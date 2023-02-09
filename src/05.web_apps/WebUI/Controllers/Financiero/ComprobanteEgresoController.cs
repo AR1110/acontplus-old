@@ -1,6 +1,5 @@
 ﻿using Helpers;
 using DataAccess;
-using DataAccess.FE;
 using DataAccess.GestionFinanciera;
 using DataAccess.Tesoreria;
 using Domain.Models;
@@ -8,27 +7,26 @@ using Domain.ViewModels.GestionFinanciera;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers.GestionFinanciera
 {
     public class ComprobanteEgresoController : Controller
     {
-        ComprobanteIngresoDao _ci = new();
+        private ComprobanteIngresoDao _ci;
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private DataAccessObject _dao;
         private readonly int _idRol;
         private EstadoFinancieroDao _ef;
-        ComprobanteEgresoDao _ce = new();
+        private ComprobanteEgresoDao _ce;
 
         public ComprobanteEgresoController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
             _ef = new EstadoFinancieroDao(_configuration);
+            _ci = new ComprobanteIngresoDao(_configuration);
+            _ce = new ComprobanteEgresoDao(_configuration);
             _httpContextAccessor = httpContextAccessor;
             _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
         }

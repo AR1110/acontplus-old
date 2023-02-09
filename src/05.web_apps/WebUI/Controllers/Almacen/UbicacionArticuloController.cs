@@ -1,10 +1,6 @@
-﻿using DataAccess;
-using Domain.Models;
-using System.Threading.Tasks;
+﻿using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using System;
-using System.Linq;
 using DataAccess.Almacen;
 using Helpers;
 
@@ -12,9 +8,16 @@ namespace WebUI.Controllers
 {
     public class UbicacionArticuloController : Controller
     {
-        // GET: UbicacionArticulo
-        GenericResponse _gr = new();
-        readonly ArticuloUbicacionDao _ua = new();
+        private readonly IConfiguration _configuration;
+        private ArticuloUbicacionDao _ua;
+        private GenericResponse _gr;
+        public UbicacionArticuloController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _ua = new ArticuloUbicacionDao(_configuration);
+            _gr = new GenericResponse();
+        }
+        // GET: UbicacionArticulo  
         [Authorize]
         public IActionResult Index()
         {

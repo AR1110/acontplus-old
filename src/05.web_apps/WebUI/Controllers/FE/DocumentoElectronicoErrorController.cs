@@ -32,7 +32,7 @@ namespace WebUI.Controllers.FE
         public IActionResult GetByClaveAcceso(string claveAcceso)
         {
             string json = "";
-            return Ok(new DocumentoElectronicoErrorDao().GetByClaveAcceso(claveAcceso, ref json) == false ? "Error" : json);
+            return Ok(new DocumentoElectronicoErrorDao(_configuration).GetByClaveAcceso(claveAcceso, ref json) == false ? "Error" : json);
         }
 
         [HttpGet]

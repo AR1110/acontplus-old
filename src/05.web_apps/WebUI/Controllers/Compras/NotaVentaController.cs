@@ -2,16 +2,20 @@
 using Domain.ViewModels.Compras;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers.Compras
 {
     public class NotaVentaController : Controller
     {
-        NotaVentaDao _nv = new();
+        private readonly IConfiguration _configuration;
+
+        private NotaVentaDao _nv;
+        public NotaVentaController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _nv = new NotaVentaDao(_configuration);
+        }
+
         [Authorize]
         public IActionResult Index()
         {

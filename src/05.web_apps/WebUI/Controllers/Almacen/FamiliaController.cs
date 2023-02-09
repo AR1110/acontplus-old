@@ -15,13 +15,14 @@ namespace WebUI.Controllers
         
         private DataAccessObject _dao;
         GenericResponse _gr = new();
-        readonly FamiliaDao _f = new();
+        private FamiliaDao _f;
 
         public FamiliaController(IConfiguration configuration)
         {
             _configuration = configuration;
             
             _dao = new DataAccessObject(_configuration);
+            _f = new FamiliaDao(_configuration);
         }
 
         [Authorize]

@@ -6,16 +6,17 @@ namespace WebUI.Controllers.FE
 {
     public class DocumentoLoteController : Controller
     {
-        //private IConfiguration _config;
+        private readonly IConfiguration _configuration;
         //private readonly string _urlApi = "";
         //private ResponseFE _responseFE;
         private readonly DocumentoLoteDao _dl;
         public AuthorizationDto _auth;
-        public DocumentoLoteController()
+        public DocumentoLoteController(IConfiguration configuration)
         {
             //_responseFE = new ResponseFE();
-            _dl = new DocumentoLoteDao();
             _auth = new AuthorizationDto();
+            _configuration = configuration;
+            _dl = new DocumentoLoteDao(_configuration);
             //_config = config;
             //_urlApi = _config.GetSection("UrlApis").GetSection("AcontPlusApi").Value;
         }

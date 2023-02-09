@@ -1,19 +1,19 @@
-﻿using DataAccess;
-using DataAccess.GestionTributaria;
-using Domain.Models;
+﻿using DataAccess.GestionTributaria;
 using Domain.ViewModels.GestionTributaria;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers.Config
 {
     public class ConfigContribuyenteController : Controller
     {
-        private ConfiguracionContribuyenteDao _cc = new();
+        private readonly IConfiguration _configuration;
+        private ConfiguracionContribuyenteDao _cc;
+        public ConfigContribuyenteController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _cc = new ConfiguracionContribuyenteDao(_configuration);
+        }
         [Authorize]
         public IActionResult Index()
         {

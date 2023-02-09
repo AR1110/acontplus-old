@@ -1,16 +1,18 @@
 ﻿using DataAccess.Auditoria;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers.Auditoria
 {
     public class ConvertDocumentController : Controller
     {
-        ConvertDocumentDao _cd = new();
+        private readonly IConfiguration _configuration;
+        private ConvertDocumentDao _cd;
+        public ConvertDocumentController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _cd = new ConvertDocumentDao(_configuration);
+        }
         [Authorize]
         // GET: ConvertDocumentController
         public ActionResult Index()

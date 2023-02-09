@@ -15,15 +15,14 @@ namespace WebUI.Controllers
         
         private DataAccessObject _dao;
         GenericResponse _gr = new();
-        readonly MedidaDao _m = new();
+        private MedidaDao _m;
 
         public MedidaController(IConfiguration configuration)
         {
             _configuration = configuration;
-            
             _dao = new DataAccessObject(_configuration);
+            _m = new MedidaDao(_configuration);
         }
-
         [Authorize]
         public IActionResult Index()
         {

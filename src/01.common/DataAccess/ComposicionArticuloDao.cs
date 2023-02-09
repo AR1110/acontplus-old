@@ -8,7 +8,7 @@
 
 //namespace DataAccess
 //{
-//    public class ComposicionArticuloDao : ConnectionDb
+//    public class ComposicionArticuloDao
 //    {
 //        protected GenericResponse _gr;
 //        public ComposicionArticuloDao()
@@ -39,7 +39,7 @@
 //                        _gr.titleSms = reader.GetString(3);
 //                    }
 //                }
-//                con.Close();
+//                
 //            }
 //            catch (Exception ex)
 //            {
@@ -96,7 +96,7 @@
 //                        }
 //                    }
 //                }
-//                con.Close();
+//                
 //                _gr.data = listar;
 //            }
 //            catch (Exception ex)

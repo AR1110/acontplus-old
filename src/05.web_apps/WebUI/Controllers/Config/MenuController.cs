@@ -1,10 +1,7 @@
 ﻿using DataAccess;
 using Domain.Models;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using System;
-using System.Linq;
 using Helpers;
 
 namespace WebUI.Controllers
@@ -12,8 +9,14 @@ namespace WebUI.Controllers
     public class MenuController : Controller
     {
         // GET: Menu
+        private readonly IConfiguration _configuration;
         GenericResponse _gr = new();
-        readonly MenuDao m = new();
+        private MenuDao m;
+        public MenuController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            m = new MenuDao(_configuration);
+        }
         [Authorize]
         public IActionResult Index()
         {

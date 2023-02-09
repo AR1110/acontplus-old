@@ -1,15 +1,18 @@
 ﻿using DataAccess.GestionFinanciera;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers.GestionFinanciera
 {
     public class PagoController : Controller
     {
-        PagoDao _p = new();
+        private readonly IConfiguration _configuration;
+        private PagoDao _p;
+        public PagoController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _p = new PagoDao(_configuration);
+        }
         [Authorize]
         public IActionResult Index()
         {

@@ -1,7 +1,5 @@
-﻿using DataAccess.Almacen;
-using DataAccess;
+﻿using DataAccess;
 using DataAccess.Compras;
-using DataAccess.FE;
 using Domain.Dtos;
 using Domain.Models;
 using Domain.ViewModels.Compras;
@@ -14,7 +12,7 @@ namespace WebUI.Controllers.Compras
     public class LiquidacionCompraController : Controller
     {
         private GenericResponse _gr = new();
-        private LiquidacionCompraDao _lc = new();
+        private LiquidacionCompraDao _lc;
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor; ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
@@ -25,6 +23,7 @@ namespace WebUI.Controllers.Compras
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
+            _lc = new LiquidacionCompraDao(_configuration);
             _httpContextAccessor = httpContextAccessor;
             _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
 

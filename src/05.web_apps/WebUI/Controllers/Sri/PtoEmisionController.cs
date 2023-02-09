@@ -21,7 +21,7 @@ namespace WebUI.Controllers.Sri
             _dao = new DataAccessObject(_configuration);
             _httpContextAccessor = httpContextAccessor;
             _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
-            _tipA = new TipoAmbienteDao(configuration);
+            _tipA = new TipoAmbienteDao(_configuration);
         }
 
         [Authorize]

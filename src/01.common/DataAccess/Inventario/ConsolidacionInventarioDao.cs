@@ -13,14 +13,16 @@ using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Inventario
 {
-    public class ConsolidacionInventarioDao : ConnectionDb
+    public class ConsolidacionInventarioDao
     {
-        private readonly IConfiguration _config;
         private GenericResponse _response;
 
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
         public ConsolidacionInventarioDao(IConfiguration config)
         {
             _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
             _response = new GenericResponse();
         }
 
@@ -49,52 +51,54 @@ namespace DataAccess.Inventario
 
             try
             {
-                var cmd = new SqlCommand("aspConsolidacionInventarioGetId", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idConsolidacionInventario", idConsolidacionInventario);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _response.id = reader.GetString(0);
-                    _response.message = reader.GetString(1);
-                    _response.titleSms = reader.GetString(2);
-                    if (_response.id == "1")
+                    var cmd = new SqlCommand("aspConsolidacionInventarioGetId", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idConsolidacionInventario", idConsolidacionInventario);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        consolidacion.consolidacion = new ConsolidacionInventario()
+                        _response.id = reader.GetString(0);
+                        _response.message = reader.GetString(1);
+                        _response.titleSms = reader.GetString(2);
+                        if (_response.id == "1")
                         {
-                            idConsolidacionInventario = reader.GetInt64(3),
-                            fechaEmision = reader.GetDateTime(4).ToString("yyyy-MM-dd"),
-                            observacion = reader.GetString(5),
-                            total = reader.GetDecimal(6),
-                        };
-
-                        reader.NextResult();
-                        while (reader.Read())
-                        {
-                            var item = new ConsolidacionInventarioDetalleViewModel
+                            consolidacion.consolidacion = new ConsolidacionInventario()
                             {
-                                detalle = new ConsolidacionInventarioDetalle()
-                                {
-                                    idConsolidacionInventarioDetalle = reader.GetInt64(0),
-                                    idBodega = reader.GetInt32(1),
-                                    idArticulo = reader.GetInt32(2),
-                                    idMedida = reader.GetInt32(3),
-                                    descripcion = reader.GetString(4),
-                                    cantidad = reader.GetDecimal(5),
-                                    precioCosto = reader.GetDecimal(6),
-                                    precioActual = reader.GetDecimal(7),
-                                },
-                                codigo = reader.GetString(8),
-                                codigoTipoIva = reader.GetString(9),
-                                nombreTipoIva = reader.GetString(10),
-                                stock = reader.GetDecimal(11),
+                                idConsolidacionInventario = reader.GetInt64(3),
+                                fechaEmision = reader.GetDateTime(4).ToString("yyyy-MM-dd"),
+                                observacion = reader.GetString(5),
+                                total = reader.GetDecimal(6),
                             };
-                            detalle.Add(item);
+
+                            reader.NextResult();
+                            while (reader.Read())
+                            {
+                                var item = new ConsolidacionInventarioDetalleViewModel
+                                {
+                                    detalle = new ConsolidacionInventarioDetalle()
+                                    {
+                                        idConsolidacionInventarioDetalle = reader.GetInt64(0),
+                                        idBodega = reader.GetInt32(1),
+                                        idArticulo = reader.GetInt32(2),
+                                        idMedida = reader.GetInt32(3),
+                                        descripcion = reader.GetString(4),
+                                        cantidad = reader.GetDecimal(5),
+                                        precioCosto = reader.GetDecimal(6),
+                                        precioActual = reader.GetDecimal(7),
+                                    },
+                                    codigo = reader.GetString(8),
+                                    codigoTipoIva = reader.GetString(9),
+                                    nombreTipoIva = reader.GetString(10),
+                                    stock = reader.GetDecimal(11),
+                                };
+                                detalle.Add(item);
+                            }
                         }
                     }
-
                 }
                 data.consolidacion = consolidacion;
                 data.detalle = detalle;
@@ -109,7 +113,7 @@ namespace DataAccess.Inventario
             }
             finally
             {
-                con.Close();
+
             }
 
             return _response;
@@ -118,22 +122,25 @@ namespace DataAccess.Inventario
         {
             try
             {
-                var cmd = new SqlCommand("aspConsolidacionInventarioInsert", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idPuntoEmision", data.consolidacion.idPuntoEmision);
-                cmd.Parameters.AddWithValue("fechaEmision", data.consolidacion.fechaEmision);
-                cmd.Parameters.AddWithValue("total", data.consolidacion.total);
-                cmd.Parameters.AddWithValue("observacion", DataHelper.ToDBNullOrDefault(data.consolidacion.observacion));
-                var detalle = JsonConvert.SerializeObject(data.detalle); cmd.Parameters.Add(new SqlParameter("jsonDetalle", detalle));
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _response.id = reader.GetString(0);
-                    _response.message = reader.GetString(1);
-                    _response.titleSms = reader.GetString(2);
+                    var cmd = new SqlCommand("aspConsolidacionInventarioInsert", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idPuntoEmision", data.consolidacion.idPuntoEmision);
+                    cmd.Parameters.AddWithValue("fechaEmision", data.consolidacion.fechaEmision);
+                    cmd.Parameters.AddWithValue("total", data.consolidacion.total);
+                    cmd.Parameters.AddWithValue("observacion", DataHelper.ToDBNullOrDefault(data.consolidacion.observacion));
+                    var detalle = JsonConvert.SerializeObject(data.detalle); cmd.Parameters.Add(new SqlParameter("jsonDetalle", detalle));
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        _response.id = reader.GetString(0);
+                        _response.message = reader.GetString(1);
+                        _response.titleSms = reader.GetString(2);
 
+                    }
                 }
             }
             catch (Exception ex)
@@ -144,7 +151,7 @@ namespace DataAccess.Inventario
             }
             finally
             {
-                con.Close();
+
             }
             return _response;
         }
@@ -152,22 +159,25 @@ namespace DataAccess.Inventario
         {
             try
             {
-                var cmd = new SqlCommand("aspConsolidacionInventarioUpdate", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idConsolidacionInventario", idConsolidacionInventario);
-                cmd.Parameters.AddWithValue("fechaEmision", data.consolidacion.fechaEmision);
-                cmd.Parameters.AddWithValue("total", data.consolidacion.total);
-                cmd.Parameters.AddWithValue("observacion", DataHelper.ToDBNullOrDefault(data.consolidacion.observacion));
-                var detalle = JsonConvert.SerializeObject(data.detalle); cmd.Parameters.Add(new SqlParameter("jsonDetalle", detalle));
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _response.id = reader.GetString(0);
-                    _response.message = reader.GetString(1);
-                    _response.titleSms = reader.GetString(2);
+                    var cmd = new SqlCommand("aspConsolidacionInventarioUpdate", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idConsolidacionInventario", idConsolidacionInventario);
+                    cmd.Parameters.AddWithValue("fechaEmision", data.consolidacion.fechaEmision);
+                    cmd.Parameters.AddWithValue("total", data.consolidacion.total);
+                    cmd.Parameters.AddWithValue("observacion", DataHelper.ToDBNullOrDefault(data.consolidacion.observacion));
+                    var detalle = JsonConvert.SerializeObject(data.detalle); cmd.Parameters.Add(new SqlParameter("jsonDetalle", detalle));
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        _response.id = reader.GetString(0);
+                        _response.message = reader.GetString(1);
+                        _response.titleSms = reader.GetString(2);
 
+                    }
                 }
             }
             catch (Exception ex)
@@ -178,7 +188,7 @@ namespace DataAccess.Inventario
             }
             finally
             {
-                con.Close();
+
             }
             return _response;
         }
@@ -186,18 +196,21 @@ namespace DataAccess.Inventario
         {
             try
             {
-                var cmd = new SqlCommand("aspConsolidacionInventarioDelete", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idConsolidacionInventario", idConsolidacionInventario);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _response.id = reader.GetString(0);
-                    _response.message = reader.GetString(1);
-                    _response.titleSms = reader.GetString(2);
+                    var cmd = new SqlCommand("aspConsolidacionInventarioDelete", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idConsolidacionInventario", idConsolidacionInventario);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        _response.id = reader.GetString(0);
+                        _response.message = reader.GetString(1);
+                        _response.titleSms = reader.GetString(2);
 
+                    }
                 }
             }
             catch (Exception ex)
@@ -208,7 +221,7 @@ namespace DataAccess.Inventario
             }
             finally
             {
-                con.Close();
+
             }
             return _response;
         }

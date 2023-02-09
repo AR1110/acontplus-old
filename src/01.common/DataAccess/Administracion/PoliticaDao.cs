@@ -5,15 +5,19 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Helpers;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Administracion
 {
-    public class PoliticaDao : ConnectionDb
+    public class PoliticaDao
     {
         protected GenericResponse _gr;
-
-        public PoliticaDao()
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public PoliticaDao(IConfiguration config)
         {
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
             _gr = new GenericResponse();
         }
 
@@ -23,34 +27,37 @@ namespace DataAccess.Administracion
             var list = new List<Politica>();
             try
             {
-                SqlCommand cmd = new SqlCommand("aspPoliticaGet", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("pageIndex", pageIndex);
-                cmd.Parameters.AddWithValue("pageSize", pageSize);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
-
-                    if (_gr.id == "1")
+                    SqlCommand cmd = new SqlCommand("aspPoliticaGet", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("pageIndex", pageIndex);
+                    cmd.Parameters.AddWithValue("pageSize", pageSize);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        var p = new Politica
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+
+                        if (_gr.id == "1")
                         {
-                            idPolitica = reader.GetInt32(3),
-                            descripcion = reader.GetString(4),
-                            codigo = reader.GetString(5),
-                            estado = reader.GetBoolean(6),
-                            fechaRegistro = reader.GetDateTime(7).ToString("yyyy-MM-dd"),
-                            totalRecords = reader.GetInt32(8)
-                        };
-                        list.Add(p);
+                            var p = new Politica
+                            {
+                                idPolitica = reader.GetInt32(3),
+                                descripcion = reader.GetString(4),
+                                codigo = reader.GetString(5),
+                                estado = reader.GetBoolean(6),
+                                fechaRegistro = reader.GetDateTime(7).ToString("yyyy-MM-dd"),
+                                totalRecords = reader.GetInt32(8)
+                            };
+                            list.Add(p);
+                        }
                     }
+                    _gr.data = list;
                 }
-                _gr.data = list;
             }
             catch (Exception ex)
             {
@@ -61,7 +68,7 @@ namespace DataAccess.Administracion
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }
@@ -69,46 +76,15 @@ namespace DataAccess.Administracion
         {
             try
             {
-                SqlCommand cmd = new SqlCommand("aspPoliticaInsert", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("descripcion", data.descripcion);
-                cmd.Parameters.AddWithValue("codigo", data.codigo);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
-                }
-            }
-            catch (Exception ex)
-            {
-                _gr.id = "0";
-                _gr.message = ex.Message.ToString();
-                _gr.titleSms = "Registrar Politica";
-            }
-            finally
-            {
-                con.Close();
-            }
-            return _gr;
-        }
-        public async Task<GenericResponse> UpdateAsync(int idRol, Politica data)
-        {
-            try
-            {
-                SqlCommand cmd = new SqlCommand("aspPoliticaUpdate", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idPolitica", data.idPolitica);
-                cmd.Parameters.AddWithValue("descripcion", data.descripcion);
-                cmd.Parameters.AddWithValue("codigo", data.codigo);
-                cmd.Parameters.AddWithValue("estado", data.estado);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                using (SqlDataReader reader = cmd.ExecuteReader())
-                {
+                    SqlCommand cmd = new SqlCommand("aspPoliticaInsert", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("descripcion", data.descripcion);
+                    cmd.Parameters.AddWithValue("codigo", data.codigo);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);
@@ -121,11 +97,48 @@ namespace DataAccess.Administracion
             {
                 _gr.id = "0";
                 _gr.message = ex.Message.ToString();
+                _gr.titleSms = "Registrar Politica";
+            }
+            finally
+            {
+
+            }
+            return _gr;
+        }
+        public async Task<GenericResponse> UpdateAsync(int idRol, Politica data)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                {
+                    SqlCommand cmd = new SqlCommand("aspPoliticaUpdate", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idPolitica", data.idPolitica);
+                    cmd.Parameters.AddWithValue("descripcion", data.descripcion);
+                    cmd.Parameters.AddWithValue("codigo", data.codigo);
+                    cmd.Parameters.AddWithValue("estado", data.estado);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            _gr.id = reader.GetString(0);
+                            _gr.message = reader.GetString(1);
+                            _gr.titleSms = reader.GetString(2);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _gr.id = "0";
+                _gr.message = ex.Message.ToString();
                 _gr.titleSms = "Actualizar Politica";
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }
@@ -133,22 +146,24 @@ namespace DataAccess.Administracion
         {
             try
             {
-                SqlCommand cmd = new SqlCommand("ASPPoliticaDelete", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idPolitica", idPolitica);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    while (await reader.ReadAsync())
+                    SqlCommand cmd = new SqlCommand("ASPPoliticaDelete", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idPolitica", idPolitica);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
                     {
-                        _gr.id = reader.GetString(0);
-                        _gr.typeNotify = reader.GetString(1);
-                        _gr.message = reader.GetString(2);
-                        _gr.titleSms = reader.GetString(3);
+                        while (await reader.ReadAsync())
+                        {
+                            _gr.id = reader.GetString(0);
+                            _gr.typeNotify = reader.GetString(1);
+                            _gr.message = reader.GetString(2);
+                            _gr.titleSms = reader.GetString(3);
+                        }
                     }
                 }
-                con.Close();
             }
             catch (Exception ex)
             {
@@ -166,28 +181,31 @@ namespace DataAccess.Administracion
             var list = new List<Politica>();
             try
             {
-                var cmd = new SqlCommand("ASPPoliticaGetAll", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-
-                    if (_gr.id == "1")
+                    var cmd = new SqlCommand("ASPPoliticaGetAll", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        var p = new Politica
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+
+                        if (_gr.id == "1")
                         {
-                            idPolitica = reader.GetInt32(2),
-                            descripcion = reader.GetString(3),
-                            codigo = reader.GetString(4),
-                        };
-                        list.Add(p);
+                            var p = new Politica
+                            {
+                                idPolitica = reader.GetInt32(2),
+                                descripcion = reader.GetString(3),
+                                codigo = reader.GetString(4),
+                            };
+                            list.Add(p);
+                        }
                     }
+                    _gr.data = list;
                 }
-                _gr.data = list;
             }
             catch (Exception ex)
             {
@@ -197,7 +215,7 @@ namespace DataAccess.Administracion
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }

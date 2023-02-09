@@ -14,7 +14,7 @@ namespace WebUI.Controllers.GestionFinanciera
 {
     public class GestionFinancieraController : Controller
     {
-        GestionFinancieraDao _gf = new();
+        private GestionFinancieraDao _gf;
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor; ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
@@ -25,6 +25,7 @@ namespace WebUI.Controllers.GestionFinanciera
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
+            _gf = new GestionFinancieraDao(_configuration);
             _httpContextAccessor = httpContextAccessor;
             _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
         }
@@ -51,7 +52,7 @@ namespace WebUI.Controllers.GestionFinanciera
         {
             int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
             var res = await _gf.GetDocumentsPayAsync(idRol, json);
-            return Ok(res); 
+            return Ok(res);
         }
 
         // 
@@ -67,7 +68,7 @@ namespace WebUI.Controllers.GestionFinanciera
         public async Task<IActionResult> GetChargeForDocument(string json)
         {
             int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
-            var res = await _gf.GetChargeForDocumentAsync(idRol, json);    
+            var res = await _gf.GetChargeForDocumentAsync(idRol, json);
             return Ok(res);
         }
     }

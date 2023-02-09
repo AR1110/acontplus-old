@@ -1,6 +1,5 @@
 ﻿using DataAccess;
 using Domain.Models;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Helpers;
@@ -9,9 +8,15 @@ namespace WebUI.Controllers
 {
     public class AccionController : Controller
     {
+        private AccionesDao ac;
+        private readonly IConfiguration _configuration;
+        public AccionController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            ac = new AccionesDao(_configuration);
+        }
         // GET: Acciones
         GenericResponse _gr = new();
-        readonly AccionesDao ac = new();
         [Authorize]
         public IActionResult Index()
         {

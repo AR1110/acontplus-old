@@ -5,33 +5,41 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess
 {
-    public class CiudadDao : ConnectionDb
+    public class CiudadDao
     {
         protected GenericResponse _response;
 
-        public CiudadDao()
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public CiudadDao(IConfiguration config)
         {
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
             _response = new GenericResponse();
         }
         public async Task<GenericResponse> GetAsync(string json)
         {
-            DataTable dt = new DataTable ();
+            DataTable dt = new DataTable();
             try
             {
-                using (SqlCommand cmd = new SqlCommand("App.aspCiudad_Get", con))
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    cmd.Parameters.AddWithValue("json", json);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await con.OpenAsync();
-                    SqlDataAdapter dataAdapter = new SqlDataAdapter (cmd);
-                    dataAdapter.Fill(dt);
-                    if (dt.Rows.Count > 0)
+                    using (SqlCommand cmd = new SqlCommand("App.aspCiudad_Get", con))
                     {
-                        _response.id = "1";
-                        _response.data = DataHelper.DataTableToJSON(dt);
+                        cmd.Parameters.AddWithValue("json", json);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        await con.OpenAsync();
+                        SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
+                        dataAdapter.Fill(dt);
+                        if (dt.Rows.Count > 0)
+                        {
+                            _response.id = "1";
+                            _response.data = DataHelper.DataTableToJSON(dt);
+                        }
                     }
                 }
             }
@@ -43,7 +51,7 @@ namespace DataAccess
             }
             finally
             {
-                con.Close();
+
             }
             return _response;
         }
@@ -52,28 +60,30 @@ namespace DataAccess
             var listar = new List<Provincia>();
             try
             {
-                using (SqlCommand cmd = new SqlCommand("SPProvinciaList", con))
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    con.Open();
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlCommand cmd = new SqlCommand("SPProvinciaList", con))
                     {
-                        while (reader.Read())
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        con.Open();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            _response.id = reader.GetString(0);
-                            _response.message = reader.GetString(1);
-                            _response.titleSms = reader.GetString(2);
-
-                            if (_response.id == "1")
+                            while (reader.Read())
                             {
-                                var pr = new Provincia();
-                                pr.idProvincia = Convert.ToInt32(reader["idProvincia"]);
-                                pr.descripcion = reader["descripcion"].ToString();
-                                listar.Add(pr);
+                                _response.id = reader.GetString(0);
+                                _response.message = reader.GetString(1);
+                                _response.titleSms = reader.GetString(2);
+
+                                if (_response.id == "1")
+                                {
+                                    var pr = new Provincia();
+                                    pr.idProvincia = Convert.ToInt32(reader["idProvincia"]);
+                                    pr.descripcion = reader["descripcion"].ToString();
+                                    listar.Add(pr);
+                                }
                             }
                         }
                     }
-                    con.Close();
                 }
                 _response.data = listar;
             }
@@ -90,28 +100,30 @@ namespace DataAccess
             var listar = new List<Ciudad>();
             try
             {
-                using (SqlCommand cmd = new SqlCommand("SPCiudadList", con))
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    cmd.Parameters.AddWithValue("@idProvincia", data.provincia.idProvincia);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    con.Open();
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlCommand cmd = new SqlCommand("SPCiudadList", con))
                     {
-                        while (reader.Read())
+                        cmd.Parameters.AddWithValue("@idProvincia", data.provincia.idProvincia);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        con.Open();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            _response.id = reader.GetString(0);
-                            _response.message = reader.GetString(1);
-                            _response.titleSms = reader.GetString(2);
-                            if (_response.id == "1")
+                            while (reader.Read())
                             {
-                                var c = new Ciudad();
-                                c.idCiudad = Convert.ToInt32(reader["idCiudad"]);
-                                c.descripcion = reader["descripcion"].ToString();
-                                listar.Add(c);
+                                _response.id = reader.GetString(0);
+                                _response.message = reader.GetString(1);
+                                _response.titleSms = reader.GetString(2);
+                                if (_response.id == "1")
+                                {
+                                    var c = new Ciudad();
+                                    c.idCiudad = Convert.ToInt32(reader["idCiudad"]);
+                                    c.descripcion = reader["descripcion"].ToString();
+                                    listar.Add(c);
+                                }
                             }
                         }
                     }
-                    con.Close();
                 }
                 _response.data = listar;
             }
@@ -128,32 +140,34 @@ namespace DataAccess
             var listar = new List<Ciudad>();
             try
             {
-                SqlCommand cmd = new SqlCommand("ASPReadCiudad", con);
-                cmd.CommandType = CommandType.StoredProcedure;
-                con.Open();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _response.id = reader.GetString(0);
-                    _response.typeNotify = reader.GetString(1);
-                    _response.message = reader.GetString(2);
-                    _response.titleSms = reader.GetString(3);
-                    if (_response.id == "1")
+                    SqlCommand cmd = new SqlCommand("ASPReadCiudad", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    con.Open();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        var c = new Ciudad();
-                        c.idCiudad = reader.GetInt32(4);
-                        c.descripcion = reader.GetString(5);
-                        c.codigo = reader.GetString(6);
-                        c.estado = reader.GetBoolean(7);
-                        c.provincia = new Provincia()
+                        _response.id = reader.GetString(0);
+                        _response.typeNotify = reader.GetString(1);
+                        _response.message = reader.GetString(2);
+                        _response.titleSms = reader.GetString(3);
+                        if (_response.id == "1")
                         {
-                            idProvincia = reader.GetInt32(8),
-                            descripcion = reader.GetString(9)
-                        };
-                        listar.Add(c);
+                            var c = new Ciudad();
+                            c.idCiudad = reader.GetInt32(4);
+                            c.descripcion = reader.GetString(5);
+                            c.codigo = reader.GetString(6);
+                            c.estado = reader.GetBoolean(7);
+                            c.provincia = new Provincia()
+                            {
+                                idProvincia = reader.GetInt32(8),
+                                descripcion = reader.GetString(9)
+                            };
+                            listar.Add(c);
+                        }
                     }
                 }
-                con.Close();
                 _response.data = listar;
             }
             catch (Exception ex)

@@ -1,6 +1,7 @@
 ﻿using Domain.Models;
 using Domain.ViewModels;
 using Helpers;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -11,12 +12,16 @@ using System.Threading.Tasks;
 
 namespace DataAccess
 {
-    public class ConfiguracionMoraDao : ConnectionDb
+    public class ConfiguracionMoraDao
     {
         protected GenericResponse _gr;
 
-        public ConfiguracionMoraDao()
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public ConfiguracionMoraDao(IConfiguration config)
         {
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
             _gr = new GenericResponse();
         }
 
@@ -24,25 +29,27 @@ namespace DataAccess
         {
             try
             {
-                using (SqlCommand cmd = new SqlCommand("ASPConfiguracionMoraCreate", con))
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    cmd.Parameters.AddWithValue("idRol", idRol);
-                    cmd.Parameters.AddWithValue("diasGracia", data.diasGracia);
-                    cmd.Parameters.AddWithValue("porcentajeMora", data.porcentajeMora);
-                    cmd.Parameters.AddWithValue("tiempoConfiguracion", data.tiempoConfiguracion);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await con.OpenAsync();
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlCommand cmd = new SqlCommand("ASPConfiguracionMoraCreate", con))
                     {
-                        while (reader.Read())
+                        cmd.Parameters.AddWithValue("idRol", idRol);
+                        cmd.Parameters.AddWithValue("diasGracia", data.diasGracia);
+                        cmd.Parameters.AddWithValue("porcentajeMora", data.porcentajeMora);
+                        cmd.Parameters.AddWithValue("tiempoConfiguracion", data.tiempoConfiguracion);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        await con.OpenAsync();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            _gr.id = reader.GetString(0);
-                            _gr.typeNotify = reader.GetString(1);
-                            _gr.message = reader.GetString(2);
-                            _gr.titleSms = reader.GetString(3);
+                            while (reader.Read())
+                            {
+                                _gr.id = reader.GetString(0);
+                                _gr.typeNotify = reader.GetString(1);
+                                _gr.message = reader.GetString(2);
+                                _gr.titleSms = reader.GetString(3);
+                            }
                         }
                     }
-                    con.Close();
                 }
             }
             catch (Exception ex)
@@ -59,37 +66,39 @@ namespace DataAccess
             var listar = new List<ConfiguracionMoraViewModel>();
             try
             {
-                using (SqlCommand cmd = new SqlCommand("ASPConfiguracionMoraRead", con))
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    cmd.Parameters.AddWithValue("idRol", idRol);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await con.OpenAsync();
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlCommand cmd = new SqlCommand("ASPConfiguracionMoraRead", con))
                     {
-                        while (reader.Read())
+                        cmd.Parameters.AddWithValue("idRol", idRol);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        await con.OpenAsync();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            _gr.id = reader.GetString(0);
-                            _gr.typeNotify = reader.GetString(1);
-                            _gr.message = reader.GetString(2);
-                            _gr.titleSms = reader.GetString(3);
-                            if (_gr.id == "1")
+                            while (reader.Read())
                             {
-                                var item = new ConfiguracionMoraViewModel();
-                                item.configuracionMora = new ConfiguracionMora()
+                                _gr.id = reader.GetString(0);
+                                _gr.typeNotify = reader.GetString(1);
+                                _gr.message = reader.GetString(2);
+                                _gr.titleSms = reader.GetString(3);
+                                if (_gr.id == "1")
                                 {
-                                    idConfiguracionMora = reader.GetInt32(4),
-                                    diasGracia = reader.GetInt32(5),
-                                    porcentajeMora = reader.GetDecimal(6),
-                                    tiempoConfiguracion = reader.GetBoolean(7)
-                                };
-                                item.totalRecords = reader.GetInt32(8);
-                                item.diaGracia = reader.GetString(9);
-                                item.configuracion = reader.GetString(10);
-                                listar.Add(item);
+                                    var item = new ConfiguracionMoraViewModel();
+                                    item.configuracionMora = new ConfiguracionMora()
+                                    {
+                                        idConfiguracionMora = reader.GetInt32(4),
+                                        diasGracia = reader.GetInt32(5),
+                                        porcentajeMora = reader.GetDecimal(6),
+                                        tiempoConfiguracion = reader.GetBoolean(7)
+                                    };
+                                    item.totalRecords = reader.GetInt32(8);
+                                    item.diaGracia = reader.GetString(9);
+                                    item.configuracion = reader.GetString(10);
+                                    listar.Add(item);
+                                }
                             }
                         }
                     }
-                    con.Close();
                 }
                 _gr.data = listar;
             }
@@ -106,26 +115,28 @@ namespace DataAccess
         {
             try
             {
-                using (SqlCommand cmd = new SqlCommand("ASPConfiguracionMoraUpdate", con))
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    cmd.Parameters.AddWithValue("idRol", idRol);
-                    cmd.Parameters.AddWithValue("idConfiguracionMora", data.idConfiguracionMora);
-                    cmd.Parameters.AddWithValue("diasGracia", data.diasGracia);
-                    cmd.Parameters.AddWithValue("porcentajeMora", data.porcentajeMora);
-                    cmd.Parameters.AddWithValue("tiempoConfiguracion", data.tiempoConfiguracion);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await con.OpenAsync();
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlCommand cmd = new SqlCommand("ASPConfiguracionMoraUpdate", con))
                     {
-                        while (reader.Read())
+                        cmd.Parameters.AddWithValue("idRol", idRol);
+                        cmd.Parameters.AddWithValue("idConfiguracionMora", data.idConfiguracionMora);
+                        cmd.Parameters.AddWithValue("diasGracia", data.diasGracia);
+                        cmd.Parameters.AddWithValue("porcentajeMora", data.porcentajeMora);
+                        cmd.Parameters.AddWithValue("tiempoConfiguracion", data.tiempoConfiguracion);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        await con.OpenAsync();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            _gr.id = reader.GetString(0);
-                            _gr.typeNotify = reader.GetString(1);
-                            _gr.message = reader.GetString(2);
-                            _gr.titleSms = reader.GetString(3);
+                            while (reader.Read())
+                            {
+                                _gr.id = reader.GetString(0);
+                                _gr.typeNotify = reader.GetString(1);
+                                _gr.message = reader.GetString(2);
+                                _gr.titleSms = reader.GetString(3);
+                            }
                         }
                     }
-                    con.Close();
                 }
             }
             catch (Exception ex)
@@ -141,23 +152,25 @@ namespace DataAccess
         {
             try
             {
-                using (SqlCommand cmd = new SqlCommand("ASPConfiguracionMoraDelete", con))
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    cmd.Parameters.AddWithValue("idRol", idRol);
-                    cmd.Parameters.AddWithValue("idConfiguracionMora", idConfiguracionMora);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await con.OpenAsync();
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlCommand cmd = new SqlCommand("ASPConfiguracionMoraDelete", con))
                     {
-                        while (reader.Read())
+                        cmd.Parameters.AddWithValue("idRol", idRol);
+                        cmd.Parameters.AddWithValue("idConfiguracionMora", idConfiguracionMora);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        await con.OpenAsync();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            _gr.id = reader.GetString(0);
-                            _gr.typeNotify = reader.GetString(1);
-                            _gr.message = reader.GetString(2);
-                            _gr.titleSms = reader.GetString(3);
+                            while (reader.Read())
+                            {
+                                _gr.id = reader.GetString(0);
+                                _gr.typeNotify = reader.GetString(1);
+                                _gr.message = reader.GetString(2);
+                                _gr.titleSms = reader.GetString(3);
+                            }
                         }
                     }
-                    con.Close();
                 }
             }
             catch (Exception ex)

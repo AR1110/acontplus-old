@@ -5,28 +5,39 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.FE
 {
-    public class DocumentoLoteDao : ConnectionDb
+    public class DocumentoLoteDao
     {
         private GenericResponse _response = new GenericResponse();
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public DocumentoLoteDao(IConfiguration config)
+        {
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
+        }
         public async Task<GenericResponse> GetAsync(int idRol, string json)
         {
             DataTable dt = new DataTable();
             try
             {
-                SqlCommand cmd = new SqlCommand("ASPDocumentoLoteGet", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("json", json);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
-                dataAdapter.Fill(dt);
-                if (dt.Rows.Count > 0)
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _response.id = "1";
-                    _response.data = DataHelper.DataTableToJSON(dt);
+                    SqlCommand cmd = new SqlCommand("ASPDocumentoLoteGet", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("json", json);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
+                    dataAdapter.Fill(dt);
+                    if (dt.Rows.Count > 0)
+                    {
+                        _response.id = "1";
+                        _response.data = DataHelper.DataTableToJSON(dt);
+                    }
                 }
             }
             catch (Exception ex)
@@ -35,7 +46,7 @@ namespace DataAccess.FE
             }
             finally
             {
-                con.Close();
+                
             }
             return _response;
         }
@@ -44,17 +55,20 @@ namespace DataAccess.FE
             DataSet ds = new DataSet();
             try
             {
-                SqlCommand cmd = new SqlCommand("ASPDocumentoLoteInsert", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("codDoc", codDoc);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-                adapter.Fill(ds);
-                _response = DbResponse.SPDataTable(ds.Tables[0]);
-                if (_response.id == "1")
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _response.data = DataHelper.DataTableToJSON(ds.Tables[1]);
+                    SqlCommand cmd = new SqlCommand("ASPDocumentoLoteInsert", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("codDoc", codDoc);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+                    adapter.Fill(ds);
+                    _response = DbResponse.SPDataTable(ds.Tables[0]);
+                    if (_response.id == "1")
+                    {
+                        _response.data = DataHelper.DataTableToJSON(ds.Tables[1]);
+                    }
                 }
             }
             catch (Exception ex)
@@ -64,7 +78,7 @@ namespace DataAccess.FE
             }
             finally
             {
-                con.Close();
+                
             }
             return _response;
         }
@@ -72,40 +86,17 @@ namespace DataAccess.FE
         {
             try
             {
-                byte[] byteXml = Encoding.UTF8.GetBytes(xmlLote ?? "");
-                SqlCommand cmd = new SqlCommand("ASPDocumentoLoteUpdate", con);
-                cmd.Parameters.AddWithValue("claveAcceso", claveAcceso);
-                cmd.Parameters.AddWithValue("numeroComprobantesLote", Convert.ToInt32(numeroComprobantesLote));
-                cmd.Parameters.AddWithValue("totalAuth", totalAuth);
-                cmd.Parameters.AddWithValue("xmlLote", byteXml);
-                cmd.CommandType = CommandType.StoredProcedure;
-                con.Open();
-                cmd.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-                _ = ex.Message;
-            }
-            finally
-            {
-                con.Close();
-            }
-        }
-        public bool AuthorizeAsync(int idRol, int idDocumentoLote, ref DataSet ds)
-        {
-            bool _response = false;
-            try
-            {
-                SqlCommand cmd = new SqlCommand("ASPDocumentoLoteAuthorize", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idDocumentoLote", idDocumentoLote);
-                cmd.CommandType = CommandType.StoredProcedure;
-                con.Open();
-                SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-                adapter.Fill(ds);
-                if (ds.Tables.Count > 0)
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _response = true;
+                    byte[] byteXml = Encoding.UTF8.GetBytes(xmlLote ?? "");
+                    SqlCommand cmd = new SqlCommand("ASPDocumentoLoteUpdate", con);
+                    cmd.Parameters.AddWithValue("claveAcceso", claveAcceso);
+                    cmd.Parameters.AddWithValue("numeroComprobantesLote", Convert.ToInt32(numeroComprobantesLote));
+                    cmd.Parameters.AddWithValue("totalAuth", totalAuth);
+                    cmd.Parameters.AddWithValue("xmlLote", byteXml);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    con.Open();
+                    cmd.ExecuteNonQuery();
                 }
             }
             catch (Exception ex)
@@ -114,7 +105,36 @@ namespace DataAccess.FE
             }
             finally
             {
-                con.Close();
+                
+            }
+        }
+        public bool AuthorizeAsync(int idRol, int idDocumentoLote, ref DataSet ds)
+        {
+            bool _response = false;
+            try
+            {
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                {
+                    SqlCommand cmd = new SqlCommand("ASPDocumentoLoteAuthorize", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idDocumentoLote", idDocumentoLote);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    con.Open();
+                    SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+                    adapter.Fill(ds);
+                    if (ds.Tables.Count > 0)
+                    {
+                        _response = true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _ = ex.Message;
+            }
+            finally
+            {
+                
             }
             return _response;
         }
@@ -123,14 +143,17 @@ namespace DataAccess.FE
             DataTable dt = new DataTable();
             try
             {
-                SqlCommand cmd = new SqlCommand("ASPDocumentoLoteDelete", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idDocumentoLote", idDocumentoLote);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
-                dataAdapter.Fill(dt);
-                _response = DbResponse.SPDefault(dt);
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                {
+                    SqlCommand cmd = new SqlCommand("ASPDocumentoLoteDelete", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idDocumentoLote", idDocumentoLote);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
+                    dataAdapter.Fill(dt);
+                    _response = DbResponse.SPDefault(dt);
+                }
             }
             catch (Exception ex)
             {
@@ -138,7 +161,7 @@ namespace DataAccess.FE
             }
             finally
             {
-                con.Close();
+                
             }
             return _response;
         }

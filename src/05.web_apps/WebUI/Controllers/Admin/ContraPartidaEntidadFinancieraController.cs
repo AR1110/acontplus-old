@@ -1,19 +1,22 @@
 ﻿using DataAccess;
-using Domain.Models;
 using Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers.Admin
 {
     public class ContraPartidaEntidadFinancieraController : Controller
     {
+        private readonly IConfiguration _configuration;
         GenericResponse _gr = new();
-        ContraPartidaEfDao _cpe = new();
+        private ContraPartidaEfDao _cpe;
+
+        public ContraPartidaEntidadFinancieraController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _cpe = new ContraPartidaEfDao(_configuration);
+        }
+
         [Authorize]
         public IActionResult Index()
         {

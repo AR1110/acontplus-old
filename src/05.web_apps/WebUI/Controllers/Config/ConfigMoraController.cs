@@ -3,17 +3,21 @@ using Domain.Models;
 using Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers.Config
 {
     public class ConfigMoraController : Controller
     {
+        private readonly IConfiguration _configuration;
+
         GenericResponse _gr = new();
-        ConfiguracionMoraDao _cm = new();
+        private ConfiguracionMoraDao _cm;
+        public ConfigMoraController(IConfiguration configuration)
+        {
+            _configuration = configuration; 
+            _cm = new ConfiguracionMoraDao(_configuration);
+        }
+
         [Authorize]
         public IActionResult Index()
         {

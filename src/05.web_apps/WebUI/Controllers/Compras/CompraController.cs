@@ -1,20 +1,20 @@
-﻿using DataAccess;
-using WebUI.Internal.Compras;
-using Domain.Models;
+﻿using WebUI.Internal.Compras;
 using Domain.ViewModels.Compras;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers.Compras
 {
     public class CompraController : Controller
     {
+        private readonly IConfiguration _configuration;
+        private IngresoBodegaInternal _ib;
+        public CompraController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _ib = new IngresoBodegaInternal(_configuration);
+        }
         //FacturaCompraInternal _fc = new();
-        IngresoBodegaInternal _ib = new();
         
         [Authorize]
         public IActionResult Index()

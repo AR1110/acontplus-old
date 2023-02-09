@@ -1,18 +1,10 @@
 ﻿using WebUI.ApiClient;
 using DataAccess.Compras;
-using WebUI.Utils;
 using Domain.Models;
 using Domain.ViewModels.Compras;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.StaticFiles;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
 using DataAccess;
-using Microsoft.AspNetCore.Http;
 using Helpers;
 
 namespace WebUI.Controllers.Compras
@@ -24,13 +16,15 @@ namespace WebUI.Controllers.Compras
         private DataAccessObject _dao;
         private readonly int _idRol;
         GenericResponse _gr = new();
-        OrdenCompraDao _oc = new();
+        private OrdenCompraDao _oc;
         private readonly string _urlApi = "";
 
         public OrdenCompraController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
+            _oc = new OrdenCompraDao(_configuration);
+            _oc = new OrdenCompraDao(_configuration);
             _httpContextAccessor = httpContextAccessor;
             _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
             _urlApi = configuration.GetSection("UrlApis").GetSection("AcontPlusApi").Value;

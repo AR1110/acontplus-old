@@ -2,16 +2,19 @@
 using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers.Admin
 {
     public class AsignacionBodegaController : Controller
     {
-        AsignacionBodegaDao _asignB = new();
+        private readonly IConfiguration _configuration;
+        private AsignacionBodegaDao _asignB;
+        public AsignacionBodegaController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _asignB = new AsignacionBodegaDao(_configuration);
+        }
+
         [Authorize]
         public IActionResult Index()
         {

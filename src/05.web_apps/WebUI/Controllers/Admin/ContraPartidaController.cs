@@ -3,17 +3,22 @@ using Domain.Models;
 using Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers.Admin
 {
     public class ContraPartidaController : Controller
-    {
+    {    
+        private readonly IConfiguration _configuration;
+
         GenericResponse _gr = new();
-        ContraPartidaDao _cp = new();
+       private ContraPartidaDao _cp;
+
+        public ContraPartidaController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _cp = new ContraPartidaDao(_configuration);
+        }
+
         [Authorize]
         public IActionResult Index()
         {

@@ -55,7 +55,7 @@ namespace DataAccess
                             listar.Add(_tt);
                         }
                     }
-                    con.Close();
+                    
                     _gr.data = listar;
                 }
             }

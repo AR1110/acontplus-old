@@ -10,18 +10,16 @@ namespace WebUI.Controllers
 {
     public class CodigoBarraArticuloController : Controller
     {
-        // GET: CodigoBarraArticulo
-        private readonly IConfiguration _configuration;
-        
+        private readonly IConfiguration _configuration; 
+        // GET: CodigoBarraArticulo 
         private DataAccessObject _dao;
+        private ArticuloCodigoBarraDao _cba;
         GenericResponse _gr = new();
-        readonly ArticuloCodigoBarraDao _cba = new();
-
         public CodigoBarraArticuloController(IConfiguration configuration)
         {
             _configuration = configuration;
-            
             _dao = new DataAccessObject(_configuration);
+            _cba = new ArticuloCodigoBarraDao(_configuration);
         }
 
         [Authorize]

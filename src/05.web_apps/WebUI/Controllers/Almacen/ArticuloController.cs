@@ -16,7 +16,7 @@ namespace WebUI.Controllers
         private DataAccessObject _dao;
         private readonly int _idRol;
         GenericResponse _gr = new();
-        readonly ArticuloDao _a = new();
+        private ArticuloDao _a;
 
         public ArticuloController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
@@ -24,7 +24,7 @@ namespace WebUI.Controllers
             _dao = new DataAccessObject(_configuration);
             _httpContextAccessor = httpContextAccessor;
             _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
-
+            _a = new ArticuloDao(_configuration);
         }
 
         [Authorize]

@@ -7,7 +7,7 @@
 
 //namespace DataAccess
 //{
-//    public class AsignacionesDao : ConnectionDb
+//    public class AsignacionesDao
 //    {
 //        protected GenericResponse _gr;
 
@@ -36,7 +36,7 @@
 //                            _gr.titleSms = reader.GetString(3);
 //                        }
 //                    }
-//                    con.Close();
+//                    
 //                }
 //            }
 //            catch (Exception ex)
@@ -87,7 +87,7 @@
 //                            }
 //                        }
 //                    }
-//                    con.Close();
+//                    
 //                }
 //                _gr.data = listar;
 //            }
@@ -121,7 +121,7 @@
 //                            _gr.titleSms = reader.GetString(3);
 //                        }
 //                    }
-//                    con.Close();
+//                    
 
 //                }
 //            }

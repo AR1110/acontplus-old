@@ -1,16 +1,21 @@
 ﻿using Domain.Models;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using System;
-using System.Linq;
 using DataAccess.Administracion;
 
 namespace WebUI.Controllers
 {
     public class PoliticaController : Controller
-    {        
-        readonly PoliticaDao _p = new();
+    {
+        private readonly IConfiguration _configuration;
+
+        private PoliticaDao _p;
+        public PoliticaController(IConfiguration configuration, PoliticaDao p)
+        {
+            _configuration = configuration;
+            _p = new PoliticaDao(_configuration);
+        }
+
         [Authorize]
         public IActionResult Index()
         {

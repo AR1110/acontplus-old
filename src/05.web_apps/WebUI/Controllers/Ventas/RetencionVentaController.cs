@@ -2,15 +2,20 @@
 using Domain.ViewModels.Ventas;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers.Ventas
 {
     public class RetencionVentaController : Controller
     {
-        RetencionVentaDao _rv = new();
+        private readonly IConfiguration _configuration;
+
+        private RetencionVentaDao _rv;
+        public RetencionVentaController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _rv = new RetencionVentaDao(_configuration);
+        }
+
         [Authorize] 
         public IActionResult Index()
         {

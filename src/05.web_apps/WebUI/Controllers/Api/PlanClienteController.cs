@@ -9,10 +9,13 @@ namespace WebUI.Controllers.Api
     [ApiController]
     public class PlanClienteController : ControllerBase
     {
+        private readonly IConfiguration _configuration;
         private readonly ILogger<PlanClienteController> _logger;
-        readonly PlanClienteDao _pcl = new();
-        public PlanClienteController(ILogger<PlanClienteController> logger)
+        readonly PlanClienteDao _pcl;
+        public PlanClienteController(ILogger<PlanClienteController> logger, IConfiguration configuration)
         {
+            _configuration = configuration;
+            _pcl = new PlanClienteDao(_configuration);
             _logger = logger;
         }
 

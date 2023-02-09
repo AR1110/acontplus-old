@@ -11,13 +11,16 @@ namespace WebUI.Controllers.Api
     [ApiController]
     public class EntidadController : ControllerBase
     {
+        private readonly IConfiguration _configuration;
         private readonly ILogger<EntidadController> _logger;
 
-        readonly EntidadDao _e = new();
+        private EntidadDao _e;
 
-        public EntidadController(ILogger<EntidadController> logger)
+        public EntidadController(ILogger<EntidadController> logger, IConfiguration configuration)
         {
             _logger = logger;
+            _configuration = configuration;
+            _e = new EntidadDao(_configuration);
         }
 
         [HttpGet]

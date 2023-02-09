@@ -1,9 +1,6 @@
-﻿using Helpers;
-using Domain.Models;
+﻿using Domain.Models;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.Extensions.Configuration;
 
 namespace DataAccess

@@ -1,11 +1,4 @@
-﻿using DataAccess;
-using Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using DataAccess.GestionTributaria;
 using Domain.Models.GestionTributaria;
@@ -15,10 +8,16 @@ namespace WebUI.Controllers
 {
     public class TipoImpuestoController : Controller
     {
+        private readonly IConfiguration _configuration;
+
         // GET: TipoImpuesto
         GenericResponse _gr = new();
-        readonly TipoImpuestoRentaDao _ti = new();
-
+        private TipoImpuestoRentaDao _ti;
+        public TipoImpuestoController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _ti = new TipoImpuestoRentaDao(_configuration);
+        }
         [Authorize]
         public IActionResult Index()
         {

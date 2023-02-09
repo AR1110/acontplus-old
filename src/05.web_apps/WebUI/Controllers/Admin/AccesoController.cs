@@ -1,19 +1,20 @@
-﻿using DataAccess;
-using Domain.Models;
-using System.Threading.Tasks;
+﻿using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using DataAccess.Administracion;
-using System;
-using System.Linq;
-using System.Collections.Generic;
 
 namespace WebUI.Controllers
 {
     public class AccesoController : Controller
     {
-        // GET: Acceso        
-        readonly AccesoDao _a = new();
+        private AccesoDao _a;
+        private readonly IConfiguration _configuration;
+        public AccesoController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _a = new AccesoDao(_configuration);
+        }
+        // GET: Acceso
         [Authorize]
         public IActionResult Index()
         {

@@ -1,7 +1,6 @@
 ﻿using DataAccess.Aplicacion;
 using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -12,11 +11,14 @@ namespace WebUI.Controllers.Api
     [ApiController]
     public class RolController : ControllerBase
     {
+        private readonly IConfiguration _configuration;
         private readonly ILogger<RolController> _logger;
-        readonly RolDao _rd = new();
-        public RolController(ILogger<RolController> logger)
+        private RolDao _rd;
+        public RolController(ILogger<RolController> logger, IConfiguration configuration)
         {
             _logger = logger;
+            _configuration = configuration;
+            _rd = new RolDao(_configuration);
         }
 
         [HttpGet]

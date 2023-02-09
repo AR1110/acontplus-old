@@ -7,19 +7,24 @@ namespace WebUI.Controllers
 {
     public class PvPArticuloController : Controller
     {
+        private readonly IConfiguration _configuration;
+        private ArticuloPvPDao _pvp;
+        private GenericResponse _gr;
+        public PvPArticuloController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _pvp = new ArticuloPvPDao(_configuration);
+            _gr = new GenericResponse();
+        }
         // GET: PvPArticulo
-        GenericResponse _gr = new();
-        ArticuloPvPDao _pvp = new();
+
         [Authorize]
         public IActionResult Index()
         {
             return View();
         }
-
-       
-
         //Gestiones especiales 
-        
+
 
         public async Task<IActionResult> GetTarifaPrecio()
         {
@@ -54,9 +59,6 @@ namespace WebUI.Controllers
             var res = await _pvp.GetForPvPAsync(idRol, idArticulo, tipo);
             return Ok(res);
         }
-        
-        
-
 
     }
 }

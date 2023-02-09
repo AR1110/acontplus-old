@@ -1,4 +1,5 @@
 ﻿using Helpers;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Data;
 using System.Data.SqlClient;
@@ -6,26 +7,36 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Ventas
 {
-    public class EstadisticaVentaDao : ConnectionDb
+    public class EstadisticaVentaDao
     {
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public EstadisticaVentaDao(IConfiguration config)
+        {
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
+        }
         public async Task<string> GetAsync(string json)
         {
             DataTable dt = new DataTable();
             string response = "";
             try
             {
-                using (SqlCommand cmd = new SqlCommand("ASPReporteVentaEstadistica", con))
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    cmd.Parameters.AddWithValue("json", json);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await con.OpenAsync();
-                    SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
-                    dataAdapter.Fill(dt);
-                    if (dt.Rows.Count > 0)
+                    using (SqlCommand cmd = new SqlCommand("ASPReporteVentaEstadistica", con))
                     {
-                        response = DataHelper.DataTableToJSON(dt);
+                        cmd.Parameters.AddWithValue("json", json);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        await con.OpenAsync();
+                        SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
+                        dataAdapter.Fill(dt);
+                        if (dt.Rows.Count > 0)
+                        {
+                            response = DataHelper.DataTableToJSON(dt);
+                        }
+                        dataAdapter.Dispose();
                     }
-                    dataAdapter.Dispose();
                 }
             }
             catch (Exception ex)
@@ -34,7 +45,7 @@ namespace DataAccess.Ventas
             }
             finally
             {
-                con.Close();
+                
             }
             return response;
         }

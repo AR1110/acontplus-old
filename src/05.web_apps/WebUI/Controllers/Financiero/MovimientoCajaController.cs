@@ -22,13 +22,14 @@ namespace WebUI.Controllers.GestionFinanciera
         private readonly string _urlApiReports = string.Empty;
         private readonly string _urlPrint = string.Empty;
 
-        MovimientoCajaDao _movc = new();
+        private MovimientoCajaDao _movc;
 
         public MovimientoCajaController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
             _httpContextAccessor = httpContextAccessor;
+            _movc = new MovimientoCajaDao(_configuration); 
             _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
             _urlApiReports = _configuration.GetSection("UrlApis").GetSection("AcontPlusApi").Value;
             _urlPrint = _configuration.GetSection("UrlApis").GetSection("UrlApiPrint").Value;

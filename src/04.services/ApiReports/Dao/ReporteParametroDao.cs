@@ -45,6 +45,7 @@ namespace ApiReports.Dao
                 cmd.Parameters.AddWithValue("idRol", idRol);
                 cmd.Parameters.AddWithValue("json", jsonData); //PARAMETROS DINAMICOS parameters: {}
                 cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
                 con.Open();
                 var dataAdapter = new SqlDataAdapter();
                 dataAdapter.SelectCommand = cmd;

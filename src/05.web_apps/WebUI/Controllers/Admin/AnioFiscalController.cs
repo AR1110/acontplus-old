@@ -1,9 +1,4 @@
 ﻿using Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using DataAccess;
 
@@ -11,10 +6,15 @@ namespace WebUI.Controllers
 {
     public class AnioFiscalController : Controller
     {
+        private AnioFiscalDao _af;
+        private readonly IConfiguration _configuration;
+        public AnioFiscalController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _af = new AnioFiscalDao(_configuration);
+        }
         // GET: AnioFiscal
-       
-        readonly AnioFiscalDao _af = new();
-        public IActionResult Index()
+         public IActionResult Index()
         {
             return View();
         }

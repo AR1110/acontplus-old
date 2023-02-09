@@ -4,33 +4,41 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess
 {
-    public class UsuarioRolDao : ConnectionDb
+    public class UsuarioRolDao
     {
         protected GenericResponse _response;
-        public UsuarioRolDao()
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public UsuarioRolDao(IConfiguration config)
         {
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
             _response = new GenericResponse();
         }
 
         public async Task<GenericResponse> GetAsync(string json)
         {
-            DataTable dt = new DataTable ();
+            DataTable dt = new DataTable();
             try
             {
-                using (SqlCommand cmd = new SqlCommand("App.aspUsuarioRol_Get", con))
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    cmd.Parameters.AddWithValue("json", json);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await con.OpenAsync();
-                    SqlDataAdapter dataAdapter = new SqlDataAdapter (cmd);
-                    dataAdapter.Fill(dt);
-                    if (dt.Rows.Count > 0)
+                    using (SqlCommand cmd = new SqlCommand("App.aspUsuarioRol_Get", con))
                     {
-                        _response.id = "1";
-                        _response.data = DataHelper.DataTableToJSON(dt);
+                        cmd.Parameters.AddWithValue("json", json);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        await con.OpenAsync();
+                        SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
+                        dataAdapter.Fill(dt);
+                        if (dt.Rows.Count > 0)
+                        {
+                            _response.id = "1";
+                            _response.data = DataHelper.DataTableToJSON(dt);
+                        }
                     }
                 }
             }
@@ -42,26 +50,29 @@ namespace DataAccess
             }
             finally
             {
-                con.Close();
+
             }
             return _response;
         }
         public async Task<GenericResponse> GetIdAsync(int id)
         {
-            DataTable dt = new DataTable ();
+            DataTable dt = new DataTable();
             try
             {
-                using (SqlCommand cmd = new SqlCommand("App.aspUsuarioRol_GetId", con))
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    cmd.Parameters.AddWithValue("id", id);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await con.OpenAsync();
-                    SqlDataAdapter dataAdapter = new SqlDataAdapter (cmd);
-                    dataAdapter.Fill(dt);
-                    if (dt.Rows.Count > 0)
+                    using (SqlCommand cmd = new SqlCommand("App.aspUsuarioRol_GetId", con))
                     {
-                        _response.id = "1";
-                        _response.data = DataHelper.DataTableToJSON(dt);
+                        cmd.Parameters.AddWithValue("id", id);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        await con.OpenAsync();
+                        SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
+                        dataAdapter.Fill(dt);
+                        if (dt.Rows.Count > 0)
+                        {
+                            _response.id = "1";
+                            _response.data = DataHelper.DataTableToJSON(dt);
+                        }
                     }
                 }
             }
@@ -73,7 +84,7 @@ namespace DataAccess
             }
             finally
             {
-                con.Close();
+
             }
             return _response;
         }
@@ -81,19 +92,22 @@ namespace DataAccess
         {
             try
             {
-                using (SqlCommand cmd = new SqlCommand("App.aspUsuarioRol_Insert", con))
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    cmd.Parameters.AddWithValue("idUsuario", data.idUsuario);
-                    cmd.Parameters.AddWithValue("idEntidad", data.idEntidad);
-                    cmd.Parameters.AddWithValue("codRol", data.codRol);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await con.OpenAsync();
-                    SqlDataReader reader = await cmd.ExecuteReaderAsync();
-                    while (await reader.ReadAsync())
+                    using (SqlCommand cmd = new SqlCommand("App.aspUsuarioRol_Insert", con))
                     {
-                        _response.id = reader.GetString(0);
-                        _response.message = reader.GetString(1);
-                        _response.titleSms = reader.GetString(2);
+                        cmd.Parameters.AddWithValue("idUsuario", data.idUsuario);
+                        cmd.Parameters.AddWithValue("idEntidad", data.idEntidad);
+                        cmd.Parameters.AddWithValue("codRol", data.codRol);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        await con.OpenAsync();
+                        SqlDataReader reader = await cmd.ExecuteReaderAsync();
+                        while (await reader.ReadAsync())
+                        {
+                            _response.id = reader.GetString(0);
+                            _response.message = reader.GetString(1);
+                            _response.titleSms = reader.GetString(2);
+                        }
                     }
                 }
             }
@@ -105,7 +119,7 @@ namespace DataAccess
             }
             finally
             {
-                con.Close();
+
             }
             return _response;
         }
@@ -113,18 +127,21 @@ namespace DataAccess
         {
             try
             {
-                using (SqlCommand cmd = new SqlCommand("App.aspUsuarioRol_Update", con))
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    cmd.Parameters.AddWithValue("id", id);
-                    cmd.Parameters.AddWithValue("codRol", codRol);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await con.OpenAsync();
-                    SqlDataReader reader = await cmd.ExecuteReaderAsync();
-                    while (await reader.ReadAsync())
+                    using (SqlCommand cmd = new SqlCommand("App.aspUsuarioRol_Update", con))
                     {
-                        _response.id = reader.GetString(0);
-                        _response.message = reader.GetString(1);
-                        _response.titleSms = reader.GetString(2);
+                        cmd.Parameters.AddWithValue("id", id);
+                        cmd.Parameters.AddWithValue("codRol", codRol);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        await con.OpenAsync();
+                        SqlDataReader reader = await cmd.ExecuteReaderAsync();
+                        while (await reader.ReadAsync())
+                        {
+                            _response.id = reader.GetString(0);
+                            _response.message = reader.GetString(1);
+                            _response.titleSms = reader.GetString(2);
+                        }
                     }
                 }
             }
@@ -136,7 +153,7 @@ namespace DataAccess
             }
             finally
             {
-                con.Close();
+
             }
             return _response;
         }
@@ -144,17 +161,20 @@ namespace DataAccess
         {
             try
             {
-                using (SqlCommand cmd = new SqlCommand("App.aspUsuarioRol_Delete", con))
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    cmd.Parameters.AddWithValue("id", id);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await con.OpenAsync();
-                    SqlDataReader reader = await cmd.ExecuteReaderAsync();
-                    while (await reader.ReadAsync())
+                    using (SqlCommand cmd = new SqlCommand("App.aspUsuarioRol_Delete", con))
                     {
-                        _response.id = reader.GetString(0);
-                        _response.message = reader.GetString(1);
-                        _response.titleSms = reader.GetString(2);
+                        cmd.Parameters.AddWithValue("id", id);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        await con.OpenAsync();
+                        SqlDataReader reader = await cmd.ExecuteReaderAsync();
+                        while (await reader.ReadAsync())
+                        {
+                            _response.id = reader.GetString(0);
+                            _response.message = reader.GetString(1);
+                            _response.titleSms = reader.GetString(2);
+                        }
                     }
                 }
             }
@@ -166,7 +186,7 @@ namespace DataAccess
             }
             finally
             {
-                con.Close();
+
             }
             return _response;
         }

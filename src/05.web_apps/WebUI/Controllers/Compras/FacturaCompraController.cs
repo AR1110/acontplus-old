@@ -21,8 +21,8 @@ namespace WebUI.Controllers.Compras
         private DataAccessObject _dao;
         private readonly int _idRol;
         GenericResponse _gr = new();
-        readonly ArticuloDao _a = new();
-        FacturaCompraDao _fc = new();        
+        private ArticuloDao _a;
+        private FacturaCompraDao _fc;        
 
         public FacturaCompraController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
@@ -30,7 +30,8 @@ namespace WebUI.Controllers.Compras
             _dao = new DataAccessObject(_configuration);
             _httpContextAccessor = httpContextAccessor;
             _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
-
+            _a = new ArticuloDao(_configuration);
+            _fc = new FacturaCompraDao(_configuration);
         }
 
         [Authorize]

@@ -1,10 +1,4 @@
 ﻿using DataAccess;
-using Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
@@ -12,8 +6,14 @@ namespace WebUI.Controllers
 {
     public class ActividadEmpresaController : Controller
     {
-        // GET: ActividadEmpresa        
-        readonly ActividadEmpresaDao _ae = new();
+        private ActividadEmpresaDao _ae;
+        private readonly IConfiguration _configuration;
+        public ActividadEmpresaController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _ae = new ActividadEmpresaDao(_configuration);
+        }
+        // GET: ActividadEmpresa         
 
         [Authorize]
         public IActionResult Index()

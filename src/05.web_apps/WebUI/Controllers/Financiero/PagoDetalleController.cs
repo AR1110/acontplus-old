@@ -1,14 +1,19 @@
 ﻿using DataAccess.GestionFinanciera;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers.GestionFinanciera
 {
     public class PagoDetalleController : Controller
     {
-        PagoDetalleDao _pagoD = new();
+        private readonly IConfiguration _configuration;
+
+        private PagoDetalleDao _pagoD;
+        public PagoDetalleController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _pagoD = new PagoDetalleDao(_configuration);
+        }
+
         public IActionResult Index()
         {
             return View();

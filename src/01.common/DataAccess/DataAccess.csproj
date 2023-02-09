@@ -29,9 +29,4 @@
     <ProjectReference Include="..\Common.Logs\Common.Logs.csproj" />
     <ProjectReference Include="..\Helpers\Helpers.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Establecimientos\" />
-    <Folder Include="Reports\" />
-  </ItemGroup>
 </Project>

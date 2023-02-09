@@ -16,12 +16,13 @@ namespace WebUI.Controllers
         private DataAccessObject _dao;
         private readonly int _idRol;
         GenericResponse _gr = new();
-        readonly SubFamiliaDao _sf = new();
+        private SubFamiliaDao _sf;
 
         public SubFamiliaController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
+            _sf = new SubFamiliaDao(_configuration);
             _httpContextAccessor = httpContextAccessor;
             _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
 

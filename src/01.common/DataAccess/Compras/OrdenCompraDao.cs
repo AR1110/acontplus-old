@@ -8,15 +8,20 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Compras
 {
-    public class OrdenCompraDao : ConnectionDb
+    public class OrdenCompraDao
     {
         private GenericResponse _gr;
 
-        public OrdenCompraDao()
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public OrdenCompraDao(IConfiguration config)
         {
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
             _gr = new GenericResponse();
         }
 
@@ -25,19 +30,21 @@ namespace DataAccess.Compras
             DataTable dt = new DataTable();
             try
             {
-                var cmd = new SqlCommand("Compra.Orden_Get", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("json", json);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
-                dataAdapter.Fill(dt);
-                if (dt.Rows.Count > 0)
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = "1";
-                    _gr.data = DataHelper.DataTableToJSON(dt);
+                    var cmd = new SqlCommand("Compra.Orden_Get", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("json", json);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
+                    dataAdapter.Fill(dt);
+                    if (dt.Rows.Count > 0)
+                    {
+                        _gr.id = "1";
+                        _gr.data = DataHelper.DataTableToJSON(dt);
+                    }
                 }
-
             }
             catch (Exception ex)
             {
@@ -47,7 +54,7 @@ namespace DataAccess.Compras
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }
@@ -59,79 +66,82 @@ namespace DataAccess.Compras
             var data = new OrdenCompraData();
             try
             {
-                var cmd = new SqlCommand("Compra.Orden_GetId", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idOrdenCompra", idOrdenCompra);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
-                    if (_gr.id == "1")
+                    var cmd = new SqlCommand("Compra.Orden_GetId", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idOrdenCompra", idOrdenCompra);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        ordenCompra.ordenCompra = new OrdenCompra()
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                        if (_gr.id == "1")
                         {
-                            idOrdenCompra = reader.GetInt64(3),
-                            idProveedor = reader.GetInt32(4),
-                            idPuntoEmision = reader.GetInt32(5),
-                            nroDocumento = reader.GetInt64(6),
-                            fechaEmision = reader.GetDateTime(7).ToString("yyyy-MM-dd"),
-                            subTotalSinImpuestos = reader.GetDecimal(8),
-                            subTotalIva = reader.GetDecimal(9),
-                            subTotalNetoIva = reader.GetDecimal(10),
-                            subTotalIvaCero = reader.GetDecimal(11),
-                            subTotalNetoIvaCero = reader.GetDecimal(12),
-                            subTotalNoObjetoIva = reader.GetDecimal(13),
-                            subTotalNetoNoObjetoIva = reader.GetDecimal(14),
-                            subTotalExentoIva = reader.GetDecimal(15),
-                            subTotalNetoExentoIva = reader.GetDecimal(16),
-                            totalDescuento = reader.GetDecimal(17),
-                            porcentajeDescuento = reader.GetDecimal(18),
-                            totalIce = reader.GetDecimal(19),
-                            irbpnr = reader.GetDecimal(20),
-                            propina = reader.GetDecimal(21),
-                            iva = reader.GetDecimal(22),
-                            recargo = reader.GetDecimal(23),
-                            transporte = reader.GetDecimal(24),
-                            total = reader.GetDecimal(25),
-                            observacion = reader.GetString(26),
-                        };
-                        ordenCompra.nombreFiscal = reader.GetString(27);
-                        ordenCompra.nroIdentificacion = reader.GetString(28);
-                        ordenCompra.correo = reader.GetString(29);
-                        ordenCompra.direccion = reader.GetString(30);
-
-                        reader.NextResult();
-                        while (reader.Read())
-                        {
-                            var item = new OrdenCompraDetalleViewModel
+                            ordenCompra.ordenCompra = new OrdenCompra()
                             {
-                                detalle = new OrdenCompraDetalle()
-                                {
-                                    idOrdenCompraDetalle = reader.GetInt64(0),
-                                    idBodega = reader.GetInt32(1),
-                                    idArticulo = reader.GetInt32(2),
-                                    idMedida = reader.GetInt32(3),
-                                    descripcion = reader.GetString(4),
-                                    cantidad = reader.GetDecimal(5),
-                                    precioCosto = reader.GetDecimal(6),
-                                    precioCostoNeto = reader.GetDecimal(7),
-                                    porcentajeDescuento = reader.GetDecimal(8),
-                                    valorDescuento = reader.GetDecimal(9),
-                                    nota = reader.GetString(10),
-                                    idTipoIva = reader.GetInt32(17),
-                                },
-                                codigo = reader.GetString(11),
-                                llevaInventario = reader.GetBoolean(12),
-                                nombreMedida = reader.GetString(13),
-                                nombreTipoIva = reader.GetString(14),
-                                codigoTipoIva = reader.GetString(15),
-                                ice = reader.GetDecimal(16)
+                                idOrdenCompra = reader.GetInt64(3),
+                                idProveedor = reader.GetInt32(4),
+                                idPuntoEmision = reader.GetInt32(5),
+                                nroDocumento = reader.GetInt64(6),
+                                fechaEmision = reader.GetDateTime(7).ToString("yyyy-MM-dd"),
+                                subTotalSinImpuestos = reader.GetDecimal(8),
+                                subTotalIva = reader.GetDecimal(9),
+                                subTotalNetoIva = reader.GetDecimal(10),
+                                subTotalIvaCero = reader.GetDecimal(11),
+                                subTotalNetoIvaCero = reader.GetDecimal(12),
+                                subTotalNoObjetoIva = reader.GetDecimal(13),
+                                subTotalNetoNoObjetoIva = reader.GetDecimal(14),
+                                subTotalExentoIva = reader.GetDecimal(15),
+                                subTotalNetoExentoIva = reader.GetDecimal(16),
+                                totalDescuento = reader.GetDecimal(17),
+                                porcentajeDescuento = reader.GetDecimal(18),
+                                totalIce = reader.GetDecimal(19),
+                                irbpnr = reader.GetDecimal(20),
+                                propina = reader.GetDecimal(21),
+                                iva = reader.GetDecimal(22),
+                                recargo = reader.GetDecimal(23),
+                                transporte = reader.GetDecimal(24),
+                                total = reader.GetDecimal(25),
+                                observacion = reader.GetString(26),
                             };
-                            detalle.Add(item);
+                            ordenCompra.nombreFiscal = reader.GetString(27);
+                            ordenCompra.nroIdentificacion = reader.GetString(28);
+                            ordenCompra.correo = reader.GetString(29);
+                            ordenCompra.direccion = reader.GetString(30);
+
+                            reader.NextResult();
+                            while (reader.Read())
+                            {
+                                var item = new OrdenCompraDetalleViewModel
+                                {
+                                    detalle = new OrdenCompraDetalle()
+                                    {
+                                        idOrdenCompraDetalle = reader.GetInt64(0),
+                                        idBodega = reader.GetInt32(1),
+                                        idArticulo = reader.GetInt32(2),
+                                        idMedida = reader.GetInt32(3),
+                                        descripcion = reader.GetString(4),
+                                        cantidad = reader.GetDecimal(5),
+                                        precioCosto = reader.GetDecimal(6),
+                                        precioCostoNeto = reader.GetDecimal(7),
+                                        porcentajeDescuento = reader.GetDecimal(8),
+                                        valorDescuento = reader.GetDecimal(9),
+                                        nota = reader.GetString(10),
+                                        idTipoIva = reader.GetInt32(17),
+                                    },
+                                    codigo = reader.GetString(11),
+                                    llevaInventario = reader.GetBoolean(12),
+                                    nombreMedida = reader.GetString(13),
+                                    nombreTipoIva = reader.GetString(14),
+                                    codigoTipoIva = reader.GetString(15),
+                                    ice = reader.GetDecimal(16)
+                                };
+                                detalle.Add(item);
+                            }
                         }
                     }
                 }
@@ -147,7 +157,7 @@ namespace DataAccess.Compras
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }
@@ -155,18 +165,21 @@ namespace DataAccess.Compras
         {
             try
             {
-                var cmd = new SqlCommand("Compra.Orden_Insert", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                var ordenCompra = JsonConvert.SerializeObject(data.ordenCompra); cmd.Parameters.Add(new SqlParameter("jsonOrdenCompra", ordenCompra));
-                var detalle = JsonConvert.SerializeObject(data.detalle); cmd.Parameters.Add(new SqlParameter("jsonDetalle", detalle));
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
+                    var cmd = new SqlCommand("Compra.Orden_Insert", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    var ordenCompra = JsonConvert.SerializeObject(data.ordenCompra); cmd.Parameters.Add(new SqlParameter("jsonOrdenCompra", ordenCompra));
+                    var detalle = JsonConvert.SerializeObject(data.detalle); cmd.Parameters.Add(new SqlParameter("jsonDetalle", detalle));
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                    }
                 }
             }
             catch (Exception ex)
@@ -177,7 +190,7 @@ namespace DataAccess.Compras
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }
@@ -185,19 +198,22 @@ namespace DataAccess.Compras
         {
             try
             {
-                var cmd = new SqlCommand("Compra.Orden_Update", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idOrdenCompra", idOrdenCompra);
-                var ordenCompra = JsonConvert.SerializeObject(data.ordenCompra); cmd.Parameters.Add(new SqlParameter("jsonOrdenCompra", ordenCompra));
-                var detalle = JsonConvert.SerializeObject(data.detalle); cmd.Parameters.Add(new SqlParameter("jsonDetalle", detalle));
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
+                    var cmd = new SqlCommand("Compra.Orden_Update", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idOrdenCompra", idOrdenCompra);
+                    var ordenCompra = JsonConvert.SerializeObject(data.ordenCompra); cmd.Parameters.Add(new SqlParameter("jsonOrdenCompra", ordenCompra));
+                    var detalle = JsonConvert.SerializeObject(data.detalle); cmd.Parameters.Add(new SqlParameter("jsonDetalle", detalle));
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                    }
                 }
             }
             catch (Exception ex)
@@ -208,7 +224,7 @@ namespace DataAccess.Compras
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }
@@ -216,17 +232,20 @@ namespace DataAccess.Compras
         {
             try
             {
-                var cmd = new SqlCommand("Compra.Orden_Delete", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idOrdenCompra", idOrdenCompra);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
+                    var cmd = new SqlCommand("Compra.Orden_Delete", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idOrdenCompra", idOrdenCompra);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                    }
                 }
             }
             catch (Exception ex)
@@ -237,7 +256,7 @@ namespace DataAccess.Compras
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }

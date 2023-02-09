@@ -1,18 +1,20 @@
 ﻿using DataAccess;
-using Domain.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Domain.Models.Administracion;
-using System;
-using System.Linq;
 
 namespace WebUI.Controllers.Config
 {
     public class SubMenuController : Controller
     {
-        readonly SubMenuDao sm = new();
+        private readonly IConfiguration _configuration;
+
+        private SubMenuDao sm;
+        public SubMenuController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            sm = new SubMenuDao(_configuration);
+        }
         [Authorize]
         public IActionResult Index()
         {

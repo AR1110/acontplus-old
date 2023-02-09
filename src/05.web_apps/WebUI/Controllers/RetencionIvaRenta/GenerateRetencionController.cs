@@ -1,15 +1,18 @@
 ﻿using DataAccess.RetencionIvaRenta;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers.RetencionIvaRenta
 {
     public class GenerateRetencionController : Controller
     {
-        GenerateRetencionDao _gr = new ();
+        private readonly IConfiguration _configuration; 
+       private GenerateRetencionDao _gr;
+        public GenerateRetencionController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _gr = new GenerateRetencionDao(_configuration);
+        }
         [Authorize]
         public IActionResult Index()
         {

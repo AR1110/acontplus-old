@@ -1,18 +1,22 @@
 ﻿using DataAccess.GestionFinanciera;
-using Domain.Models;
-using Domain.Models.GestionFinanciera;
 using Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.StaticFiles;
-using WebUI.ApiClient;
 
 namespace WebUI.Controllers.GestionFinanciera
 {
     public class CarteraClienteController : Controller
     {
+        private readonly IConfiguration _configuration;
+
         GenericResponse _gr = new();
-        readonly CarteraDao _c = new();
+        private CarteraDao _c;
+        public CarteraClienteController(IConfiguration configuration)
+        {
+            _configuration = configuration; 
+            _c = new CarteraDao(_configuration);
+        }
+
         [Authorize]
         public IActionResult Index() => View();
 

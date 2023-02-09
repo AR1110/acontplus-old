@@ -5,18 +5,20 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Administracion
 {
-    public class AccesoDao : ConnectionDb
+    public class AccesoDao
     {
         private GenericResponse _gr;
-
-        public AccesoDao()
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public AccesoDao(IConfiguration config)
         {
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
             _gr = new GenericResponse();
         }
 
@@ -25,17 +27,20 @@ namespace DataAccess.Administracion
             DataTable dt = new DataTable();
             try
             {
-                SqlCommand cmd = new SqlCommand("aspAccesoGetByPolitica", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idPolitica", idPolitica);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
-                dataAdapter.Fill(dt);
-                if (dt.Rows.Count > 0)
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = "1";
-                    _gr.data = DataHelper.DataTableToJSON(dt);
+                    SqlCommand cmd = new SqlCommand("aspAccesoGetByPolitica", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idPolitica", idPolitica);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
+                    dataAdapter.Fill(dt);
+                    if (dt.Rows.Count > 0)
+                    {
+                        _gr.id = "1";
+                        _gr.data = DataHelper.DataTableToJSON(dt);
+                    }
                 }
             }
             catch (Exception ex)
@@ -46,7 +51,7 @@ namespace DataAccess.Administracion
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }
@@ -55,17 +60,20 @@ namespace DataAccess.Administracion
             DataTable dt = new DataTable();
             try
             {
-                SqlCommand cmd = new SqlCommand("aspAccesoGetBySubMenu", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idSubMenu", idSubMenu);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
-                dataAdapter.Fill(dt);
-                if (dt.Rows.Count > 0)
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = "1";
-                    _gr.data = DataHelper.DataTableToJSON(dt);
+                    SqlCommand cmd = new SqlCommand("aspAccesoGetBySubMenu", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idSubMenu", idSubMenu);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
+                    dataAdapter.Fill(dt);
+                    if (dt.Rows.Count > 0)
+                    {
+                        _gr.id = "1";
+                        _gr.data = DataHelper.DataTableToJSON(dt);
+                    }
                 }
             }
             catch (Exception ex)
@@ -76,7 +84,7 @@ namespace DataAccess.Administracion
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }
@@ -84,18 +92,21 @@ namespace DataAccess.Administracion
         {
             try
             {
-                var cmd = new SqlCommand("aspAccesoUpdate", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                var bodegas = JsonConvert.SerializeObject(data); cmd.Parameters.Add(new SqlParameter("jsonAcceso", bodegas));
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
+                    var cmd = new SqlCommand("aspAccesoUpdate", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    var bodegas = JsonConvert.SerializeObject(data); cmd.Parameters.Add(new SqlParameter("jsonAcceso", bodegas));
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
 
+                    }
                 }
             }
             catch (Exception ex)
@@ -106,7 +117,7 @@ namespace DataAccess.Administracion
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }

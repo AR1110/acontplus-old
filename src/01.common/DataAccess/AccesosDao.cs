@@ -45,7 +45,7 @@ namespace DataAccess
                                 _gr.titleSms = reader.GetString(2);
                             }
                         }
-                        con.Close();
+
                     }
                 }
             }
@@ -102,7 +102,7 @@ namespace DataAccess
                                 }
                             }
                         }
-                        con.Close();
+
 
                     }
                 }
@@ -138,7 +138,7 @@ namespace DataAccess
                                 _gr.titleSms = reader.GetString(2);
                             }
                         }
-                        con.Close();
+
                     }
                 }
             }

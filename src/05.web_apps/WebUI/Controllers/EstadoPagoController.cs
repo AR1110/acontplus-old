@@ -1,16 +1,19 @@
 ﻿using DataAccess;
-using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers
 {
     public class EstadoPagoController : Controller
     {
-        EstadoDocumentoDao _eDoc = new();
+        private readonly IConfiguration _configuration;
+        private EstadoDocumentoDao _eDoc;   
+        public EstadoPagoController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _eDoc = new EstadoDocumentoDao(_configuration);
+        }
+
         [Authorize]
         public ActionResult Index()
         {

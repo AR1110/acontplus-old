@@ -9,13 +9,15 @@ using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Inventario
 {
-    public class ControlStockDao : ConnectionDb
+    public class ControlStockDao
     {
         protected GenericResponse _response;
         private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
         public ControlStockDao(IConfiguration config)
         {
             _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
             _response = new GenericResponse();
         }
 
@@ -25,21 +27,24 @@ namespace DataAccess.Inventario
 
             try
             {
-                var cmd = new SqlCommand("ASPControlStockGet", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idArticulo", idArticulo);
-                cmd.Parameters.AddWithValue("cantidad", cantidad);
-                cmd.Parameters.AddWithValue("presentacion", presentacion);
-                cmd.Parameters.AddWithValue("idPresentacion", idPresentacion);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _response.id = reader.GetString(0);
-                    _response.message = reader.GetString(1);
-                    _response.titleSms = reader.GetString(2);
-                    _response.gestion = reader.GetDecimal(3);
+                    var cmd = new SqlCommand("ASPControlStockGet", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idArticulo", idArticulo);
+                    cmd.Parameters.AddWithValue("cantidad", cantidad);
+                    cmd.Parameters.AddWithValue("presentacion", presentacion);
+                    cmd.Parameters.AddWithValue("idPresentacion", idPresentacion);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        _response.id = reader.GetString(0);
+                        _response.message = reader.GetString(1);
+                        _response.titleSms = reader.GetString(2);
+                        _response.gestion = reader.GetDecimal(3);
+                    }
                 }
             }
             catch (Exception ex)
@@ -50,7 +55,7 @@ namespace DataAccess.Inventario
             }
             finally
             {
-                con.Close();
+
             }
             return _response;
         }

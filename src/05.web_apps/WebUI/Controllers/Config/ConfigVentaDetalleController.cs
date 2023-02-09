@@ -1,17 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using DataAccess.ConfigEmpresa;
+﻿using DataAccess.ConfigEmpresa;
 using Domain.Models.ConfigEmpresa;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Configuracion
 {
-    public class ConfigVentaDetalleController : Controller 
+    public class ConfigVentaDetalleController : Controller
     {
-        ConfigVentaDetalleDao _cvd = new();
+        private readonly IConfiguration _configuration;
+
+        private ConfigVentaDetalleDao _cvd;
+        public ConfigVentaDetalleController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _cvd = new ConfigVentaDetalleDao(_configuration);   
+        }
         [Authorize]
         public IActionResult Index()
         {

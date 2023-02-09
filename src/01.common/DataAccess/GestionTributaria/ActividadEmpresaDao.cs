@@ -1,6 +1,7 @@
 ﻿using Domain.Dtos;
 using Domain.Models;
 using Helpers;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -9,35 +10,42 @@ using System.Threading.Tasks;
 
 namespace DataAccess
 {
-    public class ActividadEmpresaDao : ConnectionDb
+    public class ActividadEmpresaDao
     {
         private GenericResponse _gr;
-        public ActividadEmpresaDao()
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public ActividadEmpresaDao(IConfiguration config)
         {
-            _gr= new GenericResponse();
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
+            _gr = new GenericResponse();
         }
         public GenericResponse GetAllAsync(int idRol)
         {
             var listar = new List<ActividadEmpresa>();
             try
             {
-                var cmd = new SqlCommand("ASPActividadEmpresaGetAll", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.CommandType = CommandType.StoredProcedure;
-                con.Open();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    if (_gr.id == "1")
+                    var cmd = new SqlCommand("ASPActividadEmpresaGetAll", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    con.Open();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        var a = new ActividadEmpresa
+                        _gr.id = reader.GetString(0);
+                        if (_gr.id == "1")
                         {
-                            idActividadEmpresa = reader.GetInt32(1),
-                            descripcion = reader.GetString(2),
-                            estado = reader.GetBoolean(3),
-                        };
-                        listar.Add(a);
+                            var a = new ActividadEmpresa
+                            {
+                                idActividadEmpresa = reader.GetInt32(1),
+                                descripcion = reader.GetString(2),
+                                estado = reader.GetBoolean(3),
+                            };
+                            listar.Add(a);
+                        }
                     }
                 }
                 _gr.data = listar;
@@ -50,7 +58,7 @@ namespace DataAccess
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }
@@ -59,23 +67,26 @@ namespace DataAccess
             var listar = new List<ActividadEmpresa>();
             try
             {
-                var cmd = new SqlCommand("ASPActividadEmpresaBySucursal", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.CommandType = CommandType.StoredProcedure;
-                con.Open();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    if (_gr.id == "1")
+                    var cmd = new SqlCommand("ASPActividadEmpresaBySucursal", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    con.Open();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        var a = new ActividadEmpresa
+                        _gr.id = reader.GetString(0);
+                        if (_gr.id == "1")
                         {
-                            idActividadEmpresa = reader.GetInt32(1),
-                            descripcion = reader.GetString(2),
-                            estado = reader.GetBoolean(3),
-                        };
-                        listar.Add(a);
+                            var a = new ActividadEmpresa
+                            {
+                                idActividadEmpresa = reader.GetInt32(1),
+                                descripcion = reader.GetString(2),
+                                estado = reader.GetBoolean(3),
+                            };
+                            listar.Add(a);
+                        }
                     }
                 }
                 _gr.data = listar;
@@ -88,7 +99,7 @@ namespace DataAccess
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }

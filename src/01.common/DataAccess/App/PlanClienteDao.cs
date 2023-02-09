@@ -1,5 +1,5 @@
-﻿using Domain.Models;
-using Helpers;
+﻿using Helpers;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Data;
 using System.Data.SqlClient;
@@ -7,11 +7,15 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Aplicacion
 {
-    public class PlanClienteDao : ConnectionDb
+    public class PlanClienteDao
     {
         protected GenericResponse _response;
-        public PlanClienteDao()
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public PlanClienteDao(IConfiguration config)
         {
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
             _response = new GenericResponse();
         }
 
@@ -19,18 +23,21 @@ namespace DataAccess.Aplicacion
         {
             try
             {
-                using (SqlCommand cmd = new SqlCommand("App.aspPlanCliente_Update", con))
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    cmd.Parameters.AddWithValue("ruc", ruc);
-                    cmd.Parameters.AddWithValue("codigo", codigo);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await con.OpenAsync();
-                    SqlDataReader reader = await cmd.ExecuteReaderAsync();
-                    while (await reader.ReadAsync())
+                    using (SqlCommand cmd = new SqlCommand("App.aspPlanCliente_Update", con))
                     {
-                        _response.id = reader.GetString(0);
-                        _response.message = reader.GetString(1);
-                        _response.titleSms = reader.GetString(2);
+                        cmd.Parameters.AddWithValue("ruc", ruc);
+                        cmd.Parameters.AddWithValue("codigo", codigo);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        await con.OpenAsync();
+                        SqlDataReader reader = await cmd.ExecuteReaderAsync();
+                        while (await reader.ReadAsync())
+                        {
+                            _response.id = reader.GetString(0);
+                            _response.message = reader.GetString(1);
+                            _response.titleSms = reader.GetString(2);
+                        }
                     }
                 }
             }
@@ -42,7 +49,7 @@ namespace DataAccess.Aplicacion
             }
             finally
             {
-                con.Close();
+                
             }
             return _response;
         }

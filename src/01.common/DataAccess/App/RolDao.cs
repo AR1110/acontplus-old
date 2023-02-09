@@ -4,32 +4,40 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Aplicacion
 {
-    public class RolDao : ConnectionDb
+    public class RolDao
     {
         protected GenericResponse _response;
-        public RolDao()
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public RolDao(IConfiguration config)
         {
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
             _response = new GenericResponse();
         }
         public async Task<GenericResponse> GetAsync(string json)
         {
-            DataTable dt = new DataTable ();
+            DataTable dt = new DataTable();
             try
             {
-                using (SqlCommand cmd = new SqlCommand("App.aspRol_Get", con))
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    cmd.Parameters.AddWithValue("json", json);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await con.OpenAsync();
-                    SqlDataAdapter dataAdapter = new SqlDataAdapter (cmd);
-                    dataAdapter.Fill(dt);
-                    if (dt.Rows.Count > 0)
+                    using (SqlCommand cmd = new SqlCommand("App.aspRol_Get", con))
                     {
-                        _response.id = "1";
-                        _response.data = DataHelper.DataTableToJSON(dt);
+                        cmd.Parameters.AddWithValue("json", json);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        await con.OpenAsync();
+                        SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
+                        dataAdapter.Fill(dt);
+                        if (dt.Rows.Count > 0)
+                        {
+                            _response.id = "1";
+                            _response.data = DataHelper.DataTableToJSON(dt);
+                        }
                     }
                 }
             }
@@ -41,7 +49,7 @@ namespace DataAccess.Aplicacion
             }
             finally
             {
-                con.Close();
+
             }
             return _response;
         }
@@ -49,19 +57,22 @@ namespace DataAccess.Aplicacion
         {
             try
             {
-                using (SqlCommand cmd = new SqlCommand("App.aspRol_Insert", con))
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    cmd.Parameters.AddWithValue("codLicencia", data.codLicencia);
-                    cmd.Parameters.AddWithValue("codigo", data.codigo);
-                    cmd.Parameters.AddWithValue("descripcion", data.descripcion);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await con.OpenAsync();
-                    SqlDataReader reader = await cmd.ExecuteReaderAsync();
-                    while (await reader.ReadAsync())
+                    using (SqlCommand cmd = new SqlCommand("App.aspRol_Insert", con))
                     {
-                        _response.id = reader.GetString(0);
-                        _response.message = reader.GetString(1);
-                        _response.titleSms = reader.GetString(2);
+                        cmd.Parameters.AddWithValue("codLicencia", data.codLicencia);
+                        cmd.Parameters.AddWithValue("codigo", data.codigo);
+                        cmd.Parameters.AddWithValue("descripcion", data.descripcion);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        await con.OpenAsync();
+                        SqlDataReader reader = await cmd.ExecuteReaderAsync();
+                        while (await reader.ReadAsync())
+                        {
+                            _response.id = reader.GetString(0);
+                            _response.message = reader.GetString(1);
+                            _response.titleSms = reader.GetString(2);
+                        }
                     }
                 }
             }
@@ -73,7 +84,7 @@ namespace DataAccess.Aplicacion
             }
             finally
             {
-                con.Close();
+
             }
             return _response;
         }
@@ -81,18 +92,21 @@ namespace DataAccess.Aplicacion
         {
             try
             {
-                using (SqlCommand cmd = new SqlCommand("App.aspRol_Update", con))
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    cmd.Parameters.AddWithValue("codigo", codigo);
-                    cmd.Parameters.AddWithValue("descripcion", descripcion);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await con.OpenAsync();
-                    SqlDataReader reader = await cmd.ExecuteReaderAsync();
-                    while (await reader.ReadAsync())
+                    using (SqlCommand cmd = new SqlCommand("App.aspRol_Update", con))
                     {
-                        _response.id = reader.GetString(0);
-                        _response.message = reader.GetString(1);
-                        _response.titleSms = reader.GetString(2);
+                        cmd.Parameters.AddWithValue("codigo", codigo);
+                        cmd.Parameters.AddWithValue("descripcion", descripcion);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        await con.OpenAsync();
+                        SqlDataReader reader = await cmd.ExecuteReaderAsync();
+                        while (await reader.ReadAsync())
+                        {
+                            _response.id = reader.GetString(0);
+                            _response.message = reader.GetString(1);
+                            _response.titleSms = reader.GetString(2);
+                        }
                     }
                 }
             }
@@ -104,7 +118,7 @@ namespace DataAccess.Aplicacion
             }
             finally
             {
-                con.Close();
+
             }
             return _response;
         }
@@ -112,17 +126,20 @@ namespace DataAccess.Aplicacion
         {
             try
             {
-                using (SqlCommand cmd = new SqlCommand("App.aspRol_Delete", con))
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    cmd.Parameters.AddWithValue("codigo", codigo);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await con.OpenAsync();
-                    SqlDataReader reader = await cmd.ExecuteReaderAsync();
-                    while (await reader.ReadAsync())
+                    using (SqlCommand cmd = new SqlCommand("App.aspRol_Delete", con))
                     {
-                        _response.id = reader.GetString(0);
-                        _response.message = reader.GetString(1);
-                        _response.titleSms = reader.GetString(2);
+                        cmd.Parameters.AddWithValue("codigo", codigo);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        await con.OpenAsync();
+                        SqlDataReader reader = await cmd.ExecuteReaderAsync();
+                        while (await reader.ReadAsync())
+                        {
+                            _response.id = reader.GetString(0);
+                            _response.message = reader.GetString(1);
+                            _response.titleSms = reader.GetString(2);
+                        }
                     }
                 }
             }
@@ -134,7 +151,7 @@ namespace DataAccess.Aplicacion
             }
             finally
             {
-                con.Close();
+
             }
             return _response;
         }

@@ -6,7 +6,13 @@ namespace WebUI.Controllers.GestionDocumento
 {
     public class EstadoDocumentoController : Controller
     {
-        EstadoDocumentoDao _eDoc = new();
+        private readonly IConfiguration _configuration;
+        private EstadoDocumentoDao _eDoc;
+        public EstadoDocumentoController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _eDoc = new EstadoDocumentoDao(_configuration);
+        }
         [Authorize]
         public IActionResult Index()
         {

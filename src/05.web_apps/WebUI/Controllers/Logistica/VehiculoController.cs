@@ -1,15 +1,18 @@
 ﻿using DataAccess.Logistica;
 using Domain.Models.Logistica;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers.Logistica
 {
     public class VehiculoController : Controller
     {
-        VehiculoDao _v = new();
+        private readonly IConfiguration _configuration;
+        private VehiculoDao _v;
+        public VehiculoController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _v = new VehiculoDao(_configuration);
+        }
         public IActionResult Index()
         {
             return View();

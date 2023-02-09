@@ -3,16 +3,19 @@ using Domain.Models.CuotaDocumento;
 using Domain.ViewModels.CuotaDocumento;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers.CuotaDoc
 {
     public class CuotaXCobrarController : Controller
     {
-        CuotaXCobrarDao _cxc = new();
+        private readonly IConfiguration _configuration;
+        private CuotaXCobrarDao _cxc;
+
+        public CuotaXCobrarController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _cxc = new CuotaXCobrarDao(_configuration);
+        }
         [Authorize]
         public IActionResult Index()
         {

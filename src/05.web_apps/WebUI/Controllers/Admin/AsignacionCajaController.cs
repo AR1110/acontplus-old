@@ -2,16 +2,18 @@
 using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers.Admin
 {
     public class AsignacionCajaController : Controller
     {        
-        AsignacionCajaDao _ac = new();
+        private AsignacionCajaDao _ac;
+        private readonly IConfiguration _configuration;
+        public AsignacionCajaController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _ac = new AsignacionCajaDao(_configuration);
+        }
         [Authorize]
         public IActionResult Index()
         {

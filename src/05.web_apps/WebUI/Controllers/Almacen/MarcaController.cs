@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using DataAccess.Almacen;
 using DataAccess;
 using Helpers;
-using Microsoft.AspNetCore.Http;
 
 namespace WebUI.Controllers
 {
@@ -16,12 +15,13 @@ namespace WebUI.Controllers
         private DataAccessObject _dao;
         private readonly int _idRol;
         GenericResponse _gr = new();
-        MarcaDao _m = new();
+        private MarcaDao _m;
 
         public MarcaController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
+            _m = new MarcaDao(_configuration);
             _httpContextAccessor = httpContextAccessor;
             _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
         }

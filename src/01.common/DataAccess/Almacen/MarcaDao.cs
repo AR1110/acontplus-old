@@ -7,15 +7,20 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Almacen
 {
-    public class MarcaDao : ConnectionDb
+    public class MarcaDao
     {
         protected GenericResponse _response;
-        public MarcaDao()
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public MarcaDao(IConfiguration config)
         {
-            _response= new GenericResponse();
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
+            _response = new GenericResponse();
         }
 
         //Operaciones Espciales
@@ -24,27 +29,29 @@ namespace DataAccess.Almacen
             var listar = new List<Marca>();
             try
             {
-                var cmd = new SqlCommand("ASPMarcaOption", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idMarca", idMarca);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = await cmd.ExecuteReaderAsync();
-
-                while (await reader.ReadAsync())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _response.id = reader.GetString(0);
-                    if (_response.id == "1")
+                    var cmd = new SqlCommand("ASPMarcaOption", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idMarca", idMarca);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = await cmd.ExecuteReaderAsync();
+
+                    while (await reader.ReadAsync())
                     {
-                        var m = new Marca
+                        _response.id = reader.GetString(0);
+                        if (_response.id == "1")
                         {
-                            idMarca = reader.GetInt32(1),
-                            descripcion = reader.GetString(2)
-                        };
-                        listar.Add(m);
+                            var m = new Marca
+                            {
+                                idMarca = reader.GetInt32(1),
+                                descripcion = reader.GetString(2)
+                            };
+                            listar.Add(m);
+                        }
                     }
                 }
-
                 _response.data = listar;
             }
             catch (Exception ex)
@@ -54,7 +61,7 @@ namespace DataAccess.Almacen
             }
             finally
             {
-                con.Close();
+                
             }
             return _response;
         }
