@@ -1,0 +1,240 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div ng-controller="loteCtrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Gestión de Lotes</h4>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
+                    <li class="breadcrumb-item active">Lotes</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex m-b-5 align-items-center no-block">
+                        <h5 class="card-title ">Lote</h5>
+                        <div class="ml-auto">
+                            <ul class="list-inline font-12">
+                                <li><button ng-click="abrirModal(0,1)" class="btn btn-info"><i class="fa fa-plus"></i> Nuevo</button></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="table-responsive">
+                        <table class="table color-bordered-table info-bordered-table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>N°</th>
+                                    <th>Lote</th>
+                                    <th>Estado</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="l in lotes">
+                                    <td>{{$index+1}}</td>
+                                    <td>{{l.descripcion}}</td>
+                                    <td ng-bind-html="l.estado|estadoPrimario"></td>
+                                    <td>
+                                        <a class="text-success" ng-click="abrirModal(l,2)" href="javascript:;" title="Editar"><i class="fa fa-edit"></i></a>
+                                        <a class="text-danger" ng-click="abrirModal(l,3)" href="javascript:;" title="Eliminar"><i class="fa fa-trash"></i></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="agregarLote" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1" aria-hidden="true" data-backdrop="static" data-keyboard="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <form ng-submit="crudLote(data.tipoOperacion)" autocomplete="off" novalidate>
+                            <div class="modal-content">
+                                <div class="modal-header {{colorHeader}}">
+                                    <h5 class="modal-title text-white" id="exampleModalLabel"><i class="{{icono}}"></i>{{tituloModal}}</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <label for="">Descripción: <span class="text-danger">*</span></label>
+                                            <div class="controls">
+                                                <input type="text" ng-model="data.descripcion" class="form-control" required data-validation-required-message="Este campo es requerido" maxlength="50" pattern="[A-Za-z0-9]+" placeholder="Ej: LO/3356">
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-lg-6 col-md-6 col-sm-6 col-xs-6" ng-if="data.tipoOperacion==2">
+                                            <label for="">Estado: </label>
+                                            <fieldset class="controls">
+                                                <div class="custom-control custom-radio">
+                                                    <input type="radio" value="1" ng-model="data.estado" ng-value="true" name="styled_radio" required id="styled_radio1" class="custom-control-input">
+                                                    <label class="custom-control-label" for="styled_radio1">Activo</label>
+                                                </div>
+                                            </fieldset>
+                                            <fieldset>
+                                                <div class="custom-control custom-radio">
+                                                    <input type="radio" value="2" ng-model="data.estado" ng-value="false" name="styled_radio" id="styled_radio2" class="custom-control-input">
+                                                    <label class="custom-control-label" for="styled_radio2">Inactivo</label>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn {{btnColor}}"><i class="{{icono}}"></i> {{btnTitulo}}</button>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-close"></i>Cancelar</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="eliminarLote" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="true" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <form ng-submit="crudLote(data.tipoOperacion)" autocomplete="off">
+                        <div class="modal-content">
+                            <div class="modal-header bg-danger">
+                                <h5 class="modal-title text-white" id="exampleModalLabel"><i class="fa fa-trash"></i> Eliminar Lote</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Está usted seguro de eliminar el Lote <b class="text-success">{{data.descripcion}} </b>, de manera permanente?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-danger"><i class="fa fa-check" aria-hidden="true"></i> Si</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times-circle"></i> No</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+        </div>
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body ">
+                    <div class="d-flex m-b-5 align-items-center no-block">
+                        <h5 class="card-title ">Medidas</h5>
+                        <div class="ml-auto">
+                            <ul class="list-inline font-12">
+                                <li><button ng-click="abrirModal(0,4)" class="btn btn-info"><i class="fa fa-plus"></i> Nuevo</button></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="table-responsive">
+                        <table class="table color-bordered-table success-bordered-table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>N°</th>
+                                    <th>Medidas</th>
+                                    <th>Estado</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="m in medidas">
+                                    <td>{{$index+1}}</td>
+                                    <td>{{m.descripcion}}</td>
+                                    <td ng-bind-html="m.estado|estadoPrimario"></td>
+                                    <td>
+                                        <a class="text-success" ng-click="abrirModal(m,5)" href="javascript:;" title="Editar"><i class="fa fa-edit"></i></a>
+                                        <a class="text-danger" ng-click="abrirModal(m,6)" href="javascript:;" title="Eliminar"><i class="fa fa-trash"></i></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal fade" id="agregarMedida" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1"  data-backdrop="static" data-keyboard="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <form ng-submit="crudLote(data.tipoOperacion)" autocomplete="off" novalidate>
+                            <div class="modal-content">
+                                <div class="modal-header {{colorHeader}}">
+                                    <h5 class="modal-title text-white" id="exampleModalLabel"><i class="{{icono}}"></i>{{tituloModal}}</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <label for="">Descripción: <span class="text-danger">*</span> </label>
+                                            <div class="controls">
+                                                <input type="text" ng-model="data.descripcion" class="form-control" required data-validation-required-message="Este campo es requerido" maxlength="50" placeholder="Ej: Unidad">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div ng-if="data.tipoOperacion==5">
+                                        <label for="">Estado: </label>
+                                        <fieldset class="controls">
+
+                                            <div class="custom-control custom-radio">
+                                                <input type="radio" value="1" ng-model="data.estado" ng-value="true" name="styled_radio" required id="styled_radio1" class="custom-control-input">
+                                                <label class="custom-control-label" for="styled_radio1">Activo</label>
+                                            </div>
+                                        </fieldset>
+                                        <fieldset>
+                                            <div class="custom-control custom-radio">
+                                                <input type="radio" value="2" ng-model="data.estado" ng-value="false" name="styled_radio" id="styled_radio2" class="custom-control-input">
+                                                <label class="custom-control-label" for="styled_radio2">Inactivo</label>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn {{btnColor}}"><i class="{{icono}}"></i> {{btnTitulo}}</button>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-close"></i>Cancelar</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="eliminarMedida" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <form ng-submit="crudLote(data.tipoOperacion)" autocomplete="off">
+                        <div class="modal-content">
+                            <div class="modal-header bg-danger">
+                                <h5 class="modal-title text-white" id="exampleModalLabel"><i class="fa fa-trash"></i> Eliminar Medida</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Está usted seguro de eliminar la Medida <b class="text-success">{{data.descripcion}} </b>, de manera permanente?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-danger"><i class="fa fa-check" aria-hidden="true"></i> Si</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times-circle"></i> No</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script src="~/js/controllers/loteCtrl.js?<%=GetVersionApp%>"></script>
+
+
+

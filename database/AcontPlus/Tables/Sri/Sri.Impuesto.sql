@@ -1,0 +1,10 @@
+USE AcontPlus
+IF OBJECT_ID(N'Sri.Impuesto', N'U') IS NOT NULL
+DROP TABLE Sri.Impuesto 
+GO
+CREATE TABLE Sri.Impuesto(
+idImpuesto INT NOT NULL PRIMARY KEY IDENTITY(1,1)
+,codigo VARCHAR(1) NOT NULL UNIQUE
+,descripcion VARCHAR(30) NOT NULL
+,estado BIT NOT NULL DEFAULT 1
+)

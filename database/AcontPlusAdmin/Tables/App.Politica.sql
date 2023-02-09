@@ -1,0 +1,7 @@
+--CREATE TABLE App.Politica(
+--	idPolitica INT PRIMARY KEY IDENTITY(1,1),
+--	codigo NVARCHAR(10) UNIQUE,
+--	descripcion NVARCHAR(200) NOT NULL,
+--	estado BIT DEFAULT 1,
+--	fechaRegistro DATETIME NOT NULL
+--)

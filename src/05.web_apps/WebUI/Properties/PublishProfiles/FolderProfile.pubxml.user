@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file is used by the publish/package process of your Web project. You can customize the behavior of this process
+by editing this MSBuild file. In order to learn more about this please visit https://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project>
+  <PropertyGroup>
+    <_PublishTargetUrl>C:\AcontPlus\WebApps\WebUI</_PublishTargetUrl>
+    <History>True|2023-02-09T04:38:03.0366918Z;True|2023-02-08T23:16:31.4233761-05:00;True|2023-02-08T22:58:34.1867135-05:00;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,12 @@
+--CREATE TABLE Config.Sequential_Document
+--(   
+--    idSequential_Document UNIQUEIDENTIFIER NOT NULL
+--   ,idSucursal INT FOREIGN KEY REFERENCES dbo.Sucursal(idSucursal)NOT NULL
+--   ,idTipoDocumento BIGINT FOREIGN KEY REFERENCES dbo.TipoDocumento(idTipoDocumento) NOT NULL
+--   ,secuencial INT NOT NULL
+--   ,ruc VARCHAR(20) NOT NULL
+--   ,estab VARCHAR(5) NOT NULL
+--   ,codDoc VARCHAR(10) NOT NULL
+--   ,estado BIT DEFAULT 1 NOT NULL
+--)
+

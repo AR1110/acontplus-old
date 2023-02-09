@@ -1,0 +1,146 @@
+﻿<form ng-submit="saveProv()" name="frmProvClient">
+    <div class="modal-header">
+        <h4 class="modal-title">
+            <icon class="{{txtIconModalProv}}"></icon> {{txtTitleModalProv}}
+        </h4>
+        <button type="button" class="close" ng-click="modalRefProv.close()">&times;</button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                    <label for="idTipoIdentificacionProv">Tipo Identificación:</label>
+                    <select id="idTipoIdentificacionProv" class="form-control">
+                        <option value="{{item.idTipoIdentificacion}}" ng-repeat="item in tiposIdentificacion"
+                            ng-selected="item.idTipoIdentificacion == provCliente.idTipoIdentificacion" disabled>
+                            {{item.descripcion}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                    <label for="idTipoClienteProveedor">Tipo Proveedor:</label>
+                    <select id="idTipoClienteProveedor" class="form-control"
+                        ng-model="provCliente.idTipoClienteProveedor">
+                        <option ng-value="item.idTipoClienteProveedor" ng-repeat="item in tiposProveedor">
+                            {{item.descripcion}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                    <label for="idTipoEntidadProv">Tipo Entidad:</label>
+                    <select id="idTipoEntidadProv" class="form-control" ng-model="provCliente.idTipoEntidad">
+                        <option ng-value="item.idTipoEntidad" ng-repeat="item in tiposEntidad">
+                            {{item.descripcion}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                    <label for="idSubContribuyenteProv">Contribuyente:</label>
+                    <select id="idSubContribuyenteProv" class="form-control" ng-model="provCliente.idSubContribuyente">
+                        <option value="{{item.idSubContribuyente}}" ng-repeat="item in contribuyentes"
+                            ng-selected="item.idSubContribuyente === provCliente.idSubContribuyente">
+                            {{item.descripcion}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                    <label for="idTiempoCreditoProv">Tiempo Crédito:</label>
+                    <select id="idTiempoCreditoProv" class="form-control" ng-model="provCliente.idTiempoCredito">
+                        <option value="{{item.idTiempoCredito}}" ng-repeat="item in tiemposCredito"
+                            ng-selected="item.idTiempoCredito === provCliente.idTiempoCredito">
+                            {{item.descripcion}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <!-- <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                            <div class="form-group">
+                                <label for="idCiudadProv">Ciudad:</label>
+                                <select name="ciudadProv" id="idCiudadProv"
+                                    class="form-control"
+                                    ng-model="ciudadProv"
+                                    ng-options="c as c.ciudad group by c.provincia for c in ciudades"></select>
+                            </div>
+                        </div>-->
+        </div>
+        <div class="row">
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                    <label for="numeroIdentificacionProv">Nro. Identificacion:</label>
+                    <input type="text" name="name" class="form-control" id="numeroIdentificacionProv"
+                        ng-model="provCliente.ruc" required disabled />
+                    <div ng-messages="frmProvClient.ruc.$error">
+                        <div ng-message="required">This is required.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-12">
+                <div class="form-group">
+                    <label for="nombreComercialProv">Nombre Comercial:</label>
+                    <input type="text" name="name" class="form-control" id="nombreComercialProv"
+                        ng-model="provCliente.nombreComercial" />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="form-group">
+                    <label for="razonSocialProv">Razón Social:</label>
+                    <input type="text" name="name" class="form-control" id="razonSocialProv"
+                        ng-model="provCliente.razonSocial" required />
+                    <div ng-messages="frmProvClient.razonSocial.$error">
+                        <div ng-message="required">This is required.</div>
+                        <div ng-message="md-maxlength">
+                            The description must be less than 300 characters long.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="form-group">
+                    <label for="direccionProv">Dirección:</label>
+                    <textarea id="direccionProv" class="form-control" ng-model="provCliente.dirMatriz"
+                        required></textarea>
+                    <div ng-messages="frmProvClient.dirMatriz.$error">
+                        <div ng-message="required">This is required.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                    <label for="telefonoProv">Telefono:</label>
+                    <input type="text" name="name" class="form-control" id="telefonoProv"
+                        ng-model="provCliente.telefono" />
+                </div>
+            </div>
+            <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-12">
+                <div class="form-group">
+                    <label for="correoProv">Correo:</label>
+                    <input type="text" name="name" class="form-control" id="correoProv" ng-model="provCliente.correo" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-success" title="Guardar">
+            <icon class="ti-save"></icon> {{txtBtnProv}}
+        </button>
+        <button type="button" class="btn btn-dark" ng-click="modalRefProv.close()" title="Cerrar">
+            <icon class="ti-close"></icon> Cerrar
+        </button>
+    </div>
+</form>

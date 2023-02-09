@@ -1,0 +1,5 @@
+DROP PROCEDURE [dbo].[ASPSucursalDelete]
+DROP PROCEDURE [dbo].[ASPSucursalGet]
+DROP PROCEDURE [dbo].[ASPSucursalInsert]
+DROP PROCEDURE [dbo].[ASPSucursalUpdate]
+DROP PROCEDURE [dbo].[ASPSucursalGetId]

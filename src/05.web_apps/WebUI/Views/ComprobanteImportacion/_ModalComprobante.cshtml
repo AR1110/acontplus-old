@@ -1,0 +1,371 @@
+<div class="modal-header">
+    <h4 class="modal-title">
+        <i class="ti-upload"></i> Importar Comprobante
+    </h4>
+    <button type="button" class="close" aria-label="Close" ng-click="modalRef.close()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <div class="row border">
+        <div class="col-xl-7 col-lg-7col-md-7 col-sm-7 col-12 mb-2">
+            <div class="form-group">
+                <label>Proveedor:</label>
+                <input maxlength="300" class="form-control" required name="description"
+                    ng-model="infoTributaria.razonSocial" disabled>
+            </div>
+            <div class="form-group">
+                <label>Dirección Matriz:</label>
+                <input required class="form-control" name="dirMatriz" ng-model="infoTributaria.dirMatriz" disabled>
+            </div>
+            <div class="form-group">
+                <label>Dir. Establecimiento:</label>
+                <h5>{{infoComprobante.dirEstablecimiento}}</h5>
+            </div>
+            <div class="form-group">
+                <label>Obligado Contabilidad:</label>
+                <h5>{{infoComprobante.obligadoContabilidad}}</h5>
+            </div>
+            <button type="button" id="btnProv" ng-disabled="btnProvIsEnable" ng-click="addProvClient()"
+                class="btn btn-success btn-sm">
+                <icon class="ti-save"></icon> Guardar Proveedor
+            </button>
+        </div>
+        <div class="col-xl-5 col-lg-5 col-md-5 col-sm-5 col-12">
+            <div class="form-group">
+                <label>Nro. Documento:</label>
+                <h5> {{selected[0].comprobante}} {{infoTributaria.estab}} - {{infoTributaria.ptoEmi}}
+                    - {{infoTributaria.secuencial}}</h5>
+            </div>
+            <div class="form-group">
+                <label>Ruc:</label>
+                <input required name="ruc" class="form-control" ng-model="infoTributaria.ruc" disabled>
+            </div>
+            <div class="form-group">
+                <label>Nro. Autorización:</label>
+                <input required name="ruc" class="form-control" ng-model="infoTributaria.claveAcceso" disabled>
+            </div>
+            <div class="form-group">
+                <label>Fecha Emisión:</label>
+                <input required name="ruc" class="form-control" ng-model="infoComprobante.fechaEmision" disabled>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="form-group">
+                <label for="idSustentoTributario">Sustento Tributario:</label>
+                <select id="idSustentoTributario" class="form-control" ng-model="comprobanteForm.idSustentoTributario"
+                    required>
+                    <option>Seleccione un Sustento</option>
+                    <option value="{{item.idSustentoTributario}}" ng-repeat="item in sustentos"
+                        ng-selected="item.idSustentoTributario == comprobanteForm.idSustentoTributario">
+                        {{item.codigo}} - {{item.descripcion}}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+            <div class="form-group">
+                <label for="idTiempoCredito">Tiempo Crédito:</label>
+                <select id="idTiempoCredito" class="form-control" ng-model="comprobanteForm.idTiempoCredito" required>
+                    <option>Seleccione un tiempo de crédito</option>
+                    <option ng-value="item.idTiempoCredito" ng-repeat="item in tiemposCredito">
+                        {{item.descripcion}}
+                    </option>
+                </select>
+            </div>
+        </div>
+        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+            <div class="form-group">
+                <label for="idCategoria">Categoria:</label>
+                <select id="idCategoria" class="form-control" ng-model="comprobanteForm.idCategoria" required>
+                    <option>Seleccione una categoria</option>
+                    <option value="{{item.idCategoriaCompra}}" ng-repeat="item in categories"
+                        ng-selected="item.idCategoriaCompra == comprobanteForm.idCategoria">
+                        {{item.descripcion}}
+                    </option>
+                </select>
+            </div>
+        </div>
+        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+            <div class="form-group">
+                <label for="idBodega">Bodega:</label>
+                <select id="idBodega" class="form-control" ng-model="comprobanteForm.idBodega" required>
+                    <option>Seleccione una bodega</option>
+                    <option value="{{item.idBodega}}" ng-repeat="item in bodegas"
+                        ng-selected="item.idBodega == comprobanteForm.idBodega">{{item.descripcion}}
+                    </option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <button class="btn btn-info btn-sm" ng-click="askToAddCustomDetails($event)">
+                <icon class="ti-plus"></icon> Agregar Detalle Personalizado
+            </button>
+        </div>
+    </div>
+    <br />
+    <ng-form ng-show="showFormCustomDetails" name="formCustomDetail">
+        <div class="row">
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                <div class="input-group">
+                    <input type="text" id="articuloSearchFiltro" autocomplete="off" name="articuloSearchFiltro"
+                        class="form-control border-select" placeholder="Buscar articulo"
+                        ng-model="articleFinded.descripcion" ng-keyup="clearSearch()"
+                        uib-typeahead="a as a.codigo + '-' + a.descripcion for a in searchArticleCustomDetail($viewValue)"
+                        typeahead-loading="articleFinded.loading" typeahead-no-results="articleFinded.noResults"
+                        typeahead-editable="false" typeahead-on-select="selectArticleSearch($item)" />
+                    <div class="input-group-append">
+                        <button class="btn btn-info btn-sm" ng-click="openModalNewArticle($event)"><i
+                                class="ti-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-4">
+                <div class="form-group">
+                    <label for="cantidad">Cantidad:</label>
+                    <input type="number" id="cantidad" class="form-control" ng-model="customDetail.cantidad" min="1"
+                        name="cantidad" step="any" disabled required />
+                </div>
+            </div>
+            <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-4">
+                <div class="form-group">
+                    <label for="codigoPrincipal">Cód. Principal:</label>
+                    <input type="text" id="codigoPrincipal" class="form-control" ng-model="customDetail.codigoPrincipal"
+                        name="codigoPrincipal" required />
+                </div>
+            </div>
+            <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-4">
+                <div class="form-group">
+                    <label for="codigoAuxiliar">Cód. Auxiliar:</label>
+                    <input type="text" id="codigoAuxiliar" class="form-control" ng-model="customDetail.codigoAuxiliar"
+                        name="codigoAuxiliar" />
+                </div>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                <div class="form-group">
+                    <label for="descripcion">Descripcion:</label>
+                    <input type="text" id="descripcion" class="form-control" ng-model="customDetail.descripcion"
+                        name="descripcion" required />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-2 col-lg-2 col-md-3 col-sm-3 col-4">
+                <div class="form-group">
+                    <label for="precioUnitario">Precio Unitario:</label>
+                    <input type="text" id="precioUnitario" class="form-control" ng-model="customDetail.precioUnitario"
+                        name="precioUnitario" step="any" disabled required />
+                </div>
+            </div>
+            <div class="col-xl-2 col-lg-2 col-md-3 col-sm-3 col-4">
+                <div class="form-group">
+                    <label for="descuento">Descuento:</label>
+                    <input type="text" id="descuento" class="form-control" ng-model="customDetail.descuento" min="0"
+                        name="descuento" step="any" disabled />
+                </div>
+            </div>
+            <div class="col-xl-2 col-lg-3 col-md-3 col-sm-2 col-4">
+                <div class="form-group">
+                    <label for="total">Total:</label>
+                    <input type="text" id="total" class="form-control" ng-model="customDetail.total" name="total"
+                        step="any" disabled />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                <button class="btn btn-success btn-sm" ng-click="addCustomDetail($event)">
+                    <icon class="ti-plus"></icon> Agregar
+                </button>
+                <button class="btn btn-warning btn-sm" ng-click="cancelCustomDetails()">&times;
+                    Cancelar</button>
+            </div>
+        </div>
+    </ng-form>
+    <div class="row">
+        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 offset-xl-8 offset-lg-8 offset-md-8 offset-sm-8  col-12">
+            <div class="form-group">
+                <label for="sizeAll">Aplicar Medida para todos</label>
+                <select class="form-control" ng-model="articleSize" ng-change="updateSizeArticles(articleSize)">
+                    <option ng-value="size.idMedida" ng-repeat="size in medidas"
+                        ng-selected="size.idMedida == articleSize">
+                        {{size.descripcion}}</option>
+                </select>
+            </div>
+        </div>
+    </div> 
+    <md-table-container>
+        <table md-table class="table-bordered">
+            <caption></caption>
+            <thead md-head>
+                <tr md-row>
+                    <th md-column class="text-center">Cantidad</th>
+                    <th md-column class="text-center">Cód. Principal</th>
+                    <th md-column class="text-center">Cód. Auxiliar</th>
+                    <th md-column>Descripción</th>
+                    <td md-column>Medida</td>
+                    <th md-column>P.U.</th>
+                    <th md-column>Descuento</th>
+                    <th md-column>Total</th>
+                    <th md-column>Opciones</th>
+                </tr>
+            </thead>
+            <tbody md-body>
+                <tr md-row ng-repeat="item in tempDetail">
+                    <td md-cell class="text-center">{{item.cantidad}}</td>
+                    <td md-cell class="text-center">{{item.codigoPrincipal}}</td>
+                    <td md-cell class="text-center">{{item.codigoAuxiliar}}</td>
+                    <td md-cell>{{item.descripcion}}</td>
+                    <td md-cell>
+                        <div style="position:relative; min-width:100px;">
+                            <select class="form-control" ng-model="item.idMedida"  ng-change="updateArticleTemp(item)">
+                                <option ng-value="size.idMedida" ng-repeat="size in medidas">
+                                    {{size.descripcion}}</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td md-cell class="text-right">{{item.precioUnitario | currency}}</td>
+                    <td md-cell class="text-right">{{item.descuento | currency}}</td>
+                    <td md-cell class="text-right">{{item.precioTotalSinImpuesto | currency}}</td>
+                    <td md-cell>
+                        <md-button ng-if="!(item.idArticulo > 0 && item.idProveedor > 0)" class="md-icon-button"
+                            ng-click="openMerge(item)" aria-label="Unir" title="Unir">
+                            <md-icon md-font-set="md" class="text-info">sync_alt</md-icon>
+                        </md-button>
+                        <md-button ng-if="(item.idArticulo > 0 && item.idProveedor > 0)" class="md-icon-button"
+                            ng-click="getArticleHistory(item)" aria-label="Historial" title="Historial de ingresos de facturas">
+                            <md-icon md-font-set="md" class="text-danger">shopping_cart</md-icon>
+                        </md-button>
+                        <md-button ng-if="(item.idArticulo > 0 && item.idProveedor > 0)" class="md-icon-button"
+                            ng-click="getArticleHC(item)" aria-label="Historial" title="Historial de vinculación">
+                            <md-icon md-font-set="md" class="text-info">history</md-icon>
+                        </md-button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </md-table-container>
+    <div class="row">
+        <div class="col-xl-7 col-lg-7 col-md-7 col-sm-7 col-12">
+            <div class="table-responsive">
+                <h5><strong>Información Adicional</strong></h5>
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr ng-repeat="item in infoAdicional">
+                            <td><strong>{{item.nombre}}</strong></td>
+                            <td>{{item.valor}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <hr>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Forma de Pago</th>
+                            <th>Plazo</th>
+                            <th>Total</th>
+                            <th>U. Tiempo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in payments">
+                            <td>{{item.formaPago}}</td>
+                            <td>{{item.plazo}}</td>
+                            <td>{{item.total}}</td>
+                            <td>{{item.unidadTiempo}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        <div class="col-xl-5 col-lg-5">
+            <div class="table-responsive">
+                <h5><strong></strong></h5>
+                <table class="table table-bordeless">
+                    <tbody>
+                        <tr>
+                            <td class="text-right"><strong>SubTotal 12%</strong></td>
+                            <td class="text-right">{{infoComprobante.totalSinImpuestos | currency}}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-right"><strong>SubTotal Iva 0%</strong></td>
+                            <td class="text-right">{{totalTaxesRide.iva0 | currency}}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-right"><strong>SubTotal No Objeto Iva</strong></td>
+                            <td class="text-right">{{totalTaxesRide.noObjetoIva | currency}}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-right"><strong>SubTotal Excento Iva</strong></td>
+                            <td class="text-right">{{totalTaxesRide.excentoIva | currency}}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-right"><strong>Total Sin Impuestos</strong></td>
+                            <td class="text-right">{{infoComprobante.totalSinImpuestos | currency}}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-right"><strong>Descuento</strong></td>
+                            <td class="text-right">0.00</td>
+                            <!--<td class="text-right">{{infoComprobante.totalDescuento | currency}}</td>-->
+                        </tr>
+                        <tr>
+                            <td class="text-right"><strong>ICE</strong></td>
+                            <td class="text-right">{{totalTaxesRide.ice | currency}}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-right"><strong>IVA 12%</strong></td>
+                            <td class="text-right">{{totalTaxesRide.iva12 | currency}}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-right"><strong>IRBPNR</strong></td>
+                            <td class="text-right">{{totalTaxesRide.irbpnr | currency}}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-right"><strong>Propina</strong></td>
+                            <td class="text-right">{{infoComprobante.propina | currency}}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-right"><strong>Importe Total</strong></td>
+                            <td class="text-right">{{infoComprobante.importeTotal | currency}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <h4 class="float-right"><strong></strong></h4><br>
+            <h4 class="float-right"><strong></strong></h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-7 col-lg-7 col-md-7 col-sm-7 col-12">
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="form-group">
+                <label for="observacion">Observación:</label>
+                <textarea name="observacion" id="observacion" ng-model="comprobanteForm.observacion"
+                    class="form-control"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="submit" class="btn btn-success" ng-click="askToSave()" title="Guardar">
+        <icon class="ti-save"></icon> Guardar
+    </button>
+    <button class="btn btn-dark" ng-click="modalRef.close()">
+        <icon class="ti-close"></icon> Cancelar
+    </button>
+</div>

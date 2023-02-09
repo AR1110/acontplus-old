@@ -1,0 +1,47 @@
+
+<div class="modal-header">
+    <h5 class="modal-title">Gestión de Imagenes</h5>
+    <button class="close" ng-click="$ctrl.closeModal()">&times;</button>
+</div>
+<div class="modal-body">
+    <div class="row justify-content-between">
+        <div class="col-lg-12">                        
+            <div class="mb-2 mt-2">      
+                    <input type="file" class="form-control" ngf-select="$ctrl.onChangeSelectImage($files)"  ng-model="$ctrl.modelImagenes" name="files"
+                                ngf-pattern="'image/*'" ngf-max-size="20MB" ngf-accept="'image/*'" multiple />                                                    
+            </div>
+        </div>
+        <div class="col-lg-4">
+            @* <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner" role="listbox">                               
+                    <div class="carousel-item {{$index===0?'active':''}}" ng-repeat="file in imagenes">
+                        <div class="container">
+                            <img class="d-block img-fluid" ng-src="{{file.imagen}}" width="200" alt="Img">
+                        </div>
+                    </div>                        
+                </div>
+                <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev"> <span class="carousel-control-prev-icon" aria-hidden="true"></span> <span class="sr-only">Previous</span> </a>
+                <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next"> <span class="carousel-control-next-icon" aria-hidden="true"></span> <span class="sr-only">Next</span> </a>
+            </div> *@
+        </div>
+    </div>  
+
+    <div class="row" ng-if="$ctrl.imagenes.length>0">
+        <div class="col-lg-4" ng-repeat="file in $ctrl.imagenes">    
+            <div class="card">
+                <img class="card-img-top" src="{{file.imagen}}" alt="{{file.name}}">
+                <div class="card-img-overlay">
+                    @* <span class="badge badge-danger badge-pill">For Rent</span> *@
+                </div>                                                                                                              
+            </div>    
+            <div class="text-center mb-1">
+                <button type="button" class="btn btn-outline-danger btn-sm" ng-click="$ctrl.eliminar(file)"><i class=" fas fa-times"></i></button>
+            </div>                                                                                
+        </div>
+    </div> 
+</div>                
+<div class="modal-footer">
+    <button type="button" class="btn btn-success" ng-click="$ctrl.guardar()"><i class="ti-save"></i> Guardar</button>
+    <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">&times; Cerrar</button>
+</div>
+       

@@ -1,0 +1,9 @@
+--CREATE TABLE Inventario.ControlStock
+--(
+--	token UNIQUEIDENTIFIER DEFAULT NEWID()
+--   ,idTipoDocumento BIGINT FOREIGN KEY REFERENCES TipoDocumento(idTipoDocumento) NOT NULL
+--   ,idDocumento INT NOT NULL
+--   ,idArticulo INT NOT NULL FOREIGN KEY REFERENCES dbo.Articulo(idArticulo) 
+--   ,idBodega INT NOT NULL FOREIGN KEY REFERENCES dbo.Bodega(idBodega)
+--   ,estado VARCHAR(5) DEFAULT 'PE'
+--)

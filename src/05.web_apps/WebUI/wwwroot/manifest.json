@@ -1,0 +1,34 @@
+{
+  "name": "Acontplus",
+  "short_name": "Acontplus",
+  "description": "SISTEMA DE FACTURACIÓN ELECTRÓNICA",
+  "theme_color": "#F2811D",
+  "background_color": "#F2811D",
+  "start_url": "/Home/Index",
+  "display": "standalone",
+  "scope": "/",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/assets/images/icon/apple-touch-icon-180x180.png",
+      "type": "image/png",
+      "sizes": "180x180"
+    },
+    {
+      "src": "/assets/images/icon/android-icon-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    }
+  ],
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=com.example.app1",
+      "id": "com.example.app1"
+    },
+    {
+      "platform": "itunes",
+      "url": "https://itunes.apple.com/app/example-app1/id123456789"
+    }
+  ]
+}

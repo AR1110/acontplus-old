@@ -1,0 +1,66 @@
+ <div class="modal-header">
+    <h5 class="modal-title">Anticipos</h5>
+    <button class="close" ng-click="$ctrl.closeModal()">&times;</button>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="form-group">
+                <label for="clientePersonalizado">Cliente</label>
+                <input type="text" id="autocompleteCliente"
+                    autocomplete="off"
+                    name="autocompleteCliente"
+                    class="form-control border-select"
+                    placeholder="Ingrese C.I o Nombre Fiscal"
+                    ng-model="$ctrl.data.selelectedCliente"
+                    typeahead-wait-ms="10"
+                    ng-keyup="$ctrl.data.onKeyupSearchCliente()"
+                    uib-typeahead="a as a.nombreFiscal for a in $ctrl.clienteSearch($viewValue)"
+                    typeahead-loading="$ctrl.data.loadingSearchCliente"
+                    typeahead-no-results="$ctr.data.noResultsCliente"
+                    typeahead-template-url="autocompleteCliente.html"
+                    typeahead-editable="false"
+                    typeahead-on-select="$ctrl.selectedClienteChange($item)" />
+
+                    <script type="text/ng-template" id="autocompleteCliente.html">
+                        <div class="autocomplete-suggestion-uib-typeahead">
+                            <span class="item-title">
+                                <b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}
+                            </span>
+                        </div>
+                    </script>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="" class="control-label">Entidad Financiera <span class="text-danger">*</span></label>
+        <select class="form-control border-select" ng-model="$ctrl.data.idEntidadFinanciera" ng-change="$ctrl.getSubEntidadByEntidadFinanciera()">
+            <option ng-value="ef.idEntidadFinanciera" ng-repeat="ef in $ctrl.entidadesFinancieras">{{ef.descripcion}}</option>
+        </select>
+    </div>
+
+    <div class="form-group" ng-show="$ctrl.data.idEntidadFinanciera>0">
+        <label for="" class="control-label">Sub Entidad Financiera</label>
+        <select class="form-control border-select" ng-model="$ctrl.data.idSubEntidadFinanciera">
+            <option ng-value="se.idSubEntidadFinanciera" ng-repeat="se in $ctrl.subEntidades">{{se.descripcion}}</option>
+        </select>
+    </div> 
+
+    <div class="form-group">
+        <label for="valor">Valor <span class="text-danger">*</span></label>
+        <input type="text" decimal class="form-control border-select" ng-model="$ctrl.data.valor" placeholder="0.00">
+    </div>
+
+    <div class="form-group">
+        <label for="" class="control-label">Observación </label>
+        <textarea class="form-control border-select" ng-model="$ctrl.data.observaciones" touppercase></textarea>
+    </div>
+
+</div>
+<div class="modal-footer">
+    <button class="btn btn-success" ng-click="$ctrl.guardarAnticipo()"><i class="{{$ctrl.tipoRegistro==1?'ti-save':'fa fa-edit'}}"></i>
+    {{$ctrl.tipoRegistro==1?'Guardar':'Actualizar'}}
+    </button>
+    <button class="btn btn-dark" ng-click="$ctrl.closeModal()">&times; Cerrar</button>                
+</div>

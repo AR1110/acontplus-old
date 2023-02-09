@@ -1,0 +1,148 @@
+<div id="modalHistorialCobro" class="modal fade in" role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Comprobante de Ingreso</h5>
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="card">
+                            <div class="card-body shadow">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="row">
+                                            <div class="col-5">
+                                                <span>CI/RUC</span>
+                                            </div>
+                                            <div class="col-7 text-truncate">
+                                                :<span class="font-medium"> {{data.nroIdentificacion}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-5">
+                                                <span>Cliente</span>
+                                            </div>
+                                            <div class="col-7">
+                                                :<span class="font-medium"> {{data.cliente}}</span>
+                                            </div>
+                                        </div>                                       
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="row">
+                                            <div class="col-5 text-truncate">
+                                                <span>Nro. Comprobante</span>
+                                            </div>
+                                            <div class="col-7">
+                                                :<span class="font-medium"> {{data.nroDoc}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-5">
+                                                <span>Fecha Emisión</span>
+                                            </div>
+                                            <div class="col-7">
+                                                :<span class="font-medium"> {{data.fechaRegistro}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 border-left">
+                                        <div class="row">
+                                            <div class="col">
+                                                <h4 class="m-b-0">${{data.total}}</h4>
+                                                <h6 class="font-light">Total</h6></div>
+                                            <div class="col">
+                                                <h4 class="m-b-0">${{data.abono}}</h4>
+                                                <h6 class="font-light">Abono</h6></div>
+                                            <div class="col">
+                                                <h4 class="m-b-0">${{data.cambio}}</h4>
+                                                <h6 class="font-light">Cambio</h6></div>
+                                        </div>
+                                    </div>
+                                </div>                                 
+                            </div>
+                        </div>
+                    </div>                    
+                </div>                
+
+                <div class="card">
+                    <div class="card-body shadow">
+                        <md-table-container>
+                            <table md-table>
+                                <thead md-head>
+                                    <tr md-row>
+                                        <th md-column></th>
+                                        <th md-column>N°</th>                                
+                                        <th md-column>Fecha Emisión</th>                                
+                                        <th md-column>Sub Entidad</th>                                
+                                        <th md-column>Valor</th>                                
+                                        <th md-column>Número</th>                                
+                                        <th md-column>Posfechado</th>                                
+                                        <th md-column>Banco</th>                                
+                                        <th md-column>Estado</th>                                
+                                    </tr>
+                                </thead>
+                                <tbody md-body>
+                                    <tr md-row ng-repeat-start="c in comprobanteIngresos">
+                                        <td md-cell ng-click="getCobroDetalle(c)">
+                                            <icon  ng-if="c.showDetalle" class="icon-arrow-right "></icon>
+                                            <icon ng-if="!c.showDetalle" class="icon-arrow-down "></icon>
+                                        </td>
+                                        <td md-cell>{{$index+1}}</td>
+                                        <td md-cell>{{c.cobro.fechaEmision}}</td>
+                                        <td md-cell>{{c.subEntiadaFinanciera}}</td>
+                                        <td md-cell>{{c.cobro.valor}}</td>
+                                        <td md-cell>{{c.nroTransaccion}}</td>
+                                        <td md-cell>{{c.posfechado}}</td>
+                                        <td md-cell>{{c.banco}}</td>
+                                        <td md-cell>{{c.cobroEstado}}</td>
+                                    </tr>
+                                    <tr ng-show="c.showDetalle" ng-repeat-end="">
+                                        <td md-cell colspan="9">                                                                        
+                                            <div class="ml-5 mt-1 mr-5">
+                                                <div class="table-responsive">
+                                                    <table class="table table-hover table-bordered table-sm">
+                                                        <thead>
+                                                            <tr>                                                        
+                                                                <th>Cuota</th>
+                                                                <th>Tipo. Documento</th>
+                                                                <th>Nro. Documento</th>                                                        
+                                                                <th>Fecha Vcto</th>
+                                                                <th>Total cuota</th>
+                                                                <th>Abono</th>
+                                                                <th>Mora</th>
+                                                                <th>Saldo</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr ng-repeat="c in c.cobroDetalles">
+                                                                <td>{{c.nroCuota}}</td>
+                                                                <th>{{c.tipDoc}}</th>
+                                                                <td>{{c.nroDoc}}</td>
+                                                                <td>{{c.fechaVencimiento}}</td>
+                                                                <td>{{c.cuota|currency:'$'}}</td>
+                                                                <td>{{c.cobroDetalle.abono|currency:'$'}}</td>
+                                                                <td>{{c.mora|currency:'$'}}</td>
+                                                                <td>{{c.saldo|currency:'$'}}</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>                                                                                                                                        
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </md-table-container>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="modal-footer">                
+                <button class="btn btn-dark" data-dismiss="modal">&times; Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>

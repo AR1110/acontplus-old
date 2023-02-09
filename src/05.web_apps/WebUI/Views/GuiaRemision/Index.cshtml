@@ -1,0 +1,113 @@
+﻿@{
+    ViewData["title"] = "Guía de Remisión";
+}
+
+<div ng-controller="guiaRemisionCtrl">
+    <div>
+        <div class="row page-titles">
+            <div class="col-lg-5 align-self-center">
+                <h5 class="color-themecolor">Gestión de Guía de Remisión</h5>
+            </div>        
+            <div class="col-lg-7 align-self-center text-right">
+                <div class="d-flex justify-content-end align-items-center">                    
+                    <button type="button" class="btn btn-info m-l-15" ng-click="openModalNew()"><i class="ti-plus"></i> Nuevo</button>                     
+                </div>
+            </div>
+        </div>        
+        
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <md-toolbar class="md-table-toolbar md-default">
+                        <div class="md-toolbar-tools">
+                            <div class="col-lg-9 col-md-9 col-sm-1">
+                                <button type="button" class="btn btn-info" ng-click="openModalFiltro()"><i class="fa fa-filter"></i> Filtrar</button>                
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                                <form class="form-material">
+                                    <input type="text" class="form-control" ng-model="dataSearch.bySearch" ng-keyup="searchGuiaRemision()" placeholder="Buscar">
+                                </form>
+                            </div>
+                        </div>
+                    </md-toolbar>  
+
+                    <div id="upperScroll" style="overflow-x:scroll; overflow-y: hidden; max-height:20px; width:100%">
+                        <div name="innerScroll" ng-style="duelScroll" style="height:20px;"></div>
+                    </div>
+                    
+                    <div ng-style="getStyle($index)">
+                        <md-table-container name="wireTable" infinite-scroll="loadMore($index)" infinite-scroll-distance="1" infinite-scroll-parent="true" ng-init="isShow=true" ng-show="isShow" style=" max-height: 400px; overflow-x: hidden">
+                            <table resize master md-table name="innerWireTable">
+                                <thead  md-trim-column-names fix-head md-head>
+                                    <tr md-row>
+                                        <th md-column ng-if="accion.editar || accion.anular || accion.reporte || accion.enviarSri || accion.enviarCorreo">Op.</th>                                                                                              
+                                        <th md-column>F. Emisión</th>                                
+                                        <th md-column>Nro</th>                                
+                                        <th md-column>F. Inicio</th>                                
+                                        <th md-column>F. Fin</th>                                
+                                        <th md-column>Cliente</th>                                
+                                        <th md-column>Factura</th>                                
+                                        <th md-column>Estado</th>                                                                                               
+                                        <th md-column>Transportista</th>                                
+                                        <th md-column>Usuario</th>                                
+                                    </tr>
+                                </thead>
+                                <tbody md-body>
+                                    <tr md-row ng-repeat="item in guiasRemision" ng-class="item.style">                                   
+                                        <td md-cell ng-if="accion.editar || accion.anular || accion.reporte || accion.enviarSri || accion.enviarCorreo">                                    
+                                            <md-menu>
+                                                <md-button aria-label="Open demo menu" class="md-icon-button"
+                                                            ng-click="$mdMenu.open($event)">
+                                                    <icon class="mdi mdi-menu"></icon>
+                                                </md-button>
+                                                <md-menu-content class="md-dense">
+                                                    <md-menu-item>                                            
+                                                        <md-button ng-click="openModalDetalle(item)">
+                                                            <span md-menu-align-target><i class="ti-menu"></i> Detalle</span>
+                                                        </md-button>
+                                                    </md-menu-item>  
+
+                                                    <md-menu-item ng-if="accion.editar">                                                                                        
+                                                        <md-button  ng-click="openModalEditar(item)" ng-disabled="item.anulada || item.autorizada">
+                                                            <span md-menu-align-target><i class="ti-pencil"></i> Editar</span>
+                                                        </md-button>
+                                                    </md-menu-item>                                                                                                                                             
+
+                                                    <md-menu-item ng-if="accion.anular">                                                                                        
+                                                        <md-button ng-click="askToDelete(item)" ng-disabled="item.anulada">
+                                                            <span md-menu-align-target><i class="ti-close"></i> Anular</span>
+                                                        </md-button>
+                                                    </md-menu-item>                                                                                                                                                                                                                                                                                                                   
+                                                    <md-menu-item  ng-if="accion.reporte">                                                                                        
+                                                        <md-button ng-click="getReport(item)">
+                                                            <span md-menu-align-target><i class=" ti-file"></i> PDF</span>
+                                                        </md-button>
+                                                    </md-menu-item>
+                                                                                                  
+                                                </md-menu-content>
+                                            </md-menu>
+                                        </td>                          
+                                        <td md-cell>{{item.fechaEmision}}</td>
+                                        <td md-cell>{{item.nroDoc}}</td>
+                                        <td md-cell>{{item.fechaInicio}}</td>
+                                        <td md-cell>{{item.fechaFin}}</td>
+                                        <td md-cell>{{item.cliente}}</td>
+                                        <td md-cell>{{item.nroFactura}}</td>
+                                        <td md-cell>{{item.estadoSri}}</td>
+                                        <td md-cell>{{item.transportista}}</td>                                
+                                        <td md-cell>{{item.usuario}}</td>                                
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </md-table-container>
+                    </div>                                                                                     
+                </div>
+            </div>
+        </div>      
+    </div>       
+</div>
+
+@section Scripts{        
+    <script src="~/js/controllers/logistica/guiaRemisionCtrl.js" asp-append-version="true"></script>       
+}

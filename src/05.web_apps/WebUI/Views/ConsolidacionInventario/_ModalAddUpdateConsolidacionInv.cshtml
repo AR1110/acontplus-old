@@ -1,0 +1,96 @@
+                                     
+<div class="modal-header">
+    <h5 class="modal-title">{{tipoRegistro==1?'Nuevo': 'Editar'}} Consolidación Inventario</h5>
+    <div class="text-right">
+        <h4>Total: <strong>{{consolidacion.total|currency:'$'}}</strong></h4>
+    </div>
+</div> 
+<div class="modal-body">
+    <div class="row">
+        <div class="col-lg-4">
+            <input-select-sucursal 
+                set-asignaciones="setAsignaciones(item)"
+                edit-data="sucursal"
+                scope-parent="scopeParent">
+            </input-select-sucursal>
+        </div>
+        <div class="col-lg-2">
+            <input-select-punto-emision
+                asignaciones-data="asignacionesData"
+                set-item-punto-emision="setItemPuntoEmision(item)"
+                edit-data="dataDocumento"
+                scope-parent="scopeParent">
+            </input-select-punto-emision>
+            @* <div class="form-group">
+                <label for="PuntoEmision">Punto Emisión <span class="text-danger">*</span></label>
+                <select id="ptoEmision" name="ptoEmision" class="form-control border-select" ng-model="consolidacion.idPuntoEmision">
+                    <option ng-value="p.idPuntoEmision" ng-repeat="p in puntosEmisiones">{{p.ptoEmision}}</option>
+                </select>
+            </div> *@
+        </div> 
+        <div class="col-lg-2">
+            <div class="form-group">
+                <label for="fechaEmision">Fecha Emisión <span class="text-danger">*</span></label>
+                <input type="date" name="fechaEmision" ng-model="consolidacion.fechaEmision" class="form-control border-select">
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="form-group">
+                <label for="observacion">Observación</label>
+                <input type="text" name="observacion" autocomplete="off" placeholder="..." ng-model="consolidacion.observacion" class="form-control border-select">
+            </div>
+        </div>                                   
+    </div>
+
+    <div class="row justify-content-between">
+        <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
+            <label for="">Buscar Articulo</label>  
+            <md-autocomplete-articulo-component 
+                tipo-doc="tipoDoc"
+                abrir-modal-articulo="abrirModalArticulo(item)"
+                get-data-articulo="getDataIdArticulo(item)"
+                set-item-articulo-en-detalle="setItemArticuloEnDetalle(item)"
+                scope-parent="$scope">
+            </md-autocomplete-articulo-component>
+        </div>
+        <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+            <input-select-bodega
+                asignaciones-data="asignacionesData"
+                set-item-bodega="setItemBodega(item)"                        
+                edit-data="dataDocumento"
+                grid-options-ref="gridOptions"
+                >
+            </input-select-bodega>
+        </div>   
+    </div> 
+
+    <div id="grid" class="grid"
+            ui-grid="gridOptions"
+            ui-grid-edit
+            ui-grid-cellNav
+            ui-grid-auto-resize                        
+            ui-grid-resize-columns>
+    </div>                              
+
+    <!--Sub Totales -->
+    <div class="row justify-content-between mt-2">
+        <div class="col-lg-2"></div>
+        <div class="col-lg-2">
+            <div class="text-right">
+                <h4><strong>Total: {{consolidacion.total|currency:'$'}}</strong></h4>
+            </div>                        
+        </div>
+    </div>
+    
+
+</div>
+<div class="modal-footer"> 
+    <button type="button" class="btn btn-info mr-auto" ng-click="openModalConsolidacionImportArticulos()">
+        <i class="mdi mdi-wrap"></i> Consolidar Import. Articulos
+    </button>              
+    <button type="button" class="btn btn-{{tipoRegistro==1?'success':'info'}}" ng-click="saveUpdate(tipoRegistro)">
+        <i class="{{tipoRegistro==1?'ti-save':'ti-pencil'}}"></i> {{tipoRegistro==1?'Guardar':'Actualizar'}}
+    </button>
+    <button class="btn btn-dark" ng-click="$ctrl.closeModal()">&times; Cerrar</button>
+</div>
+       

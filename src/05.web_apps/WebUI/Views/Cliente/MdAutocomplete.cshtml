@@ -1,0 +1,35 @@
+
+<div  layout="row" layout-wrap >
+  <md-autocomplete flex="80"
+      ng-disabled="$ctrl.search.isDisabled"
+      md-no-cache="$ctrl.search.noCache"
+      md-selected-item="$ctrl.search.selectedItem"
+      md-search-text-change="$ctrl.searchTextChange($ctrl.searchText)"
+      md-search-text="$ctrl.searchText"
+      md-selected-item-change="$ctrl.selectedItemChange(item)"
+      md-items="item in $ctrl.getDynamicSearchCliente($ctrl.searchText)"
+      md-item-text="item.nombreComercial"
+      md-min-length="1"
+      placeholder="Ej. Emilio Senguana"
+      md-escape-options="clear"
+      md-require-match=""
+      md-clear-button="false"
+      input-aria-labelledby="Clientes">
+    <md-item-template>
+        <span md-highlight-text="ctrl.searchText">{{item.nombreFiscal}}</span>
+    </md-item-template>
+    <md-not-found>
+      No se encontraron los resultados          
+      <a ng-click="$ctrl.openModal($ctrl.searchText)">Crear Nuevo!</a>
+    </md-not-found>
+  </md-autocomplete>   
+  <button class="btn btn-secondary btn-xs" flex-gt-xs="3" ng-click="$ctrl.openModalCliente()">
+    <i class="fas fa-plus"></i>
+  </button>
+  <button class="btn btn-secondary btn-xs" ng-if="$ctrl.idCliente>0" flex-gt-xs="3" ng-click="$ctrl.openModalCliente($ctrl.dataCliente)">
+    <i class="fas fa-pencil fa-xs"></i>
+  </button>
+  <button class="btn btn-secondary btn-xs" flex-gt-xs="3" ng-click="$ctrl.openModalClienteLista()">
+    <i class="fas fa-search"></i>
+  </button>
+</div>

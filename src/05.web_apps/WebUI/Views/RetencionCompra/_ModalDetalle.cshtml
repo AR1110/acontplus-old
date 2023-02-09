@@ -1,0 +1,87 @@
+
+
+<form  autocomplete="off">    
+    <div class="modal-header bg-info text-white">
+        <h5 class="modal-title">Detalle Retención de Compra</h5>
+        <button type="button" class="close" ng-click="$ctrl.closeModal()">&times;</button>
+    </div>
+
+
+    <div class="modal-body">
+        <div layout-gt-sm="row">
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Sucursal</label>
+                <md-select name="type" ng-model="$ctrl.data.codEstab" disabled>                    
+                    <md-option ng-value="item.codEstab" ng-repeat="item in $ctrl.establecimientos">{{item.nombreComercial}}</md-option>
+                </md-select>
+            </md-input-container>
+
+            <md-input-container class="md-block" flex-gt-sm>             
+                <label>Punto Emisión</label>
+                <md-select ng-model="$ctrl.data.idPuntoEmision" disabled>
+                    <md-option ng-value="item.idPuntoEmision" ng-repeat="item in $ctrl.puntosEmision">
+                        {{item.ptoEmi}}
+                    </md-option>                
+                </md-select>           
+            </md-input-container>                                              
+        </div>
+
+        <div layout-gt-sm="row">                                                                                                                       
+            <md-input-container class="md-block" flex-gt-xs>
+                <label>Proveedor</label>
+                <input ng-model="$ctrl.proveedor.nombreFiscal" disabled>                               
+            </md-input-container>
+
+            <md-input-container class="md-block" flex-gt-xs>
+                <label>Nro. Identificación</label>
+                <input ng-model="$ctrl.proveedor.numeroIdentificacion" disabled>
+            </md-input-container>                       
+
+            <md-input-container class="md-block" flex-gt-xs>
+                <label>Factura</label>
+                <input ng-model="$ctrl.factura.nroFactura" disabled>                                                                       
+                <a class="btn btn-secondary btn-sm mt-1" ng-if="$ctrl.idComprobante>0" href="javascript:void(0)" ng-click="$ctrl.viewDetailInvoice()">
+                    <i class="mdi mdi-eye"></i> Ver Documento
+                </a>
+            </md-input-container>                                                                                           
+        </div>
+
+        <div layout-gt-sm="row">
+            <div flex-gt-sm>   
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Fecha Emisión</label>
+                    <input type="date" ng-model="$ctrl.data.fechaEmision" disabled>
+                </md-input-container>                                               
+            </div>
+
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Observación</label>
+                <input ng-model="$ctrl.data.concepto" disabled>
+            </md-input-container>
+        </div> 
+
+            <div ui-grid="$ctrl.gridOptions"              
+                 ui-grid-edit
+                ui-grid-resize-columns
+                ui-grid-cellNav
+                ui-grid-auto-resize
+                class="grid">
+            </div>    
+
+            <div class="row justify-content-end">          
+                <div class="col-md-3">
+                    <div class="mt-2">
+                        <button type="button" class="btn btn-secondary btn-sm btn-lg btn-block" ng-click="$ctrl.openModalInfoAdicional(true)"><i class="fas fa-info-circle text-info"></i> Dato Adicional</button>
+                    </div>
+                </div>
+            </div>               
+        
+        
+    </div>
+
+    <div class="modal-footer">      
+        <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">
+            &times; Cerrar
+        </button>
+    </div>
+</form>

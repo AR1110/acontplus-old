@@ -1,0 +1,139 @@
+﻿(function() {
+    'use strict';
+
+    angular
+        .module('acontPlusApp')
+        .controller('modeloCtrl', modeloCtrl);
+
+    modeloCtrl.$inject = ['$scope', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService'];
+
+    function modeloCtrl($scope, mS, _commonSvc, _modalSvc, _nombreModal, toast) {
+        let accion = JSON.parse(localStorage.getItem("accion"));
+        if(accion===null){
+            location.href = "/Home/Index";
+        }else{
+            $scope.accion = accion[0];
+        };
+        $scope.data = {};
+        $scope.modelo = {};
+        $scope.marca = {};
+        $scope.modelos = [];
+        $scope.marcas = [];
+        $scope.dataSearch = {
+            pageIndex: 1,
+            pageSize: 10
+        }
+        $scope.totalRecords = 0;
+        $scope.recordsQuantity = [5, 10, 25, 50, 100, 500]
+
+        $scope.getModelos = function() {
+            try {
+                showLoader();
+                mS.getData('get', '/Modelo/Get?json=' + JSON.stringify($scope.dataSearch)).then(response => {
+                    if (response.code == "0") {
+                        hideLoader();
+                        toast.toastr('warning', response.message, response.titleSms);
+                        return
+                    }
+                    $scope.modelos = JSON.parse(response.data) || [];
+                    $scope.totalRecords = $scope.modelos.length > 0 ? $scope.modelos[0].totalRecords : 0;
+                    hideLoader();
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        $scope.getModelos();
+
+        $scope.pagechanged = function() {
+            $scope.getModelos();
+        }
+
+        $scope.changePageSize = function() {
+            $scope.dataSearch.pageIndex = 1;
+            $scope.getModelos();
+        }     
+        
+        $scope.exportTableToExcel = () => {       
+            try {
+                showLoader();
+                const modelos = $scope.modelos.map(item=>({
+                    codigo: item.codigo,
+                    descripcion: item.descripcion,
+                }))                          
+                _commonSvc.exportTableToExcel({
+                    arr: modelos,
+                    fileName: 'Modelos'
+                })               
+            } catch (error) {
+                hideLoader();
+                console.log(error)
+            }
+            
+        }
+
+
+        $scope.openModalNew = async()=>{
+            const {modelo} = _nombreModal;
+            const {ModalModeloCtrl} = await import('./../../modal/' + modelo.MODAL_CTRL);
+            
+            const modalDialogRef = _modalSvc.openModalCustom({
+                controller: ModalModeloCtrl,
+                template: 'Modelo/' + modelo.MODAL_CSHTML,
+                size: 'md'
+            })             
+            modalDialogRef.result.then(result=>{
+                if(typeof result==='object'){
+                    $scope.getModelos();
+                }
+            });  
+        }
+
+        $scope.openModalEdit = async(item)=>{
+            const {modelo} = _nombreModal;
+            const {ModalModeloCtrl} = await import('./../../modal/' + modelo.MODAL_CTRL);
+            
+            const modalDialogRef = _modalSvc.openModalCustom({
+                controller: ModalModeloCtrl,
+                template: 'Modelo/' + modelo.MODAL_CSHTML,
+                size: 'md',
+                params: item
+            })     
+
+           
+            modalDialogRef.result.then(result=>{
+                if(typeof result==='object'){
+                    $scope.getModelos();
+                }
+            });  
+        }
+       
+       
+        $scope.delete = function( data ) {
+            Swal.fire({
+                icon: 'warning',
+                html: `<small>Esta seguro/a de eliminar este Modelo ahora?</small>`,
+                showConfirmButton: true,
+                confirmButtonText: 'Si, eliminar',
+                showCancelButton: true,
+                cancelButtonText: 'No, cancelar',
+                allowOutsideClick: false
+            }).then(result => {
+                if (result.value) {
+                    mS.getData('delete', '/Modelo/Delete?id=' + data.idModelo).then(response => {
+                        if (response.code == "0") {
+                            toast.toastr('warning', response.message, response.titleSms);
+                            return
+                        }
+                        if (response.code == "1") {
+                            toast.toastr('success', response.message, response.titleSms);
+                            $scope.getModelos();
+                            return
+                        }
+                    })
+                }
+            })
+        }
+        
+    }
+})();

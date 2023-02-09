@@ -1,0 +1,129 @@
+<ul class="nav nav-tabs mt-2" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#home{{$index}}" role="tab" aria-selected="false">
+            <span class="hidden-sm-up"><icon class="ti-home"></icon></span>
+            <span class="hidden-xs-down">General</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" data-toggle="tab" href="#profile{{$index}}" role="tab" aria-selected="true">
+            <span class="hidden-sm-up"><icon class=" fas fa-hand-holding-usd"></icon></span>
+            <span class="hidden-xs-down">Tarifa</span>
+        </a>
+    </li>
+</ul>
+<div class="tab-content tabcontent-border mb-2">
+    <div class="tab-pane" id="home{{$index}}" role="tabpanel">
+        <div class="p-20">
+            <div class="row">
+                <div class="col-md-3 col-xs-6 b-r">
+                    <strong>Articulo</strong>
+                    <br>
+                    <p class="text-muted">{{a.view.descripcion}}</p>
+                </div>
+                <div class="col-md-2 col-xs-6 b-r">
+                    <strong>Código</strong>
+                    <br>
+                    <p class="text-muted">{{a.view.codigo}}</p>
+                </div>
+                <div class="col-md-2 col-xs-6 b-r">
+                    <strong>Cod. Auxiliar</strong>
+                    <br>
+                    <p class="text-muted">{{a.view.codigoAuxiliar}}</p>
+                </div>
+                <div class="col-md-2 col-xs-6">
+                    <strong>T. IVA</strong>
+                    <br>
+                    <p class="text-muted">{{a.view.nombreTipoIva}}</p>
+                </div>
+                <div class="col-md-3 col-xs-6">
+                    <strong>Observación</strong>
+                    <br>
+                    <p class="text-muted">{{a.view.observaciones}}</p>
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-md-3 col-xs-6 b-r">
+                    <strong>Fraccionable</strong>
+                    <br>
+                    <p class="text-muted">
+                        <span ng-bind-html="a.view.productoFraccionable|sino"></span>
+                    </p>
+                </div>
+                <div class="col-md-2 col-xs-6 b-r">
+                    <strong>Inventario</strong>
+                    <br>
+                    <p class="text-muted">
+                        <span ng-bind-html="a.view.llevaInventario|sino"></span>
+                    </p>
+                </div>
+                <div class="col-md-2 col-xs-6 b-r">
+                    <strong>Lote</strong>
+                    <br>
+                    <p class="text-muted">{{a.view.lote}}</p>
+                </div>
+                <div class="col-md-2 col-xs-6">
+                    <strong>F. Creación</strong>
+                    <br>
+                    <p class="text-muted">
+                        {{a.view.fechaCreacion}}
+                    </p>
+                </div>
+                <div class="col-md-3 col-xs-6">
+                    <strong>F. Caducidad</strong>
+                    <br>
+                    <p class="text-muted">{{a.view.fechaCaducidad}}</p>
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-md-3 col-xs-6 b-r">
+                    <strong>Stock Máximo</strong>
+                    <br>
+                    <p class="text-muted">{{a.view.stockMaximo}}</p>
+                </div>
+                <div class="col-md-2 col-xs-6 b-r">
+                    <strong>Stock Minimo</strong>
+                    <br>
+                    <p class="text-muted">{{a.view.stockMinimo}}</p>
+                </div>
+                <div class="col-md-2 col-xs-6 b-r">
+                    <strong>P. Costo</strong>
+                    <br>
+                    <p class="text-muted">
+                    <h5>{{a.view.precioCosto|currency:'$'}}</h5>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane active p-20" id="profile{{$index}}" role="tabpanel">
+        <div class="table-responsive m-t-5">
+            <table class="table table-bordered table-striped table-sm">
+                <caption></caption>
+                <thead>
+                    <tr>
+                        <th>N°</th>
+                        <th>Tarifa</th>
+                        <th>P. Venta</th>
+                        <th>P. IVA</th>
+                        <th>%. Utilidad</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="pvp in a.tarifas">
+                        <td>{{$index+1}}</td>
+                        <td>{{pvp.tarifa}}</td>
+                        <td>{{pvp.precioVenta}}</td>
+                        <td>{{pvp.precioConIva}}</td>
+                        <td>{{pvp.porcentajeUtilidad}}</td>
+                        <td>{{pvp.precioPredeterminado?'Predeterminada':''}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="tab-pane p-20" id="messages" role="tabpanel">3</div>
+</div>

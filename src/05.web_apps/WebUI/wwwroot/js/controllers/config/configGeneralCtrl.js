@@ -1,0 +1,230 @@
+app.controller("configGeneralCtrl", configGeneralCtrl);
+
+configGeneralCtrl.$inject=['$timeout', '$q', 'mainService', '$scope', 'commonService','modalService', 'nombreModal'];
+
+function configGeneralCtrl($timeout, $q, _mS, $scope, _commonSvc, _modalSvc, _nombreModal){
+    let accion = JSON.parse(localStorage.getItem("accion"));
+    if(accion===null){
+        location.href = "/Home/Index";
+    }else{
+        $scope.accion = accion[0];
+    }
+            
+    $scope.data = {};
+    $scope.decimales = [2,3,4,5];
+
+    $scope.initiload = async()=>{ 
+        showLoader();
+        const results = await Promise.all([
+            _commonSvc.getGestionAlmacen(),
+            _commonSvc.getModuloDecimal(),
+            _commonSvc.getGestionSistema(),
+            _mS.getData('get','/TipoIva/OptionTipoIva').then(response=>response.data),
+            _mS.getData('get','/ConfigVentaDetalle/Get').then(response =>response.data),
+            _mS.getData('get','/NotificacionEntidad/Get?json=' + JSON.stringify({})).then(response=>JSON.parse(response.data)),
+        ])  
+        const {valoracionMetodos}  = results[0];
+        $scope.valoracionMetodos =  valoracionMetodos;        
+
+        const moduloDecimales = results[1];
+        $scope.decimalAlmacen = moduloDecimales[0][0],
+        $scope.decimalCompra  = moduloDecimales[1][0],
+        $scope.decimalVenta   = moduloDecimales[2][0];   
+
+        $scope.gestionSistema = results[2][0];
+        $scope.searchText     = $scope.gestionSistema.nombreFiscal; //Buscar Cliente 
+        $scope.searchTextArticle = $scope.gestionSistema.descripcion;
+        
+        $scope.tipoIvas       = results[3];
+        $scope.configDetalle  = results[4];
+        $scope.entidadNotificaciones = results[5];                      
+        hideLoader();
+        $scope.$apply(); 
+    }
+
+    $scope.initiload();
+
+
+    //------------------------Cliente-------------------------------------------------
+    $scope.searchTextChange = (textSearch)=>{
+        if(textSearch===null || textSearch===undefined || textSearch===""){
+            $scope.gestionSistema.idCliente = 0;
+        }
+    }
+    $scope.searchCustomer = function(textSearch){    
+        if(textSearch===null || textSearch===undefined || textSearch==="") return
+        return _commonSvc.clienteSearch(textSearch);
+    }
+
+    $scope.selectedItemChangeCliente = function(item){   
+        if(!item) return
+        $scope.gestionSistema.idCliente = item.idCliente;                                                                          
+    }
+
+    //---------------------------------Articulo---------------------------
+    $scope.searchTextChangeArticle = (textSearch)=>{
+        if(textSearch===null || textSearch===undefined || textSearch===""){            
+            $scope.gestionSistema.idArticulo = 0;
+        }
+    }
+
+    $scope.searchArticle = async(textSearch)=>{
+        let results = _commonSvc.articuloSearchGeneral({
+            textSearch,
+            condicion: false
+        })
+       
+        let deferred = $q.defer();
+        $timeout(()=> { 
+            deferred.resolve(results); 
+        }, Math.random() * 1000, false);
+        return deferred.promise; 
+    }
+
+    $scope.selectedItemChangeArticle = (item)=>{
+        if(!item) return        
+        $scope.gestionSistema.idArticulo = item.idArticulo;
+    }
+
+    $scope.editArticle = async()=>{
+        if(!$scope.gestionSistema.idArticulo || $scope.gestionSistema.idArticulo ===0){
+            toastr.warning('Seleccione el Artículo');
+            return
+        }
+        const {MODAL_CTRL, MODAL_NUEVO_CSHTML} = _nombreModal.articulo
+        const {ModalArticuloCtrl} = await import('./../../modal/' + MODAL_CTRL);
+        
+        const modalDialogRef = _modalSvc.openModalCustom({
+            controller: ModalArticuloCtrl,
+            template: 'Articulo/' + MODAL_NUEVO_CSHTML,
+            size: 'xl',
+            params: { 
+                idArticulo: $scope.gestionSistema.idArticulo
+            }
+        })        
+    }
+
+    
+    //------------------------------------CONFIGURACION DE SISTEMA---------------
+    $scope.updateConfigSistema= async()=>{            
+        if(!$scope.gestionSistema.taxesDefault || $scope.gestionSistema.idTipoIva<0){
+            toastr.warning("El Tipo IVA es requerido");
+            return
+        }
+        if($scope.gestionSistema.taxesDefault && !$scope.gestionSistema.idTipoIva){
+            toastr.warning('Seleccione el Tipo IVA');
+            return
+        }
+
+        if($scope.gestionSistema.llevaInventario && !$scope.gestionSistema.idMetodoValoracion){
+            toastr.warning('Seleccione el Método de Valoración');
+            return
+        }else if(!$scope.gestionSistema.llevaInventario){
+            $scope.gestionSistema.idMetodoValoracion = 0;
+        }
+
+
+        if($scope.gestionSistema.customerDefault && (!$scope.gestionSistema.idCliente|| $scope.gestionSistema.idCliente==0)){
+            toastr.warning('Seleccione el Cliente');
+            return
+        }else if(!$scope.gestionSistema.customerDefault){
+            $scope.gestionSistema.idCliente = 0;
+        }
+
+        if($scope.gestionSistema.articleDefault && (!$scope.gestionSistema.idArticulo || $scope.gestionSistema.idArticulo===0)){
+            toastr.warning('Seleccione el Artículo');
+            return
+        }else if(!$scope.gestionSistema.articleDefault){
+            $scope.gestionSistema.idArticulo = 0;
+        }
+
+        
+
+    
+        let {isConfirmed} = await Swal.fire({
+            icon:'warning',
+            html:`<small>Desea Actualizar la Configuración del Sistema?</small>`,
+            showConfirmButton: true,
+            confirmButtonText:'Si, actualizar',
+            showCancelButton:true,
+            cancelButtonText:'No, cancelar',
+            allowOutsideClick: false
+        })
+        
+        if(isConfirmed){      
+            const data = Object.assign({}, $scope.gestionSistema);
+            data.llevaInventario = data.llevaInventario?'SI':'NO'            
+            const response = await _mS.getData('put', '/GestionSistema/Put?id=' + $scope.gestionSistema.idGestionSistema, data);            
+            
+            if(response.code=="0"){
+                toastr.warning(response.message, response.titleSms, {positionClass: 'toast-bottom-center'})                    
+            }
+            if(response.code==="1"){
+                $scope.initiload();
+                toastr.success(response.message, response.titleSms, {positionClass: 'toast-bottom-center'})
+            }
+        }        
+    }
+    
+
+
+    //---------------------------------------CONFIGURACIÓN DE DECIMALES------------------------------------
+    $scope.updateModuloDecimal = async()=>{
+        let {isConfirmed} = await Swal.fire({
+            icon:'warning',
+            html:`<small>Desea Actualizar los decimales generales ahora?</small>`,
+            showConfirmButton: true,
+            confirmButtonText:'Si, actualizar',
+            showCancelButton:true,
+            cancelButtonText:'No, cancelar',
+            allowOutsideClick: false
+        })
+
+        if(isConfirmed){
+            const moduloDecimales = [$scope.decimalAlmacen, $scope.decimalCompra, $scope.decimalVenta];
+            const response = await _mS.getData('put','/CantidadDecimal/Update?json=' + JSON.stringify(moduloDecimales))                                          
+            if(response.id==='0'){
+                toastr.warning(response.message, response.titleSms, {positionClass: 'toast-bottom-center'})
+            }
+            if(response.id==='1'){
+                $scope.initiload();
+                toastr.success(response.message, response.titleSms, {positionClass: 'toast-bottom-center'})
+            }           
+        }
+    }
+    
+
+    
+    //---------------------------------------CONFIGURACIÓN DE MOSTRAR COLUMNAS EN DETALLE VENTA ------------------------------------
+    $scope.updateConfigShowDetalle= async()=>{
+        const response = await _mS.getData('put', '/ConfigVentaDetalle/Put', $scope.configDetalle);
+        if (response.id == "0") {
+            toastr.warning(response.message, response.titleSms, {positionClass: 'toast-bottom-center'})
+            return
+        }
+        if (response.id == "1") {
+            $scope.initiload();                
+            toastr.success(response.message, response.titleSms, {positionClass: 'toast-bottom-center'})
+        }
+    }
+
+
+
+    $scope.updateNotificacion = async()=>{
+        let response = await _mS.getData('put', '/NotificacionEntidad/Update?json=' + JSON.stringify($scope.entidadNotificaciones));       
+        if(response.id==='0'){
+            toastr.warning(response.message, response.titleSms, {positionClass: 'toast-bottom-center'})
+        }
+        if(response.id==='1'){
+            $scope.initiload();
+            toastr.success(response.message, response.titleSms, {positionClass: 'toast-bottom-center'});
+        }
+    }
+
+
+
+
+
+
+}
+

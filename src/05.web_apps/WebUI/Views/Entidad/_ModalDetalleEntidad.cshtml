@@ -1,0 +1,71 @@
+<div id="detalle" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="vcenter" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <strong class="mr-auto">Detalle Entidad</strong>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-condensed table-sm">
+                        <tbody>
+                            <tr>
+                                <td class="w-col-3"> <strong>RUC</strong></td>
+                                <td>: <b>{{data.ruc}}</b></td>
+                            </tr>
+                            <tr>
+                                <td class="w-col-3"><strong>Nombre Fiscal</strong></td>
+                                <td>: {{data.razonSocial}} </td>
+                            </tr>
+                            <tr>
+                                <td class="w-col-3"> <strong>Nombre Comercial</strong></td>
+                                <td>: {{data.nombreComercial}}</td>
+                            </tr>
+                            <tr>
+                                <td class="w-col-3"> <strong>Contribuyente</strong></td>
+                                <td>: {{data.subContribuyente}}</td>
+                            </tr>
+                            <tr>
+                                <td class="w-col-3"><strong>N° Contribuyente</strong></td>
+                                <td>: {{data.nroContribuyenteEspecial}}</td>
+                            </tr>
+                            <tr>
+                                <td class="w-col-3"><strong>Obligado Llevar Contabilidad</strong></td>
+                                <td ng-bind-html="data.obligadoLlevarContabilidad|sino"></td>
+                            </tr> 
+                             <tr>
+                                <td class="w-col-3"><strong>Año Fiscal</strong></td>
+                                <td>: {{data.anioFiscal}}</td>
+                            </tr>                           
+                            <tr>
+                                <td class="w-col-3"> <strong>Provincia</strong></td>
+                                <td>: {{ciudad.provincia.descripcion}}</td>
+                            </tr>
+                            <tr>
+                                <td class="w-col-3"> <strong>Ciudad</strong></td>
+                                <td>: {{data.ciudad}}</td>
+                            </tr>
+
+                            <tr>
+                                <td class="w-col-3"> <strong>Dirección</strong></td>
+                                <td>: {{data.direccion}}</td>
+                            </tr>
+                            <tr>
+                                <td class="w-col-3"> <strong>Teléfono</strong></td>
+                                <td>: {{data.telefono}}</td>
+                            </tr>
+                            <tr>
+                                <td class="w-col-3"> <strong>Email</strong></td>
+                                <td>: {{data.email}}</td>
+                            </tr>
+                            <tr>
+                                <td class="w-col-3"> <strong>Estado</strong></td>
+                                <td ng-bind-html="data.estado | estadoPrimario"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>

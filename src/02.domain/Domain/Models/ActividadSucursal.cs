@@ -1,0 +1,16 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Domain.Models
+{
+    public class ActividadSucursal
+    {
+        public int idActividadSucursal { get; set; }
+        public int idSucursal { get; set; }
+        public int idActividadEmpresa { get; set; }
+        public bool estado { get; set; }
+    }
+}

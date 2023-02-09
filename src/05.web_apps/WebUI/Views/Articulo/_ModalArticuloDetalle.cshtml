@@ -1,0 +1,239 @@
+<div class="modal-header">
+    <h5 class="modal-title">Detalle Artículo </h5>
+    <button class="close" ng-click="$ctrl.closeModal()">&times;</button>
+</div>
+
+<div class="modal-body">
+    <div class="row">
+        @* <div class="col-lg-6">
+            <div class="card border-info">
+                <div class="card-header bg-info">
+                    <h4 class="m-b-0 text-white">Datos del Artículo </h4>
+                </div>
+                <div class="card-body shadow">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                <label for="">Descripción</label><br>
+                                <span class="text-muted">{{$ctrl.data.descripcion}}</span>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                <label for="">SubFamilia</label>
+                                <select class="form-control border-select" disabled ng-model="$ctrl.data.idSubFamilia" ng-change="$ctrl.getArticuloCodigo()"
+                                        ng-options="sf.idSubFamilia as sf.subFamilia group by sf.familia  for sf in $ctrl.subFamilias">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                            <div class="form-group">
+                                <label for="">Código</label>
+                                <input type="text" class="form-control" ng-model="$ctrl.data.codigo" disabled>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                            <div class="form-group">
+                                <label for="">Código Aux:</label>
+                                <input type="text" class="form-control" ng-model="$ctrl.data.codigoAuxiliar" disabled>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                            <div class="form-group">
+                                <label for="">Código de Barra:</label>
+                                <input type="text" class="form-control" ng-model="$ctrl.data.codigoBarra" disabled>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                <label for="">Tipo Artículo: </label>
+                                <select class="form-control" ng-model="$ctrl.data.idTipoArticulo" disabled>
+                                        <option ng-value="item.idTipoArticulo" ng-repeat="item in $ctrl.tipoArticulos">{{item.descripcion}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                <label for="">Medida</label>
+                                <select class="form-control"  ng-model="$ctrl.data.idMedida" disabled>
+                                        <option ng-value="item.idMedida" ng-repeat="item in $ctrl.medidas">{{item.descripcion}}</option>
+                                </select>
+                            </div>
+                        </div>                       
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                <label>Adicionales: </label>
+                                <div class="icheck-primary">
+                                    <input type="checkbox" id="datosAdicionalesDetalle" disabled name="datosAdicionalesDetalle" ng-model="$ctrl.data.datosAdicionales" />
+                                    <label for="datosAdicionalesDetalle"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                <label for="">Fraccionable: </label>
+                                <div class="icheck-primary">
+                                    <input type="checkbox" id="productoFraccionableADetalle" disabled name="productoFraccionableADetalle" ng-model="$ctrl.data.productoFraccionable" />
+                                    <label for="productoFraccionableADetalle"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                <label for="">Llevar Inventario: </label>
+                                <div class="icheck-primary">
+                                    <input type="checkbox" id="llevaInventarioDetalle" disabled name="llevaInventarioDetalle" ng-model="$ctrl.data.llevaInventario" />
+                                    <label for="llevaInventarioDetalle"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                <label for="">Tipo Iva</label>
+                                <select class="form-control" ng-model="$ctrl.data.idTipoIva" disabled>
+                                    <option ng-value="item.idTipoIva" ng-repeat="item in $ctrl.tipoIvas">{{item.descripcion}}</option>
+                                </select>
+                            </div>
+                            
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                <label for="">Precio Costo</label>
+                                <input type="text" ng-model="$ctrl.data.precioCosto" class="form-control" disabled>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                <label for="">Estado: </label>
+                                <div class="icheck-primary">
+                                    <input type="checkbox" id="estado" disabled name="estado" ng-model="$ctrl.data.estado" />
+                                    <label for="estado"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12" ng-if="$ctrl.data.datosAdicionales">
+                            <div class="form-group">
+                                <label>Actividades: </label>
+                                <select ng-model="$ctrl.data.idActividad" disabled class="form-control">
+                                    <option ng-value="item.idActividadEtiqueta" ng-repeat="item in $ctrl.actividades">{{item.descripcion}}</option>
+                                </select>  
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                            <div class="form-group">
+                                <label for="">Marca: </label>                            
+                                <select class="form-control" disabled ng-model="$ctrl.data.idMarca">
+                                        <option ng-value="item.idMarca" ng-repeat="item in $ctrl.marcas">{{item.descripcion}}</option>                                        
+                                </select>                                
+                            </div> 
+                        </div>
+
+                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                            <div class="form-group">
+                                <label for="">Modelo: </label>                           
+                                <select class="form-control" disabled ng-model="$ctrl.data.idModelo"
+                                        ng-options="m.modelo.idModelo as m.modelo.descripcion group by m.nombreMarca for m in $ctrl.modelos">
+                                </select>                                
+                            </div>
+                        </div>
+
+                        <div class=" col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                            <div class="form-group">
+                                <label for="">ICE: </label>
+                                <select class="form-control" disabled ng-model="$ctrl.data.idTipoIce">
+                                        <option ng-value="item.idTipoIce" ng-repeat="item in $ctrl.tipoIces">{{item.descripcion}}</option>
+                                </select>
+                            </div>
+                        </div>                      
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4 col-md-3 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                <label>Stock Mínimo: </label>
+                                <input type="text" class="form-control" disabled value="1" ng-model="$ctrl.data.stockMinimo" valid-number placeholder="0">
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-3 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                <label for="">Stock Máximo: </label>
+                                <input type="text" class="form-control" disabled value="2" ng-model="$ctrl.data.stockMaximo" valid-number placeholder="0">
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-3 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                <label for="">Observación: </label>
+                                <textarea name="textarea" ng-model="$ctrl.data.observaciones" disabled class="form-control"></textarea>
+                            </div>
+                        </div>
+                    </div>                   
+                </div>
+            </div>
+        </div> *@
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header bg-info">
+                    <h4 class="m-b-0 text-white">Tarifas</h4>
+                </div>
+                <div class="card-body shadow">
+                    <div ui-grid="$ctrl.gridOptions" 
+                        ui-grid-resize-columns
+                        ui-grid-cellNav
+                        ui-grid-auto-resize class="grid"></div> 
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-success">
+                    <h4 class="m-b-0 text-white">Ubicación</h4>
+                </div>
+                <div class="card-body shadow">
+                    <div class="table-responsive">
+                        <table class="table table-condensed table-sm">
+                            <thead>
+                                <tr>
+                                    <th>N°</th>
+                                    <th>Bodega</th>
+                                    <th>Ubicación</th>                                  
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="item in $ctrl.articuloUbicaciones">
+                                    <td>{{$index+1}}</td>
+                                    <td>{{item.descripcion}}</td>
+                                    <td>{{item.ubicacion}}</td>                                    
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>                                      
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">
+        &times; Cerrar
+    </button>
+</div>

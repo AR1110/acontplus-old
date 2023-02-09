@@ -1,0 +1,140 @@
+<style>
+    /* Angular Material Overrides */
+    .md-select-menu-container, md-backdrop {
+        z-index: 9999 !important;
+    }
+    
+
+    .autocomplete-standard-template .md-autocomplete-suggestion{
+        border-bottom: 1px solid #ccc; 
+        height: auto;      
+        @* white-space: normal; *@
+    }
+    
+    .autocomplete-standard-template .md-autocomplete-suggestion:last-child {
+        border-bottom-width: 0;
+    }
+    .autocomplete-standard-template .item-desc {
+        font-size: 10px;
+        margin: 0.8em 0 .8em;
+        max-width: 400px;
+    }
+    .standard-container {
+        width: 300px;
+    }
+    .instance-wrapper {
+        padding: 0 0px;
+    }
+</style>
+
+<form  autocomplete="off" ng-submit="$ctrl.onSave()">    
+    <div class="modal-header bg-success text-white">
+        <h5 class="modal-title">Nuevo Retención de Compra</h5>
+        <button type="button" class="close" ng-click="$ctrl.closeModal()">&times;</button>
+    </div>
+
+
+    <div class="modal-body">
+        <div layout-gt-sm="row">
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Estab.:</label>
+                <md-select name="type" ng-model="$ctrl.data.codEstab" ng-change="$ctrl.onChangeSucursal()">                    
+                    <md-option ng-value="item.codEstab" ng-repeat="item in $ctrl.establecimientos">{{item.nombreComercial}}</md-option>
+                </md-select>
+            </md-input-container>
+
+            <md-input-container class="md-block" flex-gt-sm>             
+                <label>Punto Emisión</label>
+                <md-select ng-model="$ctrl.data.idPuntoEmision">
+                    <md-option ng-value="item.idPuntoEmision" ng-repeat="item in $ctrl.puntosEmision">
+                        {{item.ptoEmi}}
+                    </md-option>                
+                </md-select>           
+            </md-input-container>                                              
+        </div>
+
+        <div layout-gt-sm="row">                                                                                                                       
+            <div flex-gt-sm>
+                <md-autocomplete-proveedor 
+                selected-item-proveedor="$ctrl.selectedItemProveedor(item)" search="$ctrl.searchProveedorOptions"></md-autocomplete-proveedor>                               
+            </div>            
+            <md-input-container class="md-block" flex-gt-xs>
+                <label>Nro. Identificación</label>
+                <input ng-model="$ctrl.proveedor.numeroIdentificacion" disabled>
+            </md-input-container>                       
+
+            <div flex-gt-sm>
+                <md-autocomplete                   
+                    md-input-name="autocompleteField"  
+                    md-autofocus 
+                    md-autoselect            
+                    md-min-length="0"                   
+                    md-no-cache="$ctrl.noCache"
+                    md-selected-item="$ctrl.selectedItem"
+                    md-search-text-change="$ctrl.searchTextChangeInvoice($ctrl.searchTextInvoice)"
+                    md-selected-item-change="$ctrl.selectedItemInvoice(item)"
+                    md-search-text="$ctrl.searchTextInvoice"
+                    md-items="item in $ctrl.querySearchInvoice($ctrl.searchTextInvoice)"
+                    md-item-text="item.nroDocumento"
+                    md-escape-options="clear"                    
+                    md-floating-label="{{$ctrl.facturas.length}} Facturas"
+                    input-aria-describedby="Facturas">
+                    <md-item-template>
+                        <span md-highlight-text="$ctrl.searchTextInvoice">{{item.nroDocumento}}</span>
+                    </md-item-template>
+                    <a class="btn btn-success btn-sm mt-1" href="javascript:void(0)" ng-if="$ctrl.showBtnCreateInvoiceFast" ng-click="$ctrl.openModalInvoiceFast()">
+                        <i class="mdi mdi-plus"></i> Nueva Factura
+                    </a>
+                    <a class="btn btn-info btn-sm mt-1" href="javascript:void(0)" ng-click="$ctrl.refreshDetailRetencion()">
+                        <i class="mdi mdi-reload"></i> Recargar
+                    </a>
+                    <a class="btn btn-secondary btn-sm mt-1" ng-if="$ctrl.idComprobante>0" href="javascript:void(0)" ng-click="$ctrl.viewDetailInvoice()">
+                        <i class="mdi mdi-eye"></i> Ver Documento
+                    </a>
+                </md-autocomplete>                                             
+
+            </div>                                                                     
+        </div>
+
+        <div layout-gt-sm="row">
+            <div flex-gt-sm>   
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Fecha Emisión</label>
+                    <input type="date" ng-model="$ctrl.data.fechaEmision" class="form-control select-border">
+                </md-input-container>                                               
+            </div>
+
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Observación</label>
+                <input ng-model="$ctrl.data.concepto">
+            </md-input-container>
+        </div> 
+
+            <div ui-grid="$ctrl.gridOptions"
+                ui-grid-edit
+                ui-grid-resize-columns
+                ui-grid-cellNav
+                ui-grid-auto-resize
+                class="grid">
+            </div>    
+
+            <div class="row justify-content-end">          
+                <div class="col-md-3">
+                    <div class="mt-2">
+                        <button type="button" class="btn btn-secondary btn-sm btn-lg btn-block" ng-click="$ctrl.openModalInfoAdicional()"><i class="fas fa-info-circle text-info"></i> Dato Adicional</button>
+                    </div>
+                </div>
+            </div>               
+        
+        
+    </div>
+
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-success">
+            <i class="ti-save"></i> Guardar
+        </button>
+        <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">
+            &times; Cerrar
+        </button>
+    </div>
+</form>

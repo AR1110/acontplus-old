@@ -1,0 +1,20 @@
+<input  type="text" 
+        class="form-control" 
+        ng-model="dataUsuarioFilter.nombreCompleto"
+        ng-keyup="onKeyupUsuarioSearchFilter()"
+        uib-typeahead="u as u.nombreCompleto for u in usuarioSearch($viewValue)"
+        typeahead-editable="false" placeholder="Buscar Usuario" autocomplete="off"
+        typeahead-template-url="usuarioSearchFilterTemplate.html"
+        typeahead-no-results="dataUsuarioFilter.noResults"
+        typeahead-on-select="selectedUsuarioSearchFilter($item)">
+
+        <script type="text/ng-template" id="usuarioSearchFilterTemplate.html">
+            <div class="autocomplete-suggestion-uib-typeahead">
+                <span class="item-title">
+                    {{match.model.nombreCompleto}}</b>
+                </span>
+            </div>
+        </script>
+                
+        <span class="ml-5" ng-if="dataUsuarioFilter.loading"> <i class="fas fa-sync-alt fa-xs"></i> Loading...</span>
+        <small class="text-danger ml-5" ng-if="dataUsuarioFilter.noResults">No se encontraron resultados</small>

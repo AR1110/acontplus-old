@@ -1,0 +1,22 @@
+/* You can add global styles to this file, and also import other style files */
+@import "@angular/material/prebuilt-themes/indigo-pink.css";
+@import '~ngx-toastr/toastr';
+
+table{
+    width:100%;
+  }
+
+.mat-radio-button ~ .mat-radio-button {
+  margin-left: 16px;
+}
+
+
+input.webkit-outer-spin-button::-webkit-outer-spin-button,
+input.webkit-outer-spin-button::-webkit-inner-spin-button {
+  display: none;
+}
+
+input.webkit-outer-spin-button {
+  -moz-appearance: textfield;
+}
+

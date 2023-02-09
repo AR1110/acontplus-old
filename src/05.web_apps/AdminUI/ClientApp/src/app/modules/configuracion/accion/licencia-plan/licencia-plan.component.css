@@ -1,0 +1,13 @@
+.licencia-header {
+  background-color: #1e88e5;
+}
+
+
+.mat-card .mat-card-header {
+  padding: 12px;
+  border-radius: 4px 4px 0 0;
+}
+
+.mat-card-title{
+  font-size: 15px!important;
+}

@@ -1,0 +1,90 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+<div ng-controller="articuloFraccionableCtrl as $ctrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Articulos Fraccionables</h4>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+                <!--<ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/Home/Index">Inicio</a></li>
+                    <li class="breadcrumb-item"><a href="javascript:void(0)">Almacen</a></li>
+                    <li class="breadcrumb-item active">Articulo Fraccionable</li>
+                </ol>-->
+                <button type="button" class="btn btn-info m-l-15" ng-if="$ctrl.accion.crear" ng-click="$ctrl.openModal()"><i class="fa fa-plus-circle"></i> Nuevo</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <md-toolbar class="md-table-toolbar md-default">
+                <div class="md-toolbar-tools">
+
+                    <div class="col-lg-9 col-md-9 col-sm-1">
+                       
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                        <form class="form-material">
+                            <input type="text" class="form-control" ng-model="$ctrl.buscarText"  placeholder="Buscar Articulo" />
+                        </form>
+                    </div>
+                </div>
+            </md-toolbar>
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th ng-if="$ctrl.accion.editar || $ctrl.accion.eliminar">Op.</th>
+                                    <th>N°</th>
+                                    <th>Articulo</th>
+                                    <th>Conversión</th>
+                                    <th>Medida</th>
+                                    <th>Gestión</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="af in $ctrl.articuloFraccionados | filter: $ctrl.buscarText">
+                                    <td ng-if="$ctrl.accion.editar || $ctrl.accion.eliminar">
+                                        <div class="row justify-content-center">
+                                            <button type="button" class="btn btn-info btn-sm" ng-if="$ctrl.accion.editar" ng-click="$ctrl.openModal(af)"><i class="ti-pencil"></i></button>
+                                            <button type="button" class="btn btn-danger btn-sm ml-1" ng-if="$ctrl.accion.eliminar" ng-click="$ctrl.askToDelete(af)"><i class="ti-trash"></i></button>
+                                        </div>                                      
+                                    </td>
+                                    <td>{{$index+1}}</td>                                     
+                                    <td ><b class="text-primary">{{af.articulo}}</b></td>
+                                    <td >{{af.conversion}}</td>
+                                    <td >
+                                        {{af.medida}}
+                                    </td>
+                                    <td>
+                                        <span class="label" ng-class="af.gestionVenta? 'label-success':'label-info'">
+                                            {{af.fraccionado.gestionVenta?'Venta':'Compra'}}
+                                        </span>
+                                    </td>
+                                    <td ng-bind-html="af.estado | estadoPrimario"></td>
+                                    
+                                </tr>
+                                <tr class="text-center" ng-show="$ctrl.articuloFraccionados.length===0">
+                                   <td colspan="7">No hay registros :)</td> 
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{    
+    <script type="module" src="~/js/controllers/almacen/articuloFraccionableCtrl.min.js" asp-append-version="true"></script>
+}
+
+
+

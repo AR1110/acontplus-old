@@ -1,0 +1,11 @@
+USE AcontPlus
+IF OBJECT_ID(N'Compra.FormaPago', N'U') IS NOT NULL
+DROP TABLE Compra.FormaPago 
+GO
+CREATE TABLE Compra.FormaPago(
+idFormaPago INT NOT NULL PRIMARY KEY IDENTITY(1,1)
+,idDocumento INT NOT NULL
+,codDoc VARCHAR(2) NOT NULL
+,formaPago VARCHAR(2) NOT NULL
+,total NUMERIC(18,5) NOT NULL
+)

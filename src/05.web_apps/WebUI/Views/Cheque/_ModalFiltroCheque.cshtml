@@ -1,0 +1,106 @@
+<div id="modalFiltroCobroPosf" class="modal fade" role="dialog" tabindex="-1" data-backdrop="static">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form autocomplete="off">
+                <div class="modal-header">
+                    <h5 class="modal-title">Busqueda</h5>
+                    <button class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">  
+                    <div class="row justify-content-between">                        
+                        <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                            <div class="icheck-info">
+                                <input type="checkbox" ng-model="dataSearch.checkBoxFecha" id="checkboxFechaFilter" ng-change="onChangeFechaFiltro()">
+                                <label for="checkboxFechaFilter">Fecha</label>
+                            </div>  
+                        </div> 
+                        
+                        <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                            <div class="icheck-info">
+                                <input type="checkbox" ng-model="dataSearch.checkBoxGestion" id="checkboxClaseFilter" class="form-control">
+                                <label for="checkboxClaseFilter">Gestión (Cobros/Pagos)</label>
+                            </div>  
+                        </div> 
+
+                        <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                            <div class="icheck-info">
+                                <input type="checkbox" ng-model="dataSearch.checkBoxPosfechado" id="checkboxPosfechadoFilter" class="form-control">
+                                <label for="checkboxPosfechadoFilter">PosFechado</label>
+                            </div>  
+                        </div>                      
+                    </div> 
+                    <hr> 
+
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                <label for="">Estab.:</label>
+                                <select name="" id="" ng-model="dataSearch.codEstab" class="form-control border-select">
+                                    <option ng-value="item.codEstab" ng-repeat="item in establecimientos">{{item.nombreComercial}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" ng-if="dataSearch.checkBoxFecha">
+                        <div class="col-lg-4 col-md-4 col-sm-12">
+                            <div class="form-group">
+                                <label class="control-label">Mes: </label>
+                                <select ng-model="mes" class="form-control" ng-change="getFechaInicioFinFilter(mes)">
+                                    <option ng-value="m.numero" ng-repeat="m in meses">{{m.nombre}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-12">
+                            <div class="form-group">
+                                <label>Fecha Inicio:</label>
+                                <input type="date" class="form-control border-select" name="fechaInicio" ng-model="dataSearch.fechaInicio"/>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-12">
+                            <div class="form-group">
+                                <label>Fecha Fin:</label>
+                                <input type="date" class="form-control border-select" name="facheFin" ng-model="dataSearch.fechaFin"  />
+                            </div>
+                        </div>
+                    </div> 
+
+                    <div class="row">    
+                         <div class="col-lg-3" ng-if="dataSearch.checkBoxGestion">
+                            <div class="form-group">
+                                <label for="clase">Clase</label>
+                                <select class="form-control border-select" ng-change="onChangeGestion()"  ng-model="dataSearch.byGestion">
+                                    <option ng-value="c.id" ng-repeat="c in clases">{{c.nombre}}</option>                                   
+                                </select>
+                            </div>                            
+                        </div>                                           
+                        <div class="col-lg-6" ng-if="dataSearch.checkBoxGestion">
+                            <div ng-show="dataSearch.byGestion===1">
+                                @await Html.PartialAsync("~/Views/Cliente/_ClienteAutocompleteFiltro.cshtml")                                
+                            </div>
+                            <div ng-show="dataSearch.byGestion===2">
+                                @await Html.PartialAsync("~/Views/Proveedor/_ProveedorAutocompleteFiltro.cshtml")                            
+                            </div>
+                        </div> 
+                        <div class="col-lg-3" ng-if="dataSearch.checkBoxPosfechado">
+                            <div class="form-group">
+                                <label for="clase">PosFechado</label>
+                                <md-radio-group ng-model="dataSearch.byPosfechado" aria-labelledby="Posfechado">                                    
+                                    <md-radio-button ng-value="true">SI</md-radio-button>
+                                    <md-radio-button ng-value="false">NO</md-radio-button>
+                                </md-radio-group>
+                            </div>
+                        </div>                                                                
+                    </div>
+                    
+                     
+                                                                      
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-info" ng-click="buscar()"><i class="fa fa-search"></i> Buscar</button>
+                    <button type="button" class="btn btn-dark" data-dismiss="modal">&times; Cerrar</button>                
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

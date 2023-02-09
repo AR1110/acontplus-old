@@ -1,0 +1,97 @@
+<form ng-submit="$ctrl.saveUpdate()" autocomplete="off">
+    <div class="modal-header">
+        <h5 class="modal-title">{{$ctrl.tipoRegistro==1?'Nuevo':'Editar'}} Entidad</h5>
+        <button type="button" class="close" ng-click="$ctrl.closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">                
+        <div class="row">
+            <div class="col-lg-12"> 
+                <div class="form-group">
+                    <label for="ruc">Ruc <span class="text-danger">*</span></label>
+                    <input type="text" id="ruc" name="ruc" ng-class="$ctrl.typeNotify" placeholder="Ej. 1450152325001" ng-model="$ctrl.data.ruc" ng-keyup="$ctrl.validarRuc()" maxlength="13" valid-number class="form-control border-select">
+                    <small class="invalid-feedback">{{$ctrl.message}}</small>
+                    <small class="valid-feedback">{{$ctrl.message}}</small>
+                </div>
+            </div>          
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <label for="razonSocial">Razón Social 
+                        <span tooltip-placement="top" uib-tooltip="Nombre oficial y legal de la Persona Natural o Juridica ">
+                            <i class="fas fa-info-circle"></i></span> <span class="text-danger">*</span>
+                        </span>    
+                    </label>             
+                    <input type="text" ng-model="$ctrl.data.razonSocial" touppercase placeholder="CORREA CALLE MARTHA MARICELA" class="form-control border-select" touppercase id="razonSocial">                                    
+                </div>
+            </div>                        
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <label for="nombreComercial">Nombre Comercial 
+                        <span tooltip-placement="top" uib-tooltip="Nombre de la Persona Natural o Juridica para el ejercicio de Actividades Economicas">
+                            <i class="fas fa-info-circle"></i></span> <span class="text-danger">*</span>
+                        </span>
+                    </label>
+                    <input type="text" ng-model="$ctrl.data.nombreComercial" touppercase placeholder="VENTA AL POR MAYOR DE COMPUTADORAS Y EQUIPO PERIFÉRICO" class="form-control border-select" touppercase id="nombreComercial">
+                </div>
+            </div>                        
+        </div>                   
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="direccion" class="text-muted">Dirección </label>
+                    <input ng-model="$ctrl.data.direccion" id="direccion" touppercase class="form-control border-select">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group ">
+                    <label for="email" class="text-muted">Correo</label>
+                    <input type="text" ng-model="$ctrl.data.email" tolowercase validate-email class="form-control border-select" id="email" placeholder="example@gmail.com">
+                    <small class="invalid-feedback">Por favor, ingrese un correo electrónico válido.</small>
+                    <small class="valid-feedback">Correo Electrónico válido.</small>
+                </div>
+            </div>                        
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label for="celular" class="text-muted">Teléfono: </label>
+                    <input type="tel" class="form-control border-select" placeholder="0959889752" ng-model="$ctrl.data.telefono" valid-number maxlength="10" id="celular">
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label for="ciudad" class="text-muted"> Ciudad :</label>
+                    <select class="form-control border-select" ng-model="$ctrl.data.idCiudad" id="ciudad"
+                            ng-options="cp.idCiudad as cp.descripcion group by cp.provincia.descripcion for cp in $ctrl.ciudadPronvincias">
+                    </select>
+                </div>
+            </div>  
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12 col-md-12">
+                <div ng-if="$ctrl.tipoRegistro===2">
+                    <label for="">Estado</label><br>
+                    <div class="icheck-emerland icheck-inline">
+                        <input type="radio" id="chb1" ng-value="true" ng-model="$ctrl.data.estado" name="estadoEntidad"/>
+                        <label for="chb1">Activo</label>
+                    </div>
+                    <div class="icheck-alizarin icheck-inline">
+                        <input type="radio" id="chb2" ng-value="false" ng-model="$ctrl.data.estado" name="estadoEntidad" />
+                        <label for="chb2">Inactivo</label>
+                    </div>
+                </div>
+            </div>
+        </div>                     
+    </div>
+
+
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-success">
+            <i class="{{$ctrl.tipoRegistro==1?'ti-save':'fa fa-edit'}}"></i> {{$ctrl.tipoRegistro==1?'Guardar':'Actualizar'}}
+        </button>
+        <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()"> &times; Cerrar</button>
+    </div>
+
+</form>

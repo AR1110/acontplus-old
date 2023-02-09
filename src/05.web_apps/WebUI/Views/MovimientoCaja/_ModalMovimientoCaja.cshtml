@@ -1,0 +1,102 @@
+<div class="modal-header">
+    <h5 class="modal-title">Nuevo Egreso/Ingreso Caja</h5>
+    <button class="close" ng-click="$ctrl.closeModal()">&times;</button>
+</div>
+<div class="modal-body">   
+    <div class="row justify-content-between">
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-12">
+            <div class="form-group">                
+                <label for="" class="control-label">Caja: <span class="text-danger">*</span></label>
+                <select class="form-control border-select" ng-model="$ctrl.data.idCaja">
+                    <option ng-value="item.idCaja" ng-repeat="item in $ctrl.cajas">{{item.descripcion}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-12">
+            <div class="form-group">                
+                <label for="" class="control-label">Tipo Documento:<span class="text-danger">*</span></label>
+                <div class="icheck-info" ng-repeat="item in $ctrl.tipoDocumentos">
+                    <input type="radio" ng-model="$ctrl.data.idTipoDocumento" ng-value="item.idTipoDocumento" id="tipo{{item.idTipoDocumento}}" name="tipo">
+                    <label for="tipo{{item.idTipoDocumento}}">{{item.descripcion}}</label>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="row">       
+        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="form-group">
+                <label for="" class="control-label">Entidad Financiera <span class="text-danger">*</span></label>
+                <select class="form-control border-select" ng-model="$ctrl.data.idEntidadFinanciera" ng-change="$ctrl.getSubEntidadByEntidadFinanciera()">
+                    <option ng-value="ef.idEntidadFinanciera" ng-repeat="ef in $ctrl.entidadesFinancieras">{{ef.descripcion}}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="form-group" ng-if="$ctrl.data.idEntidadFinanciera>0">
+                <label for="" class="control-label">Sub Entidad Financiera</label>
+                <select class="form-control border-select" ng-model="$ctrl.data.idSubEntidadFinanciera">
+                    <option ng-value="se.idSubEntidadFinanciera" ng-repeat="se in $ctrl.subEntidades">{{se.descripcion}}</option>
+                </select>
+            </div> 
+        </div>
+    </div>                                                                               
+
+   
+    <div class="row">
+        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="form-group">
+                <label for="" class="control-label">Empleado <span class="text-danger">*</span></label>
+                <input type="text"
+                    autocomplete="off"
+                    class="form-control border-select"
+                    placeholder="Ingrese Descripción"
+                    ng-model="$ctrl.selectedEmpleado"
+                    ng-keyup="$ctrl.onKeyupSearchEmpleado()"
+                    uib-typeahead="e as e.nombreCompleto for e in $ctrl.searchEmpleado($viewValue)"
+                    typeahead-loading="loadingLocations"
+                    typeahead-no-results="data.noResults"
+                    typeahead-items="1"
+                    typeahead-wait-ms="10"                            
+                    typeahead-template-url="autocompleteEmpleado.html"
+                    typeahead-editable="false"                                                
+                    typeahead-on-select="$ctrl.selectedEmpleadoChange($item)" />
+                    <script type="text/ng-template" id="autocompleteEmpleado.html">
+                        <div class="autocomplete-suggestion-uib-typeahead">
+                            <span class="item-title">
+                                <strong>{{match.model.nroIdentificacion}}</strong> - {{match.model.nombreCompleto}}
+                            </span>
+                        </div>
+                    </script>
+                <small ng-show="$ctrl.data.noResults" class="text-danger">No se encontraron los resultados</small>
+            </div>
+        </div>
+        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="form-group">
+                <label for="" class="control-label">Valor <span class="text-danger">*</span></label>
+                <input type="text" decimal ng-model="$ctrl.data.valor" class="form-control border-select" placeholder="0.00">
+            </div>
+        </div>             
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm 12 col-xs-12">
+            <div class="form-group">
+                <label for="" class="control-label">Observación <span class="text-danger">*</span></label>
+                <textarea class="form-control border-select" ng-model="$ctrl.data.observaciones" touppercase></textarea>
+            </div>
+        </div>
+    </div>
+    
+
+    
+
+    
+
+    
+</div>
+<div class="modal-footer">
+    <button class="btn btn-success" ng-click="$ctrl.guardarMovCaja()"><i class="ti-save"></i> Guardar</button>
+    <button class="btn btn-dark" ng-click="$ctrl.closeModal()">&times; Cerrar</button>
+</div>

@@ -1,0 +1,174 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+<div ng-controller="documentoElectronicoCtrl">
+    @* <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>codDoc</th>
+                            <th>Nro</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in documents">
+                            <td>{{item.codDoc}}</td>
+                            <td>{{item.nroDocumento}}</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="2">
+                                <button class="btn btn-primary" ng-click="signDocs()">
+                                    <i class="fa fa-lock"></i>
+                                    Firmar Documentos
+                                </button>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div> *@
+  
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h5 class="text-themecolor">Comprobantes</h5>
+        </div>
+    </div>
+
+    @await Html.PartialAsync("_ModalFiltroComprobante.cshtml")
+    
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="card">      
+                <div class="card-body">
+                    <div class="row justify-content-between">
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">                         
+                            <button type="button" class="btn btn-info" uib-tooltip="Filtrar Comprobantes" tooltip-placement="top" ng-click="openModalFiltro()"><i class="mdi mdi-filter-outline"></i> Filtro</button>
+                            
+                            <button type="button" class="btn btn-success" uib-tooltip="Autorizar Comprobantes" tooltip-placement="top"   ng-if="selectedComprobantes.length>0" ng-click="getAuthorizate()"><i class="mdi mdi-file-lock"></i> Autorizar</button>
+
+                            <button type="button" class="btn btn-warning" uib-tooltip="Correo Comprobantes" tooltip-placement="top" ng-click="estadoCorreoComprobantes()" ><i class="mdi mdi-contact-mail"></i> Correo</button>                            
+                        </div>
+
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
+                            <div class="form-material">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="" id="" ng-model="textSearch" placeholder="Buscar Comprobante">
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-secondary" ng-click="getComprobantes()">
+                                                <i class="fas fa-redo"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <div class="ml-auto">
+                        </div>
+                    </div>
+                    
+                    
+                </div>        
+                
+
+                <md-table-container md-scroll-y layout-fill style=" max-height: 400px;">
+                    <table md-table md-row-select="true"  multiple="true"  ng-model="selectedComprobantes">
+                        <thead md-head fix-head >
+                            <tr md-row>
+                                @* <th md-column>Nro</th>   *@                    
+                                <th md-column>Op.</th>
+                                <th md-column>Comprobante</th>
+                                <th md-column>serie</th>
+                                <th md-column>Ruc Receptor</th>
+                                <th md-column>Razón Social Receptor</th>
+                                <th md-column>Clave de acceso/Nro. autorización</th>
+                                <th md-column>Estado</th>
+                                @* <th md-column>Correo</th> *@
+
+                            </tr>
+                        </thead>
+                        <tbody md-body>
+                            <tr md-row md-auto-select="false" md-select="item" ng-disabled="!(item.codEstado===2)" md-on-select="onSelectComprobante"
+                                ng-repeat="item in comprobantes | filter: textSearch track by $index" ng-class="item.style">
+                              
+                                <td md-cell>                                    
+                                    <md-menu>
+                                        <md-button aria-label="Open demo menu" class="md-icon-button"
+                                                    ng-click="$mdMenu.open($event)">
+                                            <icon class="mdi mdi-menu"></icon>
+                                        </md-button>
+                                        <md-menu-content class="md-dense">
+                                         
+                                            <md-menu-item >                                                                                        
+                                                <md-button  ng-click="getDetalleDoc(item)" uib-tooltip="Ver el Detalle del Documento" tooltip-placement="top">
+                                                    <span md-menu-align-target><i class="ti-eye"></i> Doc. Detalle</span>
+                                                </md-button>
+                                            </md-menu-item>                                                                                                                                                                                                                                                                                                                                    
+                                            <md-menu-item  ng-if="(item.codEstado==5 || item.codEstado==0)">                        
+                                                <md-button uib-tooltip="Errorres del comprobante" tooltip-placement="top"  ng-click="getError(item)">
+                                                    <span md-menu-align-target>
+                                                        <i class="mdi mdi-close-network"></i> Error
+                                                    </span>
+                                                </md-button>
+                                            </md-menu-item> 
+
+
+                                            <!--Update Xml-->
+                                            <md-menu-item  ng-if="showBtnUpdateXml(item)">                        
+                                                <md-button uib-tooltip="Actualizar el XML" tooltip-placement="top"  ng-click="updateXml(item)">
+                                                    <span md-menu-align-target>
+                                                        <i class="mdi mdi-clipboard-flow"></i> Actualizar XML
+                                                    </span>
+                                                </md-button>
+                                            </md-menu-item> 
+                                            
+                                            <md-menu-item>                                                                                      
+                                                <md-button ng-click="openModalSendMail(item)">
+                                                    <span md-menu-align-target><i class="mdi mdi-email-outline"></i> Enviar Correo</span>
+                                                </md-button>
+                                            </md-menu-item>
+                                            
+                                            <md-menu-item>                                                                                        
+                                                <md-button ng-click="getStatusSendMail(item)">
+                                                    <span md-menu-align-target><i class="mdi mdi-contact-mail"></i> Estado Correo</span>
+                                                </md-button>
+                                            </md-menu-item>
+                                        </md-menu-content>
+                                    </md-menu>                                 
+                                </td>
+                                @* <td md-cell>{{$index+1}}</td> *@
+                                <td md-cell>{{item.comprobante}}</td>
+                                <td md-cell>{{item.serie}}</td>
+                                <td md-cell>{{item.rucReceptor}}</td>
+                                <td md-cell>{{item.razonSocial}}</td>
+                                <td md-cell>{{item.claveAcceso}}</td>
+                                <td md-cell>{{item.estado}}</td>
+                                @* <td md-cell>{{item.statusEmail}}</td> *@
+                            </tr>
+                        
+                            <tr ng-show="comprobantes.length==0" class="text-center">
+                                <td colspan="8">
+                                    No hay registros en esta tabla :)
+                                </td>
+                            </tr>           
+                        </tbody>       
+                    </table>
+                </md-table-container>
+
+
+            </div>
+        </div>
+    </div>   
+
+
+</div>
+@section Scripts{
+    <script src="~/js/controllers/factElect/documentoElectronicoCtrl.min.js" asp-append-version="true"></script>
+}

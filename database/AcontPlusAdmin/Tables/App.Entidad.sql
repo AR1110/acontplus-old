@@ -1,0 +1,12 @@
+--CREATE TABLE App.Entidad(
+--	idEntidad INT PRIMARY KEY IDENTITY(1,1) NOT NULL,
+--	ruc NVARCHAR(30) NOT NULL UNIQUE,
+--	razonSocial NVARCHAR(150) NOT NULL,
+--	nombreComercial NVARCHAR(150) NOT NULL,
+--	correo NVARCHAR(300) NULL,
+--	telefono NVARCHAR(100) NULL,
+--	dirrecion NVARCHAR(300) NULL,
+--	estado BIT DEFAULT 1,
+--	fechaRegistro DATETIME 
+
+--)

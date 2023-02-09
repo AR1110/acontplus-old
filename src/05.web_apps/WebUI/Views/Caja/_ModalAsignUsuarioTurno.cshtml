@@ -1,0 +1,78 @@
+
+<div class="modal-header">
+    <h5 class="modal-title">Asignar Usuario/Turno</h5>
+    <button type="button" class="close" ng-click="$ctrl.closeModal()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <div class="form-group">
+        <label class="control-label"> Usuario <span class="text-danger">*</span></label>
+        <div ng-if="$ctrl.tipoRegistro===1">
+            @await Html.PartialAsync("~/Views/Usuario/_UibModalUsuarioSearch.cshtml")
+        </div>
+        <div ng-if="$ctrl.tipoRegistro===2">
+            <input type="text" class="form-control" ng-value="$ctrl.usuarioSearch.nombreCompleto" disabled>
+        </div>
+    </div>  
+
+    <div class="table-responsive">
+        <table class="table table-sm">
+            <thead>
+                <tr class="text-center">
+                    <th colspan="3">Turno</th>
+                </tr>
+                <tr>
+                    <th>N°</th>                    
+                    <th>Turno</th>
+                    <th>Op.</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="t in $ctrl.turnos">
+                    <td>{{$index+1}}</td>
+                    <td>
+                        <div class="btn-group dropup">
+                            <a type="button" ng-click="$ctrl.detalleHorario(t.idTurno)" data-toggle="dropdown" data-boundary="viewport" aria-haspopup="true" aria-expanded="false">
+                                {{t.descripcion}}                                                
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenu">
+                                <div class="px-2 py-2">                                    
+                                    <div class="table-responsive ">                                                    
+                                        <table class="table no-border table-sm">
+                                            <tbody>
+                                                <tr class="text-center">
+                                                    <th><small>Dia</small></th>
+                                                    <th><small>Apertura</small></th>
+                                                    <th><small>Cierre</small></th>
+                                                    <th><small>Estado</small></th>
+                                                </tr>
+                                                <tr ng-repeat="h in $ctrl.horarios" class="text-muted {{h.clase}}">
+                                                    <td><small>{{h.diaSemana}}</small></td>
+                                                    <td><small>{{h.horario.apertura }} </small></td>
+                                                    <td><small>{{h.horario.cierre }}</small></td>
+                                                    <td><i class="{{h.diaLaborable}} "></i></td>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>                                     
+                                </div>                                                                                                
+                            </div>
+                        </div>                                        
+                    </td>
+                    <td>
+                        <md-switch class="md-secondary" aria-label="Select Turn" ng-change="$ctrl.onChangeTurno(t)" ng-model="t.estado"></md-switch>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>                                           
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-success" ng-click="$ctrl.saveUpdateAsigUsuarioTurno()"><i class="{{$ctrl.tipoRegistro==1?'ti-save':'fa fa-edit'}}"></i>
+        {{$ctrl.tipoRegistro==1?'Guardar':'Actualizar'}}
+    </button>
+    <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">&times; Cerrar</button>
+</div> 
+            

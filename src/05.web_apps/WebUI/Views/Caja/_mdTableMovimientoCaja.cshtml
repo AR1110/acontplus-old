@@ -1,0 +1,43 @@
+
+<div id="upperScroll" style="overflow-x:scroll; overflow-y: hidden; max-height:20px; width:100%">
+    <div name="innerScroll" ng-style="duelScroll" style="height:20px;"></div>
+</div>
+<div ng-style="getStyle($index)">
+    <md-table-container  name="wireTable" infinite-scroll="loadMore($index)"  infinite-scroll-distance="1" infinite-scroll-parent="true" ng-init="isShow=true" ng-show="isShow" style=" max-height: 400px; overflow-x: hidden;">
+        <table resize master md-table name="innerWireTable">
+            <thead fix-head md-head md-trim-column-names>
+                <tr md-row>
+                    <th md-column>N°</th>
+                    <th md-column>Apertura</th>
+                    <th md-column>Cierre</th>
+                    <th md-column>Faltante</th>
+                    <th md-column>Sobrante</th>
+                    <th md-column>Total</th>
+                    <th md-column>Estado</th>
+                    <th md-column>Op.</th>                   
+                </tr>
+            </thead>
+            <tbody md-body>
+                <tr md-row ng-repeat="item in $ctrl.movimientosCaja">
+                    <td md-cell>{{$index+1}}</td>
+                    <td md-cell>{{item.fechaApertura}}</td>
+                    <td md-cell>{{item.fechaCierre}}</td>
+                    <td md-cell>{{item.faltante}}</td>
+                    <td md-cell>{{item.sobrante}}</td>
+                    <td md-cell>{{item.totalArqueo}}</td>
+                    <td md-cell>{{item.estado ? "ABIERTO": "CERRADO"}}</td>      
+                    <td md-cell>
+                        <button ng-if="item.estado" type="button" ng-click="$ctrl.openModalCierreCaja(item)" tooltip data-tooltip="toggle" title="Cerrar Caja" class="btn btn-danger btn-sm">
+                            <i class="icons-Box-Full"></i>
+                        </button>
+                        <button type="button" ng-click="$ctrl.getReport(item.idControlCaja)" tooltip data-tooltip="toggle" title="Reporte Caja" class="btn btn-secondary btn-sm"><i class="fas fa-file-pdf"></i></button>
+                    </td>                                                    
+                </tr>           
+                <tr class="text-center" ng-show="$ctrl.movimientosCaja.length===0">
+                    <td colspan="8">No hay registros</td>
+                </tr>
+            </tbody>          
+        </table>
+    </md-table-container>
+</div>
+

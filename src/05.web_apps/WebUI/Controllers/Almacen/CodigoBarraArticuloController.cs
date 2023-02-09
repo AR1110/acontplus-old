@@ -1,0 +1,80 @@
+﻿using Domain.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Domain.Models.Almacen;
+using DataAccess.Almacen;
+using DataAccess;
+using Helpers;
+
+namespace WebUI.Controllers
+{
+    public class CodigoBarraArticuloController : Controller
+    {
+        // GET: CodigoBarraArticulo
+        private readonly IConfiguration _configuration;
+        
+        private DataAccessObject _dao;
+        GenericResponse _gr = new();
+        readonly ArticuloCodigoBarraDao _cba = new();
+
+        public CodigoBarraArticuloController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            
+            _dao = new DataAccessObject(_configuration);
+        }
+
+        [Authorize]
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Get(int idArticulo)
+        {
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            _gr = await _cba.GetIdAsync(idArticulo);
+            return Ok(_gr);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] ArticuloCodigoBarra data)
+        {
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            parameters.Add("idRol", idRol);
+            parameters.Add("idArticulo", data.idArticulo);
+            parameters.Add("idMedida", data.idMedida);
+            parameters.Add("codigoBarra", data.codigoBarra);
+            parameters.Add("descripcion", data.descripcion);
+            parameters.Add("color", data.color ?? "");
+            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Almacen.CodigoBarra_Insert", parameters)));
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Put(int idArticuloCodigoBarra, [FromBody] ArticuloCodigoBarra data)
+        {
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            parameters.Add("idRol", idRol);
+            parameters.Add("id", idArticuloCodigoBarra);
+            parameters.Add("idMedida", data.idMedida);
+            parameters.Add("codigoBarra", data.codigoBarra);
+            parameters.Add("descripcion", data.descripcion);
+            parameters.Add("color", data.color ?? "");
+            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Almacen.CodigoBarra_Update", parameters)));
+        }
+
+        
+        public async Task<IActionResult> Delete(int idArticuloCodigoBarra)
+        {
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            parameters.Add("idRol", idRol);
+            parameters.Add("id", idArticuloCodigoBarra);
+            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Almacen.CodigoBarra_Delete", parameters)));
+        }
+    }
+}

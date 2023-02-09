@@ -1,0 +1,137 @@
+<div id="modalReporteKardex" class="modal fade in" role="dialog" data-backdrop="static">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Reporte Kardex</h5>
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="row justify-content-between">
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                        <div class="icheck-info">
+                            <input type="checkbox" ng-model="dataSearch.checkboxSucursalFiltro" name="checkboxSucursalFiltro" id="checkboxSucursalFiltro">
+                            <label for="checkboxSucursalFiltro">Sucursal</label>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                        <div class="icheck-info">
+                            <input type="checkbox" ng-model="dataSearch.checkboxTipoDocFiltro" name="checkboxTipoDocFiltro" id="checkboxTipoDocFiltro">
+                            <label for="checkboxTipoDocFiltro">Tipo Documento</label>
+                        </div>
+                    </div>
+                </div>
+                <hr/>
+
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label for="articulo">Articulo <span class="text-danger">*</span></label>
+                            <input type="text" id="articuloAutocomplete"
+                                    autocomplete="off"
+                                    name="articuloAutocomplete"
+                                    class="form-control border-select"
+                                    placeholder="Ingrese Descripción del Articulo"
+                                    ng-model="selectedArticulo"
+                                    ng-keyup="onKeyupSearchArticulo()"
+                                    uib-typeahead="a as a.descripcion for a in searchArticuloFilter($viewValue)"
+                                    typeahead-loading="loadingLocations"
+                                    typeahead-no-results="noResults"
+                                    typeahead-template-url="autocompleteArticulo.html"
+                                    typeahead-editable="false"
+                                    typeahead-on-select="selectedArticuloChange($item)" />
+                            <span class="text-danger" ng-show="noResults">No se encontraron resultados</span><br />
+                            <script type="text/ng-template" id="autocompleteArticulo.html">
+                                <div class="autocomplete-suggestion-uib-typeahead">
+                                    <span class="item-title">
+                                        <small> {{match.model.descripcion}}</small><br>
+                                        <small><b>Código: </b>{{match.model.codigo}}</small>
+                                    </span>
+                                </div>
+                            </script>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12" ng-if="dataSearch.checkboxSucursalFiltro">
+                        <div class="form-group">
+                            <label for="sucursal">Sucursal</label>
+                            <select ng-model="dataSearch.bySucursal" class="form-control border-select">
+                                <option ng-value="item.idSucursal" ng-repeat="item in sucursales">{{item.nombreComercial}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12" ng-if="dataSearch.checkboxTipoDocFiltro">
+                        <div class="form-group">
+                            <label for="sucursal">Tipo Documento</label>
+                            <select ng-model="dataSearch.byTipoDoc" class="form-control border-select">
+                                <option ng-value="item.idTipoDocumento" ng-repeat="item in tipoDocumentos">{{item.descripcion}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                        <div class="form-group">
+                            <label class="control-label">Mes: </label>
+                            <select ng-model="mes" class="form-control" ng-change="getFechaInicioFinFilter()">
+                                <option ng-value="m.numero" ng-repeat="m in meses">{{m.nombre}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                        <div class="form-group">
+                            <label>Fecha Inicio:</label>
+                            <input type="date" class="form-control" ng-model="dataSearch.fechaInicio"/>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                        <div class="form-group">
+                            <label>Fecha Fin:</label>
+                            <input type="date" class="form-control" ng-model="dataSearch.fechaFin" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row justify-content-between">
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                        <div class="form-group">
+                            <label for="ordenNombre">Ordenar por:</label>
+                            <select ng-model="dataSearch.byOrderCampo" class="form-control border-select">
+                                <option value="fechaEmision">Fecha Emision</option>
+                            </select>
+                        </div>                        
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                        <div class="icheck-info mt-3">
+                            <input type="radio" ng-model="dataSearch.byOrder" value='ASC' name="radioByOrder" id="byOrderAsc">
+                            <label for="byOrderAsc">Ascendente</label>
+                        </div>
+                        <div class="icheck-info">
+                            <input type="radio" ng-model="dataSearch.byOrder" value="DESC" name="radioByOrder" id="byOrderDesc">
+                            <label for="byOrderDesc">Descendente</label>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                        <div class="form-group">
+                            <label for="tipoFormato">Tipo Formato</label>
+                            <div class="icheck-info">
+                                <input type="radio" ng-model="dataSearch.byTipoFormato" value="pdf" name="tipoFormato" id="pdf">
+                                <label for="pdf">PDF</label>
+                            </div>
+                            <div class="icheck-info">
+                                <input type="radio" ng-model="dataSearch.byTipoFormato" value="excel" name="tipoFormato" id="excel">
+                                <label for="excel">EXCEL</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary-1" ng-click="filtrar()"><i class="fa fa-search"></i> Buscar</button>
+                <button class="btn btn-dark" data-dismiss="modal">&times; Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>

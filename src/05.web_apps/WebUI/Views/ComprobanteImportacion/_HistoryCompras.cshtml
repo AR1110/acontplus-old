@@ -1,0 +1,40 @@
+<div class="modal-header">
+    <h4 class="modal-title">
+        <i class="fa fa-history"></i> Historial de Compras Habituales - <strong>{{articleName}}</strong> 
+    </h4>
+    <button type="button" class="close" aria-label="Close" ng-click="modalRefAHC.close()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Proveedor</th>
+                    <th class="text-center">Ruc</th>
+                    <th class="text-center">Código</th>
+                    <th>Articulo</th>
+                    <th class="text-center">Opciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in historyComprasArticle">
+                    <td>{{item.proveedor}}</td>
+                    <td class="text-center">{{item.ruc}}</td>
+                    <td class="text-center">{{item.codArticulo}}</td>
+                    <td>{{item.articulo}}</td>
+                    <td class="text-center">
+                        <md-button class="md-icon-button" ng-click="askToDeleteCH(item)" aria-label="Historial"
+                            title="Desvincular articulo">
+                            <md-icon md-font-set="md" class="text-danger">remove_shopping_cart</md-icon>
+                        </md-button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-dark" ng-click="modalRefAHC.close()">&times; Cerrar</button>
+</div>

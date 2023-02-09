@@ -1,0 +1,133 @@
+<form ng-submit="$ctrl.onSave()">    
+    <div class="modal-header bg-info text-white">
+        <h5 class="modal-title">Editar Establecimiento</h5>
+        <button type="button" class="close" ng-click="$ctrl.closeModal()">&times;</button>
+    </div>
+
+    <div class="modal-body">
+        <div class="text-right">
+            <span class="text-danger">*</span><span>Son campos requeridos</span>
+        </div>
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="form-group">
+                    <label for="nombreComercial">Nombre Comercial <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control border-select" touppercase ng-model="$ctrl.data.nombreComercial" placeholder="">
+                </div>
+            </div>                       
+        </div>
+
+        <div class="row">
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                <div class="form-group">
+                    <label for="numEstab">Nro. Establecimiento: <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control border-select" valid-number mask="999" ng-model="$ctrl.data.estab" disabled placeholder="000">
+                </div>
+            </div>
+            <div class="col-xl-8 co-lg-8 col-md-6 col-sm-12 col-xs-12">
+                <div class="form-group">
+                    <label for="contribuyente">Tipo Contribuyente: <span class="text-danger">*</span> </label>
+                    <div class="input-group">
+                        <select name="contribuyente" id="contribuyente" class="form-control border-select" ng-model="$ctrl.data.contribuyente" ng-change="$ctrl.onChangeTipoContribuyente()">                        
+                            <option ng-value="item.codigo" ng-repeat="item in $ctrl.tipoContribuyentes">
+                                {{item.descripcion}}
+                            </option>
+                        </select>
+                        <div class="input-group-append">
+                            <button type="button" ng-click="$ctrl.showInfoTipoContribuyente()" class="btn btn-secondary btn-sm">
+                                <i class="fas fa-info-circle fa-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>                  
+            </div>                     
+        </div>
+
+        <div class="row">
+            <div class="col-xl-4 co-lg-4 col-md-6 col-sm-12 col-xs-12">
+                <div class="form-group">
+                    <label for="agenteRetencion">Agente Retención: </label>
+                    <select name="agenteRetencion" id="agenteRetencion" class="form-control border-select" ng-model="$ctrl.data.agenteRetencion" ng-disabled="$ctrl.isDisabledAgenteRetencion">    
+                        <option ng-value="">Ninguna</option>
+                        <option ng-value="item.resolucion" ng-repeat="item in $ctrl.agenteRetenciones">
+                            {{item.resolucion}}
+                        </option>
+                    </select>
+                </div>                
+            </div> 
+            <div class="col-xl-4 co-lg-4 col-md-6 col-sm-12 col-xs-12">
+                <div class="form-group">
+                    <label for="contribuyenteEspecial">Contribuyente Especial: </label>
+                    <input type="text" class="form-control border-select" valid-number mask="999" ng-model="$ctrl.data.contribuyenteEspecial" placeholder="">
+                </div>                
+            </div>
+
+            <div class="col-xl-4 co-lg-4 col-md-6 col-sm-12 col-xs-12">
+                <div class="form-group">
+                    <span for="obligadoContabilidad">Obligado llevar Contabilidad</s>
+                    <md-switch ng-model="$ctrl.data.obligadoContabilidad" ng-true-value="'SI'" ng-false-value="'NO'" aria-label="Obligado Contabilidad">
+                        {{ $ctrl.data.obligadoContabilidad}}
+                    </md-switch>
+
+                </div>
+            </div>
+        </div>
+     
+        <div class="row">
+            <div class="col-xl-12">   
+
+                <div class="form-group">
+                    <label for="actividadEconomica">Actividad: <span class="text-danger">*</span> </label>
+                    <div class="input-group">
+                        <select name="actividadEconomica" id="actividadEconomica" class="form-control border-select" ng-model="$ctrl.data.actividad">                        
+                            <option ng-value="item.codigo" ng-repeat="item in $ctrl.actividadesEconomicas">
+                                {{item.descripcion}}
+                                </option>
+                            </select>
+                        <div class="input-group-append">
+                            <button type="button" ng-click="$ctrl.showInfoActividadEc()" class="btn btn-secondary btn-sm">
+                                <i class="fas fa-info-circle fa-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>            
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                <div class="form-group">
+                    <label for="cantones">Cantón: <span class="text-danger">*</span> </label>                    
+                    <input type="text" 
+                        ng-model="$ctrl.canton" 
+                        placeholder="Buscar Cantón"  
+                        uib-typeahead="item as item.descripcion for item in $ctrl.filterCanton($viewValue)" 
+                        typeahead-loading="$ctrl.loadingSearch" 
+                        typeahead-no-results="$ctrl.noResults"
+                        typeahead-on-select="$ctrl.onSelectCanton($item)" 
+                        class="form-control border-select">
+                    <span ng-if="$ctrl.loadingSearch"> <i class="fas fa-sync-alt fa-xs"></i> Loading...</span>
+                    <small class="text-danger ml-5" ng-if="$ctrl.noResults">No se encontraron resultados</small>
+                </div>
+            </div>       
+            <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                <div class="form-group">
+                    <label for="direccion">Dirección <span class="text-danger">*</span> </label>
+                    <textarea class="form-control border-select" touppercase ng-model="$ctrl.data.dirEstablecimiento" rows="2"></textarea>
+                </div>
+            </div> 
+        </div> 
+
+    </div>
+
+       
+
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-success">
+            <i class="ti-pencil"></i> Actualizar
+        </button>
+        <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">
+            &times; Cerrar
+        </button>
+    </div>
+</form>

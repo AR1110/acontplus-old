@@ -1,0 +1,12 @@
+USE AcontPlus
+IF OBJECT_ID(N'Sri.FormaPago', N'U') IS NOT NULL
+DROP TABLE Sri.FormaPago 
+GO
+CREATE TABLE Sri.FormaPago(
+idFormaPago INT NOT NULL PRIMARY KEY IDENTITY(1,1)
+,formaPago VARCHAR(2) NOT NULL UNIQUE
+,descripcion VARCHAR(150) NOT NULL
+,fechaInicio DATE NULL
+,fechaFin DATE NULL
+,estado BIT NOT NULL DEFAULT 1
+)

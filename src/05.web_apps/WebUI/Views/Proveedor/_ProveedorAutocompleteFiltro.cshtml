@@ -1,0 +1,29 @@
+<div class="form-group">
+    <label for="proveedorFiltro">Proveedor</label>
+    <input  type="text" 
+        id="proveedorAutocompleteFiltro"         
+        autocomplete="off"
+        name="proveedorAutocompleteFiltro"
+        class="form-control border-select"
+        placeholder="Ingrese C.I o Nombre Fiscal"
+        typeahead-wait-ms="10"
+        typeahead-show-hint="true"
+        ng-model="proveedorFiltro.nombreFiscal"
+        ng-keyup="onKeyupProvedorAutocompleteFiltro()"
+        uib-typeahead="a as a.proveedor.nombreFiscal for a in proveedorSearch($viewValue)"
+        typeahead-loading="proveedorFiltro.loading"
+        typeahead-no-results="proveedorFiltro.noResults"
+        typeahead-template-url="proveedorAutocompleteFiltro.html"
+        typeahead-editable="false"
+        typeahead-on-select="selectProveedorFiltro($item)" /> 
+
+        <script type="text/ng-template" id="proveedorAutocompleteFiltro.html">
+            <div class="autocomplete-suggestion-uib-typeahead">               
+                <span class="item-title">
+                    <b> {{match.model.proveedor.numeroIdentificacion}}</b> - {{match.model.proveedor.nombreFiscal}}
+                </span>
+            </div>
+        </script> 
+        <span class="ml-5" ng-if="proveedorFiltro.loading"> <i class="fas fa-sync-alt fa-xs"></i> Loading...</span>
+        <small class="text-danger ml-5" ng-if="proveedorFiltro.noResults">No se encontraron resultados</small>
+</div>

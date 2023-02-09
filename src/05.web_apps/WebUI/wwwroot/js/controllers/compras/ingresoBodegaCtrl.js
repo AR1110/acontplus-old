@@ -1,0 +1,314 @@
+
+
+app.controller('ingresoBodegaCtrl', ingresoBodegaCtrl);
+
+ingresoBodegaCtrl.$inject = ['$scope', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario']
+
+function ingresoBodegaCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form){
+
+    let accion = JSON.parse(localStorage.getItem("accion"));  
+    if(accion===null){
+        location.href ="/Home/Index";
+        return
+    }else{
+        $scope.accion = accion[0];
+    }
+
+    const TIPO_DOC = _commonSvc.tipoDoc['IB'];
+
+     //Filtro 
+     $scope.meses = _form.meses();
+     $scope.mes = $scope.meses[new Date().getMonth() + 1].numero;
+
+    $scope.dataSearch = {
+        pageIndex: 1,
+        pageSize: 1000
+    }
+
+    $scope.searchProveedorFilter = (textSearch)=>{            
+        return _commonSvc.proveedorSearch(textSearch);
+    } 
+
+    $scope.getIngresoBodegas = async()=>{
+        try {
+            showLoader();
+            await _mS.getData('get', '/IngresoBodega/Get?json=' + JSON.stringify($scope.dataSearch)).then(response=>{
+                console.log(response)
+                if(response.code==="0"){
+                    console.warn(response)                    
+                }
+
+                $scope.ingresoBodegas =  JSON.parse(response.payload) || [];                
+            })
+        } catch (error) {
+            console.log(error)
+        }finally{
+            hideLoader();
+        }
+    }
+
+    $scope.initiload = ()=>{
+        _mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response=>{
+            let results = JSON.parse(response.payload) || [];
+            $scope.establecimientos = results[0];
+            let codEstab = $scope.establecimientos.length>0?$scope.establecimientos[0].codEstab: 0;            
+            $scope.dataSearch.codEstab = codEstab;
+            $scope.getIngresoBodegas();
+        })
+
+        _commonSvc.getEstadoDocByCodDoc('IB').then(response=>{
+            $scope.estadoPagos = response;
+        })
+
+    }
+    $scope.initiload();
+
+
+
+    //--------------------------------------Filtro---------------------
+    
+    $scope.openModalFiltro = ()=>{
+        $("#modalFiltroIngresoBodega").modal('show');
+    }
+
+    $scope.onChangeFechaFiltro =()=>{
+        $scope.dataSearch.tipoFecha = 'FE';
+        $scope.mes = new Date().getMonth() +1;
+        $scope.getFechaInicioFinFilter($scope.mes)
+    }
+
+    //Fecha Inicial y Final dependiendo el Mes que seleccione el usuario en el Buscador AVanzado
+    $scope.getFechaInicioFinFilter = function(mes) {
+        let { fechaInicio, fechaFin } = _form.getFechaInicioFinFilter(mes);
+        $scope.dataSearch.fechaInicio = fechaInicio;
+        $scope.dataSearch.fechaFin = fechaFin;
+    }
+
+    $scope.searchProveedorFilterChange = function(item) {                       
+        $scope.dataSearch.byProveedor = item.proveedor.idProveedor            
+    }
+
+    //---------------------------------USUARIO-----------------------------------------------------
+    $scope.dataUsuarioFilter = {}
+    $scope.usuarioSearch = (textSearch) => {
+        return _commonSvc.usuarioSearch({
+            idRol: document.getElementById('idRol').value,
+            busqueda: textSearch
+        })
+    }
+
+    $scope.onKeyupUsuarioSearchFilter = () => {
+        if (_form.campo($scope.dataUsuarioFilter.nombreCompleto)) {
+            $scope.dataSearch.byUsuario = null;
+        }
+    }
+
+    $scope.selectedUsuarioSearchFilter = (item) => {
+        $scope.dataSearch.byUsuario = item.idUsuario;
+    }
+
+
+    $scope.busquedaAvanzada = ()=>{
+        if(_form.campo($scope.dataSearch.codEstab)){
+            toastr.warning('Seleccione el Establecimiento');
+            return
+        }
+
+        if ($scope.dataSearch.checkBoxProveedor) {
+            if (_form.campo($scope.dataSearch.byProveedor)) {
+                toastr.warning('Seleccione el Proveedor');
+                return;
+            };
+        }
+
+        if ($scope.dataSearch.checkBoxFecha) {
+            if (_form.campo($scope.dataSearch.fechaInicio)) {
+                toastr.warning('Seleccione la Fecha Inicio');
+                return;
+            };
+            if (_form.campo($scope.dataSearch.fechaFin)) {
+                toastr.warning('Seleccione la Fecha Fin');
+                return;
+            }
+        }
+
+        if($scope.dataSearch.checkBoxUsuario){
+            if(_form.campo($scope.dataSearch.byUsuario)){
+                toastr.warning('Seleccione el Usuario');
+                return
+            }
+        }
+
+        if ($scope.dataSearch.checkBoxEstado) {
+            if (_form.campo($scope.dataSearch.byEstado)) {
+                toastr.warning('Por favor seleccione el Estado');
+                return
+            }
+        }
+
+        $scope.getIngresoBodegas();
+        $("#modalFiltroIngresoBodega").modal('hide');
+    }
+
+
+
+    $scope.openModalNew = async()=>{
+
+        let {MODAL_FILE_CTRL, MODAL_NUEVO} = _nombreModalConst.ingreso_bodega;
+        let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_NUEVO['controller']];        
+        let template   = MODAL_NUEVO['template'];
+        
+        let params = {
+            TIPO_REGISTRO: 'NUEVO'
+        }
+      
+        $scope.openModalParam({
+            controller,
+            template,
+            params
+        })
+    }
+
+    $scope.openModalDetalle = async(item)=>{
+        try {
+            showLoader();
+            let {MODAL_FILE_CTRL, MODAL_DETALLE} = _nombreModalConst.ingreso_bodega;
+            let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_DETALLE['controller']];        
+            let template   = MODAL_DETALLE['template'];
+         
+            let response = await _commonSvc.getDataTipoDocCompra({
+                id: item.idIngresoBodega,
+                codigoDocumento: TIPO_DOC.codigo
+            })
+
+            if(!response.isComplete) return
+            
+            let params = {
+                TIPO_REGISTRO: 'DETALLE',
+                data: response
+            }
+        
+            $scope.openModalParam({
+                controller,
+                template,
+                params
+            })
+        } catch (error) {
+            console.log(error)
+        }finally{
+            hideLoader();
+        }
+    }
+
+    $scope.openModalEditar = async(item)=>{
+        try {
+            showLoader();
+            let {MODAL_FILE_CTRL, MODAL_EDITAR} = _nombreModalConst.ingreso_bodega;
+            let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_EDITAR['controller']];        
+            let template   = MODAL_EDITAR['template'];
+            console.log(item)
+            let response = await _commonSvc.getDataTipoDocCompra({
+                id: item.idIngresoBodega,
+                codigoDocumento: TIPO_DOC.codigo
+            })
+
+            if(!response.isComplete) return
+            
+            let params = {
+                TIPO_REGISTRO: 'EDITAR',
+                data: response
+            }
+        
+            $scope.openModalParam({
+                controller,
+                template,
+                params
+            })
+        } catch (error) {
+            console.log(error)
+        }finally{
+            hideLoader();
+        }
+    }
+
+    $scope.openModalParam = async({controller, template, size='xl', params})=>{
+        _modalSvc.openModalCustom({
+            controller,
+            template,
+            size,
+            params,
+            windowClass:'uibModalFullScreen'
+        }).result.then(result=>{
+            if(typeof result ==='object'){
+                $scope.getIngresoBodegas()
+            }
+        })        
+    }
+
+
+
+    $scope.askToDelete = async(item)=>{
+
+        try {
+            let {isConfirmed} = await Swal.fire({
+                title: '<small>Anular Documento?</small>',
+                html: `<small>Esta Ud. seguro de anular este Documento</b> N° ${item.nroDocumento}</small>?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, eliminar!',
+                cancelButtonText:'No, cancelar'
+            })
+    
+            if(isConfirmed){
+                _form.showLoaderAnular();
+                _mS.getData('delete', '/IngresoBodega/Delete?id=' + item.idIngresoBodega).then(response=>{
+                    if(response.code==="0"){
+                        _form.sweetAlert('warning', response.message, response.titleSms);            
+                    }
+                    if(response.code==="1"){
+                        _form.sweetAlert('success', response.message, response.titleSms, 1000);                    
+                        $scope.getIngresoBodegas();
+                    }
+                }).catch(err=>{
+                    Swal.close();
+                    console.log(err)
+    
+                })           
+            }
+        } catch (error) {
+            console.log(error)            
+        }       
+    }
+
+
+
+     //Reporte 
+     $scope.getReport = function (item) { 
+             
+        let dataParms = {
+            codEstab: item.codEstab,
+            idIngresoBodega: item.idIngresoBodega,            
+        }
+        const parameters = {
+            reportParams: JSON.stringify({
+                codigo: 'RIB', 
+                codEstab: item.codEstab,
+                format: 'pdf',
+                aditionalParams: []
+            }),
+            dataParams: JSON.stringify(dataParms),
+            sendEmail:false
+        }
+        
+        _commonSvc.getReport({
+            parameters,
+            formatType:'pdf'
+        })        
+    }
+
+
+
+
+}

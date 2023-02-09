@@ -1,0 +1,155 @@
+<div class="modal-header">
+    <h4 class="modal-title">{{tipoRegistro==1?'Nuevo':'Editar'}} Transferencia</h4>
+    <button class="close" ng-click="modalRef.close()">&times;</button>
+</div>
+<div class="modal-body"> 
+    <div class="row">
+        <div class="col-lg-5 col-md-5 col-sm-5">
+            <div class="row justify-content-between">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <div class="form-group">
+                        <label for="">Sucursal Origen</label>
+                        {{sucursalOrigen}}
+                        <select class="form-control" ng-model="sucursalOrigen" ng-change="getOrigenBodegas()" ng-options="item as item.nombreComercial for item in origenSucursales track by item.idSucursal">                               
+                        </select>                           
+                    </div>                    
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <div class="form-group">
+                        <label for="">Bodega Origen: <span class="text-danger">*</span> </label>
+                        <select class="form-control border-select" ng-model="data.idBodegaOrigen">
+                            <option ng-value="item.idBodega" ng-repeat="item in origenBodegas">
+                                {{item.descripcion}}
+                            </option>                           
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-2 col-sm-2 text-center">
+            <div class="round round-success mt-4">
+                <i class="ti-angle-double-right"></i>
+            </div>
+        </div>
+        <div class="col-lg-5 col-md-5 col-sm-5">
+            <div class="row justify-content-between">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <div class="form-group">
+                        <label for="">Sucursal Destino</label>
+                        <select class="form-control" ng-model="sucursalDestino" ng-change="getDestinoBodegas()" ng-options="item as item.nombreComercial for item in destinoSucursales track by item.idSucursal">                               
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <div class="form-group">
+                        <label for="">Bodega Destino: <span class="text-danger">*</span> </label>
+                        <select class="form-control border-select" ng-model="data.idBodegaDestino">
+                            <option ng-value="item.idBodega" ng-repeat="item in destinoBodegas">
+                                {{item.descripcion}}
+                            </option>                           
+                        </select>
+                    </div> 
+                </div>
+            </div>             
+        </div>
+    </div> 
+            
+    <div class="row">
+        <div class="col-lg-3 col-md-4 col-sm-12 col-xs-12">
+            <div class="form-group">
+                <label for="">Punto Emision</label>                        
+                <select class="form-control border-select" ng-model="data.idPuntoEmision">
+                    <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmisiones">
+                        {{item.serie}}
+                    </option>
+                </select>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-12 col-xs-12">
+            <div class="form-group">
+                <label for="fechaEmision">Fecha Emisión</label>
+                <input type="date" ng-model="data.fechaEmision" class="form-control border-select" ng-requerid="true">                        
+            </div>
+        </div>
+
+        <div class="col-lg-6 col-md-4 col-sm-12 col-xs-12">
+            <div class="form-group">
+                <label for="observación">Observación</label>
+                <textarea ng-model="data.observacion" class="form-control border-select" cols="20" rows="2"></textarea>
+            </div>
+        </div>
+    </div>
+        
+    <div class="row justify-content-between">
+        <div class="col-lg-6">
+            <div class="form-group">
+                <label for="articulo">Articulo</label>
+                <input type="text" ng-model="articuloSearch.seachTextArticulo" autocomplete="off" id="searchArticulo" name="searchArticulo"
+                keyboard-disable
+                focus-search-articulo
+                ng-hide="data.isSearchCodigo" placeholder="Ej: AUDIFONO + MICROFONO... "
+                ng-focus="delayFocus('.searchArticulo')" 
+                uib-typeahead="a as  (a.codigo +' - ' + a.descripcion) for a in searchArticuloFilter($viewValue) | limitTo:5"
+                typeahead-template-url="customTemplate.html"
+                typeahead-items="5"
+                typeahead-editable="false"
+                @*typeahead-append-to-body="true"*@
+                @* typeahead-show-hint="true" *@
+                typeahead-focus-first="false"
+                typeahead-focus-on-select="false" 
+                typeahead-min-length="1"
+                @* typeahead-should-select="searchArticuloCodigo($event)"    *@
+                typeahead-on-select="selectedArticuloChange($item)"
+                @* ng-keydown="searchArticuloCodigo($event)"   *@
+                typeahead-loading="data.loadingSearchArticulo" typeahead-no-results="data.noResultsItem"
+                class="form-control border-select searchArticulo">
+                    
+                <script type="text/ng-template" id="customTemplate.html">
+                
+                    <div class="table-responsive">
+                        <table class="table-box browser no-border table-sm rtable">
+                            <thead ng-if="match.model.showHeader">
+                                <tr>
+                                    <th width="15">Codigo</th>
+                                    <th>Descripcion</th>
+                                    <th width="60">{{ match.model.bodega}}</th>                        
+                                    <th width="60">Stock Total</th>
+                                    <th>Ubicacion</th>                        
+                                </tr>
+                            </thead>
+                            <tr >
+                                
+                                <td class="suggestion-codigo">                        
+                                    {{ match.model.codigo }}
+                                </td>
+                                <td class="suggestion-articulo">{{ match.model.descripcion }} </td>
+                                <td class="suggestion-column text-center"> {{ match.model.stockBodega}}</td>                    
+                                <td scope="col" class="suggestion-column text-center">                                   
+                                    <h6><span class="{{match.model.color}}">{{ match.model.stock }} </span></h6>                                    
+                                </td>
+                                <td class="suggestion-column text-center">                                     
+                                            {{ match.model.ubicacion }}                                                                                              
+                                </td>                   
+                            </tr>
+                        </table>
+                    </div> 
+                </script> 
+            </div>
+        </div>
+    </div>
+
+    <div ui-grid="gridOptions"
+        ui-grid-edit
+        ui-grid-resize-columns
+        ui-grid-cellNav
+        ui-grid-auto-resize
+        class="grid"></div>                  
+                          
+                               
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-success" ng-click="guardar()">
+        <i ng-class="{'ti-save':tipoRegistro==1,'fa fa-edit':tipoRegistro==2}"></i> 
+        {{tipoRegistro===1?'Nuevo':'Actualizar'}}</button>
+    <button type="button" class="btn btn-dark"  ng-click="modalRef.close()">&times; Cerrar</button>
+</div>

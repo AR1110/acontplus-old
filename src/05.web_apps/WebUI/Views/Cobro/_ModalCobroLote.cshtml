@@ -1,0 +1,232 @@
+
+<style>
+    .cellPenditeParcial {
+    background-color: rgb(247, 150, 26) !important; 
+    color: #000 !important; 
+    }
+
+    .cellPendiente {
+    background-color: #FF9999 !important; 
+    color: #000 !important; 
+    }
+
+   
+</style>
+<form autocomplete="off">
+    <div class="modal-header">
+        <h5 class="modal-title">Nuevo Cobro</h5>
+        <button class="close" ng-click="$ctrl.closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+        <!--Tab-->
+        <div class="list-group list-group-horizontal" id="paymentStep">
+            <a href="javascript:void(0)" ng-click="$ctrl.paymentStepUno()" class="list-group-item list-group-item-action active">
+                <div>Paso 1 </div>
+                <span>Seleccionar Documentos</span>
+            </a>
+                <a href="javascript:void(0)" ng-click="$ctrl.paymentStepDos()" class="list-group-item list-group-item-action">
+                <div>Paso 2 </div>
+                <span>Cuotas</span>
+            </a>
+        </div>
+        
+        <hr>
+
+        <!--Tab Content-->
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="content-list-documento" role="tabpanel">
+                <div class="row">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label for="establecimiento">Estab.: <span class="text-danger">*</span></label>
+                            <select name="establecimiento" id="establecimiento" class="form-control border-select" ng-model="$ctrl.data.codEstab" ng-change="$ctrl.onChangeEstablecimiento()">
+                                <option ng-value="item.codEstab" ng-repeat="item in $ctrl.establecimientos">
+                                    {{item.nombreComercial}}
+                                </option>
+                            </select>
+                        </div>                                                
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label for="cliente">Cliente: <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                @await Html.PartialAsync("~/Views/Cliente/_UibModalClienteSearchFilter.cshtml") 
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" ng-click="$ctrl.getTipoDocumentos()">
+                                        <i class="fas fa-redo fa-xs"></i>
+                                    </button>
+                                </div>                                
+                            </div>
+                            <span class="ml-5" ng-if="$ctrl.clienteFiltro.loading"> <i class="fas fa-sync-alt fa-xs"></i> Loading...</span>
+                            <small class="text-danger ml-5" ng-if="$ctrl.clienteFiltro.noResults">No se encontraron resultados</small>
+                        </div>
+                    </div>
+                </div>
+                 @* <div  ui-grid="$ctrl.gridOptions"                                
+                        ui-grid-auto-resize  
+                        ui-grid-resize-columns                        
+                        ui-grid-pinning                         
+                        ui-grid-selection 
+                        ui-grid-infinite-scroll
+                        class="grid">
+                    </div> *@
+
+                <md-table-container style=" max-height: 400px;" ng-show="$ctrl.tipoDocumentos.length>0">
+                    <table md-table md-row-select="$ctrl.options.rowSelection" multiple="{{$ctrl.options.multiSelect}}" ng-model="$ctrl.selectedDocumentos">
+                        <thead md-head>
+                            <tr md-row>
+                                @*<th md-column><span>N°</span></th>*@
+                                <th md-column><span>N°. Doc.</span></th>
+                                <th md-column><span>Tipo Doc.</span></th>
+                                <th md-column><span>F. Emisión</span></th>
+                                <th md-column><span>F. Vcto.</span></th>
+                                <th md-column md-numeric><span>Total</span></th>
+                                <th md-column md-numeric><span>Abono</span></th>
+                                <th md-column md-numeric><span>Saldo</span></th>
+                                <th md-column md-numeric><span>Estado</span></th>
+                                @*<th md-column md-numeric hide-gt-xs show-gt-lg><span></span></th>*@
+                            </tr>
+                        </thead>
+                        <tbody md-body id="body-cobro">
+                            <tr style="cursor: pointer;" 
+                                md-row md-select="item" 
+                                md-on-select="$ctrl.getCuotaByTypeDocument"
+                                md-auto-select="true" 
+                                ng-disabled="item.hasEntrada"
+                                ng-repeat="item in $ctrl.tipoDocumentos ">
+                                @*<td md-cell>{{$index+1}}</td>*@
+                                <td md-cell>{{item.nroDocumento}}</td>
+                                <td md-cell>{{item.tipoDocumento}}</td>
+                                <td md-cell>{{item.fechaEmision}}</td>
+                                <td md-cell>{{item.fechaVencimiento}}</td>
+                                <td md-cell>${{item.total}}</td>
+                                <td md-cell>${{item.abono}}</td>
+                                <td md-cell>${{item.saldo}}</td>
+                                <td md-cell ng-style="{background:item.codigoColor, color:'white '}">{{item.estadoDoc}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </md-table-container>
+               
+            </div>
+
+            <div class="tab-pane fade show active" id="content-cuotas" style="display: none;" role="tabpanel">
+                <div class="row">
+                    <div class="col-xl-9 col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                        <div class="row">
+                            <div class="col clearfix mb-2">
+                                <span class="float-left">
+                                    <h5 class="modal-title">Cuotas a Cobrar</h5>
+                                </span>
+                                <span class="float-right">
+                                    <button type="button" class="btn btn-warning" ng-click="$ctrl.openModalFormaCobro()"><i class="ti-plus"></i> Nuevo Cobro</button>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xl-12 col-lg-12 col-md-12 coo-sm-12 col-xs-12">                                
+                                @await Html.PartialAsync("~/Views/Cobro/_DocumentoCuotas.cshtml")                           
+                            </div>
+                            
+                            <div class="col-xl-12 col-lg-12 col-md-12 coo-sm-12 col-xs-12">
+                                @await Html.PartialAsync("~/Views/Cobro/_DatosCobro.cshtml")                       
+                            </div>
+                        </div>                                
+                    </div>
+
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                        <div class="card-body border">
+                            <div class="row pb-1">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-7 py-2">
+                                            <span>Total</span>
+                                        </div>
+                                        <div class="col-5 py-2">
+                                            @* <span class="font-medium"></span> *@
+                                            <h4 class="text-success">{{$ctrl.data.total | currency:'$'}}</h4>
+                                        </div>
+                                    </div>
+
+                                    <div class="row bg-primary text-white" ng-if="$ctrl.data.totalAbonoAnterior>0">
+                                        <div class="col-7 py-2">
+                                            <span>Abono Anterior</span>
+                                        </div>
+                                        <div class="col-5 py-2">
+                                            :<span class="font-medium">{{$ctrl.data.totalAbonoAnterior | currency:'$'}}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-7 py-2">
+                                            <span>Abono</span>
+                                        </div>
+                                        <div class="col-5 py-2">
+                                            :<span class="font-medium">
+                                                {{$ctrl.data.abono | currency:'$'}}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-7 py-2">
+                                            <span>Abono Posf.</span>
+                                        </div>
+                                        <div class="col-5 py-2">
+                                            :<span class="font-medium">
+                                                {{$ctrl.data.abonoPosfechado | currency:'$'}}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-7 py-2">
+                                            <span>Total Abono</span>
+                                        </div>
+                                        <div class="col-5 py-2">
+                                            :<span class="font-medium">
+                                                {{$ctrl.data.abonoTotal | currency:'$'}}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-7 py-2">
+                                            <span>Saldo</span>
+                                        </div>
+                                        <div class="col-5 py-2">
+                                            :<span class="font-medium">
+                                                {{$ctrl.data.saldo | currency:'$'}}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row bg-dark text-white">
+                                        <div class="col-7 py-2">
+                                            <span>Cambio</span>
+                                        </div>
+                                        <div class="col-5 py-2">
+                                            :<span class="font-medium">
+                                                {{$ctrl.data.valorCambio | currency:'$'}}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>                                        
+                            </div>                                   
+                        </div>                                             
+                    </div>
+                </div>
+            </div>                   
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div ng-show="$ctrl.footerActionStepUno">
+            <button type="button" class="btn btn-info" ng-click="$ctrl.paymentStepDos()"><i class=" fas fa-angle-right"></i> Siguiente</button>
+            <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">&times; Cerrar</button>
+        </div>                
+        <div ng-show="$ctrl.footerActionStepDos">
+            <button type="button" class="btn btn-info" ng-click="$ctrl.paymentStepUno()"><i class=" fas fa-angle-left"></i> Atras</button>
+            <button type="button" class="btn btn-success" ng-click="$ctrl.onSave()"> <i class="ti-save"></i> Guardar</button>
+        </div>
+    </div>
+</form>
+        

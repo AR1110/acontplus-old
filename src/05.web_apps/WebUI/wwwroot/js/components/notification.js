@@ -1,0 +1,38 @@
+class Notification{
+    static $inject = ["$scope", "commonService", ]
+    constructor(){
+        this.connection = new signalR.HubConnectionBuilder().withUrl("/notificationHub").build();
+        this.connection.start();
+        
+        this.notifications = [];
+        let count = 0;
+        this.connection.on("ReceiveNotification", (user, message)=> {
+           return             
+        })    
+    }
+
+
+    showNotification(){
+        this.connection.invoke("SendNotification", "Notificacion Uno").then(function () {
+            console.log("End")        
+        }).catch(function (err) {
+            return console.error(err.toString());
+        })
+    }
+
+    $onInit(){
+
+    }
+
+    $onChanges(changesObj){
+        console.log(changesObj)
+    }
+}
+
+app.component("notification", {
+    templateUrl: '/Home/RenderView?name=' + 'Shared/_MainNotification.cshtml',
+    //template:` `,
+    bindings: {
+    },
+    controller: Notification
+})

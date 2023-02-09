@@ -1,0 +1,114 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+    
+<div ng-controller="configTributariaCtrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Gestión Tributaria</h4>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/Home/Index">Inicio</a></li>
+                    <li class="breadcrumb-item"><a href="javascript:void(0)">Config.</a></li>
+                    <li class="breadcrumb-item active">Config. Tributaria</li>
+                </ol>
+                <button type="button" class="btn btn-info m-l-15" ng-click="abrirModal(0,1)"><i class="fa fa-plus-circle"></i> Nuevo</button>
+            </div>
+        </div>
+    </div>
+
+
+    
+    <div layout="column">
+        <div flex="100">
+            <md-card>  
+                <md-card-content>
+                    <!-- tabla articulo fraccionado -->
+                    <md-table-container>
+
+                        <table md-table>
+                            <thead md-head>
+                                <tr md-row>
+                                    <th md-column><span>N°</span></th>
+                                    <th md-column>Entidad</th>
+                                    <th md-column md-order-by="articulo"><span>I.V.A</span></th>                                       
+                                    <th md-column>Estado</th>
+                                    <th md-column align="center">Op.</th>
+                                </tr>
+                            </thead>
+                            <tbody md-body class="text-center">
+                                <tr md-row ng-repeat="c in configTributarios | filter: buscar | limitTo: query.limit : (query.page -1) * query.limit">
+                                    <td md-cell>{{$index+1}}</td>
+                                    <td md-cell>{{c.empresa}}</td>
+                                    <td md-cell><b class="text-primary">{{c.tipoIva}}</b></td>                                       
+                                    <td md-cell ng-bind-html="c.configuracionTributaria.estado | estadoPrimario"></td>
+                                    <td md-cell>
+                                        <md-button class="md-icon-button md-primary" ng-click="abrirModal(c,2)" aria-label="Editar">
+                                            <i class="fa fa-edit"></i>
+                                        </md-button>                                     
+                                    </td>
+                                </tr>
+                                <tr ng-show="configTributarios.length==0" class="text-center">
+                                    <td colspan="8">
+                                        No hay registros en esta tabla :)
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </md-table-container>                   
+                </md-card-content>
+            </md-card>
+        </div>
+          
+    </div>
+    
+
+    <div class="modal fade in" id="agregar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="true">
+        <div class="modal-dialog modal-sm" role="document">
+            <form ng-submit="saveUpdate(tipo)" autocomplete="off">
+                <div class="modal-content">
+                    <div class="modal-header {{colorHeader}}">
+                        <h5 class="modal-title text-white" id="exampleModalLabel"><i class="{{iconoModal}}"></i>{{tituloModal}}</h5>
+                    </div>
+                    <div class="modal-body">                       
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-sm-12">
+                                <div class="form-group">
+                                    <label class="form-control-label">Tipo I.V.A <span class="text-danger">*</span></label>
+                                    <select ng-model="idTipoIva" class="form-control">
+                                        <option ng-value="ti.idTipoIva" ng-repeat="ti in tipoIvas">{{ti.descripcion}}</option>
+                                    </select>                                   
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-md-12 col-sm-12" ng-show="tipo==2">                                
+                                    <label>Estado: </label>
+                                    <md-switch ng-model="data.estado" aria-label="Estado" class="md-warn">
+                                        {{data.estado?'Activo':'Inactivo'}}
+                                    </md-switch>
+                            </div>                           
+                        </div>                       
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success text-white">
+                            <i class="{{tipo==1?'ti-save':' ti-pencil'}}"></i>{{tipo==1?' Guardar':' Actualizar'}}
+                        </button>
+                        <button type="button" class="btn btn-dark" data-dismiss="modal"><i class="fa fa-close"></i>&times; Cerrar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts{
+
+    <script src="~/js/controllers/config/configTributariaCtrl.js" asp-append-version="true"></script>
+
+}
+
+
+

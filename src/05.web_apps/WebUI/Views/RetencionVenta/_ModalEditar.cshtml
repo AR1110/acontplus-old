@@ -1,0 +1,106 @@
+<style>
+    /* Angular Material Overrides */
+    .md-select-menu-container, md-backdrop {
+        z-index: 9999 !important;
+    }        
+
+    .autocomplete-standard-template .md-autocomplete-suggestion{
+        border-bottom: 1px solid #ccc; 
+        height: auto;      
+        @* white-space: normal; *@
+    }
+    
+    .autocomplete-standard-template .md-autocomplete-suggestion:last-child {
+        border-bottom-width: 0;
+    }
+    .autocomplete-standard-template .item-desc {
+        font-size: 10px;
+        margin: 0.8em 0 .8em;
+        max-width: 400px;
+    }
+</style>
+<div class="modal-header">
+    <h4 class="modal-title">Editar Retencion Venta</h4>
+    <button type="button" class="close" aria-label="Close" ng-click="$ctrl.closeModal()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <div layout-gt-sm="row">
+        <md-input-container class="md-block" flex-gt-sm>
+             <label>Estab.: <span class="text-danger">*</span></label>
+            <md-select name="establecimiento" ng-model="$ctrl.data.codEstab" disabled>                    
+                <md-option ng-value="item.codEstab" ng-repeat="item in $ctrl.establecimientos">{{item.nombreComercial}}</md-option>
+            </md-select>              
+        </md-input-container>
+        
+        <md-input-container class="md-block" flex-gt-sm>
+            <label for="">Punto Emisión: <span class="text-danger">*</span></label>
+            <input type="text" ng-model="$ctrl.data.ptoEmision" mask="999-999" md-minlength="7"  md-maxlength="7" placeholder="001-002">
+        </md-input-container>
+        
+        <md-input-container class="md-block" flex-gt-sm>
+            <label for="">Nro. Documento: <span class="text-danger">*</span></label>
+            <input type="text" ng-model="$ctrl.data.nroDoc" >
+        </md-input-container>
+        
+        <md-input-container class="md-block" flex-gt-sm>
+            <label>Fecha Emisión</label>
+            <input type="date" ng-model="$ctrl.data.fechaEmision" class="form-control select-border">
+        </md-input-container>                                                       
+    </div>
+
+
+    <div layout-gt-sm="row">                                                                                                                       
+        <div flex-gt-sm>
+            <label for="">Cliente</label>
+            <input ng-model="$ctrl.cliente.nombreFiscal" disabled>                                 
+        </div>            
+        <md-input-container class="md-block" flex="20" flex-gt-xs>
+            <label>Nro. Identificación</label>
+            <input ng-model="$ctrl.cliente.numeroIdentificacion" disabled>
+        </md-input-container>                       
+
+        <div flex-gt-sm>
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Nro. Factura</label>
+                <input ng-model="$ctrl.factura.nroDocumento" disabled>
+                 <a class="btn btn-secondary btn-sm mt-1" ng-if="$ctrl.factura.idFactura>0" href="javascript:void(0)" ng-click="$ctrl.viewDetailInvoice()">
+                    <i class="mdi mdi-eye"></i> Ver Documento
+                </a>
+            </md-input-container>                                                         
+        </div>                                                                     
+
+    </div>
+
+    <div layout-gt-sm="row">       
+        <md-input-container class="md-block" flex="50" flex-gt-sm>
+            <label>Nro. Autorización: <span class="text-danger">*</span></label>
+            <input ng-model="$ctrl.data.nroAutho" valid-number>
+             <span class="text-info">{{$ctrl.data.nroAutho.length}} números</span>     
+        </md-input-container>
+
+        <md-input-container class="md-block" flex="50" flex-gt-sm>
+            <label>Observación</label>
+            <input ng-model="$ctrl.data.concepto">
+        </md-input-container>
+    </div> 
+
+    <div ui-grid="$ctrl.gridOptions"
+            ui-grid-edit
+            ui-grid-resize-columns
+            ui-grid-cellNav
+            ui-grid-auto-resize
+            class="grid">
+        </div> 
+
+        
+</div>
+<div class="modal-footer">
+    <button class="btn btn-info" type="button" ng-click="$ctrl.saveUpdateVenta()">
+        <i class="ti-pencil"></i> Actualizar
+    </button>
+    <button class="btn btn-dark" type="button" ng-click="$ctrl.closeModal()">
+        <i class="ti-close"></i> Cerrar
+    </button>
+</div>

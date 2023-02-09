@@ -1,0 +1,34 @@
+<h2 mat-dialog-title>{{tipoRegistro===1?'Nuevo':'Editar'}} Licencia</h2>
+
+<mat-dialog-content class="mat-typography">
+  <form [formGroup]="dataForm">
+    <mat-form-field >
+      <mat-label>Código</mat-label>
+      <input type="text" formControlName="codigo"  matInput>
+    </mat-form-field>
+
+    <mat-form-field >
+      <mat-label>Título</mat-label>
+      <input type="text" formControlName="titulo" matInput>
+    </mat-form-field>
+
+    <mat-form-field >
+      <mat-label>Descripcion</mat-label>
+      <input type="text" formControlName="descripcion" matInput>
+    </mat-form-field>
+
+    <section *ngIf="tipoRegistro===2">
+      <mat-label>Estado</mat-label><br>
+      <mat-radio-group  aria-label="Estado" formControlName="estado">
+        <mat-radio-button [value]="true">Activo</mat-radio-button>
+        <mat-radio-button [value]="false">Inactivo</mat-radio-button>
+      </mat-radio-group>
+    </section>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-raised-button color="accent" (click)="saveAndUpdate()">Guardar</button>
+  <button mat-raised-button color="basic" mat-dialog-close>Cerrar</button>
+</mat-dialog-actions>

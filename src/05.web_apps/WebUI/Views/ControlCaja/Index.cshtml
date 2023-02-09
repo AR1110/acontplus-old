@@ -1,0 +1,115 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+<div ng-controller="controlCajaCtrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Control Caja</h4>
+        </div>
+        <div class="col-md-7 align-self-center">
+            <ol class="breadcrumb float-right">
+                <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
+                <li class="breadcrumb-item"><a href="javascript:void(0)">Administración</a></li>
+                <li class="breadcrumb-item text-primary font-medium">Control Caja</li>
+            </ol>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card overflow-hidden">
+                <div class="card-body border-bottom">
+                    <h4 class="card-title mb-0">Caja: <span class="text-success"> {{dataCaja.descripcion}}</span></h4>                    
+                </div>
+                <div class="row justify-content-center bg-light p-4">
+                    <div class="col-md-10">
+                        <div class="card shadow-sm">
+                            <div class="p-4">
+                                <h5>Movimientos Caja</h5>
+                                <div class="card mb-0  mt-3">
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>N°</th>
+                                                        <th>Apertura</th>
+                                                        <th>Cierre</th>
+                                                        <th>Faltante</th>
+                                                        <th>Sobrante</th>
+                                                        <th>Total</th>
+                                                        <th>Estado</th>
+                                                        <th>Op.</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="mc in movimientosCaja">
+                                                        <td>{{$index+1}}</td>
+                                                        <td>{{mc.controlCaja.fechaApertura}}</td>
+                                                        <td>{{mc.controlCaja.fechaCierre}}</td>
+                                                        <td>{{mc.controlCaja.faltante | currency:'$'}}</td>
+                                                        <td>{{mc.controlCaja.sobrante | currency:'$'}}</td>
+                                                        <td>{{mc.controlCaja.totalArqueo | currency:'$'}}</td>
+                                                        <td>{{mc.nombreEstado}}</td>
+                                                        <td>
+                                                            <a href="javascript:void(0)" ng-click="abrirModal(mc,1)" class="text-inverse p-r-10" data-toggle="tooltip" title="" data-original-title="Edit"><i class="fas fa-dollar-sign"></i></a>
+                                                        </td>
+                                                    </tr>
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="ml-auto">
+                                        <a href="javascript:void(0)" ng-click="atras()" class="btn btn-dark"> Atrás</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-modal="true" >
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="myModalLabel">{{tituloModal}}</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-lg-2 col-md-2 col-sm-2" ng-repeat="a in arqueos">
+                                <div class="form-group">
+                                    <small>{{a.descripcionMoneda}}</small>
+                                    <input type="text" valid-number class="form-control border-select" ng-model="a.detalleArqueoCaja.cantidad"
+                                           ng-change="calcularCantidadMoneda(a)" ng-value="a.detalleArqueoCaja.cantidad">
+                                </div>
+                            </div>
+                            <h4 class="ml-auto">Total: <span>{{totalArqueo|currency:'$'}}</span> </h4>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" ng-click="crudControlCaja(tipo)">
+                            Guardar                            
+                        </button>
+                        <button type="button" class="btn btn-dark" data-dismiss="modal">&times; Cerrar</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+
+
+    </div>
+
+</div>
+
+@section Scripts{
+    <script src="~/js/controllers/admin/controlCajaCtrl.js?v=0.4" asp-append-version="true"></script>
+}
+
+

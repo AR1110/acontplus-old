@@ -1,0 +1,130 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+<div ng-controller="documentoLoteCtrl">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Documentos por lotes</h5>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="">Documento:</label>
+                                <select id="codDoc" class="form-control" ng-model="data.codDoc"
+                                    ng-change="get(data.codDoc)">
+                                    <option value="">Seleccione</option>
+                                    <option ng-repeat="item in tipoDocumentos" value="{{item.codigoSri}}"
+                                        ng-selected="item.codigoSri == data.codDoc">{{item.descripcion}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row" ng-show="data.codDoc">
+                        <div class="col-sm-4">
+                            <button type="button" class="btn btn-success" ng-click="askToPost()"> <i
+                                    class="ti-plus"></i> Generar Lotes</button>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="table-responsive" ng-show="lotes.length>0">
+                        <table class="table table-striped table-bordered zero-configuration">
+                            <thead>
+                                <tr>
+                                    <th>Ambiente</th>
+                                    <th>Lote</th>
+                                    <th>Fecha Emisión</th>
+                                    <th>Cant. Solicitada</th>
+                                    <th>Estado</th>
+                                    <th>Cant Docs. Aut.</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="item in lotes">
+                                    <td>{{item.ambiente}}</td>
+                                    <td class="text-center">{{item.nroLote}}</td>
+                                    <td class="text-center">{{item.fechaEmision | date: 'dd/MM/yyyy HH:mm'}}</td>
+                                    <td class="text-center">{{item.cantDocs}}</td>
+                                    <td class="text-center">{{item.estado}}</td>
+                                    <td class="text-center">{{item.totalAutorizados}}</td>
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-info btn-sm" ng-click="getDetails(item)"
+                                            title="Ver Documentos"><i class="fa fa-folder-open"></i></button>
+                                        <button type="button" class="btn btn-success btn-sm"
+                                            ng-click="askToAuthorize(item)" title="Enviar al sri"
+                                            ng-disabled="item.numeroComprobantesLote > 0"><i
+                                                class="fa fa-unlock"></i></button>
+                                        <button type="button" class="btn btn-danger btn-sm" ng-click="askToDelete(item)"
+                                            ng-disabled="item.numeroComprobantesLote > 0" title="Eliminar"><i
+                                                class="fa fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="docsModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Documentos del Lote: {{nroLote}}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <input type="text" class="form-control" ng-model="searchDoc" placeholder="Buscar Documento">
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Secuencial</th>
+                                    <th>Fecha</th>
+                                    <th>Ruc</th>
+                                    <th>Cliente</th>
+                                    <th>Total</th>
+                                    <th>Estado</th>
+                                    <th>Opciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="item in documents | filter: searchDoc">
+                                    <td>{{item.secuencial}}</td>
+                                    <td>{{item.fechaEmision | date: 'dd/MM/yyyy HH:mm'}}</td>
+                                    <td>{{item.ruc}}</td>
+                                    <td>{{item.cliente}}</td>
+                                    <td class="text-right">{{item.total | currency}}</td>
+                                    <td class="text-center">{{item.estado}}</td>
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-danger btn-sm btn-rounded"
+                                            ng-click="askToDeleteDoc(item)" ng-disabled="item.estado === 'Autorizado'"
+                                            title="Eliminar del Lote"><i class="fa fa-trash"></i></button>
+                                        <button type="button" class="btn btn-info btn-sm btn-rounded"
+                                            ng-click="getLogs(item)" ng-show="item.estado != 'Autorizado'"
+                                            title="Ver Logs"><i class="fa fa-info"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-dark" data-dismiss="modal">&times; Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+<script src="~/js/controllers/documentoLoteCtrl.min.js" asp-append-version="true"></script>
+}

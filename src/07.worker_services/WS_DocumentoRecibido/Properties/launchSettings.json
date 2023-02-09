@@ -1,0 +1,11 @@
+﻿{
+  "profiles": {
+    "WS_DocumentoRecibido": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

@@ -1,0 +1,114 @@
+﻿
+<div ng-controller="retencionCompraCtrl">
+    <div class="modal fade" id="generarRetencion" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fa fa-donate fa-xs"></i> Retención de Compra</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <form ng-submit="saveRetencion()" autocomplete="0ff" novalidate>
+                    <div class="modal-body">                                                                           
+                        <div class="row">
+                            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+                                <small class="text-muted">Sucursal: </small>
+                                <h6>{{sucursal.nombreComercial}}</h6>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+                                <small class="text-muted">Sr (es): </small>
+                                <h6>{{proveedor.nombreComercial}}</h6>
+                            </div>
+                            <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6">
+                                <small class="text-muted">RUC: </small>
+                                <h6>{{proveedor.numeroIdentificacion}}</h6>
+                            </div>
+                            <div class="col-lg-2 col-md-3 col-sm-6 col-xs-6">
+                                <small class="text-muted">Dirección: </small>
+                                <h6>{{proveedor.direccion}}</h6>
+                            </div>
+                            <div class="col-lg-2 col-md-2 col-sm-6 col-xs-6">
+                                <small class="text-muted">Correo: </small>
+                                <h6>{{proveedor.correo}}</h6>
+                            </div>
+                        </div>
+                        <hr />
+                            <div class="row">
+                                <div class="col-lg-2 col-md-2 col-sm-2">
+                                    <div class="form-group">
+                                        <label class="control-label">Punto emisión:</label>
+                                        <select class="form-control" ng-model="puntoEmisionEmpresa"
+                                                ng-options="pe as pe.serieCompleta for pe in puntoEmisionesEmpresa track by pe.idPuntoEmision">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2">
+                                    <div class="form-group">
+                                        <label class="control-label">Nro. Retención: </label>
+                                        <input type="text" class="form-control" ng-model="retencionCompra.numeroRentencion" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-3">
+                                    <div class="form-group">
+                                        <label class="control-label">Autorización <b class="text-danger">S.R.I:</b> </label>
+                                        <input type="text" ng-model="retencionCompra.autorizacionSri" class="form-control" value="" />                                       
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2">
+                                    <div class="form-group">
+                                        <label class="control-label">Clave Acceso: </label>
+                                        <input type="text" class="form-control" ng-model="retencionCompra.claveAcceso" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2">
+                                    <div class="form-group">
+                                        <label class="control-label">Fecha Emisión:</label>
+                                        <input type="date" ng-model="retencionCompra.fechaEmision" class="form-control" value="" />
+
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2">
+                                    <div class="form-group">
+                                        <label class="control-label">F. Autorización <b class="text-danger">S.R.I:</b> </label>
+                                        <span>{{retencionCompra.fechaAutorizacionSri}}</span>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12">
+                                    <div id="grid" ui-grid="gridOptionsRetencion"
+                                            ui-grid-edit
+                                            ui-grid-resize-columns
+                                            ui-grid-cellNav                                            
+                                            ui-grid-auto-resize
+                                            class="grid" ng-style="getTableHeightUI()">
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Concepto:</label>
+                                        <textarea class="form-control" ng-model="retencionCompra.concepto" cols="2" rows="1" placeholder="Concepto..."></textarea>
+                                    </div>
+                                </div>
+                                @*<div class="col-lg-6 col-md-6 col-sm-6">
+                                    <div class="pull-right mt-2  text-right">
+                                        <h3><b>Total :</b> <b class="text-muted">{{retencionCompra.concepto|currency:'$'}}</b></h3>
+                                    </div>
+                                    <div class="clearfix"></div>                                            
+                                </div>*@
+                            </div>
+                                                                                
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success"><i class="ti-save"></i> Guardar</button>
+                        <button type="button" class="btn btn-dark" data-dismiss="modal">&times; Cerrar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

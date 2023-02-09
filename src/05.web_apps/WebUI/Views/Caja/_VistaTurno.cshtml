@@ -1,0 +1,19 @@
+ <div class="table-responsive ">                                                    
+    <table class="table browser no-border table-sm">
+        <tbody>
+            <tr class="text-center">
+                <th><small>Dia</small></th>
+                <th><small>Apertura</small></th>
+                <th><small>Cierre</small></th>
+                <th><small>Estado</small></th>
+            </tr>
+            <tr ng-repeat="h in horarios" class="text-muted {{h.clase}}">
+                <td><small>{{h.diaSemana}}</small></td>
+                <td><small>{{h.horario.apertura }} </small></td>
+                <td><small>{{h.horario.cierre }}</small></td>
+                <td><i class="{{h.diaLaborable}} "></i></td>
+            </tr>
+
+        </tbody>
+    </table>
+</div> 

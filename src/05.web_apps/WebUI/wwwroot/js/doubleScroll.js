@@ -1,0 +1,10 @@
+  
+$("[name='innerScroll']").width($("[name='innerWireTable']").width());
+$("#upperScroll").scroll(function () {    
+    $("[name='wireTable']").scrollLeft($("#upperScroll").scrollLeft());
+});
+ 
+$("[name='wireTable']").scroll(function () {
+    $("#upperScroll").scrollLeft($("[name='wireTable']").scrollLeft());
+}); 
+// $("#upperScroll").css({ 'height': ($("[name='wireTable']").height() + 'px') });

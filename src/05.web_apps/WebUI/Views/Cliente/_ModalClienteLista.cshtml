@@ -1,0 +1,90 @@
+<div class="modal-header">
+    <h5 class="modal-title">Lista de Clientes</h5>
+    <button class="close" ng-click="$ctrl.closeModal()">&times;</button>
+</div>
+<div class="modal-body">
+    <div class="card">
+        <div class="row justify-content-end">
+            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                <form class="form-material" autocomplete="off">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="searchCliente" ng-model="$ctrl.dataSearch.bySearch" ng-keyup="$ctrl.onKeyupSearchCliente()" placeholder="Buscar Cliente" />
+                        <div class="input-group-append" uib-tooltip="Recargar la tabla" tooltip-placement="top">
+                            <button type="button" class="btn btn-info" ng-click="$ctrl.resetList()">
+                                <i class="fas fa-undo"></i> 
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>            
+        </div>
+        @* <md-toolbar class="md-table-toolbar md-default">
+            <div class="md-toolbar-tools">
+
+                <div class="col-lg-9 col-md-9 col-sm-9 m-t-20">                    
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-3">
+                    <form class="form-material" autocomplete="off">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="searchCliente" ng-model="$ctrl.dataSearch.bySearch" ng-keyup="$ctrl.onKeyupSearchCliente()" placeholder="Buscar Cliente" />
+                            <div class="input-group-append" uib-tooltip="Recargar la tabla" tooltip-placement="top">
+                                <button type="button" class="btn btn-info" ng-click="$ctrl.resetList()">
+                                    <i class="fas fa-undo"></i> 
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </md-toolbar> *@
+
+        @* <md-toolbar class="md-whiteframe-1dp">
+            <div class="md-toolbar-tools">
+                <div class="md-title">Material Design Data Table</div>
+            </div>
+        </md-toolbar> *@
+
+        <md-table-container md-scroll-y layout-fill style=" max-height: 400px;">
+            <table md-table md-row-select="true"  ng-model="$ctrl.selected">
+                <thead md-head >
+                    <tr md-row>                                                     
+                        <th md-column>N°</th>
+                        <th md-column>RUC</th>
+                        <th md-column>Nombre Fiscal</th>
+                        <th md-column>Dirección</th>
+                        <th md-column>Teléfono</th>
+                        <th md-column>Estado</th> 
+                    </tr>
+                </thead>
+                <tbody md-body>
+                    <tr md-row md-select="c" md-on-select="$ctrl.seleccionarCliente" md-auto-select="true"  ng-repeat="c in $ctrl.clientes">                                                       
+                        <td md-cell>{{$index+1}}</td>
+                        <td md-cell>{{c.numeroIdentificacion}}</td>
+                        <td md-cell>{{c.nombreFiscal}}</td>
+                        <td md-cell>{{c.direccion}}</td>
+                        <td md-cell>{{c.telefono}}</td>
+                        <td md-cell ng-bind-html="c.estado|estadoPrimario"></td>                               
+                    </tr>
+                    <tr ng-show="clientes.length==0" class="text-center">
+                        <td colspan="7">
+                            No hay registros en esta tabla :)
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td align="center" colspan="7">
+                            <div class="pull-left m-t-10">
+                                @* <md-table-pagination md-limit="query.limit" md-limit-options="recordsQuantity" md-page="query.page" md-total="{{totalRecords}}" md-boundary-links="options.boundaryLinks" md-on-paginate="logPagination"></md-table-pagination> *@
+                                @*<ul uib-pagination total-items="totalRecords" items-Per-Page="pageSize" ng-change="pagechanged()" ng-model="pageIndex" max-size="maxSize" class="pagination" boundary-links="true" rotate="false"></ul>*@
+                            </div>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </md-table-container>
+    </div>  
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()" >&times; Cerrar</button>
+</div>

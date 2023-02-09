@@ -1,0 +1,42 @@
+
+<mat-sidenav-container class="mat-drawer-container mat-sidenav-container">
+  <div class="mat-drawer-backdrop ">
+
+  </div><!---->
+  <mat-sidenav-content class="mat-drawer-content mat-sidenav-content ">
+    <router-outlet></router-outlet>
+      <div  class="login-register" style="background-image: url(assets/images/fondo/fondo1-1200x630.png);">
+        <div  class="login-register-box">
+          <mat-card>
+            <mat-card-content class="mat-typography">
+              <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                <div  class="text-center">
+                  <img  alt="homepage" src="assets/images/logo/logoAcontPlus.jpg" width="60%">
+                  <h3  class="m-t-0">Inicio de Sesión</h3>
+                </div>
+
+                <mat-form-field>
+                  <mat-icon matSuffix class="auth-page-icon">email</mat-icon>
+                  <input matInput formControlName="email" placeholder="Usuario" id="email"  name="usuario" required>
+                  <mat-error>
+                    Ingrese usuario válido
+                  </mat-error>
+                </mat-form-field>
+                <mat-form-field>
+                  <mat-icon matSuffix class="auth-page-icon">vpn_key</mat-icon>
+                  <input matInput type="password" formControlName="password" placeholder="Password"  name="password" required>
+                  <mat-error>
+                    Ingrese una contraseña válida
+                  </mat-error>
+                </mat-form-field>
+                <button mat-raised-button color="primary" type="submit">
+                  Ingresar
+                  <mat-icon>exit_to_app</mat-icon>
+                </button>
+              </form>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

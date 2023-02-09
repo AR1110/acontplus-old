@@ -1,0 +1,28 @@
+<div class="form-group">
+    <label for="clienteFiltro">Cliente</label>
+    <input type="text" id="clienteSearchFiltro"
+        autocomplete="off"
+        name="clienteSearchFiltro"
+        class="form-control border-select"
+        placeholder="Ingrese C.I o Nombre Fiscal"
+        ng-model="clienteFiltro.nombreFiscal"
+        typeahead-wait-ms="10"
+        ng-keyup="onKeyupClienteSearchFiltro()"
+        uib-typeahead="a as a.nombreFiscal for a in clienteSearch($viewValue)"
+        typeahead-loading="clienteFiltro.loading"
+        typeahead-no-results="clienteFiltro.noResults"
+        typeahead-template-url="clienteSearchFiltro.html"
+        typeahead-editable="false"
+        typeahead-on-select="selectedClienteSearchFiltro($item)" />
+
+        <script type="text/ng-template" id="clienteSearchFiltro.html">
+            <div class="autocomplete-suggestion-uib-typeahead">
+                <span class="item-title">
+                    <b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}
+                </span>
+            </div>
+        </script>
+        
+        <span class="ml-5" ng-if="clienteFiltro.loading"> <i class="fas fa-sync-alt fa-xs"></i> Loading...</span>
+        <small class="text-danger ml-5" ng-if="clienteFiltro.noResults">No se encontraron resultados</small>
+</div>

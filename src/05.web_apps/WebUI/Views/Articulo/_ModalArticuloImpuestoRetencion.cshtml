@@ -1,0 +1,83 @@
+<style>
+    .md-select-menu-container, md-backdrop {
+    z-index: 9999 !important;
+}
+
+</style>
+
+<div class="modal-header">
+    <h5 class="modal-title">Impuesto Articulo Retención</h5>
+    <button class="close" ng-click="$ctrl.closeModal()">&times;</button>
+</div>
+<div class="modal-body"> 
+    <div layout-gt-sm="row">
+        <md-input-container class="md-block"  flex-gt-sm>
+            <label>Nro. Identificación</label>
+            <input ng-value="$ctrl.header.numeroIdentificacion" disabled />            
+        </md-input-container>
+
+        <md-input-container class="md-block"  flex-gt-sm>
+          <label>{{$ctrl.labelEntidad}}</label>
+          <input ng-value="$ctrl.header.nombreFiscal" disabled/>          
+        </md-input-container>
+       
+        <md-input-container class="md-block" flex-gt-sm>
+            <label>Dirección</label>
+            <input ng-value="$ctrl.header.direccion" disabled />            
+        </md-input-container>       
+    </div>  
+
+    <div class="row justify-content-lg-end justify-content-md-end justify-content-sm-between">
+        <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+            <div class="form-group">
+                <label for="tipoImpuesto" class="text-muted">Tipo Impuesto</label>
+                <select id="tipoImpuesto" name="tipoImpuesto" class="form-control border-select" ng-model="$ctrl.idTipoImpuestoRenta" ng-change="$ctrl.onChangeTipoImpuesto()">
+                    <option ng-value="ti.idTipoImpuestoRenta" ng-repeat="ti in $ctrl.tipoImpuestos">{{ti.descripcion}}</option>
+                </select> 
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+            <div class="form-group">
+                <label for="impuesto" class="text-muted">Impuesto</label>
+                <select id="impuesto" name="impuesto" class="form-control border-select" ng-model="$ctrl.idRetencionRenta" ng-change="$ctrl.onChangeImpuesto()">
+                    <option ng-value="item.idRetencionRenta" ng-repeat="item in  $ctrl.impuestos">{{item.descripcion}}</option>
+                </select> 
+            </div> 
+        </div>
+    </div>
+    <md-table-container>
+        <table md-table>
+            <thead md-head>                          
+                <tr md-row>                    
+                    <th md-column>Código</th>
+                    <th md-column>Articulo</th>
+                    <th md-column>Tipo Iva</th>
+                    <th md-column>Tipo Impuesto</th>
+                    <th md-column>Impuesto</th>
+                </tr>               
+            </thead>
+            <tbody md-body>                               
+                <tr md-row ng-repeat="item in $ctrl.articuloImpuestos">                    
+                    <td md-cell>{{item.codigo}}</td> 
+                    <td md-cell>{{item.detalle.descripcion}}</td>
+                    <td md-cell>{{item.nombreTipoIva}}</td>
+                    <td md-cell>                                             
+                        <select class="form-control" ng-model="item.detalle.idTipoImpuestoRenta" ng-change="$ctrl.getImpuestoByIdTipoImpuesto(item.detalle, item.detalle.idTipoImpuestoRenta)">
+                            <option ng-value="ti.idTipoImpuestoRenta" ng-repeat="ti in $ctrl.tipoImpuestos">{{ti.descripcion}}</option>
+                        </select>                                                 
+                    </td> 
+                    <td md-cell>
+                        <select class="form-control" ng-model="item.detalle.idRetencionRenta" ng-disabled="!item.detalle.idTipoImpuestoRenta>0">
+                            <option ng-value="i.idRetencionRenta" ng-repeat="i in  item.detalle.impuestos">{{i.descripcion}}</option>
+                        </select> 
+                    </td>                                  
+                </tr>
+            </tbody>
+        </table>
+    </md-table-container> 
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-success" ng-click="$ctrl.guardarImpuestoArticulo()"><i class="ti-save"></i> Guardar</button>
+    <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">&times; Cerrar</button>
+</div>

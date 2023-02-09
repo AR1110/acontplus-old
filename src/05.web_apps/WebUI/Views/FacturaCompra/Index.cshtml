@@ -1,0 +1,170 @@
+﻿@{
+    ViewData["title"] ="Factura Compra";
+}
+
+
+<div ng-controller="facturaCompraCtrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor"> Factura de Compra</h4>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+                @* <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/Home/Index">Inicio</a></li>
+                    <li class="breadcrumb-item"><a href="javascript:void(0)">Compras </a></li>
+                    <li class="breadcrumb-item active">Factura de Compra</li>
+                </ol> *@
+                <button type="button" class="btn btn-info m-l-15" ng-if="accion.leer && accion.crear" ng-click="openModalNew()"><i class="fa fa-plus-circle"></i> Nuevo</button>
+                @* <button class="btn btn-danger" ng-click="openModalTestNew()">Test New</button>  *@
+            </div>
+        </div>
+    </div>
+
+
+    <!--Busqueda Avanzada-->
+    <partial name="_ModalFiltro"/>
+
+   
+    <!--Inicio Lista Factura Compras-->
+    <div class="row">
+        <div class="col-lg-12">
+            <md-card>
+                <md-toolbar class="md-table-toolbar md-default">
+                    <div class="md-toolbar-tools">
+
+                        <div class="col-lg-9 col-md-9 col-sm-1">                                                    
+                            <button type="button"  class="btn btn-info" ng-click="openModalFiltro()"><i class=" fas fa-filter"></i> Filtrar</button>
+                            <button class="btn  waves-effect waves-light btn-secondary" ng-click="getFacturas()"><i class=" fas fa-sync"></i></button>                
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                            <form class="form-material">
+                                <input type="text" class="form-control" ng-keyup="filterLocalFC()"  ng-model="txtFilter" placeholder="Buscar Factura de Compra" />
+                            </form>
+                        </div>
+                    </div>
+                </md-toolbar> 
+                <div id="upperScroll" style="overflow-x:scroll; overflow-y: hidden; max-height:20px; width:100%">
+                    <div name="innerScroll" ng-style="duelScroll" style="height:20px;"></div>
+                </div>
+                <div ng-style="getStyle($index)">
+                    <md-table-container  name="wireTable" infinite-scroll="loadMore($index)" infinite-scroll-distance="1" infinite-scroll-parent="true" ng-init="isShow=true" ng-show="isShow" style=" max-height: 400px; overflow-x: hidden;">
+                        <table resize master md-table name="innerWireTable">
+                            <thead fix-head md-head md-on-reorder="facturaCompras">
+                                <tr md-row>
+                                    <th md-column>Op.</th>
+                                    @* <th md-column>N°</th> *@
+                                    <th md-column>N°. Doc. </th>
+                                    <th md-column>F. Emisión</th>
+                                    <th md-column>F. Vcto</th>
+                                    <th md-column>Proveedor</th>
+                                    <th md-column>Total</th>
+                                    <th md-column>Abono</th>
+                                    <th md-column>Saldo</th>
+                                    <th md-column>N°. Ret.</th>
+                                    <th md-column>Estado</th>
+                                    <th md-column>Usuario</th>
+                                </tr>
+                            </thead>
+                            <tbody md-body>
+                                <tr md-row ng-repeat="f in facturas" >
+                                    <td md-cell>
+                                        <md-menu>
+                                            <md-button aria-label="Open demo menu" class="md-icon-button"
+                                                        ng-click="$mdMenu.open($event)">
+                                                <icon class="mdi mdi-menu"></icon>
+                                            </md-button>
+                                            <md-menu-content class="md-dense">
+                                                <md-menu-item>
+                                                    <md-button ng-click="openModalDetalle(f)">
+                                                        <span md-menu-align-target><i class="ti-menu"></i> Detalle</span>
+                                                    </md-button>
+                                                </md-menu-item>
+
+                                                <md-menu-item ng-if="accion.editar">
+                                                    <md-button ng-click="openModalEditar(f)">
+                                                        <span md-menu-align-target><i class="ti-pencil"></i> Editar</span>
+                                                    </md-button>
+                                                </md-menu-item>
+
+                                                <md-menu-item ng-if="accion.eliminar">
+                                                    <md-button ng-click="askToDelete(f)">
+                                                        <span md-menu-align-target><i class="ti-trash"></i> Eliminar</span>
+                                                    </md-button>
+                                                </md-menu-item>
+
+                                                <md-menu-item>
+                                                    <md-button ng-click="retencionAutomatica(f)">
+                                                        <span md-menu-align-target><icon class="fa fa-recycle"></icon> Retención</span>
+                                                    </md-button>
+                                                </md-menu-item>
+
+                                                <md-menu-item>
+                                                    <md-button ng-click="openModalCuota(f)">
+                                                        <span md-menu-align-target><icon class="fas fa-donate"></icon> Cuotas</span>
+                                                    </md-button>
+                                                </md-menu-item>
+
+                                                <md-menu-item ng-if="accion.cobroPago">
+                                                    <md-button ng-click="openModalPago(f)">
+                                                        <span md-menu-align-target><icon class="far fa-money-bill-alt"></icon> Pago</span>
+                                                    </md-button>
+                                                </md-menu-item>                        
+
+                                                <md-menu-item ng-if="accion.historialFinanciero">
+                                                    <md-button ng-click="openModalHistorialPago(f)">
+                                                        <span md-menu-align-target><icon class=" fas fa-tasks"></icon> Hist. Mov.</span>
+                                                    </md-button>
+                                                </md-menu-item>   
+
+                                                <md-menu-item ng-if="accion.reporte" >
+                                                    <md-button ng-click="getReport(f)">
+                                                        <span md-menu-align-target><icon class=" ti-file"></icon> PDF</span>
+                                                    </md-button>
+                                                </md-menu-item> 
+                                            </md-menu-content>
+                                        </md-menu>                                       
+                                    </td>                                         
+                                    <td md-cell>{{f.nroDocumento}}</td>
+                                    <td md-cell>{{f.fechaEmision}}</td>
+                                    <td md-cell>{{f.fechaVencimiento}}</td>
+                                    <td md-cell>{{f.proveedor}}</td>
+                                    <td md-cell>${{f.total}}</td>
+                                    <td md-cell>${{f.abono}}</td>
+                                    <td md-cell>${{f.saldo}}</td>
+                                    <td md-cell>{{f.nroRetencion}}</td>
+                                    <td md-cell>{{f.estadoFinanciero}}</td>
+                                    <td md-cell>{{f.usuario}}</td>
+                                </tr>
+                                <tr ng-show="facturas.length ==0" class="text-center">
+                                    <td colspan="11">
+                                        No hay registros en esta tabla :)
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot md-foot fix>
+                                <tr md-row>
+                                    <td md-cell colspan="1"><span class="font-weight-bold">{{facturas.length}} Facturas</span></td>
+                                    <td md-cell colspan="4"><span class="font-weight-bold">Total</span></td>
+                                    <td md-cell><span class="font-weight-bold">{{total}}</span></td>
+                                    <td md-cell colspan="5"></td>
+                                </tr>                
+                            </tfoot>
+                        </table>
+                    </md-table-container>
+                </div>
+                @* <md-table-pagination md-limit="query.limit" md-limit-options="recordsQuantity" md-page="query.page" md-total="{{totalRecords}}" md-page-select="options.pageSelect" md-boundary-links="options.boundaryLinks" md-on-paginate="logPagination"></md-table-pagination> *@
+            </md-card>            
+        </div>
+    </div>           
+</div>
+
+
+@section Scripts{      
+    <script src="~/js/components/mdAutocompleteProveedor.min.js" asp-append-version="true"></script>         
+    <script src="~/js/controllers/compras/facturaCompraCtrl.js" asp-append-version="true"></script>                     
+}
+
+
+
+

@@ -1,0 +1,87 @@
+<div fxLayout="row wrap">
+  <div fxFlex="100">
+    <mat-card>
+        <mat-card-content>
+          <div fxLayout="row wrap">
+            <div fxFlex.gt-lg="25" fxFlex.gt-md="25" fxFlex="100">
+              <mat-form-field>
+                <input type="text" (keyup)="planClienteFilter($event)" placeholder="Buscar" matInput #inputFilter>
+              </mat-form-field>
+            </div>
+            <div fxFlex.gt-lg="75" fxFlex.gt-md="75" class="text-right">
+              <button mat-raised-button color="primary" (click)="openModalAdd()">
+                <mat-icon class="mat-18">add</mat-icon>
+                Nuevo
+              </button>
+            </div>
+          </div>
+        </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+
+<div fxLayout="row wrap">
+  <div fxFlex="100">
+    <mat-card>
+      <mat-card-content>
+        <table mat-table [dataSource]="dataSource" matSort>
+          <ng-container matColumnDef="index">
+            <th mat-header-cell *matHeaderCellDef>N°</th>
+            <td mat-cell *matCellDef="let row; let index=index">{{index+1}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="ruc">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Ruc</th>
+            <td mat-cell *matCellDef="let row">{{row.ruc}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="licencia">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Licencia</th>
+            <td mat-cell *matCellDef="let row">{{row.licencia}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="suscripcion">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Suscripción</th>
+            <td mat-cell *matCellDef="let row">{{row.suscripcion}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="valor">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Valor</th>
+            <td mat-cell *matCellDef="let row">{{row.valor | currency:'$'}}</td>
+          </ng-container>
+
+
+          <ng-container matColumnDef="estado">
+            <th mat-header-cell *matHeaderCellDef>Estado</th>
+            <td mat-cell *matCellDef="let row;">
+              <div [innerHtml]="row.estado | estadoColor"> </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="op">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Op</th>
+            <td mat-cell *matCellDef="let row">
+              <button mat-icon-button color="accent" (click)="openModalUpdate(row)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="swalFireDelete(row)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="8">No se encontraron los resultados "{{inputFilter.value}}"</td>
+          </tr>
+
+        </table>
+        <mat-paginator [pageSizeOptions]="[5, 10, 25, 50, 100]" aria-label="Select page of Plan Cliente "></mat-paginator>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

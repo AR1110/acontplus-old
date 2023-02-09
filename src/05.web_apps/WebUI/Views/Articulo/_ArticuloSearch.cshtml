@@ -1,0 +1,218 @@
+<style>
+    .custom-container {
+        max-width:700px !important;
+        width:700px !important;
+    }
+    .standard-container,
+.virtual-container {
+  width: 300px;
+}
+    .autocomplete-custom-template-test li:last-child {
+        border-bottom-width: 0;
+    }
+
+    .autocomplete-custom-template-test li {
+        border-bottom: 1px solid #ccc;
+        height: auto;
+        padding-top: 1px;
+        padding-bottom: 1px;
+        white-space: normal;
+    }
+
+    .rtable #headerAutocompleteArticulo:hover{
+        cursor: none;
+        background-color: white;
+    }
+
+    .rtable .suggestion-articulo-1{  
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 200px;
+        width: 200px;            
+    }   
+
+    .table-box tr td {
+        width: 1%;
+        white-space: nowrap !important;
+    }
+    .table-box #bodySearch{
+        justify-content: center;
+    }
+}
+
+</style>
+
+    <form ng-submit="$event.preventDefault()">        
+        <md-autocomplete
+        id="custom-template"   
+        md-no-cache="true"                
+        md-selected-item="ctrl.selectedItem"
+        md-search-text-change="ctrl.searchTextChange(ctrl.searchText)"
+        md-search-text="searchText"
+        md-selected-item-change="searchArticulo.methods.selectArticleSearch(item)"
+        md-items="item in searchArticulo.methods.getDynamicSearchArticles(searchText)"
+        md-item-text="item.descripcion"
+        md-min-length="0"
+        md-escape-options="clear"
+        input-aria-label="Current Repository"
+        placeholder="Pick an Angular repository"
+         
+         md-menu-class="autocomplete-virtual-template"
+            md-menu-container-class="virtual-container"
+            md-mode="virtual"> 
+        <md-item-template>
+            <div class="table-responsive">
+                <table class="table-box browser no-border table-sm rtable">
+                    <thead ng-if="item.showHeader">
+                        <tr id="headerAutocompleteArticulo">
+                            <th>Codigo</th>
+                            <th>Descripcion</th>                                                 
+                            <th>Stock</th>
+                            <th>Iva</th>                               
+                            <th>SubFamilia</th>                               
+                            <th>Medida</th>                               
+                            <th>Marca</th>                               
+                            <th>Modelo</th>                               
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr id="bodySearch">                            
+                            <td class="suggestion-codigo">                        
+                                {{ item.codigo }}
+                            </td>
+                            <td  class="suggestion-articulo-1">
+                                {{ item.descripcion }}
+                            </td>
+                            <td class="suggestion-column text-center">
+                                <h6><span class="{{item.style}}">{{ item.stock}} </span></h6>
+                            </td> 
+                            <td class="suggestion-column text-center">
+                                {{ item.iva}}
+                            </td>   
+                            <td class="suggestion-column text-center">
+                                {{ item.subFamilia}}
+                            </td> 
+                            <td class="suggestion-column text-center">
+                                {{ item.medida}}
+                            </td>
+                            <td class="suggestion-column text-center">
+                                {{ item.marca}}
+                            </td>
+                            <td class="suggestion-column text-center">
+                                {{ item.modelo}}
+                            </td>                                                                                                          
+                        </tr>
+                    </tbody>
+                </table>                
+            </div>
+            @* <md-table-container>
+                <table md-table resize>
+                    <thead md-head  md-trim-column-names>
+                        <tr md-row ng-if="item.showHeader">        
+                            <th md-column>Código</th>
+                            <th md-column>Descripción</th>
+                            <th md-column>Iva</th>
+                            <th md-column>Stock</th>
+                            <th md-column>SubFamilia</th>
+                            <th md-column>Marca</th>
+                            <th md-column>Medida</th>
+                            <th md-column>Modelo</th>                          
+                        </tr>
+                    </thead>
+                    <tbody md-body>
+                        <tr md-row>        
+                            <td>{{item.codigo}}</td>
+                            <td>{{item.descripcion}}</td>
+                            <td >{{item.iva}}</td>
+                            <td >{{item.stock}}</td>
+                            <td>{{item.subFamilia}}</td>
+                            <td>{{item.marca}}</td>
+                            <td>{{item.medida}}</td>
+                            <td>{{item.modelo}}</td>                        
+                        </tr>
+                    </tbody>
+                </table>
+            </md-table-container>                      *@
+        </md-item-template>
+      </md-autocomplete>
+    </form>
+  
+@* <div class="input-group uib-typeahead typeahead-scrollable">                                    
+    <input  type="text" 
+            ng-model="searchArticulo.dataSearch.inputSearchArticulo"
+            autocomplete="off" 
+            id="searchArticulo" 
+            name="searchArticulo"
+            keyboard-disable
+            focus-search-articulo
+            placeholder="Ej: AUDIFONO + MICROFONO... "
+            ng-focus="delayFocus('.searchArticulo')" 
+            uib-typeahead="a as  (a.codigo +' - ' + a.descripcion) for a in searchArticulo.methods.getDynamicSearchArticles($viewValue) | limitTo:5"
+            typeahead-template-url="customTemplateItemArticle.html"
+            typeahead-items="100"
+            typeahead-editable="false"                                
+            typeahead-focus-first="false"
+            typeahead-focus-on-select="false" 
+            typeahead-min-length="1"    
+                    
+            typeahead-on-select="searchArticulo.selectArticleSearch($item)"                
+            typeahead-loading="searchArticulo.dataSearch.loading" 
+            typeahead-no-results="searchArticulo.dataSearch.noResults"
+            class="form-control border-select searchArticulo">
+
+            <script type="text/ng-template" id="customTemplateItemArticle.html">
+                <div class="table-responsive">
+                    <table class="table-box browser no-border table-sm rtable">
+                        <thead ng-if="match.model.showHeader">
+                            <tr>
+                                <th width="15">Codigo</th>
+                                <th>Descripcion</th>                                                 
+                                <th width="60">Stock</th>
+                                <th>Iva</th>                               
+                                <th>SubFamilia</th>                               
+                                <th>Medida</th>                               
+                                <th>Marca</th>                               
+                                <th>Modelo</th>                               
+                            </tr>
+                        </thead>
+                        <tr>                            
+                            <td class="suggestion-codigo">                        
+                                {{ match.model.codigo }}
+                            </td>
+                            <td class="suggestion-articulo">
+                                {{ match.model.descripcion }}
+                            </td>
+                            <td class="suggestion-column text-center">
+                                <h6><span class="{{match.model.style}}">{{ match.model.stock}} </span></h6>
+                            </td> 
+                            <td class="suggestion-column text-center">
+                                {{ match.model.iva}}
+                            </td>   
+                            <td class="suggestion-column text-center">
+                                {{ match.model.subFamilia}}
+                            </td> 
+                            <td class="suggestion-column text-center">
+                                {{ match.model.medida}}
+                            </td>
+                            <td class="suggestion-column text-center">
+                                {{ match.model.marca}}
+                            </td>
+                            <td class="suggestion-column text-center">
+                                {{ match.model.modelo}}
+                            </td>                                                                                                          
+                        </tr>
+                    </table>
+                </div>
+            </script> 
+
+    <div class="input-group-append">
+        <button type="button" class="btn btn-outline-secondary btn-sm" ng-click="searchArticulo.actions.openModalArticulo()">
+            <i class="fa fa-plus fa-xs"></i>
+        </button>
+        <button type="button" class="btn btn-outline-secondary btn-sm" ng-click="searchArticulo.actions.openModalArticuloGeneral()">
+            <i class="fa fa-search fa-xs"></i>
+        </button>                            
+    </div>           
+</div>
+<small class="text-danger" ng-if="searchArticulo.dataSearch.noResults">No se encontraron los resultados</small>
+<span ng-if="searchArticulo.dataSearch.loading"><i class="fas fa-sync-alt fa-xs"></i> Loading...</span>                 *@

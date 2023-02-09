@@ -1,0 +1,33 @@
+
+<div class="modal-header">
+    <h5 class="modal-title">Información del Documento</h5>
+    <button class="close" ng-click="$ctrl.closeModal()">&times;</button>
+</div>
+<div class="modal-body">                          
+    <div class="table-responsive">
+        <table class="table table-condensed table-bordered table-sm small">
+            <thead>                           
+                <tr>
+                    <th>N°</th>                                
+                    <th>F. Conv.</th>
+                    <th>Mensaje</th>
+                    <th>Usuario</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="dt in $ctrl.historialConversiones">
+                    <td width="20">{{$index+1}}</td>                                
+                    <td width="100">{{dt.fechaConversion|date:'dd-MM-yyyy'}}</td>
+                    <td width="150">{{dt.mensaje}}</td>
+                    <td width="30">{{dt.usuario}}</td>
+                    <td width="30">{{dt.estado}}</td>
+                </tr>                            
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="modal-footer"> 
+    <button class="btn btn-dark btn-sm" ng-click="$ctrl.closeModal()">&times; Cerrar</button>
+</div>
+       

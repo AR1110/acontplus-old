@@ -1,0 +1,110 @@
+﻿
+<div ng-controller="turnoCtrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Gestión de Turnos</h4>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+                @*<ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
+                        <li class="breadcrumb-item active">Administración</li>
+                        <li class="breadcrumb-item active">Turnos</li>
+                    </ol>*@
+                <button type="button" class="btn btn-info  m-l-15" ng-click="abrirModalNuevo()"><i class="fa fa-plus-circle"></i> Nuevo </button>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <md-toolbar class="md-table-toolbar md-default">
+                        <div class="md-toolbar-tools">
+
+                            <div class="col-lg-9 col-md-6 col-sm-1 col-xs-1 m-t-20">
+                                @*<span class="form-group pull-left page-size form-inline">
+                                        <select class="form-control control-color"
+                                                ng-model="pageSize"
+                                                ng-change="changePageSize()"
+                                                ng-options="ra for ra in recordsQuantity">
+                                        </select>
+                                    </span>*@
+                            </div>
+                            <div class="col-lg-3 col-md-6 col-sm-11 col-xs-11">
+                                <input type="text" class="form-control" ng-model="buscar" placeholder="Buscar" />
+                            </div>
+
+                        </div>
+                    </md-toolbar>
+
+
+                    <!--Lista-->
+                    <md-table-container>
+                        <table md-table>
+                            <thead md-head md-order="query.order" md-on-reorder="turnos">
+                                <tr md-row>                                    
+                                    <th md-column>N°</th>
+                                    <th md-column md-order-by="turno.descripcion"><span>Descripción</span></th>
+                                    <th md-column>Estado</th>                                    
+                                    <th md-column>Op.</th>
+                                </tr>
+                            </thead>
+                            <tbody md-body>
+                                <tr md-row ng-repeat="t in turnos|filter:buscar  | orderBy: query.order | limitTo: query.limit : (query.page -1) * query.limit">                                   
+                                    <td md-cell>{{$index+1}}</td>
+                                    <td md-cell>{{t.turno.descripcion}}</td>
+                                    <td md-cell ng-bind-html="t.turno.estado | estadoPrimario"></td>  
+                                    <td md-cell>
+                                        <button class="btn btn-info btn-xs" ng-click="editarTurno(t)"><i class="ti-pencil"></i></button>
+                                        <button class="btn btn-danger btn-xs"  ng-click="askToDelete(t)"><i class="ti-trash"></i></button>                                        
+                                        <button class="btn btn-secondary btn-xs" uib-popover-template="'viewPopoverTurno.html'" popover-trigger="'mouseenter'" popover-placement="top" href="javascript:void(0)" ng-mouseover="viewHorarioPoper(t)"><i class="ti-menu"></i></button>
+                                    </td>                                  
+                                </tr>
+                                <tr md-row ng-show="turnos.length==0">
+                                    <td md-cell colspan="6" class="text-center">No hay registros disponibles en esta tabla.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </md-table-container>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    
+
+    <partial name="_ModalAddUpdateTurno"/>
+
+    
+</div>
+
+@section Scripts{
+    <script src="~/js/controllers/admin/turnoCtrl.js" asp-append-version="true"></script>
+    <script type="text/ng-template" id="viewPopoverTurno.html">
+        <h5>{{t.turno.descripcion }}</h5>
+        <table class="table browser no-border table-sm">
+            <tbody>
+                <tr class="text-center">
+                    <th><small>Dia</small></th>
+                    <th><small>Apertura</small></th>
+                    <th><small>Cierre</small></th>
+                    <th><small>Estado</small></th>
+                </tr>
+                <tr ng-repeat="h in horarios" class="text-muted text-center">
+                    <td><small>{{h.diaSemana}}</small></td>
+                    <td><small>{{h.horario.apertura}} </small></td>
+                    <td><small>{{h.horario.cierre}}</small></td>
+                    <td><i class="{{h.diaLaborable}} "></i></td>
+                </tr>
+
+            </tbody>
+        </table>
+    </script>
+
+}

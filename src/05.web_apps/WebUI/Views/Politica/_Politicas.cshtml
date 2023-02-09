@@ -1,0 +1,45 @@
+<div class="table-responsive">
+    <table class="table table-condensed">
+        <thead>
+            <tr>
+                <th>N°</th>
+                <th>Codigo</th>
+                <th>Descripcion</th>                                    
+                <th>Estado</th>
+                <th ng-show="accion.editar || accion.eliminar || accion.acceso">Op.</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="p in politicas | filter:buscar track by $index">
+                <td>{{$index+1}}</td>
+                <td>{{p.codigo}}</td>                                    
+                <td>{{p.descripcion}}</td>
+                <td ng-bind-html="p.estado | estadoPrimario"></td>
+                <td ng-if="accion.editar || accion.eliminar || accion.acceso">
+                    <button type="button" ng-if="accion.editar" class="btn btn-info btn-xs" tooltip data-toggle="toggle" title="Editar" 
+                            ng-click="abrirModal(p,2)">
+                            <i class="ti-pencil"></i>
+                    </button>
+                    <button type="button" ng-if="accion.eliminar" class="btn btn-danger btn-xs" tooltip data-toggle="toggle" title="Eliminar" 
+                            ng-click="delete(p)">
+                            <i class="ti-trash"></i>
+                    </button>     
+                    <button type="button" ng-if="accion.acceso" class="btn btn-warning btn-xs" 
+                            ng-click="openModalAcceso(p)"
+                            tooltip data-toggle="toggle" title="Accesos">
+                            <i class="fas fa-key"></i>
+                    </button>                                                                                
+                </td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td align="center" colspan="9">
+                    <div class="pull-left">
+                        <ul uib-pagination total-items="totalRecords" items-Per-Page="pageSize" ng-change="pagechanged()" ng-model="pageIndex" max-size="maxSize" class="pagination" boundary-links="true" rotate="false"></ul>
+                    </div>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>

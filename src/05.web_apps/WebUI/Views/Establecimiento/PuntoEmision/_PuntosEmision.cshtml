@@ -1,0 +1,51 @@
+<div class="row">
+    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12">
+        <div class="d-flex justify-content-start">                                             
+            <span class="form-group pull-left page-size form-inline">
+                <button type="button" class="btn btn-info m-l-5" ng-click="$ctrl.openModalPtoEmisionNew()">
+                    <i class="ti-plus"></i> Nuevo
+                </button> 
+            </span>            
+        </div>
+    </div>
+    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12">
+        <div class="d-flex justify-content-end">
+            <form class="form-material">
+                <input type="text" class="form-control" ng-model="$ctrl.buscar" placeholder="Buscar Punto Emisión" />
+            </form> 
+        </div>
+    </div>                        
+</div>   
+<div class="table-responsive ">
+    <table class="table table-condensed">
+        <thead>
+            <tr>                                    
+                <th>Op.</th>                                                                                   
+                <th>N°</th>                                                                             
+                <th>Punto de Emisión</th>    
+                <th>Ambiente</th>                                
+                <th>Estado </th>  
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="item in $ctrl.puntosEmision | filter:$ctrl.buscar">                                   
+                <td>
+                    <div class="justify-content-center">
+                        <a href="javascript:void(0)" ng-click="$ctrl.openModalPtoEmisionEdit(item)" class="btn btn-info btn-xs"><i class=" fas fa-edit"></i></a>                                            
+                        <a href="javascript:void(0)" ng-click="$ctrl.askToDeletePtoEmision(item)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i></a>                                            
+                    </div>
+                </td>
+                <td>{{$index+1}}</td>                                                                         
+                <td>{{item.ptoEmi}}</td>   
+                <td>{{item.descripcion}}</td>                                 
+                <td ng-bind-html="item.estado | estadoPrimario"></td>                                   
+                
+            </tr>
+            <tr ng-show="$ctrl.puntosEmision.length==0" class="text-center">
+                <td colspan="7">
+                    No hay registros en esta tabla.
+                </td>
+            </tr>
+        </tbody>       
+    </table>
+</div> 

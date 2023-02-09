@@ -1,0 +1,88 @@
+
+<style>
+    .ui-grid, .ui-grid-viewport {
+        height: 400px !important;
+    }
+
+</style>
+<form>
+    
+
+    <div class="modal-header bg-success text-white">
+        <h5 class="modal-title">
+            <i class="mdi mdi-wrap"></i> Consolidación de Articulos Importados 
+        </h5>
+
+        <button type="button" class="close" ng-click="$ctrl.closeModal()">&times;</button>
+    </div>
+
+
+    <div class="modal-body">
+        <div class="row">
+
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label for="establecimiento">Estab.: <span class="text-danger">*</span></label>
+                    <select name="establecimiento" id="establecimiento" class="form-control border-select" ng-model="$ctrl.data.codEstab" ng-change="$ctrl.onChangeEstablecimiento()">
+                        <option ng-value="item.codEstab" ng-repeat="item in $ctrl.establecimientos">
+                            {{item.nombreComercial}}
+                        </option>
+                    </select>
+                </div>                            
+            </div>
+
+            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label for="puntoEmision">Punto Emisión <span class="text-danger">*</span></label>
+                    <select name="puntoEmision" id="puntoEmision" class="form-control border-select" ng-model="$ctrl.data.idPuntoEmision">
+                        <option ng-value="item.idPuntoEmision" ng-repeat="item in $ctrl.puntosEmision">
+                            {{item.ptoEmi}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label for="fechaEmision">Fecha Emisión <span class="text-danger">*</span></label>
+                    <input type="date" name="fechaEmision" id="fechaEmision" class="form-control border-select" ng-model="$ctrl.data.fechaEmision">
+                </div>
+            </div>
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label for="observacion">Observación</label>
+                    <input type="text" name="observacion" id="observacion" ng-model="$ctrl.data.observacion" class="form-control border-select" placeholder="...">
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 colmd-12">
+                <div 
+                    ui-grid="$ctrl.gridOptions" 
+                    ui-grid-selection 
+                    ui-grid-cellnav
+                    ui-grid-resize-columns                
+                    ui-grid-auto-resize            
+                    ui-grid-save-state
+                    class="grid" ng-style="$ctrl.setStyle()">
+                </div>
+            </div>
+        </div>        
+
+        <div class="icheck-info">
+            <input type="checkbox" id="closeModal" ng-model="$ctrl.isCloseModal">
+            <label for="closeModal">No cerrar la ventana al guardar la Consolidación</label>
+        </div>
+           
+
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success" ng-click="$ctrl.askToSave()">
+            <i class="ti-save"></i> Guardar
+        </button>
+        <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">
+            &times; Cerrar
+        </button>
+    </div>
+</form>

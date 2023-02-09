@@ -1,0 +1,11 @@
+--CREATE TABLE App.Usuario(
+--	idUsuario INT PRIMARY KEY IDENTITY(1,1) NOT NULL,
+--	nombre NVARCHAR(150) NULL,
+--	apellido NVARCHAR(150)NULL,
+--	nombreUsuario NVARCHAR(350) NOT NULL UNIQUE,
+--	contrasena BINARY(64) NOT NULL,
+--	nroIdentificacion NVARCHAR(30) NOT NULL UNIQUE,
+--	correo NVARCHAR(300) NULL,
+--	estado BIT DEFAULT 1,
+--	fechaRegistro DATETIME NOT NULL
+--)

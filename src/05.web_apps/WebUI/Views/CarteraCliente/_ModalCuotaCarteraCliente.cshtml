@@ -1,0 +1,77 @@
+<div id="modalCuotaCarteraCliente" class="modal fade in">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cuota por Cobrar</h5>
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-8 border-right">
+                        <div class="row justify-content-between">
+                            <div class="col-md-5 col-xs-12 b-r">
+                                <strong>Cliente:</strong>
+                                <br>                        
+                                <p class="text-muted">{{cliente.nombreFiscal}}</p>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-xs-12 b-r">
+                                <strong>Nro. Documento:</strong>
+                                <br>
+                                <p class="text-muted">{{dataTipoDocumento.nroDocumento}}</p>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-xs-12 b-r">
+                                <strong>Fecha Emisión:</strong>
+                                <br>
+                                <p class="text-muted">{{dataTipoDocumento.fechaEmision}}</p>
+                            </div>                            
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="row">
+                            <div class="col-lg-4 col-md-4 col-xs-12 b-r">
+                                <strong>Total:</strong>
+                                <h4>${{dataTipoDocumento.total}}</h4>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-xs-12 b-r">
+                                <strong>Abono:</strong>
+                                <h4>${{dataTipoDocumento.abonoEfectivizado}}</h4>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-xs-12 b-r">
+                                <strong>Saldo:</strong>
+                                <h4>${{dataTipoDocumento.saldo}}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <md-divider></md-divider>
+                <div class="table-responsive mt-2">
+                    <table class="table table-bordered table-sm">
+                        <thead>
+                            <tr>
+                                <th>N°</th>
+                                <th>Nro. Cuota</th>
+                                <th>Fecha Vencimiento</th>
+                                <th>Total</th>
+                                <th>Abono</th>
+                                <th>Saldo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="cuota in cuotas">
+                                <td>{{$index+1}}</td>
+                                <td>{{cuota.cxc.nroCuota}}</td>
+                                <td>{{cuota.cxc.fechaVencimiento}}</td>
+                                <td>${{cuota.cxc.cuota}}</td>
+                                <td>${{cuota.abono}}</td>
+                                <td>${{cuota.saldo}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">                
+                <button class="btn btn-dark" data-dismiss="modal">&times; Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>

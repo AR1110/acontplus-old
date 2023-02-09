@@ -1,0 +1,24 @@
+USE master
+CREATE DATABASE AcontPlusAdimn
+GO
+
+USE AcontPlusAdimn
+
+GO
+
+CREATE SCHEMA General;
+GO
+CREATE SCHEMA Config;
+
+GO
+
+--DROP TABLE Config.Menu
+
+CREATE TABLE Config.Menu(
+idMenu INT NOT NULL PRIMARY KEY IDENTITY(1,1)
+,codigo VARCHAR(10) NOT NULL
+,urlMenu VARCHAR(100) NOT NULL
+,icono VARCHAR(50) NULL
+,descripcion VARCHAR(100) NOT NULL
+,estado BIT NOT NULL DEFAULT 1
+)

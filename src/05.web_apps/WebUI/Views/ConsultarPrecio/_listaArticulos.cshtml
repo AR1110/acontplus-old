@@ -1,0 +1,92 @@
+<div >                        
+    <md-table-container style="max-height: 400px;">
+        <table resize master md-table md-row-select="$ctrl.options.rowSelection" multiple="{{$ctrl.options.multiSelect}}" ng-model="$ctrl.selectedArticulos">
+            <thead  md-head>
+                <tr md-row>
+                    <th md-column><span>Img</span></th>
+                    <th md-column><span>Código</span></th>
+                    <th md-column><span>Descripción</span></th> 
+                    <th md-column>Cod. Barra</th>
+                    <th md-column>Medida</th>                                                                                                                   
+                    <th md-column><span>Iva</span></th> 
+                    <th md-column>Stock</th>                                                                          
+                    <th md-column ng-repeat="item in $ctrl.tarifas">
+                        {{item.tarifa}}
+                    </th>     
+                    <th md-column>Marca</th>                                                                          
+                    <th md-column>Modelo</th>                                                                          
+                    <th md-column>Obs.</th>                                                                          
+                </tr>
+            </thead>
+            <tbody md-body>                                    
+                <tr md-row md-select="item" md-on-select="$ctrl.onChangeCheckBoxItem" md-auto-select="$ctrl.options.autoSelect" ng-repeat="item in $ctrl.listaArticulos track by $index" >      
+                    <td md-cell>
+                        <span ng-click="$ctrl.getImagen(item)" ng-show="item.imagen">
+                            <i class="text-success fas fa-file-image fa-lg"></i>
+                        </span>
+                        <button type="button"  class="btn waves-effect waves-light btn-rounded btn-sm btn-info"
+                                uib-tooltip="Ver los movimientos del Artículo(Kardex)" tooltip-placement="top"
+                         ng-click="$ctrl.openModalKardex(item)">
+                            <icon class="fas fa-clipboard-list"></icon>
+                        </button>
+                    </td>                                 
+                    <td md-cell>{{item.codigo}}</td>
+                    <td md-cell>
+                        <a  tooltip uib-tooltip="{{item.observaciones}}" tooltip-trigger="'mouseenter'" tooltip-placement="top" href="javascript:void(0)">
+                            {{item.descripcion}}
+                        </a>
+                    </td>                                                                                                        
+                    <td md-cell>{{item.codigoBarra}}</td>                                                                                                        
+                    <td md-cell>{{item.medida}}</td>                                                                                                        
+                    <td md-cell>{{item.tipoIva}}</td>   
+                    <td md-cell>
+                        @* popover-title="{{item.descripcion}}"  *@
+                        <span style="cursor: pointer;"
+                        ng-mouseover="$ctrl.showBodegas(item)"
+                        popover-trigger="'mouseenter'" 
+                        uib-popover-template="$ctrl.dynamicPopover.templateUrl" 
+                            class="btn btn-default">
+                        <h6><spna style="cursor: pointer;" ng-class="item.color">{{item.stock}}</spna></h6>
+                        
+                        </span>
+
+
+                    </td>                                                                                                      
+                    <td md-cell ng-repeat="pvp in item.tarifa">{{pvp.precioConIva}}</td>                                        
+                    <td md-cell>{{item.marca}}</td> 
+                    <td md-cell>{{item.modelo}}</td> 
+                    <td md-cell>{{item.observaciones}}</td> 
+
+                </tr>
+                <tr ng-show="$ctrl.listaArticulos.length==0" class="text-center">
+                    <td colspan="16">
+                        No hay registros en esta tabla :)
+                    </td>
+                </tr>
+            </tbody>                                
+        </table>
+    </md-table-container>
+</div> 
+
+<script type="text/ng-template" id="myPopoverTemplate.html">
+    <div class="table-responsive">
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th>Sucursal</th>
+                    <th>Bodega</th>
+                    <th>Stock</th>
+                    <th>Ub.</th>
+                </tr>
+            </thead>
+            <tbody ng-repeat="s in $ctrl.branchs" class="small">
+                <tr ng-repeat="ub in s.warehouses">
+                    <td ng-if="$first" rowspan="2">{{s.branchOffice}}</td>
+                    <td>{{ub.bodega}}</td>
+                    <td>{{ub.stock}}</td>
+                    <td>{{ub.ubicacion}}</td>
+                <tr>
+            </tbody>
+        </table>
+    </div>              
+</script>

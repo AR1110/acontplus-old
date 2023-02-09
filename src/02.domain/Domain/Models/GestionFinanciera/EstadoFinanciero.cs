@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Domain.Models
+{
+    public class EstadoFinanciero
+    {
+        public int idTipoDocumento { get; set; }
+        public int idDocumento { get; set; }
+        public string estado { get; set; }
+        public string codDoc { get; set; }
+
+    }
+}

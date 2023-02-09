@@ -1,0 +1,168 @@
+<div id="modalAddUpdateTurno" class="modal fade">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{tipoRegistro===1?'Nuevo':'Editar'}} Turno</h5>
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="row justify-content-between">
+                    <div class="col-lg-7">
+                        <div class="form-group">
+                            <label for="Descripcion">Descripción del Turno <span class="text-danger">*</span> </label>
+                            <input  type="text" touppercase ng-model="data.descripcion"  uib-tooltip="Ingrese la Descripcion del Turno"  
+                                    tooltip-trigger="'mouseenter'" tooltip-placement="top" 
+                                    class="form-control" placeholder="...">
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4" ng-show="tipoRegistro==2">
+                        <div class="form-group">
+                            <label for="estado">Estado</label><br>
+                            <div class="icheck-success icheck-inline">
+                                <input type="radio" id="estadoTrue" ng-value="true" ng-model="data.estado" name="estadoTrue" />
+                                <label for="estadoTrue">Activo</label>
+                            </div>
+                            <div class="icheck-danger icheck-inline">
+                                <input type="radio" id="estadoFlase" ng-value="false" ng-model="data.estado" name="estadoFlase" />
+                                <label for="estadoFlase">Inactivo</label>
+                            </div>
+                        </div>                       
+                    </div>
+                </div>
+
+                <md-table-container>
+                    <table md-table>
+                        <thead md-head>
+                            <tr md-row>
+                                <th md-column></th>
+                                <th md-column>Dìa</th>
+                                <th md-column>Estado</th>
+                                <th md-column>Apertura</th>
+                                <th md-column>Cierra</th>
+                            </tr>
+                        </thead>
+                        <tbody md-body>
+                            <tr md-row ng-repeat="d in dias">
+                                <td md-cell>{{$index+1}}</td>
+                                <td md-cell>{{d.diaSemana}}</td>
+                                <td md-cell>
+                                    @* <div class="icheck-info">
+                                        <input type="checkbox" id="dia{{$index+1}}" ng-model="d.horario.estado" name="checkDiaItem" />
+                                        <label for="dia{{$index+1}}"></label>
+                                    </div> *@
+                                    <md-switch class="md-primary" md-no-ink aria-label="estado" ng-model="d.horario.estado"></md-switch>
+                                </td>
+                                <td md-cell>
+                                    <div uib-timepicker ng-model="d.horario.apertura" ng-disabled="!d.horario.estado" hour-step="hstep" minute-step="mstep" show-meridian="true"></div>
+                                    @* <input type="time" ng-model="d.horario.apertura " ng-disabled="!d.horario.estado" ng-required="true" class="form-control">                                                                             *@
+                                </td>
+                                <td md-cell>                                    
+                                     <div uib-timepicker ng-model="d.horario.cierre" ng-disabled="!d.horario.estado" hour-step="hstep" minute-step="mstep" show-meridian="true"></div>
+                                    @* <input type="time" ng-model="d.horario.cierre" ng-disabled="!d.horario.estado" ng-required="true" class="form-control">                                                                            *@
+                                </td>
+                            </tr>                            
+                        </tbody>
+                    </table>
+                </md-table-container>
+
+
+            </div>
+            <div class="modal-footer">                
+                <button type="button" class="btn btn-info" ng-click="saveUpdate(tipoRegistro)"><i class="{{tipoRegistro==1?'ti-save':'fa fa-edit'}}"></i> 
+                {{tipoRegistro==1?'Guardar':'Actualizar'}}
+                </button>
+                <button type="button" class="btn btn-warning-1" data-dismiss="modal" >&times; Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="agregar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <form ng-submit="saveUpdate(type)" class="form-material" autocomplete="off" novalidate>
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel"><i class="{{iconoModal}}"></i><span>{{tituloModal}}</span></h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="form-group col-lg-8 col-md-8 col-sm-8 col-xs-6">
+                                    
+                                </div>
+                                <div class="form-group col-lg-4 col-md-4 col-sm-4 col-xs-4" ng-show="type==2">
+                                    <label class="control-label">Estado</label>
+                                    <div class="row">
+                                        <div class="icheck-info">
+                                            <input type="radio" id="estadoTrue" ng-value="true" ng-model="data.estado" name="estadoTrue" />
+                                            <label for="estadoTrue">Activo</label>
+                                        </div>
+                                        <div class="icheck-info m-l-15">
+                                            <input type="radio" id="estadoFlase" ng-value="false" ng-model="data.estado" name="estadoFlase" />
+                                            <label for="estadoFlase">Inactivo</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <h5 class="modal-title">Horario</h5>
+                            <hr />
+                            <div class="row">
+
+                                <div class="col-lg-12 col-md-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-condensed  table-sm">
+                                            <thead>
+                                                <tr class="text-center">
+                                                    <th>Día</th>
+                                                    <th>Estado</th>
+                                                    <th>Apertura</th>
+                                                    <th>Cierre</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="d in dias" class="text-center">
+                                                    <td>{{d.diaSemana}}</td>
+                                                    <td>
+                                                        <div class="icheck-info">
+                                                            <input type="checkbox" id="dia{{$index+1}}" ng-model="d.horario.estado" name="checkDiaItem" />
+                                                            <label for="dia{{$index+1}}"></label>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="input-group">
+                                                            <input type="time" ng-model="d.horario.apertura " ng-disabled="d.horario.estado==false" ng-required="true" class="form-control">
+                                                            <div class="input-group-append">
+                                                                <span class="input-group-text"><i class="fas fa-clock"></i></span>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="input-group">
+                                                            <input type="time" ng-model="d.horario.cierre" ng-disabled="d.horario.estado==false" ng-required="true" class="form-control">
+                                                            <div class="input-group-append">
+                                                                <span class="input-group-text"><i class="fas fa-clock"></i></span>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-success"><i class="{{icono}}"></i> {{btnModal}}</button>
+                            <button type="button" class="btn btn-dark" data-dismiss="modal">&times; Cerrar</button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>

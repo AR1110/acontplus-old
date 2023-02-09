@@ -1,0 +1,22 @@
+
+    <tbody md-body ng-if="dataSearch.checkBoxDeudoresFiltro">
+        <tr md-row ng-repeat="cartera in carteraClientes | filter: txtSearch">
+            <td md-cell>
+                <button class="btn btn-warning btn-sm"><i class="ti-file"></i></button>
+            </td>
+            <td md-cell>{{$index +1 }}</td>
+            <td md-cell>{{cartera.nombreFiscal}}</td>
+            <td md-cell>{{cartera.numeroIdentificacion}}</td>
+            <td md-cell>${{cartera.total}}</td>
+            <td md-cell>${{cartera.abono}}</td>
+            <td md-cell>${{cartera.saldo}}</td>
+        </tr>
+    </tbody>
+    <tfoot md-foot ng-if="dataSearch.checkBoxDeudoresFiltro">
+        <tr md-row>
+            <td md-cell colspan="3"><span class="font-weight-bold">Total: </span></td>
+            <td md-cell><span class="font-weight-bold">${{}}</span></td>
+            <td md-cell><span class="font-weight-bold">${{}}</span></td>
+            <td md-cell><span class="font-weight-bold">${{}}</span></td>
+        </tr>
+    </tfoot>

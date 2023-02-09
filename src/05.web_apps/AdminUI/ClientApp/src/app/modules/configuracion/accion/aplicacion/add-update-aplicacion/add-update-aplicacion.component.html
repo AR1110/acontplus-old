@@ -1,0 +1,41 @@
+<h2 mat-dialog-title> Nueva Aplicación</h2>
+
+<mat-dialog-content class="mat-typography">
+  <form [formGroup]="dataForm">
+    <div fxLayout="column">
+      <mat-form-field  fxFlex="100%">
+        <mat-label>Sistema</mat-label>
+        <mat-select formControlName="idSistema">
+          <mat-option [value]="item.idSistema" *ngFor="let item  of sistemas">{{item.descripcion}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field  fxFlex="100%">
+        <input type="text" formControlName="codigo" matInput placeholder="Código">
+      </mat-form-field>
+
+      <mat-form-field>
+        <input type="text" formControlName="descripcion" matInput placeholder="Descripción">
+      </mat-form-field>
+
+      <section *ngIf="tipoRegistro===2">
+        <mat-label>Estado</mat-label><br>
+        <mat-radio-group  aria-label="Estado" formControlName="estado">
+          <mat-radio-button [value]="true">Activo</mat-radio-button>
+          <mat-radio-button [value]="false">Inactivo</mat-radio-button>
+        </mat-radio-group>
+      </section>
+
+    </div>
+  </form>
+</mat-dialog-content>
+
+
+<mat-dialog-actions align="end">
+  <button mat-raised-button color="accent" [disabled]="dataForm.invalid" (click)="saveAndUpdate()">
+    {{tipoRegistro===1?'Guardar':'Actualizar'}}
+  </button>
+  <button mat-stroked-button color="basic" mat-dialog-close>
+    Cerrar
+  </button>
+</mat-dialog-actions>

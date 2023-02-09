@@ -1,0 +1,45 @@
+<div class="card card-body border border-info rounded">
+    <div class="card-body">
+        <h5 class="card-title">Info Adicional</h5>
+        <div class="row">
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-3">
+                <div class="form-group">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" name="nombre" id="nombre" class="form-control"
+                        ng-model="additionalInfo.nombre" />
+                </div>
+            </div>
+            <div class="col-xl-7 col-lg-7 col-md-7 col-sm-6 col-9">
+                <div class="form-group">
+                    <label for="valor">Valor:</label>
+                    <input type="text" name="valor" id="valor" class="form-control" ng-model="additionalInfo.valor" />
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-info" ng-click="addAdditionalInfo(item.codDocSustento)"><i class="ti-plus"></i>
+            Añadir</button>
+
+
+        <div class="table-responsive" ng-if="infoAdded.length > 0">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Valor</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="item in infoAdded">
+                        <td>{{item.nombre}}</td>
+                        <td>{{item.valor}}</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" ng-click="removeAdditionalInfo($index)"><i
+                                    class="ti-trash"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

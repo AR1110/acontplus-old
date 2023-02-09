@@ -1,0 +1,170 @@
+
+<div class="modal-header bg-info text-white">
+    <h5 class="modal-title">        
+        Historial de Cobros de <span class="h4">{{$ctrl.TIPO_DOC.descripcion}}</span>
+    </h5>
+    <button type="button" class="close" ng-click="$ctrl.closeModal()">&times;</button>
+</div>
+<div class="modal-body">     
+    <div class="row">
+        <div class="col-md-3 col-xs-6 b-r"> <strong>Nro. Identificación</strong>
+            <br>
+            <p class="text-muted">{{$ctrl.data.identificacionComprador}}</p>
+        </div>
+        <div class="col-md-3 col-xs-6 b-r"> <strong>Cliente</strong>
+            <br>
+            <p class="text-muted">{{$ctrl.data.razonSocialComprador}}</p>
+        </div>
+        <div class="col-md-3 col-xs-6 b-r"> <strong>Nro. Documento</strong>
+            <br>
+            <p class="text-muted">{{$ctrl.data.nroDocumento}}</p>
+        </div>
+        <div class="col-md-3 col-xs-6"> <strong>Fecha Emisión</strong>
+            <br>
+            <p class="text-muted">{{$ctrl.data.fechaEmision}}</p>
+        </div>
+    </div>
+    <md-divider></md-divider>                                   
+    <div class="row mt-2">
+        <div class="col-lg-9">
+            <div class="card">
+                <div class="card-body shadow">
+                    <div class="table-responsive">
+                        <table class="table table-no-bordered table-condensed table-sm hover-table">
+                            <thead>
+                                <tr>
+                                    <th>N°</th>
+                                    <th>N°. Doc</th>
+                                    <th>Fecha</th>
+                                    <th>Total</th>
+                                    <th>Abono</th>
+                                    <th>Cambio</th> 
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat-start="hc in $ctrl.historialCobros" class="table-success">
+                                    <td>{{$index+1}}</td>
+                                    <td>{{hc.nroDocumento}}</td>
+                                    <td>{{hc.comprobanteIngreso.fechaRegistro}}</td>
+                                    <td>${{hc.comprobanteIngreso.total}}</td>
+                                    <td>${{hc.comprobanteIngreso.abono}}</td>
+                                    <td>${{hc.comprobanteIngreso.cambio}}</td> 
+                                    <td>{{hc.estado}}</td>
+                                </tr>
+                                <tr ng-show="hc.showCobro" ng-repeat-end="">
+                                    <td colspan="7">
+                                        <div class="ml-2 mr-2 mt-3">
+                                            <div class="table-table-responsive">
+                                                <table class="table table-no-bordered table-sm">
+                                                    <thead>
+                                                        <tr>
+                                                            <th></th>
+                                                            <th>N°</th>
+                                                            <th>PosF.</th>
+                                                            <th>Fecha</th>
+                                                            <th>Forma Cobro</th>
+                                                            <th>Número</th>
+                                                            <th>Banco</th>                                                                    
+                                                            <th>Valor</th>
+                                                            <th>Abono</th>
+                                                            <th>Estado</th>                                                                    
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @* class="{{c.showDetalle?'table-primary':''}}" *@
+                                                        <tr ng-repeat-start="c in hc.cobros" class="{{c.showDetalle?'table-primary':''}}">
+                                                            <td ng-click="$ctrl.getCobroDetalle(c)">
+                                                                <span  ng-if="c.showDetalle" class="fas fa-minus-circle"></span>
+                                                                <span ng-if="!c.showDetalle" class="fas fa-plus-circle" ></span>
+                                                            </td>
+                                                            <td>{{$index+1}}</td>
+                                                            <td>{{c.posfechado}}</td>
+                                                            <td>{{c.cobro.fechaEmision}}</td>
+                                                            <td>{{c.subEntiadaFinanciera}}</td>
+                                                            <td>{{c.nroTransaccion}}</td>
+                                                            <td>{{c.banco}}</td>
+                                                            <td>${{c.cobro.valor}}</td>
+                                                            <td>${{c.cobro.abono}}</td>
+                                                            <td>{{c.cobroEstado}}</td>
+                                                        </tr>
+                                                        <tr ng-show="c.showDetalle" ng-repeat-end="">                                                                    
+                                                            <td colspan="10">                                                                        
+                                                                <div class="ml-5 mt-1 mr-5">
+                                                                    <div class="table-responsive">
+                                                                        <table class="table table-condensed table-bordered">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th>Cuota</th>
+                                                                                    <th>Fecha Vcto</th>
+                                                                                    <th>Total cuota</th>
+                                                                                    <th>Saldo Anterior</th>
+                                                                                    <th>Abono</th>
+                                                                                    @* <th>Mora</th> *@
+                                                                                    <th>Saldo</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr ng-repeat="c in c.cobroDetalles">
+                                                                                    <td>{{c.nroCuota}}</td>
+                                                                                    <td>{{c.fechaVencimiento}}</td>
+                                                                                    <td>${{c.cuota}}</td>
+                                                                                    <td>${{c.saldoAnterior}}</td>
+                                                                                    <td>${{c.cobroDetalle.abono}}</td>
+                                                                                    @* <td>{{c.mora}}</td> *@
+                                                                                    <td>{{c.saldo}}</td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>                                                                                                                                        
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card">
+                <div class="card-body shadow">
+                    <div class="table-responsive">
+                        <table class="table table-no-bordered table-condensed table-sm small">
+                            <tbody>
+                                <tr>
+                                    <td>Total</td>
+                                    <td align="left">:<span class="h4 text-muted">${{$ctrl.data.total}}</span> </td>
+                                    
+                                </tr> 
+                                <tr>
+                                    <td>Abono Efect: </td>
+                                    <td>: <span class="h6 text-muted">${{$ctrl.data.abono}}</span> </td>                                                   
+                                </tr>     
+                                <tr>
+                                    <td>Abono x Efec</td>
+                                    <td>: <span class="h6 text-muted">${{$ctrl.data.posfechado}}</span> </td>                                                    
+                                </tr> 
+                                <tr>
+                                    <td>Saldo</td>
+                                    <td>: <span class="h6 text-muted">${{$ctrl.data.saldo}}</span> </td>
+                                </tr>                                                                          
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>                                                                        
+
+</div>
+<div class="modal-footer">
+    <button class="btn btn-dark" ng-click="$ctrl.closeModal()">&times; Cerrar</button>
+</div>
+            

@@ -1,0 +1,11 @@
+USE [AcontPlus]
+GO 
+
+
+CREATE TABLE Sri.Regimen
+(
+	idRegimen INT PRIMARY KEY IDENTITY(1,1) NOT NULL
+   ,codigo VARCHAR(10) UNIQUE  NOT NULL
+   ,descripcion VARCHAR(150) NOT NULL
+   ,estado BIT DEFAULT 1 NOT NULL
+)

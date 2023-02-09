@@ -1,0 +1,62 @@
+﻿<div id="modalPayment" class="modal fade in" role="dialog" tabindex="-1" data-backdrop="static">
+    <div class="modal-dialog modal-full-screen-width modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Nuevo Pago</h4>
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body ">                 
+                <div class="list-group list-group-horizontal">
+                    <a href="javascript:void(0)" id="newPaymentForm-head-1" ng-click="paymentStepUno()" class="list-group-item list-group-item-action active">
+                        <div>Paso 1</div>
+                        <span>Seleccionar Documentos</span>
+                    </a>
+                    <a href="javascript:void(0)" id="newPaymentForm-head-2" ng-click="paymentStepDos()" class="list-group-item list-group-item-action">
+                        <div>Paso 2</div>
+                        <span>Cuotas</span>
+                    </a>                                       
+                </div>                   
+                <hr>  
+                @* <div class="row">                        
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <small class="text-muted">Proveedor: </small>
+                        <h6>{{proveedor.nombreFiscal}}</h6>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <small class="text-muted">RUC: </small>
+                        <h6>{{proveedor.nroIdentificacion}}</h6>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <small class="text-muted">Dirección: </small>
+                        <h6>{{proveedor.direccion}}</h6>
+                    </div>
+                    <div class="col-lg-3 col-md-2 col-sm-6 col-xs-12">
+                        <small class="text-muted">Correo: </small>
+                        <h6>{{proveedor.correo}}</h6>
+                    </div>
+                </div>
+                <hr>         *@
+                <div class="tab-content" id="nav-tabContent"> 
+                    <div class="tab-pane fade show active" id="newPaymentForm-step-1"  role="tabpanel" style="display: block;" >
+                        <div class="mb-2">                                                         
+                            <partial name="_listDocuments"></partial>
+                        </div>                            
+                    </div>
+                    <div class="tab-pane fade fade show" id="newPaymentForm-step-2" role="tabpanel" style="display: none;">
+                        <partial name="_cuotasDocumentos"></partial>
+                    </div>                      
+                </div>                                      
+            </div>
+            <div class="modal-footer">
+                <div ng-show="showFooterStepUno">
+                    <button class="btn btn-info" ng-click="paymentStepDos()"> Siguiente <i class=" fas fa-angle-right"></i></button>
+                    <button class="btn btn-dark" data-dismiss="modal">&times; Cerrar</button>
+                </div>                
+                <div ng-show="showFooterStepDos">
+                    <button class="btn btn-info" ng-click="paymentStepUno()"><i class=" fas fa-angle-left"></i> Atras</button>
+                    <button class="btn btn-success" ng-click="finalizar()"> Finalizar</button>                
+                </div>                
+            </div>
+        </div>
+    </div>
+</div>

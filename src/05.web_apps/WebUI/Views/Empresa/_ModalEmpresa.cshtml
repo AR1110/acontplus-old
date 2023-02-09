@@ -1,0 +1,44 @@
+<form autocomplete="off">
+    <div class="modal-header">
+        <h4 class="modal-title">{{$ctrl.tipoRegistro===1?'Nuevo':'Editar'}} Empresa</h4>
+        <button class="close" ng-click="$ctrl.closeModal()">&times;</button>
+    </div>
+
+    <div class="modal-body">
+        <div class="form-group">
+            <label for="ruc">Ruc <span class="text-danger">*</span></label>
+            <input type="text" id="ruc" name="ruc" ng-class="$ctrl.typeNotify"
+                    placeholder="Ej. 1450152325001" 
+                    ng-model="$ctrl.data.ruc" 
+                    ng-keyup="$ctrl.validarRuc()" maxlength="13" valid-number class="form-control border-select">
+            <small class="invalid-feedback">{{$ctrl.message}}</small>
+            <small class="valid-feedback">{{$ctrl.message}}</small>
+        </div>
+
+        <div class="form-group">
+            <label for="">Razon Social  <span class="text-danger">*</span></label>
+            <input type="text" name="" ng-model="$ctrl.data.razonSocial" ng-keyup="$ctrl.copiarRazonSocial()" class="form-control border-select" touppercase id="">
+        </div>
+
+        <div class="form-group">
+            <label for="">Nombre Comercial <span class="text-danger">*</span></label>
+            <input type="text" name="" ng-model="$ctrl.data.nombreComercial" class="form-control border-select" id="">
+        </div>
+
+        <div class="form-group" ng-if="$ctrl.tipoRegistro ===2">
+            <label for="">Estado</label>
+            <md-radio-group ng-model="$ctrl.data.estado" aria-labelledby="Estado Empresa">
+                <md-radio-button ng-value="true" class="md-primary">Activo</md-radio-button>
+                <md-radio-button ng-value="false">Inactivo</md-radio-button>            
+            </md-radio-group>
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+        <button  type="button" class="btn btn-success" ng-click="$ctrl.saveAndUpdate()">
+            {{$ctrl.tipoRegistro===1?'Guardar':'Actualizar'}}
+        </button>
+        <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">&times; Cerrar</button>
+    </div>
+</form>

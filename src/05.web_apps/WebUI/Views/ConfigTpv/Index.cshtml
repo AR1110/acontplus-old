@@ -1,0 +1,83 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+
+<div ng-controller="configTpvCtrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h5 class="text-themecolor">Configuración TPV</h5>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Configuraciones</h5>
+                    <hr>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Servicio</th>
+                                    <th>Hora Inicio</th>
+                                    <th>Hora Fin</th>
+                                    <th class="text-center">Estado</th>
+                                    <th>
+                                        Opciones
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="item in configurations">
+                                    <td>{{item.descripcion}}</td>
+                                    <td>
+                                        <div>
+                                            <input type="time" id="horaInicio-{{item.codigo}}"
+                                                ng-model="item.horaInicio" min="04:00:00" max="23:00:00"
+                                                class="form-control" />
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <input type="time" id="horaFin-{{item.codigo}}" ng-model="item.horaFin"
+                                                min="04:00:00" max="23:00:00" class="form-control" />
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="icheck-success">
+                                            <input type="checkbox" id="chk-{{item.codigo}}" ng-model="item.estado" />
+                                            <label for="chk-{{item.codigo}}"></label>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-success btn-sm" ng-click="save(item)"
+                                            title="Guardar"><i class="ti-save"></i></button>
+                                        <button type="button" class="btn btn-danger btn-sm" ng-click="askToDelete(item)"
+                                            title="Guardar"><i class="ti-trash"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="form-group">
+                                <div class="icheck-success">
+                                    <input type="checkbox" id="chkAutomaticPrint" ng-model="printerConfig"
+                                        ng-change="saveConfigPrinter(this)" />
+                                    <label for="chkAutomaticPrint">Impresión Automatica <i
+                                            class="ti-printer"></i></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+<script src="~/js/controllers/restaurant/configTpvCtrl.min.js" asp-append-version="true"></script>
+}

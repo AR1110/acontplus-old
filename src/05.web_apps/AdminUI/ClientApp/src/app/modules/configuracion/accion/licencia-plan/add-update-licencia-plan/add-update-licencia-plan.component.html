@@ -1,0 +1,49 @@
+<h2 mat-dialog-title>{{tipoRegistro===1?'Nuevo':'Editar'}} Licencia Plan</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="dataForm">
+    <div fxLayout="column">
+      <mat-form-field  fxFlex="100%">
+        <mat-label>Aplicación</mat-label>
+        <mat-select formControlName="idAplicacion">
+          <mat-option [value]="item.idAplicacion" *ngFor="let item of aplicaciones">{{item.descripcion}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field  fxFlex="100%">
+        <mat-label>Licencia</mat-label>
+        <mat-select formControlName="idLicencia">
+          <mat-option [value]="item.idLicencia" *ngFor="let item of licencias">{{item.descripcion}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field  fxFlex="100%">
+        <input type="text" formControlName="costo" placeholder="Costo" matInput>
+      </mat-form-field>
+
+      <mat-form-field  fxFlex="100%">
+        <input type="text" formControlName="impuesto" placeholder="Impuesto" matInput>
+      </mat-form-field>
+
+      <mat-form-field  fxFlex="100%">
+        <input type="text" formControlName="descuento" placeholder="Descuento" matInput>
+      </mat-form-field>
+
+      <section *ngIf="tipoRegistro===2">
+        <mat-label>Estado</mat-label><br>
+        <mat-radio-group  aria-label="Estado" formControlName="estado">
+          <mat-radio-button [value]="true">Activo</mat-radio-button>
+          <mat-radio-button [value]="false">Inactivo</mat-radio-button>
+        </mat-radio-group>
+      </section>
+    </div>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-raised-button color="accent" (click)="saveAndUpdate()">
+    {{tipoRegistro===1?'Guardar':'Actualizar'}}
+  </button>
+  <button mat-raised-button color="basic" mat-dialog-close="">Cerrar</button>
+</mat-dialog-actions>

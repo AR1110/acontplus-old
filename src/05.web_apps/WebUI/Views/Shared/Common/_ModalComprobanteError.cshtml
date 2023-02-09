@@ -1,0 +1,45 @@
+
+<div class="modal-header">
+    <h5 class="modal-title">Errorres del comprobante</h5>
+    <button type="button" class="close" ng-click="$ctrl.closeModal()">&times;</button>
+</div>
+
+<div class="modal-body">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Op.</th>
+                    <th>Nro.</th>
+                    <th>Tipo</th>
+                    <th>Mensaje</th>                    
+                    <th>F. Registro</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in $ctrl.erroresComprobante">
+                    <td>
+                        <button class="btn btn-info btn-sm waves-effect waves-light" type="button" ng-click="$ctrl.showInfoAdicional(item)">
+                            <span class="btn-label"><i class="ti-plus"></i></span>
+                        </button>
+                    </td>
+                    <td>{{$index+1}}</td>
+                    <td>{{item.tipo}}</td>
+                    <td>{{item.mensaje}}</td>                    
+                    <td>{{item.fechaRegistro | date: $ctrl.formatDate}}</td>
+                    <td>{{item.estado}}</td>
+                </tr>
+                <tr class="text-center" ng-if="$ctrl.erroresComprobante.length===0">
+                    <td colspan="6">No hay registros en esta tabla.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>    
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">
+        &times; Cerrar
+    </button>
+</div>

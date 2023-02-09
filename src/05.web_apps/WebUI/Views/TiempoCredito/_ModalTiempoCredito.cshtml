@@ -1,0 +1,78 @@
+<div class="modal-header">
+    <h5 class="modal-title">{{$ctrl.tipoRegistro===1?'Nuevo':'Editar'}} Tiempo Crédito</h5>
+    <button type="button" class="close" ng-click="$ctrl.closeModal()">&times;</button>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <label for="Descripcion">Descripción <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" ng-model="$ctrl.data.descripcion" touppercase placeholder="Ej: COMPRAS-CONTADO">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <div class="icheck-primary">
+                <input type="radio" ng-model="$ctrl.data.tipo" ng-change="$ctrl.onChangeTipo()" ng-value="true" checked id="someRadioId1" name="someGroupName" />
+                <label for="someRadioId1">Contado</label>
+            </div>
+        </div>
+        <div class="col-6 text-right">
+            <div class="icheck-info">
+                <input type="radio" ng-model="$ctrl.data.tipo" ng-change="$ctrl.onChangeTipo()" ng-value="false" id="someRadioId2" name="someGroupName" />
+                <label for="someRadioId2">Credito</label>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="form-group col-lg-6 col-md-6 col-sm-6 col-xs-6">
+            <label for="codigo">Días Crédito <span class="text-danger">*</span></label>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" ng-model="$ctrl.data.diasCredito" ng-disabled="$ctrl.data.tipo" valid-number placeholder="0">
+                <div class="input-group-append">
+                    <span class="input-group-text" id="basic-addon2">Días</span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-lg-6 col-md-6 col-sm-6 col-xs-6">
+            <label for="nroCuota">Número Cuotas <span class="text-danger">*</span></label>
+            <input type="text" class="form-control border-select" ng-model="$ctrl.data.numeroCuota" ng-disabled="$ctrl.data.tipo" valid-number placeholder="0">
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-lg-6 col-md-6 col-sm-6 col-xs-6">                                    
+            <div class="radio icheck-turquoise">
+                <input type="radio" ng-model="$ctrl.data.gestion" ng-value="false" id="gestionCompra" name="gestionCompra" />
+                <label for="gestionCompra">Compra</label>
+            </div>
+            <div class="radio icheck-turquoise">
+                <input type="radio" ng-model="$ctrl.data.gestion" ng-value="true" id="gestionVenta" name="gestionVenta" />
+                <label for="gestionVenta">Venta</label>
+            </div>
+        </div>
+        <div class="form-group col-lg-6 col-md-6 col-sm-6 col-xs-6">
+            <md-checkbox ng-model="$ctrl.data.entrada" ng-disabled="$ctrl.data.tipo" aria-label="Entrada">
+                <label for="Entrada"><span class="text-success">Entrada</span></label>
+            </md-checkbox>
+        </div>
+    </div>
+    <div class="row">                               
+        <!--Estado -->
+        <div class="form-group col-lg-6 col-md-6 col-sm-6 col-xs-6" ng-if="$ctrl.tipoRegistro==2">
+            <label for="">Estado: </label>
+            <div class="icheck-primary">
+                <input type="radio" ng-model="$ctrl.data.estado" ng-value="true" id="estadoActivo" name="estadoActivo" />
+                <label for="estadoActivo">Activo</label>
+            </div>
+            <div class="icheck-primary">
+                <input type="radio" ng-model="$ctrl.data.estado" ng-value="false" id="estadoInactivo" name="estadoInactivo" />
+                <label for="estadoInactivo">Inactivo</label>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-success" ng-click="$ctrl.saveAndUpdate()">
+        {{$ctrl.tipoRegistro===1?'Guardar':'Actualizar'}}
+    </button>
+    <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">&times; Cerrar</button>
+</div>

@@ -1,0 +1,156 @@
+<style>
+    .custom-template-md-autocomplete-articulo {
+        max-width:900px !important;
+        width:900px !important;
+    }
+    
+    .standard-container {
+        width: 940px;
+    }
+    .autocomplete-standard-template li:last-child {
+        border-bottom-width: 0;
+    }
+
+    .autocomplete-standard-template li {
+        border-bottom: 1px solid #ccc;
+        height: auto;
+        padding-top: 1px;
+        padding-bottom: 1px;
+        white-space: normal;
+    }
+
+    .rtable #headerAutocompleteArticulo:hover{
+        cursor: none;
+        background-color: white;
+    }
+
+    .autocomplete-standard-template .item-desc {
+        font-size: 12px;
+        margin: 0.8em 0 .8em;
+        max-width: 200px;
+    }
+
+ 
+
+    .rtable .column-articulo-descripcion {  
+        width: 290px;
+        min-width: 290px;
+        max-width: 290px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap !important;    
+        word-break: break-all !important;
+    } 
+
+    .rtable .suggestion-column{
+         text-overflow: ellipsis;
+        white-space: nowrap !important;    
+        word-break: break-all !important;
+    }
+
+    .zindex {
+        z-index: 999999 !important;
+    }
+    
+</style>
+
+@* <div ng-submit="$event.preventDefault()">         *@
+    <div class="mb-1">        
+        <md-autocomplete 
+        input-focus
+        md-input-id="custom-template-md-autocomplete-articulo"
+        uib-tooltip="Buscar Artículo por descripción o Código "
+        tooltip-placement="top"
+        tooltip-trigger="'mouseenter'"
+        
+        md-no-cache="false"  
+        ng-enter="$ctrl.getArticuloByCode();"              
+        md-selected-item="$ctrl.selectedItem"
+        md-search-text-change="$ctrl.searchTextChange($ctrl.searchText)"
+        md-search-text="$ctrl.searchText"
+        md-selected-item-change="$ctrl.selectArticleSearch(item)"
+        md-items="item in $ctrl.getDynamicSearchArticles($ctrl.searchText)"
+        md-item-text="item.descripcion"
+        md-min-length="3"
+        ng-focus="$ctrl.focusDescripcionArticulo('#custom-template-md-autocomplete-articulo')"
+        md-escape-options="clear"
+        input-aria-label="Buscador Articulo"
+        placeholder="Ingrese Descripción"        
+        md-menu-class="autocomplete-standard-template"
+        md-menu-container-class="standard-container"
+        md-mode="standard" 
+        md-clear-button="false"> 
+            <md-item-template>            
+                <div class="table-responsive">
+                    <table class="rtable">                
+                        <thead>
+                            <tr ng-show="item.showHeader">
+                                <th>Codigo</th>
+                                <th>Descripcion</th>                                                 
+                                <th>Stock</th>
+                                <th>Iva</th>                               
+                                <th>SubFamilia</th>                               
+                                <th>Medida</th>                               
+                                <th>Marca</th> 
+                                <th ng-repeat="pvp in item.priceSale">
+                                    {{pvp.tarifa}}
+                                </th>                                                         
+                                <th>
+                                    Ubicación
+                                </th>                            
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>                          
+                            <td class="suggestion-codigo text-left">                        
+                                {{ item.codigo }}
+                            </td>
+                            <td  class="column-articulo-descripcion text-left" uib-tooltip="{{item.descripcion}}" tooltip-placement="bottom" tooltip-trigger="focus">                        
+                                <span class="item-desc">
+                                    {{item.descripcion}}                             
+                                </span>
+                            </td>
+                            <td class="suggestion-column text-center">
+                                <h6><span class="{{item.style}}">{{ item.stock}} </span></h6>
+                            </td> 
+                            <td class="suggestion-column text-center">
+                                {{ item.iva}}
+                            </td>   
+                            <td class="suggestion-column text-center">
+                                {{ item.subFamilia}}
+                            </td> 
+                            <td class="suggestion-column text-center">
+                                {{ item.medida}}
+                            </td>
+                            <td class="suggestion-column text-center">
+                                {{ item.marca}}
+                            </td>
+                            <td class="suggestion-column text-center" ng-repeat="pvp in item.priceSale">
+                                {{pvp.precio}}
+                            </td>   
+                            <td class="suggestion-column text-center" ng-repeat="ub in item.warehouses">
+                                {{ub.ubicacion}}
+                            </td>
+                            @* <td ng-click="$ctrl.showDetailTarifa(item)" stop-event >
+                                <i class="ti-eye"></i>
+                            </td>                                                                                                        *@
+                        </tr> 
+                        </tbody>               
+                    </table>                
+                </div>                     
+            </md-item-template>
+            <md-not-found>
+                No se encontraron estados que coincidan con "{{$ctrl.searchText}}".          
+            </md-not-found>
+            @* <md-not-found>
+                No hay estados coincidentes con "{{searchText}}"       
+            </md-not-found> *@
+        </md-autocomplete>       
+        <a href="javascript:void(0)" class="btn btn-success btn-xs mt-1" ng-click="$ctrl.openModalArticulo()">
+            <i class="fas fa-plus"></i> Nuevo
+        </a>
+        <a href="javascript:void(0)" class="btn btn-info btn-xs mt-1" ng-click="$ctrl.openModalArticuloGeneral()">
+            <i class="fas fa-search"></i> Lista
+        </a>
+    </div>
+@* </div> *@

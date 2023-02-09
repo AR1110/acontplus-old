@@ -1,0 +1,38 @@
+<div class="modal-header">
+    <h5 class="modal-title">Datos adicionales del articulo</h5>
+    <button class="close" ng-click="$ctrl.closeModal()">&times;</button>
+</div>
+<div class="modal-body">  
+    <h5>Artículo: {{$ctrl.articulo.descripcion}}</h5>              
+    <div class="row">
+        <div class="col-lg-4" ng-repeat="item in $ctrl.articuloDatosAdicionales">
+            <div class="table-responsive">
+                <table class="table table-bordered table-sm small">
+                    <thead>
+                        <tr>
+                            <th>Descripción</th>
+                            <th>Valor</th>
+                        </tr>                                
+                    </thead>
+                    <tbody>
+                        <tr  ng-repeat="l in item.etiquetas">
+                            <th>{{l.etiqueta}}</th>
+                            <td>{{l.valor}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="text-center">
+                                <div class="icheck-primary icheck-inline">
+                                    <input type="checkbox" id="add{{$index+1}}" ng-disabled="$ctrl._params.isView" ng-model="item.gestion" ng-change="$ctrl.agregarDatoAdicional(item)">
+                                    <label for="add{{$index+1}}"></label>
+                                </div>                                
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>                            
+            </div>                                                                     
+        </div>                    
+    </div>                
+</div>
+<div class="modal-footer">
+    <button class="btn btn-dark btn-sm" ng-click="$ctrl.closeModal()">&times; Cerrar</button>
+</div>

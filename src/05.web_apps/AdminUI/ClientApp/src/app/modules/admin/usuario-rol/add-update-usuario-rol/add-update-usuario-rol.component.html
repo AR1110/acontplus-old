@@ -1,0 +1,52 @@
+<h2 mat-dialog-title>{{tipoRegistro===1?'Nuevo':'Editar'}}</h2>
+
+<mat-dialog-content class="mat-typography">
+  <form [formGroup]="dataForm">
+    <div fxLayout="column">
+
+      <mat-form-field  fxFlex="100%">
+        <mat-label>Usuario</mat-label>
+        <mat-select formControlName="idUsuario">
+          <mat-option [value]="item.idUsuario" *ngFor="let item of usuarios">{{item.nombreCompleto}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+
+      <mat-form-field  fxFlex="100%">
+        <mat-label>Entidad</mat-label>
+        <mat-select formControlName="idEntidad">
+          <mat-option [value]="item.idEntidad" *ngFor="let item of entidades">{{item.razonSocial}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+
+
+      <mat-form-field  fxFlex="100%">
+        <mat-label>Rol</mat-label>
+        <mat-select formControlName="codRol" >
+          <mat-option [value]="item.codigo" *ngFor="let item of roles">{{item.descripcion}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <section *ngIf="tipoRegistro===2">
+        <mat-label>Estado</mat-label><br>
+        <mat-radio-group  aria-label="Estado" formControlName="estado">
+          <mat-radio-button [value]="true">Activo</mat-radio-button>
+          <mat-radio-button [value]="false">Inactivo</mat-radio-button>
+        </mat-radio-group>
+      </section>
+
+    </div>
+
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-raised-button color="accent" [disabled]="dataForm.invalid" (click)="saveAndUpdate()">
+    {{tipoRegistro===1?'Guardar':'Actualizar'}}
+  </button>
+  <button mat-raised-button color="basic" mat-dialog-close>
+    Cerrar
+  </button>
+</mat-dialog-actions>

@@ -1,0 +1,131 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div ng-controller="tipoImpuestoCtrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Gestión de Tipo Impuesto</h4>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+                @*<ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
+                        <li class="breadcrumb-item active">Tipo Impuesto</li>
+                    </ol>*@
+                <button type="button" ng-click="abrirModal(0,1)" class="btn btn-info  m-l-15">
+                    <i class="ti-plus"></i> Nuevo
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <md-card>
+        <md-card-content>
+            <div class="row">
+                <div class="col-lg-9">
+                    <span class="form-group pull-left page-size form-inline">
+                        <select class="form-control control-color"
+                                ng-model="pageSize"
+                                ng-change="changePageSize()"
+                                ng-options="ra for ra in recordsQuantity">
+                        </select>
+                    </span>
+                </div>
+                <div class="col-lg-3">
+                    <form class="form-material">
+                        <input type="search" class="form-control form-control-line" placeholder="Buscar T. Impuesto" />
+                    </form>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-no-bordered">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>N°</th>
+                            <th>Código</th>
+                            <th>Tipo Impuesto</th>
+                            <th>Estado</th>                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="ti in tipoImpuestos | filter:buscar">
+                            <td>
+                                <div class="justify-content-center">
+                                    <a href="javascript:void(0)" ng-click="delete(ti.tipoImpuestoRenta)" tooltip class="text-rojo" data-toggle="tooltip" title="Eliminar"><i class="fa fa-trash"></i></a>
+                                    <a href="javascript:void(0)" ng-click="abrirModal(ti.tipoImpuestoRenta,2)" tooltip class="text-azul m-l-10" title="Actualizar" data-toggle="tooltip"><i class=" fas fa-edit"></i></a>                                            
+                                </div>
+                            </td>
+                            <td>{{$index+1}}</td>
+                            <td>{{ti.tipoImpuestoRenta.codigo}}</td>
+                            <td>{{ti.tipoImpuestoRenta.descripcion}}</td>
+                            <td ng-bind-html="ti.tipoImpuestoRenta.estado|estadoPrimario"></td>  
+                        </tr>
+                        <tr class="text-center" ng-show="tipoImpuestos.length==0">
+                            <td colspan="5">No hay registros en esta tabla</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td align="center" colspan="5">
+                                <div class="pull-left">
+                                    <ul uib-pagination total-items="totalRecords" items-Per-Page="pageSize" ng-change="pagechanged()" ng-model="pageIndex" max-size="maxSize" class="pagination" boundary-links="true" rotate="false"></ul>
+                                </div>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </md-card-content>
+    </md-card>
+   
+
+    <div class="modal fade" id="agregarTipoImpuesto" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1" aria-hidden="true" data-backdrop="static" data-keyboard="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form ng-submit="saveUpdate(type)" class="form-material" autocomplete="off" novalidate>
+                    <div class="modal-content">
+                        <div class="modal-header {{colorHeader}}">
+                            <h5 class="modal-title text-white" id="exampleModalLabel"><i class="{{iconoModal}}"></i>{{tituloModal}}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <label for="">Descripción: <span class="text-danger">*</span> </label>
+                                    <input type="text" ng-model="data.descripcion" class="form-control" ng-change="obtenerTresLetras(data)" maxlength="50" placeholder="EJ: SERVICIOS">
+                                </div>
+                                <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <label for="">Código: </label><span class="text-info" data-toggle="tooltip" data-placement="top" title="En este campo hay que poner la letra inicial de la Descripcion de Tipo Impuesto" data-original-title="En este campo hay que poner la letra inicial de la Descripcion de Tipo Impuesto"> <i class="fa fa-info-circle"></i></span>
+                                    <input type="text" ng-model="data.codigo" ng-disabled="data.descripcion==undefined||data.descripcion==''||type==2"
+                                           class="form-control" maxlength="50" placeholder="Ej: S" />
+                                </div>
+                                <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12" ng-show="type==2">
+                                    <label>Estado: </label>
+                                    <md-radio-group ng-model="data.estado">
+                                        <md-radio-button ng-value="true">Activo</md-radio-button>
+                                        <md-radio-button ng-value="false">Inactivo</md-radio-button>
+                                    </md-radio-group>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn {{btnColor}}"><i class="{{icono}}"></i> {{btnTitulo}}</button>
+                            <button type="button" class="btn btn-dark" data-dismiss="modal"> &times; Cerrar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{    
+    <script src="~/js/controllers/sri/tipoImpuestoCtrl.min.js" asp-append-version="true"></script>
+}
+
+

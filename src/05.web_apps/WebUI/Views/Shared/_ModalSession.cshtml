@@ -1,0 +1,28 @@
+<div ng-show="IsVisible" id="modalSession" class="modal" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div idle-countdown="countdown" class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Tu session esta cerca de expirar!</h4>
+            </div>
+            <div class="modal-body">
+                <div style="float: left; height: 50px;">
+                    <span class="ti-warning text-danger btn-lg"></span>
+                </div>
+                <div idle-countdown="countdown">
+                    <p> Tu session expira en <strong>{{countdown}}</strong> segundos.<br />
+                        Deseas continuar?</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" ng-click="Reset()" class="btn btn-success btn-sm">
+                    <icon class="ti-check"></icon> Si
+                </button>
+                <button type="button" ng-click="SignOut()" class="btn btn-danger btn-sm">
+                    <icon class="ti-close"></icon> No
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+        

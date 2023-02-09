@@ -1,0 +1,27 @@
+<div class="form-group">
+    <label for="articuloFiltro">Articulo</label>
+    <input type="text" id="articuloSearchFiltro"
+            autocomplete="off"
+            name="articuloSearchFiltro"
+            class="form-control border-select"
+            placeholder="Ingrese Descripción del Articulo"
+            ng-model="articuloFiltro.descripcion"
+            ng-keyup="onKeyupArticuloSearchFiltro()"
+            uib-typeahead="a as a.articulo.descripcion for a in articuloSearch($viewValue)"
+            typeahead-loading="articuloFiltro.loading"
+            typeahead-no-results="articuloFiltro.noResults"
+            typeahead-template-url="articuloSearchFiltroTemplate.html"
+            typeahead-editable="false"
+            typeahead-on-select="selectedArticuloSearchFiltro($item)" />  
+
+            <script type="text/ng-template" id="articuloSearchFiltroTemplate.html">
+                <div class="autocomplete-suggestion-uib-typeahead">
+                    <span class="item-title">
+                        <small> {{match.model.articulo.descripcion}}</small><br>
+                        <small><b>Código: </b>{{match.model.articulo.codigo}}</small>
+                    </span>
+                </div>
+            </script>
+            <span class="ml-5" ng-if="articuloFiltro.loading"> <i class="fas fa-sync-alt fa-xs"></i> Loading...</span>
+            <small class="text-danger ml-5" ng-if="articuloFiltro.noResults">No se encontraron resultados</small>
+</div>

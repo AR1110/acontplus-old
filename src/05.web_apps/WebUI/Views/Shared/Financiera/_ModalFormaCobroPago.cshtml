@@ -1,0 +1,308 @@
+
+<div class="modal-header">
+    <h5 class="modal-title">{{$ctrl.tituloModal}}</h5>
+    <button class="close" ng-click="$ctrl.closeModal()">&times;</button>
+</div>
+<div class="modal-body"> 
+    <div class="card">        
+        <div class="card-body text-center">
+            <div class="row">
+                <div class="col shadow ">
+                    <h3 class="m-b-0 text-info">${{$ctrl.data.total}}</h3>
+                    <h5 class="font-light">Total</h5>
+                </div>
+                <div class="col shadow" ng-if="$ctrl.data.totalAbonoAnterior>0">
+                    <h3 class="m-b-0 text-primary">${{$ctrl.data.totalAbonoAnterior}}</h3>
+                    <h5 class="font-light">Abono Anterior</h5>
+                </div>
+                <div class="col shadow">
+                    <h3 class="m-b-0">${{$ctrl.data.abono}}</h3>
+                    <h5 class="font-light">Abono</h5>
+                </div>
+                <div class="col shadow">
+                    <h3 class="m-b-0">${{$ctrl.data.abonoPosfechado}}</h3>
+                    <h5 class="font-light">Abono Posf.</h5>
+                </div>
+                <div class="col shadow">
+                    <h3 class="m-b-0">${{$ctrl.data.abonoTotal}}</h3>
+                    <h5 class="font-light">Total Abono</h5>
+                </div>
+                <div class="col shadow">
+                    <h3 class="m-b-0">${{$ctrl.data.saldo}}</h3>
+                    <h5 class="font-light">Saldo</h5>
+                </div>
+
+                @* <div class="col shadow bg-dark text-white">
+                    <h3 class="m-b-0">${{$ctrl.data.valorCambio}}</h3>
+                    <h5 class="font-light">Cambio</h5>
+                </div> *@
+            </div>
+        </div>
+    </div>    
+           
+         
+             
+    <md-tabs class="md-primary" md-center-tabs md-selected="$ctrl.selectedIndex">
+        <md-tab label="{{item.descripcion}}" ng-repeat="item in  $ctrl.entidadesFinancieras" ng-click="$ctrl.onChangeTabEntidadFinanciera()">                                                                                 
+        </md-tab>                
+    </md-tabs>            
+    <div class="card">
+        <div class="card-body shadow border">
+
+            <!--TARJETA DE CRÉDITO-->
+            <div ng-show="$ctrl.entidadFinanciera.codigo=='TAR'">
+                <div class="row">
+                    <div class="form-group col-lg-4">
+                        <label class="text-muted">SubEntidad Financiera: <span class="text-danger">*</span></label>
+                        <select class="form-control border-select" ng-model="$ctrl.subEntidadFinanciera">
+                            <option ng-value="item" ng-repeat="item in $ctrl.subEntidadesFinancieras">
+                                {{item.descripcion}}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-lg-4">
+                        <label class="text-muted">Fecha Emisión: <span class="text-danger">*</span></label>
+                        <input type="date" ng-model="$ctrl.data.fechaEmision" class="form-control border-select">
+                    
+                    </div>
+                    
+                    <div class="form-group col-lg-4">
+                        <label class="text-danger">Valor Abono: <span class="text-danger">*</span> </label>
+                        <input type="text" ng-model="$ctrl.data.valorAbono" class="form-control border-select" decimal placeholder="0.00" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-lg-4">
+                        <label class="text-muted">Número <span class="text-danger">*</span></label>
+                        <input type="text" ng-model="$ctrl.data.nro" class="form-control border-select" />
+                    </div>
+                    <div class="form-group col-lg-4">
+                        <label>Ciudad: <span class="text-danger">*</span></label>                       
+                        <select class="form-control border-select" ng-model="$ctrl.data.idCiudad" 
+                                ng-options="item.idCiudad as item.descripcion group by item.provincia.descripcion for item in $ctrl.ciudadProvincias">
+                        </select>
+                        <script type="text/ng-template" id="typeahead-item.html">
+                            <div class="typeahead-group-header">{{match.model.provincia}}</div>
+                            <span  ng-repeat="c in match.model.ciudades">
+                                <a><span>{{c}}</span></a><br>
+                            </span>
+                        </script>
+                    </div>
+                    <div class="form-group col-lg-4">
+                        <label>Referencia: <span class="text-danger">*</span></label>
+                        <input type="text" ng-model="$ctrl.data.referencia" class="form-control border-select" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-4 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label class="text-muted">Aprobación <span class="text-danger">*</span></label>
+                            <input type="text" ng-model="$ctrl.data.aprobacion" class="form-control border-select" />
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-4 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label class="text-muted">Lote <span class="text-danger">*</span></label>
+                            <input type="text" ng-model="$ctrl.data.lote" class="form-control border-select" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--EFECTIVO-->
+            <div ng-show="$ctrl.entidadFinanciera.codigo=='EFE'">
+                <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                        <div class="form-group">
+                            <label class="text-muted">SubEntidad Financiera: <span class="text-danger">*</span></label>
+                            <select class="form-control border-select" ng-model="$ctrl.subEntidadFinanciera">
+                                <option ng-value="item" ng-repeat="item in $ctrl.subEntidadesFinancieras">
+                                    {{item.descripcion}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                        <div class="form-group">
+                            <label class="text-muted">Fecha Emisión: <span class="text-danger">*</span></label>
+                            <input type="date" ng-model="$ctrl.data.fechaEmision" class="form-control border-select">
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label class="text-danger">Valor Abono *</label>
+                            <input type="text" ng-model="$ctrl.data.valorAbono" class="form-control border-select" decimal
+                                    placeholder="0.00" />
+                        </div>
+                    </div>
+                </div>
+            </div> 
+
+
+            <div ng-show="$ctrl.entidadFinanciera.codigo==='TRA'">
+                <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                        <div class="form-group">
+                            <label class="text-muted">SubEntidad Financiera: <span class="text-danger">*</span></label>
+                            <select class="form-control border-select" ng-model="$ctrl.subEntidadFinanciera">
+                                <option ng-value="item" ng-repeat="item in $ctrl.subEntidadesFinancieras">
+                                    {{item.descripcion}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                        <div class="form-group">
+                            <label class="text-muted">Fecha Emisión: <span class="text-danger">*</span></label>
+                            <input type="date" ng-model="$ctrl.data.fechaEmision" class="form-control border-select">
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label class="text-danger">Valor Abono *</label>
+                            <input type="text" ng-model="$ctrl.data.valorAbono" class="form-control border-select" decimal
+                                    placeholder="0.00" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label class="text-muted">Banco: <span class="text-danger">*</span></label>
+                            <select class="form-control border-select" ng-model="$ctrl.banco">
+                                <option ng-value="item" ng-repeat="item in $ctrl.bancos">
+                                    {{item.descripcion}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label class="text-muted">Número <span class="text-danger">*</span></label>
+                            <input type="text" ng-model="$ctrl.data.nro" class="form-control border-select" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+             <!--CHEQUE-->
+            <div ng-show="$ctrl.entidadFinanciera.codigo=='CHE'">
+                <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                        <div class="form-group">
+                            <label class="text-muted">SubEntidad Financiera: <span class="text-danger">*</span></label>
+                            <select class="form-control border-select" ng-model="$ctrl.subEntidadFinanciera">
+                                <option ng-value="item" ng-repeat="item in $ctrl.subEntidadesFinancieras">
+                                    {{item.descripcion}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                        <div class="form-group">
+                            <label class="text-muted">Fecha Emisión: <span class="text-danger">*</span></label>
+                            <input type="date" ng-model="$ctrl.data.fechaEmision" class="form-control border-select">
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label class="text-danger">Valor Abono *</label>
+                            <input type="text" ng-model="$ctrl.data.valorAbono" class="form-control border-select" decimal
+                                    placeholder="0.00" />
+                        </div>
+                    </div>
+                </div>                
+
+                <div class="row">                    
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label class="text-muted">Ciudad</label>
+                            <select class="form-control border-select" ng-model="$ctrl.data.idCiudad" 
+                                ng-options="item.idCiudad as item.descripcion group by item.provincia.descripcion for item in $ctrl.ciudadProvincias">
+                            </select>                                 
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label class="text-muted">Banco: <span class="text-danger">*</span></label>
+                            <select class="form-control" ng-model="$ctrl.banco">
+                                <option ng-value="item" ng-repeat="item in $ctrl.bancos">
+                                    {{item.descripcion}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label class="text-muted">Número: <span class="text-danger">*</span></label>
+                            <input type="text" ng-model="$ctrl.data.nro" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label class="text-muted">PosFechado</label>
+                            <div class="icheck-primary">
+                                <input type="checkbox" ng-model="$ctrl.data.posFechado" id="posFechado" />
+                                <label for="posFechado"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label for="">Dirigido a:</label>
+                            <input type="text" class="form-control border-select" ng-model="$ctrl.data.referencia">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--DOCUMENTO-->
+            <div ng-show="$ctrl.entidadFinanciera.codigo=='DOC'">
+                <div class="table-responsive">
+                    <table class="table table-condensed table-sm">
+                        <thead>
+                            <tr>
+                                <th>N°.</th>
+                                <th><span>N°. Documento</span></th>
+                                <th><span>Tipo Documento</span></th>
+                                <th><span>Total</span></th>
+                                <th>Op.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="item in $ctrl.documentos">
+                                <td>{{$index+1}}</td>
+                                <td>{{item.nroDocumento}}</td>
+                                <td>{{item.tipoDocumento}}</td>
+                                <td>${{item.total}}</td>
+                                <td>
+                                    <button class="btn btn-warning btn-sm" ng-click="$ctrl.agregarCobroPagoDocumento(item)">
+                                        <i class="fas fa-arrow-circle-down fa-xs"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr ng-if="$ctrl.documentos.length===0" class="text-center">
+                                <td colspan="5">No hay registros en esta tabla</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>  
+</div>
+<div class="modal-footer">    
+    <button type="button" ng-if="$ctrl.entidadFinanciera.codigo!=='DOC'" class="btn btn-block btn-info mt-2" ng-click="$ctrl.addFormaCobroPago()">
+        <icon class="ti-save"></icon> Guardar
+    </button>
+    <button type="button" class="btn btn-block btn-dark" ng-click="$ctrl.closeModal()">
+        <icon class="ti-close"></icon> Cerrar
+    </button>       
+</div>
+        

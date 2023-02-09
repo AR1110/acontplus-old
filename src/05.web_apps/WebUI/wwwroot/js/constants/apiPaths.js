@@ -1,0 +1,9 @@
+const ApiPaths = Object.freeze({
+    CuotaXPagar: '/CuotaXPagar/'  
+})
+
+export default ApiPaths;
+
+
+
+

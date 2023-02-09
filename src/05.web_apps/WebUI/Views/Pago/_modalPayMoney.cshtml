@@ -1,0 +1,232 @@
+﻿<div id="modalPayMoney" class="modal" role="dialog" tabindex="-1" data-backdrop="static" >
+    <div class="modal-dialog  modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Forma de Pago</h5>
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+                        <div class="list-group list-group-horizontal">
+                            <a href="javascript:void(0)" data-toggle="list" class="list-group-item list-group-item-action"
+                               ng-class="ef.codigo=='EFE'?'active':''" ng-show="ef.codigo!=='DOC'"
+                               ng-repeat="ef in entidadesFinancieras"
+                               ng-click="onClickTabEntidadFinanciera(ef)">
+                                {{ef.descripcion}}
+                            </a>                                       
+                        </div>
+                        <br>
+                        <div class="card border border"> 
+                            <div class="card-body">
+                                @* <div class="animate-switch-container" ng-switch on="entidadFinanciera.codigo"> *@
+                                    <!--EFECTIVO-->
+                                    <div class="animate-switch" ng-show="entidadFinanciera.codigo=='EFE'">
+                                        <div class="row">
+                                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                                <div class="form-group">
+                                                    <label class="text-muted">SubEntidad Financiera <span class="text-danger">*</span></label>
+                                                    <select class="form-control" ng-model="subEntidad">
+                                                        <option ng-value="se" ng-repeat="se in subEntidades">{{se.descripcion}}</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                                <div class="form-group">
+                                                    <label class="control-label">Fecha Emisión</label>
+                                                    <input type="date" ng-model="pago.fechaEmision" ng-required="true" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                                <div class="form-group">
+                                                    <label class="text-danger">Valor Abono *</label>
+                                                    <input type="text" ng-model="pago.valorPago" class="form-control"
+                                                            ng-required="true" valid-number
+                                                            placeholder="0.00" />
+                                                </div>
+                                            </div>                                            
+                                        </div>
+                                    </div>
+
+                                    <!--TARJETA CREDITO -->
+                                    <div class="animate-switch" ng-show="entidadFinanciera.codigo=='TAR'">
+                                        <div class="row">
+                                            <div class="form-group col-lg-4">
+                                                <label class="text-muted">SubEntidad Financiera <span class="text-danger">*</span></label>
+                                                <select class="form-control" ng-model="subEntidad">
+                                                    <option ng-value="se" ng-repeat="se in subEntidades">{{se.descripcion}}</option>
+                                                </select>                                                
+                                            </div>                                            
+                                            <div class="form-group col-lg-4">
+                                                <label class="control-label">Fecha Emisión</label>
+                                                <input type="date" ng-model="pago.fechaEmision" ng-required="true" class="form-control">                                                
+                                            </div>
+                                            <div class="form-group col-lg-4">
+                                                <label class="text-danger">Valor Abono *</label>
+                                                <input type="text" ng-model="pago.valorPago" class="form-control" ng-required="true" valid-number
+                                                            placeholder="0.00" />                                                
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-lg-4">
+                                                <label class="text-muted">Número <span class="text-danger">*</span></label>
+                                                <input type="text" ng-model="pago.nro"  class="form-control" />                                               
+                                            </div>                                            
+                                            <div class="form-group col-lg-4">
+                                                <label>Ciudad: <span class="text-danger">*</span></label>
+                                                @* <input type="text" class="form-control" placeholder="Buscar Ciudad" ng-model="ciudad"
+                                                uib-typeahead="cp as cp for cp in getCiudad($viewValue)"
+                                                typeahead-template-url="typeahead-item.html" /> *@
+                                                <select class="form-control border-select" ng-model="pago.idCiudad" id="ciudad"
+                                                        ng-options="cp.idCiudad as cp.descripcion group by cp.provincia.descripcion for cp in ciudadPronvincias">
+                                                </select>  
+                                                <script type="text/ng-template" id="typeahead-item.html">
+                                                    <div class="typeahead-group-header">{{match.model.provincia}}</div>
+                                                    <span  ng-repeat="c in match.model.ciudades">
+                                                        <a><span>{{c}}</span></a><br>
+                                                    </span>                                                   
+                                                </script>                                               
+                                            </div>
+                                            <div class="form-group col-lg-4">
+                                                <label>Referencia: <span class="text-danger">*</span></label>
+                                                <input type="text" ng-model="pago.referencia" class="form-control" />                                                                                            
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6 col-md-4 col-sm-12 col-xs-12">
+                                                <div class="form-group">
+                                                        <label class="text-muted">Aprobación <span class="text-danger">*</span></label>
+                                                        <input type="text" ng-model="pago.aprobacion"  class="form-control" />
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 col-md-4 col-sm-12 col-xs-12">
+                                                <div class="form-group">
+                                                    <label class="text-muted">Lote <span class="text-danger">*</span></label>
+                                                    <input type="text" ng-model="pago.lote"  class="form-control" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!--TRANSFERENCIA-->
+                                    <div class="animate-switch" ng-show="entidadFinanciera.codigo=='TRA'">
+                                        <div class="row">
+                                            <div class="form-group col-lg-4">
+                                                <label class="text-muted">SubEntidad Financiera <span class="text-danger">*</span></label>
+                                                <select class="form-control" ng-model="subEntidad">
+                                                    <option ng-value="se" ng-repeat="se in subEntidades">{{se.descripcion}}</option>
+                                                </select>                                                
+                                            </div>                                            
+                                            <div class="form-group col-lg-4">
+                                                <label class="control-label">Fecha Emisión</label>
+                                                <input type="date" ng-model="pago.fechaEmision" ng-required="true" class="form-control">                                                
+                                            </div>
+                                            <div class="form-group col-lg-4">
+                                                <label class="text-danger">Valor Abono *</label>
+                                                <input type="text" ng-model="pago.valorPago" class="form-control" ng-required="true" valid-number
+                                                            placeholder="0.00" />                                                
+                                            </div>
+                                        </div>
+                                         <div class="row">
+                                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                                <div class="form-group">
+                                                    <label class="text-muted">Banco<span class="text-danger">*</span></label>
+                                                    <select class="form-control" ng-model="banco" >
+                                                        <option ng-value="b" ng-repeat="b in bancos">{{b.descripcion}}</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                                <div class="form-group">
+                                                    <label class="text-muted">Número <span class="text-danger">*</span></label>
+                                                    <input type="text" ng-model="pago.nro" class="form-control" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!--CHEQUE-->
+                                    <div class="animate-switch" ng-show="entidadFinanciera.codigo=='CHE'">
+                                        <div class="row">
+                                            <div class="form-group col-lg-4">
+                                                <label class="text-muted">SubEntidad Financiera <span class="text-danger">*</span></label>
+                                                <select class="form-control" ng-model="subEntidad">
+                                                    <option ng-value="se" ng-repeat="se in subEntidades">{{se.descripcion}}</option>
+                                                </select>                                                
+                                            </div>                                            
+                                            <div class="form-group col-lg-4">
+                                                <label class="control-label">Fecha Emisión</label>
+                                                <input type="date" ng-model="pago.fechaEmision" ng-required="true" class="form-control">                                                
+                                            </div>
+                                            <div class="form-group col-lg-4">
+                                                <label class="text-danger">Valor Abono *</label>
+                                                <input type="text" ng-model="pago.valorPago" class="form-control" ng-required="true" valid-number
+                                                            placeholder="0.00" />                                                
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                                                <div class="form-group">
+                                                    <label for="">Ciudad</label>
+                                                    <select class="form-control border-select" ng-model="pago.idCiudad" id="ciudad"
+                                                            ng-options="cp.idCiudad as cp.descripcion group by cp.provincia.descripcion for cp in ciudadPronvincias">
+                                                    </select>  
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                                                <div class="form-group">
+                                                    <label class="text-muted">Banco<span class="text-danger">*</span></label>
+                                                    <select class="form-control" ng-model="banco">
+                                                        <option ng-value="val" ng-repeat="val in bancos">{{val.descripcion}}</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                                                <div class="form-group">
+                                                    <label class="text-muted">Número <span class="text-danger">*</span></label>
+                                                    <input type="text" ng-model="pago.nro" class="form-control" />
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                                                <div class="form-group">
+                                                    <label class="text-muted">PosFechado</label>
+                                                    <div class="icheck-primary">
+                                                        <input type="checkbox" ng-model="pago.posFechado" id="posFechado" />
+                                                        <label for="posFechado"></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>  
+
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                <div class="form-group">
+                                                    <label for="">Dirigido a:</label>
+                                                    <input type="text" class="form-control border-select" ng-model="pago.referencia">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                     </div>
+                             
+                                                                                                                                                                                                                 
+                                @* </div> *@
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-12 col-sm-6 col-xs-6">
+                        <div class="card border border">
+                            <div ng-include src="'asideSubTotalPago'"></div>
+                        </div>                        
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline-success" ng-click="validarFormaPago()"><i class="ti-arrow-circle-down"></i> Agregar</button>
+                <button class="btn btn-outline-dark" data-dismiss="modal">&times; Cerrar </button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,42 @@
+.login-register {
+  height: 100vh;
+  display: flex;
+  background-size: cover;
+  align-items: center;
+}
+
+.login-register .login-register-box {
+  max-width: 400px;
+  min-width: 280px;
+  margin: 0 auto;
+  vertical-align: middle;
+}
+
+.mat-drawer-container {
+  background-color: #fafafa;
+  color: #000000de;
+}
+
+.login-register .login-register-box {
+  max-width: 400px;
+  min-width: 280px;
+  margin: 0 auto;
+  vertical-align: middle;
+}
+
+.login-register .mat-card {
+  margin: 0 15px;
+}
+
+.mat-card:not([class*=mat-elevation-z]) {
+  box-shadow: 0 2px 1px -1px #0003,0 1px 1px #00000024,0 1px 3px #0000001f;
+}
+
+
+.mat-card {
+  transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+  display: block;
+  position: relative;
+  padding: 16px;
+  border-radius: 4px;
+}

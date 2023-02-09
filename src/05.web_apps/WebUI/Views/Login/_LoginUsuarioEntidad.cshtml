@@ -1,0 +1,30 @@
+<div id="modalLoginUsuarioEntidad" class="modal fade in" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Usuario Entidad</h5>
+                @* <button class="close" data-dismiss="modal">&times;</button> *@
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4" ng-repeat="ue in usuarioEntidades">
+                        @* <img class="img-responsive" alt="user" src="dist/images/big/c2.jpg"> *@
+                        <div class="card">
+                            <div class="card-body shadow">
+                                <h5 class="card-title">{{ue.entidad}}</h5>   
+                                <small class="text-muted">{{ue.nombreComercial}}</small> 
+                                <div class="d-flex no-block align-items-center p-t-10">
+                                    <span><i class="fas fa-user-secret"></i> {{ue.role}}</span>
+                                </div>                                                       
+                                <button class="btn btn-success btn-rounded waves-effect btn-block waves-light m-t-30" ng-click="loginMultiple(ue)" >Ingresar <i class="fa fa-sign-in-alt"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-dark" data-dismiss="modal">&times; Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>

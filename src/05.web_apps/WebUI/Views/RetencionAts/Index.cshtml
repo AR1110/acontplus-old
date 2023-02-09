@@ -1,0 +1,119 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+
+<div ng-controller="retencionAtsCtrl" ng-init="initialLoad()">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h5 class="text-themecolor">Retencion 2.0 (ATS)</h5>
+        </div>
+    </div>
+    <md-card>
+        <md-card-content>
+            <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    @await Html.PartialAsync("_InfoTributaria")
+                    @await Html.PartialAsync("_InfoCompRetencion")
+                    @await Html.PartialAsync("_DocsSustento")
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    @await Html.PartialAsync("_InfoAdicional")
+                </div>
+            </div>
+        </md-card-content>
+        <div class="card-footer">
+            <button class="btn btn-success btn-lg" ng-click="save()"><i class="ti-save"></i> Guardar
+                Retención</button>
+        </div>
+    </md-card>
+    <!--MODALS -->
+    <div id="searchProvModal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fa fa-users"></i> Proveedores Encontrados</h5>
+                    <button class="close" data-dismiss="modal" title="Cerrar">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Razón Social</th>
+                                            <th>Identificación</th>
+                                            <th>N° Identificación</th>
+                                            <th>Correo</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="item in proveedores" ng-click="selectSujetoRetenido(item, true)"
+                                            title="Seleccionar Proveedor" style="cursor: pointer;">
+                                            <td>{{item.razonSocial}}</td>
+                                            <td>{{item.descTipoIdentificacion}}</td>
+                                            <td>{{item.numeroIdentificacion}}</td>
+                                            <td>{{item.correo}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-dark btn-sm" data-dismiss="modal" title="Cerrar">&times;
+                        Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="docsModal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fa fa-list"></i> Documentos Encontrados</h5>
+                    <button class="close" data-dismiss="modal" title="Cerrar">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Documento</th>
+                                            <th>Secuencial</th>
+                                            <th>Fecha Emision</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="item in docsFounded" ng-click="selectDoc(item)"
+                                            title="Seleccionar Documento" style="cursor: pointer;">
+                                            <td>{{item.documento}}</td>
+                                            <td>{{item.secuencial}}</td>
+                                            <td>{{item.fechaEmision | date: 'dd/MM/yyyy'}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-dark btn-sm" data-dismiss="modal" title="Cerrar">&times;
+                        Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END MODALS -->
+</div>
+
+@section Scripts {
+
+<script src="~/js/controllers/ventas/retencionAtsCtrl.js" asp-append-version="true"></script>
+}

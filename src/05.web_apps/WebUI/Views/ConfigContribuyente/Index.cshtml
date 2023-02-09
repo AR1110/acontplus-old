@@ -1,0 +1,179 @@
+﻿
+@{
+    ViewData["title"] = "Gestión de Config. Contribuyente";
+}
+<style>
+    .ui-grid-viewport {
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+    }
+
+    .ui-grid, .ui-grid-viewport {
+        height: auto !important;
+    }
+</style>
+
+<div ng-controller="configContribuyenteCtrl">
+    <div class="row page-titles" ng-if="accion.leer">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Gestión de Config. Contribuyente</h4>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+                @*<ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
+                        <li class="breadcrumb-item active">Config. Contribuyente</li>
+                    </ol>*@
+                <button type="button" ng-if="accion.crear" ng-click="abrirModal(0,1)" class="btn btn-info  m-l-15">
+                    <i class="fa fa-plus-circle"></i> Nuevo
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" ng-if="accion.leer">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-no-bordered table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>N°</th>
+                                    <th></th>
+                                    <th>Contribuyente Empresa</th>
+                                    <th>Renta</th>
+                                    <th>Iva</th>
+                                    <th>Contribuyente Retenido</th>
+                                    <th ng-if="accion.editar || accion.eliminar">Op.</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat-start="cc in configContribuyentes" class="{{cc.expanded?'table-warning':''}}">
+                                    <td>{{$index+1}}</td>
+                                    <td ng-click="expandDetalle(cc)">
+                                        <span ng-if="cc.expanded"><i class="fas fa-caret-square-down"></i></span>
+                                        <span ng-if="!cc.expanded"><i class="fas fa-caret-square-right"></i></span>
+                                    </td>
+                                    <td>
+                                        {{cc.tipoContribuyenteEmpresa}}<br />
+                                        <small class="text-muted">{{cc.subContribuyenteEmpresa}}</small>
+                                    </td>
+                                    <td ng-bind-html="cc.config.renta | sino"></td>
+                                    <td ng-bind-html="cc.config.iva | sino"></td>
+                                    <td>
+                                        {{cc.tipoContribuyenteProveedor}}
+                                        <br />
+                                        <small class="text-muted">{{cc.subContribuyenteProveedor}}</small>
+                                    </td>
+                                    <td ng-if="accion.editar || accion.eliminar">
+                                        <button class="btn btn-info btn-sm" ng-if="accion.editar" ng-click="abrirModal(cc.config,2)"><i class="ti-pencil"></i></button>
+                                        <button class="btn btn-danger btn-sm" ng-if="accion.eliminar" ng-click="deleteConfigContribuyente(cc.config.idConfiguracionContribuyente)"><i class="ti-trash"></i></button>
+                                    </td>
+                                </tr>
+                                <tr ng-if="cc.expanded" ng-repeat-end="">
+                                    <td colspan="7">
+                                        <div class="ml-5 mr-5">
+                                            <div class="table-responsive">
+                                                <table class="table table-no-bordered table-sm">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>N°</th>
+                                                            <th>Tipo Impuesto</th>
+                                                            <th>Retencion IVA</th>
+                                                            <th>%</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr ng-repeat="cd in cc.configDetalle">
+                                                            <td>{{$index+1}}</td>
+                                                            <td>{{cd.idTipoImpuestoRenta|mapTipoImpuesto:tipoImpuestos}}</td>
+                                                            <td>{{cd.idRetencionIva|mapRetencionIva:retencionesIvas}}</td>
+                                                            <td>{{cd.porcentaje|currency:'%'}}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade in" id="agregar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1" data-backdrop="static" data-keyboard="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">               
+                    <div class="modal-content">
+                        <div class="modal-header {{tipo==1?'bg-info':'bg-success'}} text-white">
+                            <h5 class="modal-title" ><i class="{{tipo==1?'fa fa-plus-circle':'fa fa-edit'}}"></i> {{tipo==1?'Nuevo': 'Actualizar'}}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="form-group col-lg-4 col-md-4 col-sm-12 col-xs-12 border-right">
+                                    <label for="">De Contribuyente Empresa: <span class="text-danger">*</span> </label>
+                                    <select class="form-control border-select" ng-model="data.idSubContribuyenteEmpresa" required="required"
+                                            ng-options="sc.subContribuyente.idSubContribuyente as sc.subContribuyente.descripcion group by sc.tipoContribuyente.descripcion for sc in subContribuyentes ">
+                                    </select>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+                                    <div class="form-group text-center ml-4 mt-0">
+                                        <label>RENTA</label>
+                                        <md-switch ng-model="data.renta" aria-label="iva"  class="md-primary">
+                                            {{ data.renta?'SI':'NO' }}
+                                        </md-switch>
+                                    </div>
+                                    
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+                                    <div class="form-group text-center ml-4 mt-0">
+                                        <label>IVA</label>
+                                        <md-switch ng-model="data.iva" aria-label="iva">
+                                            {{ data.iva?'SI':'NO' }}
+                                        </md-switch>
+                                    </div>
+                                </div>
+                                <div class="form-group col-lg-4 col-md-4 col-sm-12 col-xs-12 border-left">
+                                    <label for="">A Contribuyente Proveedor: <span class="text-danger">*</span> </label>
+                                    <select class="form-control border-select" ng-model="data.idSubContribuyenteProveedor" required="required"
+                                            ng-options="sc.subContribuyente.idSubContribuyente as sc.subContribuyente.descripcion group by sc.tipoContribuyente.descripcion for sc in subContribuyentes ">
+                                    </select>
+                                </div>
+                            </div>
+                            <md-divider></md-divider><br />
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12">                                  
+                                    <div class="table-responsive">
+                                        <div id="grid" ui-grid="gridOptions" 
+                                              ui-grid-edit
+                                              ui-grid-resize-columns
+                                              ui-grid-cellNav
+                                              ui-grid-auto-resize
+                                             class="grid" ></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button  ng-click="saveUpdate(tipo)" class="btn btn-success"><i class="{{tipo==1?'ti-save':'fa fa-edit'}}"></i> {{tipo==1?'Guardar':'Actualizar'}}</button>
+                            <button type="button" class="btn btn-dark" data-dismiss="modal">&times; Cerrar</button>
+                        </div>
+                    </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <partial name="PageNotAccessible"/>
+   
+</div>
+@section Scripts{
+    <script src="~/js/controllers/config/configContribuyenteCtrl.min.js" asp-append-version="true"></script>
+}

@@ -1,0 +1,12 @@
+--CREATE TABLE App.UsuarioRol(
+--	idUsuarioRol INT PRIMARY KEY IDENTITY(1,1) NOT NULL,
+--	idUsuario INT FOREIGN KEY REFERENCES App.Usuario(idUsuario) NOT NULL,
+--	idEntidad INT FOREIGN KEY REFERENCES App.Entidad(idEntidad) NOT NULL,
+--	idPolitica INT FOREIGN KEY REFERENCES App.Politica(idPolitica) NOT NULL,
+--	nroIdentificacion NVARCHAR(30) NOT NULL,
+--	ruc NVARCHAR(30) NOT NULL,
+--	codPolitica NVARCHAR(100) NOT NULL,
+--	estado BIT DEFAULT 1 NOT NULL,
+--	fechaRegistro DATETIME NOT NULL
+--)
+

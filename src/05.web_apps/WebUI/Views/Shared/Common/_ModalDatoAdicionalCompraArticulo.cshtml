@@ -1,0 +1,60 @@
+ <div class="modal-header">
+    <h5 class="modal-title">Datos Adicionales de Artículo</h5>
+    <button class="close" ng-click="$ctrl.closeModal()">&times;</button> 
+</div>
+<div class="modal-body">
+    <p><strong>Articulo: </strong>{{$ctrl.articulo.descripcion}}</p>
+    <md-table-container>
+        <table md-table>
+            <thead md-head>
+                <tr md-row>
+                    <th md-column>N°</th>
+                    <th md-column>Etiqueta</th>
+                    <th md-column>Valor</th>
+                </tr>
+            </thead>   
+            <tbody md-body>
+                <tr md-row ng-repeat="e in $ctrl.etiquetas">
+                    <td md-cell>{{$index+1}}</td>
+                    <td md-cell>{{e.descripcion}}</td>
+                    <td md-cell>
+                        <md-chips                                             
+                            ng-model="e.etiquetas" 
+                            md-max-chips="{{$ctrl.articulo.cantidad}}"
+                            readonly="$ctrl._params.isView"
+                            md-removable="!$ctrl._params.isView"
+                            md-enable-chip-edit="true" 
+                            md-add-on-blur="true" 
+                            ng-required="true"                                        
+                            @* md-on-add="transformarEtiqueta($chip, $index, e)"  *@
+                            md-transform-chip="$ctrl.transformarEtiqueta($chip, $index, e)"  
+                            md-on-remove="$ctrl.etiquetaRemove($chip, e)"
+                            md-on-select="$ctrl.getChipInfo($chip)"
+                            input-aria-label="Etiquetas"
+                            placeholder="{{$ctrl.articulo.cantidad-e.etiquetas.length}} etiquetas por ingresar">
+                                @* <md-chip-template>{{$chip.descripcion}}</md-chip-template> *@
+                            <md-chip-template>
+                                <span>
+                                <b>{{$chip.detalle.descripcion}}</b>
+                                @* <em>({{$chip.type}})</em> *@
+                                </span>
+                            </md-chip-template>                                         
+                        </md-chips>                                                                          
+                        
+                            @* <tags-input ng-model="e.etiquetas"  max-tags="{{articulo.cantidad}}" display-property="descripcion" 
+    on-tag-added="etiquetaAdd($tag, e)"
+    on-tag-removed="etiquetaRemove($tag, e)">                                         
+                        </tags-input>    *@                                    
+                    </td>
+                </tr>
+            </tbody>                     
+        </table>
+    </md-table-container>
+    
+</div>            
+<div class="modal-footer">
+    <button type="button" ng-if="!$ctrl._params.isView" ng-click="$ctrl.guardarEtiquetaArticulo()" class="btn btn-success">
+        <i class="ti-save"></i> Guardar
+    </button>
+    <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">&times; Cerrar</button> 
+</div>
