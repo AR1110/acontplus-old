@@ -1,5 +1,5 @@
 
-import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.14";
+import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.16";
 
 
 class ModalNotaEntregaCtrl extends ModalBaseCtrl{
@@ -71,6 +71,67 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl{
         this.data = Object.assign(this.data, this.uiGridInvoice.getTotales());
         this.$scope.$apply();        
     }
+
+    async setItemArticuloEnDetalle(dataArticulo){        
+        try {
+            const self = this;
+                 
+            this.dataArticulo = dataArticulo;
+
+            self.addRow();        
+            
+            const {articulo, medidas, datosAdicionales} = self.dataArticulo;        
+            let index  = self.gridOptions.data.findIndex(value => value.idArticulo === 0); 
+            let entity = self.gridOptions.data[index]; 
+        
+            let dataMedida = medidas[0];
+
+            console.log(this.dataArticulo)
+                
+            entity.idArticulo           = articulo.idArticulo;
+            entity.codigo               = articulo.codigoArticulo;                
+            entity.descripcion          = articulo.descripcion;  
+            entity.idTipoIva            = articulo.idTipoIva;                          
+            entity.codigoPorcentaje     = articulo.codigoPorcentaje;
+            entity.tarifa               = articulo.tarifa;
+            // entity.nombreTipoIva        = articulo.nombreTipoIva;
+            entity.ice                  = articulo.valorIce;
+            entity.idBodega             = self.idBodega ? self.idBodega : 0;
+            entity.llevaInventario      = articulo.llevaInventario;
+            entity.datosAdicionales     = articulo.datosAdicionales;
+            entity.productoFraccionable = articulo.productoFraccionable;
+            entity.medidas              = medidas; //Lista Medida 
+            entity.idMedida             = dataMedida.idMedida; //Medida por defecto 
+            entity.adicional            = datosAdicionales; //
+
+            console.log(JSON.parse(dataMedida.tarifas))
+            console.log(self)
+            entity.articuloTarifas      = JSON.parse(dataMedida.tarifas);
+            let tarifa                  = entity.articuloTarifas.find(item=>item.idTarifa===self.idTarifa);                                      
+            entity.idTarifa             = self.idTarifa;  
+            entity.precioUnitario       = self._fS.roundNumber(tarifa.precioVenta, self.decimal.nroPrecio);                
+            entity.precioConIva         = self._fS.roundNumber(tarifa.precioConIva, self.decimal.nroPrecio);
+            
+            
+            const objCalculo            = self.uiGridInvoice.calculoColDef(entity, 0);             
+            
+            objCalculo["precioUnitario"] && objCalculo["precioUnitario"]();
+            
+            objCalculo["calculoTotalDetalle"]();
+            
+            self.data = Object.assign(self.data, self.uiGridInvoice.getTotales()); 
+
+            this.focusColumnCantidad();
+
+
+            this.indexRow = this.gridOptions.data.findIndex(val => val.idArticulo === this.dataArticulo.articulo.idArticulo);           
+
+          
+        } catch (error) {
+            console.log(error)            
+        }
+    }
+    
 
 
 
@@ -155,7 +216,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
             }
 
 
-            this.decimal = resultsDataForm[1];
+            this.decimal = resultsDataForm[1][0]
             this.configDetalle = resultsDataForm[2];
             this.tipoIvas = resultsDataForm[3];
             this.tarifas  = resultsDataForm[4];
@@ -168,6 +229,11 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
            
             //6 articulo 
             //7 cliente 
+             
+            if(resultsDataForm[7].length>0){
+                this.cliente = resultsDataForm[7][0];
+            }
+
            
             this.data.fechaEmision = new Date();
             this.getFechaVencimiento();
@@ -232,7 +298,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
 
     async onSave(){                        
         try {            
-            showLoader();
+            
 
             if(!this.isValidaForm()) return
         
@@ -243,7 +309,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
 
             this.validarDatosAdicionales("idNotaEntregaDetalle");
 
-            
+            showLoader();
             this.nroDocumentoSecuencial = await this._commonSvc.generarNroDocumentoVenta({
                 idPuntoEmision: this.data.idPuntoEmision,
                 codigoDocumento: this.TIPO_DOC_NE.codigo,                
@@ -261,7 +327,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
                 buttonsStyling: false
             })
               
-            let {isConfirmed} = await swalWithBootstrapButtons.fire({
+            swalWithBootstrapButtons.fire({
                 title: '<small>Guardar Nota de Entrega</small>',
                 html: `<small>Esta Ud. seguro de ${textAccion} este <b> Nota de Entrega</b> N° ${this.nroDocumentoSecuencial}</small>?`,
                 icon: 'warning',
@@ -271,52 +337,58 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
                 reverseButtons: false,
                 allowOutsideClick:false,
                 allowEscapeKey:false
+            }).then(result=>{
+                if(result.isConfirmed){
+                    showLoader();
+                    let notaEntrega = Object.assign({}, this.data);
+                    notaEntrega.fechaEmision =  this._fS.formatDateTimeZone(this.data.fechaEmision)
+                    notaEntrega.fechaVencimiento = this._fS.formatDateTimeZone(this.data.fechaVencimiento)
+                    notaEntrega.idCliente = this.cliente.idCliente;        
+                    
+                    //Tarifa Aplicada al Documento
+                    notaEntrega.tarifa = this.actividadTipoIva.tarifa;
+                    
+                    const sendData = {
+                        notaEntrega,
+                        detalle: this.trimDetailDoc(),
+                        manejoArticulo: this.datosAdicionalesArticulo
+                    }
+
+                    this._mS.getData('post', '/NotaEntrega/Insert', sendData).then(response=>{
+                        if(response.code==='0'){   
+                            showLoader()                 
+                            this._fS.sweetAlert('warning', response.message, response.titleSms);                    
+                        }
+                        if(response.code==="1"){
+                            showLoader()
+                            this._fS.sweetAlert('success', response.message, response.titleSms, 1000);                  
+                        
+                            let data = JSON.parse(response.payload)[0];
+                            
+                            let mainData = {
+                                isRegister: true,
+                                data: {
+                                    ...data,
+                                    nroDocumento: data.estab + data.ptoEmi + data.secuencial,
+                                    esContado: data.gestion, 
+                                },
+                                TIPO_DOC: this.TIPO_DOC_NE                                             
+                            }
+
+                            if(mainData.data.esContado){
+                                this.openModalRapido(mainData)
+                            }else{
+                                this.openModalCobroDocumento(mainData)
+                            }                                                                                       
+                        }
+                    })
+                }
             })       
            
             
             if(!isConfirmed) return
 
-            showLoader();
-            let notaEntrega = Object.assign({}, this.data);
-            notaEntrega.fechaEmision =  this._fS.formatDateTimeZone(this.data.fechaEmision)
-            notaEntrega.fechaVencimiento = this._fS.formatDateTimeZone(this.data.fechaVencimiento)
-            notaEntrega.idCliente = this.cliente.idCliente;        
             
-            //Tarifa Aplicada al Documento
-            notaEntrega.tarifa = this.actividadTipoIva.tarifa;
-            
-            const sendData = {
-                notaEntrega,
-                detalle: this.trimDetailDoc(),
-                manejoArticulo: this.datosAdicionalesArticulo
-            }
-
-            await this._mS.getData('post', '/NotaEntrega/Insert', sendData).then(response=>{
-                if(response.code==='0'){                    
-                    this._fS.sweetAlert('warning', response.message, response.titleSms);                    
-                }
-                if(response.code==="1"){
-                    this._fS.sweetAlert('success', response.message, response.titleSms, 1000);                  
-                   
-                    let data = JSON.parse(response.payload)[0];
-                    
-                    let mainData = {
-                        isRegister: true,
-                        data: {
-                            ...data,
-                            nroDocumento: data.estab + data.ptoEmi + data.secuencial,
-                            esContado: data.gestion, 
-                        },
-                        TIPO_DOC: this.TIPO_DOC_NE                                             
-                    }
-
-                    if(mainData.data.esContado){
-                        this.openModalRapido(mainData)
-                    }else{
-                        this.openModalCobroDocumento(mainData)
-                    }                                                                                       
-                }
-            })
                                                 
         } catch (error) {  
 
@@ -324,7 +396,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
 
         }finally{
 
-            hideLoader();
+            
         }     
     }
 
@@ -482,7 +554,7 @@ export class ModalNotaEntregaDetalleCtrl extends ModalNotaEntregaCtrl{
             }
 
 
-            this.decimal = resultsDataForm[1];
+            this.decimal = resultsDataForm[1][0];
             this.configDetalle = resultsDataForm[2];
             this.tipoIvas = resultsDataForm[3];
             this.tarifas  = resultsDataForm[4];
@@ -581,7 +653,7 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl{
             }
 
 
-            this.decimal = resultsDataForm[1];
+            this.decimal = resultsDataForm[1][0]
             this.configDetalle = resultsDataForm[2];
             this.tipoIvas = resultsDataForm[3];
             this.tarifas  = resultsDataForm[4];
@@ -769,7 +841,7 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl{
             }
 
 
-            this.decimal = resultsDataForm[1];
+            this.decimal = resultsDataForm[1][0]
             this.configDetalle = resultsDataForm[2];
             this.tipoIvas = resultsDataForm[3];
             this.tarifas  = resultsDataForm[4];

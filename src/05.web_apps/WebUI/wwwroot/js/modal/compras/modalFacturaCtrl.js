@@ -601,9 +601,9 @@ export class ModalFacturaDetalleCtrl extends ModalFacturaCtrl{
     getReport() {                               
         try {
             let format = 'excel';
-            let dataParms = {      
-                id: this.data.idFacturaCompra,                     
-                codDoc: this.data.codDoc,
+            let dataParms = {     
+                codEstab: this.data.codEstab, 
+                id: this.data.idFacturaCompra,                                     
                 codigo: 'RCD', 
                 codDoc: this.TIPO_DOC.codigo,
                 format,            

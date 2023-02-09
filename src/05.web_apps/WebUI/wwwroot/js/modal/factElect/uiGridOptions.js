@@ -309,11 +309,13 @@ export class UiGridOptions{
                 try {
 
                     if(rowEntity.precioConIva===oldValue) return                            
-                    let tipoIva                 = this.tipoIvaFindById(rowEntity);                    
-                    rowEntity.precioConIva = this._fS.roundNumber(rowEntity.precioConIva, this.decimal.nroPrecio);
-
+                    let tipoIva                 = this.tipoIvaFindById(rowEntity);    
+                                   
+                    
                     let precioUnitario = CalculoTarifaHelper.calcularPrecioVenta(rowEntity.precioConIva, tipoIva.tarifa);
-                    rowEntity.precioUnitario = this._fS.roundNumber(precioUnitario, this.decimal.nroPvP);
+
+                    rowEntity.precioConIva = this._fS.roundNumber(rowEntity.precioConIva, this.decimal.nroPrecio);
+                    rowEntity.precioUnitario = this._fS.roundNumber(precioUnitario, this.decimal.nroPrecio);
 
                 } catch (error) {
                     toastr.error(`CÁLCULO DE PRECIO CON IVA: ${error}`)
@@ -334,7 +336,7 @@ export class UiGridOptions{
                         let valorDescuento     = CalculoTarifaHelper.getValorDescuento(rowEntity.precioUnitario, rowEntity.porcentajeDescuento);
     
                         rowEntity.porcentajeDescuento = this._fS.roundNumber(rowEntity.porcentajeDescuento, this.decimal.nroPorcentaje);
-                        rowEntity.precioConIva        = this._fS.roundNumber(precioIvaDescuento, this.decimal.nroPvP);
+                        rowEntity.precioConIva        = this._fS.roundNumber(precioIvaDescuento, this.decimal.nroPrecio);
                         rowEntity.valorDescuento      = this._fS.roundNumber(valorDescuento, this.decimal.nroDescuento);  
     
                     } else {
@@ -386,7 +388,7 @@ export class UiGridOptions{
                 }
             },                  
         }
-
+        console.log(this.decimal)
         return calculoColumnas;
     }
 
@@ -607,7 +609,7 @@ export class UiGridOptionsCompra{
                     if(rowEntity.idTipoIva===oldValue) return
 
                     let tipoIva = this.tipoIvas.find(val => val.idTipoIva === rowEntity.idTipoIva);
-                    console.log(tipoIva)
+                    
                     rowEntity.tarifa     = tipoIva.tarifa;
                     rowEntity.codigoPorcentaje = tipoIva.codigoPorcentaje;                    
                     calculoColumnas["precioUnitario"]();                        

@@ -791,7 +791,8 @@ export class ModalBaseCtrl{
             // }
 
             this.indexRow = this.gridOptions.data.findIndex(val => val.idArticulo === this.dataArticulo.articulo.idArticulo);           
-   
+
+            
         } catch (error) {
             console.log(error)            
         }
@@ -837,6 +838,8 @@ export class ModalBaseCtrl{
         let entity = self.gridOptions.data[index]; 
     
         let dataMedida = medidas[0];
+
+        console.log(this.dataArticulo)
             
         entity.idArticulo           = articulo.idArticulo;
         entity.codigo               = articulo.codigoArticulo;                
@@ -870,6 +873,8 @@ export class ModalBaseCtrl{
         self.data = Object.assign(self.data, self.uiGridInvoice.getTotales()); 
 
         this.focusColumnCantidad();
+        console.log(this)
+        
     }
 
     focusColumnCantidad() {
