@@ -493,7 +493,7 @@ export class CommonService {
             fraccionado: isFraccionado,
         }
         // let articulos = [];
-
+        
         if (textSearch.length < 3) return
 
         return this.mS.getData('get', '/Articulo/Search?json=' + JSON.stringify(json)).then(response => {

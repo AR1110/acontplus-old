@@ -325,7 +325,7 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
                 if (!value) {                    
                     return 'Ingrese la descripción!'
                 }   
-                if(localStorage.getItem('docsDetalle')){
+                if(localStorage.getItem('detailInvoice')){
                     let getStorageDocDetalle = JSON.parse(localStorage.getItem('detailInvoice'));
                     if(getStorageDocDetalle[value]){
                         return 'Ya existe Documento Apartado con esta descripción';
