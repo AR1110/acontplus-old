@@ -61,7 +61,8 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
                     console.warn(response.message);
                     return
                 }
-                $scope.notaEntregas = JSON.parse(response.data) || []
+                $scope.notaEntregas = JSON.parse(response.data) || [];
+                console.log($scope.notaEntregas)
                 $scope.cloneNotaEntregas = JSON.parse(JSON.stringify($scope.notaEntregas));
                 $scope.getTotales();
             })
