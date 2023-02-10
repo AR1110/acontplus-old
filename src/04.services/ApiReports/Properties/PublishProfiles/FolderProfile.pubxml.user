@@ -4,7 +4,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
 -->
 <Project>
   <PropertyGroup>
-    <History>False|2023-02-09T16:04:13.8804683Z;</History>
+    <History>True|2023-02-10T04:26:07.8388750Z;True|2023-02-09T23:22:22.8035364-05:00;True|2023-02-09T23:18:30.2846167-05:00;True|2023-02-09T22:58:05.4687451-05:00;False|2023-02-09T22:57:37.5551943-05:00;False|2023-02-09T11:04:13.8804683-05:00;</History>
     <LastFailureDetails />
     <_PublishTargetUrl>C:\AcontPlus\Services\ApiReports</_PublishTargetUrl>
   </PropertyGroup>
@@ -79,16 +79,16 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>09/10/2013 16:29:20</publishTime>
     </File>
     <File Include="bin/ApiReports.dll">
-      <publishTime>02/09/2023 11:15:29</publishTime>
+      <publishTime>02/09/2023 23:26:02</publishTime>
     </File>
     <File Include="bin/ApiReports.pdb">
-      <publishTime>02/09/2023 11:15:29</publishTime>
+      <publishTime>02/09/2023 23:26:02</publishTime>
     </File>
     <File Include="bin/App_global.asax.compiled">
-      <publishTime>02/09/2023 11:15:36</publishTime>
+      <publishTime>02/09/2023 23:26:05</publishTime>
     </File>
     <File Include="bin/App_global.asax.dll">
-      <publishTime>02/09/2023 11:15:36</publishTime>
+      <publishTime>02/09/2023 23:26:05</publishTime>
     </File>
     <File Include="bin/BarcodeStandard.dll">
       <publishTime>05/09/2021 12:19:26</publishTime>
@@ -526,7 +526,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>02/09/2023 10:41:08</publishTime>
     </File>
     <File Include="PrecompiledApp.config">
-      <publishTime>02/09/2023 11:15:30</publishTime>
+      <publishTime>02/09/2023 23:26:03</publishTime>
     </File>
     <File Include="Reports/Cartera/CarteraCliente.rdlc">
       <publishTime>02/09/2023 11:05:30</publishTime>
@@ -685,7 +685,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>02/09/2023 10:41:08</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>02/09/2023 11:15:29</publishTime>
+      <publishTime>02/09/2023 22:57:37</publishTime>
     </File>
     <File Include="x64/SqlServerSpatial160.dll">
       <publishTime>10/08/2022 07:58:44</publishTime>

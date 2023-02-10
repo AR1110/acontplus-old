@@ -11,11 +11,16 @@ namespace ApiReports.Utils
 {
     public class GenerateReport
     {
+        private readonly string _dirLogs = string.Empty;
         private ReporteParametroDao _rp = new ReporteParametroDao();
+        public GenerateReport()
+        {
+            _dirLogs = System.Configuration.ConfigurationManager.AppSettings["dirLogs"];
+        }
         public byte[] ByteReport(ApiReportParamsDto data, ref string mimeType, ref string fileName)
         {
             string format = "";
-            byte[] reportBytes = null;            
+            byte[] reportBytes = null;
             try
             {
                 var lr = new LocalReport();
@@ -71,14 +76,11 @@ namespace ApiReports.Utils
             }
             catch (Exception ex)
             {
-                Logs.LogWritter.LogError("C:\\AcontPlus\\Logs\\ApiReports", ex.Message);
+                Logs.LogWritter.LogError(_dirLogs, ex.Message + " --> \n" + ex.StackTrace);
             }
 
             return reportBytes;
         }
-
-
-
 
         public byte[] ByteReportDynamic(ApiReportParamsDto parameters, ref string mimeType, ref string fileName)
         {
@@ -126,7 +128,7 @@ namespace ApiReports.Utils
                 {
                     if (item.Key == "imagen")
                     {
-                        byte[] array = Convert.FromBase64String(item.Value);                        
+                        byte[] array = Convert.FromBase64String(item.Value);
                         lr.SetParameters(new ReportParameter("logo", FileExtensionsNS.getBase64FromByte((byte[])array)));
                         lr.SetParameters(new ReportParameter("mimeType", mimeTypeImg));
                     }
@@ -134,7 +136,7 @@ namespace ApiReports.Utils
                     //{                        
                     //    lr.SetParameters(new ReportParameter(item.Key, item.Value));
                     //}
-                    if(item.Key == "claveAcceso")
+                    if (item.Key == "claveAcceso")
                     {
 
                         byte[] barcode = _cb.Get(item.Value);
@@ -142,13 +144,13 @@ namespace ApiReports.Utils
                         lr.SetParameters(new ReportParameter("mimeTypeBarcode", "image/png"));
                     }
                 }
-                
+
                 reportBytes = lr.Render(format, null, out mimeType, out _, out _, out _, out _);
 
             }
             catch (Exception ex)
             {
-                Logs.LogWritter.LogError("C:\\AcontPlus\\Logs\\ApiReports\\", ex.Message);
+                Logs.LogWritter.LogError(_dirLogs, ex.Message + " --> \n" + ex.StackTrace);
             }
             return reportBytes;
 

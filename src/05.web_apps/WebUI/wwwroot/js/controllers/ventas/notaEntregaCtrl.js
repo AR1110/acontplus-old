@@ -638,6 +638,7 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
     $scope.getReport = function (item) {           
         let format = 'pdf';
         let dataParms = {
+            codEstab: item.codEstab,
             idNotaEntrega: item.idNotaEntrega        
         }
        

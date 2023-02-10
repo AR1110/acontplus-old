@@ -63,7 +63,7 @@
         tooltip-placement="top"
         tooltip-trigger="'mouseenter'"
         
-        md-no-cache="false"  
+        md-no-cache="true"  
         ng-enter="$ctrl.getArticuloByCode();"              
         md-selected-item="$ctrl.selectedItem"
         md-search-text-change="$ctrl.searchTextChange($ctrl.searchText)"
@@ -71,7 +71,7 @@
         md-selected-item-change="$ctrl.selectArticleSearch(item)"
         md-items="item in $ctrl.getDynamicSearchArticles($ctrl.searchText)"
         md-item-text="item.descripcion"
-        md-min-length="3"
+        md-min-length="2"
         ng-focus="$ctrl.focusDescripcionArticulo('#custom-template-md-autocomplete-articulo')"
         md-escape-options="clear"
         input-aria-label="Buscador Articulo"

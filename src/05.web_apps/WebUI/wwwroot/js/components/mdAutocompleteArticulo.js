@@ -58,35 +58,40 @@ class MdArticuloCtrl{
     }
     
     async getDynamicSearchArticles(textSearch){  
-        
-        let results = await this._commonSvc.articuloSearchGeneral({
-            textSearch,
-            condicion: false
-        })
-        
-        if(results.length>0){
-            results.unshift({
-                showHeader: true,
-                priceSale: JSON.parse(results[0].priceSale),
-                warehouses: JSON.parse(results[0].warehouses)
-
-            })
-            results = results.map(item=>{
-                if(!item.hasOwnProperty('showHeader')){
-                    item.priceSale = JSON.parse(item.priceSale)
-                    item.warehouses = JSON.parse(item.warehouses)
-                } 
-                return item;
-            })
+        let json =  {
+            busqueda: this._commonSvc.removeAccents(textSearch),
+            condicion: false,
+            fraccionado: false,
         }
         
-        return results
-        // let deferred = this.$q.defer();
-        // this.$timeout(()=> { 
-        //     deferred.resolve(results); 
-        // }, Math.random() * 1000, false);
-        // return deferred.promise;              
-       
+        return this.$http.get('/Articulo/Search?json=' + JSON.stringify(json)).then(response=>{
+            
+            if(response.data.code==='0'){
+                console.log(response)
+                return []
+            }
+
+            let articulos = JSON.parse(response.data.payload) || [];
+            if(articulos.length>0){
+                articulos.unshift({
+                    showHeader: true,
+                    priceSale: JSON.parse(articulos[0].priceSale),
+                    warehouses: JSON.parse(articulos[0].warehouses)
+    
+                })
+                articulos = articulos.map(item=>{
+                    if(!item.hasOwnProperty('showHeader')){
+                        item.priceSale = JSON.parse(item.priceSale)
+                        item.warehouses = JSON.parse(item.warehouses)
+                    } 
+                    return item;
+                })
+            }
+            
+            return articulos;
+
+        }) 
+               
     }
 
     async getDynamicSearchArticlesSimple(textSearch){  
