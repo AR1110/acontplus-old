@@ -5,14 +5,19 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.FE
 {
-    public class DocumentoElectronicoDao : ConnectionDb
+    public class DocumentoElectronicoDao
     {
         private GenericResponse _response;
-        public DocumentoElectronicoDao()
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public DocumentoElectronicoDao(IConfiguration config)
         {
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
             _response = new GenericResponse();
         }
         public async Task<GenericResponse> GetNotSignedAsync(int idRol)
@@ -20,16 +25,19 @@ namespace DataAccess.FE
             DataSet ds = new DataSet();
             try
             {
-                SqlCommand cmd = new SqlCommand("ASPDocumentoElectronicoGetNotSigned", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
-                dataAdapter.Fill(ds);
-                if (ds.Tables.Count > 0)
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _response.id = "1";
-                    _response.data = DataHelper.DataTableToJSON(ds.Tables[0]);
+                    SqlCommand cmd = new SqlCommand("ASPDocumentoElectronicoGetNotSigned", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
+                    dataAdapter.Fill(ds);
+                    if (ds.Tables.Count > 0)
+                    {
+                        _response.id = "1";
+                        _response.data = DataHelper.DataTableToJSON(ds.Tables[0]);
+                    }
                 }
             }
             catch (Exception ex)
@@ -38,7 +46,7 @@ namespace DataAccess.FE
             }
             finally
             {
-                con.Close();
+                
             }
             return _response;
         }
@@ -47,16 +55,19 @@ namespace DataAccess.FE
             DataSet ds = new DataSet();
             try
             {
-                SqlCommand cmd = new SqlCommand("ASPDocumentoElectronicoGetNotAuthorized", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
-                dataAdapter.Fill(ds);
-                if (ds.Tables.Count > 0)
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _response.id = "1";
-                    _response.data = DataHelper.DataTableToJSON(ds.Tables[0]);
+                    SqlCommand cmd = new SqlCommand("ASPDocumentoElectronicoGetNotAuthorized", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
+                    dataAdapter.Fill(ds);
+                    if (ds.Tables.Count > 0)
+                    {
+                        _response.id = "1";
+                        _response.data = DataHelper.DataTableToJSON(ds.Tables[0]);
+                    }
                 }
             }
             catch (Exception ex)
@@ -65,7 +76,7 @@ namespace DataAccess.FE
             }
             finally
             {
-                con.Close();
+                
             }
             return _response;
         }
@@ -74,18 +85,21 @@ namespace DataAccess.FE
             bool _response = true;
             try
             {
-                SqlCommand cmd = new SqlCommand("ASPDocumentoElectronicoGetAuthorize", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("codDoc", codDoc);
-                cmd.Parameters.AddWithValue("idDocumento", idDocumento);
-                cmd.Parameters.AddWithValue("onlySign", onlySign);
-                cmd.CommandType = CommandType.StoredProcedure;
-                con.Open();
-                SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
-                dataAdapter.Fill(ds);
-                if (ds.Tables.Count == 0)
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _response = false;
+                    SqlCommand cmd = new SqlCommand("ASPDocumentoElectronicoGetAuthorize", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("codDoc", codDoc);
+                    cmd.Parameters.AddWithValue("idDocumento", idDocumento);
+                    cmd.Parameters.AddWithValue("onlySign", onlySign);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    con.Open();
+                    SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
+                    dataAdapter.Fill(ds);
+                    if (ds.Tables.Count == 0)
+                    {
+                        _response = false;
+                    }
                 }
             }
             catch (Exception ex)
@@ -95,7 +109,7 @@ namespace DataAccess.FE
             }
             finally
             {
-                con.Close();
+                
             }
             return _response;
         }
@@ -135,7 +149,7 @@ namespace DataAccess.FE
         //    }
         //    finally
         //    {
-        //        con.Close();
+        //        
         //    }
         //    return isSuccess;
         //}
@@ -143,17 +157,20 @@ namespace DataAccess.FE
         {
             try
             {
-                byte[] byteXml = Encoding.UTF8.GetBytes(comprobante ?? "Sin Doc");
-                SqlCommand cmd = new SqlCommand("ASPDocumentoElectronicoUpdate", con);
-                cmd.Parameters.AddWithValue("numeroAutorizacion", DataHelper.ToDBNullOrDefault(numeroAutorizacion));
-                cmd.Parameters.AddWithValue("fechaAutorizacionString", DataHelper.ToDBNullOrDefault(fechaAutorizacion));
-                cmd.Parameters.AddWithValue("docXml", byteXml);
-                cmd.Parameters.AddWithValue("xmlAcontPlus", DataHelper.ToDBNullOrDefault(comprobante));
-                cmd.Parameters.AddWithValue("estado", DataHelper.ToDBNullOrDefault(estado));
-                cmd.Parameters.AddWithValue("fromLote", fromLote);
-                cmd.CommandType = CommandType.StoredProcedure;
-                con.Open();
-                cmd.ExecuteNonQuery();
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                {
+                    byte[] byteXml = Encoding.UTF8.GetBytes(comprobante ?? "Sin Doc");
+                    SqlCommand cmd = new SqlCommand("ASPDocumentoElectronicoUpdate", con);
+                    cmd.Parameters.AddWithValue("numeroAutorizacion", DataHelper.ToDBNullOrDefault(numeroAutorizacion));
+                    cmd.Parameters.AddWithValue("fechaAutorizacionString", DataHelper.ToDBNullOrDefault(fechaAutorizacion));
+                    cmd.Parameters.AddWithValue("docXml", byteXml);
+                    cmd.Parameters.AddWithValue("xmlAcontPlus", DataHelper.ToDBNullOrDefault(comprobante));
+                    cmd.Parameters.AddWithValue("estado", DataHelper.ToDBNullOrDefault(estado));
+                    cmd.Parameters.AddWithValue("fromLote", fromLote);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                }
             }
             catch (Exception ex)
             {
@@ -161,24 +178,27 @@ namespace DataAccess.FE
             }
             finally
             {
-                con.Close();
+                
             }
         }
         public void InsertErrorAsync(string claveAcceso, string estado, string identificador, string message, string informacionAdicional, string tipo, bool lote)
         {
             try
             {
-                SqlCommand cmd = new SqlCommand("aspDocumentoElectronicoErrorInsert", con);
-                cmd.Parameters.AddWithValue("claveAcceso", claveAcceso);
-                cmd.Parameters.AddWithValue("estado", DataHelper.ToDBNullOrDefault(estado));
-                cmd.Parameters.AddWithValue("identificador", DataHelper.ToDBNullOrDefault(identificador));
-                cmd.Parameters.AddWithValue("mensaje", DataHelper.ToDBNullOrDefault(message));
-                cmd.Parameters.AddWithValue("informacionAdicional", DataHelper.ToDBNullOrDefault(informacionAdicional));
-                cmd.Parameters.AddWithValue("tipo", DataHelper.ToDBNullOrDefault(tipo));
-                cmd.Parameters.AddWithValue("lote", lote);
-                cmd.CommandType = CommandType.StoredProcedure;
-                con.Open();
-                cmd.ExecuteNonQuery();
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                {
+                    SqlCommand cmd = new SqlCommand("aspDocumentoElectronicoErrorInsert", con);
+                    cmd.Parameters.AddWithValue("claveAcceso", claveAcceso);
+                    cmd.Parameters.AddWithValue("estado", DataHelper.ToDBNullOrDefault(estado));
+                    cmd.Parameters.AddWithValue("identificador", DataHelper.ToDBNullOrDefault(identificador));
+                    cmd.Parameters.AddWithValue("mensaje", DataHelper.ToDBNullOrDefault(message));
+                    cmd.Parameters.AddWithValue("informacionAdicional", DataHelper.ToDBNullOrDefault(informacionAdicional));
+                    cmd.Parameters.AddWithValue("tipo", DataHelper.ToDBNullOrDefault(tipo));
+                    cmd.Parameters.AddWithValue("lote", lote);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                }
             }
             catch (Exception ex)
             {
@@ -186,7 +206,7 @@ namespace DataAccess.FE
             }
             finally
             {
-                con.Close();
+                
             }
         }
     }

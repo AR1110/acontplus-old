@@ -2,6 +2,7 @@
 using Domain.Models.GestionTributaria;
 using Domain.ViewModels.GestionTributaria;
 using Helpers;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -11,31 +12,42 @@ using System.Threading.Tasks;
 
 namespace DataAccess.GestionTributaria
 {
-    public class ImpuestoArticuloDao : ConnectionDb
+    public class ImpuestoArticuloDao
     {
         protected GenericResponse _gr;
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public ImpuestoArticuloDao(IConfiguration config)
+        {
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
+            _gr = new GenericResponse();
+        }
+
         public ImpuestoArticuloDao()
         {
-            _gr= new GenericResponse();
         }
 
         public async Task<GenericResponse> InsertAsync(int idRol, ImpuestoArticulo data)
         {
             try
             {
-                var cmd = new SqlCommand("ASPImpuestoArticuloInsert", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idArticulo", data.idArticulo);
-                cmd.Parameters.AddWithValue("idSubContribuyente", data.idSubContribuyente);
-                cmd.Parameters.AddWithValue("idRetencionRenta", data.idRetencionRenta);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = await cmd.ExecuteReaderAsync();
-                while (await reader.ReadAsync())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
+                    var cmd = new SqlCommand("ASPImpuestoArticuloInsert", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idArticulo", data.idArticulo);
+                    cmd.Parameters.AddWithValue("idSubContribuyente", data.idSubContribuyente);
+                    cmd.Parameters.AddWithValue("idRetencionRenta", data.idRetencionRenta);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = await cmd.ExecuteReaderAsync();
+                    while (await reader.ReadAsync())
+                    {
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                    }
                 }
             }
             catch (Exception ex)
@@ -46,7 +58,7 @@ namespace DataAccess.GestionTributaria
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }
@@ -55,37 +67,40 @@ namespace DataAccess.GestionTributaria
             var listar = new List<ImpuestoArticuloViewModel>();
             try
             {
-                var cmd = new SqlCommand("ASPImpuestoArticuloGetId", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idArticulo", idArticulo);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
-                    if (_gr.id == "1")
-                    {
-                        var ia = new ImpuestoArticuloViewModel()
-                        {
-                            impuestoArticulo = new ImpuestoArticulo()
-                            {
-                                idImpuestoArticulo = reader.GetInt32(3),
-                                idSubContribuyente = reader.GetInt32(4),
-                                idRetencionRenta = reader.GetInt32(5)
-                            },
-                            subContribuyente = reader.GetString(6),
-                            nombreRetencionRenta = reader.GetString(7),
-                            idTipoImpuestoRenta = reader.GetInt32(8),
-                            nombreTipoRenta = reader.GetString(9),
-                            idTipoContribuyente = reader.GetInt32(10),
-                            nombreTipoContribuyente = reader.GetString(11),
+                    var cmd = new SqlCommand("ASPImpuestoArticuloGetId", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idArticulo", idArticulo);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
 
-                        };
-                        listar.Add(ia);
+                    while (reader.Read())
+                    {
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                        if (_gr.id == "1")
+                        {
+                            var ia = new ImpuestoArticuloViewModel()
+                            {
+                                impuestoArticulo = new ImpuestoArticulo()
+                                {
+                                    idImpuestoArticulo = reader.GetInt32(3),
+                                    idSubContribuyente = reader.GetInt32(4),
+                                    idRetencionRenta = reader.GetInt32(5)
+                                },
+                                subContribuyente = reader.GetString(6),
+                                nombreRetencionRenta = reader.GetString(7),
+                                idTipoImpuestoRenta = reader.GetInt32(8),
+                                nombreTipoRenta = reader.GetString(9),
+                                idTipoContribuyente = reader.GetInt32(10),
+                                nombreTipoContribuyente = reader.GetString(11),
+
+                            };
+                            listar.Add(ia);
+                        }
                     }
                 }
                 _gr.data = listar;
@@ -99,7 +114,7 @@ namespace DataAccess.GestionTributaria
             finally
             {
 
-                con.Close();
+                
             }
             return _gr;
         }
@@ -107,23 +122,25 @@ namespace DataAccess.GestionTributaria
         {
             try
             {
-                SqlCommand cmd = new SqlCommand("ASPImpuestoArticuloUpdate", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idImpuestoArticulo", idImpuestoArticulo);
-                cmd.Parameters.AddWithValue("idArticulo", data.idArticulo);
-                cmd.Parameters.AddWithValue("idSubContribuyente", data.idSubContribuyente);
-                cmd.Parameters.AddWithValue("idRetencionRenta", data.idRetencionRenta);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = await cmd.ExecuteReaderAsync();
-
-                while (await reader.ReadAsync())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
-                }
+                    SqlCommand cmd = new SqlCommand("ASPImpuestoArticuloUpdate", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idImpuestoArticulo", idImpuestoArticulo);
+                    cmd.Parameters.AddWithValue("idArticulo", data.idArticulo);
+                    cmd.Parameters.AddWithValue("idSubContribuyente", data.idSubContribuyente);
+                    cmd.Parameters.AddWithValue("idRetencionRenta", data.idRetencionRenta);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = await cmd.ExecuteReaderAsync();
 
+                    while (await reader.ReadAsync())
+                    {
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -134,7 +151,7 @@ namespace DataAccess.GestionTributaria
             finally
             {
 
-                con.Close();
+                
             }
             return _gr;
         }
@@ -142,18 +159,21 @@ namespace DataAccess.GestionTributaria
         {
             try
             {
-                var cmd = new SqlCommand("ASPImpuestoArticuloDelete", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idImpuestoArticulo", idImpuestoArticulo);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = await cmd.ExecuteReaderAsync();
-
-                while (await reader.ReadAsync())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
+                    var cmd = new SqlCommand("ASPImpuestoArticuloDelete", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idImpuestoArticulo", idImpuestoArticulo);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = await cmd.ExecuteReaderAsync();
+
+                    while (await reader.ReadAsync())
+                    {
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                    }
                 }
             }
             catch (Exception ex)
@@ -164,7 +184,7 @@ namespace DataAccess.GestionTributaria
             }
             finally
             {
-                con.Close();
+                
             }
             return _gr;
         }
@@ -174,22 +194,24 @@ namespace DataAccess.GestionTributaria
         {
             try
             {
-                var cmd = new SqlCommand("ASPImpuestoArticuloListaInsert", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);            
-                var lista = JsonConvert.SerializeObject(data);
-                cmd.Parameters.Add(new SqlParameter("json", lista));
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
+                    var cmd = new SqlCommand("ASPImpuestoArticuloListaInsert", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    var lista = JsonConvert.SerializeObject(data);
+                    cmd.Parameters.Add(new SqlParameter("json", lista));
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
 
-                }                
-                con.Close();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+
+                    }
+                }
             }
             catch(Exception ex)
             {

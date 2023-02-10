@@ -1,6 +1,7 @@
 ﻿using Domain.Models;
 using Domain.Models.Generic;
 using Helpers;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -9,12 +10,16 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Tesoreria
 {
-    public class GestionFinancieraDao : ConnectionDb
+    public class GestionFinancieraDao
     {
         private GenericResponse _gr;
 
-        public GestionFinancieraDao()
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public GestionFinancieraDao(IConfiguration config)
         {
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
             _gr = new GenericResponse();
         }
 
@@ -25,34 +30,37 @@ namespace DataAccess.Tesoreria
             var documents = new List<Documento>();
             try
             {
-                var cmd = new SqlCommand("ASPDocumentsCharge", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idCliente", idCliente);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
-                    if (_gr.id == "1")
+                    var cmd = new SqlCommand("ASPDocumentsCharge", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idCliente", idCliente);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        var item = new Documento()
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                        if (_gr.id == "1")
                         {
-                            idComprobante = (int)reader.GetInt64(3),
-                            idTipoDocumento = (int)reader.GetInt64(4),
-                            fechaEmision = reader.GetString(5),
-                            fechaVencimiento = reader.GetString(6),
-                            nroDocumento = reader.GetString(7),
-                            total = reader.GetDecimal(8),
-                            estadoFinanciero = reader.GetString(9),
-                            codigoColor = reader.GetString(10),
-                            abono = reader.GetDecimal(11),
-                            saldo = reader.GetDecimal(12),
-                            tipoDocumento = reader.GetString(13)
-                        };
-                        documents.Add(item);
+                            var item = new Documento()
+                            {
+                                idComprobante = (int)reader.GetInt64(3),
+                                idTipoDocumento = (int)reader.GetInt64(4),
+                                fechaEmision = reader.GetString(5),
+                                fechaVencimiento = reader.GetString(6),
+                                nroDocumento = reader.GetString(7),
+                                total = reader.GetDecimal(8),
+                                estadoFinanciero = reader.GetString(9),
+                                codigoColor = reader.GetString(10),
+                                abono = reader.GetDecimal(11),
+                                saldo = reader.GetDecimal(12),
+                                tipoDocumento = reader.GetString(13)
+                            };
+                            documents.Add(item);
+                        }
                     }
                 }
                 _gr.data = documents;
@@ -65,7 +73,7 @@ namespace DataAccess.Tesoreria
             }
             finally
             {
-                con.Close();
+
             }
 
             return _gr;
@@ -75,29 +83,32 @@ namespace DataAccess.Tesoreria
             var documents = new List<Documento>();
             try
             {
-                var cmd = new SqlCommand("ASPDocumentsForCharge", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("json", json);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
-                    if (_gr.id == "1")
+                    var cmd = new SqlCommand("ASPDocumentsForCharge", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("json", json);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        var item = new Documento()
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                        if (_gr.id == "1")
                         {
-                            idComprobante = (int)reader.GetInt64(3),
-                            idTipoDocumento = (int)reader.GetInt64(4),
-                            nroDocumento = reader.GetString(5),
-                            total = reader.GetDecimal(6),
-                            tipoDocumento = reader.GetString(7),
-                            nroFactura = reader.GetString(8),
-                        };
-                        documents.Add(item);
+                            var item = new Documento()
+                            {
+                                idComprobante = (int)reader.GetInt64(3),
+                                idTipoDocumento = (int)reader.GetInt64(4),
+                                nroDocumento = reader.GetString(5),
+                                total = reader.GetDecimal(6),
+                                tipoDocumento = reader.GetString(7),
+                                nroFactura = reader.GetString(8),
+                            };
+                            documents.Add(item);
+                        }
                     }
                 }
                 _gr.data = documents;
@@ -110,7 +121,7 @@ namespace DataAccess.Tesoreria
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
 
@@ -122,34 +133,37 @@ namespace DataAccess.Tesoreria
             var documents = new List<Documento>();
             try
             {
-                var cmd = new SqlCommand("ASPDocumentsPay", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("json", json);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
-                    if (_gr.id == "1")
+                    var cmd = new SqlCommand("ASPDocumentsPay", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("json", json);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        var item = new Documento()
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                        if (_gr.id == "1")
                         {
-                            idComprobante = (int)reader.GetInt64(3),
-                            idTipoDocumento = (int)reader.GetInt64(4),
-                            fechaEmision = reader.GetString(5),
-                            fechaVencimiento = reader.GetString(6),
-                            nroDocumento = reader.GetString(7),
-                            total = reader.GetDecimal(8),
-                            estadoFinanciero = reader.GetString(9),
-                            codigoColor = reader.GetString(10),
-                            abono = reader.GetDecimal(11),
-                            saldo = reader.GetDecimal(12),
-                            tipoDocumento = reader.GetString(13)
-                        };
-                        documents.Add(item);
+                            var item = new Documento()
+                            {
+                                idComprobante = (int)reader.GetInt64(3),
+                                idTipoDocumento = (int)reader.GetInt64(4),
+                                fechaEmision = reader.GetString(5),
+                                fechaVencimiento = reader.GetString(6),
+                                nroDocumento = reader.GetString(7),
+                                total = reader.GetDecimal(8),
+                                estadoFinanciero = reader.GetString(9),
+                                codigoColor = reader.GetString(10),
+                                abono = reader.GetDecimal(11),
+                                saldo = reader.GetDecimal(12),
+                                tipoDocumento = reader.GetString(13)
+                            };
+                            documents.Add(item);
+                        }
                     }
                 }
                 _gr.data = documents;
@@ -162,7 +176,7 @@ namespace DataAccess.Tesoreria
             }
             finally
             {
-                con.Close();
+
             }
 
             return _gr;
@@ -172,28 +186,31 @@ namespace DataAccess.Tesoreria
             var documents = new List<Documento>();
             try
             {
-                var cmd = new SqlCommand("ASPDocumentsForPayment", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idProveedor", idProveedor);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
-                    if (_gr.id == "1")
+                    var cmd = new SqlCommand("ASPDocumentsForPayment", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idProveedor", idProveedor);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        var item = new Documento()
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                        if (_gr.id == "1")
                         {
-                            idComprobante = (int)reader.GetInt64(3),
-                            idTipoDocumento = (int)reader.GetInt64(4),
-                            nroDocumento = reader.GetString(5),
-                            total = reader.GetDecimal(6),
-                            tipoDocumento = reader.GetString(7)
-                        };
-                        documents.Add(item);
+                            var item = new Documento()
+                            {
+                                idComprobante = (int)reader.GetInt64(3),
+                                idTipoDocumento = (int)reader.GetInt64(4),
+                                nroDocumento = reader.GetString(5),
+                                total = reader.GetDecimal(6),
+                                tipoDocumento = reader.GetString(7)
+                            };
+                            documents.Add(item);
+                        }
                     }
                 }
                 _gr.data = documents;
@@ -206,12 +223,9 @@ namespace DataAccess.Tesoreria
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
-
-        }
-
-
+        } 
     }
 }

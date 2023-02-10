@@ -224,7 +224,7 @@ function aprobComprobanteCtrl($scope, mS, commonSvc, _modalSvc, _nombreModalCons
             let format = 'pdf';
             let dataParms = {      
                 id: item.idAprob_Document,                     
-                idSucursal: item.idSucursal,
+                codEstab: item.codEstab,
                 codigo: 'RAC', 
                 format,            
             }

@@ -8,34 +8,45 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Logistica
 {
-    public class TransportistaDao : ConnectionDb
+    public class TransportistaDao
     {
         private GenericResponse _response;
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public TransportistaDao(IConfiguration config)
+        {
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
+            _response = new GenericResponse();
+        }
 
         public TransportistaDao()
         {
-            _response = new GenericResponse();
         }
 
         public async Task<GenericResponse> GetAsync(int idRol, string json)
         {
-            DataTable dt = new DataTable ();
+            DataTable dt = new DataTable();
             try
             {
-                var cmd = new SqlCommand("Logistica.Transportista_Get", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("json", json);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataAdapter dataAdapter = new SqlDataAdapter (cmd);
-                dataAdapter.Fill(dt);
-                if (dt.Rows.Count > 0)
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _response.id = "1";
-                    _response.data = DataHelper.DataTableToJSON(dt);
+                    var cmd = new SqlCommand("Logistica.Transportista_Get", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("json", json);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
+                    dataAdapter.Fill(dt);
+                    if (dt.Rows.Count > 0)
+                    {
+                        _response.id = "1";
+                        _response.data = DataHelper.DataTableToJSON(dt);
+                    }
                 }
 
             }
@@ -47,7 +58,7 @@ namespace DataAccess.Logistica
             }
             finally
             {
-                con.Close();
+
             }
             return _response;
         }
@@ -55,20 +66,23 @@ namespace DataAccess.Logistica
         {
             try
             {
-                var cmd = new SqlCommand("Logistica.Transportista_Insert", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idTipoIdentificacion", data.idTipoIdentificacion);
-                cmd.Parameters.AddWithValue("nroIdentificacion", data.nroIdentificacion);
-                cmd.Parameters.AddWithValue("nombre", data.nombre);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _response.id = reader.GetString(0);
-                    _response.message = reader.GetString(1);
-                    _response.titleSms = reader.GetString(2);
-                    _response.lastId = reader.GetInt32(3);
+                    var cmd = new SqlCommand("Logistica.Transportista_Insert", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idTipoIdentificacion", data.idTipoIdentificacion);
+                    cmd.Parameters.AddWithValue("nroIdentificacion", data.nroIdentificacion);
+                    cmd.Parameters.AddWithValue("nombre", data.nombre);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        _response.id = reader.GetString(0);
+                        _response.message = reader.GetString(1);
+                        _response.titleSms = reader.GetString(2);
+                        _response.lastId = reader.GetInt32(3);
+                    }
                 }
             }
             catch (Exception ex)
@@ -79,7 +93,7 @@ namespace DataAccess.Logistica
             }
             finally
             {
-                con.Close();
+
             }
             return _response;
         }
@@ -87,19 +101,22 @@ namespace DataAccess.Logistica
         {
             try
             {
-                var cmd = new SqlCommand("Logistica.Transportista_Update", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idTransportista", idTransportista);
-                cmd.Parameters.AddWithValue("nroIdentificacion", data.nroIdentificacion);
-                cmd.Parameters.AddWithValue("nombre", data.nombre);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _response.id = reader.GetString(0);
-                    _response.message = reader.GetString(1);
-                    _response.titleSms = reader.GetString(2);
+                    var cmd = new SqlCommand("Logistica.Transportista_Update", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idTransportista", idTransportista);
+                    cmd.Parameters.AddWithValue("nroIdentificacion", data.nroIdentificacion);
+                    cmd.Parameters.AddWithValue("nombre", data.nombre);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        _response.id = reader.GetString(0);
+                        _response.message = reader.GetString(1);
+                        _response.titleSms = reader.GetString(2);
+                    }
                 }
             }
             catch (Exception ex)
@@ -110,7 +127,7 @@ namespace DataAccess.Logistica
             }
             finally
             {
-                con.Close();
+
             }
             return _response;
         }
@@ -118,17 +135,20 @@ namespace DataAccess.Logistica
         {
             try
             {
-                var cmd = new SqlCommand("Logistica.Transportista_Delete", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idTransportista", idTransportista);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _response.id = reader.GetString(0);
-                    _response.message = reader.GetString(1);
-                    _response.titleSms = reader.GetString(2);
+                    var cmd = new SqlCommand("Logistica.Transportista_Delete", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idTransportista", idTransportista);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        _response.id = reader.GetString(0);
+                        _response.message = reader.GetString(1);
+                        _response.titleSms = reader.GetString(2);
+                    }
                 }
             }
             catch (Exception ex)
@@ -139,7 +159,7 @@ namespace DataAccess.Logistica
             }
             finally
             {
-                con.Close();
+
             }
             return _response;
         }

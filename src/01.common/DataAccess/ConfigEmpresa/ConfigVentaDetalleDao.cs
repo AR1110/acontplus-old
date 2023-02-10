@@ -1,6 +1,7 @@
 ﻿using Domain.Models;
 using Domain.Models.ConfigEmpresa;
 using Helpers;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -11,12 +12,16 @@ using System.Threading.Tasks;
 
 namespace DataAccess.ConfigEmpresa
 {
-    public class ConfigVentaDetalleDao : ConnectionDb
+    public class ConfigVentaDetalleDao
     {
         private GenericResponse _gr;
 
-        public ConfigVentaDetalleDao()
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public ConfigVentaDetalleDao(IConfiguration config)
         {
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
             _gr = new GenericResponse();
         }
 
@@ -27,26 +32,29 @@ namespace DataAccess.ConfigEmpresa
 
             try
             {
-                var cmd = new SqlCommand("ASPConfigVentaDetalleGet", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    if (_gr.id == "1")
+                    var cmd = new SqlCommand("ASPConfigVentaDetalleGet", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        config = new ConfigVentaDetalle()
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        if (_gr.id == "1")
                         {
-                            idConfigVentaDetalle = reader.GetInt64(2),
-                            porcentajeIva = reader.GetBoolean(3),
-                            porcentajeDescuento = reader.GetBoolean(4),
-                            descuento = reader.GetBoolean(5),
-                            totalDescuento = reader.GetBoolean(6),
-                            ice = reader.GetBoolean(7)
-                        };
+                            config = new ConfigVentaDetalle()
+                            {
+                                idConfigVentaDetalle = reader.GetInt64(2),
+                                porcentajeIva = reader.GetBoolean(3),
+                                porcentajeDescuento = reader.GetBoolean(4),
+                                descuento = reader.GetBoolean(5),
+                                totalDescuento = reader.GetBoolean(6),
+                                ice = reader.GetBoolean(7)
+                            };
+                        }
                     }
                 }
                 _gr.data = config;
@@ -59,7 +67,7 @@ namespace DataAccess.ConfigEmpresa
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }
@@ -67,22 +75,25 @@ namespace DataAccess.ConfigEmpresa
         {
             try
             {
-                var cmd = new SqlCommand("ASPConfigVentaDetalleUpdate", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idConfigVentaDetalle", data.idConfigVentaDetalle);
-                cmd.Parameters.AddWithValue("porcentajeIva", data.porcentajeIva);
-                cmd.Parameters.AddWithValue("porcentajeDescuento", data.porcentajeDescuento);
-                cmd.Parameters.AddWithValue("descuento", data.descuento);
-                cmd.Parameters.AddWithValue("totalDescuento", data.totalDescuento);
-                cmd.Parameters.AddWithValue("ice", data.ice);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
+                    var cmd = new SqlCommand("ASPConfigVentaDetalleUpdate", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idConfigVentaDetalle", data.idConfigVentaDetalle);
+                    cmd.Parameters.AddWithValue("porcentajeIva", data.porcentajeIva);
+                    cmd.Parameters.AddWithValue("porcentajeDescuento", data.porcentajeDescuento);
+                    cmd.Parameters.AddWithValue("descuento", data.descuento);
+                    cmd.Parameters.AddWithValue("totalDescuento", data.totalDescuento);
+                    cmd.Parameters.AddWithValue("ice", data.ice);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                    }
                 }
             }
             catch (Exception ex)
@@ -93,7 +104,7 @@ namespace DataAccess.ConfigEmpresa
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }

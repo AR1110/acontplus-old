@@ -1,19 +1,19 @@
 ﻿using DataAccess;
-using Domain.Models;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using System.Linq;
-using System;
-using DataAccess.Administracion;
-using Newtonsoft.Json;
 
 namespace WebUI.Controllers
 {
     public class EntidadController : Controller
-    {        
-        readonly EntidadDao _e = new();        
+    {
+        private readonly IConfiguration _configuration;
 
+        readonly EntidadDao _e;        
+        public EntidadController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _e = new EntidadDao(_configuration);
+        }
         // GET: Entidad
         [Authorize]
         public IActionResult Index()

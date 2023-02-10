@@ -4,7 +4,13 @@ namespace WebUI.Controllers.Estadisticas
 {
     public class EstadisticaVentaController : Controller
     {
-        private readonly EstadisticaVentaDao _ev = new();
+        private readonly IConfiguration _configuration; 
+        private EstadisticaVentaDao _ev;
+        public EstadisticaVentaController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _ev = new EstadisticaVentaDao(_configuration);  
+        }
         public IActionResult Index()
         {
             return View();

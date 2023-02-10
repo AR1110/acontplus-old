@@ -1,5 +1,5 @@
 
-import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.14";
+import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.16";
 
 
 class ModalNotaEntregaCtrl extends ModalBaseCtrl{
@@ -72,6 +72,67 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl{
         this.$scope.$apply();        
     }
 
+    async setItemArticuloEnDetalle(dataArticulo){        
+        try {
+            const self = this;
+                 
+            this.dataArticulo = dataArticulo;
+
+            self.addRow();        
+            
+            const {articulo, medidas, datosAdicionales} = self.dataArticulo;        
+            let index  = self.gridOptions.data.findIndex(value => value.idArticulo === 0); 
+            let entity = self.gridOptions.data[index]; 
+        
+            let dataMedida = medidas[0];
+
+            console.log(this.dataArticulo)
+                
+            entity.idArticulo           = articulo.idArticulo;
+            entity.codigo               = articulo.codigoArticulo;                
+            entity.descripcion          = articulo.descripcion;  
+            entity.idTipoIva            = articulo.idTipoIva;                          
+            entity.codigoPorcentaje     = articulo.codigoPorcentaje;
+            entity.tarifa               = articulo.tarifa;
+            // entity.nombreTipoIva        = articulo.nombreTipoIva;
+            entity.ice                  = articulo.valorIce;
+            entity.idBodega             = self.idBodega ? self.idBodega : 0;
+            entity.llevaInventario      = articulo.llevaInventario;
+            entity.datosAdicionales     = articulo.datosAdicionales;
+            entity.productoFraccionable = articulo.productoFraccionable;
+            entity.medidas              = medidas; //Lista Medida 
+            entity.idMedida             = dataMedida.idMedida; //Medida por defecto 
+            entity.adicional            = datosAdicionales; //
+
+            console.log(JSON.parse(dataMedida.tarifas))
+            console.log(self)
+            entity.articuloTarifas      = JSON.parse(dataMedida.tarifas);
+            let tarifa                  = entity.articuloTarifas.find(item=>item.idTarifa===self.idTarifa);                                      
+            entity.idTarifa             = self.idTarifa;  
+            entity.precioUnitario       = self._fS.roundNumber(tarifa.precioVenta, self.decimal.nroPrecio);                
+            entity.precioConIva         = self._fS.roundNumber(tarifa.precioConIva, self.decimal.nroPrecio);
+            
+            
+            const objCalculo            = self.uiGridInvoice.calculoColDef(entity, 0);             
+            
+            objCalculo["precioUnitario"] && objCalculo["precioUnitario"]();
+            
+            objCalculo["calculoTotalDetalle"]();
+            
+            self.data = Object.assign(self.data, self.uiGridInvoice.getTotales()); 
+
+            this.focusColumnCantidad();
+
+
+            this.indexRow = this.gridOptions.data.findIndex(val => val.idArticulo === this.dataArticulo.articulo.idArticulo);           
+
+          
+        } catch (error) {
+            console.log(error)            
+        }
+    }
+    
+
 
 
     trimDetailDoc(){
@@ -94,6 +155,7 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl{
                 cantidad: item.cantidad,
                 precioCostoNeto: item.precioCostoNeto,
                 precioUnitario: item.precioUnitario,
+                precioVenta: item.precioUnitario,
                 precioConIva: item.precioConIva,
                 valorDescuento: item.valorDescuento,
                 precioTotalSinImpuesto: item.precioTotalSinImpuesto || 0,
@@ -155,7 +217,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
             }
 
 
-            this.decimal = resultsDataForm[1];
+            this.decimal = resultsDataForm[1][0]
             this.configDetalle = resultsDataForm[2];
             this.tipoIvas = resultsDataForm[3];
             this.tarifas  = resultsDataForm[4];
@@ -168,6 +230,11 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
            
             //6 articulo 
             //7 cliente 
+             
+            if(resultsDataForm[7].length>0){
+                this.cliente = resultsDataForm[7][0];
+            }
+
            
             this.data.fechaEmision = new Date();
             this.getFechaVencimiento();
@@ -191,7 +258,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
             })
             
 
-            if(localStorage.getItem('docsDetalle')){
+            if(localStorage.getItem('detailNotaEntrega')){
                 this.restoreDetailStorage();
             }
             
@@ -232,7 +299,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
 
     async onSave(){                        
         try {            
-            showLoader();
+            
 
             if(!this.isValidaForm()) return
         
@@ -243,7 +310,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
 
             this.validarDatosAdicionales("idNotaEntregaDetalle");
 
-            
+            showLoader();
             this.nroDocumentoSecuencial = await this._commonSvc.generarNroDocumentoVenta({
                 idPuntoEmision: this.data.idPuntoEmision,
                 codigoDocumento: this.TIPO_DOC_NE.codigo,                
@@ -261,7 +328,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
                 buttonsStyling: false
             })
               
-            let {isConfirmed} = await swalWithBootstrapButtons.fire({
+            swalWithBootstrapButtons.fire({
                 title: '<small>Guardar Nota de Entrega</small>',
                 html: `<small>Esta Ud. seguro de ${textAccion} este <b> Nota de Entrega</b> N° ${this.nroDocumentoSecuencial}</small>?`,
                 icon: 'warning',
@@ -271,52 +338,58 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
                 reverseButtons: false,
                 allowOutsideClick:false,
                 allowEscapeKey:false
+            }).then(result=>{
+                if(result.isConfirmed){
+                    showLoader();
+                    let notaEntrega = Object.assign({}, this.data);
+                    notaEntrega.fechaEmision =  this._fS.formatDateTimeZone(this.data.fechaEmision)
+                    notaEntrega.fechaVencimiento = this._fS.formatDateTimeZone(this.data.fechaVencimiento)
+                    notaEntrega.idCliente = this.cliente.idCliente;        
+                    
+                    //Tarifa Aplicada al Documento
+                    notaEntrega.tarifa = this.actividadTipoIva.tarifa;
+                    
+                    const sendData = {
+                        notaEntrega,
+                        detalle: this.trimDetailDoc(),
+                        manejoArticulo: this.datosAdicionalesArticulo
+                    }
+
+                    this._mS.getData('post', '/NotaEntrega/Insert', sendData).then(response=>{
+                        if(response.code==='0'){   
+                            hideLoader()                 
+                            this._fS.sweetAlert('warning', response.message, response.titleSms);                    
+                        }
+                        if(response.code==="1"){
+                            hideLoader()
+                            this._fS.sweetAlert('success', response.message, response.titleSms, 1000);                  
+                        
+                            let data = JSON.parse(response.payload)[0];
+                            
+                            let mainData = {
+                                isRegister: true,
+                                data: {
+                                    ...data,
+                                    nroDocumento: data.estab + data.ptoEmi + data.secuencial,
+                                    esContado: data.gestion, 
+                                },
+                                TIPO_DOC: this.TIPO_DOC_NE                                             
+                            }
+
+                            if(mainData.data.esContado){
+                                this.openModalRapido(mainData)
+                            }else{
+                                this.openModalCobroDocumento(mainData)
+                            }                                                                                       
+                        }
+                    })
+                }
             })       
            
             
             if(!isConfirmed) return
 
-            showLoader();
-            let notaEntrega = Object.assign({}, this.data);
-            notaEntrega.fechaEmision =  this._fS.formatDateTimeZone(this.data.fechaEmision)
-            notaEntrega.fechaVencimiento = this._fS.formatDateTimeZone(this.data.fechaVencimiento)
-            notaEntrega.idCliente = this.cliente.idCliente;        
             
-            //Tarifa Aplicada al Documento
-            notaEntrega.tarifa = this.actividadTipoIva.tarifa;
-            
-            const sendData = {
-                notaEntrega,
-                detalle: this.trimDetailDoc(),
-                manejoArticulo: this.datosAdicionalesArticulo
-            }
-
-            await this._mS.getData('post', '/NotaEntrega/Insert', sendData).then(response=>{
-                if(response.code==='0'){                    
-                    this._fS.sweetAlert('warning', response.message, response.titleSms);                    
-                }
-                if(response.code==="1"){
-                    this._fS.sweetAlert('success', response.message, response.titleSms, 1000);                  
-                   
-                    let data = JSON.parse(response.payload)[0];
-                    
-                    let mainData = {
-                        isRegister: true,
-                        data: {
-                            ...data,
-                            nroDocumento: data.estab + data.ptoEmi + data.secuencial,
-                            esContado: data.gestion, 
-                        },
-                        TIPO_DOC: this.TIPO_DOC_NE                                             
-                    }
-
-                    if(mainData.data.esContado){
-                        this.openModalRapido(mainData)
-                    }else{
-                        this.openModalCobroDocumento(mainData)
-                    }                                                                                       
-                }
-            })
                                                 
         } catch (error) {  
 
@@ -324,7 +397,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
 
         }finally{
 
-            hideLoader();
+            
         }     
     }
 
@@ -332,7 +405,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
     //Guardar Nota de Entrega como Nota de Entrega    
     async onSaveInvoice(){                        
         try {            
-            showLoader();
+            
 
             if(!this.isValidaForm()) return
         
@@ -343,6 +416,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
 
             this.validarDatosAdicionales("idFacturaDetalle");
 
+            showLoader();
             
             this.nroDocumentoSecuencial = await this._commonSvc.generarNroDocumentoVenta({
                 idPuntoEmision: this.data.idPuntoEmision,
@@ -361,7 +435,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
                 buttonsStyling: false
             })
               
-            let {isConfirmed} = await swalWithBootstrapButtons.fire({
+            swalWithBootstrapButtons.fire({
                 title: '<small>Guardar Factura</small>',
                 html: `<small>Esta Ud. seguro de ${textAccion} este <b> Nota de Entrega</b> N° ${this.nroDocumentoSecuencial}</small>?`,
                 icon: 'warning',
@@ -371,61 +445,199 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
                 reverseButtons: false,
                 allowOutsideClick:false,
                 allowEscapeKey:false
-            })       
-           
-            
-            if(!isConfirmed) return
+            }).then(result=>{
+                if(result.isConfirmed){
 
-            showLoader();
-            let factura = Object.assign({}, this.data);
-            factura.idCliente      = this.cliente.idCliente;              
-            factura.fechaEmision   = this._fS.formatDateTimeZone(this.data.fechaEmision);
-            factura.fechaVencimiento = this._fS.formatDateTimeZone(this.data.fechaVencimiento);
+                    showLoader();
+                    let factura = Object.assign({}, this.data);
+                    factura.idCliente      = this.cliente.idCliente;              
+                    factura.fechaEmision   = this._fS.formatDateTimeZone(this.data.fechaEmision);
+                    factura.fechaVencimiento = this._fS.formatDateTimeZone(this.data.fechaVencimiento);
 
-            //Tarifa Aplicada al Documento
-            factura.tarifa = this.actividadTipoIva.tarifa;
-        
-            
-
-            const data = {
-                factura: JSON.stringify(factura),
-                detalle: JSON.stringify(this.trimDetailDoc()),
-                adicional: JSON.stringify(this.infoAdicionalDocumento || []),
-                manejoArticulo: JSON.stringify(this.datosAdicionalesArticulo)
-            }
-
-            await this._mS.getData('post', '/FacturaVenta/Insert', data).then(response=>{
-                if(response.code==='0'){                    
-                    this._fS.sweetAlert('warning', response.message, response.titleSms);                    
-                }
-                if(response.code==="1"){
-                    this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
-
-                    let data = JSON.parse(response.payload)[0];
+                    //Tarifa Aplicada al Documento
+                    factura.tarifa = this.actividadTipoIva.tarifa;
+                
                     
-                    let mainData = {
-                        isRegister: true,
-                        data: {
-                            ...data,
-                            nroDocumento: data.estab + data.ptoEmi + data.secuencial,
-                            esContado: data.gestion, 
-                        },
-                        TIPO_DOC: this.TIPO_DOC_FV                                             
+
+                    const data = {
+                        factura: JSON.stringify(factura),
+                        detalle: JSON.stringify(this.trimDetailDoc()),
+                        adicional: JSON.stringify(this.infoAdicionalDocumento || []),
+                        manejoArticulo: JSON.stringify(this.datosAdicionalesArticulo)
                     }
 
-                    if(mainData.data.esContado){
-                        this.openModalRapido(mainData)
-                    }else{
-                        this.openModalCobroDocumento(mainData)
-                    }                                                                                         
+                    this._mS.getData('post', '/FacturaVenta/Insert', data).then(response=>{
+                        if(response.code==='0'){ 
+                            hideLoader();                   
+                            this._fS.sweetAlert('warning', response.message, response.titleSms);                    
+                        }
+                        if(response.code==="1"){
+                            hideLoader();
+                            this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
+
+                            let data = JSON.parse(response.payload)[0];
+                            
+                            let mainData = {
+                                isRegister: true,
+                                data: {
+                                    ...data,
+                                    nroDocumento: data.estab + data.ptoEmi + data.secuencial,
+                                    esContado: data.gestion, 
+                                },
+                                TIPO_DOC: this.TIPO_DOC_FV                                             
+                            }
+
+                            if(mainData.data.esContado){
+                                this.openModalRapido(mainData)
+                            }else{
+                                this.openModalCobroDocumento(mainData)
+                            }                                                                                         
+                        }
+                    })
+
+
                 }
-            })
+            })       
+           
+
+            
                                                 
         } catch (error) {            
             console.log(error)
         }finally{
-            hideLoader();
+            
         }              
+    }
+
+
+    async closeModal(){
+        if(this.TIPO_REGISTRO==='NUEVO' && this.gridOptions.data.length>0){
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                  confirmButton: 'btn btn-success',
+                  denyButton:'btn btn-info ml-2',
+                  cancelButton: 'btn btn-danger ml-2'
+                },
+                buttonsStyling: false
+            })
+            
+            swalWithBootstrapButtons.fire({
+                title: 'Salir ?',
+                html: "<small>Tienes un documento en proceso, desea salir ahora?</small>",
+                icon: 'warning',
+                showCancelButton: true,
+                showConfirmButton:true,
+                showDenyButton:true,
+                confirmButtonText: 'Apartar',
+                denyButtonText: 'Si, salir',
+                cancelButtonText: 'No, cancelar!',
+                focusDeny:true,
+                reverseButtons: false
+            }).then(result=>{
+
+                if(result.isConfirmed){
+                    this.saveLocalStorage();
+                }
+
+                if(result.isDenied){
+                    this.$uibModalInstance.close();
+                }
+
+                
+
+                if(result.isDismissed){
+                }
+                console.log(result)
+            })
+            return 
+        }
+        this.$uibModalInstance.close();        
+    }
+
+    async saveLocalStorage(){
+        let {isConfirmed, value} = await Swal.fire({
+            title: '<small>Apartar Documento</small>',
+            input: 'text',
+            inputAttributes: {
+              autocapitalize: 'off'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Apartar',
+            cancelButtonText: 'No, cancelar',
+            showLoaderOnConfirm: true,
+            inputValidator: (value) => {
+                if (!value) {                    
+                    return 'Ingrese la descripción!'
+                }   
+                if(localStorage.getItem('detailNotaEntrega')){
+                    let getStorageDocDetalle = JSON.parse(localStorage.getItem('detailNotaEntrega'));
+                    if(getStorageDocDetalle[value]){
+                        return 'Ya existe Documento Apartado con esta descripción';
+                    }
+                }                        
+            },           
+        })
+
+        if(isConfirmed){
+            if(!localStorage.getItem('detailNotaEntrega')){
+                let objSave = {}
+                objSave[value] = JSON.stringify(this.gridOptions.data);
+                localStorage.setItem('detailNotaEntrega', JSON.stringify(objSave));  
+                this._tS.toastr('success', 'Documento Apartado Correctamente');                            
+            }
+
+            if(localStorage.getItem('detailNotaEntrega')){
+                let getStorageDocDetalle = JSON.parse(localStorage.getItem('detailNotaEntrega'));
+                getStorageDocDetalle[value] = JSON.stringify(this.gridOptions.data);
+                localStorage.setItem('detailNotaEntrega', JSON.stringify(getStorageDocDetalle)); 
+                this._tS.toastr('success', 'Documento Apartado Correctamente')                
+            }
+            
+            this.$uibModalInstance.close();
+        }
+    }
+
+    async restoreDetailStorage(){
+        let docsDetalle = JSON.parse(localStorage.getItem('detailNotaEntrega'));
+        let inputOptions = {};
+        for(let item of Object.keys(docsDetalle)){
+            inputOptions[item] = item;
+        }
+        const { isConfirmed, value } = await Swal.fire({
+            title: '<small>Recuperar Detalle del Documento</small>',
+            input: 'select',
+            inputOptions,
+            inputPlaceholder: 'Seleccionar la Factura',
+            showCancelButton: true,
+            confirmButtonText: 'Recuperar detalle',
+            cancelButtonText: 'No, cancelar',
+            allowEscapeKey:false,
+            allowOutsideClick:false,
+            inputValidator: (value) => {
+              return new Promise((resolve) => {
+                if (value) {
+                    resolve()
+                } else {
+                    resolve('Seleccione la opción :)')
+                }
+              })
+            }
+        })
+
+        if(isConfirmed){           
+            this.gridOptions.data = JSON.parse(docsDetalle[value]);
+            delete docsDetalle[value];
+            
+            if(Object.entries(docsDetalle).length !== 0){
+
+                localStorage.setItem('detailNotaEntrega', JSON.stringify(docsDetalle));               
+            }else{
+                localStorage.removeItem('detailNotaEntrega')
+            }
+            this.data = Object.assign(this.data, this.uiGridInvoice.getTotales());  
+        }
+
+
     }
 
 
@@ -482,7 +694,7 @@ export class ModalNotaEntregaDetalleCtrl extends ModalNotaEntregaCtrl{
             }
 
 
-            this.decimal = resultsDataForm[1];
+            this.decimal = resultsDataForm[1][0];
             this.configDetalle = resultsDataForm[2];
             this.tipoIvas = resultsDataForm[3];
             this.tarifas  = resultsDataForm[4];
@@ -581,7 +793,7 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl{
             }
 
 
-            this.decimal = resultsDataForm[1];
+            this.decimal = resultsDataForm[1][0]
             this.configDetalle = resultsDataForm[2];
             this.tipoIvas = resultsDataForm[3];
             this.tarifas  = resultsDataForm[4];
@@ -769,7 +981,7 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl{
             }
 
 
-            this.decimal = resultsDataForm[1];
+            this.decimal = resultsDataForm[1][0]
             this.configDetalle = resultsDataForm[2];
             this.tipoIvas = resultsDataForm[3];
             this.tarifas  = resultsDataForm[4];

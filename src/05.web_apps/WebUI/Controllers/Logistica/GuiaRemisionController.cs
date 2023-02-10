@@ -16,7 +16,7 @@ namespace WebUI.Controllers.Logistica
         private DataAccessObject _dao;
         private readonly int _idRol;
         private GenericResponse _gr = new();
-        private GuiaRemisionDao _guideR = new();
+        private GuiaRemisionDao _guideR;
         public AuthorizationDto _auth;
         private IConfiguration _config;
         private readonly string _urlApi = "";
@@ -28,6 +28,7 @@ namespace WebUI.Controllers.Logistica
             _config = configuration;
             _urlApi = _config.GetSection("UrlApis").GetSection("AcontPlusApi").Value;
             _dao = new DataAccessObject(_config);
+            _guideR = new GuiaRemisionDao(_config);
             _httpContextAccessor = httpContextAccessor;
             _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);            
         }

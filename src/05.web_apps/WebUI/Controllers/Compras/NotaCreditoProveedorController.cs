@@ -1,15 +1,9 @@
 ﻿using WebUI.ApiClient;
 using DataAccess.Compras;
-using WebUI.Utils;
 using Domain.Models;
 using Domain.ViewModels.Compras;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.StaticFiles;
-using System;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
 using DataAccess;
 using Helpers;
 
@@ -22,12 +16,13 @@ namespace WebUI.Controllers.Compras
         private DataAccessObject _dao;
         private readonly int _idRol;
         GenericResponse _gr = new();
-        NotaCreditoProveedorDao _ncprov = new();
+        private NotaCreditoProveedorDao _ncprov;
         private readonly string _urlApi = "";
         public NotaCreditoProveedorController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
+            _ncprov = new NotaCreditoProveedorDao(_configuration);
             _httpContextAccessor = httpContextAccessor;
             _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
             _urlApi = _configuration.GetSection("UrlApis").GetSection("AcontPlusApi").Value;

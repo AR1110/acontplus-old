@@ -2,16 +2,18 @@
 using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers.Admin
 {
     public class AsignacionPuntoEmisionController : Controller
     {
-        AsignacionPuntoEmisionDao _asignE = new();
+        private AsignacionPuntoEmisionDao _asignE;
+        private readonly IConfiguration _configuration;
+        public AsignacionPuntoEmisionController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _asignE = new AsignacionPuntoEmisionDao(_configuration);
+        }
         [Authorize]
         public IActionResult Index()
         {

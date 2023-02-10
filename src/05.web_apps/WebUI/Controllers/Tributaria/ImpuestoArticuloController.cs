@@ -1,11 +1,4 @@
-﻿using DataAccess;
-using Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Domain.Models.GestionTributaria;
 using DataAccess.GestionTributaria;
 using Helpers;
@@ -14,9 +7,15 @@ namespace WebUI.Controllers
 {
     public class ImpuestoArticuloController : Controller
     {
+        private IConfiguration _config;
+        private ImpuestoArticuloDao _ia;
+        public ImpuestoArticuloController(IConfiguration config)
+        {
+            _config = config;
+            _ia = new ImpuestoArticuloDao(_config);
+        }
         // GET: ImpuestoArticulo
         GenericResponse _gr = new();
-        readonly ImpuestoArticuloDao _ia = new();
         public IActionResult Index()
         {
             return View();

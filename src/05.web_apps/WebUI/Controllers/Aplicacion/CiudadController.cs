@@ -6,6 +6,12 @@ namespace WebUI.Controllers.Aplicacion
 {
     public class CiudadController : Controller
     {
+        private readonly IConfiguration _configuration;
+        public CiudadController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         [Authorize]
         public IActionResult Index()
         {
@@ -14,7 +20,7 @@ namespace WebUI.Controllers.Aplicacion
 
         public async Task<IActionResult> Get(string json)
         {
-            return Ok(await new CiudadDao().GetAsync(json));
+            return Ok(await new CiudadDao(_configuration).GetAsync(json));
         }
 
 

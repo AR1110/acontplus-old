@@ -20,13 +20,14 @@ namespace WebUI.Controllers.Ventas
         private DataAccessObject _dao;
         private readonly int _idRol;
         GenericResponse _gr = new();
-        NotaEntregaDao _ne = new NotaEntregaDao();
+        private NotaEntregaDao _ne;
 
         public NotaEntregaController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _config = configuration;
             _urlApi = _config.GetSection("UrlApis").GetSection("AcontPlusApi").Value;            
             _dao = new DataAccessObject(_config);
+            _ne = new NotaEntregaDao(_config);
             _httpContextAccessor = httpContextAccessor;
             _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
         }
@@ -80,7 +81,7 @@ namespace WebUI.Controllers.Ventas
             parameters.Add("jsonNotaEntrega", JsonConvert.SerializeObject(data.notaEntrega));
             parameters.Add("jsonDetalle", JsonConvert.SerializeObject(data.detalle));
             parameters.Add("jsonManejoArticulo", JsonConvert.SerializeObject(data.manejoArticulo));
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Ventas.NotaEntrega_Insert", parameters)));
+            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Ventas.NotaEntrega_Update", parameters)));
 
         }
 

@@ -9,7 +9,15 @@ namespace WebUI.Controllers.GestionFinanciera
 {
     public class CobroController : Controller
     {
-        CobroDao _c = new();
+        private readonly IConfiguration _configuration;
+
+        private CobroDao _c;
+        public CobroController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _c = new CobroDao(_configuration);
+        }
+
         [Authorize]
         public IActionResult Index()
         {

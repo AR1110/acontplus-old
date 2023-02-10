@@ -2,6 +2,7 @@
 using Domain.Models.Tesoreria;
 using Domain.ViewModels.Tesoreria;
 using Helpers;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -10,12 +11,16 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Tesoreria
 {
-    public class CobroDao : ConnectionDb
+    public class CobroDao
     {
         private GenericResponse _gr;
 
-        public CobroDao()
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public CobroDao(IConfiguration config)
         {
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
             _gr = new GenericResponse();
         }
         public async Task<GenericResponse> GetByDocumentAsync(int idRol, int idComprobanteIngreso, int idTipoDocumento, int idComprobante)
@@ -23,42 +28,44 @@ namespace DataAccess.Tesoreria
             var cobros = new List<CobroViewModel>();
             try
             {
-
-                var cmd = new SqlCommand("ASPCobroByDocument", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idComprobanteIngreso", idComprobanteIngreso);
-                cmd.Parameters.AddWithValue("idTipoDocumento", idTipoDocumento);
-                cmd.Parameters.AddWithValue("idComprobante", idComprobante);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
-                    if (_gr.id == "1")
+                    var cmd = new SqlCommand("ASPCobroByDocument", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idComprobanteIngreso", idComprobanteIngreso);
+                    cmd.Parameters.AddWithValue("idTipoDocumento", idTipoDocumento);
+                    cmd.Parameters.AddWithValue("idComprobante", idComprobante);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        var item = new CobroViewModel()
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                        if (_gr.id == "1")
                         {
-                            cobro = new Cobro
+                            var item = new CobroViewModel()
                             {
-                                idCobro = reader.GetInt64(3),
-                                valor = reader.GetDecimal(4),
-                                fechaEmision = reader.GetString(5),
-                                abono = reader.GetDecimal(6),
+                                cobro = new Cobro
+                                {
+                                    idCobro = reader.GetInt64(3),
+                                    valor = reader.GetDecimal(4),
+                                    fechaEmision = reader.GetString(5),
+                                    abono = reader.GetDecimal(6),
 
-                            },
-                            subEntiadaFinanciera = reader.GetString(7),
-                            posfechado = reader.GetString(8),
-                            cobroEstado = reader.GetString(9),
-                            nroTransaccion = reader.GetString(10),
-                            banco = reader.GetString(11),
-                            cuentaBancaria = reader.GetString(12),
-                            tipoDocumento = reader.GetString(13),
-                            comprobante = reader.GetString(14),
-                        };
-                        cobros.Add(item);
+                                },
+                                subEntiadaFinanciera = reader.GetString(7),
+                                posfechado = reader.GetString(8),
+                                cobroEstado = reader.GetString(9),
+                                nroTransaccion = reader.GetString(10),
+                                banco = reader.GetString(11),
+                                cuentaBancaria = reader.GetString(12),
+                                tipoDocumento = reader.GetString(13),
+                                comprobante = reader.GetString(14),
+                            };
+                            cobros.Add(item);
+                        }
                     }
                 }
                 _gr.data = cobros;
@@ -71,7 +78,7 @@ namespace DataAccess.Tesoreria
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }
@@ -80,38 +87,40 @@ namespace DataAccess.Tesoreria
             var cobros = new List<CobroViewModel>();
             try
             {
-
-                var cmd = new SqlCommand("ASPCobroByComprobante", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idComprobanteIngreso", idComprobanteIngreso);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
-                    if (_gr.id == "1")
+                    var cmd = new SqlCommand("ASPCobroByComprobante", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idComprobanteIngreso", idComprobanteIngreso);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        var item = new CobroViewModel()
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                        if (_gr.id == "1")
                         {
-                            cobro = new Cobro
+                            var item = new CobroViewModel()
                             {
-                                idCobro = reader.GetInt64(3),
-                                valor = reader.GetDecimal(4),
-                                fechaEmision = reader.GetString(5),
-                            },
-                            subEntiadaFinanciera = reader.GetString(6),
-                            posfechado = reader.GetString(7),
-                            cobroEstado = reader.GetString(8),
-                            nroTransaccion = reader.GetString(9),
-                            banco = reader.GetString(10),
-                            cuentaBancaria = reader.GetString(11),
-                            tipoDocumento = reader.GetString(12),
-                            comprobante = reader.GetString(13),
-                        };
-                        cobros.Add(item);
+                                cobro = new Cobro
+                                {
+                                    idCobro = reader.GetInt64(3),
+                                    valor = reader.GetDecimal(4),
+                                    fechaEmision = reader.GetString(5),
+                                },
+                                subEntiadaFinanciera = reader.GetString(6),
+                                posfechado = reader.GetString(7),
+                                cobroEstado = reader.GetString(8),
+                                nroTransaccion = reader.GetString(9),
+                                banco = reader.GetString(10),
+                                cuentaBancaria = reader.GetString(11),
+                                tipoDocumento = reader.GetString(12),
+                                comprobante = reader.GetString(13),
+                            };
+                            cobros.Add(item);
+                        }
                     }
                 }
                 _gr.data = cobros;
@@ -124,7 +133,7 @@ namespace DataAccess.Tesoreria
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }
@@ -132,22 +141,24 @@ namespace DataAccess.Tesoreria
         {
             try
             {
-                var cmd = new SqlCommand("ASPCobroUpdate", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idCobro", idCobro);
-                cmd.Parameters.AddWithValue("observacion", observacion);
-                cmd.Parameters.AddWithValue("cobro", cobro);
-                cmd.Parameters.AddWithValue("anular", anular);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
+                    var cmd = new SqlCommand("ASPCobroUpdate", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idCobro", idCobro);
+                    cmd.Parameters.AddWithValue("observacion", observacion);
+                    cmd.Parameters.AddWithValue("cobro", cobro);
+                    cmd.Parameters.AddWithValue("anular", anular);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                    }
                 }
-
             }
             catch (Exception ex)
             {
@@ -157,7 +168,7 @@ namespace DataAccess.Tesoreria
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }

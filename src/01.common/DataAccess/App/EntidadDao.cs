@@ -4,34 +4,41 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Aplicacion
 {
-    public class EntidadDao : ConnectionDb
+    public class EntidadDao
     {
         protected GenericResponse _response;
-        public EntidadDao()
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public EntidadDao(IConfiguration config)
         {
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
             _response = new GenericResponse();
         }
 
         public async Task<GenericResponse> GetAsync(string json)
         {
-            DataTable dt = new DataTable ();
+            DataTable dt = new DataTable();
             try
             {
-                SqlCommand cmd = new SqlCommand("App.aspEntidad_Get", con);
-                cmd.Parameters.AddWithValue("json", json);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataAdapter dataAdapter = new SqlDataAdapter (cmd);
-                dataAdapter.Fill(dt);
-                if (dt.Rows.Count > 0)
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _response.id = "1";
-                    _response.data = DataHelper.DataTableToJSON(dt);
+                    SqlCommand cmd = new SqlCommand("App.aspEntidad_Get", con);
+                    cmd.Parameters.AddWithValue("json", json);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
+                    dataAdapter.Fill(dt);
+                    if (dt.Rows.Count > 0)
+                    {
+                        _response.id = "1";
+                        _response.data = DataHelper.DataTableToJSON(dt);
+                    }
                 }
-
             }
             catch (Exception ex)
             {
@@ -41,26 +48,29 @@ namespace DataAccess.Aplicacion
             }
             finally
             {
-                con.Close();
+
             }
             return _response;
 
         }
         public async Task<GenericResponse> GetIdAsync(int id)
         {
-            DataTable dt = new DataTable ();
+            DataTable dt = new DataTable();
             try
             {
-                SqlCommand cmd = new SqlCommand("App.aspEntidad_GetId", con);
-                cmd.Parameters.AddWithValue("id", id);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataAdapter dataAdapter = new SqlDataAdapter (cmd);
-                dataAdapter.Fill(dt);
-                if (dt.Rows.Count > 0)
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _response.id = "1";
-                    _response.data = DataHelper.DataTableToJSON(dt);
+                    SqlCommand cmd = new SqlCommand("App.aspEntidad_GetId", con);
+                    cmd.Parameters.AddWithValue("id", id);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
+                    dataAdapter.Fill(dt);
+                    if (dt.Rows.Count > 0)
+                    {
+                        _response.id = "1";
+                        _response.data = DataHelper.DataTableToJSON(dt);
+                    }
                 }
             }
             catch (Exception ex)
@@ -71,7 +81,7 @@ namespace DataAccess.Aplicacion
             }
             finally
             {
-                con.Close();
+
             }
             return _response;
         }
@@ -79,21 +89,24 @@ namespace DataAccess.Aplicacion
         {
             try
             {
-                var cmd = new SqlCommand("App.aspEntidad_Insert", con);
-                cmd.Parameters.AddWithValue("ruc", data.ruc);
-                cmd.Parameters.AddWithValue("razonSocial", data.razonSocial);
-                cmd.Parameters.AddWithValue("nombreComercial", data.nombreComercial);
-                cmd.Parameters.AddWithValue("email", DataHelper.ToDBNullOrDefault(data.email));
-                cmd.Parameters.AddWithValue("telefono", DataHelper.ToDBNullOrDefault(data.telefono));
-                cmd.Parameters.AddWithValue("direccion", DataHelper.ToDBNullOrDefault(data.direccion));
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _response.id = reader.GetString(0);
-                    _response.message = reader.GetString(1);
-                    _response.titleSms = reader.GetString(2);
+                    var cmd = new SqlCommand("App.aspEntidad_Insert", con);
+                    cmd.Parameters.AddWithValue("ruc", data.ruc);
+                    cmd.Parameters.AddWithValue("razonSocial", data.razonSocial);
+                    cmd.Parameters.AddWithValue("nombreComercial", data.nombreComercial);
+                    cmd.Parameters.AddWithValue("email", DataHelper.ToDBNullOrDefault(data.email));
+                    cmd.Parameters.AddWithValue("telefono", DataHelper.ToDBNullOrDefault(data.telefono));
+                    cmd.Parameters.AddWithValue("direccion", DataHelper.ToDBNullOrDefault(data.direccion));
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        _response.id = reader.GetString(0);
+                        _response.message = reader.GetString(1);
+                        _response.titleSms = reader.GetString(2);
+                    }
                 }
             }
             catch (Exception ex)
@@ -104,7 +117,7 @@ namespace DataAccess.Aplicacion
             }
             finally
             {
-                con.Close();
+
             }
             return _response;
         }
@@ -112,23 +125,26 @@ namespace DataAccess.Aplicacion
         {
             try
             {
-                var cmd = new SqlCommand("App.aspEntidad_Update", con);
-                cmd.Parameters.AddWithValue("id", id);
-                cmd.Parameters.AddWithValue("ruc", data.ruc);
-                cmd.Parameters.AddWithValue("idCiudad", data.idCiudad);
-                cmd.Parameters.AddWithValue("razonSocial", data.razonSocial);
-                cmd.Parameters.AddWithValue("nombreComercial", data.nombreComercial);
-                cmd.Parameters.AddWithValue("email", DataHelper.ToDBNullOrDefault(data.email));
-                cmd.Parameters.AddWithValue("telefono", DataHelper.ToDBNullOrDefault(data.telefono));
-                cmd.Parameters.AddWithValue("direccion", DataHelper.ToDBNullOrDefault(data.direccion));
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _response.id = reader.GetString(0);
-                    _response.message = reader.GetString(1);
-                    _response.titleSms = reader.GetString(2);
+                    var cmd = new SqlCommand("App.aspEntidad_Update", con);
+                    cmd.Parameters.AddWithValue("id", id);
+                    cmd.Parameters.AddWithValue("ruc", data.ruc);
+                    cmd.Parameters.AddWithValue("idCiudad", data.idCiudad);
+                    cmd.Parameters.AddWithValue("razonSocial", data.razonSocial);
+                    cmd.Parameters.AddWithValue("nombreComercial", data.nombreComercial);
+                    cmd.Parameters.AddWithValue("email", DataHelper.ToDBNullOrDefault(data.email));
+                    cmd.Parameters.AddWithValue("telefono", DataHelper.ToDBNullOrDefault(data.telefono));
+                    cmd.Parameters.AddWithValue("direccion", DataHelper.ToDBNullOrDefault(data.direccion));
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        _response.id = reader.GetString(0);
+                        _response.message = reader.GetString(1);
+                        _response.titleSms = reader.GetString(2);
+                    }
                 }
             }
             catch (Exception ex)
@@ -139,7 +155,7 @@ namespace DataAccess.Aplicacion
             }
             finally
             {
-                con.Close();
+
             }
             return _response;
 
@@ -149,16 +165,19 @@ namespace DataAccess.Aplicacion
         {
             try
             {
-                var cmd = new SqlCommand("App.aspEntidad_Delete", con);
-                cmd.Parameters.AddWithValue("id", id);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _response.id = reader.GetString(0);
-                    _response.message = reader.GetString(1);
-                    _response.titleSms = reader.GetString(2);
+                    var cmd = new SqlCommand("App.aspEntidad_Delete", con);
+                    cmd.Parameters.AddWithValue("id", id);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        _response.id = reader.GetString(0);
+                        _response.message = reader.GetString(1);
+                        _response.titleSms = reader.GetString(2);
+                    }
                 }
             }
             catch (Exception ex)
@@ -169,7 +188,7 @@ namespace DataAccess.Aplicacion
             }
             finally
             {
-                con.Close();
+
             }
             return _response;
         }

@@ -4,30 +4,38 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess
 {
-    public class CodigoEnvioSriDao : ConnectionDb
+    public class CodigoEnvioSriDao
     {
         private GenericResponse _gr;
-        public CodigoEnvioSriDao()
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public CodigoEnvioSriDao(IConfiguration config)
         {
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
             _gr = new GenericResponse();
         }
         public async Task<GenericResponse> GetAsync()
         {
-            DataTable dt = new DataTable ();
+            DataTable dt = new DataTable();
             try
             {
-                var cmd = new SqlCommand("Sri.aspCodigoEnvioSriGet", con);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataAdapter dataAdapter = new SqlDataAdapter (cmd);
-                dataAdapter.Fill(dt);
-                if (dt.Rows.Count > 0)
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = "1";
-                    _gr.data = DataHelper.DataTableToJSON(dt);
+                    var cmd = new SqlCommand("Sri.aspCodigoEnvioSriGet", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
+                    dataAdapter.Fill(dt);
+                    if (dt.Rows.Count > 0)
+                    {
+                        _gr.id = "1";
+                        _gr.data = DataHelper.DataTableToJSON(dt);
+                    }
                 }
             }
             catch (Exception ex)
@@ -38,7 +46,7 @@ namespace DataAccess
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }

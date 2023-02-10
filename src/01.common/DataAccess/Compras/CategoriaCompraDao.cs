@@ -1,6 +1,7 @@
 ﻿using Domain.Models;
 using Domain.ViewModels.Compras;
 using Helpers;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -9,12 +10,16 @@ using System.Threading.Tasks;
 
 namespace DataAccess
 {
-    public class CategoriaCompraDao : ConnectionDb
+    public class CategoriaCompraDao
     {
         protected GenericResponse _gr;
 
-        public CategoriaCompraDao()
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public CategoriaCompraDao(IConfiguration config)
         {
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
             _gr = new GenericResponse();
         }
 
@@ -23,32 +28,35 @@ namespace DataAccess
             var listar = new List<CategoriaCompraViewModel>();
             try
             {
-                var cmd = new SqlCommand("Compra.Categoria_Get", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("pageIndex", pageIndex);
-                cmd.Parameters.AddWithValue("pageSize", pageSize);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
-                    if (_gr.id == "1")
+                    var cmd = new SqlCommand("Compra.Categoria_Get", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("pageIndex", pageIndex);
+                    cmd.Parameters.AddWithValue("pageSize", pageSize);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        var _cc = new CategoriaCompraViewModel()
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                        if (_gr.id == "1")
                         {
-                            categoria = new CategoriaCompra()
+                            var _cc = new CategoriaCompraViewModel()
                             {
-                                idCategoriaCompra = reader.GetInt32(3),
-                                descripcion = reader.GetString(4),
-                                codigo = reader.GetString(5),
-                                estado = reader.GetBoolean(6),
-                            },
-                            totalRecords = reader.GetInt32(7),
-                        };
-                        listar.Add(_cc);
+                                categoria = new CategoriaCompra()
+                                {
+                                    idCategoriaCompra = reader.GetInt32(3),
+                                    descripcion = reader.GetString(4),
+                                    codigo = reader.GetString(5),
+                                    estado = reader.GetBoolean(6),
+                                },
+                                totalRecords = reader.GetInt32(7),
+                            };
+                            listar.Add(_cc);
+                        }
                     }
                 }
                 _gr.data = listar;
@@ -61,7 +69,7 @@ namespace DataAccess
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }
@@ -69,20 +77,22 @@ namespace DataAccess
         {
             try
             {
-                var cmd = new SqlCommand("Compra.Categoria_Insert", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("descripcion", data.descripcion);
-                cmd.Parameters.AddWithValue("codigo", data.codigo);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
+                    var cmd = new SqlCommand("Compra.Categoria_Insert", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("descripcion", data.descripcion);
+                    cmd.Parameters.AddWithValue("codigo", data.codigo);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                    }
                 }
-
             }
             catch (Exception ex)
             {
@@ -92,7 +102,7 @@ namespace DataAccess
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }
@@ -100,19 +110,22 @@ namespace DataAccess
         {
             try
             {
-                var cmd = new SqlCommand("Compra.Categoria_Update", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idCategoriaCompra", data.idCategoriaCompra);
-                cmd.Parameters.AddWithValue("descripcion", data.descripcion);
-                cmd.Parameters.AddWithValue("estado", data.estado);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
+                    var cmd = new SqlCommand("Compra.Categoria_Update", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idCategoriaCompra", data.idCategoriaCompra);
+                    cmd.Parameters.AddWithValue("descripcion", data.descripcion);
+                    cmd.Parameters.AddWithValue("estado", data.estado);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                    }
                 }
             }
             catch (Exception ex)
@@ -123,7 +136,7 @@ namespace DataAccess
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }
@@ -131,17 +144,20 @@ namespace DataAccess
         {
             try
             {
-                var cmd = new SqlCommand("Compra.Categoria_Delete", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idCategoriaCompra", idCategoriaCompra);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
+                    var cmd = new SqlCommand("Compra.Categoria_Delete", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idCategoriaCompra", idCategoriaCompra);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                    }
                 }
             }
             catch (Exception ex)
@@ -152,7 +168,7 @@ namespace DataAccess
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }
@@ -162,25 +178,28 @@ namespace DataAccess
             var listar = new List<CategoriaCompra>();
             try
             {
-                var cmd = new SqlCommand("aspCategoriaCompraOption", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
-                    if (_gr.id == "1")
+                    var cmd = new SqlCommand("aspCategoriaCompraOption", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        var _cc = new CategoriaCompra()
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                        if (_gr.id == "1")
                         {
-                            idCategoriaCompra = reader.GetInt32(3),
-                            descripcion = reader.GetString(4),
-                            codigo = reader.GetString(5),
-                        };
-                        listar.Add(_cc);
+                            var _cc = new CategoriaCompra()
+                            {
+                                idCategoriaCompra = reader.GetInt32(3),
+                                descripcion = reader.GetString(4),
+                                codigo = reader.GetString(5),
+                            };
+                            listar.Add(_cc);
+                        }
                     }
                 }
                 _gr.data = listar;
@@ -193,7 +212,7 @@ namespace DataAccess
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }

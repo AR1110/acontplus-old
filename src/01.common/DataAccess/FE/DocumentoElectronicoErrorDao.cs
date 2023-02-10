@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.FE
 {
@@ -26,24 +27,33 @@ namespace DataAccess.FE
             list = new comprobante[0];
         }
     }
-    public class DocumentoElectronicoErrorDao : ConnectionDb
+    public class DocumentoElectronicoErrorDao
     {
-
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public DocumentoElectronicoErrorDao(IConfiguration config)
+        {
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
+        }
         public bool GetByClaveAcceso(string claveAcceso, ref string jsonResponse)
         {
             bool exists = false;
             DataTable dt = new DataTable();
             try
             {
-                SqlCommand cmd = new SqlCommand("ASPDocumentoElectronicoErrorGetByCA", con);
-                cmd.Parameters.AddWithValue("claveAcceso", claveAcceso);
-                cmd.CommandType = CommandType.StoredProcedure;
-                con.Open();
-                SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
-                dataAdapter.Fill(dt);
-                if (dt.Rows.Count > 0)
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    jsonResponse = DataHelper.DataTableToJSON(dt);
+                    SqlCommand cmd = new SqlCommand("ASPDocumentoElectronicoErrorGetByCA", con);
+                    cmd.Parameters.AddWithValue("claveAcceso", claveAcceso);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    con.Open();
+                    SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
+                    dataAdapter.Fill(dt);
+                    if (dt.Rows.Count > 0)
+                    {
+                        jsonResponse = DataHelper.DataTableToJSON(dt);
+                    }
                 }
             }
             catch (Exception ex)
@@ -53,7 +63,7 @@ namespace DataAccess.FE
             }
             finally
             {
-                con.Close();
+                
             }
             return exists;
         }

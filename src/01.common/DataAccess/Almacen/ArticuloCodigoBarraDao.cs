@@ -7,14 +7,19 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Almacen
 {
-    public class ArticuloCodigoBarraDao : ConnectionDb
+    public class ArticuloCodigoBarraDao
     {
         protected GenericResponse _response;
-        public ArticuloCodigoBarraDao()
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public ArticuloCodigoBarraDao(IConfiguration config)
         {
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
             _response = new GenericResponse();
         }
 
@@ -23,43 +28,46 @@ namespace DataAccess.Almacen
             var listar = new List<ArticuloCodigoBarraOperaciones>();
             try
             {
-                SqlCommand cmd = new SqlCommand("Almacen.CodigoBarra_Get_Id", con);
-                cmd.Parameters.AddWithValue("id", id);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    while (await reader.ReadAsync())
+                    SqlCommand cmd = new SqlCommand("Almacen.CodigoBarra_Get_Id", con);
+                    cmd.Parameters.AddWithValue("id", id);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
                     {
-                        _response.id = reader.GetString(0);
-                        _response.typeNotify = reader.GetString(1);
-                        _response.message = reader.GetString(2);
-                        _response.titleSms = reader.GetString(3);
-                        if (_response.id == "1")
+                        while (await reader.ReadAsync())
                         {
-                            var _cb = new ArticuloCodigoBarraOperaciones
+                            _response.id = reader.GetString(0);
+                            _response.typeNotify = reader.GetString(1);
+                            _response.message = reader.GetString(2);
+                            _response.titleSms = reader.GetString(3);
+                            if (_response.id == "1")
                             {
-                                articuloCodigoBarra = new ArticuloCodigoBarra()
+                                var _cb = new ArticuloCodigoBarraOperaciones
                                 {
-                                    idArticuloCodigoBarra = reader.GetInt32(4),
-                                    codigoBarra = reader.GetString(5),
-                                    descripcion = reader.GetString(6),
-                                    color = reader.GetString(7),
-                                    estado = reader.GetBoolean(8),
-                                    codigoPrincipal = reader.GetBoolean(9)
-                                },
-                                medida = new Medida()
-                                {
-                                    idMedida = reader.GetInt32(10),
-                                    descripcion = reader.GetString(11)
-                                }
-                            };
-                            listar.Add(_cb);
+                                    articuloCodigoBarra = new ArticuloCodigoBarra()
+                                    {
+                                        idArticuloCodigoBarra = reader.GetInt32(4),
+                                        codigoBarra = reader.GetString(5),
+                                        descripcion = reader.GetString(6),
+                                        color = reader.GetString(7),
+                                        estado = reader.GetBoolean(8),
+                                        codigoPrincipal = reader.GetBoolean(9)
+                                    },
+                                    medida = new Medida()
+                                    {
+                                        idMedida = reader.GetInt32(10),
+                                        descripcion = reader.GetString(11)
+                                    }
+                                };
+                                listar.Add(_cb);
+                            }
                         }
                     }
+
+                    _response.data = listar;
                 }
-                con.Close();
-                _response.data = listar;
             }
             catch (Exception ex)
             {

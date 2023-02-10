@@ -476,7 +476,7 @@ export class ModalSelectDocumentoCtrl extends ModalBaseCtrl{
             }
 
 
-            this.decimal = resultsDataForm[1];
+            this.decimal = resultsDataForm[1][0]
             this.configDetalle = resultsDataForm[2];
             this.tipoIvas = resultsDataForm[3];
             this.tarifas  = resultsDataForm[4];
@@ -1616,7 +1616,7 @@ export class ModalApproveDocCtrl extends ModalBaseCtrl{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
             }
 
-            this.decimal = resultsDataForm[1];
+            this.decimal = resultsDataForm[1][0]
             this.configDetalle = resultsDataForm[2];
             this.tipoIvas = resultsDataForm[3];
             this.tarifas  = resultsDataForm[4];
@@ -2099,7 +2099,7 @@ export class ModalApproveDocEditCtrl extends ModalBaseCtrl{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
             }
 
-            this.decimal = resultsDataForm[1];
+            this.decimal = resultsDataForm[1][0]
             this.configDetalle = resultsDataForm[2];
             this.tipoIvas = resultsDataForm[3];
             this.tarifas  = resultsDataForm[4];
@@ -2582,7 +2582,7 @@ export class ModalApproveDocDetalleCtrl extends ModalBaseCtrl{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
             }
 
-            this.decimal = resultsDataForm[1];
+            this.decimal = resultsDataForm[1][0]
             this.configDetalle = resultsDataForm[2];
             this.tipoIvas = resultsDataForm[3];
             this.tarifas  = resultsDataForm[4];

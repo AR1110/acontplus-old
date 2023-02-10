@@ -1,22 +1,23 @@
-﻿using Domain.Models;
-using Domain.Models.Generic;
+﻿using Domain.Models.Generic;
 using Helpers;
+using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DataAccess.GestionFinanciera
 {
-    public class GestionCobroDao : ConnectionDb
+    public class GestionCobroDao
     {
         private GenericResponse _gr;
 
-        public GestionCobroDao()
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public GestionCobroDao(IConfiguration config)
         {
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
             _gr = new GenericResponse();
         }
 
@@ -25,23 +26,26 @@ namespace DataAccess.GestionFinanciera
             var document = new Documento();
             try
             {
-                var cmd = new SqlCommand("ASPDocumentoPayment", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idTipoDocumento", idTipoDocumento);
-                cmd.Parameters.AddWithValue("idComprobante", idComprobante);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    document = new Documento()
+                    var cmd = new SqlCommand("ASPDocumentoPayment", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idTipoDocumento", idTipoDocumento);
+                    cmd.Parameters.AddWithValue("idComprobante", idComprobante);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        total = reader.GetDecimal(0),
-                        abono = reader.GetDecimal(1),
-                        posfechado = reader.GetDecimal(2),
-                        saldo = reader.GetDecimal(3),
+                        document = new Documento()
+                        {
+                            total = reader.GetDecimal(0),
+                            abono = reader.GetDecimal(1),
+                            posfechado = reader.GetDecimal(2),
+                            saldo = reader.GetDecimal(3),
 
-                    };
+                        };
+                    }
                 }
                 _gr.data = document;
             }
@@ -52,7 +56,7 @@ namespace DataAccess.GestionFinanciera
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }

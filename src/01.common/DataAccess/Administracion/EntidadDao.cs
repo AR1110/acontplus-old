@@ -4,20 +4,21 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using Helpers;
-
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess
 {
-    public class EntidadDao : ConnectionDb
+    public class EntidadDao
     {
         protected GenericResponse _gr;
-
-        public EntidadDao()
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public EntidadDao(IConfiguration config)
         {
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
             _gr = new GenericResponse();
         }
 
@@ -26,29 +27,32 @@ namespace DataAccess
             var listar = new List<Entidad>();
             try
             {
-                var cmd = new SqlCommand("aspEntidadOption", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    if (_gr.id == "1")
+                    var cmd = new SqlCommand("aspEntidadOption", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        var item = new Entidad
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        if (_gr.id == "1")
                         {
-                            idEntidad = reader.GetInt32(2),
-                            razonSocial = reader.GetString(3),
-                            ruc = reader.GetString(4),
-                            nombreComercial = reader.GetString(5),
-                        };
-                        listar.Add(item);
-                    }
+                            var item = new Entidad
+                            {
+                                idEntidad = reader.GetInt32(2),
+                                razonSocial = reader.GetString(3),
+                                ruc = reader.GetString(4),
+                                nombreComercial = reader.GetString(5),
+                            };
+                            listar.Add(item);
+                        }
 
+                    }
+                    _gr.data = listar;
                 }
-                _gr.data = listar;
             }
             catch (Exception ex)
             {
@@ -57,7 +61,7 @@ namespace DataAccess
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }
@@ -66,33 +70,36 @@ namespace DataAccess
             var listar = new List<EntidadViewModel>();
             try
             {
-                SqlCommand cmd = new SqlCommand("aspEntidadByAccess", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idUsuario", idUsuario);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    if (_gr.id == "1")
+                    SqlCommand cmd = new SqlCommand("aspEntidadByAccess", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idUsuario", idUsuario);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        var e = new EntidadViewModel
+                        _gr.id = reader.GetString(0);
+                        if (_gr.id == "1")
                         {
-                            entidad = new Entidad()
+                            var e = new EntidadViewModel
                             {
-                                idEntidad = reader.GetInt32(1),
-                                razonSocial = reader.GetString(2),
-                                ruc = reader.GetString(3),
-                                estado = reader.GetBoolean(4),
-                            },
-                            idUsuario = reader.GetInt32(5),
-                            idPolitica = reader.GetInt32(6),
-                        };
-                        listar.Add(e);
+                                entidad = new Entidad()
+                                {
+                                    idEntidad = reader.GetInt32(1),
+                                    razonSocial = reader.GetString(2),
+                                    ruc = reader.GetString(3),
+                                    estado = reader.GetBoolean(4),
+                                },
+                                idUsuario = reader.GetInt32(5),
+                                idPolitica = reader.GetInt32(6),
+                            };
+                            listar.Add(e);
+                        }
                     }
+                    _gr.data = listar;
                 }
-                _gr.data = listar;
 
             }
             catch (Exception ex)
@@ -103,7 +110,7 @@ namespace DataAccess
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }

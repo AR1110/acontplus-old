@@ -1,18 +1,19 @@
 ﻿using DataAccess;
-using Domain.Models;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers
 {
     public class CiudadController : Controller
     {
+        private readonly IConfiguration _configuration;
         GenericResponse _gr = new();
-        readonly CiudadDao c = new();
+        private CiudadDao _c;
+        public CiudadController(IConfiguration configuration)
+        {
+            _configuration= configuration;
+            _c = new CiudadDao(_configuration);
+        }
         public IActionResult Index()
         {
             return View(); 
@@ -20,7 +21,7 @@ namespace WebUI.Controllers
 
         public IActionResult ReadCiudadProvincia()
         {
-            _gr = c.ReadCiudad(); 
+            _gr = _c.ReadCiudad(); 
             return Ok(_gr);
         }
     }

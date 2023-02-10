@@ -1,5 +1,6 @@
 ﻿using Domain.Models;
 using Helpers;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -8,34 +9,40 @@ using System.Threading.Tasks;
 
 namespace DataAccess
 {
-    public class BancoDao : ConnectionDb
+    public class BancoDao
     {
         protected GenericResponse _gr;
-        public BancoDao()
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public BancoDao(IConfiguration config)
         {
-            _gr= new GenericResponse();
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
+            _gr = new GenericResponse();
         }
         public async Task<GenericResponse> CreateBancoAsync(int idRol, Banco data)
         {
             try
             {
-                SqlCommand cmd = new SqlCommand("ASPBancoCreate", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("descripcion", data.descripcion);
-                cmd.Parameters.AddWithValue("codigo", data.codigo);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    while (await reader.ReadAsync())
+                    SqlCommand cmd = new SqlCommand("ASPBancoCreate", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("descripcion", data.descripcion);
+                    cmd.Parameters.AddWithValue("codigo", data.codigo);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
                     {
-                        _gr.id = reader.GetString(0);
-                        _gr.typeNotify = reader.GetString(1);
-                        _gr.message = reader.GetString(2);
-                        _gr.titleSms = reader.GetString(3);
+                        while (await reader.ReadAsync())
+                        {
+                            _gr.id = reader.GetString(0);
+                            _gr.typeNotify = reader.GetString(1);
+                            _gr.message = reader.GetString(2);
+                            _gr.titleSms = reader.GetString(3);
+                        }
                     }
                 }
-                con.Close();
             }
             catch (Exception ex)
             {
@@ -51,36 +58,38 @@ namespace DataAccess
             var listar = new List<Banco>();
             try
             {
-                SqlCommand cmd = new SqlCommand("ASPBancoRead", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("pageIndex", pageIndex);
-                cmd.Parameters.AddWithValue("pageSize", pageSize);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    while (await reader.ReadAsync())
+                    SqlCommand cmd = new SqlCommand("ASPBancoRead", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("pageIndex", pageIndex);
+                    cmd.Parameters.AddWithValue("pageSize", pageSize);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
                     {
-                        _gr.id = reader.GetString(0);
-                        _gr.typeNotify = reader.GetString(1);
-                        _gr.message = reader.GetString(2);
-                        _gr.titleSms = reader.GetString(3);
-                        if (_gr.id == "1")
+                        while (await reader.ReadAsync())
                         {
-                            var b = new Banco
+                            _gr.id = reader.GetString(0);
+                            _gr.typeNotify = reader.GetString(1);
+                            _gr.message = reader.GetString(2);
+                            _gr.titleSms = reader.GetString(3);
+                            if (_gr.id == "1")
                             {
-                                idBanco = reader.GetInt32(4),
-                                descripcion = reader.GetString(5),
-                                codigo = reader.GetString(6),
-                                estado = reader.GetBoolean(7),
-                                fechaRegistro = reader.GetDateTime(8).ToString("yyyy-MM-dd"),
-                                totalRecords = reader.GetInt32(9)
-                            };
-                            listar.Add(b);
+                                var b = new Banco
+                                {
+                                    idBanco = reader.GetInt32(4),
+                                    descripcion = reader.GetString(5),
+                                    codigo = reader.GetString(6),
+                                    estado = reader.GetBoolean(7),
+                                    fechaRegistro = reader.GetDateTime(8).ToString("yyyy-MM-dd"),
+                                    totalRecords = reader.GetInt32(9)
+                                };
+                                listar.Add(b);
+                            }
                         }
                     }
                 }
-                con.Close();
                 _gr.data = listar;
             }
             catch (Exception ex)
@@ -96,20 +105,23 @@ namespace DataAccess
         {
             try
             {
-                SqlCommand cmd = new SqlCommand("ASPBancoUpdate", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idBanco", data.idBanco);
-                cmd.Parameters.AddWithValue("descripcion", data.descripcion);
-                cmd.Parameters.AddWithValue("estado", data.estado);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = await cmd.ExecuteReaderAsync();
-                while (await reader.ReadAsync())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.typeNotify = reader.GetString(1);
-                    _gr.message = reader.GetString(2);
-                    _gr.titleSms = reader.GetString(3);
+                    SqlCommand cmd = new SqlCommand("ASPBancoUpdate", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idBanco", data.idBanco);
+                    cmd.Parameters.AddWithValue("descripcion", data.descripcion);
+                    cmd.Parameters.AddWithValue("estado", data.estado);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = await cmd.ExecuteReaderAsync();
+                    while (await reader.ReadAsync())
+                    {
+                        _gr.id = reader.GetString(0);
+                        _gr.typeNotify = reader.GetString(1);
+                        _gr.message = reader.GetString(2);
+                        _gr.titleSms = reader.GetString(3);
+                    }
                 }
             }
             catch (Exception ex)
@@ -125,20 +137,22 @@ namespace DataAccess
         {
             try
             {
-                SqlCommand cmd = new SqlCommand("ASPBancoDelete", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idBanco", idBanco);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = await cmd.ExecuteReaderAsync();
-                while (await reader.ReadAsync())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.typeNotify = reader.GetString(1);
-                    _gr.message = reader.GetString(2);
-                    _gr.titleSms = reader.GetString(3);
-                }
-                con.Close();
+                    SqlCommand cmd = new SqlCommand("ASPBancoDelete", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idBanco", idBanco);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = await cmd.ExecuteReaderAsync();
+                    while (await reader.ReadAsync())
+                    {
+                        _gr.id = reader.GetString(0);
+                        _gr.typeNotify = reader.GetString(1);
+                        _gr.message = reader.GetString(2);
+                        _gr.titleSms = reader.GetString(3);
+                    }
+                }   
             }
             catch (Exception ex)
             {
@@ -155,23 +169,26 @@ namespace DataAccess
             var list = new List<Banco>();
             try
             {
-                var cmd = new SqlCommand("ASPBancoByOption", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    if (_gr.id == "1")
+                    var cmd = new SqlCommand("ASPBancoByOption", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        var item = new Banco()
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        if (_gr.id == "1")
                         {
-                            idBanco = reader.GetInt32(2),
-                            descripcion = reader.GetString(3),
-                        };
-                        list.Add(item);
+                            var item = new Banco()
+                            {
+                                idBanco = reader.GetInt32(2),
+                                descripcion = reader.GetString(3),
+                            };
+                            list.Add(item);
+                        }
                     }
                 }
                 _gr.data = list;
@@ -183,7 +200,7 @@ namespace DataAccess
             }
             finally
             {
-                con.Close();
+                
             }
             return _gr;
         }

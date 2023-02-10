@@ -1,24 +1,20 @@
 ﻿using DataAccess.Compras;
-using Domain.Models;
 using Domain.ViewModels.Compras;
 using Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Internal.Compras
 {
     public class IngresoBodegaInternal
     {
+        private readonly IConfiguration _configuration;
         protected GenericResponse _gr;
-        public IngresoBodegaInternal()
+        private IngresoBodegaDao _ib;
+        public IngresoBodegaInternal(IConfiguration configuration)
         {
+            _configuration = configuration;
+            _ib = new IngresoBodegaDao(_configuration);
             _gr = new GenericResponse();
         }
-
-        IngresoBodegaDao _ib = new();
-
         internal async Task<GenericResponse> PostIngresoBoega(int tipOperacion, int idRol, int idIngresoBodega, IngresoBodegaViewModel data)
         {
 

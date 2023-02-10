@@ -138,7 +138,7 @@ function reporteInventarioCtrl($scope, _commonSvc, mS, form, toast, FileSaver, B
         
         $scope.dataSearch.filtroFecha =  fecha + ' ' + hora;
 
-        console.log($scope.dataSearch)
+     
         const parameters = {
             reportParams: JSON.stringify({
                 codigo: 'INVRG', 

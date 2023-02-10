@@ -12,10 +12,16 @@ namespace WebUI.Controllers.GestionTributaria
 {
     public class AtsController : Controller
     {
-        private AtsDao _ats = new AtsDao();
+        private readonly IConfiguration _configuration;
+
+        private AtsDao _ats;
         private AtsXml _atsXml = new AtsXml();
         private GenericResponse _response = new GenericResponse();
-
+        public AtsController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _ats = new AtsDao(_configuration);
+        }
         [Authorize]
         public IActionResult Index()
         {

@@ -50,7 +50,7 @@ namespace DataAccess
                                 _gr.titleSms = reader.GetString(3);
                             }
                         }
-                        con.Close();
+                        
                     }
                 }
             }
@@ -89,7 +89,7 @@ namespace DataAccess
                                 _gr.titleSms = reader.GetString(3);
                             }
                         }
-                        con.Close();
+                        
                     }
                 }
             }
@@ -139,7 +139,7 @@ namespace DataAccess
                                 }
                             }
                         }
-                        con.Close();
+                        
                     }
                 }
                 _gr.data = listar;
@@ -175,7 +175,7 @@ namespace DataAccess
                                 _gr.titleSms = reader.GetString(3);
                             }
                         }
-                        con.Close();
+                        
                     }
                 }
             }
@@ -219,7 +219,7 @@ namespace DataAccess
                                 }
                             }
                         }
-                        con.Close();
+                        
                     }
                 }
 

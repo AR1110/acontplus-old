@@ -2,16 +2,19 @@
 using Domain.Models.Tesoreria;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers.GestionFinanciera
 {
     public class SubEntidadFinancieraController : Controller
     {
+        private readonly IConfiguration _configuration;
+        private SubEntidadFinancieraDao _sef;
+        public SubEntidadFinancieraController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _sef = new SubEntidadFinancieraDao(_configuration);
+        }
 
-        SubEntidadFinancieraDao _sef = new();
         [Authorize]
         public IActionResult Index()
         {

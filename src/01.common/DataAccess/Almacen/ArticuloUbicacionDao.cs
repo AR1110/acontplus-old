@@ -1,5 +1,6 @@
 ﻿using Domain.Models;
 using Helpers;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -8,37 +9,43 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Almacen
 {
-    public class ArticuloUbicacionDao : ConnectionDb
+    public class ArticuloUbicacionDao
     {
         protected GenericResponse _gr;
 
-        public ArticuloUbicacionDao()
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public ArticuloUbicacionDao(IConfiguration config)
         {
-            _gr= new GenericResponse();
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
+            _gr = new GenericResponse();
         }
 
         public async Task<GenericResponse> InsertAsync(int idRol, ArticuloUbicacion data)
         {
             try
             {
-                SqlCommand cmd = new SqlCommand("ASPArticuloUbicacionCreate", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idArticulo", data.idArticulo);
-                cmd.Parameters.AddWithValue("idBodega", data.idBodega);
-                cmd.Parameters.AddWithValue("ubicacion", data.ubicacion);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    while (await reader.ReadAsync())
+                    SqlCommand cmd = new SqlCommand("ASPArticuloUbicacionCreate", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idArticulo", data.idArticulo);
+                    cmd.Parameters.AddWithValue("idBodega", data.idBodega);
+                    cmd.Parameters.AddWithValue("ubicacion", data.ubicacion);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
                     {
-                        _gr.id = reader.GetString(0);
-                        _gr.typeNotify = reader.GetString(1);
-                        _gr.message = reader.GetString(2);
-                        _gr.titleSms = reader.GetString(3);
+                        while (await reader.ReadAsync())
+                        {
+                            _gr.id = reader.GetString(0);
+                            _gr.typeNotify = reader.GetString(1);
+                            _gr.message = reader.GetString(2);
+                            _gr.titleSms = reader.GetString(3);
+                        }
                     }
                 }
-                con.Close();
             }
             catch (Exception ex)
             {
@@ -54,40 +61,42 @@ namespace DataAccess.Almacen
             var listar = new List<ArticuloUbicacionOperaciones>();
             try
             {
-                SqlCommand cmd = new SqlCommand("ASPArticuloUbicacionRead", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idArticulo", idArticulo);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    while (await reader.ReadAsync())
+                    SqlCommand cmd = new SqlCommand("ASPArticuloUbicacionRead", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idArticulo", idArticulo);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
                     {
-                        _gr.id = reader.GetString(0);
-                        _gr.typeNotify = reader.GetString(1);
-                        _gr.message = reader.GetString(2);
-                        _gr.titleSms = reader.GetString(3);
-                        if (_gr.id == "1")
+                        while (await reader.ReadAsync())
                         {
-                            var _uo = new ArticuloUbicacionOperaciones
+                            _gr.id = reader.GetString(0);
+                            _gr.typeNotify = reader.GetString(1);
+                            _gr.message = reader.GetString(2);
+                            _gr.titleSms = reader.GetString(3);
+                            if (_gr.id == "1")
                             {
-                                articuloUbicacion = new ArticuloUbicacion()
+                                var _uo = new ArticuloUbicacionOperaciones
                                 {
-                                    idArticuloUbicacion = reader.GetInt32(4),
-                                    ubicacion = reader.GetString(5),
-                                    estado = reader.GetBoolean(6),
-                                },
-                                bodega = new Bodega()
-                                {
-                                    idBodega = reader.GetInt32(7),
-                                    descripcion = reader.GetString(8)
-                                }
-                            };
-                            listar.Add(_uo);
+                                    articuloUbicacion = new ArticuloUbicacion()
+                                    {
+                                        idArticuloUbicacion = reader.GetInt32(4),
+                                        ubicacion = reader.GetString(5),
+                                        estado = reader.GetBoolean(6),
+                                    },
+                                    bodega = new Bodega()
+                                    {
+                                        idBodega = reader.GetInt32(7),
+                                        descripcion = reader.GetString(8)
+                                    }
+                                };
+                                listar.Add(_uo);
+                            }
                         }
                     }
                 }
-                con.Close();
                 _gr.data = listar;
             }
             catch (Exception ex)
@@ -103,25 +112,27 @@ namespace DataAccess.Almacen
         {
             try
             {
-                SqlCommand cmd = new SqlCommand("ASPArticuloUbicacionUpdate", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idArticuloUbicacion", id);
-                cmd.Parameters.AddWithValue("idArticulo", data.idArticulo);
-                cmd.Parameters.AddWithValue("idBodega", data.idBodega);
-                cmd.Parameters.AddWithValue("ubicacion", data.ubicacion);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    while (await reader.ReadAsync())
+                    SqlCommand cmd = new SqlCommand("ASPArticuloUbicacionUpdate", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idArticuloUbicacion", id);
+                    cmd.Parameters.AddWithValue("idArticulo", data.idArticulo);
+                    cmd.Parameters.AddWithValue("idBodega", data.idBodega);
+                    cmd.Parameters.AddWithValue("ubicacion", data.ubicacion);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
                     {
-                        _gr.id = reader.GetString(0);
-                        _gr.typeNotify = reader.GetString(1);
-                        _gr.message = reader.GetString(2);
-                        _gr.titleSms = reader.GetString(3);
+                        while (await reader.ReadAsync())
+                        {
+                            _gr.id = reader.GetString(0);
+                            _gr.typeNotify = reader.GetString(1);
+                            _gr.message = reader.GetString(2);
+                            _gr.titleSms = reader.GetString(3);
+                        }
                     }
                 }
-                con.Close();
             }
             catch (Exception ex)
             {
@@ -136,22 +147,24 @@ namespace DataAccess.Almacen
         {
             try
             {
-                SqlCommand cmd = new SqlCommand("ASPArticuloUbicacionDelete", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idArticuloUbicacion", idArticuloUbicacion);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    while (await reader.ReadAsync())
+                    SqlCommand cmd = new SqlCommand("ASPArticuloUbicacionDelete", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idArticuloUbicacion", idArticuloUbicacion);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
                     {
-                        _gr.id = reader.GetString(0);
-                        _gr.typeNotify = reader.GetString(1);
-                        _gr.message = reader.GetString(2);
-                        _gr.titleSms = reader.GetString(3);
+                        while (await reader.ReadAsync())
+                        {
+                            _gr.id = reader.GetString(0);
+                            _gr.typeNotify = reader.GetString(1);
+                            _gr.message = reader.GetString(2);
+                            _gr.titleSms = reader.GetString(3);
+                        }
                     }
                 }
-                con.Close();
 
             }
             catch (Exception ex)

@@ -8,8 +8,15 @@ namespace WebUI.Controllers.Ingresos
 {
     public class CategoriaCompraController : Controller
     {
+        private readonly IConfiguration _configuration;
+
         GenericResponse _gr = new();
-        readonly CategoriaCompraDao _cc = new();
+        readonly CategoriaCompraDao _cc;
+        public CategoriaCompraController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _cc = new CategoriaCompraDao(_configuration);
+        }
         [Authorize]
         public IActionResult Index()
         {

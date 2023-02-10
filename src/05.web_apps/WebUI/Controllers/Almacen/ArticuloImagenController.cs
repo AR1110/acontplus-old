@@ -1,19 +1,19 @@
 ﻿using DataAccess.Almacen;
-using WebUI.Utils;
 using Domain.Models.Almacen;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers.Almacen
 {
     public class ArticuloImagenController : Controller
     {
-        ArticuloImagenDao _ai = new();
+        private readonly IConfiguration _configuration;
+        private ArticuloImagenDao _ai;
+        public ArticuloImagenController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _ai = new ArticuloImagenDao(_configuration);
+        }
+
         public IActionResult Index()
         {
             return View();

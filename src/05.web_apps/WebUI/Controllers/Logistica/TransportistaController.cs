@@ -1,15 +1,19 @@
 ﻿using DataAccess.Logistica;
 using Domain.Models.Logistica;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers.Logistica
 {
     public class TransportistaController : Controller
     {
-        TransportistaDao _trans = new();
+        private readonly IConfiguration _configuration;
+
+        private TransportistaDao _trans = new();
+        public TransportistaController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _trans = new TransportistaDao(_configuration);
+        }
         public ViewResult Index()
         {
             return View();

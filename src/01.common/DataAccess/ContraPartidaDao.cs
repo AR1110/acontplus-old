@@ -7,45 +7,52 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Domain.ViewModels;
 using Helpers;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess
 {
-    public class ContraPartidaDao : ConnectionDb
+    public class ContraPartidaDao
     {
         protected GenericResponse _gr;
 
-        public ContraPartidaDao()
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public ContraPartidaDao(IConfiguration config)
         {
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
             _gr = new GenericResponse();
         }
-
         public async Task<GenericResponse> CreateContraPartidaAsync(int idRol, ContraPartida data)
         {
             try
             {
-                using (SqlCommand cmd = new SqlCommand("ASPContraPartidaCreate", con))
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    cmd.Parameters.AddWithValue("idRol", idRol);
-                    cmd.Parameters.AddWithValue("descripcion", data.descripcion);
-                    cmd.Parameters.AddWithValue("codigo", data.codigo);
-                    cmd.Parameters.AddWithValue("observacion", data.observacion ?? "");
-                    var c = JsonConvert.SerializeObject(data.dataCaja);
-                    cmd.Parameters.Add(new SqlParameter("jsonCaja", c));
-                    var ef = JsonConvert.SerializeObject(data.dataEntidadFinanciera);
-                    cmd.Parameters.Add(new SqlParameter("jsonEntidadFinanciera", ef));
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await con.OpenAsync();
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlCommand cmd = new SqlCommand("ASPContraPartidaCreate", con))
                     {
-                        while (reader.Read())
+                        cmd.Parameters.AddWithValue("idRol", idRol);
+                        cmd.Parameters.AddWithValue("descripcion", data.descripcion);
+                        cmd.Parameters.AddWithValue("codigo", data.codigo);
+                        cmd.Parameters.AddWithValue("observacion", data.observacion ?? "");
+                        var c = JsonConvert.SerializeObject(data.dataCaja);
+                        cmd.Parameters.Add(new SqlParameter("jsonCaja", c));
+                        var ef = JsonConvert.SerializeObject(data.dataEntidadFinanciera);
+                        cmd.Parameters.Add(new SqlParameter("jsonEntidadFinanciera", ef));
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        await con.OpenAsync();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            _gr.id = reader.GetString(0);
-                            _gr.typeNotify = reader.GetString(1);
-                            _gr.message = reader.GetString(2);
-                            _gr.titleSms = reader.GetString(3);
+                            while (reader.Read())
+                            {
+                                _gr.id = reader.GetString(0);
+                                _gr.typeNotify = reader.GetString(1);
+                                _gr.message = reader.GetString(2);
+                                _gr.titleSms = reader.GetString(3);
+                            }
                         }
+
                     }
-                    con.Close();
                 }
             }
             catch (Exception ex)
@@ -62,36 +69,38 @@ namespace DataAccess
             var listar = new List<ContraPartidaViewModel>();
             try
             {
-                using (SqlCommand cmd = new SqlCommand("ASPContraPartidaRead", con))
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    cmd.Parameters.AddWithValue("idRol", idRol);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await con.OpenAsync();
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlCommand cmd = new SqlCommand("ASPContraPartidaRead", con))
                     {
-                        while (reader.Read())
+                        cmd.Parameters.AddWithValue("idRol", idRol);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        await con.OpenAsync();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            _gr.id = reader.GetString(0);
-                            _gr.typeNotify = reader.GetString(1);
-                            _gr.message = reader.GetString(2);
-                            _gr.titleSms = reader.GetString(3);
-                            if (_gr.id == "1")
+                            while (reader.Read())
                             {
-                                var item = new ContraPartidaViewModel();
-                                item.contraPartida = new ContraPartida()
+                                _gr.id = reader.GetString(0);
+                                _gr.typeNotify = reader.GetString(1);
+                                _gr.message = reader.GetString(2);
+                                _gr.titleSms = reader.GetString(3);
+                                if (_gr.id == "1")
                                 {
-                                    idContraPartida = reader.GetInt32(4),
-                                    descripcion = reader.GetString(5),
-                                    codigo = reader.GetString(6),
-                                    observacion = reader.GetString(7),
-                                    estado = reader.GetBoolean(8)
-                                };
-                                item.totalRecords = reader.GetInt32(9);
-                                listar.Add(item);
+                                    var item = new ContraPartidaViewModel();
+                                    item.contraPartida = new ContraPartida()
+                                    {
+                                        idContraPartida = reader.GetInt32(4),
+                                        descripcion = reader.GetString(5),
+                                        codigo = reader.GetString(6),
+                                        observacion = reader.GetString(7),
+                                        estado = reader.GetBoolean(8)
+                                    };
+                                    item.totalRecords = reader.GetInt32(9);
+                                    listar.Add(item);
+                                }
                             }
                         }
                     }
-                    con.Close();
                 }
                 _gr.data = listar;
             }
@@ -108,30 +117,32 @@ namespace DataAccess
         {
             try
             {
-                using (SqlCommand cmd = new SqlCommand("ASPContraPartidaUpdate", con))
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    cmd.Parameters.AddWithValue("idRol", idRol);
-                    cmd.Parameters.AddWithValue("idContraPartida", data.idContraPartida);
-                    cmd.Parameters.AddWithValue("descripcion", data.descripcion);
-                    cmd.Parameters.AddWithValue("observacion", data.observacion ?? "");
-                    cmd.Parameters.AddWithValue("estado", data.estado);
-                    var c = JsonConvert.SerializeObject(data.dataCaja);
-                    cmd.Parameters.Add(new SqlParameter("jsonCaja", c));
-                    var ef = JsonConvert.SerializeObject(data.dataEntidadFinanciera);
-                    cmd.Parameters.Add(new SqlParameter("jsonEntidadFinanciera", ef));
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await con.OpenAsync();
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlCommand cmd = new SqlCommand("ASPContraPartidaUpdate", con))
                     {
-                        while (reader.Read())
+                        cmd.Parameters.AddWithValue("idRol", idRol);
+                        cmd.Parameters.AddWithValue("idContraPartida", data.idContraPartida);
+                        cmd.Parameters.AddWithValue("descripcion", data.descripcion);
+                        cmd.Parameters.AddWithValue("observacion", data.observacion ?? "");
+                        cmd.Parameters.AddWithValue("estado", data.estado);
+                        var c = JsonConvert.SerializeObject(data.dataCaja);
+                        cmd.Parameters.Add(new SqlParameter("jsonCaja", c));
+                        var ef = JsonConvert.SerializeObject(data.dataEntidadFinanciera);
+                        cmd.Parameters.Add(new SqlParameter("jsonEntidadFinanciera", ef));
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        await con.OpenAsync();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            _gr.id = reader.GetString(0);
-                            _gr.typeNotify = reader.GetString(1);
-                            _gr.message = reader.GetString(2);
-                            _gr.titleSms = reader.GetString(3);
+                            while (reader.Read())
+                            {
+                                _gr.id = reader.GetString(0);
+                                _gr.typeNotify = reader.GetString(1);
+                                _gr.message = reader.GetString(2);
+                                _gr.titleSms = reader.GetString(3);
+                            }
                         }
                     }
-                    con.Close();
                 }
             }
             catch (Exception ex)
@@ -147,24 +158,26 @@ namespace DataAccess
         {
             try
             {
-                using (SqlCommand cmd = new SqlCommand("ASPContraPartidaDelete", con))
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    cmd.Parameters.AddWithValue("idRol", idRol);
-                    cmd.Parameters.AddWithValue("idContraPartida", idContraPartida);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await con.OpenAsync();
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlCommand cmd = new SqlCommand("ASPContraPartidaDelete", con))
                     {
-                        while (reader.Read())
+                        cmd.Parameters.AddWithValue("idRol", idRol);
+                        cmd.Parameters.AddWithValue("idContraPartida", idContraPartida);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        await con.OpenAsync();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            _gr.id = reader.GetString(0);
-                            _gr.typeNotify = reader.GetString(1);
-                            _gr.message = reader.GetString(2);
-                            _gr.titleSms = reader.GetString(3);
+                            while (reader.Read())
+                            {
+                                _gr.id = reader.GetString(0);
+                                _gr.typeNotify = reader.GetString(1);
+                                _gr.message = reader.GetString(2);
+                                _gr.titleSms = reader.GetString(3);
 
+                            }
                         }
                     }
-                    con.Close();
                 }
             }
             catch (Exception ex)

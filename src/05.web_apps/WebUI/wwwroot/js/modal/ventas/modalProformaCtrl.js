@@ -1,7 +1,7 @@
 
 
 
-import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.14";
+import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.16";
 
 
 class ModalProformaCtrl extends ModalBaseCtrl{
@@ -73,6 +73,67 @@ class ModalProformaCtrl extends ModalBaseCtrl{
         this.$scope.$apply();        
     }
 
+
+    async setItemArticuloEnDetalle(dataArticulo){        
+        try {
+            const self = this;
+                 
+            this.dataArticulo = dataArticulo;
+
+            self.addRow();        
+            
+            const {articulo, medidas, datosAdicionales} = self.dataArticulo;        
+            let index  = self.gridOptions.data.findIndex(value => value.idArticulo === 0); 
+            let entity = self.gridOptions.data[index]; 
+        
+            let dataMedida = medidas[0];
+
+            console.log(this.dataArticulo)
+                
+            entity.idArticulo           = articulo.idArticulo;
+            entity.codigo               = articulo.codigoArticulo;                
+            entity.descripcion          = articulo.descripcion;  
+            entity.idTipoIva            = articulo.idTipoIva;                          
+            entity.codigoPorcentaje     = articulo.codigoPorcentaje;
+            entity.tarifa               = articulo.tarifa;
+            // entity.nombreTipoIva        = articulo.nombreTipoIva;
+            entity.ice                  = articulo.valorIce;
+            entity.idBodega             = self.idBodega ? self.idBodega : 0;
+            entity.llevaInventario      = articulo.llevaInventario;
+            entity.datosAdicionales     = articulo.datosAdicionales;
+            entity.productoFraccionable = articulo.productoFraccionable;
+            entity.medidas              = medidas; //Lista Medida 
+            entity.idMedida             = dataMedida.idMedida; //Medida por defecto 
+            entity.adicional            = datosAdicionales; //
+
+            console.log(JSON.parse(dataMedida.tarifas))
+            console.log(self)
+            entity.articuloTarifas      = JSON.parse(dataMedida.tarifas);
+            let tarifa                  = entity.articuloTarifas.find(item=>item.idTarifa===self.idTarifa);                                      
+            entity.idTarifa             = self.idTarifa;  
+            entity.precioUnitario       = self._fS.roundNumber(tarifa.precioVenta, self.decimal.nroPrecio);                
+            entity.precioConIva         = self._fS.roundNumber(tarifa.precioConIva, self.decimal.nroPrecio);
+            
+            
+            const objCalculo            = self.uiGridInvoice.calculoColDef(entity, 0);             
+            
+            objCalculo["precioUnitario"] && objCalculo["precioUnitario"]();
+            
+            objCalculo["calculoTotalDetalle"]();
+            
+            self.data = Object.assign(self.data, self.uiGridInvoice.getTotales()); 
+
+            this.focusColumnCantidad();
+
+
+            this.indexRow = this.gridOptions.data.findIndex(val => val.idArticulo === this.dataArticulo.articulo.idArticulo);           
+
+          
+        } catch (error) {
+            console.log(error)            
+        }
+    }
+    
 
 
     trimDetailDoc(){
@@ -151,7 +212,7 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl{
             }
 
 
-            this.decimal = resultsDataForm[1];
+            this.decimal = resultsDataForm[1][0]
             this.configDetalle = resultsDataForm[2];
             this.tipoIvas = resultsDataForm[3];
             this.tarifas  = resultsDataForm[4];
@@ -345,7 +406,7 @@ export class ModalProformaDetalleCtrl extends ModalProformaCtrl{
             }
 
 
-            this.decimal = resultsDataForm[1];
+            this.decimal = resultsDataForm[1][0]
             this.configDetalle = resultsDataForm[2];
             this.tipoIvas = resultsDataForm[3];
             this.tarifas  = resultsDataForm[4];
@@ -440,7 +501,7 @@ export class ModalProformaEditarCtrl extends ModalProformaCtrl{
             }
 
 
-            this.decimal = resultsDataForm[1];
+            this.decimal = resultsDataForm[1][0]
             this.configDetalle = resultsDataForm[2];
             this.tipoIvas = resultsDataForm[3];
             this.tarifas  = resultsDataForm[4];
@@ -619,7 +680,7 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl{
             }
 
 
-            this.decimal = resultsDataForm[1];
+            this.decimal = resultsDataForm[1][0]
             this.configDetalle = resultsDataForm[2];
             this.tipoIvas = resultsDataForm[3];
             this.tarifas  = resultsDataForm[4];

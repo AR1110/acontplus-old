@@ -490,18 +490,21 @@ export class ModalCierreCajaCtrl{
     }
 
     $onInit(){
-        this._mS.getData('get','/DetalleArqueoCaja/ListDetalleArqueoCaja').then(response => {
-            if (response.id ==="0") {
-                Swal.fire({                        
-                    icon:'warning',
-                    title:`<small>${response.titleSms}</small>`,                        
-                    html:`<small>${response.message}</small>`
-                })                                    
-            }
-            if (response.id ==="1") {
-                this.arqueos = response.data;                                                
-            }
+
+        let tempArqueos = [{"idMoneda":1,"cantidad":0,"valor":100.00,"descripcionMonedad":"Billetes de $100"},{"idMoneda":2,"cantidad":0,"valor":50.00,"descripcionMonedad":"Billetes de $50"},{"idMoneda":3,"cantidad":0,"valor":20.00,"descripcionMonedad":"Billetes de $20"},{"idMoneda":4,"cantidad":0,"valor":10.00,"descripcionMonedad":"Billetes de $10"},{"idMoneda":5,"cantidad":0,"valor":5.00,"descripcionMonedad":"Billetes de $5"},{"idMoneda":6,"cantidad":0,"valor":1.00,"descripcionMonedad":"Billetes de $1"},{"idMoneda":7,"cantidad":0,"valor":1.00,"descripcionMonedad":"Monedas de $1"},{"idMoneda":8,"cantidad":0,"valor":0.50,"descripcionMonedad":"Monedas de ¢0.50"},{"idMoneda":9,"cantidad":0,"valor":0.25,"descripcionMonedad":"Monedas de ¢0.25"},{"idMoneda":10,"cantidad":0,"valor":0.10,"descripcionMonedad":"Monedas de ¢0.10"},{"idMoneda":11,"cantidad":0,"valor":0.05,"descripcionMonedad":"Monedas de ¢0.05"},{"idMoneda":12,"cantidad":0,"valor":0.01,"descripcionMonedad":"Monedas de ¢0.01"}]
+
+        this.arqueos = tempArqueos.map(item=>{
+            let obj = {
+                detalleArqueoCaja: {
+                    idMoneda: item.idMoneda,
+                    cantidad: item.cantidad
+                },
+                descripcionMoneda: item.descripcionMonedad,
+                valorMoneda: item.valor            
+            }            
+            return obj;
         })
+        
     }
 
     calcularCantidadMoneda() {            

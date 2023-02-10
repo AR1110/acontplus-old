@@ -8,15 +8,20 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Logistica
 {
-    public class VehiculoDao : ConnectionDb
+    public class VehiculoDao
     {
         private GenericResponse _gr;
 
-        public VehiculoDao()
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public VehiculoDao(IConfiguration config)
         {
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
             _gr = new GenericResponse();
         }
 
@@ -24,21 +29,24 @@ namespace DataAccess.Logistica
         {
             try
             {
-                var cmd = new SqlCommand("ASPVehiculoInsert", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("placa", data.placa);
-                cmd.Parameters.AddWithValue("marca", data.marca);
-                cmd.Parameters.AddWithValue("modelo", data.modelo);
-                cmd.Parameters.AddWithValue("observacion", DataHelper.ToDBNullOrDefault(data.observacion));
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
-                    _gr.lastId = reader.GetInt32(3);
+                    var cmd = new SqlCommand("ASPVehiculoInsert", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("placa", data.placa);
+                    cmd.Parameters.AddWithValue("marca", data.marca);
+                    cmd.Parameters.AddWithValue("modelo", data.modelo);
+                    cmd.Parameters.AddWithValue("observacion", DataHelper.ToDBNullOrDefault(data.observacion));
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                        _gr.lastId = reader.GetInt32(3);
+                    }
                 }
             }
             catch (Exception ex)
@@ -49,7 +57,7 @@ namespace DataAccess.Logistica
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }
@@ -58,27 +66,30 @@ namespace DataAccess.Logistica
             var vehiculos = new List<Vehiculo>();
             try
             {
-                var cmd = new SqlCommand("ASPVehiculoGet", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
-                    if (_gr.id == "1")
+                    var cmd = new SqlCommand("ASPVehiculoGet", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        var item = new Vehiculo()
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                        if (_gr.id == "1")
                         {
-                            idVehiculo = reader.GetInt32(3),
-                            placa = reader.GetString(4),
-                            marca = reader.GetString(5),
-                            modelo = reader.GetString(6),
-                            observacion = reader.GetString(7),
-                        };
-                        vehiculos.Add(item);
+                            var item = new Vehiculo()
+                            {
+                                idVehiculo = reader.GetInt32(3),
+                                placa = reader.GetString(4),
+                                marca = reader.GetString(5),
+                                modelo = reader.GetString(6),
+                                observacion = reader.GetString(7),
+                            };
+                            vehiculos.Add(item);
+                        }
                     }
                 }
                 _gr.data = vehiculos;
@@ -92,7 +103,7 @@ namespace DataAccess.Logistica
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }
@@ -100,21 +111,24 @@ namespace DataAccess.Logistica
         {
             try
             {
-                var cmd = new SqlCommand("ASPVehiculoUpdate", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idVehiculo", idVehiculo);
-                cmd.Parameters.AddWithValue("placa", data.placa);
-                cmd.Parameters.AddWithValue("marca", data.marca);
-                cmd.Parameters.AddWithValue("modelo", data.modelo);
-                cmd.Parameters.AddWithValue("observacion", DataHelper.ToDBNullOrDefault(data.observacion));
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
+                    var cmd = new SqlCommand("ASPVehiculoUpdate", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idVehiculo", idVehiculo);
+                    cmd.Parameters.AddWithValue("placa", data.placa);
+                    cmd.Parameters.AddWithValue("marca", data.marca);
+                    cmd.Parameters.AddWithValue("modelo", data.modelo);
+                    cmd.Parameters.AddWithValue("observacion", DataHelper.ToDBNullOrDefault(data.observacion));
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                    }
                 }
             }
             catch (Exception ex)
@@ -125,7 +139,7 @@ namespace DataAccess.Logistica
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }
@@ -133,17 +147,20 @@ namespace DataAccess.Logistica
         {
             try
             {
-                var cmd = new SqlCommand("ASPVehiculoDelete", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idVehiculo", idVehiculo);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
+                    var cmd = new SqlCommand("ASPVehiculoDelete", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idVehiculo", idVehiculo);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                    }
                 }
             }
             catch (Exception ex)
@@ -154,7 +171,7 @@ namespace DataAccess.Logistica
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }
@@ -164,24 +181,27 @@ namespace DataAccess.Logistica
             var search = new List<Vehiculo>();
             try
             {
-                var cmd = new SqlCommand("ASPVehiculoSearch", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("busqueda", busqueda);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    if (_gr.id == "1")
+                    var cmd = new SqlCommand("ASPVehiculoSearch", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("busqueda", busqueda);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        var item = new Vehiculo()
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        if (_gr.id == "1")
                         {
-                            idVehiculo = reader.GetInt32(2),
-                            placa = reader.GetString(3),
-                        };
-                        search.Add(item);
+                            var item = new Vehiculo()
+                            {
+                                idVehiculo = reader.GetInt32(2),
+                                placa = reader.GetString(3),
+                            };
+                            search.Add(item);
+                        }
                     }
                 }
                 _gr.data = search;
@@ -194,7 +214,7 @@ namespace DataAccess.Logistica
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }

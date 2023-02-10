@@ -1,38 +1,41 @@
-﻿using Domain.Models;
-using Domain.Models.GestionFinanciera;
+﻿using Domain.Models.GestionFinanciera;
 using Helpers;
+using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DataAccess.GestionFinanciera
 {
-    public class CuentaContableDao : ConnectionDb
+    public class CuentaContableDao
     {
         private GenericResponse _gr;
-        public CuentaContableDao()
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public CuentaContableDao(IConfiguration config)
         {
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
             _gr = new GenericResponse();
         }
-
         public async Task<GenericResponse> InsertAsync(int idRol, CuentaBancaria data)
         {
             try
             {
-                var cmd = new SqlCommand("ASPCuentaBancariaInsert", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
+                    var cmd = new SqlCommand("ASPCuentaBancariaInsert", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                    }
                 }
             }
             catch (Exception ex)
@@ -43,7 +46,7 @@ namespace DataAccess.GestionFinanciera
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }

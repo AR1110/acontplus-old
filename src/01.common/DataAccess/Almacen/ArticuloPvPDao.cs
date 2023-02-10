@@ -2,6 +2,7 @@
 using Domain.Models.Almacen;
 using Domain.ViewModels;
 using Helpers;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -10,12 +11,16 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Almacen
 {
-    public class ArticuloPvPDao : ConnectionDb
+    public class ArticuloPvPDao
     {
         protected GenericResponse _gr;
-        public ArticuloPvPDao()
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public ArticuloPvPDao(IConfiguration config)
         {
-            _gr= new GenericResponse();
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
+            _gr = new GenericResponse();
         }
 
         //Gestion de Informacion
@@ -26,36 +31,39 @@ namespace DataAccess.Almacen
             var listar = new List<ArticuloPvPViewModel>();
             try
             {
-                var cmd = new SqlCommand("ASPArticuloPvPGetId", con);
-
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idArticulo", idArticulo);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
-                    if (_gr.id == "1")
+                    var cmd = new SqlCommand("ASPArticuloPvPGetId", con);
+
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idArticulo", idArticulo);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
                     {
-                        var item = new ArticuloPvPViewModel
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                        if (_gr.id == "1")
                         {
-                            articuloPvP = new ArticuloPvP()
+                            var item = new ArticuloPvPViewModel
                             {
-                                idArticuloPvP = reader.GetInt32(3),
-                                idTarifa = reader.GetInt32(4),
-                                precioVenta = reader.GetDecimal(5),
-                                precioConIva = reader.GetDecimal(6),
-                                porcentajeUtilidad = reader.GetDecimal(7),
-                                precioPredeterminado = reader.GetBoolean(8),
-                            },
-                            tarifa = reader.GetString(9),
-                            porcentajeIva = reader.GetDecimal(10)
-                        };
-                        listar.Add(item);
+                                articuloPvP = new ArticuloPvP()
+                                {
+                                    idArticuloPvP = reader.GetInt32(3),
+                                    idTarifa = reader.GetInt32(4),
+                                    precioVenta = reader.GetDecimal(5),
+                                    precioConIva = reader.GetDecimal(6),
+                                    porcentajeUtilidad = reader.GetDecimal(7),
+                                    precioPredeterminado = reader.GetBoolean(8),
+                                },
+                                tarifa = reader.GetString(9),
+                                porcentajeIva = reader.GetDecimal(10)
+                            };
+                            listar.Add(item);
+                        }
                     }
                 }
                 _gr.data = listar;
@@ -74,34 +82,37 @@ namespace DataAccess.Almacen
             var listar = new List<ArticuloPvPViewModel>();
             try
             {
-                using (SqlCommand cmd = new SqlCommand("ASPTarifaOption", con))
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    cmd.Parameters.AddWithValue("idRol", idRol);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await con.OpenAsync();
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlCommand cmd = new SqlCommand("ASPTarifaOption", con))
                     {
-                        while (reader.Read())
+                        cmd.Parameters.AddWithValue("idRol", idRol);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        await con.OpenAsync();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            _gr.id = reader.GetString(0);
-                            _gr.typeNotify = reader.GetString(1);
-                            _gr.message = reader.GetString(2);
-                            _gr.titleSms = reader.GetString(3);
-                            if (_gr.id == "1")
+                            while (reader.Read())
                             {
-                                var item = new ArticuloPvPViewModel();
-                                item.articuloPvP = new ArticuloPvP()
+                                _gr.id = reader.GetString(0);
+                                _gr.typeNotify = reader.GetString(1);
+                                _gr.message = reader.GetString(2);
+                                _gr.titleSms = reader.GetString(3);
+                                if (_gr.id == "1")
                                 {
-                                    idTarifa = reader.GetInt32(4),
-                                };
-                                item.predeterminada = reader.GetBoolean(5);
-                                item.tarifa = reader.GetString(6);
+                                    var item = new ArticuloPvPViewModel();
+                                    item.articuloPvP = new ArticuloPvP()
+                                    {
+                                        idTarifa = reader.GetInt32(4),
+                                    };
+                                    item.predeterminada = reader.GetBoolean(5);
+                                    item.tarifa = reader.GetString(6);
 
-                                listar.Add(item);
+                                    listar.Add(item);
+                                }
                             }
                         }
+
                     }
-                    con.Close();
                 }
                 _gr.data = listar;
             }
@@ -121,34 +132,36 @@ namespace DataAccess.Almacen
             var listar = new List<ArticuloFraccionadoPvPViewModel>();
             try
             {
-                SqlCommand cmd = new SqlCommand("ASPArticuloTarifaList", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idArticulo", idArticulo);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    while (await reader.ReadAsync())
+                    SqlCommand cmd = new SqlCommand("ASPArticuloTarifaList", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idArticulo", idArticulo);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
                     {
-                        _gr.id = reader.GetString(0);
-                        _gr.typeNotify = reader.GetString(1);
-                        _gr.message = reader.GetString(2);
-                        _gr.titleSms = reader.GetString(3);
-                        if (_gr.id == "1")
+                        while (await reader.ReadAsync())
                         {
-                            var item = new ArticuloFraccionadoPvPViewModel();
-                            item.pvp = new ArticuloFraccionadoPvP()
+                            _gr.id = reader.GetString(0);
+                            _gr.typeNotify = reader.GetString(1);
+                            _gr.message = reader.GetString(2);
+                            _gr.titleSms = reader.GetString(3);
+                            if (_gr.id == "1")
                             {
-                                idTarifa = reader.GetInt32(4),
-                                precioVenta = reader.GetDecimal(5),
-                            };
-                            item.tarifa = reader.GetString(6);
-                            item.porcentajeIva = reader.GetDecimal(7);
-                            listar.Add(item);
+                                var item = new ArticuloFraccionadoPvPViewModel();
+                                item.pvp = new ArticuloFraccionadoPvP()
+                                {
+                                    idTarifa = reader.GetInt32(4),
+                                    precioVenta = reader.GetDecimal(5),
+                                };
+                                item.tarifa = reader.GetString(6);
+                                item.porcentajeIva = reader.GetDecimal(7);
+                                listar.Add(item);
+                            }
                         }
                     }
                 }
-                con.Close();
                 _gr.data = listar;
             }
             catch (Exception ex)
@@ -166,33 +179,36 @@ namespace DataAccess.Almacen
 
             try
             {
-                var cmd = new SqlCommand("ASPArticuloGetForPvP", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idArticulo", idArticulo);
-                cmd.Parameters.AddWithValue("tipoArticulo", tipoArticulo);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
-                    if (_gr.id == "1")
+                    var cmd = new SqlCommand("ASPArticuloGetForPvP", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idArticulo", idArticulo);
+                    cmd.Parameters.AddWithValue("tipoArticulo", tipoArticulo);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        var item = new ArticuloPvPViewModel
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                        if (_gr.id == "1")
                         {
-                            articuloPvP = new ArticuloPvP()
+                            var item = new ArticuloPvPViewModel
                             {
-                                idTarifa = reader.GetInt32(3),
-                                precioVenta = reader.GetDecimal(4),
-                                precioConIva = reader.GetDecimal(5),
-                                porcentajeUtilidad = reader.GetDecimal(6),
-                            },
-                            tarifa = reader.GetString(7),
-                            porcentajeIva = reader.GetDecimal(8)
-                        };
-                        pvps.Add(item);
+                                articuloPvP = new ArticuloPvP()
+                                {
+                                    idTarifa = reader.GetInt32(3),
+                                    precioVenta = reader.GetDecimal(4),
+                                    precioConIva = reader.GetDecimal(5),
+                                    porcentajeUtilidad = reader.GetDecimal(6),
+                                },
+                                tarifa = reader.GetString(7),
+                                porcentajeIva = reader.GetDecimal(8)
+                            };
+                            pvps.Add(item);
+                        }
                     }
                 }
                 _gr.data = pvps;
@@ -206,7 +222,7 @@ namespace DataAccess.Almacen
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
 

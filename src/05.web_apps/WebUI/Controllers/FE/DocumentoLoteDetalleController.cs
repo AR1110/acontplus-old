@@ -1,18 +1,17 @@
 ﻿using DataAccess.FE;
-using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers.FE
 {
     public class DocumentoLoteDetalleController : Controller
     {
+        private readonly IConfiguration _configuration;
+
         private DocumentoLoteDetalleDao _dld;
-        public DocumentoLoteDetalleController()
+        public DocumentoLoteDetalleController(IConfiguration configuration)
         {
-            _dld = new DocumentoLoteDetalleDao();
+            _configuration = configuration;
+            _dld = new DocumentoLoteDetalleDao(_configuration); 
         }
         public async Task<IActionResult> Get(int idDocumentoLote)
         {

@@ -6,7 +6,13 @@ namespace WebUI.Controllers.Estadisticas
 {
     public class EstadisticaCompraController : Controller
     {
-        private readonly EstadisticaCompraDao _ec = new();
+        private readonly IConfiguration _configuration;
+        private EstadisticaCompraDao _ec;
+        public EstadisticaCompraController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _ec = new EstadisticaCompraDao(_configuration);
+        }
         [Authorize]
         public IActionResult Index()
         {

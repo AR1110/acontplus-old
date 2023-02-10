@@ -11,13 +11,15 @@ using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Compras
 {
-    public class ProveedorDao : ConnectionDb
+    public class ProveedorDao
     {
         protected GenericResponse _response;
         private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
         public ProveedorDao(IConfiguration config)
         {
             _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
             _response = new GenericResponse();
         }
         //Gestion de informacion CRUD. 
@@ -26,69 +28,11 @@ namespace DataAccess.Compras
             var item = new ProveedorViewModel();
             try
             {
-                SqlCommand cmd = new SqlCommand("ASPProveedorGetId", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idProveedor", idProveedor);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                using (SqlDataReader reader = cmd.ExecuteReader())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    while (reader.Read())
-                    {
-                        _response.id = reader.GetString(0);
-                        _response.message = reader.GetString(1);
-                        _response.titleSms = reader.GetString(2);
-                        if (_response.id == "1")
-                        {
-
-                            item.proveedor = new Proveedor()
-                            {
-                                idProveedor = reader.GetInt32(3),
-                                idTipoClienteProveedor = reader.GetInt32(4),
-                                idTipoEntidad = reader.GetInt32(5),
-                                idSubContribuyente = reader.GetInt32(6),
-                                idTiempoCredito = reader.GetInt32(7),
-                                idTipoIdentificacion = reader.GetInt32(8),
-                                idCiudad = reader.GetInt32(9),
-                                numeroIdentificacion = reader.GetString(10),
-                                nombreFiscal = reader.GetString(11),
-                                nombreComercial = reader.GetString(12),
-                                direccion = reader.GetString(13),
-                                telefono = reader.GetString(14),
-                                correo = reader.GetString(15),
-                                estado = reader.GetBoolean(16),
-                            };
-                            item.tipoIdentificacion = reader.GetString(17);
-                            item.diasCredito = reader.GetInt32(18);
-                            item.codigoIndetificacion = reader.GetString(19);
-                        }
-                    }
-                }
-
-                _response.data = item;
-
-            }
-            catch (Exception ex)
-            {
-                _response.id = "0";
-                _response.message = ex.Message.ToString();
-                _response.titleSms = "Buscar Proveedor";
-            }
-            finally
-            {
-                con.Close();
-            }
-            return _response;
-        }
-        public async Task<GenericResponse> SearchProveedorAsync(int idRol, string busqueda)
-        {
-            var listar = new List<ProveedorViewModel>();
-            try
-            {
-                using (SqlCommand cmd = new SqlCommand("ASPProveedorSearch", con))
-                {
+                    SqlCommand cmd = new SqlCommand("ASPProveedorGetId", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
-                    cmd.Parameters.AddWithValue("busqueda", busqueda ?? "");
+                    cmd.Parameters.AddWithValue("idProveedor", idProveedor);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
                     using (SqlDataReader reader = cmd.ExecuteReader())
@@ -100,25 +44,87 @@ namespace DataAccess.Compras
                             _response.titleSms = reader.GetString(2);
                             if (_response.id == "1")
                             {
-                                var item = new ProveedorViewModel();
+
                                 item.proveedor = new Proveedor()
                                 {
                                     idProveedor = reader.GetInt32(3),
-                                    idTiempoCredito = reader.GetInt32(4),
-                                    numeroIdentificacion = reader.GetString(5),
-                                    nombreFiscal = reader.GetString(6),
-                                    nombreComercial = reader.GetString(7),
-                                    direccion = reader.GetString(8),
-                                    telefono = reader.GetString(9),
-                                    correo = reader.GetString(10),
+                                    idTipoClienteProveedor = reader.GetInt32(4),
+                                    idTipoEntidad = reader.GetInt32(5),
+                                    idSubContribuyente = reader.GetInt32(6),
+                                    idTiempoCredito = reader.GetInt32(7),
+                                    idTipoIdentificacion = reader.GetInt32(8),
+                                    idCiudad = reader.GetInt32(9),
+                                    numeroIdentificacion = reader.GetString(10),
+                                    nombreFiscal = reader.GetString(11),
+                                    nombreComercial = reader.GetString(12),
+                                    direccion = reader.GetString(13),
+                                    telefono = reader.GetString(14),
+                                    correo = reader.GetString(15),
+                                    estado = reader.GetBoolean(16),
                                 };
-                                item.diasCredito = reader.GetInt32(11);
-                                item.codigoIndetificacion = reader.GetString(12);
-                                listar.Add(item);
+                                item.tipoIdentificacion = reader.GetString(17);
+                                item.diasCredito = reader.GetInt32(18);
+                                item.codigoIndetificacion = reader.GetString(19);
                             }
                         }
                     }
+                }
+                _response.data = item;
 
+            }
+            catch (Exception ex)
+            {
+                _response.id = "0";
+                _response.message = ex.Message.ToString();
+                _response.titleSms = "Buscar Proveedor";
+            }
+            finally
+            {
+
+            }
+            return _response;
+        }
+        public async Task<GenericResponse> SearchProveedorAsync(int idRol, string busqueda)
+        {
+            var listar = new List<ProveedorViewModel>();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                {
+                    using (SqlCommand cmd = new SqlCommand("ASPProveedorSearch", con))
+                    {
+                        cmd.Parameters.AddWithValue("idRol", idRol);
+                        cmd.Parameters.AddWithValue("busqueda", busqueda ?? "");
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        await con.OpenAsync();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                _response.id = reader.GetString(0);
+                                _response.message = reader.GetString(1);
+                                _response.titleSms = reader.GetString(2);
+                                if (_response.id == "1")
+                                {
+                                    var item = new ProveedorViewModel();
+                                    item.proveedor = new Proveedor()
+                                    {
+                                        idProveedor = reader.GetInt32(3),
+                                        idTiempoCredito = reader.GetInt32(4),
+                                        numeroIdentificacion = reader.GetString(5),
+                                        nombreFiscal = reader.GetString(6),
+                                        nombreComercial = reader.GetString(7),
+                                        direccion = reader.GetString(8),
+                                        telefono = reader.GetString(9),
+                                        correo = reader.GetString(10),
+                                    };
+                                    item.diasCredito = reader.GetInt32(11);
+                                    item.codigoIndetificacion = reader.GetString(12);
+                                    listar.Add(item);
+                                }
+                            }
+                        }
+                    }
                     _response.data = listar;
                 }
 
@@ -131,7 +137,7 @@ namespace DataAccess.Compras
             }
             finally
             {
-                con.Close();
+
             }
             return _response;
         }
@@ -140,35 +146,37 @@ namespace DataAccess.Compras
             var item = new ProveedorViewModel();
             try
             {
-                SqlCommand cmd = new SqlCommand("ASPProveedorPost", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idTipoIdentificacion", data.idTipoIdentificacion);
-                cmd.Parameters.AddWithValue("numeroIdentificacion", data.numeroIdentificacion);
-                cmd.Parameters.AddWithValue("nombreFiscal", data.nombreFiscal);
-                cmd.Parameters.AddWithValue("nombreComercial", data.nombreComercial);
-                cmd.Parameters.AddWithValue("direccion", data.direccion ?? "");
-                cmd.Parameters.AddWithValue("telefono", data.telefono ?? "");
-                cmd.Parameters.AddWithValue("correo", data.correo ?? "");
-                cmd.Parameters.AddWithValue("idTipoClienteProveedor", data.idTipoClienteProveedor);
-                cmd.Parameters.AddWithValue("idTipoEntidad", data.idTipoEntidad);
-                cmd.Parameters.AddWithValue("idCiudad", data.idCiudad);
-                cmd.Parameters.AddWithValue("idSubContribuyente", data.idSubContribuyente);
-                cmd.Parameters.AddWithValue("idTiempoCredito", data.idTiempoCredito);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = await cmd.ExecuteReaderAsync();
-                while (await reader.ReadAsync())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _response.id = reader.GetString(0);
-                    _response.message = reader.GetString(1);
-                    _response.titleSms = reader.GetString(2);
-
-                    if (_response.id == "1")
+                    SqlCommand cmd = new SqlCommand("ASPProveedorPost", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idTipoIdentificacion", data.idTipoIdentificacion);
+                    cmd.Parameters.AddWithValue("numeroIdentificacion", data.numeroIdentificacion);
+                    cmd.Parameters.AddWithValue("nombreFiscal", data.nombreFiscal);
+                    cmd.Parameters.AddWithValue("nombreComercial", data.nombreComercial);
+                    cmd.Parameters.AddWithValue("direccion", data.direccion ?? "");
+                    cmd.Parameters.AddWithValue("telefono", data.telefono ?? "");
+                    cmd.Parameters.AddWithValue("correo", data.correo ?? "");
+                    cmd.Parameters.AddWithValue("idTipoClienteProveedor", data.idTipoClienteProveedor);
+                    cmd.Parameters.AddWithValue("idTipoEntidad", data.idTipoEntidad);
+                    cmd.Parameters.AddWithValue("idCiudad", data.idCiudad);
+                    cmd.Parameters.AddWithValue("idSubContribuyente", data.idSubContribuyente);
+                    cmd.Parameters.AddWithValue("idTiempoCredito", data.idTiempoCredito);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = await cmd.ExecuteReaderAsync();
+                    while (await reader.ReadAsync())
                     {
-                        _response.data = reader.GetInt32(3);
+                        _response.id = reader.GetString(0);
+                        _response.message = reader.GetString(1);
+                        _response.titleSms = reader.GetString(2);
+
+                        if (_response.id == "1")
+                        {
+                            _response.data = reader.GetInt32(3);
+                        }
                     }
                 }
-
             }
             catch (Exception ex)
             {
@@ -178,7 +186,7 @@ namespace DataAccess.Compras
             }
             finally
             {
-                con.Close();
+
             }
             return _response;
         }
@@ -186,32 +194,33 @@ namespace DataAccess.Compras
         {
             try
             {
-                SqlCommand cmd = new SqlCommand("ASPProveedorUpdate", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idProveedor", idProveedor);
-                cmd.Parameters.AddWithValue("nombreFiscal", data.nombreFiscal);
-                cmd.Parameters.AddWithValue("nombreComercial", data.nombreComercial);
-                cmd.Parameters.AddWithValue("direccion", data.direccion ?? "");
-                cmd.Parameters.AddWithValue("telefono", data.telefono ?? "");
-                cmd.Parameters.AddWithValue("correo", data.correo ?? "");
-                cmd.Parameters.AddWithValue("idTipoClienteProveedor", data.idTipoClienteProveedor);
-                cmd.Parameters.AddWithValue("idTipoEntidad", data.idTipoEntidad);
-                cmd.Parameters.AddWithValue("idCiudad", data.idCiudad);
-                cmd.Parameters.AddWithValue("idSubContribuyente", data.idSubContribuyente);
-                cmd.Parameters.AddWithValue("idTiempoCredito", data.idTiempoCredito);
-                cmd.Parameters.AddWithValue("estado", data.estado);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = await cmd.ExecuteReaderAsync();
-                while (await reader.ReadAsync())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _response.id = reader.GetString(0);
-                    _response.typeNotify = reader.GetString(1);
-                    _response.message = reader.GetString(2);
-                    _response.titleSms = reader.GetString(3);
+                    SqlCommand cmd = new SqlCommand("ASPProveedorUpdate", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idProveedor", idProveedor);
+                    cmd.Parameters.AddWithValue("nombreFiscal", data.nombreFiscal);
+                    cmd.Parameters.AddWithValue("nombreComercial", data.nombreComercial);
+                    cmd.Parameters.AddWithValue("direccion", data.direccion ?? "");
+                    cmd.Parameters.AddWithValue("telefono", data.telefono ?? "");
+                    cmd.Parameters.AddWithValue("correo", data.correo ?? "");
+                    cmd.Parameters.AddWithValue("idTipoClienteProveedor", data.idTipoClienteProveedor);
+                    cmd.Parameters.AddWithValue("idTipoEntidad", data.idTipoEntidad);
+                    cmd.Parameters.AddWithValue("idCiudad", data.idCiudad);
+                    cmd.Parameters.AddWithValue("idSubContribuyente", data.idSubContribuyente);
+                    cmd.Parameters.AddWithValue("idTiempoCredito", data.idTiempoCredito);
+                    cmd.Parameters.AddWithValue("estado", data.estado);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = await cmd.ExecuteReaderAsync();
+                    while (await reader.ReadAsync())
+                    {
+                        _response.id = reader.GetString(0);
+                        _response.typeNotify = reader.GetString(1);
+                        _response.message = reader.GetString(2);
+                        _response.titleSms = reader.GetString(3);
+                    }
                 }
-
-
             }
             catch (Exception ex)
             {
@@ -222,7 +231,7 @@ namespace DataAccess.Compras
             }
             finally
             {
-                con.Close();
+
             }
             return _response;
         }
@@ -230,21 +239,23 @@ namespace DataAccess.Compras
         {
             try
             {
-                SqlCommand cmd = new SqlCommand("ASPProveedorDelete", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idProveedor", idProveedor);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = await cmd.ExecuteReaderAsync();
-                while (await reader.ReadAsync())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _response.id = reader.GetString(0);
-                    _response.typeNotify = reader.GetString(1);
-                    _response.message = reader.GetString(2);
-                    _response.titleSms = reader.GetString(3);
+                    SqlCommand cmd = new SqlCommand("ASPProveedorDelete", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idProveedor", idProveedor);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = await cmd.ExecuteReaderAsync();
+                    while (await reader.ReadAsync())
+                    {
+                        _response.id = reader.GetString(0);
+                        _response.typeNotify = reader.GetString(1);
+                        _response.message = reader.GetString(2);
+                        _response.titleSms = reader.GetString(3);
+                    }
+
                 }
-
-
             }
             catch (Exception ex)
             {
@@ -255,7 +266,7 @@ namespace DataAccess.Compras
             }
             finally
             {
-                con.Close();
+
             }
             return _response;
         }

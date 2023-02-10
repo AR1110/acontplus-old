@@ -3,6 +3,7 @@ using Domain.Models.Ventas;
 using Domain.ViewModels;
 using Domain.ViewModels.Ventas;
 using Helpers;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -11,12 +12,16 @@ using System.Threading.Tasks;
 
 namespace DataAccess.RetencionIvaRenta
 {
-    public class GenerateRetencionDao : ConnectionDb
+    public class GenerateRetencionDao
     {
         private GenericResponse _gr;
 
-        public GenerateRetencionDao()
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public GenerateRetencionDao(IConfiguration config)
         {
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
             _gr = new GenericResponse();
         }
 
@@ -25,41 +30,44 @@ namespace DataAccess.RetencionIvaRenta
             var listar = new List<RetencionCompraDetalleViewModel>();
             try
             {
-                var cmd = new SqlCommand("aspRetencionCompraGenerate", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idFacturaCompra", idFacturaCompra);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
-                    if (_gr.id == "1")
+                    var cmd = new SqlCommand("aspRetencionCompraGenerate", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idFacturaCompra", idFacturaCompra);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        var item = new RetencionCompraDetalleViewModel
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                        if (_gr.id == "1")
                         {
-                            retencionCompraDetalle = new RetencionCompraDetalle
+                            var item = new RetencionCompraDetalleViewModel
                             {
-                                idImpuesto = reader.GetInt32(3),
-                                idRetencion = reader.GetInt32(4),
-                                baseImponible = reader.GetDecimal(5),
-                                porcentajeRetencion = reader.GetDecimal(6),
-                                valorRetenido = reader.GetDecimal(7),
-                            },
-                            codigoRetencion = reader.GetInt32(8),
-                            tipoRetencion = reader.GetString(9),
-                            impuesto = reader.GetString(10),
-                            codigoImpuesto = reader.GetString(11)
-                        };
-                        listar.Add(item);
+                                retencionCompraDetalle = new RetencionCompraDetalle
+                                {
+                                    idImpuesto = reader.GetInt32(3),
+                                    idRetencion = reader.GetInt32(4),
+                                    baseImponible = reader.GetDecimal(5),
+                                    porcentajeRetencion = reader.GetDecimal(6),
+                                    valorRetenido = reader.GetDecimal(7),
+                                },
+                                codigoRetencion = reader.GetInt32(8),
+                                tipoRetencion = reader.GetString(9),
+                                impuesto = reader.GetString(10),
+                                codigoImpuesto = reader.GetString(11)
+                            };
+                            listar.Add(item);
 
-                    }
-                    if (_gr.id == "2")
-                    {
-                        _gr.gestion = reader.GetInt32(3);
-                        _gr.lastId = reader.GetInt32(4);
+                        }
+                        if (_gr.id == "2")
+                        {
+                            _gr.gestion = reader.GetInt32(3);
+                            _gr.lastId = reader.GetInt32(4);
+                        }
                     }
                 }
                 _gr.data = listar;
@@ -72,7 +80,7 @@ namespace DataAccess.RetencionIvaRenta
             }
             finally
             {
-                con.Close();
+                
             }
 
             return _gr;
@@ -82,42 +90,45 @@ namespace DataAccess.RetencionIvaRenta
             var listar = new List<RetencionVentaDetalleViewModel>();
             try
             {
-                var cmd = new SqlCommand("aspRetencionVentaGenerate", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idTipoDocumento", idTipoDocumento);
-                cmd.Parameters.AddWithValue("idComprobante", idComprobante);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
-                    if (_gr.id == "1")
+                    var cmd = new SqlCommand("aspRetencionVentaGenerate", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idTipoDocumento", idTipoDocumento);
+                    cmd.Parameters.AddWithValue("idComprobante", idComprobante);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        var item = new RetencionVentaDetalleViewModel
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                        if (_gr.id == "1")
                         {
-                            detalle = new RetencionVentaDetalle
+                            var item = new RetencionVentaDetalleViewModel
                             {
-                                idImpuesto = reader.GetInt32(3),
-                                idRetencion = reader.GetInt32(4),
-                                baseImponible = reader.GetDecimal(5),
-                                porcentajeRetencion = reader.GetDecimal(6),
-                                valorRetenido = reader.GetDecimal(7),
-                            },
-                            codigoSri = reader.GetInt32(8),
-                            tipoImpuesto = reader.GetString(9),
-                            impuesto = reader.GetString(10),
-                            codigoImpuesto = reader.GetString(11)
-                        };
-                        listar.Add(item);
+                                detalle = new RetencionVentaDetalle
+                                {
+                                    idImpuesto = reader.GetInt32(3),
+                                    idRetencion = reader.GetInt32(4),
+                                    baseImponible = reader.GetDecimal(5),
+                                    porcentajeRetencion = reader.GetDecimal(6),
+                                    valorRetenido = reader.GetDecimal(7),
+                                },
+                                codigoSri = reader.GetInt32(8),
+                                tipoImpuesto = reader.GetString(9),
+                                impuesto = reader.GetString(10),
+                                codigoImpuesto = reader.GetString(11)
+                            };
+                            listar.Add(item);
 
-                    }
-                    if (_gr.id == "2")
-                    {
-                        _gr.gestion = reader.GetInt32(3);
-                        _gr.lastId = reader.GetInt32(4);
+                        }
+                        if (_gr.id == "2")
+                        {
+                            _gr.gestion = reader.GetInt32(3);
+                            _gr.lastId = reader.GetInt32(4);
+                        }
                     }
                 }
                 _gr.data = listar;
@@ -130,7 +141,7 @@ namespace DataAccess.RetencionIvaRenta
             }
             finally
             {
-                con.Close();
+                
             }
 
             return _gr;
@@ -140,33 +151,36 @@ namespace DataAccess.RetencionIvaRenta
             var listar = new List<RetencionCompraDetalleViewModel>();
             try
             {
-                var cmd = new SqlCommand("ASPTipoImpuestoGet", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("busqueda", busqueda);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
-                    if (_gr.id == "1")
+                    var cmd = new SqlCommand("ASPTipoImpuestoGet", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("busqueda", busqueda);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        var item = new RetencionCompraDetalleViewModel
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                        if (_gr.id == "1")
                         {
-                            retencionCompraDetalle = new RetencionCompraDetalle
+                            var item = new RetencionCompraDetalleViewModel
                             {
-                                idImpuesto = reader.GetInt32(3),
-                                idRetencion = reader.GetInt32(4),
-                                porcentajeRetencion = reader.GetDecimal(5),
-                            },
-                            impuesto = reader.GetString(6),
-                            tipoRetencion = reader.GetString(7),
-                            icono = reader.GetString(8),
-                            codigoImpuesto = reader.GetString(9),
-                        };
-                        listar.Add(item);
+                                retencionCompraDetalle = new RetencionCompraDetalle
+                                {
+                                    idImpuesto = reader.GetInt32(3),
+                                    idRetencion = reader.GetInt32(4),
+                                    porcentajeRetencion = reader.GetDecimal(5),
+                                },
+                                impuesto = reader.GetString(6),
+                                tipoRetencion = reader.GetString(7),
+                                icono = reader.GetString(8),
+                                codigoImpuesto = reader.GetString(9),
+                            };
+                            listar.Add(item);
+                        }
                     }
                 }
                 _gr.data = listar;
@@ -179,7 +193,7 @@ namespace DataAccess.RetencionIvaRenta
             }
             finally
             {
-                con.Close();
+                
             }
 
             return _gr;

@@ -10,15 +10,20 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Tesoreria
 {
-    public class ComprobanteIngresoDao : ConnectionDb
+    public class ComprobanteIngresoDao
     {
         private GenericResponse _gr;
 
-        public ComprobanteIngresoDao()
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public ComprobanteIngresoDao(IConfiguration config)
         {
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
             _gr = new GenericResponse();
         }
 
@@ -27,38 +32,41 @@ namespace DataAccess.Tesoreria
             var comprobantes = new List<ComprobanteIngresoViewModel>();
             try
             {
-                var cmd = new SqlCommand("GestFinanc.ComprobanteIngreso_Get_ByDocument", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idTipoDocumento", idTipoDocumento);
-                cmd.Parameters.AddWithValue("idComprobante", idComprobante);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
-                    if (_gr.id == "1")
+                    var cmd = new SqlCommand("GestFinanc.ComprobanteIngreso_Get_ByDocument", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idTipoDocumento", idTipoDocumento);
+                    cmd.Parameters.AddWithValue("idComprobante", idComprobante);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        var item = new ComprobanteIngresoViewModel()
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                        if (_gr.id == "1")
                         {
-                            comprobanteIngreso = new ComprobanteIngreso()
+                            var item = new ComprobanteIngresoViewModel()
                             {
-                                idComprobanteIngreso = reader.GetInt64(3),
-                                total = reader.GetDecimal(4),
-                                fechaRegistro = reader.GetString(5),
-                                abono = reader.GetDecimal(6),
-                                cambio = reader.GetDecimal(7),
-                            },
-                            nroDocumento = reader.GetString(8),
-                            cliente = reader.GetString(9),
-                            nroIdentificacion = reader.GetString(10),
-                            caja = reader.GetString(11),
-                            color = reader.GetString(12),
-                            estado = reader.GetString(13),
-                        };
-                        comprobantes.Add(item);
+                                comprobanteIngreso = new ComprobanteIngreso()
+                                {
+                                    idComprobanteIngreso = reader.GetInt64(3),
+                                    total = reader.GetDecimal(4),
+                                    fechaRegistro = reader.GetString(5),
+                                    abono = reader.GetDecimal(6),
+                                    cambio = reader.GetDecimal(7),
+                                },
+                                nroDocumento = reader.GetString(8),
+                                cliente = reader.GetString(9),
+                                nroIdentificacion = reader.GetString(10),
+                                caja = reader.GetString(11),
+                                color = reader.GetString(12),
+                                estado = reader.GetString(13),
+                            };
+                            comprobantes.Add(item);
+                        }
                     }
                 }
                 _gr.data = comprobantes;
@@ -72,7 +80,7 @@ namespace DataAccess.Tesoreria
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }
@@ -80,23 +88,26 @@ namespace DataAccess.Tesoreria
         {
             try
             {
-                var cmd = new SqlCommand("GestFinanc.ComprobanteIngreso_Insert_Fast", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idTipoDocumento", idTipoDocumento);
-                cmd.Parameters.AddWithValue("idComprobante", idComprobante);
-                cmd.Parameters.AddWithValue("idCliente", data.comprobanteIngreso.idCliente);
-                cmd.Parameters.AddWithValue("codEstab", data.comprobanteIngreso.codEstab);
-                cmd.Parameters.AddWithValue("total", data.comprobanteIngreso.total);
-                cmd.Parameters.AddWithValue("abono", data.comprobanteIngreso.abono);
-                var cobros = JsonConvert.SerializeObject(data.cobros); cmd.Parameters.Add(new SqlParameter("jsonCobro", cobros));
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
+                    var cmd = new SqlCommand("GestFinanc.ComprobanteIngreso_Insert_Fast", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idTipoDocumento", idTipoDocumento);
+                    cmd.Parameters.AddWithValue("idComprobante", idComprobante);
+                    cmd.Parameters.AddWithValue("idCliente", data.comprobanteIngreso.idCliente);
+                    cmd.Parameters.AddWithValue("codEstab", data.comprobanteIngreso.codEstab);
+                    cmd.Parameters.AddWithValue("total", data.comprobanteIngreso.total);
+                    cmd.Parameters.AddWithValue("abono", data.comprobanteIngreso.abono);
+                    var cobros = JsonConvert.SerializeObject(data.cobros); cmd.Parameters.Add(new SqlParameter("jsonCobro", cobros));
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                    }
                 }
             }
             catch (Exception ex)
@@ -107,7 +118,7 @@ namespace DataAccess.Tesoreria
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }

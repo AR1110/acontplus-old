@@ -23,8 +23,8 @@ namespace WebUI.Controllers.Ingresos
     public class RetencionCompraController : Controller
     {
         GenericResponse _gr = new();
-        RetencionCompraDao _rc = new();
-        GenerateRetencionDao _gra = new();        
+        private RetencionCompraDao _rc;
+        private GenerateRetencionDao _gra;
         private DataAccessObject _dao;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private IConfiguration _config;
@@ -32,11 +32,13 @@ namespace WebUI.Controllers.Ingresos
         private readonly int _idRol;
 
         public RetencionCompraController(IConfiguration config, IHttpContextAccessor httpContextAccessor)
-        {            
-            _config = config; 
+        {
+            _config = config;
             _urlApi = _config.GetSection("UrlApis").GetSection("AcontPlusApi").Value;
             _httpContextAccessor = httpContextAccessor;
             _dao = new DataAccessObject(_config);
+            _gra = new GenerateRetencionDao(_config);
+            _rc = new RetencionCompraDao(_config);
             _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
         }
 
@@ -53,7 +55,7 @@ namespace WebUI.Controllers.Ingresos
         public async Task<IActionResult> Insert([FromBody] RetencionCompraViewModel data)
         {
             int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
-            _gr = await _rc.InsertAsync(idRol, data);           
+            _gr = await _rc.InsertAsync(idRol, data);
             return Ok(_gr);
         }
 
@@ -61,7 +63,7 @@ namespace WebUI.Controllers.Ingresos
         public async Task<IActionResult> Get(string json)
         {
             int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
-            var res = await _rc.GetAsync(idRol,json);
+            var res = await _rc.GetAsync(idRol, json);
             return Ok(res);
         }
 
@@ -90,11 +92,11 @@ namespace WebUI.Controllers.Ingresos
         {
             int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
             //RetencionCompraViewModel data = JsonConvert.DeserializeObject<RetencionCompraViewModel>(jsonData);
-            _gr = await _rc.UpdateAsync(idRol, id, data);           
+            _gr = await _rc.UpdateAsync(idRol, id, data);
             return Ok(_gr);
         }
 
-     
+
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {

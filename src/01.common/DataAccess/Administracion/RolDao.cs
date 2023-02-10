@@ -10,7 +10,7 @@
 
 //namespace DataAccess.Administracion
 //{
-//    public class RolDao : ConnectionDb
+//    public class RolDao
 //    {
 //        private GenericResponse _gr;
 //        public RolDao()
@@ -46,7 +46,7 @@
 //            }
 //            finally
 //            {
-//                con.Close();
+//                
 //            }
 //            return _gr;
 //        }
@@ -93,7 +93,7 @@
 //            }
 //            finally
 //            {
-//                con.Close();
+//                
 //            }
 //            return _gr;
 //        }

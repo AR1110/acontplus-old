@@ -4,7 +4,19 @@
 </div>
 <div class="modal-body">   
     <div class="row justify-content-between">
-        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-12">
+
+        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-xs-12">
+            <div class="form-group">
+                <label for="">Estab.:</label>                
+                <select name="" id="" class="form-control" ng-model="$ctrl.data.codEstab">
+                    <option ng-value="item.codEstab" ng-repeat="item in $ctrl.establecimientos">
+                        {{item.nombreComercial}}
+                    </option>
+                </select>
+            </div>            
+        </div>
+        
+        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-xs-12">
             <div class="form-group">                
                 <label for="" class="control-label">Caja: <span class="text-danger">*</span></label>
                 <select class="form-control border-select" ng-model="$ctrl.data.idCaja">
@@ -12,17 +24,18 @@
                 </select>
             </div>
         </div>
-        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-12">
+
+        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-xs-12">
             <div class="form-group">                
                 <label for="" class="control-label">Tipo Documento:<span class="text-danger">*</span></label>
                 <div class="icheck-info" ng-repeat="item in $ctrl.tipoDocumentos">
                     <input type="radio" ng-model="$ctrl.data.idTipoDocumento" ng-value="item.idTipoDocumento" id="tipo{{item.idTipoDocumento}}" name="tipo">
                     <label for="tipo{{item.idTipoDocumento}}">{{item.descripcion}}</label>
                 </div>
-
             </div>
         </div>
     </div>
+
     <div class="row">       
         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
             <div class="form-group">

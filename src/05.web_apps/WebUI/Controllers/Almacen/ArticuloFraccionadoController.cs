@@ -4,10 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using DataAccess.Almacen;
 using Domain.ViewModels;
 using DataAccess;
-using Helpers;
 using Newtonsoft.Json;
-using System.Data.SqlClient;
-using Microsoft.AspNetCore.Http;
 
 namespace WebUI.Controllers
 {
@@ -17,13 +14,13 @@ namespace WebUI.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor; ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
         private readonly int _idRol;
-        GenericResponse _gr = new();
-        readonly ArticuloFraccionadoDao _af = new();
+        readonly ArticuloFraccionadoDao _af;
 
         public ArticuloFraccionadoController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
+            _af = new ArticuloFraccionadoDao(_configuration);
             _httpContextAccessor = httpContextAccessor;
             _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
         }

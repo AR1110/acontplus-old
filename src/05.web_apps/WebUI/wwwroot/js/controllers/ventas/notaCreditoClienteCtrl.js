@@ -334,5 +334,26 @@ function notaCreditoClienteCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModal
     }
 
 
+    $scope.getReport = (item)=>{
+        try {
+                           
+            let format = 'pdf';
+            let dataParms = {
+                id: item.idNotaCredito,            
+                codEstab: item.codEstab,
+                codigo: 'RNCC', 
+                format,            
+            }
+               
+            const parameters = {               
+                dataParams: JSON.stringify(dataParms)
+            }       
+            
+            _commonSvc.getReportDynamic({parameters, format})
+        } catch (error) {
+            console.log(error)
+        }        
+    }
+
 
 }

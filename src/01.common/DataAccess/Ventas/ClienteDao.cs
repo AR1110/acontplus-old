@@ -8,14 +8,19 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess
 {
-    public class ClienteDao : ConnectionDb
+    public class ClienteDao
     {
         protected GenericResponse _response;
-        public ClienteDao()
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public ClienteDao(IConfiguration config)
         {
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
             _response = new GenericResponse();
         }
 
@@ -24,38 +29,41 @@ namespace DataAccess
             var cl = new ClienteViewModel();
             try
             {
-                var cmd = new SqlCommand("ASPClienteDetalleGet", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idCliente", idCliente);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _response.id = reader.GetString(0);
-                    _response.message = reader.GetString(1);
-                    _response.titleSms = reader.GetString(2);
+                    var cmd = new SqlCommand("ASPClienteDetalleGet", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idCliente", idCliente);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
 
-                    if (_response.id == "1")
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        cl.cliente = new Cliente()
-                        {
-                            numeroIdentificacion = reader.GetString(3),
-                            nombreComercial = reader.GetString(4),
-                            nombreFiscal = reader.GetString(5),
-                            direccion = reader.GetString(6),
-                            telefono = reader.GetString(7),
-                            correo = reader.GetString(8),
-                        };
-                        cl.tipoIdentificacion = reader.GetString(9);
-                        cl.tipoClienteProveedor = reader.GetString(10);
-                        cl.tipoEntidad = reader.GetString(11);
-                        cl.subContribuyente = reader.GetString(12);
-                        cl.tiempoCredito = reader.GetString(13);
-                        cl.ciudad = reader.GetString(14);
-                        cl.provincia = reader.GetString(15);
+                        _response.id = reader.GetString(0);
+                        _response.message = reader.GetString(1);
+                        _response.titleSms = reader.GetString(2);
 
+                        if (_response.id == "1")
+                        {
+                            cl.cliente = new Cliente()
+                            {
+                                numeroIdentificacion = reader.GetString(3),
+                                nombreComercial = reader.GetString(4),
+                                nombreFiscal = reader.GetString(5),
+                                direccion = reader.GetString(6),
+                                telefono = reader.GetString(7),
+                                correo = reader.GetString(8),
+                            };
+                            cl.tipoIdentificacion = reader.GetString(9);
+                            cl.tipoClienteProveedor = reader.GetString(10);
+                            cl.tipoEntidad = reader.GetString(11);
+                            cl.subContribuyente = reader.GetString(12);
+                            cl.tiempoCredito = reader.GetString(13);
+                            cl.ciudad = reader.GetString(14);
+                            cl.provincia = reader.GetString(15);
+
+                        }
                     }
                 }
                 _response.data = cl;
@@ -68,7 +76,7 @@ namespace DataAccess
             }
             finally
             {
-                con.Close();
+                
             }
             return _response;
         }

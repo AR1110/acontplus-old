@@ -10,35 +10,42 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Compras
 {
-    public class LiquidacionCompraDao : ConnectionDb
+    public class LiquidacionCompraDao
     {
 
         private GenericResponse _response;
 
-        public LiquidacionCompraDao()
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public LiquidacionCompraDao(IConfiguration config)
         {
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
             _response = new GenericResponse();
-
         }
         public async Task<GenericResponse> GetAsync(int idRol, string json)
         {
             DataTable dt = new DataTable();
             try
             {
-                var cmd = new SqlCommand("Compra.Liquidacion_Get", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("json", json);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
-                dataAdapter.Fill(dt);
-                if (dt.Rows.Count > 0)
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _response.id = "1";
-                    _response.data = DataHelper.DataTableToJSON(dt);
+                    var cmd = new SqlCommand("Compra.Liquidacion_Get", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("json", json);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
+                    dataAdapter.Fill(dt);
+                    if (dt.Rows.Count > 0)
+                    {
+                        _response.id = "1";
+                        _response.data = DataHelper.DataTableToJSON(dt);
+                    }
                 }
             }
             catch (Exception ex)
@@ -49,7 +56,7 @@ namespace DataAccess.Compras
             }
             finally
             {
-                con.Close();
+
             }
             return _response;
         }
@@ -62,97 +69,99 @@ namespace DataAccess.Compras
 
             try
             {
-                var cmd = new SqlCommand("Compra.Liquidacion_Get_Id", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idLiquidacionCompra", idLiquidacionCompra);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _response.id = reader.GetString(0);
-                    _response.message = reader.GetString(1);
-                    _response.titleSms = reader.GetString(2);
-                    if (_response.id == "1")
+                    var cmd = new SqlCommand("Compra.Liquidacion_Get_Id", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idLiquidacionCompra", idLiquidacionCompra);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        liquidacion.liquidacion = new LiquidacionCompra()
+                        _response.id = reader.GetString(0);
+                        _response.message = reader.GetString(1);
+                        _response.titleSms = reader.GetString(2);
+                        if (_response.id == "1")
                         {
-                            idLiquidacionCompra = reader.GetInt64(3),
-                            idProveedor = reader.GetInt32(4),
-                            idPuntoEmision = reader.GetInt32(5),
-                            idTiempoCredito = reader.GetInt32(6),
-                            fechaEmision = reader.GetDateTime(7).ToString("yyyy-MM-dd"),
-                            fechaVencimiento = reader.GetDateTime(8).ToString("yyyy-MM-dd"),
-                            subTotalSinImpuestos = reader.GetDecimal(9),
-                            subTotalIva = reader.GetDecimal(10),
-                            subTotalNetoIva = reader.GetDecimal(11),
-                            subTotalIvaCero = reader.GetDecimal(12),
-                            subTotalNetoIvaCero = reader.GetDecimal(13),
-                            subTotalNoObjetoIva = reader.GetDecimal(14),
-                            subTotalNetoNoObjetoIva = reader.GetDecimal(15),
-                            subTotalExentoIva = reader.GetDecimal(16),
-                            subTotalNetoExentoIva = reader.GetDecimal(17),
-                            totalDescuento = reader.GetDecimal(18),
-                            porcentajeDescuento = reader.GetDecimal(19),
-                            totalIce = reader.GetDecimal(20),
-                            irbpnr = reader.GetDecimal(21),
-                            propina = reader.GetDecimal(22),
-                            iva = reader.GetDecimal(23),
-                            recargo = reader.GetDecimal(24),
-                            transporte = reader.GetDecimal(25),
-                            total = reader.GetDecimal(26),
-                            observacion = reader.GetString(27),
-                        };
-                        liquidacion.nombreFiscal = reader.GetString(28);
-                        liquidacion.nroIdentificacion = reader.GetString(29);
-                        liquidacion.correo = reader.GetString(30);
-                        liquidacion.direccion = reader.GetString(31);
-
-                        reader.NextResult();
-                        while (reader.Read())
-                        {
-                            var item = new LiquidacionCompraDetalleViewModel
+                            liquidacion.liquidacion = new LiquidacionCompra()
                             {
-                                detalle = new LiquidacionCompraDetalle()
+                                idLiquidacionCompra = reader.GetInt64(3),
+                                idProveedor = reader.GetInt32(4),
+                                idPuntoEmision = reader.GetInt32(5),
+                                idTiempoCredito = reader.GetInt32(6),
+                                fechaEmision = reader.GetDateTime(7).ToString("yyyy-MM-dd"),
+                                fechaVencimiento = reader.GetDateTime(8).ToString("yyyy-MM-dd"),
+                                subTotalSinImpuestos = reader.GetDecimal(9),
+                                subTotalIva = reader.GetDecimal(10),
+                                subTotalNetoIva = reader.GetDecimal(11),
+                                subTotalIvaCero = reader.GetDecimal(12),
+                                subTotalNetoIvaCero = reader.GetDecimal(13),
+                                subTotalNoObjetoIva = reader.GetDecimal(14),
+                                subTotalNetoNoObjetoIva = reader.GetDecimal(15),
+                                subTotalExentoIva = reader.GetDecimal(16),
+                                subTotalNetoExentoIva = reader.GetDecimal(17),
+                                totalDescuento = reader.GetDecimal(18),
+                                porcentajeDescuento = reader.GetDecimal(19),
+                                totalIce = reader.GetDecimal(20),
+                                irbpnr = reader.GetDecimal(21),
+                                propina = reader.GetDecimal(22),
+                                iva = reader.GetDecimal(23),
+                                recargo = reader.GetDecimal(24),
+                                transporte = reader.GetDecimal(25),
+                                total = reader.GetDecimal(26),
+                                observacion = reader.GetString(27),
+                            };
+                            liquidacion.nombreFiscal = reader.GetString(28);
+                            liquidacion.nroIdentificacion = reader.GetString(29);
+                            liquidacion.correo = reader.GetString(30);
+                            liquidacion.direccion = reader.GetString(31);
+
+                            reader.NextResult();
+                            while (reader.Read())
+                            {
+                                var item = new LiquidacionCompraDetalleViewModel
                                 {
-                                    idLiquidacionCompraDetalle = reader.GetInt64(0),
-                                    idBodega = reader.GetInt32(1),
-                                    idArticulo = reader.GetInt32(2),
-                                    idMedida = reader.GetInt32(3),
-                                    descripcion = reader.GetString(4),
-                                    cantidad = reader.GetDecimal(5),
-                                    precioCosto = reader.GetDecimal(6),
-                                    precioCostoNeto = reader.GetDecimal(7),
-                                    porcentajeDescuento = reader.GetDecimal(8),
-                                    valorDescuento = reader.GetDecimal(9),
-                                    nota = reader.GetString(10),
-                                    idTipoIva = reader.GetInt32(17)
-                                },
-                                codigo = reader.GetString(11),
-                                llevaInventario = reader.GetBoolean(12),
-                                nombreMedida = reader.GetString(13),
-                                nombreTipoIva = reader.GetString(14),
-                                codigoTipoIva = reader.GetString(15),
-                                ice = reader.GetDecimal(16)
-                            };
-                            detalle.Add(item);
-                        }
+                                    detalle = new LiquidacionCompraDetalle()
+                                    {
+                                        idLiquidacionCompraDetalle = reader.GetInt64(0),
+                                        idBodega = reader.GetInt32(1),
+                                        idArticulo = reader.GetInt32(2),
+                                        idMedida = reader.GetInt32(3),
+                                        descripcion = reader.GetString(4),
+                                        cantidad = reader.GetDecimal(5),
+                                        precioCosto = reader.GetDecimal(6),
+                                        precioCostoNeto = reader.GetDecimal(7),
+                                        porcentajeDescuento = reader.GetDecimal(8),
+                                        valorDescuento = reader.GetDecimal(9),
+                                        nota = reader.GetString(10),
+                                        idTipoIva = reader.GetInt32(17)
+                                    },
+                                    codigo = reader.GetString(11),
+                                    llevaInventario = reader.GetBoolean(12),
+                                    nombreMedida = reader.GetString(13),
+                                    nombreTipoIva = reader.GetString(14),
+                                    codigoTipoIva = reader.GetString(15),
+                                    ice = reader.GetDecimal(16)
+                                };
+                                detalle.Add(item);
+                            }
 
-                        reader.NextResult();
-                        while (reader.Read())
-                        {
-                            var itemAdicional = new InfoAdicionalDoc()
+                            reader.NextResult();
+                            while (reader.Read())
                             {
-                                idInfoAdicionalDoc = reader.GetInt64(0),
-                                nombre = reader.GetString(1),
-                                valor = reader.GetString(2),
-                            };
-                            infoAdicional.Add(itemAdicional);
-                        }
+                                var itemAdicional = new InfoAdicionalDoc()
+                                {
+                                    idInfoAdicionalDoc = reader.GetInt64(0),
+                                    nombre = reader.GetString(1),
+                                    valor = reader.GetString(2),
+                                };
+                                infoAdicional.Add(itemAdicional);
+                            }
 
+                        }
                     }
                 }
-
                 data.liquidacion = liquidacion;
                 data.detalle = detalle;
                 data.infoAdicional = infoAdicional;
@@ -166,7 +175,7 @@ namespace DataAccess.Compras
             }
             finally
             {
-                con.Close();
+
             }
             return _response;
         }
@@ -174,22 +183,25 @@ namespace DataAccess.Compras
         {
             try
             {
-                var cmd = new SqlCommand("Compra.Liquidacion_Insert", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                var liquidacion = JsonConvert.SerializeObject(data.liquidacion); cmd.Parameters.Add(new SqlParameter("jsonLiquidacion", liquidacion));
-                var detalle = JsonConvert.SerializeObject(data.detalle); cmd.Parameters.Add(new SqlParameter("jsonDetalle", detalle));
-                var infoAdicional = JsonConvert.SerializeObject(data.adicional); cmd.Parameters.Add(new SqlParameter("jsonInfoAdicional", infoAdicional));
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _response.id = reader.GetString(0);
-                    _response.message = reader.GetString(1);
-                    _response.titleSms = reader.GetString(2);
-                    if (_response.id == "1")
+                    var cmd = new SqlCommand("Compra.Liquidacion_Insert", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    var liquidacion = JsonConvert.SerializeObject(data.liquidacion); cmd.Parameters.Add(new SqlParameter("jsonLiquidacion", liquidacion));
+                    var detalle = JsonConvert.SerializeObject(data.detalle); cmd.Parameters.Add(new SqlParameter("jsonDetalle", detalle));
+                    var infoAdicional = JsonConvert.SerializeObject(data.adicional); cmd.Parameters.Add(new SqlParameter("jsonInfoAdicional", infoAdicional));
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        _response.lastId = reader.GetInt64(3);
+                        _response.id = reader.GetString(0);
+                        _response.message = reader.GetString(1);
+                        _response.titleSms = reader.GetString(2);
+                        if (_response.id == "1")
+                        {
+                            _response.lastId = reader.GetInt64(3);
+                        }
                     }
                 }
             }
@@ -201,7 +213,7 @@ namespace DataAccess.Compras
             }
             finally
             {
-                con.Close();
+
             }
 
             return _response;
@@ -210,23 +222,26 @@ namespace DataAccess.Compras
         {
             try
             {
-                var cmd = new SqlCommand("Compra.Liquidacion_Update", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idLiquidacionCompra", idLiquidacionCompra);
-                var liquidacion = JsonConvert.SerializeObject(data.liquidacion); cmd.Parameters.Add(new SqlParameter("jsonLiquidacion", liquidacion));
-                var detalle = JsonConvert.SerializeObject(data.detalle); cmd.Parameters.Add(new SqlParameter("jsonDetalle", detalle));
-                var infoAdicional = JsonConvert.SerializeObject(data.adicional); cmd.Parameters.Add(new SqlParameter("jsonInfoAdicional", infoAdicional));
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _response.id = reader.GetString(0);
-                    _response.message = reader.GetString(1);
-                    _response.titleSms = reader.GetString(2);
-                    if (_response.id == "1")
+                    var cmd = new SqlCommand("Compra.Liquidacion_Update", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idLiquidacionCompra", idLiquidacionCompra);
+                    var liquidacion = JsonConvert.SerializeObject(data.liquidacion); cmd.Parameters.Add(new SqlParameter("jsonLiquidacion", liquidacion));
+                    var detalle = JsonConvert.SerializeObject(data.detalle); cmd.Parameters.Add(new SqlParameter("jsonDetalle", detalle));
+                    var infoAdicional = JsonConvert.SerializeObject(data.adicional); cmd.Parameters.Add(new SqlParameter("jsonInfoAdicional", infoAdicional));
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        _response.lastId = reader.GetInt64(3);
+                        _response.id = reader.GetString(0);
+                        _response.message = reader.GetString(1);
+                        _response.titleSms = reader.GetString(2);
+                        if (_response.id == "1")
+                        {
+                            _response.lastId = reader.GetInt64(3);
+                        }
                     }
                 }
             }
@@ -238,7 +253,7 @@ namespace DataAccess.Compras
             }
             finally
             {
-                con.Close();
+
             }
             return _response;
         }
@@ -246,18 +261,21 @@ namespace DataAccess.Compras
         {
             try
             {
-                var cmd = new SqlCommand("Compra.Liquidacion_Delete", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idLiquidacionCompra", idLiquidacionCompra);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _response.id = reader.GetString(0);
-                    _response.message = reader.GetString(1);
-                    _response.titleSms = reader.GetString(2);
+                    var cmd = new SqlCommand("Compra.Liquidacion_Delete", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idLiquidacionCompra", idLiquidacionCompra);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        _response.id = reader.GetString(0);
+                        _response.message = reader.GetString(1);
+                        _response.titleSms = reader.GetString(2);
 
+                    }
                 }
             }
             catch (Exception ex)
@@ -268,7 +286,7 @@ namespace DataAccess.Compras
             }
             finally
             {
-                con.Close();
+
             }
             return _response;
         }
@@ -279,28 +297,31 @@ namespace DataAccess.Compras
             var invoiceName = "";
             try
             {
-                var cmd = new SqlCommand("Compra.Liquidacion_Send_Email", con);
-                cmd.Parameters.AddWithValue("json", json);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _response.id = reader.GetString(0);
-                    _response.message = reader.GetString(1);
-                    if (_response.id == "1")
+                    var cmd = new SqlCommand("Compra.Liquidacion_Send_Email", con);
+                    cmd.Parameters.AddWithValue("json", json);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        send = new Email()
+                        _response.id = reader.GetString(0);
+                        _response.message = reader.GetString(1);
+                        if (_response.id == "1")
                         {
-                            from = reader.GetString(2),
-                            password = reader.GetString(3),
-                            to = reader.GetString(4),
-                            subject = reader.GetString(5),
-                            message = reader.GetString(6),
-                            cc = reader.GetString(7),
-                        };
-                        urlSri = reader.GetString(8);
-                        invoiceName = reader.GetString(9);
+                            send = new Email()
+                            {
+                                from = reader.GetString(2),
+                                password = reader.GetString(3),
+                                to = reader.GetString(4),
+                                subject = reader.GetString(5),
+                                message = reader.GetString(6),
+                                cc = reader.GetString(7),
+                            };
+                            urlSri = reader.GetString(8);
+                            invoiceName = reader.GetString(9);
+                        }
                     }
                 }
             }
@@ -311,7 +332,7 @@ namespace DataAccess.Compras
             }
             finally
             {
-                con.Close();
+
             }
             return new object[] { send, urlSri, invoiceName };
         }

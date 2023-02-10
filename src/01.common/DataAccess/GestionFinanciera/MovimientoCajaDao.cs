@@ -9,34 +9,42 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.GestionFinanciera
 {
-    public class MovimientoCajaDao : ConnectionDb
+    public class MovimientoCajaDao
     {
         private GenericResponse _gr;
 
-        public MovimientoCajaDao()
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public MovimientoCajaDao(IConfiguration config)
         {
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
             _gr = new GenericResponse();
         }
 
         public async Task<GenericResponse> GetAsync(int idRol, string json)
         {
-            DataTable dt = new DataTable ();
+            DataTable dt = new DataTable();
             try
             {
-                var cmd = new SqlCommand("aspMovimientoCajaGet", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("json", json);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataAdapter dataAdapter = new SqlDataAdapter (cmd);
-                dataAdapter.Fill(dt);
-                if (dt.Rows.Count > 0)
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = "1";
-                    _gr.data = DataHelper.DataTableToJSON(dt);
+                    var cmd = new SqlCommand("aspMovimientoCajaGet", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("json", json);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
+                    dataAdapter.Fill(dt);
+                    if (dt.Rows.Count > 0)
+                    {
+                        _gr.id = "1";
+                        _gr.data = DataHelper.DataTableToJSON(dt);
+                    }
                 }
             }
             catch (Exception ex)
@@ -47,7 +55,7 @@ namespace DataAccess.GestionFinanciera
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }
@@ -55,26 +63,28 @@ namespace DataAccess.GestionFinanciera
         {
             try
             {
-                var cmd = new SqlCommand("ASPMovimientoCajaInsert", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("codEstab", data.codEstab);
-                cmd.Parameters.AddWithValue("idTipoDocumento", data.idTipoDocumento);
-                cmd.Parameters.AddWithValue("idEmpleado", data.idEmpleado);
-                cmd.Parameters.AddWithValue("idSubEntidadFinanciera", data.idSubEntidadFinanciera);
-                cmd.Parameters.AddWithValue("idCaja", data.idCaja);
-                cmd.Parameters.AddWithValue("valor", data.valor);
-                cmd.Parameters.AddWithValue("observaciones", DataHelper.ToDBNullOrDefault(data.observaciones));
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
+                    var cmd = new SqlCommand("ASPMovimientoCajaInsert", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("codEstab", data.codEstab);
+                    cmd.Parameters.AddWithValue("idTipoDocumento", data.idTipoDocumento);
+                    cmd.Parameters.AddWithValue("idEmpleado", data.idEmpleado);
+                    cmd.Parameters.AddWithValue("idSubEntidadFinanciera", data.idSubEntidadFinanciera);
+                    cmd.Parameters.AddWithValue("idCaja", data.idCaja);
+                    cmd.Parameters.AddWithValue("valor", data.valor);
+                    cmd.Parameters.AddWithValue("observaciones", DataHelper.ToDBNullOrDefault(data.observaciones));
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
 
+                    }
                 }
-
             }
             catch (Exception ex)
             {
@@ -84,10 +94,10 @@ namespace DataAccess.GestionFinanciera
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }
-        
+
     }
 }

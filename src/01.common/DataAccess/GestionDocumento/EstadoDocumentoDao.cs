@@ -1,5 +1,6 @@
 ﻿using Domain.Models;
 using Helpers;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -7,8 +8,15 @@ using System.Threading.Tasks;
 
 namespace DataAccess
 {
-    public class EstadoDocumentoDao : ConnectionDb
+    public class EstadoDocumentoDao
     {
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public EstadoDocumentoDao(IConfiguration config)
+        {
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
+        }
         public GenericResponse _response = new GenericResponse();
         public async Task<GenericResponse> GetAsync(string json)
         {
@@ -16,23 +24,25 @@ namespace DataAccess
 
             try
             {
-                SqlCommand cmd = new SqlCommand("Gestion.EstadoDocumento_Get", con);
-                cmd.Parameters.AddWithValue("json", json);
-                await con.OpenAsync();
-                cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    var item = new EstadoPago
+                    SqlCommand cmd = new SqlCommand("Gestion.EstadoDocumento_Get", con);
+                    cmd.Parameters.AddWithValue("json", json);
+                    await con.OpenAsync();
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        idEstadoPago = reader.GetInt32(0),
-                        codigo = reader.GetString(1),
-                        descripcion = reader.GetString(2),
-                        estado = reader.GetBoolean(3)
-                    };
-                    data.Add(item);
+                        var item = new EstadoPago
+                        {
+                            idEstadoPago = reader.GetInt32(0),
+                            codigo = reader.GetString(1),
+                            descripcion = reader.GetString(2),
+                            estado = reader.GetBoolean(3)
+                        };
+                        data.Add(item);
+                    }
                 }
-
                 _response.data = data;
             }
             catch (Exception ex)
@@ -41,7 +51,7 @@ namespace DataAccess
             }
             finally
             {
-                con.Close();
+                
             }
 
             return _response;
@@ -75,7 +85,7 @@ namespace DataAccess
         //    }
         //    finally
         //    {
-        //        con.Close();
+        //        
         //    }
 
         //    return _response;
@@ -107,7 +117,7 @@ namespace DataAccess
         //    }
         //    finally
         //    {
-        //        con.Close();
+        //        
         //    }
 
         //    return _response;
@@ -141,7 +151,7 @@ namespace DataAccess
         //    }
         //    finally
         //    {
-        //        con.Close();
+        //        
         //    }
 
         //    return _response;
@@ -174,7 +184,7 @@ namespace DataAccess
         //    }
         //    finally
         //    {
-        //        con.Close();
+        //        
         //    }
 
         //    return _response;

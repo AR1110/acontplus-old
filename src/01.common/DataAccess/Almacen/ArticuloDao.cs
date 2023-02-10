@@ -12,12 +12,21 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Almacen
 {
-    public class ArticuloDao : ConnectionDb
+    public class ArticuloDao
     {
         private GenericResponse _response = new GenericResponse();
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public ArticuloDao(IConfiguration config)
+        {
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
+            _response = new GenericResponse();
+        }
         public async Task<GenericResponse> SearchFilterAsync(int idRol, string busqueda, bool condicion)
         {
             var filter = new List<ArticuloViewModel>();
@@ -25,65 +34,68 @@ namespace DataAccess.Almacen
             var search = new ArticuloSearchViewModel();
             try
             {
-                SqlCommand cmd = new SqlCommand("ASPArticuloSearchFilter", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("busqueda", busqueda ?? "");
-                cmd.Parameters.AddWithValue("condicion", condicion);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                using (SqlDataReader reader = cmd.ExecuteReader())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    while (reader.Read())
+                    SqlCommand cmd = new SqlCommand("ASPArticuloSearchFilter", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("busqueda", busqueda ?? "");
+                    cmd.Parameters.AddWithValue("condicion", condicion);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        _response.id = reader.GetString(0);
-
-                        switch (_response.id)
+                        while (reader.Read())
                         {
-                            case "1":
+                            _response.id = reader.GetString(0);
 
-                                var item = new ArticuloViewModel
-                                {
-                                    articulo = new Articulo()
+                            switch (_response.id)
+                            {
+                                case "1":
+
+                                    var item = new ArticuloViewModel
                                     {
-                                        idArticulo = reader.GetInt32(1),
-                                        descripcion = reader.GetString(2),
-                                        codigo = reader.GetString(3),
-                                    },
-                                    stockBodega = reader.GetDecimal(4),
-                                    bodega = reader.GetString(5),
-                                    ubicacion = reader.GetString(6),
-                                    stockTotal = reader.GetDecimal(7),
-                                    presentacion = reader.GetString(8),
-                                    idPresentacion = reader.GetInt32(9),
-                                    table = reader.GetString(10),
-                                    precios = reader.GetString(11),
-                                };
-                                filter.Add(item);
-                                break;
+                                        articulo = new Articulo()
+                                        {
+                                            idArticulo = reader.GetInt32(1),
+                                            descripcion = reader.GetString(2),
+                                            codigo = reader.GetString(3),
+                                        },
+                                        stockBodega = reader.GetDecimal(4),
+                                        bodega = reader.GetString(5),
+                                        ubicacion = reader.GetString(6),
+                                        stockTotal = reader.GetDecimal(7),
+                                        presentacion = reader.GetString(8),
+                                        idPresentacion = reader.GetInt32(9),
+                                        table = reader.GetString(10),
+                                        precios = reader.GetString(11),
+                                    };
+                                    filter.Add(item);
+                                    break;
 
 
-                            case "2":
+                                case "2":
 
-                                codigo = new ArticuloViewModel()
-                                {
-                                    articulo = new Articulo()
+                                    codigo = new ArticuloViewModel()
                                     {
-                                        idArticulo = reader.GetInt32(1),
-                                        descripcion = reader.GetString(2),
-                                        codigo = reader.GetString(3),
-                                    },
-                                    idPresentacion = reader.GetInt32(4),
-                                    presentacion = reader.GetString(5),
-                                };
-                                break;
+                                        articulo = new Articulo()
+                                        {
+                                            idArticulo = reader.GetInt32(1),
+                                            descripcion = reader.GetString(2),
+                                            codigo = reader.GetString(3),
+                                        },
+                                        idPresentacion = reader.GetInt32(4),
+                                        presentacion = reader.GetString(5),
+                                    };
+                                    break;
 
+                            }
                         }
                     }
-                }
 
-                search.filter = filter;
-                search.codigo = codigo;
-                _response.data = search;
+                    search.filter = filter;
+                    search.codigo = codigo;
+                    _response.data = search;
+                }
             }
             catch (Exception ex)
             {
@@ -93,7 +105,7 @@ namespace DataAccess.Almacen
             }
             finally
             {
-                con.Close();
+                
             }
             return _response;
 
@@ -103,40 +115,43 @@ namespace DataAccess.Almacen
             var filter = new List<ArticuloViewModel>();
             try
             {
-                SqlCommand cmd = new SqlCommand("ASPArticuloSearchFraccFilter", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("busqueda", busqueda ?? "");
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                using (SqlDataReader reader = cmd.ExecuteReader())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    while (reader.Read())
+                    SqlCommand cmd = new SqlCommand("ASPArticuloSearchFraccFilter", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("busqueda", busqueda ?? "");
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        _response.id = reader.GetString(0);
-                        if (_response.id == "1")
+                        while (reader.Read())
                         {
-
-                            var item = new ArticuloViewModel
+                            _response.id = reader.GetString(0);
+                            if (_response.id == "1")
                             {
-                                articulo = new Articulo()
-                                {
-                                    idArticulo = reader.GetInt32(1),
-                                    descripcion = reader.GetString(2),
-                                    codigo = reader.GetString(3),
-                                    precioCosto = reader.GetDecimal(9),
-                                },
-                                stockBodega = reader.GetDecimal(4),
-                                bodega = reader.GetString(5),
-                                ubicacion = reader.GetString(6),
-                                stockTotal = reader.GetDecimal(7),
-                                nombreMedida = reader.GetString(8),
-                            };
-                            filter.Add(item);
 
+                                var item = new ArticuloViewModel
+                                {
+                                    articulo = new Articulo()
+                                    {
+                                        idArticulo = reader.GetInt32(1),
+                                        descripcion = reader.GetString(2),
+                                        codigo = reader.GetString(3),
+                                        precioCosto = reader.GetDecimal(9),
+                                    },
+                                    stockBodega = reader.GetDecimal(4),
+                                    bodega = reader.GetString(5),
+                                    ubicacion = reader.GetString(6),
+                                    stockTotal = reader.GetDecimal(7),
+                                    nombreMedida = reader.GetString(8),
+                                };
+                                filter.Add(item);
+
+                            }
                         }
                     }
+                    _response.data = filter;
                 }
-                _response.data = filter;
             }
             catch (Exception ex)
             {
@@ -145,7 +160,7 @@ namespace DataAccess.Almacen
             }
             finally
             {
-                con.Close();
+                
             }
             return _response;
 
@@ -155,37 +170,40 @@ namespace DataAccess.Almacen
             var listar = new List<ArticuloDto>();
             try
             {
-                using (SqlCommand cmd = new SqlCommand("ASPArticuloHistoryEntrada", con))
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    cmd.Parameters.AddWithValue("idRol", idRol);
-                    cmd.Parameters.AddWithValue("idArticulo", idArticulo);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await con.OpenAsync();
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlCommand cmd = new SqlCommand("ASPArticuloHistoryEntrada", con))
                     {
-                        while (reader.Read())
+                        cmd.Parameters.AddWithValue("idRol", idRol);
+                        cmd.Parameters.AddWithValue("idArticulo", idArticulo);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        await con.OpenAsync();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            _response.id = reader.GetString(0);
-                            _response.typeNotify = reader.GetString(1);
-                            _response.message = reader.GetString(2);
-                            _response.titleSms = reader.GetString(3);
-                            if (_response.id == "1")
+                            while (reader.Read())
                             {
-                                var item = new ArticuloDto();
-                                item.proveedor = reader.GetString(4);
-                                item.precioCosto = reader.GetDecimal(5);
-                                item.numeroFactura = reader.GetString(6);
-                                item.fechaEmision = reader.GetDateTime(7).ToString("yy-MM-dd");
-                                item.cantidad = reader.GetDecimal(8);
-                                item.total = reader.GetDecimal(9);
-                                item.tipoDocumento = reader.GetString(10);
-                                listar.Add(item);
+                                _response.id = reader.GetString(0);
+                                _response.typeNotify = reader.GetString(1);
+                                _response.message = reader.GetString(2);
+                                _response.titleSms = reader.GetString(3);
+                                if (_response.id == "1")
+                                {
+                                    var item = new ArticuloDto();
+                                    item.proveedor = reader.GetString(4);
+                                    item.precioCosto = reader.GetDecimal(5);
+                                    item.numeroFactura = reader.GetString(6);
+                                    item.fechaEmision = reader.GetDateTime(7).ToString("yy-MM-dd");
+                                    item.cantidad = reader.GetDecimal(8);
+                                    item.total = reader.GetDecimal(9);
+                                    item.tipoDocumento = reader.GetString(10);
+                                    listar.Add(item);
+                                }
                             }
                         }
+
                     }
-                    con.Close();
+                    _response.data = listar;
                 }
-                _response.data = listar;
             }
             catch (Exception ex)
             {

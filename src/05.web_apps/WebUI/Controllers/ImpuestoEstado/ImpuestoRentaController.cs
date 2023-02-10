@@ -1,12 +1,9 @@
 ﻿using DataAccess;
 using Domain.Models;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using DataAccess.GestionTributaria;
 using Domain.Models.GestionTributaria;
-using System;
-using System.Linq;
 using Helpers;
 
 namespace WebUI.Controllers.ImpuestoEstado
@@ -20,13 +17,13 @@ namespace WebUI.Controllers.ImpuestoEstado
         private DataAccessObject _dao;
         private readonly int _idRol;
         GenericResponse _gr = new();
-        readonly RetencionRentaDao _i = new();
+        private RetencionRentaDao _i;
 
         public ImpuestoRentaController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
-            
             _dao = new DataAccessObject(_configuration);
+            _i = new RetencionRentaDao(_configuration);
             _httpContextAccessor = httpContextAccessor;
             _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
 

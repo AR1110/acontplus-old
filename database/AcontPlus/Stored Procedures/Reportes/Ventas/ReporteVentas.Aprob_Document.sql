@@ -1,5 +1,6 @@
 
-USE AcontPlus;
+USE AcontPlus
+GO
 
 IF OBJECT_ID('ReporteVentas.Aprob_Document')IS NOT NULL
 BEGIN 
@@ -65,9 +66,9 @@ BEGIN
 	
 	SELECT 	
 
-		@uniqueId       = ad.uniqueId,
+		@uniqueId        = ad.uniqueId,
 		@idEntidad       = ad.idEntidad,
-		@codEstab        = es.codEstab,
+		@codEstab        = pe.codEstab,
 		@telefono        = e.telefono,
 		@razonSocial     = e.razonSocial,
 		@cc              = e.email,
@@ -78,10 +79,10 @@ BEGIN
 		@subject         = 'Comprobante Electrónico - Acontplus N°: '+ ad.estab+'-'+ad.ptoEmi+'-'+dbo.AFTAutoComplete(ad.secuencial),		
 		@importeTotal    = CAST(ad.importeTotal AS DECIMAL(15,2))				
 	FROM Ventas.Aprob_Document ad
-	INNER JOIN Entidad e ON e.idEntidad = ad.idEntidad
-	INNER JOIN dbo.EstadoPago ep ON ep.codigo = ad.codEstado
-	INNER JOIN dbo.Cliente cl ON cl.idCliente = ad.idCliente
-	INNER JOIN Sri.Establecimiento es ON es.estab = ad.estab
+	INNER JOIN Entidad           e ON e.idEntidad = ad.idEntidad
+	INNER JOIN dbo.EstadoPago   ep ON ep.codigo = ad.codEstado
+	INNER JOIN dbo.Cliente      cl ON cl.idCliente = ad.idCliente
+	INNER JOIN dbo.PuntoEmision pe ON pe.idPuntoEmision = ad.idPuntoEmision
 	WHERE idAprob_Document = @id
 
 	SELECT @imagen = imagen, @mimeType = mimeType FROM Config.Estab_Logo WHERE codEstab = @codEstab

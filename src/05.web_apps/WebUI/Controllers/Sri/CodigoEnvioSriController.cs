@@ -6,7 +6,14 @@ namespace WebUI.Controllers.Sri
 {
     public class CodigoEnvioSriController : Controller
     {
-        readonly CodigoEnvioSriDao _ces = new();
+        private readonly IConfiguration _configuration;
+
+        private CodigoEnvioSriDao _ces;
+        public CodigoEnvioSriController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _ces = new CodigoEnvioSriDao(_configuration);
+        }
         [Authorize]
         public IActionResult Index()
         {

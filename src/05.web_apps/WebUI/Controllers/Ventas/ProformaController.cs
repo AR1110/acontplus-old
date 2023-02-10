@@ -19,13 +19,14 @@ namespace WebUI.Controllers.Ventas
         private DataAccessObject _dao;
         private readonly int _idRol;
         GenericResponse _gr = new();
-        ProformaDao _prof = new();
+        private ProformaDao _prof;
 
         public ProformaController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
             _urlApi = configuration.GetSection("UrlApis").GetSection("AcontPlusApi").Value;
             _dao = new DataAccessObject(_configuration);
+            _prof = new ProformaDao(_configuration);
             _httpContextAccessor = httpContextAccessor;
             _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
 

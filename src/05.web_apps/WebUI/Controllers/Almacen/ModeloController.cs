@@ -16,13 +16,14 @@ namespace WebUI.Controllers
         private DataAccessObject _dao;
         private readonly int _idRol;
         GenericResponse _gr = new();
-        readonly ModeloDao _m = new();
+        private ModeloDao _m;
 
 
         public ModeloController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
+            _m = new ModeloDao(_configuration);
             _httpContextAccessor = httpContextAccessor;
             _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
         }

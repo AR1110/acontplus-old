@@ -1,14 +1,19 @@
 ﻿using DataAccess.Tesoreria;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers.GestionFinanciera
 {
     public class CobroDetalleController : Controller
     {
-        CobroDetalleDao _cd = new();
+        private readonly IConfiguration _configuration;
+
+        private CobroDetalleDao _cd;
+        public CobroDetalleController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _cd = new CobroDetalleDao(_configuration);
+        }
+
         public IActionResult Index()
         {
             return View();

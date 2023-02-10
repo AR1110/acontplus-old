@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using DataAccess;
+﻿using DataAccess;
 using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,8 +7,16 @@ namespace WebUI.Controllers
 {
     public class BancoController : Controller
     {
+        private readonly IConfiguration _configuration;
+        private BancoDao _b;
+        public BancoController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _b = new BancoDao(_configuration);
+        }
+
+
         // GET: Banco        
-        BancoDao _b = new();
         [Authorize]
         public IActionResult Index()
         {

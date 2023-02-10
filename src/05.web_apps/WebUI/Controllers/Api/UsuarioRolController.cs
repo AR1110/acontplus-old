@@ -10,11 +10,14 @@ namespace WebUI.Controllers.Api
     [ApiController]
     public class UsuarioRolController : ControllerBase
     {
+        private readonly IConfiguration _configuration;
         private readonly ILogger<UsuarioRolController> _logger;
-        readonly UsuarioRolDao _urd = new();
-        public UsuarioRolController(ILogger<UsuarioRolController> logger)
+        private UsuarioRolDao _urd;
+        public UsuarioRolController(ILogger<UsuarioRolController> logger, IConfiguration configuration)
         {
             _logger = logger;
+            _configuration = configuration;
+            _urd = new UsuarioRolDao(_configuration);
         }
 
         [HttpGet]

@@ -2,6 +2,7 @@
 using Domain.Models.GestionTributaria;
 using Domain.ViewModels.GestionTributaria;
 using Helpers;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -11,36 +12,42 @@ using System.Threading.Tasks;
 
 namespace DataAccess.GestionTributaria
 {
-    public class ConfiguracionContribuyenteDao : ConnectionDb
+    public class ConfiguracionContribuyenteDao
     {
         protected GenericResponse _gr;
-        public ConfiguracionContribuyenteDao()
+        private readonly IConfiguration _config;
+        private readonly string _connectionStrings = string.Empty;
+        public ConfiguracionContribuyenteDao(IConfiguration config)
         {
-            _gr= new GenericResponse();
+            _config = config;
+            _connectionStrings = Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus"));
+            _gr = new GenericResponse();
         }
 
         public async Task<GenericResponse> InsertAsync(int idRol, ConfigContribuyenteViewModel data)
         {
             try
             {
-                var cmd = new SqlCommand("ASPConfigContribuyenteInsert", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idSubContribuyenteEmpresa", data.config.idSubContribuyenteEmpresa);
-                cmd.Parameters.AddWithValue("idSubContribuyenteProveedor", data.config.idSubContribuyenteProveedor);
-                cmd.Parameters.AddWithValue("renta", data.config.renta);
-                cmd.Parameters.AddWithValue("iva", data.config.iva);
-                var p = JsonConvert.SerializeObject(data.detalle);
-                cmd.Parameters.Add(new SqlParameter("json", p));
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = await cmd.ExecuteReaderAsync();
-                while (await reader.ReadAsync())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
+                    var cmd = new SqlCommand("ASPConfigContribuyenteInsert", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idSubContribuyenteEmpresa", data.config.idSubContribuyenteEmpresa);
+                    cmd.Parameters.AddWithValue("idSubContribuyenteProveedor", data.config.idSubContribuyenteProveedor);
+                    cmd.Parameters.AddWithValue("renta", data.config.renta);
+                    cmd.Parameters.AddWithValue("iva", data.config.iva);
+                    var p = JsonConvert.SerializeObject(data.detalle);
+                    cmd.Parameters.Add(new SqlParameter("json", p));
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = await cmd.ExecuteReaderAsync();
+                    while (await reader.ReadAsync())
+                    {
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                    }
                 }
-
             }
             catch (Exception ex)
             {
@@ -50,7 +57,7 @@ namespace DataAccess.GestionTributaria
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }
@@ -59,33 +66,36 @@ namespace DataAccess.GestionTributaria
             var listar = new List<ConfigContribuyenteViewModel>();
             try
             {
-                var cmd = new SqlCommand("ASPConfigContribuyenteGet", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
-                    if (_gr.id == "1")
+                    var cmd = new SqlCommand("ASPConfigContribuyenteGet", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        var cc = new ConfigContribuyenteViewModel
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                        if (_gr.id == "1")
                         {
-                            config = new ConfiguracionContribuyente()
+                            var cc = new ConfigContribuyenteViewModel
                             {
-                                idConfiguracionContribuyente = reader.GetInt32(3),
-                                renta = reader.GetBoolean(4),
-                                iva = reader.GetBoolean(5)
-                            },
-                            subContribuyenteEmpresa = reader.GetString(6),
-                            subContribuyenteProveedor = reader.GetString(7),
-                            tipoContribuyenteEmpresa = reader.GetString(8),
-                            tipoContribuyenteProveedor = reader.GetString(9),
-                        };
-                        listar.Add(cc);
+                                config = new ConfiguracionContribuyente()
+                                {
+                                    idConfiguracionContribuyente = reader.GetInt32(3),
+                                    renta = reader.GetBoolean(4),
+                                    iva = reader.GetBoolean(5)
+                                },
+                                subContribuyenteEmpresa = reader.GetString(6),
+                                subContribuyenteProveedor = reader.GetString(7),
+                                tipoContribuyenteEmpresa = reader.GetString(8),
+                                tipoContribuyenteProveedor = reader.GetString(9),
+                            };
+                            listar.Add(cc);
 
+                        }
                     }
                 }
                 _gr.data = listar;
@@ -98,7 +108,7 @@ namespace DataAccess.GestionTributaria
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }
@@ -109,41 +119,44 @@ namespace DataAccess.GestionTributaria
             var data = new ConfigContribuyenteData();
             try
             {
-                var cmd = new SqlCommand("ASPConfigContribuyenteGetId", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idConfiguracionContribuyente", idConfiguracionContribuyente);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
-                    if (_gr.id == "1")
+                    var cmd = new SqlCommand("ASPConfigContribuyenteGetId", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idConfiguracionContribuyente", idConfiguracionContribuyente);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        config.config = new ConfiguracionContribuyente()
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
+                        if (_gr.id == "1")
                         {
-                            idConfiguracionContribuyente = reader.GetInt32(3),
-                            idSubContribuyenteEmpresa = reader.GetInt32(4),
-                            idSubContribuyenteProveedor = reader.GetInt32(5),
-                            renta = reader.GetBoolean(6),
-                            iva = reader.GetBoolean(7),
-                        };
-
-                        reader.NextResult();
-                        while (reader.Read())
-                        {
-                            var item = new ConfigContribuyenteDetalleViewModel()
+                            config.config = new ConfiguracionContribuyente()
                             {
-                                detalle = new ConfiguracionContribuyenteDetalle()
-                                {
-                                    idConfiguracionContribuyenteDetalle = reader.GetInt32(0),
-                                    idTipoImpuestoRenta = reader.GetInt32(1),
-                                    idRetencionIva = reader.GetInt32(2),
-                                }
+                                idConfiguracionContribuyente = reader.GetInt32(3),
+                                idSubContribuyenteEmpresa = reader.GetInt32(4),
+                                idSubContribuyenteProveedor = reader.GetInt32(5),
+                                renta = reader.GetBoolean(6),
+                                iva = reader.GetBoolean(7),
                             };
-                            detalle.Add(item);
+
+                            reader.NextResult();
+                            while (reader.Read())
+                            {
+                                var item = new ConfigContribuyenteDetalleViewModel()
+                                {
+                                    detalle = new ConfiguracionContribuyenteDetalle()
+                                    {
+                                        idConfiguracionContribuyenteDetalle = reader.GetInt32(0),
+                                        idTipoImpuestoRenta = reader.GetInt32(1),
+                                        idRetencionIva = reader.GetInt32(2),
+                                    }
+                                };
+                                detalle.Add(item);
+                            }
                         }
                     }
                 }
@@ -159,7 +172,7 @@ namespace DataAccess.GestionTributaria
             }
             finally
             {
-                con.Close();
+
             }
 
             return _gr;
@@ -168,48 +181,19 @@ namespace DataAccess.GestionTributaria
         {
             try
             {
-                var cmd = new SqlCommand("ASPConfigContribuyenteUpdate", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idConfiguracionContribuyente", idConfiguracionContribuyente);
-                cmd.Parameters.AddWithValue("renta", data.config.renta);
-                cmd.Parameters.AddWithValue("iva", data.config.iva);
-                var p = JsonConvert.SerializeObject(data.detalle);
-                cmd.Parameters.Add(new SqlParameter("json", p));
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = await cmd.ExecuteReaderAsync();
-
-                while (await reader.ReadAsync())
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
-                }
+                    var cmd = new SqlCommand("ASPConfigContribuyenteUpdate", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idConfiguracionContribuyente", idConfiguracionContribuyente);
+                    cmd.Parameters.AddWithValue("renta", data.config.renta);
+                    cmd.Parameters.AddWithValue("iva", data.config.iva);
+                    var p = JsonConvert.SerializeObject(data.detalle);
+                    cmd.Parameters.Add(new SqlParameter("json", p));
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = await cmd.ExecuteReaderAsync();
 
-            }
-            catch (Exception ex)
-            {
-                _gr.id = "0";
-                _gr.message = ex.Message.ToString();
-                _gr.titleSms = "Actualizar ConfiguracionContribuyente";
-            }
-            finally
-            {
-                con.Close();
-            }
-            return _gr;
-        }
-        public async Task<GenericResponse> DeleteAsync(int idRol, int idConfiguracionContribuyente)
-        {
-            try
-            {
-                var cmd = new SqlCommand("ASPConfigContribuyenteDelete", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idConfiguracionContribuyente", idConfiguracionContribuyente);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
-                {
                     while (await reader.ReadAsync())
                     {
                         _gr.id = reader.GetString(0);
@@ -222,11 +206,45 @@ namespace DataAccess.GestionTributaria
             {
                 _gr.id = "0";
                 _gr.message = ex.Message.ToString();
+                _gr.titleSms = "Actualizar ConfiguracionContribuyente";
+            }
+            finally
+            {
+
+            }
+            return _gr;
+        }
+        public async Task<GenericResponse> DeleteAsync(int idRol, int idConfiguracionContribuyente)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                {
+                    var cmd = new SqlCommand("ASPConfigContribuyenteDelete", con);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idConfiguracionContribuyente", idConfiguracionContribuyente);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            _gr.id = reader.GetString(0);
+                            _gr.message = reader.GetString(1);
+                            _gr.titleSms = reader.GetString(2);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _gr.id = "0";
+                _gr.message = ex.Message.ToString();
                 _gr.titleSms = "Eliminar ConfiguracionContribuyente";
             }
             finally
             {
-                con.Close();
+
             }
             return _gr;
         }
