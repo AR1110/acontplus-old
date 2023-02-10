@@ -486,17 +486,16 @@ export class CommonService {
 
 
     //Buscador Articulo en datatable
-    articuloSearchGeneral({ textSearch, condicion = false, isFraccionado = false }) {
+    articuloSearchGeneral({ textSearch, code = false}) {
         const json = {
-            busqueda: this.removeAccents(textSearch),
-            condicion,
-            fraccionado: isFraccionado,
+            bySearch: this.removeAccents(textSearch),
+            code
         }
         // let articulos = [];
         
         if (textSearch.length < 3) return
 
-        return this.mS.getData('get', '/Articulo/Search?json=' + JSON.stringify(json)).then(response => {
+        return this.mS.getData('get', '/Articulo/Get?json=' + JSON.stringify(json)).then(response => {
             if(response.code==='0'){
                 throw response;
             }
