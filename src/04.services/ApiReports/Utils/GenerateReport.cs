@@ -20,10 +20,8 @@ namespace ApiReports.Utils
         public byte[] ByteReport(ApiReportParamsDto data, ref string mimeType, ref string fileName)
         {
             string format = "";
-            byte[] reportBytes = null;
-            try
+            using (LocalReport lr = new LocalReport())
             {
-                var lr = new LocalReport();
                 DataSet dsParams = new DataSet();
                 if (!_rp.GetByCodeAsync(data, ref dsParams)) //OBTENEMOS PARAMETROS DINAMICOS
                     return null;
@@ -72,25 +70,16 @@ namespace ApiReports.Utils
                 }
                 lr.SetParameters(p);
 
-                reportBytes = lr.Render(format, null, out mimeType, out _, out _, out _, out _);
+                return lr.Render(format, null, out mimeType, out _, out _, out _, out _);
             }
-            catch (Exception ex)
-            {
-                Logs.LogWritter.LogError(_dirLogs, ex.Message + " --> \n" + ex.StackTrace);
-            }
-
-            return reportBytes;
         }
 
         public byte[] ByteReportDynamic(ApiReportParamsDto parameters, ref string mimeType, ref string fileName)
         {
             string format = "";
             string mimeTypeImg = "";
-            byte[] reportBytes = null;
-
-            try
+            using (LocalReport lr = new LocalReport())
             {
-                var lr = new LocalReport();
                 CodigoBarraController _cb = new CodigoBarraController();
 
                 foreach (var item in parameters.rdlcParams)
@@ -113,8 +102,6 @@ namespace ApiReports.Utils
                         mimeTypeImg = item.Value;
                     }
                 }
-
-
                 if (parameters.dataSources != null)
                 {
                     foreach (var item in parameters.dataSources)
@@ -138,24 +125,13 @@ namespace ApiReports.Utils
                     //}
                     if (item.Key == "claveAcceso")
                     {
-
                         byte[] barcode = _cb.Get(item.Value);
                         lr.SetParameters(new ReportParameter("barcode", FileExtensionsNS.getBase64FromByte((byte[])barcode)));
                         lr.SetParameters(new ReportParameter("mimeTypeBarcode", "image/png"));
                     }
                 }
-
-                reportBytes = lr.Render(format, null, out mimeType, out _, out _, out _, out _);
-
+                return lr.Render(format, null, out mimeType, out _, out _, out _, out _);
             }
-            catch (Exception ex)
-            {
-                Logs.LogWritter.LogError(_dirLogs, ex.Message + " --> \n" + ex.StackTrace);
-            }
-            return reportBytes;
-
         }
-
-
     }
 }
