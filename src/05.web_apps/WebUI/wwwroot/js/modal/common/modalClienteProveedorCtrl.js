@@ -22,8 +22,8 @@ export class ModalBaseCtrl {
             this._mS.getData('get', '/TipoEntidad/TipoEntidadSelect').then(response => response.data),
             this._mS.getData('get', '/Ciudad/ReadCiudadProvincia').then(response => response.data),
             this._mS.getData('get', '/TiempoCredito/OptionTiempoCredito?gestion=' + esCredito).then(response => response.data),
-            this._mS.getData('get', '/Empresa/Get?json=' + JSON.stringify({ typeList: 2 })).then(response => JSON.parse(response.data)),
-            this._mS.getData('get', '/Cargo/Get?json=' + JSON.stringify({ typeList: 2 })).then(response => JSON.parse(response.data)),
+            // this._mS.getData('get', '/Empresa/Get?json=' + JSON.stringify({ typeList: 2 })).then(response => JSON.parse(response.data)),
+            // this._mS.getData('get', '/Cargo/Get?json=' + JSON.stringify({ typeList: 2 })).then(response => JSON.parse(response.data)),
         ])
     }
 
@@ -156,9 +156,16 @@ export class ModalClienteCtrl extends ModalBaseCtrl {
             this.tiempoCreditos = results[5];
             this.data.idTiempoCredito = this.tiempoCreditos.length > 0 ? this.tiempoCreditos[0].idTiempoCredito : 0
 
-            this.empresas = results[6];
-
-            this.cargos = results[7];
+            this._mS.getData('get', '/Empresa/Get?json=' + JSON.stringify({ typeList: 2 })).then(response => {                
+                if(response.data){
+                    this.empresas = JSON.parse(response.data)
+                }
+            }),
+            this._mS.getData('get', '/Cargo/Get?json=' + JSON.stringify({ typeList: 2 })).then(response => {
+                if(response.data){
+                    this.cargos = JSON.parse(response.data)
+                }
+            })
 
             //Editar
             //Cuando editamos
@@ -372,7 +379,7 @@ export class ModalClienteCtrl extends ModalBaseCtrl {
                 return
             }
 
-            if (this.data.codigoIdentificacion === "C" && this.data.numeroIdentificacion.length !== 13) {
+            if (this.data.codigoIdentificacion === "C" && this.data.numeroIdentificacion.length !== 10) {
                 this._tS.toastr('warning', 'Número de Cédula tiene que ser de 10 dígitos', tituloModal);
                 return
             }

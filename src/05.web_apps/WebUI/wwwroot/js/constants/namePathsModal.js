@@ -398,7 +398,7 @@ app.constant('nombreModal', {
         },      
     },
     nota_credito_cliente: {
-        MODAL_FILE_CTRL: 'modal/ventas/modalNotaCreditoCtrl.min.js' + CHANGE_VERSION(),
+        MODAL_FILE_CTRL: 'modal/ventas/modalNotaCreditoCtrl.js' + CHANGE_VERSION(),
         MODAL_NUEVO:{
             controller: 'ModalNotaCreditoNuevoCtrl',
             template: 'NotaCreditoCliente/_ModalNuevo.cshtml'

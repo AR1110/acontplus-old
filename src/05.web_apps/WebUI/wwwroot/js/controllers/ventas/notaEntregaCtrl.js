@@ -61,7 +61,8 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
                     console.warn(response.message);
                     return
                 }
-                $scope.notaEntregas = JSON.parse(response.data) || []
+                $scope.notaEntregas = JSON.parse(response.data) || [];
+                console.log($scope.notaEntregas)
                 $scope.cloneNotaEntregas = JSON.parse(JSON.stringify($scope.notaEntregas));
                 $scope.getTotales();
             })
@@ -604,6 +605,7 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
             _fS.showLoaderSendEmail();
             let format = 'pdf';
             let dataParms = {
+                codEstab: item.codEstab,
                 idNotaEntrega: ne.idNotaEntrega        
             }
            
@@ -611,6 +613,7 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
                 reportParams: JSON.stringify({
                     codigo: 'RNE', 
                     format,
+                    codEstab: item.codEstab,
                     aditionalParams: [
                         
                     ]
@@ -645,6 +648,7 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
         const parameters = {
             reportParams: JSON.stringify({
                 codigo: 'RNE', 
+                codEstab: item.codEstab,
                 format,
                 aditionalParams: [
                     

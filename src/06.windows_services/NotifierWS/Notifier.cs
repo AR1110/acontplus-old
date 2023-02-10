@@ -52,7 +52,6 @@ namespace NotifierWS
                 try
                 {
                     if (!new DataAccess().Get(ref dt, Convert.ToInt32(ConfigurationManager.AppSettings["cantDocs"]))) return;
-                    LogWritter.LogInfo(_path, "Service Notifier is processing");
                     Execute(dt);
                 }
                 catch (Exception ex)
@@ -64,7 +63,7 @@ namespace NotifierWS
                     System.Threading.Monitor.Exit(_intervalSync);
                 }
             }
-        } 
+        }
 
         public void Execute(DataTable dt)
         {
@@ -140,9 +139,9 @@ namespace NotifierWS
                 //}
                 //else
                 //{
-                    xmlSri = HttpUtility.HtmlDecode(dataRow.Field<string>("xmlSri"));
-                    byte[] byteXml = Encoding.UTF8.GetBytes(xmlSri);
-                    xmlFile.Create(byteXml, "text/xml", dataRow.Field<string>("comprobante"));
+                xmlSri = HttpUtility.HtmlDecode(dataRow.Field<string>("xmlSri"));
+                byte[] byteXml = Encoding.UTF8.GetBytes(xmlSri);
+                xmlFile.Create(byteXml, "text/xml", dataRow.Field<string>("comprobante"));
                 //}
 
                 var files = new List<FileModel>
@@ -168,8 +167,8 @@ namespace NotifierWS
             }
             catch (Exception ex)
             {
-                new DataAccess().Update(dataRow.Field<long>("idNotificacionTributaria"), "ERROR", ex.Message);
-                LogWritter.LogError(_path, "Error al enviar por correo el documento: idNot - " + Convert.ToString(dataRow.Field<long>("idNotificacionTributaria")) + " - " + ex.Message);
+                new DataAccess().Update(dataRow.Field<long>("idNotificacionTributaria"), "ERROR", ex.ToString());
+                LogWritter.LogError(_path, "Error al enviar por correo el documento: idNot - " + Convert.ToString(dataRow.Field<long>("idNotificacionTributaria")) + " - " + ex.ToString());
                 return false;
             }
         }
@@ -183,8 +182,8 @@ namespace NotifierWS
             }
             else
             {
-                new DataAccess().Update(id, "ERROR");
-                LogWritter.LogError(_path, "Error al enviar por correo el documento: idNot-" + Convert.ToString(id));
+                new DataAccess().Update(id, "ERROR", "Correo incorrecto, favor revisar");
+                LogWritter.LogError(_path, "Error al enviar por correo el documento: idNot -> " + Convert.ToString(id));
             }
         }
         public static ApiReportParamsDto ConverToModelReportParams(ApiReportParamsDto data)
@@ -245,7 +244,6 @@ namespace NotifierWS
             return _response;
         }
         public static bool EmailIsValid(string email)
-
         {
 
             string _regexPattern = @"^(([\w-]+\.)+[\w-]+|([a-zA-Z]{1}|[\w-]{2,}))@"

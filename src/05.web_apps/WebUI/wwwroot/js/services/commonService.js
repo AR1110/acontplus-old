@@ -898,6 +898,7 @@ export class CommonService {
         let detalleDocumento = [];
         let dataDocumento = {};
         let infoAdicionalDocumento = [];
+        let factura = {}
         let actividadTipoIva = {};
         const TIPO_DOC = this.tipoDoc[codigoDocumento];
 
@@ -1001,15 +1002,35 @@ export class CommonService {
             case "NC":
                 showLoader();
                 await this.mS.getData('get', '/NotaCreditoCliente/GetId?id=' + id).then(response => {
-                        if (response.id == "0") {
+                        if (response.code == "0") {
                             this.form.sweetAlert('warning', response.message)
                             toastr.warning(response.message, response.titleSms)
                             throw response.message   
                         }
                         if (response.code === "1") {
-                            let dataMain = JSON.parse(response.payload);
-                       
-                            console.log(dataMain)
+                            let dataMain = JSON.parse(response.payload); 
+                                                    
+                            let detalle  = dataMain[3];
+
+                            dataDocumento          = dataMain[0][0];
+                           
+                            //Fechas                         
+                            dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision);                                      
+
+                            factura = dataMain[1][0]
+                           
+                            cliente                = dataMain[2][0];
+
+                            
+                            detalleDocumento       = this.getDetalleVenta(detalle, 'precioUnitario');
+                            
+                            infoAdicionalDocumento = dataMain[4];
+
+                            actividadTipoIva = {
+                                tarifa: dataDocumento.tarifa,
+                                codigoPorcentaje: dataDocumento.codigoPorcentaje
+                            }                        
+                            isComplete = true; 
                             
                         }
                     });
@@ -1062,6 +1083,7 @@ export class CommonService {
             cliente,
             dataTipoDocumento,
             dataDocumento,
+            factura,
             detalleDocumento,
             infoAdicionalDocumento,
             actividadTipoIva,

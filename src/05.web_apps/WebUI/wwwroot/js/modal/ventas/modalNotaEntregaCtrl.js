@@ -303,10 +303,10 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
 
             if(!this.isValidaForm()) return
         
-            if(this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total>50 ){
-                this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')           
-                return
-            }
+            // if(this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total>50 ){
+            //     this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')           
+            //     return
+            // }
 
             this.validarDatosAdicionales("idNotaEntregaDetalle");
 
@@ -409,10 +409,10 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
 
             if(!this.isValidaForm()) return
         
-            if(this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total>50 ){
-                this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')           
-                return
-            }
+            // if(this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total>50 ){
+            //     this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')           
+            //     return
+            // }
 
             this.validarDatosAdicionales("idFacturaDetalle");
 
@@ -859,10 +859,10 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl{
         try {                        
             if(!this.isValidaForm()) return
         
-            if(this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total>50 ){
-                this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')           
-                return
-            }
+            // if(this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total>50 ){
+            //     this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')           
+            //     return
+            // }
 
             this.validarDatosAdicionales("idNotaEntregaDetalle");                    
 
@@ -1056,10 +1056,10 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl{
 
             if(!this.isValidaForm()) return
         
-            if(this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total>50 ){
-                this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')           
-                return
-            }
+            // if(this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total>50 ){
+            //     this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')           
+            //     return
+            // }
 
             this.validarDatosAdicionales("idNotaEntregaDetalle");
 
