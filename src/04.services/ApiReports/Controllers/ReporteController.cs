@@ -17,6 +17,12 @@ namespace ApiReports.Controllers
 {
     public class ReporteController : ApiController
     {
+        private readonly string _dirLogs = string.Empty;
+        public ReporteController()
+        {
+            _dirLogs = System.Configuration.ConfigurationManager.AppSettings["dirLogs"];
+        } 
+        //Method for backend dynamic request
         [HttpPost]
         [Route("api/Reporte/GetReport")]
         public HttpResponseMessage GetReport(ApiReportParamsDto parameters)
@@ -104,11 +110,11 @@ namespace ApiReports.Controllers
             }
             catch (Exception ex)
             {
-                Logs.LogWritter.LogError("C:\\AcontPlus\\Logs\\ApiReports", ex.InnerException.ToString());
+                Logs.LogWritter.LogError(_dirLogs, "Error in GetReport: " + ex.Message + " --> \n" + ex.StackTrace);
                 return this.Request.CreateResponse(HttpStatusCode.BadRequest, "Error al crear el reporte");
             }
         }
-
+        //method for backend request to db
         [HttpPost]
         [Route("api/Reporte/Download")]
         public HttpResponseMessage Download(ApiReportParamsDto data)
@@ -132,14 +138,14 @@ namespace ApiReports.Controllers
             }
             catch (Exception ex)
             {
-                Logs.LogWritter.LogError("C:\\AcontPlus\\Logs\\ApiReports", ex.Message);
+                Logs.LogWritter.LogError(_dirLogs, "Error in Download: " + ex.Message + " --> \n" + ex.StackTrace);
                 ApiError.ReportNotFound(_response);
             }
             return Request.CreateResponse(HttpStatusCode.OK, _response);
         }
 
 
-        //Dynamic Report 
+        //Dynamic Report --> From Client
         [HttpPost]
         [Route("api/Reporte/DynamicReport")]
         public HttpResponseMessage DynamicReport(ApiReportParamsDto data)
@@ -147,10 +153,11 @@ namespace ApiReports.Controllers
             FileModelDto _response = new FileModelDto();            
             string mimeType = string.Empty;
             string fileName = string.Empty;
+            byte[] bytes = null;
             try
             {
                 ApiReportParamsDto _dataReport = ConverToModelReportParams(data);
-                byte[] bytes = new GenerateReport().ByteReportDynamic(_dataReport, ref mimeType, ref fileName);
+                bytes = new GenerateReport().ByteReportDynamic(_dataReport, ref mimeType, ref fileName);
                 if (bytes == null || bytes.Length == 0)
                 {
                     ApiError.ReportNotFound(_response);
@@ -163,7 +170,7 @@ namespace ApiReports.Controllers
             }
             catch (Exception ex)
             {
-                Logs.LogWritter.LogError("C:\\AcontPlus\\Logs\\ApiReports\\", ex.Message);
+                Logs.LogWritter.LogError(_dirLogs, "Error in DynamicReport: " + ex.Message + " --> \n" + ex.StackTrace);
                 ApiError.ReportNotFound(_response);
             }
             return Request.CreateResponse(HttpStatusCode.OK, _response);

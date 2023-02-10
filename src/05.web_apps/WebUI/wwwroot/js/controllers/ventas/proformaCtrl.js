@@ -314,6 +314,7 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
         try {
             let format = 'pdf';
             let dataParms = {
+                codEstab: item.codEstab,
                 idProforma : item.idProforma           
             }
         
@@ -321,6 +322,7 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
                 reportParams: JSON.stringify({
                     codigo: 'PR', 
                     format,
+                    codEstab: item.codEstab,
                     aditionalParams: [                    
                     ]
                 }),

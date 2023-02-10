@@ -58,6 +58,19 @@ class ModalNotaCreditoCtrl extends ModalBaseCtrl{
         }
     }
 
+
+
+
+    getImporteTotal(){
+        if(!this.decimal) return
+        let total = Number(this.data.total);
+       
+        this.data.total  = total;
+        
+        return this._fS.roundNumber( this.data.total, this.decimal.nroTotalSubTotal);
+    }
+
+
     /**
      * 
      * @param {*} entity Datos del Articulo 
@@ -300,9 +313,6 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl{
             })
             
 
-            if(localStorage.getItem('docsDetalle')){
-                this.restoreDetailStorage();
-            }
             
             this.$scope.$apply();
 
@@ -507,13 +517,14 @@ export class ModalNotaCreditoEditarCtrl extends ModalNotaCreditoCtrl{
 
         <a  ng-click="grid.appScope.$ctrl.openModalDatoAdicionalArticulo(row.entity, false)" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
 
-        let {dataDocumento, cliente, detalleDocumento, infoAdicionalDocumento, actividadTipoIva } = data;
+        let {dataDocumento, factura, cliente, detalleDocumento, infoAdicionalDocumento, actividadTipoIva } = data;
         this.dataDocumento          = dataDocumento;
+        this.factura                = factura;
         this.cliente                = cliente;
         this.detalleDocumento       = detalleDocumento;
         this.infoAdicionalDocumento = infoAdicionalDocumento;
         this.actividadTipoIva       = actividadTipoIva;
-        console.log(this)
+       
     }
 
     async $onInit(){
@@ -549,8 +560,7 @@ export class ModalNotaCreditoEditarCtrl extends ModalNotaCreditoCtrl{
 
             this.idTarifa = this.tarifas.length>0?this.tarifas[0].idTarifa:0;
             this.cloneIdTarifa = this.idTarifa;
-
-            this.tiempoCreditos = resultsDataForm[5];
+           
            
             this.setColumnDefs();            
            
@@ -571,12 +581,10 @@ export class ModalNotaCreditoEditarCtrl extends ModalNotaCreditoCtrl{
             })
             
             //Cargamos los Datos 
-            this.data = this.dataDocumento;
-            this.nroDocSecuencial = this.data.nroDocSecuencial;
+            this.data = Object.assign({}, this.dataDocumento);    
+            this.data.idFactura = this.factura.idFactura;        
             this.gridOptions.data = this.detalleDocumento;            
-
-            this.fechaEmisionEscrita = this._fS.getFechaEscrita(this.data.fechaEmision);
-            this.fechaVencimientoEscrita = this._fS.getFechaEscrita(this.data.fechaVencimiento);
+            
             
             this.$scope.$apply();            
 
@@ -590,30 +598,11 @@ export class ModalNotaCreditoEditarCtrl extends ModalNotaCreditoCtrl{
         }
     }
 
-    async onSelectedClienteChange(item){
-        try {
-
-            let dataCliente = await this.getClienteById(item);
-            this.cliente = dataCliente;           
-            this.$scope.$apply();
-            
-        } catch (error) {
-            this.cliente = {};            
-            console.log('ERROR AL OBTENER DATOS DEL CLIENTE', error)
-            this.$scope.$apply();
-        }
-    }
-
+    
     async onSave(){                        
         try {                        
             if(!this.isValidaForm()) return
-        
-            if(this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total>50 ){
-                this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')           
-                return
-            }
-
-            this.validarDatosAdicionales("idFacturaDetalle");                    
+                        
 
             let textAccion = 'Actualizar';   
             const swalWithBootstrapButtons = Swal.mixin({
@@ -625,8 +614,8 @@ export class ModalNotaCreditoEditarCtrl extends ModalNotaCreditoCtrl{
             })
               
             let {isConfirmed} = await swalWithBootstrapButtons.fire({
-                title: '<small>Actualizar Factura</small>',
-                html: `<small>Esta Ud. seguro de ${textAccion} este <b> Factura de Venta</b> N° ${this.nroDocSecuencial}</small>?`,
+                title: '<small>Actualizar Nota Credito</small>',
+                html: `<small>Esta Ud. seguro de ${textAccion} este Comprobante</small>?`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Si, actualizar!',
@@ -638,29 +627,29 @@ export class ModalNotaCreditoEditarCtrl extends ModalNotaCreditoCtrl{
            
             
             if(!isConfirmed) return
-
+            
             showLoader();
-            let factura = Object.assign({}, this.data);
-            factura.idCliente      = this.cliente.idCliente;              
-            factura.fechaEmision   = this._fS.formatDateTimeZone(this.data.fechaEmision);
-            factura.fechaVencimiento = this._fS.formatDateTimeZone(this.data.fechaVencimiento);
+            let notaCredito = Object.assign({}, this.data);
+            notaCredito.idCliente = this.cliente.idCliente;                            
+
+            //Tarifa Aplicada al Documento
+            notaCredito.tarifa = this.actividadTipoIva.tarifa;
+        
         
             let data = {
-                factura: JSON.stringify(factura),
-                detalle: JSON.stringify(this.trimDetailDoc()),
-                adicional: JSON.stringify(this.infoAdicionalDocumento || []),
-                manejoArticulo: JSON.stringify(this.datosAdicionalesArticulo)
+                nota: notaCredito,
+                detalle: this.gridOptions.data,
+                adicional: this.infoAdicionalDocumento,                
             }
-
-            await this._mS.getData('put', '/FacturaVenta/Update?id=' + this.data.idFactura, data).then(response=>{
-                if(response.code==='0'){                    
+          
+            await this._mS.getData('put', '/NotaCreditoCliente/Update?id=' + this.data.idNotaCredito, data).then(response=>{
+                console.log(response)
+                if(response.id==='0'){                    
                     this._fS.sweetAlert('warning', response.message, response.titleSms);                    
                 }
-                if(response.code==="1"){
-                    this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
-                    // let data = JSON.parse(response.payload)[0];                   
-                    // this.$uibModalInstance.close(data) 
-                    this.isUpdate = true;                                      
+                if(response.id==="1"){
+                    this._fS.sweetAlert('success', response.message, response.titleSms, 1000);                                    
+                    this.$uibModalInstance.close(data)                     
                 }
             })
                                                 

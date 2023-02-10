@@ -378,7 +378,7 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMo
         let format = 'pdf';
         let dataParms = {
             id: item.idFactura,            
-            idSucursal: item.idSucursal,
+            codEstab: item.codEstab,
             codigo: 'RF', 
             format,            
         }
@@ -601,6 +601,8 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMo
             codigo: 'RFPT',
 
         }
+
+        console.log(parameters)
 
         _commonSvc.askToReportII({
             parameters: JSON.stringify(parameters)

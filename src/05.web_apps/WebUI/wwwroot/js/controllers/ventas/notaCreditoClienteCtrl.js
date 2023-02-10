@@ -210,7 +210,7 @@ function notaCreditoClienteCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModal
 
     $scope.openModalDetalle = async(item)=>{
         try {
-            let {MODAL_FILE_CTRL, MODAL_DETALLE} = _nombreModalConst.nota_entrega;
+            let {MODAL_FILE_CTRL, MODAL_DETALLE} = _nombreModalConst.nota_credito_cliente;
             let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_DETALLE['controller']];
             let template   = MODAL_DETALLE['template'];
             let response = await _commonSvc.getDataTipoDocVenta({
@@ -235,16 +235,16 @@ function notaCreditoClienteCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModal
         }
     }
 
-    $scope.openModalEdit = async(item)=>{
+    $scope.openModalEditar = async(item)=>{
         try {
             showLoader();            
-            let {MODAL_FILE_CTRL, MODAL_EDITAR} = _nombreModalConst.nota_entrega;
+            let {MODAL_FILE_CTRL, MODAL_EDITAR} = _nombreModalConst.nota_credito_cliente;
             let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_EDITAR['controller']];
             let template   = MODAL_EDITAR['template'];
 
             let response = await _commonSvc.getDataTipoDocVenta({
-                id: item.idNotaEntrega,
-                codigoDocumento: TIPO_DOC_NE.codigo
+                id: item.idNotaCredito,
+                codigoDocumento: TIPO_DOC.codigo
             })
 
             
