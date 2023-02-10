@@ -45,7 +45,7 @@ BEGIN
 
 	SELECT @codigo = codigo,@format = formato, @id = id, @versionComp = versionComp FROM OPENJSON(@json) WITH (codigo VARCHAR(100) '$.codigo',formato VARCHAR(100) '$.format',id INT '$.id', versionComp VARCHAR(10)) AS jsd
 
-	SELECT @reportPath = reportPath ,@storedProcedure = storedProcedure FROM dbo.ReporteParametro WHERE codigo = @codigo
+	SELECT @reportPath = reportPath ,@storedProcedure = storedProcedure  FROM dbo.ReporteParametro WHERE codigo = @codigo
 
 	IF @format = 'pdf'
 		BEGIN
@@ -68,7 +68,8 @@ BEGIN
 	SET @rdlcParams = (
 						SELECT reportPath  = @reportPath 
 						      ,'format'    = @format
-							  ,contentType = @contentType							  						  
+							  ,contentType = @contentType		
+							  ,'fileName'  = @fileName 
 						FOR JSON PATH
 						)
 
