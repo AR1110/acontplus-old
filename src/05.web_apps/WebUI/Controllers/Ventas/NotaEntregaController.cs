@@ -81,7 +81,7 @@ namespace WebUI.Controllers.Ventas
             parameters.Add("jsonNotaEntrega", JsonConvert.SerializeObject(data.notaEntrega));
             parameters.Add("jsonDetalle", JsonConvert.SerializeObject(data.detalle));
             parameters.Add("jsonManejoArticulo", JsonConvert.SerializeObject(data.manejoArticulo));
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Ventas.NotaEntrega_Insert", parameters)));
+            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Ventas.NotaEntrega_Update", parameters)));
 
         }
 
