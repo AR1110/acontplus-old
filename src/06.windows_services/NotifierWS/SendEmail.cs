@@ -10,7 +10,6 @@ using System.Net.Mail;
 using System.Net.Mime;
 using System.Text;
 using Nustache.Core;
-using System.Text.RegularExpressions;
 
 namespace NotifierWS
 {
@@ -23,28 +22,29 @@ namespace NotifierWS
         }
         public bool Send(Email email)
         {
-            var mail = new MailMessage();
-            var client = new SmtpClient();
+            MailMessage message = new MailMessage();
+
             try
             {
-                mail.To.Clear();
 
-                mail.From = new MailAddress(email.from);
-                mail.To.Add(email.to.Trim());
-                mail.BodyEncoding = Encoding.UTF8;
+                message.To.Clear();
+                message.IsBodyHtml = true;
+                message.BodyEncoding = Encoding.UTF8;
+
+                message.From = new MailAddress(email.from);
+                message.To.Add(email.to.Trim());
                 //mail.Body = email.message;
-                mail.Subject = email.subject;
-                mail.IsBodyHtml = true;
-                mail.Priority = MailPriority.High;
-                mail.SubjectEncoding = Encoding.UTF8;
+                message.Subject = email.subject;
+                message.Priority = MailPriority.High;
+                message.SubjectEncoding = Encoding.UTF8;
 
 
                 if (email.cc != "" && email.cc != null)
                 {
                     MailAddress cC = new MailAddress(email.cc.Trim().Trim());
-                    mail.CC.Add(cC);
+                    message.CC.Add(cC);
                 }
-                var pathToHTMLFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Templates", "EmailTemplate.html");
+                string pathToHTMLFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Templates", "EmailTemplate.html");
 
                 string htmlString = File.ReadAllText(pathToHTMLFile);
 
@@ -56,17 +56,17 @@ namespace NotifierWS
                 {
                     dataEmail.Add(paramRdlc.Key, paramRdlc.Value);
                 }
-                var emailBody = ProcessTemplate(htmlString, dataEmail);
+                string emailBody = ProcessTemplate(htmlString, dataEmail);
                 //mail.Body = emailBody;
 
                 // Create an alternate view and add it to the email.
-                var altView = AlternateView.CreateAlternateViewFromString(emailBody, null, MediaTypeNames.Text.Html);
-                mail.AlternateViews.Add(altView);
+                AlternateView altView = AlternateView.CreateAlternateViewFromString(emailBody, null, MediaTypeNames.Text.Html);
+                message.AlternateViews.Add(altView);
 
-                var pathLogo = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logos", email.logo);
+                string pathLogo = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logos", email.logo);
 
 
-                var linkedResource = new LinkedResource(pathLogo, "image/jpg");
+                LinkedResource linkedResource = new LinkedResource(pathLogo, "image/jpg");
                 linkedResource.ContentId = "Pic1";
                 altView.LinkedResources.Add(linkedResource);
 
@@ -77,31 +77,45 @@ namespace NotifierWS
                         foreach (var formFile in email.files)
                         {
                             //var target = new MemoryStream();
-                            var dataFile = new Attachment(new MemoryStream(formFile.Content), formFile.FileName, formFile.ContentType);
+                            Attachment dataFile = new Attachment(new MemoryStream(formFile.Content), formFile.FileName, formFile.ContentType);
                             // Add time stamp information for the file.
                             ContentDisposition disposition = dataFile.ContentDisposition;
                             disposition.CreationDate = File.GetCreationTime(formFile.FileName);
                             disposition.ModificationDate = File.GetLastWriteTime(formFile.FileName);
                             disposition.ReadDate = File.GetLastAccessTime(formFile.FileName);
-                            mail.Attachments.Add(dataFile);
+                            message.Attachments.Add(dataFile);
                         }
                     }
                 }
-                client.Credentials = new NetworkCredential(email.from, email.pwd);
-                client.Host = email.host;
-                client.Port = email.port;
-                client.EnableSsl = email.enableSsl;
-                client.DeliveryFormat = SmtpDeliveryFormat.International;
-                client.Send(mail);
-                mail.Dispose();
-                client.Dispose();
-                return true;
+                using (SmtpClient smtpClient = new SmtpClient())
+                {
+                    smtpClient.Host = email.host;
+                    smtpClient.Port = email.port;
+                    smtpClient.EnableSsl = email.enableSsl;
+
+                    NetworkCredential NetworkCred = new NetworkCredential();
+                    NetworkCred.UserName = email.from;
+                    NetworkCred.Password = email.pwd;
+                    smtpClient.Credentials = NetworkCred;
+
+                    smtpClient.DeliveryFormat = SmtpDeliveryFormat.International;
+                    smtpClient.Send(message);
+                }
             }
             catch (Exception ex)
             {
-                LogWritter.LogError(_path, "Error al enviar por correo el documento: " + ex.Message);
+                if (message != null)
+                {
+                    message.Dispose();
+                }
+                LogWritter.LogError(_path, "Error al enviar por correo el documento: " + ex.ToString());
                 return false;
             }
+            finally
+            {
+                message.Dispose();
+            }
+            return true;
         }
         private static string ProcessTemplate(string template,
            Dictionary<string, string> data)
