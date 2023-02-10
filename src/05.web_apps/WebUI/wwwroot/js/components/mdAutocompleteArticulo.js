@@ -116,7 +116,7 @@ class MdArticuloCtrl{
             if(this.searchText===null || this.searchText===undefined || this.searchText==='') return
             let result = await this._commonSvc.articuloSearchGeneral({
                 textSearch: this.searchText,
-                condicion: true
+                code: true
             }) 
 
             if(result===null || result ===undefined || (Array.isArray(result) && result.length===0)) return  
