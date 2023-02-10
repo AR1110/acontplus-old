@@ -10,7 +10,7 @@ namespace WebUI.Controllers
         private readonly IConfiguration _configuration;
 
         private PoliticaDao _p;
-        public PoliticaController(IConfiguration configuration, PoliticaDao p)
+        public PoliticaController(IConfiguration configuration)
         {
             _configuration = configuration;
             _p = new PoliticaDao(_configuration);
