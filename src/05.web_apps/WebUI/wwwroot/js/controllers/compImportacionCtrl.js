@@ -67,6 +67,11 @@ function compImportacionCtrl($filter, $scope, mS, _commonSvc, tS, modalService, 
         }
     };
 
+    const _urlService = document.getElementById("urlGateway").value + 'api/'
+    const _idRol = document.getElementById("idRol").value
+
+    //console.log(_urlService)
+
     $scope.selected = [];
     $scope.pages = [50, 100];
     $scope.query = {
@@ -96,24 +101,27 @@ function compImportacionCtrl($filter, $scope, mS, _commonSvc, tS, modalService, 
                 return false
         }
     }
-    function success(response) {
-        $scope.comprobantes = [];
-        if (response.payload) {
-            $scope.comprobantes = JSON.parse(response.payload);
-
-            $scope.cloneComprobantes = JSON.parse(JSON.stringify($scope.comprobantes))
-            $scope.totalRecords = $scope.comprobantes[0].totalRecords;
-        }
-        hideLoader();
-    }
 
     $scope.getComprobantes = function () {
         try {
+            $scope.comprobantes = [];
             showLoader();
             $scope.query.startDate = $scope.dateRangePicker.date.startDate
             $scope.query.endDate = $scope.dateRangePicker.date.endDate
             console.log($scope.query)
-            $scope.promise = mS.getData('get', '/ComprobanteImportacion/Get?json=' + JSON.stringify($scope.query)).then(success).$promise;
+            mS.getData('get', _urlService + 'DocumentoRecibido/Get/' + _idRol + "/" + JSON.stringify($scope.query)).then(response => {
+                if (response.code == "1") {
+                    $scope.comprobantes = JSON.parse(response.payload);
+                    $scope.cloneComprobantes = JSON.parse(JSON.stringify($scope.comprobantes))
+                    $scope.totalRecords = $scope.comprobantes[0].totalRecords;
+                }
+            }, error => {
+                if (error.data) {
+                    tS.toastr('error', error.data.message)
+                }
+                console.log(error.data)
+            })
+            hideLoader();
         } catch (error) {
             hideLoader();
             console.log(error);
@@ -202,10 +210,10 @@ function compImportacionCtrl($filter, $scope, mS, _commonSvc, tS, modalService, 
             document.getElementById("btnDelete").style.display = "none";
         }
         document.getElementById("btnImportar").onclick = function (event) {
-            if ($scope.selected[0].comprobante != 'Factura') {
-                Swal.fire({ title: "Info", text: "Documento aun no disponible, para importar" })
-                return
-            }
+            // if ($scope.selected[0].comprobante != 'Factura') {
+            //     Swal.fire({ title: "Info", text: "Documento aun no disponible, para importar" })
+            //     return
+            // }
             $scope.getId();
             Swal.close();
             event.preventDefault();
@@ -235,7 +243,7 @@ function compImportacionCtrl($filter, $scope, mS, _commonSvc, tS, modalService, 
                 alert('No ha seleccionado ningun archivo');
                 return;
             }
-            mS.getDataFile('/ComprobanteImportacion/Post', file).then(
+            mS.getDataFile(_urlService + 'DocumentoRecibido/' + _idRol, file).then(
                 response => {
                     if (response.code == 0) {
                         hideLoader();
@@ -263,7 +271,7 @@ function compImportacionCtrl($filter, $scope, mS, _commonSvc, tS, modalService, 
     $scope.putXml = function () {
         try {
             showLoader();
-            mS.getData('put', '/ComprobanteImportacion/Put?id=' + $scope.selected[0].uniqueId + '&claveAcceso=' + $scope.selected[0].claveAcceso).then(
+            mS.getData('put', _urlService + 'DocumentoRecibido/Put?id=' + $scope.selected[0].uniqueId + '&claveAcceso=' + $scope.selected[0].claveAcceso).then(
                 response => {
                     hideLoader();
                     if (response.code == 0) {
@@ -314,7 +322,7 @@ function compImportacionCtrl($filter, $scope, mS, _commonSvc, tS, modalService, 
                 return;
             }
             console.log(file)
-            mS.getDataFile('/ComprobanteImportacion/PostXml?id=' + $scope.selected[0].uniqueId + '&claveAcceso=' + $scope.selected[0].claveAcceso, file).then(
+            mS.getDataFile(_urlService + 'DocumentoRecibido/PostXml?id=' + $scope.selected[0].uniqueId + '&claveAcceso=' + $scope.selected[0].claveAcceso, file).then(
                 response => {
                     hideLoader();
                     if (response.code == 0) {
@@ -359,7 +367,7 @@ function compImportacionCtrl($filter, $scope, mS, _commonSvc, tS, modalService, 
     $scope.delete = function (item) {
         try {
             showLoader();
-            mS.getData('delete', '/ComprobanteImportacion/Delete?id=' + item).then(
+            mS.getData('delete', _urlService + 'DocumentoRecibido/Delete?id=' + item).then(
                 response => {
                     if (response.code == 0) {
                         hideLoader();
@@ -412,7 +420,7 @@ function compImportacionCtrl($filter, $scope, mS, _commonSvc, tS, modalService, 
     $scope.medidas = [];
     $scope.getFormData = function () {
         try {
-            mS.getData('get', '/ComprobanteImportacion/GetFormData').then(
+            mS.getData('get', _urlService + 'DocumentoRecibido/GetFormData').then(
                 response => {
                     if (response.code == "0") {
                         tS.toastr('warning', response.message);
@@ -454,7 +462,7 @@ function compImportacionCtrl($filter, $scope, mS, _commonSvc, tS, modalService, 
     $scope.getId = () => {
         try {
             showLoader();
-            mS.getData('get', '/ComprobanteImportacion/GetId?id=' + $scope.selected[0].uniqueId).then(response => {
+            mS.getData('get', _urlService + 'DocumentoRecibido/GetId/' + _idRol + "/" + $scope.selected[0].uniqueId).then(response => {
                 if (!response.payload) {
                     tS.toastr('warning', "Aun no se actualizado el Xml del SRI");
                 } else {
@@ -576,7 +584,7 @@ function compImportacionCtrl($filter, $scope, mS, _commonSvc, tS, modalService, 
 
     $scope.getProv = () => {
         try {
-            mS.getData('get', '/ComprobanteImportacion/GetProveedor?json=' + JSON.stringify({ tipo: 1, ruc: $scope.infoTributaria.ruc })).then(
+            mS.getData('get', _urlService + 'DocumentoRecibido/GetProveedor?json=' + JSON.stringify({ tipo: 1, ruc: $scope.infoTributaria.ruc })).then(
                 response => {
                     if (response.code == "0") {
                         $scope.txtIconModalProv = 'ti-plus';
@@ -601,7 +609,7 @@ function compImportacionCtrl($filter, $scope, mS, _commonSvc, tS, modalService, 
     $scope.arraysProvClient = [];
     $scope.addProvClient = function () {
         try {
-            mS.getData('get', '/ComprobanteImportacion/GetDataProveedor').then(
+            mS.getData('get', _urlService + 'DocumentoRecibido/GetDataProveedor').then(
                 response => {
                     $scope.arraysProvClient = JSON.parse(response.payload);
                     $scope.tiposIdentificacion = $scope.arraysProvClient[0]
@@ -687,7 +695,7 @@ function compImportacionCtrl($filter, $scope, mS, _commonSvc, tS, modalService, 
                 return;
             }
             showLoader();
-            mS.getData('post', '/ComprobanteImportacion/PostProveedor?json=' + JSON.stringify($scope.provCliente)).then(
+            mS.getData('post', _urlService + 'DocumentoRecibido/PostProveedor?json=' + JSON.stringify($scope.provCliente)).then(
                 response => {
                     if (response.code == "0") {
                         tS.toastr('warning', response.message)
@@ -778,7 +786,7 @@ function compImportacionCtrl($filter, $scope, mS, _commonSvc, tS, modalService, 
 
     $scope.getTempDetails = function () {
         try {
-            mS.getData('get', '/ComprobanteImportacion/GetArticlesTemp?uniqueId=' + $scope.selected[0].uniqueId).then(
+            mS.getData('get', _urlService + 'DocumentoRecibido/GetArticlesTemp?uniqueId=' + $scope.selected[0].uniqueId).then(
                 response => {
                     if (response.code == "1") {
                         $scope.tempDetail = JSON.parse(response.payload);
@@ -797,10 +805,10 @@ function compImportacionCtrl($filter, $scope, mS, _commonSvc, tS, modalService, 
             let method = '', url = ''
             if (tipo == 1) {
                 method = "post"
-                url = "/ComprobanteImportacion/PostArticleTemp?json="
+                url = _urlService + "DocumentoRecibido/PostArticleTemp?json="
             } else {
                 method = "put"
-                url = "/ComprobanteImportacion/PutArticleTemp?json="
+                url = _urlService + "DocumentoRecibido/PutArticleTemp?json="
             }
             mS.getData(method, url + JSON.stringify(data)).then(
                 response => {
@@ -897,7 +905,7 @@ function compImportacionCtrl($filter, $scope, mS, _commonSvc, tS, modalService, 
                 codigoAuxiliar: $scope.articleSelected.codigoAuxiliar,
                 descripcion: $scope.articleSelected.descripcion
             }
-            mS.getData('get', '/ComprobanteImportacion/GetArticles?jsonData=' + JSON.stringify(jsonData)).then(
+            mS.getData('get', _urlService + 'DocumentoRecibido/GetArticles?jsonData=' + JSON.stringify(jsonData)).then(
                 response => {
                     if (response.code == '1') {
                         $scope.articlesTemp = JSON.parse(response.payload)
@@ -941,7 +949,7 @@ function compImportacionCtrl($filter, $scope, mS, _commonSvc, tS, modalService, 
                 descripcion: $scope.articleMergeSearch.textSearch,
                 tipo: tipo
             }
-            mS.getData('get', '/ComprobanteImportacion/GetArticles?jsonData=' + JSON.stringify(jsonData)).then(
+            mS.getData('get', _urlService + 'DocumentoRecibido/GetArticles?jsonData=' + JSON.stringify(jsonData)).then(
                 response => {
                     if (response.code == '1') {
                         // if ($scope.articleNotFound) {
@@ -974,7 +982,7 @@ function compImportacionCtrl($filter, $scope, mS, _commonSvc, tS, modalService, 
             showLoader()
             $scope.articleHistory = []
             $scope.articleName = item.descripcion
-            mS.getData('get', '/ComprobanteImportacion/GetArticleHistory?id=' + item.idArticulo).then(
+            mS.getData('get', _urlService + 'DocumentoRecibido/GetArticleHistory?id=' + item.idArticulo).then(
                 response => {
                     if (response.code == '1') {
                         $scope.articleHistory = JSON.parse(response.payload)
@@ -1299,7 +1307,7 @@ function compImportacionCtrl($filter, $scope, mS, _commonSvc, tS, modalService, 
 
             }
             console.log(data)
-            mS.getData('post', '/ComprobanteImportacion/PostComprobante?json=' + JSON.stringify(data)).then(response => {
+            mS.getData('post', _urlService + 'DocumentoRecibido/PostComprobante?json=' + JSON.stringify(data)).then(response => {
                 if (response.code == '0') {
                     tS.toastr('warning', response.message)
                 }
