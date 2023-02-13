@@ -73,3 +73,7 @@
 /src/04.services/ApiReports/ApiReports.csproj.user
 /src/07.worker_services/WS_DocumentoRecibido/bin/Release/net6.0
 *.user
+/src/02.domain/Domain.FactElect/bin/Debug/net6.0
+/src/02.domain/Domain.FactElect/obj
+/src/03.business_logic/BL.FactElect/bin/Debug/net6.0
+/src/03.business_logic/BL.FactElect/obj
