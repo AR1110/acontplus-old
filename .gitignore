@@ -71,3 +71,5 @@
 /src/04.services/ApiReports/Properties/PublishProfiles/FolderProfile.pubxml.user
 /src/05.web_apps/WebUI/Properties/PublishProfiles/FolderProfile.pubxml.user
 /src/04.services/ApiReports/ApiReports.csproj.user
+/src/07.worker_services/WS_DocumentoRecibido/bin/Release/net6.0
+*.user
