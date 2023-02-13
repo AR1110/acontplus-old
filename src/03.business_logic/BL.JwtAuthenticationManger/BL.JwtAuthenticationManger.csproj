@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\02.domain\Domain.Auth\Domain.Auth.csproj" />
-    <ProjectReference Include="..\..\02.domain\Domain\Domain.csproj" />
   </ItemGroup>
 
 </Project>
