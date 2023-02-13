@@ -1,17 +1,15 @@
 ﻿using System.Security.Claims;
 using Common.Logs;
 using DataAccess;
+using Domain.Auth.Dtos;
 using Domain.Auth.Models;
 using Domain.Dtos;
-using Domain.Models;
 using Domain.ViewModels;
 using Helpers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 using WebUI.ApiClient;
 
 namespace WebUI.Controllers
@@ -49,10 +47,20 @@ namespace WebUI.Controllers
                 if (codSms == "2")
                 {
                     var response = _gr.data as LoginViewModel;
+
                     var loginData = response.userData[0];
-                    
+                    var loginDataDto = new LoginDataDto();
+
+                    loginDataDto.idUsuarioRol = loginData.idRol;
+                    loginDataDto.userName= loginData.userName;
+                    loginDataDto.fullName = loginData.fullName;
+                    loginDataDto.nroIdentificacion = loginData.nroIdentificacion;
+                    loginDataDto.role= loginData.role;
+                    loginDataDto.razonSocial = loginData.entidad;
+                    loginDataDto.ruc = loginData.ruc ?? "";
+
                     var urlService = _config.GetSection("UrlApis").GetSection("ApiGateway").Value;
-                    var _authService = await new ApiServer(urlService).PostAsync<AuthResponse>("api/account", loginData);
+                    var _authService = await new ApiServer(urlService).PostAsync<AuthResponse>("api/account", loginDataDto);
                     loginData.jwtToken = _authService.jwtToken;
                     
                     //for more information review https://docs.microsoft.com/en-us/aspnet/core/security/authentication/cookie?view=aspnetcore-6.0
