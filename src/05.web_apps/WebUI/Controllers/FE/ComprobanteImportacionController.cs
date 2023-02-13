@@ -8,9 +8,7 @@ using WebUI.Utils;
 using DataAccess;
 using System.Xml;
 using Newtonsoft.Json;
-using HelpersNS20;
 using System.Text;
-using Microsoft.AspNetCore.Http;
 using FactElect;
 
 namespace WebUI.Controllers.FE
@@ -27,19 +25,23 @@ namespace WebUI.Controllers.FE
         private GetDataXmlComprobante _getXmlSriData = new GetDataXmlComprobante();
         private readonly string _urlSri = "https://cel.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantesOffline?wsdl";
         private readonly int _idRol;
+        private readonly string _apiGateway = string.Empty;
         public ComprobanteImportacionController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
             _httpContextAccessor = httpContextAccessor;
             _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            _apiGateway = _configuration.GetSection("UrlApis").GetSection("ApiGateway").Value;
         }
         #endregion
-        #region ComprobanteImportacion
         public IActionResult Index()
         {
+            ViewData["idRol"] = _idRol; 
+            ViewData["urlGateway"] = _apiGateway;
             return View();
         }
+        #region ComprobanteImportacion
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
