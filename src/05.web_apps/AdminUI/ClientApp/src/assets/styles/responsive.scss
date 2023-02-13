@@ -34,7 +34,7 @@ File: scss
     padding: 0 15px;
     display: flex;
     flex-flow: row wrap;
-    .mat-card {
+    .mat-mdc-card {
       margin: 15px 0px;
       flex: 1 0 0%;
       border-left: 1px solid $border;
@@ -48,7 +48,7 @@ File: scss
 @media (max-width: 1023px) {
   .card-group {
     margin: 15px 0;
-    .mat-card {
+    .mat-mdc-card {
       margin: 0 15px;
       border-top: 1px solid $border;
       &:first-child {

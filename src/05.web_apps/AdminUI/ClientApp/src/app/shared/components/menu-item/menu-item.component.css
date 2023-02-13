@@ -12,11 +12,11 @@
   align-items: center;
 }
 
-.mat-list-icon {
+.mat-mdc-list-item-icon {
   padding: 4px;
 }
 
-.mat-list-item {
+.mat-mdc-list-item {
   cursor: pointer;
   border-left: 4px solid transparent;
   transition: 0.2s all;
@@ -24,15 +24,15 @@
   box-sizing: border-box;
 }
 
-.mat-list-item:hover {
+.mat-mdc-list-item:hover {
   background: rgba(0, 0, 0, 0.04);
 }
 
-.mat-list-base {
+.mat-mdc-list-base {
   padding-top: 0;
 }
 
-.mat-list-base .mat-list-item {
+.mat-mdc-list-base .mat-mdc-list-item {
   height: 50px;
 }
 
