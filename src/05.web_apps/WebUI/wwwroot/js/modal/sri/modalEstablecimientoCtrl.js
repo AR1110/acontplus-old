@@ -338,7 +338,7 @@ class ModalEstablecimientoConfigCtrl extends ModalBaseCtrl{
                     this._tS.toastr('warning', response.message)                   
                 }
                 if(response.code==='1'){                    
-                    // this._tS.toastr('success', response.message)                    
+                    this._tS.toastr('success', response.message)                    
                 }
             }
         )

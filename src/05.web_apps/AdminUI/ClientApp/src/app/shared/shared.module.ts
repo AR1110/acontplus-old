@@ -1,24 +1,31 @@
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { HeaderComponent } from './components/header/header.component';
+import { SideBarComponent } from './components/side-bar/side-bar.component';
+import { RouterModule } from '@angular/router';
+import { MaterialModule } from '@app/material.module';
+import { MenuItemComponent } from './components/menu-item/menu-item.component';
+import { PageHeaderComponent } from './components/page-header/page-header.component';
 
-import { MenuItems } from '@layout/sidebar/menu-items';
-import { AccordionAnchorDirective, AccordionLinkDirective, AccordionDirective } from './accordion';
 
 
 @NgModule({
-  imports:[
-    CommonModule
-  ],
   declarations: [
-    AccordionAnchorDirective,
-    AccordionLinkDirective,
-    AccordionDirective,
+    HeaderComponent,
+    SideBarComponent,
+    MenuItemComponent,
+    PageHeaderComponent
   ],
-  exports: [
-    AccordionAnchorDirective,
-    AccordionLinkDirective,
-    AccordionDirective
-   ],
-  providers: [ MenuItems ]
+  imports: [
+    CommonModule,
+    RouterModule,
+    MaterialModule
+  ],
+  exports:[
+    HeaderComponent,
+    SideBarComponent,
+    MenuItemComponent,
+    PageHeaderComponent
+  ]
 })
 export class SharedModule { }

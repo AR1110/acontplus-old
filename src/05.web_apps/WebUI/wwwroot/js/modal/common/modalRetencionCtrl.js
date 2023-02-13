@@ -588,7 +588,7 @@ class ModalRetencionCompraCtrl extends ModalBaseCtrl{
             if(item.codigoSri===1){
                 totalRenta += item.baseImponible;
             }else{
-                totalIva += val.baseImponible;
+                totalIva += item.baseImponible;
             }
             totalBaseImponible += item.baseImponible;
         }
@@ -638,6 +638,59 @@ class ModalRetencionCompraCtrl extends ModalBaseCtrl{
         let total = this.gridOptions.data.map(val=>val.valorRetenido).reduce((prev, curr)=>prev+curr,0);            
         return this._form.roundNumber(total,5);
     }
+
+
+    async generateRetencion() {   
+        try {            
+            showLoader();
+            this.gridOptions.data = [];
+            await this._mS.getData('get', `/GenerateRetencion/GetGenerateRetencionCompra?idFacturaCompra=${this.idComprobante}`).then(response=>{
+                
+                console.log(response)
+                if (response.id === "0") {                      
+                    this._form.sweetAlert('warning', response.message, response.titleSms);                    
+                }
+
+                if (response.id === "1") {     
+                    // this.gridOptions.data = response.data;    
+                    
+                    for(let item of response.data){
+                        let obj = {
+                            ...item,
+                            ...item.retencionCompraDetalle,
+                            tipoImpuesto: item.tipoRetencion
+
+                        }                        
+                        this.gridOptions.data.push(obj);
+                    }
+
+                    
+                    const { totalBaseImponible, totalRenta, totalIva } = this.getTotales();
+                    
+                    this.data.total = this._form.roundNumber(totalBaseImponible,5);
+                    this.data.totalRenta = this._form.roundNumber(totalRenta,5);
+                    this.data.totalIva = this._form.roundNumber(totalIva,5);                                                            
+                }
+
+                if(response.id=="2"){                
+                    const data={
+                        tipoRetencion: this.TIPO_DOC.codigo,
+                        idProveedor: this.proveedor.idProveedor,
+                        idSubContribuyente: response.gestion,
+                        idFactura: this.idComprobante,
+                        idConfigContribuyente: response.lastId
+                    }
+                    this.openModalArticuloImpuesto(data)                    
+                }
+            })                
+        } catch (error) {            
+            console.error(error)
+        }finally{
+            hideLoader();
+        }             
+    }
+
+
 }
 
 
@@ -782,58 +835,6 @@ export class ModalRetencionCompraNuevoCtrl extends ModalRetencionCompraCtrl{
             console.log(error)
         }                                            
     }
-
-
-    async generateRetencion() {   
-        try {            
-            showLoader();
-            
-            await this._mS.getData('get', `/GenerateRetencion/GetGenerateRetencionCompra?idFacturaCompra=${this.idComprobante}`).then(response=>{
-                
-                console.log(response)
-                if (response.id === "0") {                      
-                    this._form.sweetAlert('warning', response.message, response.titleSms);                    
-                }
-
-                if (response.id === "1") {     
-                    // this.gridOptions.data = response.data;    
-                    
-                    for(let item of response.data){
-                        let obj = {
-                            ...item,
-                            ...item.retencionCompraDetalle
-                        }
-                        this.gridOptions.data.push(obj);
-                    }
-
-                    
-                    const { totalBaseImponible, totalRenta, totalIva } = this.getTotales();
-                    
-                    this.data.total = this._form.roundNumber(totalBaseImponible,5);
-                    this.data.totalRenta = this._form.roundNumber(totalRenta,5);
-                    this.data.totalIva = this._form.roundNumber(totalIva,5);                                                            
-                }
-
-                if(response.id=="2"){                
-                    const data={
-                        tipoRetencion: this.TIPO_DOC.codigo,
-                        idProveedor: this.proveedor.idProveedor,
-                        idSubContribuyente: response.gestion,
-                        idFactura: this.idComprobante,
-                        idConfigContribuyente: response.lastId
-                    }
-                    this.openModalArticuloImpuesto(data)                    
-                }
-            })                
-        } catch (error) {            
-            console.error(error)
-        }finally{
-            hideLoader();
-        }             
-    }
-
-
-
 }
 
 
@@ -983,7 +984,7 @@ export class ModalRetencionCompraEditarCtrl extends ModalRetencionCompraCtrl{
 }
 
 
-export class ModalRetencionAutomaticaCtrl extends ModalBaseCtrl{
+export class ModalRetencionCompraAutomaticaCtrl extends ModalRetencionCompraCtrl{
     static $inject = [
         '$scope',
         '$timeout', 
@@ -995,49 +996,145 @@ export class ModalRetencionAutomaticaCtrl extends ModalBaseCtrl{
         'uiGridConstants', 
         'toastService',
         'formulario',
+        'toastService',
         'params'
     ]
-    constructor($scope, $timeout, _mS, _commonSvc, _modalSvc, _nombreModal, $uibModalInstance, uiGridConstants, toastr, _form, _params){                              
-        super({$scope, $timeout, _mS, _commonSvc, _modalSvc, _nombreModal, $uibModalInstance, uiGridConstants, toastr, _form, codigoDocumento: "RC"})
-        this.scopeParent = this;
-        this.tipoDoc           = this._commonSvc.tipoDoc['RC']
-
-        this.sucursal    = {};
+    constructor($scope, $timeout, _mS, _commonSvc, _modalSvc, _nombreModal,  $uibModalInstance, uiGridConstants, toastr, _form, _tS, _params){                              
+        super({$scope, $timeout, _mS, _commonSvc, _modalSvc, _nombreModal, $uibModalInstance, uiGridConstants, toastr, _form})
+        
         this._params = _params;
-        this.asignacionesData = {}; //(data sucursal, puntos emisiones y bodegas)
-        this.puntoEmision = {};
-        this.data = {};
+        let {data} = _params;
+        this.data = Object.assign({}, data);
         this.data.fechaEmision = new Date();
     }
 
-    $onInit(){
-        try {            
-            const {dataDocumento, dataTipoDocumento, proveedor} = this._params;
-            this.dataTipoDocumento = dataTipoDocumento;
-            this.proveedor = proveedor;
-            this.idComprobante = this.dataTipoDocumento.idComprobante;
+    async $onInit(){
+        try {      
+            
+            let resultsDataForm = await this.initiload();
+            
+            this.establecimientos = resultsDataForm[0];
+
+            if(this.establecimientos.length>0){
+                                             
+                let dataEstab = this.establecimientos.find(item=>item.codEstab===this.data.codEstab)             
+                let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
+                
+                this.puntosEmision = resultsDataFormEstab[0];
+                if(this.puntosEmision.length>0)            {
+                    this.data.idPuntoEmision = this.puntosEmision[0].idPuntoEmision;
+                }
+                this.cloneCodEstab   = this.data.codEstab;                   
+            }else{
+                this._tS.toastr('info', 'No tienes asignado ningún Establecimiento')
+            }
+
+            this.proveedor.idProveedor = this.data.idProveedor;
+            this.proveedor.proveedor = this.data.proveedor,
+            this.proveedor.numeroIdentificacion = this.data.nroIdentificacion;
+            this.proveedor.direccion = this.data.direccion
+                    
+            this.factura = {
+                idFacturaCompra: this.data.idFacturaCompra,
+                nroFactura: this.data.nroDocumento
+            }
+            this.idComprobante = this.data.idFacturaCompra;   
+
+            this.setColumnDefs();
+
             this.generateRetencion();
             
         } catch (error) {
-            
+            console.log(error)
         }
     }
+       
 
-    
-    setAsignaciones(item){                         
-        this.sucursal = item.sucursal;
-        this.asignacionesData = item;
+    //Guardar Retencion 
+    async guardarRetencionCompra() {
+        try {
+            const tituloModal = 'Guardar Retencion';        
+            if(this._form.campo(this.factura.idFacturaCompra)){
+                this._toastr.toastr('warning', 'El id del documento no existe', tituloModal);
+                return;               
+            }
+            if (this._form.campo(this.data.idPuntoEmision)) {
+                this._toastr.toastr('warning', 'Seleccione el Punto de Emisión', tituloModal);
+                return;
+            }           
+
+            if (this._form.campo(this.data.fechaEmision)) {
+                this._toastr.toastr('warning', 'Ingrese la Fecha de Emisión', tituloModal);
+                return;
+            };
+        
+
+            if (this.gridOptions.data.length===0) {
+                this._toastr.toastr('warning', 'No existe detalle de esta retención', tituloModal);
+                return;
+            };
+
+            if (this.gridOptions.data.some(val => [null, undefined, ""].includes(val.impuesto))) {
+                this._toastr.toastr('warning', 'Complete los campos en el Detalle', tituloModal);
+                return;
+            }
+
+            this.nroDocumentoSecuencial = await this.generarNroSecuencial();
+
+            if(!this.nroDocumentoSecuencial) return "NO SE GENERO CORRECTAMENTE EL NÚMERO DE DOCUMENTO"
+            
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                confirmButton: 'btn btn-success',
+                cancelButton: 'btn btn-danger ml-2'
+                },
+                buttonsStyling: false
+            })
+            
+            swalWithBootstrapButtons.fire({
+                title: '<small>Guardar Retención</small>',
+                html:`<small>Esta seguro/a de guardar esta Retención Compra Nro. <b>${this.nroDocumentoSecuencial}</b> de la Factura N°. <b>${this.data.nroDocumento}<b></b></small>`, 
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Si, guardar!',
+                cancelButtonText: 'No, cancelar!',
+                reverseButtons: true
+            }).then(result=>{
+
+                if(result.isConfirmed){
+                    showLoader();
+
+                    let retencionCompra = {
+                        idFacturaCompra: this.factura.idFacturaCompra,
+                        idProveedor: this.proveedor.idProveedor,
+                        idPuntoEmision: this.data.idPuntoEmision,
+                        total: this.getTotalValorRetenido(),
+                        fechaEmision: this.data.fechaEmision,
+                        concepto: this.data.concepto||''
+                    }
+            
+                    let data = {
+                        adicional: this.infoAdicionalDocumento,
+                        retencionCompra,
+                        dataDetalle: this.gridOptions.data
+                    }
+                        
+                    this._mS.getData('post', '/RetencionCompra/Insert', data) .then(response=>{
+                            if (response.id === "0") {                        
+                                this._form.sweetAlert('warning', response.message, response.titleSms);                        
+                            }
+                            if (response.id == "1") {                        
+                                this._form.sweetAlert('success', response.message, response.titleSms, 1000);                                                                   
+                                this.$uibModalInstance.close({response:1});                            
+                            }
+                        }
+                    )                                             
+                }
+            })
+        } catch (error) {
+            console.log(error)
+        }
     }
-
-    
-    setItemPuntoEmision(item){
-        this.puntoEmision = item;                
-    }
-
-   
-
-
-    
 }
 
 
