@@ -1,12 +1,20 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { HomePageComponent } from './modules';
+import { SessionGuard } from './core/guards/session.guard';
 
 
 const routes: Routes = [
-  {path: '', redirectTo:'home', pathMatch:'full'},
-  {path: 'home', loadChildren:()=>import('./modules').then(m=>m.HomeModule)},
-  {path: 'administration', loadChildren:()=>import('./modules').then(m=>m.AdministrationModule)},
-  {path: 'configuration', loadChildren:()=>import('./modules').then(m=>m.ConfigurationModule)}
+  {
+    path: 'auth', //Public (Login)
+    loadChildren:()=>import('./modules').then(m=>m.AuthModule)
+  },
+  {
+    path: '', //Privada
+    component: HomePageComponent,
+    loadChildren:()=>import('./modules').then(m=>m.HomeModule),
+    canActivate: [SessionGuard]
+  }, 
 ];
 
 @NgModule({
