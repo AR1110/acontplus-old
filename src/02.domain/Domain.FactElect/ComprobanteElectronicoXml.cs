@@ -1,17 +1,64 @@
-﻿using System.Collections.Generic;
-using System.Xml;
-
-namespace Domain.Models.FE
+﻿namespace Domain.FactElect
 {
     public class ComprobanteElectronicoXml
     {
+        public string codDoc { get; set; }
         public InfoTributaria infoTributaria { get; set; }
-        public InfoComprobante infoComprobante { get; set; }
-        public List<TotalImpuesto> totalImpuestos { get; set; }
-        public List<Pago> pagos { get; set; }
-        public List<Detalle> detalles { get; set; }
-        public List<ImpuestoComp> impuestos { get; set; }
-        public List<InfoAdicional> infoAdicionals { get; set; }
+        protected InfoFactura infoFactura { get; set; }
+        protected InfoCompRetencion infoCompRetencion { get; set; }
+        protected List<TotalImpuesto> totalImpuestos { get; set; }
+        protected List<Pago> pagos { get; set; }
+        protected List<Detalle> detalles { get; set; }
+        protected List<Impuesto> impuestos { get; set; }
+        protected List<ImpuestoRetencion> impuestosRetencion { get; set; }
+        protected List<InfoAdicional> infoAdicional { get; set; }
+
+        public void Create(string codDoc, object obj)
+        {
+            switch (codDoc)
+            {
+                case "01":
+                    this.infoFactura = obj as InfoFactura;
+                    break;
+                case "03":
+                    break;
+                case "04":
+                    break;
+                case "05":
+                    break;
+                case "06":
+                    break;
+                case "07":
+                    this.infoCompRetencion = obj as InfoCompRetencion;
+                    break;
+                default:
+                    break;
+            }
+        }
+        public void CreateTotalTaxes(object obj)
+        {
+            this.totalImpuestos = obj as List<TotalImpuesto>;
+        }
+        public void CreatePayments(object obj)
+        {
+            this.pagos = obj as List<Pago>;
+        }
+        public void CreateDetails(object obj)
+        {
+            this.detalles = obj as List<Detalle>;
+        }
+        public void CreateTaxes(object obj)
+        {
+            this.impuestos = obj as List<Impuesto>;
+        }
+        public void CreateRetencionTaxes(object obj)
+        {
+            this.impuestosRetencion = obj as List<ImpuestoRetencion>;
+        }
+        public void CreateAdditionalInfo(object obj)
+        {
+            this.infoAdicional = obj as List<InfoAdicional>;
+        }
     }
     public class InfoTributaria
     {
@@ -28,7 +75,7 @@ namespace Domain.Models.FE
         public string dirMatriz { get; set; }
 
     }
-    public class InfoComprobante
+    public class InfoFactura
     {
         public string fechaEmision { get; set; }
         public string dirEstablecimiento { get; set; }
@@ -48,6 +95,17 @@ namespace Domain.Models.FE
         public string propina { get; set; }
         public string importeTotal { get; set; }
         public string moneda { get; set; }
+    }
+    public class InfoCompRetencion
+    {
+        public string fechaEmision { get; set; }
+        public string dirEstablecimiento { get; set; }
+        public string contribuyenteEspecial { get; set; }
+        public string obligadoContabilidad { get; set; }
+        public string tipoIdentificacionSujetoRetenido { get; set; }
+        public string razonSocialSujetoRetenido { get; set; }
+        public string identificacionSujetoRetenido { get; set; }
+        public string periodoFiscal { get; set; }
     }
     public class TotalImpuesto
     {
@@ -91,7 +149,7 @@ namespace Domain.Models.FE
         public string detAdicionalNombre { get; set; }
         public string detAdicionalValor { get; set; }
     }
-    public class ImpuestoComp
+    public class Impuesto
     {
         public string codArticulo { get; set; }
         public string codigo { get; set; }
@@ -99,6 +157,17 @@ namespace Domain.Models.FE
         public string tarifa { get; set; }
         public string baseImponible { get; set; }
         public string valor { get; set; }
+    }
+    public class ImpuestoRetencion
+    {
+        public string codigo { get; set; }
+        public string codigoRetencion { get; set; }
+        public string baseImponible { get; set; }
+        public string porcentajeRetener { get; set; }
+        public string valorRetenido { get; set; }
+        public string codDocSustento { get; set; }
+        public string numDocSustento { get; set; }
+        public string fechaEmisionDocSustento { get; set; }
     }
     public class InfoAdicional
     {

@@ -1,16 +1,15 @@
 ﻿using ApiProveedores.Utils;
 using BL.Proveedores;
 using Common.Logs;
-using Domain.Models.FE;
-using Domain.Models;
 using Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using System.Data;
 using System.Xml;
 using DataAccess;
-using static System.Reflection.Metadata.BlobBuilder;
+using BL.FactElect;
+using Domain.FactElect;
+using Newtonsoft.Json;
 
 namespace ApiProveedores.Controllers
 {
@@ -21,7 +20,7 @@ namespace ApiProveedores.Controllers
     {
         private readonly IConfiguration _configuration;
         public DocumentoRecibidoController(IConfiguration configuration) => (_configuration) = (configuration);
-        [HttpGet("Get/{idRol}/{json}")] 
+        [HttpGet("Get/{idRol}/{json}")]
         public async Task<IActionResult> Get(int idRol, string json)
         {
             LogWriter _logs = new LogWriter(_configuration);
@@ -69,20 +68,26 @@ namespace ApiProveedores.Controllers
                     xdoc.LoadXml(xmlDoc);
                     ComprobanteElectronicoXml ceXml = new ComprobanteElectronicoXml();
                     string sms = string.Empty;
-                    //if (!_getXmlSriData.GetData(xdoc, ref ceXml, ref sms))
-                    //{
-                    //    _response.Create("0", sms);
-                    //}
-                    //else
-                    //{
-                    //    Dictionary<string, object> parametersTemp = new Dictionary<string, object>();
-                    //    parametersTemp.Add("idRol", _idRol);
-                    //    parametersTemp.Add("idComp", id);
-                    //    parametersTemp.Add("jsonData", JsonConvert.SerializeObject(ceXml.detalles));
-                    //    parametersTemp.Add("impuestos", JsonConvert.SerializeObject(ceXml.impuestos));
-                    //    //await _dao.OnlyExecute("FactElect.CompImpDetailTemp_Insert_All", parametersTemp);
-                    //    _response.payload = ceXml;
-                    //}
+                    DataXmlComprobante _getXmlSriData = new DataXmlComprobante();
+                    if (!_getXmlSriData.GetData(xdoc, ref ceXml, ref sms))
+                    {
+                        _response.Create("0", sms);
+                    }
+                    else
+                    {
+                        Dictionary<string, object> parametersTemp = new Dictionary<string, object>
+                        {
+                            { "idRol", idRol },
+                            { "idComp", id },
+                            { "jsonComp", JsonConvert.SerializeObject(ceXml) }
+                            //,
+                            //{ "jsonData", JsonConvert.SerializeObject() },
+                            //{ "impuestos", JsonConvert.SerializeObject() }
+                        };
+                        DAO _dao = new DAO(_configuration);
+                        //_dao.OnlyExec("FactElect.CompImpDetailTemp_Insert_All", parametersTemp);
+                        _response.payload = ceXml;
+                    }
                 }
                 else
                 {
