@@ -20,7 +20,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\01.common\Common.Logs\Common.Logs.csproj" />
     <ProjectReference Include="..\..\02.domain\Domain.Auth\Domain.Auth.csproj" />
-    <ProjectReference Include="..\..\02.domain\Domain\Domain.csproj" />
     <ProjectReference Include="..\..\03.business_logic\BL.JwtAuthenticationManger\BL.JwtAuthenticationManger.csproj" />
   </ItemGroup>
 
