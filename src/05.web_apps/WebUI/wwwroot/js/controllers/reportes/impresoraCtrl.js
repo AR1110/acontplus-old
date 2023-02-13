@@ -9,12 +9,15 @@ function impresoraCtrl($scope, _commonSvc, mS, tS) {
 
     $scope.initialLoad = () => {
         mS.getData('get','/Impresora/Get?json=' + JSON.stringify({ tipo: 1 })).then(response => {
-            $scope.printers = JSON.parse(response[1]) || [];
-            console.log($scope.printers)
-            $scope.printers = $scope.printers.map(item=>{
-                item.copyPrint = item.copyPrint==2?true:false;
-                return item;
-            })                    
+            $scope.printers = [];
+            if(response.payload) {
+                $scope.printers = JSON.parse(response.payload) || [];
+                console.log($scope.printers)
+                $scope.printers = $scope.printers.map(item=>{
+                    item.copyPrint = item.copyPrint==2?true:false;
+                    return item;
+                })  
+            }             
         })
 
         _commonSvc.getEstabAsign().then(response=>{
@@ -33,12 +36,18 @@ function impresoraCtrl($scope, _commonSvc, mS, tS) {
 
     $scope.openModalNew = () => {
         $scope.tipoRegistro = 1;
+        $scope.data.predeterminada = true;
         $('#addUpdatePrinter').modal('show')
     }
       
     $scope.openEdit = (item) => {
-        $scope.data = item;        
+        $scope.data = item; 
+        $scope.tipoRegistro = 2;
         $('#addUpdatePrinter').modal('show')
+    }
+
+    $scope.clearNameEquipment = ()=>{
+        $scope.data.nombreEquipo = null; 
     }
 
     $scope.saveEdit = () => {
@@ -55,6 +64,11 @@ function impresoraCtrl($scope, _commonSvc, mS, tS) {
 
             if (!$scope.data.idTipoImpresora) {                
                 tS.toastr('warning', 'Seleccione el Tipo Impresora')
+                return
+            }
+
+            if ($scope.data.asignar && !$scope.data.nombreEquipo){
+                tS.toastr('warning', 'Escriba el nombre del equipo')
                 return
             }
 

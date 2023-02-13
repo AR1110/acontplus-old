@@ -1,3 +1,5 @@
+USE [AcontPlus]
+go
 -- ================================================
 -- Template generated from Template Explorer using:
 -- Create Procedure (New Menu).SQL
@@ -24,7 +26,7 @@ GO
 CREATE PROCEDURE FactElect.Config_Comprob_Elect_Update 
 	@idRol            INT
    ,@id               INT
-   ,@codigoPorcentaje VARCHAR(5)
+   ,@codigoPorcentaje VARCHAR(5) = NULL
    ,@porcentaje       DECIMAL(15,5)
    ,@isAutomatic      INT
 AS
@@ -35,12 +37,7 @@ BEGIN
 
 	BEGIN TRY
 		BEGIN TRAN
-			UPDATE FactElect.Config_Comprob_Elect SET
-				codigoPorcentaje = @codigoPorcentaje
-			   ,porcentaje       = @porcentaje
-			   ,isAutomatic      = @isAutomatic
-			WHERE idConfig_Comprob_Elect = @id
-
+			UPDATE FactElect.Config_Comprob_Elect SET isAutomatic = @isAutomatic WHERE idConfig_Comprob_Elect = @id
 		COMMIT TRAN 
 		SELECT '1'code,'Actualizado Correctamente' as 'message'
 		RETURN 

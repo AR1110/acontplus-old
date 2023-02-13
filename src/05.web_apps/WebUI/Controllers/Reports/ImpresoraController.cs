@@ -32,9 +32,7 @@ namespace WebUI.Controllers.Reports
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("idRol", _idRol);
             parameters.Add("json", SqlValidation.ValidateSqlString(json));
-            var response = DbResponse.SPDataTable(await _dao.GetDataTableAsync("ApiPrinter.Impresora_Get", parameters));
-            object[] objResp = new object[] { response.code, response.data, _connectionStrings };
-            return Ok(objResp);
+            return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("ApiPrinter.Impresora_Get", parameters)));
         }
 
         [HttpPost]
