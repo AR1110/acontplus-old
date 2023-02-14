@@ -11,15 +11,6 @@ namespace BL.JwtAuthenticationManger
     {
         public const string JWT_SECURITY_KEY = "acontplusthebest";
         private const int JWT_TOKEN_VALIDITY_MINS = 8;
-        public List<Usuario> _users;
-        public JwtTokenHandler()
-        {
-            _users = new List<Usuario>
-            {
-                new Usuario{userName="ipaz", password="123456", role="admin"},
-                new Usuario{userName="aramirez", password="123456", role="Administrator"}
-            };
-        }
         public AuthResponse? GenerateJwtToken(LoginDataDto authRequest)
         {
             try
@@ -65,7 +56,6 @@ namespace BL.JwtAuthenticationManger
                 var token = jwtSecurityTokenHandler.WriteToken(securityToken);
                 return new AuthResponse
                 {
-                    userName = authRequest.userName,
                     expiresIn = (int)tokenExpiryTimeStamp.Subtract(DateTime.Now).TotalSeconds,
                     jwtToken = token
                 };
