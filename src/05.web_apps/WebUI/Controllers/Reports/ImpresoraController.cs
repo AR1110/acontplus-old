@@ -27,12 +27,31 @@ namespace WebUI.Controllers.Reports
         {
             return View();
         }
+
+        [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("idRol", _idRol);
             parameters.Add("json", SqlValidation.ValidateSqlString(json));
             return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("ApiPrinter.Impresora_Get", parameters)));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetDataForm(string json)
+        {
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            parameters.Add("idRol", _idRol);
+            parameters.Add("json", SqlValidation.ValidateSqlString(json));
+            return Ok(DbResponse.SPDataSet(await _dao.GetDataSetAsync("ApiPrinter.Impresora_Get_Data_Form", parameters)));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetId(int id)
+        {
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            parameters.Add("id", id);
+            return Ok(DbResponse.SPDataSet(await _dao.GetDataSetAsync("ApiPrinter.Impresora_Get_Id", parameters)));
         }
 
         [HttpPost]
