@@ -126,10 +126,8 @@ function reporteInventarioCtrl($scope, _commonSvc, mS, form, toast, FileSaver, B
         
         let loaderGif = $scope.dataSearch.byTipoFormato==="pdf"?'document-office.gif':'transfer-file.gif'
         form.showLoaderForm('Descargando...', 'Espere', `/assets/images/gif/${loaderGif}`)
-        $scope.getReport();                
-        return
-                    
-    };       
+        $scope.getReport();                                            
+    }     
 
     $scope.getReport = function() {   
         let fechaHoy = new Date();
@@ -138,6 +136,7 @@ function reporteInventarioCtrl($scope, _commonSvc, mS, form, toast, FileSaver, B
         
         $scope.dataSearch.filtroFecha =  fecha + ' ' + hora;
 
+        console.log($scope.dataSearch)
      
         const parameters = {
             reportParams: JSON.stringify({
@@ -146,7 +145,8 @@ function reporteInventarioCtrl($scope, _commonSvc, mS, form, toast, FileSaver, B
                 aditionalParams: []
             }),
             dataParams: JSON.stringify($scope.dataSearch)
-        };
+        }
+
         mS.getFile('Post', '/Reporte/Download', parameters).then(response=>{
             Swal.close();
             
