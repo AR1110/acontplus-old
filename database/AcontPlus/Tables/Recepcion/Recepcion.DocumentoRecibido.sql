@@ -20,6 +20,10 @@ CREATE TABLE Recepcion.DocumentoRecibido (
 	importeTotal decimal(18,5) NOT NULL,
 	xmlDoc XML NULL,
 	idUsuario INT NULL,
-	fechaRegistro DATETIME NOT NULL DEFAULT GETDATE()
+	fechaRegistro DATETIME NOT NULL DEFAULT GETDATE(),
+	complete BIT NOT NULL DEFAULT 0,
+	downloaded VARCHAR(2) NOT NULL
 	CONSTRAINT DocumentoRecibido_PK PRIMARY KEY (uniqueId)
 );
+
+--DROP TABLE Recepcion.DocumentoRecibido

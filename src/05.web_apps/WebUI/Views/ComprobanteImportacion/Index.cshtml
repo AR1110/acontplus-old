@@ -92,6 +92,9 @@
         </div>
     </div>
     @await Html.PartialAsync("_NewImport")
+    <input type="text" name="urlGateway" id="urlGateway" value="@ViewData["urlGateway"]" hidden />
+    <input type="text" name="idRol" id="idRol" value="@ViewData["idRol"]" hidden />
+
 </div>
 @section Scripts{
     <script src="~/js/controllers/compImportacionCtrl.min.js" asp-append-version="true"></script>

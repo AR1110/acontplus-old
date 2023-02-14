@@ -3,14 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using Helpers;
-using Domain.Models.FE;
 using WebUI.Utils;
 using DataAccess;
 using System.Xml;
-using Newtonsoft.Json;
-using HelpersNS20;
 using System.Text;
-using Microsoft.AspNetCore.Http;
 using FactElect;
 
 namespace WebUI.Controllers.FE
@@ -24,22 +20,26 @@ namespace WebUI.Controllers.FE
         
         private GenericResponse _response = new GenericResponse();
         private DataAccessObject _dao;
-        private GetDataXmlComprobante _getXmlSriData = new GetDataXmlComprobante();
+        //private GetDataXmlComprobante _getXmlSriData = new GetDataXmlComprobante();
         private readonly string _urlSri = "https://cel.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantesOffline?wsdl";
         private readonly int _idRol;
+        private readonly string _apiGateway = string.Empty;
         public ComprobanteImportacionController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
             _httpContextAccessor = httpContextAccessor;
             _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            _apiGateway = _configuration.GetSection("UrlApis").GetSection("ApiGateway").Value;
         }
         #endregion
-        #region ComprobanteImportacion
         public IActionResult Index()
         {
+            ViewData["idRol"] = _idRol; 
+            ViewData["urlGateway"] = _apiGateway;
             return View();
         }
+        #region ComprobanteImportacion
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
@@ -61,22 +61,22 @@ namespace WebUI.Controllers.FE
                 string xmlDoc = dt.Rows[0]["xmlDoc"].ToString();
                 XmlDocument xdoc = new XmlDocument();
                 xdoc.LoadXml(xmlDoc);
-                ComprobanteElectronicoXml ceXml = new ComprobanteElectronicoXml();
+                //ComprobanteElectronicoXml ceXml = new ComprobanteElectronicoXml();
                 string sms = string.Empty;
-                if (!_getXmlSriData.GetData(xdoc, ref ceXml, ref sms))
-                {
-                    _response.Create("0", sms);
-                }
-                else
-                {
-                    Dictionary<string, object> parametersTemp = new Dictionary<string, object>();
-                    parametersTemp.Add("idRol", _idRol);
-                    parametersTemp.Add("idComp", id);
-                    parametersTemp.Add("jsonData", JsonConvert.SerializeObject(ceXml.detalles));
-                    parametersTemp.Add("impuestos", JsonConvert.SerializeObject(ceXml.impuestos));
-                    await _dao.OnlyExecuteAsync("FactElect.CompImpDetailTemp_Insert_All", parametersTemp);
-                    _response.payload = ceXml;
-                }
+                //if (!_getXmlSriData.GetData(xdoc, ref ceXml, ref sms))
+                //{
+                //    _response.Create("0", sms);
+                //}
+                //else
+                //{
+                //    Dictionary<string, object> parametersTemp = new Dictionary<string, object>();
+                //    parametersTemp.Add("idRol", _idRol);
+                //    parametersTemp.Add("idComp", id);
+                //    parametersTemp.Add("jsonData", JsonConvert.SerializeObject(ceXml.detalles));
+                //    parametersTemp.Add("impuestos", JsonConvert.SerializeObject(ceXml.impuestos));
+                //    await _dao.OnlyExecuteAsync("FactElect.CompImpDetailTemp_Insert_All", parametersTemp);
+                //    _response.payload = ceXml;
+                //}
             }
             return Ok(_response);
         }

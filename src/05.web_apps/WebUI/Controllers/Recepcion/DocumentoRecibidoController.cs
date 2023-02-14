@@ -1,11 +1,7 @@
 ﻿using DataAccess;
-using Domain.Models.FE;
 using Domain.Models;
-using FactElect;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using System.Data;
 using System.Text;
 using System.Xml;
 using WebUI.Utils;
@@ -20,7 +16,7 @@ namespace WebUI.Controllers.Recepcion
 
         private GenericResponse _response = new GenericResponse();
         private DataAccessObject _dao;
-        private GetDataXmlComprobante _getXmlSriData = new GetDataXmlComprobante();
+        //private GetDataXmlComprobante _getXmlSriData = new GetDataXmlComprobante();
         private readonly int _idRol;
         public DocumentoRecibidoController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
