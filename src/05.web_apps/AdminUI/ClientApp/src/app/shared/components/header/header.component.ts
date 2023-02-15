@@ -7,11 +7,8 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angul
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HeaderComponent {
-  @Output() menuToggled = new EventEmitter<boolean>();
 
-  user: string = 'Enea';
-
-  // constructor(private authService: AuthService) { }
+  title = 'AcontPlus'
 
   logout(): void {
     console.log('Logged out');

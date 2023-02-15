@@ -1,16 +1,19 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HeaderComponent } from './components/header/header.component';
-import { SideBarComponent } from './components/side-bar/side-bar.component';
 import { RouterModule } from '@angular/router';
 import { MaterialModule } from '@app/material.module';
+
+import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
+import { HeaderComponent, SideBarComponent, Page404Component} from './components';
 
 
 
 @NgModule({
   declarations: [
+    MainLayoutComponent,
     HeaderComponent,
-    SideBarComponent,    
+    SideBarComponent,
+    Page404Component,
   ],
   imports: [
     CommonModule,
@@ -18,8 +21,10 @@ import { MaterialModule } from '@app/material.module';
     MaterialModule
   ],
   exports:[
-    HeaderComponent,
-    SideBarComponent    
+    MainLayoutComponent,
+    HeaderComponent, 
+    SideBarComponent,
+    Page404Component
   ]
 })
 export class SharedModule { }

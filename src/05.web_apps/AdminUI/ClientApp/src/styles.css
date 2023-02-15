@@ -1,11 +1,13 @@
 
 @import '~@angular/material/prebuilt-themes/indigo-pink.css';
 
-body{
+html, body{
   font-family: 'Roboto', sans-serif;
-  margin:0px !important;
+  margin: 0px !important;
   overflow: hidden;
+  height: 100%;
 }
+
 .add-btn{
   position: fixed;
   right: 25px;
@@ -99,16 +101,16 @@ a{
 
 }
 
-/* 
+/*
   ##Device = Laptops, Desktops
   ##Screen = B/w 1025px to 1280px
 */
 
 @media (min-width: 1025px) and (max-width: 1280px) {
 
-} 
+}
 
-/* 
+/*
   ##Device = Tablets, Ipads (portrait)
   ##Screen = B/w 768px to 1024px
 */
@@ -126,16 +128,16 @@ a{
   }
 }
 
-/* 
+/*
   ##Device = Tablets, Ipads (landscape)
   ##Screen = B/w 768px to 1024px
 */
 
 @media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
 
-} 
+}
 
-/* 
+/*
   ##Device = Low Resolution Tablets, Mobiles (Landscape)
   ##Screen = B/w 481px to 767px
 
@@ -151,9 +153,9 @@ a{
   .btn{
       font-size: 1em;
   }
-} 
+}
 
-/* 
+/*
   ##Device = Most of the Smartphones Mobiles (Portrait)
   ##Screen = B/w 320px to 479px
 
