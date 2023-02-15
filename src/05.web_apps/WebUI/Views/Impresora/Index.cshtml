@@ -25,24 +25,24 @@
                             <thead>
                                 <tr>
                                     <th>N°</th>
-                                    <th>Impresora</th>
-                                    <th>Equipo</th>
-                                    <th class="text-center">Tipo Impr.</th>                                                                        
-                                    <th class="text-center">Predeterminada</th>                                                         
-                                    <th class="text-center">Usuario</th>                                                                        
-                                    <th class="text-center">Estab.</th>                                                                        
+                                    <th class="text-center">Estab.</th> 
+                                    <th class="text-center">Impresora</th>
+                                    <th class="text-center">Usuario</th>  
+                                    <th class="text-center">Equipo</th>
+                                    <th class="text-center">Documento</th>
+                                    <th class="text-center">Tipo Impr.</th>                                     
                                     <th class="text-center">Opciones</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr ng-repeat="item in printers |filter:buscar">
-                                    <td>{{$index+1}}</td>
-                                    <td>{{item.nombreImpresora}}</td>
-                                    <td>{{item.nombreEquipo}}</td>
-                                    <td class="text-center">{{item.tipoImpresora}}</td>
-                                    <td class="text-center" ng-bind-html="item.predeterminada | sino"></td>   
-                                    <td class="text-center">{{item.nroIdentificacion}}</td>
+                                    <td >{{$index+1}}</td>
                                     <td class="text-center">{{item.estab}}</td>
+                                    <td class="text-center">{{item.nombreImpresora}}</td>
+                                    <td class="text-center">{{item.nroIdentificacion}}</td>
+                                    <td class="text-center">{{item.nombreEquipo}}</td>
+                                    <td class="text-center">{{item.documento}}</td>
+                                    <td class="text-center">{{item.tipoImpresora}}</td>  
                                     <td class="text-center">
                                         <button class="btn btn-warning btn-sm" ng-click="openEdit(item.id)"><i
                                                 class="ti-pencil"></i></button>

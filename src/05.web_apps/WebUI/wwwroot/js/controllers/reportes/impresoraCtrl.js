@@ -98,8 +98,29 @@ function impresoraCtrl($scope, _commonSvc, mS, tS) {
                 }
             }
 
+            if($scope.documents.every(item=>!item.estado)){ 
+                tS.toastr('warning', 'Seleccione al menos un documento')
+                return
+            }
+
             let url = $scope.tipoRegistro === 1 ? '/Impresora/Post?json=' : '/Impresora/Put?json=';
             let method = $scope.tipoRegistro === 1 ? 'post' : 'put';
+            let data = "";
+            
+            if($scope.documents.some(item=>item.codDoc==="FV" && item.estado)){
+                data = "FV"    
+            }
+                
+            if($scope.documents.some(item=>item.codDoc==="NE" && item.estado)){
+                data = "NE";
+            }
+
+            if($scope.documents.every(item=>item.estado)){
+                data = "A";
+            }
+
+            $scope.data.codDoc = data;
+
             let object = {printer: $scope.data, documents : $scope.documents.map(item=>{
                 let obj = {
                     idConfig_Document : item.idConfig_Document,

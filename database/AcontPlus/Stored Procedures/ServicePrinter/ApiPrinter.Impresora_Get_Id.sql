@@ -48,7 +48,7 @@ BEGIN
 
 	SELECT 
 		idConfig_Document 
-	   ,descripcion = IIF(codDoc = 'F','FACTURA','NOTA DE ENTREGA')
+	   ,descripcion = IIF(codDoc = 'FV','FACTURA','NOTA DE ENTREGA')
 	   ,codDoc
 	   ,estado
 	   ,copyPrint = IIF(copyPrint = 1,CAST(0 AS BIT),CAST(1 AS BIT))

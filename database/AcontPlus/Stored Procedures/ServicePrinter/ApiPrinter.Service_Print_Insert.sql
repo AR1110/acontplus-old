@@ -41,6 +41,8 @@ BEGIN
 	--------PARAMETER MANAGEMENT----------
 	DECLARE @idUsuario INT
 	DECLARE @SP VARCHAR(MAX)
+    DECLARE @idImpresora INT
+	DECLARE @codValidator VARCHAR(3) = 'A'
 	DECLARE @ruc VARCHAR(15)
 	DECLARE @rdlcProps VARCHAR(MAX)
 	DECLARE @dataSources VARCHAR(MAX)
@@ -80,8 +82,7 @@ BEGIN
 
 		SELECT  @ruc = ruc, @estab = estab FROM Sri.Establecimiento WITH (NOLOCK) WHERE codEstab = @codEstab
 
-		SELECT  @dataSources = dataSources FROM ApiPrinter.Document_Data(@idDocument,@idTipoDocumento,@codDoc)
-
+		
 		IF NOT EXISTS (SELECT 1 FROM ApiPrinter.Impresora WHERE codEstab = @codEstab)
 			BEGIN
 				SELECT '0' code,'No tienes ninguna impresora configurada' as 'message'
@@ -94,7 +95,8 @@ BEGIN
 				RETURN 
 			END
 
-		IF EXISTS (SELECT 1 FROM ApiPrinter.Impresora WHERE codEstab = @codEstab  AND estado = 1 AND predeterminada = 1 AND nroIdentificacion = @nroIdentificacion)
+
+		IF EXISTS (SELECT  1 FROM ApiPrinter.Impresora WHERE codEstab = @codEstab  AND predeterminada = 1 AND nroIdentificacion = @nroIdentificacion)
 			BEGIN
 				IF @identificacion != @nroIdentificacion
 					BEGIN
@@ -102,35 +104,73 @@ BEGIN
 						RETURN
 					END 
 
-				SELECT  TOP 1
-					@printerName  = i.nombreImpresora
-				   ,@computerName = i.nombreEquipo 
-				   ,@printer      = ti.descripcion
-				   ,@isThermal    = ti.isThermal
-				   ,@format       = ti.formato
-				   ,@deviceInfo   = ti.deviceInfo
-				   ,@copyPrint    = cd.copyPrint
-				FROM ApiPrinter.Config_Document cd WITH (NOLOCK)
-				INNER JOIN ApiPrinter.Impresora      i WITH (NOLOCK) ON i.idImpresora      = cd.idImpresora
-				INNER JOIN ApiPrinter.TipoImpresora ti WITH (NOLOCK) ON ti.idTipoImpresora = i.idTipoImpresora
-				WHERE cd.codDoc = @codDoc AND cd.estado = 1 AND i.codEstab = @codEstab AND i.nroIdentificacion = @nroIdentificacion
+				IF EXISTS (SELECT 1 FROM ApiPrinter.Impresora WHERE codEstab = @codEstab  AND predeterminada = 1 AND nroIdentificacion = @nroIdentificacion AND codDoc = @codDoc)
+					BEGIN
+						SELECT TOP 1 
+							@idImpresora = idImpresora 
+						FROM ApiPrinter.Impresora WITH (NOLOCK)
+						WHERE codEstab          = @codEstab 
+						  AND predeterminada    = 1 
+						  AND nroIdentificacion = @nroIdentificacion 
+						  AND codDoc            = @codDoc
+
+						SET @codValidator = @codDoc
+					END 
+
+			    IF EXISTS (SELECT 1 FROM ApiPrinter.Impresora WHERE codEstab = @codEstab  AND predeterminada = 1 AND nroIdentificacion = @nroIdentificacion AND codDoc = 'A')
+					BEGIN
+						SELECT TOP 1 @idImpresora = idImpresora 
+						FROM ApiPrinter.Impresora WITH (NOLOCK)
+						WHERE codEstab          = @codEstab 
+						  AND predeterminada    = 1 
+						  AND nroIdentificacion = @nroIdentificacion 
+						  AND codDoc            = @codValidator
+					END 
 			END 
 
 		ELSE 
 			BEGIN
-				SELECT TOP 1
-					@printerName  = i.nombreImpresora
-				   ,@computerName = i.nombreEquipo 
-				   ,@printer      = ti.descripcion
-				   ,@isThermal    = ti.isThermal
-				   ,@format       = ti.formato
-				   ,@deviceInfo   = ti.deviceInfo
-				   ,@copyPrint    = cd.copyPrint
-				FROM ApiPrinter.Config_Document cd WITH (NOLOCK)
-				INNER JOIN ApiPrinter.Impresora      i WITH (NOLOCK) ON i.idImpresora      = cd.idImpresora
-				INNER JOIN ApiPrinter.TipoImpresora ti WITH (NOLOCK) ON ti.idTipoImpresora = i.idTipoImpresora
-				WHERE cd.codDoc = @codDoc AND cd.estado = 1 AND i.codEstab = @codEstab
+				IF EXISTS (SELECT 1 FROM ApiPrinter.Impresora WHERE codEstab = @codEstab  AND predeterminada = 1 AND codDoc = @codDoc)
+					BEGIN
+						SELECT TOP 1 @idImpresora = idImpresora 
+						FROM ApiPrinter.Impresora WITH (NOLOCK)
+						WHERE codEstab          = @codEstab 
+						  AND predeterminada    = 1 
+						  AND codDoc            = @codDoc
+
+						SET @codValidator =  @codDoc
+					END 
+
+			    IF EXISTS (SELECT 1 FROM ApiPrinter.Impresora WHERE codEstab = @codEstab  AND predeterminada = 1 AND codDoc = 'A')
+					BEGIN
+						SELECT TOP 1 @idImpresora = idImpresora 
+						FROM ApiPrinter.Impresora WITH (NOLOCK)
+						WHERE codEstab          = @codEstab 
+						  AND predeterminada    = 1 
+						  AND codDoc            = @codValidator
+					END 
 			END 
+
+		IF @idImpresora IS NULL	
+			BEGIN
+				SELECT '0'code,'No tienes configurado una impresora' as message
+				RETURN 
+			END
+
+		SELECT TOP 1
+			 @printerName  = i.nombreImpresora
+			,@computerName = i.nombreEquipo 
+			,@printer      = ti.descripcion
+			,@isThermal    = ti.isThermal
+			,@format       = ti.formato
+			,@deviceInfo   = ti.deviceInfo
+			,@copyPrint    = cd.copyPrint
+		FROM ApiPrinter.Config_Document cd WITH (NOLOCK)
+		INNER JOIN ApiPrinter.Impresora      i WITH (NOLOCK) ON i.idImpresora      = cd.idImpresora
+		INNER JOIN ApiPrinter.TipoImpresora ti WITH (NOLOCK) ON ti.idTipoImpresora = i.idTipoImpresora
+		WHERE cd.idImpresora = @idImpresora AND i.codDoc = @codValidator AND cd.estado = 1
+
+		SELECT  @dataSources = dataSources FROM ApiPrinter.Document_Data(@idDocument,@idTipoDocumento,@codDoc)
 
 		SET @rdlcProps = (SELECT rdlcName = IIF(@codDoc = 'FV',@invoice,@note)+@printer+'.rdl'
 								,printerName = @printerName	 
