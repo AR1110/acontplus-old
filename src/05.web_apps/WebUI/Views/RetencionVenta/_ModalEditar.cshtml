@@ -51,25 +51,25 @@
     </div>
 
 
-    <div layout-gt-sm="row">                                                                                                                       
-        <div flex-gt-sm>
-            <label for="">Cliente</label>
-            <input ng-model="$ctrl.cliente.nombreFiscal" disabled>                                 
-        </div>            
+    <div layout-gt-sm="row">                                                                                                       <md-input-container class="md-block" flex="20" flex-gt-xs>
+            <label>Cliente</label>
+            <input ng-model="$ctrl.cliente.nombreFiscal" disabled>
+        </md-input-container>  
+                  
         <md-input-container class="md-block" flex="20" flex-gt-xs>
             <label>Nro. Identificación</label>
             <input ng-model="$ctrl.cliente.numeroIdentificacion" disabled>
         </md-input-container>                       
 
-        <div flex-gt-sm>
-            <md-input-container class="md-block" flex-gt-sm>
-                <label>Nro. Factura</label>
-                <input ng-model="$ctrl.factura.nroDocumento" disabled>
-                 <a class="btn btn-secondary btn-sm mt-1" ng-if="$ctrl.factura.idFactura>0" href="javascript:void(0)" ng-click="$ctrl.viewDetailInvoice()">
-                    <i class="mdi mdi-eye"></i> Ver Documento
-                </a>
-            </md-input-container>                                                         
-        </div>                                                                     
+        
+        <md-input-container class="md-block" flex-gt-sm>
+            <label>Nro. Factura</label>
+            <input ng-model="$ctrl.factura.nroFactura" disabled>
+                <a class="btn btn-secondary btn-sm mt-1" ng-if="$ctrl.factura.idFactura>0" href="javascript:void(0)" ng-click="$ctrl.viewDetailInvoice()">
+                <i class="mdi mdi-eye"></i> Ver Documento
+            </a>
+        </md-input-container>                                                         
+                                                                          
 
     </div>
 
@@ -101,6 +101,6 @@
         <i class="ti-pencil"></i> Actualizar
     </button>
     <button class="btn btn-dark" type="button" ng-click="$ctrl.closeModal()">
-        <i class="ti-close"></i> Cerrar
+        &times; Cerrar
     </button>
 </div>

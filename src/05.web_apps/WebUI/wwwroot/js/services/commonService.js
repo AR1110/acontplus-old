@@ -906,8 +906,7 @@ export class CommonService {
             case "FV":                
                 await this.mS.getData('get',"/FacturaVenta/GetId?id=" + id).then(response => {
                     if (response.id === "0") {                        
-                        this.form.sweetAlert('warning', response.message)
-                        toastr.warning(response.message, response.titleSms)
+                        this.form.sweetAlert('warning', response.message)                        
                         throw response.message
                     }
                     if (response.id === "1") {
@@ -937,8 +936,7 @@ export class CommonService {
                // showLoader();
                 await this.mS.getData('get', "/NotaEntrega/GetId?id=" + id).then(response => {
                     if (response.code == "0") {
-                        this.form.sweetAlert('warning', response.message)
-                        toastr.warning(response.message, response.titleSms)
+                        this.form.sweetAlert('warning', response.message)                        
                         throw response.message
                     }
 
@@ -972,8 +970,7 @@ export class CommonService {
             
                 await this.mS.getData('get', '/Proforma/GetId?id=' + id).then(response => {
                     if (response.code === "0") {
-                        this.form.sweetAlert('warning', response.message)
-                        toastr.warning(response.message, response.titleSms)
+                        this.form.sweetAlert('warning', response.message)                        
                         throw response.message                        
                     }
                     if (response.code === "1") {
@@ -999,12 +996,10 @@ export class CommonService {
                 });
                 break;
 
-            case "NC":
-                showLoader();
+            case "NC":                
                 await this.mS.getData('get', '/NotaCreditoCliente/GetId?id=' + id).then(response => {
                         if (response.code == "0") {
-                            this.form.sweetAlert('warning', response.message)
-                            toastr.warning(response.message, response.titleSms)
+                            this.form.sweetAlert('warning', response.message)                            
                             throw response.message   
                         }
                         if (response.code === "1") {
@@ -1036,44 +1031,22 @@ export class CommonService {
                     });
                 break
 
-            case "RV":
-                showLoader();
-                await this.mS.getData('get','/RetencionVenta/GetId?idRetencionVenta=' + item.idRetencionVenta).then(response=>{                    
-                        if (response.id == "0") {
-                            hideLoader();
-                            this.form.sweetAlert("warning", response.message, response.titleSms)
+            case "RV":                
+                await this.mS.getData('get','/RetencionVenta/GetId?id=' + id).then(response=>{                    
+                        if (response.code == "0") {
+                            this.form.sweetAlert('warning', response.message)                            
+                            throw response.message  
                         }
                         
-                        if (response.id === "1") {
+                        if (response.code === "1") {
+                            let dataMain = JSON.parse(response.payload)
 
-                            let { retencion: data, detalle } = response.data;
-
-                            cliente = {
-                                idCliente: data.retencion.idCliente,
-                                nombreFiscal: data.nombreFiscal,
-                                numeroIdentificacion: data.nroIdentificacion,
-                                direccion: data.direccion,
-                                correo: data.correo,
-                                // emails: this.form.getInputTagAsSplit(data.correo),
-                            }
-
-                            dataTipoDocumento = {
-                                idTipoDocumento: TIPO_DOC.idTipoDocumento,
-                                documentoDescripcion: TIPO_DOC.descripcion,
-                                nroDocumento: item.nroDoc,
-                                tipoDocumento: TIPO_DOC.codigo,
-                            }
-
-                            dataDocumento = data.retencion;
-                            dataDocumento.nroFactura = item.nroFactura
-                            let countIndex = 1;
-                            detalleDocumento = detalle.map(val => {
-                                val.num = countIndex++;
-                                return val;
-                            })
-                            // infoAdicionalDocumento = infoAdicional;
+                            dataDocumento = dataMain[0][0];
+                            dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision)
+                            cliente = dataMain[1][0];
+                            factura = dataMain[2][0];
+                            detalleDocumento = dataMain[3];                      
                             isComplete = true;
-                            hideLoader();
                         }
                     });
                 break;

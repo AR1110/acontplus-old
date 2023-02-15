@@ -132,7 +132,7 @@ class ModalNotaCreditoCtrl extends ModalBaseCtrl{
         
             let dataMedida = medidas[0];
 
-            console.log(this.dataArticulo)
+            
                 
             entity.idArticulo           = articulo.idArticulo;
             entity.codigo               = articulo.codigoArticulo;                
@@ -150,8 +150,7 @@ class ModalNotaCreditoCtrl extends ModalBaseCtrl{
             entity.idMedida             = dataMedida.idMedida; //Medida por defecto 
             entity.adicional            = datosAdicionales; //
 
-            console.log(JSON.parse(dataMedida.tarifas))
-            console.log(self)
+       
             entity.articuloTarifas      = JSON.parse(dataMedida.tarifas);
             let tarifa                  = entity.articuloTarifas.find(item=>item.idTarifa===self.idTarifa);                                      
             entity.idTarifa             = self.idTarifa;  
@@ -193,7 +192,7 @@ class ModalNotaCreditoCtrl extends ModalBaseCtrl{
 
 
     calcularPorcentajeDescuento() {
-        console.log(this.data.porcentajeDescuento)
+        
         if(typeof this.data.porcentajeDescuento !=="number" || this.data.porcentajeDescuento === ""){
             this._tS.toastr('warning', 'Ingrese un Número Válido');
             return
@@ -271,7 +270,7 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl{
                 this.cloneIdBodega = this.idBodega;
 
                 this.actividadTipoIva = resultsDataFormEstab[2][0]
-                console.log(this.actividadTipoIva)
+                
             }else{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
             }
@@ -311,6 +310,8 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl{
                 decimal: this.decimal, 
                 actividadTipoIva: this.actividadTipoIva
             })
+
+            this.uiGridInvoice.idTarifa = this.idTarifa;
             
 
             
@@ -377,7 +378,7 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl{
                 }
                 if (response.code === "1") {                                      
                     this.facturas = JSON.parse(response.payload) || []; 
-                    console.log(this.facturas)          
+                            
                 }
             })
         } catch (error) {          
@@ -481,7 +482,7 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl{
           
 
             await this._mS.getData('post', '/NotaCreditoCliente/Insert', data).then(response=>{
-                console.log(response)
+                
                 if(response.id==='0'){                    
                     this._fS.sweetAlert('warning', response.message, response.titleSms);                    
                 }
@@ -579,6 +580,7 @@ export class ModalNotaCreditoEditarCtrl extends ModalNotaCreditoCtrl{
                 decimal: this.decimal, 
                 actividadTipoIva: this.actividadTipoIva
             })
+            this.uiGridInvoice.idTarifa = this.idTarifa;
             
             //Cargamos los Datos 
             this.data = Object.assign({}, this.dataDocumento);    
@@ -643,7 +645,7 @@ export class ModalNotaCreditoEditarCtrl extends ModalNotaCreditoCtrl{
             }
           
             await this._mS.getData('put', '/NotaCreditoCliente/Update?id=' + this.data.idNotaCredito, data).then(response=>{
-                console.log(response)
+                
                 if(response.id==='0'){                    
                     this._fS.sweetAlert('warning', response.message, response.titleSms);                    
                 }
@@ -743,6 +745,7 @@ export class ModalNotaCreditoDetalleCtrl extends ModalNotaCreditoCtrl{
                 decimal: this.decimal, 
                 actividadTipoIva: this.actividadTipoIva
             })
+            this.uiGridInvoice.idTarifa = this.idTarifa;
             
             //Cargamos los Datos 
             this.data = this.dataDocumento;

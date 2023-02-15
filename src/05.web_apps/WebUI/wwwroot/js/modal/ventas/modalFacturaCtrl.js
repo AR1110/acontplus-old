@@ -490,6 +490,8 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
                 decimal: this.decimal, 
                 actividadTipoIva: this.actividadTipoIva
             })
+
+            this.uiGridInvoice.idTarifa = this.idTarifa;
             
 
             if(localStorage.getItem('detailInvoice')){
@@ -715,6 +717,8 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl{
                 decimal: this.decimal, 
                 actividadTipoIva: this.actividadTipoIva
             })
+
+            this.uiGridInvoice.idTarifa = this.idTarifa;
             
             //Cargamos los Datos 
             this.data = this.dataDocumento;
@@ -906,6 +910,8 @@ export class ModalFacturaDetalleCtrl extends ModalFacturaCtrl{
                 decimal: this.decimal, 
                 actividadTipoIva: this.actividadTipoIva
             })
+
+            this.uiGridInvoice.idTarifa = this.idTarifa;
             
             //Cargamos los Datos 
             this.data = this.dataDocumento;
@@ -1006,6 +1012,8 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl{
                 decimal: this.decimal, 
                 actividadTipoIva: this.actividadTipoIva
             })
+
+            this.uiGridInvoice.idTarifa = this.idTarifa;
             
             //Cargamos los Datos 
             this.data = this.dataDocumento;

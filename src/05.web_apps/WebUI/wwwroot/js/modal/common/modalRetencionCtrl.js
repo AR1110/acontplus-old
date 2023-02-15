@@ -1918,35 +1918,32 @@ export class ModalRetencionVentaEditarCtrl extends ModalRetencionVentaCtrl{
         this._params = {};       
         this.cliente = {}
         this.data = {};
-        this.data.fechaEmision = new Date();
 
-        this.factura  ={};
-        this.facturas = [];
-        this.infoAdicionalDocumento=[];
-        this.tipoRegistro = 1;
+        let {data, TIPO_REGISTRO} = _params;
 
-        this.search = {
-            isDisabled: false,
-            noCache: true,
-            showBtnList: true,
-            showBtnEdit: false            
-        }
-       
+        let {dataDocumento, cliente, factura, detalleDocumento} = data;
+        this.data = dataDocumento;
+        this.cliente = cliente;
+        this.factura = factura;
+        this.detalleDocumento = detalleDocumento;
+
     }
 
     async $onInit(){
         try {
-            let results = await this.initiload();
-            this.establecimientos = results[0];
-            
-            if(this.establecimientos.length>0){
-                this.data.codEstab = this.establecimientos[0].codEstab;
-            }else{
-                this._tS.toastr('info', 'No tienes asignado ningún Establecimiento')
-            }            
+            this._commonSvc.getEstabAsign().then(response=>{            
+                this.establecimientos = response;  
+                if(this.establecimientos.length===0){
+                    toastr.warning('NO TIENES ASIGNADO NINGUNA SUCURSAL')                   
+                }                
+            })
+
+            this.setColumnDefs();   
+
+            this.gridOptions.data = this.detalleDocumento;
         } catch (error) {
             console.log(error)
-        }
+        }      
     }    
 }
 
