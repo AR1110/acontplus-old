@@ -1,0 +1,197 @@
+-- ================================================
+-- Template generated from Template Explorer using:
+-- Create Multi-Statement Function (New Menu).SQL
+--
+-- Use the Specify Values for Template Parameters 
+-- command (Ctrl-Shift-M) to fill in the parameter 
+-- values below.
+--
+-- This block of comments will not be included in
+-- the definition of the function.
+-- ================================================
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+ALTER FUNCTION ApiPrinter.Document_Data 
+(
+	-- Add the parameters for the function here
+	@idDocument INT 
+   ,@idTipoDocumento INT
+   ,@codDoc VARCHAR(5)
+)
+RETURNS 
+@table TABLE 
+(
+	-- Add the column definitions for the TABLE variable here
+	dataSources VARCHAR(MAX)
+)
+AS
+BEGIN
+	-- Fill the table variable with the rows for your result set
+	DECLARE @header VARCHAR(MAX)
+	DECLARE @detail VARCHAR(MAX)
+	DECLARE @dataSources VARCHAR(MAX)
+	DECLARE @formaPago VARCHAR(100)
+	DECLARE @pago DECIMAL(15,2)
+    DECLARE @cambio DECIMAL(15,2)
+	
+	SELECT TOP 1
+		 @pago =  ci.total
+		,@cambio = ci.cambio
+		,@formaPago = ef.descripcion
+	FROM 
+	dbo.CobroDocumento cd WITH (NOLOCK) 
+	INNER JOIN dbo.ComprobanteIngreso ci WITH (NOLOCK) ON ci.idComprobanteIngreso = cd.idComprobanteIngreso
+	INNER JOIN dbo.Cobro               c WITH (NOLOCK) ON c.idComprobanteIngreso  = ci.idComprobanteIngreso
+	INNER JOIN dbo.EntidadFinanciera  ef WITH (NOLOCK) ON ef.idEntidadFinanciera  = c.idEntidadFinanciera
+	WHERE cd.idTipoDocumento = @idTipoDocumento AND cd.idComprobante = @idDocument 
+
+	IF @codDoc = 'FV'
+		BEGIN
+			SET @header = (
+					SELECT 
+						 nroFactura = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,f.nroFactura) 
+						,codigoAutorizacion = f.claveAcceso
+						,fechaEmision = CONVERT(NVARCHAR, FORMAT(f.fechaEmision, 'dd/MM/yyyy hh:mm'))  
+						,fechaVencimiento = CONVERT(NVARCHAR,FORMAT(f.fechaVencimiento, 'dd/MM/yyyy'))   
+						,tipoDoc = 'FACTURA DE VENTA'
+						,razonSocial = e.razonSocial
+						,nombreComercial = s.nombreComercial
+						,ruc = e.ruc
+						,telefonoEntidad = e.telefono 
+						,emailEntidad = e.email 
+						,dirMatriz = e.direccion 
+						,s.dirEstablecimiento
+						,s.contribuyenteEspecial 
+						,s.obligadoContabilidad 
+						,razonSocialComprador = cl.nombreFiscal  
+						,nroIdentificacion = cl.numeroIdentificacion
+						,direccionComprador = cl.direccion 
+						,subTotalNetoIva = CAST(f.subTotalNetoIva as numeric(15,2))
+						,subTotalIva12 = CAST(f.subTotalIva as numeric(15,2))
+						,subTotalNoObjetoIva = CAST(f.subTotalNoObjetoIva as numeric(15,2))
+						,subTotalIva0 = CAST(f.subTotalIvaCero as numeric(15,2))
+						,subtotalExcentoIva = CAST(f.subTotalExentoIva as numeric(15,2))
+						,ice = CAST(f.totalIce as numeric(15,2))
+						,irbpnr = CAST(f.irbpnr as numeric(15,2))
+						,subTotalSinImpuestos = CAST(f.subTotalSinImpuestos as numeric(15,2))
+						,totalDescuentos = CAST(f.totalDescuento as numeric(15,2))
+						,iva12 = CAST(f.iva as numeric(15,2))
+						,propina = CAST(f.propina as numeric(15,2))  
+						,importeTotal = CAST(f.total as numeric(15,2)) 
+						,direccion = cl.direccion  
+						,telefono = cl.telefono 
+						,email = cl.correo 
+						,valorTotal = CAST(f.total as numeric(15,2))
+						,regimen = UPPER(s.contribuyenteRimpe)
+						,tipoIva = 'IVA 12' 
+						,porcentajeIva = 'SUBTOTAL '+CAST(CAST(f.porcentaje AS numeric(15,0)) AS nvarchar)+'%'
+						,usuario = u.nombreUsuario
+						,pago = ISNULL(@pago,0)
+						,cambio = ISNULL(@cambio,0)
+						,formaPago = IIF(@formaPago Is NULL,'Cobro:','Cobro:'+@formaPago)
+					FROM dbo.Factura f WITH (NOLOCK)
+					INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK)  ON pe.idPuntoEmision = f.idPuntoEmision 
+					INNER JOIN Sri.Establecimiento s  WITH (NOLOCK)  ON s.codEstab        = pe.codEstab
+					INNER JOIN dbo.Cliente         cl WITH (NOLOCK)  ON cl.idCliente      = f.idCliente
+					INNER JOIN dbo.Entidad         e  WITH (NOLOCK)  ON e.idEntidad       = f.idEntidad
+					INNER JOIN dbo.Usuario         u  WITH (NOLOCK)  ON u.idUsuario       = f.idUsuario 
+					WHERE f.idFactura = @idDocument 
+					FOR JSON PATH
+				)
+
+		SET @detail = (
+						SELECT 
+							 codigo         = a.codigo 
+							,descripcion    = fd.descripcion 
+							,medida         = me.descripcion
+							,cantidad       = CAST(fd.cantidad as numeric(15,2))
+							,precioUnitario = CAST(fd.precioVenta as numeric(15,2))
+							,valorDescuento = CAST(fd.valorDescuento as numeric(15,2)) 
+							,precioTotal    = CAST(fd.total as numeric(15,2))
+						FROM dbo.FacturaDetalle fd WITH (NOLOCK)
+						INNER JOIN dbo.Articulo a  WITH (NOLOCK) ON a.idArticulo = fd.idArticulo
+						INNER JOIN dbo.Medida  me  WITH (NOLOCK) ON me.idMedida  = fd.idMedida
+						WHERE fd.idFactura = @idDocument AND fd.estado = 1
+						FOR JSON PATH
+					  )
+		END 
+
+
+	IF @codDoc = 'NE'
+		BEGIN
+			SET @header = (SELECT 
+							 nroDoc = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,ne.nroDocumento)			
+							,tipoDoc = 'NOTA DE ENTREGA'
+							,razonSocial = e.razonSocial
+							,nombreComercial = s.nombreComercial
+							,ruc = e.ruc
+							,direccion = e.direccion 
+							,email = e.email 
+							,telefono = ISNULL(e.telefono, 'SN') 
+							,fechaEmision = CONVERT(NVARCHAR, FORMAT(ne.fechaEmision, 'dd/MM/yyyy hh:mm')) 
+							,fechaVencimiento = CONVERT(NVARCHAR, FORMAT(ne.fechaVencimiento, 'dd/MM/yyyy hh:mm')) 
+							,s.dirEstablecimiento  
+							,s.contribuyenteEspecial
+							,cliente = cl.nombreFiscal 
+							,nroIdentificacion = cl.numeroIdentificacion
+							,direccionCliente = cl.direccion
+							,correoCliente = REPLACE(ISNULL(cl.correo , 'S/N'),';',',')
+							,telefonoCliente = REPLACE(ISNULL(cl.telefono, 'S/N'),';',',')
+							,ciudad = c.descripcion 
+							,subTotalNetoIva = CAST(ne.subTotalNetoIva as numeric(15,2))
+							,subTotalIva12 = CAST(ne.subTotalIva as numeric(15,2))
+							,subTotalNoObjetoIva = CAST(ne.subTotalNoObjetoIva as numeric(15,2))
+							,subTotalIva0 = CAST(ne.subTotalIvaCero as numeric(15,2))
+							,subtotalExcentoIva = CAST(ne.subTotalExentoIva as numeric(15,2))
+							,ice  = CAST(ne.totalIce as numeric(15,2))
+							,irbpnr = CAST(ne.irbpnr AS numeric(15,2))
+							,subTotalSinImpuestos = CAST(ne.subTotalSinImpuestos as numeric(15,2))
+							,totalDescuentos = CAST(ne.totalDescuento as numeric(15,2))
+							,iva12 = CAST(ne.iva AS numeric(15,2))
+							,propina = CAST(ne.propina AS numeric(15,2)) 
+							,importeTotal = CAST(ne.total as numeric(15,2))		
+							,valorTotal = CAST(ne.total as numeric(15,2))
+							,observacion = ISNULL(ne.observacion, 'S/N') 
+							,tipoIva = 'IVA 12'
+							,porcentajeIva = 'subTotal '+CAST(CAST(ne.tarifa AS numeric(15,0)) AS nvarchar)+'%'
+							,usuario = u.nombreUsuario
+							,pago = ISNULL(@pago,0)
+							,cambio = ISNULL(@cambio,0)
+							,formaPago = IIF(@formaPago Is NULL,'Cobro:','Cobro:'+@formaPago)
+						FROM dbo.NotaEntrega ne WITH (NOLOCK)
+						INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision = ne.idPuntoEmision 
+						INNER JOIN Sri.Establecimiento  s WITH (NOLOCK) ON s.codEstab        = pe.codEstab
+						INNER JOIN dbo.Cliente         cl WITH (NOLOCK) ON cl.idCliente      = ne.idCliente
+						LEFT  JOIN dbo.Ciudad           c WITH (NOLOCK) ON c.idCiudad        = cl.idCiudad 
+						INNER JOIN dbo.Entidad          e WITH (NOLOCK) ON e.idEntidad       = ne.idEntidad
+						INNER JOIN dbo.Usuario          u WITH (NOLOCK) ON u.idUsuario	     = ne.idUsuario
+						WHERE ne.idNotaEntrega = @idDocument FOR JSON PATH )
+
+			SET @detail = (SELECT 
+							 codigo = a.codigo
+							,cantidad = CAST(ned.cantidad AS numeric(15,2))
+							,descripcion = ned.descripcion 
+							,precioUnitario = CAST(ned.precioVenta AS numeric(15,2))
+							,valorDescuento = CAST(ned.valorDescuento AS numeric(15,2))
+							,precioTotal = CAST(ned.total AS numeric(15,2)) 
+							,medida = m.descripcion
+						FROM dbo.NotaEntregaDetalle ned WITH (NOLOCK)
+						INNER JOIN dbo.Medida   m WITH (NOLOCK) ON m.idMedida   = ned.idMedida
+						INNER JOIN dbo.Articulo a WITH (NOLOCK) ON a.idArticulo = ned.idArticulo 
+						WHERE ned.idNotaEntrega = @idDocument AND ned.estado = 1 FOR JSON PATH)
+		END 
+
+	SET @dataSources = (SELECT encabezadoDs = @header, detalleDs = @detail FOR JSON PATH )
+
+	INSERT INTO @table (dataSources) SELECT @dataSources
+
+	RETURN 
+END
+GO
