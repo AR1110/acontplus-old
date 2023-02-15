@@ -254,65 +254,7 @@ namespace WebUI.Controllers.FE
             }
         }
         #endregion
-        #region "Proveedores"
-        [HttpGet]
-        public async Task<IActionResult> GetDataProveedor()
-        {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
-            return Ok(DbResponse.SPDataSet(await _dao.GetDataSetAsync("FactElect.Comp_Imp_Get_Data_Prov", parameters)));
-        }
-        [HttpGet]
-        public async Task<IActionResult> GetProveedor(string json)
-        {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
-            parameters.Add("jsonData", json);
-            return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("FactElect.Comp_Imp_Get_Prov", parameters)));
-        }
-        [HttpPost]
-        public async Task<IActionResult> PostProveedor(string json)
-        {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
-            parameters.Add("jsonData", json);
-            return Ok(DbResponse.SPDataTable(await _dao.ExecTranAsync("FactElect.Comp_Imp_Insert_Prov", parameters)));
-        }
-        [HttpPut]
-        public async Task<IActionResult> PutProveedor(string json)
-        {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
-            parameters.Add("jsonData", json);
-            return Ok(DbResponse.SPDefault(await _dao.ExecTranAsync("FactElect.", parameters)));
-        }
-        #endregion
         #region "Articulos"
-        [HttpGet]
-        public async Task<IActionResult> GetArticlesTemp(Guid uniqueId)
-        {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
-            parameters.Add("idComp", uniqueId);
-            parameters.Add("jsonData", "");
-            return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("FactElect.CompImpDetailTemp_Get", parameters)));
-        }
-        [HttpPost]
-        public async Task<IActionResult> PostArticleTemp(string json)
-        {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
-            parameters.Add("jsonData", json);
-            return Ok(DbResponse.SPDefault(await _dao.ExecTranAsync("FactElect.CompImpDetailTemp_Insert", parameters)));
-        }
-        [HttpPut]
-        public async Task<IActionResult> PutArticleTemp(string json)
-        {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
-            parameters.Add("jsonData", json);
-             return Ok(DbResponse.SPDefault(await _dao.ExecTranAsync("FactElect.CompImpDetailTemp_Update", parameters)));
-        }
         [HttpGet]
         public async Task<IActionResult> GetArticles(string jsonData)
         {

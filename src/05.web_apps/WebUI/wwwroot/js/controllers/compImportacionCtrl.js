@@ -420,7 +420,7 @@ function compImportacionCtrl($filter, $scope, mS, _commonSvc, tS, modalService, 
     $scope.medidas = [];
     $scope.getFormData = function () {
         try {
-            mS.getData('get', _urlService + 'DocumentoRecibido/GetFormData').then(
+            mS.getData('get', '/DocumentoRecibido/GetFormData').then(
                 response => {
                     if (response.code == "0") {
                         tS.toastr('warning', response.message);
@@ -468,6 +468,7 @@ function compImportacionCtrl($filter, $scope, mS, _commonSvc, tS, modalService, 
                 } else {
                     $scope.getFormData();
                     $scope.fullComprobante = response.payload;
+                    console.log(response)
                     //poner condicionales de acuerdo al tipo de documento
                     let codDoc = $scope.fullComprobante.infoTributaria.codDoc;
                     switch (codDoc) {
@@ -475,10 +476,10 @@ function compImportacionCtrl($filter, $scope, mS, _commonSvc, tS, modalService, 
                             $scope.infoTributaria = $scope.fullComprobante.infoTributaria;
                             // console.log($scope.infoTributaria);
 
-                            $scope.infoComprobante = $scope.fullComprobante.infoComprobante;
+                            $scope.infoComprobante = $scope.fullComprobante.infoFactura;
                             // console.log($scope.infoComprobante);
 
-                            $scope.totalTaxes = $scope.fullComprobante.totalImpuestos;
+                            $scope.totalTaxes = $scope.fullComprobante.infoFactura.totalImpuestos;
                             // console.log($scope.totalTaxes)
                             for (const element of $scope.totalTaxes) {
                                 if (element.codigo == '2' && element.codigoPorcentaje == '0') {
@@ -516,7 +517,7 @@ function compImportacionCtrl($filter, $scope, mS, _commonSvc, tS, modalService, 
                             /** End details */
 
                             /** Formas de Pago */
-                            $scope.payments = $scope.fullComprobante.pagos;
+                            $scope.payments = $scope.fullComprobante.infoFactura.pagos;
                             // console.log($scope.payments);
                             /** End formas de pago */
 
@@ -584,7 +585,7 @@ function compImportacionCtrl($filter, $scope, mS, _commonSvc, tS, modalService, 
 
     $scope.getProv = () => {
         try {
-            mS.getData('get', _urlService + 'DocumentoRecibido/GetProveedor?json=' + JSON.stringify({ tipo: 1, ruc: $scope.infoTributaria.ruc })).then(
+            mS.getData('get', _urlService + 'Proveedor/' + _idRol + '/' + JSON.stringify({ tipo: 1, ruc: $scope.infoTributaria.ruc })).then(
                 response => {
                     if (response.code == "0") {
                         $scope.txtIconModalProv = 'ti-plus';
@@ -609,7 +610,7 @@ function compImportacionCtrl($filter, $scope, mS, _commonSvc, tS, modalService, 
     $scope.arraysProvClient = [];
     $scope.addProvClient = function () {
         try {
-            mS.getData('get', _urlService + 'DocumentoRecibido/GetDataProveedor').then(
+            mS.getData('get', _urlService + 'Proveedor/' + _idRol + '/' + JSON.stringify({ tipo: 2 })).then(
                 response => {
                     $scope.arraysProvClient = JSON.parse(response.payload);
                     $scope.tiposIdentificacion = $scope.arraysProvClient[0]
@@ -786,7 +787,7 @@ function compImportacionCtrl($filter, $scope, mS, _commonSvc, tS, modalService, 
 
     $scope.getTempDetails = function () {
         try {
-            mS.getData('get', _urlService + 'DocumentoRecibido/GetArticlesTemp?uniqueId=' + $scope.selected[0].uniqueId).then(
+            mS.getData('get', _urlService + 'Doc_Rec_DetailTemp/' + _idRol + '/' + $scope.selected[0].uniqueId).then(
                 response => {
                     if (response.code == "1") {
                         $scope.tempDetail = JSON.parse(response.payload);
@@ -805,10 +806,10 @@ function compImportacionCtrl($filter, $scope, mS, _commonSvc, tS, modalService, 
             let method = '', url = ''
             if (tipo == 1) {
                 method = "post"
-                url = _urlService + "DocumentoRecibido/PostArticleTemp?json="
+                url = _urlService + "Doc_Rec_Detail/" + _idRol + '/'
             } else {
                 method = "put"
-                url = _urlService + "DocumentoRecibido/PutArticleTemp?json="
+                url = _urlService + "Doc_Rec_Detail/" + _idRol + '/'
             }
             mS.getData(method, url + JSON.stringify(data)).then(
                 response => {

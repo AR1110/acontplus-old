@@ -60,13 +60,13 @@ namespace ApiProveedores.Controllers
                 _db.AddDynamicParam("idRol", idRol);
                 _db.AddDynamicParam("uniqueId", id);
                 DataTable dt = _db.GetDataTable();
-                if (dt.Rows.Count > 0)
+                if (dt.Rows.Count > 0 && dt.Columns.Contains("xmlDoc"))
                 {
                     _response.code = "1";
                     string xmlDoc = dt.Rows[0]["xmlDoc"].ToString();
                     XmlDocument xdoc = new XmlDocument();
                     xdoc.LoadXml(xmlDoc);
-                    ComprobanteElectronicoXml ceXml = new ComprobanteElectronicoXml();
+                    ComprobanteElectronico ceXml = new ComprobanteElectronico();
                     string sms = string.Empty;
                     DataXmlComprobante _getXmlSriData = new DataXmlComprobante();
                     if (!_getXmlSriData.GetData(xdoc, ref ceXml, ref sms))
@@ -79,19 +79,17 @@ namespace ApiProveedores.Controllers
                         {
                             { "idRol", idRol },
                             { "idComp", id },
-                            { "jsonComp", JsonConvert.SerializeObject(ceXml) }
-                            //,
-                            //{ "jsonData", JsonConvert.SerializeObject() },
-                            //{ "impuestos", JsonConvert.SerializeObject() }
+                            { "jsonData", JsonConvert.SerializeObject(ceXml.detalles) },
+                            { "impuestos", JsonConvert.SerializeObject(ceXml.impuestos) }
                         };
                         DAO _dao = new DAO(_configuration);
-                        //_dao.OnlyExec("FactElect.CompImpDetailTemp_Insert_All", parametersTemp);
+                        _dao.OnlyExec("Recepcion.Doc_Detail_Temp_Insert_All", parametersTemp);
                         _response.payload = ceXml;
                     }
                 }
                 else
                 {
-                    _response.code = "0";
+                    _response.Create(code: "0", message: "No se encontro xml");
                 }
                 return Ok(_response);
             }

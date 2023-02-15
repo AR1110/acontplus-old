@@ -31,14 +31,14 @@ namespace WebUI.Controllers.Recepcion
         {
             return View();
         }
-        
-        //public async Task<IActionResult> GetFormData()
-        //{
-        //    Dictionary<string, object> parameters = new Dictionary<string, object>();
-        //    parameters.Add("idRol", _idRol);
-        //    return Ok(DbResponse.SPDataSet(await _dao.GetDataSetAsync("FactElect.Comp_Imp_GetDataForm", parameters)));
-        //}
-        
+
+        public async Task<IActionResult> GetFormData()
+        {
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            parameters.Add("idRol", _idRol);
+            return Ok(DbResponse.SPDataSet(await _dao.GetDataSetAsync("FactElect.Comp_Imp_GetDataForm", parameters)));
+        }
+
         //[HttpPut]
         //public async Task<IActionResult> Put(Guid id, string claveAcceso)
         //{
