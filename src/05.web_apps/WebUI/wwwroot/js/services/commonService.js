@@ -1442,13 +1442,13 @@ export class CommonService {
         // let urlApi = await this.$http.get('/ConnectionApiAdmin/GetUrl?typeUrl=' + typeUrl).then(({data:response})=>response)    
 
         //IP Local 
-        // let urlApi = typeUrl == 1 ? "https://localhost:36779/" : "https://localhost:7224/";
+       // let urlApi = typeUrl == 1 ? "http://localhost:36779/" : "https://localhost:7224/";
 
         //IP Producción de Desarrollo 
         //let urlApi = typeUrl == 1 ? "http://205.209.99.71:8090/" : "http://206.72.196.229:83/";
 
         //IP Producción
-        let urlApi = typeUrl == 1 ? "http://206.72.196.229:81/" : "http://206.72.196.229:83/";
+       let urlApi = typeUrl == 1 ? "http://206.72.196.229:81/" : "http://206.72.196.229:83/";
         
         return this.$http({
             method,
@@ -1499,7 +1499,7 @@ export class CommonService {
      * 
      */
 
-    async viewDetailDocument({id, codigoDocumento, size, windowClass}){
+    async viewDetailDocument({id, codigoDocumento, size, windowClass="uibModalFullScreen"}){
         try {
             let controller=null, template=null, params = {}, response = {}, isComplete=false;
             switch(codigoDocumento){

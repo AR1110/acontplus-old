@@ -57,14 +57,31 @@ function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombre
     }
 
     $scope.openModalDetalle = async(item)=>{
-        let {MODAL_FILE_CTRL, MODAL_DETALLE} = _nombreModal.retencion_venta;
-        let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_DETALLE['controller']];
-        let template = MODAL_DETALLE['template'];
+        try {
+            let {MODAL_FILE_CTRL, MODAL_DETALLE} = _nombreModal.retencion_venta;
+            let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_DETALLE['controller']];
+            let template = MODAL_DETALLE['template'];
 
-        $scope.openModalParam({
-            controller,
-            template,
-        })
+            let response = await _commonSvc.getDataTipoDocVenta({
+                id: item.idRetencionVenta,
+                codigoDocumento: TIPO_DOC.codigo
+            })
+            
+            if(!response.isComplete) return
+            
+            let params = {
+                TIPO_REGISTRO: "DETALLE",
+                data: response,                
+            }
+            hideLoader();
+            $scope.openModalParam({
+                controller,
+                template,
+                params
+            })
+        } catch (error) {
+            
+        }
     }
 
     $scope.openModalEditar = async(item)=>{
@@ -77,7 +94,7 @@ function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombre
                 id: item.idRetencionVenta,
                 codigoDocumento: TIPO_DOC.codigo
             })
-            console.log(response)
+            
             if(!response.isComplete) return
             
             let params = {

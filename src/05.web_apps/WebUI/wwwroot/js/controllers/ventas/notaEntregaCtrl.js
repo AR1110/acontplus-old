@@ -566,10 +566,11 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
     $scope.getReportII = function (item) {                   
         let parameters = {
             isPrint: 1,
-            idNotaEntrega: item.idNotaEntrega,
+            idDocument: item.idNotaEntrega,
+            idTipoDocumento : item.idTipoDocumento,
             codEstab: item.codEstab,
             codDoc: TIPO_DOC_NE.codigo,
-            codigo: 'RNEPT',
+            nroIdentificacion : item.nroIdentificacion,
         }
                
         _commonSvc.askToReportII({
