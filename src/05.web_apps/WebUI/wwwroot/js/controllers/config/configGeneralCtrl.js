@@ -50,7 +50,7 @@ function configGeneralCtrl($timeout, $q, _mS, $scope, _commonSvc, _modalSvc, _no
         } catch (error) {
             hideLoader();
             console.log(error)
-        }<i class="fa fa-instagram" aria-hidden="true"></i> 
+        }
     }
 
     $scope.initiload();

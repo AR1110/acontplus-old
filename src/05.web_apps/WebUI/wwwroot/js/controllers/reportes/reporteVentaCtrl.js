@@ -252,12 +252,7 @@
                     return
                 }
             }
-
-
-            if (form.campo($scope.dataSearch.byPuntoEmision) || $scope.dataSearch.byPuntoEmision === 0) {
-                toast.toastr('warning', 'Seleccione la Sucursal', tituloToast);
-                return
-            }
+           
 
             if ($scope.dataSearch.checkboxClienteFiltro) {
                 if (form.campo($scope.dataSearch.byCliente) || $scope.dataSearch.byCliente === 0) {
