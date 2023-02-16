@@ -459,6 +459,18 @@ function compImportacionCtrl($filter, $scope, mS, _commonSvc, tS, modalService, 
         iva12: 0.00,
         irbpnr: 0.00
     }
+    $scope.getBarcode = function (item) {
+        JsBarcode("#barcodeImg", item, {
+            format: "CODE128",
+            lineColor: "#000",
+            width: 1,
+            height: 40,
+            displayValue: false
+        });
+        // let barcodeData = $('#barcode').attr('src').replace(/^data:image\/[a-z]+;base64,/, "")
+        //console.log(strImage);
+        // return barcodeData;
+    }
     $scope.getId = () => {
         try {
             showLoader();
@@ -468,13 +480,15 @@ function compImportacionCtrl($filter, $scope, mS, _commonSvc, tS, modalService, 
                 } else {
                     $scope.getFormData();
                     $scope.fullComprobante = response.payload;
-                    console.log(response)
+                    console.log($scope.fullComprobante)
                     //poner condicionales de acuerdo al tipo de documento
-                    let codDoc = $scope.fullComprobante.infoTributaria.codDoc;
+                    let codDoc = $scope.fullComprobante.infoTributaria.codDoc
+                    $scope.infoTributaria = $scope.fullComprobante.infoTributaria
+                    $scope.infoAdicional = $scope.fullComprobante.infoAdicional
+                    $scope.getBarcode($scope.infoTributaria.claveAcceso)
+                    console.log($scope.infoTributaria);
                     switch (codDoc) {
                         case "01":
-                            $scope.infoTributaria = $scope.fullComprobante.infoTributaria;
-                            // console.log($scope.infoTributaria);
 
                             $scope.infoComprobante = $scope.fullComprobante.infoFactura;
                             // console.log($scope.infoComprobante);
@@ -517,40 +531,41 @@ function compImportacionCtrl($filter, $scope, mS, _commonSvc, tS, modalService, 
                             /** End details */
 
                             /** Formas de Pago */
-                            $scope.payments = $scope.fullComprobante.infoFactura.pagos;
+                            $scope.payments = $scope.fullComprobante.infoFactura.pagos
                             // console.log($scope.payments);
                             /** End formas de pago */
 
-                            /** Info Adicional */
-                            if ($scope.fullComprobante.infoAdicionals) {
-                                $scope.infoAdicional = $scope.fullComprobante.infoAdicionals;
-                                // console.log($scope.infoAdicional);
-                            }
+                            
                             /** End Info Adicional */
+                            $scope.provCliente.razonSocial = $scope.infoTributaria.razonSocial
+                            $scope.provCliente.nombreComercial = $scope.infoTributaria.nombreComercial
+                            $scope.provCliente.ruc = $scope.infoTributaria.ruc
+                            $scope.provCliente.dirMatriz = $scope.infoTributaria.dirMatriz
+
+                            $scope.modalRef = modalService.openModalSecond(null, 'ComprobanteImportacion/_ModalComprobante.cshtml', 'xl', null, true, 'uibModalFullScreen', $scope)
+
+                            $scope.modalRef.result.then(res => {
+                                $scope.resetMainModal()
+                            })
 
                             break;
                         case "04":
-                            $scope.comprobante = $scope.fullComprobante.notaCredito;
+                            $scope.infoNotaCredito = $scope.fullComprobante.infoNotaCredito;
+                            $('#notaCreditoModal').modal('show')
                             // console.log($scope.comprobante);
                             break;
                         case "07":
-                            $scope.comprobante = $scope.fullComprobante.comprobanteRetencion;
-                            // console.log($scope.comprobante);
+                             $scope.infoCompRetencion = $scope.fullComprobante.infoCompRetencion
+                            console.log($scope.infoRetencion);
+                            $('#retencionModal').modal('show')
                             break;
                         default:
                             break;
                     }
-                    $scope.provCliente.razonSocial = $scope.infoTributaria.razonSocial;
-                    $scope.provCliente.nombreComercial = $scope.infoTributaria.nombreComercial;
-                    $scope.provCliente.ruc = $scope.infoTributaria.ruc;
-                    $scope.provCliente.dirMatriz = $scope.infoTributaria.dirMatriz;
-
-                    $scope.modalRef = modalService.openModalSecond(null, 'ComprobanteImportacion/_ModalComprobante.cshtml', 'xl', null, true, 'uibModalFullScreen', $scope)
-
-                    $scope.modalRef.result.then(res => {
-                        $scope.resetMainModal()
-                    })
-
+                    /** Info Adicional */
+                    if ($scope.fullComprobante.infoAdicional) {
+                        console.log($scope.fullComprobante.infoAdicional);
+                    }
                 }
                 hideLoader();
             }, error => {

@@ -14,7 +14,7 @@ namespace ApiProveedores.Controllers
         private readonly IConfiguration _configuration;
         public ArticuloController(IConfiguration configuration) => (_configuration) = (configuration);
         [HttpGet("{idRol}/{json}")]
-        public async Task<IActionResult> Post(int idRol, string json)
+        public async Task<IActionResult> Get(int idRol, string json)
         {
             LogWriter _logs = new LogWriter(_configuration);
 
