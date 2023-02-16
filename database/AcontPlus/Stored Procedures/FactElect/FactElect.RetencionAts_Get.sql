@@ -62,7 +62,7 @@ BEGIN
 			FROM Sri.CodigoRetencion  WITH (NOLOCK)
 			SELECT * FROM Sri.FormaPago  WITH (NOLOCK)
  
-			SELECT ea.codEstab_Asig,
+			SELECT ea.codEstab_Asig, ea.predeterminado,
 			e.*
 			FROM Config.Estab_Asig ea WITH (NOLOCK) 
 			INNER JOIN Sri.Establecimiento e WITH (NOLOCK)  ON ea.codEstab = e.codEstab

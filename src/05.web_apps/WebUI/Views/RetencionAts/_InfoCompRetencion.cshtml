@@ -133,6 +133,14 @@
                 </div>
             </div>
         </div>
+        <div class="row" ng-show="infoCompRet.identificacionSujetoRetenido.length > 0">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="form-group">
+                    <label for="">SubContribuyente:</label>
+                    <h5>{{subContribuyente}}</h5>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="card-footer" ng-if="infoCompRet.identificacionSujetoRetenido">
         <button type="button" class="btn btn-info" ng-click="searchDocs()"
