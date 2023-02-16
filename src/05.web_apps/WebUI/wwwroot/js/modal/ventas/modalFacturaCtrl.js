@@ -230,7 +230,7 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
 
 
     calcularPorcentajeDescuento() {
-        
+        console.log(this.data)
         if(typeof this.data.porcentajeDescuento !=="number" || this.data.porcentajeDescuento === ""){
             this._tS.toastr('warning', 'Ingrese un Número Válido');
             return

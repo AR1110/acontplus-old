@@ -461,46 +461,25 @@ app.directive('decimal', function () {
 //Directiva para numeros enteros y decimales 
 app.directive('validNumber', function () {
     return {
-        require: '?ngModel',
-        link: function (scope, element, attrs, ngModelCtrl) {
-            if (!ngModelCtrl) {
-                return;
-            }
+        require: 'ngModel',
+        restrict: 'A',
+        link: function (scope, element, attr, ctrl) {
+            function inputValue(val) {
+                if (val) {
+                    var digits = val.replace(/[^0-9.]/g, '');
 
-            ngModelCtrl.$parsers.push(function (val) {
-                if (angular.isUndefined(val)) {
-                    val = '';
-                }
-
-                let clean = val.replace(/[^-0-9\.]/g, '');
-                let negativeCheck = clean.split('-');
-                let decimalCheck = clean.split('.');
-                if (!angular.isUndefined(negativeCheck[1])) {
-                    negativeCheck[1] = negativeCheck[1].slice(0, negativeCheck[1].length);
-                    clean = negativeCheck[0] + '-' + negativeCheck[1];
-                    if (negativeCheck[0].length > 0) {
-                        clean = negativeCheck[0];
+                    if (digits.split('.').length > 2) {
+                        digits = digits.substring(0, digits.length - 1);
                     }
-
+                    if (digits !== val) {
+                        ctrl.$setViewValue(digits);
+                        ctrl.$render();
+                    }
+                    return parseFloat(digits);
                 }
-
-                if (!angular.isUndefined(decimalCheck[1])) {
-                    decimalCheck[1] = decimalCheck[1].slice(0, 5);
-                    clean = decimalCheck[0] + '.' + decimalCheck[1];
-                }
-
-                if (val !== clean) {
-                    ngModelCtrl.$setViewValue(clean);
-                    ngModelCtrl.$render();
-                }
-                return clean;
-            });
-
-            element.bind('keypress', function (event) {
-                if (event.keyCode === 32) {
-                    event.preventDefault();
-                }
-            });
+                return "";
+            }
+            ctrl.$parsers.push(inputValue);
         }
     };
 });
