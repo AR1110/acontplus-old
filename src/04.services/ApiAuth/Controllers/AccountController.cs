@@ -1,7 +1,7 @@
 ﻿using BL.JwtAuthenticationManger;
 using Common.Logs;
+using Domain.Auth.Dtos;
 using Domain.Auth.Models;
-using Domain.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiAuth.Controllers
@@ -15,12 +15,12 @@ namespace ApiAuth.Controllers
         public AccountController(JwtTokenHandler jwtTokenHandler, IConfiguration config) => (_jwtTokenHandler, _config) = (jwtTokenHandler, config);
 
         [HttpPost]
-        public ActionResult<AuthResponse?> Login([FromBody] LoginData authRequest)
+        public ActionResult<AuthResponse?> Login([FromBody] LoginDataDto authRequest)
         {
             LogWriter _log = new LogWriter(_config);
             var authResponse = _jwtTokenHandler.GenerateJwtToken(authRequest);
             if (authResponse == null) { return Unauthorized(); }
-            _log.LogInfo("Login successful: idRol -> " + Convert.ToString(authRequest.idRol));
+            _log.LogInfo("Login successful: idRol -> " + Convert.ToString(authRequest.idUsuarioRol) + " \n jwt: " + authResponse.jwtToken);
             return authResponse;
         }         
     }

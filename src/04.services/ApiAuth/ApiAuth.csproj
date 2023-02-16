@@ -14,13 +14,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="appsettings.json" />
+    <Content Remove="appsettings.Production.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="appsettings.json" />
+    <None Include="appsettings.Production.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\01.common\Common.Logs\Common.Logs.csproj" />
     <ProjectReference Include="..\..\02.domain\Domain.Auth\Domain.Auth.csproj" />
-    <ProjectReference Include="..\..\02.domain\Domain\Domain.csproj" />
     <ProjectReference Include="..\..\03.business_logic\BL.JwtAuthenticationManger\BL.JwtAuthenticationManger.csproj" />
   </ItemGroup>
 

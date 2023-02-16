@@ -1,3 +1,5 @@
+using BL.JwtAuthenticationManger;
+
 namespace AdminUI
 {
     public class Program
@@ -10,6 +12,9 @@ namespace AdminUI
             // Add services to the container.
 
             builder.Services.AddControllersWithViews();
+
+            //custom jwt
+            builder.Services.AddCustomJwtAuthentication();
 
             builder.Services.AddTransient<IConfiguration>(sp =>
             {

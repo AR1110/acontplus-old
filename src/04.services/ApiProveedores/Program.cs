@@ -11,18 +11,18 @@ namespace ApiProveedores
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            string[] origins = builder.Configuration.GetSection("SafeOrigins").Value.Split('|');
+            //string[] origins = builder.Configuration.GetSection("SafeOrigins").Value.Split('|');
 
-            builder.Services.AddCors(options =>
-            {
-                options.AddDefaultPolicy(
-                    policy =>
-                    {
-                        policy.AllowAnyHeader();
-                        policy.AllowAnyMethod();
-                        policy.WithOrigins(origins);
-                    });
-            });
+            //builder.Services.AddCors(options =>
+            //{
+            //    options.AddDefaultPolicy(
+            //        policy =>
+            //        {
+            //            policy.AllowAnyHeader();
+            //            policy.AllowAnyMethod();
+            //            policy.WithOrigins(origins);
+            //        });
+            //});
 
             builder.Services.AddControllers();
             //custom jwt
@@ -50,10 +50,15 @@ namespace ApiProveedores
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            else
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
 
             //app.UseHttpsRedirection();
 
-            app.UseCors();
+            //app.UseCors();
 
             app.UseAuthentication();
             app.UseAuthorization();
