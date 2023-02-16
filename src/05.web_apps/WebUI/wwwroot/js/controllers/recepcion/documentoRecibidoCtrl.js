@@ -471,6 +471,34 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
         //console.log(strImage);
         // return barcodeData;
     }
+
+    $scope.setTaxes = () => {
+        // console.log($scope.totalTaxes)
+        for (const element of $scope.totalTaxes) {
+            if (element.codigo == '2' && element.codigoPorcentaje == '0') {
+                $scope.totalTaxesRide.iva0 += parseFloat(element.valor)
+            }
+            if (element.codigo == '2' && element.codigoPorcentaje == '2') {
+                $scope.totalTaxesRide.iva12 += parseFloat(element.valor)
+            }
+            if (element.codigo == '2' && element.codigoPorcentaje == '3') {
+                $scope.totalTaxesRide.iva14 += parseFloat(element.valor)
+            }
+            if (element.codigo == '2' && element.codigoPorcentaje == '6') {
+                $scope.totalTaxesRide.noObjetoIva += parseFloat(element.valor)
+            }
+            if (element.codigo == '2' && element.codigoPorcentaje == '7') {
+                $scope.totalTaxesRide.excentoIva += parseFloat(element.valor)
+            }
+            if (element.codigo == '3') {
+                $scope.totalTaxesRide.ice += parseFloat(element.valor)
+            }
+            if (element.codigo == '5') {
+                $scope.totalTaxesRide.irbpnr += parseFloat(element.valor)
+            }
+        }
+    }
+
     $scope.getId = () => {
         try {
             showLoader();
@@ -494,30 +522,7 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
                             // console.log($scope.infoComprobante);
 
                             $scope.totalTaxes = $scope.fullComprobante.infoFactura.totalImpuestos;
-                            // console.log($scope.totalTaxes)
-                            for (const element of $scope.totalTaxes) {
-                                if (element.codigo == '2' && element.codigoPorcentaje == '0') {
-                                    $scope.totalTaxesRide.iva0 += parseFloat(element.valor)
-                                }
-                                if (element.codigo == '2' && element.codigoPorcentaje == '2') {
-                                    $scope.totalTaxesRide.iva12 += parseFloat(element.valor)
-                                }
-                                if (element.codigo == '2' && element.codigoPorcentaje == '3') {
-                                    $scope.totalTaxesRide.iva14 += parseFloat(element.valor)
-                                }
-                                if (element.codigo == '2' && element.codigoPorcentaje == '6') {
-                                    $scope.totalTaxesRide.noObjetoIva += parseFloat(element.valor)
-                                }
-                                if (element.codigo == '2' && element.codigoPorcentaje == '7') {
-                                    $scope.totalTaxesRide.excentoIva += parseFloat(element.valor)
-                                }
-                                if (element.codigo == '3') {
-                                    $scope.totalTaxesRide.ice += parseFloat(element.valor)
-                                }
-                                if (element.codigo == '5') {
-                                    $scope.totalTaxesRide.irbpnr += parseFloat(element.valor)
-                                }
-                            }
+                            $scope.setTaxes()
                             // console.log($scope.totalTaxesRide)
                             $scope.getTempDetails();
 
@@ -550,7 +555,9 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
 
                             break;
                         case "04":
-                            $scope.infoNotaCredito = $scope.fullComprobante.infoNotaCredito;
+                            $scope.infoNotaCredito = $scope.fullComprobante.infoNotaCredito
+                            $scope.totalTaxes = $scope.fullComprobante.infoNotaCredito.totalImpuestos;
+                            $scope.setTaxes()
                             $('#notaCreditoModal').modal('show')
                             // console.log($scope.comprobante);
                             break;

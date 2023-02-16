@@ -63,7 +63,7 @@
                                         <label for="">EMISIÓN:</label>
                                         <span ng-bind-html="infoTributaria.tipoEmision | tipoEmisionSri"></span>
                                     </h5>
-                                    <label for="">CLAVE DE ACCESSO</label>
+                                    <label for="">CLAVE DE ACCESSO</label><br>
                                     <img id="barcodeImg" src="" alt="">
                                     <small> {{infoTributaria.claveAcceso}}</small>
                                 </div>
@@ -127,20 +127,24 @@
                     </div>
                     <div class="row">
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6">
-                            <table class="table table-borderless">
-                                <thead>
-                                    <tr>
-                                        <th>Nombre</th>
-                                        <th>Valor</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr ng-repeat="test in infoAdicional">
-                                        <td>{{test.nombre}}</td>
-                                        <td>{{test.valor}}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <div class="card border border-dark rounded">
+                                <div class="card-body">
+                                    <table class="table table-borderless">
+                                        <thead>
+                                            <tr>
+                                                <th>Nombre</th>
+                                                <th>Valor</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="test in infoAdicional">
+                                                <td>{{test.nombre}}</td>
+                                                <td>{{test.valor}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="row">
