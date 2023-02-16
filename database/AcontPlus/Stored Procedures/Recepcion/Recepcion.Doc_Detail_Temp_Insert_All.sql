@@ -24,7 +24,7 @@ DROP PROCEDURE Recepcion.Doc_Detail_Temp_Insert_All
 GO
 CREATE PROCEDURE Recepcion.Doc_Detail_Temp_Insert_All
 @idRol INT
-,@idComp UNIQUEIDENTIFIER
+,@idDocumento INT
 ,@jsonData VARCHAR(MAX)
 ,@impuestos VARCHAR(MAX)
 ,@method VARCHAR(200) = NULL
@@ -37,7 +37,7 @@ BEGIN
 	DECLARE @idProveedor INT
 
 	DECLARE @tmp TABLE(
-	idComp UNIQUEIDENTIFIER NOT NULL
+	idDocumento INT NOT NULL
 	,idArticulo INT NULL
 	,codigoPrincipal VARCHAR(100) NOT NULL
 	,codigoAuxiliar VARCHAR(100) NULL
@@ -57,8 +57,8 @@ BEGIN
 	,valor VARCHAR(50)
 	)
 
-	INSERT INTO @tmp(idComp, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto)
-	SELECT @idComp, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto
+	INSERT INTO @tmp(idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto)
+	SELECT @idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto
 	FROM OPENJSON(@jsonData) WITH (
 	idArticulo INT '$.idArticulo'
 	,codigoPrincipal VARCHAR(100) '$.codigoPrincipal'
@@ -90,33 +90,33 @@ BEGIN
 	
 	SELECT @idEntidad = idEntidad, @idUsuario = idUsuario FROM AFTDataRol(@idRol)
 
-	SELECT @rucProv = rucEmisor  FROM Recepcion.DocumentoRecibido WHERE uniqueId = @idComp 
+	SELECT @rucProv = rucEmisor  FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento 
 
 	SELECT TOP 1 @idProveedor = idProveedor FROM Proveedor WHERE idEntidad = @idEntidad AND numeroIdentificacion = @rucProv
 
 	BEGIN TRY
 		BEGIN TRAN
-			--IF EXISTS(SELECT 1 FROM Recepcion.Doc_Detalle_Temp cpt INNER JOIN @tmp t ON cpt.idComp = t.idComp)
+			--IF EXISTS(SELECT 1 FROM Recepcion.Doc_Detalle_Temp cpt INNER JOIN @tmp t ON cpt.idDocumento = t.idDocumento)
 			--	BEGIN
-			--		DELETE FROM Recepcion.Doc_Detalle_Temp WHERE idComp = (SELECT TOP 1 idComp FROM @tmp)
+			--		DELETE FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp)
 			--	END
-			IF NOT EXISTS(SELECT 1 FROM Recepcion.Doc_Detalle_Temp cpt INNER JOIN @tmp t ON cpt.idComp = t.idComp WHERE cpt.isCustom = 0)
+			IF NOT EXISTS(SELECT 1 FROM Recepcion.Doc_Detalle_Temp cpt INNER JOIN @tmp t ON cpt.idDocumento = t.idDocumento WHERE cpt.isCustom = 0)
 				BEGIN
-					INSERT INTO Recepcion.Doc_Detalle_Temp(idComp, idProveedor, idArticulo, idMedida, codigoPrincipal, codigoAuxiliar
+					INSERT INTO Recepcion.Doc_Detalle_Temp(idDocumento, idProveedor, idArticulo, idMedida, codigoPrincipal, codigoAuxiliar
 					, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto, idUsuario)
-					SELECT idComp, @idProveedor, a.idArticulo, m.idMedida, t.codigoPrincipal, t.codigoAuxiliar
+					SELECT idDocumento, @idProveedor, a.idArticulo, m.idMedida, t.codigoPrincipal, t.codigoAuxiliar
 					,cantidad, t.descripcion, precioUnitario = CONVERT(VARCHAR, CAST((CAST(precioTotalSinImpuesto AS decimal(15,5)) / CAST(cantidad AS decimal(18,5))) AS numeric(18,5))), 0.00, precioTotalSinImpuesto, @idUsuario
 					FROM @tmp t
 					LEFT JOIN dbo.Articulo a ON a.codigo = t.codigoPrincipal AND a.idEntidad = @idEntidad
 					LEFT JOIN dbo.Medida m ON a.idMedida = m.idMedida AND a.idEntidad = @idEntidad
 					WHERE NOT EXISTS (SELECT * FROM Recepcion.Doc_Detalle_Temp tt 
-					WHERE t.idComp = tt.idComp AND t.codigoPrincipal = tt.codigoPrincipal)
+					WHERE t.idDocumento = tt.idDocumento AND t.codigoPrincipal = tt.codigoPrincipal)
 
-					 INSERT INTO Recepcion.Doc_Impuesto_Temp(idComp, codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor)
-					 SELECT (SELECT TOP 1 idComp FROM @tmp), codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor 
+					 INSERT INTO Recepcion.Doc_Impuesto_Temp(idDocumento, codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor)
+					 SELECT (SELECT TOP 1 idDocumento FROM @tmp), codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor 
 					 FROM @taxes tt
 					 WHERE NOT EXISTS (SELECT * FROM Recepcion.Doc_Impuesto_Temp tti 
-												WHERE tti.idComp = (SELECT TOP 1 idComp FROM @tmp) 
+												WHERE tti.idDocumento = (SELECT TOP 1 idDocumento FROM @tmp) 
 												AND tti.codArticulo = tt.codArticulo)
 				END
 		COMMIT TRAN 

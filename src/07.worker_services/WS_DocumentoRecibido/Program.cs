@@ -17,7 +17,6 @@ namespace WS_DocumentoRecibido
                 })
                 .ConfigureServices(services =>
                 {
-                    services.AddHostedService<Worker>();
                     services.AddTransient<IConfiguration>(config =>
                     {
                         IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();

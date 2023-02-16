@@ -25,17 +25,17 @@ DROP PROCEDURE Recepcion.Doc_Detail_Temp_Get
 GO
 CREATE PROCEDURE Recepcion.Doc_Detail_Temp_Get
 @idRol INT
-,@idComp UNIQUEIDENTIFIER
+,@idDocumento INT
 ,@jsonData NVARCHAR(MAX) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF NOT EXISTS (SELECT * FROM Recepcion.Doc_Detalle_Temp WHERE idComp = @idComp)
+	IF NOT EXISTS (SELECT * FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = @idDocumento)
 		BEGIN
 			RETURN
 		END
 
-	SELECT * FROM Recepcion.Doc_Detalle_Temp WHERE idComp = @idComp
+	SELECT * FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = @idDocumento
 END
 GO

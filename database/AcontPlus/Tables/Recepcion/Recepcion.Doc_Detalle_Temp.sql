@@ -1,9 +1,10 @@
-
+USE AcontPlus
+GO
 IF OBJECT_ID(N'Recepcion.Doc_Detalle_Temp', N'U') IS NOT NULL
 DROP TABLE Recepcion.Doc_Detalle_Temp 
 GO
 CREATE TABLE Recepcion.Doc_Detalle_Temp(
-idComp UNIQUEIDENTIFIER NOT NULL
+idDocumento INT NOT NULL
 ,idProveedor INT NULL
 ,idArticulo INT NULL
 ,idMedida INT NULL

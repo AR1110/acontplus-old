@@ -28,7 +28,7 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT TOP (@cantDocs) uniqueId, claveAcceso FROM Recepcion.DocumentoRecibido WHERE downloaded = 'ND'
+	SELECT TOP (@cantDocs) idDocumento, claveAcceso FROM Recepcion.DocumentoRecibido WHERE downloaded = 'ND'
 
 END
 GO

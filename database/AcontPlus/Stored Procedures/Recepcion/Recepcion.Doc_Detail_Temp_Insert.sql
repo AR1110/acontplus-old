@@ -37,7 +37,7 @@ BEGIN
 		DECLARE @payload VARCHAR(MAX)
 
 	DECLARE @tmp TABLE(
-	idComp UNIQUEIDENTIFIER NOT NULL
+	idDocumento INT NOT NULL
 	,idArticulo INT NULL
 	,codigoPrincipal VARCHAR(100) NOT NULL
 	,codigoAuxiliar VARCHAR(100) NULL
@@ -48,9 +48,9 @@ BEGIN
 	,precioTotalSinImpuesto VARCHAR(15) NULL
 	)
 
-	INSERT INTO @tmp(idComp, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto)
-	SELECT idComp, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto
-	FROM OPENJSON(@jsonData) WITH (idComp UNIQUEIDENTIFIER
+	INSERT INTO @tmp(idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto)
+	SELECT idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto
+	FROM OPENJSON(@jsonData) WITH (idDocumento INT
 	,idArticulo INT '$.idArticulo'
 	,codigoPrincipal VARCHAR(100) '$.codigoPrincipal'
 	,codigoAuxiliar VARCHAR(100) '$.codigoAuxiliar'
@@ -69,36 +69,36 @@ BEGIN
 	
 	SELECT @idEntidad = idEntidad, @idUsuario = idUsuario FROM AFTDataRol(@idRol)
 
-	SELECT @rucProv = rucEmisor  FROM Recepcion.DocumentoRecibido WHERE uniqueId = (SELECT TOP 1 idComp FROM @tmp) 
+	SELECT @rucProv = rucEmisor  FROM Recepcion.DocumentoRecibido WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp) 
 
 	SELECT TOP 1 @idProveedor = idProveedor FROM Proveedor WHERE idEntidad = @idEntidad AND numeroIdentificacion = @rucProv
 
 	BEGIN TRY
 		BEGIN TRAN
-			IF EXISTS(SELECT 1 FROM Recepcion.Doc_Detalle_Temp cpt INNER JOIN @tmp t ON cpt.idComp = t.idComp)
+			IF EXISTS(SELECT 1 FROM Recepcion.Doc_Detalle_Temp cpt INNER JOIN @tmp t ON cpt.idDocumento = t.idDocumento)
 				BEGIN
-					DELETE FROM Recepcion.Doc_Detalle_Temp WHERE idComp = (SELECT TOP 1 idComp FROM @tmp)
-					--DELETE FROM Recepcion.Doc_Impuesto_Temp WHERE idComp = (SELECT TOP 1 idComp FROM @tmp)
+					DELETE FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp)
+					--DELETE FROM Recepcion.Doc_Impuesto_Temp WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp)
 				END
-			INSERT INTO Recepcion.Doc_Detalle_Temp(idComp, idProveedor, idArticulo, idMedida, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto, idUsuario, isCustom)
-			SELECT idComp, @idProveedor, a.idArticulo, m.idMedida, t.codigoPrincipal, t.codigoAuxiliar, cantidad, t.descripcion, precioUnitario, descuento, precioTotalSinImpuesto, @idUsuario,1
+			INSERT INTO Recepcion.Doc_Detalle_Temp(idDocumento, idProveedor, idArticulo, idMedida, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto, idUsuario, isCustom)
+			SELECT idDocumento, @idProveedor, a.idArticulo, m.idMedida, t.codigoPrincipal, t.codigoAuxiliar, cantidad, t.descripcion, precioUnitario, descuento, precioTotalSinImpuesto, @idUsuario,1
 			FROM @tmp t
 			LEFT JOIN dbo.Articulo a ON a.codigo = t.codigoPrincipal AND a.idEntidad = @idEntidad
 			LEFT JOIN dbo.Medida m ON a.idMedida = m.idMedida AND a.idEntidad = @idEntidad
 			WHERE NOT EXISTS (SELECT * FROM Recepcion.Doc_Detalle_Temp tt 
-			WHERE t.idComp = tt.idComp AND t.codigoPrincipal = tt.codigoPrincipal)
+			WHERE t.idDocumento = tt.idDocumento AND t.codigoPrincipal = tt.codigoPrincipal)
 
-			UPDATE Recepcion.Doc_Impuesto_Temp SET codArticulo = (SELECT TOP 1 codigoPrincipal FROM @tmp) WHERE idComp = (SELECT TOP 1 idComp FROM @tmp)
+			UPDATE Recepcion.Doc_Impuesto_Temp SET codArticulo = (SELECT TOP 1 codigoPrincipal FROM @tmp) WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp)
 
-		 --INSERT INTO Recepcion.Doc_Impuesto_Temp(idComp, codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor)
-		 --SELECT (SELECT TOP 1 idComp FROM @tmp), codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor 
+		 --INSERT INTO Recepcion.Doc_Impuesto_Temp(idDocumento, codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor)
+		 --SELECT (SELECT TOP 1 idDocumento FROM @tmp), codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor 
 		 --FROM @taxes tt
 		 --WHERE NOT EXISTS (SELECT * FROM Recepcion.Doc_Impuesto_Temp tti 
-			--						WHERE tti.idComp = (SELECT TOP 1 idComp FROM @tmp) 
+			--						WHERE tti.idDocumento = (SELECT TOP 1 idDocumento FROM @tmp) 
 			--						AND tti.codArticulo = tt.codArticulo)
 
 
-			SET @payload = (SELECT * FROM Recepcion.Doc_Detalle_Temp WHERE idcomp = (SELECT TOP 1 idComp FROM @tmp) FOR JSON AUTO) 
+			SET @payload = (SELECT * FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp) FOR JSON AUTO) 
 
 			SELECT '1' AS code, @payload AS payload, 'Detalle añadido correctamente'  as 'message'
 			

@@ -1,8 +1,10 @@
+USE AcontPlus
+GO
 IF OBJECT_ID(N'Recepcion.Doc_Impuesto_Temp', N'U') IS NOT NULL
 DROP TABLE Recepcion.Doc_Impuesto_Temp 
 GO
 CREATE TABLE Recepcion.Doc_Impuesto_Temp (
-	idComp UNIQUEIDENTIFIER
+	idDocumento INT
 	,codArticulo VARCHAR(50)
 	,codigo VARCHAR(50)
 	,codigoPorcentaje VARCHAR(50)

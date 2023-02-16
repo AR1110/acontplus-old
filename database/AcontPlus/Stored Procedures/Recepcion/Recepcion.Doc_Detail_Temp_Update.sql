@@ -38,18 +38,18 @@ BEGIN
 
 	DECLARE @tmp TABLE(
 	todos BIT NULL
-	,idComp UNIQUEIDENTIFIER NOT NULL
+	,idDocumento INT NOT NULL
 	,idProveedor INT NULL
 	,idArticulo INT NULL
 	,codArticulo VARCHAR(100) NULL
 	,idMedida INT
 	)
 
-	INSERT INTO @tmp(todos, idComp, idProveedor, idArticulo, codArticulo, idMedida)
-	SELECT todos, idComp, idProveedor, idArticulo, LTRIM(RTRIM(codArticulo)), idMedida
+	INSERT INTO @tmp(todos, idDocumento, idProveedor, idArticulo, codArticulo, idMedida)
+	SELECT todos, idDocumento, idProveedor, idArticulo, LTRIM(RTRIM(codArticulo)), idMedida
 	FROM OPENJSON(@jsonData) WITH (
 	todos BIT '$.todos'
-	,idComp UNIQUEIDENTIFIER '$.idComp'
+	,idDocumento INT '$.idDocumento'
 	,idProveedor INT '$.idProveedor'
 	,idArticulo INT '$.idArticulo'
 	,codArticulo VARCHAR(100) '$.codArticulo'
@@ -72,7 +72,7 @@ BEGIN
 
 	SET @idProveedor = (SELECT TOP 1 idProveedor FROM @tmp)
 
-	SELECT @rucProv = rucEmisor FROM Recepcion.DocumentoRecibido WHERE uniqueId = (SELECT TOP 1 idComp FROM @tmp) 
+	SELECT @rucProv = rucEmisor FROM Recepcion.DocumentoRecibido WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp) 
 
 	IF (@idProveedor = 0 AND @rucProv IS NOT NULL)
 		BEGIN
@@ -91,9 +91,9 @@ BEGIN
 			IF EXISTS(SELECT 1 FROM @tmp WHERE todos = 1)
 				BEGIN
 					UPDATE Recepcion.Doc_Detalle_Temp SET idMedida = (SELECT TOP 1 idMedida FROM @tmp)
-					WHERE idComp = (SELECT TOP 1 idComp FROM @tmp)
+					WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp)
 
-					SET @payload = (SELECT * FROM Recepcion.Doc_Detalle_Temp WHERE idcomp = (SELECT TOP 1 idComp FROM @tmp) FOR JSON AUTO) 
+					SET @payload = (SELECT * FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp) FOR JSON AUTO) 
 
 					SELECT '1' AS code, @payload AS payload, 'Medida asignada correctamente'  as 'message'
 				END
@@ -106,11 +106,11 @@ BEGIN
 					,a.idUsuario = @idUsuario
 					,a.fechaRegistro = GETDATE()
 					FROM Recepcion.Doc_Detalle_Temp a WITH (NOLOCK)
-					JOIN (SELECT t.idComp, t.idArticulo, t.codArticulo, t.idMedida
-					FROM @tmp t) AS atmp ON a.idComp = atmp.idComp 
+					JOIN (SELECT t.idDocumento, t.idArticulo, t.codArticulo, t.idMedida
+					FROM @tmp t) AS atmp ON a.idDocumento = atmp.idDocumento 
 					AND a.codigoPrincipal = LTRIM(RTRIM(atmp.codArticulo))
 
-					SET @payload = (SELECT * FROM Recepcion.Doc_Detalle_Temp WHERE idcomp = (SELECT TOP 1 idComp FROM @tmp) FOR JSON AUTO) 
+					SET @payload = (SELECT * FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp) FOR JSON AUTO) 
 
 					SELECT '1' AS code, @payload AS payload, 'Articulo Actualizado'  as 'message'
 				END

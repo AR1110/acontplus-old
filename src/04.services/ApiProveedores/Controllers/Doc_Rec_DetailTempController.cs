@@ -14,8 +14,8 @@ namespace ApiProveedores.Controllers
         private readonly IConfiguration _configuration;
         public Doc_Rec_DetailTempController(IConfiguration configuration) => (_configuration) = (configuration);
 
-        [HttpGet("{idRol}/{uniqueId}")]
-        public async Task<IActionResult> GetId(int idRol, Guid uniqueId)
+        [HttpGet("{idRol}/{idDocumento}")]
+        public async Task<IActionResult> GetId(int idRol, int idDocumento)
         {
             LogWriter _logs = new LogWriter(_configuration);
 
@@ -23,7 +23,7 @@ namespace ApiProveedores.Controllers
             {
                 Dictionary<string, object> parameters = new Dictionary<string, object>();
                 parameters.Add("idRol", idRol);
-                parameters.Add("idComp", uniqueId);
+                parameters.Add("idDocumento", idDocumento);
                 parameters.Add("jsonData", "");
                 DAO _dao = new DAO(_configuration);
                 return Ok(await _dao.GetDataTable("Recepcion.Doc_Detail_Temp_Get", parameters));
