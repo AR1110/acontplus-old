@@ -1,0 +1,270 @@
+﻿<div id="notaCreditoModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <form ng-submit="saveNotaCredito()">
+                <div class="modal-header">
+                    <h5 class="modal-title">Nota de Crédito</h5>
+                    <button class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6">
+                            <div class="card border border-dark rounded">
+                                <div class="card-body">
+                                    <img src="" alt="NO LOGO" height="150">
+                                    <h5>{{infoTributaria.razonSocial}}</h5>
+                                    <br>
+                                    <h5>{{infoTributaria.nombreComercial}}</h5>
+                                    <br>
+                                    <h5><label for="">Dirección Matriz:</label> {{infoTributaria.dirMatriz}}</h5>
+                                    <br>
+                                    <h5>
+                                        <label for="">Dirección Sucursal: </label>
+                                        {{infoNotaCredito.dirEstablecimiento}}
+                                    </h5>
+                                    <br>
+                                    <h5 ng-show="">
+                                        <label for="infoNotaCredito.contribuyenteEspecial.length > 0">
+                                            Contribuyente
+                                            Especial Nro.
+                                        </label>
+                                        {{infoNotaCredito.contribuyenteEspecial}}
+                                    </h5>
+                                    <h5>
+                                        <label for="">OBLIGADO A LLEVAR CONTABILIDAD </label>
+                                        {{infoNotaCredito.obligadoContabilidad}}
+                                    </h5>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6">
+                            <div class="card border border-dark rounded">
+                                <div class="card-body">
+                                    <h5><label>RUC: </label> {{infoTributaria.ruc}}</h5>
+                                    <h4>COMPROBANTE DE RETENCIÓN</h4>
+                                    <h5>
+                                        <label for="">No.</label>
+                                        {{infoTributaria.estab}}-{{infoTributaria.ptoEmi}}-{{infoTributaria.secuencial}}
+                                    </h5>
+                                    <label for="">NÚMERO DE AUTORIZACIÓN</label>
+                                    <small>
+                                        {{infoTributaria.claveAcceso}}
+                                    </small>
+                                    <label for="">FECHA Y HORA DE AUTORIZACIÓN</label>
+                                    <small>
+                                        {{selected[0].fechaAutorizacion}}
+                                    </small>
+                                    <h5>
+                                        <label for="">AMBIENTE:</label>
+                                        <span ng-bind-html="infoTributaria.ambiente | ambienteSri"></span>
+                                    </h5>
+                                    <h5>
+                                        <label for="">EMISIÓN:</label>
+                                        <span ng-bind-html="infoTributaria.tipoEmision | tipoEmisionSri"></span>
+                                    </h5>
+                                    <label for="">CLAVE DE ACCESSO</label><br />
+                                    <img id="barcodeImg" src="" alt="">
+                                    <small> {{infoTributaria.claveAcceso}}</small>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="card border border-dark rounded">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-8">
+                                            <h5>
+                                                <label for="">Razón Social / Nombres y Apellidos: </label>
+                                                {{infoNotaCredito.razonSocialComprador}}
+                                            </h5>
+                                            <br>
+                                            <h5>
+                                                <label for="">Fecha Emisión: </label>
+                                                {{infoNotaCredito.fechaEmision}}
+                                            </h5>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4">
+                                            <h5>
+                                                <label for="">Identificación: </label>
+                                                {{infoNotaCredito.identificacionComprador}}
+                                            </h5>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4">
+                                            <h5>
+                                                <label for="">Comprobante que se modifica: </label>
+                                            </h5>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4">
+                                            <h5>
+                                                {{infoNotaCredito.codDocModificado}}
+                                            </h5>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4">
+                                            <h5>
+                                                {{infoNotaCredito.numDocModificado}}
+                                            </h5>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6">
+                                            <h5>
+                                                <label for="">Fecha Emisión comprobante a modificar: </label>
+                                            </h5>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4">
+                                            <h5>
+                                                {{infoNotaCredito.fechaEmisionDocSustento}}
+                                            </h5>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6">
+                                            <h5>
+                                                <label for="">Razón de Modificación: </label>
+                                            </h5>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4">
+                                            <h5>
+                                                {{infoNotaCredito.motivo}}
+                                            </h5>
+                                        </div>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table table-borderded">
+                                            <thead>
+                                                <tr>
+                                                    <th>Código</th>
+                                                    <th>Código Auxiliar</th>
+                                                    <th>Cantidad</th>
+                                                    <th>Descripción</th>
+                                                    <th>Detalle Adicional</th>
+                                                    <th>Detalle Adicional</th>
+                                                    <th>Detalle Adicional</th>
+                                                    <th>Precio Unitario</th>
+                                                    <th>Descuento</th>
+                                                    <th>Precio Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="item in fullComprobante.detalles">
+                                                    <td>{{item.codigoPrincipal}}</td>
+                                                    <td>{{item.codigoAuxiliar}}</td>
+                                                    <td>{{item.cantidad}}</td>
+                                                    <td>{{item.descripcion}}</td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td class="text-right">{{item.precioUnitario}}</td>
+                                                    <td class="text-right">{{item.descuento}}</td>
+                                                    <td class="text-right">{{item.precioTotalSinImpuesto}}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <br>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                            </table>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-7 col-lg-7 col-md-7 col-sm-7 col-7">
+                            <div class="card border border-dark rounded" ng-show="infoAdicional.length > 0">
+                                <div class="card-body">
+                                    <table class="table table-borderless">
+                                        <thead>
+                                            <tr>
+                                                <th>Nombre</th>
+                                                <th>Valor</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="test in infoAdicional">
+                                                <td>{{test.nombre}}</td>
+                                                <td>{{test.valor}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-5 col-lg-5 col-md-5 col-sm-5 col-5">
+                            <div class="table-responsive">
+                                <h5><strong></strong></h5>
+                                <table class="table table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <td class="text-right"><strong>SubTotal 12%</strong></td>
+                                            <td class="text-right">{{infoNotaCredito.totalSinImpuestos | currency}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-right"><strong>SubTotal Iva 0%</strong></td>
+                                            <td class="text-right">{{totalTaxesRide.iva0 | currency}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-right"><strong>SubTotal No Objeto Iva</strong></td>
+                                            <td class="text-right">{{totalTaxesRide.noObjetoIva | currency}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-right"><strong>SubTotal Excento Iva</strong></td>
+                                            <td class="text-right">{{totalTaxesRide.excentoIva | currency}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-right"><strong>Total Sin Impuestos</strong></td>
+                                            <td class="text-right">{{infoNotaCredito.totalSinImpuestos | currency}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-right"><strong>ICE</strong></td>
+                                            <td class="text-right">{{totalTaxesRide.ice | currency}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-right"><strong>IVA 12%</strong></td>
+                                            <td class="text-right">{{totalTaxesRide.iva12 | currency}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-right"><strong>IRBPNR</strong></td>
+                                            <td class="text-right">{{totalTaxesRide.irbpnr | currency}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-right"><strong>Valor Total</strong></td>
+                                            <td class="text-right">{{infoNotaCredito.valorModificacion | currency}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <h4 class="float-right"><strong></strong></h4><br>
+                            <h4 class="float-right"><strong></strong></h4>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="form-group">
+                                <label for="obs">Observación:</label>
+                                <textarea name="obs" id="obs" class="form-control" ng-model="notaCredito.obs"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    @*<button class="btn btn-success btn-sm"><i class="ti-save"></i> Importar</button>*@
+                    <button class="btn btn-dark btn-sm" data-dismiss="modal">&times; Cerrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

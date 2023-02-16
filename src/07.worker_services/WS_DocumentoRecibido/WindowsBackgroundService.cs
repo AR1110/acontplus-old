@@ -56,12 +56,12 @@ namespace WS_DocumentoRecibido
                         //        XmlNode node = xmlComp.GetElementsByTagName("infoTributaria")[0];
                         //        string codDoc = node.SelectSingleNode("codDoc").InnerText;
                         //        _log.LogInfo("Xml Doc Downloaded: " + dt.Rows[0]["claveAcceso"].ToString());
-                        //        await _docService.Update(new Guid(dt.Rows[0]["uniqueId"].ToString()), "DE", codDoc, xmlDocSri.OuterXml);
+                        //        await _docService.Update(new Guid(dt.Rows[0]["idDocumento"].ToString()), "DE", codDoc, xmlDocSri.OuterXml);
                         //    }
                         //    else
                         //    {
                         //        _log.LogWarning("XML of doc doesnt exists in sri");
-                        //        await _docService.Update_Error(new Guid(dt.Rows[0]["uniqueId"].ToString()), "NE");
+                        //        await _docService.Update_Error(new Guid(dt.Rows[0]["idDocumento"].ToString()), "NE");
                         //    }
                         //}
                     }
@@ -73,7 +73,7 @@ namespace WS_DocumentoRecibido
                 _logger.LogError(ex, "{Message}", ex.Message);
                 _log.LogError("Error while downloading xml from sri: " + ex.ToString());
                 Environment.Exit(1);
-                //await _docService.Update_Error(new Guid(dt.Rows[0]["uniqueId"].ToString()), "ER");
+                //await _docService.Update_Error(new Guid(dt.Rows[0]["idDocumento"].ToString()), "ER");
             }
         }
         public async void FastDownload(DataRow dr)
@@ -94,12 +94,12 @@ namespace WS_DocumentoRecibido
                 XmlNode node = xmlComp.GetElementsByTagName("infoTributaria")[0];
                 string codDoc = node.SelectSingleNode("codDoc").InnerText;
                 _log.LogInfo("Xml Doc Downloaded: " + dr["claveAcceso"].ToString());
-                await _docService.Update(new Guid(dr["uniqueId"].ToString()), "DE", codDoc, xmlDocSri.OuterXml);
+                await _docService.Update(Convert.ToInt32(dr["idDocumento"]), "DE", codDoc, xmlDocSri.OuterXml);
             }
             else
             {
                 _log.LogWarning("XML of doc doesnt exists in sri");
-                await _docService.Update_Error(new Guid(dr["uniqueId"].ToString()), "NE");
+                await _docService.Update_Error(Convert.ToInt32(dr["idDocumento"]), "NE");
             }
         }
     }

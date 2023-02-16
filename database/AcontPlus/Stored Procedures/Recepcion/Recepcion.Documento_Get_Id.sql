@@ -15,7 +15,7 @@ IF OBJECT_ID(N'Recepcion.Documento_Get_Id', N'P') IS NOT NULL
 DROP PROCEDURE Recepcion.Documento_Get_Id
 GO
 CREATE PROCEDURE Recepcion.Documento_Get_Id @idRol INT
-,@uniqueId UNIQUEIDENTIFIER
+,@idDocumento INT
 ,@backendInfo VARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -41,15 +41,15 @@ BEGIN
 	SET @idUsuario = (SELECT idUsuario FROM dbo.Rol WHERE idRol = @idRol)
 	--BEGIN TRY
 	--	BEGIN TRAN
-			IF EXISTS(SELECT 1 FROM Recepcion.DocumentoRecibido WHERE uniqueId = @uniqueId AND xmlDoc is null)
+			IF EXISTS(SELECT 1 FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento AND xmlDoc is null)
 				BEGIN
 					RETURN
 				END
 			--SELECT @totalRecords = COUNT(*) FROM Recepcion.ComprobanteImportacion
-			SELECT uniqueId, codDoc, [xmlDoc]
+			SELECT idDocumento, codDoc, [xmlDoc]
 			--,@totalRecords totalRecords
 			FROM Recepcion.DocumentoRecibido
-			WHERE uniqueId  = @uniqueId
+			WHERE idDocumento  = @idDocumento
 			--ORDER BY idComprobanteImportacion DESC
 			--CASE WHEN @SortBy = 'razonSocialEmisior' AND @OrderBy = 'ASC' THEN razonSocialEmisior END ASC, 
 			--CASE WHEN @SortBy = 'razonSocialEmisior' AND @OrderBy = 'DESC' THEN razonSocialEmisior END DESC 

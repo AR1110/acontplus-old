@@ -88,14 +88,18 @@
                                             <th>Documento</th>
                                             <th>Secuencial</th>
                                             <th>Fecha Emision</th>
+                                            <th>Opciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr ng-repeat="item in docsFounded" ng-click="selectDoc(item)"
-                                            title="Seleccionar Documento" style="cursor: pointer;">
+                                        <tr ng-repeat="item in docsFounded">
                                             <td>{{item.documento}}</td>
                                             <td>{{item.secuencial}}</td>
                                             <td>{{item.fechaEmision | date: 'dd/MM/yyyy'}}</td>
+                                            <td>
+                                                <button type="button" class="btn btn-info btn-sm" title="Ver Documento de Sustento"><i class="fa fa-eye"></i></button>
+                                                <button type="button" class="btn btn-success btn-sm" ng-click="selectDoc(item)" title="Seleccionar Documento de Sustento"><i class="fas fa-hand-point-right"></i></button>
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -115,5 +119,5 @@
 
 @section Scripts {
 
-<script src="~/js/controllers/ventas/retencionAtsCtrl.js" asp-append-version="true"></script>
+    <script src="~/js/controllers/ventas/retencionAtsCtrl.js" asp-append-version="true"></script>
 }

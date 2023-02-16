@@ -24,9 +24,8 @@ BEGIN
 	DECLARE @codEstab  VARCHAR(50)
 	,@idEstab INT
 
-	DECLARE @Comprobantes AS TABLE(
-	uniqueId UNIQUEIDENTIFIER NOT NULL
-	,comprobante VARCHAR(50) NOT NULL 
+	DECLARE @Comprobantes AS TABLE( 
+	comprobante VARCHAR(50) NOT NULL 
 	,serieComprobante VARCHAR(50) NULL
 	,rucEmisor VARCHAR(15) NOT NULL
 	,razonSocialEmisior VARCHAR(250)  NULL
@@ -48,13 +47,12 @@ BEGIN
 	BEGIN TRY
 		BEGIN TRAN
 			
-			INSERT INTO @Comprobantes([uniqueId], [comprobante], [serieComprobante], [rucEmisor], [razonSocialEmisior], [fechaEmision], [fechaAutorizacion], [tipoEmision], [identificacionReceptor], [claveAcceso], [numeroAutorizacion], [importeTotal])
+			INSERT INTO @Comprobantes([comprobante], [serieComprobante], [rucEmisor], [razonSocialEmisior], [fechaEmision], [fechaAutorizacion], [tipoEmision], [identificacionReceptor], [claveAcceso], [numeroAutorizacion], [importeTotal])
 
-			SELECT uniqueId, comprobante, serieComprobante, rucEmisor, razonSocialEmisior, fechaEmision, fechaAutorizacion, tipoEmision, identificacionReceptor, claveAcceso, numeroAutorizacion, CASE WHEN LEN(Ltrim(rtrim(importeTotal))) > 0 THEN Ltrim(rtrim(importeTotal)) ELSE NULL END
+			SELECT comprobante, serieComprobante, rucEmisor, razonSocialEmisior, fechaEmision, fechaAutorizacion, tipoEmision, identificacionReceptor, claveAcceso, numeroAutorizacion, CASE WHEN LEN(Ltrim(rtrim(importeTotal))) > 0 THEN Ltrim(rtrim(importeTotal)) ELSE NULL END
 
-			FROM OPENJSON(@json) WITH(
-				uniqueId VARCHAR(max) '$.uniqueId'
-				,comprobante VARCHAR(50) '$.comprobante'
+			FROM OPENJSON(@json) WITH( 
+				comprobante VARCHAR(50) '$.comprobante'
 				,serieComprobante VARCHAR(50) '$.serieComprobante'
 				,rucEmisor VARCHAR(15) '$.rucEmisor'
 				,razonSocialEmisior VARCHAR(250) '$.razonSocialEmisior'
@@ -67,8 +65,8 @@ BEGIN
 				,importeTotal VARCHAR(50) '$.importeTotal'
 			)
 
-			INSERT  INTO Recepcion.DocumentoRecibido(idEstablecimiento, [codEstab], [uniqueId], [comprobante], [serieComprobante], [rucEmisor], [razonSocialEmisior], [fechaEmision], [fechaAutorizacion], [tipoEmision], [identificacionReceptor], [claveAcceso], [numeroAutorizacion], [importeTotal], [idUsuario], [fechaRegistro], downloaded)
-			SELECT @idEstab, @codEstab, uniqueId, comprobante, serieComprobante, rucEmisor, razonSocialEmisior, fechaEmision, fechaAutorizacion, tipoEmision, identificacionReceptor, claveAcceso, numeroAutorizacion, CONVERT(DECIMAL(18,2), Ltrim(rtrim(ISNULL(importeTotal, 0)))), @idUsuario, dbo.ufnGetDateEcuador(), 'ND'
+			INSERT  INTO Recepcion.DocumentoRecibido(idEstablecimiento, [codEstab], [comprobante], [serieComprobante], [rucEmisor], [razonSocialEmisior], [fechaEmision], [fechaAutorizacion], [tipoEmision], [identificacionReceptor], [claveAcceso], [numeroAutorizacion], [importeTotal], [idUsuario], [fechaRegistro], downloaded)
+			SELECT @idEstab, @codEstab, comprobante, serieComprobante, rucEmisor, razonSocialEmisior, fechaEmision, fechaAutorizacion, tipoEmision, identificacionReceptor, claveAcceso, numeroAutorizacion, CONVERT(DECIMAL(18,2), Ltrim(rtrim(ISNULL(importeTotal, 0)))), @idUsuario, dbo.ufnGetDateEcuador(), 'ND'
 			FROM @Comprobantes t
 			WHERE NOT EXISTS (SELECT * FROM Recepcion.DocumentoRecibido c WITH (NOLOCK)
 										WHERE c.codEstab = @codEstab

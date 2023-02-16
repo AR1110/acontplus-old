@@ -25,10 +25,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="appsettings.json" />
     <Content Remove="wwwroot\js\controllers\reportes\impuestoCtrl.min.js" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="appsettings.json" />
     <None Include="bundleconfig.json" />
     <None Include="wwwroot\archivos\NotFound.pdf" />
     <None Include="wwwroot\assets\icons\crypto-icons\cryptocoins.woff2" />
@@ -1185,8 +1187,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="appsettings.Production.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
     <Content Update="libman.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Views\DocumentoRecibido\Index.cshtml">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
@@ -2138,11 +2147,11 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Update="wwwroot\js\controllers\compImportacionCtrl.js">
+    <Content Update="wwwroot\js\controllers\recepcion\documentoRecibidoCtrl.js">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Update="wwwroot\js\controllers\compImportacionCtrl.min.js">
+    <Content Update="wwwroot\js\controllers\recepcion\documentoRecibidoCtrl.min.js">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
@@ -4224,6 +4233,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Views\ComprobanteImportacion\" />
     <Folder Include="wwwroot\lib\angular-daterangepicker\" />
   </ItemGroup>
 
