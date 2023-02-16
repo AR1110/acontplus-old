@@ -73,9 +73,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WS_DocumentoRecibido", "07.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiReports", "04.services\ApiReports\ApiReports.csproj", "{09DCE12D-52DC-46F9-8106-A88C3232EB66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BL.FactElect", "03.business_logic\BL.FactElect\BL.FactElect.csproj", "{EA1CB571-CDD1-4EFE-9423-D12F84DFFEB7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BL.FactElect", "03.business_logic\BL.FactElect\BL.FactElect.csproj", "{EA1CB571-CDD1-4EFE-9423-D12F84DFFEB7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.FactElect", "02.domain\Domain.FactElect\Domain.FactElect.csproj", "{CDC4169F-2452-4661-A8FA-1C89E843B480}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.FactElect", "02.domain\Domain.FactElect\Domain.FactElect.csproj", "{CDC4169F-2452-4661-A8FA-1C89E843B480}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

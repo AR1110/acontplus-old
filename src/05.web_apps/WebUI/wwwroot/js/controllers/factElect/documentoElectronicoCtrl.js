@@ -26,7 +26,10 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
             }            
 
             _mS.getData('get', '/DocumentoElectronico/Get?json=' + JSON.stringify($scope.dataSearch)).then(
-                response=>{                    
+                response=>{   
+                    if(response.code==="0"){
+                        console.log(response)
+                    }                 
                     $scope.comprobantes = JSON.parse(response.payload) || [];                                                       
                     hideLoader();                
                 }
@@ -301,7 +304,7 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
                 params: item
             }).result.then(response=>{
                 if(response){
-
+                    console.log(response)
                 }
             })
             // _mS.getData('get', '/NotificacionTributaria/Get?json=' + JSON.stringify(item)).then(response=>{

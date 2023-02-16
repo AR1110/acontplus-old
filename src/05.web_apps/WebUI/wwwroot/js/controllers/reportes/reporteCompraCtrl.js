@@ -251,9 +251,12 @@ function reporteCompraCtrl($http, $scope, _commonSvc, mS, toast, form, FileSaver
         }
 
         if($scope.dataSearch.tipoDoc==='LC' || $scope.dataSearch.tipoDoc==='NCP'){
-            if (form.campo($scope.dataSearch.byPuntoEmision) || $scope.dataSearch.byPuntoEmision === 0) {
-                toast.toastr('warning', 'Seleccione la Sucursal', tituloToast);
-                return
+
+            if($scope.dataSearch.checkboxPuntoEmisionFiltro){
+                if (form.campo($scope.dataSearch.byPuntoEmision) || $scope.dataSearch.byPuntoEmision === 0) {
+                    toast.toastr('warning', 'Seleccione el Punto de Emisión', tituloToast);
+                    return
+                }
             }
         }
 
