@@ -85,7 +85,7 @@ BEGIN
 									 INNER JOIN FactElect.EstadoServicio es WITH (NOLOCK) ON de.codEstado = es.codigo
 									 INNER JOIN dbo.TipoDocumento td WITH (NOLOCK) ON td.codigoSri = de.codDoc
 									 LEFT JOIN dbo.Cliente cl ON cl.idCliente = de.idContribuyente  
-									 LEFT JOIN dbo.Proveedor pr ON pr.numeroIdentificacion = de.numeroIdentificacion  
+									 LEFT JOIN dbo.Proveedor pr ON pr.idProveedor = de.idContribuyente  
 									 WHERE de.idEntidad = @idEntidad   ';
 
 	SELECT @idEntidad = idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @idRol ;
@@ -138,7 +138,7 @@ BEGIN
 
 
 	EXEC sp_executesql @sql,@params
-				           ,@idEntidad
+				           ,@idEntidad = @idEntidad
 						   ,@codDoc = @codDoc 
 						   ,@codEstado = @codEstado
 						   ,@dateStart = @dateStart

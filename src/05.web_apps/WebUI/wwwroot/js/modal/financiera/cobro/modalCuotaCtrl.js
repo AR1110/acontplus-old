@@ -181,7 +181,7 @@ export class ModalCuotaNuevoCtrl extends ModalBaseCtrl{
                     return
                 }
                 if (response.id == "1") {
-                    this._fS.sweetAlert('warning', response.message, response.titleSms);    
+                    this._fS.sweetAlert('success', response.message, response.titleSms);    
                     this.$uibModalInstance.close(response)                                
                 }
             });

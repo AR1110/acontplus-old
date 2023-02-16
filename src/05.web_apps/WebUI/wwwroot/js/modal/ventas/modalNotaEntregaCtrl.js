@@ -86,7 +86,7 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl{
         
             let dataMedida = medidas[0];
 
-            console.log(this.dataArticulo)
+            
                 
             entity.idArticulo           = articulo.idArticulo;
             entity.codigo               = articulo.codigoArticulo;                
@@ -104,8 +104,6 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl{
             entity.idMedida             = dataMedida.idMedida; //Medida por defecto 
             entity.adicional            = datosAdicionales; //
 
-            console.log(JSON.parse(dataMedida.tarifas))
-            console.log(self)
             entity.articuloTarifas      = JSON.parse(dataMedida.tarifas);
             let tarifa                  = entity.articuloTarifas.find(item=>item.idTarifa===self.idTarifa);                                      
             entity.idTarifa             = self.idTarifa;  
@@ -211,7 +209,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
                 this.cloneIdBodega = this.idBodega;
 
                 this.actividadTipoIva = resultsDataFormEstab[2][0]
-                console.log(this.actividadTipoIva)
+                
             }else{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
             }
@@ -256,6 +254,8 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
                 decimal: this.decimal, 
                 actividadTipoIva: this.actividadTipoIva
             })
+
+            this.uiGridInvoice.idTarifa = this.idTarifa;
             
 
             if(localStorage.getItem('detailNotaEntrega')){
@@ -547,7 +547,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
 
                 if(result.isDismissed){
                 }
-                console.log(result)
+                
             })
             return 
         }
@@ -722,6 +722,8 @@ export class ModalNotaEntregaDetalleCtrl extends ModalNotaEntregaCtrl{
                 actividadTipoIva: this.actividadTipoIva
             })
             
+            this.uiGridInvoice.idTarifa = this.idTarifa; 
+
             //Cargamos los Datos 
             this.data = this.dataDocumento;
             this.nroDocSecuencial = this.data.nroDocSecuencial;
@@ -767,7 +769,7 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl{
         this.detalleDocumento       = detalleDocumento;
         this.infoAdicionalDocumento = infoAdicionalDocumento;
         this.actividadTipoIva       = actividadTipoIva;
-        console.log(this)
+        
     }
 
     async $onInit(){
@@ -820,6 +822,8 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl{
                 decimal: this.decimal, 
                 actividadTipoIva: this.actividadTipoIva
             })
+
+            this.uiGridInvoice.idTarifa = this.idTarifa;
             
             //Cargamos los Datos 
             this.data = this.dataDocumento;
@@ -1008,6 +1012,8 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl{
                 decimal: this.decimal, 
                 actividadTipoIva: this.actividadTipoIva
             })
+
+            this.uiGridInvoice.idTarifa = this.idTarifa;
             
             //Cargamos los Datos 
             this.data = this.dataDocumento;
@@ -1373,7 +1379,7 @@ export class ModalNotaEntregaFiltroCtrl extends ModalBaseCtrl{
                 return
             }
 
-            console.log(moment(this.dataSearch.fechaInicio).isValid())
+            
             if (!moment(this.dataSearch.fechaInicio).isValid()) {
                 console.log('Invalid Date');
             } 

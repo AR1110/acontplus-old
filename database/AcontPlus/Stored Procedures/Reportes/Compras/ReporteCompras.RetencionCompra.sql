@@ -24,8 +24,10 @@ BEGIN
  DECLARE @idTipoAmbiente INT 
  DECLARE @idRetencionCompra BIGINT
  DECLARE @idEntidad INT
- DECLARE @idTipoDocumento BIGINT 		   
+ DECLARE @idTipoDocumento BIGINT 
+ DECLARE @codEstab VARCHAR(50)
  DECLARE @imagen VARBINARY(MAX)
+ DECLARE @mimeType VARCHAR(150)
  DECLARE @rdlcParams VARCHAR(MAX)
  DECLARE @headerDs VARCHAR(MAX)
  DECLARE @detailDs VARCHAR(MAX)
@@ -40,8 +42,8 @@ BEGIN
  DECLARE @razonSocial VARCHAR(200)
  DECLARE @telefono VARCHAR(50) 
  DECLARE @subject VARCHAR(100)
- DECLARE @email VARCHAR(50) = 'acontplusweb@gmail.com' --correo servidor 
- DECLARE @password VARCHAR(50) = 'guzupdzsynqgamav'  -- passwrod 
+ DECLARE @email VARCHAR(50) = 'envio.comprobantes@acontplus.com.ec'
+ DECLARE @password VARCHAR(50) = 'rmdodmyvosnwxzwt'
  DECLARE @nameDoc VARCHAR(150)
  DECLARE @dataMail VARCHAR(MAX)
  DECLARE @cc VARCHAR(100)
@@ -65,6 +67,7 @@ BEGIN
 		BEGIN
 			SELECT 
 				@idTipoDocumento = rc.idTipoDocumento,
+				@codEstab        = pe.codEstab,
 				@claveAcceso     = claveAcceso,
 				@idEntidad       = rc.idEntidad,
 				@subject         = 'Comprobante Electrónico - Acontplus N°: '+ s.estab+'-'+pe.ptoEmi+'-'+dbo.AFTAutoComplete(rc.nroDocumento),
@@ -83,7 +86,7 @@ BEGIN
 			INNER JOIN dbo.Entidad         e WITH (NOLOCK) ON e.idEntidad        = rc.idEntidad
 			WHERE idRetencionCompra = @idRetencionCompra;
 
-			SELECT @imagen = imagen FROM dbo.EntidadLogo WITH (NOLOCK) WHERE idEntidad = @idEntidad
+			SELECT @imagen = imagen, @mimeType = mimeType FROM Config.Estab_Logo WHERE codEstab = @codEstab
 
 			SET @headerDs = (
 								SELECT
@@ -158,6 +161,7 @@ BEGIN
 			SET @dataSources = (SELECT RetencionCompraDs = @headerDs, RetencionCompraDetalleDs = @detailDs, InfoAdicionalDs = ISNULL(@infoAdditionalDs,'[]') FOR JSON PATH)
 
 			SELECT  imagen = @imagen
+			       ,mimeType = @mimeType
 				   ,claveAcceso = @claveAcceso
 				   ,rdlcParams = @rdlcParams
 				   ,dataSources = @dataSources
@@ -286,6 +290,7 @@ BEGIN
 			SET @dataSources = (SELECT RetencionCompraDs = @headerDs, RetencionCompraDetalleDs = @detailDs, InfoAdicionalDs = ISNULL(@infoAdditionalDs,'[]') FOR JSON PATH)
 
 			SELECT  imagen = @imagen
+		           ,mimeType = @mimeType
 				   ,claveAcceso = @claveAcceso
 				   ,rdlcParams = @rdlcParams
 				   ,dataSources = @dataSources

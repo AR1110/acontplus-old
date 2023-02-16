@@ -249,7 +249,8 @@
     <Content Include="Reports\GestionReporte\FacturaCompraRG.rdlc" />
     <Content Include="Reports\GestionReporte\FacturaVentaRG.rdlc" />
     <Content Include="Reports\GestionReporte\IngresoBodegaRG.rdlc" />
-    <Content Include="Reports\GestionReporte\InventarioRG.rdlc" />
+    <Content Include="Reports\GestionReporte\ConsolidadoVenta.rdl" />
+    <None Include="Reports\GestionReporte\ArticuloTarifa.rdl" />
     <Content Include="Reports\GestionReporte\KardexRG.rdlc" />
     <Content Include="Reports\GestionReporte\LiquidacionCompraRG.rdlc" />
     <Content Include="Reports\GestionReporte\NotaCreditoProveedorRG.rdlc" />
@@ -271,6 +272,7 @@
     <Content Include="Reports\Ventas\NotaCreditoCliente.rdlc" />
     <Content Include="Reports\Ventas\NotaEntrega.rdlc" />
     <Content Include="Reports\Ventas\Proforma.rdlc" />
+    <Content Include="Reports\GestionReporte\ArticuloValoracion.rdl" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\01.common\HelpersNS20\HelpersNS20.csproj">

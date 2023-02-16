@@ -88,7 +88,7 @@ class ModalProformaCtrl extends ModalBaseCtrl{
         
             let dataMedida = medidas[0];
 
-            console.log(this.dataArticulo)
+            
                 
             entity.idArticulo           = articulo.idArticulo;
             entity.codigo               = articulo.codigoArticulo;                
@@ -106,8 +106,7 @@ class ModalProformaCtrl extends ModalBaseCtrl{
             entity.idMedida             = dataMedida.idMedida; //Medida por defecto 
             entity.adicional            = datosAdicionales; //
 
-            console.log(JSON.parse(dataMedida.tarifas))
-            console.log(self)
+
             entity.articuloTarifas      = JSON.parse(dataMedida.tarifas);
             let tarifa                  = entity.articuloTarifas.find(item=>item.idTarifa===self.idTarifa);                                      
             entity.idTarifa             = self.idTarifa;  
@@ -206,7 +205,7 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl{
                 this.cloneIdBodega = this.idBodega;
 
                 this.actividadTipoIva = resultsDataFormEstab[2][0]
-                console.log(this.actividadTipoIva)
+                
             }else{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
             }
@@ -245,11 +244,13 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl{
                 decimal: this.decimal, 
                 actividadTipoIva: this.actividadTipoIva
             })
+
+            this.uiGridInvoice.idTarifa = this.idTarifa;
             
 
-            if(localStorage.getItem('docsDetalle')){
-                this.restoreDetailStorage();
-            }
+            // if(localStorage.getItem('docsDetalle')){
+            //     this.restoreDetailStorage();
+            // }
             
             this.$scope.$apply();
 
@@ -339,7 +340,7 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl{
                 }
                 if(response.id==="1"){
                     this._fS.sweetAlert('success', response.message, response.titleSms, 1000);                  
-                    console.log(response)
+                    
                     this.$uibModalInstance.close(response)                                       
                 }
             })
@@ -433,6 +434,7 @@ export class ModalProformaDetalleCtrl extends ModalProformaCtrl{
                 decimal: this.decimal, 
                 actividadTipoIva: this.actividadTipoIva
             })
+            this.uiGridInvoice.idTarifa = this.idTarifa;
             
             //Cargamos los Datos 
             this.data = this.dataDocumento;
@@ -475,7 +477,7 @@ export class ModalProformaEditarCtrl extends ModalProformaCtrl{
         this.detalleDocumento       = detalleDocumento;
         this.infoAdicionalDocumento = infoAdicionalDocumento;
         this.actividadTipoIva       = actividadTipoIva;
-        console.log(this)
+        
     }
 
     async $onInit(){
@@ -528,6 +530,8 @@ export class ModalProformaEditarCtrl extends ModalProformaCtrl{
                 decimal: this.decimal, 
                 actividadTipoIva: this.actividadTipoIva
             })
+
+            this.uiGridInvoice.idTarifa = this.idTarifa;
             
             //Cargamos los Datos 
             this.data = this.dataDocumento;
@@ -707,6 +711,8 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl{
                 decimal: this.decimal, 
                 actividadTipoIva: this.actividadTipoIva
             })
+
+            this.uiGridInvoice.idTarifa = this.idTarifa;
             
             //Cargamos los Datos 
             this.data = this.dataDocumento;
@@ -804,7 +810,7 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl{
                 }
                 if(response.id==="1"){
                     this._fS.sweetAlert('success', response.message, response.titleSms, 1000);                  
-                    console.log(response)
+                    
                     this.$uibModalInstance.close(response)                                       
                 }
             })
@@ -892,7 +898,7 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl{
                 if(response.code==="1"){
                     this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
                     let data = JSON.parse(response.payload)[0];
-                    console.log(data)
+                    
                     this.$uibModalInstance.close(data)                                       
                 }
             })
@@ -1030,7 +1036,7 @@ export class ModalProformaFiltroCtrl extends ModalProformaCtrl{
                 return
             }
 
-            console.log(moment(this.dataSearch.fechaInicio).isValid())
+            
             if (!moment(this.dataSearch.fechaInicio).isValid()) {
                 console.log('Invalid Date');
             } 

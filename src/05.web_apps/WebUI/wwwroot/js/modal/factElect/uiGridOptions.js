@@ -244,9 +244,13 @@ export class UiGridOptions{
                 if (rowEntity.idMedida === oldValue) return
 
                 let dataMedida = rowEntity.medidas.find(val => val.idMedida === rowEntity.idMedida);
-                let articuloTarifas = JSON.parse(dataMedida.tarifas);
+                let articuloTarifas = JSON.parse(dataMedida.tarifas);                
                 let pvp = articuloTarifas.find(item=>item.idTarifa===this.idTarifa);
                 
+                console.log(articuloTarifas)
+                console.log(pvp)
+                console.log(this.idTarifa)
+
                 rowEntity.articuloTarifas = articuloTarifas;          
                 rowEntity.idTarifa        = this.idTarifa
                 rowEntity.precioUnitario      = this._fS.roundNumber(pvp.precioVenta, this.decimal.nroPrecio);
@@ -273,7 +277,7 @@ export class UiGridOptions{
                     if(rowEntity.idTarifa===oldValue) return
                     let tipoIva                 = this.tipoIvaFindById(rowEntity);
                     let tarifa                  = rowEntity.articuloTarifas.find(item=>item.idTarifa===rowEntity.idTarifa);
-                                           
+                                                             
                     let precioConIva            = CalculoTarifaHelper.calcularPrecioConIva(tarifa.precioVenta, tipoIva.tarifa);
                     let precioConIvaConDesuento = CalculoTarifaHelper.getPrecioIvaConDescuento(precioConIva, rowEntity.porcentajeDescuento);
                     let valorDescuento          = CalculoTarifaHelper.getValorDescuento(tarifa.precioVenta, rowEntity.porcentajeDescuento);

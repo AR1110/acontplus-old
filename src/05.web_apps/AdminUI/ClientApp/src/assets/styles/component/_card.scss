@@ -1,57 +1,58 @@
-.mat-card {
+.mat-mdc-card {
   box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.05) !important;
   -webkit-box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.05) !important;
   margin: 0 15px 30px;
   padding: 0px !important;
   border-radius: $radius;
 
-  .mat-card-content {
+  .mat-mdc-card-content {
     font-size: 1rem;
     line-height: 23px;
     padding: 24px;
   }
-  .mat-card-image {
+  .mat-mdc-card-image {
     width: calc(100% + 0px);
     margin: 0 0px 0px 0px;
   }
-  .mat-card-header {
+  .mat-mdc-card-header {
     padding: 12px;
     border-radius: $radius $radius 0 0;
-    .mat-card-title {
+    .mat-mdc-card-title {
       margin-bottom: 2px;
       font-size: 20px;
     }
-    .mat-card-subtitle,
+    .mat-mdc-card-subtitle,
     .mat-card-subtitle:not(:first-child) {
       margin-bottom: 0px;
       margin-top: 0px;
       font-size: 14px;
     }
     &.text-white {
-      .mat-card-title {
+      .mat-mdc-card-title {
         color: $white;
       }
-      .mat-card-subtitle {
+      .mat-mdc-card-subtitle {
         color: rgba(255, 255, 255, 0.7);
       }
     }
   }
-  .mat-card-title {
+  .mat-mdc-card-title {
     font-size: 20px;
     margin-bottom: 5px;
   }
-  .mat-card-subtitle {
+  .mat-mdc-card-subtitle {
     margin-bottom: 20px;
   }
-  .mat-card-actions {
+  .mat-mdc-card-actions {
     margin: 0px !important;
   }
 }
 
 // forms
+/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
 .mat-form-field-underline {
   background-color: rgba(0, 0, 0, 0.25);
 }
-.mat-form-field {
+.mat-mdc-form-field {
   width: 100%;
 }

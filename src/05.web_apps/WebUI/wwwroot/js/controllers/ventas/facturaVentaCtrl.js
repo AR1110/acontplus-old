@@ -595,11 +595,11 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMo
     $scope.getReportII = function (item) {               
         let parameters = {
             isPrint: 1,
-            idFactura: item.idFactura,
+            idDocument: item.idFactura,
+            idTipoDocumento : item.idTipoDocumento,
             codEstab: item.codEstab,
             codDoc: TIPO_DOC_FV.codigo,
-            codigo: 'RFPT',
-
+            nroIdentificacion : item.nroIdentificacion,
         }
 
         console.log(parameters)

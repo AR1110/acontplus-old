@@ -221,7 +221,8 @@ export class ModalModuloImportacionCrtl{
                 }
             })
 
-            await this._mSvc.getData('post', '/Importacion/GetValidation?codImportacion=' + obj.dataModulo.codigo, data).then(response=>{
+            await this._mSvc.getData('post', '/Importacion/GetValidation?codImportacion=' + obj.dataModulo.codigo, data).then(response => {
+                
                 if(response.code==="0"){
                     Swal.fire({
                         icon:'warning',
@@ -229,6 +230,7 @@ export class ModalModuloImportacionCrtl{
                     })                
                 }
                 if(response.code==="1"){
+                    Swal.close();
                     let payload = JSON.parse(response.payload);
                     let nameColumns = Object.keys(payload[0])                    
                                         
@@ -242,7 +244,7 @@ export class ModalModuloImportacionCrtl{
         } catch (error) {
             console.log(error)
         } finally{
-            Swal.close();
+            
         }        
     }
 

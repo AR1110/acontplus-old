@@ -1,3 +1,5 @@
+USE [AcontPlus]
+go
 -- ================================================
 -- Template generated from Template Explorer using:
 -- Create Procedure (New Menu).SQL
@@ -27,31 +29,184 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-	DECLARE @codigo VARCHAR(50)
-	DECLARE @SP VARCHAR(MAX)
+
+	------DATA JSON PARAMETER-------------
+	DECLARE @idDocument INT
+	DECLARE @idTipoDocumento INT
 	DECLARE @codEstab VARCHAR(50)
+	DECLARE @nroIdentificacion VARCHAR(15)
+	DECLARE @codDoc VARCHAR(5)
+	------------END---------------------
 
-	SELECT @codigo = codigo, @codEstab = codEstab FROM OPENJSON(@json) WITH (codigo VARCHAR(100) '$.codigo',codEstab VARCHAR(50) '$.codEstab')
-
-	SELECT @SP = storedProcedure FROM dbo.ReporteParametro WHERE codigo = @codigo
+	--------PARAMETER MANAGEMENT----------
+	DECLARE @idUsuario INT
+	DECLARE @SP VARCHAR(MAX)
+    DECLARE @idImpresora INT
+	DECLARE @codValidator VARCHAR(3) = 'A'
+	DECLARE @ruc VARCHAR(15)
+	DECLARE @rdlcProps VARCHAR(MAX)
+	DECLARE @dataSources VARCHAR(MAX)
+    DECLARE @estab VARCHAR(5)
+	DECLARE @invoice VARCHAR(15) = 'Factura'
+	DECLARE @note VARCHAR(15) = 'NotaEntrega'
+	DECLARE @identificacion VARCHAR(15)
+	------------END-----------------------
 	
-	IF NOT EXISTS (SELECT 1 FROM dbo.ReporteParametro WHERE codigo = @codigo AND estado = 1)
-		BEGIN
-			SELECT '0' code,'No existe ningun parametro de impresion para este documento' as 'message'
-			RETURN 
-		END 
-
-	IF NOT EXISTS (SELECT 1 FROM ApiPrinter.Impresora WHERE codEstab = @codEstab  AND estado = 1 AND predeterminada = 1)
-		BEGIN
-			SELECT '0' code,'No esta configurada ninguna impresora en el establecimiento: '+nombreComercial as 'message' FROM Sri.Establecimiento WHERE codEstab = @codEstab
-			RETURN 
-		END 
+	-----DATA PRINTER SERVICE------
+	DECLARE @printerName VARCHAR(100)
+	DECLARE @computerName VARCHAR(100)
+    DECLARE @printer VARCHAR(150)
+    DECLARE @isThermal BIT
+    DECLARE @format VARCHAR(200)
+    DECLARE @deviceInfo VARCHAR(max)
+    DECLARE @copyPrint INT
+	-------------END----------------
 
 	BEGIN TRY	
-		BEGIN TRAN
-			EXEC @SP @idRol,@json
+		
+		SELECT @codEstab          = codEstab 
+			  ,@idDocument        = idDocument
+			  ,@codDoc            = codDoc
+			  ,@nroIdentificacion = nroIdentificacion
+			  ,@idTipoDocumento   = idTipoDocumento
+		FROM OPENJSON(@json) 
+		WITH (idDocument        INT          '$.idDocument'
+		     ,idTipoDocumento   INT			 '$.idTipoDocumento'
+			 ,codEstab          VARCHAR(50)  '$.codEstab'
+			 ,codDoc            VARCHAR(5)   '$.codDoc'
+			 ,nroIdentificacion VARCHAR(15)  '$.nroIdentificacion')
+
+		SELECT @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
+
+		SELECT @identificacion = nroIdentificacion FROM dbo.Usuario WITH (NOLOCK) WHERE idUsuario = @idUsuario
+
+		SELECT  @ruc = ruc, @estab = estab FROM Sri.Establecimiento WITH (NOLOCK) WHERE codEstab = @codEstab
+
+		
+		IF NOT EXISTS (SELECT 1 FROM ApiPrinter.Impresora WHERE codEstab = @codEstab)
+			BEGIN
+				SELECT '0' code,'No tienes ninguna impresora configurada' as 'message'
+				RETURN 
+			END 
+
+		IF EXISTS (SELECT 1 FROM ApiPrinter.Service_Printer_Document WHERE idTipoDocumento = @idTipoDocumento AND idComprobante = @idDocument)
+			BEGIN
+				SELECT '0' code,'El documento se encuentra imprimiendo' as 'message'
+				RETURN 
+			END
+
+
+		IF EXISTS (SELECT  1 FROM ApiPrinter.Impresora WHERE codEstab = @codEstab  AND predeterminada = 1 AND nroIdentificacion = @nroIdentificacion)
+			BEGIN
+				IF @identificacion != @nroIdentificacion
+					BEGIN
+						SELECT '0' code,'Tu configuracion esta por usuario no puedes imprimir facturas de otro vendedor' as 'message'
+						RETURN
+					END 
+
+				IF EXISTS (SELECT 1 FROM ApiPrinter.Impresora WHERE codEstab = @codEstab  AND predeterminada = 1 AND nroIdentificacion = @nroIdentificacion AND codDoc = @codDoc)
+					BEGIN
+						SELECT TOP 1 
+							@idImpresora = idImpresora 
+						FROM ApiPrinter.Impresora WITH (NOLOCK)
+						WHERE codEstab          = @codEstab 
+						  AND predeterminada    = 1 
+						  AND nroIdentificacion = @nroIdentificacion 
+						  AND codDoc            = @codDoc
+
+						SET @codValidator = @codDoc
+					END 
+
+			    IF EXISTS (SELECT 1 FROM ApiPrinter.Impresora WHERE codEstab = @codEstab  AND predeterminada = 1 AND nroIdentificacion = @nroIdentificacion AND codDoc = 'A')
+					BEGIN
+						SELECT TOP 1 @idImpresora = idImpresora 
+						FROM ApiPrinter.Impresora WITH (NOLOCK)
+						WHERE codEstab          = @codEstab 
+						  AND predeterminada    = 1 
+						  AND nroIdentificacion = @nroIdentificacion 
+						  AND codDoc            = @codValidator
+					END 
+			END 
+
+		ELSE 
+			BEGIN
+				IF EXISTS (SELECT 1 FROM ApiPrinter.Impresora WHERE codEstab = @codEstab  AND predeterminada = 1 AND codDoc = @codDoc)
+					BEGIN
+						SELECT TOP 1 @idImpresora = idImpresora 
+						FROM ApiPrinter.Impresora WITH (NOLOCK)
+						WHERE codEstab          = @codEstab 
+						  AND predeterminada    = 1 
+						  AND codDoc            = @codDoc
+
+						SET @codValidator =  @codDoc
+					END 
+
+			    IF EXISTS (SELECT 1 FROM ApiPrinter.Impresora WHERE codEstab = @codEstab  AND predeterminada = 1 AND codDoc = 'A')
+					BEGIN
+						SELECT TOP 1 @idImpresora = idImpresora 
+						FROM ApiPrinter.Impresora WITH (NOLOCK)
+						WHERE codEstab          = @codEstab 
+						  AND predeterminada    = 1 
+						  AND codDoc            = @codValidator
+					END 
+			END 
+
+		IF @idImpresora IS NULL	
+			BEGIN
+				SELECT '0'code,'No tienes configurado una impresora' as message
+				RETURN 
+			END
+
+		SELECT TOP 1
+			 @printerName  = i.nombreImpresora
+			,@computerName = i.nombreEquipo 
+			,@printer      = ti.descripcion
+			,@isThermal    = ti.isThermal
+			,@format       = ti.formato
+			,@deviceInfo   = ti.deviceInfo
+			,@copyPrint    = cd.copyPrint
+		FROM ApiPrinter.Config_Document cd WITH (NOLOCK)
+		INNER JOIN ApiPrinter.Impresora      i WITH (NOLOCK) ON i.idImpresora      = cd.idImpresora
+		INNER JOIN ApiPrinter.TipoImpresora ti WITH (NOLOCK) ON ti.idTipoImpresora = i.idTipoImpresora
+		WHERE cd.idImpresora = @idImpresora AND i.codDoc = @codValidator AND cd.estado = 1
+
+		SELECT  @dataSources = dataSources FROM ApiPrinter.Document_Data(@idDocument,@idTipoDocumento,@codDoc)
+
+		SET @rdlcProps = (SELECT rdlcName = IIF(@codDoc = 'FV',@invoice,@note)+@printer+'.rdl'
+								,printerName = @printerName	 
+								,isThermal =@isThermal
+								,'format' = @format
+								,deviceInfo = @deviceInfo
+						  FOR JSON PATH
+						  ) 
+
+		BEGIN TRAN 
+			INSERT INTO [ApiPrinter].[Service_Printer_Document](
+				 idService_Printer_Document
+				,numEstab
+				,ruc
+				,computerName
+				,idUser
+				,idTipoDocumento
+				,idComprobante
+				,rdlcProps
+				,dataSources
+				,fechaRegistro
+			   )
+			SELECT 
+			    NEWID()
+			   ,@estab
+			   ,@ruc
+			   ,@computerName
+			   ,@nroIdentificacion
+			   ,@idTipoDocumento
+			   ,@idDocument
+			   ,@rdlcProps
+			   ,@dataSources
+			   ,dbo.ufnGetDateEcuador()
 		COMMIT TRAN 
-		SELECT '1' code,'Imprimiendo...' as 'message'
+		SELECT '1'code,'Imprimiendo....' as 'message'
+		RETURN 
 	END TRY 
 
 	BEGIN CATCH
