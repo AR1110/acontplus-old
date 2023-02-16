@@ -305,7 +305,6 @@
                             } else {
                                 tS.toastr('warning', 'Impuestos no encontrados')
                             }
-
                             $('#docsModal').modal('hide')
                             console.log(temp[0].doc)
                         }
