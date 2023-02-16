@@ -25,16 +25,21 @@ BEGIN
     DECLARE @idControlCaja INT 
 	DECLARE @fechaApertura DATETIME
 	DECLARE @totalSistema DECIMAL(15,5)
+	DECLARE @subTotalSistema DECIMAL(15,5)
 
-	SELECT @idEntidad = idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @idRol
+	SELECT @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 	
 	SELECT @idControlCaja = idControlCaja  FROM OPENJSON(@json) WITH (idControlCaja BIGINT '$.idControlCaja') AS jsonValues
 
-	SELECT @fechaApertura = fechaApertura FROM dbo.ControlCaja WHERE idControlCaja = @idControlCaja
+	SELECT @fechaApertura = fechaApertura FROM dbo.ControlCaja WITH (NOLOCK) WHERE idControlCaja = @idControlCaja
 	
 	SET @chequesPosf = (SELECT SUM(abono) FROM AFTAdministracionCaja() WHERE estado = 1 AND idEntidad = @idEntidad AND codpay LIKE 'CHE' AND Cobro = 0 AND idControlCaja = @idControlCaja)
 	
 	SELECT @totalSistema =  sum(abono) FROM AFTAdministracionCaja() WHERE estado = 1 AND idEntidad = @idEntidad AND  cobro = 1 AND idControlCaja = @idControlCaja 
+
+	SELECT @subTotalSistema =  sum(abono) FROM AFTAdministracionCaja() WHERE estado = 1 AND idEntidad = @idEntidad AND  cobro = 1 AND idControlCaja = @idControlCaja AND codPay != 'EFE'
+
+
 
      SELECT 
 	      nroComprobante = nroCobro,
@@ -47,18 +52,18 @@ BEGIN
 		  saldo = CAST(saldo AS numeric(15,2)),
 		  pay =   pay
 	 FROM AFTAdministracionCaja()
-	 WHERE estado = 1 AND  idEntidad = @idEntidad AND idControlCaja = @idControlCaja
+	 WHERE estado = 1 AND idEntidad = @idEntidad AND idControlCaja = @idControlCaja
 	 ORDER BY tipo,nroDoc,nroCobro ASC 
 
 	 SELECT  
 		formaPago = ef.descripcion,
 	    ingreso   = CAST(ISNULL((SELECT sum(abono) FROM AFTAdministracionCaja() WHERE estado = 1 AND idEntidad = @idEntidad AND tipo != 4 and idEntidadFinanciera = ef.idEntidadFinanciera AND cobro = 1 AND idControlCaja = @idControlCaja),0)     AS numeric(15,2) ),
 		egreso    = CAST(ISNULL((SELECT sum(abono) FROM AFTAdministracionCaja() WHERE estado = 1 AND idEntidad = @idEntidad AND tipo = 4 and idEntidadFinanciera = ef.idEntidadFinanciera AND cobro = 1 AND idControlCaja = @idControlCaja),0) * -1 AS numeric(15,2))		
-	 FROM EntidadFinanciera ef
+	 FROM EntidadFinanciera ef WITH (NOLOCK)
 	 ORDER BY EF.fechaRegistro ASC
 
 	 SELECT 
-		tipDoc = CASE WHEN codigo LIKE 'FV' THEN 'FACTURA' ELSE 'NOTA DE ENTREGA' END,
+		tipDoc = CASE WHEN codigo = 'FV' THEN 'FACTURA' ELSE 'NOTA DE ENTREGA' END,
 		total = CAST(SUM(total) as numeric(15,2)),
 		abono = CAST(SUM(abono) as numeric(15,2)),
 		cantidad = COUNT(*)
@@ -69,8 +74,8 @@ BEGIN
 	 UNION ALL
 	 
 	 SELECT 
-		CASE WHEN tipDoc LIKE 'A'  THEN 'ANTICIPO' 
-		     WHEN tipDoc LIKE 'EC' THEN 'EGRESO CAJA'
+		CASE WHEN tipDoc = 'A'  THEN 'ANTICIPO' 
+		     WHEN tipDoc = 'EC' THEN 'EGRESO CAJA'
 		     ELSE 'INGRESO CAJA'
 		END,
 		total = CAST(SUM(total) as numeric(15,2)),
@@ -92,8 +97,8 @@ BEGIN
 
 	 SELECT 
 		caja       = c.descripcion,
-		arqueo     = CAST(cc.totalArqueo AS numeric(15,2)),
-		diferencia = CAST(entrada+ISNULL(@totalSistema,0) - cc.totalArqueo AS numeric(15,2)),
+		arqueo     = CAST(cc.totalArqueo AS numeric(15,2))+@subTotalSistema,
+		diferencia = CAST(ISNULL(@totalSistema,0) - (cc.totalArqueo - @subTotalSistema) AS numeric(15,2)),
 		sistema    = CAST(ISNULL(@totalSistema,0) AS numeric(15,2)),
 		total      = CAST(entrada+ISNULL(@totalSistema,0) AS numeric(15,2)),
 		usuario    = u.nombreCompleto,
@@ -102,10 +107,10 @@ BEGIN
 		estado     = CASE WHEN cc.estado = 1 THEN 'ABIERTA' ELSE 'CERRADA' END,
 		nroControl = cc.idControlCaja,
 		entrada    = CAST(cc.entrada AS numeric(15,2))
-	 FROM dbo.ControlCaja cc
-	 INNER JOIN Caja c ON c.idCaja = cc.idCaja
-	 INNER JOIN AsignacionCaja ac ON ac.idCaja = c.idCaja
-	 INNER JOIN Usuario u ON u.idUsuario = ac.idUsuario
+	 FROM dbo.ControlCaja cc WITH (NOLOCK)
+	 INNER JOIN dbo.Caja            c WITH (NOLOCK) ON c.idCaja    = cc.idCaja
+	 INNER JOIN dbo.AsignacionCaja ac WITH (NOLOCK) ON ac.idCaja   = c.idCaja
+	 INNER JOIN dbo.Usuario         u WITH (NOLOCK) ON u.idUsuario = ac.idUsuario
 	 WHERE cc.idControlCaja = @idControlCaja
 
 	 SELECT @chequesPosf as chequePosfechado
