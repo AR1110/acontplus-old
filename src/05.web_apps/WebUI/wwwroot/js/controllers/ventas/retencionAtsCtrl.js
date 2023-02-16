@@ -93,11 +93,13 @@
                             $scope.impuestosRet = tempArray[10]
                             $scope.porcentajesRetIva = tempArray[11]
                             $scope.codigosRetencion = tempArray[12]
-                            $scope.formasPago = tempArray[13] 
+                            $scope.formasPago = tempArray[13]
                             $scope.establecimientos = tempArray[14]
                             $scope.puntosEmisionTemp = tempArray[15]
                             $scope.infoCompRet.fechaEmision = formatDate(new Date())
                             $scope.getPeriod(null, formatDate(new Date()))
+                            $scope.infoCompRet.codEstab_Asig = $scope.establecimientos.find(item => item.predeterminado).codEstab_Asig
+                            $scope.onChangeEstablecimiento()
                             console.log(tempArray)
                         }
                         if (!$scope.isMobile) {
@@ -147,14 +149,15 @@
             $scope.infoCompRet.identificacionSujetoRetenido = ''
         }
 
-        
 
 
-        $scope.onChangeEstablecimiento = () => {  
+
+        $scope.onChangeEstablecimiento = () => {
             $scope.puntosEmision = []
             $scope.infoCompRet.ptoEmi = ''
             $scope.puntosEmision = $scope.puntosEmisionTemp.filter(item => (item.codEstab_Asig === $scope.infoCompRet.codEstab_Asig))
-            let temp = $scope.establecimientos.find(item => (item.codEstab_Asig === $scope.infoCompRet.codEstab_Asig ))
+            $scope.infoCompRet.ptoEmi = $scope.puntosEmision.find(item => item.predeterminado).ptoEmi
+            let temp = $scope.establecimientos.find(item => (item.codEstab_Asig === $scope.infoCompRet.codEstab_Asig))
             $scope.infoCompRet.codEstab = temp.codEstab
             $scope.infoCompRet.estab = temp.estab
             $scope.infoCompRet.dirEstablecimiento = temp.dirEstablecimiento
@@ -173,6 +176,7 @@
             $scope.infoCompRet.tipoIdentificacionSujetoRetenido = item.tipoIdentificacion
             $scope.infoCompRet.razonSocialSujetoRetenido = item.razonSocial
             $scope.infoCompRet.identificacionSujetoRetenido = item.numeroIdentificacion
+            $scope.subContribuyente = item.subContribuyente
             if (fromModal) {
                 $('#searchProvModal').modal('hide')
             }
@@ -180,7 +184,7 @@
         $scope.getProveedor = (item) => {
             try {
                 $scope.proveedores = []
-               
+
                 if (item == 1 && !$scope.infoCompRet.razonSocialSujetoRetenido) {
                     tS.toastr('warning', 'Ingresa un texto de busqueda correcto')
                     return
@@ -284,23 +288,25 @@
                         }
                         if (response.code == '1') {
                             let temp = JSON.parse(response.payload)
-                            if (temp[0].docs) {
-                                $scope.tempTaxes = JSON.parse(temp[0].docs)
+                            if (temp) {
+                                $scope.docData = JSON.parse(temp[0].doc)[0]
+                                $scope.tempTaxes = JSON.parse(temp[0].taxes)
                                 $scope.paymentsTemp = JSON.parse(temp[0].payments)
-                                console.log( $scope.tempTaxes)
-                                console.log( $scope.paymentsTemp)
+                                console.log($scope.docData)
 
-                                $scope.docSustento.codDocSustento = $scope.tempTaxes[0].codDocSustento
+                                console.log($scope.tempTaxes)
+                                console.log($scope.paymentsTemp)
+
+                                $scope.docSustento.codDocSustento = $scope.docData.codDocSustento
                                 $scope.selectSutento($scope.docSustento.codDocSustento)
-                                $scope.docSustento.numDocSustento = $scope.tempTaxes[0].numDocSustento
-                                $scope.docSustento.fechaEmisionDocSustento = formatDate($scope.tempTaxes[0].fechaEmisionDocSustento)
-                                $scope.docSustento.numAutDocSustento = $scope.tempTaxes[0].numAutDocSustento
+                                $scope.docSustento.numDocSustento = $scope.docData.numDocSustento
+                                $scope.docSustento.fechaEmisionDocSustento = formatDate($scope.docData.fechaEmisionDocSustento)
+                                $scope.docSustento.numAutDocSustento = $scope.docData.numAutDocSustento
                             } else {
                                 tS.toastr('warning', 'Impuestos no encontrados')
                             }
-
                             $('#docsModal').modal('hide')
-                            console.log(temp)
+                            console.log(temp[0].doc)
                         }
                         hideLoader()
                     }, error => {

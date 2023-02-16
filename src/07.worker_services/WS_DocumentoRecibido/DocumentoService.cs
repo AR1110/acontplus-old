@@ -14,22 +14,22 @@ namespace WS_DocumentoRecibido
             _dbAccess.AddDynamicParam("cantDocs", cantDocs);
             return _dbAccess.GetDataTable();
         }
-        public async Task<bool> Update(Guid token, string downloaded, string codDoc, string xmlDoc)
+        public async Task<bool> Update(int idDocumento, string downloaded, string codDoc, string xmlDoc)
         {
             DbAccess _dbAccess = new DbAccess(_config);
             await _dbAccess.SPExecute("Recepcion.Doc_Serv_Update");
-            _dbAccess.AddDynamicParam("uniqueId", token);
+            _dbAccess.AddDynamicParam("idDocumento", idDocumento);
             _dbAccess.AddDynamicParam("downloaded", downloaded);
             _dbAccess.AddDynamicParam("codDoc", codDoc);
             _dbAccess.AddDynamicParam("xmlDoc", xmlDoc);
             _dbAccess.OnlyExecute();
             return true;
         }
-        public async Task<bool> Update_Error(Guid token, string downloaded)
+        public async Task<bool> Update_Error(int idDocumento, string downloaded)
         {
             DbAccess _dbAccess = new DbAccess(_config);
             await _dbAccess.SPExecute("Recepcion.Doc_Serv_Update_Error");
-            _dbAccess.AddDynamicParam("uniqueId", token);
+            _dbAccess.AddDynamicParam("idDocumento", idDocumento);
             _dbAccess.AddDynamicParam("downloaded", downloaded);
             _dbAccess.OnlyExecute();
             return true;

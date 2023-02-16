@@ -13,19 +13,10 @@ namespace ApiGateway
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            //string[] origins = builder.Configuration.GetSection("SafeOrigins").Value.Split('|');
+            string[] origins = builder.Configuration.GetSection("SafeOrigins").Value.Split('|');
 
- 
-            builder.Services.AddCors(options =>
-            {
-                options.AddDefaultPolicy(
-                    policy =>
-                    {
-                        policy.AllowAnyHeader();
-                        policy.AllowAnyMethod();
-                        policy.WithOrigins("http://localhost:36779");
-                    });
-            });
+
+            builder.Services.AddCors();
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -35,8 +26,6 @@ namespace ApiGateway
             builder.Services.AddOcelot(builder.Configuration);
 
             builder.Services.AddCustomJwtAuthentication();
-
-           
 
 
             var app = builder.Build();
@@ -54,7 +43,17 @@ namespace ApiGateway
             }
 
             //app.UseHttpsRedirection();
-            app.UseCors();
+
+            app.UseCors(builder =>
+            {
+                builder.WithOrigins(origins)
+                .SetIsOriginAllowedToAllowWildcardSubdomains()
+                .AllowAnyHeader()
+                .AllowCredentials()
+                .AllowAnyMethod()
+                .WithMethods("GET", "PUT", "POST", "DELETE", "OPTIONS")
+                .SetPreflightMaxAge(TimeSpan.FromSeconds(3600));
+            });
 
             app.UseOcelot().Wait();
 

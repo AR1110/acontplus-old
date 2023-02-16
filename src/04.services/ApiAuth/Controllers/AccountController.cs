@@ -20,7 +20,7 @@ namespace ApiAuth.Controllers
             LogWriter _log = new LogWriter(_config);
             var authResponse = _jwtTokenHandler.GenerateJwtToken(authRequest);
             if (authResponse == null) { return Unauthorized(); }
-            _log.LogInfo("Login successful: idRol -> " + Convert.ToString(authRequest.idUsuarioRol));
+            _log.LogInfo("Login successful: idRol -> " + Convert.ToString(authRequest.idUsuarioRol) + " \n jwt: " + authResponse.jwtToken);
             return authResponse;
         }         
     }

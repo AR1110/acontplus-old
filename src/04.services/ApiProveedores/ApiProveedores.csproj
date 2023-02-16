@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\01.common\Common.Logs\Common.Logs.csproj" />
     <ProjectReference Include="..\..\01.common\Helpers\Helpers.csproj" />
+    <ProjectReference Include="..\..\02.domain\Domain.FactElect\Domain.FactElect.csproj" />
     <ProjectReference Include="..\..\03.business_logic\BL.FactElect\BL.FactElect.csproj" />
     <ProjectReference Include="..\..\03.business_logic\BL.JwtAuthenticationManger\BL.JwtAuthenticationManger.csproj" />
     <ProjectReference Include="..\..\03.business_logic\BL.Proveedores\BL.Proveedores.csproj" />

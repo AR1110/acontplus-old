@@ -63,7 +63,7 @@ BEGIN
 
 	INSERT INTO @tmp(idComp,secuencial, estab, ptoEmi,claveAcceso,fechaEmision,codDoc,totalDescuento,totalSinImpuestos,importeTotal,propina,idSustentoTributario
 				   ,idTiempoCredito,idCategoriaCompra ,idProveedor, idBodega, observacion, payments)
-	SELECT idComp, secuencial, estab,ptoEmi,claveAcceso,fechaEmision,codDoc,totalDescuento,totalSinImpuestos ,importeTotal,propina,idSustentoTributario
+	SELECT idComp, secuencial, estab,ptoEmi,claveAcceso,fechaEmision,codDoc,totalDescuento,totalSinImpuestos ,importeTotal,CASE WHEN LEN(propina) = 0 then 0 else propina end,idSustentoTributario
 				   ,idTiempoCredito ,idCategoriaCompra,idProveedor, idBodega,observacion, payments
 				   FROM OPENJSON(@jsonComp) WITH (
 										idComp UNIQUEIDENTIFIER '$.idComp'
@@ -76,7 +76,7 @@ BEGIN
 									   ,totalDescuento DECIMAL(15,5) '$.totalDescuento'
 									   ,totalSinImpuestos DECIMAL(15,5) '$.totalSinImpuestos'
 									   ,importeTotal DECIMAL(15,5) '$.importeTotal'
-									   ,propina DECIMAL(15,5) '$.propina'
+									   ,propina VARCHAR(10) '$.propina'
 									   ,idSustentoTributario INT '$.idSustentoTributario'
 									   ,idTiempoCredito INT '$.idTiempoCredito'
 									   ,idCategoriaCompra INT '$.idCategoriaCompra'
@@ -228,7 +228,7 @@ BEGIN
 	END TRY 
 
 	BEGIN CATCH 
-	SELECT '0' code, 'Error en base de datos: ' + ERROR_MESSAGE() as 'message'
+		SELECT '0' code, 'Error en base de datos: ' + ERROR_MESSAGE() as 'message'
 		IF (@@TRANCOUNT > 0)
 			ROLLBACK TRAN
 		INSERT INTO ErroresSistema([token], [method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [errorDate], [idUsuario])

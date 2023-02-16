@@ -23,7 +23,7 @@ GO
 IF OBJECT_ID(N'Recepcion.Doc_Serv_Update ', N'P') IS NOT NULL
 DROP PROCEDURE Recepcion.Doc_Serv_Update 
 GO
-CREATE PROCEDURE Recepcion.Doc_Serv_Update @uniqueId UNIQUEIDENTIFIER
+CREATE PROCEDURE Recepcion.Doc_Serv_Update @idDocumento INT
 ,@downloaded VARCHAR(2)
 ,@codDoc VARCHAR(2)
 ,@xmlDoc XML
@@ -37,7 +37,7 @@ BEGIN
 			,dr.xmlDoc = @xmlDoc
 			,dr.downloaded = @downloaded 
 			FROM Recepcion.DocumentoRecibido dr WITH (ROWLOCK)
-			WHERE uniqueId = @uniqueId
+			WHERE idDocumento = @idDocumento
 		COMMIT TRAN
 	END TRY
 	BEGIN CATCH

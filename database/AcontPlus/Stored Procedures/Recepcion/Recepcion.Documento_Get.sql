@@ -40,10 +40,12 @@ BEGIN
 	DECLARE @totalRecords AS INT
 	DECLARE @startDate DATETIME
 	DECLARE @endDate DATETIME
+	DECLARE @tipo VARCHAR(1)
 	--SET @@pageNumber=2
 	--SET @@pageNumber=4 
 
-	SELECT @codDoc = codDoc, @startDate = startDate, @endDate = endDate --, @PageNumber = pageNumber, @rowsOfPage = limit, @orderBy= orderBy, @sortBy = sortBy
+
+	SELECT @codDoc = codDoc, @startDate = startDate, @endDate = endDate, @tipo = tipo --, @PageNumber = pageNumber, @rowsOfPage = limit, @orderBy= orderBy, @sortBy = sortBy
 	FROM OPENJSON(@JSON) WITH(limit INT '$.limit'
 							,pageNumber INT '$.page' 
 							,orderBy VARCHAR(5) '$.orderBy'
@@ -51,10 +53,31 @@ BEGIN
 							,codDoc VARCHAR(2) '$.codDoc'
 							,startDate DATETIME '$.startDate'
 							,endDate DATETIME '$.endDate'
+							,tipo VARCHAR(1) '$.tipo'
 							)
 	SELECT @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 
 	SELECT @codEstab = codEstab FROM Config.Estab_Asig WHERE idUsuarioRol = @idRol AND predeterminado = 1
+
+
+	IF @tipo = '1'
+		BEGIN
+			DECLARE @idEntidad INT 
+
+			SELECT @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
+	
+ 
+			SELECT * FROM SustentoTributario
+
+			SELECT * FROM TiempoCredito WHERE idEntidad = @idEntidad AND gestion = 0
+
+			SELECT * FROM CategoriaCompra WHERE idEntidad = @idEntidad
+
+			SELECT * FROM Bodega WHERE codEstab = @codEstab
+
+			SELECT * FROM Medida WHERE idEntidad = @idEntidad
+			RETURN
+		END
 
 
 	IF LEN(@codDoc) > 1
@@ -63,7 +86,7 @@ BEGIN
 									WHERE codEstab = @codEstab
 									AND codDoc = @codDoc
 
-			SELECT [uniqueId], [codEstab], [comprobante], [codDoc], [serieComprobante], [rucEmisor], [razonSocialEmisior], [fechaEmision], [fechaAutorizacion], [tipoEmision], [identificacionReceptor], [claveAcceso], [numeroAutorizacion], [importeTotal], CASE WHEN xmlDoc IS NOT NULL THEN 1 ELSE 0 END hasXml
+			SELECT [idDocumento], [codEstab], [comprobante], [codDoc], [serieComprobante], [rucEmisor], [razonSocialEmisior], [fechaEmision], [fechaAutorizacion], [tipoEmision], [identificacionReceptor], [claveAcceso], [numeroAutorizacion], [importeTotal], CASE WHEN xmlDoc IS NOT NULL THEN 1 ELSE 0 END hasXml
 			,ISNULL(complete,0) complete
 			,CASE WHEN complete = 1 THEN 'background-color: #03a9f3;' ELSE '' END colorRow
 			,CASE WHEN complete = 1 THEN '' ELSE '' END colorCol
@@ -85,7 +108,7 @@ BEGIN
 	SELECT @totalRecords = COUNT(*) FROM Recepcion.DocumentoRecibido
 									WHERE codEstab = @codEstab
 	
-	SELECT [uniqueId], [codEstab], [comprobante], [codDoc], [serieComprobante], [rucEmisor], [razonSocialEmisior], [fechaEmision], [fechaAutorizacion], [tipoEmision], [identificacionReceptor], [claveAcceso], [numeroAutorizacion], [importeTotal], CASE WHEN xmlDoc IS NOT NULL THEN 1 ELSE 0 END hasXml
+	SELECT [idDocumento], [codEstab], [comprobante], [codDoc], [serieComprobante], [rucEmisor], [razonSocialEmisior], [fechaEmision], [fechaAutorizacion], [tipoEmision], [identificacionReceptor], [claveAcceso], [numeroAutorizacion], [importeTotal], CASE WHEN xmlDoc IS NOT NULL THEN 1 ELSE 0 END hasXml
 	,ISNULL(complete,0) complete
 	,CASE WHEN complete = 1 THEN 'background-color: #03a9f3; cursor: pointer;' ELSE '' END colorRow
 	,CASE WHEN complete = 1 THEN '' ELSE '' END colorCol
