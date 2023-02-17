@@ -164,6 +164,47 @@ class ModalProformaCtrl extends ModalBaseCtrl{
         }
         return tempDetails;
     }
+
+    calcularPorcentajeDescuento() {
+        let valor = this.data.porcentajeDescuento || 0;
+        this.data.porcentajeDescuento = Number(valor);
+        if(typeof this.data.porcentajeDescuento !=="number" || this.data.porcentajeDescuento === ""){
+            this._tS.toastr('warning', 'Ingrese un Número Válido');
+            return
+        }
+
+        if( this.data.porcentajeDescuento <=100 ){
+            //redondeo del numero porcentaje 
+            this.data.porcentajeDescuento = this._fS.roundNumber(this.data.porcentajeDescuento, this.decimal.nroTotalSubTotal)            
+            this.setPorcentajeDescuentoAll(this.data.porcentajeDescuento);              
+        }else{
+            this.toast.toastr('warning', 'El Porcentaje de Descuento tiene que ser menor o igual a 100');
+        }
+    }
+
+    //Calcular Porcentaje  Descuento 
+    calcularDescuento() {
+        try {
+            let valor = this.data.totalDescuento || 0;
+            this.data.totalDescuento = Number(valor)
+            
+            if(typeof this.data.totalDescuento!=='number' || this.data.totalDescuento === ""){
+                this._tS.toastr('warning', 'Ingrese un númeto válido', 'Valor Descuento');
+                return
+            }
+    
+            if (this.data.totalDescuento <= this.uiGridInvoice.getSubTotalSinImpuesto()) {
+                let porcentajeDescuento = (this.data.totalDescuento * 100) / this.uiGridInvoice.getSubTotalSinImpuesto() || 0;               
+                this.data.porcentajeDescuento = this._fS.roundNumber(porcentajeDescuento, this.decimal.nroDescuentoDetalle);
+                this.setPorcentajeDescuentoAll(this.data.porcentajeDescuento)            
+            }else{
+                this._tS.toastr('warning', 'El Valor Descuento no puede ser mayor al total');
+            }  
+        } catch (error) {
+            console.log("CALCULO DE TOTAL DESCUENTO", error)
+        }            
+    }
+
 }
 
 

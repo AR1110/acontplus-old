@@ -144,7 +144,7 @@ class ModalFacturaCtrl extends window.modalCompraBaseCtrl {
 
 
     calcularPorcentajeDescuento() {
-        console.log(this.data.porcentajeDescuento)
+        this.data.porcentajeDescuento = this.data.porcentajeDescuento || 0;
         if(typeof this.data.porcentajeDescuento !=="number" || this.data.porcentajeDescuento === ""){
             this._tS.toastr('warning', 'Ingrese un Número Válido');
             return
@@ -162,6 +162,7 @@ class ModalFacturaCtrl extends window.modalCompraBaseCtrl {
     //Calcular Porcentaje  Descuento 
     calcularDescuento() {
         try {
+            this.data.totalDescuento = this.data.totalDescuento || 0;
             if(typeof this.data.totalDescuento!=='number' || this.data.totalDescuento === ""){
                 this._tS.toastr('warning', 'Ingrese un númeto válido', 'Valor Descuento');
                 return

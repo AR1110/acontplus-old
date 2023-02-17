@@ -461,25 +461,46 @@ app.directive('decimal', function () {
 //Directiva para numeros enteros y decimales 
 app.directive('validNumber', function () {
     return {
-        require: 'ngModel',
-        restrict: 'A',
-        link: function (scope, element, attr, ctrl) {
-            function inputValue(val) {
-                if (val) {
-                    var digits = val.replace(/[^0-9.]/g, '');
-
-                    if (digits.split('.').length > 2) {
-                        digits = digits.substring(0, digits.length - 1);
-                    }
-                    if (digits !== val) {
-                        ctrl.$setViewValue(digits);
-                        ctrl.$render();
-                    }
-                    return parseFloat(digits);
-                }
-                return "";
+        require: '?ngModel',
+        link: function (scope, element, attrs, ngModelCtrl) {
+            if (!ngModelCtrl) {
+                return;
             }
-            ctrl.$parsers.push(inputValue);
+
+            ngModelCtrl.$parsers.push(function (val) {
+                if (angular.isUndefined(val)) {
+                    val = '';
+                }
+
+                let clean = val.replace(/[^-0-9\.]/g, '');
+                let negativeCheck = clean.split('-');
+                let decimalCheck = clean.split('.');
+                if (!angular.isUndefined(negativeCheck[1])) {
+                    negativeCheck[1] = negativeCheck[1].slice(0, negativeCheck[1].length);
+                    clean = negativeCheck[0] + '-' + negativeCheck[1];
+                    if (negativeCheck[0].length > 0) {
+                        clean = negativeCheck[0];
+                    }
+
+                }
+
+                if (!angular.isUndefined(decimalCheck[1])) {
+                    decimalCheck[1] = decimalCheck[1].slice(0, 5);
+                    clean = decimalCheck[0] + '.' + decimalCheck[1];
+                }
+
+                if (val !== clean) {
+                    ngModelCtrl.$setViewValue(clean);
+                    ngModelCtrl.$render();
+                }
+                return clean;
+            });
+
+            element.bind('keypress', function (event) {
+                if (event.keyCode === 32) {
+                    event.preventDefault();
+                }
+            });
         }
     };
 });
@@ -650,17 +671,6 @@ app.filter('sino', function ($sce) {
         return text ? $sce.trustAsHtml("<span class='text-success'>SI</span>") : $sce.trustAsHtml("<span class='text-info'>NO</span>");
     }
 });
-
-app.filter('ambienteSri', function ($sce) {
-    return function (text) {
-        return text ? $sce.trustAsHtml("<span class='text-success'>PRUEBAS</span>") : $sce.trustAsHtml("<span class='text-info'>PRODUCCIÓN</span>");
-    }
-})
-app.filter('tipoEmisionSri', function ($sce) {
-    return function (text) {
-        return text ? $sce.trustAsHtml("<span class='text-success'>NORMAL</span>") : $sce.trustAsHtml("<span class='text-info'></span>");
-    }
-})
 app.filter('tipo', function ($sce) {
     return function (text) {
         return text ? $sce.trustAsHtml("<span class='text-success'>PROVEEDOR</span>") : $sce.trustAsHtml("<span class='text-info'>CLIENTE</span>");

@@ -384,15 +384,15 @@ export class ModalClienteCtrl extends ModalBaseCtrl {
                 return
             }
 
-            if (this.data.codigoIdentificacion === "R" && this.data.numeroIdentificacion.length !== 13) {
-                this._tS.toastr('warning', 'Número de RUC tiene que ser de 13 dígitos', tituloModal);
-                return
-            }
+            // if (this.data.codigoIdentificacion === "R" && this.data.numeroIdentificacion.length !== 13) {
+            //     this._tS.toastr('warning', 'Número de RUC tiene que ser de 13 dígitos', tituloModal);
+            //     return
+            // }
 
-            if (this.data.codigoIdentificacion === "R" && this.data.numeroIdentificacion.slice(-3) !== '001') {
-                this._tS.toastr('warning', 'Número de RUC tiene que contener 001', tituloModal);
-                return
-            }
+            // if (this.data.codigoIdentificacion === "R" && this.data.numeroIdentificacion.slice(-3) !== '001') {
+            //     this._tS.toastr('warning', 'Número de RUC tiene que contener 001', tituloModal);
+            //     return
+            // }
 
 
 
@@ -429,11 +429,11 @@ export class ModalClienteCtrl extends ModalBaseCtrl {
             }
 
 
-            this.data.direccion = this._form.campo(this.data.direccion) ? null : this.data.direccion;
-            this.data.telefono = this.telefonos.length > 0 ? this.telefonos.join(';') : null;
-            this.data.correo = this.correos.length > 0 ? this.correos.join(';') : null;
-            this.data.placa = this.placas.length > 0 ? this.placas.join(';') : null;
-
+            this.data.direccion = this._form.campo(this.data.direccion) ? "" : this.data.direccion;
+            this.data.telefono = this.telefonos.length > 0 ? this.telefonos.join(';') : "";
+            this.data.correo = this.correos.length > 0 ? this.correos.join(';') : "";
+            this.data.placa = this.placas.length > 0 ? this.placas.join(';') : "";
+            
             const url = this.tipoRegistro === 1 ? '/Cliente/Post' : '/Cliente/Put?idCliente=' + this.data.idCliente;
             const method = this.tipoRegistro === 1 ? 'post' : 'put';
             showLoader();
