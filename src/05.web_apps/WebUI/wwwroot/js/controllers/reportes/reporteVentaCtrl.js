@@ -29,7 +29,7 @@
             { codigo: 'NC', descripcion: 'Nota de Crédito', codigoReporte: 'NCRG' },
             { codigo: 'RV', descripcion: 'Retencion Venta', codigoReporte: 'RVRG' },
             { codigo: 'PR', descripcion: 'Proforma', codigoReporte: 'PRRG' },
-            { codigo: 'FVNE', descripcion: 'Consolidado Venta', codigoReporte: 'RFVNE' }
+            { codigo: 'FVNE', descripcion: 'Consolidado Diario de Venta', codigoReporte: 'RFVNE' }
         ];
 
         $scope.dataSearch.codDoc = 'FV';
@@ -61,7 +61,8 @@
         ];
 
         $scope.estadoPagosNC = [
-            // {id: 4, descripcion: 'Pendiente'},
+            {id: 1, descripcion: 'Pendiente'},
+            {id: 2, descripcion: 'Pendiente Parcial'},
             {id: 4, descripcion: 'Cobrada'},
         ]
 
@@ -164,7 +165,7 @@
             }
 
             if($scope.dataSearch.codDoc==="FVNE"){
-
+                $scope.dataSearch.byOrderCampo = 'doc.fechaEmision';
             }
 
         };
