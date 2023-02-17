@@ -1,0 +1,31 @@
+<mat-toolbar color="primary"> 
+    <span class="title" routerLink="/">AcontPlus</span>
+    <span class="spacer"></span>   
+</mat-toolbar>
+
+<form (ngSubmit)="login()" [formGroup]="formLogin" autocomplete="off">
+    <div class="form-wraper">
+        <div class="form-container card">
+            <div class="form-header">
+                <img src="assets/images/logo/logoAcontPlus.jpg"  class="main-lock-icon" alt="Logo Admin" width="100%">
+            </div>
+            
+            <div class="form-body">
+                <mat-form-field class="justifier">                
+                    <input matInput formControlName="Username" placeholder="Usuario" text="text" class="form-input">
+                </mat-form-field>
+                
+                <mat-form-field class="justifier">
+                    <input matInput formControlName="Password" placeholder="Contraseña" text="password" class="form-input">
+                </mat-form-field>
+            </div>
+    
+            <div class="form-footer">
+                <!-- class="btn custom-btn" -->
+                <button mat-raised-button color="primary" [disabled]="formLogin.invalid">
+                  <mat-icon>input</mat-icon> Iniciar sesión
+                </button>           
+            </div>  
+        </div>
+    </div>
+</form>

@@ -906,8 +906,7 @@ export class CommonService {
             case "FV":                
                 await this.mS.getData('get',"/FacturaVenta/GetId?id=" + id).then(response => {
                     if (response.id === "0") {                        
-                        this.form.sweetAlert('warning', response.message)
-                        toastr.warning(response.message, response.titleSms)
+                        this.form.sweetAlert('warning', response.message)                        
                         throw response.message
                     }
                     if (response.id === "1") {
@@ -937,8 +936,7 @@ export class CommonService {
                // showLoader();
                 await this.mS.getData('get', "/NotaEntrega/GetId?id=" + id).then(response => {
                     if (response.code == "0") {
-                        this.form.sweetAlert('warning', response.message)
-                        toastr.warning(response.message, response.titleSms)
+                        this.form.sweetAlert('warning', response.message)                        
                         throw response.message
                     }
 
@@ -972,8 +970,7 @@ export class CommonService {
             
                 await this.mS.getData('get', '/Proforma/GetId?id=' + id).then(response => {
                     if (response.code === "0") {
-                        this.form.sweetAlert('warning', response.message)
-                        toastr.warning(response.message, response.titleSms)
+                        this.form.sweetAlert('warning', response.message)                        
                         throw response.message                        
                     }
                     if (response.code === "1") {
@@ -999,12 +996,10 @@ export class CommonService {
                 });
                 break;
 
-            case "NC":
-                showLoader();
+            case "NC":                
                 await this.mS.getData('get', '/NotaCreditoCliente/GetId?id=' + id).then(response => {
                         if (response.code == "0") {
-                            this.form.sweetAlert('warning', response.message)
-                            toastr.warning(response.message, response.titleSms)
+                            this.form.sweetAlert('warning', response.message)                            
                             throw response.message   
                         }
                         if (response.code === "1") {
@@ -1036,44 +1031,22 @@ export class CommonService {
                     });
                 break
 
-            case "RV":
-                showLoader();
-                await this.mS.getData('get','/RetencionVenta/GetId?idRetencionVenta=' + item.idRetencionVenta).then(response=>{                    
-                        if (response.id == "0") {
-                            hideLoader();
-                            this.form.sweetAlert("warning", response.message, response.titleSms)
+            case "RV":                
+                await this.mS.getData('get','/RetencionVenta/GetId?id=' + id).then(response=>{                    
+                        if (response.code == "0") {
+                            this.form.sweetAlert('warning', response.message)                            
+                            throw response.message  
                         }
                         
-                        if (response.id === "1") {
+                        if (response.code === "1") {
+                            let dataMain = JSON.parse(response.payload)
 
-                            let { retencion: data, detalle } = response.data;
-
-                            cliente = {
-                                idCliente: data.retencion.idCliente,
-                                nombreFiscal: data.nombreFiscal,
-                                numeroIdentificacion: data.nroIdentificacion,
-                                direccion: data.direccion,
-                                correo: data.correo,
-                                // emails: this.form.getInputTagAsSplit(data.correo),
-                            }
-
-                            dataTipoDocumento = {
-                                idTipoDocumento: TIPO_DOC.idTipoDocumento,
-                                documentoDescripcion: TIPO_DOC.descripcion,
-                                nroDocumento: item.nroDoc,
-                                tipoDocumento: TIPO_DOC.codigo,
-                            }
-
-                            dataDocumento = data.retencion;
-                            dataDocumento.nroFactura = item.nroFactura
-                            let countIndex = 1;
-                            detalleDocumento = detalle.map(val => {
-                                val.num = countIndex++;
-                                return val;
-                            })
-                            // infoAdicionalDocumento = infoAdicional;
+                            dataDocumento = dataMain[0][0];
+                            dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision)
+                            cliente = dataMain[1][0];
+                            factura = dataMain[2][0];
+                            detalleDocumento = dataMain[3];                      
                             isComplete = true;
-                            hideLoader();
                         }
                     });
                 break;
@@ -1469,13 +1442,13 @@ export class CommonService {
         // let urlApi = await this.$http.get('/ConnectionApiAdmin/GetUrl?typeUrl=' + typeUrl).then(({data:response})=>response)    
 
         //IP Local 
-        // let urlApi = typeUrl == 1 ? "https://localhost:36779/" : "https://localhost:7224/";
+       // let urlApi = typeUrl == 1 ? "http://localhost:36779/" : "https://localhost:7224/";
 
         //IP Producción de Desarrollo 
         //let urlApi = typeUrl == 1 ? "http://205.209.99.71:8090/" : "http://206.72.196.229:83/";
 
         //IP Producción
-        let urlApi = typeUrl == 1 ? "http://206.72.196.229:81/" : "http://206.72.196.229:83/";
+       let urlApi = typeUrl == 1 ? "http://206.72.196.229:81/" : "http://206.72.196.229:83/";
         
         return this.$http({
             method,
@@ -1526,7 +1499,7 @@ export class CommonService {
      * 
      */
 
-    async viewDetailDocument({id, codigoDocumento, size, windowClass}){
+    async viewDetailDocument({id, codigoDocumento, size, windowClass="uibModalFullScreen"}){
         try {
             let controller=null, template=null, params = {}, response = {}, isComplete=false;
             switch(codigoDocumento){

@@ -269,6 +269,30 @@ function facturaCompraCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreM
     }
 
 
+
+    $scope.retencionAutomatica = async(item)=>{
+        _form.sweetAlert('warning', 'La Opción no esta disponible, realice desde modulo de Retención de Compra')
+       
+        // let {MODAL_FILE_CTRL, MODAL_RETENCION_AUTOMATICA} = _nombreModalConst.retencion_compra;
+        // let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_RETENCION_AUTOMATICA['controller']]
+        // let template   = MODAL_RETENCION_AUTOMATICA['template'];
+        // let params = {        
+        //     data: {
+        //         ...item,
+        //         id: item.idFacturaCompra,                
+        //         numeroIdentificacion: item.nroIdentificacion
+        //     },            
+        // }    
+        
+        // _modalSvc.openModalCustom({
+        //     controller,
+        //     template,
+        //     size:'xl',
+        //     params            
+        // })
+    }
+
+
      //--------------------------MODAL CUOTA----------------------------------------------
      $scope.openModalCuota = async(item)=>{    
         try {

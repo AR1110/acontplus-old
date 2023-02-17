@@ -1,13 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { EntidadComponent } from './entidad/entidad.component';
-import { RolComponent } from './rol/rol.component';
-import { UsuarioComponent } from './usuario/usuario.component';
+import { UsuarioComponent } from './pages/usuario/usuario.component';
 
 const routes: Routes = [
-  {path:'usuario', component:UsuarioComponent},
-  {path:'entidad', component:EntidadComponent},
-  {path:'rol', component:RolComponent},
+  {
+    path: 'usuario',
+    component: UsuarioComponent
+  },
 ];
 
 @NgModule({

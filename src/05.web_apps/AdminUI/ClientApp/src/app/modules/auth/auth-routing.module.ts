@@ -1,16 +1,18 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { Page404Component } from './page404/page404.component';
-import { SigninComponent } from './signin/signin.component';
+import { LoginPageComponent } from './pages/login-page/login-page.component';
+import { Page404Component } from '@app/shared/components';
 
 const routes: Routes = [
-  {path:'', redirectTo:'signin', pathMatch:'full'},
-  {path:'', component:SigninComponent},
   {
-    path: 'page404',
-    component: Page404Component
+    path: 'login', 
+    component: LoginPageComponent
   },
-];
+  {
+    path: '**',
+    redirectTo: '/auth/login'
+  }
+]
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

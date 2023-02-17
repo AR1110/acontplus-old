@@ -77,13 +77,6 @@
 /src/02.domain/Domain.FactElect/obj
 /src/03.business_logic/BL.FactElect/bin/Debug/net6.0
 /src/03.business_logic/BL.FactElect/obj
+/src/05.web_apps/AdminUI/ClientApp/.angular/cache/15.1.5
 /src/02.domain/Domain.FactElect/bin/Release/net6.0
 /src/03.business_logic/BL.FactElect/bin/Release/net6.0
-/src/04.services/ApiAuth/Properties/PublishProfiles/FolderProfile.pubxml.user
-/src/04.services/ApiAuth/ApiAuth.csproj.user
-/src/04.services/ApiGateway/ApiGateway.csproj.user
-/src/04.services/ApiAuth/appsettings.Development.json
-/src/04.services/ApiProveedores/ApiProveedores.csproj.user
-/src/05.web_apps/WebUI/WebUI.csproj.user
-/src/04.services/ApiGateway/Properties/PublishProfiles/FolderProfile.pubxml.user
-*.pubxml

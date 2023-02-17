@@ -14,32 +14,43 @@ function configGeneralCtrl($timeout, $q, _mS, $scope, _commonSvc, _modalSvc, _no
     $scope.decimales = [2,3,4,5];
 
     $scope.initiload = async()=>{ 
-        showLoader();
-        const results = await Promise.all([
-            _commonSvc.getGestionAlmacen(),
-            _commonSvc.getModuloDecimal(),
-            _commonSvc.getGestionSistema(),
-            _mS.getData('get','/TipoIva/OptionTipoIva').then(response=>response.data),
-            _mS.getData('get','/ConfigVentaDetalle/Get').then(response =>response.data),
-            _mS.getData('get','/NotificacionEntidad/Get?json=' + JSON.stringify({})).then(response=>JSON.parse(response.data)),
-        ])  
-        const {valoracionMetodos}  = results[0];
-        $scope.valoracionMetodos =  valoracionMetodos;        
+        try {
 
-        const moduloDecimales = results[1];
-        $scope.decimalAlmacen = moduloDecimales[0][0],
-        $scope.decimalCompra  = moduloDecimales[1][0],
-        $scope.decimalVenta   = moduloDecimales[2][0];   
+            showLoader();
+            const results = await Promise.all([
+                _commonSvc.getGestionAlmacen(),
+                _commonSvc.getModuloDecimal(),
+                _commonSvc.getGestionSistema(),
+                _mS.getData('get','/TipoIva/OptionTipoIva').then(response=>response.data),
+                _mS.getData('get','/ConfigVentaDetalle/Get').then(response =>response.data),
+                _mS.getData('get','/NotificacionEntidad/Get?json=' + JSON.stringify({})).then(response=>response.data),
+            ])  
+            const {valoracionMetodos}  = results[0];
+            $scope.valoracionMetodos =  valoracionMetodos;        
+    
+            const moduloDecimales = results[1];
+            $scope.decimalAlmacen = moduloDecimales[0][0],
+            $scope.decimalCompra  = moduloDecimales[1][0],
+            $scope.decimalVenta   = moduloDecimales[2][0];   
+    
+            $scope.gestionSistema = results[2][0];
+            $scope.searchText     = $scope.gestionSistema.nombreFiscal; //Buscar Cliente 
+            $scope.searchTextArticle = $scope.gestionSistema.descripcion;
+            
+            $scope.tipoIvas       = results[3];
+            $scope.configDetalle  = results[4];
 
-        $scope.gestionSistema = results[2][0];
-        $scope.searchText     = $scope.gestionSistema.nombreFiscal; //Buscar Cliente 
-        $scope.searchTextArticle = $scope.gestionSistema.descripcion;
-        
-        $scope.tipoIvas       = results[3];
-        $scope.configDetalle  = results[4];
-        $scope.entidadNotificaciones = results[5];                      
-        hideLoader();
-        $scope.$apply(); 
+            if(results[5]){
+                $scope.entidadNotificaciones = JSON.parse(results[5].data);                      
+            }
+
+            hideLoader();
+            $scope.$apply();
+
+        } catch (error) {
+            hideLoader();
+            console.log(error)
+        }
     }
 
     $scope.initiload();

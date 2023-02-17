@@ -72,10 +72,9 @@ namespace PrinterWS
                 {
                     string ruc = ConfigurationManager.AppSettings["ruc"].ToString();
                     string estab = ConfigurationManager.AppSettings["estab"].ToString();
-                    string idUser = ConfigurationManager.AppSettings["idUser"].ToString();
                     ApiPrintRequestDto res = new ApiPrintRequestDto();
 
-                    if (!new DataPrint().Get(ruc, estab,idUser, ref res)) return;
+                    if (!new DataPrint().Get(ruc, estab, ref res)) return;
 
                     LogWritter.LogInfo(ConfigurationManager.AppSettings["dirLogs"].ToString(), "Imprimiendo en: ");
                     PrintReport pr = new PrintReport();

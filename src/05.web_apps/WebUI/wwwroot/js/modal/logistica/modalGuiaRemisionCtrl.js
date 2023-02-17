@@ -676,9 +676,9 @@ export class ModalGuiaRemisionNuevoCtrl extends ModalGuiaRemisionCtrl{
                 guia.idVehiculo      = this.vehiculo.idVehiculo;
                 guia.idEmpleado      = this.empleado.idEmpleado
                 
-                guia.fechaEmision = this._fS.formatDateTimeZone(this.data.fechaEmision, "YYYY-MM-DD HH:mm:ss A" );
-                guia.fechaInicio  = this._fS.formatDateTimeZone(this.data.fechaInicio, "YYYY-MM-DD HH:mm:ss A" );
-                guia.fechaFin     = this._fS.formatDateTimeZone(this.data.fechaFin, "YYYY-MM-DD HH:mm:ss A" );
+                guia.fechaEmision = this._fS.formatDateTimeZone(this.data.fechaEmision );
+                guia.fechaInicio  = this._fS.formatDateTimeZone(this.data.fechaInicio );
+                guia.fechaFin     = this._fS.formatDateTimeZone(this.data.fechaFin );
 
                 let data = {
                     guia,
@@ -821,9 +821,9 @@ export class ModalGuiaRemisionEditarCtrl extends ModalGuiaRemisionCtrl{
                 guia.idVehiculo      = this.vehiculo.idVehiculo;
                 guia.idEmpleado      = this.empleado.idEmpleado
                 
-                guia.fechaEmision = this._fS.formatDateTimeZone(this.data.fechaEmision, "YYYY-MM-DD HH:mm:ss A" );
-                guia.fechaInicio  = this._fS.formatDateTimeZone(this.data.fechaInicio, "YYYY-MM-DD HH:mm:ss A" );
-                guia.fechaFin     = this._fS.formatDateTimeZone(this.data.fechaFin, "YYYY-MM-DD HH:mm:ss A" );
+                guia.fechaEmision = this._fS.formatDateTimeZone(this.data.fechaEmision );
+                guia.fechaInicio  = this._fS.formatDateTimeZone(this.data.fechaInicio );
+                guia.fechaFin     = this._fS.formatDateTimeZone(this.data.fechaFin );
 
                 let data = {
                     guia,

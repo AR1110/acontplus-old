@@ -22,7 +22,7 @@ namespace BL.Admin.Data
                 DbAccess adb = new DbAccess(_config);
                 await adb.SPExecute("Sec_App.Login");
                 adb.AddDynamicParam("@username", data.Username);
-                adb.AddDynamicParam("@password", data.Username);
+                adb.AddDynamicParam("@password", data.Password);
                 DataTable dt = adb.GetDataTable();
                 if (dt.Rows[0]["code"].ToString() == "-1")
                 {

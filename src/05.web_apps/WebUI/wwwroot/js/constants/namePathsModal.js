@@ -555,7 +555,7 @@ app.constant('nombreModal', {
         },
         MODAL_DETALLE:{
             controller: 'ModalRetencionVentaDetalleCtrl',
-            template: 'RetencionVenta/_ModalEditar.cshtml'
+            template: 'RetencionVenta/_ModalDetalle.cshtml'
         },
         MODAL_FILTRO:{           
             controller: 'ModalRetencionVentaFiltroCtrl',
