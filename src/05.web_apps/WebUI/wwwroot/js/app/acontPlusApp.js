@@ -671,17 +671,6 @@ app.filter('sino', function ($sce) {
         return text ? $sce.trustAsHtml("<span class='text-success'>SI</span>") : $sce.trustAsHtml("<span class='text-info'>NO</span>");
     }
 });
-
-app.filter('ambienteSri', function ($sce) {
-    return function (text) {
-        return text ? $sce.trustAsHtml("<span class='text-success'>PRUEBAS</span>") : $sce.trustAsHtml("<span class='text-info'>PRODUCCIÓN</span>");
-    }
-})
-app.filter('tipoEmisionSri', function ($sce) {
-    return function (text) {
-        return text ? $sce.trustAsHtml("<span class='text-success'>NORMAL</span>") : $sce.trustAsHtml("<span class='text-info'></span>");
-    }
-})
 app.filter('tipo', function ($sce) {
     return function (text) {
         return text ? $sce.trustAsHtml("<span class='text-success'>PROVEEDOR</span>") : $sce.trustAsHtml("<span class='text-info'>CLIENTE</span>");
