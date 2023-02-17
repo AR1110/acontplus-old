@@ -218,6 +218,10 @@
           <DataField>total</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="color">
+          <DataField>color</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>ComprobantesFinancieros</rd:DataSetName>
@@ -1292,7 +1296,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>ControlCajaDs</DataSetName>
-            <Top>0.13541in</Top>
+            <Top>1.30623in</Top>
             <Left>0.13994in</Left>
             <Height>0.5in</Height>
             <Width>10.1093in</Width>
@@ -1936,6 +1940,7 @@
                                       <Value>=Sum(Fields!ingreso.Value - Fields!egreso.Value, "PayDocumentDs")</Value>
                                       <Style>
                                         <FontSize>7pt</FontSize>
+                                        <FontWeight>Bold</FontWeight>
                                       </Style>
                                     </TextRun>
                                   </TextRuns>
@@ -2032,7 +2037,7 @@
                   </Paragraph>
                 </Paragraphs>
                 <rd:DefaultName>Textbox54</rd:DefaultName>
-                <Left>2.17576cm</Left>
+                <Left>3.44576cm</Left>
                 <Height>0.6cm</Height>
                 <Width>4.97683cm</Width>
                 <ZIndex>1</ZIndex>
@@ -2048,7 +2053,7 @@
               </Textbox>
             </ReportItems>
             <KeepTogether>true</KeepTogether>
-            <Top>1.82412cm</Top>
+            <Top>0.12196cm</Top>
             <Left>0.33641cm</Left>
             <Height>2.30216cm</Height>
             <Width>12.12318cm</Width>
@@ -2373,7 +2378,7 @@
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value>=Fields!tipDoc.Value</Value>
+                                      <Value>=UCase(Fields!tipDoc.Value)</Value>
                                       <Style>
                                         <FontSize>7pt</FontSize>
                                       </Style>
@@ -2656,7 +2661,7 @@
                                     </TextRun>
                                   </TextRuns>
                                   <Style>
-                                    <TextAlign>Right</TextAlign>
+                                    <TextAlign>Center</TextAlign>
                                   </Style>
                                 </Paragraph>
                               </Paragraphs>
@@ -2759,6 +2764,7 @@
                                       <Value>=Sum(Fields!abono.Value, "HistoryDocumentDs")</Value>
                                       <Style>
                                         <FontSize>7pt</FontSize>
+                                        <FontWeight>Bold</FontWeight>
                                       </Style>
                                     </TextRun>
                                   </TextRuns>
@@ -3019,10 +3025,44 @@
                   <PaddingBottom>2pt</PaddingBottom>
                 </Style>
               </Textbox>
+              <Textbox Name="Textbox1">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>HISTORIAL DOCUMENTOS </Value>
+                        <Style>
+                          <FontWeight>Bold</FontWeight>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style>
+                      <TextAlign>Center</TextAlign>
+                    </Style>
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox1</rd:DefaultName>
+                <Top>0.04267cm</Top>
+                <Left>1.92375cm</Left>
+                <Height>0.6cm</Height>
+                <Width>9.26625cm</Width>
+                <ZIndex>3</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
             </ReportItems>
             <KeepTogether>true</KeepTogether>
-            <Top>1.82412cm</Top>
-            <Left>12.84765cm</Left>
+            <Top>0.13372cm</Top>
+            <Left>12.63598cm</Left>
             <Height>3.00771cm</Height>
             <Width>13.31673cm</Width>
             <ZIndex>2</ZIndex>
@@ -3677,40 +3717,6 @@
               </Border>
             </Style>
           </Rectangle>
-          <Textbox Name="Textbox1">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>HISTORIAL DOCUMENTOS </Value>
-                    <Style>
-                      <FontWeight>Bold</FontWeight>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style>
-                  <TextAlign>Center</TextAlign>
-                </Style>
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox1</rd:DefaultName>
-            <Top>1.82412cm</Top>
-            <Left>15.4159cm</Left>
-            <Height>0.6cm</Height>
-            <Width>9.26625cm</Width>
-            <ZIndex>4</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
         </ReportItems>
         <Height>7.15731cm</Height>
         <Style />
@@ -4092,6 +4098,7 @@
                           <Value>=First(Fields!sistema.Value, "InfoCajaDs")</Value>
                           <Style>
                             <FontSize>8pt</FontSize>
+                            <FontWeight>Bold</FontWeight>
                           </Style>
                         </TextRun>
                       </TextRuns>
@@ -4436,41 +4443,6 @@
                     <PaddingBottom>2pt</PaddingBottom>
                   </Style>
                 </Textbox>
-                <Textbox Name="Textbox61">
-                  <CanGrow>true</CanGrow>
-                  <KeepTogether>true</KeepTogether>
-                  <Paragraphs>
-                    <Paragraph>
-                      <TextRuns>
-                        <TextRun>
-                          <Value>=First(Fields!diferencia.Value, "InfoCajaDs")</Value>
-                          <Style>
-                            <FontSize>8pt</FontSize>
-                          </Style>
-                        </TextRun>
-                      </TextRuns>
-                      <Style>
-                        <TextAlign>Left</TextAlign>
-                      </Style>
-                    </Paragraph>
-                  </Paragraphs>
-                  <rd:DefaultName>Textbox55</rd:DefaultName>
-                  <Top>0.74717cm</Top>
-                  <Left>2.06386cm</Left>
-                  <Height>0.59999cm</Height>
-                  <Width>2.99028cm</Width>
-                  <ZIndex>1</ZIndex>
-                  <Style>
-                    <Border>
-                      <Style>None</Style>
-                    </Border>
-                    <VerticalAlign>Middle</VerticalAlign>
-                    <PaddingLeft>2pt</PaddingLeft>
-                    <PaddingRight>2pt</PaddingRight>
-                    <PaddingTop>2pt</PaddingTop>
-                    <PaddingBottom>2pt</PaddingBottom>
-                  </Style>
-                </Textbox>
                 <Textbox Name="Textbox58">
                   <CanGrow>true</CanGrow>
                   <KeepTogether>true</KeepTogether>
@@ -4491,10 +4463,10 @@
                   </Paragraphs>
                   <rd:DefaultName>Textbox55</rd:DefaultName>
                   <Top>0.05016cm</Top>
-                  <Left>2.06386cm</Left>
+                  <Left>2.14281cm</Left>
                   <Height>0.59999cm</Height>
-                  <Width>2.99028cm</Width>
-                  <ZIndex>2</ZIndex>
+                  <Width>2.97349cm</Width>
+                  <ZIndex>1</ZIndex>
                   <Style>
                     <Border>
                       <Style>None</Style>
@@ -4544,6 +4516,43 @@
                   <Left>0.09502cm</Left>
                   <Height>0.59999cm</Height>
                   <Width>1.96884cm</Width>
+                  <ZIndex>2</ZIndex>
+                  <Style>
+                    <Border>
+                      <Style>None</Style>
+                    </Border>
+                    <VerticalAlign>Middle</VerticalAlign>
+                    <PaddingLeft>2pt</PaddingLeft>
+                    <PaddingRight>2pt</PaddingRight>
+                    <PaddingTop>2pt</PaddingTop>
+                    <PaddingBottom>2pt</PaddingBottom>
+                  </Style>
+                </Textbox>
+                <Textbox Name="Textbox59">
+                  <CanGrow>true</CanGrow>
+                  <KeepTogether>true</KeepTogether>
+                  <Paragraphs>
+                    <Paragraph>
+                      <TextRuns>
+                        <TextRun>
+                          <Value>=First(Fields!diferencia.Value, "InfoCajaDs")</Value>
+                          <Style>
+                            <FontSize>8pt</FontSize>
+                            <FontWeight>Bold</FontWeight>
+                            <Color>=First(Fields!color.Value, "InfoCajaDs")</Color>
+                          </Style>
+                        </TextRun>
+                      </TextRuns>
+                      <Style>
+                        <TextAlign>Left</TextAlign>
+                      </Style>
+                    </Paragraph>
+                  </Paragraphs>
+                  <rd:DefaultName>Textbox55</rd:DefaultName>
+                  <Top>0.74717cm</Top>
+                  <Left>2.14281cm</Left>
+                  <Height>0.59999cm</Height>
+                  <Width>2.94661cm</Width>
                   <ZIndex>3</ZIndex>
                   <Style>
                     <Border>
@@ -4561,7 +4570,7 @@
               <Top>1.45203cm</Top>
               <Left>14.55973cm</Left>
               <Height>1.9852cm</Height>
-              <Width>5.05414cm</Width>
+              <Width>5.1163cm</Width>
               <ZIndex>4</ZIndex>
               <Style>
                 <Border>
