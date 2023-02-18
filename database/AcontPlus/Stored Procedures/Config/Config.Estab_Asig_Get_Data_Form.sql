@@ -1,3 +1,5 @@
+use [AcontPlus]
+GO
 -- ================================================
 -- Template generated from Template Explorer using:
 -- Create Procedure (New Menu).SQL
@@ -55,8 +57,9 @@ BEGIN
 	INNER JOIN dbo.Bodega b ON b.idBodega = ab.idBodega
 	WHERE codEstab_Asig = @codEstab_Asig
 
-	SELECT codigo = 'IVA12', codigoPorcentaje = codTarifaImpuesto,tarifa = porcentaje FROM Sri.ActividadEconomica WHERE codigo = @actividad
 
+	SELECT codigo = 'IVA', codigoPorcentaje = codTarifaImpuesto,tarifa = porcentaje FROM Sri.ActividadEconomica WHERE codigo = @actividad
+		
 
 	SELECT 
 	ac.idCaja,
