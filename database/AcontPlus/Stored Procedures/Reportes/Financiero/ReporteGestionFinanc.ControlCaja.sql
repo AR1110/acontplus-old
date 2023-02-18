@@ -25,10 +25,11 @@ BEGIN
 	DECLARE @color VARCHAR(200) = '#000000'
 	DECLARE @fechaApertura DATETIME
 	DECLARE @efectivoSistema DECIMAL(15,5)
+	DECLARE @totalSistema DECIMAL(15,5)
+	DECLARE @totalArqueo DECIMAL(15,5)
 	DECLARE @efectivoArqueo DECIMAL(15,5)
 	DECLARE @otros DECIMAL(15,5)
 	DECLARE @chequesPosf DECIMAL(15,5)
-	
 	DECLARE @direfencia DECIMAL(15,5)
 	
 
@@ -47,9 +48,13 @@ BEGIN
 
 	SELECT @efectivoArqueo = totalArqueo FROM  dbo.ControlCaja WITH (NOLOCK) WHERE idControlCaja = @idControlCaja 
 
-	--SELECT @direfencia = @totalSistema - @arqueo
+	SELECT @totalSistema = @efectivoSistema + @otros
+	
+	SELECT @totalArqueo  = @efectivoArqueo  + @otros
 
-	IF @direfencia > 0
+	SELECT @direfencia = @totalSistema - @totalArqueo
+
+	IF @direfencia != 0
 		BEGIN
 			SET	@color = '#FB0909'
 		END 
@@ -117,6 +122,8 @@ BEGIN
 		efectivoSistema    = CAST(ISNULL(@efectivoSistema,0) AS numeric(15,2)),
 		efectivoArqueo     = CAST(ISNULL(@efectivoArqueo,0) AS numeric(15,2)),
 		otros              = CAST(ISNULL(@otros,0) AS numeric(15,2)),
+		totalSistema       = CAST(ISNULL(@totalSistema,0) AS numeric(15,2)),
+		totalArqueo        = CAST(ISNULL(@totalArqueo,0)  AS numeric(15,2)),
 		diferencia         = CAST(ISNULL(@direfencia,0)   AS numeric(15,2)),
 		color              = @color
 	 FROM dbo.ControlCaja cc WITH (NOLOCK)
