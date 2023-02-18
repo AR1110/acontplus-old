@@ -24,11 +24,13 @@ BEGIN
 	DECLARE @idControlCaja INT 
 	DECLARE @color VARCHAR(200) = '#000000'
 	DECLARE @fechaApertura DATETIME
-	DECLARE @totalSistema DECIMAL(15,5)
-	DECLARE @subTotalSistema DECIMAL(15,5)
+	DECLARE @efectivoSistema DECIMAL(15,5)
+	DECLARE @efectivoArqueo DECIMAL(15,5)
+	DECLARE @otros DECIMAL(15,5)
 	DECLARE @chequesPosf DECIMAL(15,5)
-	DECLARE @arqueo DECIMAL(15,5)
+	
 	DECLARE @direfencia DECIMAL(15,5)
+	
 
 	SELECT @idControlCaja = idControlCaja  FROM OPENJSON(@json) WITH (idControlCaja BIGINT '$.idControlCaja') AS jsonValues
 
@@ -39,13 +41,13 @@ BEGIN
 	
 	SELECT @chequesPosf     = SUM(abono)  FROM AFTAdministracionCaja() WHERE idControlCaja = @idControlCaja AND cobro = 0 AND estado = 1 AND codpay = 'CHE'  
 	
-	SELECT @totalSistema    = SUM(abono)  FROM AFTAdministracionCaja() WHERE idControlCaja = @idControlCaja AND cobro = 1 AND estado = 1 
+	SELECT @efectivoSistema = SUM(abono)  FROM AFTAdministracionCaja() WHERE idControlCaja = @idControlCaja AND cobro = 1 AND estado = 1 AND codPay = 'EFE'
+	
+	SELECT @otros           = SUM(abono)  FROM AFTAdministracionCaja() WHERE idControlCaja = @idControlCaja AND cobro = 1 AND estado = 1 AND codPay != 'EFE'
 
-	SELECT @subTotalSistema = SUM(abono)  FROM AFTAdministracionCaja() WHERE idControlCaja = @idControlCaja AND cobro = 1 AND estado = 1 AND codPay != 'EFE'
+	SELECT @efectivoArqueo = totalArqueo FROM  dbo.ControlCaja WITH (NOLOCK) WHERE idControlCaja = @idControlCaja 
 
-	SELECT @arqueo = totalArqueo + ISNULL(@subTotalSistema,0) FROM  dbo.ControlCaja WITH (NOLOCK) WHERE idControlCaja = @idControlCaja 
-
-	SELECT @direfencia = @totalSistema - @arqueo
+	--SELECT @direfencia = @totalSistema - @arqueo
 
 	IF @direfencia > 0
 		BEGIN
@@ -105,17 +107,18 @@ BEGIN
 	 WHERE gestion = 1 AND idEntidad = @idEntidad AND CAST(fechaEmision AS date) = CAST(@fechaApertura AS date)
 
 	 SELECT 
-		caja       = c.descripcion,
-		arqueo     = CAST(ISNULL(@arqueo,0)       AS numeric(15,2)),
-		diferencia = CAST(ISNULL(@direfencia,0)   AS numeric(15,2)),
-		sistema    = CAST(ISNULL(@totalSistema,0) AS numeric(15,2)),
-		usuario    = u.nombreCompleto,
-		apertura   = dbo.AFTConvertDate(cc.fechaApertura)+dbo.AFTConvertHora(cc.fechaApertura),
-		cierre     = ISNULL(dbo.AFTConvertDate(cc.fechaCierre)+dbo.AFTConvertHora(cc.fechaCierre),'Pendiente'),
-		estado     = CASE WHEN cc.estado = 1 THEN 'ABIERTA' ELSE 'CERRADA' END,
-		nroControl = cc.idControlCaja,
-		entrada    = CAST(cc.entrada AS numeric(15,2)),
-		color      = @color
+		nroControl         = cc.idControlCaja,
+		caja               = c.descripcion,
+		apertura           = dbo.AFTConvertDate(cc.fechaApertura)+dbo.AFTConvertHora(cc.fechaApertura),
+		cierre             = ISNULL(dbo.AFTConvertDate(cc.fechaCierre)+dbo.AFTConvertHora(cc.fechaCierre),'Pendiente'),
+		usuario            = u.nombreCompleto,
+		estado             = CASE WHEN cc.estado = 1 THEN 'ABIERTA' ELSE 'CERRADA' END,
+		entrada            = CAST(cc.entrada AS numeric(15,2)),
+		efectivoSistema    = CAST(ISNULL(@efectivoSistema,0) AS numeric(15,2)),
+		efectivoArqueo     = CAST(ISNULL(@efectivoArqueo,0) AS numeric(15,2)),
+		otros              = CAST(ISNULL(@otros,0) AS numeric(15,2)),
+		diferencia         = CAST(ISNULL(@direfencia,0)   AS numeric(15,2)),
+		color              = @color
 	 FROM dbo.ControlCaja cc WITH (NOLOCK)
 	 INNER JOIN dbo.Caja            c WITH (NOLOCK) ON c.idCaja    = cc.idCaja
 	 INNER JOIN dbo.AsignacionCaja ac WITH (NOLOCK) ON ac.idCaja   = c.idCaja
