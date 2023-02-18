@@ -80,3 +80,10 @@
 /src/05.web_apps/AdminUI/ClientApp/.angular/cache/15.1.5
 /src/02.domain/Domain.FactElect/bin/Release/net6.0
 /src/03.business_logic/BL.FactElect/bin/Release/net6.0
+/src/01.common/Common.PdfReports/bin/Debug/net6.0
+/src/01.common/Common.PdfReports/obj
+/src/03.business_logic/BL.Recepcion/bin/Debug/net6.0
+/src/03.business_logic/BL.Recepcion/obj
+/src/04.services/ApiRecepcion/bin/Debug/net6.0
+/src/04.services/ApiRecepcion/obj
+/src/01.common/Common.PdfReports/bin/Release/net6.0

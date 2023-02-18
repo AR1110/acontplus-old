@@ -2,8 +2,12 @@
 using Domain.Dtos;
 using Domain.Models;
 using Helpers;
+using iTextSharp.text.pdf;
+using iTextSharp.text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Text;
+using Common.PdfReports;
 
 namespace WebUI.Controllers.Ventas
 {
@@ -13,17 +17,27 @@ namespace WebUI.Controllers.Ventas
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly int _idRol;
+        private readonly string _apiGateway = string.Empty;
         public RetencionAtsController(IConfiguration configuration,
                                       IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
             _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            _apiGateway = _configuration.GetSection("UrlApis").GetSection("ApiGateway").Value;
         }
         public IActionResult Index()
         {
+            ViewData["idRol"] = _idRol;
+            ViewData["urlGateway"] = _apiGateway;
             return View();
         }
+
+        public IActionResult Export()
+        {
+            return File(new DocElectPdf().PdfData(), "application/pdf", "report.pdf");
+        }
+
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {

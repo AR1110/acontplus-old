@@ -25,8 +25,10 @@
             </div>
         </md-card-content>
         <div class="card-footer">
-            <button class="btn btn-success btn-lg" ng-click="save()"><i class="ti-save"></i> Guardar
-                Retención</button>
+            <button class="btn btn-success btn-lg" ng-click="save()">
+                <i class="ti-save"></i> Guardar
+                Retención
+            </button>
         </div>
     </md-card>
     <!--MODALS -->
@@ -65,8 +67,10 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-dark btn-sm" data-dismiss="modal" title="Cerrar">&times;
-                        Cerrar</button>
+                    <button type="button" class="btn btn-dark btn-sm" data-dismiss="modal" title="Cerrar">
+                        &times;
+                        Cerrar
+                    </button>
                 </div>
             </div>
         </div>
@@ -97,7 +101,7 @@
                                             <td>{{item.secuencial}}</td>
                                             <td>{{item.fechaEmision | date: 'dd/MM/yyyy'}}</td>
                                             <td>
-                                                <button type="button" class="btn btn-info btn-sm" title="Ver Documento de Sustento"><i class="fa fa-eye"></i></button>
+                                                <button type="button" class="btn btn-info btn-sm" ng-click="docPreview(item.idDocumento)" title="Ver Documento de Sustento"><i class="fa fa-eye"></i></button>
                                                 <button type="button" class="btn btn-success btn-sm" ng-click="selectDoc(item)" title="Seleccionar Documento de Sustento"><i class="fas fa-hand-point-right"></i></button>
                                             </td>
                                         </tr>
@@ -108,16 +112,22 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-dark btn-sm" data-dismiss="modal" title="Cerrar">&times;
-                        Cerrar</button>
+                    <button type="button" class="btn btn-dark btn-sm" data-dismiss="modal" title="Cerrar">
+                        &times;
+                        Cerrar
+                    </button>
                 </div>
             </div>
         </div>
     </div>
     <!-- END MODALS -->
+    @await Html.PartialAsync("/Views/DocumentoRecibido/_FacturaPreview.cshtml")
+
+
+    <input type="text" name="urlGateway" id="urlGateway" value="@ViewData["urlGateway"]" hidden />
+    <input type="text" name="idRol" id="idRol" value="@ViewData["idRol"]" hidden />
 </div>
 
 @section Scripts {
-
     <script src="~/js/controllers/ventas/retencionAtsCtrl.js" asp-append-version="true"></script>
 }

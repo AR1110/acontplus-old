@@ -3,9 +3,9 @@
 
     app.controller('retencionAtsCtrl', retencionAtsCtrl);
 
-    retencionAtsCtrl.$inject = ['$scope', 'mainService', 'toastService', '$element', '$cookies', 'uuid2', '$window'];
+    retencionAtsCtrl.$inject = ['$scope', 'mainService', 'toastService', '$element', '$cookies', 'uuid2', '$window', 'FileSaver', 'Blob'];
 
-    function retencionAtsCtrl($scope, mS, tS, $element, $cookies, uuid2, $window) {
+    function retencionAtsCtrl($scope, mS, tS, $element, $cookies, uuid2, $window, FileSaver, Blob) {
         /**Initial Load */
 
         $scope.genericAnswer = [{ codigo: 'SI' }, { codigo: 'NO' }]
@@ -64,6 +64,10 @@
             _getFecha.setMinutes(_getFecha.getMinutes() + _getFecha.getTimezoneOffset());
             return _getFecha;
         }
+
+        const _urlService = document.getElementById("urlGateway").value + 'api/'
+        const _idRol = document.getElementById("idRol").value
+
 
         $scope.initialLoad = () => {
             try {
@@ -317,6 +321,22 @@
 
             } catch (error) {
                 hideLoader()
+                console.log(error)
+            }
+        }
+
+        $scope.docPreview = (item) => {
+            try {
+                mS.getData('get', _urlService + 'DocumentoRecibido/Preview/' + _idRol + '/' + item).then(
+                    response => {
+                        $('#facturaModal').modal('show')
+                        $('#bodyFactura').html(response.payload)
+                        console.log(response)
+                    }, error => {
+                        console.log(error)
+                    }
+                )
+            } catch (error) {
                 console.log(error)
             }
         }
@@ -890,6 +910,35 @@
             angular.forEach(cookies, function (value, key) {
                 $cookies.remove(key);
             });
+        }
+
+        //
+        $scope.exportPdf = () => {
+            try {
+                mS.getFile('get', '/RetencionAts/Export').then(response => {
+                    if (response.id == 0) {
+                        tS.toastr('warning', response.message)
+                        return;
+                    }
+                    if (response.data.size > 0) {
+                        let serverData = new Blob([response.data], { type: response.headers()['content-type'] });
+                        let fileName = response.headers()['content-disposition'].split(';')[1].split('=')[1];
+                        FileSaver.saveAs(serverData, fileName);
+
+                        // let element = document.createElement('a');
+                        // let fileBlob = new Blob([response.data], {
+                        //     type: response.data.type
+                        // });
+                        // let url = URL.createObjectURL(fileBlob);
+                        // element.href = url;
+                        // element.setAttribute('download', 'fileName.xml');
+                        // document.body.appendChild(element); 
+                        // element.click();
+                    }
+                })
+            } catch (error) {
+                console.log(error);
+            }
         }
     }
 })(window.angular);

@@ -3,6 +3,8 @@
     public class ComprobanteElectronico
     {
         public string codDoc { get; set; }
+        public string fechaAutorizacion { get; set; }
+        public string numeroAutorizacion { get; set; }
         public InfoTributaria infoTributaria { get; set; }
 
         public InfoFactura infoFactura { get; set; }
@@ -87,6 +89,7 @@
         public string tipoIdentificacionComprador { get; set; }
         public string razonSocialComprador { get; set; }
         public string identificacionComprador { get; set; }
+        public string direccionComprador { get; set; }
         public string guiaRemision { get; set; }
         public string totalSinImpuestos { get; set; }
         public string totalDescuento { get; set; }

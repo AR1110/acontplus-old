@@ -20,7 +20,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 40474
+          "Port": 12786
         }
       ],
       "AuthenticationOptions": {
@@ -36,7 +36,23 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 40474
+          "Port": 12786
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/DocumentoRecibido/Preview/{idRol}/{id}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamPathTemplate": "/api/DocumentoRecibido/Preview/{idRol}/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 12786
         }
       ],
       "AuthenticationOptions": {
@@ -52,7 +68,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 40474
+          "Port": 12786
         }
       ],
       "AuthenticationOptions": {
@@ -68,7 +84,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 40474
+          "Port": 12786
         }
       ],
       "AuthenticationOptions": {
@@ -84,7 +100,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 40474
+          "Port": 12786
         }
       ],
       "AuthenticationOptions": {
@@ -100,7 +116,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 40474
+          "Port": 12786
         }
       ],
       "AuthenticationOptions": {
@@ -116,7 +132,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 40474
+          "Port": 12786
         }
       ],
       "AuthenticationOptions": {
@@ -132,7 +148,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 40474
+          "Port": 12786
         }
       ],
       "AuthenticationOptions": {
@@ -141,14 +157,14 @@
       }
     },
     {
-      "UpstreamPathTemplate": "/api/Factura/{idRol}/{json}",
+      "UpstreamPathTemplate": "/api/Factura/{idRol}?json={json}",
       "UpstreamHttpMethod": [ "Post" ],
-      "DownstreamPathTemplate": "/api/Factura/{idRol}/{json}",
+      "DownstreamPathTemplate": "/api/Factura/{idRol}?json={json}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 40474
+          "Port": 12786
         }
       ],
       "AuthenticationOptions": {

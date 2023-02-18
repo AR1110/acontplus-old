@@ -107,7 +107,55 @@ namespace ApiProveedores.Controllers
             }
 
         }
+        [HttpGet("Preview/{idRol}/{id}")]
+        public async Task<IActionResult> Preview(int idRol, int id)
+        {
+            LogWriter _logs = new LogWriter(_configuration);
 
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                DbAccess _db = new DbAccess(_configuration);
+                Dictionary<string, object> parameters = new Dictionary<string, object>();
+                await _db.SPExecute("Recepcion.Documento_Get_Id");
+                _db.AddDynamicParam("idRol", idRol);
+                _db.AddDynamicParam("idDocumento", id);
+                DataTable dt = _db.GetDataTable();
+                if (dt.Rows.Count > 0 && dt.Columns.Contains("xmlDoc"))
+                {
+                    _response.code = "1";
+                    string xmlDoc = dt.Rows[0]["xmlDoc"].ToString();
+                    XmlDocument xdoc = new XmlDocument();
+                    xdoc.LoadXml(xmlDoc);
+                    ComprobanteElectronico ceXml = new ComprobanteElectronico();
+                    string sms = string.Empty;
+                    DataXmlComprobante _getXmlSriData = new DataXmlComprobante();
+                    if (!_getXmlSriData.GetData(xdoc, ref ceXml, ref sms))
+                    {
+                        _response.Create("0", sms);
+                    }
+                    else
+                    {
+                        _response.payload = DocumentoXmlToHtml.CreateHtml(ceXml);
+                    }
+                }
+                else
+                {
+                    _response.Create(code: "0", message: "No se encontro xml");
+                }
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _logs.LogError("Error getting data of doc: " + ex.ToString());
+                return new BadRequestObjectResult(new
+                {
+                    code = 0,
+                    message = "Error al obtener los datos del comprobante"
+                });
+            }
+
+        }
         [HttpPost("{idRol}")]
         public async Task<IActionResult> Post(int idRol, IFormFile file)
         {

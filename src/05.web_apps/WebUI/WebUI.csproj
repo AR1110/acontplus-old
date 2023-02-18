@@ -26,12 +26,14 @@
 
   <ItemGroup>
     <Content Remove="appsettings.json" />
+    <Content Remove="Views\DocumentoRecibido\_FacturaPreview.cshtml" />
     <Content Remove="wwwroot\js\controllers\reportes\impuestoCtrl.min.js" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="appsettings.json" />
     <None Include="bundleconfig.json" />
+    <None Include="Views\DocumentoRecibido\_FacturaPreview.cshtml" />
     <None Include="wwwroot\archivos\NotFound.pdf" />
     <None Include="wwwroot\assets\icons\crypto-icons\cryptocoins.woff2" />
     <None Include="wwwroot\assets\icons\flag-icon-css\flags\ad.svg" />
@@ -4218,12 +4220,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.10" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.13" />
+    <PackageReference Include="iTextSharp-LGPL-Core" Version="1.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.14" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\01.common\Common.Logs\Common.Logs.csproj" />
+    <ProjectReference Include="..\..\01.common\Common.PdfReports\Common.PdfReports.csproj" />
     <ProjectReference Include="..\..\01.common\DataAccess\DataAccess.csproj" />
     <ProjectReference Include="..\..\01.common\FactElect\FactElect.csproj" />
     <ProjectReference Include="..\..\01.common\HelpersNS20\HelpersNS20.csproj" />
@@ -4235,6 +4238,14 @@
   <ItemGroup>
     <Folder Include="Views\ComprobanteImportacion\" />
     <Folder Include="wwwroot\lib\angular-daterangepicker\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\DocumentoRecibido\_FacturaPreview.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\DocumentoRecibido\_FacturaPreview.cshtml" />
   </ItemGroup>
 
 </Project>
