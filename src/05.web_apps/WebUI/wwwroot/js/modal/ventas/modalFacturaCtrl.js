@@ -109,6 +109,7 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
     async setItemArticuloEnDetalle(dataArticulo){        
         try {
             const self = this;
+            const columnDefs = this.gridOptions.columnDefs;
                  
             this.dataArticulo = dataArticulo;
 
@@ -119,8 +120,7 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
             let entity = self.gridOptions.data[index]; 
         
             let dataMedida = medidas[0];
-
-            console.log(this.dataArticulo)
+         
                 
             entity.idArticulo           = articulo.idArticulo;
             entity.codigo               = articulo.codigoArticulo;                
@@ -176,12 +176,14 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
     
         let dataMedida = medidas[0];
 
-        console.log(this.dataArticulo)
+        console.log(entity)
+        console.log(this.actividadTipoIva)
             
         entity.idArticulo           = articulo.idArticulo;
         entity.codigo               = articulo.codigoArticulo;                
         entity.descripcion          = articulo.descripcion;  
-        entity.idTipoIva            = articulo.idTipoIva;                          
+        entity.idTipoIva            = articulo.idTipoIva;  
+
         entity.codigoPorcentaje     = articulo.codigoPorcentaje;
         entity.tarifa               = articulo.tarifa;
         // entity.nombreTipoIva        = articulo.nombreTipoIva;
