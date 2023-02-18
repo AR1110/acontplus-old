@@ -87,3 +87,5 @@
 /src/04.services/ApiRecepcion/bin/Debug/net6.0
 /src/04.services/ApiRecepcion/obj
 /src/01.common/Common.PdfReports/bin/Release/net6.0
+/src/03.business_logic/BL.Recepcion/bin/Release/net6.0
+/src/04.services/ApiRecepcion/bin/Release/net6.0

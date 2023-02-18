@@ -26,14 +26,12 @@
 
   <ItemGroup>
     <Content Remove="appsettings.json" />
-    <Content Remove="Views\DocumentoRecibido\_FacturaPreview.cshtml" />
     <Content Remove="wwwroot\js\controllers\reportes\impuestoCtrl.min.js" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="appsettings.json" />
     <None Include="bundleconfig.json" />
-    <None Include="Views\DocumentoRecibido\_FacturaPreview.cshtml" />
     <None Include="wwwroot\archivos\NotFound.pdf" />
     <None Include="wwwroot\assets\icons\crypto-icons\cryptocoins.woff2" />
     <None Include="wwwroot\assets\icons\flag-icon-css\flags\ad.svg" />
