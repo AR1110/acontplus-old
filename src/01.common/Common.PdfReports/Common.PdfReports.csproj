@@ -10,4 +10,8 @@
     <PackageReference Include="iTextSharp-LGPL-Core" Version="1.2.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\02.domain\Domain.FactElect\Domain.FactElect.csproj" />
+  </ItemGroup>
+
 </Project>

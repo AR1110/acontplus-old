@@ -15,12 +15,10 @@
 
   <ItemGroup>
     <Content Remove="appsettings.json" />
-    <Content Remove="ocelot.json" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="appsettings.json" />
-    <None Include="ocelot.json" />
   </ItemGroup>
 
   <ItemGroup>

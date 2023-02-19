@@ -1,9 +1,11 @@
 ﻿using DataAccess;
 using Helpers;
 using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
 using System.Data;
+using System.Threading.Tasks;
 
-namespace BL.Recepcion
+namespace DataAccess
 {
     public class DAO
     {

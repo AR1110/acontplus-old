@@ -1,11 +1,23 @@
 USE AcontPlus
+GO
+truncate table Sri.SustentoTributario
+go
 INSERT INTO Sri.SustentoTributario (codSustento, descripcion)
-VALUES('01', 'Crédito Tributario para declaración de IVA
-(servicios y bienes distintos de inventarios y
-activos fijos)')
+VALUES('01', 'Crédito Tributario para declaración de IVA (servicios y bienes distintos de inventarios y activos fijos)'),
+('02', 'Costo o Gasto para declaración de IR (servicios y bienes distintos de inventarios y activos fijos)'),
+('03', 'Activo Fijo - Crédito Tributario para declaración de IVA'),
+('04', 'Activo Fijo - Costo o Gasto para declaración de IR'),
+('05', 'Liquidación Gastos de Viaje, hospedaje y alimentación Gastos IR (a nombre de empleados y no de la empresa)'),
+('06', 'Inventario - Crédito Tributario para declaración de IV'),
+('07', 'Inventario - Costo o Gasto para declaración de IR'),
+('08', 'Valor pagado para solicitar Reembolso de Gasto (intermediario)'),
+('09', 'Reembolso por Siniestros'),
+('10', 'Distribución de Dividendos, Beneficios o Utilidades'),
+('11', 'Convenios de débito o recaudación para IFI´s'),
+('12', 'Impuestos y retenciones presuntivos'),
+('13', 'Valores reconocidos por entidades del sector público a favor de sujetos pasivos'),
+('14', 'Valores facturados por socios a operadoras de transporte (que no constituyen gasto de dicha operadora)'),
+('15', 'Pagos efectuados por consumos propios y de terceros de servicios digitales'),
+('00', 'Casos especiales cuyo sustento no aplica en las opciones anteriores')
 
-
-INSERT INTO Sri.SustentoTributario (codSustento, descripcion)
-VALUES('02', 'Costo o Gasto para declaración de IR
-(servicios y bienes distintos de inventarios y
-activos fijos)')
+GO 

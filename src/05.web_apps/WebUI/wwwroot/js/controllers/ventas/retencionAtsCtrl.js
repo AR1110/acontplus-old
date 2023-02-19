@@ -80,7 +80,7 @@
                 }
                 //console.log($cookies.get('ck_token'))
                 let data = { tipo: 1 }
-                mS.getData('get', '/RetencionAts/Get?json=' + JSON.stringify(data)).then(
+                mS.getData('get', _urlService + 'RetencionAts/' + _idRol + '/' + JSON.stringify(data)).then(
                     response => {
                         if (response.code == '1') {
                             let tempArray = JSON.parse(response.payload)
@@ -327,6 +327,10 @@
 
         $scope.docPreview = (item) => {
             try {
+                if (!item) {
+                    tS.toastr('warning', 'Este documento no ha sido registrado desde el modulo de recepcion de documentos')
+                    return
+                }
                 mS.getData('get', _urlService + 'DocumentoRecibido/Preview/' + _idRol + '/' + item).then(
                     response => {
                         $('#facturaModal').modal('show')
@@ -579,11 +583,13 @@
             $scope.retencion.valorRetenido = ''
             switch (item) {
                 case '1':
+                    $scope.retencion.baseImponible = $scope.taxesAdded.find(tax => tax.codImpuestoDocSustento == 2).baseImponible
                     $scope.porcentajeRetener = $scope.codigosRetencion
                     console.log($scope.codigosRetencion)
                     break
                 case '2':
-                    console.log('yes')
+                    //console.log('yes')
+                    $scope.retencion.baseImponible = $scope.taxesAdded.find(tax => tax.codImpuestoDocSustento == 2).valorImpuesto
                     $scope.porcentajeRetener = $scope.porcentajesRetIva
                     console.log($scope.porcentajesRetIva)
                     break
@@ -872,7 +878,7 @@
                     infoAdicional: JSON.stringify($scope.infoAdded)
                 }
                 console.log(data)
-                mS.getData('post', '/RetencionAts/Post', data).then(
+                mS.getData('post', _urlService + 'RetencionAts/' + _idRol, data).then(
                     response => {
                         if (response.code == '0') {
                             tS.toastr('warning', response.message)
@@ -913,16 +919,19 @@
         }
 
         //
-        $scope.exportPdf = () => {
+        $scope.exportPdf = (item) => {
             try {
-                mS.getFile('get', '/RetencionAts/Export').then(response => {
+                mS.getFile('get', _urlService + 'DocumentoRecibido/Export/' + _idRol + '/' + item).then(response => {
                     if (response.id == 0) {
                         tS.toastr('warning', response.message)
                         return;
                     }
                     if (response.data.size > 0) {
                         let serverData = new Blob([response.data], { type: response.headers()['content-type'] });
+                        // console.log(response.headers())
+                        // console.log(response)
                         let fileName = response.headers()['content-disposition'].split(';')[1].split('=')[1];
+                        // let fileName = 'factura.pdf'
                         FileSaver.saveAs(serverData, fileName);
 
                         // let element = document.createElement('a');

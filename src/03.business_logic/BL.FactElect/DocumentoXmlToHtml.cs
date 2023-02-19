@@ -43,11 +43,11 @@ namespace BL.FactElect
                                     </small>
                                     <h5>
                                         <label>AMBIENTE:</label>
-                                        <span ng-bind-html="" data.infoTributaria.ambiente | ambienteSri""></span>
+                                         " + data.infoTributaria.ambiente + @"
                                     </h5>
                                     <h5>
                                         <label>EMISIÓN:</label>
-                                        <span ng-bind-html="" data.infoTributaria.tipoEmision | tipoEmisionSri""></span>
+                                        "+ data.infoTributaria.tipoEmision + @"
                                     </h5>
                                     <label>CLAVE DE ACCESSO</label><br />
                                     <img id=""barcodeImg"" src="""" alt="""">

@@ -15,6 +15,9 @@ namespace BL.FactElect
                 XmlDocument xmlComp = new XmlDocument();
                 xmlComp.LoadXml(nodeComp.InnerText);
 
+                comp.numeroAutorizacion = nodeAuth.SelectSingleNode("numeroAutorizacion").InnerText;
+                comp.fechaAutorizacion = nodeAuth.SelectSingleNode("fechaAutorizacion").InnerText;
+ 
                 XmlNode nodeInfoTrib = xmlComp.GetElementsByTagName("infoTributaria")[0];
                 comp.codDoc = nodeInfoTrib.SelectSingleNode("codDoc").InnerText;
                 GetInfoTributaria(comp, nodeInfoTrib);

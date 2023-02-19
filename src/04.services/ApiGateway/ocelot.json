@@ -61,6 +61,22 @@
       }
     },
     {
+      "UpstreamPathTemplate": "/api/DocumentoRecibido/Export/{idRol}/{id}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamPathTemplate": "/api/DocumentoRecibido/Export/{idRol}/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 12786
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    {
       "UpstreamPathTemplate": "/api/DocumentoRecibido/{idRol}",
       "UpstreamHttpMethod": [ "Post" ],
       "DownstreamPathTemplate": "/api/DocumentoRecibido/{idRol}",
@@ -165,6 +181,22 @@
         {
           "Host": "localhost",
           "Port": 12786
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/RetencionAts/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "DownstreamPathTemplate": "/api/RetencionAts/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 54948
         }
       ],
       "AuthenticationOptions": {

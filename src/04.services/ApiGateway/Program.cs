@@ -52,6 +52,7 @@ namespace ApiGateway
                 .AllowCredentials()
                 .AllowAnyMethod()
                 .WithMethods("GET", "PUT", "POST", "DELETE", "OPTIONS")
+                .WithExposedHeaders("Content-Disposition")
                 .SetPreflightMaxAge(TimeSpan.FromSeconds(3600));
             });
 

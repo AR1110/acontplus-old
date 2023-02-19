@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\01.common\Common.PdfReports\Common.PdfReports.csproj" />
     <ProjectReference Include="..\..\01.common\Helpers\Helpers.csproj" />
     <ProjectReference Include="..\..\02.domain\Domain.FactElect\Domain.FactElect.csproj" />
     <ProjectReference Include="..\..\03.business_logic\BL.FactElect\BL.FactElect.csproj" />

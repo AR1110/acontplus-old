@@ -11,6 +11,8 @@ using BL.FactElect;
 using Domain.FactElect;
 using Newtonsoft.Json;
 using System.Text;
+using Common.PdfReports;
+using iTextSharp.text;
 
 namespace ApiRecepcion.Controllers
 {
@@ -154,7 +156,53 @@ namespace ApiRecepcion.Controllers
                     message = "Error al obtener los datos del comprobante"
                 });
             }
+        }
+        [HttpGet("Export/{idRol}/{id}")]
+        public async Task<IActionResult> Export(int idRol, int id)
+        {
+            LogWriter _logs = new LogWriter(_configuration);
+            ComprobanteElectronico ceXml = new ComprobanteElectronico();
 
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                DbAccess _db = new DbAccess(_configuration);
+                Dictionary<string, object> parameters = new Dictionary<string, object>();
+                await _db.SPExecute("Recepcion.Documento_Get_Id");
+                _db.AddDynamicParam("idRol", idRol);
+                _db.AddDynamicParam("idDocumento", id);
+                DataTable dt = _db.GetDataTable(); 
+
+                if (dt.Rows.Count > 0 && dt.Columns.Contains("xmlDoc"))
+                {
+                    _response.code = "1";
+                    string xmlDoc = dt.Rows[0]["xmlDoc"].ToString();
+                    XmlDocument xdoc = new XmlDocument();
+                    xdoc.LoadXml(xmlDoc);
+                    string sms = string.Empty;
+                    DataXmlComprobante _getXmlSriData = new DataXmlComprobante();
+                    if (!_getXmlSriData.GetData(xdoc, ref ceXml, ref sms))
+                    {
+                        _response.Create("0", sms);
+                    }
+                    else
+                    {
+                        //_response.payload = DocumentoXmlToHtml.CreateHtml(ceXml);
+                    }
+                }
+                else
+                {
+                    _response.Create(code: "0", message: "No se encontro xml");
+                }
+                return File(new DocElectPdf().PdfData(ceXml), "application/pdf", "report.pdf");
+            }
+            catch (Exception ex)
+            {
+                _logs.LogError("Error getting data of doc: " + ex.ToString());
+                //return BadRequest(Response.StatusCode);
+                return File(new DocElectPdf().PdfData(ceXml), "application/pdf", "report.pdf");
+
+            }
         }
         [HttpPost("{idRol}")]
         public async Task<IActionResult> Post(int idRol, IFormFile file)
@@ -171,7 +219,7 @@ namespace ApiRecepcion.Controllers
             {
                 string path = _configuration.GetSection("ImportacionTxt").Value;
                 FileData.SaveFile(path, file);
-                TxtCompImp txtComp = new TxtCompImp();
+                FileTxt txtComp = new FileTxt();
                 DataTable dt = new DataTable("Comprobantes");
                 if (txtComp.GetDocs(FileData.GetFileByte(file), ref dt))
                 {

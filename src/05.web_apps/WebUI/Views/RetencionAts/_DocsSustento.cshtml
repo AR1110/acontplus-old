@@ -19,8 +19,7 @@
                     <select id="codSustento" class="form-control" ng-model="docSustento.codSustento"
                         ng-disabled="sustentosFiltered.length==0">
                         <option value="0">::seleccione::</option>
-                        <option ng-value="item.codSustento" ng-repeat="item in sustentosFiltered"
-                            ng-selected="docSustento.codSustento">
+                        <option ng-value="item.codSustento" ng-repeat="item in sustentosFiltered">
                             {{item.codSustento}} - {{item.descripcion}}</option>
                     </select>
                 </div>

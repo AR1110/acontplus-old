@@ -1,11 +1,9 @@
-﻿using System;
-using System.Data;
-using System.IO;
+﻿using System.Data;
 using System.Text;
 
-namespace Helpers
+namespace BL.Recepcion
 {
-    public class TxtCompImp
+    public class FileTxt
     {
         public bool GetDocs(byte[] fileTxt, ref DataTable dt) 
         {
