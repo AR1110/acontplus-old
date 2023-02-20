@@ -1,5 +1,5 @@
 
-import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.16";
+import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.17";
 
 
 class ModalNotaEntregaCtrl extends ModalBaseCtrl{
@@ -251,6 +251,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
 
                 this.actividadTipoIva = resultsDataFormEstab[2][0]
                 
+                this.setDataInfoEstab(this.establecimientos, this.puntosEmisiones);
             }else{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
             }
@@ -1064,6 +1065,8 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl{
 
             this.fechaEmisionEscrita = this._fS.getFechaEscrita(this.data.fechaEmision);
             this.fechaVencimientoEscrita = this._fS.getFechaEscrita(this.data.fechaVencimiento);
+            
+            this.setDataInfoEstab(this.establecimientos, this.puntosEmisiones);
             
             this.$scope.$apply();            
 

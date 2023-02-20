@@ -1,7 +1,7 @@
 
 
 
-import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.16";
+import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.17";
 
 
 class ModalProformaCtrl extends ModalBaseCtrl{
@@ -246,7 +246,7 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl{
                 this.cloneIdBodega = this.idBodega;
 
                 this.actividadTipoIva = resultsDataFormEstab[2][0]
-                
+                        
             }else{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
             }

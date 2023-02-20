@@ -1,6 +1,6 @@
 
 
-import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.28";
+import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.32";
 
 class ModalFacturaCtrl extends ModalBaseCtrl{
     constructor({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS}){
@@ -138,8 +138,7 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
             entity.idMedida             = dataMedida.idMedida; //Medida por defecto 
             entity.adicional            = datosAdicionales; //
 
-            console.log(JSON.parse(dataMedida.tarifas))
-            console.log(self)
+        
             entity.articuloTarifas      = JSON.parse(dataMedida.tarifas);
             let tarifa                  = entity.articuloTarifas.find(item=>item.idTarifa===self.idTarifa);                                      
             entity.idTarifa             = self.idTarifa;  
@@ -196,8 +195,7 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
         entity.idMedida             = dataMedida.idMedida; //Medida por defecto 
         entity.adicional            = datosAdicionales; //
 
-        console.log(JSON.parse(dataMedida.tarifas))
-        console.log(self)
+    
         entity.articuloTarifas      = JSON.parse(dataMedida.tarifas);
         let tarifa                  = entity.articuloTarifas.find(item=>item.idTarifa===self.idTarifa);                                      
         entity.idTarifa             = self.idTarifa;  
@@ -309,7 +307,7 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
 
                 if(result.isDismissed){
                 }
-                console.log(result)
+                
             })
             return 
         }
@@ -389,7 +387,7 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
         if(isConfirmed){           
             this.gridOptions.data = JSON.parse(docsDetalle[value]);
             delete docsDetalle[value];
-            console.log(docsDetalle)
+            
             if(Object.entries(docsDetalle).length !== 0){
 
                 localStorage.setItem('detailInvoice', JSON.stringify(docsDetalle));               
@@ -437,19 +435,31 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
 
             if(this.establecimientos.length>0){
 
-                let dataEstab = this.establecimientos[0];             
+                
+                let dataEstab = this.establecimientos[0];                    
                 let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
                 
+                //informacion de establecimiento y ptoEmision en Encabezado                              
+
+
+
                 this.data.codEstab = dataEstab.codEstab;
                 this.cloneCodEstab = dataEstab.codEstab;
+
                 this.puntosEmisiones = resultsDataFormEstab[0];
-                this.data.idPuntoEmision = this.puntosEmisiones.length>0?this.puntosEmisiones[0].idPuntoEmision:0;
-               
+
+                if(this.puntosEmisiones.length>0){
+                    this.data.idPuntoEmision = this.puntosEmisiones[0].idPuntoEmision;                               
+                }
+                
+                
                 this.bodegas       = resultsDataFormEstab[1];                
                 this.idBodega      = this.bodegas.length>0?this.bodegas[0].idBodega:0;
                 this.cloneIdBodega = this.idBodega;
 
-                this.actividadTipoIva = resultsDataFormEstab[2][0]
+                this.actividadTipoIva = resultsDataFormEstab[2][0];
+
+                this.setDataInfoEstab(this.establecimientos, this.puntosEmisiones);
                 
             }else{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
@@ -984,8 +994,7 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl{
                 this.idBodega      = this.bodegas.length>0?this.bodegas[0].idBodega:0;
                 this.cloneIdBodega = this.idBodega;
 
-                this.actividadTipoIva = resultsDataFormEstab[2][0]
-
+                this.actividadTipoIva = resultsDataFormEstab[2][0]                
             }else{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
             }
@@ -1030,6 +1039,7 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl{
             this.fechaEmisionEscrita = this._fS.getFechaEscrita(this.data.fechaEmision);
             this.fechaVencimientoEscrita = this._fS.getFechaEscrita(this.data.fechaVencimiento);
             
+            this.setDataInfoEstab(this.establecimientos, this.puntosEmisiones);
             this.$scope.$apply();            
 
         } catch (error) {

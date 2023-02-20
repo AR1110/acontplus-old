@@ -31,15 +31,19 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
 
 
     $scope.getTotales = function () {
-        let total = 0, totalAbono = 0, totalSaldo = 0;
-        for (let val of $scope.notaEntregas) {
-            total += val.total;
-            totalAbono += val.abono;
-            totalSaldo += val.saldo;
-        };
-        $scope.total = _fS.roundNumber(total, 5);
-        $scope.totalAbono = _fS.roundNumber(totalAbono, 5);
-        $scope.totalSaldo = _fS.roundNumber(totalSaldo, 5);
+        try {
+            let total = 0, totalAbono = 0, totalSaldo = 0;
+            for (let val of $scope.notaEntregas) {
+                total += val.total;
+                totalAbono += val.abono;
+                totalSaldo += val.saldo;
+            };
+            $scope.total = _fS.roundNumber(total, 5);
+            $scope.totalAbono = _fS.roundNumber(totalAbono, 5);
+            $scope.totalSaldo = _fS.roundNumber(totalSaldo, 5);
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     $scope.getNotaEntregas = async()=>{
@@ -56,13 +60,14 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
                 }
 
             await _mS.getData('get', '/NotaEntrega/Get?json=' + JSON.stringify($scope.dataSearch)).then(response=>{
+                $scope.notaEntregas = [];
                 if(response.code==="0"){
-                    $scope.notaEntregas = [];
+                    $scope.getTotales();
                     console.warn(response.message);
                     return
                 }
                 $scope.notaEntregas = JSON.parse(response.data) || [];
-                console.log($scope.notaEntregas)
+                
                 $scope.cloneNotaEntregas = JSON.parse(JSON.stringify($scope.notaEntregas));
                 $scope.getTotales();
             })
@@ -318,7 +323,7 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
             params,
             windowClass: 'uibModalFullScreen'
         }).result.then(result=>{  
-            console.log(result)          
+                  
             if(typeof result==='object'){
                 $scope.getNotaEntregas();
             }
@@ -356,7 +361,7 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
                     didOpen: () => {
                         Swal.showLoading();
                         _mS.getData('delete', '/NotaEntrega/Delete?id=' + item.idNotaEntrega).then(response=> {
-                            console.log(response)
+                            
                             if (response.code === "0") {
                                 _fS.sweetAlert('warning', response.message, response.titleSms);
                             }
