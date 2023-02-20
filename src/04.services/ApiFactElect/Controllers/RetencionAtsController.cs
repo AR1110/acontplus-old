@@ -17,16 +17,18 @@ namespace ApiFactElect.Controllers
         {
             _configuration = configuration;
         }
-        [HttpGet("{idRol}/{json}")]
-        public async Task<IActionResult> Get(int idRol, string json)
+        [HttpGet("{json}")]
+        public async Task<IActionResult> Get(string json)
         {
             LogWriter _logs = new LogWriter(_configuration);
             try
             {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+
                 DAO _dao = new DAO(_configuration);
                 Dictionary<string, object> parameters = new Dictionary<string, object>
                 {
-                    { "idRol", idRol },
+                    { "idRol", idUsuarioRol },
                     { "json", SqlValidation.ValidateSqlString(json) }
                 };
                 return Ok(await _dao.GetDataSet("FactElect.RetencionAts_Get", parameters));
@@ -41,15 +43,17 @@ namespace ApiFactElect.Controllers
                 });
             }
         }
-        [HttpPost("{idRol}")]
-        public async Task<IActionResult> Post(int idRol, [FromBody] RetencionAtsDto data)
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] RetencionAtsDto data)
         {
             LogWriter _logs = new LogWriter(_configuration);
             try
             {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+
                 DAO _dao = new DAO(_configuration);
                 Dictionary<string, object> parameters = new Dictionary<string, object>();
-                parameters.Add("idRol", idRol);
+                parameters.Add("idRol", idUsuarioRol);
                 parameters.Add("infoCompRet", SqlValidation.ValidateSqlString(data.infoCompRet));
                 parameters.Add("docsSust", SqlValidation.ValidateSqlString(data.docsSust));
                 parameters.Add("impuestos", SqlValidation.ValidateSqlString(data.impuestos));
@@ -75,19 +79,21 @@ namespace ApiFactElect.Controllers
                 });
             }
         }
-        [HttpPut("{idRol}/{id}")]
-        public async Task<IActionResult> Put(int idRol, int id, Dictionary<string, object> data)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, Dictionary<string, object> data)
         {
             LogWriter _logs = new LogWriter(_configuration);
             try
             {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+
                 DAO _dao = new DAO(_configuration);
                 Dictionary<string, object> parameters = new Dictionary<string, object>();
                 foreach (KeyValuePair<string, object> item in data)
                 {
                     parameters.Add(item.Key, SqlValidation.ValidateSqlString(item.Value.ToString()));
                 }
-                parameters.Add("idRol", idRol);
+                parameters.Add("idRol", idUsuarioRol);
                 parameters.Add("id", id);
                 return Ok(await _dao.Default("FactElect.RetencionAts_Update", parameters));
             }
@@ -102,17 +108,19 @@ namespace ApiFactElect.Controllers
             }
             
         }
-        [HttpDelete("{idRol}/{id}")]
-        public async Task<IActionResult> Delete(int idRol, int id)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
             LogWriter _logs = new LogWriter(_configuration);
             try
             {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+
                 DAO _dao = new DAO(_configuration);
                 Dictionary<string, object> parameters = new Dictionary<string, object>
             {
                 { "id", id },
-                { "idRol", idRol }
+                { "idRol", idUsuarioRol }
             };
                 return Ok(await _dao.Default("FactElect.RetencionAts_Delete", parameters));
             }

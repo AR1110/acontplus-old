@@ -14,15 +14,17 @@ namespace ApiRecepcion.Controllers
         private readonly IConfiguration _configuration;
         public FacturaController(IConfiguration configuration) => (_configuration) = (configuration);
 
-        [HttpPost("{idRol}")]//large json
-        public async Task<IActionResult> Post(int idRol, string json)
+        [HttpPost]//large json
+        public async Task<IActionResult> Post(string json)
         {
             LogWriter _logs = new LogWriter(_configuration);
             try
             {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+
                 Dictionary<string, object> parameters = new Dictionary<string, object>
                 {
-                    { "idRol", idRol },
+                    { "idRol", idUsuarioRol },
                     { "jsonComp", SqlValidation.ValidateSqlString(json) }
                 };
                 DAO _dao = new DAO(_configuration);

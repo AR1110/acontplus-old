@@ -32,6 +32,7 @@ namespace WebUI.Controllers.FE
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
+            //var correlationId = HttpContext.Request.Headers["X-IdUsuarioRol"].ToString();
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("idRol", _idRol);
             parameters.Add("json", SqlValidation.ValidateSqlString(json));
