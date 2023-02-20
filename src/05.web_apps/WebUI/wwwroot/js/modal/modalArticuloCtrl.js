@@ -1,4 +1,4 @@
-
+ 
 import { ArticuloTarifaGridOption } from './../helpers/articuloTarifaGridOption.min.js?v=0.2';
 
 class ModalBaseCtrl {

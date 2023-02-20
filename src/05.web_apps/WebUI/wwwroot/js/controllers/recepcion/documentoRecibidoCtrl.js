@@ -1334,7 +1334,7 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
 
             }
             console.log(data)
-            mS.getData('post', _urlService + 'Factura/' + _idRol + '/' + JSON.stringify(data)).then(response => {
+            mS.getData('post', _urlService + 'Factura/' + _idRol + '?json=' + JSON.stringify(data)).then(response => {
                 if (response.code == '0') {
                     tS.toastr('warning', response.message)
                 }

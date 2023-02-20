@@ -15,6 +15,9 @@ namespace BL.FactElect
                 XmlDocument xmlComp = new XmlDocument();
                 xmlComp.LoadXml(nodeComp.InnerText);
 
+                comp.numeroAutorizacion = nodeAuth.SelectSingleNode("numeroAutorizacion").InnerText;
+                comp.fechaAutorizacion = nodeAuth.SelectSingleNode("fechaAutorizacion").InnerText;
+ 
                 XmlNode nodeInfoTrib = xmlComp.GetElementsByTagName("infoTributaria")[0];
                 comp.codDoc = nodeInfoTrib.SelectSingleNode("codDoc").InnerText;
                 GetInfoTributaria(comp, nodeInfoTrib);
@@ -119,6 +122,7 @@ namespace BL.FactElect
             infoFac.tipoIdentificacionComprador = nodeInfoFactura.SelectSingleNode("tipoIdentificacionComprador").InnerText;
             infoFac.razonSocialComprador = nodeInfoFactura.SelectSingleNode("razonSocialComprador").InnerText;
             infoFac.identificacionComprador = nodeInfoFactura.SelectSingleNode("identificacionComprador").InnerText;
+            infoFac.direccionComprador = (nodeInfoFactura.SelectSingleNode("direccionComprador") == null) ? "" : nodeInfoFactura.SelectSingleNode("direccionComprador").InnerText;
             infoFac.guiaRemision = (nodeInfoFactura.SelectSingleNode("guiaRemision") == null) ? "" : nodeInfoFactura.SelectSingleNode("guiaRemision").InnerText;
             infoFac.totalSinImpuestos = nodeInfoFactura.SelectSingleNode("totalSinImpuestos").InnerText;
             infoFac.totalDescuento = nodeInfoFactura.SelectSingleNode("totalDescuento").InnerText;
