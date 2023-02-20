@@ -288,7 +288,7 @@
                         <div class="form-group">
                             <label>% Descuento</label>
                             <div class="input-group">
-                                <input ng-model="$ctrl.data.porcentajeDescuento" ng-disabled="$ctrl.gridOptions.data.length==0" 
+                                <input type="text" ng-model="$ctrl.data.porcentajeDescuento" ng-disabled="$ctrl.gridOptions.data.length==0" 
                                 valid-number class="form-control" />
                                 <div class="input-group-append">
                                     <button type="button" class="btn btn-secondary btn-sm" ng-click="$ctrl.calcularPorcentajeDescuento()">

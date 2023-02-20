@@ -650,6 +650,22 @@ app.directive('keyboardDisable', function () {
     }
 })
 
+
+app.directive("infoEstabPtoEmision", function(){
+    return {
+        template: `
+            <h5>Estab: </h5>
+            <span>Pto. Emisión: </span>
+        `,
+        link: function($scope, element, attrs, ctrl){
+            console.log($scope, element, attrs, ctrl)
+        }
+    }
+
+
+})
+
+
 //FILTERS GENERAL 
 app.filter('estadoPrimario', function ($sce) {
     return function (text) {
@@ -668,17 +684,6 @@ app.filter('sino', function ($sce) {
         return text ? $sce.trustAsHtml("<span class='text-success'>SI</span>") : $sce.trustAsHtml("<span class='text-info'>NO</span>");
     }
 });
-
-app.filter('ambienteSri', function ($sce) {
-    return function (text) {
-        return text ? $sce.trustAsHtml("<span class='text-success'>PRUEBAS</span>") : $sce.trustAsHtml("<span class='text-info'>PRODUCCIÓN</span>");
-    }
-})
-app.filter('tipoEmisionSri', function ($sce) {
-    return function (text) {
-        return text ? $sce.trustAsHtml("<span class='text-success'>NORMAL</span>") : $sce.trustAsHtml("<span class='text-info'></span>");
-    }
-})
 app.filter('tipo', function ($sce) {
     return function (text) {
         return text ? $sce.trustAsHtml("<span class='text-success'>PROVEEDOR</span>") : $sce.trustAsHtml("<span class='text-info'>CLIENTE</span>");

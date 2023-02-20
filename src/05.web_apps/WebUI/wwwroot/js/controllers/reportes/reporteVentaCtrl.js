@@ -28,7 +28,8 @@
             { codigo: 'NE', descripcion: 'Nota de Entrega', codigoReporte: 'NERG' },
             { codigo: 'NC', descripcion: 'Nota de Crédito', codigoReporte: 'NCRG' },
             { codigo: 'RV', descripcion: 'Retencion Venta', codigoReporte: 'RVRG' },
-            { codigo: 'PR', descripcion: 'Proforma', codigoReporte: 'PRRG' }
+            { codigo: 'PR', descripcion: 'Proforma', codigoReporte: 'PRRG' },
+            { codigo: 'FVNE', descripcion: 'Consolidado Diario de Venta', codigoReporte: 'RFVNE' }
         ];
 
         $scope.dataSearch.codDoc = 'FV';
@@ -58,6 +59,12 @@
             { id: 1, descripcion: 'Autorizada' },
             { id: -1, descripcion: 'Diferente de Autorizada' },
         ];
+
+        $scope.estadoPagosNC = [
+            {id: 1, descripcion: 'Pendiente'},
+            {id: 2, descripcion: 'Pendiente Parcial'},
+            {id: 4, descripcion: 'Cobrada'},
+        ]
 
         $scope.dataSearch.byAnio = new Date().getFullYear().toString();
         $scope.dataSearch.checkboxTipoDocRG = false;
@@ -155,6 +162,10 @@
                 $scope.dataSearch.checkboxRetencionFiltro = false;
                 $scope.dataSearch.checkboxDevolucionFiltro = false;
                 return
+            }
+
+            if($scope.dataSearch.codDoc==="FVNE"){
+                $scope.dataSearch.byOrderCampo = 'doc.fechaEmision';
             }
 
         };
@@ -300,10 +311,7 @@
                     return
                 }
             };
-
-
-            let loaderGif = $scope.dataSearch.byTipoFormato === "pdf" ? 'document-office.gif' : 'transfer-file.gif'
-            form.showLoaderForm('Descargando...', 'Espere', `/assets/images/gif/${loaderGif}`)
+         
             $scope.getReport();
             return
 
@@ -322,26 +330,14 @@
                     aditionalParams: []
                 }),
                 dataParams: JSON.stringify($scope.dataSearch)
-            };
-            mS.getFile('post', '/Reporte/Download', parameters).then(response => {
-                Swal.close();
+            }
 
-                if ($scope.dataSearch.byTipoFormato == 'pdf' || $scope.dataSearch.byTipoFormato == 'excel') {
-                    let fileBlob = new Blob([response.data], {
-                        type: response.data.type
-                    });
-                    let objectUrl = window.URL || window.webkitURL;
-                    let urlFile = objectUrl.createObjectURL(fileBlob);
-                    window.open(urlFile, '_blank');
-                    return;
-                } else {
-                    let serverData = new Blob([response.data], { type: response.headers()['content-type'] });
-                    let fileName = response.headers()['content-disposition'].split(';')[1].split('=')[1];
-                    FileSaver.saveAs(serverData, fileName);
-                    return;
-                };
-            }, error => console.log(error));
-        };
+            _commonSvc.getReport({
+                parameters,
+                formatType: $scope.dataSearch.byTipoFormato
+            })            
+        }
+
 
         $scope.getEstadistica = function () {
             const tituloEstadistica = 'Estadistica';
@@ -391,6 +387,7 @@
             $scope.dataSearch.anio = Number($scope.dataSearch.byAnio);
 
             mS.getData('get', `/EstadisticaVenta/Get?json=${JSON.stringify($scope.dataSearch)}`).then(response => {
+                console.log(response)
                 $scope.estadisticas = response;
                 if ($scope.estadisticas.length > 0) {
                     $scope.drawChartAnual();

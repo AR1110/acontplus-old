@@ -41,7 +41,7 @@ BEGIN
 											codigo  		 = ar.codigo,
 											subFamilia		 = sf.descripcion ,
 											precioCosto      = CAST(ar.precioCosto as numeric(15, 2)),
-											precioVenta      = CAST(apvp.precioConIva as numeric(15,2)),
+											precioIva      = CAST(apvp.precioConIva as numeric(15,2)),
 											totalStock       = CAST(ar.stock  as numeric(15, 2))                											
 										FROM ArticuloPvP apvp WITH (NOLOCK) 		
 										INNER JOIN Tarifa t WITH (NOLOCK) ON t.idTarifa            = apvp.idTarifa										
