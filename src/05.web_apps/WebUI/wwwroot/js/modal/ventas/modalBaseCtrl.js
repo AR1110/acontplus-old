@@ -59,6 +59,20 @@ export class ModalBaseCtrl{
     }
 
 
+
+    setDataInfoEstab(establecimientos, ptosEmision){
+        this.infoEstabPtoEmi = {}
+        if(establecimientos.length>0){
+            this.infoEstabPtoEmi.nombreComercial = establecimientos.find(item=>item.codEstab===this.data.codEstab).nombreComercial;
+        }
+
+        if(ptosEmision.length>0){
+            this.infoEstabPtoEmi.ptoEmi = ptosEmision.find(item=>item.idPuntoEmision===this.data.idPuntoEmision).ptoEmi; 
+        }
+        
+    }
+
+
     /**
      * 
      * @param {string} textSearch 
@@ -146,7 +160,7 @@ export class ModalBaseCtrl{
             params
         })
         modalRef.result.then(result=>{
-            console.log(result)
+            
             if(typeof result!=='object') return
             
             this.onSelectedClienteChange(result)
@@ -166,7 +180,7 @@ export class ModalBaseCtrl{
             this.data.fechaVencimiento = this._fS.getFechaVencimiento(this.data.fechaEmision, diasCredito);
             this.fechaEmisionEscrita = this._fS.getFechaEscrita(this.data.fechaEmision);
             this.fechaVencimientoEscrita = this._fS.getFechaEscrita(this.data.fechaVencimiento);
-            console.log(this)
+            
         }
     }
 
@@ -637,6 +651,9 @@ export class ModalBaseCtrl{
 
             this.uiGridInvoice.actividadTipoIva = this.actividadTipoIva;
             this.data = Object.assign(this.data, this.uiGridInvoice.getTotales());
+
+            this.setDataInfoEstab(this.establecimientos, this.puntosEmisiones)
+
             this.$scope.$apply();
         } catch (error) {
             console.trace(error)
@@ -716,9 +733,8 @@ export class ModalBaseCtrl{
         try {            
             for(let rowEntity of this.gridOptions.data){
                
-                let tarifa = rowEntity.articuloTarifas.find(item=>item.idTarifa===this.idTarifa);               
-                console.log(tarifa)
-               console.log(rowEntity)
+                let tarifa = rowEntity.articuloTarifas.find(item=>item.idTarifa===this.idTarifa);     
+
                 let precioConIva             = CalculoTarifaHelper.calcularPrecioConIva(tarifa.precioVenta, rowEntity.tarifa);
                 let precioConIvaConDescuento = CalculoTarifaHelper.getPrecioIvaConDescuento(precioConIva, rowEntity.porcentajeDescuento);
                 let valorDescuento           = CalculoTarifaHelper.getValorDescuento(tarifa.precioVenta, rowEntity.porcentajeDescuento);
@@ -839,7 +855,7 @@ export class ModalBaseCtrl{
     
         let dataMedida = medidas[0];
 
-        console.log(this.dataArticulo)
+        
             
         entity.idArticulo           = articulo.idArticulo;
         entity.codigo               = articulo.codigoArticulo;                
@@ -873,7 +889,7 @@ export class ModalBaseCtrl{
         self.data = Object.assign(self.data, self.uiGridInvoice.getTotales()); 
 
         this.focusColumnCantidad();
-        console.log(this)
+        
         
     }
 

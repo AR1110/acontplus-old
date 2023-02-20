@@ -48,6 +48,7 @@ function facturaCompraCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreM
     $scope.getFacturas = async()=>{
         try {
             showLoader();
+            $scope.facturas = [];
             await _mS.getData('get', '/FacturaCompra/Get?json=' + JSON.stringify($scope.dataSearch)).then(response=>{
                 if(response.code==="0"){
                     console.warn(response)                    

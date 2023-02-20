@@ -58,8 +58,8 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMo
                 }                 
                 
             await _mS.getData('get', '/FacturaVenta/Get?json=' + JSON.stringify($scope.dataSearch)).then(response=>{                
+                $scope.facturas = []
                 if(response.code==='0'){
-                    $scope.facturas = []
                     console.warn(response)
                     return
 
@@ -350,7 +350,7 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMo
                     didOpen: () => {
                         Swal.showLoading();
                         _mS.getData('delete', '/FacturaVenta/Delete?id=' + item.idFactura).then(response=> {
-                            console.log(response)
+                            
                             if (response.code === "0") {
                                 _fS.sweetAlert('warning', response.message, response.titleSms);
                             }
@@ -570,7 +570,7 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMo
                     }
                 }
             })
-            console.log('iwhuihiuf')
+            
             let $modalRef = _modalSvc.openModalCustom({
                 controller,
                 template,
@@ -600,9 +600,7 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMo
             codEstab: item.codEstab,
             codDoc: TIPO_DOC_FV.codigo,
             nroIdentificacion : item.nroIdentificacion,
-        }
-
-        console.log(parameters)
+        }        
 
         _commonSvc.askToReportII({
             parameters: JSON.stringify(parameters)

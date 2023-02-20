@@ -7,8 +7,12 @@ import { Observable} from 'rxjs';
 })
 
 export class AuthService {
-    
-    constructor(private http: HttpClient, @Inject("BASE_URL") private baseUrl: string) {}
+
+    constructor(private http: HttpClient, @Inject("BASE_URL") private baseUrl: string) {
+
+
+      
+    }
 
     login(username: string, password: string): Observable<any>{
         let body = {
@@ -17,5 +21,7 @@ export class AuthService {
         }
         return this.http.post(`${this.baseUrl}api/Login/Login`, body)
     }
-    
+
+
+
 }

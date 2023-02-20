@@ -1,7 +1,7 @@
 
 
 
-import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.28";
+import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.31";
 
 class ModalNotaCreditoCtrl extends ModalBaseCtrl{
     constructor({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS}){
@@ -275,6 +275,7 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl{
 
                 this.actividadTipoIva = resultsDataFormEstab[2][0]
                 
+              
             }else{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
             }
