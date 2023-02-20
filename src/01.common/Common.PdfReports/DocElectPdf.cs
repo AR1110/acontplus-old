@@ -37,10 +37,10 @@ namespace Common.PdfReports
             pdfTable.HorizontalAlignment = Element.ALIGN_LEFT;
             pdfTable.DefaultCell.BorderWidth = 1;
             pdfTable.SetWidths(new float[] { 0.1f, 0.01f, 0.1f });
-            BaseFont bfCalibri = BaseFont.CreateFont("c:\\windows\\fonts\\calibri.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-            iTextSharp.text.Font calibri = new iTextSharp.text.Font(bfCalibri, 12);
-            iTextSharp.text.Font calibri6 = new iTextSharp.text.Font(bfCalibri, 10);
-            iTextSharp.text.Font boldStyle = new iTextSharp.text.Font(bfCalibri, 10, Font.BOLD);
+            BaseFont bfArial = BaseFont.CreateFont("c:\\windows\\fonts\\times.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+            iTextSharp.text.Font arial12 = new iTextSharp.text.Font(bfArial, 12);
+            iTextSharp.text.Font arial10 = new iTextSharp.text.Font(bfArial, 10);
+            iTextSharp.text.Font boldStyle = new iTextSharp.text.Font(bfArial, 12, Font.BOLD);
 
             //int[,] arry = new int [1,2];
             //Adding DataRow  
@@ -64,7 +64,7 @@ namespace Common.PdfReports
             tmpTable.DefaultCell.BorderWidth = 0;
             tmpTable.DefaultCell.VerticalAlignment = Element.ALIGN_TOP;
             tmpTable.DefaultCell.HorizontalAlignment = Element.ALIGN_CENTER;
-            tmpTable.AddCell(new Paragraph("test", calibri));
+            tmpTable.AddCell(new Paragraph("test", arial12));
             pdfCell.AddElement(tmpTable);
             pdfTable.AddCell(pdfCell);
 
@@ -95,6 +95,8 @@ namespace Common.PdfReports
             bc.StartStopText = false;
             bc.CodeType = iTextSharp.text.pdf.Barcode128.CODE128;
             bc.Extended = true;
+            bc.Font = BaseFont.CreateFont("c:\\windows\\fonts\\times.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+
             //bc.Font = null;
 
             PdfContentByte cb = writer.DirectContent;
@@ -110,6 +112,7 @@ namespace Common.PdfReports
             barcideimage.HorizontalAlignment = 2;
             barcideimage.Border = 0;
             barcideimage.HorizontalAlignment = Element.ALIGN_CENTER;
+
             p_detail1.AddCell(barcideimage);
 
 
@@ -132,27 +135,71 @@ namespace Common.PdfReports
             tmpTable2.DefaultCell.VerticalAlignment = Element.ALIGN_TOP;
             tmpTable2.DefaultCell.HorizontalAlignment = Element.ALIGN_LEFT;
 
-            Chunk chunkAddress = new Chunk("RUC:  ", boldStyle);
+            Chunk chunkAddress = new Chunk("RUC: ", boldStyle);
             Chunk ChunkAddressDetails = new Chunk(data.infoTributaria.ruc);
 
-            Phrase phrase = new Phrase();
-            phrase.Add(chunkAddress);
-            phrase.Add(ChunkAddressDetails);
+            Phrase phrase = new Phrase
+            {
+                chunkAddress,
+                ChunkAddressDetails
+            };
 
-            Paragraph paragraph = new Paragraph();
-            paragraph.Add(phrase);
+            Paragraph paragraph = new Paragraph
+            {
+                phrase
+            };
 
             //Paragraph p = new Paragraph("RUC: " , boldStyle);
             //p.Add(new Chunk(data.infoTributaria.ruc, calibri));
 
             //tmpTable2.AddCell(p);
             tmpTable2.AddCell(paragraph);
-            tmpTable2.AddCell(new Paragraph("FACTURA", calibri));
-            tmpTable2.AddCell(new Paragraph("No.: " + data.infoTributaria.estab + "-" + data.infoTributaria.ptoEmi + "-" + data.infoTributaria.secuencial, calibri));
-            tmpTable2.AddCell(new Paragraph("NÚMERO DE AUTORIZACIÓN: " + data.numeroAutorizacion, calibri));
-            tmpTable2.AddCell(new Paragraph("FECHA Y HORA DE AUTORIZACIÓN: " + data.fechaAutorizacion, calibri));
-            tmpTable2.AddCell(new Paragraph("AMBIENTE: " + data.infoTributaria.ambiente, calibri));
-            tmpTable2.AddCell(new Paragraph("CLAVE DE ACCESSO: ", calibri));
+            tmpTable2.AddCell(new Paragraph("FACTURA", arial12));
+
+
+            Chunk ckNro = new Chunk("No.: ", boldStyle);
+            Chunk ckNroDetails = new Chunk(data.infoTributaria.estab + "-" + data.infoTributaria.ptoEmi + "-" + data.infoTributaria.secuencial);
+
+            Phrase phNro = new Phrase
+            {
+                ckNro,
+                ckNroDetails
+            };
+
+            Paragraph pNro = new Paragraph
+            {
+                phNro
+            };
+
+            tmpTable2.AddCell(pNro);
+            tmpTable2.AddCell(new Paragraph("NÚMERO DE AUTORIZACIÓN: " + data.numeroAutorizacion, boldStyle));
+            tmpTable2.AddCell(new Paragraph("FECHA Y HORA DE AUTORIZACIÓN: " + data.fechaAutorizacion, arial12));
+
+            Chunk ck_ambiente = new Chunk("AMBIENTE: ", boldStyle);
+            Chunk ck_ambienteDetails = new Chunk((data.infoTributaria.ambiente == "1"? "PRUEBAS" : "PRODUCCIÓN"), arial12);
+            Phrase ph_Ambiente = new Phrase
+            {
+                ck_ambiente,
+                ck_ambienteDetails
+            };
+
+            Paragraph p_ambiente = new Paragraph(ph_Ambiente); 
+
+            tmpTable2.AddCell(p_ambiente);
+
+            Chunk ck_tipo_emision = new Chunk("EMISIÓN: ", boldStyle);
+            Chunk ck_tipo_emision_details = new Chunk((data.infoTributaria.tipoEmision == "1" ? "NORMAL" : ""), arial12);
+            Phrase ph_tipo_emision = new Phrase
+            {
+                ck_tipo_emision,
+                ck_tipo_emision_details
+            };
+
+            Paragraph p_tipo_emision = new Paragraph(ph_tipo_emision);
+
+            tmpTable2.AddCell(ph_tipo_emision);
+
+            tmpTable2.AddCell(new Paragraph("CLAVE DE ACCESSO: ", arial12));
             tmpTable2.AddCell(barcideimage);
             pdfCell2.AddElement(tmpTable2);
             pdfTable.AddCell(pdfCell2);
