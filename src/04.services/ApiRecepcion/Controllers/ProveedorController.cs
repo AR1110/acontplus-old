@@ -1,5 +1,4 @@
-﻿using BL.Recepcion;
-using Common.Logs;
+﻿using Common.Logs;
 using DataAccess;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,16 +13,18 @@ namespace ApiRecepcion.Controllers
         private readonly IConfiguration _configuration;
         public ProveedorController(IConfiguration configuration) => (_configuration) = (configuration);
 
-        [HttpGet("{idRol}/{json}")]
-        public async Task<IActionResult> Get(int idRol, string json)
+        [HttpGet("{json}")]
+        public async Task<IActionResult> Get(string json)
         {
             LogWriter _logs = new LogWriter(_configuration);
 
             try
             {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+
                 Dictionary<string, object> parameters = new Dictionary<string, object>
                 {
-                    { "idRol", idRol },
+                    { "idRol", idUsuarioRol },
                     { "jsonData", json }
                 };
                 DAO _dao = new DAO(_configuration);
@@ -40,16 +41,18 @@ namespace ApiRecepcion.Controllers
             }
 
         }
-        [HttpPost("{idRol}/{json}")]
-        public async Task<IActionResult> Post(int idRol, string json)
+        [HttpPost("{json}")]
+        public async Task<IActionResult> Post(string json)
         {
             LogWriter _logs = new LogWriter(_configuration);
 
             try
             {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+
                 Dictionary<string, object> parameters = new Dictionary<string, object>
                 {
-                    { "idRol", idRol },
+                    { "idRol", idUsuarioRol },
                     { "jsonData", json }
                 };
                 DAO _dao = new DAO(_configuration);
@@ -66,16 +69,18 @@ namespace ApiRecepcion.Controllers
             }
 
         }
-        [HttpPut("{idRol}/{json}")]
-        public async Task<IActionResult> Put(int idRol, string json)
+        [HttpPut("{json}")]
+        public async Task<IActionResult> Put(string json)
         {
             LogWriter _logs = new LogWriter(_configuration);
 
             try
             {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+
                 Dictionary<string, object> parameters = new Dictionary<string, object>
                 {
-                    { "idRol", idRol },
+                    { "idRol", idUsuarioRol },
                     { "jsonData", json }
                 };
                 DAO _dao = new DAO(_configuration);

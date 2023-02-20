@@ -13,9 +13,9 @@
       ]
     },
     {
-      "UpstreamPathTemplate": "/api/DocumentoRecibido/Get/{idRol}/{json}",
-      "UpstreamHttpMethod": [ "Get" ],
-      "DownstreamPathTemplate": "/api/DocumentoRecibido/Get/{idRol}/{json}",
+      "UpstreamPathTemplate": "/api/DocumentoRecibido/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "DownstreamPathTemplate": "/api/DocumentoRecibido/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -29,9 +29,9 @@
       }
     },
     {
-      "UpstreamPathTemplate": "/api/DocumentoRecibido/GetId/{idRol}/{id}",
-      "UpstreamHttpMethod": [ "Get" ],
-      "DownstreamPathTemplate": "/api/DocumentoRecibido/GetId/{idRol}/{id}",
+      "UpstreamPathTemplate": "/api/Proveedor/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "DownstreamPathTemplate": "/api/Proveedor/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -45,9 +45,9 @@
       }
     },
     {
-      "UpstreamPathTemplate": "/api/DocumentoRecibido/Preview/{idRol}/{id}",
-      "UpstreamHttpMethod": [ "Get" ],
-      "DownstreamPathTemplate": "/api/DocumentoRecibido/Preview/{idRol}/{id}",
+      "UpstreamPathTemplate": "/api/Doc_Rec_DetailTemp/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "DownstreamPathTemplate": "/api/Doc_Rec_DetailTemp/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -61,9 +61,9 @@
       }
     },
     {
-      "UpstreamPathTemplate": "/api/DocumentoRecibido/Export/{idRol}/{id}",
-      "UpstreamHttpMethod": [ "Get" ],
-      "DownstreamPathTemplate": "/api/DocumentoRecibido/Export/{idRol}/{id}",
+      "UpstreamPathTemplate": "/api/Articulo/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "DownstreamPathTemplate": "/api/Articulo/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -77,105 +77,9 @@
       }
     },
     {
-      "UpstreamPathTemplate": "/api/DocumentoRecibido/{idRol}",
-      "UpstreamHttpMethod": [ "Post" ],
-      "DownstreamPathTemplate": "/api/DocumentoRecibido/{idRol}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 12786
-        }
-      ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": []
-      }
-    },
-    {
-      "UpstreamPathTemplate": "/api/DocumentoRecibido/{idRol}/{id}",
-      "UpstreamHttpMethod": [ "Put", "Delete" ],
-      "DownstreamPathTemplate": "/api/DocumentoRecibido/{idRol}/{id}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 12786
-        }
-      ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": []
-      }
-    },
-    {
-      "UpstreamPathTemplate": "/api/Proveedor/{idRol}/{json}",
-      "UpstreamHttpMethod": [ "Get", "Post" ],
-      "DownstreamPathTemplate": "/api/Proveedor/{idRol}/{json}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 12786
-        }
-      ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": []
-      }
-    },
-    {
-      "UpstreamPathTemplate": "/api/Doc_Rec_DetailTemp/{idRol}/{idDocumento}",
-      "UpstreamHttpMethod": [ "Get" ],
-      "DownstreamPathTemplate": "/api/Doc_Rec_DetailTemp/{idRol}/{idDocumento}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 12786
-        }
-      ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": []
-      }
-    },
-    {
-      "UpstreamPathTemplate": "/api/Doc_Rec_DetailTemp/{idRol}/{json}",
-      "UpstreamHttpMethod": [ "Post", "Put" ],
-      "DownstreamPathTemplate": "/api/Doc_Rec_DetailTemp/{idRol}/{json}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 12786
-        }
-      ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": []
-      }
-    },
-    {
-      "UpstreamPathTemplate": "/api/Articulo/{idRol}/{json}",
-      "UpstreamHttpMethod": [ "Get" ],
-      "DownstreamPathTemplate": "/api/Articulo/{idRol}/{json}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 12786
-        }
-      ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": []
-      }
-    },
-    {
-      "UpstreamPathTemplate": "/api/Factura/{idRol}?json={json}",
-      "UpstreamHttpMethod": [ "Post" ],
-      "DownstreamPathTemplate": "/api/Factura/{idRol}?json={json}",
+      "UpstreamPathTemplate": "/api/Factura/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "DownstreamPathTemplate": "/api/Factura/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {

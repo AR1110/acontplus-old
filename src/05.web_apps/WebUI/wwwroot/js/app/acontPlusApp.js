@@ -1,14 +1,14 @@
 ﻿
 
-const swalOffline = ()=>{
+const swalOffline = () => {
     Swal.fire({
-        html:`<small>Esperando la conexión...</small>`,
+        html: `<small>Esperando la conexión...</small>`,
         imageUrl: "/assets/images/offline.webp",
-        imageHeight:'150px',
-        allowOutsideClick:false,
-        allowEscapeKey:true,
-        showConfirmButton:false,
-        didOpen:()=>Swal.showLoading()
+        imageHeight: '150px',
+        allowOutsideClick: false,
+        allowEscapeKey: true,
+        showConfirmButton: false,
+        didOpen: () => Swal.showLoading()
     })
 }
 
@@ -27,7 +27,7 @@ let app = angular.module('acontPlusApp', [
     'ui.grid.autoResize',
     'ui.grid.expandable',
     'ui.grid.saveState',
-    'ngSanitize',   
+    'ngSanitize',
     'ngMaterial',
     'md.data.table',
     'fixed.table.header',
@@ -40,7 +40,8 @@ let app = angular.module('acontPlusApp', [
     'ngCookies',
     'angularUUID2',
     'angularUtils.directives.dirPagination',
-    'daterangepicker'
+    'daterangepicker',
+    'angular-jwt'
 ]);
 
 
@@ -60,56 +61,59 @@ app.run(function (Idle) {
 
 
 //check connection offilne/online
-app.run(function($window, $rootScope) {
+app.run(function ($window, $rootScope) {
     $rootScope.online = navigator.onLine;
-   
+
     $window.addEventListener("offline", function () {
-        $rootScope.$apply(function() {
-            $rootScope.online = false;            
-            swalOffline();               
+        $rootScope.$apply(function () {
+            $rootScope.online = false;
+            swalOffline();
         });
     }, false);
 
     $window.addEventListener("online", function () {
-        $rootScope.$apply(function() {                 
+        $rootScope.$apply(function () {
             $rootScope.online = true;
             Swal.fire({
-                html:`<small>Recuperando la conexión...</small>`,
-                allowOutsideClick:false,
-                allowEscapeKey:true,
-                showConfirmButton:false,
-                timer:999
+                html: `<small>Recuperando la conexión...</small>`,
+                allowOutsideClick: false,
+                allowEscapeKey: true,
+                showConfirmButton: false,
+                timer: 999
             })
         });
     }, false);
 
-    if(!$rootScope.online){
+    if (!$rootScope.online) {
         swalOffline();
     }
 });
 
- app.run(function ($rootScope, $http, $location, $localStorage) {
-     // keep user logged in after page refresh
-     if ($localStorage.currentUser) {
-         $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.currentUser.token
-     }
+app.run(function ($rootScope, $http, $location, $localStorage, jwtHelper) {
+    // keep user logged in after page refresh
+    if ($localStorage.currentUser) {
+        $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.currentUser.token
+        let decodedJwt = jwtHelper.decodeToken($localStorage.currentUser.token)
+        $http.defaults.headers.common['X-IdUsuarioRol'] = decodedJwt.idUsuarioRol
+        //console.log($http.defaults)
+    }
 
-     // redirect to login page if not logged in and trying to access a restricted page
-     //$rootScope.$on('$locationChangeStart', function (event, next, current) {
-     //    let publicPages = ['/login'];
-     //    let restrictedPage = publicPages.indexOf($location.path()) === -1;
-     //    if (restrictedPage && !$localStorage.currentUser) {
-     //        toastr.warning('error', 'Ha perdido session')
-     //        //$location.path('/Login');
-     //    }
-     //});
- })
+    // redirect to login page if not logged in and trying to access a restricted page
+    //$rootScope.$on('$locationChangeStart', function (event, next, current) {
+    //    let publicPages = ['/login'];
+    //    let restrictedPage = publicPages.indexOf($location.path()) === -1;
+    //    if (restrictedPage && !$localStorage.currentUser) {
+    //        toastr.warning('error', 'Ha perdido session')
+    //        //$location.path('/Login');
+    //    }
+    //});
+})
 
 //app.config(function ($httpProvider) {
 //    $httpProvider.useApplyAsync(true);
 //});
 //Settings for incons in angularjs materialize
-app.config(['$mdThemingProvider','$mdIconProvider', function ($mdThemingProvider, $mdIconProvider) {
+app.config(['$mdThemingProvider', '$mdIconProvider', function ($mdThemingProvider, $mdIconProvider) {
     // $mdThemingProvider.theme('default').primaryPalette('blue');
     $mdIconProvider.fontSet('md', 'material-icons');
 }]);
@@ -179,16 +183,11 @@ mainService.$inject = ['$http', 'Upload'];
 function mainService($http, Upload) {
     let service = {};
 
-    function getData(method, url, data = null, showLoader=false) {        
+    function getData(method, url, data = null, showLoader = false) {
         return $http({
             method: method,
             url: url,
-            data: data,
-            headers: {
-                //'Accept': 'application/json',
-                //'Content-Type': 'application/json',
-                'Access-Control-Request-Private-Network': true
-            }
+            data: data
         }).then(response => {
             return response.data
         })
@@ -213,8 +212,6 @@ function mainService($http, Upload) {
             return response
         })
     }
-
-
 
     service.getData = getData;
     service.getDataFile = getDataFile;
@@ -274,7 +271,7 @@ function modalService($uibModal) {
          * @param {object} params {controller, template, size, params, keyboard=false, animation = true, windowClass = null, scope, props = {}}
          * @returns object 
          */
-        openModalCustom: function({controller, template, size, params, keyboard=false, animation = true, windowClass = null, windowTopClass, openedClass , scope, props = {}}){
+        openModalCustom: function ({ controller, template, size, params, keyboard = false, animation = true, windowClass = null, windowTopClass, openedClass, scope, props = {} }) {
             return $uibModal.open({
                 animation,
                 templateUrl: `/Home/RenderView?name=${template || 'Shared/ModalNotFound.cshtml'}`,
@@ -293,12 +290,12 @@ function modalService($uibModal) {
                 minWidth: props.minWidth,
                 minHeight: props.minHeight,
                 windowTopClass,
-                openedClass ,
+                openedClass,
                 resolve: {
                     params: function () {
                         return params;
                     }
-                }                                
+                }
             })
         },
         openModalSecond: function (controller, template, size, params, animation = true, windowClass = null, $scope, props = {}) {
@@ -513,19 +510,19 @@ app.directive('touppercase', function () {
         require: 'ngModel',
         restrict: 'A',
         link: function (scope, element, attrs, modelCtrl) {
-            element.on("keydown", event=>{
+            element.on("keydown", event => {
                 teclaAnterior = teclaAnterior + " " + event.keyCode;
                 var arregloTA = teclaAnterior.split(" ");
                 if (event.keyCode == 32 && arregloTA[arregloTA.length - 2] == 32) {
-                  event.preventDefault();
+                    event.preventDefault();
                 }
             })
 
-            function removeAccents(input){               
+            function removeAccents(input) {
                 let inputText = input || "";
                 inputText = inputText.normalize('NFD')
-                                    .replace(/([^n\u0300-\u036f]|n(?!\u0303(?![\u0300-\u036f])))[\u0300-\u036f]+/gi,"$1").normalize();
-                inputText = inputText.replace(/[`#$%^*Ç¨_|+\=?'´",<>\{\}\[\]\\]/gi, '').trim()               
+                    .replace(/([^n\u0300-\u036f]|n(?!\u0303(?![\u0300-\u036f])))[\u0300-\u036f]+/gi, "$1").normalize();
+                inputText = inputText.replace(/[`#$%^*Ç¨_|+\=?'´",<>\{\}\[\]\\]/gi, '').trim()
                 modelCtrl.$setViewValue(inputText);
                 modelCtrl.$render();
                 return inputText.toUpperCase();
@@ -543,7 +540,7 @@ app.directive('tolowercase', function () {
     return {
         require: 'ngModel',
         link: function (scope, element, attrs, modelCtrl) {
-            modelCtrl.$parsers.push(function (input) {                
+            modelCtrl.$parsers.push(function (input) {
                 return input ? input.toLowerCase() : "";
             });
             element.css("text-transform", "lowercase");
@@ -680,59 +677,59 @@ app.filter('tipo', function ($sce) {
 
 //Filter tipo Iva 
 app.filter('mapTipoIva', () => {
-    return function (idTipoIva, tipoIvas) {          
+    return function (idTipoIva, tipoIvas) {
         let result = tipoIvas.reduce((acc, curr) => ({ ...acc, [curr.idTipoIva]: curr.descripcion }), { 0: 'Tipo Iva' });
         return !idTipoIva ? result[0] : result[idTipoIva];
     }
 });
 
-app.filter('cellFilterTipoIva', ()=>{
+app.filter('cellFilterTipoIva', () => {
     let result = {
         '0': 'Seleccione IVA'
     };
-    return (input, context)=>{
-        
+    return (input, context) => {
+
         let fieldLevel = (context.editDropdownOptionsArray == undefined) ? context.col.colDef : context;
         let map = fieldLevel.editDropdownOptionsArray;
         let idField = fieldLevel.editDropdownIdLabel;
         let valueField = fieldLevel.editDropdownValueLabel;
-       
+
         if (typeof map !== "undefined") {
             for (let value of map) {
                 result[value.idTipoIva] = value.descripcion
-            }                   
+            }
         }
-        
+
         if (!input) {
             return result[0];
         } else {
             return result[input];
-        } 
+        }
     }
 })
 
-app.filter('cellFilterBodega', ()=>{
+app.filter('cellFilterBodega', () => {
     let result = {
         '0': 'Seleccione Bodega'
     };
-    return (input, context)=>{
-        
+    return (input, context) => {
+
         let fieldLevel = (context.editDropdownOptionsArray == undefined) ? context.col.colDef : context;
         let map = fieldLevel.editDropdownOptionsArray;
         let idField = fieldLevel.editDropdownIdLabel;
         let valueField = fieldLevel.editDropdownValueLabel;
-       
+
         if (typeof map !== "undefined") {
             for (let value of map) {
                 result[value.idBodega] = value.descripcion
-            }                   
+            }
         }
-        
+
         if (!input) {
             return result[0];
         } else {
             return result[input];
-        } 
+        }
     }
 })
 
@@ -740,7 +737,7 @@ app.directive('inputFocus', function ($timeout) {
     return {
         restrict: 'AC',
         link: function (_scope, _element) {
-            $timeout(function () {                
+            $timeout(function () {
                 _element[0].focus();
             }, 0);
         }
@@ -770,14 +767,14 @@ app.directive('stopEvent', function () {
             });
         }
     };
- });
+});
 
 // app.directive('autoocus')
 
 //Filter bodegas 
 app.filter('mapBodega', () => {
-    return function (idBodega, bodegas) {  
-        if(!bodegas || bodegas.length===0) return { 0: 'Seleccionar bodega' }   
+    return function (idBodega, bodegas) {
+        if (!bodegas || bodegas.length === 0) return { 0: 'Seleccionar bodega' }
 
         let result = bodegas.reduce((acc, curr) => ({ ...acc, [curr.idBodega]: curr.descripcion }), { 0: 'Seleccionar bodega' });
         return !idBodega ? result[0] : result[idBodega];

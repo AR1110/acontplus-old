@@ -66,7 +66,6 @@
         }
 
         const _urlService = document.getElementById("urlGateway").value + 'api/'
-        const _idRol = document.getElementById("idRol").value
 
 
         $scope.initialLoad = () => {
@@ -80,7 +79,7 @@
                 }
                 //console.log($cookies.get('ck_token'))
                 let data = { tipo: 1 }
-                mS.getData('get', _urlService + 'RetencionAts/' + _idRol + '/' + JSON.stringify(data)).then(
+                mS.getData('get', _urlService + 'RetencionAts/' + JSON.stringify(data)).then(
                     response => {
                         if (response.code == '1') {
                             let tempArray = JSON.parse(response.payload)
@@ -331,7 +330,7 @@
                     tS.toastr('warning', 'Este documento no ha sido registrado desde el modulo de recepcion de documentos')
                     return
                 }
-                mS.getData('get', _urlService + 'DocumentoRecibido/Preview/' + _idRol + '/' + item).then(
+                mS.getData('get', _urlService + 'DocumentoRecibido/Preview/' + item).then(
                     response => {
                         $('#facturaModal').modal('show')
                         $('#bodyFactura').html(response.payload)
@@ -921,7 +920,7 @@
         //
         $scope.exportPdf = (item) => {
             try {
-                mS.getFile('get', _urlService + 'DocumentoRecibido/Export/' + _idRol + '/' + item).then(response => {
+                mS.getFile('get', _urlService + 'DocumentoRecibido/Export/' + item).then(response => {
                     if (response.id == 0) {
                         tS.toastr('warning', response.message)
                         return;
