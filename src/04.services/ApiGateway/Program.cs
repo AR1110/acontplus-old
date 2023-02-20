@@ -61,6 +61,7 @@ namespace ApiGateway
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseMiddleware<JWTMiddleware>();
 
             app.MapControllers();
 

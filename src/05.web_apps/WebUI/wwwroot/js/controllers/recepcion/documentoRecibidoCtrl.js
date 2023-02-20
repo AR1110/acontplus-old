@@ -1,8 +1,24 @@
 ﻿app.controller('documentoRecibidoCtrl', documentoRecibidoCtrl);
 
-documentoRecibidoCtrl.$inject = ['$filter', '$scope', 'mainService', 'commonService', 'toastService', 'modalService', 'nombreModal'];
+documentoRecibidoCtrl.$inject = [
+    '$filter',
+    '$scope',
+    'mainService',
+    'commonService',
+    'toastService',
+    'modalService',
+    'nombreModal'
+];
 
-function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService, nameModalConst) {
+function documentoRecibidoCtrl(
+    $filter,
+    $scope,
+    mS,
+    _commonSvc,
+    tS,
+    modalService,
+    nameModalConst) {
+
     'use strict';
     $scope.title = 'documentoRecibidoCtrl';
     $scope.comprobantes = [];
@@ -66,9 +82,9 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
             }
         }
     };
+    // console.log(jwtDecoded)
 
     const _urlService = document.getElementById("urlGateway").value + 'api/'
-    const _idRol = document.getElementById("idRol").value
 
     //console.log(_urlService)
 
@@ -109,7 +125,7 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
             $scope.query.startDate = $scope.dateRangePicker.date.startDate
             $scope.query.endDate = $scope.dateRangePicker.date.endDate
             console.log($scope.query)
-            mS.getData('get', _urlService + 'DocumentoRecibido/Get/' + _idRol + "/" + JSON.stringify($scope.query)).then(response => {
+            mS.getData('get', _urlService + 'DocumentoRecibido/Get/' + JSON.stringify($scope.query)).then(response => {
                 if (response.code == "1") {
                     $scope.comprobantes = JSON.parse(response.payload)[0];
                     $scope.cloneComprobantes = JSON.parse(JSON.stringify($scope.comprobantes))
@@ -243,7 +259,7 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
                 alert('No ha seleccionado ningun archivo');
                 return;
             }
-            mS.getDataFile(_urlService + 'DocumentoRecibido/' + _idRol, file).then(
+            mS.getDataFile(_urlService + 'DocumentoRecibido/', file).then(
                 response => {
                     if (response.code == 0) {
                         hideLoader();
@@ -271,7 +287,7 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
     $scope.putXml = function () {
         try {
             showLoader();
-            mS.getData('put', _urlService + 'DocumentoRecibido/Put/' + _idRol + '/' + $scope.selected[0].idDocumento).then(
+            mS.getData('put', _urlService + 'DocumentoRecibido/Put/' + $scope.selected[0].idDocumento).then(
                 response => {
                     hideLoader();
                     if (response.code == 0) {
@@ -322,7 +338,7 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
                 return;
             }
             console.log(file)
-            mS.getDataFile(_urlService + 'DocumentoRecibido/' + _idRol + '/' + $scope.selected[0].idDocumento + '/' + $scope.selected[0].claveAcceso, file).then(
+            mS.getDataFile(_urlService + 'DocumentoRecibido/' + $scope.selected[0].idDocumento + '/' + $scope.selected[0].claveAcceso, file).then(
                 response => {
                     hideLoader();
                     if (response.code == 0) {
@@ -367,7 +383,7 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
     $scope.delete = function (item) {
         try {
             showLoader();
-            mS.getData('delete', _urlService + 'DocumentoRecibido/' + _idRol + '/' + item).then(
+            mS.getData('delete', _urlService + 'DocumentoRecibido/' + item).then(
                 response => {
                     if (response.code == 0) {
                         hideLoader();
@@ -420,7 +436,7 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
     $scope.medidas = [];
     $scope.getFormData = function () {
         try {
-            mS.getData('get', _urlService + 'DocumentoRecibido/Get/' + _idRol + '/' + JSON.stringify({ tipo: '1' })).then(
+            mS.getData('get', _urlService + 'DocumentoRecibido/Get/' + JSON.stringify({ tipo: '1' })).then(
                 response => {
                     if (response.code == "0") {
                         tS.toastr('warning', response.message);
@@ -502,7 +518,7 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
     $scope.getId = () => {
         try {
             showLoader();
-            mS.getData('get', _urlService + 'DocumentoRecibido/GetId/' + _idRol + "/" + $scope.selected[0].idDocumento).then(response => {
+            mS.getData('get', _urlService + 'DocumentoRecibido/GetId/' + $scope.selected[0].idDocumento).then(response => {
                 if (!response.payload) {
                     tS.toastr('warning', "Aun no se actualizado el Xml del SRI");
                 } else {
@@ -607,7 +623,7 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
 
     $scope.getProv = () => {
         try {
-            mS.getData('get', _urlService + 'Proveedor/' + _idRol + '/' + JSON.stringify({ tipo: 1, ruc: $scope.infoTributaria.ruc })).then(
+            mS.getData('get', _urlService + 'Proveedor/' + JSON.stringify({ tipo: 1, ruc: $scope.infoTributaria.ruc })).then(
                 response => {
                     if (response.code == "0") {
                         $scope.txtIconModalProv = 'ti-plus';
@@ -632,7 +648,7 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
     $scope.arraysProvClient = [];
     $scope.addProvClient = function () {
         try {
-            mS.getData('get', _urlService + 'Proveedor/' + _idRol + '/' + JSON.stringify({ tipo: 2 })).then(
+            mS.getData('get', _urlService + 'Proveedor/' + JSON.stringify({ tipo: 2 })).then(
                 response => {
                     $scope.arraysProvClient = JSON.parse(response.payload);
                     $scope.tiposIdentificacion = $scope.arraysProvClient[0]
@@ -718,7 +734,7 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
                 return;
             }
             showLoader();
-            mS.getData('post', _urlService + 'Proveedor/' + _idRol + '/' + JSON.stringify($scope.provCliente)).then(
+            mS.getData('post', _urlService + 'Proveedor/' + JSON.stringify($scope.provCliente)).then(
                 response => {
                     if (response.code == "0") {
                         tS.toastr('warning', response.message)
@@ -809,7 +825,7 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
 
     $scope.getTempDetails = function () {
         try {
-            mS.getData('get', _urlService + 'Doc_Rec_DetailTemp/' + _idRol + '/' + $scope.selected[0].idDocumento).then(
+            mS.getData('get', _urlService + 'Doc_Rec_DetailTemp/' + $scope.selected[0].idDocumento).then(
                 response => {
                     if (response.code == "1") {
                         $scope.tempDetail = JSON.parse(response.payload);
@@ -928,7 +944,7 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
                 codigoAuxiliar: $scope.articleSelected.codigoAuxiliar,
                 descripcion: $scope.articleSelected.descripcion
             }
-            mS.getData('get', _urlService + 'Articulo/' + _idRol + '/' + JSON.stringify(jsonData)).then(
+            mS.getData('get', _urlService + 'Articulo/' + JSON.stringify(jsonData)).then(
                 response => {
                     if (response.code == '1') {
                         $scope.articlesTemp = JSON.parse(response.payload)
@@ -972,7 +988,7 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
                 descripcion: $scope.articleMergeSearch.textSearch,
                 tipo: tipo
             }
-            mS.getData('get', _urlService + 'Articulo/' + _idRol + '/' + JSON.stringify(jsonData)).then(
+            mS.getData('get', _urlService + 'Articulo/' + JSON.stringify(jsonData)).then(
                 response => {
                     if (response.code == '1') {
                         // if ($scope.articleNotFound) {
@@ -1009,7 +1025,7 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
                 id: item.idArticulo,
                 tipo: 'H'
             }
-            mS.getData('get', _urlService + 'Articulo/' + _idRol + '/' + JSON.stringify(data)).then(
+            mS.getData('get', _urlService + 'Articulo/' + JSON.stringify(data)).then(
                 response => {
                     if (response.code == '1') {
                         $scope.articleHistory = JSON.parse(response.payload)
@@ -1334,7 +1350,7 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
 
             }
             console.log(data)
-            mS.getData('post', _urlService + 'Factura/' + _idRol + '?json=' + JSON.stringify(data)).then(response => {
+            mS.getData('post', _urlService + 'Factura/' + '?json=' + JSON.stringify(data)).then(response => {
                 if (response.code == '0') {
                     tS.toastr('warning', response.message)
                 }

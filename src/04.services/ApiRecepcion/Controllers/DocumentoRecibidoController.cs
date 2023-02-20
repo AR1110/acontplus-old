@@ -24,17 +24,20 @@ namespace ApiRecepcion.Controllers
         private readonly IConfiguration _configuration;
         public DocumentoRecibidoController(IConfiguration configuration) => (_configuration) = (configuration);
 
-        [HttpGet("Get/{idRol}/{json}")]
-        public async Task<IActionResult> Get(int idRol, string json)
+        [HttpGet("Get/{json}")]
+        public async Task<IActionResult> Get(string json)
         {
+            //var correlationId = HttpContext.Request.Headers["X-IdUsuarioRol"].ToString();
+
             LogWriter _logs = new LogWriter(_configuration);
             GenericResponse _response = new GenericResponse();
             try
             {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 DAO _dao = new DAO(_configuration);
                 Dictionary<string, object> parameters = new Dictionary<string, object>
                 {
-                    {"idRol", idRol },
+                    {"idRol", idUsuarioRol },
                     { "json", SqlValidation.ValidateSqlString(json) }
                 };
                 return Ok(await _dao.GetDataSet("Recepcion.Documento_Get", parameters));
@@ -51,18 +54,20 @@ namespace ApiRecepcion.Controllers
 
         }
 
-        [HttpGet("GetId/{idRol}/{id}")]
-        public async Task<IActionResult> GetId(int idRol, int id)
+        [HttpGet("GetId/{id}")]
+        public async Task<IActionResult> GetId(int id)
         {
             LogWriter _logs = new LogWriter(_configuration);
 
             GenericResponse _response = new GenericResponse();
             try
             {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+
                 DbAccess _db = new DbAccess(_configuration);
                 Dictionary<string, object> parameters = new Dictionary<string, object>();
                 await _db.SPExecute("Recepcion.Documento_Get_Id");
-                _db.AddDynamicParam("idRol", idRol);
+                _db.AddDynamicParam("idRol", idUsuarioRol);
                 _db.AddDynamicParam("idDocumento", id);
                 DataTable dt = _db.GetDataTable();
                 if (dt.Rows.Count > 0 && dt.Columns.Contains("xmlDoc"))
@@ -82,7 +87,7 @@ namespace ApiRecepcion.Controllers
                     {
                         Dictionary<string, object> parametersTemp = new Dictionary<string, object>
                         {
-                            { "idRol", idRol },
+                            { "idRol", idUsuarioRol },
                             { "idDocumento", id },
                             { "jsonData", JsonConvert.SerializeObject(ceXml.detalles) },
                             { "impuestos", JsonConvert.SerializeObject(ceXml.impuestos) }
@@ -109,18 +114,20 @@ namespace ApiRecepcion.Controllers
             }
 
         }
-        [HttpGet("Preview/{idRol}/{id}")]
-        public async Task<IActionResult> Preview(int idRol, int id)
+        [HttpGet("Preview/{id}")]
+        public async Task<IActionResult> Preview(int id)
         {
             LogWriter _logs = new LogWriter(_configuration);
 
             GenericResponse _response = new GenericResponse();
             try
             {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+
                 DbAccess _db = new DbAccess(_configuration);
                 Dictionary<string, object> parameters = new Dictionary<string, object>();
                 await _db.SPExecute("Recepcion.Documento_Get_Id");
-                _db.AddDynamicParam("idRol", idRol);
+                _db.AddDynamicParam("idRol", idUsuarioRol);
                 _db.AddDynamicParam("idDocumento", id);
                 DataTable dt = _db.GetDataTable();
                 if (dt.Rows.Count > 0 && dt.Columns.Contains("xmlDoc"))
@@ -157,8 +164,8 @@ namespace ApiRecepcion.Controllers
                 });
             }
         }
-        [HttpGet("Export/{idRol}/{id}")]
-        public async Task<IActionResult> Export(int idRol, int id)
+        [HttpGet("Export/{id}")]
+        public async Task<IActionResult> Export(int id)
         {
             LogWriter _logs = new LogWriter(_configuration);
             ComprobanteElectronico ceXml = new ComprobanteElectronico();
@@ -166,10 +173,11 @@ namespace ApiRecepcion.Controllers
             GenericResponse _response = new GenericResponse();
             try
             {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 DbAccess _db = new DbAccess(_configuration);
                 Dictionary<string, object> parameters = new Dictionary<string, object>();
                 await _db.SPExecute("Recepcion.Documento_Get_Id");
-                _db.AddDynamicParam("idRol", idRol);
+                _db.AddDynamicParam("idRol", idUsuarioRol);
                 _db.AddDynamicParam("idDocumento", id);
                 DataTable dt = _db.GetDataTable(); 
 
@@ -194,7 +202,7 @@ namespace ApiRecepcion.Controllers
                 {
                     _response.Create(code: "0", message: "No se encontro xml");
                 }
-                return File(new DocElectPdf().PdfData(ceXml), "application/pdf", "report.pdf");
+                return File(new DocElectPdf().PdfData(ceXml), "application/pdf", "Factura_" + ceXml.infoTributaria.estab + "-"+ ceXml.infoTributaria.ptoEmi + "-" + ceXml.infoTributaria.secuencial + ".pdf");
             }
             catch (Exception ex)
             {
@@ -204,8 +212,8 @@ namespace ApiRecepcion.Controllers
 
             }
         }
-        [HttpPost("{idRol}")]
-        public async Task<IActionResult> Post(int idRol, IFormFile file)
+        [HttpPost]
+        public async Task<IActionResult> Post(IFormFile file)
         {
             LogWriter _logs = new LogWriter(_configuration);
             GenericResponse _response = new GenericResponse();
@@ -217,6 +225,8 @@ namespace ApiRecepcion.Controllers
             }
             try
             {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+
                 string path = _configuration.GetSection("ImportacionTxt").Value;
                 FileData.SaveFile(path, file);
                 FileTxt txtComp = new FileTxt();
@@ -225,7 +235,7 @@ namespace ApiRecepcion.Controllers
                 {
                     Dictionary<string, object> parameters = new Dictionary<string, object>
                     {
-                        { "idRol", idRol},
+                        { "idRol", idUsuarioRol},
                         { "json", DataHelper.DataTableToJSON(dt) }
                     };
                     _response = await _dao.Default("Recepcion.Documento_Insert", parameters);
@@ -247,17 +257,18 @@ namespace ApiRecepcion.Controllers
             }
         }
 
-        [HttpPut("Put/{idRol}/{id}")]
-        public async Task<IActionResult> Put(int idRol, int id)
+        [HttpPut("Put/{id}")]
+        public async Task<IActionResult> Put(int id)
         {
             LogWriter _logs = new LogWriter(_configuration);
             GenericResponse _response = new GenericResponse();
             DAO _dao = new DAO(_configuration); 
             try
-            { 
+            {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
 
                 Dictionary<string, object> parameters = new Dictionary<string, object>();
-                parameters.Add("idRol", idRol);
+                parameters.Add("idRol", idUsuarioRol);
                 parameters.Add("idDocumento", id);
                 parameters.Add("tipo", 1);
                 parameters.Add("xmlDoc", ""); //no aplica -> lo procesa el worker
@@ -275,8 +286,8 @@ namespace ApiRecepcion.Controllers
             }
         }
 
-        [HttpPut("{idRol}/{id}")]
-        public async Task<IActionResult> Upload(int idRol, int id, IFormFile file)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Upload(int id, IFormFile file)
         {
             LogWriter _logs = new LogWriter(_configuration);
             GenericResponse _response = new GenericResponse();
@@ -288,6 +299,8 @@ namespace ApiRecepcion.Controllers
             }
             try
             {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+
                 string xmlSri = Encoding.UTF8.GetString(FileData.GetFileByte(file));
                 xmlSri = xmlSri.Replace("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>", "").Replace("</xml>", ""); //DELETE UNNECESARY
                 XmlDocument xmlDocSri = new XmlDocument();
@@ -301,7 +314,7 @@ namespace ApiRecepcion.Controllers
                 string codDoc = node.SelectSingleNode("codDoc").InnerText;
 
                 Dictionary<string, object> parameters = new Dictionary<string, object>();
-                parameters.Add("idRol", idRol);
+                parameters.Add("idRol", idUsuarioRol);
                 parameters.Add("idDocumento", id);
                 parameters.Add("tipo", 2);
                 parameters.Add("xmlDoc", xmlDocSri.OuterXml);
@@ -320,16 +333,18 @@ namespace ApiRecepcion.Controllers
             }
         }
 
-        [HttpDelete("{idRol}/{id}")]
-        public async Task<IActionResult> Delete(int idRol, int id)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
             LogWriter _logs = new LogWriter(_configuration);
 
             try
             {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+
                 DAO _dao = new DAO(_configuration);
                 Dictionary<string, object> parameters = new Dictionary<string, object>();
-                parameters.Add("idRol", idRol);
+                parameters.Add("idRol", idUsuarioRol);
                 parameters.Add("idDocumento", id);
                 return Ok(await _dao.Default("Recepcion.Documento_Delete", parameters));
             }
