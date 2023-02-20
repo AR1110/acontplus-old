@@ -654,21 +654,6 @@ app.directive('keyboardDisable', function () {
 })
 
 
-app.directive("infoEstabPtoEmision", function(){
-    return {
-        template: `
-            <h5>Estab: </h5>
-            <span>Pto. Emisión: </span>
-        `,
-        link: function($scope, element, attrs, ctrl){
-            console.log($scope, element, attrs, ctrl)
-        }
-    }
-
-
-})
-
-
 //FILTERS GENERAL 
 app.filter('estadoPrimario', function ($sce) {
     return function (text) {

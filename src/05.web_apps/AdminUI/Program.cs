@@ -35,11 +35,16 @@ namespace AdminUI
 
             app.UseCors(policy =>
             {
+                policy.AllowCredentials();
+                policy.WithExposedHeaders("Content-Disposition");
                 policy.AllowAnyHeader();
                 policy.AllowAnyMethod();
                 policy.WithOrigins(origins);
             });
 
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.UseMiddleware<JWTMiddleware>();
 
             app.MapControllerRoute(
                 name: "default",

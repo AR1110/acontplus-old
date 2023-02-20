@@ -19,17 +19,18 @@ export class AuthInterceptor implements HttpInterceptor {
             if(isLoggedIn){
 
                 let token = this.jwtTokenSvc.getJWTToken();
-
+                console.log(token)
                 if(token){
 
-                    request.clone({
+                  request = request.clone({
                             setHeaders: {
-                                authorization: `Bearer ${token}`,
+                              Authorization: `Bearer ${token}`,
                             }
                         })
 
                 }
             }
+
 
             return next.handle(request);
 
