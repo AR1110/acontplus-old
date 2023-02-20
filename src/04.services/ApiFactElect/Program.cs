@@ -1,3 +1,5 @@
+using BL.JwtAuthenticationManger;
+
 namespace ApiFactElect
 {
     public class Program
@@ -9,6 +11,8 @@ namespace ApiFactElect
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddCustomJwtAuthentication();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -47,7 +51,9 @@ namespace ApiFactElect
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

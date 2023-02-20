@@ -3,9 +3,9 @@
 
     app.controller('retencionAtsCtrl', retencionAtsCtrl);
 
-    retencionAtsCtrl.$inject = ['$scope', 'mainService', 'toastService', '$element', '$cookies', 'uuid2', '$window'];
+    retencionAtsCtrl.$inject = ['$scope', 'mainService', 'toastService', '$element', '$cookies', 'uuid2', '$window', 'FileSaver', 'Blob'];
 
-    function retencionAtsCtrl($scope, mS, tS, $element, $cookies, uuid2, $window) {
+    function retencionAtsCtrl($scope, mS, tS, $element, $cookies, uuid2, $window, FileSaver, Blob) {
         /**Initial Load */
 
         $scope.genericAnswer = [{ codigo: 'SI' }, { codigo: 'NO' }]
@@ -65,6 +65,10 @@
             return _getFecha;
         }
 
+        const _urlService = document.getElementById("urlGateway").value + 'api/'
+        const _idRol = document.getElementById("idRol").value
+
+
         $scope.initialLoad = () => {
             try {
                 let token = $cookies.get('ck_token')
@@ -76,7 +80,7 @@
                 }
                 //console.log($cookies.get('ck_token'))
                 let data = { tipo: 1 }
-                mS.getData('get', '/RetencionAts/Get?json=' + JSON.stringify(data)).then(
+                mS.getData('get', _urlService + 'RetencionAts/' + _idRol + '/' + JSON.stringify(data)).then(
                     response => {
                         if (response.code == '1') {
                             let tempArray = JSON.parse(response.payload)
@@ -321,6 +325,26 @@
             }
         }
 
+        $scope.docPreview = (item) => {
+            try {
+                if (!item) {
+                    tS.toastr('warning', 'Este documento no ha sido registrado desde el modulo de recepcion de documentos')
+                    return
+                }
+                mS.getData('get', _urlService + 'DocumentoRecibido/Preview/' + _idRol + '/' + item).then(
+                    response => {
+                        $('#facturaModal').modal('show')
+                        $('#bodyFactura').html(response.payload)
+                        console.log(response)
+                    }, error => {
+                        console.log(error)
+                    }
+                )
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
         /**Validations */
 
         $scope.validateDocSust = () => {
@@ -559,11 +583,13 @@
             $scope.retencion.valorRetenido = ''
             switch (item) {
                 case '1':
+                    $scope.retencion.baseImponible = $scope.taxesAdded.find(tax => tax.codImpuestoDocSustento == 2).baseImponible
                     $scope.porcentajeRetener = $scope.codigosRetencion
                     console.log($scope.codigosRetencion)
                     break
                 case '2':
-                    console.log('yes')
+                    //console.log('yes')
+                    $scope.retencion.baseImponible = $scope.taxesAdded.find(tax => tax.codImpuestoDocSustento == 2).valorImpuesto
                     $scope.porcentajeRetener = $scope.porcentajesRetIva
                     console.log($scope.porcentajesRetIva)
                     break
@@ -852,7 +878,7 @@
                     infoAdicional: JSON.stringify($scope.infoAdded)
                 }
                 console.log(data)
-                mS.getData('post', '/RetencionAts/Post', data).then(
+                mS.getData('post', _urlService + 'RetencionAts/' + _idRol, data).then(
                     response => {
                         if (response.code == '0') {
                             tS.toastr('warning', response.message)
@@ -890,6 +916,38 @@
             angular.forEach(cookies, function (value, key) {
                 $cookies.remove(key);
             });
+        }
+
+        //
+        $scope.exportPdf = (item) => {
+            try {
+                mS.getFile('get', _urlService + 'DocumentoRecibido/Export/' + _idRol + '/' + item).then(response => {
+                    if (response.id == 0) {
+                        tS.toastr('warning', response.message)
+                        return;
+                    }
+                    if (response.data.size > 0) {
+                        let serverData = new Blob([response.data], { type: response.headers()['content-type'] });
+                        // console.log(response.headers())
+                        // console.log(response)
+                        let fileName = response.headers()['content-disposition'].split(';')[1].split('=')[1];
+                        // let fileName = 'factura.pdf'
+                        FileSaver.saveAs(serverData, fileName);
+
+                        // let element = document.createElement('a');
+                        // let fileBlob = new Blob([response.data], {
+                        //     type: response.data.type
+                        // });
+                        // let url = URL.createObjectURL(fileBlob);
+                        // element.href = url;
+                        // element.setAttribute('download', 'fileName.xml');
+                        // document.body.appendChild(element); 
+                        // element.click();
+                    }
+                })
+            } catch (error) {
+                console.log(error);
+            }
         }
     }
 })(window.angular);
