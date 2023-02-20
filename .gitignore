@@ -90,3 +90,5 @@
 /src/03.business_logic/BL.Recepcion/bin/Release/net6.0
 /src/04.services/ApiRecepcion/bin/Release/net6.0
 /src/04.services/ApiFactElect/ApiFactElect.csproj.user
+/src/07.worker_services/WS_Article_Inventory/bin/Debug/net6.0
+/src/07.worker_services/WS_Article_Inventory/obj
