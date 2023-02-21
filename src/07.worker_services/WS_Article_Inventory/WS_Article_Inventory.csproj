@@ -14,5 +14,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\01.common\Common.Logs\Common.Logs.csproj" />
+    <ProjectReference Include="..\..\01.common\DataAccess\DataAccess.csproj" />
   </ItemGroup>
 </Project>

@@ -72,7 +72,19 @@ BEGIN
 	INNER JOIN dbo.EstadoPago      ep WITH (NOLOCK) ON ep.idEstadoPago = fc.idEstadoPago 
 	WHERE fcd.idArticulo = @idArticulo AND fc.estado = 1 AND fcd.estado = 1
 
-	UNION ALL 
+	INSERT INTO @table 
+	(
+	    
+	    idMedida
+	   ,codDoc
+	   ,fechaEmision
+	   ,cantidad
+	   ,precio
+	   ,precioCosto
+	   ,total
+	   ,movimiento
+	   ,particion
+	)
 
 	SELECT 
 	     ibd.idMedida
@@ -89,7 +101,19 @@ BEGIN
 	INNER JOIN dbo.EstadoPago      ep WITH (NOLOCK) ON ep.idEstadoPago    = ib.idEstadoPago 
 	WHERE idArticulo = @idArticulo AND ib.estado = 1 AND ibd.estado = 1
 
-	UNION ALL 
+	INSERT INTO @table 
+	(
+	    
+	    idMedida
+	   ,codDoc
+	   ,fechaEmision
+	   ,cantidad
+	   ,precio
+	   ,precioCosto
+	   ,total
+	   ,movimiento
+	   ,particion
+	) 
 
 	SELECT 
 	     lcd.idMedida
@@ -106,7 +130,19 @@ BEGIN
 	INNER JOIN dbo.EstadoPago          ep WITH (NOLOCK) ON ep.idEstadoPago = lc.idEstadoPago   
 	WHERE idArticulo = @idArticulo AND lc.estado = 1 AND lcd.estado = 1
 
-	UNION ALL 
+	INSERT INTO @table 
+	(
+	    
+	    idMedida
+	   ,codDoc
+	   ,fechaEmision
+	   ,cantidad
+	   ,precio
+	   ,precioCosto
+	   ,total
+	   ,movimiento
+	   ,particion
+	) 
 
 	SELECT 
 	     ncd.idMedida
@@ -123,7 +159,19 @@ BEGIN
 	INNER JOIN dbo.EstadoPago    ep WITH (NOLOCK) ON ep.idEstadoPago  = nc.idEstadoDocumento 
 	WHERE idArticulo = @idArticulo AND nc.estado = 1 AND ncd.estado = 1
 
-	UNION ALL
+	INSERT INTO @table 
+	(
+	    
+	    idMedida
+	   ,codDoc
+	   ,fechaEmision
+	   ,cantidad
+	   ,precio
+	   ,precioCosto
+	   ,total
+	   ,movimiento
+	   ,particion
+	)
 
 	SELECT 
 	    tbd.idMedida,
@@ -141,7 +189,19 @@ BEGIN
 	WHERE tbd.idArticulo = @idArticulo AND tbd.estado = 1
 
 	------------------------------SALIDAS---------------------------
-	UNION ALL
+	INSERT INTO @table 
+	(
+	    
+	    idMedida
+	   ,codDoc
+	   ,fechaEmision
+	   ,cantidad
+	   ,precio
+	   ,precioCosto
+	   ,total
+	   ,movimiento
+	   ,particion
+	)
 
 	SELECT 
 	     fd.idMedida
@@ -158,7 +218,19 @@ BEGIN
 	INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = f.idEstadoPago 
 	WHERE idArticulo = @idArticulo AND f.estado = 1 AND fd.estado = 1
 	 
-	UNION ALL 
+	INSERT INTO @table 
+	(
+	    
+	    idMedida
+	   ,codDoc
+	   ,fechaEmision
+	   ,cantidad
+	   ,precio
+	   ,precioCosto
+	   ,total
+	   ,movimiento
+	   ,particion
+	)
 
 	SELECT 
  	     ned.idMedida
@@ -175,7 +247,19 @@ BEGIN
 	INNER JOIN dbo.EstadoPago    ep WITH (NOLOCK) ON ep.idEstadoPago  = ne.idEstadoPago 
 	WHERE idArticulo = @idArticulo AND ne.estado = 1 AND ned.estado = 1
 
-	UNION ALL 
+	INSERT INTO @table 
+	(
+	    
+	    idMedida
+	   ,codDoc
+	   ,fechaEmision
+	   ,cantidad
+	   ,precio
+	   ,precioCosto
+	   ,total
+	   ,movimiento
+	   ,particion
+	) 
 
 	SELECT 
 		 a.idMedida
@@ -193,7 +277,19 @@ BEGIN
 	INNER JOIN dbo.EstadoPago             ep WITH (NOLOCK) ON ep.idEstadoPago           = np.idEstadoDocumento 
 	WHERE npd.idArticulo = @idArticulo AND np.estado = 1 AND npd.estado = 1
 
-	UNION ALL
+	INSERT INTO @table 
+	(
+	    
+	    idMedida
+	   ,codDoc
+	   ,fechaEmision
+	   ,cantidad
+	   ,precio
+	   ,precioCosto
+	   ,total
+	   ,movimiento
+	   ,particion
+	)
 
 	SELECT
 	    tbd.idMedida,
@@ -211,7 +307,19 @@ BEGIN
 	WHERE tbd.idArticulo = @idArticulo AND tbd.estado = 1
 
 	----------------------OTROS MOVIMIENTOS---------------------------------------------
-	UNION ALL
+	INSERT INTO @table 
+	(
+	    
+	    idMedida
+	   ,codDoc
+	   ,fechaEmision
+	   ,cantidad
+	   ,precio
+	   ,precioCosto
+	   ,total
+	   ,movimiento
+	   ,particion
+	)
 	
 	SELECT 
 	     cid.idMedida
@@ -241,7 +349,7 @@ BEGIN
 	   ,total
 	   ,movimiento
 	   ,particion
-	FROM @table 
+	FROM @table ORDER BY fechaEmision ASC
 
 END
 GO

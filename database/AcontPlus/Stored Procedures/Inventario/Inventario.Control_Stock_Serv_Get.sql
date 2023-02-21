@@ -21,13 +21,13 @@ GO
 IF OBJECT_ID(N'Inventario.Control_Stock_Serv_Get', N'P') IS NOT NULL
 DROP PROCEDURE Inventario.Control_Stock_Serv_Get 
 GO
-CREATE PROCEDURE Inventario.Control_Stock_Serv_Get
+CREATE PROCEDURE Inventario.Control_Stock_Serv_Get  @cantArticles INT
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-	SELECT TOP 10 idControlStock,idArticulo,idBodega FROM Inventario.ControlStock WITH (NOLOCK)
+	SELECT TOP (@cantArticles) idControlStock,idArticulo,idBodega FROM Inventario.ControlStock  WITH (NOLOCK) WHERE estado = 'PE'
 END
 GO
