@@ -13,8 +13,24 @@
       ]
     },
     {
+      "UpstreamPathTemplate": "/api/DocumentoRecibido",
+      "UpstreamHttpMethod": [ "Post" ],
+      "DownstreamPathTemplate": "/api/DocumentoRecibido",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 12786
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    {
       "UpstreamPathTemplate": "/api/DocumentoRecibido/{everything}",
-      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "UpstreamHttpMethod": [ "Get", "Put", "Delete", "Options" ],
       "DownstreamPathTemplate": "/api/DocumentoRecibido/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [

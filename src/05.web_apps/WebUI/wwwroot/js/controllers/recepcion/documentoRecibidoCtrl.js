@@ -259,7 +259,7 @@ function documentoRecibidoCtrl(
                 alert('No ha seleccionado ningun archivo');
                 return;
             }
-            mS.getDataFile(_urlService + 'DocumentoRecibido/', file).then(
+            mS.getDataFile(_urlService + 'DocumentoRecibido', file).then(
                 response => {
                     if (response.code == 0) {
                         hideLoader();
