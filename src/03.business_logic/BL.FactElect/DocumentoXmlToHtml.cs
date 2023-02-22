@@ -1,4 +1,5 @@
 ﻿using Domain.FactElect;
+using Helpers;
 
 namespace BL.FactElect
 {
@@ -17,9 +18,9 @@ namespace BL.FactElect
                                     <h6>" + data.infoTributaria.razonSocial + @"</h6>
                                     
                                     <h6>" + data.infoTributaria.nombreComercial + @"</h6>
-                                    
+                                    <br>
                                     <h6><label>Dirección Matriz:</label> " + data.infoTributaria.dirMatriz + @"</h6>
-                                    
+                                    <br>
                                     " + GetInfoTrib(data) + @"
                                 </div>
                             </div>
@@ -33,7 +34,7 @@ namespace BL.FactElect
                                         <label>No.</label>
                                         " + data.infoTributaria.estab + @"-" + data.infoTributaria.ptoEmi + @"-" + data.infoTributaria.secuencial + @"
                                     </h5>
-                                    <label>NÚMERO DE AUTORIZACIÓN</label>
+                                    <label>NÚMERO DE AUTORIZACIÓN</label><br>
                                     <small>
                                         " + data.infoTributaria.claveAcceso + @"
                                     </small>
@@ -43,15 +44,16 @@ namespace BL.FactElect
                                     </small>
                                     <h5>
                                         <label>AMBIENTE:</label>
-                                         " + data.infoTributaria.ambiente + @"
+                                         " + (data.infoTributaria.ambiente == "1" ? "PRUEBAS" : "PRODUCCIÓN") + @"
                                     </h5>
                                     <h5>
                                         <label>EMISIÓN:</label>
-                                        "+ data.infoTributaria.tipoEmision + @"
+                                        "+ (data.infoTributaria.tipoEmision == "1" ? "NORMAL": "") + @"
                                     </h5>
                                     <label>CLAVE DE ACCESSO</label><br />
-                                    <img id=""barcodeImg"" src="""" alt="""">
-                                    <small> " + data.infoTributaria.claveAcceso + @"</small>
+<div class=""text-center"">
+                                    <img id=""barcodeImg"" src="+ $"data:image/png;base64,{Convert.ToBase64String(BarcodeGen.Create(data.infoTributaria.claveAcceso), 0 , BarcodeGen.Create(data.infoTributaria.claveAcceso).Length)}" + @" alt="""" align=""center"" height=""60"" width=""500"">
+                                    <br><small> " + data.infoTributaria.claveAcceso + @"</small></div>
                                 </div>
 
                             </div>
@@ -60,9 +62,8 @@ namespace BL.FactElect
                     </div> " + GetInfoComprobante(data) + @"
                     </div>
                     <div class=""row"">
-                        <div class=""col-xl-7 col-lg-7 col-md-7 col-sm-7 col-7"">
-                           " + GetInfoAdicional(data) + @"
-                        </div>" + GetTotals(data) + @"
+                        
+                           " + GetInfoAdicional(data) + GetTotals(data) + @"
                         
                     </div>
                     <div class=""row"">
@@ -85,7 +86,7 @@ namespace BL.FactElect
                                         <label>Dirección Sucursal: </label>
                                         " + data.infoFactura.dirEstablecimiento + @"
                                     </h6>
-                                    
+                                    <br>
                                     <h6>
                                         <label>
                                             Contribuyente
@@ -358,7 +359,7 @@ namespace BL.FactElect
             {
                 return string.Empty;
             }
-            string info = @"<div class=""card border border-dark rounded"" ng-show=""infoAdicional.length > 0"">
+            string info = @"<div class=""col-xl-7 col-lg-7 col-md-7 col-sm-7 col-7""><div class=""card border border-dark rounded"" ng-show=""infoAdicional.length > 0"">
                                 <div class=""card-body"">
 
                                                 <table class=""table table-borderless"">
@@ -375,7 +376,8 @@ namespace BL.FactElect
                 <td>" + item.valor + @"</td ></tr>";
             }
 
-            info += @"</div></div></tbody></table>";
+            info += @"</tbody></table></div></div>
+                        </div>";
             return info;
         }
         public static string GetTotals(ComprobanteElectronico data)

@@ -259,7 +259,7 @@ function documentoRecibidoCtrl(
                 alert('No ha seleccionado ningun archivo');
                 return;
             }
-            mS.getDataFile(_urlService + 'DocumentoRecibido/', file).then(
+            mS.getDataFile(_urlService + 'DocumentoRecibido', file).then(
                 response => {
                     if (response.code == 0) {
                         hideLoader();
@@ -514,7 +514,7 @@ function documentoRecibidoCtrl(
             }
         }
     }
-
+    $scope.customDetailTemp = []
     $scope.getId = () => {
         try {
             showLoader();
@@ -539,7 +539,32 @@ function documentoRecibidoCtrl(
 
                             $scope.totalTaxes = $scope.fullComprobante.infoFactura.totalImpuestos;
                             $scope.setTaxes()
-                            // console.log($scope.totalTaxesRide)
+                            for (const det of $scope.totalTaxes) {
+                                // if (det.codigo == '2' && (det.codigoPorcentaje == '2')) {
+
+                                // }
+                                if (Number(det.baseImponible) > 0) {
+                                    $scope.customDetailTemp.push(
+                                        {
+                                            idDocumento: $scope.selected[0].idDocumento,
+                                            idArticulo: 0,
+                                            cantidad: 1,
+                                            codigo: det.codigo, //impuesto
+                                            codigoPorcentaje: det.codigoPorcentaje, //porcentaje impuesto
+                                            valor: det.valor, //valor impuesto
+                                            codigoPrincipal: '',
+                                            codigoAuxiliar: '',
+                                            descripcion: '',
+                                            precioUnitario: det.baseImponible,
+                                            precioTotalSinImpuesto: det.baseImponible,
+                                            descuento: (det.descuentoAdicional == '' ? 0.00 : Number(det.descuentoAdicional)),
+                                            total: ((Number(det.baseImponible) - Number(det.descuentoAdicional)) + Number(det.valor)).toFixed(2)
+                                        }
+                                    )
+                                }
+                            }
+                            console.log($scope.totalTaxes)
+                            console.log($scope.customDetailTemp)
                             $scope.getTempDetails();
 
                             // $scope.tempDetail = $scope.fullComprobante.detalles;
@@ -788,7 +813,7 @@ function documentoRecibidoCtrl(
 
     }
 
-    $scope.selectArticleSearch = (item) => {
+    $scope.selectArticleSearch = (item, itemDetail) => {
         try {
             mS.getData('get', '/Articulo/GetId?id=' + item.idArticulo).then(
                 response => {
@@ -796,10 +821,13 @@ function documentoRecibidoCtrl(
                         $scope.articleFinded = { descripcion: '' }
                         const results = JSON.parse(response.payload)
                         const objArticle = results[0][0]
-                        $scope.customDetail.idArticulo = item.idArticulo
-                        $scope.customDetail.codigoPrincipal = objArticle.codigo
-                        $scope.customDetail.codigoAuxiliar = objArticle.codigoAuxiliar
-                        $scope.customDetail.descripcion = objArticle.descripcion
+                        // $scope.customDetail.idArticulo = item.idArticulo
+                        // $scope.customDetail.codigoPrincipal = objArticle.codigo
+                        // $scope.customDetail.codigoAuxiliar = objArticle.codigoAuxiliar
+                        // $scope.customDetail.descripcion = objArticle.descripcion
+                        itemDetail.codigoPrincipal = objArticle.codigo
+                        itemDetail.codigoAuxiliar = objArticle.codigoAuxiliar
+                        itemDetail.descripcion = objArticle.descripcion
                     }
                 }
                 , error => {
@@ -844,10 +872,10 @@ function documentoRecibidoCtrl(
             let method = '', url = ''
             if (tipo == 1) {
                 method = "post"
-                url = _urlService + "Doc_Rec_DetailTemp/" + _idRol + '/'
+                url = _urlService + "Doc_Rec_DetailTemp?json="
             } else {
                 method = "put"
-                url = _urlService + "Doc_Rec_DetailTemp/" + _idRol + '/'
+                url = _urlService + "Doc_Rec_DetailTemp?json="
             }
             mS.getData(method, url + JSON.stringify(data)).then(
                 response => {
@@ -1219,10 +1247,10 @@ function documentoRecibidoCtrl(
             if (result.value) {
                 $scope.tempDetail = []
                 $scope.showFormCustomDetails = true
-                $scope.customDetail.cantidad = 1
-                $scope.customDetail.precioUnitario = $scope.infoComprobante.totalSinImpuestos
-                $scope.customDetail.descuento = 0.00 //$scope.infoComprobante.totalDescuento
-                $scope.customDetail.total = $scope.infoComprobante.importeTotal
+                // $scope.customDetail.cantidad = 1
+                // $scope.customDetail.precioUnitario = $scope.infoComprobante.totalSinImpuestos
+                // $scope.customDetail.descuento = 0.00 //$scope.infoComprobante.totalDescuento
+                // $scope.customDetail.total = $scope.infoComprobante.importeTotal
                 $scope.$digest();
             }
         })
@@ -1236,34 +1264,51 @@ function documentoRecibidoCtrl(
                 }
             }
         }
-        if (!$scope.customDetail.cantidad || $scope.customDetail.cantidad == 0) {
-            tS.toastr('warning', 'Por favor ingrese una cantidad valida');
-            return;
-        }
-        if (!$scope.customDetail.codigoPrincipal) {
-            tS.toastr('warning', 'Por favor ingrese un código');
-            return;
-        }
-        if (!$scope.customDetail.descripcion) {
-            tS.toastr('warning', 'Por favor ingrese una descripción');
-            return;
-        }
-        if (!$scope.customDetail.precioUnitario || $scope.customDetail.precioUnitario == 0) {
-            tS.toastr('warning', 'Por favor ingrese un precio unitario valido');
-            return;
-        }
 
-        $scope.tempDetail.push({
-            idDocumento: $scope.selected[0].idDocumento,
-            idArticulo: $scope.customDetail.idArticulo,
-            cantidad: $scope.customDetail.cantidad,
-            codigoPrincipal: $scope.customDetail.codigoPrincipal,
-            codigoAuxiliar: $scope.customDetail.codigoAuxiliar,
-            descripcion: $scope.customDetail.descripcion,
-            precioUnitario: $scope.customDetail.precioUnitario,
-            descuento: $scope.customDetail.descuento,
-            total: $scope.customDetail.total
+        angular.forEach($scope.customDetailTemp, (value, key) => {
+            //console.log(key, value)
+            if (!value.codigoPrincipal) {
+                tS.toastr('warning', 'Por favor ingrese un código');
+                return;
+            }
+            if (!value.descripcion) {
+                tS.toastr('warning', 'Por favor ingrese una descripción');
+                return;
+            }
+            if (!value.precioUnitario || value.precioUnitario == 0) {
+                tS.toastr('warning', 'Por favor ingrese un precio unitario valido');
+                return;
+            }
+
         })
+        // if (!$scope.customDetail.cantidad || $scope.customDetail.cantidad == 0) {
+        //     tS.toastr('warning', 'Por favor ingrese una cantidad valida');
+        //     return;
+        // }
+        // if (!$scope.customDetail.codigoPrincipal) {
+        //     tS.toastr('warning', 'Por favor ingrese un código');
+        //     return;
+        // }
+        // if (!$scope.customDetail.descripcion) {
+        //     tS.toastr('warning', 'Por favor ingrese una descripción');
+        //     return;
+        // }
+        // if (!$scope.customDetail.precioUnitario || $scope.customDetail.precioUnitario == 0) {
+        //     tS.toastr('warning', 'Por favor ingrese un precio unitario valido');
+        //     return;
+        // }
+
+        // $scope.tempDetail.push({
+        //     idDocumento: $scope.selected[0].idDocumento,
+        //     idArticulo: $scope.customDetail.idArticulo,
+        //     cantidad: $scope.customDetail.cantidad,
+        //     codigoPrincipal: $scope.customDetail.codigoPrincipal,
+        //     codigoAuxiliar: $scope.customDetail.codigoAuxiliar,
+        //     descripcion: $scope.customDetail.descripcion,
+        //     precioUnitario: $scope.customDetail.precioUnitario,
+        //     descuento: $scope.customDetail.descuento,
+        //     total: $scope.customDetail.total
+        // })
 
         //let totalCustomDetails = 0.00;
         //angular.forEach($scope.tempDetail, function (value, key) {
@@ -1275,7 +1320,7 @@ function documentoRecibidoCtrl(
         //    return;
         //}
 
-        $scope.saveArticleTemp(1, $scope.tempDetail)
+        $scope.saveArticleTemp(1, $scope.customDetailTemp)
     }
     $scope.cancelCustomDetails = function () {
         $scope.showFormCustomDetails = false;
@@ -1350,7 +1395,7 @@ function documentoRecibidoCtrl(
 
             }
             console.log(data)
-            mS.getData('post', _urlService + 'Factura/' + '?json=' + JSON.stringify(data)).then(response => {
+            mS.getData('post', _urlService + 'Factura?json=' + JSON.stringify(data)).then(response => {
                 if (response.code == '0') {
                     tS.toastr('warning', response.message)
                 }
@@ -1377,5 +1422,10 @@ function documentoRecibidoCtrl(
         $scope.showFormCustomDetails = false
     }
 
+    $scope.closeMainModal = () => {
+        $scope.fullComprobante = ''
+        $scope.customDetailTemp = []
+        $scope.modalRef.close()
+    }
     //**Config */
 }

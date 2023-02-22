@@ -42,7 +42,7 @@ namespace ApiRecepcion.Controllers
             }
         }
 
-        [HttpPost("{json}")]
+        [HttpPost]
         public async Task<IActionResult> Post(string json)
         {
             LogWriter _logs = new LogWriter(_configuration);
@@ -70,7 +70,7 @@ namespace ApiRecepcion.Controllers
             }
         }
 
-        [HttpPut("{json}")]
+        [HttpPut]
         public async Task<IActionResult> Put(string json)
         {
             LogWriter _logs = new LogWriter(_configuration);
