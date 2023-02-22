@@ -54,7 +54,7 @@ namespace AdminUI.Controllers
 
         [HttpDelete]
         [Route("Delete/{id}")]
-        public async Task<IActionResult> Put(string id)
+        public async Task<IActionResult> Delete(string id)
         {
             return Ok(await _mS.DeleteAsyn(id));
         }

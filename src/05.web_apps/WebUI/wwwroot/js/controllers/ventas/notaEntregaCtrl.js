@@ -588,7 +588,7 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
 
 
 
-    $scope.askToSendEmail = async (ne)=> {
+    $scope.askToSendEmail = async (item)=> {
         let { isConfirmed } = await Swal.fire({
             title: '<small>Enviar por Correo</small>',
             icon: 'warning',
@@ -600,19 +600,19 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
         });
 
         if (isConfirmed) {
-            $scope.getSendEmail(ne);            
+            $scope.getSendEmail(item);            
         }
     }
 
 
     
-    $scope.getSendEmail = function (ne) {
+    $scope.getSendEmail = function (item) {
         try {
             _fS.showLoaderSendEmail();
             let format = 'pdf';
             let dataParms = {
                 codEstab: item.codEstab,
-                idNotaEntrega: ne.idNotaEntrega        
+                idNotaEntrega: item.idNotaEntrega        
             }
            
             const parameters = {

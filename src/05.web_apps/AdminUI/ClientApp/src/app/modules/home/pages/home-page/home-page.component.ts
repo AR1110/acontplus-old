@@ -1,5 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Inject, inject } from '@angular/core';
+import { Component, Inject, ViewChild, inject } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 @Component({
   selector: 'app-home-page',
   templateUrl: './home-page.component.html',
@@ -7,13 +10,15 @@ import { Component, Inject, inject } from '@angular/core';
 })
 export class HomePageComponent {
 
-  title = "AcontPlus"
+  displayedColumns:string[]=['index', 'ruc', 'razonSocial', 'nombreComercial', 'correo', 'direccion',  'estado', 'op'];
+  dataSource!: MatTableDataSource<any>
+
+  @ViewChild(MatPaginator) paginator!:MatPaginator;
+  @ViewChild(MatSort) sort!:MatSort;
 
 
-  constructor( @Inject("BASE_URL") private baseUrl: string, private http: HttpClient){
-    http.get(baseUrl + 'api/Entidad/Get/' + JSON.stringify({test: ''})).subscribe(response=>{
 
-    })
+  constructor( ){
   }
   ngOnInit(): void {
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.

@@ -367,16 +367,18 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl{
     async getInvoiceByCustomer(){
         try {
             showLoader();
-            let json = {                
+            let json = {     
                 checkBoxNotaCredito: true,     
                 byNotaCredito: false,           
                 checkBoxEstado: true,
-                byEstado: 13, //Autorizadas
+                byEstado: 15, //Autorizadas 13 en desarrollo
                 checkBoxCliente: true,
                 byCliente: this.cliente.idCliente,
                 checkBoxDefault: false,
                 codEstab: this.data.codEstab
             }
+
+            console.log(json)
             this._mS.getData('get', '/FacturaVenta/Get?json=' + JSON.stringify(json)).then(response => {
                 if (response.code === "0") {                                      
                     console.warn(response)

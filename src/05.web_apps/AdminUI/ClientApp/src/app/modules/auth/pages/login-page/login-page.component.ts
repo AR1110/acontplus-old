@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { AuthService } from '@modules/auth/services/auth.service';
 import { Router } from '@angular/router';
 import { FormControl, FormGroup, Validators} from '@angular/forms';
-import { JWTTokenService } from '../../services';
+import { JWTTokenService } from '@app/core/services/jwt-token.service';
+import { AuthApiService } from '../../data/services/auth-api.service';
+import { AuthModel } from '../../domain/models/auth.model';
 
 
 @Component({
@@ -17,9 +18,9 @@ export class LoginPageComponent {
     formLogin: FormGroup = new FormGroup({})
 
     constructor(
-        private authSvc: AuthService,
-        private jwtTokenSvc: JWTTokenService,
-        private router: Router
+      private authApiSvc: AuthApiService,
+      private jwtTokenSvc: JWTTokenService,
+      private router: Router
     ){}
 
 
@@ -39,10 +40,10 @@ export class LoginPageComponent {
 
         this.formLogin = new FormGroup(
         {
-            Username: new FormControl('', [
+            username: new FormControl('', [
                 Validators.required
             ]),
-            Password: new FormControl('', [
+            password: new FormControl('', [
                 Validators.required,
                 Validators.minLength(3),
                 Validators.maxLength(12)
@@ -52,19 +53,13 @@ export class LoginPageComponent {
 
 
     login(){
-
-        let {Username, Password} = this.formLogin.value;
-
-        this.authSvc.login(Username, Password).subscribe(response=>{
-
-            let {jwtToken }= response;
-
-            if(!jwtToken){
+      this.authApiSvc.login( this.formLogin.value as AuthModel).subscribe(response=>{
+           if(!response.access_token){
                 console.log(response)
                 return
             }
 
-            this.jwtTokenSvc.saveSession(jwtToken)
+            this.jwtTokenSvc.saveSession(response.access_token)
 
             this.router.navigate(['/', 'home'])
 

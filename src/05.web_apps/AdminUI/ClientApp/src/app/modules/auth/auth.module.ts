@@ -14,6 +14,6 @@ import { MaterialModule } from '@app/material.module';
     CommonModule,
     AuthRoutingModule,
     MaterialModule
-  ]
+  ],
 })
 export class AuthModule { }

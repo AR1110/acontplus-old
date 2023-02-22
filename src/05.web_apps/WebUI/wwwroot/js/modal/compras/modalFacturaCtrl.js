@@ -612,7 +612,8 @@ export class ModalFacturaDetalleCtrl extends ModalFacturaCtrl{
         
             const parameters = {               
                 dataParams: JSON.stringify(dataParms)
-            }                   
+            }   
+            console.log(parameters)                
             this._commonSvc.getReportDynamic({parameters, format})
         } catch (error) {
             console.log(error)

@@ -77,7 +77,7 @@ BEGIN
 	   ,predeterminada
 	   ,codigo 
 	FROM Tarifa WITH (NOLOCK) 
-	WHERE idEntidad = 4 AND estado = 1
+	WHERE idEntidad = @idEntidad AND estado = 1
 
 	SELECT 
 		idTiempoCredito

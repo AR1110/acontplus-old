@@ -616,6 +616,12 @@ export class CommonService {
 
     
     //--------------------------------------METODOS RELACIONADOS AL TIPO DOCUMENTO---------------------------
+
+
+    getDataFormVenta(){
+        
+    }
+
     async generarNroDocumento({ puntoEmision, idPuntoEmision, nroDocumento, codigoDocumento, tipoDoc='C'}) {
         let nroDocumentoSecuencial = null;                   
         let url = tipoDoc === 'C' ? 'GenerarNroDocCompra' : 'GenerarNroDocVenta';

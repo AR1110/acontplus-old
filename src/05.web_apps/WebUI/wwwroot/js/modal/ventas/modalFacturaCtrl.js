@@ -3,12 +3,20 @@
 import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.32";
 
 class ModalFacturaCtrl extends ModalBaseCtrl{
-    constructor({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS}){
+    
+    constructor({$scope, $timeout, $uibModalInstance, _mS,_storageSvc, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS}){
         super({_mS, _commonSvc, _modalSvc, _nombreModalConst,  _tS,})
+       
         const self = this;
+       
+        this._storageSvc = _storageSvc;
+
         this.$scope = $scope;
+       
         this.$timeout = $timeout;
+       
         this.$uibModalInstance = $uibModalInstance;
+       
         this._fS = _fS;
 
         this.TIPO_DOC_FV = _commonSvc.tipoDoc['FV']
@@ -109,7 +117,6 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
     async setItemArticuloEnDetalle(dataArticulo){        
         try {
             const self = this;
-            const columnDefs = this.gridOptions.columnDefs;
                  
             this.dataArticulo = dataArticulo;
 
@@ -174,9 +181,6 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
         let entity = self.gridOptions.data[index]; 
     
         let dataMedida = medidas[0];
-
-        console.log(entity)
-        console.log(this.actividadTipoIva)
             
         entity.idArticulo           = articulo.idArticulo;
         entity.codigo               = articulo.codigoArticulo;                
@@ -271,6 +275,8 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
 
 
     async closeModal(){
+
+
         if(this.TIPO_REGISTRO==='NUEVO' && this.gridOptions.data.length>0){
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
@@ -302,16 +308,37 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
                 if(result.isDenied){
                     this.$uibModalInstance.close();
                 }
-
-                
-
-                if(result.isDismissed){
-                }
                 
             })
             return 
         }
         this.$uibModalInstance.close();        
+    }
+
+    askToSaveStorage(){
+        Swal.fire({
+            title: '<small>Apartar Documento</small>',
+            input: 'text',
+            inputAttributes: {
+              autocapitalize: 'off'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Apartar',
+            cancelButtonText: 'No, cancelar',
+            showLoaderOnConfirm: true,
+            inputValidator: (value) => {
+                if (!value) {                    
+                    return 'Ingrese la descripción!'
+                }   
+                // if(localStorage.getItem('detailInvoice')){
+                //     let getStorageDocDetalle = JSON.parse(localStorage.getItem('detailInvoice'));
+                //     if(getStorageDocDetalle[value]){
+                //         return 'Ya existe Documento Apartado con esta descripción';
+                //     }
+                // }                        
+            },           
+        })        
+
     }
 
     async saveLocalStorage(){
@@ -404,13 +431,19 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
 
 
 export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params']
+    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'storageService',  'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params']
 
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params){
-        super({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS})
+    constructor($scope, $timeout, $uibModalInstance, _mS, _storageSvc, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params){
+        super({$scope, $timeout, $uibModalInstance, _mS, _storageSvc, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS})
         const self = this;
-        let {TIPO_REGISTRO} = _params;        
+
+        this._params = _params;
+
+        let {TIPO_REGISTRO} = _params;  
+    
+
         this.TIPO_REGISTRO = TIPO_REGISTRO;
+        
         this.CELL_TEMPLATE_OPTION = `<a  ng-click="grid.appScope.$ctrl.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
 
         <a  ng-click="grid.appScope.$ctrl.openModalArticle(row.entity, 2)" id="btnEditArticuloDetalle" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >
@@ -422,15 +455,13 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
     
     async $onInit(){
         try { 
-            showLoader();           
-            let resultsDataForm = await this.initiload();            
-            
-            //6 articulo 
-            // if(resultsDataForm[6].length>0){
-            //     this.articuloDefault = resultsDataForm[6][0]
-            // }
+            showLoader();
+                           
+            let resultsDataForm = this._params.dataForm;          
+           
 
             let {UiGridOptions} = await import('./../factElect/uiGridOptions.js' + CHANGE_VERSION());
+          
             this.establecimientos = resultsDataForm[0];
 
             if(this.establecimientos.length>0){
@@ -514,15 +545,16 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
                 this.restoreDetailStorage();
             }
             
+            hideLoader();
             this.$scope.$apply();
 
         } catch (error) {
-            
+            hideLoader();
             console.error(error)
 
         }finally{
 
-            hideLoader();
+           
         }
     }
 

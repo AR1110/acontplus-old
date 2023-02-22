@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 import {HttpRequest, HttpHandler, HttpEvent, HttpInterceptor} from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { JWTTokenService } from '@app/modules';
+import { JWTTokenService } from '../services/jwt-token.service';
 
 
 @Injectable()
@@ -19,7 +19,7 @@ export class AuthInterceptor implements HttpInterceptor {
             if(isLoggedIn){
 
                 let token = this.jwtTokenSvc.getJWTToken();
-                console.log(token)
+                
                 if(token){
 
                   request = request.clone({

@@ -4,6 +4,8 @@ Author: Themedesigner
 Email: niravjoshi87@gmail.com
 File: scss
 */
+// Variables
+
 $bodyfont: 'Poppins', sans-serif;
 $headingfont: 'Poppins', sans-serif;
 
@@ -23,7 +25,8 @@ $headingfont: 'Poppins', sans-serif;
 $primary: mat.define-palette(mat.$indigo-palette, 500);
 $accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
 $warn: mat.define-palette(mat.$pink-palette, 500);
-// $background: map-get($theme, background);
+// $background: mat.get($theme, 50);
+// map-get($theme, background);
 // $foreground: map-get($theme, foreground);
 
 $custom-typography: mat.define-typography-config(
@@ -50,8 +53,8 @@ $theme: mat.define-light-theme(
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
 // Default Theme
- @include mat.core-theme($theme);
-// @include mat.all-component-themes($theme);
+
+@include mat.all-component-themes($theme);
 
 /*Theme Colors*/
 
@@ -78,7 +81,7 @@ $success: #26c6da;
 $warning: #ffb22b;
 $primary: #7460ee;
 $info: #1e88e5;
-$inverse: #2f3d4a;
+$inverse: #f2f5f8;
 $muted: #99abb4;
 $dark: #263238;
 $light: #f2f4f8;

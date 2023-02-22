@@ -1,9 +1,19 @@
 ﻿
 app.controller('facturaVentaCtrl', facturaVentaCtrl)
 
-facturaVentaCtrl.$inject = ['$scope', '$filter', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario']
+facturaVentaCtrl.$inject = [
+    '$scope', 
+    '$filter', 
+    'mainService', 
+    'commonService', 
+    'documentoVentaService', 
+    'modalService', 
+    'nombreModal', 
+    'toastService', 
+    'formulario'
+]
 
-function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS){
+function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modalSvc, _nombreModalConst, _tS, _fS){
     let accion = JSON.parse(localStorage.getItem("accion"));
     if (accion === null) {
         location.href = "/Home/Index";
@@ -98,6 +108,7 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMo
         let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_NUEVO['controller']];
         let template   = MODAL_NUEVO['template'];
         let params = {
+            dataForm: await _docVentaSvc.initiload(),
             TIPO_REGISTRO: 'NUEVO'
         }
 
