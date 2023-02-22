@@ -18,16 +18,27 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-IF OBJECT_ID(N'Inventario.Control_Stock_Serv_Get_Id', N'P') IS NOT NULL
-DROP PROCEDURE Inventario.Control_Stock_Serv_Get_Id 
+IF OBJECT_ID(N'Inventario.Control_Stock_Serv_Delete', N'P') IS NOT NULL
+DROP PROCEDURE Inventario.Control_Stock_Serv_Delete 
 GO
-CREATE PROCEDURE Inventario.Control_Stock_Serv_Get_Id @id INT
+CREATE PROCEDURE Inventario.Control_Stock_Serv_Delete @id INT
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
+	BEGIN TRY 
+		BEGIN TRAN 
+			DELETE FROM Inventario.ControlStock WHERE idControlStock = @id
+		COMMIT TRAN 
+	END TRY 
 
-
+	BEGIN CATCH
+		IF @@TRANCOUNT > 0 
+		BEGIN
+			ROLLBACK TRAN; 
+		END
+		SELECT ERROR_MESSAGE() as 'message'
+	END CATCH
 END
 GO
