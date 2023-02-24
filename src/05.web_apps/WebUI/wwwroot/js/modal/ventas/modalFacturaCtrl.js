@@ -4,12 +4,10 @@ import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.32";
 
 class ModalFacturaCtrl extends ModalBaseCtrl{
     
-    constructor({$scope, $timeout, $uibModalInstance, _mS,_storageSvc, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS}){
+    constructor({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS}){
         super({_mS, _commonSvc, _modalSvc, _nombreModalConst,  _tS,})
        
         const self = this;
-       
-        this._storageSvc = _storageSvc;
 
         this.$scope = $scope;
        
@@ -431,10 +429,10 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
 
 
 export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'storageService',  'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params']
+    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params']
 
-    constructor($scope, $timeout, $uibModalInstance, _mS, _storageSvc, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params){
-        super({$scope, $timeout, $uibModalInstance, _mS, _storageSvc, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS})
+    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params){
+        super({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS})
         const self = this;
 
         this._params = _params;

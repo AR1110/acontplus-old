@@ -572,12 +572,14 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
         let parameters = {
             isPrint: 1,
             idDocument: item.idNotaEntrega,
+            idDocument: item.idNotaEntrega,
             idTipoDocumento : item.idTipoDocumento,
             codEstab: item.codEstab,
             codDoc: TIPO_DOC_NE.codigo,
             nroIdentificacion : item.nroIdentificacion,
+            codigo: 'RNEPT'
         }
-               
+        
         _commonSvc.askToReportII({
             parameters: JSON.stringify(parameters)
         })
