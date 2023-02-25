@@ -48,6 +48,8 @@ function facturaCompraCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreM
     $scope.getFacturas = async()=>{
         try {
             showLoader();
+            $scope.facturas = [];
+            console.log($scope.dataSearch)
             await _mS.getData('get', '/FacturaCompra/Get?json=' + JSON.stringify($scope.dataSearch)).then(response=>{
                 if(response.code==="0"){
                     console.warn(response)                    
@@ -270,26 +272,24 @@ function facturaCompraCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreM
 
 
 
-    $scope.retencionAutomatica = async(item)=>{
-        _form.sweetAlert('warning', 'La Opción no esta disponible, realice desde modulo de Retención de Compra')
-       
-        // let {MODAL_FILE_CTRL, MODAL_RETENCION_AUTOMATICA} = _nombreModalConst.retencion_compra;
-        // let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_RETENCION_AUTOMATICA['controller']]
-        // let template   = MODAL_RETENCION_AUTOMATICA['template'];
-        // let params = {        
-        //     data: {
-        //         ...item,
-        //         id: item.idFacturaCompra,                
-        //         numeroIdentificacion: item.nroIdentificacion
-        //     },            
-        // }    
+    $scope.retencionAutomatica = async(item)=>{               
+        let {MODAL_FILE_CTRL, MODAL_RETENCION_AUTOMATICA} = _nombreModalConst.retencion_compra;
+        let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_RETENCION_AUTOMATICA['controller']]
+        let template   = MODAL_RETENCION_AUTOMATICA['template'];
+        let params = {        
+            data: {
+                ...item,
+                id: item.idFacturaCompra,                
+                numeroIdentificacion: item.nroIdentificacion
+            },            
+        }    
         
-        // _modalSvc.openModalCustom({
-        //     controller,
-        //     template,
-        //     size:'xl',
-        //     params            
-        // })
+        _modalSvc.openModalCustom({
+            controller,
+            template,
+            size:'xl',
+            params            
+        })
     }
 
 

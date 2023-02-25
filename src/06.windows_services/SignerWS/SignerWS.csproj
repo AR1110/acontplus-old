@@ -53,43 +53,43 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="commons-logging-1.1">
-      <HintPath>..\..\..\SignatureLibrary\commons-logging-1.1.dll</HintPath>
+      <HintPath>..\..\..\libraries\XadES_BES\commons-logging-1.1.dll</HintPath>
     </Reference>
     <Reference Include="IKVM.OpenJDK.Core">
-      <HintPath>..\..\..\SignatureLibrary\IKVM.OpenJDK.Core.dll</HintPath>
+      <HintPath>..\..\..\libraries\XadES_BES\IKVM.OpenJDK.Core.dll</HintPath>
     </Reference>
     <Reference Include="IKVM.OpenJDK.Security">
-      <HintPath>..\..\..\SignatureLibrary\IKVM.OpenJDK.Security.dll</HintPath>
+      <HintPath>..\..\..\libraries\XadES_BES\IKVM.OpenJDK.Security.dll</HintPath>
     </Reference>
     <Reference Include="IKVM.OpenJDK.Text">
-      <HintPath>..\..\..\SignatureLibrary\IKVM.OpenJDK.Text.dll</HintPath>
+      <HintPath>..\..\..\libraries\XadES_BES\IKVM.OpenJDK.Text.dll</HintPath>
     </Reference>
     <Reference Include="IKVM.OpenJDK.Util">
-      <HintPath>..\..\..\SignatureLibrary\IKVM.OpenJDK.Util.dll</HintPath>
+      <HintPath>..\..\..\libraries\XadES_BES\IKVM.OpenJDK.Util.dll</HintPath>
     </Reference>
     <Reference Include="IKVM.OpenJDK.XML.API">
-      <HintPath>..\..\..\SignatureLibrary\IKVM.OpenJDK.XML.API.dll</HintPath>
+      <HintPath>..\..\..\libraries\XadES_BES\IKVM.OpenJDK.XML.API.dll</HintPath>
     </Reference>
     <Reference Include="IKVM.OpenJDK.XML.Parse">
-      <HintPath>..\..\..\SignatureLibrary\IKVM.OpenJDK.XML.Parse.dll</HintPath>
+      <HintPath>..\..\..\libraries\XadES_BES\IKVM.OpenJDK.XML.Parse.dll</HintPath>
     </Reference>
     <Reference Include="IKVM.Runtime">
-      <HintPath>..\..\..\SignatureLibrary\IKVM.Runtime.dll</HintPath>
+      <HintPath>..\..\..\libraries\XadES_BES\IKVM.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="MITyCLibAPI-1.0.4">
-      <HintPath>..\..\..\SignatureLibrary\MITyCLibAPI-1.0.4.dll</HintPath>
+      <HintPath>..\..\..\libraries\XadES_BES\MITyCLibAPI-1.0.4.dll</HintPath>
     </Reference>
     <Reference Include="MITyCLibCert-1.0.4">
-      <HintPath>..\..\..\SignatureLibrary\MITyCLibCert-1.0.4.dll</HintPath>
+      <HintPath>..\..\..\libraries\XadES_BES\MITyCLibCert-1.0.4.dll</HintPath>
     </Reference>
     <Reference Include="MITyCLibTrust-1.0.4">
-      <HintPath>..\..\..\SignatureLibrary\MITyCLibTrust-1.0.4.dll</HintPath>
+      <HintPath>..\..\..\libraries\XadES_BES\MITyCLibTrust-1.0.4.dll</HintPath>
     </Reference>
     <Reference Include="MITyCLibTSA-1.0.4">
-      <HintPath>..\..\..\SignatureLibrary\MITyCLibTSA-1.0.4.dll</HintPath>
+      <HintPath>..\..\..\libraries\XadES_BES\MITyCLibTSA-1.0.4.dll</HintPath>
     </Reference>
     <Reference Include="MITyCLibXADES-1.0.4">
-      <HintPath>..\..\..\SignatureLibrary\MITyCLibXADES-1.0.4.dll</HintPath>
+      <HintPath>..\..\..\libraries\XadES_BES\MITyCLibXADES-1.0.4.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -104,7 +104,7 @@
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml" />
     <Reference Include="xmlsec-1.4.2-ADSI-1.0">
-      <HintPath>..\..\..\SignatureLibrary\xmlsec-1.4.2-ADSI-1.0.dll</HintPath>
+      <HintPath>..\..\..\libraries\XadES_BES\xmlsec-1.4.2-ADSI-1.0.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

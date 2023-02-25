@@ -292,7 +292,9 @@
                 <!-- ============================================================== -->
             </div>
         </div>
-        <footer class="footer">
+        <footer class="footer"><li class="nav-item">
+    <a class="nav-link text-dark" asp-page="/Index" asp-area="MyFeature">MyFeature</a>
+</li>
             &copy; 2021 - AcontPlus @*<a asp-area="" asp-controller="Home" asp-action="Privacy"></a>*@
         </footer>
 
@@ -366,7 +368,8 @@
     <script src="~/lib/angular-utils-pagination/dirPagination.min.js"></script>
     <script src="~/lib/bootstrap-daterangepicker/daterangepicker.min.js"></script> 
     <script src="~/lib/angular-daterangepicker/angular-daterangepicker.min.js"></script>
-
+    <!--angular-jwt-->
+    <script src="~/lib/angular-jwt/angular-jwt.min.js"></script>
     <!--Chartjs-->
     <script src="~/lib/Chart.js/Chart.min.js" asp-append-version="true"></script>
 
@@ -377,7 +380,7 @@
 
     <script src="~/lib/microsoft-signalr/signalr.min.js"></script>
     <!--App-->
-    <script src="~/js/app/acontPlusApp.min.js" asp-append-version="true"></script>
+    <script src="~/js/app/acontPlusApp.js" asp-append-version="true"></script>
     <script src="~/js/controllers/layoutCtrl.min.js" asp-append-version="true"></script>
 
     <!--Common Constants-->
@@ -386,6 +389,7 @@
     <!--Common Services-->
     <script src="~/js/services/formularioService.min.js" asp-append-version="true"></script>
     <script type="module" src="~/js/services/commonService.min.js" asp-append-version="true"></script>
+    <script src="~/js/services/documentoVentaService.js" asp-append-version="true"></script>
 
     <!--Components-->
     <script src="~/js/components/mdAutocompleteCliente.min.js" asp-append-version="true"></script>

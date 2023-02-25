@@ -128,7 +128,7 @@ export class FormaCobroPagoCtrl extends ModalBaseCtrl{
     }
     
     $onInit(){
-        console.log(this)
+        
         this.$timeout(async()=>{
             const results = await this.initiload();
             let entidadesFinancieras = results[0];

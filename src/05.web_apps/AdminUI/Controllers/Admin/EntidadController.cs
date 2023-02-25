@@ -9,6 +9,7 @@ namespace AdminUI.Controllers
     {
         private readonly ILogger<EntidadController> _logger;
         private readonly IConfiguration _config;
+       
 
         private EntidadService _eS;
         public EntidadController(ILogger<EntidadController> logger, IConfiguration config)
@@ -22,6 +23,7 @@ namespace AdminUI.Controllers
         [Route("Get/{json}")]
         public async Task<IActionResult> Get(string json)
         {
+            int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             return Ok(await _eS.GetAsync(json));
         }
 

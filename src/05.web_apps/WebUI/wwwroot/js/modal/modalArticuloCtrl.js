@@ -1,11 +1,11 @@
-
+ 
 import { ArticuloTarifaGridOption } from './../helpers/articuloTarifaGridOption.min.js?v=0.2';
 
 class ModalBaseCtrl {
     constructor({$scope, _mS, _commonSvc, _form}){
         this.$scope     = $scope;
         this._mS        = _mS;
-        this._commonSvc = _commonSvc;
+        this._commonSvc = _commonSvc; 
         this._form      = _form;
 
         this.tarifaInstance    = new ArticuloTarifaGridOption(_form);

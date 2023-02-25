@@ -94,7 +94,7 @@ function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombre
                 id: item.idRetencionVenta,
                 codigoDocumento: TIPO_DOC.codigo
             })
-            
+            console.log(response)
             if(!response.isComplete) return
             
             let params = {
@@ -110,6 +110,8 @@ function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombre
         } catch (error) {
             hideLoader();
             console.log(error)            
+        }finally{
+            hideLoader();
         }
     }
 
@@ -223,7 +225,8 @@ function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombre
     $scope.getRetencionesVenta = ()=> {
         try {
             showLoader();
-            console.log($scope.dataSearch)
+            
+            $scope.retencionesVenta  = []
             _mS.getData('get', '/RetencionVenta/Get?json=' + JSON.stringify($scope.dataSearch)).then(response => {
                 console.log(response)
                 if (response.id === "0") {
@@ -298,21 +301,32 @@ function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombre
         };
     }
 
+
     //Eliminar Retencion Venta
     $scope.delete = (item)=> {
-        form.showLoaderAnular();
-        $http.post('/RetencionVenta/Delete?idRetencionVenta=' + item.idRetencionVenta)
-        .then(({data:response}) => {
-            if (response.id == "0") {
-                form.sweetAlert('warning', response.message, response.titleSms);                    
-            }
-            if (response.id == "1") {
-                form.sweetAlert('success', response.message, response.titleSms, 1000);
-                $scope.getRetencionesVenta();                    
-            }
-        }, error => console.log(error));
-
+        try {
+            showLoader();
+            _mS.getData('delete', '/RetencionVenta/Delete?id=' + item.idRetencionVenta).then(response=>{
+                if (response.id == "0") {
+                    hideLoader()
+                    form.sweetAlert('warning', response.message, response.titleSms);                    
+                }
+                if (response.id == "1") {
+                    hideLoader()
+                    form.sweetAlert('success', response.message, response.titleSms, 1000);
+                    $scope.getRetencionesVenta();                    
+                }
+            })
+        } catch (error) {
+            hideLoader()
+        }        
     }
 
    
+    $scope.getReport = function(){
+        Swal.fire({
+            icon:'info',
+            html: `<small>No Disponible</small>`
+        })
+    }
 }

@@ -170,6 +170,54 @@ class ModalBaseCtrl{
             this.infoAdicionalDocumento = infoAdicionalDocumento
         })
     }
+
+
+
+
+    async onChangeSucursal(){
+        try {
+
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                  confirmButton: 'btn btn-success',
+                  cancelButton: 'btn btn-danger ml-2'
+                },
+                buttonsStyling: false
+              })
+              
+              let {isConfirmed} = await  swalWithBootstrapButtons.fire({
+                title: '<small>Cambiar Establecimiento?</small>',
+                html: "<small>Esta seguro de cambiar <b>Punto de Emisión</b>?</small>",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Si, cambiar!',
+                cancelButtonText: 'No, cancelar!',
+                reverseButtons: false,
+                allowOutsideClick:false,
+                allowEscapeKey:false
+            })
+
+            if(!isConfirmed){
+                this.data.codEstab = this.cloneCodEstab;
+                this.$scope.$apply();
+                return
+            }
+
+            this.cloneCodEstab = this.data.codEstab;
+
+            let dataEstab = this.establecimientos.find(item=>item.codEstab===this.data.codEstab);   
+            
+            //Obtenemos Puntos de Emision y Bodegas 
+            let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
+           
+            this.puntosEmision = resultsDataFormEstab[0];
+            this.data.idPuntoEmision = this.puntosEmision.length>0 ? this.puntosEmision[0].idPuntoEmision: 0;
+ 
+            this.$scope.$apply();
+        } catch (error) {
+            console.trace(error)
+        }       
+    }
     
     closeModal(){
         this.$uibModalInstance.close();
@@ -1748,8 +1796,9 @@ export class ModalRetencionVentaNuevoCtrl extends ModalRetencionVentaCtrl{
             "checkBoxDefault": false,
             "checkBoxCliente": true,
             "byCliente": this.cliente.idCliente,
-            "checkBoxEstado": true,
-            "byEstado": 13            
+            "checkBoxEstado": false,
+            "byEstado": 13,
+            "paraNotaCredito": true            
         }      
         await this._mS.getData('get', '/FacturaVenta/Get?json=' + JSON.stringify(dataSearch)).then(response=>{
             if (response.id === "0") {

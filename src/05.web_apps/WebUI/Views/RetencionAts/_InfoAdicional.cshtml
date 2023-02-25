@@ -16,10 +16,13 @@
                 </div>
             </div>
         </div>
-        <button class="btn btn-info" ng-click="addAdditionalInfo(item.codDocSustento)"><i class="ti-plus"></i>
+        <button type="button" id="btnAddInfoAdd" class="btn btn-info" ng-click="addAdditionalInfo()"><i
+                class="ti-plus"></i>
             Añadir</button>
-
-
+        <button type="button" id="btnEditInfoSave" class="btn btn-info" ng-click="updateAdditionalInfo()"
+            style="display:none"><i class="ti-save"></i>
+            Guardar</button>
+        <hr>
         <div class="table-responsive" ng-if="infoAdded.length > 0">
             <table class="table">
                 <thead>
@@ -34,7 +37,9 @@
                         <td>{{item.nombre}}</td>
                         <td>{{item.valor}}</td>
                         <td>
-                            <button class="btn btn-danger btn-sm" ng-click="removeAdditionalInfo($index)"><i
+                            <button class="btn btn-warning btn-sm" ng-click="editAdditionalInfo($index)"
+                                ng-if="item.idRetAtsInfoAdicional > 0"><i class="ti-pencil"></i></button>
+                            <button class="btn btn-danger btn-sm" ng-click="askToDeleteAdditionalInfo($index, item)"><i
                                     class="ti-trash"></i></button>
                         </td>
                     </tr>

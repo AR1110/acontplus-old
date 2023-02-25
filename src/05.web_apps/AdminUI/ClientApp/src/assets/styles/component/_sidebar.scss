@@ -15,14 +15,12 @@ mat-sidenav {
   }
   #snav {
     box-shadow: 1px 0px 20px rgba(0, 0, 0, 0.08);
-    .mat-mdc-list-item {
+    .mat-list-item {
       height: auto;
       &:hover {
         background: none;
       }
-      /*
-TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version.
-*/
+  
       .mat-list-item-content {
         display: block;
         padding: 0px 15px;
@@ -57,9 +55,6 @@ TODO(mdc-migration): The following rule targets internal classes of list that ma
           height: 16px;
         }
       }
-      /*
-TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version.
-*/
       &.selected > .mat-list-item-content > a {
         background: $themecolor-alt;
         border-radius: $radius;
@@ -73,9 +68,6 @@ TODO(mdc-migration): The following rule targets internal classes of list that ma
           transform: rotate(-180deg);
         }
       }
-      /*
-TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version.
-*/
       &.selected .sub-item .mat-list-item-content a.selected {
         background: transparent;
         color: $inverse;

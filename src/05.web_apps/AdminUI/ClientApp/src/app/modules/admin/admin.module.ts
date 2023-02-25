@@ -6,19 +6,22 @@ import { AdminRoutingModule } from './admin-routing.module';
 import { EntidadComponent } from './pages/entidad/entidad.component';
 import { UsuarioComponent } from './pages/usuario/usuario.component';
 import { MaterialModule } from '@app/material.module';
-import { SharedModule } from '@app/shared/shared.module';
+import { MenuComponent, ModalMenuComponent } from './pages';
+import { SubmenuComponent } from './pages/submenu/submenu.component';
+import { ModalSubmenuComponent } from './pages/submenu/modal-submenu/modal-submenu.component';
 
 
 @NgModule({
   declarations: [
-    EntidadComponent,
-    UsuarioComponent
+    MenuComponent,
+    ModalMenuComponent,
+    SubmenuComponent,
+    ModalSubmenuComponent
   ],
   imports: [
     CommonModule,
     AdminRoutingModule,
     MaterialModule,
-    SharedModule
   ]
 })
 export class AdminModule { }

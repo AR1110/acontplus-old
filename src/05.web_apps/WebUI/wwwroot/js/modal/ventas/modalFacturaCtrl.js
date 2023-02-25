@@ -1,14 +1,20 @@
 
 
-import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.28";
+import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.32";
 
 class ModalFacturaCtrl extends ModalBaseCtrl{
+    
     constructor({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS}){
         super({_mS, _commonSvc, _modalSvc, _nombreModalConst,  _tS,})
+       
         const self = this;
+
         this.$scope = $scope;
+       
         this.$timeout = $timeout;
+       
         this.$uibModalInstance = $uibModalInstance;
+       
         this._fS = _fS;
 
         this.TIPO_DOC_FV = _commonSvc.tipoDoc['FV']
@@ -119,8 +125,7 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
             let entity = self.gridOptions.data[index]; 
         
             let dataMedida = medidas[0];
-
-            console.log(this.dataArticulo)
+         
                 
             entity.idArticulo           = articulo.idArticulo;
             entity.codigo               = articulo.codigoArticulo;                
@@ -138,8 +143,7 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
             entity.idMedida             = dataMedida.idMedida; //Medida por defecto 
             entity.adicional            = datosAdicionales; //
 
-            console.log(JSON.parse(dataMedida.tarifas))
-            console.log(self)
+        
             entity.articuloTarifas      = JSON.parse(dataMedida.tarifas);
             let tarifa                  = entity.articuloTarifas.find(item=>item.idTarifa===self.idTarifa);                                      
             entity.idTarifa             = self.idTarifa;  
@@ -175,13 +179,12 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
         let entity = self.gridOptions.data[index]; 
     
         let dataMedida = medidas[0];
-
-        console.log(this.dataArticulo)
             
         entity.idArticulo           = articulo.idArticulo;
         entity.codigo               = articulo.codigoArticulo;                
         entity.descripcion          = articulo.descripcion;  
-        entity.idTipoIva            = articulo.idTipoIva;                          
+        entity.idTipoIva            = articulo.idTipoIva;  
+
         entity.codigoPorcentaje     = articulo.codigoPorcentaje;
         entity.tarifa               = articulo.tarifa;
         // entity.nombreTipoIva        = articulo.nombreTipoIva;
@@ -194,8 +197,7 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
         entity.idMedida             = dataMedida.idMedida; //Medida por defecto 
         entity.adicional            = datosAdicionales; //
 
-        console.log(JSON.parse(dataMedida.tarifas))
-        console.log(self)
+    
         entity.articuloTarifas      = JSON.parse(dataMedida.tarifas);
         let tarifa                  = entity.articuloTarifas.find(item=>item.idTarifa===self.idTarifa);                                      
         entity.idTarifa             = self.idTarifa;  
@@ -271,6 +273,8 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
 
 
     async closeModal(){
+
+
         if(this.TIPO_REGISTRO==='NUEVO' && this.gridOptions.data.length>0){
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
@@ -302,16 +306,37 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
                 if(result.isDenied){
                     this.$uibModalInstance.close();
                 }
-
                 
-
-                if(result.isDismissed){
-                }
-                console.log(result)
             })
             return 
         }
         this.$uibModalInstance.close();        
+    }
+
+    askToSaveStorage(){
+        Swal.fire({
+            title: '<small>Apartar Documento</small>',
+            input: 'text',
+            inputAttributes: {
+              autocapitalize: 'off'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Apartar',
+            cancelButtonText: 'No, cancelar',
+            showLoaderOnConfirm: true,
+            inputValidator: (value) => {
+                if (!value) {                    
+                    return 'Ingrese la descripción!'
+                }   
+                // if(localStorage.getItem('detailInvoice')){
+                //     let getStorageDocDetalle = JSON.parse(localStorage.getItem('detailInvoice'));
+                //     if(getStorageDocDetalle[value]){
+                //         return 'Ya existe Documento Apartado con esta descripción';
+                //     }
+                // }                        
+            },           
+        })        
+
     }
 
     async saveLocalStorage(){
@@ -387,7 +412,7 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
         if(isConfirmed){           
             this.gridOptions.data = JSON.parse(docsDetalle[value]);
             delete docsDetalle[value];
-            console.log(docsDetalle)
+            
             if(Object.entries(docsDetalle).length !== 0){
 
                 localStorage.setItem('detailInvoice', JSON.stringify(docsDetalle));               
@@ -409,8 +434,14 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
     constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params){
         super({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS})
         const self = this;
-        let {TIPO_REGISTRO} = _params;        
+
+        this._params = _params;
+
+        let {TIPO_REGISTRO} = _params;  
+    
+
         this.TIPO_REGISTRO = TIPO_REGISTRO;
+        
         this.CELL_TEMPLATE_OPTION = `<a  ng-click="grid.appScope.$ctrl.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
 
         <a  ng-click="grid.appScope.$ctrl.openModalArticle(row.entity, 2)" id="btnEditArticuloDetalle" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >
@@ -422,32 +453,42 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
     
     async $onInit(){
         try { 
-            showLoader();           
-            let resultsDataForm = await this.initiload();            
-            
-            //6 articulo 
-            // if(resultsDataForm[6].length>0){
-            //     this.articuloDefault = resultsDataForm[6][0]
-            // }
+            showLoader();
+                           
+            let resultsDataForm = this._params.dataForm;          
+           
 
             let {UiGridOptions} = await import('./../factElect/uiGridOptions.js' + CHANGE_VERSION());
+          
             this.establecimientos = resultsDataForm[0];
 
             if(this.establecimientos.length>0){
 
-                let dataEstab = this.establecimientos[0];             
+                
+                let dataEstab = this.establecimientos[0];                    
                 let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
                 
+                //informacion de establecimiento y ptoEmision en Encabezado                              
+
+
+
                 this.data.codEstab = dataEstab.codEstab;
                 this.cloneCodEstab = dataEstab.codEstab;
+
                 this.puntosEmisiones = resultsDataFormEstab[0];
-                this.data.idPuntoEmision = this.puntosEmisiones.length>0?this.puntosEmisiones[0].idPuntoEmision:0;
-               
+
+                if(this.puntosEmisiones.length>0){
+                    this.data.idPuntoEmision = this.puntosEmisiones[0].idPuntoEmision;                               
+                }
+                
+                
                 this.bodegas       = resultsDataFormEstab[1];                
                 this.idBodega      = this.bodegas.length>0?this.bodegas[0].idBodega:0;
                 this.cloneIdBodega = this.idBodega;
 
-                this.actividadTipoIva = resultsDataFormEstab[2][0]
+                this.actividadTipoIva = resultsDataFormEstab[2][0];
+
+                this.setDataInfoEstab(this.establecimientos, this.puntosEmisiones);
                 
             }else{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
@@ -502,15 +543,16 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
                 this.restoreDetailStorage();
             }
             
+            hideLoader();
             this.$scope.$apply();
 
         } catch (error) {
-            
+            hideLoader();
             console.error(error)
 
         }finally{
 
-            hideLoader();
+           
         }
     }
 
@@ -982,8 +1024,7 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl{
                 this.idBodega      = this.bodegas.length>0?this.bodegas[0].idBodega:0;
                 this.cloneIdBodega = this.idBodega;
 
-                this.actividadTipoIva = resultsDataFormEstab[2][0]
-
+                this.actividadTipoIva = resultsDataFormEstab[2][0]                
             }else{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
             }
@@ -1028,6 +1069,7 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl{
             this.fechaEmisionEscrita = this._fS.getFechaEscrita(this.data.fechaEmision);
             this.fechaVencimientoEscrita = this._fS.getFechaEscrita(this.data.fechaVencimiento);
             
+            this.setDataInfoEstab(this.establecimientos, this.puntosEmisiones);
             this.$scope.$apply();            
 
         } catch (error) {

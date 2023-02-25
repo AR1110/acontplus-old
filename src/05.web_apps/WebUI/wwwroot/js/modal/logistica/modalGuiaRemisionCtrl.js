@@ -198,6 +198,28 @@ class ModalBaseCtrl{
 
 
 
+
+    //Editar Transportista 
+    async openModalTransportistaUpdate(){
+        let {MODAL_CTRL, MODAL_EDITAR} = this._nombreModalConst.transportista;
+        let controller = (await import('./../../modal/' + MODAL_CTRL))[MODAL_EDITAR['controller']];
+        let template   = MODAL_EDITAR['template'];
+                        
+        let modalRef = this._modalSvc.openModalCustom({
+            controller,
+            template,
+            size:'md',
+            params: Object.assign({}, this.transportista)
+        })        
+
+        modalRef.result.then(response=>{
+            if(typeof response !=='object') return
+            this.transportista = JSON.parse(response.payload)[0]                     
+        })
+    }
+
+
+
     closeModal(){
         this.$uibModalInstance.close()
     }
@@ -449,6 +471,24 @@ class ModalGuiaRemisionCtrl extends ModalBaseCtrl{
             size:'md'
         })
        
+    }
+
+    async openModalVehiculoEditar(){
+        let {MODAL_CTRL, MODAL_NUEVO} = this._nombreModalConst.vehiculo;
+        let controller = (await import('./../../modal/' + MODAL_CTRL))[MODAL_NUEVO['controller']];
+        let template   = MODAL_NUEVO['template'];
+        
+        let modalRef = this._modalSvc.openModalCustom({
+            controller,
+            template,
+            size:'md',
+            params: Object.assign({}, this.vehiculo)
+        })
+
+        modalRef.result.then(response=>{
+            if(typeof response !=='object') return
+            this.vehiculo = JSON.parse(response.payload)[0]            
+        })
     }
 
 

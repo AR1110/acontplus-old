@@ -1,8 +1,24 @@
 ﻿app.controller('documentoRecibidoCtrl', documentoRecibidoCtrl);
 
-documentoRecibidoCtrl.$inject = ['$filter', '$scope', 'mainService', 'commonService', 'toastService', 'modalService', 'nombreModal'];
+documentoRecibidoCtrl.$inject = [
+    '$filter',
+    '$scope',
+    'mainService',
+    'commonService',
+    'toastService',
+    'modalService',
+    'nombreModal'
+];
 
-function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService, nameModalConst) {
+function documentoRecibidoCtrl(
+    $filter,
+    $scope,
+    mS,
+    _commonSvc,
+    tS,
+    modalService,
+    nameModalConst) {
+
     'use strict';
     $scope.title = 'documentoRecibidoCtrl';
     $scope.comprobantes = [];
@@ -66,9 +82,9 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
             }
         }
     };
+    // console.log(jwtDecoded)
 
     const _urlService = document.getElementById("urlGateway").value + 'api/'
-    const _idRol = document.getElementById("idRol").value
 
     //console.log(_urlService)
 
@@ -109,7 +125,7 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
             $scope.query.startDate = $scope.dateRangePicker.date.startDate
             $scope.query.endDate = $scope.dateRangePicker.date.endDate
             console.log($scope.query)
-            mS.getData('get', _urlService + 'DocumentoRecibido/Get/' + _idRol + "/" + JSON.stringify($scope.query)).then(response => {
+            mS.getData('get', _urlService + 'DocumentoRecibido/Get/' + JSON.stringify($scope.query)).then(response => {
                 if (response.code == "1") {
                     $scope.comprobantes = JSON.parse(response.payload)[0];
                     $scope.cloneComprobantes = JSON.parse(JSON.stringify($scope.comprobantes))
@@ -243,7 +259,7 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
                 alert('No ha seleccionado ningun archivo');
                 return;
             }
-            mS.getDataFile(_urlService + 'DocumentoRecibido/' + _idRol, file).then(
+            mS.getDataFile(_urlService + 'DocumentoRecibido', file).then(
                 response => {
                     if (response.code == 0) {
                         hideLoader();
@@ -271,7 +287,7 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
     $scope.putXml = function () {
         try {
             showLoader();
-            mS.getData('put', _urlService + 'DocumentoRecibido/Put/' + _idRol + '/' + $scope.selected[0].idDocumento).then(
+            mS.getData('put', _urlService + 'DocumentoRecibido/Put/' + $scope.selected[0].idDocumento).then(
                 response => {
                     hideLoader();
                     if (response.code == 0) {
@@ -322,7 +338,7 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
                 return;
             }
             console.log(file)
-            mS.getDataFile(_urlService + 'DocumentoRecibido/' + _idRol + '/' + $scope.selected[0].idDocumento + '/' + $scope.selected[0].claveAcceso, file).then(
+            mS.getDataFile(_urlService + 'DocumentoRecibido/' + $scope.selected[0].idDocumento + '/' + $scope.selected[0].claveAcceso, file).then(
                 response => {
                     hideLoader();
                     if (response.code == 0) {
@@ -367,7 +383,7 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
     $scope.delete = function (item) {
         try {
             showLoader();
-            mS.getData('delete', _urlService + 'DocumentoRecibido/' + _idRol + '/' + item).then(
+            mS.getData('delete', _urlService + 'DocumentoRecibido/' + item).then(
                 response => {
                     if (response.code == 0) {
                         hideLoader();
@@ -420,7 +436,7 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
     $scope.medidas = [];
     $scope.getFormData = function () {
         try {
-            mS.getData('get', _urlService + 'DocumentoRecibido/Get/' + _idRol + '/' + JSON.stringify({ tipo: '1' })).then(
+            mS.getData('get', _urlService + 'DocumentoRecibido/Get/' + JSON.stringify({ tipo: '1' })).then(
                 response => {
                     if (response.code == "0") {
                         tS.toastr('warning', response.message);
@@ -498,11 +514,11 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
             }
         }
     }
-
+    $scope.customDetailTemp = []
     $scope.getId = () => {
         try {
             showLoader();
-            mS.getData('get', _urlService + 'DocumentoRecibido/GetId/' + _idRol + "/" + $scope.selected[0].idDocumento).then(response => {
+            mS.getData('get', _urlService + 'DocumentoRecibido/GetId/' + $scope.selected[0].idDocumento).then(response => {
                 if (!response.payload) {
                     tS.toastr('warning', "Aun no se actualizado el Xml del SRI");
                 } else {
@@ -523,7 +539,32 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
 
                             $scope.totalTaxes = $scope.fullComprobante.infoFactura.totalImpuestos;
                             $scope.setTaxes()
-                            // console.log($scope.totalTaxesRide)
+                            for (const det of $scope.totalTaxes) {
+                                // if (det.codigo == '2' && (det.codigoPorcentaje == '2')) {
+
+                                // }
+                                if (Number(det.baseImponible) > 0) {
+                                    $scope.customDetailTemp.push(
+                                        {
+                                            idDocumento: $scope.selected[0].idDocumento,
+                                            idArticulo: 0,
+                                            cantidad: 1,
+                                            codigo: det.codigo, //impuesto
+                                            codigoPorcentaje: det.codigoPorcentaje, //porcentaje impuesto
+                                            valor: det.valor, //valor impuesto
+                                            codigoPrincipal: '',
+                                            codigoAuxiliar: '',
+                                            descripcion: '',
+                                            precioUnitario: det.baseImponible,
+                                            precioTotalSinImpuesto: det.baseImponible,
+                                            descuento: (det.descuentoAdicional == '' ? 0.00 : Number(det.descuentoAdicional)),
+                                            total: ((Number(det.baseImponible) - Number(det.descuentoAdicional)) + Number(det.valor)).toFixed(2)
+                                        }
+                                    )
+                                }
+                            }
+                            console.log($scope.totalTaxes)
+                            console.log($scope.customDetailTemp)
                             $scope.getTempDetails();
 
                             // $scope.tempDetail = $scope.fullComprobante.detalles;
@@ -607,7 +648,7 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
 
     $scope.getProv = () => {
         try {
-            mS.getData('get', _urlService + 'Proveedor/' + _idRol + '/' + JSON.stringify({ tipo: 1, ruc: $scope.infoTributaria.ruc })).then(
+            mS.getData('get', _urlService + 'Proveedor/' + JSON.stringify({ tipo: 1, ruc: $scope.infoTributaria.ruc })).then(
                 response => {
                     if (response.code == "0") {
                         $scope.txtIconModalProv = 'ti-plus';
@@ -632,7 +673,7 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
     $scope.arraysProvClient = [];
     $scope.addProvClient = function () {
         try {
-            mS.getData('get', _urlService + 'Proveedor/' + _idRol + '/' + JSON.stringify({ tipo: 2 })).then(
+            mS.getData('get', _urlService + 'Proveedor/' + JSON.stringify({ tipo: 2 })).then(
                 response => {
                     $scope.arraysProvClient = JSON.parse(response.payload);
                     $scope.tiposIdentificacion = $scope.arraysProvClient[0]
@@ -718,7 +759,7 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
                 return;
             }
             showLoader();
-            mS.getData('post', _urlService + 'Proveedor/' + _idRol + '/' + JSON.stringify($scope.provCliente)).then(
+            mS.getData('post', _urlService + 'Proveedor/' + JSON.stringify($scope.provCliente)).then(
                 response => {
                     if (response.code == "0") {
                         tS.toastr('warning', response.message)
@@ -772,7 +813,7 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
 
     }
 
-    $scope.selectArticleSearch = (item) => {
+    $scope.selectArticleSearch = (item, itemDetail) => {
         try {
             mS.getData('get', '/Articulo/GetId?id=' + item.idArticulo).then(
                 response => {
@@ -780,10 +821,13 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
                         $scope.articleFinded = { descripcion: '' }
                         const results = JSON.parse(response.payload)
                         const objArticle = results[0][0]
-                        $scope.customDetail.idArticulo = item.idArticulo
-                        $scope.customDetail.codigoPrincipal = objArticle.codigo
-                        $scope.customDetail.codigoAuxiliar = objArticle.codigoAuxiliar
-                        $scope.customDetail.descripcion = objArticle.descripcion
+                        // $scope.customDetail.idArticulo = item.idArticulo
+                        // $scope.customDetail.codigoPrincipal = objArticle.codigo
+                        // $scope.customDetail.codigoAuxiliar = objArticle.codigoAuxiliar
+                        // $scope.customDetail.descripcion = objArticle.descripcion
+                        itemDetail.codigoPrincipal = objArticle.codigo
+                        itemDetail.codigoAuxiliar = objArticle.codigoAuxiliar
+                        itemDetail.descripcion = objArticle.descripcion
                     }
                 }
                 , error => {
@@ -809,7 +853,7 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
 
     $scope.getTempDetails = function () {
         try {
-            mS.getData('get', _urlService + 'Doc_Rec_DetailTemp/' + _idRol + '/' + $scope.selected[0].idDocumento).then(
+            mS.getData('get', _urlService + 'Doc_Rec_DetailTemp/' + $scope.selected[0].idDocumento).then(
                 response => {
                     if (response.code == "1") {
                         $scope.tempDetail = JSON.parse(response.payload);
@@ -828,10 +872,10 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
             let method = '', url = ''
             if (tipo == 1) {
                 method = "post"
-                url = _urlService + "Doc_Rec_DetailTemp/" + _idRol + '/'
+                url = _urlService + "Doc_Rec_DetailTemp?json="
             } else {
                 method = "put"
-                url = _urlService + "Doc_Rec_DetailTemp/" + _idRol + '/'
+                url = _urlService + "Doc_Rec_DetailTemp?json="
             }
             mS.getData(method, url + JSON.stringify(data)).then(
                 response => {
@@ -928,7 +972,7 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
                 codigoAuxiliar: $scope.articleSelected.codigoAuxiliar,
                 descripcion: $scope.articleSelected.descripcion
             }
-            mS.getData('get', _urlService + 'Articulo/' + _idRol + '/' + JSON.stringify(jsonData)).then(
+            mS.getData('get', _urlService + 'Articulo/' + JSON.stringify(jsonData)).then(
                 response => {
                     if (response.code == '1') {
                         $scope.articlesTemp = JSON.parse(response.payload)
@@ -972,7 +1016,7 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
                 descripcion: $scope.articleMergeSearch.textSearch,
                 tipo: tipo
             }
-            mS.getData('get', _urlService + 'Articulo/' + _idRol + '/' + JSON.stringify(jsonData)).then(
+            mS.getData('get', _urlService + 'Articulo/' + JSON.stringify(jsonData)).then(
                 response => {
                     if (response.code == '1') {
                         // if ($scope.articleNotFound) {
@@ -1009,7 +1053,7 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
                 id: item.idArticulo,
                 tipo: 'H'
             }
-            mS.getData('get', _urlService + 'Articulo/' + _idRol + '/' + JSON.stringify(data)).then(
+            mS.getData('get', _urlService + 'Articulo/' + JSON.stringify(data)).then(
                 response => {
                     if (response.code == '1') {
                         $scope.articleHistory = JSON.parse(response.payload)
@@ -1203,10 +1247,10 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
             if (result.value) {
                 $scope.tempDetail = []
                 $scope.showFormCustomDetails = true
-                $scope.customDetail.cantidad = 1
-                $scope.customDetail.precioUnitario = $scope.infoComprobante.totalSinImpuestos
-                $scope.customDetail.descuento = 0.00 //$scope.infoComprobante.totalDescuento
-                $scope.customDetail.total = $scope.infoComprobante.importeTotal
+                // $scope.customDetail.cantidad = 1
+                // $scope.customDetail.precioUnitario = $scope.infoComprobante.totalSinImpuestos
+                // $scope.customDetail.descuento = 0.00 //$scope.infoComprobante.totalDescuento
+                // $scope.customDetail.total = $scope.infoComprobante.importeTotal
                 $scope.$digest();
             }
         })
@@ -1220,34 +1264,51 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
                 }
             }
         }
-        if (!$scope.customDetail.cantidad || $scope.customDetail.cantidad == 0) {
-            tS.toastr('warning', 'Por favor ingrese una cantidad valida');
-            return;
-        }
-        if (!$scope.customDetail.codigoPrincipal) {
-            tS.toastr('warning', 'Por favor ingrese un código');
-            return;
-        }
-        if (!$scope.customDetail.descripcion) {
-            tS.toastr('warning', 'Por favor ingrese una descripción');
-            return;
-        }
-        if (!$scope.customDetail.precioUnitario || $scope.customDetail.precioUnitario == 0) {
-            tS.toastr('warning', 'Por favor ingrese un precio unitario valido');
-            return;
-        }
 
-        $scope.tempDetail.push({
-            idDocumento: $scope.selected[0].idDocumento,
-            idArticulo: $scope.customDetail.idArticulo,
-            cantidad: $scope.customDetail.cantidad,
-            codigoPrincipal: $scope.customDetail.codigoPrincipal,
-            codigoAuxiliar: $scope.customDetail.codigoAuxiliar,
-            descripcion: $scope.customDetail.descripcion,
-            precioUnitario: $scope.customDetail.precioUnitario,
-            descuento: $scope.customDetail.descuento,
-            total: $scope.customDetail.total
+        angular.forEach($scope.customDetailTemp, (value, key) => {
+            //console.log(key, value)
+            if (!value.codigoPrincipal) {
+                tS.toastr('warning', 'Por favor ingrese un código');
+                return;
+            }
+            if (!value.descripcion) {
+                tS.toastr('warning', 'Por favor ingrese una descripción');
+                return;
+            }
+            if (!value.precioUnitario || value.precioUnitario == 0) {
+                tS.toastr('warning', 'Por favor ingrese un precio unitario valido');
+                return;
+            }
+
         })
+        // if (!$scope.customDetail.cantidad || $scope.customDetail.cantidad == 0) {
+        //     tS.toastr('warning', 'Por favor ingrese una cantidad valida');
+        //     return;
+        // }
+        // if (!$scope.customDetail.codigoPrincipal) {
+        //     tS.toastr('warning', 'Por favor ingrese un código');
+        //     return;
+        // }
+        // if (!$scope.customDetail.descripcion) {
+        //     tS.toastr('warning', 'Por favor ingrese una descripción');
+        //     return;
+        // }
+        // if (!$scope.customDetail.precioUnitario || $scope.customDetail.precioUnitario == 0) {
+        //     tS.toastr('warning', 'Por favor ingrese un precio unitario valido');
+        //     return;
+        // }
+
+        // $scope.tempDetail.push({
+        //     idDocumento: $scope.selected[0].idDocumento,
+        //     idArticulo: $scope.customDetail.idArticulo,
+        //     cantidad: $scope.customDetail.cantidad,
+        //     codigoPrincipal: $scope.customDetail.codigoPrincipal,
+        //     codigoAuxiliar: $scope.customDetail.codigoAuxiliar,
+        //     descripcion: $scope.customDetail.descripcion,
+        //     precioUnitario: $scope.customDetail.precioUnitario,
+        //     descuento: $scope.customDetail.descuento,
+        //     total: $scope.customDetail.total
+        // })
 
         //let totalCustomDetails = 0.00;
         //angular.forEach($scope.tempDetail, function (value, key) {
@@ -1259,7 +1320,7 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
         //    return;
         //}
 
-        $scope.saveArticleTemp(1, $scope.tempDetail)
+        $scope.saveArticleTemp(1, $scope.customDetailTemp)
     }
     $scope.cancelCustomDetails = function () {
         $scope.showFormCustomDetails = false;
@@ -1334,7 +1395,7 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
 
             }
             console.log(data)
-            mS.getData('post', _urlService + 'Factura/' + _idRol + '?json=' + JSON.stringify(data)).then(response => {
+            mS.getData('post', _urlService + 'Factura?json=' + JSON.stringify(data)).then(response => {
                 if (response.code == '0') {
                     tS.toastr('warning', response.message)
                 }
@@ -1361,5 +1422,10 @@ function documentoRecibidoCtrl($filter, $scope, mS, _commonSvc, tS, modalService
         $scope.showFormCustomDetails = false
     }
 
+    $scope.closeMainModal = () => {
+        $scope.fullComprobante = ''
+        $scope.customDetailTemp = []
+        $scope.modalRef.close()
+    }
     //**Config */
 }

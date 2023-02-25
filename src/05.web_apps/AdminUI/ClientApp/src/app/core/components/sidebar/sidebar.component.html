@@ -1,0 +1,37 @@
+
+<div class="main-container">
+  <mat-toolbar color="primary" class="topbar telative">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="index.html"><b></b>
+        <span fxShow="false" fxShow.gt-xs>
+          <span style="color: white;">AcontPlus</span>
+        </span>
+      </a>
+    </div>
+
+    <button mat-icon-button (click)="snav.toggle()" value="sidebarclosed">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <span class="example-spacer"></span>
+    <span fxFlex></span>
+
+    <!--Header-->
+    <app-header></app-header>
+  </mat-toolbar>
+
+
+  <mat-sidenav-container class="example-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 0 : 0">
+    <mat-sidenav #snav id="snav" class="dark-sidebar pl-xs" [mode]="mobileQuery.matches ? 'side' : 'over'" fixedTopGap="0" [opened]="mobileQuery.matches" [disableClose]="mobileQuery.matches">
+
+      <!-- sidebar -->
+      <app-side-navbar></app-side-navbar>
+
+    </mat-sidenav>
+
+    <mat-sidenav-content class="page-wrapper">
+      <div class="page-content">
+        <router-outlet></router-outlet>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

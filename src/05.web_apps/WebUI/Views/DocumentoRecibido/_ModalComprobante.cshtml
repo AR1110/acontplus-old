@@ -2,7 +2,7 @@
     <h4 class="modal-title">
         <i class="ti-upload"></i> Factura de Compra
     </h4>
-    <button type="button" class="close" aria-label="Close" ng-click="modalRef.close()">
+    <button type="button" class="close" aria-label="Close" ng-click="closeMainModal()">
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
@@ -110,7 +110,7 @@
     </div>
     <br />
     <ng-form ng-show="showFormCustomDetails" name="formCustomDetail">
-        <div class="row">
+        <!--<div class="row">
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                 <div class="input-group">
                     <input type="text" id="articuloSearchFiltro" autocomplete="off" name="articuloSearchFiltro"
@@ -178,7 +178,57 @@
                         step="any" disabled />
                 </div>
             </div>
+        </div>-->
+
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Cantidad</th>
+                        <th>Descripcion:</th>
+                        <th>Cód. Principal</th>
+                        <th>Cód. Auxiliar:</th>
+                        <th>Precio Unitario:</th>
+                        <th>Descuento:</th>
+                        <th>Total:</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="item in customDetailTemp">
+                        <td>{{item.cantidad}}</td>
+                        <td>
+                            <div class="form-group">
+                                <input type="text" id="{{$index}}-descripcion" class="form-control"
+                                    name="{{$index}}-descripcion" autocomplete="off" class="form-control border-select"
+                                    placeholder="Buscar articulo" ng-model="item.descripcion" ng-keyup="clearSearch()"
+                                    uib-typeahead="a as a.codigo + '-' + a.descripcion for a in searchArticleCustomDetail($viewValue)"
+                                    typeahead-loading="articleFinded.loading"
+                                    typeahead-no-results="articleFinded.noResults" typeahead-editable="false"
+                                    typeahead-on-select="selectArticleSearch($item, item)" onclick="select()"
+                                    required />
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-group">
+                                <input type="text" id="{{$index}}-codigoPrincipal" class="form-control"
+                                    ng-model="item.codigoPrincipal" name="{{$index}}-codigoPrincipal" required />
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-group">
+                                <input type="text" id="{{$index}}-codigoAuxiliar" class="form-control"
+                                    ng-model="item.codigoAuxiliar" name="{{$index}}-codigoAuxiliar" />
+                            </div>
+                        </td>
+
+                        <td>{{item.precioUnitario | currency}}</td>
+                        <td>{{item.descuento | currency}}</td>
+                        <td>{{item.total | currency}}</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
+
         <div class="row">
             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                 <button class="btn btn-success btn-sm" ng-click="addCustomDetail($event)">
@@ -200,7 +250,7 @@
                 </select>
             </div>
         </div>
-    </div> 
+    </div>
     <md-table-container>
         <table md-table class="table-bordered">
             <caption></caption>
@@ -225,7 +275,7 @@
                     <td md-cell>{{item.descripcion}}</td>
                     <td md-cell>
                         <div style="position:relative; min-width:100px;">
-                            <select class="form-control" ng-model="item.idMedida"  ng-change="updateArticleTemp(item)">
+                            <select class="form-control" ng-model="item.idMedida" ng-change="updateArticleTemp(item)">
                                 <option ng-value="size.idMedida" ng-repeat="size in medidas">
                                     {{size.descripcion}}</option>
                             </select>
@@ -240,7 +290,8 @@
                             <md-icon md-font-set="md" class="text-info">sync_alt</md-icon>
                         </md-button>
                         <md-button ng-if="(item.idArticulo > 0 && item.idProveedor > 0)" class="md-icon-button"
-                            ng-click="getArticleHistory(item)" aria-label="Historial" title="Historial de ingresos de facturas">
+                            ng-click="getArticleHistory(item)" aria-label="Historial"
+                            title="Historial de ingresos de facturas">
                             <md-icon md-font-set="md" class="text-danger">shopping_cart</md-icon>
                         </md-button>
                         <md-button ng-if="(item.idArticulo > 0 && item.idProveedor > 0)" class="md-icon-button"

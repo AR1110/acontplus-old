@@ -2,6 +2,7 @@ using WebUI.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using WebUI.Hubs;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace testWebApi
 {
@@ -13,12 +14,12 @@ namespace testWebApi
             //dynamic origins
             string[] origins = builder.Configuration.GetSection("SafeOrigins").Value.Split('|');
             //for mor information https://docs.microsoft.com/en-us/aspnet/core/mvc/views/view-compilation?view=aspnetcore-6.0&tabs=visual-studio
-            var mvcBuilder = builder.Services.AddRazorPages();
+            //var mvcBuilder = builder.Services.AddRazorPages();
 
-            if (builder.Environment.IsDevelopment())
-            {
-                mvcBuilder.AddRazorRuntimeCompilation();
-            }
+            //if (builder.Environment.IsDevelopment())
+            //{
+            //    mvcBuilder.AddRazorRuntimeCompilation();
+            //}
 
             builder.Services.AddCors(options =>
             {
@@ -33,7 +34,7 @@ namespace testWebApi
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-
+            builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
             //SignalR
             builder.Services.AddSignalR();
 
@@ -132,7 +133,6 @@ namespace testWebApi
 
             app.UseAuthorization();            
 
-            app.MapRazorPages(); //added manually
 
             app.UseCookiePolicy(cookiePolicyOptions);
 
@@ -141,6 +141,7 @@ namespace testWebApi
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
             app.MapHub<NotificationHub>("/notificationHub");
+            app.MapRazorPages(); //added manually
 
             app.Run();
         }

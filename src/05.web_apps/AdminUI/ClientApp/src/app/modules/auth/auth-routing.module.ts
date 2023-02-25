@@ -1,11 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
-import { Page404Component } from '@app/shared/components';
 
 const routes: Routes = [
   {
-    path: 'login', 
+    path: 'login',
     component: LoginPageComponent
   },
   {

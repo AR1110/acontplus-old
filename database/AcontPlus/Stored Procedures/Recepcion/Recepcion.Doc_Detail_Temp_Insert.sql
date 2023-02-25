@@ -39,6 +39,9 @@ BEGIN
 	DECLARE @tmp TABLE(
 	idDocumento INT NOT NULL
 	,idArticulo INT NULL
+	,codigo VARCHAR(100) NOT NULL
+	,codigoPorcentaje VARCHAR(100) NOT NULL
+	,valor VARCHAR(15) NOT NULL
 	,codigoPrincipal VARCHAR(100) NOT NULL
 	,codigoAuxiliar VARCHAR(100) NULL
 	,cantidad VARCHAR(100) NOT NULL
@@ -48,8 +51,8 @@ BEGIN
 	,precioTotalSinImpuesto VARCHAR(15) NULL
 	)
 
-	INSERT INTO @tmp(idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto)
-	SELECT idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto
+	INSERT INTO @tmp(idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto, codigo, codigoPorcentaje, valor)
+	SELECT idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto, codigo, codigoPorcentaje, valor
 	FROM OPENJSON(@jsonData) WITH (idDocumento INT
 	,idArticulo INT '$.idArticulo'
 	,codigoPrincipal VARCHAR(100) '$.codigoPrincipal'
@@ -59,6 +62,9 @@ BEGIN
 	,precioUnitario VARCHAR(15) '$.precioUnitario'
 	,descuento VARCHAR(15) '$.descuento'
 	,precioTotalSinImpuesto VARCHAR(15) '$.precioTotalSinImpuesto'
+	,codigo VARCHAR(15) '$.codigo'
+	,codigoPorcentaje VARCHAR(15) '$.codigoPorcentaje' 
+	,valor VARCHAR(15) '$.valor' 
 	)
 
 	IF NOT EXISTS (SELECT 1 FROM @tmp)
@@ -88,14 +94,21 @@ BEGIN
 			WHERE NOT EXISTS (SELECT * FROM Recepcion.Doc_Detalle_Temp tt 
 			WHERE t.idDocumento = tt.idDocumento AND t.codigoPrincipal = tt.codigoPrincipal)
 
-			UPDATE Recepcion.Doc_Impuesto_Temp SET codArticulo = (SELECT TOP 1 codigoPrincipal FROM @tmp) WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp)
+			--UPDATE Recepcion.Doc_Impuesto_Temp SET codArticulo = (SELECT TOP 1 codigoPrincipal FROM @tmp) WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp)
 
-		 --INSERT INTO Recepcion.Doc_Impuesto_Temp(idDocumento, codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor)
-		 --SELECT (SELECT TOP 1 idDocumento FROM @tmp), codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor 
-		 --FROM @taxes tt
-		 --WHERE NOT EXISTS (SELECT * FROM Recepcion.Doc_Impuesto_Temp tti 
-			--						WHERE tti.idDocumento = (SELECT TOP 1 idDocumento FROM @tmp) 
-			--						AND tti.codArticulo = tt.codArticulo)
+			IF EXISTS(SELECT 1 FROM Recepcion.Doc_Impuesto_Temp WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp))
+				BEGIN
+					DELETE FROM Recepcion.Doc_Impuesto_Temp WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp)
+				END
+
+			INSERT INTO Recepcion.Doc_Impuesto_Temp(idDocumento, codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor)
+			SELECT (SELECT TOP 1 idDocumento FROM @tmp), t.codigoPrincipal, t.codigo, t.codigoPorcentaje, ti.porcentaje, t.precioUnitario, t.valor 
+			FROM @tmp t
+			LEFT JOIN dbo.Articulo a ON a.codigo = t.codigoPrincipal AND a.idEntidad = @idEntidad
+			LEFT JOIN Sri.TarifaImpuesto ti ON t.codigo = ti.codImpuesto AND t.codigoPorcentaje = ti.codigo
+			LEFT JOIN dbo.Medida m ON a.idMedida = m.idMedida AND a.idEntidad = @idEntidad
+			--WHERE NOT EXISTS (SELECT * FROM Recepcion.Doc_Detalle_Temp tt 
+			--WHERE t.idDocumento = tt.idDocumento AND t.codigoPrincipal = tt.codigoPrincipal)
 
 
 			SET @payload = (SELECT * FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp) FOR JSON AUTO) 

@@ -55,7 +55,7 @@ BEGIN
 		,asig.estado
 	FROM Config.Estab_Asig asig
 	INNER JOIN Sri.Establecimiento es ON es.codEstab = asig.codEstab 
-	wHERE asig.idUsuarioRol = @idUsuarioRol
+	wHERE asig.idUsuarioRol = @idUsuarioRol ORDER BY asig.predeterminado ASC 
 
 	UNION ALL
 

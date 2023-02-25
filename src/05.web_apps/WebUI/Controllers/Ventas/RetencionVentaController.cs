@@ -58,10 +58,11 @@ namespace WebUI.Controllers.Ventas
             return Ok(res);
         }
 
-        public async Task<IActionResult> Delete(int idRetencionVenta)
+        [HttpDelete]
+        public async Task<IActionResult> Delete(int id)
         {
             int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
-            var res = await _rv.DeleteAsync(idRol, idRetencionVenta);
+            var res = await _rv.DeleteAsync(idRol, id);
             return Ok(res);
 
         }

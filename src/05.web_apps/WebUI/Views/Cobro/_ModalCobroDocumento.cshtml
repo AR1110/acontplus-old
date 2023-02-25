@@ -153,7 +153,7 @@
                                         <tr ng-repeat="item in $ctrl.abonoEntidadesFinancieras">
                                             <td>{{$index+1}}</td>
                                             <td>{{item.fechaEmision|date:'MM/dd/yyyy  h:mma'}}</td>
-                                            <td><sup>{{c.posFechado?'*':''}}</sup> <span>{{c.subEntidad}}</span></td>                
+                                            <td><sup>{{item.posFechado?'*':''}}</sup> <span>{{item.subEntidad}}</span></td>                
                                             <td>{{item.abono|currency:'$'}}</td>
                                             <td>{{item.tipoDocumento}}</td>
                                             <td>{{item.nro}}</td>

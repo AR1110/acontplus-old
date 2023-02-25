@@ -246,10 +246,7 @@ export class UiGridOptions{
                 let dataMedida = rowEntity.medidas.find(val => val.idMedida === rowEntity.idMedida);
                 let articuloTarifas = JSON.parse(dataMedida.tarifas);                
                 let pvp = articuloTarifas.find(item=>item.idTarifa===this.idTarifa);
-                
-                console.log(articuloTarifas)
-                console.log(pvp)
-                console.log(this.idTarifa)
+           
 
                 rowEntity.articuloTarifas = articuloTarifas;          
                 rowEntity.idTarifa        = this.idTarifa
@@ -392,7 +389,7 @@ export class UiGridOptions{
                 }
             },                  
         }
-        console.log(this.decimal)
+        
         return calculoColumnas;
     }
 
@@ -452,8 +449,8 @@ export class UiGridOptions{
     }
 
 
-    getTotales() {
-        let CODIGO_PORCENTAJE_IVA0 = '0', CODIGO_PORCENTAJE_IVAEXENTO = '7', CODIGO_PORCENTAJE_IVA_NO_OBJETO ='6';
+    getTotales() {        
+        let CODIGO_PORCENTAJE_IVA0 = '0', CODIGO_PORCENTAJE_IVAEXENTO = '7', CODIGO_PORCENTAJE_IVA_NO_OBJETO ='6', CODIGO_PORCENTAJE_IVA8 = '8' ;
         let [subTotalIva, subTotalNetoIva]             = this.getTotalIva(this.actividadTipoIva.codigoPorcentaje);
         let [subTotalIvaCero, subTotalNetoIvaCero]     = this.getTotalIva(CODIGO_PORCENTAJE_IVA0);
         let [subTotalExentoIva, subTotalNetoExentoIva] = this.getTotalIva(CODIGO_PORCENTAJE_IVAEXENTO);

@@ -130,8 +130,7 @@ function notaCreditoClienteCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModal
                     console.warn(response.message);
                     return
                 }
-                $scope.notaCreditos = JSON.parse(response.data) || []
-                console.log(response)
+                $scope.notaCreditos = JSON.parse(response.data) || []                
             })
         } catch (error) {
 

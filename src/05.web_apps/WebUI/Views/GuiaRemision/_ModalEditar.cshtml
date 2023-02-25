@@ -95,10 +95,10 @@
                         </script>
                         <div class="input-group-append">
                             <button class="btn btn-outline-secondary btn-sm" tabindex="-1" type="button" ng-click="$ctrl.openModalTransportistaNew()"><i class="fa fa-plus fa-xs"></i></button>
-                            @* <button class="btn btn-outline-secondary btn-sm" tabindex="-1" type="button" ng-if="$ctrl.transportista.idTransportista>0"
-                                ng-click="$ctrl.openModalTransportista($ctrl.transportista)" >
+                           <button class="btn btn-outline-secondary btn-sm" tabindex="-1" type="button" ng-if="$ctrl.transportista.idTransportista>0"
+                                ng-click="$ctrl.openModalTransportistaUpdate()" >
                                 <i class="fas fa-pencil-alt fa-xs"></i>
-                            </button>                                                                                          *@
+                            </button>   
                         </div>
                     </div>
                 </div>
@@ -132,9 +132,9 @@
                             <button type="button" class="btn btn-outline-secondary btn-sm" ng-click="$ctrl.openModalVehiculoNew()" tabindex="-1" >
                                 <i class="fa fa-plus fa-xs"></i>
                             </button>
-                            @* <button type="button" class="btn btn-outline-secondary btn-sm" ng-click="$ctrl.openModalVehiculo($ctrl.vehiculo)" ng-if="$ctrl.vehiculo.idVehiculo>0" tabindex="-1">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" ng-click="$ctrl.openModalVehiculoEditar()" ng-if="$ctrl.vehiculo.idVehiculo>0" tabindex="-1">
                                 <i class="fas fa-pencil-alt fa-xs"></i>
-                            </button>                                              *@
+                            </button>                                              
                         </div>
                     </div>
                 </div>

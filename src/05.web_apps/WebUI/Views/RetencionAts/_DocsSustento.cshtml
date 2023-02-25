@@ -158,7 +158,7 @@
         </div>
         <div class="row">
             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
-                <button type="button" class="btn  btn-success" ng-click="addDocSustento()"
+                <button type="button" class="btn  btn-success btn-sm" ng-click="addDocSustento()"
                     title="Click para agregar documento de sustento"><i class="ti-plus"></i> Agregar Doc. de
                     Sustento</button>
             </div>
@@ -193,9 +193,9 @@
                         <td>
                             <button class="btn btn-info btn-sm" ng-click="viewDocSust()"
                                 title="Ver informacion completa del documento"><i class="ti-info"></i></button>
-                            <button class="btn btn-warning btn-sm" ng-click="editDocSust()" title="Editar datos"><i
+                            <button class="btn btn-warning btn-sm" ng-click="editDocSust($index)" title="Editar datos"><i
                                     class="ti-pencil"></i></button>
-                            <button class="btn btn-danger btn-sm" ng-click="deleteDocSust()"><i
+                            <button class="btn btn-danger btn-sm" ng-click="deleteDocSust($index)"><i
                                     class="ti-trash"></i></button>
                         </td>
                     </tr>

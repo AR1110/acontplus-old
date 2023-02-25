@@ -68,20 +68,8 @@ export class ModalBaseCtrl {
             }
             if (response.code === "1") {
                 const data = JSON.parse(response.payload)[0];
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.addEventListener('mouseenter', Swal.stopTimer)
-                        toast.addEventListener('mouseleave', Swal.resumeTimer)
-                    }
-                })
 
-                Toast.fire({
-                    icon: 'info',
+                Swal.fire({
                     title: `${this.dataSearchValidacion.titulo}`,
                     html: `
                         <small><strong>Nro. Identificación</strong></small>
@@ -89,8 +77,33 @@ export class ModalBaseCtrl {
                         <p class="text-muted small">${data.numeroIdentificacion}</p>
                         <small><strong>Nombre Fiscal</strong></small> <br>
                         <p class="text-muted small">${data.nombreFiscal}</p>
-                    `
-                })
+                    `,
+                    icon: 'info',                                        
+                  })
+
+                // const Toast = Swal.mixin({
+                //     toast: true,
+                //     position: 'top-end',
+                //     showConfirmButton: false,
+                //     timer: 3000,
+                //     timerProgressBar: true,
+                //     didOpen: (toast) => {
+                //         toast.addEventListener('mouseenter', Swal.stopTimer)
+                //         toast.addEventListener('mouseleave', Swal.resumeTimer)
+                //     }
+                // })
+
+                // Toast.fire({
+                //     icon: 'info',
+                //     title: `${this.dataSearchValidacion.titulo}`,
+                //     html: `
+                //         <small><strong>Nro. Identificación</strong></small>
+                //         <br>
+                //         <p class="text-muted small">${data.numeroIdentificacion}</p>
+                //         <small><strong>Nombre Fiscal</strong></small> <br>
+                //         <p class="text-muted small">${data.nombreFiscal}</p>
+                //     `
+                // })
             }
         })
     }

@@ -12,7 +12,8 @@ import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 
 import { MaterialModule } from './material.module';
 import{ToastrModule} from 'ngx-toastr';
-
+import { CoreModule } from './core/core.module';
+import { SweetAlert2Module } from "@sweetalert2/ngx-sweetalert2";
 
 @NgModule({
   declarations: [
@@ -23,8 +24,9 @@ import{ToastrModule} from 'ngx-toastr';
     BrowserAnimationsModule,
     AppRoutingModule,
     HttpClientModule,
-    MaterialModule,
-    ToastrModule.forRoot()
+    CoreModule,
+    SweetAlert2Module.forRoot(),
+    ToastrModule.forRoot(),
   ],
   providers: [
     CookieService,

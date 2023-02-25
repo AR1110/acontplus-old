@@ -51,23 +51,24 @@ namespace WebUI.Controllers
                     var loginData = response.userData[0];
                     var loginDataDto = new LoginDataDto();
 
-                    loginDataDto.idUsuarioRol = loginData.idRol;
-                    loginDataDto.userName= loginData.userName;
+                    loginDataDto.idUsuarioRol = loginData.idRol; //para jwt authentication
+                    loginDataDto.userName = loginData.userName;
                     loginDataDto.fullName = loginData.fullName;
                     loginDataDto.nroIdentificacion = loginData.nroIdentificacion;
-                    loginDataDto.role= loginData.role;
+                    loginDataDto.role = loginData.role;
                     loginDataDto.razonSocial = loginData.entidad;
                     loginDataDto.ruc = loginData.ruc ?? "";
 
                     var urlService = _config.GetSection("UrlApis").GetSection("ApiGateway").Value;
                     var _authService = await new ApiServer(urlService).PostAsync<AuthResponse>("api/account", loginDataDto);
                     loginData.jwtToken = _authService.jwtToken;
-                    
+
                     //for more information review https://docs.microsoft.com/en-us/aspnet/core/security/authentication/cookie?view=aspnetcore-6.0
 
                     var claims = new List<Claim>
                     {
                         new Claim("idRol", Convert.ToString(loginData.idRol)),
+                        new Claim("idUsuarioRol", Convert.ToString(loginData.idRol)), //para migrar jwt
                         new Claim(ClaimTypes.UserData, Convert.ToString(loginData.userName)),
                         new Claim(ClaimTypes.NameIdentifier, loginData.userName),
                         new Claim(ClaimTypes.Name, loginData.fullName),

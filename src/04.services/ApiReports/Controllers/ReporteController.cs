@@ -110,7 +110,7 @@ namespace ApiReports.Controllers
             }
             catch (Exception ex)
             {
-                Logs.LogWritter.LogError(_dirLogs, "Error in GetReport: " + ex.Message + " --> \n" + ex.StackTrace);
+                Logs.LogWritter.LogError(_dirLogs, "Error in GetReport: \n" + ex.ToString());
                 return this.Request.CreateResponse(HttpStatusCode.BadRequest, "Error al crear el reporte");
             }
         }
@@ -138,7 +138,7 @@ namespace ApiReports.Controllers
             }
             catch (Exception ex)
             {
-                Logs.LogWritter.LogError(_dirLogs, "Error in Download: " + ex.Message + " --> \n" + ex.StackTrace);
+                Logs.LogWritter.LogError(_dirLogs, "Error in Download: \n" + ex.ToString());
                 ApiError.ReportNotFound(_response);
             }
             return Request.CreateResponse(HttpStatusCode.OK, _response);
@@ -170,7 +170,7 @@ namespace ApiReports.Controllers
             }
             catch (Exception ex)
             {
-                Logs.LogWritter.LogError(_dirLogs, "Error in DynamicReport: " + ex.Message + " --> \n" + ex.StackTrace);
+                Logs.LogWritter.LogError(_dirLogs, "Error in DynamicReport: \n" + ex.ToString());
                 ApiError.ReportNotFound(_response);
             }
             return Request.CreateResponse(HttpStatusCode.OK, _response);
@@ -237,6 +237,6 @@ namespace ApiReports.Controllers
 
             return _response;
         }
-
+        
     }
 }

@@ -30,7 +30,7 @@
                      <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-xs-12">
                         <div class="form-group">
                             <label>Nro. Documento <small class="text-danger">*</small></label>
-                            <input class="form-control border-select" ng-model="$ctrl.data.nroDoc" valid-number placeholder="0000000">
+                            <input class="form-control border-select" ng-model="$ctrl.data.nroDoc" decimal placeholder="0000000">
                         </div>
                     </div>
 
@@ -41,7 +41,7 @@
                     <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-xs-12">
                         <div class="form-group">
                             <label for="nroAutorización">Nro. Autorización <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control border-select" ng-model="$ctrl.data.nroAutho" valid-number>
+                            <input type="text" class="form-control border-select" ng-model="$ctrl.data.nroAutho" decimal>
                             <small class="text-danger">{{$ctrl.data.nroAutho?$ctrl.data.nroAutho.length:0}} Números</small>
                         </div>                                              
                     </div>

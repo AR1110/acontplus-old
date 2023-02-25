@@ -1,0 +1,39 @@
+<div class="user-profile" style="background: url(assets/images/background/user-info.jpg) no-repeat;">
+  <div class="profile-img"><img src="assets/images/users/profile.png" alt="user"> </div>
+
+  <div class="profile-text">
+    <a class=""> Markarn Doe
+      <i class="ti-angle-down font-12 m-l-5"></i>
+    </a>
+  </div>
+</div>
+
+
+<mat-nav-list appAccordion class="side-navnar">
+  <ng-container *ngFor="let menu of menuList; index as i;">
+      <ng-container [ngTemplateOutlet]="menu.children ?  childMenu : parentMenu"
+          [ngTemplateOutletContext]="{menu:menu}">
+      </ng-container>
+  </ng-container>
+</mat-nav-list>
+
+<ng-template #parentMenu let-menu="menu">
+  <mat-list-item  [routerLink]="menu.routerLink" routerLinkActive="selected" [routerLinkActiveOptions]="{exact:
+      true}">
+      <mat-icon>{{menu.icon}}</mat-icon> {{menu.text}}
+  </mat-list-item>
+</ng-template>
+
+<ng-template #childMenu let-menu="menu">
+  <mat-expansion-panel [class.mat-elevation-z0]="true">
+      <mat-expansion-panel-header>
+          <mat-icon mat-list-icon>{{menu.icon}}</mat-icon>{{menu.text}}
+      </mat-expansion-panel-header>
+      <mat-nav-list>
+          <mat-list-item [routerLink]="submenu.routerLink" *ngFor="let submenu of menu.children" routerLinkActive="selected" [routerLinkActiveOptions]="{exact:
+              true}">
+              <mat-icon>{{submenu.icon}}</mat-icon> <small>{{submenu.text}}</small>
+          </mat-list-item>
+      </mat-nav-list>
+  </mat-expansion-panel>
+</ng-template>
