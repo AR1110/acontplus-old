@@ -1,25 +1,19 @@
-﻿using Domain.Models;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Helpers;
 using DataAccess;
+using Common.Logs;
 
 namespace WebUI.Controllers.FE
 {
     [Authorize]
     public class DocumentoElectronicoController : Controller
     {
-        private DataAccessObject _dao;
-        private readonly IHttpContextAccessor _httpContextAccessor; ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
-        private readonly int _idRol;
         private readonly IConfiguration _configuration;
 
-        public DocumentoElectronicoController(IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
+        public DocumentoElectronicoController(IConfiguration configuration)
         {
-            _httpContextAccessor = httpContextAccessor;
-            _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
             _configuration = configuration;
-            _dao = new DataAccessObject(_configuration);
         }
         public IActionResult Index()
         {
@@ -32,27 +26,77 @@ namespace WebUI.Controllers.FE
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            //var correlationId = HttpContext.Request.Headers["X-IdUsuarioRol"].ToString();
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
-            parameters.Add("json", SqlValidation.ValidateSqlString(json));
-            return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("FactElect.Doc_Elect_Get", parameters)));
+            LogWriter _log = new LogWriter(_configuration);
+            try
+            {
+                //var idUsuarioRol = Convert.ToInt32(HttpContext.Request.Headers["X-IdUsuarioRol"]);
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                Dictionary<string, object> parameters = new Dictionary<string, object>
+                {
+                    { "idRol", idUsuarioRol },
+                    { "json", SqlValidation.ValidateSqlString(json) }
+                };
+                DAO _dao = new DAO(_configuration);
+                return Ok(await _dao.GetDataTable("FactElect.Doc_Elect_Get", parameters));
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error while getting docs: \n" + ex.ToString());
+                return new BadRequestObjectResult(new
+                {
+                    code = "0",
+                    message = "Error al obtener los documentos"
+                });
+            }
         }
         [HttpGet]
         public async Task<IActionResult> GetDataForm()
         {
-            return Ok(DbResponse.SPDataSet(await _dao.GetDataSetAsync("FactElect.Doc_Elect_Get_Data_Form")));
+            LogWriter _log = new LogWriter(_configuration);
+            try
+            {
+                DAO _dao = new DAO(_configuration);
+
+                return Ok(await _dao.GetDataSet("FactElect.Doc_Elect_Get_Data_Form"));
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error while getting data form: \n" + ex.ToString());
+                return new BadRequestObjectResult(new
+                {
+                    code = "0",
+                    message = "Error al obtener los datos del formulario"
+                });
+            }
         }
         [HttpPut]
         public async Task<IActionResult> Put(int id)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
-            parameters.Add("id", id);
-            return Ok(DbResponse.SPDefault(await _dao.ExecTranAsync("FactElect.Doc_Elect_Update", parameters)));
+            LogWriter _log = new LogWriter(_configuration);
+            try
+            {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                Dictionary<string, object> parameters = new Dictionary<string, object>
+                {
+                    { "idRol", idUsuarioRol },
+                    { "id", id }
+                };
+                DAO _dao = new DAO(_configuration);
+                return Ok(await _dao.Default("FactElect.Doc_Elect_Update", parameters));
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error while updating doc: \n" + ex.ToString());
+                return new BadRequestObjectResult(new
+                {
+                    code = "0",
+                    message = "Error al actualizar el documento"
+                });
+            }
+           
         }
 
-       
+
 
         //public IActionResult SignMassive([FromBody] List<DocumentoElectronico> data)
         //{

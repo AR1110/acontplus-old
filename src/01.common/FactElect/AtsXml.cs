@@ -14,6 +14,7 @@ namespace FactElect
             DataTable dtSales = ds.Tables[2];
             DataTable dtCanceled = ds.Tables[3];
             DataTable dtRetenciones = ds.Tables[4];
+            DataTable dtVentasEstab = ds.Tables[5];
 
             MemoryStream atsMS = new MemoryStream();
             TextWriter tw = new StreamWriter(atsMS);
@@ -64,25 +65,27 @@ namespace FactElect
             {
                 NodeSales(xtr, dtSales);
 
-                xtr.WriteStartElement("ventasEstablecimiento"); //start ventasEstablecimiento
+                NodeVentasEstab(xtr, dtVentasEstab);
 
-                xtr.WriteStartElement("ventaEst"); //start ventaEst
+                //xtr.WriteStartElement("ventasEstablecimiento"); //start ventasEstablecimiento
 
-                xtr.WriteStartElement("codEstab");
-                xtr.WriteString(dtHeader.Rows[0]["codEstab"].ToString());
-                xtr.WriteEndElement();
+                //xtr.WriteStartElement("ventaEst"); //start ventaEst
 
-                xtr.WriteStartElement("ventasEstab");
-                xtr.WriteString(dtHeader.Rows[0]["totalVentas"].ToString());
-                xtr.WriteEndElement();
+                //xtr.WriteStartElement("codEstab");
+                //xtr.WriteString(dtHeader.Rows[0]["codEstab"].ToString());
+                //xtr.WriteEndElement();
 
-                xtr.WriteStartElement("ivaComp");
-                xtr.WriteString(dtHeader.Rows[0]["ivaComp"].ToString());
-                xtr.WriteEndElement();
+                //xtr.WriteStartElement("ventasEstab");
+                //xtr.WriteString(dtHeader.Rows[0]["totalVentas"].ToString());
+                //xtr.WriteEndElement();
 
-                xtr.WriteEndElement(); //end ventaEst
+                //xtr.WriteStartElement("ivaComp");
+                //xtr.WriteString(dtHeader.Rows[0]["ivaComp"].ToString());
+                //xtr.WriteEndElement();
 
-                xtr.WriteEndElement(); //end ventasEstablecimiento
+                //xtr.WriteEndElement(); //end ventaEst
+
+                //xtr.WriteEndElement(); //end ventasEstablecimiento
             }
             //Anulados
             if (dtCanceled.Rows.Count > 0)
@@ -410,6 +413,32 @@ namespace FactElect
                 xtr.WriteEndElement(); //end formasDePago
 
                 xtr.WriteEndElement(); //end detalleVentas
+            }
+            xtr.WriteEndElement(); // end ventas
+        }
+        public void NodeVentasEstab(XmlTextWriter xtr, DataTable dt)
+        {
+            xtr.WriteStartElement("ventasEstablecimiento"); //start ventas
+            foreach (DataRow dr in dt.Rows)
+            {
+                xtr.WriteStartElement("ventaEst"); //start ventas
+
+                xtr.WriteStartElement("codEstab");
+                xtr.WriteString(dr["codEstab"].ToString());
+                xtr.WriteEndElement();
+
+
+                xtr.WriteStartElement("ventasEstab");
+                xtr.WriteString(dr["ventasEstab"].ToString());
+                xtr.WriteEndElement();
+
+
+                xtr.WriteStartElement("ivaComp");
+                xtr.WriteString(dr["ivaComp"].ToString());
+                xtr.WriteEndElement();
+
+                xtr.WriteEndElement(); // end ventas
+
             }
             xtr.WriteEndElement(); // end ventas
         }

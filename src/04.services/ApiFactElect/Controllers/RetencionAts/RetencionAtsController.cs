@@ -5,7 +5,7 @@ using Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ApiFactElect.Controllers
+namespace ApiFactElect.Controllers.RetencionAts
 {
     [Authorize]
     [Route("api/[controller]")]
@@ -79,8 +79,8 @@ namespace ApiFactElect.Controllers
                 });
             }
         }
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, Dictionary<string, object> data)
+        [HttpPut]
+        public async Task<IActionResult> Put([FromBody] RetencionAtsDto data)
         {
             LogWriter _logs = new LogWriter(_configuration);
             try
@@ -89,12 +89,20 @@ namespace ApiFactElect.Controllers
 
                 DAO _dao = new DAO(_configuration);
                 Dictionary<string, object> parameters = new Dictionary<string, object>();
-                foreach (KeyValuePair<string, object> item in data)
-                {
-                    parameters.Add(item.Key, SqlValidation.ValidateSqlString(item.Value.ToString()));
-                }
                 parameters.Add("idRol", idUsuarioRol);
-                parameters.Add("id", id);
+                parameters.Add("infoCompRet", SqlValidation.ValidateSqlString(data.infoCompRet));
+                parameters.Add("docsSust", SqlValidation.ValidateSqlString(data.docsSust));
+                parameters.Add("impuestos", SqlValidation.ValidateSqlString(data.impuestos));
+                parameters.Add("retenciones", SqlValidation.ValidateSqlString(data.retenciones));
+                if (!string.IsNullOrEmpty(data.reembolsos))
+                {
+                    parameters.Add("reembolsos", SqlValidation.ValidateSqlString(data.reembolsos));
+                }
+                parameters.Add("payments", SqlValidation.ValidateSqlString(data.payments));
+                if (!string.IsNullOrEmpty(data.infoAdicional))
+                {
+                    parameters.Add("infoAdicional", SqlValidation.ValidateSqlString(data.infoAdicional));
+                }
                 return Ok(await _dao.Default("FactElect.RetencionAts_Update", parameters));
             }
             catch (Exception ex)
@@ -106,7 +114,7 @@ namespace ApiFactElect.Controllers
                     message = "Error al actualizar la retención"
                 });
             }
-            
+
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
@@ -132,7 +140,7 @@ namespace ApiFactElect.Controllers
                     code = 0,
                     message = "Error al eliminar la retención"
                 });
-            } 
+            }
         }
     }
 }

@@ -92,3 +92,6 @@
 /src/04.services/ApiFactElect/ApiFactElect.csproj.user
 /src/07.worker_services/WS_Article_Inventory/bin/Debug/net6.0
 /src/07.worker_services/WS_Article_Inventory/obj
+/src/07.worker_services/WS_Article_Inventory/bin/Release/net6.0
+/src/08.razor_ui/FACT_UI/bin
+/src/08.razor_ui/FACT_UI/obj

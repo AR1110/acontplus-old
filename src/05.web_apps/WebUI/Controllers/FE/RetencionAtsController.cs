@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Common.PdfReports;
 
 namespace WebUI.Controllers.Ventas
 {
@@ -14,8 +13,9 @@ namespace WebUI.Controllers.Ventas
             _configuration = configuration;
             _apiGateway = _configuration.GetSection("UrlApis").GetSection("ApiGateway").Value;
         }
-        public IActionResult Index()
+        public IActionResult Index(long? id)
         {
+            ViewData["ID"] = id;
             ViewData["urlGateway"] = _apiGateway;
             return View();
         }
