@@ -121,12 +121,7 @@ BEGIN
 			--FROM Recepcion.CompImp_Imp_Temp cd
 			--WHERE cd.idDocumento = @idDocumento
 			
-			IF (SELECT LTRIM(RTRIM(payments)) FROM @tmp) IS NULL OR (SELECT LTRIM(RTRIM(payments)) FROM @tmp) = '' OR (SELECT LTRIM(RTRIM(payments)) FROM @tmp) = 'null'
-				BEGIN
-					SELECT '0' code,'No hay formas de pago'  AS 'message'
-					RETURN
-				END
-
+			 
 			INSERT INTO FacturaCompra 
 				(idTipoDocumento,idEstadoPago,idSustentoTributario,idProveedor,codEstab
 				,idCategoriaCompra,idTiempoCredito,nroDocumento,puntoEmision,nroAutorizacion
@@ -153,7 +148,7 @@ BEGIN
 				nota, total)
 
 			SELECT @idFacturaCompra, @idBodega, cd.idArticulo, idMedida, descripcion,
-			cantidad, precioUnitario, precioUnitario, cd.descuento
+			cantidad, precioUnitario, CAST(precioTotalSinImpuesto AS decimal(15,5)) / CAST(cantidad AS decimal(18,5), cd.descuento
 			,'', SUM(cast(ct.baseImponible as numeric(18,2)))
 
 			FROM Recepcion.Doc_Detalle_Temp cd
@@ -172,9 +167,17 @@ BEGIN
 			AND fcd.idFacturaCompra = @idFacturaCompra
 			WHERE i.idDocumento = @idDocumento
 
-			INSERT INTO Compra.FormaPago(idDocumento, codDoc, formaPago, total) 
-			SELECT @idFacturaCompra, '01', FormaPago, total FROM OPENJSON((SELECT payments FROM @tmp)) WITH (formaPago VARCHAR(2)'$.formaPago', total NUMERIC(18,2) '$.total')
 
+			IF (SELECT LTRIM(RTRIM(payments)) FROM @tmp) IS NULL OR (SELECT LTRIM(RTRIM(payments)) FROM @tmp) = '' OR (SELECT LTRIM(RTRIM(payments)) FROM @tmp) = 'null'
+				BEGIN
+						INSERT INTO Compra.FormaPago(idDocumento, codDoc, formaPago, total) 
+						SELECT @idFacturaCompra, '01', '20', (select top 1 importeTotal from @tmp)
+				END
+			ELSE
+				BEGIN
+						INSERT INTO Compra.FormaPago(idDocumento, codDoc, formaPago, total) 
+						SELECT @idFacturaCompra, '01', FormaPago, total FROM OPENJSON((SELECT payments FROM @tmp)) WITH (formaPago VARCHAR(2)'$.formaPago', total NUMERIC(18,2) '$.total')
+				END
 
 			DECLARE @idTiempoCredito INT
 			,@total DECIMAL(15,5)
@@ -222,7 +225,7 @@ BEGIN
 			INNER JOIN dbo.TipoIva ti ON ti.codigoPorcentaje = fi.codigoPorcentaje
 			WHERE fcd.idFacturaCompra = @idFacturaCompra
 
-			EXEC ASPStockUpdate @idFacturaCompra,@idTipoDocumento
+			--EXEC ASPStockUpdate @idFacturaCompra,@idTipoDocumento
 
 			SELECT '1' AS code, 'Registrada exitosamente' AS 'message'
 		COMMIT TRAN 

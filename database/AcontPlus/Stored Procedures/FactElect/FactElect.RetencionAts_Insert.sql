@@ -187,7 +187,7 @@ BEGIN
 			)
 
 			DECLARE @idRetencionAts INT
-			,@ambiente TINYINT
+			,@ambiente nvarchar(1)
 			,@tipoEmision TINYINT
 			,@idEntidad INT 
 			,@idPuntoEmision INT
@@ -209,7 +209,7 @@ BEGIN
 			
 			SET @ruc = (SELECT RUC FROM Entidad WHERE idEntidad = @idEntidad)
 
-			set @idPuntoEmision = (SELECT TOP 1 idPuntoEmision FROM PuntoEmision p INNER JOIN @tblInfoCompRet t ON p.codEstab = t.codEstab)
+			SELECT TOP 1  @idPuntoEmision = idPuntoEmision, @ambiente = ambiente FROM PuntoEmision p INNER JOIN @tblInfoCompRet t ON p.codEstab = t.codEstab
 
 
 			SET @idProveedor = (SELECT idProveedor FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND numeroIdentificacion = (SELECT identificacionSujetoRetenido FROM @tblInfoCompRet))
@@ -256,7 +256,7 @@ BEGIN
 			, tipoIdentificacionSujetoRetenido, tipoSujetoRetenido, parteRel, idCliente
 			, razonSocialSujetoRetenido, identificacionSujetoRetenido, periodoFiscal
 			,fechaRegistro, idUsuario, idProveedor)
-			SELECT @ambiente, @tipoEmision, codEstab, @claveAcceso
+			SELECT cast(@ambiente as tinyint), @tipoEmision, codEstab, @claveAcceso
 			,'07',estab,ptoEmi,@secuencial,fechaEmision,contribuyentEspecial,obligadoContabilidad
 			,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente
 			,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal

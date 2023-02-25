@@ -4228,6 +4228,7 @@
     <ProjectReference Include="..\..\01.common\Helpers\Helpers.csproj" />
     <ProjectReference Include="..\..\02.domain\Domain.Auth\Domain.Auth.csproj" />
     <ProjectReference Include="..\..\02.domain\Domain\Domain.csproj" />
+    <ProjectReference Include="..\..\08.razor_ui\FACT_UI\FACT_UI.csproj" />
   </ItemGroup>
 
   <ItemGroup>

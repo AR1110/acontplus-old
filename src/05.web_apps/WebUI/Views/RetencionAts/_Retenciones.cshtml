@@ -45,7 +45,11 @@
         </div>
     </div>
 </div>
-<button class="btn btn-info" ng-click="addRetencion(item.uniqueIdDoc)"><i class="ti-plus"></i> Añadir
+<button type="button" id="btnAddRet" class="btn btn-info" ng-click="addRetencion(item.uniqueIdDoc, true)"><i
+        class="ti-plus"></i> Añadir
+    Retención</button>
+<button type="button" id="btnEditRet" class="btn btn-info" ng-click="updateRet(item.uniqueIdDoc)"
+    style="display:none;"><i class="ti-plus"></i> Guardar
     Retención</button>
 <hr>
 <div class="table-responsive" ng-if="retencionAdded.length > 0">
@@ -69,7 +73,10 @@
                 <td>{{ret.porcentajeRetener}}</td>
                 <td>{{ret.valorRetenido | currency}}</td>
                 <td>
-                    <button class="btn btn-danger btn-sm" ng-click="removeRet($index)"><i class="ti-trash"></i></button>
+                    <button class="btn btn-warning btn-sm" ng-click="editRetencion($index, ret, item)"><i
+                            class="ti-pencil"></i></button>
+                    <button class="btn btn-danger btn-sm" ng-click="askToRemoveRet($index, ret, item)"><i
+                            class="ti-trash"></i></button>
                 </td>
             </tr>
         </tbody>

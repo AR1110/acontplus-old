@@ -34,7 +34,7 @@ BEGIN
 	BEGIN TRY
 		BEGIN TRAN
 			UPDATE dr SET dr.codDoc = @codDoc
-			,dr.xmlDoc = @xmlDoc
+			,dr.xmlDoc = @xmlDoc.query('//RespuestaAutorizacionComprobante/autorizaciones/autorizacion')  
 			,dr.downloaded = @downloaded 
 			FROM Recepcion.DocumentoRecibido dr WITH (ROWLOCK)
 			WHERE idDocumento = @idDocumento

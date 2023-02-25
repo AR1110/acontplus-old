@@ -35,13 +35,13 @@ BEGIN
 
 	DECLARE @params AS TABLE(
 		tipo INT NOT NULL
-	
+		,idDoc BIGINT NULL
 	)
 
 	--SELECT @idEntidad = idEntidad, @idSucursal = idSucursal FROM AFTDataRol(@idRol)
 	--SET @dirEstablecimiento = (SELECT direccion FROM Sucursal WHERE idSucursal = @idSucursal)
-	INSERT INTO @params(tipo)
-	SELECT tipo FROM OPENJSON(@json) WITH(tipo INT '$.tipo')
+	INSERT INTO @params(tipo, idDoc)
+	SELECT tipo, idDoc FROM OPENJSON(@json) WITH(tipo INT '$.tipo', idDoc BIGINT '$.idDoc')
 	--1 FORMULARIO
 	IF EXISTS(SELECT 1 FROM @params WHERE tipo = 1)
 		BEGIN
@@ -72,6 +72,35 @@ BEGIN
 			FROM Config.PtoEmi_Asig pa  WITH (NOLOCK) 
 			INNER JOIN  Config.Estab_Asig ea WITH (NOLOCK)  ON ea.codEstab_Asig = pa.codEstab_Asig
  			WHERE ea.idUsuarioRol = @idRol
+
+			RETURN
+		END
+
+		IF EXISTS(SELECT 1 FROM @params WHERE tipo = 2)
+		BEGIN
+			DECLARE @idRetencionATS INT
+			SET @idRetencionATS = (SELECT idDocumento FROM DocumentoElectronico WITH (NOLOCK)  WHERE idDocumentoElectronico = (SELECT TOP 1 idDoc FROM @params))
+			
+			--INFO RETENCION
+			SELECT ra.*, s.descripcion subContribuyente FROM FactElect.RetencionAts ra WITH (NOLOCK) 
+			INNER JOIN Proveedor p WITH (NOLOCK)  ON ra.idProveedor = p.idProveedor
+			LEFT JOIN SubContribuyente s WITH (NOLOCK)  ON p.idSubContribuyente = s.idSubContribuyente
+			WHERE idRetencionAts = @idRetencionATS
+			
+			--DOCUMENTOS DE SUSTENTOS
+			SELECT * FROM FactElect.RetAtsDocSustento WITH (NOLOCK)  WHERE idRetencionAts = @idRetencionATS
+
+			--IMPUESTOS DEL DOCUMENTO DE SUSTENTO
+			SELECT * FROM FactElect.RetAtsImpDocSustento WITH (NOLOCK) WHERE idRetencionAts = @idRetencionATS
+
+			--RETENCIONES DEL DOCUMENTO DE SUSTENTO
+			SELECT * FROM FactElect.RetencionAtsRet WITH (NOLOCK)  WHERE idRetencionAts = @idRetencionATS
+
+			--FORMAS DE PAGO DEL DOCUMENTO DE SUSTENTO
+			SELECT * FROM FactElect.RetencionAtsPago WITH (NOLOCK)  WHERE idRetencionAts = @idRetencionATS
+
+			--INFO ADICIONAL DE LA RETENCION
+			SELECT * FROM FactElect.RetAtsInfoAdicional WITH (NOLOCK)  WHERE idRetencionAts = @idRetencionATS
 
 			RETURN
 		END

@@ -2,7 +2,7 @@
     ViewData["Title"] = "Index";
 }
 
-<div ng-controller="retencionAtsCtrl" ng-init="initialLoad()">
+<div ng-controller="retencionAtsCtrl">
     <div class="row page-titles">
         <div class="col-md-5 align-self-center">
             <h5 class="text-themecolor">Retencion 2.0 (ATS)</h5>
@@ -27,7 +27,6 @@
         <div class="card-footer">
             <button class="btn btn-success btn-lg" ng-click="save()">
                 <i class="ti-save"></i> Guardar
-                Retención
             </button>
         </div>
     </md-card>
@@ -123,10 +122,10 @@
     </div>
     <!-- END MODALS -->
     @await Html.PartialAsync("/Views/DocumentoRecibido/_FacturaPreview.cshtml")
-
+    <input type="text" name="idDocumentoElectronico" id="idDocumentoElectronico" value="@ViewData["ID"]" hidden />
     <input type="text" name="urlGateway" id="urlGateway" value="@ViewData["urlGateway"]" hidden />
 </div>
 
 @section Scripts {
-    <script src="~/js/controllers/ventas/retencionAtsCtrl.js" asp-append-version="true"></script>
+    <script src="~/js/controllers/factElect/retencionAtsCtrl.js" asp-append-version="true"></script>
 }
