@@ -3826,7 +3826,7 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox1</rd:DefaultName>
                 <Top>0.07056cm</Top>
-                <Left>18.24911cm</Left>
+                <Left>18.56661cm</Left>
                 <Height>0.6cm</Height>
                 <Width>5cm</Width>
                 <ZIndex>2</ZIndex>
@@ -3864,7 +3864,9 @@
                                   <TextRuns>
                                     <TextRun>
                                       <Value>Inicio Caja : </Value>
-                                      <Style />
+                                      <Style>
+                                        <FontSize>7pt</FontSize>
+                                      </Style>
                                     </TextRun>
                                   </TextRuns>
                                   <Style />
@@ -3873,7 +3875,7 @@
                               <rd:DefaultName>Textbox139</rd:DefaultName>
                               <Style>
                                 <Border>
-                                  <Style>None</Style>
+                                  <Style>Solid</Style>
                                 </Border>
                                 <PaddingLeft>2pt</PaddingLeft>
                                 <PaddingRight>2pt</PaddingRight>
@@ -3893,7 +3895,9 @@
                                   <TextRuns>
                                     <TextRun>
                                       <Value>=Fields!entrada.Value</Value>
-                                      <Style />
+                                      <Style>
+                                        <FontSize>7pt</FontSize>
+                                      </Style>
                                     </TextRun>
                                   </TextRuns>
                                   <Style>
@@ -3904,7 +3908,7 @@
                               <rd:DefaultName>entrada</rd:DefaultName>
                               <Style>
                                 <Border>
-                                  <Style>None</Style>
+                                  <Style>Solid</Style>
                                 </Border>
                                 <VerticalAlign>Middle</VerticalAlign>
                                 <PaddingLeft>2pt</PaddingLeft>
@@ -3930,7 +3934,9 @@
                                   <TextRuns>
                                     <TextRun>
                                       <Value>Efectivo : </Value>
-                                      <Style />
+                                      <Style>
+                                        <FontSize>7pt</FontSize>
+                                      </Style>
                                     </TextRun>
                                   </TextRuns>
                                   <Style />
@@ -3939,7 +3945,7 @@
                               <rd:DefaultName>Textbox144</rd:DefaultName>
                               <Style>
                                 <Border>
-                                  <Style>None</Style>
+                                  <Style>Solid</Style>
                                 </Border>
                                 <PaddingLeft>2pt</PaddingLeft>
                                 <PaddingRight>2pt</PaddingRight>
@@ -3959,7 +3965,9 @@
                                   <TextRuns>
                                     <TextRun>
                                       <Value>=Fields!efectivoSistema.Value</Value>
-                                      <Style />
+                                      <Style>
+                                        <FontSize>7pt</FontSize>
+                                      </Style>
                                     </TextRun>
                                   </TextRuns>
                                   <Style>
@@ -3970,7 +3978,7 @@
                               <rd:DefaultName>efectivoSistema</rd:DefaultName>
                               <Style>
                                 <Border>
-                                  <Style>None</Style>
+                                  <Style>Solid</Style>
                                 </Border>
                                 <VerticalAlign>Middle</VerticalAlign>
                                 <PaddingLeft>2pt</PaddingLeft>
@@ -3996,7 +4004,9 @@
                                   <TextRuns>
                                     <TextRun>
                                       <Value>Otros :</Value>
-                                      <Style />
+                                      <Style>
+                                        <FontSize>7pt</FontSize>
+                                      </Style>
                                     </TextRun>
                                   </TextRuns>
                                   <Style />
@@ -4005,7 +4015,7 @@
                               <rd:DefaultName>Textbox148</rd:DefaultName>
                               <Style>
                                 <Border>
-                                  <Style>None</Style>
+                                  <Style>Solid</Style>
                                 </Border>
                                 <PaddingLeft>2pt</PaddingLeft>
                                 <PaddingRight>2pt</PaddingRight>
@@ -4025,7 +4035,9 @@
                                   <TextRuns>
                                     <TextRun>
                                       <Value>=Fields!otros.Value</Value>
-                                      <Style />
+                                      <Style>
+                                        <FontSize>7pt</FontSize>
+                                      </Style>
                                     </TextRun>
                                   </TextRuns>
                                   <Style>
@@ -4036,7 +4048,7 @@
                               <rd:DefaultName>otros</rd:DefaultName>
                               <Style>
                                 <Border>
-                                  <Style>None</Style>
+                                  <Style>Solid</Style>
                                 </Border>
                                 <VerticalAlign>Middle</VerticalAlign>
                                 <PaddingLeft>2pt</PaddingLeft>
@@ -4062,7 +4074,9 @@
                                   <TextRuns>
                                     <TextRun>
                                       <Value>Total : </Value>
-                                      <Style />
+                                      <Style>
+                                        <FontSize>7pt</FontSize>
+                                      </Style>
                                     </TextRun>
                                   </TextRuns>
                                   <Style />
@@ -4071,7 +4085,7 @@
                               <rd:DefaultName>Textbox150</rd:DefaultName>
                               <Style>
                                 <Border>
-                                  <Style>None</Style>
+                                  <Style>Solid</Style>
                                 </Border>
                                 <PaddingLeft>2pt</PaddingLeft>
                                 <PaddingRight>2pt</PaddingRight>
@@ -4091,7 +4105,9 @@
                                   <TextRuns>
                                     <TextRun>
                                       <Value>=Fields!totalSistema.Value</Value>
-                                      <Style />
+                                      <Style>
+                                        <FontSize>7pt</FontSize>
+                                      </Style>
                                     </TextRun>
                                   </TextRuns>
                                   <Style>
@@ -4102,7 +4118,7 @@
                               <rd:DefaultName>totalSistema</rd:DefaultName>
                               <Style>
                                 <Border>
-                                  <Style>None</Style>
+                                  <Style>Solid</Style>
                                 </Border>
                                 <VerticalAlign>Middle</VerticalAlign>
                                 <PaddingLeft>2pt</PaddingLeft>
@@ -4171,7 +4187,7 @@
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value>Inicio Caja : </Value>
+                                      <Value />
                                       <Style />
                                     </TextRun>
                                   </TextRuns>
@@ -4200,7 +4216,7 @@
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value>=Fields!entrada.Value</Value>
+                                      <Value />
                                       <Style />
                                     </TextRun>
                                   </TextRuns>
@@ -4238,7 +4254,9 @@
                                   <TextRuns>
                                     <TextRun>
                                       <Value>Efectivo : </Value>
-                                      <Style />
+                                      <Style>
+                                        <FontSize>7pt</FontSize>
+                                      </Style>
                                     </TextRun>
                                   </TextRuns>
                                   <Style />
@@ -4247,7 +4265,7 @@
                               <rd:DefaultName>Textbox144</rd:DefaultName>
                               <Style>
                                 <Border>
-                                  <Style>None</Style>
+                                  <Style>Solid</Style>
                                 </Border>
                                 <PaddingLeft>2pt</PaddingLeft>
                                 <PaddingRight>2pt</PaddingRight>
@@ -4267,7 +4285,9 @@
                                   <TextRuns>
                                     <TextRun>
                                       <Value>=Fields!efectivoArqueo.Value</Value>
-                                      <Style />
+                                      <Style>
+                                        <FontSize>7pt</FontSize>
+                                      </Style>
                                     </TextRun>
                                   </TextRuns>
                                   <Style>
@@ -4278,7 +4298,7 @@
                               <rd:DefaultName>efectivoSistema</rd:DefaultName>
                               <Style>
                                 <Border>
-                                  <Style>None</Style>
+                                  <Style>Solid</Style>
                                 </Border>
                                 <VerticalAlign>Middle</VerticalAlign>
                                 <PaddingLeft>2pt</PaddingLeft>
@@ -4304,7 +4324,9 @@
                                   <TextRuns>
                                     <TextRun>
                                       <Value>Otros :</Value>
-                                      <Style />
+                                      <Style>
+                                        <FontSize>7pt</FontSize>
+                                      </Style>
                                     </TextRun>
                                   </TextRuns>
                                   <Style />
@@ -4313,7 +4335,7 @@
                               <rd:DefaultName>Textbox148</rd:DefaultName>
                               <Style>
                                 <Border>
-                                  <Style>None</Style>
+                                  <Style>Solid</Style>
                                 </Border>
                                 <PaddingLeft>2pt</PaddingLeft>
                                 <PaddingRight>2pt</PaddingRight>
@@ -4333,7 +4355,9 @@
                                   <TextRuns>
                                     <TextRun>
                                       <Value>=Fields!otros.Value</Value>
-                                      <Style />
+                                      <Style>
+                                        <FontSize>7pt</FontSize>
+                                      </Style>
                                     </TextRun>
                                   </TextRuns>
                                   <Style>
@@ -4344,7 +4368,7 @@
                               <rd:DefaultName>otros</rd:DefaultName>
                               <Style>
                                 <Border>
-                                  <Style>None</Style>
+                                  <Style>Solid</Style>
                                 </Border>
                                 <VerticalAlign>Middle</VerticalAlign>
                                 <PaddingLeft>2pt</PaddingLeft>
@@ -4370,7 +4394,9 @@
                                   <TextRuns>
                                     <TextRun>
                                       <Value>Total : </Value>
-                                      <Style />
+                                      <Style>
+                                        <FontSize>7pt</FontSize>
+                                      </Style>
                                     </TextRun>
                                   </TextRuns>
                                   <Style />
@@ -4379,7 +4405,7 @@
                               <rd:DefaultName>Textbox150</rd:DefaultName>
                               <Style>
                                 <Border>
-                                  <Style>None</Style>
+                                  <Style>Solid</Style>
                                 </Border>
                                 <PaddingLeft>2pt</PaddingLeft>
                                 <PaddingRight>2pt</PaddingRight>
@@ -4399,7 +4425,9 @@
                                   <TextRuns>
                                     <TextRun>
                                       <Value>=Fields!totalArqueo.Value</Value>
-                                      <Style />
+                                      <Style>
+                                        <FontSize>7pt</FontSize>
+                                      </Style>
                                     </TextRun>
                                   </TextRuns>
                                   <Style>
@@ -4410,7 +4438,7 @@
                               <rd:DefaultName>totalSistema</rd:DefaultName>
                               <Style>
                                 <Border>
-                                  <Style>None</Style>
+                                  <Style>Solid</Style>
                                 </Border>
                                 <VerticalAlign>Middle</VerticalAlign>
                                 <PaddingLeft>2pt</PaddingLeft>
@@ -4546,7 +4574,9 @@
                                   <TextRuns>
                                     <TextRun>
                                       <Value>Efectivo : </Value>
-                                      <Style />
+                                      <Style>
+                                        <FontSize>7pt</FontSize>
+                                      </Style>
                                     </TextRun>
                                   </TextRuns>
                                   <Style />
@@ -4555,7 +4585,7 @@
                               <rd:DefaultName>Textbox144</rd:DefaultName>
                               <Style>
                                 <Border>
-                                  <Style>None</Style>
+                                  <Style>Solid</Style>
                                 </Border>
                                 <PaddingLeft>2pt</PaddingLeft>
                                 <PaddingRight>2pt</PaddingRight>
@@ -4575,7 +4605,9 @@
                                   <TextRuns>
                                     <TextRun>
                                       <Value>=Fields!diferencia.Value</Value>
-                                      <Style />
+                                      <Style>
+                                        <FontSize>8pt</FontSize>
+                                      </Style>
                                     </TextRun>
                                   </TextRuns>
                                   <Style>
@@ -4586,7 +4618,7 @@
                               <rd:DefaultName>efectivoSistema</rd:DefaultName>
                               <Style>
                                 <Border>
-                                  <Style>None</Style>
+                                  <Style>Solid</Style>
                                 </Border>
                                 <VerticalAlign>Middle</VerticalAlign>
                                 <PaddingLeft>2pt</PaddingLeft>
@@ -4678,7 +4710,9 @@
                                   <TextRuns>
                                     <TextRun>
                                       <Value>Total : </Value>
-                                      <Style />
+                                      <Style>
+                                        <FontSize>7pt</FontSize>
+                                      </Style>
                                     </TextRun>
                                   </TextRuns>
                                   <Style />
@@ -4687,7 +4721,7 @@
                               <rd:DefaultName>Textbox150</rd:DefaultName>
                               <Style>
                                 <Border>
-                                  <Style>None</Style>
+                                  <Style>Solid</Style>
                                 </Border>
                                 <PaddingLeft>2pt</PaddingLeft>
                                 <PaddingRight>2pt</PaddingRight>
@@ -4707,7 +4741,9 @@
                                   <TextRuns>
                                     <TextRun>
                                       <Value>=Fields!diferencia.Value</Value>
-                                      <Style />
+                                      <Style>
+                                        <FontSize>8pt</FontSize>
+                                      </Style>
                                     </TextRun>
                                   </TextRuns>
                                   <Style>
@@ -4718,7 +4754,7 @@
                               <rd:DefaultName>totalSistema</rd:DefaultName>
                               <Style>
                                 <Border>
-                                  <Style>None</Style>
+                                  <Style>Solid</Style>
                                 </Border>
                                 <VerticalAlign>Middle</VerticalAlign>
                                 <PaddingLeft>2pt</PaddingLeft>
@@ -4768,7 +4804,7 @@
             <KeepTogether>true</KeepTogether>
             <Top>0.49389cm</Top>
             <Left>0.28437cm</Left>
-            <Height>4.58912cm</Height>
+            <Height>3.42495cm</Height>
             <Width>25.77417cm</Width>
             <ZIndex>4</ZIndex>
             <Style>
@@ -4781,10 +4817,10 @@
         <Height>12.3696cm</Height>
         <Style />
       </Body>
-      <Width>26.4025cm</Width>
+      <Width>26.25641cm</Width>
       <Page>
         <PageHeader>
-          <Height>3.59652cm</Height>
+          <Height>3.6759cm</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <ReportItems>
             <Textbox Name="Textbox2">
@@ -4821,536 +4857,499 @@
                 <PaddingBottom>2pt</PaddingBottom>
               </Style>
             </Textbox>
-            <Rectangle Name="Rectangle5">
-              <ReportItems>
-                <Textbox Name="Textbox27">
-                  <CanGrow>true</CanGrow>
-                  <KeepTogether>true</KeepTogether>
-                  <Paragraphs>
-                    <Paragraph>
-                      <TextRuns>
-                        <TextRun>
-                          <Value>CAJA:</Value>
-                          <Style>
-                            <FontSize>8pt</FontSize>
-                            <FontWeight>Bold</FontWeight>
-                          </Style>
-                        </TextRun>
-                      </TextRuns>
-                      <Style>
-                        <TextAlign>Left</TextAlign>
-                      </Style>
-                    </Paragraph>
-                  </Paragraphs>
-                  <rd:DefaultName>Textbox27</rd:DefaultName>
-                  <Top>0.91738cm</Top>
-                  <Left>0.10636cm</Left>
-                  <Height>0.5289cm</Height>
-                  <Width>1.57778cm</Width>
-                  <Style>
-                    <Border>
-                      <Style>None</Style>
-                    </Border>
-                    <VerticalAlign>Middle</VerticalAlign>
-                    <PaddingLeft>2pt</PaddingLeft>
-                    <PaddingRight>2pt</PaddingRight>
-                    <PaddingTop>2pt</PaddingTop>
-                    <PaddingBottom>2pt</PaddingBottom>
-                  </Style>
-                </Textbox>
-                <Textbox Name="Textbox57">
-                  <CanGrow>true</CanGrow>
-                  <KeepTogether>true</KeepTogether>
-                  <Paragraphs>
-                    <Paragraph>
-                      <TextRuns>
-                        <TextRun>
-                          <Value>=First(Fields!caja.Value, "InfoCajaDs")</Value>
-                          <Style>
-                            <FontSize>8pt</FontSize>
-                          </Style>
-                        </TextRun>
-                      </TextRuns>
-                      <Style>
-                        <TextAlign>Left</TextAlign>
-                      </Style>
-                    </Paragraph>
-                  </Paragraphs>
-                  <rd:DefaultName>Textbox55</rd:DefaultName>
-                  <Top>0.91738cm</Top>
-                  <Left>1.68414cm</Left>
-                  <Height>0.5289cm</Height>
-                  <Width>3.36128cm</Width>
-                  <ZIndex>1</ZIndex>
-                  <Style>
-                    <Border>
-                      <Style>None</Style>
-                    </Border>
-                    <VerticalAlign>Middle</VerticalAlign>
-                    <PaddingLeft>2pt</PaddingLeft>
-                    <PaddingRight>2pt</PaddingRight>
-                    <PaddingTop>2pt</PaddingTop>
-                    <PaddingBottom>2pt</PaddingBottom>
-                  </Style>
-                </Textbox>
-                <Textbox Name="Textbox63">
-                  <CanGrow>true</CanGrow>
-                  <KeepTogether>true</KeepTogether>
-                  <Paragraphs>
-                    <Paragraph>
-                      <TextRuns>
-                        <TextRun>
-                          <Value>Apertura:</Value>
-                          <Style>
-                            <FontSize>8pt</FontSize>
-                            <FontWeight>Bold</FontWeight>
-                          </Style>
-                        </TextRun>
-                      </TextRuns>
-                      <Style>
-                        <TextAlign>Left</TextAlign>
-                      </Style>
-                    </Paragraph>
-                    <Paragraph>
-                      <TextRuns>
-                        <TextRun>
-                          <Value />
-                          <Style>
-                            <FontSize>8pt</FontSize>
-                            <FontWeight>Bold</FontWeight>
-                          </Style>
-                        </TextRun>
-                      </TextRuns>
-                      <Style>
-                        <TextAlign>Center</TextAlign>
-                      </Style>
-                    </Paragraph>
-                  </Paragraphs>
-                  <rd:DefaultName>Textbox56</rd:DefaultName>
-                  <Top>0.27934cm</Top>
-                  <Left>5.78608cm</Left>
-                  <Height>0.52888cm</Height>
-                  <Width>1.61306cm</Width>
-                  <ZIndex>2</ZIndex>
-                  <Style>
-                    <Border>
-                      <Style>None</Style>
-                    </Border>
-                    <VerticalAlign>Middle</VerticalAlign>
-                    <PaddingLeft>2pt</PaddingLeft>
-                    <PaddingRight>2pt</PaddingRight>
-                    <PaddingTop>2pt</PaddingTop>
-                    <PaddingBottom>2pt</PaddingBottom>
-                  </Style>
-                </Textbox>
-                <Textbox Name="Textbox64">
-                  <CanGrow>true</CanGrow>
-                  <KeepTogether>true</KeepTogether>
-                  <Paragraphs>
-                    <Paragraph>
-                      <TextRuns>
-                        <TextRun>
-                          <Value>=First(Fields!apertura.Value, "InfoCajaDs")</Value>
-                          <Style>
-                            <FontSize>8pt</FontSize>
-                          </Style>
-                        </TextRun>
-                      </TextRuns>
-                      <Style>
-                        <TextAlign>Left</TextAlign>
-                      </Style>
-                    </Paragraph>
-                  </Paragraphs>
-                  <rd:DefaultName>Textbox55</rd:DefaultName>
-                  <Top>0.28211cm</Top>
-                  <Left>7.43442cm</Left>
-                  <Height>0.52611cm</Height>
-                  <Width>4.70184cm</Width>
-                  <ZIndex>3</ZIndex>
-                  <Style>
-                    <Border>
-                      <Style>None</Style>
-                    </Border>
-                    <VerticalAlign>Middle</VerticalAlign>
-                    <PaddingLeft>2pt</PaddingLeft>
-                    <PaddingRight>2pt</PaddingRight>
-                    <PaddingTop>2pt</PaddingTop>
-                    <PaddingBottom>2pt</PaddingBottom>
-                  </Style>
-                </Textbox>
-                <Textbox Name="Textbox65">
-                  <CanGrow>true</CanGrow>
-                  <KeepTogether>true</KeepTogether>
-                  <Paragraphs>
-                    <Paragraph>
-                      <TextRuns>
-                        <TextRun>
-                          <Value>Cierre:</Value>
-                          <Style>
-                            <FontSize>8pt</FontSize>
-                            <FontWeight>Bold</FontWeight>
-                          </Style>
-                        </TextRun>
-                      </TextRuns>
-                      <Style>
-                        <TextAlign>Left</TextAlign>
-                      </Style>
-                    </Paragraph>
-                    <Paragraph>
-                      <TextRuns>
-                        <TextRun>
-                          <Value />
-                          <Style>
-                            <FontSize>8pt</FontSize>
-                            <FontWeight>Bold</FontWeight>
-                          </Style>
-                        </TextRun>
-                      </TextRuns>
-                      <Style>
-                        <TextAlign>Center</TextAlign>
-                      </Style>
-                    </Paragraph>
-                  </Paragraphs>
-                  <rd:DefaultName>Textbox56</rd:DefaultName>
-                  <Top>0.87933cm</Top>
-                  <Left>5.78608cm</Left>
-                  <Height>0.56695cm</Height>
-                  <Width>1.61306cm</Width>
-                  <ZIndex>4</ZIndex>
-                  <Style>
-                    <Border>
-                      <Style>None</Style>
-                    </Border>
-                    <VerticalAlign>Middle</VerticalAlign>
-                    <PaddingLeft>2pt</PaddingLeft>
-                    <PaddingRight>2pt</PaddingRight>
-                    <PaddingTop>2pt</PaddingTop>
-                    <PaddingBottom>2pt</PaddingBottom>
-                  </Style>
-                </Textbox>
-                <Textbox Name="Textbox66">
-                  <CanGrow>true</CanGrow>
-                  <KeepTogether>true</KeepTogether>
-                  <Paragraphs>
-                    <Paragraph>
-                      <TextRuns>
-                        <TextRun>
-                          <Value>=First(Fields!cierre.Value, "InfoCajaDs")</Value>
-                          <Style>
-                            <FontSize>8pt</FontSize>
-                          </Style>
-                        </TextRun>
-                      </TextRuns>
-                      <Style>
-                        <TextAlign>Left</TextAlign>
-                      </Style>
-                    </Paragraph>
-                  </Paragraphs>
-                  <rd:DefaultName>Textbox55</rd:DefaultName>
-                  <Top>0.8821cm</Top>
-                  <Left>7.43442cm</Left>
-                  <Height>0.56418cm</Height>
-                  <Width>4.70184cm</Width>
-                  <ZIndex>5</ZIndex>
-                  <Style>
-                    <Border>
-                      <Style>None</Style>
-                    </Border>
-                    <PaddingLeft>2pt</PaddingLeft>
-                    <PaddingRight>2pt</PaddingRight>
-                    <PaddingTop>2pt</PaddingTop>
-                    <PaddingBottom>2pt</PaddingBottom>
-                  </Style>
-                </Textbox>
-                <Textbox Name="Textbox29">
-                  <CanGrow>true</CanGrow>
-                  <KeepTogether>true</KeepTogether>
-                  <Paragraphs>
-                    <Paragraph>
-                      <TextRuns>
-                        <TextRun>
-                          <Value>Nro.:</Value>
-                          <Style>
-                            <FontSize>8pt</FontSize>
-                            <FontWeight>Bold</FontWeight>
-                          </Style>
-                        </TextRun>
-                      </TextRuns>
-                      <Style>
-                        <TextAlign>Left</TextAlign>
-                      </Style>
-                    </Paragraph>
-                  </Paragraphs>
-                  <rd:DefaultName>Textbox27</rd:DefaultName>
-                  <Top>0.28488cm</Top>
-                  <Left>0.10636cm</Left>
-                  <Height>0.52334cm</Height>
-                  <Width>1.57778cm</Width>
-                  <ZIndex>6</ZIndex>
-                  <Style>
-                    <Border>
-                      <Style>None</Style>
-                    </Border>
-                    <VerticalAlign>Middle</VerticalAlign>
-                    <PaddingLeft>2pt</PaddingLeft>
-                    <PaddingRight>2pt</PaddingRight>
-                    <PaddingTop>2pt</PaddingTop>
-                    <PaddingBottom>2pt</PaddingBottom>
-                  </Style>
-                </Textbox>
-                <Textbox Name="Textbox70">
-                  <CanGrow>true</CanGrow>
-                  <KeepTogether>true</KeepTogether>
-                  <Paragraphs>
-                    <Paragraph>
-                      <TextRuns>
-                        <TextRun>
-                          <Value>=First(Fields!nroControl.Value, "InfoCajaDs")</Value>
-                          <Style>
-                            <FontSize>8pt</FontSize>
-                          </Style>
-                        </TextRun>
-                      </TextRuns>
-                      <Style>
-                        <TextAlign>Left</TextAlign>
-                      </Style>
-                    </Paragraph>
-                  </Paragraphs>
-                  <rd:DefaultName>Textbox55</rd:DefaultName>
-                  <Top>0.28488cm</Top>
-                  <Left>1.71942cm</Left>
-                  <Height>0.52334cm</Height>
-                  <Width>3.32601cm</Width>
-                  <ZIndex>7</ZIndex>
-                  <Style>
-                    <Border>
-                      <Style>None</Style>
-                    </Border>
-                    <VerticalAlign>Middle</VerticalAlign>
-                    <PaddingLeft>2pt</PaddingLeft>
-                    <PaddingRight>2pt</PaddingRight>
-                    <PaddingTop>2pt</PaddingTop>
-                    <PaddingBottom>2pt</PaddingBottom>
-                  </Style>
-                </Textbox>
-                <Textbox Name="Textbox74">
-                  <CanGrow>true</CanGrow>
-                  <KeepTogether>true</KeepTogether>
-                  <Paragraphs>
-                    <Paragraph>
-                      <TextRuns>
-                        <TextRun>
-                          <Value>Usuario:</Value>
-                          <Style>
-                            <FontSize>8pt</FontSize>
-                            <FontWeight>Bold</FontWeight>
-                          </Style>
-                        </TextRun>
-                      </TextRuns>
-                      <Style>
-                        <TextAlign>Left</TextAlign>
-                      </Style>
-                    </Paragraph>
-                    <Paragraph>
-                      <TextRuns>
-                        <TextRun>
-                          <Value />
-                          <Style>
-                            <FontSize>8pt</FontSize>
-                            <FontWeight>Bold</FontWeight>
-                          </Style>
-                        </TextRun>
-                      </TextRuns>
-                      <Style>
-                        <TextAlign>Center</TextAlign>
-                      </Style>
-                    </Paragraph>
-                  </Paragraphs>
-                  <rd:DefaultName>Textbox56</rd:DefaultName>
-                  <Top>0.91738cm</Top>
-                  <Left>12.8252cm</Left>
-                  <Height>0.52889cm</Height>
-                  <Width>1.61306cm</Width>
-                  <ZIndex>8</ZIndex>
-                  <Style>
-                    <Border>
-                      <Style>None</Style>
-                    </Border>
-                    <VerticalAlign>Middle</VerticalAlign>
-                    <PaddingLeft>2pt</PaddingLeft>
-                    <PaddingRight>2pt</PaddingRight>
-                    <PaddingTop>2pt</PaddingTop>
-                    <PaddingBottom>2pt</PaddingBottom>
-                  </Style>
-                </Textbox>
-                <Textbox Name="Textbox62">
-                  <CanGrow>true</CanGrow>
-                  <KeepTogether>true</KeepTogether>
-                  <Paragraphs>
-                    <Paragraph>
-                      <TextRuns>
-                        <TextRun>
-                          <Value>=First(Fields!usuario.Value, "InfoCajaDs")</Value>
-                          <Style>
-                            <FontSize>8pt</FontSize>
-                          </Style>
-                        </TextRun>
-                      </TextRuns>
-                      <Style>
-                        <TextAlign>Left</TextAlign>
-                      </Style>
-                    </Paragraph>
-                  </Paragraphs>
-                  <rd:DefaultName>Textbox55</rd:DefaultName>
-                  <Top>0.91738cm</Top>
-                  <Left>14.50882cm</Left>
-                  <Height>0.52889cm</Height>
-                  <Width>4.66656cm</Width>
-                  <ZIndex>9</ZIndex>
-                  <Style>
-                    <Border>
-                      <Style>None</Style>
-                    </Border>
-                    <VerticalAlign>Middle</VerticalAlign>
-                    <PaddingLeft>2pt</PaddingLeft>
-                    <PaddingRight>2pt</PaddingRight>
-                    <PaddingTop>2pt</PaddingTop>
-                    <PaddingBottom>2pt</PaddingBottom>
-                  </Style>
-                </Textbox>
-                <Textbox Name="Textbox68">
-                  <CanGrow>true</CanGrow>
-                  <KeepTogether>true</KeepTogether>
-                  <Paragraphs>
-                    <Paragraph>
-                      <TextRuns>
-                        <TextRun>
-                          <Value>=First(Fields!estado.Value, "InfoCajaDs")</Value>
-                          <Style>
-                            <FontSize>8pt</FontSize>
-                          </Style>
-                        </TextRun>
-                      </TextRuns>
-                      <Style>
-                        <TextAlign>Left</TextAlign>
-                      </Style>
-                    </Paragraph>
-                  </Paragraphs>
-                  <rd:DefaultName>Textbox55</rd:DefaultName>
-                  <Top>0.27934cm</Top>
-                  <Left>14.47354cm</Left>
-                  <Height>0.52888cm</Height>
-                  <Width>4.70184cm</Width>
-                  <ZIndex>10</ZIndex>
-                  <Style>
-                    <Border>
-                      <Style>None</Style>
-                    </Border>
-                    <VerticalAlign>Middle</VerticalAlign>
-                    <PaddingLeft>2pt</PaddingLeft>
-                    <PaddingRight>2pt</PaddingRight>
-                    <PaddingTop>2pt</PaddingTop>
-                    <PaddingBottom>2pt</PaddingBottom>
-                  </Style>
-                </Textbox>
-                <Textbox Name="Textbox73">
-                  <CanGrow>true</CanGrow>
-                  <KeepTogether>true</KeepTogether>
-                  <Paragraphs>
-                    <Paragraph>
-                      <TextRuns>
-                        <TextRun>
-                          <Value>Estado:</Value>
-                          <Style>
-                            <FontSize>8pt</FontSize>
-                            <FontWeight>Bold</FontWeight>
-                          </Style>
-                        </TextRun>
-                      </TextRuns>
-                      <Style>
-                        <TextAlign>Left</TextAlign>
-                      </Style>
-                    </Paragraph>
-                    <Paragraph>
-                      <TextRuns>
-                        <TextRun>
-                          <Value />
-                          <Style>
-                            <FontSize>8pt</FontSize>
-                            <FontWeight>Bold</FontWeight>
-                          </Style>
-                        </TextRun>
-                      </TextRuns>
-                      <Style>
-                        <TextAlign>Center</TextAlign>
-                      </Style>
-                    </Paragraph>
-                  </Paragraphs>
-                  <rd:DefaultName>Textbox56</rd:DefaultName>
-                  <Top>0.28211cm</Top>
-                  <Left>12.8252cm</Left>
-                  <Height>0.52611cm</Height>
-                  <Width>1.64834cm</Width>
-                  <ZIndex>11</ZIndex>
-                  <Style>
-                    <Border>
-                      <Style>None</Style>
-                    </Border>
-                    <VerticalAlign>Middle</VerticalAlign>
-                    <PaddingLeft>2pt</PaddingLeft>
-                    <PaddingRight>2pt</PaddingRight>
-                    <PaddingTop>2pt</PaddingTop>
-                    <PaddingBottom>2pt</PaddingBottom>
-                  </Style>
-                </Textbox>
-                <Textbox Name="Textbox4">
-                  <CanGrow>true</CanGrow>
-                  <KeepTogether>true</KeepTogether>
-                  <Paragraphs>
-                    <Paragraph>
-                      <TextRuns>
-                        <TextRun>
-                          <Value>=First(Fields!diferencia.Value, "InfoCajaDs")</Value>
-                          <Style>
-                            <Color>=First(Fields!color.Value, "InfoCajaDs")</Color>
-                          </Style>
-                        </TextRun>
-                      </TextRuns>
-                      <Style>
-                        <TextAlign>Center</TextAlign>
-                      </Style>
-                    </Paragraph>
-                  </Paragraphs>
-                  <rd:DefaultName>Textbox4</rd:DefaultName>
-                  <Top>0.27934cm</Top>
-                  <Left>21.34411cm</Left>
-                  <Height>1.16139cm</Height>
-                  <Width>2.8175cm</Width>
-                  <ZIndex>12</ZIndex>
-                  <Style>
-                    <Border>
-                      <Style>Solid</Style>
-                    </Border>
-                    <VerticalAlign>Middle</VerticalAlign>
-                    <PaddingLeft>2pt</PaddingLeft>
-                    <PaddingRight>2pt</PaddingRight>
-                    <PaddingTop>2pt</PaddingTop>
-                    <PaddingBottom>2pt</PaddingBottom>
-                  </Style>
-                </Textbox>
-              </ReportItems>
-              <KeepTogether>true</KeepTogether>
-              <Top>1.36701cm</Top>
+            <Line Name="Line4">
+              <Top>3.49951cm</Top>
               <Left>0.28437cm</Left>
-              <Height>1.92083cm</Height>
+              <Height>0cm</Height>
               <Width>25.82797cm</Width>
               <ZIndex>1</ZIndex>
               <Style>
                 <Border>
-                  <Style>None</Style>
+                  <Style>Solid</Style>
                 </Border>
               </Style>
-            </Rectangle>
+            </Line>
+            <Textbox Name="Textbox70">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=First(Fields!nroControl.Value, "InfoCajaDs")</Value>
+                      <Style>
+                        <FontSize>8pt</FontSize>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Left</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox55</rd:DefaultName>
+              <Top>1.65189cm</Top>
+              <Left>4.81865cm</Left>
+              <Height>0.52334cm</Height>
+              <Width>3.32601cm</Width>
+              <ZIndex>2</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <VerticalAlign>Middle</VerticalAlign>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox57">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=First(Fields!caja.Value, "InfoCajaDs")</Value>
+                      <Style>
+                        <FontSize>8pt</FontSize>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Left</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox55</rd:DefaultName>
+              <Top>2.24579cm</Top>
+              <Left>4.78337cm</Left>
+              <Height>0.5289cm</Height>
+              <Width>3.36128cm</Width>
+              <ZIndex>3</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <VerticalAlign>Middle</VerticalAlign>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox27">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>CAJA:</Value>
+                      <Style>
+                        <FontSize>8pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Left</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox27</rd:DefaultName>
+              <Top>2.27552cm</Top>
+              <Left>3.17032cm</Left>
+              <Height>0.5289cm</Height>
+              <Width>1.61306cm</Width>
+              <ZIndex>4</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <VerticalAlign>Middle</VerticalAlign>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox29">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Nro.:</Value>
+                      <Style>
+                        <FontSize>8pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Left</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox27</rd:DefaultName>
+              <Top>1.64635cm</Top>
+              <Left>3.17032cm</Left>
+              <Height>0.52334cm</Height>
+              <Width>1.57778cm</Width>
+              <ZIndex>5</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <VerticalAlign>Middle</VerticalAlign>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox64">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=First(Fields!apertura.Value, "InfoCajaDs")</Value>
+                      <Style>
+                        <FontSize>8pt</FontSize>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Left</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox55</rd:DefaultName>
+              <Top>1.67558cm</Top>
+              <Left>10.56893cm</Left>
+              <Height>0.52611cm</Height>
+              <Width>4.70184cm</Width>
+              <ZIndex>6</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <VerticalAlign>Middle</VerticalAlign>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox66">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=First(Fields!cierre.Value, "InfoCajaDs")</Value>
+                      <Style>
+                        <FontSize>8pt</FontSize>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Left</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox55</rd:DefaultName>
+              <Top>2.27557cm</Top>
+              <Left>10.56893cm</Left>
+              <Height>0.53771cm</Height>
+              <Width>4.70184cm</Width>
+              <ZIndex>7</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox65">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Cierre:</Value>
+                      <Style>
+                        <FontSize>8pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Left</TextAlign>
+                  </Style>
+                </Paragraph>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value />
+                      <Style>
+                        <FontSize>8pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox56</rd:DefaultName>
+              <Top>2.2728cm</Top>
+              <Left>8.89413cm</Left>
+              <Height>0.50189cm</Height>
+              <Width>1.61306cm</Width>
+              <ZIndex>8</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <VerticalAlign>Middle</VerticalAlign>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox63">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Apertura:</Value>
+                      <Style>
+                        <FontSize>8pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Left</TextAlign>
+                  </Style>
+                </Paragraph>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value />
+                      <Style>
+                        <FontSize>8pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox56</rd:DefaultName>
+              <Top>1.64635cm</Top>
+              <Left>8.89413cm</Left>
+              <Height>0.52888cm</Height>
+              <Width>1.61306cm</Width>
+              <ZIndex>9</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <VerticalAlign>Middle</VerticalAlign>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox68">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=First(Fields!estado.Value, "InfoCajaDs")</Value>
+                      <Style>
+                        <FontSize>8pt</FontSize>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Left</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox55</rd:DefaultName>
+              <Top>1.64635cm</Top>
+              <Left>17.58159cm</Left>
+              <Height>0.52888cm</Height>
+              <Width>4.70184cm</Width>
+              <ZIndex>10</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <VerticalAlign>Middle</VerticalAlign>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox62">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=First(Fields!usuario.Value, "InfoCajaDs")</Value>
+                      <Style>
+                        <FontSize>8pt</FontSize>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Left</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox55</rd:DefaultName>
+              <Top>2.28439cm</Top>
+              <Left>17.61687cm</Left>
+              <Height>0.52889cm</Height>
+              <Width>4.66656cm</Width>
+              <ZIndex>11</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <VerticalAlign>Middle</VerticalAlign>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox74">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Usuario:</Value>
+                      <Style>
+                        <FontSize>8pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Left</TextAlign>
+                  </Style>
+                </Paragraph>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value />
+                      <Style>
+                        <FontSize>8pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox56</rd:DefaultName>
+              <Top>2.28439cm</Top>
+              <Left>15.93325cm</Left>
+              <Height>0.52889cm</Height>
+              <Width>1.61306cm</Width>
+              <ZIndex>12</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <VerticalAlign>Middle</VerticalAlign>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox73">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Estado:</Value>
+                      <Style>
+                        <FontSize>8pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Left</TextAlign>
+                  </Style>
+                </Paragraph>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value />
+                      <Style>
+                        <FontSize>8pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox56</rd:DefaultName>
+              <Top>1.64912cm</Top>
+              <Left>15.93325cm</Left>
+              <Height>0.52611cm</Height>
+              <Width>1.64834cm</Width>
+              <ZIndex>13</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <VerticalAlign>Middle</VerticalAlign>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
           </ReportItems>
           <Style>
             <Border>
@@ -5358,6 +5357,148 @@
             </Border>
           </Style>
         </PageHeader>
+        <PageFooter>
+          <Height>1.53458cm</Height>
+          <PrintOnFirstPage>true</PrintOnFirstPage>
+          <PrintOnLastPage>true</PrintOnLastPage>
+          <ReportItems>
+            <Textbox Name="Textbox4">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>="Date: " &amp; Format(Now(), "dd/MM/yyyy HH:mm")</Value>
+                      <Style>
+                        <Format>f</Format>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox4</rd:DefaultName>
+              <Top>0.75237cm</Top>
+              <Left>6.82186cm</Left>
+              <Height>0.6cm</Height>
+              <Width>10.13267cm</Width>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <VerticalAlign>Middle</VerticalAlign>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox12">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>ACONTPLUS</Value>
+                      <Style>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox12</rd:DefaultName>
+              <Top>0.75237cm</Top>
+              <Left>0.33641cm</Left>
+              <Height>0.6cm</Height>
+              <Width>2.5cm</Width>
+              <ZIndex>1</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox14">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Página </Value>
+                      <Style>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                    <TextRun>
+                      <Value>=Globals!PageNumber</Value>
+                      <Style>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                    <TextRun>
+                      <Value> de </Value>
+                      <Style>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                    <TextRun>
+                      <Value>=Globals!TotalPages</Value>
+                      <Style>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Right</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox14</rd:DefaultName>
+              <Top>0.75237cm</Top>
+              <Left>18.9602cm</Left>
+              <Height>0.6cm</Height>
+              <Width>7.15214cm</Width>
+              <ZIndex>2</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Line Name="Line1">
+              <Top>0.39931cm</Top>
+              <Left>0.33641cm</Left>
+              <Height>0cm</Height>
+              <Width>25.72213cm</Width>
+              <ZIndex>3</ZIndex>
+              <Style>
+                <Border>
+                  <Style>Solid</Style>
+                </Border>
+              </Style>
+            </Line>
+          </ReportItems>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+          </Style>
+        </PageFooter>
         <PageHeight>21.59cm</PageHeight>
         <PageWidth>27cm</PageWidth>
         <LeftMargin>0.25cm</LeftMargin>
