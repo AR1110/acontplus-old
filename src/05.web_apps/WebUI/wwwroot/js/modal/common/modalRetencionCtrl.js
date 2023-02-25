@@ -1796,8 +1796,9 @@ export class ModalRetencionVentaNuevoCtrl extends ModalRetencionVentaCtrl{
             "checkBoxDefault": false,
             "checkBoxCliente": true,
             "byCliente": this.cliente.idCliente,
-            "checkBoxEstado": true,
-            "byEstado": 13            
+            "checkBoxEstado": false,
+            "byEstado": 13,
+            "paraNotaCredito": true            
         }      
         await this._mS.getData('get', '/FacturaVenta/Get?json=' + JSON.stringify(dataSearch)).then(response=>{
             if (response.id === "0") {

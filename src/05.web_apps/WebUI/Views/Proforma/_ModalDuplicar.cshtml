@@ -246,7 +246,7 @@
                             <label>% Descuento</label>
                             <div class="input-group">
                                 <input ng-model="$ctrl.data.porcentajeDescuento" ng-disabled="$ctrl.gridOptions.data.length==0" 
-                                valid-number class="form-control" />
+                                decimal class="form-control" />
                                 <div class="input-group-append">
                                     <button type="button" class="btn btn-secondary btn-sm" ng-click="$ctrl.calcularPorcentajeDescuento()">
                                         <i class="fa fa-calculator fa-xs"></i>
@@ -260,7 +260,7 @@
                         <div class="form-group">
                             <label>Descuento</label>
                             <div class="input-group">
-                                <input ng-model="$ctrl.data.totalDescuento" id="totalDescuento" ng-disabled="$ctrl.gridOptions.data.length==0" valid-number placeholder="0.00" class="form-control" />
+                                <input ng-model="$ctrl.data.totalDescuento" id="totalDescuento" ng-disabled="$ctrl.gridOptions.data.length==0" decimal placeholder="0.00" class="form-control" />
                                 <div class="input-group-append">
                                     <button type="button" class="btn btn-secondary btn-sm" ng-click="$ctrl.calcularDescuento()">
                                         <i class="fa fa-calculator fa-xs"></i>

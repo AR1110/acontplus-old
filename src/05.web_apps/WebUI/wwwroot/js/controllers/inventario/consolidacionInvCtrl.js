@@ -25,6 +25,8 @@ function consolidacionInvCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nomb
     $scope.getConsolidaciones = async()=>{
         try {
             showLoader();
+            $scope.consolidaciones = [];
+
             await _mS.getData('get', '/ConsolidacionInventario/Get?json=' + JSON.stringify($scope.dataSearch)).then(response=>{
                 if(response.code==="0"){
                     console.warn(response)                    
@@ -41,13 +43,13 @@ function consolidacionInvCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nomb
     }
 
     $scope.initiload = ()=>{
-        _mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response=>{
-            let results = JSON.parse(response.payload) || [];
-            let establecimientos = results[0];
+        _commonSvc.getEstabAsign().then(response=>{            
+            let establecimientos = response;
             let codEstab = establecimientos.length>0?establecimientos[0].codEstab: 0;            
             $scope.dataSearch.codEstab = codEstab;
             $scope.getConsolidaciones();
-        })
+
+        })                
     }
     $scope.initiload();
 

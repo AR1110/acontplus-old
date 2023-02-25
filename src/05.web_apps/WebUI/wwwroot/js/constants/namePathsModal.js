@@ -570,6 +570,10 @@ app.constant('nombreModal', {
         MODAL_NUEVO:{
             controller: 'ModalTransportistaCtrl',
             template: 'Transportista/_ModalTransportista.cshtml'
+        },
+        MODAL_EDITAR:{
+            controller: 'ModalTransportistaCtrl',
+            template: 'Transportista/_ModalTransportista.cshtml'
         }
     },
     transferencia_bodega: {

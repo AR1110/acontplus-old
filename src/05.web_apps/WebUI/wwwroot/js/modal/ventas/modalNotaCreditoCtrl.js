@@ -705,6 +705,7 @@ export class ModalNotaCreditoDetalleCtrl extends ModalNotaCreditoCtrl{
     async $onInit(){
         try {
             showLoader();
+            console.log(this)
             let resultsDataForm = await this.initiload();            
             let {UiGridOptions} = await import('./../factElect/uiGridOptions.min.js' + CHANGE_VERSION());
            
@@ -719,7 +720,7 @@ export class ModalNotaCreditoDetalleCtrl extends ModalNotaCreditoCtrl{
 
                 this.bodegas       = resultsDataFormEstab[1];                
                 this.idBodega      = this.bodegas.length>0?this.bodegas[0].idBodega:0;
-                this.cloneIdBodega = this.idBodega;                
+                             
             }else{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
             }
@@ -730,37 +731,19 @@ export class ModalNotaCreditoDetalleCtrl extends ModalNotaCreditoCtrl{
             this.tipoIvas = resultsDataForm[3];
             this.tarifas  = resultsDataForm[4];
 
-            this.idTarifa = this.tarifas.length>0?this.tarifas[0].idTarifa:0;
-            this.cloneIdTarifa = this.idTarifa;
+            this.idTarifa = this.tarifas.length>0?this.tarifas[0].idTarifa:0;            
 
             this.tiempoCreditos = resultsDataForm[5];
            
             this.setColumnDefsVista();            
            
-            this.uiGridInvoice =  new UiGridOptions({
-                $scope: this.$scope,
-                gridOptions: this.gridOptions,
-                _fS: this._fS,
-                _mS: this._mS,
-                _tS: this._tS,
-                tipoIvas: this.tipoIvas
-            })
-
-            this.uiGridInvoice.setInitiload({
-                bodegas: this.bodegas,                 
-                tipoIvas: this.tipoIvas, 
-                decimal: this.decimal, 
-                actividadTipoIva: this.actividadTipoIva
-            })
-            this.uiGridInvoice.idTarifa = this.idTarifa;
-            
+    
             //Cargamos los Datos 
             this.data = this.dataDocumento;
             this.nroDocSecuencial = this.data.nroDocSecuencial;
             this.gridOptions.data = this.detalleDocumento;            
 
-            this.fechaEmisionEscrita = this._fS.getFechaEscrita(this.data.fechaEmision);
-            this.fechaVencimientoEscrita = this._fS.getFechaEscrita(this.data.fechaVencimiento);
+            this.fechaEmisionEscrita = this._fS.getFechaEscrita(this.data.fechaEmision);            
             
             this.$scope.$apply();            
 

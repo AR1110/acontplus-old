@@ -304,18 +304,22 @@ function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombre
 
     //Eliminar Retencion Venta
     $scope.delete = (item)=> {
-        form.showLoaderAnular();
-        $http.post('/RetencionVenta/Delete?idRetencionVenta=' + item.idRetencionVenta)
-        .then(({data:response}) => {
-            if (response.id == "0") {
-                form.sweetAlert('warning', response.message, response.titleSms);                    
-            }
-            if (response.id == "1") {
-                form.sweetAlert('success', response.message, response.titleSms, 1000);
-                $scope.getRetencionesVenta();                    
-            }
-        }, error => console.log(error));
-
+        try {
+            showLoader();
+            _mS.getData('delete', '/RetencionVenta/Delete?id=' + item.idRetencionVenta).then(response=>{
+                if (response.id == "0") {
+                    hideLoader()
+                    form.sweetAlert('warning', response.message, response.titleSms);                    
+                }
+                if (response.id == "1") {
+                    hideLoader()
+                    form.sweetAlert('success', response.message, response.titleSms, 1000);
+                    $scope.getRetencionesVenta();                    
+                }
+            })
+        } catch (error) {
+            hideLoader()
+        }        
     }
 
    

@@ -199,6 +199,9 @@ namespace DataAccess.Logistica
                             {
                                 idVehiculo = reader.GetInt32(2),
                                 placa = reader.GetString(3),
+                                marca = reader.GetString(4),
+                                modelo = reader.GetString(5),
+                                observacion = reader.GetString(6),  
                             };
                             search.Add(item);
                         }
