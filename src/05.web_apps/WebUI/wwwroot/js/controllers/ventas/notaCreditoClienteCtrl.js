@@ -144,14 +144,14 @@ function notaCreditoClienteCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModal
     }
 
     $scope.initiload = ()=>{
-        _mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response=>{
-            let results = JSON.parse(response.payload) || [];
-            $scope.establecimientos = results[0];
+        _commonSvc.getEstabAsign().then(response=>{                        
+            $scope.establecimientos = response;
             let codEstab = $scope.establecimientos.length>0?$scope.establecimientos[0].codEstab: 0;            
             $scope.dataSearch.codEstab = codEstab;
             $scope.getNotaCreditos();
+            
         })
-
+        
         _commonSvc.getEstadoDocByCodDoc('NC').then(response=>{
             $scope.estadoPagos = response;
         })  

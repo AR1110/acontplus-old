@@ -48,8 +48,7 @@ function facturaCompraCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreM
     $scope.getFacturas = async()=>{
         try {
             showLoader();
-            $scope.facturas = [];
-            console.log($scope.dataSearch)
+            $scope.facturas = [];            
             await _mS.getData('get', '/FacturaCompra/Get?json=' + JSON.stringify($scope.dataSearch)).then(response=>{
                 if(response.code==="0"){
                     console.warn(response)                    
@@ -67,9 +66,9 @@ function facturaCompraCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreM
     }
 
     $scope.initiload = ()=>{
-        _mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response=>{
-            let results = JSON.parse(response.payload) || [];
-            $scope.establecimientos = results[0];
+
+        _commonSvc.getEstabAsign().then(response=>{  
+            $scope.establecimientos = response;
             let codEstab = $scope.establecimientos.length>0?$scope.establecimientos[0].codEstab: 0;            
             $scope.dataSearch.codEstab = codEstab;
             $scope.getFacturas();

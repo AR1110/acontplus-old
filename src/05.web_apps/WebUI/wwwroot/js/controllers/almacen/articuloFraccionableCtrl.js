@@ -47,13 +47,23 @@ class ArticuloFraccionadoCtrl{
     }
 
     getAllArticuloFraccionado(){
-        showLoader();
-        this._mS.getData('get','/ArticuloFraccionado/Get?json=' + JSON.stringify({ test: 'kjghksh' })).then(
-            response => {
-                hideLoader();
-                this.articuloFraccionados = JSON.parse(response.payload) || [];
-            }
-        )      
+        try {
+            this.articuloFraccionados = [];
+            showLoader();
+            this._mS.getData('get','/ArticuloFraccionado/Get?json=' + JSON.stringify({ test: 'kjghksh' })).then(
+                response => {
+                    if(response.code=="0"){
+                        console.log(response)
+                    }
+                    this.articuloFraccionados = JSON.parse(response.payload) || [];
+                    console.log(this.articuloFraccionados)
+                    hideLoader();
+                }
+            )  
+        } catch (error) {
+            
+        }
+            
     }
 
     async openModal(item){

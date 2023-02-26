@@ -45,7 +45,7 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
                 }else{                                
                     $scope.dataSearch.checkBoxDefault = true;
                 } 
-                console.log($scope.dataSearch)
+                
             await _mS.getData('get', '/Proforma/Get?json=' + JSON.stringify($scope.dataSearch)).then(response=>{                              
                 if(response.id==='0'){
                     $scope.proformas = []
@@ -68,12 +68,12 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
     }    
 
     $scope.initiload = ()=>{
-        _mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response=>{
-            let results = JSON.parse(response.payload) || [];
-            let establecimientos = results[0];
-            let codEstab = establecimientos.length>0?establecimientos[0].codEstab: 0;            
+        _commonSvc.getEstabAsign().then(response=>{            
+            $scope.establecimientos = response;
+            let codEstab = $scope.establecimientos.length>0? $scope.establecimientos[0].codEstab: 0;            
             $scope.dataSearch.codEstab = codEstab;
             $scope.getProformas();
+            
         })
     }
     $scope.initiload();
@@ -85,7 +85,7 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
         let {MODAL_FILE_CTRL, MODAL_NUEVO} = _nombreModalConst.proforma;
         let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_NUEVO['controller']];
         let template   = MODAL_NUEVO['template'];
-        console.log(MODAL_FILE_CTRL)
+        
         let params = {
             TIPO_REGISTRO: 'NUEVO'
         }

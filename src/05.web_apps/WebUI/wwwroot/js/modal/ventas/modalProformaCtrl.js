@@ -123,7 +123,7 @@ class ModalProformaCtrl extends ModalBaseCtrl{
             self.data = Object.assign(self.data, self.uiGridInvoice.getTotales()); 
 
             this.focusColumnCantidad();
-
+            this.counterGridOptions();
 
             this.indexRow = this.gridOptions.data.findIndex(val => val.idArticulo === this.dataArticulo.articulo.idArticulo);           
 
@@ -131,6 +131,13 @@ class ModalProformaCtrl extends ModalBaseCtrl{
         } catch (error) {
             console.log(error)            
         }
+    }
+
+    counterGridOptions(){        
+        angular.forEach(this.gridOptions.data, (item, index)=>{
+            item.n = index + 1;
+        })
+       
     }
     
 
@@ -210,11 +217,12 @@ class ModalProformaCtrl extends ModalBaseCtrl{
 
 
 export class ModalProformaNuevoCtrl extends ModalProformaCtrl{
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params']
+    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'storageService', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params']
 
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params){
+    constructor($scope, $timeout, $uibModalInstance, _storageSvc, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params){
         super({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS})
         const self = this;
+        this._storageSvc = _storageSvc;
 
         let {TIPO_REGISTRO} = _params;        
         this.TIPO_REGISTRO = TIPO_REGISTRO;
@@ -288,10 +296,20 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl{
 
             this.uiGridInvoice.idTarifa = this.idTarifa;
             
+            
+            if(Object.keys(this._storageSvc.getObject("proformaDetail")).length>0){
+                this._storageSvc.restoreInvoiceDetail("proformaDetail").then(result=>{
+                    if(result.isConfirmed){
+                        this.gridOptions.data = JSON.parse(result.dataInvoiceDetail[result.value]);                           
+                        delete result.dataInvoiceDetail[result.value];
+                                        
+                        this._storageSvc.setObject("proformaDetail", result.dataInvoiceDetail) 
+                                                                                       
+                        this.data = Object.assign(this.data, this.uiGridInvoice.getTotales());  
+                    }
 
-            // if(localStorage.getItem('docsDetalle')){
-            //     this.restoreDetailStorage();
-            // }
+                })
+            }
             
             this.$scope.$apply();
 
@@ -395,6 +413,60 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl{
             hideLoader();
         }     
     }
+
+
+
+    async closeModal(){
+
+        if(this.gridOptions.data.length>0){
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                  confirmButton: 'btn btn-success',
+                  denyButton:'btn btn-info ml-2',
+                  cancelButton: 'btn btn-danger ml-2'
+                },
+                buttonsStyling: false
+            })
+            
+            swalWithBootstrapButtons.fire({
+                title: 'Salir ?',
+                html: "<small>Tienes un documento en proceso, desea salir ahora?</small>",
+                icon: 'warning',
+                showCancelButton: true,
+                showConfirmButton:true,
+                showDenyButton:true,
+                confirmButtonText: 'Apartar',
+                denyButtonText: 'Si, salir',
+                cancelButtonText: 'No, cancelar!',
+                focusDeny:true,
+                reverseButtons: false
+            }).then(result=>{
+
+                if(result.isConfirmed){
+                    this.askToSaveStorage();
+                }
+
+                if(result.isDenied){
+                    this.$uibModalInstance.close();
+                }
+                
+            })
+            return 
+        }
+        this.$uibModalInstance.close();        
+    }
+
+
+    async askToSaveStorage(){
+        try {
+            await this._storageSvc.askToSaveDetailDoc("proformaDetail", this.gridOptions.data);
+            this.$uibModalInstance.close(); 
+        } catch (error) {
+            console.log(error)
+        }             
+    }
+
+
 }
 
 

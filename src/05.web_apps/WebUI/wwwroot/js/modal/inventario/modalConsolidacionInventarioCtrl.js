@@ -647,10 +647,12 @@ class ModalConsolidacionCtrl extends ModalBaseCtrl{
 
 export class ModalConsolidacionNuevoCtrl extends ModalConsolidacionCtrl{
 
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'uiGridConstants', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario', 'params'];
+    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'storageService', 'uiGridConstants', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario', 'params'];
 
-    constructor($scope, $timeout, $uibModalInstance, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreConst, _tS, _fS, _params){
+    constructor($scope, $timeout, $uibModalInstance, _storageSvc, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreConst, _tS, _fS, _params){
         super({$scope, $timeout, $uibModalInstance, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreConst, _tS, _fS, _params})
+
+        this._storageSvc = _storageSvc;
 
         let {TIPO_REGISTRO} =_params;
 
@@ -697,6 +699,19 @@ export class ModalConsolidacionNuevoCtrl extends ModalConsolidacionCtrl{
             
             
             this.setColumnDefs();
+
+
+            if(Object.keys(this._storageSvc.getObject("consolidacionDetail")).length>0){
+                this._storageSvc.restoreInvoiceDetail("consolidacionDetail").then(result=>{
+                    if(result.isConfirmed){
+                        this.gridOptions.data = JSON.parse(result.dataInvoiceDetail[result.value]);                           
+                        delete result.dataInvoiceDetail[result.value];
+                                        
+                        this._storageSvc.setObject("consolidacionDetail", result.dataInvoiceDetail)                            
+                    }
+
+                })
+            }
            
             this.$scope.$apply();            
 
@@ -767,7 +782,7 @@ export class ModalConsolidacionNuevoCtrl extends ModalConsolidacionCtrl{
                 },
                 buttonsStyling: false
             })
-            console.log(this)  
+            
             let {isConfirmed} = await  swalWithBootstrapButtons.fire({
                 title: '<small>Guardar Documento</small>',
                 html: `<small>Esta seguro de guardar este Consolidación Nro. <b>${this.nroDocumentoSecuencial}</b>?</small>`,
@@ -810,6 +825,59 @@ export class ModalConsolidacionNuevoCtrl extends ModalConsolidacionCtrl{
             hideLoader();
         }
     }
+
+
+
+    async closeModal(){
+
+        if(this.gridOptions.data.length>0){
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                  confirmButton: 'btn btn-success',
+                  denyButton:'btn btn-info ml-2',
+                  cancelButton: 'btn btn-danger ml-2'
+                },
+                buttonsStyling: false
+            })
+            
+            swalWithBootstrapButtons.fire({
+                title: 'Salir ?',
+                html: "<small>Tienes un documento en proceso, desea salir ahora?</small>",
+                icon: 'warning',
+                showCancelButton: true,
+                showConfirmButton:true,
+                showDenyButton:true,
+                confirmButtonText: 'Apartar',
+                denyButtonText: 'Si, salir',
+                cancelButtonText: 'No, cancelar!',
+                focusDeny:true,
+                reverseButtons: false
+            }).then(result=>{
+
+                if(result.isConfirmed){
+                    this.askToSaveStorage();
+                }
+
+                if(result.isDenied){
+                    this.$uibModalInstance.close();
+                }
+                
+            })
+            return 
+        }
+        this.$uibModalInstance.close();        
+    }
+
+
+    async askToSaveStorage(){
+        try {
+            await this._storageSvc.askToSaveDetailDoc("consolidacionDetail", this.gridOptions.data);
+            this.$uibModalInstance.close(); 
+        } catch (error) {
+            console.log(error)
+        }             
+    }
+
 }
 
 

@@ -45,7 +45,7 @@ BEGIN
 			SET @idUsuarioRol = @idRol
 		END 
 
-	SELECT 
+	SELECT * FROM ( SELECT 
 		 asig.idEstab_Asig
 		,asig.codEstab_Asig
 		,asig.codEstab
@@ -55,7 +55,7 @@ BEGIN
 		,asig.estado
 	FROM Config.Estab_Asig asig
 	INNER JOIN Sri.Establecimiento es ON es.codEstab = asig.codEstab 
-	wHERE asig.idUsuarioRol = @idUsuarioRol ORDER BY asig.predeterminado ASC 
+	wHERE asig.idUsuarioRol = @idUsuarioRol  
 
 	UNION ALL
 
@@ -70,6 +70,7 @@ BEGIN
 	FROM Sri.Establecimiento es 
 	WHERE es.codEstab NOT IN (SELECT sc.codEstab FROM Config.Estab_Asig sc WHERE sc.idUsuarioRol = @idUsuarioRol)
 	AND es.ruc = @ruc 
+	) AS t ORDER BY t.predeterminado DESC
 
 
 END
