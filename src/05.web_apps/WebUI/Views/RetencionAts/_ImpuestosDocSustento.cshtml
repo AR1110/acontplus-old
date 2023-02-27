@@ -1,4 +1,4 @@
-﻿<h4>Impuestos</h4>
+﻿<h4>Impuestos del Documento</h4>
 <div class="row">
     <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
         <div class="form-group">
@@ -47,10 +47,15 @@
         </div>
     </div>
 </div>
-<button class="btn btn-info" ng-click="addTax(item.uniqueIdDoc)"><i class="ti-plus"></i> Añadir Impuesto</button>
+<button type="button" class="btn btn-info  btn-sm" id="btnAddTax" ng-click="addTax(item.uniqueIdDoc, true)"><i
+        class="ti-plus"></i>
+    Añadir Impuesto</button>
+<button type="button" class="btn btn-info btn-sm" id="btnEditTax" ng-click="updateTax(item.uniqueIdDoc)"
+    style="display:none;"><i class="ti-save"></i>
+    Guardar Impuesto</button>
 <hr>
 <div class="table-responsive" ng-if="taxesAdded.length > 0">
-    <table class="table">
+    <table class="table table-bordered">
         <thead>
             <tr>
                 <th>Impuesto</th>
@@ -62,7 +67,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr dir-paginate="tax in taxesAdded|orderBy:sortKey:reverse|filter:item.uniqueIdDoc|itemsPerPage:10"
+            <tr dir-paginate="tax in taxesAdded | orderBy:sortKey:reverse | filter: item.uniqueIdDoc|itemsPerPage:10"
                 ng-class-even="'even'" ng-class-odd="'odd'">
                 <td>{{tax.impuesto}}<input type="hidden" ng-model="tax.uniqueIdDoc" /></td>
                 <td>{{tax.porcentaje}}</td>
@@ -70,9 +75,10 @@
                 <td>{{tax.tarifa}}</td>
                 <td>{{tax.valorImpuesto | currency}}</td>
                 <td>
-                    <button class="btn btn-warning btn-sm" ng-click="editTax($index, ret, item)"><i
+                    <button class="btn btn-warning btn-sm" ng-click="editTax($index, tax, item)"><i
                             class="ti-pencil"></i></button>
-                    <button class="btn btn-danger btn-sm" ng-click="removeTax($index, tax, item)"><i class="ti-trash"></i></button>
+                    <button class="btn btn-danger btn-sm" ng-click="askToRemoveTax($index, tax, item)"><i
+                            class="ti-trash"></i></button>
                 </td>
             </tr>
         </tbody>

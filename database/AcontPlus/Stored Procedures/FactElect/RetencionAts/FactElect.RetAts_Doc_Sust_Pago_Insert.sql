@@ -33,10 +33,11 @@ BEGIN
 					SET @totalOld = (SELECT SUM(importeTotal) FROM FactElect.RetAtsDocSustento WHERE idRetencionAts = @idRetencionAts)
 				END
 
-			INSERT INTO FactElect.RetencionAtsPago(idRetencionAts, idRetAtsDocSustento, formaPago, total)
-			SELECT @idRetencionAts, @idDocSust, formaPago, total--, codigoPorcentaje, baseImponible, tarifa, valorImpuesto
+			INSERT INTO FactElect.RetencionAtsPago(idRetencionAts, idRetAtsDocSustento, uniqueIdDoc, formaPago, total)
+			SELECT @idRetencionAts, @idDocSust, uniqueIdDoc,  formaPago, total--, codigoPorcentaje, baseImponible, tarifa, valorImpuesto
 			FROM OPENJSON(@json)
 			WITH	( 
+							uniqueIdDoc UNIQUEIDENTIFIER '$.uniqueIdDoc',
 				formaPago VARCHAR(4) '$.formaPago', 
 				total  NUMERIC(18,5) '$.total'
 			)

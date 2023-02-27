@@ -26,13 +26,14 @@ BEGIN
 		BEGIN TRAN 
 			SET @idRetencionAts = (SELECT idRetencionAts FROM FactElect.RetAtsDocSustento WHERE idRetAtsDocSustento = @idDocSust)
 
-			INSERT INTO FactElect.RetencionAtsRet(idRetencionAts, uniqueIdDoc, codigo, codigoRetencion
+			INSERT INTO FactElect.RetencionAtsRet(idRetencionAts, idRetAtsDocSustento, uniqueIdDoc, codigo, codigoRetencion
 			, baseImponible, porcentajeRetener, valorRetenido, fechaPagoDiv, imRentaSoc, ejerFisUtDiv
 			, numCajBan, precCajBan)
-			SELECT @idRetencionAts, uniqueIdDoc, codigo, codigoRetencion, baseImponible, porcentajeRetener, valorRetenido, fechaPagoDiv, imRentaSoc, ejerFisUtDiv, numCajBan, precCajBan
+			SELECT @idRetencionAts, @idDocSust, uniqueIdDoc, codigo, codigoRetencion, baseImponible, porcentajeRetener, valorRetenido, fechaPagoDiv, imRentaSoc, ejerFisUtDiv, numCajBan, precCajBan
 			FROM OPENJSON(@json) 
-			WITH(uniqueIdDoc UNIQUEIDENTIFIER '$.uniqueIdDoc'
-				,codigo TINYINT '$.codigo'
+			WITH(
+				uniqueIdDoc UNIQUEIDENTIFIER '$.uniqueIdDoc',
+				codigo VARCHAR(1) '$.codigo'
 				,codigoRetencion VARCHAR(5) '$.codigoRetencion'
 				,baseImponible NUMERIC(18,5) '$.baseImponible'
 				,porcentajeRetener NUMERIC(18,5) '$.porcentajeRetener'

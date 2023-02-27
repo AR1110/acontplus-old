@@ -13,6 +13,7 @@ IF OBJECT_ID(N'FactElect.RetAts_Doc_Sust_Insert', N'P') IS NOT NULL
 DROP PROCEDURE FactElect.RetAts_Doc_Sust_Insert
 GO
 CREATE PROCEDURE FactElect.RetAts_Doc_Sust_Insert @idUsuarioRol INT  
+,@idRetencionAts INT
 ,@json VARCHAR(MAX)
 AS
 BEGIN
@@ -50,13 +51,11 @@ BEGIN
 			, numAutDocSustento, pagoLocExt, tipoRegi, paisEfecPago, aplicConvDobTrib, pagExtSujRetNorLeg, pagoRegFis
 			, totalComprobantesReembolso, totalBaseImponibleReembolso, totalImpuestoReembolso, totalSinImpuestos, importeTotal)
 
-			SELECT idRetencionAts, uniqueIdDoc, codSustento, codDocSustento
+			SELECT @idRetencionAts idRetencionAts, uniqueIdDoc, codSustento, codDocSustento
 			, numDocSustento, fechaEmisionDocSustento, fechaRegistroContable
 			, numAutDocSustento, pagoLocExt, tipoRegi, paisEfecPago, aplicConvDobTrib, pagExtSujRetNorLeg, pagoRegFis
 			, totalComprobantesReembolso, totalBaseImponibleReembolso, totalImpuestoReembolso, totalSinImpuestos, importeTotal
-			FROM OPENJSON(@json) WITH (
-								idRetencionAts INT '$.idRetencionAts'
-								,uniqueIdDoc UNIQUEIDENTIFIER '$.uniqueIdDoc'
+			FROM OPENJSON(@json) WITH (uniqueIdDoc UNIQUEIDENTIFIER '$.uniqueIdDoc'
 								,codSustento VARCHAR(2) '$.codSustento'
 								,codDocSustento VARCHAR(2) '$.codDocSustento'
 								,numDocSustento VARCHAR(15) '$.numDocSustento'

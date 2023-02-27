@@ -26,11 +26,9 @@ BEGIN
 			UPDATE rp SET rp.formaPago = t.formaPago
 			,rp.total = t.total 
 			FROM FactElect.RetencionAtsPago rp WITH (ROWLOCK)
-			JOIN (SELECT idRetencionAtsPago, formaPago, total
+			JOIN (SELECT @id idRetencionAtsPago, formaPago, total
 			FROM OPENJSON(@json)
-			WITH(
-			idRetencionAtsPago INT  '$.idRetencionAtsPago'
-				,formaPago VARCHAR(2) '$.formaPago'
+			WITH( formaPago VARCHAR(2) '$.formaPago'
 				,total NUMERIC(18,5) '$.total'
 			)) as t ON t.idRetencionAtsPago = rp.idRetencionAtsPago
 			WHERE rp.idRetencionAtsPago = @id

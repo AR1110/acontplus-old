@@ -157,9 +157,9 @@
       }
     },
     {
-      "UpstreamPathTemplate": "/api/RetencionAts",
+      "UpstreamPathTemplate": "/api/RetencionAts/{everything}",
       "UpstreamHttpMethod": [ "Post", "Put" ],
-      "DownstreamPathTemplate": "/api/RetencionAts",
+      "DownstreamPathTemplate": "/api/RetencionAts/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {

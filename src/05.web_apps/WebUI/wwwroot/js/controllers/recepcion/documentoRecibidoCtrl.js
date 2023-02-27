@@ -930,7 +930,7 @@ function documentoRecibidoCtrl(
                 codigo: $scope.articleSelected.codigoPrincipal,
                 codigoAuxiliar: $scope.articleSelected.codigoAuxiliar,
                 descripcion: $scope.articleSelected.descripcion,
-                precioCosto: parseFloat($scope.articleSelected.precioUnitario)
+                precioCosto: parseFloat($scope.articleSelected.costoNeto)
             }
 
             const { articulo } = nameModalConst;
