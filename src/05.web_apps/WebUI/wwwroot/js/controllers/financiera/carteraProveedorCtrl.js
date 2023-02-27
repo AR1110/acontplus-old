@@ -119,59 +119,60 @@ function carteraProveedorCtrl(_mS, $scope, $filter, commonSvc, _modalSvc, _nombr
     }     
 
     $scope.filtrar = ()=>{
-        if(!$scope.dataSearch.codEstab){
-            toast.toastr('warning', 'Seleccione el Establecimiento','Filtrar');
-            return
-        };
-
-        if(!$scope.dataSearch.checkBoxProveedor){
-            toast.toastr('warning', 'Seleccione el Proveedor','Filtrar');
-            return
-        }
-
-        if($scope.dataSearch.checkBoxProveedor){
-            if(form.campo($scope.dataSearch.byProveedor) || $scope.dataSearch.byProveedor===0){
-                toast.toastr('warning', 'Seleccione el Proveedor','Filtrar');
+        try {
+            if(!$scope.dataSearch.codEstab){
+                toast.toastr('warning', 'Seleccione el Establecimiento','Filtrar');
                 return
             };
-        }
-
-        if($scope.dataSearch.checkBoxFecha){
-            if(form.campo($scope.dataSearch.fechaInicio)){
-                toast.toastr('warning', 'Ingrese fecha de Inicio','Filtrar');
+    
+            if(!$scope.dataSearch.checkBoxProveedor){
+                toast.toastr('warning', 'Seleccione el Proveedor','Filtrar');
                 return
             }
-            if(form.campo($scope.dataSearch.fechaFin)){
-                toast.toastr('warning', 'Ingrese fecha Fin','Filtrar');
-                return
+    
+            if($scope.dataSearch.checkBoxProveedor){
+                if(form.campo($scope.dataSearch.byProveedor) || $scope.dataSearch.byProveedor===0){
+                    toast.toastr('warning', 'Seleccione el Proveedor','Filtrar');
+                    return
+                };
             }
-        }
-
-        if($scope.dataSearch.checkBoxEstado){
-            if(form.campo($scope.dataSearch.byEstado) || $scope.dataSearch.byEstado ===0){
-                toast.toastr('warning', 'Seleccione el Estado','Filtrar');
-                return
+    
+            if($scope.dataSearch.checkBoxFecha){
+                if(form.campo($scope.dataSearch.fechaInicio)){
+                    toast.toastr('warning', 'Ingrese fecha de Inicio','Filtrar');
+                    return
+                }
+                if(form.campo($scope.dataSearch.fechaFin)){
+                    toast.toastr('warning', 'Ingrese fecha Fin','Filtrar');
+                    return
+                }
             }
-        };
-        
-        showLoader();
-        _mS.getData('get', '/CarteraProveedor/Get?json=' + JSON.stringify($scope.dataSearch)).then(response=>{
-            if(response.id==="0"){
-                hideLoader();
-                form.sweetAlert('warning', response.message);
-                return
-            }                                              
+    
+            if($scope.dataSearch.checkBoxEstado){
+                if(form.campo($scope.dataSearch.byEstado) || $scope.dataSearch.byEstado ===0){
+                    toast.toastr('warning', 'Seleccione el Estado','Filtrar');
+                    return
+                }
+            };
             
-            $scope.carteraProveedores = JSON.parse(response.data) || []
-            $scope.cloneCarteraProveedores = JSON.parse(JSON.stringify($scope.carteraProveedores));
-            $scope.setTotalColumn();                    
-            $("#modalFiltroCarteraProveedor").modal('hide'); 
-            hideLoader();                                
-        }).catch(error=>{
+            showLoader();
+            _mS.getData('get', '/CarteraProveedor/Get?json=' + JSON.stringify($scope.dataSearch)).then(response=>{
+                if(response.id==="0"){
+                    hideLoader();
+                    form.sweetAlert('warning', response.message);
+                    return
+                }                                              
+                
+                $scope.carteraProveedores = JSON.parse(response.data) || []
+                $scope.cloneCarteraProveedores = JSON.parse(JSON.stringify($scope.carteraProveedores));
+                $scope.setTotalColumn();                    
+                $("#modalFiltroCarteraProveedor").modal('hide'); 
+                hideLoader();                                
+            })
+        } catch (error) {
             hideLoader();
-            const msg = error.config?error.config.url:error;
-            console.error(msg)
-        })
+            console.log(error)
+        }
     };
             
 
@@ -192,62 +193,17 @@ function carteraProveedorCtrl(_mS, $scope, $filter, commonSvc, _modalSvc, _nombr
     }
 
     $scope.openModalDocumento = async(item)=>{    
-        let data, dataTipoDoc, modal;    
-        switch(item.codigo)   {
-            case 'FC':
-                data = {
-                    idFacturaCompra: item.idDocumento,
-                    nroDocumento: item.nroDoc
-                }
-                dataTipoDoc = await commonSvc.getDataTipoDocCompra({
-                    item: data,
-                    codigoDocumento: item.codigo            
-                })
-
-                if(!dataTipoDoc.isComplete) return
-        
-                const {MODAL_CTRL, MODAL_DETALLE_CSHTML} = _nombreModal.factura_compra
-                modal =  await import('./../../modal/' + MODAL_CTRL);
-                _modalSvc.openModalSecond(modal.ModalDetalleCtrl, 'FacturaCompra/'+ MODAL_DETALLE_CSHTML, 'xl', dataTipoDoc, true, 'uibModalFullScreen')                
-                
-                break
-            case 'LC':
-                data = {
-                    idLiquidacionCompra: item.idDocumento,
-                    nroDocumento: item.nroDoc
-                }
-                dataTipoDoc = await commonSvc.getDataTipoDocCompra({
-                    item: data,
-                    codigoDocumento: item.codigo            
-                })
-
-                if(!dataTipoDoc.isComplete) return
-        
-                const {liquidacion_compra} = _nombreModal;
-                
-                modal =  await import('./../../modal/' + liquidacion_compra.MODAL_CTRL);
-                _modalSvc.openModalSecond(modal.ModalDetalleCtrl, 'LiquidacionCompra/'+ liquidacion_compra.MODAL_DETALLE_CSHTML, 'xl', dataTipoDoc, true, 'uibModalFullScreen')                
-                
-                break
-            case 'IB':
-                data = {
-                    idIngresoBodega: item.idDocumento,
-                    nroDocumento: item.nroDoc
-                }
-                dataTipoDoc = await commonSvc.getDataTipoDocCompra({
-                    item: data,
-                    codigoDocumento: item.codigo            
-                })
-
-                if(!dataTipoDoc.isComplete) return
-        
-                const {ingreso_bodega} = _nombreModal;
-                
-                modal =  await import('./../../modal/' + ingreso_bodega.MODAL_CTRL);
-                _modalSvc.openModalSecond(modal.ModalDetalleCtrl, 'IngresoBodega/'+ ingreso_bodega.MODAL_DETALLE_CSHTML, 'xl', dataTipoDoc, true, 'uibModalFullScreen')                
-                
-                break
-        }       
+        try {
+            console.log(item)
+            commonSvc.viewDetailDocument({
+                id: item.idDocumento,
+                codigoDocumento: item.codigo,
+                size: 'xl',
+                windowClass: 'uibModalFullScreen'
+            }) 
+        } catch (error) {
+            console.log(error)
+        }           
     }
 
 }

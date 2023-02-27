@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
   <AutoRefresh>0</AutoRefresh>
   <DataSources>
@@ -7,6 +7,7 @@
         <DataProvider>System.Data.DataSet</DataProvider>
         <ConnectString>/* Local Connection */</ConnectString>
       </ConnectionProperties>
+      <rd:SecurityType>None</rd:SecurityType>
       <rd:DataSourceID>8ee07305-cf22-4e1e-9820-ccd37e7ecd8f</rd:DataSourceID>
     </DataSource>
   </DataSources>
@@ -188,21 +189,6 @@
     <ReportSection>
       <Body>
         <ReportItems>
-          <Image Name="logo">
-            <Source>Database</Source>
-            <Value>=Parameters!logo.Value</Value>
-            <MIMEType>=Parameters!mimeType.Value</MIMEType>
-            <Sizing>FitProportional</Sizing>
-            <Top>0.26348cm</Top>
-            <Left>0.37245cm</Left>
-            <Height>1.8532cm</Height>
-            <Width>7.67191cm</Width>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-            </Style>
-          </Image>
           <Textbox Name="Textbox1">
             <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
@@ -226,7 +212,6 @@
             <Left>17.44755cm</Left>
             <Height>0.6cm</Height>
             <Width>7.13021cm</Width>
-            <ZIndex>1</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -261,7 +246,7 @@
             <Left>17.44755cm</Left>
             <Height>0.46771cm</Height>
             <Width>7.13021cm</Width>
-            <ZIndex>2</ZIndex>
+            <ZIndex>1</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -296,7 +281,7 @@
             <Left>17.44755cm</Left>
             <Height>0.46771cm</Height>
             <Width>7.13021cm</Width>
-            <ZIndex>3</ZIndex>
+            <ZIndex>2</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -332,7 +317,7 @@
             <Left>17.44755cm</Left>
             <Height>0.6cm</Height>
             <Width>7.13021cm</Width>
-            <ZIndex>4</ZIndex>
+            <ZIndex>3</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -841,7 +826,7 @@
             <Left>0.37245cm</Left>
             <Height>1.8cm</Height>
             <Width>28.17344cm</Width>
-            <ZIndex>5</ZIndex>
+            <ZIndex>4</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2452,7 +2437,7 @@
             <Left>0.37245cm</Left>
             <Height>2.4cm</Height>
             <Width>28.50355cm</Width>
-            <ZIndex>6</ZIndex>
+            <ZIndex>5</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2482,7 +2467,7 @@
             <Left>17.88852cm</Left>
             <Height>0.41479cm</Height>
             <Width>3.16146cm</Width>
-            <ZIndex>7</ZIndex>
+            <ZIndex>6</ZIndex>
             <Style>
               <Border />
               <VerticalAlign>Middle</VerticalAlign>
@@ -2515,7 +2500,7 @@
             <Left>21.12054cm</Left>
             <Height>0.41479cm</Height>
             <Width>3.45722cm</Width>
-            <ZIndex>8</ZIndex>
+            <ZIndex>7</ZIndex>
             <Style>
               <Border />
               <VerticalAlign>Middle</VerticalAlign>
@@ -2526,7 +2511,7 @@
             </Style>
           </Textbox>
         </ReportItems>
-        <Height>4.5625in</Height>
+        <Height>2.91238in</Height>
         <Style />
       </Body>
       <Width>11.3685in</Width>

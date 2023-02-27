@@ -68,7 +68,7 @@ export class ModalBaseCtrl {
             }
             if (response.code === "1") {
                 const data = JSON.parse(response.payload)[0];
-
+                
                 Swal.fire({
                     title: `${this.dataSearchValidacion.titulo}`,
                     html: `
@@ -77,7 +77,12 @@ export class ModalBaseCtrl {
                         <p class="text-muted small">${data.numeroIdentificacion}</p>
                         <small><strong>Nombre Fiscal</strong></small> <br>
                         <p class="text-muted small">${data.nombreFiscal}</p>
+
+                        <small><strong>Nombre Comercial</strong></small> <br>
+                        <p class="text-muted small">${data.nombreComercial}</p>
                     `,
+                    allowOutsideClick: false,
+                    allowEnterKey: false,
                     icon: 'info',                                        
                   })
 
@@ -148,6 +153,7 @@ export class ModalClienteCtrl extends ModalBaseCtrl {
         this.placas = [];
 
         this.isDisableInputIdentificacion = false;
+        this.isDisableSelectIdentificacion = false;
     }
 
 
@@ -242,8 +248,11 @@ export class ModalClienteCtrl extends ModalBaseCtrl {
         this.message = ''
         this.data.numeroIdentificacion = '';
 
+        this.isDisableInputIdentificacion = false;
+
         //Tipo Identificacion Consumir Final
         if (this.data.codigoIdentificacion === 'CF') {
+            this.isDisableInputIdentificacion = true;
             this.data.numeroIdentificacion = '9'.repeat(13)
         }
     }
@@ -255,8 +264,11 @@ export class ModalClienteCtrl extends ModalBaseCtrl {
             bySearch: this.data.numeroIdentificacion,
             titulo: 'Cliente Registrado.'
         }
+       
         let codigoIdentificacion = this.tipoIdentificaciones.find(item => item.idTipoIdentificacion === this.data.idTipoIdentificacion).codigoIdentificacion;
+        
         if (this._form.campo(this.data.numeroIdentificacion)) return
+
 
         //Validamos Número de Cedula
         if (codigoIdentificacion === 'C') {
@@ -275,15 +287,19 @@ export class ModalClienteCtrl extends ModalBaseCtrl {
             if (this.data.numeroIdentificacion.toString().length < 13) {
                 this.typeNotify = 'is-invalid';
                 this.message = 'Número de RUC debe tener 13 dígitos';
-            } else {
-                this.typeNotify = 'is-valid';
-                this.message = '';
-                this.verificarSiExisteNumIdentificacion();
+                return
+            } 
+            
+            if(this.data.numeroIdentificacion.slice(this.data.numeroIdentificacion.length - 3) !=='001'){
+                this.typeNotify = 'is-invalid';
+                this.message = 'Número de RUC tiene que contener (001) en últimos dígitos';
+                return
             }
-            // else {
-            //     this.validarNumIdentificacion();
-            //     return
-            // }
+            
+      
+            this.typeNotify = 'is-valid';
+            this.message = '';
+            this.verificarSiExisteNumIdentificacion();                       
         }
 
 
@@ -394,18 +410,15 @@ export class ModalClienteCtrl extends ModalBaseCtrl {
                 return
             }
 
-            // if (this.data.codigoIdentificacion === "R" && this.data.numeroIdentificacion.length !== 13) {
-            //     this._tS.toastr('warning', 'Número de RUC tiene que ser de 13 dígitos', tituloModal);
-            //     return
-            // }
+            if (this.data.codigoIdentificacion === "R" && this.data.numeroIdentificacion.length !== 13) {
+                this._tS.toastr('warning', 'Número de RUC tiene que ser de 13 dígitos', tituloModal);
+                return
+            }
 
-            // if (this.data.codigoIdentificacion === "R" && this.data.numeroIdentificacion.slice(-3) !== '001') {
-            //     this._tS.toastr('warning', 'Número de RUC tiene que contener 001', tituloModal);
-            //     return
-            // }
-
-
-
+            if (this.data.codigoIdentificacion === "R" && this.data.numeroIdentificacion.slice(-3) !== '001') {
+                this._tS.toastr('warning', 'Número de RUC tiene que contener 001', tituloModal);
+                return
+            }
 
             if (this._form.campo(this.data.idSubContribuyente)) {
                 this._tS.toastr('warning', 'Seleccione el Contribuyente', tituloModal)
@@ -678,11 +691,19 @@ export class ModalProveedorCtrl extends ModalBaseCtrl {
                     this.typeNotify = 'is-invalid';
                     this.message = 'Número de RUC debe tener 13 dígitos';
                     this.id = 0;
-                } else {
-                    this.typeNotify = 'is-valid';
-                    this.message = '';
-                    this.verificarSiExisteNumIdentificacion();
-                }
+                    return
+                } 
+                
+                if(this.data.numeroIdentificacion.slice(this.data.numeroIdentificacion.length - 3) !=='001'){
+                    this.typeNotify = 'is-invalid';
+                    this.message = 'Número de RUC tiene que contener (001) en últimos dígitos';
+                    return
+                } 
+
+                this.typeNotify = 'is-valid';
+                this.message = '';
+                this.verificarSiExisteNumIdentificacion();
+                
                 // else {
                 //     this.validarNumIdentificacion();
                 // }
@@ -720,6 +741,8 @@ export class ModalProveedorCtrl extends ModalBaseCtrl {
 
     saveAndUpdate() {
         try {
+
+            
             let tituloModal = this.tipoRegistro === 1 ? 'Guardar' : 'Actualizar';
 
             if (this._form.campo(this.data.numeroIdentificacion)) {
