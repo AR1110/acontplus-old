@@ -36,6 +36,17 @@ BEGIN
 			RETURN
 		END
 
-	SELECT * FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = @idDocumento
+	SELECT d.*
+	,impuesto  = (SELECT TOP 1 si.descripcion FROM Recepcion.Doc_Impuesto_Temp i
+											INNER JOIN Sri.Impuesto si ON i.codigo = si.codigo
+														WHERE d.idDocumento = i.idDocumento 
+														AND d.codigoPrincipal = i.codArticulo)
+	,valorImpuesto  = (SELECT SUM(CONVERT(NUMERIC(18,2),i.valor)) FROM Recepcion.Doc_Impuesto_Temp i
+														WHERE d.idDocumento = i.idDocumento 
+														AND d.codigoPrincipal = i.codArticulo)
+	
+	FROM Recepcion.Doc_Detalle_Temp d
+			 
+	WHERE d.idDocumento = @idDocumento
 END
 GO

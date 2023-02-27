@@ -96,11 +96,15 @@ BEGIN
 
 	BEGIN TRY
 		BEGIN TRAN
-			--IF EXISTS(SELECT 1 FROM Recepcion.Doc_Detalle_Temp cpt INNER JOIN @tmp t ON cpt.idDocumento = t.idDocumento)
-			--	BEGIN
-			--		DELETE FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp)
-			--	END
-			IF NOT EXISTS(SELECT 1 FROM Recepcion.Doc_Detalle_Temp cpt INNER JOIN @tmp t ON cpt.idDocumento = t.idDocumento WHERE cpt.isCustom = 0)
+			IF EXISTS(SELECT 1 FROM Recepcion.Doc_Detalle_Temp cpt INNER JOIN @tmp t ON cpt.idDocumento = t.idDocumento)
+				BEGIN
+					DELETE FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp)
+				END
+			IF EXISTS(SELECT 1 FROM Recepcion.Doc_Impuesto_Temp cpt INNER JOIN @tmp t ON cpt.idDocumento = t.idDocumento)
+				BEGIN
+					DELETE FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp)
+				END
+			IF NOT EXISTS(SELECT 1 FROM Recepcion.Doc_Detalle_Temp cpt INNER JOIN @tmp t ON cpt.idDocumento = t.idDocumento)
 				BEGIN
 					INSERT INTO Recepcion.Doc_Detalle_Temp(idDocumento, idProveedor, idArticulo, idMedida, codigoPrincipal, codigoAuxiliar
 					, cantidad, descripcion, precioUnitario, precioTotalSinImpuesto, costoNeto, descuento, idUsuario)
