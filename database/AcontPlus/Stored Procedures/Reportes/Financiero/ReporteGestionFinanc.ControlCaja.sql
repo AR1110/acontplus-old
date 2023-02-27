@@ -33,7 +33,7 @@ BEGIN
 	DECLARE @direfencia DECIMAL(15,5)
 	
 
-	SELECT @idControlCaja = idControlCaja  FROM OPENJSON(@json) WITH (idControlCaja BIGINT '$.idControlCaja') AS jsonValues
+	SELECT @idControlCaja = idControlCaja  FROM OPENJSON(@json) WITH (idControlCaja INT '$.idControlCaja') AS jsonValues
 
 	SELECT @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 
@@ -52,7 +52,7 @@ BEGIN
 	
 	SELECT @totalArqueo  = @efectivoArqueo  + @otros
 
-	SELECT @direfencia = @totalSistema - @totalArqueo
+	SELECT @direfencia = @totalArqueo - @totalSistema 
 
 	IF @direfencia != 0
 		BEGIN

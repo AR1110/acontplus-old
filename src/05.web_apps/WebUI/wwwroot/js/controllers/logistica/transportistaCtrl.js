@@ -5,9 +5,9 @@
         .module("acontPlusApp")
         .controller("transportistaCtrl", transportistaCtrl);
 
-    transportistaCtrl.$inject = ["$scope", '$http', "modalService", 'nombreModal', "formulario"];
+    transportistaCtrl.$inject = ["$scope", '$http', 'mainService', "modalService", 'nombreModal', "formulario"];
 
-    function transportistaCtrl($scope, $http, _modalSvc, _nombreModal, _form) {        
+    function transportistaCtrl($scope, $http, _mS, _modalSvc, _nombreModal, _form) {        
         $scope.json = {
             typeList:0
         }
@@ -23,19 +23,21 @@
         }
 
         $scope.getTransportistas = function () {
-            showLoader();
-            $http.get("/Transportista/Get?json=" + JSON.stringify($scope.json)).then(({data:response}) => {
-                if (response.id === "0") {
-                    hideLoader();
-                    toastr.warning(response.message, response.titleSms);
-                    return
-                }
-                $scope.transportistas = JSON.parse(response.data);                
-                hideLoader();                
-            }).catch(error=>{
+            try {
+                showLoader();
+                $scope.transportistas = [];
+                _mS.getData('get', '/Transportista/Get?json=' + JSON.stringify($scope.json)).then(response => {
+                    if (response.id === "0") {
+                        hideLoader();
+                        toastr.warning(response.message, response.titleSms);
+                        return
+                    }
+                    $scope.transportistas = JSON.parse(response.data);                
+                    hideLoader();                
+                })
+            } catch (error) {
                 hideLoader();
-                toastr.error(error)
-            })
+            }
         }
         $scope.getTransportistas();
 

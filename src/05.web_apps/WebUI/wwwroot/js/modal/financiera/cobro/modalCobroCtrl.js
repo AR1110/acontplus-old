@@ -286,7 +286,7 @@ export class ModalCobroLoteCtrl extends ModalCobroCtrl{
                     var val = grid.getCellValue(row, col);
                     
                     if (row.entity.estadoCod === 'PE') {
-                        console.log('kjdghkjd')
+                        
                       return "cellPendiente"
                     }
                     else if (row.entity.estadoCod === 'PP') {
@@ -424,7 +424,7 @@ export class ModalCobroLoteCtrl extends ModalCobroCtrl{
 
 
             this._mS.getData('get', '/GestionFinanciera/GetDocumentsCharge?json=' + JSON.stringify(json)).then(response => {
-                console.log(response)
+                
                 if (response.code == "0") {                    
                     this._tS.toastr('warning', response.message, response.titleSms);
                     return
@@ -435,7 +435,7 @@ export class ModalCobroLoteCtrl extends ModalCobroCtrl{
 
                     this.gridOptions.data = documentos;
                     this.tipoDocumentos = documentos;
-                    console.log(documentos)
+                    
                     
                 }
                 // if (response.data.length == 0) {
@@ -460,7 +460,7 @@ export class ModalCobroLoteCtrl extends ModalCobroCtrl{
             showLoader();
            
             await this._mS.getData('get', '/CuotaXCobrar/GetCuotaForPayment?idComprobante=' + item.idComprobante + '&idTipoDocumento=' + item.idTipoDocumento).then(response => {
-                console.log(response)
+                
                 if (response.id == "0") {                    
                     this._tS.toastr('warning', response.message, response.titleSms);
                     return
@@ -953,7 +953,7 @@ export class ModalCobroRapidoCtrl extends ModalCobroCtrl{
         try {
 
             showLoader();
-            console.log(this)
+            
             let resultMain = await  Promise.all([
                 this._mS.getData('get','/EntidadFinanciera/OptionEntidadFinanciera').then(response=>response.data),
                 this._mS.getData('get','/Banco/GetByAll').then(response=>response.data),
@@ -1209,7 +1209,7 @@ export class ModalCobroRapidoCtrl extends ModalCobroCtrl{
             };
             
             showLoader();       
-            console.log(this.TIPO_DOC)     
+            
             const url = `/ComprobanteIngreso/PostFast?idTipoDoc=${this.TIPO_DOC.idTipoDocumento}&idComprobante=${this.data.id}`;
             this._mS.getData('post', url, data).then(response => {
                 if (response.id == "0") {
@@ -1439,6 +1439,7 @@ export class ModalCobroDocumentoCtrl extends ModalCobroCtrl{
             })
 
             $modalRef.result.then(result=>{
+                console.log(result)
                 if(typeof result!=='object') return
                 
                 this.dataAbono = result;

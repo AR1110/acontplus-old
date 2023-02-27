@@ -2,7 +2,7 @@ let UiGridOptions = {};
 async function loadImport() {
     ({UiGridOptions} = await import('./../factElect/uiGridOptions.min.js' + CHANGE_VERSION()));    
 }
-loadImport();
+loadImport(); 
 
 
 class ModalBaseCtrl{

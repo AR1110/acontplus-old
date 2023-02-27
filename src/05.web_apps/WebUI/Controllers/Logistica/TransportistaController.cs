@@ -1,5 +1,9 @@
-﻿using DataAccess.Logistica;
+﻿using DataAccess;
+using DataAccess.Logistica;
+using Domain.Models;
 using Domain.Models.Logistica;
+using Helpers;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Logistica
@@ -7,12 +11,20 @@ namespace WebUI.Controllers.Logistica
     public class TransportistaController : Controller
     {
         private readonly IConfiguration _configuration;
+        private readonly IHttpContextAccessor _httpContextAccessor; ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
+        private DataAccessObject _dao;
+        private readonly int _idRol;
+        GenericResponse _gr = new();        
 
         private TransportistaDao _trans = new();
-        public TransportistaController(IConfiguration configuration)
+        public TransportistaController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
-            _trans = new TransportistaDao(_configuration);
+            _trans = new TransportistaDao(_configuration);            
+
+            _dao = new DataAccessObject(_configuration);
+            _httpContextAccessor = httpContextAccessor;
+            _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
         }
         public ViewResult Index()
         {
@@ -45,9 +57,12 @@ namespace WebUI.Controllers.Logistica
         [HttpPut]
         public async Task<IActionResult> Put(int id, [FromBody] Transportista data)
         {
-            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
-            var res = await _trans.PutAsycn(idRol, id, data);
-            return Ok(res);
+            Dictionary<string, object> parameters = new Dictionary<string, object>();     
+            parameters.Add("idRol", _idRol);
+            parameters.Add("idTransportista", id);
+            parameters.Add("nroIdentificacion", data.nroIdentificacion);
+            parameters.Add("nombre", data.nombre);
+            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Logistica.Transportista_Update", parameters)));            
 
         }
 

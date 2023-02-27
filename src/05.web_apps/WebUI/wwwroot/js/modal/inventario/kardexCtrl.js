@@ -308,140 +308,151 @@ export class KardexCtrl{
 
 
     async openModalTipoDocumento(item){ 
-        let data = {}, modal = {}, dataTipoDoc = {};
+        try {
+            this._commonSvc.viewDetailDocument({
+                id: item.idComprobante,
+                codigoDocumento: item.tipoDoc,
+                size: 'xl',
+                windowClass: 'uibModalFullScreen'
+            })  
+            console.log(item)
+        } catch (error) {
+            console.log(error)
+        }
+        // let data = {}, modal = {}, dataTipoDoc = {};
 
-        switch(item.tipoDoc)   {
-            case 'FC':
-                data = {
-                    idFacturaCompra: item.idComprobante,
-                    nroDocumento: item.nroDocumento
-                }
+        // switch(item.tipoDoc)   {
+        //     case 'FC':
+        //         data = {
+        //             idFacturaCompra: item.idComprobante,
+        //             nroDocumento: item.nroDocumento
+        //         }
                 
-                dataTipoDoc = await this._commonSvc.getDataTipoDocCompra({
-                    item: data,
-                    codigoDocumento: item.tipoDoc            
-                })
+        //         dataTipoDoc = await this._commonSvc.getDataTipoDocCompra({
+        //             item: data,
+        //             codigoDocumento: item.tipoDoc            
+        //         })
 
-                if(!dataTipoDoc.isComplete) return
+        //         if(!dataTipoDoc.isComplete) return
       
-                const {factura_compra} = this._nombreModal;
-                modal =  await import('./../' + factura_compra.MODAL_CTRL);
-                this._modalSvc.openModalSecond(modal.ModalDetalleCtrl, 'FacturaCompra/'+factura_compra.MODAL_DETALLE_CSHTML, 'xl', dataTipoDoc, true, 'uibModalFullScreen')                
+        //         const {factura_compra} = this._nombreModal;
+        //         modal =  await import('./../' + factura_compra.MODAL_CTRL);
+        //         this._modalSvc.openModalSecond(modal.ModalDetalleCtrl, 'FacturaCompra/'+factura_compra.MODAL_DETALLE_CSHTML, 'xl', dataTipoDoc, true, 'uibModalFullScreen')                
                 
-                break
-            case 'FV':
+        //         break
+        //     case 'FV':
 
-                data = {
-                    idFactura: item.idComprobante,
-                    nroDocumento: item.nroDocumento
-                }
-                dataTipoDoc = await this._commonSvc.getDataTipoDocVenta({
-                    item: data,
-                    codigoDocumento: item.tipoDoc
-                })
+        //         data = {
+        //             idFactura: item.idComprobante,
+        //             nroDocumento: item.nroDocumento
+        //         }
+        //         dataTipoDoc = await this._commonSvc.getDataTipoDocVenta({
+        //             item: data,
+        //             codigoDocumento: item.tipoDoc
+        //         })
                 
-                if(!dataTipoDoc.isComplete) return
+        //         if(!dataTipoDoc.isComplete) return
                 
-                const {MODAL_CTRL, MODAL_DETALLE_CSHTML} = this._nombreModal.factura_venta
-                const {ModalDetalleCtrl} =  await import('./../' + MODAL_CTRL);
-                this._modalSvc.openModalSecond(ModalDetalleCtrl, 'FacturaVenta/'+ MODAL_DETALLE_CSHTML, 'xl', dataTipoDoc, true, 'uibModalFullScreen')                
-                break
-            case 'NE':
-                data = {
-                    idNotaEntrega: item.idComprobante,
-                    nroDocumento: item.nroDocumento
-                }
-                dataTipoDoc = await this._commonSvc.getDataTipoDocVenta({
-                    item: data,
-                    codigoDocumento: item.tipoDoc
-                })                
+        //         const {MODAL_CTRL, MODAL_DETALLE_CSHTML} = this._nombreModal.factura_venta
+        //         const {ModalDetalleCtrl} =  await import('./../' + MODAL_CTRL);
+        //         this._modalSvc.openModalSecond(ModalDetalleCtrl, 'FacturaVenta/'+ MODAL_DETALLE_CSHTML, 'xl', dataTipoDoc, true, 'uibModalFullScreen')                
+        //         break
+        //     case 'NE':
+        //         data = {
+        //             idNotaEntrega: item.idComprobante,
+        //             nroDocumento: item.nroDocumento
+        //         }
+        //         dataTipoDoc = await this._commonSvc.getDataTipoDocVenta({
+        //             item: data,
+        //             codigoDocumento: item.tipoDoc
+        //         })                
                 
-                if(!dataTipoDoc.isComplete) return
+        //         if(!dataTipoDoc.isComplete) return
                 
-                const {nota_entrega} = this._nombreModal;
-                modal =  await import('./../' + nota_entrega.MODAL_CTRL);
-                this._modalSvc.openModalSecond(modal.ModalDetalleCtrl, 'NotaEntrega/'+ nota_entrega.MODAL_DETALLE_CSHTML, 'xl', dataTipoDoc, true, 'uibModalFullScreen')                                
-                break
+        //         const {nota_entrega} = this._nombreModal;
+        //         modal =  await import('./../' + nota_entrega.MODAL_CTRL);
+        //         this._modalSvc.openModalSecond(modal.ModalDetalleCtrl, 'NotaEntrega/'+ nota_entrega.MODAL_DETALLE_CSHTML, 'xl', dataTipoDoc, true, 'uibModalFullScreen')                                
+        //         break
 
-            case 'LC':                
-                data = {
-                    idLiquidacionCompra: item.idComprobante,
-                    nroDocumento: item.nroDocumento
-                }
-                dataTipoDoc = await this._commonSvc.getDataTipoDocCompra({
-                    item: data,
-                    codigoDocumento: item.tipoDoc
-                })                
+        //     case 'LC':                
+        //         data = {
+        //             idLiquidacionCompra: item.idComprobante,
+        //             nroDocumento: item.nroDocumento
+        //         }
+        //         dataTipoDoc = await this._commonSvc.getDataTipoDocCompra({
+        //             item: data,
+        //             codigoDocumento: item.tipoDoc
+        //         })                
                 
-                if(!dataTipoDoc.isComplete) return
+        //         if(!dataTipoDoc.isComplete) return
                 
-                const {liquidacion_compra} = this._nombreModal;
-                modal =  await import('./../' + liquidacion_compra.MODAL_CTRL);
-                this._modalSvc.openModalSecond(modal.ModalDetalleCtrl, 'LiquidacionCompra/'+ liquidacion_compra.MODAL_DETALLE_CSHTML, 'xl', dataTipoDoc, true, 'uibModalFullScreen')                                
-                break
-            case 'IB':                
-                data = {
-                    idIngresoBodega: item.idComprobante,
-                    nroDocumento: item.nroDocumento
-                }
-                dataTipoDoc = await this._commonSvc.getDataTipoDocCompra({
-                    item: data,
-                    codigoDocumento: item.tipoDoc
-                })                
+        //         const {liquidacion_compra} = this._nombreModal;
+        //         modal =  await import('./../' + liquidacion_compra.MODAL_CTRL);
+        //         this._modalSvc.openModalSecond(modal.ModalDetalleCtrl, 'LiquidacionCompra/'+ liquidacion_compra.MODAL_DETALLE_CSHTML, 'xl', dataTipoDoc, true, 'uibModalFullScreen')                                
+        //         break
+        //     case 'IB':                
+        //         data = {
+        //             idIngresoBodega: item.idComprobante,
+        //             nroDocumento: item.nroDocumento
+        //         }
+        //         dataTipoDoc = await this._commonSvc.getDataTipoDocCompra({
+        //             item: data,
+        //             codigoDocumento: item.tipoDoc
+        //         })                
                 
-                if(!dataTipoDoc.isComplete) return
+        //         if(!dataTipoDoc.isComplete) return
                 
-                const {ingreso_bodega} = this._nombreModal;
-                modal =  await import('./../' + ingreso_bodega.MODAL_CTRL);
-                this._modalSvc.openModalSecond(modal.ModalDetalleCtrl, 'IngresoBodega/'+ ingreso_bodega.MODAL_DETALLE_CSHTML, 'xl', dataTipoDoc, true, 'uibModalFullScreen')                                
-                break
-            case 'CIV':
-                data = {
-                    idConsolidacionInventario: item.idComprobante,
-                    nroDoc: item.nroDocumento
-                }
+        //         const {ingreso_bodega} = this._nombreModal;
+        //         modal =  await import('./../' + ingreso_bodega.MODAL_CTRL);
+        //         this._modalSvc.openModalSecond(modal.ModalDetalleCtrl, 'IngresoBodega/'+ ingreso_bodega.MODAL_DETALLE_CSHTML, 'xl', dataTipoDoc, true, 'uibModalFullScreen')                                
+        //         break
+        //     case 'CIV':
+        //         data = {
+        //             idConsolidacionInventario: item.idComprobante,
+        //             nroDoc: item.nroDocumento
+        //         }
 
-                dataTipoDoc = await this._commonSvc.getDataConsolidacionInventario({
-                    item: data,
-                    codigoDocumento: item.tipoDoc
-                })
-                if(!dataTipoDoc.isComplete) return
-                const { consolidacion_inv } = this._nombreModal
-                modal = await import('./../../modal/' + consolidacion_inv.MODAL_CTRL);
-                this._modalSvc.openModalSecond(modal.ModalDetalleCtrl, 'ConsolidacionInventario/' + consolidacion_inv.MODAL_DETALLE_CSHTML, 'xl', dataTipoDoc, true, 'uibModalFullScreen')        
-                break
+        //         dataTipoDoc = await this._commonSvc.getDataConsolidacionInventario({
+        //             item: data,
+        //             codigoDocumento: item.tipoDoc
+        //         })
+        //         if(!dataTipoDoc.isComplete) return
+        //         const { consolidacion_inv } = this._nombreModal
+        //         modal = await import('./../../modal/' + consolidacion_inv.MODAL_CTRL);
+        //         this._modalSvc.openModalSecond(modal.ModalDetalleCtrl, 'ConsolidacionInventario/' + consolidacion_inv.MODAL_DETALLE_CSHTML, 'xl', dataTipoDoc, true, 'uibModalFullScreen')        
+        //         break
 
-            case 'NCP':
-                data = {
-                    idNotaCreditoProveedor: item.idComprobante,
-                    nroDocumento: item.nroDocumento
-                }
+        //     case 'NCP':
+        //         data = {
+        //             idNotaCreditoProveedor: item.idComprobante,
+        //             nroDocumento: item.nroDocumento
+        //         }
 
-                dataTipoDoc = await this._commonSvc.getDataTipoDocCompra({
-                    item: data,
-                    codigoDocumento: item.tipoDoc
-                })
-                if(!dataTipoDoc.isComplete) return
-                const { nota_credito_prov } = this._nombreModal
-                modal = await import('./../../modal/' + nota_credito_prov.MODAL_CTRL);
-                this._modalSvc.openModalSecond(modal.ModalDetalleCtrl, 'NotaCreditoProveedor/' + nota_credito_prov.MODAL_DETALLE_CSHTML, 'xl', dataTipoDoc, true, 'uibModalFullScreen')        
-                break
+        //         dataTipoDoc = await this._commonSvc.getDataTipoDocCompra({
+        //             item: data,
+        //             codigoDocumento: item.tipoDoc
+        //         })
+        //         if(!dataTipoDoc.isComplete) return
+        //         const { nota_credito_prov } = this._nombreModal
+        //         modal = await import('./../../modal/' + nota_credito_prov.MODAL_CTRL);
+        //         this._modalSvc.openModalSecond(modal.ModalDetalleCtrl, 'NotaCreditoProveedor/' + nota_credito_prov.MODAL_DETALLE_CSHTML, 'xl', dataTipoDoc, true, 'uibModalFullScreen')        
+        //         break
             
-            case 'NC':
-                data = {
-                    idNotaCredito: item.idComprobante,
-                    nroDoc: item.nroDocumento
-                }
-                dataTipoDoc =  await this._commonSvc.getDataTipoDocVenta({
-                    item: data,
-                    codigoDocumento: item.tipoDoc
-                })
-                if(!dataTipoDoc.isComplete) return
+        //     case 'NC':
+        //         data = {
+        //             idNotaCredito: item.idComprobante,
+        //             nroDoc: item.nroDocumento
+        //         }
+        //         dataTipoDoc =  await this._commonSvc.getDataTipoDocVenta({
+        //             item: data,
+        //             codigoDocumento: item.tipoDoc
+        //         })
+        //         if(!dataTipoDoc.isComplete) return
         
-                const {nota_credito_cliente } = this._nombreModal;
-                modal =  await import('./../../modal/' + nota_credito_cliente.MODAL_CTRL);
-                this._modalSvc.openModalSecond(modal.ModalDetalleCtrl, 'NotaCreditoCliente/'+ nota_credito_cliente.MODAL_DETALLE_CSHTML, 'xl', dataTipoDoc, true, 'uibModalFullScreen')       
-        }        
+        //         const {nota_credito_cliente } = this._nombreModal;
+        //         modal =  await import('./../../modal/' + nota_credito_cliente.MODAL_CTRL);
+        //         this._modalSvc.openModalSecond(modal.ModalDetalleCtrl, 'NotaCreditoCliente/'+ nota_credito_cliente.MODAL_DETALLE_CSHTML, 'xl', dataTipoDoc, true, 'uibModalFullScreen')       
+        // }        
     }
 
 }

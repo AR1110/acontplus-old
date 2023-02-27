@@ -1038,7 +1038,8 @@ export class CommonService {
                 break
 
             case "RV":                
-                await this.mS.getData('get','/RetencionVenta/GetId?id=' + id).then(response=>{                    
+                await this.mS.getData('get','/RetencionVenta/GetId?id=' + id).then(response=>{  
+                    console.log(response)                  
                         if (response.code == "0") {
                             this.form.sweetAlert('warning', response.message)                            
                             throw response.message  
@@ -1134,7 +1135,7 @@ export class CommonService {
         let isComplete = false, dataTipoDocumento = {}, dataDocumento = {}, detalleDocumento = [];
                 
         await this.mS.getData('get', '/ConsolidacionInventario/GetId?id=' + id).then(response => {
-         
+                   
                 if (response.code === '0') {
                     this.form.sweetAlert('warning', response.message)
                     throw response.message
@@ -1145,7 +1146,8 @@ export class CommonService {
                     dataDocumento = dataMain[0][0];
                     dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision)
                     
-                    detalleDocumento = dataMain[1].map(item=>{
+                                     
+                    detalleDocumento = dataMain[1].map((item, index)=>{                        
                         let json = {
                             idArticulo: item.idArticulo
                         }
@@ -1156,8 +1158,11 @@ export class CommonService {
                         }).then(response=>{
                             let results = JSON.parse(response.payload);                                      
                             item.medidas= results[1]                                                  
-                        });                                        
+                        })
+
+                        item.num = index + 1;                                    
                         item.total = item.cantidad * item.precioActual;   
+                        
                         return item;
                     })
                     isComplete = true;
@@ -1451,10 +1456,10 @@ export class CommonService {
        // let urlApi = typeUrl == 1 ? "http://localhost:36779/" : "https://localhost:7224/";
 
         //IP Producción de Desarrollo 
-        let urlApi = typeUrl == 1 ? "http://205.209.99.71:8090/" : "http://206.72.196.229:83/";
+       // let urlApi = typeUrl == 1 ? "http://205.209.99.71:8090/" : "http://206.72.196.229:83/";
 
         //IP Producción
-       //let urlApi = typeUrl == 1 ? "http://206.72.196.229:81/" : "http://206.72.196.229:83/";
+       let urlApi = typeUrl == 1 ? "http://206.72.196.229:81/" : "http://206.72.196.229:83/";
         
         return this.$http({
             method,
@@ -1543,6 +1548,74 @@ export class CommonService {
                     }
 
                 break
+
+
+                case "NC":
+                    let {nota_credito_cliente} = this._nombreModalConst;
+                    controller = (await import('./../' + nota_credito_cliente.MODAL_FILE_CTRL))[nota_credito_cliente.MODAL_DETALLE['controller']];
+                    template   = nota_credito_cliente.MODAL_DETALLE['template'];
+
+                    response = await this.getDataTipoDocVenta({
+                        id,
+                        codigoDocumento
+                    })
+
+                    params = {
+                        TIPO_REGISTRO: 'DETALLE',
+                        data: response,
+                    }
+                    
+                break
+
+
+                case "FC": 
+                    let {factura_compra} = this._nombreModalConst;
+                    controller = (await import('./../' + factura_compra.MODAL_FILE_CTRL))[factura_compra.MODAL_DETALLE['controller']];        
+                    template   = factura_compra.MODAL_DETALLE['template'];
+
+                    response = await this.getDataTipoDocCompra({
+                        id,
+                        codigoDocumento
+                    })
+
+                    params = {
+                        TIPO_REGISTRO: 'DETALLE',
+                        data: response
+                    }
+
+                    break
+
+                case "IB": 
+                    let {ingreso_bodega} = this._nombreModalConst;
+                    controller = (await import('./../' + ingreso_bodega.MODAL_FILE_CTRL))[ingreso_bodega.MODAL_DETALLE['controller']];        
+                    template   = ingreso_bodega.MODAL_DETALLE['template'];
+
+                    response = await this.getDataTipoDocCompra({
+                        id,
+                        codigoDocumento
+                    })
+
+                    params = {
+                        TIPO_REGISTRO: 'DETALLE',
+                        data: response
+                    }
+
+                    break
+
+
+                case "CIV":
+                    let {consolidacion_inv} = this._nombreModalConst;
+                    controller = (await import('./../' + consolidacion_inv.MODAL_FILE_CTRL))[consolidacion_inv.MODAL_DETALLE['controller']];        
+                    template   = consolidacion_inv.MODAL_DETALLE['template'];
+
+                    response = await this.getDataConsolidacionInventario(id)
+
+                    params = {
+                        TIPO_REGISTRO: 'DETALLE',
+                        data: response
+                    }
+
+                    break
             }
 
         

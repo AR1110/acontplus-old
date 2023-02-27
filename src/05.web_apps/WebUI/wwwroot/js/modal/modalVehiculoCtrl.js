@@ -40,11 +40,11 @@ export class ModalVehiculoCtrl{
 
         const url = this.tipoRegistro == 1 ? '/Vehiculo/Post' : '/Vehiculo/Put?id=' + this.data.idVehiculo;
         this.$http.post(url, this.data).then(({data:response}) => {
-            if (response.id === "0") {
+            if (response.id === "0" || response.code === "0") {
                toastr.warning(response.message, response.titleSms, posicionToast);
                 return
             }
-            if (response.id === "1") {
+            if (response.id === "1" || response.code === "1") {
                 toastr.success(response.message, response.titleSms, posicionToast);                   
                 this.$uibModalInstance.close(response)                
             }

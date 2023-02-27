@@ -142,7 +142,7 @@ BEGIN
 								INNER JOIN dbo.RetencionCompra rc WITH (NOLOCK) ON rc.idRetencionCompra = rcd.idRetencionCompra
 								INNER JOIN dbo.FacturaCompra   fc WITH (NOLOCK) ON fc.idFacturaCompra   = rc.idFacturaCompra	
 								INNER JOIN dbo.TipoDocumento   td WITH (NOLOCK) ON td.idTipoDocumento   = fc.idTipoDocumento
-								WHERE rcd.idRetencionCompra = @idRetencionCompra
+								WHERE rcd.idRetencionCompra = 2 @idRetencionCompra
 								FOR JSON PATH
 							)
 		
