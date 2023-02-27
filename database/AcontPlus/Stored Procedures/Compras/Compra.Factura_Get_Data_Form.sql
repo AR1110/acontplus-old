@@ -76,6 +76,9 @@ BEGIN
 	WHERE idEntidad = @idEntidad AND estado = 1
 	ORDER BY idCategoriaCompra DESC
 
-	SELECT idSustentoTributario, descripcion FROM SustentoTributario WHERE estado = 1
+	SELECT idSustentoTributario, descripcion = codigo + ' - ' + descripcion FROM SustentoTributario WHERE estado = 1
+
+	SELECT * FROM SustentoTributario
+
 END
 GO

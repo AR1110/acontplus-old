@@ -601,6 +601,7 @@ export class UiGridOptionsCompra{
 
                 let dataMedida = rowEntity.medidas.find(val => val.idMedida === rowEntity.idMedida);
                 rowEntity.precioCosto = this._fS.roundNumber(dataMedida.precioCosto, this.decimal.nroPrecio)
+                rowEntity.precioUnitario = this._fS.roundNumber(dataMedida.precioCosto, this.decimal.nroPrecio)
                 rowEntity.precioCostoNeto = this._fS.roundNumber(dataMedida.precioCosto, this.decimal.nroPrecio)
                 //  this.setTotalRow(rowEntity, index);                                  
                                   

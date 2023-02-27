@@ -32,6 +32,7 @@ function ingresoBodegaCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst
     $scope.getIngresoBodegas = async()=>{
         try {
             showLoader();
+            $scope.ingresoBodegas = [];
             await _mS.getData('get', '/IngresoBodega/Get?json=' + JSON.stringify($scope.dataSearch)).then(response=>{
                 console.log(response)
                 if(response.code==="0"){

@@ -91,12 +91,11 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
 
 
     $scope.initiload = ()=>{
-        _mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response=>{
-            let results = JSON.parse(response.payload) || [];
-            let establecimientos = results[0];
-            let codEstab = establecimientos.length>0?establecimientos[0].codEstab: 0;            
-            $scope.dataSearch.codEstab = codEstab;
-            $scope.getFacturas();
+        _commonSvc.getEstabAsign().then(response=>{            
+            $scope.establecimientos = response;
+            let codEstab = $scope.establecimientos.length>0? $scope.establecimientos[0].codEstab: 0;            
+            $scope.dataSearch.codEstab = codEstab;            
+            $scope.getFacturas();            
         })
     }
     $scope.initiload();

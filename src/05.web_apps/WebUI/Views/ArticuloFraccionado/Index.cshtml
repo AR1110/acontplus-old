@@ -43,6 +43,7 @@
                                     <th>N°</th>
                                     <th>Articulo</th>
                                     <th>Conversión</th>
+                                    <th>P. Costo Fraccionado</th>
                                     <th>Medida</th>
                                     <th>Gestión</th>
                                     <th>Estado</th>
@@ -59,9 +60,8 @@
                                     <td>{{$index+1}}</td>                                     
                                     <td ><b class="text-primary">{{af.articulo}}</b></td>
                                     <td >{{af.conversion}}</td>
-                                    <td >
-                                        {{af.medida}}
-                                    </td>
+                                    <td>${{af.precioCostoFraccionado}}</td>
+                                    <td >{{af.medida}}</td>
                                     <td>
                                         <span class="label" ng-class="af.gestionVenta? 'label-success':'label-info'">
                                             {{af.fraccionado.gestionVenta?'Venta':'Compra'}}

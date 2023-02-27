@@ -64,7 +64,7 @@ export class ModalBaseCtrl {
 
         this._mS.getData('get', `/${this.dataSearchValidacion.url}/Get?json=` + JSON.stringify(this.dataSearchValidacion)).then(response => {
             if (response.code === "0") {
-                this._tS.toastr('warning', response.message, response.titleSms);
+               console.log(response)
             }
             if (response.code === "1") {
                 const data = JSON.parse(response.payload)[0];
@@ -320,6 +320,7 @@ export class ModalClienteCtrl extends ModalBaseCtrl {
             template: 'Empresa/' + MODAL_CSHTML,
             size: 'md'
         })
+
         modalRef.result.then(async res => {
             if (typeof res === 'object') {
                 const results = await this.initiload(this.initiloadParams);
@@ -348,11 +349,7 @@ export class ModalClienteCtrl extends ModalBaseCtrl {
             size: 'md'
         })
 
-        modalRef.result.then(res => {
-            if (typeof res === 'object') {
-
-            }
-        })
+       
     }
 
     async openModalCargo() {
@@ -551,13 +548,13 @@ export class ModalClienteListaCtrl {
     }
 
     resetList() {
-        this.dataSearch.bySearch = null;
+        this.dataSearch.bySearch = this.dataSearch.bySearch || null;
         this.getSearchCustomer();
     }
 
 
     getSearchCustomer() {
-        this.dataSearch.bySearch || null;
+        this.dataSearch.bySearch = this.dataSearch.bySearch || null;
         this._mS.getData('get', '/Cliente/Get?json=' + JSON.stringify(this.dataSearch)).then(
             response => {
                 console.log(response)
