@@ -25,7 +25,7 @@ BEGIN
 	SET NOCOUNT ON;
 
 	DECLARE @tblInfoCompRet AS TABLE(
-		fechaEmision DATE NOT NULL
+		fechaEmision DATETIME NOT NULL
 		,codEstab VARCHAR(25) NOT NULL
 		,estab VARCHAR(5) NOT NULL
 		,ptoEmi VARCHAR(5) NOT NULL
@@ -104,7 +104,7 @@ BEGIN
 								codEstab VARCHAR(25) '$.codEstab'
 					,estab VARCHAR(5) '$.estab'
 					,ptoEmi VARCHAR(5) '$.ptoEmi'
-					,fechaEmision DATE '$.fechaEmision'
+					,fechaEmision DATETIME '$.fechaEmision'
 					,contribuyentEspecial VARCHAR(13) '$.contribuyentEspecial'
 					,obligadoContabilidad VARCHAR(2) '$.obligadoContabilidad'
 					,tipoIdentificacionSujetoRetenido VARCHAR(2) '$.tipoIdentificacionSujetoRetenido'

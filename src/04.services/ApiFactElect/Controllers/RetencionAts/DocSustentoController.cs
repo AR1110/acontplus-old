@@ -31,8 +31,8 @@ namespace ApiFactElect.Controllers.RetencionAts
         }
 
         // POST api/<DocSustentoController>
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] string json)
+        [HttpPost("{idRetencionAts}")]
+        public async Task<IActionResult> Post(int idRetencionAts, string json)
         {
             LogWriter _logs = new LogWriter(_configuration);
             try
@@ -43,6 +43,7 @@ namespace ApiFactElect.Controllers.RetencionAts
                 Dictionary<string, object> parameters = new Dictionary<string, object>
                 {
                     { "idUsuarioRol", idUsuarioRol },
+                    { "idRetencionAts", idRetencionAts },
                     { "json", SqlValidation.ValidateSqlString(json) }
                 };
                 return Ok(await _dao.Default("FactElect.RetAts_Doc_Sust_Insert", parameters));
@@ -60,7 +61,7 @@ namespace ApiFactElect.Controllers.RetencionAts
 
         // PUT api/<DocSustentoController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] string json)
+        public async Task<IActionResult> Put(int id, string json)
         {
             LogWriter _logs = new LogWriter(_configuration);
             try

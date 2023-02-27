@@ -58,21 +58,19 @@ BEGIN
 			,rds.aplicConvDobTrib = t.aplicConvDobTrib
 			,rds.pagExtSujRetNorLeg = t.pagExtSujRetNorLeg
 			,rds.pagoRegFis = t.pagoRegFis
-			,rds.totalComprobantesReembolso = t.totalComprobantesReembolso
-			,rds.totalBaseImponibleReembolso = t.totalBaseImponibleReembolso
-			,rds.totalImpuestoReembolso = t.totalImpuestoReembolso
-			,rds.totalSinImpuestos = t.totalSinImpuestos
-			,rds.importeTotal = t.importeTotal
+			--,rds.totalComprobantesReembolso = t.totalComprobantesReembolso
+			--,rds.totalBaseImponibleReembolso = t.totalBaseImponibleReembolso
+			--,rds.totalImpuestoReembolso = t.totalImpuestoReembolso
+			--,rds.totalSinImpuestos = t.totalSinImpuestos
+			--,rds.importeTotal = t.importeTotal
 			 
 			FROM FactElect.RetAtsDocSustento rds
-			JOIN (SELECT uniqueIdDoc, codSustento, codDocSustento, numDocSustento, fechaEmisionDocSustento, fechaRegistroContable, numAutDocSustento, pagoLocExt, tipoRegi, paisEfecPago, aplicConvDobTrib, pagExtSujRetNorLeg, pagoRegFis, totalComprobantesReembolso, totalBaseImponibleReembolso, totalImpuestoReembolso, totalSinImpuestos, importeTotal
-			FROM OPENJSON(@json) WITH(
-					uniqueIdDoc UNIQUEIDENTIFIER '$.uniqueIdDoc'
-				,codSustento VARCHAR(2) '$.codSustento'
+			JOIN (SELECT @id idRetAtsDocSustento, codSustento, codDocSustento, numDocSustento, fechaEmisionDocSustento, fechaRegistroContable, numAutDocSustento, pagoLocExt, tipoRegi, paisEfecPago, aplicConvDobTrib, pagExtSujRetNorLeg, pagoRegFis--, totalComprobantesReembolso, totalBaseImponibleReembolso, totalImpuestoReembolso, totalSinImpuestos, importeTotal
+			FROM OPENJSON(@json) WITH( codSustento VARCHAR(2) '$.codSustento'
 				,codDocSustento VARCHAR(2) '$.codDocSustento'
 				,numDocSustento VARCHAR(15) '$.numDocSustento'
-				,fechaEmisionDocSustento DATE '$.fechaEmisionDocSustento'
-				,fechaRegistroContable DATE '$.fechaRegistroContable'
+				,fechaEmisionDocSustento DATETIME '$.fechaEmisionDocSustento'
+				,fechaRegistroContable DATETIME '$.fechaRegistroContable'
 				,numAutDocSustento VARCHAR(49) '$.numAutDocSustento'
 				,pagoLocExt VARCHAR(2) '$.pagoLocExt'
 				,tipoRegi VARCHAR(2) '$.tipoRegi'
@@ -80,12 +78,12 @@ BEGIN
 				,aplicConvDobTrib VARCHAR(2) '$.aplicConvDobTrib'
 				,pagExtSujRetNorLeg VARCHAR(2) '$.pagExtSujRetNorLeg'
 				,pagoRegFis VARCHAR(2) '$.pagoRegFis'
-				,totalComprobantesReembolso NUMERIC(18,5) '$.totalComprobantesReembolso'
-				,totalBaseImponibleReembolso NUMERIC(18,5) '$.totalBaseImponibleReembolso'
-				,totalImpuestoReembolso NUMERIC(18,5) '$.totalImpuestoReembolso'
-				,totalSinImpuestos NUMERIC(18,5) '$.totalSinImpuestos'
-				,importeTotal NUMERIC(18,5) '$.importeTotal'
-			)) t ON rds.uniqueIdDoc = t.uniqueIdDoc
+				--,totalComprobantesReembolso NUMERIC(18,5) '$.totalComprobantesReembolso'
+				--,totalBaseImponibleReembolso NUMERIC(18,5) '$.totalBaseImponibleReembolso'
+				--,totalImpuestoReembolso NUMERIC(18,5) '$.totalImpuestoReembolso'
+				--,totalSinImpuestos NUMERIC(18,5) '$.totalSinImpuestos'
+				--,importeTotal NUMERIC(18,5) '$.importeTotal'
+			)) t ON rds.idRetAtsDocSustento = t.idRetAtsDocSustento
 			
 			WHERE rds.idRetAtsDocSustento = @id
 

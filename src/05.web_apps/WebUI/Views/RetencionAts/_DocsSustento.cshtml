@@ -29,8 +29,8 @@
             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
                 <div class="form-group">
                     <label for="numDocSustento">N° Doc. Sustento:</label>
-                    <input type="text" class="form-control" id="numDocSustento" ng-model="docSustento.numDocSustento"
-                        maxlength="15">
+                    <input type="text" class="form-control" id="numDocSustento" onclick="this.select()"
+                        ng-model="docSustento.numDocSustento" maxlength="15">
                 </div>
             </div>
             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-12">
@@ -53,7 +53,7 @@
                 <div class="form-group">
                     <label for="numAutDocSustento">N° Autorización:</label>
                     <input type="text" name="numAutDocSustento" id="numAutDocSustento" class="form-control"
-                        ng-model="docSustento.numAutDocSustento" maxlength="49" />
+                        onclick="this.select()" ng-model="docSustento.numAutDocSustento" maxlength="49" />
                 </div>
             </div>
             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-6">
@@ -158,14 +158,39 @@
         </div>
         <div class="row">
             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
-                <button type="button" class="btn  btn-success btn-sm" ng-click="addDocSustento()"
+                <button type="button" id="btnAddDocSust" class="btn  btn-success btn-sm" ng-click="addDocSustento(true)"
                     title="Click para agregar documento de sustento"><i class="ti-plus"></i> Agregar Doc. de
+                    Sustento</button>
+                <button type="button" id="btnEditDocSust" class="btn  btn-success btn-sm" ng-click="updateDocSustento()"
+                    title="Click para guardar documento de sustento" style="display:none;"><i class="ti-save"></i>
+                    Guardar Doc. de
                     Sustento</button>
             </div>
         </div>
+        <hr>
+       <!-- <div class="row" ng-repeat="item in docsAdded" ng-if="docsAdded.length > 0">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card body">
+                        <h5 class="card-title">{{item.numDocSustento}}</h5>
 
+                        @await Html.PartialAsync("_ImpuestosDocSustento")
+
+                        @await Html.PartialAsync("_Retenciones")
+
+                        @await Html.PartialAsync("_Pagos")
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-warning btn-sm" ng-click="editDocSust($index)" title="Editar datos"><i
+                                class="ti-pencil"></i></button>
+                        <button class="btn btn-danger btn-sm" ng-click="deleteDocSust($index)"
+                            ng-if="item.idRetAtsDocSustento == 0"><i class="ti-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>-->
         <div class="table-responsive" ng-if="docsAdded.length > 0">
-            <table class="table">
+            <table class="table table-bordered">
                 <thead>
                     <tr>
                         <th></th>
@@ -174,10 +199,10 @@
                         <th>Sustento</th>
                         <th>Fecha Emisión</th>
                         <th>Importe Total</th>
-                        <th>Opc</th>
+                        <th></th>
                     </tr>
                 </thead>
-                <tbody dir-paginate="item in docsAdded|orderBy:sortKey:reverse|filter:search|itemsPerPage:10">
+                <tbody dir-paginate="item in docsAdded|orderBy:sortKey:reverse|filter:''|itemsPerPage:10">
                     <tr ng-class-even="'even'" ng-class-odd="'odd'">
                         <td>
                             <button type="button" ng-click="expanded = !expanded" class="btn btn-info btn-sm"
@@ -191,12 +216,10 @@
                         <td>{{item.fechaEmisionDocSustento | date: 'dd/MM/yyyy'}}</td>
                         <td>{{item.importeTotal | currency}}</td>
                         <td>
-                            <button class="btn btn-info btn-sm" ng-click="viewDocSust()"
-                                title="Ver informacion completa del documento"><i class="ti-info"></i></button>
-                            <button class="btn btn-warning btn-sm" ng-click="editDocSust($index)" title="Editar datos"><i
-                                    class="ti-pencil"></i></button>
-                            <button class="btn btn-danger btn-sm" ng-click="deleteDocSust($index)"><i
-                                    class="ti-trash"></i></button>
+                            <button class="btn btn-warning btn-sm" ng-click="editDocSust($index)"
+                                title="Editar datos"><i class="ti-pencil"></i></button>
+                            <button class="btn btn-danger btn-sm" ng-click="deleteDocSust($index)"
+                                ng-if="item.idRetAtsDocSustento == 0"><i class="ti-trash"></i></button>
                         </td>
                     </tr>
                     <tr class="sub" ng-show="expanded">
@@ -204,7 +227,7 @@
                         </td>
                         <td colspan="5">
                             @await Html.PartialAsync("_ImpuestosDocSustento")
-                            
+
                             @await Html.PartialAsync("_Retenciones")
 
                             @await Html.PartialAsync("_Pagos")
@@ -219,20 +242,20 @@
 </div>
 
 @section Scripts{
-<script>
-    $(function () {
-        $('body').on('click', '.CX span', function () {
-            //When Click On + sign
-            if ($(this).text() == '+') {
-                $(this).text('-');
-            }
-            else {
-                $(this).text('+');
-            }
-            $(this).closest('tr') // row of + sign
-                .next('tr') // next row of + sign
-                .toggle(); // if show then hide else show
+    <script>
+        $(function () {
+            $('body').on('click', '.CX span', function () {
+                //When Click On + sign
+                if ($(this).text() == '+') {
+                    $(this).text('-');
+                }
+                else {
+                    $(this).text('+');
+                }
+                $(this).closest('tr') // row of + sign
+                    .next('tr') // next row of + sign
+                    .toggle(); // if show then hide else show
+            });
         });
-    });
-</script>
+    </script>
 }

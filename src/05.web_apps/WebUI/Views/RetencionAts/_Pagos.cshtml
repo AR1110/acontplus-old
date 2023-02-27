@@ -1,31 +1,43 @@
+<hr>
 <h4>Pagos</h4>
 <div class="row">
     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-9 col-10">
         <div class="form-group">
-            <label for="formaPago">Forma de Pago:</label>
             <select name="formaPago" id="formaPago" class="form-control" ng-model="payment.formaPago">
-                <option></option>
+                <option>-- Seleccione una forma de pago --</option>
                 <option ng-value="item.formaPago" ng-repeat="item in formasPago">{{item.formaPago}} -
                     {{item.descripcion}}
                 </option>
             </select>
         </div>
     </div>
-    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-3 col-2">
-        <div class="form-group">
-            <label for="total">Total:</label>
-            <input type="number" name="total" id="total" class="form-control" ng-model="payment.total" step="any"
+    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-6">
+        <div class="input-group">
+            <input type="number" name="total" id="totalPago" class="form-control" onclick="this.select()" placeholder="0.00" ng-model="payment.total" step="any"
                 min="0" />
+            <div class="input-group-append">
+                <button class="btn btn-info  btn-sm" id="btnAddPaymentAdd" ng-click="addPayment(item.uniqueIdDoc, true)"><i
+                        class="ti-plus"></i> Añadir
+                    Forma de Pago</button>
+                <button class="btn btn-info  btn-sm" id="btnEditPaymentSave" ng-click="updatePayment(item.uniqueIdDoc)"
+                    style="display:none"><i class="ti-save"></i> Guardar
+                    Forma de Pago</button>
+            </div>
         </div>
     </div>
+    @* <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+    <button class="btn btn-info" id="btnAddPaymentAdd" ng-click="addPayment(item.uniqueIdDoc, true)"><i
+    class="ti-plus"></i> Añadir
+    Forma de Pago</button>
+    <button class="btn btn-info" id="btnEditPaymentSave" ng-click="updatePayment(item.uniqueIdDoc)"
+    style="display:none"><i class="ti-plus"></i> Guardar
+    Forma de Pago</button>
+    </div> *@
 </div>
-<button class="btn btn-info" id="btnAddPaymentAdd" ng-click="addPayment(item.uniqueIdDoc, true)"><i class="ti-plus"></i> Añadir
-    Forma de Pago</button>
-<button class="btn btn-info" id="btnEditPaymentSave" ng-click="updatePayment(item.uniqueIdDoc)" style="display:none"><i class="ti-plus"></i> Guardar
-    Forma de Pago</button>
+
 
 <div class="table-responsive" ng-if="paymentsAdded.length > 0">
-    <table class="table">
+    <table class="table table-bordered">
         <thead>
             <tr>
                 <th>Forma de Pago</th>
