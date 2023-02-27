@@ -386,24 +386,17 @@ export class ModalFiltroKardex{
             this.dataSearch.mes = this._params.dataSearch.mes;
         }
 
-        this._mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response=>{
-            if(response.code=="0"){
-                toastr.warning(response.message)
+        this._commonSvc.getEstabAsign().then(response=>{
+            this.establecimientos = response;
+            
+            if(this.establecimientos.length>0){                    
+                this.dataSearch.codEstab = this.establecimientos[0].codEstab;
+                this.getBodegas();
+            }else{
+                taostr.warning('warning', 'NO TIENES ASIGNADO NINGÚN ESTABLECIMIENTO');
             }
-            if(response.code==="1"){
-                let dataMain = JSON.parse(response.payload)
-                
-                this.establecimientos = dataMain[0];
-
-                if(this.establecimientos.length>0){                    
-                    this.dataSearch.codEstab = this.establecimientos[0].codEstab;
-                    this.getBodegas();
-                }else{
-                    taostr.warning('warning', 'NO TIENES ASIGNADO NINGÚN ESTABLECIMIENTO');
-                }
-            }            
         })
-
+       
         this._commonSvc.getGestionAlmacen().then(response=>{
             this.estadoMovimientos = response.movimientosStocks;
             
