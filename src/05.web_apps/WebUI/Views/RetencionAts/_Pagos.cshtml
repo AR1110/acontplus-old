@@ -16,10 +16,10 @@
             <input type="number" name="total" id="totalPago" class="form-control" onclick="this.select()" placeholder="0.00" ng-model="payment.total" step="any"
                 min="0" />
             <div class="input-group-append">
-                <button class="btn btn-info  btn-sm" id="btnAddPaymentAdd" ng-click="addPayment(item.uniqueIdDoc, true)"><i
+                <button class="btn btn-info  btn-sm" id="{{item.uniqueIdDoc}}-btnAddPaymentAdd" ng-click="addPayment(item.uniqueIdDoc, true)"><i
                         class="ti-plus"></i> Añadir
                     Forma de Pago</button>
-                <button class="btn btn-info  btn-sm" id="btnEditPaymentSave" ng-click="updatePayment(item.uniqueIdDoc)"
+                <button class="btn btn-info  btn-sm" id="{{item.uniqueIdDoc}}-btnEditPaymentSave" ng-click="updatePayment(item.uniqueIdDoc)"
                     style="display:none"><i class="ti-save"></i> Guardar
                     Forma de Pago</button>
             </div>

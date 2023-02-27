@@ -190,6 +190,8 @@
                         <th>Cód. Auxiliar:</th>
                         <th>Precio Unitario:</th>
                         <th>Descuento:</th>
+                        <th>Imp.</th>
+                        <th>Valor Imp.</th>
                         <th>Total:</th>
                     </tr>
                 </thead>
@@ -223,6 +225,8 @@
 
                         <td>{{item.precioUnitario | currency}}</td>
                         <td>{{item.descuento | currency}}</td>
+                        <td>{{item.impuesto}}</td>
+                        <td>{{item.valorImpuesto}}</td>
                         <td>{{item.total | currency}}</td>
                     </tr>
                 </tbody>
@@ -349,7 +353,7 @@
                     <tbody>
                         <tr>
                             <td class="text-right"><strong>SubTotal 12%</strong></td>
-                            <td class="text-right">{{infoComprobante.totalSinImpuestos | currency}}</td>
+                            <td class="text-right">{{totalTaxesRide.iva12 | currency}}</td>
                         </tr>
                         <tr>
                             <td class="text-right"><strong>SubTotal Iva 0%</strong></td>
@@ -369,7 +373,7 @@
                         </tr>
                         <tr>
                             <td class="text-right"><strong>Descuento</strong></td>
-                            <td class="text-right">0.00</td>
+                            <td class="text-right">{{totalTaxesRide.descuento | currency}}</td>
                             <!--<td class="text-right">{{infoComprobante.totalDescuento | currency}}</td>-->
                         </tr>
                         <tr>

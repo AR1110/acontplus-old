@@ -93,8 +93,32 @@ namespace WS_DocumentoRecibido
 
                 XmlNode node = xmlComp.GetElementsByTagName("infoTributaria")[0];
                 string codDoc = node.SelectSingleNode("codDoc").InnerText;
+                string versionComp = string.Empty;
+                switch (codDoc)
+                {
+                    case "01":
+                        versionComp = xmlComp.GetElementsByTagName("factura")[0].Attributes["version"].Value;
+                        break;
+                    case "03":
+                        versionComp = xmlComp.GetElementsByTagName("liquidacionCompra")[0].Attributes["version"].Value;
+                        break;
+                    case "04":
+                        versionComp = xmlComp.GetElementsByTagName("notaCredito")[0].Attributes["version"].Value;
+                        break;
+                    case "05":
+                        versionComp = xmlComp.GetElementsByTagName("notaDebito")[0].Attributes["version"].Value;
+                        break;
+                    case "06":
+                        versionComp = xmlComp.GetElementsByTagName("guiaRemision")[0].Attributes["version"].Value;
+                        break;
+                    case "07":
+                        versionComp = xmlComp.GetElementsByTagName("comprobanteRetencion")[0].Attributes["version"].Value;
+                        break;
+                    default:
+                        break;
+                }
                 _log.LogInfo("Xml Doc Downloaded: " + dr["claveAcceso"].ToString());
-                await _docService.Update(Convert.ToInt32(dr["idDocumento"]), "DE", codDoc, xmlDocSri.OuterXml);
+                await _docService.Update(Convert.ToInt32(dr["idDocumento"]), "DE", codDoc, versionComp, nodeAuth.OuterXml);
             }
             else
             {

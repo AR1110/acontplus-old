@@ -487,24 +487,25 @@ function documentoRecibidoCtrl(
         //console.log(strImage);
         // return barcodeData;
     }
-
+    $scope.totalTaxesRide.iva12 = 0.00
+    $scope.totalTaxesRide.descuento = 0.00
     $scope.setTaxes = () => {
         // console.log($scope.totalTaxes)
         for (const element of $scope.totalTaxes) {
             if (element.codigo == '2' && element.codigoPorcentaje == '0') {
-                $scope.totalTaxesRide.iva0 += parseFloat(element.valor)
+                $scope.totalTaxesRide.iva0 += parseFloat(element.baseImponible)
             }
             if (element.codigo == '2' && element.codigoPorcentaje == '2') {
                 $scope.totalTaxesRide.iva12 += parseFloat(element.valor)
             }
             if (element.codigo == '2' && element.codigoPorcentaje == '3') {
-                $scope.totalTaxesRide.iva14 += parseFloat(element.valor)
+                $scope.totalTaxesRide.iva14 += parseFloat(element.baseImponible)
             }
             if (element.codigo == '2' && element.codigoPorcentaje == '6') {
-                $scope.totalTaxesRide.noObjetoIva += parseFloat(element.valor)
+                $scope.totalTaxesRide.noObjetoIva += parseFloat(element.baseImponible)
             }
             if (element.codigo == '2' && element.codigoPorcentaje == '7') {
-                $scope.totalTaxesRide.excentoIva += parseFloat(element.valor)
+                $scope.totalTaxesRide.excentoIva += parseFloat(element.baseImponible)
             }
             if (element.codigo == '3') {
                 $scope.totalTaxesRide.ice += parseFloat(element.valor)
@@ -512,6 +513,7 @@ function documentoRecibidoCtrl(
             if (element.codigo == '5') {
                 $scope.totalTaxesRide.irbpnr += parseFloat(element.valor)
             }
+            $scope.totalTaxesRide.descuento += parseFloat(element.descuentoAdicional)
         }
     }
     $scope.customDetailTemp = []
@@ -558,6 +560,8 @@ function documentoRecibidoCtrl(
                                             precioUnitario: det.baseImponible,
                                             precioTotalSinImpuesto: det.baseImponible,
                                             descuento: (det.descuentoAdicional == '' ? 0.00 : Number(det.descuentoAdicional)),
+                                            impuesto: (det.codigo) == '2' ? 'iva' : 'ice',
+                                            valorImpuesto: det.valor,
                                             total: ((Number(det.baseImponible) - Number(det.descuentoAdicional)) + Number(det.valor)).toFixed(2)
                                         }
                                     )

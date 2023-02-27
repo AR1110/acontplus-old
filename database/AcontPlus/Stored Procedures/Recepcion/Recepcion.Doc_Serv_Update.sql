@@ -26,6 +26,7 @@ GO
 CREATE PROCEDURE Recepcion.Doc_Serv_Update @idDocumento INT
 ,@downloaded VARCHAR(2)
 ,@codDoc VARCHAR(2)
+,@versionComp VARCHAR(5)
 ,@xmlDoc XML
 AS
 BEGIN
@@ -34,8 +35,9 @@ BEGIN
 	BEGIN TRY
 		BEGIN TRAN
 			UPDATE dr SET dr.codDoc = @codDoc
-			,dr.xmlDoc = @xmlDoc.query('//RespuestaAutorizacionComprobante/autorizaciones/autorizacion')  
+			,dr.xmlDoc = @xmlDoc
 			,dr.downloaded = @downloaded 
+			,versionComp = @versionComp
 			FROM Recepcion.DocumentoRecibido dr WITH (ROWLOCK)
 			WHERE idDocumento = @idDocumento
 		COMMIT TRAN
