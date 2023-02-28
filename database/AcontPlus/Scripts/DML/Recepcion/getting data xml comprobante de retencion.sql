@@ -12,9 +12,19 @@ SELECT
 ,versionComp = CONVERT(xml,dbo.f_sanitize_xml(convert(varchar(max), ci.xmlDoc.query('/autorizacion/comprobante')))).value('(comprobante/comprobanteRetencion/@version)[1]', 'VARCHAR(10)')
 ,xmlComp = CONVERT(xml,dbo.f_sanitize_xml(convert(varchar(max), ci.xmlDoc.query('/autorizacion/comprobante'))))
 FROM Recepcion.DocumentoRecibido ci
-where downloaded = 'DE' AND codDoc = '07' and complete = 0
+where idDocumento = 142
 
 
+
+SELECT 
+	ambiente = CASE WHEN x.y.value('(//infoTributaria/ambiente)[1]','varchar(15)') = '2' THEN 'PRODUCCION' ELSE 'PRUEBAS' END
+   ,tipoEmision = CASE WHEN x.y.value('(//infoTributaria/tipoEmision)[1]','varchar(15)') = '1' THEN 'NORMAL' ELSE '' END
+   ,razonSocial = x.y.value('(//infoTributaria/razonSocial)[1]','varchar(150)')
+   ,nombreComercial = x.y.value('(//infoTributaria/nombreComercial)[1]','varchar(150)')
+   ,ruc = x.y.value('(//infoTributaria/ruc)[1]','varchar(15)')
+from @tmp t
+CROSS APPLY t.xmlComp.nodes('//comprobante/comprobanteRetencion') x(y)
+RETURN
 ----RETENCIONES 
 
 DECLARE @mainRet AS TABLE(
@@ -44,7 +54,7 @@ SELECT
  ,X.Y.value('(//impuesto/fechaEmisionDocSustento)[1]','VARCHAR(50)') AS fechaEmisionDocSustento
  ,X.Y.value('sum(//impuesto/valorRetenido)[1]',' NUMERIC(18,2)') AS valorRetenido
 from @mainRet rt 
-CROSS APPLY  rt.retenciones.nodes('//impuestos') x(y) 
+CROSS APPLY rt.retenciones.nodes('//impuestos') x(y) 
 WHERE rt.versionComp = '1.0.0'
 
 INSERT INTO @retenciones(idDocumento,codDocSustento, numDocSustento, fechaEmisionDocSustento, valorRetenido)
