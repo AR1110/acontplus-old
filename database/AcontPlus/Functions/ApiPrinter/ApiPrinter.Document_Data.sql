@@ -1,3 +1,5 @@
+USE [Acontplus]
+go
 -- ================================================
 -- Template generated from Template Explorer using:
 -- Create Multi-Statement Function (New Menu).SQL
