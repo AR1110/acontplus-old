@@ -629,7 +629,7 @@ function documentoRecibidoCtrl(
                         case "04":
                             $scope.infoNotaCredito = $scope.fullComprobante.infoNotaCredito
                             $scope.totalTaxes = $scope.fullComprobante.infoNotaCredito.totalImpuestos;
-                            $scope.setTaxes()
+                            //$scope.setTaxes()
                             $('#notaCreditoModal').modal('show')
                             // console.log($scope.comprobante);
                             break;
