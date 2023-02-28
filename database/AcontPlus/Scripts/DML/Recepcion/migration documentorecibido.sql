@@ -8,10 +8,13 @@ USE AcontPlus
 
 --alter table recepcion.DocumentoRecibido add obs VARCHAR(MAX) NULL
 
-INSERT INTO Recepcion.DocumentoRecibido(idEstablecimiento, codEstab, comprobante, codDoc, serieComprobante, rucEmisor, razonSocialEmisior, fechaEmision, fechaAutorizacion, tipoEmision, identificacionReceptor, claveAcceso, numeroAutorizacion, importeTotal, idUsuario, fechaRegistro, xmlDoc, complete, downloaded)
+--INSERT INTO Recepcion.DocumentoRecibido(idEstablecimiento, codEstab, comprobante, codDoc, serieComprobante, rucEmisor, razonSocialEmisior, fechaEmision, fechaAutorizacion, tipoEmision, identificacionReceptor, claveAcceso, numeroAutorizacion, importeTotal, idUsuario, fechaRegistro, xmlDoc, complete, downloaded)
 
-SELECT idEstablecimiento, codEstab, comprobante, codDoc, serieComprobante, rucEmisor, razonSocialEmisior, fechaEmision, fechaAutorizacion, tipoEmision, identificacionReceptor, claveAcceso, numeroAutorizacion, importeTotal, idUsuario, fechaRegistro, xmlDoc, complete, CASE WHEN xmlDoc IS NULL THEN 'ND' ELSE 'DE' END  FROM FactElect.ComprobanteImportacion
+--SELECT e.idEstablecimiento, ci.codEstab, comprobante, codDoc, serieComprobante, rucEmisor, razonSocialEmisior, fechaEmision, fechaAutorizacion, tipoEmision, identificacionReceptor, claveAcceso, numeroAutorizacion, importeTotal, idUsuario, ci.fechaRegistro, xmlDoc, complete, CASE WHEN xmlDoc IS NULL THEN 'ND' ELSE 'DE' END 
+--FROM FactElect.ComprobanteImportacion ci with (nolock)
+--INNER JOIN Sri.Establecimiento e with (nolock) on ci.codEstab = e.codEstab
 
+--select * from FactElect.ComprobanteImportacion  where codEstab is null
 --TRUNCATE TABLE Recepcion.DocumentoRecibido
 
 
