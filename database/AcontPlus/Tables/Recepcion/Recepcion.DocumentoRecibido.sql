@@ -19,6 +19,7 @@ CREATE TABLE Recepcion.DocumentoRecibido (
 	numeroAutorizacion varchar(50) NOT NULL,
 	importeTotal decimal(18,5) NOT NULL,
 	xmlDoc XML NULL,
+	versionComp VARCHAR(5) NULL,
 	downloaded VARCHAR(2) NOT NULL,
 	complete BIT NOT NULL DEFAULT 0,
 	obs VARCHAR(MAX) NULL,

@@ -126,7 +126,7 @@ namespace BL.FactElect
             infoFac.guiaRemision = (nodeInfoFactura.SelectSingleNode("guiaRemision") == null) ? "" : nodeInfoFactura.SelectSingleNode("guiaRemision").InnerText;
             infoFac.totalSinImpuestos = nodeInfoFactura.SelectSingleNode("totalSinImpuestos").InnerText;
             infoFac.totalDescuento = nodeInfoFactura.SelectSingleNode("totalDescuento").InnerText;
-            infoFac.propina = (nodeInfoFactura.SelectSingleNode("propina") == null) ? "" : nodeInfoFactura.SelectSingleNode("propina").InnerText;
+            infoFac.propina = (nodeInfoFactura.SelectSingleNode("propina") == null) ? "0.00" : nodeInfoFactura.SelectSingleNode("propina").InnerText;
             infoFac.importeTotal = nodeInfoFactura.SelectSingleNode("importeTotal").InnerText;
             infoFac.moneda = (nodeInfoFactura.SelectSingleNode("moneda") == null) ? "" : nodeInfoFactura.SelectSingleNode("moneda").InnerText;
 
@@ -144,7 +144,7 @@ namespace BL.FactElect
                 TotalImpuesto totalImpuesto = new TotalImpuesto();
                 totalImpuesto.codigo = item.SelectSingleNode("codigo").InnerText;
                 totalImpuesto.codigoPorcentaje = item.SelectSingleNode("codigoPorcentaje").InnerText;
-                totalImpuesto.descuentoAdicional = (item.SelectSingleNode("descuentoAdicional") == null) ? "" : item.SelectSingleNode("descuentoAdicional").InnerText;
+                totalImpuesto.descuentoAdicional = (item.SelectSingleNode("descuentoAdicional") == null) ? "0.00" : item.SelectSingleNode("descuentoAdicional").InnerText;
                 totalImpuesto.baseImponible = item.SelectSingleNode("baseImponible").InnerText;
                 totalImpuesto.valor = item.SelectSingleNode("valor").InnerText;
                 totalImpuestos.Add(totalImpuesto);

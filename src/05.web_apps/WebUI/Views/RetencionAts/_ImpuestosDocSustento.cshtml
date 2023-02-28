@@ -47,10 +47,10 @@
         </div>
     </div>
 </div>
-<button type="button" class="btn btn-info  btn-sm" id="btnAddTax" ng-click="addTax(item.uniqueIdDoc, true)"><i
+<button type="button" class="btn btn-info  btn-sm" id="{{item.uniqueIdDoc}}-btnAddTax" ng-click="addTax(item.uniqueIdDoc, true)"><i
         class="ti-plus"></i>
     Añadir Impuesto</button>
-<button type="button" class="btn btn-info btn-sm" id="btnEditTax" ng-click="updateTax(item.uniqueIdDoc)"
+<button type="button" class="btn btn-info btn-sm" id="{{item.uniqueIdDoc}}-btnEditTax" ng-click="updateTax(item.uniqueIdDoc)"
     style="display:none;"><i class="ti-save"></i>
     Guardar Impuesto</button>
 <hr>

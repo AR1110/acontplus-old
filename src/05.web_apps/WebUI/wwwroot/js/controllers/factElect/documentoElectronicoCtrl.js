@@ -361,6 +361,10 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
         }
     }
     $scope.edit = (item) => {
-        location.href = '/RetencionAts/Index?id=' + item.idDocumentoElectronico
+        if (item.versionComp == '2.0.0') {
+            location.href = '/RetencionAts/Index?id=' + item.idDocumentoElectronico
+        } else {
+            _tS.toastr('warning', 'No disponible')
+        }
     }
 }

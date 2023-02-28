@@ -80,7 +80,7 @@ BEGIN
 																   WHEN 6 THEN ''table-danger''
 																   WHEN 0 THEN ''table-warning''
 												 END  
-
+										,de.versionComp
 									 FROM DocumentoElectronico de WITH (NOLOCK)
 									 INNER JOIN FactElect.EstadoServicio es WITH (NOLOCK) ON de.codEstado = es.codigo
 									 INNER JOIN dbo.TipoDocumento td WITH (NOLOCK) ON td.codigoSri = de.codDoc

@@ -148,7 +148,7 @@ BEGIN
 				nota, total)
 
 			SELECT @idFacturaCompra, @idBodega, cd.idArticulo, idMedida, descripcion,
-			cantidad, precioUnitario, CAST(precioTotalSinImpuesto AS decimal(15,5)) / CAST(cantidad AS decimal(18,5), cd.descuento
+			cantidad, precioUnitario, CAST(precioTotalSinImpuesto AS decimal(15,5)) / CAST(cantidad AS decimal(18,5)), cd.descuento
 			,'', SUM(cast(ct.baseImponible as numeric(18,2)))
 
 			FROM Recepcion.Doc_Detalle_Temp cd

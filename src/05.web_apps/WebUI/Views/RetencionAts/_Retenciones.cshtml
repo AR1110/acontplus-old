@@ -55,10 +55,10 @@
         </div>
     </div>
 </div>
-<button type="button" id="btnAddRet" class="btn btn-info  btn-sm" ng-click="addRetencion(item.uniqueIdDoc, true)"><i
+<button type="button" id="{{item.uniqueIdDoc}}-btnAddRet" class="btn btn-info  btn-sm" ng-click="addRetencion(item.uniqueIdDoc, true)"><i
         class="ti-plus"></i> Añadir
     Retención</button>
-<button type="button" id="btnEditRet" class="btn btn-info  btn-sm" ng-click="updateRet(item.uniqueIdDoc)"
+<button type="button" id="{{item.uniqueIdDoc}}-btnEditRet" class="btn btn-info  btn-sm" ng-click="updateRet(item.uniqueIdDoc)"
     style="display:none;"><i class="ti-save"></i> Guardar
     Retención</button>
 <hr>
