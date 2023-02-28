@@ -28,7 +28,7 @@ namespace ApiRecepcion.Controllers
                     { "jsonData", json }
                 };
                 DAO _dao = new DAO(_configuration);
-                return Ok(await _dao.GetDataTable("Recepcion.Proveedor_Get", parameters));
+                return Ok(await _dao.GetDataSet("Recepcion.Proveedor_Get", parameters));
             }
             catch (Exception ex)
             {
@@ -41,7 +41,7 @@ namespace ApiRecepcion.Controllers
             }
 
         }
-        [HttpPost("{json}")]
+        [HttpPost]
         public async Task<IActionResult> Post(string json)
         {
             LogWriter _logs = new LogWriter(_configuration);

@@ -790,7 +790,7 @@ function documentoRecibidoCtrl(
                 return;
             }
             showLoader();
-            mS.getData('post', _urlService + 'Proveedor/' + JSON.stringify($scope.provCliente)).then(
+            mS.getData('post', _urlService + 'Proveedor?json=' + JSON.stringify($scope.provCliente)).then(
                 response => {
                     if (response.code == "0") {
                         tS.toastr('warning', response.message)
