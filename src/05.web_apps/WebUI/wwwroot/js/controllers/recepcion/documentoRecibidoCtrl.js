@@ -629,7 +629,7 @@ function documentoRecibidoCtrl(
                         case "04":
                             $scope.infoNotaCredito = $scope.fullComprobante.infoNotaCredito
                             $scope.totalTaxes = $scope.fullComprobante.infoNotaCredito.totalImpuestos;
-                            $scope.setTaxes()
+                            //$scope.setTaxes()
                             $('#notaCreditoModal').modal('show')
                             // console.log($scope.comprobante);
                             break;
@@ -790,7 +790,7 @@ function documentoRecibidoCtrl(
                 return;
             }
             showLoader();
-            mS.getData('post', _urlService + 'Proveedor/' + JSON.stringify($scope.provCliente)).then(
+            mS.getData('post', _urlService + 'Proveedor?json=' + JSON.stringify($scope.provCliente)).then(
                 response => {
                     if (response.code == "0") {
                         tS.toastr('warning', response.message)
