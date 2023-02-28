@@ -818,7 +818,17 @@ export class ModalRetencionCompraNuevoCtrl extends ModalRetencionCompraCtrl{
             if (!(this.data.idPuntoEmision>0)) {
                 this._toastr.toastr('warning', 'Seleccione el Punto de Emisión', tituloModal);
                 return;
-            }           
+            }   
+            
+            if(!(this.proveedor.idProveedor>0)){
+                this._toastr.toastr('warning', 'Seleccione el Proveedor', tituloModal);
+                return;
+            }
+
+            if(!(this.idComprobante>0)){
+                this._toastr.toastr('warning', 'Seleccione la Factura', tituloModal);
+                return;
+            }
 
             if (!this.data.fechaEmision) {
                 this._toastr.toastr('warning', 'Ingrese la Fecha de Emisión', tituloModal);

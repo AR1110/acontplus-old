@@ -380,6 +380,10 @@ export class ModalCobroLoteCtrl extends ModalCobroCtrl{
         })
 
         if(isConfirmed){
+            this.selectedDocumentos = [];
+            this.gridOptions.data = []
+            this.tipoDocumentos = [];
+
             this.cloneCodEstab = this.data.codEstab;
             this.getTipoDocumentos();
             this.$scope.$apply()
