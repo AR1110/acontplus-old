@@ -14,7 +14,6 @@ DROP PROCEDURE FactElect.RetAts_Doc_Sust_Imp_Delete
 GO
 CREATE PROCEDURE FactElect.RetAts_Doc_Sust_Imp_Delete @idUsuarioRol INT 
 ,@id INT
-,@json VARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;

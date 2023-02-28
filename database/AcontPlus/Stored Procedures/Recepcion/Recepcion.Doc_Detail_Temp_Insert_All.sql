@@ -103,9 +103,10 @@ BEGIN
 			IF NOT EXISTS(SELECT 1 FROM Recepcion.Doc_Detalle_Temp cpt INNER JOIN @tmp t ON cpt.idDocumento = t.idDocumento WHERE cpt.isCustom = 0)
 				BEGIN
 					INSERT INTO Recepcion.Doc_Detalle_Temp(idDocumento, idProveedor, idArticulo, idMedida, codigoPrincipal, codigoAuxiliar
-					, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto, idUsuario)
+					, cantidad, descripcion, precioUnitario, precioTotalSinImpuesto, costoNeto, descuento, idUsuario)
+
 					SELECT idDocumento, @idProveedor, a.idArticulo, m.idMedida, t.codigoPrincipal, t.codigoAuxiliar
-					,cantidad, t.descripcion, precioUnitario = CONVERT(VARCHAR, CAST((CAST(precioTotalSinImpuesto AS decimal(15,5)) / CAST(cantidad AS decimal(18,5))) AS numeric(18,5))), 0.00, precioTotalSinImpuesto, @idUsuario
+					,cantidad, t.descripcion, precioUnitario, precioTotalSinImpuesto, CAST((CAST(precioTotalSinImpuesto AS decimal(15,5)) / CAST(cantidad AS decimal(18,5))) AS numeric(18,5)), descuento, @idUsuario
 					FROM @tmp t
 					LEFT JOIN dbo.Articulo a ON a.codigo = t.codigoPrincipal AND a.idEntidad = @idEntidad
 					LEFT JOIN dbo.Medida m ON a.idMedida = m.idMedida AND a.idEntidad = @idEntidad

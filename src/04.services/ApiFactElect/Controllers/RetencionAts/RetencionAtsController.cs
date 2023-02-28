@@ -79,30 +79,18 @@ namespace ApiFactElect.Controllers.RetencionAts
                 });
             }
         }
-        [HttpPut]
-        public async Task<IActionResult> Put([FromBody] RetencionAtsDto data)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, RetencionAtsDto data)
         {
             LogWriter _logs = new LogWriter(_configuration);
             try
             {
-                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value); 
                 DAO _dao = new DAO(_configuration);
                 Dictionary<string, object> parameters = new Dictionary<string, object>();
                 parameters.Add("idRol", idUsuarioRol);
+                parameters.Add("id", id);
                 parameters.Add("infoCompRet", SqlValidation.ValidateSqlString(data.infoCompRet));
-                parameters.Add("docsSust", SqlValidation.ValidateSqlString(data.docsSust));
-                parameters.Add("impuestos", SqlValidation.ValidateSqlString(data.impuestos));
-                parameters.Add("retenciones", SqlValidation.ValidateSqlString(data.retenciones));
-                if (!string.IsNullOrEmpty(data.reembolsos))
-                {
-                    parameters.Add("reembolsos", SqlValidation.ValidateSqlString(data.reembolsos));
-                }
-                parameters.Add("payments", SqlValidation.ValidateSqlString(data.payments));
-                if (!string.IsNullOrEmpty(data.infoAdicional))
-                {
-                    parameters.Add("infoAdicional", SqlValidation.ValidateSqlString(data.infoAdicional));
-                }
                 return Ok(await _dao.Default("FactElect.RetencionAts_Update", parameters));
             }
             catch (Exception ex)

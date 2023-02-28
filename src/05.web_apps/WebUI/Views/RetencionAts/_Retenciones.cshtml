@@ -5,7 +5,7 @@
         <div class="form-group">
             <label for="codigo">Impuesto:</label>
             <select name="codigo" id="codigo" class="form-control" ng-model="retencion.codigo"
-                ng-change="setPorcentajesRet(retencion.codigo)">
+                ng-change="setPorcentajesRet(retencion.codigo, item.uniqueIdDoc)">
                 <option></option>
                 <option ng-value="item.codigo" ng-repeat="item in impuestosRet">{{item.codigo}} - {{item.descripcion}}
                 </option>
@@ -15,11 +15,21 @@
     <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
         <div class="form-group">
             <label for="codigoRetencion">Codigo Retención:</label>
-            <select name="codigoRetencion" id="codigoRetencion" class="form-control"
+            <input type="text" id="{{item.uniqueIdDoc}}-descripcion" class="form-control"
+                                    name="{{item.uniqueIdDoc}}-descripcion" autocomplete="off" class="form-control border-select"
+                                    placeholder="Buscar código de retención" ng-model="retencionCodigoSearch" ng-keyup="clearSearch()"
+                                    uib-typeahead="a as a.codigo + '-' + a.descripcion for a in porcentajeRetener | filter: $viewValue"
+                                    typeahead-loading="articleFinded.loading"
+                                    typeahead-no-results="articleFinded.noResults" typeahead-editable="false"
+                                    typeahead-on-select="setPorcentajeRet($item.codigo, false)" 
+                                    uib-popover="{{retencionCodigoSearch.descripcion}}"  popover-trigger="'focus'"
+                                    onclick="select()"
+                                    required />
+            @* <select name="codigoRetencion" id="codigoRetencion" class="form-control"
                 ng-model="retencion.codigoRetencion" ng-change="setPorcentajeRet(retencion.codigoRetencion, false)">
                 <option></option>
                 <option ng-value="item.codigo" ng-repeat="item in porcentajeRetener">{{item.codigo}} -
-                    {{item.descripcion}}</option>
+                    {{item.descripcion}}</option> *@
             </select>
         </div>
     </div>
@@ -45,15 +55,15 @@
         </div>
     </div>
 </div>
-<button type="button" id="btnAddRet" class="btn btn-info" ng-click="addRetencion(item.uniqueIdDoc, true)"><i
+<button type="button" id="btnAddRet" class="btn btn-info  btn-sm" ng-click="addRetencion(item.uniqueIdDoc, true)"><i
         class="ti-plus"></i> Añadir
     Retención</button>
-<button type="button" id="btnEditRet" class="btn btn-info" ng-click="updateRet(item.uniqueIdDoc)"
-    style="display:none;"><i class="ti-plus"></i> Guardar
+<button type="button" id="btnEditRet" class="btn btn-info  btn-sm" ng-click="updateRet(item.uniqueIdDoc)"
+    style="display:none;"><i class="ti-save"></i> Guardar
     Retención</button>
 <hr>
 <div class="table-responsive" ng-if="retencionAdded.length > 0">
-    <table class="table">
+    <table class="table table-bordered">
         <thead>
             <tr>
                 <th>Impuesto</th>
@@ -65,7 +75,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr dir-paginate="ret in retencionAdded|orderBy:sortKey:reverse|filter:item.uniqueIdDoc|itemsPerPage:10"
+            <tr dir-paginate="ret in retencionAdded|orderBy:sortKey : reverse | filter: {uniqueIdDoc: item.uniqueIdDoc}|itemsPerPage:10"
                 ng-class-even="'even'" ng-class-odd="'odd'">
                 <td>{{ret.impuesto}}</td>
                 <td>{{ret.codRet}}</td>

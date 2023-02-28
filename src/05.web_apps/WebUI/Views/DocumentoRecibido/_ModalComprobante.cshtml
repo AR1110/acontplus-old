@@ -262,6 +262,7 @@
                     <th md-column>Descripción</th>
                     <td md-column>Medida</td>
                     <th md-column>P.U.</th>
+                    <th md-column>Costo Neto</th>
                     <th md-column>Descuento</th>
                     <th md-column>Total</th>
                     <th md-column>Opciones</th>
@@ -282,6 +283,7 @@
                         </div>
                     </td>
                     <td md-cell class="text-right">{{item.precioUnitario | currency}}</td>
+                    <td md-cell class="text-right">{{item.costoNeto | currency}}</td>
                     <td md-cell class="text-right">{{item.descuento | currency}}</td>
                     <td md-cell class="text-right">{{item.precioTotalSinImpuesto | currency}}</td>
                     <td md-cell>

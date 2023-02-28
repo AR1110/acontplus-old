@@ -15,6 +15,7 @@ idDocumento INT NOT NULL
 ,precioUnitario VARCHAR(15) NOT NULL
 ,descuento VARCHAR(15) NULL
 ,precioTotalSinImpuesto VARCHAR(15) NULL
+,costoNeto NUMERIC(18,5) NULL
 ,impuestos VARCHAR(MAX) NULL
 ,fechaRegistro DATETIME NOT NULL DEFAULT GETDATE()
 ,idUsuario INT NULL

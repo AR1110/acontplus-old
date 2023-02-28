@@ -137,6 +137,7 @@
                             $scope.infoCompRet = tempArray[0][0]
                             $scope.infoCompRet.codEstab_Asig = $scope.establecimientos.find(item => (item.codEstab == $scope.infoCompRet.codEstab)).codEstab_Asig
                             $scope.onChangeEstablecimiento()
+                            //console.log(tempArray[0])
                             $scope.infoCompRet.fechaEmision = formatDate(tempArray[0].fechaEmision)
                             $scope.subContribuyente = tempArray[0].subContribuyente
 
@@ -145,7 +146,8 @@
                             $scope.paymentsTemp = tempArray[4]
                             for (const d of tempArray[1]) {
                                 $scope.docSustento = d
-                                $scope.addDocSustento()
+                                $scope.selectSutento($scope.docSustento.codDocSustento)
+                                $scope.addDocSustento(false)
                             }
 
                             $scope.infoAdded = tempArray[5]
@@ -432,6 +434,7 @@
                 tS.toastr('warning', 'Debe seleccionar el pago de regimen fiscal')
                 $scope.docSustIsValid = false
             }
+            return true
         }
 
         /**End Validations */
@@ -479,7 +482,7 @@
 
         $scope.docSustento = {}
         $scope.docsAdded = []
-        $scope.addDocSustento = () => {
+        $scope.addDocSustento = (toBd) => {
             $scope.docSustIsValid = true
             $scope.validateDocSust()
             if ($scope.docSustIsValid) {
@@ -489,48 +492,94 @@
                 } else {
                     guid = uuid2.newguid()
                 }
-
-                let countTax = 0
+                let indexxT = 0
                 if ($scope.tempTaxes.length > 0) {
                     for (const t of $scope.tempTaxes) {
-                        $scope.tax = t
-                        $scope.addTax(guid)
-                        countTax++
-                    }
-                    if (countTax == $scope.tempTaxes.length) {
-                        $scope.tempTaxes = []
+                        if (idDocumentoElectronico > 0) {
+                            if (t.uniqueIdDoc == guid) {
+                                $scope.tax = t
+                                $scope.addTax(guid, false)
+                                indexxT = $scope.tempTaxes.indexOf(t)
+                                $scope.tempTaxes.splice(indexxT, 1)
+                            }
+                        } else {
+                            $scope.tax = t
+                            $scope.addTax(guid, false)
+                            indexxT = $scope.tempTaxes.indexOf(t)
+                            $scope.tempTaxes.splice(indexxT, 1)
+                        }
                     }
                 }
-
-                let countRetenciones = 0
+                let indexxR = 0
 
                 if ($scope.retencionesTemp.length > 0) {
                     for (const r of $scope.retencionesTemp) {
-                        $scope.retencion = r
-                        if (r.codigo == '1') {
-                            $scope.porcentajeRetener = $scope.codigosRetencion
+                        if (idDocumentoElectronico > 0) {
+                            if (r.uniqueIdDoc == guid) {
+                                $scope.retencion = r
+                                if (r.codigo == '1') {
+                                    $scope.porcentajeRetener = $scope.codigosRetencion
+                                }
+                                if (r.codigo == '2') {
+                                    $scope.porcentajeRetener = $scope.porcentajesRetIva
+                                }
+                                $scope.addRetencion(guid, false)
+                                indexxR = $scope.retencionesTemp.indexOf(r)
+                                $scope.retencionesTemp.splice(indexxR, 1)
+                            }
+                        } else {
+                            $scope.retencion = r
+                            if (r.codigo == '1') {
+                                $scope.porcentajeRetener = $scope.codigosRetencion
+                            }
+                            if (r.codigo == '2') {
+                                $scope.porcentajeRetener = $scope.porcentajesRetIva
+                            }
+                            $scope.addRetencion(guid, false)
+                            indexxR = $scope.retencionesTemp.indexOf(r)
+                            $scope.retencionesTemp.splice(indexxR, 1)
                         }
-                        if (r.codigo == '2') {
-                            $scope.porcentajeRetener = $scope.porcentajesRetIva
-                        }
-                        $scope.addRetencion(guid, false)
-                        countRetenciones++
-                    }
-                    if (countRetenciones == $scope.retencionesTemp.length) {
-                        $scope.retencionesTemp = []
+
                     }
                 }
-
-                let countPayments = 0
-
+                let indexP = 0
                 if ($scope.paymentsTemp.length > 0) {
                     for (const p of $scope.paymentsTemp) {
-                        $scope.payment = p
-                        $scope.addPayment(guid, false)
-                        countPayments++
+                        if (idDocumentoElectronico > 0) {
+                            if (p.uniqueIdDoc == guid) {
+                                $scope.payment = p
+                                $scope.addPayment(guid, false)
+                                indexP = $scope.paymentsTemp.indexOf(p)
+                                $scope.paymentsTemp.splice(indexP, 1)
+                            }
+                        } else {
+                            $scope.payment = p
+                            $scope.addPayment(guid, false)
+                            indexP = $scope.paymentsTemp.indexOf(p)
+                            $scope.paymentsTemp.splice(indexP, 1)
+                        }
                     }
-                    if (countPayments == $scope.paymentsTemp.length) {
-                        $scope.paymentsTemp = []
+                }
+                if (toBd) {
+                    if ($scope.infoCompRet.idRetencionAts > 0) {
+                        $scope.docSustento.uniqueIdDoc = guid
+                        $scope.docSustento.totalBaseImponibleReembolso = 0.00
+                        $scope.docSustento.totalImpuestoReembolso = 0.00
+                        $scope.docSustento.totalSinImpuestos = 0.00
+                        $scope.docSustento.importeTotal = 0.00
+                        mS.getData('post', _urlService + 'DocSustento/' + $scope.infoCompRet.idRetencionAts + '?json=' + JSON.stringify($scope.docSustento)).then(
+                            response => {
+                                if (response.code == '0') {
+                                    tS.toastr('warning', response.message)
+                                }
+                                if (response.code == '1') {
+                                    //$scope.tax = {}
+                                    tS.toastr('success', response.message)
+                                }
+                            }, error => {
+                                console.log(error)
+                            }
+                        )
                     }
                 }
 
@@ -540,7 +589,7 @@
                     codDocSustento: $scope.docSustento.codDocSustento,
                     docSustento: $scope.documentos.find(item => item.codDocSustento === $scope.docSustento.codDocSustento).descripcion,
                     codSustento: $scope.docSustento.codSustento,
-                    sustento: !$scope.docSustento.codSustento ? $scope.sustentosFiltered.find(item => item.codSustento === $scope.docSustento.codSustento).descripcion : '',
+                    sustento: $scope.docSustento.codSustento ? $scope.sustentosFiltered.find(item => item.codSustento === $scope.docSustento.codSustento).descripcion : '',
                     numDocSustento: $scope.docSustento.numDocSustento,
                     fechaEmisionDocSustento: $scope.docSustento.fechaEmisionDocSustento,
                     fechaRegistroContable: $scope.docSustento.fechaRegistroContable,
@@ -556,8 +605,15 @@
                     totalSinImpuestos: 0.00,
                     importeTotal: 0.00
                 })
-                console.log($scope.docsAdded)
+                //console.log($scope.docsAdded)
                 $scope.docSustento = {}
+
+
+                if (toBd) {
+                    setTimeout(() => {
+                        $window.location.reload()
+                    }, 2200)
+                }
             }
         }
 
@@ -577,7 +633,10 @@
         $scope.setTaxValue = (item) => {
             $scope.tax.valorImpuesto = ((item.tax.baseImponible * $scope.tax.tarifa) / 100).toFixed(2)
         }
-        $scope.taxValid = () => {
+        $scope.taxValid = (toBd) => {
+            if (!toBd) {
+                return true
+            }
             if (!$scope.tax.codImpuestoDocSustento) {
                 tS.toastr('warning', 'Debe seleccionar un impuesto')
                 return false
@@ -597,8 +656,47 @@
             return true
         }
 
-        $scope.addTax = (uniqueIdDoc) => {
-            if ($scope.taxValid()) {
+        $scope.addTax = (uniqueIdDoc, toBd) => {
+            if ($scope.taxValid(toBd)) {
+                if (toBd) {
+                    let idRetAtsDocSustento = $scope.docsAdded.find(item => (item.uniqueIdDoc == uniqueIdDoc)).idRetAtsDocSustento
+                    if (idRetAtsDocSustento > 0) {
+                        $scope.tax.uniqueIdDoc = uniqueIdDoc
+                        mS.getData('post', _urlService + 'DocSustImpuesto/' + idRetAtsDocSustento + '?json=' + JSON.stringify($scope.tax)).then(
+                            response => {
+                                if (response.code == '0') {
+                                    tS.toastr('warning', response.message)
+                                }
+                                if (response.code == '1') {
+                                    if ($scope.retencionAdded.length > 0) {
+                                        for (const ret of $scope.retencionAdded) {
+                                            if (ret.codigo == '1' && ret.uniqueIdDoc == uniqueIdDoc) {
+                                                ret.baseImponible = $scope.tax.baseImponible
+                                                ret.valorRetenido = (ret.porcentajeRetener / 100) * $scope.tax.baseImponible
+                                            }
+                                            if (ret.codigo == '2' && ret.uniqueIdDoc == uniqueIdDoc) {
+                                                ret.baseImponible = $scope.tax.valorImpuesto
+                                                ret.valorRetenido = (ret.porcentajeRetener / 100) * $scope.tax.valorImpuesto
+                                            }
+                                        }
+                                    }
+                                    if ($scope.paymentsAdded.length > 0) {
+                                        for (const payment of $scope.paymentsAdded) {
+                                            if (payment.uniqueIdDoc == uniqueIdDoc) {
+                                                payment.total = (Number($scope.tax.baseImponible) + Number($scope.tax.valorImpuesto))
+                                            }
+                                        }
+                                    }
+
+                                    //$scope.tax = {}
+                                    tS.toastr('success', response.message)
+                                }
+                            }, error => {
+                                console.log(error)
+                            }
+                        )
+                    }
+                }
                 $scope.taxesAdded.push({
                     uniqueIdDoc: uniqueIdDoc,
                     idRetAtsImpDocSustento: (idDocumentoElectronico) ? $scope.tax.idRetAtsImpDocSustento : 0,
@@ -612,39 +710,119 @@
                 })
                 angular.forEach($scope.docsAdded, (value, key) => {
                     if (value.uniqueIdDoc == uniqueIdDoc) {
-                        value.totalSinImpuestos += Number($scope.tax.baseImponible)
-                        value.importeTotal += (Number($scope.tax.baseImponible) + Number($scope.tax.valorImpuesto))
+                        value.totalSinImpuestos = Number($scope.tax.baseImponible)
+                        value.importeTotal = (Number($scope.tax.baseImponible) + Number($scope.tax.valorImpuesto))
                     }
-                    $scope.payment.total += value.importeTotal
+                    $scope.payment.total = (Number($scope.tax.baseImponible) + Number($scope.tax.valorImpuesto))
                 })
 
                 $scope.tax = {}
-                console.log($scope.docsAdded)
+                //console.log($scope.docsAdded)
                 console.log($scope.taxesAdded)
             }
         }
         $scope.editTax = (item) => {
-            $scope.indexTax = $scope.taxesAdded.findIndex(item)
-            $scope.tax = item
-            $scope.showBtnTaxEdit = true
-            $scope.hideBtnTaxAdd = true
+            $scope.indexTax = item
+            $scope.tax = $scope.taxesAdded[item]
+            document.getElementById('btnAddTax').style.display = 'none'
+            document.getElementById('btnEditTax').style.display = 'block'
         }
         $scope.updateTax = (uniqueIdDoc) => {
             if ($scope.taxValid()) {
-                angular.array.forEach($scope.taxesAdded, (value, index) => {
-                    if (value.uniqueIdDoc == uniqueIdDoc && $scope.indexTax == index) {
-                        value.codImpuestoDocSustento = $scope.tax.codImpuestoDocSustento
-                        value.codigoPorcentaje = $scope.tax.codigoPorcentaje
-                        value.baseImponible = $scope.tax.baseImponible
-                        value.tarifa = $scope.tax.tarifa
-                        value.valorImpuesto = $scope.tax.valorImpuesto
-                    }
-                });
-                $scope.tax = {}
+                if ($scope.tax.idRetAtsImpDocSustento > 0) {
+                    mS.getData('put', _urlService + 'DocSustImpuesto/' + $scope.tax.idRetAtsImpDocSustento + '?json=' + JSON.stringify($scope.tax)).then(
+                        response => {
+                            if (response.code == '0') {
+                                tS.toastr('warning', response.message)
+                            }
+                            if (response.code == '1') {
+                                angular.forEach($scope.taxesAdded, (value, index) => {
+                                    if (value.uniqueIdDoc == uniqueIdDoc && $scope.indexTax == index) {
+                                        value.codImpuestoDocSustento = $scope.tax.codImpuestoDocSustento
+                                        value.codigoPorcentaje = $scope.tax.codigoPorcentaje
+                                        value.baseImponible = $scope.tax.baseImponible
+                                        value.tarifa = $scope.tax.tarifa
+                                        value.valorImpuesto = $scope.tax.valorImpuesto
+                                    }
+                                })
+                                for (const ret of $scope.retencionAdded) {
+                                    if (ret.codigo == '1' && ret.uniqueIdDoc == uniqueIdDoc) {
+                                        ret.baseImponible = $scope.tax.baseImponible
+                                        ret.valorRetenido = (ret.porcentajeRetener / 100) * $scope.tax.baseImponible
+                                    }
+                                    if (ret.codigo == '2' && ret.uniqueIdDoc == uniqueIdDoc) {
+                                        ret.baseImponible = $scope.tax.valorImpuesto
+                                        ret.valorRetenido = (ret.porcentajeRetener / 100) * $scope.tax.valorImpuesto
+                                    }
+                                }
+                                for (const payment of $scope.paymentsAdded) {
+                                    if (payment.uniqueIdDoc == uniqueIdDoc) {
+                                        payment.total = (Number($scope.tax.baseImponible) + Number($scope.tax.valorImpuesto))
+                                    }
+                                }
+                                $scope.tax = {}
+                                document.getElementById('btnAddTax').style.display = 'block'
+                                document.getElementById('btnEditTax').style.display = 'none'
+                                tS.toastr('success', response.message)
+                            }
+                        }, error => {
+                            console.log(error)
+                        }
+                    )
+                } else {
+                    angular.forEach($scope.taxesAdded, (value, index) => {
+                        if (value.uniqueIdDoc == uniqueIdDoc && $scope.indexTax == index) {
+                            value.codImpuestoDocSustento = $scope.tax.codImpuestoDocSustento
+                            value.codigoPorcentaje = $scope.tax.codigoPorcentaje
+                            value.baseImponible = $scope.tax.baseImponible
+                            value.tarifa = $scope.tax.tarifa
+                            value.valorImpuesto = $scope.tax.valorImpuesto
+                        }
+                    })
+                    $scope.tax = {}
+                }
             }
         }
-        $scope.removeTax = (index) => {
-            alert('falta recalcular totales')
+        $scope.askToRemoveTax = (index, item) => {
+            if (item.idRetAtsImpDocSustento > 0) {
+                Swal.fire({
+                    title: '¿Está seguro de eliminar este impuesto?',
+                    text: "¡No podrás revertir esto!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Si, eliminar!',
+                    cancelButtonText: 'No, cancelar',
+                    allowOutsideClick: false
+                }).then((result) => {
+                    if (result.value) {
+                        $scope.removeTax(index, item)
+                    }
+                })
+            } else {
+                $scope.removeTax(index, item)
+            }
+        }
+        $scope.removeTax = (index, item) => {
+            if (item.idRetAtsImpDocSustento > 0) {
+                try {
+                    mS.getData('delete', _urlService + 'DocSustImpuesto/' + item.idRetAtsImpDocSustento).then(
+                        response => {
+                            if (response.code == '0') {
+                                tS.toastr('warning', response.message)
+                            }
+                            if (response.code == '1') {
+                                tS.toastr('success', response.message)
+                            }
+                        }, error => {
+                            console.log(error)
+                        }
+                    )
+                } catch (error) {
+                    console.log(error)
+                }
+            }
             $scope.taxesAdded.splice(index, 1)
         }
         /**End Impuestos */
@@ -653,19 +831,19 @@
         $scope.retencion = {}
         $scope.retencionAdded = []
 
-        $scope.setPorcentajesRet = (item) => {
-            $scope.retencion.baseImponible = ''
-            $scope.retencion.porcentajeRetener = ''
-            $scope.retencion.valorRetenido = ''
+        $scope.setPorcentajesRet = (item, uniqueIdDoc) => {
+            // $scope.retencion.baseImponible = ''
+            // $scope.retencion.porcentajeRetener = ''
+            // $scope.retencion.valorRetenido = ''
             switch (item) {
                 case '1':
-                    $scope.retencion.baseImponible = $scope.taxesAdded.find(tax => tax.codImpuestoDocSustento == 2).baseImponible
+                    $scope.retencion.baseImponible = $scope.taxesAdded.find(tax => (tax.codImpuestoDocSustento == 2 && tax.uniqueIdDoc == uniqueIdDoc)).baseImponible
                     $scope.porcentajeRetener = $scope.codigosRetencion
                     console.log($scope.codigosRetencion)
                     break
                 case '2':
                     //console.log('yes')
-                    $scope.retencion.baseImponible = $scope.taxesAdded.find(tax => tax.codImpuestoDocSustento == 2).valorImpuesto
+                    $scope.retencion.baseImponible = $scope.taxesAdded.find(tax => (tax.codImpuestoDocSustento == 2 && tax.uniqueIdDoc == uniqueIdDoc)).valorImpuesto
                     $scope.porcentajeRetener = $scope.porcentajesRetIva
                     console.log($scope.porcentajesRetIva)
                     break
@@ -679,6 +857,7 @@
                 $scope.retencion.porcentajeRetener = item.retencion.porcentajeRetener
             } else {
                 $scope.retencion.porcentajeRetener = $scope.porcentajeRetener.find(p => p.codigo == item).porcentaje
+                $scope.retencionCodigoSearch = $scope.porcentajeRetener.find(p => p.codigo == item)
             }
             if (Number($scope.retencion.baseImponible)) {
                 $scope.calculateRet($scope.retencion.baseImponible)
@@ -691,7 +870,10 @@
             $scope.retencion.valorRetenido = ((baseImponible * $scope.retencion.porcentajeRetener) / 100).toFixed(2)
         }
 
-        $scope.retencionValid = () => {
+        $scope.retencionValid = (toBd) => {
+            if (!toBd) {
+                return true
+            }
             if ($scope.taxesAdded.length == 0) {
                 tS.toastr('warning', 'Debe agregar al menos un impuesto al documento de sustento')
                 return false
@@ -716,18 +898,19 @@
         }
         $scope.addRetencion = (uniqueIdDoc, toBd) => {
 
-            if ($scope.retencionValid()) {
+            if ($scope.retencionValid(toBd)) {
                 //console.log($scope.retencion)
                 if (toBd) {
                     let idRetAtsDocSustento = $scope.docsAdded.find(item => (item.uniqueIdDoc == uniqueIdDoc)).idRetAtsDocSustento
                     if (idRetAtsDocSustento > 0) {
+                        $scope.retencion.uniqueIdDoc = uniqueIdDoc
                         mS.getData('post', _urlService + 'DocSustRetencion/' + idRetAtsDocSustento + '?json=' + JSON.stringify($scope.retencion)).then(
                             response => {
                                 if (response.code == '0') {
                                     tS.toastr('warning', response.message)
                                 }
                                 if (response.code == '1') {
-                                    $scope.retencion = {}
+                                    //$scope.retencion = {}
                                     tS.toastr('success', response.message)
                                 }
                             }, error => {
@@ -750,10 +933,12 @@
                 $scope.retencion = {}
             }
         }
-        $scope.editRetencion = (item) => {
+        //$scope.retencionCodigoSearch = {}
+        $scope.editRetencion = (item, ret, d) => {
             $scope.indexRet = item
             $scope.retencion = $scope.retencionAdded[item]
-            $scope.setPorcentajesRet($scope.retencion.codigo)
+
+            $scope.setPorcentajesRet($scope.retencion.codigo, d.uniqueIdDoc)
             $scope.setPorcentajeRet($scope.retencion.codigoRetencion, false)
             document.getElementById('btnAddRet').style.display = 'none'
             document.getElementById('btnEditRet').style.display = 'block'
@@ -769,7 +954,7 @@
                             if (response.code == '1') {
                                 angular.forEach($scope.retencionAdded, (value, index) => {
                                     if (value.idRetencionAtsRet == $scope.retencion.idRetencionAtsRet) {
-                                        value.codigo = $scope.retencion.codImpuestoDocSustento
+                                        value.codigo = $scope.retencion.codigo
                                         value.codigoPorcentaje = $scope.retencion.codigoPorcentaje
                                         value.baseImponible = $scope.retencion.baseImponible
                                         value.porcentajeRetener = $scope.retencion.porcentajeRetener
@@ -813,7 +998,7 @@
                     allowOutsideClick: false
                 }).then((result) => {
                     if (result.value) {
-                        $scope.removePayment(index, item)
+                        $scope.removeRet(index, item)
                     }
                 })
             } else {
@@ -856,7 +1041,10 @@
         /**Pagos */
 
 
-        $scope.paymentValid = () => {
+        $scope.paymentValid = (toBd) => {
+            if (!toBd) {
+                return true
+            }
             if ($scope.taxesAdded.length == 0) {
                 tS.toastr('warning', 'Primero debe agregar los impuestos del documento')
                 return false
@@ -876,11 +1064,26 @@
             return true
         }
         $scope.addPayment = (uniqueIdDoc, toBd) => {
-            if ($scope.paymentValid()) {
+            if ($scope.paymentValid(toBd)) {
                 if (toBd) {
                     let data = {
+                        uniqueIdDoc: uniqueIdDoc,
                         formaPago: $scope.payment.formaPago,
                         total: $scope.payment.total
+                    }
+
+                    let totalBaseImp = $scope.taxesAdded.map(item => (item.baseImponible)).reduce((valorActual, previous) => (valorActual + previous), 0)
+                    let totalImpuesto = $scope.taxesAdded.map(item => (item.valorImpuesto)).reduce((valorActual, previous) => (Number(valorActual) + Number(previous)), 0)
+                    let importeTotal = (totalBaseImp + totalImpuesto)
+
+                    console.log(importeTotal)
+
+                    let totalFp = $scope.paymentsAdded.map(item => (item.total)).reduce((valorActual, previous) => (valorActual + previous), 0)
+                    totalFp = totalFp + $scope.payment.total
+
+                    if (importeTotal != totalFp) {
+                        tS.toastr('warning', 'El total de formas de pago es diferente al importe total del documento de sustento')
+                        return
                     }
                     let idRetAtsDocSustento = $scope.docsAdded.find(item => (item.uniqueIdDoc == uniqueIdDoc)).idRetAtsDocSustento
                     if (idRetAtsDocSustento > 0) {
@@ -890,7 +1093,7 @@
                                     tS.toastr('warning', response.message)
                                 }
                                 if (response.code == '1') {
-                                    $scope.payment = {}
+                                    //$scope.payment = {}
                                     tS.toastr('success', response.message)
                                 }
                             }, error => {
@@ -916,6 +1119,7 @@
             console.log($scope.payment)
             document.getElementById('btnAddPaymentAdd').style.display = 'none'
             document.getElementById('btnEditPaymentSave').style.display = 'block'
+            document.getElementById('totalPago').disabled = true
         }
         $scope.updatePayment = (uniqueIdDoc) => {
             if ($scope.paymentValid()) {
@@ -937,6 +1141,7 @@
                                     $scope.payment = {}
                                     document.getElementById('btnAddPaymentAdd').style.display = 'block'
                                     document.getElementById('btnEditPaymentSave').style.display = 'none'
+                                    document.getElementById('totalPago').disabled = false
                                     tS.toastr('success', response.message)
                                 }
                             }, error => {
@@ -1003,6 +1208,98 @@
             $scope.paymentsAdded.splice(index, 1)
         }
         /**End Pagos */
+
+
+
+
+        $scope.editDocSust = (item) => {
+            $scope.indexDoc = item
+            $scope.docSustento = $scope.docsAdded[item]
+            $scope.docSustento.fechaEmisionDocSustento = formatDate($scope.docsAdded[item].fechaEmisionDocSustento)
+            if ($scope.docsAdded[item].fechaRegistroContable) {
+                $scope.docSustento.fechaRegistroContable = formatDate($scope.docsAdded[item].fechaRegistroContable)
+            }
+            $scope.selectSutento($scope.docSustento.codDocSustento)
+            document.getElementById('btnAddDocSust').style.display = 'none'
+            document.getElementById('btnEditDocSust').style.display = 'block'
+        }
+
+        $scope.updateDocSustento = () => {
+            if ($scope.validateDocSust()) {
+                if ($scope.docSustento.idRetAtsDocSustento > 0) {
+                    mS.getData('put', _urlService + 'DocSustento/' + $scope.docSustento.idRetAtsDocSustento + '?json=' + JSON.stringify($scope.docSustento)).then(
+                        response => {
+                            if (response.code == '0') {
+                                tS.toastr('warning', response.message)
+                            }
+                            if (response.code == '1') {
+                                angular.forEach($scope.docsAdded, (value, index) => {
+                                    if ($scope.indexDoc == index) {
+                                        value.codDocSustento = $scope.docSustento.codDocSustento
+                                        value.docSustento = $scope.documentos.find(item => item.codDocSustento === $scope.docSustento.codDocSustento).descripcion
+                                        value.codSustento = $scope.docSustento.codSustento
+                                        value.sustento = $scope.docSustento.codSustento ? $scope.sustentosFiltered.find(item => item.codSustento == $scope.docSustento.codSustento).descripcion : ''
+                                        value.numDocSustento = $scope.docSustento.numDocSustento
+                                        value.fechaEmisionDocSustento = $scope.docSustento.fechaEmisionDocSustento
+                                        value.fechaRegistroContable = $scope.docSustento.fechaRegistroContable
+                                        value.numAutDocSustento = $scope.docSustento.numAutDocSustento
+                                        value.pagoLocExt = $scope.docSustento.pagoLocExt
+                                        value.tipoRegi = $scope.docSustento.tipoRegi
+                                        value.paisEfecPago = $scope.docSustento.paisEfecPago
+                                        value.aplicConvDobTrib = $scope.docSustento.aplicConvDobTrib
+                                        value.pagExtSujRetNorLeg = $scope.docSustento.pagExtSujRetNorLeg
+                                        value.pagoRegFis = $scope.docSustento.pagoRegFis
+                                        //     idRetAtsDocSustento: (idDocumentoElectronico) ? $scope.docSustento.idRetAtsDocSustento : 0,
+                                        // uniqueIdDoc: guid,
+
+                                        // totalBaseImponibleReembolso: 0.00,
+                                        // totalImpuestoReembolso: 0.00,
+                                        // totalSinImpuestos: 0.00,
+                                        // importeTotal: 0.00
+                                    }
+                                })
+                                $scope.docSustento = {}
+                                document.getElementById('btnAddDocSust').style.display = 'block'
+                                document.getElementById('btnEditDocSust').style.display = 'none'
+                                tS.toastr('success', response.message)
+                            }
+                        }, error => {
+                            console.log(error)
+                        }
+                    )
+                } else {
+                    angular.forEach($scope.docsAdded, (value, index) => {
+                        if ($scope.indexDoc == index) {
+                            value.codDocSustento = $scope.docSustento.codDocSustento
+                            value.docSustento = $scope.documentos.find(item => item.codDocSustento === $scope.docSustento.codDocSustento).descripcion
+                            value.codSustento = $scope.docSustento.codSustento
+                            value.sustento = $scope.docSustento.codSustento ? $scope.sustentosFiltered.find(item => item.codSustento === $scope.docSustento.codSustento).descripcion : ''
+                            value.numDocSustento = $scope.docSustento.numDocSustento
+                            value.fechaEmisionDocSustento = $scope.docSustento.fechaEmisionDocSustento
+                            value.fechaRegistroContable = $scope.docSustento.fechaRegistroContable
+                            value.numAutDocSustento = $scope.docSustento.numAutDocSustento
+                            value.pagoLocExt = $scope.docSustento.pagoLocExt
+                            value.tipoRegi = $scope.docSustento.tipoRegi
+                            value.paisEfecPago = $scope.docSustento.paisEfecPago
+                            value.aplicConvDobTrib = $scope.docSustento.aplicConvDobTrib
+                            value.pagExtSujRetNorLeg = $scope.docSustento.pagExtSujRetNorLeg
+                            value.pagoRegFis = $scope.docSustento.pagoRegFis
+                            //     idRetAtsDocSustento: (idDocumentoElectronico) ? $scope.docSustento.idRetAtsDocSustento : 0,
+                            // uniqueIdDoc: guid,
+
+                            // totalBaseImponibleReembolso: 0.00,
+                            // totalImpuestoReembolso: 0.00,
+                            // totalSinImpuestos: 0.00,
+                            // importeTotal: 0.00
+                        }
+                    })
+                    $scope.docSustento = {}
+                }
+            }
+        }
+
+
+
         /**************************************************************************************** */
         /**End Documentos Sustento */
 
@@ -1217,17 +1514,25 @@
                 let infoComp = Object.assign({}, $scope.infoCompRet)
                 infoComp.fechaEmision = formatDateTimeZone($scope.infoCompRet.fechaEmision)
 
-                let data = {
-                    infoCompRet: JSON.stringify(infoComp),
-                    docsSust: JSON.stringify($scope.docsAdded),
-                    impuestos: JSON.stringify($scope.taxesAdded),
-                    retenciones: JSON.stringify($scope.retencionAdded),
-                    payments: JSON.stringify($scope.paymentsAdded),
-                    infoAdicional: JSON.stringify($scope.infoAdded)
+                let data = {}
+                if (idDocumentoElectronico) {
+                    data = {
+                        infoCompRet: JSON.stringify(infoComp),
+                        docsSust: JSON.stringify($scope.docsAdded),
+                        impuestos: JSON.stringify($scope.taxesAdded),
+                        retenciones: JSON.stringify($scope.retencionAdded),
+                        payments: JSON.stringify($scope.paymentsAdded),
+                        infoAdicional: JSON.stringify($scope.infoAdded)
+                    }
+                } else {
+                    data = {
+                        infoCompRet: JSON.stringify(infoComp)
+                    }
                 }
                 //console.log(data)
                 let method = (idDocumentoElectronico) ? 'put' : 'post'
-                mS.getData(method, _urlService + 'RetencionAts', data).then(
+                let url = (idDocumentoElectronico) ? _urlService + 'RetencionAts/' + $scope.infoCompRet.idRetencionAts : _urlService + 'RetencionAts'
+                mS.getData(method, url, data).then(
                     response => {
                         if (response.code == '0') {
                             tS.toastr('warning', response.message)
