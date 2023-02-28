@@ -34,7 +34,10 @@ INSERT INTO @tmp(idDocumento, versionComp, rucReceptor, numeroAutorizacion, nume
 --UPDATE c SET xmlDoc = 
 SELECT TOP 10 ci.idDocumento,
  CONVERT(xml,dbo.f_sanitize_xml(convert(varchar(max), ci.xmlDoc.query('/autorizacion/comprobante')))).value('(comprobante/comprobanteRetencion/@version)[1]', 'VARCHAR(10)')
+
 ,ci.identificacionReceptor, ci.numeroAutorizacion, ci.serieComprobante
+
+
 ,totalSinImpuestos = CONVERT(xml,dbo.f_sanitize_xml(convert(varchar(max), ci.xmlDoc.query('/autorizacion/comprobante')))).query('/comprobante/factura').value('(/factura/infoFactura/totalSinImpuestos)[1]', 'numeric(18,2)')
 
 ,totalConImp = 	CONVERT(xml,dbo.f_sanitize_xml(convert(varchar(max), ci.xmlDoc.query('/autorizacion/comprobante')))).query('/comprobante/factura/infoFactura/totalConImpuestos')
