@@ -15,6 +15,8 @@ function consolidacionInvCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nomb
         $scope.accion = accion[0];
     }
 
+    $scope.btnEditDisabled = true;
+
     const TIPO_DOC = _commonSvc.tipoDoc['CIV'];
 
     $scope.dataSearch = {
@@ -33,7 +35,9 @@ function consolidacionInvCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nomb
                 }
 
                 $scope.consolidaciones =  JSON.parse(response.payload) || []; 
-                $scope.cloneConsolidaciones = JSON.parse(JSON.stringify($scope.consolidaciones))                
+                $scope.cloneConsolidaciones = JSON.parse(JSON.stringify($scope.consolidaciones)) 
+                let total = $scope.consolidaciones.map(val=>val.total).reduce((acc, curr)=>acc+curr, 0);
+                $scope.total = _form.roundNumber(total, 5);                 
             })
         } catch (error) {
             console.log(error)
@@ -56,7 +60,9 @@ function consolidacionInvCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nomb
 
     $scope.getListaFilter= ()=>{
         let consolidaciones = JSON.parse(JSON.stringify($scope.cloneConsolidaciones))
-        $scope.consolidaciones = $filter("filter")(consolidaciones, $scope.dataSearch.bySearch);        
+        $scope.consolidaciones = $filter("filter")(consolidaciones, $scope.dataSearch.bySearch);  
+        let total = $scope.consolidaciones.map(val=>val.total).reduce((acc, curr)=>acc+curr, 0);
+        $scope.total = _form.roundNumber(total, 5);        
     }
 
     

@@ -34,6 +34,7 @@
         $scope.getCheques = function(){            
             try {
                 showLoader();
+                $scope.cheques = []
                 _mS.getData('get', '/Cheque/Get?json='+ JSON.stringify($scope.dataSearch)).then(response => {
                     if (response.id == "0") {
                         hideLoader();
@@ -52,13 +53,13 @@
         }
 
         $scope.initiload = ()=>{
-            _mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response=>{
-                let results = JSON.parse(response.payload) || [];
-                $scope.establecimientos = results[0];
+            commonSvc.getEstabAsign().then(response=>{
+                $scope.establecimientos = response;
                 let codEstab = $scope.establecimientos.length>0?$scope.establecimientos[0].codEstab: 0;            
                 $scope.dataSearch.codEstab = codEstab;
                 $scope.getCheques();
-            })
+
+            })           
         }
         $scope.initiload();
 
@@ -97,7 +98,8 @@
             }
         }
 
-        $scope.selectProveedorFiltro = (item)=>{            
+        $scope.selectProveedorFiltro = (item)=>{    
+               
             $scope.dataSearch.byPersona=item.proveedor.numeroIdentificacion           
         }
 
@@ -109,8 +111,9 @@
             if(form.campo($scope.proveedorFiltro.nombreFiscal)) $scope.dataSearch.byPersona = null;            
         }
 
-        $scope.selectedClienteSearchFiltro= (item)=>{            
-            $scope.dataSearch.byPersona=item.cliente.numeroIdentificacion;
+        $scope.selectedClienteSearchFiltro= (item)=>{   
+            
+            $scope.dataSearch.byPersona=item.numeroIdentificacion;
         }
 
         $scope.onChangeFechaFiltro = ()=>{

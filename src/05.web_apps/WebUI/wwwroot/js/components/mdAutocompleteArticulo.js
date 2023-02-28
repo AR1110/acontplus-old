@@ -256,6 +256,8 @@ class MdArticuloCtrl{
                 json: this.dataArticulo
             }).then(response=>JSON.parse(response.payload));
 
+            console.log(results)
+
             let responseMsg = results[0][0];  
 
             let sharedData = {

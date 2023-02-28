@@ -96,7 +96,7 @@
                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                         <div class="form-group">
                             <label>Autorización SRI: <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control border-select" decimal ng-model="$ctrl.data.nroAutorizacion" />
+                            <input type="text" class="form-control border-select" valid-number ng-model="$ctrl.data.nroAutorizacion" />
                             <small class="text-danger">{{$ctrl.data.nroAutorizacion.length}}  números</small>
                         </div>
                     </div>
@@ -108,9 +108,16 @@
                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-12">
                         <div class="form-group">
                             <label>Tiempo Credito: </label>
-                            <select class="form-control border-select" ng-model="$ctrl.data.idTiempoCredito" ng-change="$ctrl.getFechaVencimiento()">
+                            <div class="input-group">
+                                <select class="form-control border-select" ng-model="$ctrl.data.idTiempoCredito" ng-change="$ctrl.getFechaVencimiento()">
                                     <option ng-value="item.idTiempoCredito" ng-repeat="item in $ctrl.tiempoCreditos">{{item.descripcion}}</option>
-                            </select>
+                                </select>
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-secondary btn-xs" ng-click="$ctrl.realoadCreditTime()">
+                                        <i class="fas fa-redo fa-xs"></i>
+                                    </button>
+                                </div>
+                            </div>                           
                         </div>
                     </div>
 

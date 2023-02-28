@@ -88,13 +88,6 @@ class ModalFacturaCtrl extends window.modalCompraBaseCtrl {
         })          
     }
 
-    selectedItemProveedor(item){
-        this.proveedor = item;
-        this.searchProveedorOptions.showBtnEdit = true;
-        console.log(item)
-    }
-    
-
 
      /**
      * 
@@ -201,11 +194,13 @@ class ModalFacturaCtrl extends window.modalCompraBaseCtrl {
 
 export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
 
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario']
+    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'storageService', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario']
     
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS){
+    constructor($scope, $timeout, $uibModalInstance, _storageSvc, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS){
         super({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS});
         
+        this._storageSvc = _storageSvc;
+
         this.searchProveedorOptions = {}
         this.searchProveedorOptions.showBtnNew = true;
         this.searchProveedorOptions.showBtnList = true;   
@@ -268,9 +263,24 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
             })
             
             this.data.fechaEmision = new Date();
-            this.getFechaVencimiento()
-            this.$scope.$apply();
+            this.getFechaVencimiento();
 
+            if(Object.keys(this._storageSvc.getObject("facturaCompraDetalle")).length>0){
+                this._storageSvc.restoreInvoiceDetail("facturaCompraDetalle").then(result=>{
+                    if(result.isConfirmed){
+                        this.gridOptions.data = JSON.parse(result.dataInvoiceDetail[result.value]);                           
+                        delete result.dataInvoiceDetail[result.value];
+                                        
+                        this._storageSvc.setObject("facturaCompraDetalle", result.dataInvoiceDetail) 
+                                                                                       
+                        this.data = Object.assign(this.data, this.uiGridInvoice.getTotales());  
+                    }
+
+                })
+            }
+
+
+            this.$scope.$apply();
         } catch (error) {
             console.log(error)            
         }finally{
@@ -329,7 +339,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
             const data = {
                 factura: this.data,
                 detalle: this.trimDetail(),
-                manejoArticuloDetalle: this.datosAdicionalesArticulo
+                manejoArticuloDetalle: this.datosAdicionalesArticulo || []
             }
 
             await this._mS.getData('post', '/FacturaCompra/Post', data).then(response=>{
@@ -348,6 +358,81 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
         }finally{
             hideLoader()
         }
+    }
+
+
+    selectedItemProveedor(item){
+        try {
+            this.proveedor = item;
+            this.searchProveedorOptions.showBtnEdit = true;
+
+            this.data.idTiempoCredito = this.proveedor.idTiempoCredito;
+            
+            this.data.fechaEmision = new Date();
+            this.getFechaVencimiento();
+
+            this.$scope.$apply();        
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
+
+    async realoadCreditTime(){
+        let resultsDataForm = await this.initiload();
+        this.tiempoCreditos = resultsDataForm[3];
+    }
+
+
+    async closeModal(){
+        if(this.gridOptions.data.length===0){
+            this.$uibModalInstance.close();
+            return
+        }
+
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+              confirmButton: 'btn btn-success',
+              denyButton:'btn btn-info ml-2',
+              cancelButton: 'btn btn-danger ml-2'
+            },
+            buttonsStyling: false
+        })
+        
+        swalWithBootstrapButtons.fire({
+            title: 'Salir ?',
+            html: "<small>Tienes un documento en proceso, desea salir ahora?</small>",
+            icon: 'warning',
+            showCancelButton: true,
+            showConfirmButton:true,
+            showDenyButton:true,
+            confirmButtonText: 'Apartar',
+            denyButtonText: 'Si, salir',
+            cancelButtonText: 'No, cancelar!',
+            focusDeny:true,
+            reverseButtons: false
+        }).then(result=>{
+
+            if(result.isConfirmed){
+                this.askToSaveStorage();
+            }
+
+            if(result.isDenied){
+                this.$uibModalInstance.close();
+            }
+            
+        })        
+    }
+
+
+    async askToSaveStorage(){
+        try {
+            await this._storageSvc.askToSaveDetailDoc("facturaCompraDetalle", this.gridOptions.data);
+            this.$uibModalInstance.close(); 
+        } catch (error) {
+            console.log(error)
+        }             
     }
 
 
@@ -445,6 +530,10 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl{
             hideLoader()
         }
     }
+
+
+   
+
 
 
     async onSave(){

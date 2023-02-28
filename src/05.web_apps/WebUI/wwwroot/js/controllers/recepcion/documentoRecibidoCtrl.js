@@ -205,7 +205,7 @@ function documentoRecibidoCtrl(
             title: 'Comprobante',
             html: `<div> ${$scope.selected[0].comprobante} <strong> ${$scope.selected[0].serieComprobante} </strong> </div>
                     <div class="btn btn-group btn-group-sm" role="group">
-                        <button type="button" id="btnImportar" class="btn btn-info btn-sm" title="Importar Comprobante"><i class="ti-upload"></i> Importar</button>
+                        <button type="button" id="btnImportar" class="btn btn-info btn-sm" title="Importar Comprobante"><i class="ti-upload"></i> Visualizar</button>
                         <button type="button" id="btnGetXml" class="btn btn-success btn-sm" title="Actualizar Xml Sri"><i class="ti-download"></i> Actualizar Xml</button>
                         <button type="button" id="btnDelete" class="btn btn-danger btn-sm" title="Eliminar"><i class="ti-trash"></i> Eliminar</button>
                     </div>`,
@@ -487,32 +487,61 @@ function documentoRecibidoCtrl(
         //console.log(strImage);
         // return barcodeData;
     }
-
+    $scope.totalTaxesRide.iva12 = 0.00
+    $scope.totalTaxesRide.descuento = 0.00
     $scope.setTaxes = () => {
         // console.log($scope.totalTaxes)
+        let trTaxes = ''
         for (const element of $scope.totalTaxes) {
+            if (element.codigo == '2' && element.codigoPorcentaje == '2') {
+                trTaxes += `<tr><td class="text-right"><strong>SubTotal 12%</strong></td>`
+                trTaxes += `<td class="text-right"> ${parseFloat(element.baseImponible).toLocaleString('en', { style: 'currency', currency: 'USD' })} </td></tr>`
+            }
             if (element.codigo == '2' && element.codigoPorcentaje == '0') {
-                $scope.totalTaxesRide.iva0 += parseFloat(element.valor)
+                trTaxes += `<tr><td class="text-right"><strong>SubTotal Iva 0%</strong></td>`
+                trTaxes += `<td class="text-right"> ${parseFloat(element.baseImponible).toLocaleString('en', { style: 'currency', currency: 'USD' })} </td></tr>`
+            }
+            if (element.codigo == '2' && (element.codigoPorcentaje == '6')) {
+                trTaxes += `<tr><td class="text-right"><strong>SubTotal No Objeto Iva</strong></td>`
+                trTaxes += `<td class="text-right"> ${parseFloat(element.baseImponible).toLocaleString('en', { style: 'currency', currency: 'USD' })} </td></tr>`
+            }
+
+            if (element.codigo == '2' && element.codigoPorcentaje == '7') {
+                trTaxes += `<tr><td class="text-right"><strong>SubTotal Excento Iva</strong></td>`
+                trTaxes += `<td class="text-right"> ${parseFloat(element.baseImponible).toLocaleString('en', { style: 'currency', currency: 'USD' })} </td></tr>`
+            } 
+            if (element.codigo == '3') {
+                trTaxes += `<tr><td class="text-right"><strong>ICE</strong></td>`
+                trTaxes += `<td class="text-right"> ${parseFloat(element.valor).toLocaleString('en', { style: 'currency', currency: 'USD' })} </td></tr>`
             }
             if (element.codigo == '2' && element.codigoPorcentaje == '2') {
-                $scope.totalTaxesRide.iva12 += parseFloat(element.valor)
-            }
-            if (element.codigo == '2' && element.codigoPorcentaje == '3') {
-                $scope.totalTaxesRide.iva14 += parseFloat(element.valor)
-            }
-            if (element.codigo == '2' && element.codigoPorcentaje == '6') {
-                $scope.totalTaxesRide.noObjetoIva += parseFloat(element.valor)
-            }
-            if (element.codigo == '2' && element.codigoPorcentaje == '7') {
-                $scope.totalTaxesRide.excentoIva += parseFloat(element.valor)
-            }
-            if (element.codigo == '3') {
-                $scope.totalTaxesRide.ice += parseFloat(element.valor)
+                trTaxes += `<tr><td class="text-right"><strong>Iva 12%</strong></td>`
+                trTaxes += `<td class="text-right"> ${parseFloat(element.valor).toLocaleString('en', { style: 'currency', currency: 'USD' })} </td></tr>`
             }
             if (element.codigo == '5') {
-                $scope.totalTaxesRide.irbpnr += parseFloat(element.valor)
+                trTaxes += `<tr><td class="text-right"><strong>IRBPNR</strong></td>`
+                trTaxes += `<td class="text-right"> ${parseFloat(element.valor).toLocaleString('en', { style: 'currency', currency: 'USD' })} </td></tr>`
             }
         }
+        trTaxes += `<tr><td class="text-right"><strong>Total Sin Impuestos</strong></td>`
+        trTaxes += `<td class="text-right"> ${parseFloat($scope.infoComprobante.totalSinImpuestos).toLocaleString('en', { style: 'currency', currency: 'USD' })} </td></tr>`
+
+        trTaxes += `<tr><td class="text-right"><strong>Descuento</strong></td>`
+        trTaxes += `<td class="text-right"> ${parseFloat($scope.infoComprobante.totalDescuento).toLocaleString('en', { style: 'currency', currency: 'USD' })} </td></tr>`
+
+        trTaxes += `<tr><td class="text-right"><strong>Propina</strong></td>`
+        trTaxes += `<td class="text-right"> ${parseFloat($scope.infoComprobante.propina).toLocaleString('en', { style: 'currency', currency: 'USD' })} </td></tr>`
+
+        trTaxes += `<tr><td class="text-right"><strong>Importe Total</strong></td>`
+        trTaxes += `<td class="text-right"> ${parseFloat($scope.infoComprobante.importeTotal).toLocaleString('en', { style: 'currency', currency: 'USD' })} </td></tr>`
+
+
+        $scope.modalRef.rendered.then(res => {
+            $("#tbodyTaxes").html(trTaxes)
+            // const table = document.getElementById("tbdoyTaxes");
+            // table.innerHTML = trTaxes
+        })
+
     }
     $scope.customDetailTemp = []
     $scope.getId = () => {
@@ -538,7 +567,6 @@ function documentoRecibidoCtrl(
                             // console.log($scope.infoComprobante);
 
                             $scope.totalTaxes = $scope.fullComprobante.infoFactura.totalImpuestos;
-                            $scope.setTaxes()
                             for (const det of $scope.totalTaxes) {
                                 // if (det.codigo == '2' && (det.codigoPorcentaje == '2')) {
 
@@ -558,6 +586,8 @@ function documentoRecibidoCtrl(
                                             precioUnitario: det.baseImponible,
                                             precioTotalSinImpuesto: det.baseImponible,
                                             descuento: (det.descuentoAdicional == '' ? 0.00 : Number(det.descuentoAdicional)),
+                                            impuesto: (det.codigo) == '2' ? 'iva' : 'ice',
+                                            valorImpuesto: det.valor,
                                             total: ((Number(det.baseImponible) - Number(det.descuentoAdicional)) + Number(det.valor)).toFixed(2)
                                         }
                                     )
@@ -593,12 +623,13 @@ function documentoRecibidoCtrl(
                             $scope.modalRef.result.then(res => {
                                 $scope.resetMainModal()
                             })
+                            $scope.setTaxes()
 
                             break;
                         case "04":
                             $scope.infoNotaCredito = $scope.fullComprobante.infoNotaCredito
                             $scope.totalTaxes = $scope.fullComprobante.infoNotaCredito.totalImpuestos;
-                            $scope.setTaxes()
+                            //$scope.setTaxes()
                             $('#notaCreditoModal').modal('show')
                             // console.log($scope.comprobante);
                             break;
@@ -759,7 +790,7 @@ function documentoRecibidoCtrl(
                 return;
             }
             showLoader();
-            mS.getData('post', _urlService + 'Proveedor/' + JSON.stringify($scope.provCliente)).then(
+            mS.getData('post', _urlService + 'Proveedor?json=' + JSON.stringify($scope.provCliente)).then(
                 response => {
                     if (response.code == "0") {
                         tS.toastr('warning', response.message)
@@ -882,7 +913,7 @@ function documentoRecibidoCtrl(
                     if (response.code == '1') {
                         $scope.tempDetail = []
                         $scope.showFormCustomDetails = false
-                        $scope.customDetail = {};
+                        $scope.customDetailTemp = []
                         tS.toastr('success', response.message)
                         $scope.tempDetail = JSON.parse(response.payload)
                     } else {
@@ -1268,18 +1299,16 @@ function documentoRecibidoCtrl(
         angular.forEach($scope.customDetailTemp, (value, key) => {
             //console.log(key, value)
             if (!value.codigoPrincipal) {
-                tS.toastr('warning', 'Por favor ingrese un código');
+                tS.toastr('warning', 'Por favor ingrese un código')
                 return;
             }
             if (!value.descripcion) {
-                tS.toastr('warning', 'Por favor ingrese una descripción');
+                tS.toastr('warning', 'Por favor ingrese una descripción')
                 return;
             }
             if (!value.precioUnitario || value.precioUnitario == 0) {
-                tS.toastr('warning', 'Por favor ingrese un precio unitario valido');
-                return;
+                tS.toastr('warning', 'Por favor ingrese un precio unitario valido')
             }
-
         })
         // if (!$scope.customDetail.cantidad || $scope.customDetail.cantidad == 0) {
         //     tS.toastr('warning', 'Por favor ingrese una cantidad valida');
@@ -1420,6 +1449,7 @@ function documentoRecibidoCtrl(
 
     $scope.resetMainModal = () => {
         $scope.showFormCustomDetails = false
+        $scope.customDetailTemp = []
     }
 
     $scope.closeMainModal = () => {

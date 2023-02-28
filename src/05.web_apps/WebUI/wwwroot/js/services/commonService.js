@@ -1449,17 +1449,17 @@ export class CommonService {
     //--------------------------------PETICIONES PARA API ADMIN-CLIENTE----------------------
     async getDataApi({ method, url, data = null, typeUrl }) {
         //showLoader();
-
+        let urlApi = '';
         // let urlApi = await this.$http.get('/ConnectionApiAdmin/GetUrl?typeUrl=' + typeUrl).then(({data:response})=>response)    
 
         //IP Local 
-       // let urlApi = typeUrl == 1 ? "http://localhost:36779/" : "https://localhost:7224/";
+       //urlApi = typeUrl == 1 ? "http://localhost:36779/" : "https://localhost:7224/";
 
         //IP Producción de Desarrollo 
-       // let urlApi = typeUrl == 1 ? "http://205.209.99.71:8090/" : "http://206.72.196.229:83/";
+       //urlApi = typeUrl == 1 ? "http://205.209.99.71:8090/" : "http://206.72.196.229:83/";
 
         //IP Producción
-       let urlApi = typeUrl == 1 ? "http://206.72.196.229:81/" : "http://206.72.196.229:83/";
+       urlApi = typeUrl == 1 ? "http://206.72.196.229:81/" : "http://206.72.196.229:83/";
         
         return this.$http({
             method,

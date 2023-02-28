@@ -14,9 +14,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Views\ComprobanteImportacion\**" />
     <Compile Remove="wwwroot\lib\angular-toastr\**" />
+    <Content Remove="Views\ComprobanteImportacion\**" />
     <Content Remove="wwwroot\lib\angular-toastr\**" />
+    <EmbeddedResource Remove="Views\ComprobanteImportacion\**" />
     <EmbeddedResource Remove="wwwroot\lib\angular-toastr\**" />
+    <None Remove="Views\ComprobanteImportacion\**" />
     <None Remove="wwwroot\lib\angular-toastr\**" />
   </ItemGroup>
 
@@ -4232,7 +4236,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\ComprobanteImportacion\" />
     <Folder Include="wwwroot\lib\angular-daterangepicker\" />
   </ItemGroup>
 

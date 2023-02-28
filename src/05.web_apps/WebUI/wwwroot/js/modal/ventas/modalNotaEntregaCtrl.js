@@ -120,7 +120,7 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl{
             self.data = Object.assign(self.data, self.uiGridInvoice.getTotales()); 
 
             this.focusColumnCantidad();
-
+            this.counterGridOptions();
 
             this.indexRow = this.gridOptions.data.findIndex(val => val.idArticulo === this.dataArticulo.articulo.idArticulo);           
 
@@ -128,6 +128,13 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl{
         } catch (error) {
             console.log(error)            
         }
+    }
+
+    counterGridOptions(){        
+        angular.forEach(this.gridOptions.data, (item, index)=>{
+            item.n = index + 1;
+        })
+       
     }
     
 
@@ -210,11 +217,12 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl{
 
 
 export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params']
+    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'storageService', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params']
 
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params){
+    constructor($scope, $timeout, $uibModalInstance, _storageSvc, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params){
         super({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS})
         const self = this;
+        this._storageSvc = _storageSvc;
 
         let {TIPO_REGISTRO} = _params;        
         this.TIPO_REGISTRO = TIPO_REGISTRO;
@@ -300,8 +308,18 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
             this.uiGridInvoice.idTarifa = this.idTarifa;
             
 
-            if(localStorage.getItem('detailNotaEntrega')){
-                this.restoreDetailStorage();
+            if(Object.keys(this._storageSvc.getObject("notaEntregaDetail")).length>0){
+                this._storageSvc.restoreInvoiceDetail("notaEntregaDetail").then(result=>{
+                    if(result.isConfirmed){
+                        this.gridOptions.data = JSON.parse(result.dataInvoiceDetail[result.value]);                           
+                        delete result.dataInvoiceDetail[result.value];
+                                           
+                        this._storageSvc.setObject("notaEntregaDetail", result.dataInvoiceDetail) 
+                                                                                       
+                        this.data = Object.assign(this.data, this.uiGridInvoice.getTotales());  
+                    }
+
+                })
             }
             
             this.$scope.$apply();
@@ -326,7 +344,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
 
             if (this.TIPO_REGISTRO === 'NUEVO') {
                 this.data.placa = '';
-                this.data.idTiempoCredito = this.cliente.idTiempoCredito;                
+                this.data.idTiempoCredito = this.cliente.idTiempoCredito || 0;               
                 this.data.fechaEmision = new Date();
                 this.getFechaVencimiento();
             }
@@ -578,16 +596,11 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
             }).then(result=>{
 
                 if(result.isConfirmed){
-                    this.saveLocalStorage();
+                    this.askToSaveStorage();
                 }
 
                 if(result.isDenied){
                     this.$uibModalInstance.close();
-                }
-
-                
-
-                if(result.isDismissed){
                 }
                 
             })
@@ -596,90 +609,13 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
         this.$uibModalInstance.close();        
     }
 
-    async saveLocalStorage(){
-        let {isConfirmed, value} = await Swal.fire({
-            title: '<small>Apartar Documento</small>',
-            input: 'text',
-            inputAttributes: {
-              autocapitalize: 'off'
-            },
-            showCancelButton: true,
-            confirmButtonText: 'Apartar',
-            cancelButtonText: 'No, cancelar',
-            showLoaderOnConfirm: true,
-            inputValidator: (value) => {
-                if (!value) {                    
-                    return 'Ingrese la descripción!'
-                }   
-                if(localStorage.getItem('detailNotaEntrega')){
-                    let getStorageDocDetalle = JSON.parse(localStorage.getItem('detailNotaEntrega'));
-                    if(getStorageDocDetalle[value]){
-                        return 'Ya existe Documento Apartado con esta descripción';
-                    }
-                }                        
-            },           
-        })
-
-        if(isConfirmed){
-            if(!localStorage.getItem('detailNotaEntrega')){
-                let objSave = {}
-                objSave[value] = JSON.stringify(this.gridOptions.data);
-                localStorage.setItem('detailNotaEntrega', JSON.stringify(objSave));  
-                this._tS.toastr('success', 'Documento Apartado Correctamente');                            
-            }
-
-            if(localStorage.getItem('detailNotaEntrega')){
-                let getStorageDocDetalle = JSON.parse(localStorage.getItem('detailNotaEntrega'));
-                getStorageDocDetalle[value] = JSON.stringify(this.gridOptions.data);
-                localStorage.setItem('detailNotaEntrega', JSON.stringify(getStorageDocDetalle)); 
-                this._tS.toastr('success', 'Documento Apartado Correctamente')                
-            }
-            
-            this.$uibModalInstance.close();
-        }
-    }
-
-    async restoreDetailStorage(){
-        let docsDetalle = JSON.parse(localStorage.getItem('detailNotaEntrega'));
-        let inputOptions = {};
-        for(let item of Object.keys(docsDetalle)){
-            inputOptions[item] = item;
-        }
-        const { isConfirmed, value } = await Swal.fire({
-            title: '<small>Recuperar Detalle del Documento</small>',
-            input: 'select',
-            inputOptions,
-            inputPlaceholder: 'Seleccionar la Factura',
-            showCancelButton: true,
-            confirmButtonText: 'Recuperar detalle',
-            cancelButtonText: 'No, cancelar',
-            allowEscapeKey:false,
-            allowOutsideClick:false,
-            inputValidator: (value) => {
-              return new Promise((resolve) => {
-                if (value) {
-                    resolve()
-                } else {
-                    resolve('Seleccione la opción :)')
-                }
-              })
-            }
-        })
-
-        if(isConfirmed){           
-            this.gridOptions.data = JSON.parse(docsDetalle[value]);
-            delete docsDetalle[value];
-            
-            if(Object.entries(docsDetalle).length !== 0){
-
-                localStorage.setItem('detailNotaEntrega', JSON.stringify(docsDetalle));               
-            }else{
-                localStorage.removeItem('detailNotaEntrega')
-            }
-            this.data = Object.assign(this.data, this.uiGridInvoice.getTotales());  
-        }
-
-
+    async askToSaveStorage(){
+        try {
+            await this._storageSvc.askToSaveDetailDoc("notaEntregaDetail", this.gridOptions.data);
+            this.$uibModalInstance.close(); 
+        } catch (error) {
+            console.log(error)
+        }             
     }
 
 

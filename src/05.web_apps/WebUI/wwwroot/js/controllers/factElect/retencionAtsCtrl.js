@@ -11,7 +11,7 @@
         $scope.genericAnswer = [{ codigo: 'SI' }, { codigo: 'NO' }]
 
         $scope.infoCompRet = {}
-
+        $scope.infoCompRet.parteRel = 'NO'
         $scope.tiposIdentificacion = []
         $scope.tiposSujRetenido = []
         $scope.documentos = []
@@ -353,7 +353,7 @@
 
                                 $scope.docSustento.codDocSustento = $scope.docData.codDocSustento
                                 $scope.selectSutento($scope.docSustento.codDocSustento)
-                                $scope.docSustento.numDocSustento = $scope.docData.numDocSustento
+                                $scope.docSustento.numDocSustento = $scope.docData.numDocSustento.split('-').join('')
                                 $scope.docSustento.fechaEmisionDocSustento = formatDate($scope.docData.fechaEmisionDocSustento)
                                 $scope.docSustento.numAutDocSustento = $scope.docData.numAutDocSustento
                             } else {
@@ -609,7 +609,7 @@
                 $scope.docSustento = {}
 
 
-                if (toBd) {
+                if (toBd && idDocumentoElectronico > 0) {
                     setTimeout(() => {
                         $window.location.reload()
                     }, 2200)
@@ -721,11 +721,11 @@
                 console.log($scope.taxesAdded)
             }
         }
-        $scope.editTax = (item) => {
+        $scope.editTax = (item, t, d) => {
             $scope.indexTax = item
             $scope.tax = $scope.taxesAdded[item]
-            document.getElementById('btnAddTax').style.display = 'none'
-            document.getElementById('btnEditTax').style.display = 'block'
+            document.getElementById(d.uniqueIdDoc + '-btnAddTax').style.display = 'none'
+            document.getElementById(d.uniqueIdDoc + '-btnEditTax').style.display = 'block'
         }
         $scope.updateTax = (uniqueIdDoc) => {
             if ($scope.taxValid()) {
@@ -761,8 +761,8 @@
                                     }
                                 }
                                 $scope.tax = {}
-                                document.getElementById('btnAddTax').style.display = 'block'
-                                document.getElementById('btnEditTax').style.display = 'none'
+                                document.getElementById(uniqueIdDoc + '-btnAddTax').style.display = 'block'
+                                document.getElementById(uniqueIdDoc + '-btnEditTax').style.display = 'none'
                                 tS.toastr('success', response.message)
                             }
                         }, error => {
@@ -858,6 +858,7 @@
             } else {
                 $scope.retencion.porcentajeRetener = $scope.porcentajeRetener.find(p => p.codigo == item).porcentaje
                 $scope.retencionCodigoSearch = $scope.porcentajeRetener.find(p => p.codigo == item)
+                $scope.retencion.codigoRetencion = $scope.retencionCodigoSearch.codigo
             }
             if (Number($scope.retencion.baseImponible)) {
                 $scope.calculateRet($scope.retencion.baseImponible)
@@ -940,8 +941,8 @@
 
             $scope.setPorcentajesRet($scope.retencion.codigo, d.uniqueIdDoc)
             $scope.setPorcentajeRet($scope.retencion.codigoRetencion, false)
-            document.getElementById('btnAddRet').style.display = 'none'
-            document.getElementById('btnEditRet').style.display = 'block'
+            document.getElementById(d.uniqueIdDoc + '-btnAddRet').style.display = 'none'
+            document.getElementById(d.uniqueIdDoc + '-btnEditRet').style.display = 'block'
         }
         $scope.updateRet = (uniqueIdDoc) => {
             if ($scope.retencionValid()) {
@@ -962,8 +963,8 @@
                                     }
                                 })
                                 $scope.retencion = {}
-                                document.getElementById('btnAddRet').style.display = 'block'
-                                document.getElementById('btnEditRet').style.display = 'none'
+                                document.getElementById(uniqueIdDoc + '-btnAddRet').style.display = 'block'
+                                document.getElementById(uniqueIdDoc + '-btnEditRet').style.display = 'none'
                                 tS.toastr('success', response.message)
                             }
                         }, error => {
@@ -1113,13 +1114,13 @@
             }
         }
 
-        $scope.editPayment = (item) => {
+        $scope.editPayment = (item, p, d) => {
             $scope.indexPayment = item
             $scope.payment = $scope.paymentsAdded[item]
             console.log($scope.payment)
-            document.getElementById('btnAddPaymentAdd').style.display = 'none'
-            document.getElementById('btnEditPaymentSave').style.display = 'block'
-            document.getElementById('totalPago').disabled = true
+            document.getElementById(d.uniqueIdDoc + '-btnAddPaymentAdd').style.display = 'none'
+            document.getElementById(d.uniqueIdDoc + '-btnEditPaymentSave').style.display = 'block'
+            document.getElementById(d.uniqueIdDoc + '-totalPago').disabled = true
         }
         $scope.updatePayment = (uniqueIdDoc) => {
             if ($scope.paymentValid()) {
@@ -1139,9 +1140,9 @@
                                         }
                                     })
                                     $scope.payment = {}
-                                    document.getElementById('btnAddPaymentAdd').style.display = 'block'
-                                    document.getElementById('btnEditPaymentSave').style.display = 'none'
-                                    document.getElementById('totalPago').disabled = false
+                                    document.getElementById(uniqueIdDoc + '-btnAddPaymentAdd').style.display = 'block'
+                                    document.getElementById(uniqueIdDoc + '-btnEditPaymentSave').style.display = 'none'
+                                    document.getElementById(uniqueIdDoc + '-totalPago').disabled = false
                                     tS.toastr('success', response.message)
                                 }
                             }, error => {
@@ -1517,16 +1518,16 @@
                 let data = {}
                 if (idDocumentoElectronico) {
                     data = {
+                        infoCompRet: JSON.stringify(infoComp)
+                    }
+                } else {
+                    data = {
                         infoCompRet: JSON.stringify(infoComp),
                         docsSust: JSON.stringify($scope.docsAdded),
                         impuestos: JSON.stringify($scope.taxesAdded),
                         retenciones: JSON.stringify($scope.retencionAdded),
                         payments: JSON.stringify($scope.paymentsAdded),
                         infoAdicional: JSON.stringify($scope.infoAdded)
-                    }
-                } else {
-                    data = {
-                        infoCompRet: JSON.stringify(infoComp)
                     }
                 }
                 //console.log(data)
