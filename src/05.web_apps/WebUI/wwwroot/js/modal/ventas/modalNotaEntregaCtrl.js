@@ -447,7 +447,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
             })       
            
             
-            if(!isConfirmed) return
+           
 
             
                                                 

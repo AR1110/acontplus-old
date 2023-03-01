@@ -159,20 +159,18 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
             let parameters = {}
             if(result.TIPO_DOC.codigo==="FV"){
                 parameters = {
-                    idFactura: result.data.id,
-                    codEstab: result.data.codEstab,
-                    codDoc: 'FV',
+                    ...result.data,
+                    idDocument: result.data.id,
                     codigo: 'RFPT',
                 };
             }else{
                 parameters = {
-                    isPrint: 1,
-                    idNotaEntrega: result.data.id,
-                    codEstab: result.data.codEstab,
-                    codDoc: TIPO_DOC_NE.codigo,
+                    ...result.data,
+                    idDocument: result.data.id,
                     codigo: 'RNEPT',
                 }
             }
+            console.log(parameters);
 
             _commonSvc.askToReportII({
                 parameters: JSON.stringify(parameters)
@@ -285,17 +283,14 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
                 let parameters = {}
                 if(result.TIPO_DOC.codigo==="FV"){
                     parameters = {
-                        idFactura: result.data.id,
-                        codEstab: result.data.codEstab,
-                        codDoc: 'FV',
+                        ...result.data,
+                        idDocument: result.data.id,
                         codigo: 'RFPT',
                     };
                 }else{
                     parameters = {
-                        isPrint: 1,
-                        idNotaEntrega: result.data.id,
-                        codEstab: result.data.codEstab,
-                        codDoc: TIPO_DOC_NE.codigo,
+                        ...result.data,
+                        idDocument: result.data.id,
                         codigo: 'RNEPT',
                     }
                 }
@@ -573,8 +568,7 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
     $scope.getReportII = function (item) {                   
         let parameters = {
             isPrint: 1,
-            idDocument: item.idNotaEntrega,
-            idDocument: item.idNotaEntrega,
+            idDocument: item.idNotaEntrega,           
             idTipoDocumento : item.idTipoDocumento,
             codEstab: item.codEstab,
             codDoc: TIPO_DOC_NE.codigo,
