@@ -123,3 +123,5 @@
 /src/07.worker_services/WS_Article_Inventory/bin/Release/net6.0/Common.Logs.pdb
 /src/07.worker_services/WS_Article_Inventory/bin/Release/net6.0/Common.Logs.dll
 /src/08.razor_ui/FACT_UI/obj/Debug/net6.0/project.razor.json
+/src/07.worker_services/WS_Article_Inventory/bin/Release/net6.0/WS_Article_Inventory.deps.json
+/src/08.razor_ui/FACT_UI/obj/Debug/net6.0/FACT_UI.csproj.AssemblyReference.cache

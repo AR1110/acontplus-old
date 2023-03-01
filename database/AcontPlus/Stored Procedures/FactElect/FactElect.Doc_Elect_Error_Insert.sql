@@ -30,8 +30,15 @@ SELECT @claveAcceso = claveAcceso FROM dbo.DocumentoElectronico WHERE idDocument
 BEGIN
 	BEGIN TRY 
 		BEGIN TRAN  
-			INSERT INTO dbo.DocumentoElectronicoError(xmlSri, claveAcceso, estado, identificador, mensaje, informacionAdicional, tipo, fechaRegistro)
-			VALUES(@xmlSri, @claveAcceso, @estado, @identificador, @mensaje, @informacionAdicional, @tipo, dbo.ufnGetDateEcuador()) 
+			IF (@identificador = '43')
+				BEGIN
+					UPDATE dbo.DocumentoElectronico SET codEstado = 3 WHERE idDocumentoElectronico = @id
+				END
+			ELSE
+				BEGIN
+					INSERT INTO dbo.DocumentoElectronicoError(xmlSri, claveAcceso, estado, identificador, mensaje, informacionAdicional, tipo, fechaRegistro)
+					VALUES(@xmlSri, @claveAcceso, @estado, @identificador, @mensaje, @informacionAdicional, @tipo, dbo.ufnGetDateEcuador()) 
+				END
 		COMMIT TRAN
 	END TRY
 	BEGIN CATCH

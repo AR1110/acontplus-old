@@ -180,7 +180,7 @@ BEGIN
 			,Helper.F_Auto_Sequential(@secuencial)) 
 			 FROM @tblInfoCompRet
 
-			 print @claveaccesso
+			 --print @claveaccesso
 
 			-- --SELECT '0' as code, (select *,  from @tblInfoCompRet for json path) as 'message'
 			-- --return
@@ -214,7 +214,8 @@ BEGIN
 			JOIN (SELECT @id idRetencionAts, codEstab,estab,ptoEmi,fechaEmision,contribuyentEspecial,obligadoContabilidad
 			,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente
 			,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal
-			FROM @tblInfoCompRet) AS t on ret.idRetencionAts = @id
+			FROM @tblInfoCompRet) AS t on ret.idRetencionAts = t.idRetencionAts
+			WHERE ret.idRetencionAts = @id
 
 
 			----Documentos de Sustento
