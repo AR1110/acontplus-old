@@ -111,7 +111,7 @@ namespace WebUI.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error while login into AcontplusWeb: " + ex.StackTrace);
+                _logs.LogError("Error while login into AcontplusWeb: " + ex.ToString());
                 return new BadRequestObjectResult(new
                 {
                     code = "0",
