@@ -29,7 +29,7 @@ namespace ApiRecepcion.Controllers
                     { "jsonData", SqlValidation.ValidateSqlString(json) }
                 };
                 DAO _dao = new DAO(_configuration);
-                return Ok(await _dao.Default("Recepcion.Articulo_Get", parameters));
+                return Ok(await _dao.GetDataTable("Recepcion.Articulo_Get", parameters));
             }
             catch (Exception ex)
             {

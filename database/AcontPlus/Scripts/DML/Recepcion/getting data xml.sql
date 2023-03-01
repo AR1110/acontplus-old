@@ -32,9 +32,17 @@ INSERT INTO @tmp(idDocumento, versionComp, rucReceptor, numeroAutorizacion, nume
 ,totalSinImpuestos, totalConImpuestos ,importeTotal, fechaEmision,xmlComp, details)
 
 --UPDATE c SET xmlDoc = 
-SELECT TOP 10 ci.idDocumento,
+SELECT top 150 ci.idDocumento,
+ 
+ case when codDoc = '07' then
  CONVERT(xml,dbo.f_sanitize_xml(convert(varchar(max), ci.xmlDoc.query('/autorizacion/comprobante')))).value('(comprobante/comprobanteRetencion/@version)[1]', 'VARCHAR(10)')
-
+ when codDoc = '01'
+ then
+  CONVERT(xml,dbo.f_sanitize_xml(convert(varchar(max), ci.xmlDoc.query('/autorizacion/comprobante')))).value('(comprobante/factura/@version)[1]', 'VARCHAR(10)')
+  when codDoc = '04'
+ then
+  CONVERT(xml,dbo.f_sanitize_xml(convert(varchar(max), ci.xmlDoc.query('/autorizacion/comprobante')))).value('(comprobante/notaCredito/@version)[1]', 'VARCHAR(10)')
+ end
 ,ci.identificacionReceptor, ci.numeroAutorizacion, ci.serieComprobante
 
 
@@ -48,7 +56,7 @@ SELECT TOP 10 ci.idDocumento,
 
 ,CONVERT(xml,dbo.f_sanitize_xml(convert(varchar(max), ci.xmlDoc.query('/autorizacion/comprobante')))).query('/comprobante/factura').query('/factura/detalles')
 as detailes
-FROM Recepcion.DocumentoRecibido ci
+FROM Recepcion.DocumentoRecibido ci with (nolock)
 where --ci.complete = 1 --AND numeroAutorizacion = '2601202301179002447400120010020001318610013186113'
 --AND  ci.codEstab IN (
 --'ESTAB-000000048','ESTAB-000000129'
@@ -56,8 +64,10 @@ where --ci.complete = 1 --AND numeroAutorizacion = '2601202301179002447400120010
 --AND identificacionReceptor = '0102289790001'
 --AND YEAR(CONVERT(DATE, fechaEmision, 103))=2023
 --AND MONTH(CONVERT(DATE, fechaEmision, 103))=1
-downloaded = 'DE' AND numeroAutorizacion = '0302202307010137401500120030020000022181234567810'
-
+--downloaded = 'DE' AND numeroAutorizacion = '0302202307010137401500120030020000022181234567810'
+xmlDoc is not null
+and versionComp is null
+order by fechaRegistro desc
 ----RETENCIONES 
 
 DECLARE @mainRet AS TABLE(
@@ -65,10 +75,22 @@ idDocumento int,
 versionComp VARCHAR(10),
 retenciones XML
 )
-insert into @mainRet (idDocumento, versionComp, retenciones)
-SELECT idDocumento, versionComp,
-case when versionComp = '1.0.0' then xmlComp.query('//impuestos') else xmlComp.query('//docsSustento/docSustento/retenciones/retencion') end
-from @tmp
+--insert into @mainRet (idDocumento, versionComp, retenciones)
+--SELECT idDocumento, versionComp,
+--case when versionComp = '1.0.0' then xmlComp.query('//impuestos') else xmlComp.query('//docsSustento/docSustento/retenciones/retencion') end
+--from @tmp
+
+--select * from @mainRet
+
+update dr SET dr.versionComp = t.versionComp
+
+from Recepcion.DocumentoRecibido dr
+join(
+select idDocumento, versionComp from @tmp) as t on dr.idDocumento = t.idDocumento
+
+
+return
+
 
 DECLARE @retenciones AS TABLE(
 codDocSustento VARCHAR(5),
