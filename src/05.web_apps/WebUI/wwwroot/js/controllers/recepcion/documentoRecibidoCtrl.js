@@ -7,7 +7,8 @@ documentoRecibidoCtrl.$inject = [
     'commonService',
     'toastService',
     'modalService',
-    'nombreModal'
+    'nombreModal',
+    'uuid2'
 ];
 
 function documentoRecibidoCtrl(
@@ -17,7 +18,9 @@ function documentoRecibidoCtrl(
     _commonSvc,
     tS,
     modalService,
-    nameModalConst) {
+    nameModalConst,
+    uuid2
+    ) {
 
     'use strict';
     $scope.title = 'documentoRecibidoCtrl';
@@ -574,6 +577,7 @@ function documentoRecibidoCtrl(
                                 if (Number(det.baseImponible) > 0) {
                                     $scope.customDetailTemp.push(
                                         {
+                                            idDetalle: uuid2.newguid(),
                                             idDocumento: $scope.selected[0].idDocumento,
                                             idArticulo: 0,
                                             cantidad: 1,
@@ -689,8 +693,8 @@ function documentoRecibidoCtrl(
                     }
                     if (response.code == "1") {
                         let respArray = JSON.parse(response.payload)
-                        $scope.idProveedor = respArray[0].idProveedor
-                        $scope.comprobanteForm.idTiempoCredito = respArray[0].idTiempoCredito
+                        $scope.idProveedor = respArray[0][0].idProveedor
+                        $scope.comprobanteForm.idTiempoCredito = respArray[0][0].idTiempoCredito
                         $scope.txtBtnProv = 'Actualizar'
                         handleBtnProv(1);
                     }
@@ -856,6 +860,7 @@ function documentoRecibidoCtrl(
                         // $scope.customDetail.codigoPrincipal = objArticle.codigo
                         // $scope.customDetail.codigoAuxiliar = objArticle.codigoAuxiliar
                         // $scope.customDetail.descripcion = objArticle.descripcion
+                        itemDetail.idArticulo = item.idArticulo
                         itemDetail.codigoPrincipal = objArticle.codigo
                         itemDetail.codigoAuxiliar = objArticle.codigoAuxiliar
                         itemDetail.descripcion = objArticle.descripcion
@@ -1260,7 +1265,7 @@ function documentoRecibidoCtrl(
     /** End Compra Habitual **/
 
     /** Comprobante */
-    $scope.customDetail = {};
+    $scope.customDetail = [];
     $scope.showFormCustomDetails = false;
     $scope.askToAddCustomDetails = function (event) {
         Swal.fire({

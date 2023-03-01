@@ -49,44 +49,51 @@
                                    options="{locale: {separator: " :"}}" />
                         </div>
                     </div>
-                    <table md-table md-row-select ng-model="selected" md-progress="promise">
-                        <caption>Lista de Importaciones</caption>
-                        <thead md-head md-order="query.sortBy">
-                            <tr md-row>
-                                <th md-column>Doc.</th>
-                                <th md-column md-order-by="serieComprobante">Serie</th>
-                                <th md-column>Ruc Emisor</th>
-                                <th md-column md-order-by="razonSocialEmisior" ng-click="setOrder($event)">
-                                    <span>Razón Social Emisor</span>
-                                </th>
-                                <th md-column>Fecha Emisión</th>
-                                <th md-column>F. Aut.</th>
-                                <th md-column md-order-by="importeTotal">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody md-body>
-                            <tr md-row md-select="item" md-select-id="index" md-on-select="showOptions"
-                                md-auto-select
-                                ng-repeat="item in comprobantes"
-                                style="{{item.colorRow}}" title="{{item.hoverText}}" ng-disabled="item.complete">
-                                <td md-cell style="{{item.colorCol}}">{{item.comprobante}}</td>
-                                <td md-cell style="{{item.colorCol}}">{{item.serieComprobante}}</td>
-                                <td md-cell style="{{item.colorCol}}">{{item.rucEmisor}}</td>
-                                <td class="text-left" style="{{item.colorCol}}" md-cell>
-                                    {{item.razonSocialEmisior}}
-                                </td>
-                                <td md-cell style="{{item.colorCol}}">{{item.fechaEmision}}</td>
-                                <td md-cell style="{{item.colorCol}}">{{item.fechaAutorizacion}}</td>
-                                <td md-cell class="text-right" style="{{item.colorCol}}">
-                                    {{item.importeTotal |
+                    <div class="table-responsive">
+                        <table md-table md-row-select ng-model="selected" md-progress="promise">
+                            <caption>Lista de Importaciones</caption>
+                            <thead md-head md-order="query.sortBy">
+                                <tr md-row>
+                                    <th md-column>Doc.</th>
+                                    <th md-column md-order-by="serieComprobante">Serie</th>
+                                    <th md-column>Ruc Emisor</th>
+                                    <th md-column md-order-by="razonSocialEmisior" ng-click="setOrder($event)">
+                                        <span>Razón Social Emisor</span>
+                                    </th>
+                                    <th md-column>Fecha Emisión</th>
+                                    <th md-column>F. Aut.</th>
+                                    <th md-column md-order-by="importeTotal">Total</th>
+                                    <th md-column>No. Aut.</th>
+                                </tr>
+                            </thead>
+                            <tbody md-body>
+                                <tr md-row md-select="item" md-select-id="index" md-on-select="showOptions"
+                                    md-auto-select
+                                    ng-repeat="item in comprobantes"
+                                    style="{{item.colorRow}}" title="{{item.hoverText}}" ng-disabled="item.complete">
+                                    <td md-cell style="{{item.colorCol}}">{{item.comprobante}}</td>
+                                    <td md-cell style="{{item.colorCol}}">{{item.serieComprobante}}</td>
+                                    <td md-cell style="{{item.colorCol}}">{{item.rucEmisor}}</td>
+                                    <td class="text-left" style="{{item.colorCol}}" md-cell>
+                                        {{item.razonSocialEmisior}}
+                                    </td>
+                                    <td md-cell style="{{item.colorCol}}">{{item.fechaEmision}}</td>
+                                    <td md-cell style="{{item.colorCol}}">{{item.fechaAutorizacion}}</td>
+                                    <td md-cell class="text-right" style="{{item.colorCol}}">
+                                        {{item.importeTotal |
                                         currency }}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    @*<md-table-pagination md-limit="query.limit" md-limit-options="pages" md-page="query.page"
-                            md-total="{{totalRecords}}" md-on-paginate="getComprobantes" md-page-select>
-                        </md-table-pagination>*@
+                                    </td>
+                                    <td class="text-left" style="{{item.colorCol}}" md-cell>
+                                        {{item.numeroAutorizacion}}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        @*<md-table-pagination md-limit="query.limit" md-limit-options="pages" md-page="query.page"
+            md-total="{{totalRecords}}" md-on-paginate="getComprobantes" md-page-select>
+        </md-table-pagination>*@
+                    </div>
+                  
                 </div>
             </div>
         </div>

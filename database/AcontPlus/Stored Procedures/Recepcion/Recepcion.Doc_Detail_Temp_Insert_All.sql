@@ -46,6 +46,7 @@ BEGIN
 	,precioUnitario VARCHAR(15) NOT NULL
 	,descuento VARCHAR(15) NULL
 	,precioTotalSinImpuesto VARCHAR(15) NULL
+	,idDetalle UNIQUEIDENTIFIER NULL
 	)
 
 	DECLARE @taxes TABLE(
@@ -55,12 +56,14 @@ BEGIN
 	,tarifa VARCHAR(50)
 	,baseImponible VARCHAR(50)
 	,valor VARCHAR(50)
+	,idDetalle UNIQUEIDENTIFIER NULL
 	)
 
-	INSERT INTO @tmp(idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto)
-	SELECT @idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto
+	INSERT INTO @tmp(idDetalle, idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto)
+	SELECT idDetalle, @idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto
 	FROM OPENJSON(@jsonData) WITH (
-	idArticulo INT '$.idArticulo'
+		idDetalle UNIQUEIDENTIFIER '$.idDetalle'
+	,idArticulo INT '$.idArticulo'
 	,codigoPrincipal VARCHAR(100) '$.codigoPrincipal'
 	,codigoAuxiliar VARCHAR(100) '$.codigoAuxiliar'
 	,cantidad VARCHAR(100) '$.cantidad'
@@ -70,11 +73,12 @@ BEGIN
 	,precioTotalSinImpuesto VARCHAR(15) '$.precioTotalSinImpuesto'
 	)
 
-	INSERT INTO @taxes(codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor)
-	SELECT codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor
+	INSERT INTO @taxes(idDetalle, codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor)
+	SELECT idDetalle, codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor
 	FROM OPENJSON(@impuestos) 
 	WITH (
-	codArticulo VARCHAR(100) '$.codArticulo'
+			idDetalle UNIQUEIDENTIFIER '$.idDetalle'
+	,codArticulo VARCHAR(100) '$.codArticulo'
 	,codigo VARCHAR(100) '$.codigo'
 	,codigoPorcentaje VARCHAR(100) '$.codigoPorcentaje'
 	,tarifa VARCHAR(100) '$.tarifa'
@@ -106,10 +110,10 @@ BEGIN
 				END
 			IF NOT EXISTS(SELECT 1 FROM Recepcion.Doc_Detalle_Temp cpt INNER JOIN @tmp t ON cpt.idDocumento = t.idDocumento)
 				BEGIN
-					INSERT INTO Recepcion.Doc_Detalle_Temp(idDocumento, idProveedor, idArticulo, idMedida, codigoPrincipal, codigoAuxiliar
+					INSERT INTO Recepcion.Doc_Detalle_Temp(idDetalle, idDocumento, idProveedor, idArticulo, idMedida, codigoPrincipal, codigoAuxiliar
 					, cantidad, descripcion, precioUnitario, precioTotalSinImpuesto, costoNeto, descuento, idUsuario)
 
-					SELECT idDocumento, @idProveedor, a.idArticulo, m.idMedida, t.codigoPrincipal, t.codigoAuxiliar
+					SELECT idDetalle, idDocumento, @idProveedor, a.idArticulo, m.idMedida, t.codigoPrincipal, t.codigoAuxiliar
 					,cantidad, t.descripcion, precioUnitario, precioTotalSinImpuesto, CAST((CAST(precioTotalSinImpuesto AS decimal(15,5)) / CAST(cantidad AS decimal(18,5))) AS numeric(18,5)), descuento, @idUsuario
 					FROM @tmp t
 					LEFT JOIN dbo.Articulo a ON a.codigo = t.codigoPrincipal AND a.idEntidad = @idEntidad
@@ -117,8 +121,8 @@ BEGIN
 					WHERE NOT EXISTS (SELECT * FROM Recepcion.Doc_Detalle_Temp tt 
 					WHERE t.idDocumento = tt.idDocumento AND t.codigoPrincipal = tt.codigoPrincipal)
 
-					 INSERT INTO Recepcion.Doc_Impuesto_Temp(idDocumento, codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor)
-					 SELECT (SELECT TOP 1 idDocumento FROM @tmp), codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor 
+					 INSERT INTO Recepcion.Doc_Impuesto_Temp(idDetalle, idDocumento, codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor)
+					 SELECT idDetalle, (SELECT TOP 1 idDocumento FROM @tmp), codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor 
 					 FROM @taxes tt
 					 WHERE NOT EXISTS (SELECT * FROM Recepcion.Doc_Impuesto_Temp tti 
 												WHERE tti.idDocumento = (SELECT TOP 1 idDocumento FROM @tmp) 
