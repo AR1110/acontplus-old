@@ -22,7 +22,7 @@ BEGIN
  SET LANGUAGE SPANISH;
 
  DECLARE @idTipoAmbiente INT 
- DECLARE @idRetencionCompra BIGINT
+ DECLARE @id BIGINT
  DECLARE @idEntidad INT
  DECLARE @idTipoDocumento BIGINT 
  DECLARE @codEstab VARCHAR(50)
@@ -52,17 +52,23 @@ BEGIN
 
 
 
-	SELECT @idRetencionCompra = idRetencionCompra
-	,@rdlcParams = rdlcParams 
-	,@versionComp = versionComp
+
+	SELECT 
+		@idTipoDocumento = idTipoDocumento
+		,@id = id
+		,@rdlcParams = rdlcParams 
+		,@versionComp = versionComp
 	FROM OPENJSON(@json)
-	WITH (idRetencionCompra INT '$.id'
-	,rdlcParams VARCHAR(MAX) '$.rdlcParams'
-	,versionComp VARCHAR(MAX) '$.versionComp'
+	WITH (
+		idTipoDocumento INT '$.idTipoDocumento'
+		,id INT '$.id'
+		,rdlcParams VARCHAR(MAX) '$.rdlcParams'
+		,versionComp VARCHAR(MAX) '$.versionComp'
 	) AS dt 
 	
-	SELECT @fechaAutorizacion = fechaAutorizacion FROM DocumentoElectronico WITH (NOLOCK) WHERE idDocumento = @idRetencionCompra AND codDoc = '07' AND versionComp = @versionComp
-	PRINT @versionComp
+	SELECT @fechaAutorizacion = fechaAutorizacion FROM DocumentoElectronico WITH (NOLOCK) WHERE idDocumento = @id AND codDoc = '07' AND versionComp = @versionComp
+	
+
 	IF @versionComp = '1.0.0'
 		BEGIN
 			SELECT 
@@ -84,7 +90,7 @@ BEGIN
 			INNER JOIN Sri.Establecimiento s WITH (NOLOCK) ON s.codEstab         = pe.codEstab
 			INNER JOIN dbo.Proveedor      pr WITH (NOLOCK) ON pr.idProveedor     = rc.idProveedor
 			INNER JOIN dbo.Entidad         e WITH (NOLOCK) ON e.idEntidad        = rc.idEntidad
-			WHERE idRetencionCompra = @idRetencionCompra;
+			WHERE idRetencionCompra = @id;
 
 			SELECT @imagen = imagen, @mimeType = mimeType FROM Config.Estab_Logo WHERE codEstab = @codEstab
 
@@ -114,13 +120,13 @@ BEGIN
 									,ISNULL(prov.telefono, 'S/N') as telefonoProveedor
 									,ISNULL(prov.direccion, 'S/N') as direccionProveedor								
 									,CONVERT(NVARCHAR, FORMAT(rc.fechaEmision, 'dd/MM/yyyy hh:mm')) as fechaEmision 		
-									,CAST((SELECT SUM(valorRetenido) FROM dbo.RetencionCompraDetalle WHERE idRetencionCompra = @idRetencionCompra) as numeric(15, 2)) as totalValorRetenido
+									,CAST((SELECT SUM(valorRetenido) FROM dbo.RetencionCompraDetalle WHERE idRetencionCompra = @id) as numeric(15, 2)) as totalValorRetenido
 								FROM dbo.RetencionCompra rc WITH (NOLOCK)
 								INNER JOIN dbo.PuntoEmision       pe WITH (NOLOCK) ON pe.idPuntoEmision       = rc.idPuntoEmision 
 								INNER JOIN Sri.Establecimiento     s WITH (NOLOCK) ON s.codEstab              = pe.codEstab
 								INNER JOIN dbo.Proveedor        prov WITH (NOLOCK) ON prov.idProveedor        = rc.idProveedor
 								INNER JOIN dbo.Entidad             e WITH (NOLOCK) ON e.idEntidad             = rc.idEntidad	
-								WHERE rc.idRetencionCompra =  @idRetencionCompra
+								WHERE rc.idRetencionCompra =  @id
 								FOR JSON PATH
 							);
 
@@ -142,12 +148,12 @@ BEGIN
 								INNER JOIN dbo.RetencionCompra rc WITH (NOLOCK) ON rc.idRetencionCompra = rcd.idRetencionCompra
 								INNER JOIN dbo.FacturaCompra   fc WITH (NOLOCK) ON fc.idFacturaCompra   = rc.idFacturaCompra	
 								INNER JOIN dbo.TipoDocumento   td WITH (NOLOCK) ON td.idTipoDocumento   = fc.idTipoDocumento
-								WHERE rcd.idRetencionCompra =  @idRetencionCompra
+								WHERE rcd.idRetencionCompra =  @id
 								FOR JSON PATH
 							)
 		
 			SET @infoAdditionalDs = (
-										SELECT nombre,valor FROM InfoAdicionalDoc WITH (NOLOCK) WHERE idComprobante = @idRetencionCompra AND idTipoDocumento = @idTipoDocumento
+										SELECT nombre,valor FROM InfoAdicionalDoc WITH (NOLOCK) WHERE idComprobante = @id AND idTipoDocumento = @idTipoDocumento
 										FOR JSON PATH
 									)
 
@@ -202,7 +208,7 @@ BEGIN
 			INNER JOIN dbo.Entidad               e WITH(NOLOCK)  ON e.ruc        = d.ruc 
 			INNER JOIN dbo.TipoDocumento        td WITH (NOLOCK) ON td.codigoSri = '07'
 			INNER JOIN Config.Estab_Logo        el WITH (NOLOCK) ON s.codEstab   = el.codEstab
-			WHERE idRetencionAts = @idRetencionCompra;
+			WHERE idRetencionAts = @id;
 		
 			PRINT CAST(@idRetencionCompra AS VARCHAR(20))
 			PRINT CAST(@idEntidad AS VARCHAR(20))
@@ -237,7 +243,7 @@ BEGIN
 									,ISNULL(prov.telefono, 'S/N') as telefonoProveedor
 									,ISNULL(prov.direccion, 'S/N') as direccionProveedor								
 									,CONVERT(NVARCHAR, FORMAT(rc.fechaEmision, 'dd/MM/yyyy hh:mm')) as fechaEmision 		
-									,CAST((SELECT SUM(valorRetenido) FROM dbo.RetencionCompraDetalle WHERE idRetencionCompra = @idRetencionCompra) as numeric(15, 2)) as totalValorRetenido
+									,CAST((SELECT SUM(valorRetenido) FROM dbo.RetencionCompraDetalle WHERE idRetencionCompra = @id) as numeric(15, 2)) as totalValorRetenido
 								FROM FactElect.RetencionAts        rc WITH (NOLOCK)
 								INNER JOIN Sri.Establecimiento      s WITH (NOLOCK) ON s.codEstab              = rc.codEstab
 								INNER JOIN dbo.TipoDocumento       td WITH (NOLOCK) ON td.codigoSri            = '07'
@@ -248,7 +254,7 @@ BEGIN
 								AND rc.idRetencionAts = d.idDocumento
 								AND d.versionComp = '2.0.0'
 								INNER JOIN Entidad e WITH(NOLOCK) ON e.ruc = d.ruc 								
- 								WHERE rc.idRetencionAts =  @idRetencionCompra
+ 								WHERE rc.idRetencionAts =  @id
 								FOR JSON PATH
 							);
 
@@ -267,16 +273,16 @@ BEGIN
 								INNER JOIN Sri.DocumentoSustento      ds WITH (NOLOCK) ON rcd.codDocSustento      = ds.codDocSustento
 								INNER JOIN FactElect.RetencionAtsRet ret WITH (NOLOCK) ON rcd.idRetAtsDocSustento = ret.idRetAtsDocSustento
 								INNER JOIN Sri.ImpuestoRetencion       i WITH (NOLOCK) ON ret.codigo              = i.codigo
-								WHERE rcd.idRetencionAts = @idRetencionCompra
+								WHERE rcd.idRetencionAts = @id
 								FOR JSON PATH
 							)
 
 			SET @importeTotal = (SELECT CAST(SUM(ret.valorRetenido) AS numeric(18,2)) FROM FactElect.RetAtsDocSustento rcd  WITH (NOLOCK) 								
 			INNER JOIN FactElect.RetencionAtsRet ret WITH (NOLOCK) ON rcd.idRetAtsDocSustento = ret.idRetAtsDocSustento
-					WHERE rcd.idRetencionAts = @idRetencionCompra )
+					WHERE rcd.idRetencionAts = @id )
 		
 			SET @infoAdditionalDs = (
-										SELECT nombre,valor FROM FactElect.RetAtsInfoAdicional WITH (NOLOCK) WHERE idRetencionAts = @idRetencionCompra
+										SELECT nombre,valor FROM FactElect.RetAtsInfoAdicional WITH (NOLOCK) WHERE idRetencionAts = @id
 										FOR JSON PATH
 									)
 

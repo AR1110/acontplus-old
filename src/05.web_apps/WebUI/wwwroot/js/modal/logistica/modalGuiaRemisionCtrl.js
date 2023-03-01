@@ -870,7 +870,7 @@ export class ModalGuiaRemisionEditarCtrl extends ModalGuiaRemisionCtrl{
                     detalle: this.gridOptions.data,
                     adicional: this.infoAdicionalDocumento
                 }
-                
+                console.log(guia)
                 await this._mS.getData('put', '/GuiaRemision/Update?id=' + this.data.idGuiaRemision, data).then(response=>{                    
                     if (response.id === "0") {                       
                         this._fS.sweetAlert('warning', response.message, response.titleSms);                        
