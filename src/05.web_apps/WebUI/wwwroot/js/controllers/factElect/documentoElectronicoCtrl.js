@@ -25,12 +25,17 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
                 $scope.dataSearch.isCurrentDate = true;
             }
 
+            $scope.comprobantes = [];
             _mS.getData('get', '/DocumentoElectronico/Get?json=' + JSON.stringify($scope.dataSearch)).then(
                 response => {
                     if (response.code === "0") {
+                        hideLoader()
+                        $scope.comprobantes = [];
                         console.log(response)
+                        return
                     }
-                    $scope.comprobantes = JSON.parse(response.payload) || [];
+                    
+                    $scope.comprobantes = JSON.parse(response.payload)|| [];
                     hideLoader();
                 }
             ).catch(error => {
@@ -125,103 +130,48 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
 
     }
 
-    $scope.getDetalleDoc = async (item) => {
+
+
+    //Get Report 
+    $scope.getReport = (item) => {
         try {
-            const tipoDoc = $scope.tiposDocumento.find(doc => doc.codigoSri === item.codDoc);
-            let data = {}, modal = {}, response = {};
-
-            switch (tipoDoc.codigo) {
-                case 'FV':
-                    data = {
-                        idFactura: item.idDocumento,
-                        nroDocumento: item.nroDocumento
-                    }
-                    response = await _commonSvc.getDataTipoDocVenta({
-                        item: data,
-                        codigoDocumento: tipoDoc.codigo
-                    })
-
-                    if (!response.isComplete) return
-
-                    const { MODAL_CTRL, MODAL_DETALLE_CSHTML } = _nombreModalConst.factura_venta
-                    const { ModalDetalleCtrl } = await import('./../../modal/' + MODAL_CTRL);
-                    _modalSvc.openModalCustom({
-                        controller: ModalDetalleCtrl,
-                        template: 'FacturaVenta/' + MODAL_DETALLE_CSHTML,
-                        params: response,
-                        keyboard: true,
-                        windowClass: 'uibModalFullScreen'
-                    })
-                    break
-                case 'LC':
-                    data = {
-                        idLiquidacionCompra: item.idDocumento,
-                        nroDocumento: item.nroDocumento
-                    }
-                    response = await _commonSvc.getDataTipoDocCompra({
-                        item: data,
-                        codigoDocumento: tipoDoc.codigo
-                    })
-
-                    if (!response.isComplete) return
-
-                    const { liquidacion_compra } = _nombreModalConst;
-                    modal = await import('./../../modal/' + liquidacion_compra.MODAL_CTRL);
-                    _modalSvc.openModalCustom({
-                        controller: modal.ModalDetalleCtrl,
-                        template: 'LiquidacionCompra/' + liquidacion_compra.MODAL_DETALLE_CSHTML,
-                        size: 'xl',
-                        params: response,
-                        keyboard: true,
-                        windowClass: 'uibModalFullScreen'
-                    })
-                    break
-
-                case 'NC':
-                    data = {
-                        idNotaCredito: item.idDocumento,
-                        nroDoc: item.nroDocumento
-                    }
-                    response = await _commonSvc.getDataTipoDocVenta({
-                        item: data,
-                        codigoDocumento: tipoDoc.codigo
-                    })
-                    if (!response.isComplete) return
-
-                    const { nota_credito_cliente } = _nombreModalConst;
-                    modal = await import('./../../modal/' + nota_credito_cliente.MODAL_CTRL);
-                    _modalSvc.openModalCustom({
-                        controller: modal.ModalDetalleCtrl,
-                        template: 'NotaCreditoCliente/' + nota_credito_cliente.MODAL_DETALLE_CSHTML,
-                        size: 'xl',
-                        keyboard: true,
-                        params: response,
-                        windowClass: 'uibModalFullScreen'
-                    })
-
-                    break
-
-                case 'RC':
-                    data = {
-                        idRetencionCompra: item.idDocumento,
-                    }
-
-                    response = await _commonSvc.getDataTipoDocCompra({
-                        item: data,
-                        codigoDocumento: tipoDoc.codigo
-                    })
-                    if (!response.isComplete) return
-
-                    const { retencion_compra } = _nombreModalConst;
-                    const { RetencionCompraDetalle } = await import('./../../modal/' + retencion_compra.MODAL_CTRL);
-                    _modalSvc.openModalCustom({
-                        controller: RetencionCompraDetalle,
-                        template: retencion_compra.MODAL_DETALLE_CSHTML,
-                        size: 'xl',
-                        params: response.dataDocumento
-                    })
-                    break
+            let format = 'pdf';
+            let dataParms = {
+                versionComp: item.versionComp,
+                id: item.idDocumento,            
+                codEstab: item.codEstab,
+                codigo: 'RRC', 
+                format,            
             }
+       
+            const parameters = {               
+                dataParams: JSON.stringify(dataParms)
+            }
+            
+            _commonSvc.getReportDynamic({
+                parameters, 
+                format
+            })     
+        } catch (error) {
+            
+            console.log(item);
+        }
+    }
+
+
+
+
+    $scope.getDetalleDoc = async (item) => {
+        try {            
+            const tipoDoc = $scope.tiposDocumento.find(doc => doc.codigoSri === item.codDoc);
+            
+            _commonSvc.viewDetailDocument({
+                id: item.idDocumento,
+                codigoDocumento: tipoDoc.codigo,
+                size: 'xl',
+                windowClass: 'uibModalFullScreen'
+            })  
+            
         } catch (error) {
             console.error(error)
         }
@@ -253,7 +203,8 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
                 }
                 Swal.fire({
                     icon: 'success',
-                    html: `<small>Autorizando...</small>`
+                    html: `<small>Autorizando...</small>`,
+                    timer: 1000
                 })
                 hideLoader();
             }

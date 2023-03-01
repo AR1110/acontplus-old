@@ -36,12 +36,14 @@
                 showLoader();
                 $scope.cheques = []
                 _mS.getData('get', '/Cheque/Get?json='+ JSON.stringify($scope.dataSearch)).then(response => {
+                    console.log(response)
                     if (response.id == "0") {
                         hideLoader();
-                        toast.toastr('warning', response.message);
+                        $scope.cheques = []; 
+                        console.log(response)
                         return
                     }                           
-                    $scope.cheques = JSON.parse(response.data) || [];
+                    $scope.cheques = response.data ===''? []: JSON.parse(response.data)
                    
                     $scope.cloneCheques = JSON.parse(JSON.stringify($scope.cheques))                                                    
                     $scope.getSumColumnaValor(); 
@@ -66,6 +68,7 @@
 
         $scope.getSumColumnaValor = function(){
             const total = $scope.cheques.map(item=>item.valor).reduce((previousValue, currentValue)=>previousValue + currentValue, 0)
+            console.log(total);
             $scope.total = form.roundNumber(total, 5)
         }
         
