@@ -115,20 +115,27 @@
                                             <icon class="mdi mdi-menu"></icon>
                                         </md-button>
                                         <md-menu-content class="md-dense">
-                                            <md-menu-item>
-                                                <md-button ng-if="(item.codDoc=='07') && item.codEstado != 4"
+                                            <md-menu-item ng-if="(item.codDoc=='07') && item.codEstado != 4">
+                                                <md-button
                                                     ng-click="edit(item)" uib-tooltip="Editar el Documento"
                                                     tooltip-placement="top">
                                                     <span md-menu-align-target><i class="ti-eye"></i> Editar</span>
                                                 </md-button>
                                             </md-menu-item>
                                             <md-menu-item>
-                                                <md-button ng-click="getDetalleDoc(item)"
-                                                    uib-tooltip="Ver el Detalle del Documento" tooltip-placement="top">
+                                                <md-button ng-click="getDetalleDoc(item)">
                                                     <span md-menu-align-target><i class="ti-eye"></i> Doc.
                                                         Detalle</span>
                                                 </md-button>
                                             </md-menu-item>
+
+                                            <md-menu-item>
+                                                <md-button ng-click="getReport(item)"
+                                                    uib-tooltip="Ver PDF" tooltip-placement="top">
+                                                    <span md-menu-align-target><i class="ti-file"></i>                                          PDF</span>
+                                                </md-button>
+                                            </md-menu-item>
+
                                             <md-menu-item ng-if="(item.codEstado==5 || item.codEstado==0)">
                                                 <md-button uib-tooltip="Errorres del comprobante"
                                                     tooltip-placement="top" ng-click="getError(item)">

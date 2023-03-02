@@ -88,7 +88,7 @@ BEGIN
 
 			SELECT [idDocumento], [codEstab], [comprobante], [codDoc], [serieComprobante], [rucEmisor], [razonSocialEmisior], [fechaEmision], [fechaAutorizacion], [tipoEmision], [identificacionReceptor], [claveAcceso], [numeroAutorizacion], [importeTotal], CASE WHEN xmlDoc IS NOT NULL THEN 1 ELSE 0 END hasXml
 			,ISNULL(complete,0) complete
-			,CASE WHEN xmlDoc IS NOT NULL AND complete = 0 THEN 'background-color: #5bc0de;' WHEN complete = 1 THEN 'background-color: #03a9f3;' ELSE '' END colorRow
+			,CASE WHEN xmlDoc IS NOT NULL AND complete = 0 THEN 'background-color: #FFF5BD;' WHEN complete = 1 THEN 'background-color: #03a9f3;' ELSE '' END colorRow
 			,CASE WHEN complete = 1 THEN '' ELSE '' END colorCol
 				,CASE WHEN complete = 1 THEN 'Documento Importado' ELSE '' END hoverText
 			,@totalRecords totalRecords
@@ -110,7 +110,7 @@ BEGIN
 	
 	SELECT [idDocumento], [codEstab], [comprobante], [codDoc], [serieComprobante], [rucEmisor], [razonSocialEmisior], [fechaEmision], [fechaAutorizacion], [tipoEmision], [identificacionReceptor], [claveAcceso], [numeroAutorizacion], [importeTotal], CASE WHEN xmlDoc IS NOT NULL THEN 1 ELSE 0 END hasXml
 	,ISNULL(complete,0) complete
-	,CASE  WHEN xmlDoc IS NOT NULL AND complete = 0 THEN 'background-color: #5bc0de;' WHEN complete = 1 THEN 'background-color: #03a9f3; cursor: pointer;' ELSE '' END colorRow
+	,CASE  WHEN xmlDoc IS NOT NULL AND complete = 0 THEN 'background-color: #FFF5BD;' WHEN complete = 1 THEN 'background-color: #03a9f3; cursor: pointer;' ELSE '' END colorRow
 	,CASE WHEN complete = 1 THEN '' ELSE '' END colorCol
 		,CASE WHEN complete = 1 THEN 'Documento Importado' ELSE '' END hoverText
 	,@totalRecords totalRecords

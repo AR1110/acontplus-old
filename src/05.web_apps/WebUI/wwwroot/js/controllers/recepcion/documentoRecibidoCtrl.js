@@ -41,6 +41,29 @@ function documentoRecibidoCtrl(
     $scope.infoAdicional = [];
     $scope.provCliente = {};
 
+    $scope.isMobile = true;
+
+    //DETECT MOBILE DEVICE
+    $scope.detectMobilDevice = function () {
+        if (navigator.userAgent.match(/Android/i)
+            || navigator.userAgent.match(/webOS/i)
+            || navigator.userAgent.match(/iPhone/i)
+            || navigator.userAgent.match(/iPad/i)
+            || navigator.userAgent.match(/iPod/i)
+            || navigator.userAgent.match(/BlackBerry/i)
+            || navigator.userAgent.match(/Windows Phone/i)
+        ) {
+            Swal.fire(
+                'Dispositivo Movil Detectado!',
+                'Para una mejor comodidad, le recomendamos usar una Laptop o PC.',
+                'success'
+            )
+        } else {
+            $scope.isMobile = false
+        }
+    }
+    $scope.detectMobilDevice()
+
     const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
             confirmButton: 'btn btn-success',
@@ -132,8 +155,9 @@ function documentoRecibidoCtrl(
                 if (response.code == "1") {
                     $scope.comprobantes = JSON.parse(response.payload)[0];
                     $scope.cloneComprobantes = JSON.parse(JSON.stringify($scope.comprobantes))
-                    $scope.totalRecords = $scope.comprobantes[0].totalRecords;
+                    //$scope.totalRecords = $scope.comprobantes[0].totalRecords;
                 }
+                
             }, error => {
                 if (error.data) {
                     tS.toastr('error', error.data.message)
@@ -158,10 +182,15 @@ function documentoRecibidoCtrl(
                             $scope.tiposDocumento.push(doc);
                         }
                     }
+                    if (!$scope.isMobile) {
+                        document.getElementById('menu_toggle').click();
+                    }
                 }, error => {
                     console.log(error);
                 }
-            )
+            ) 
+
+            
         } catch (error) {
             console.log(error);
         }
@@ -173,7 +202,7 @@ function documentoRecibidoCtrl(
                 $scope.decimal = response[1][0];
             }
         )
-
+            
     }
 
     $scope.onKeyupSearchFilter = () => {
