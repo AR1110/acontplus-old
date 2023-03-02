@@ -210,8 +210,8 @@ BEGIN
 			INNER JOIN Config.Estab_Logo        el WITH (NOLOCK) ON s.codEstab   = el.codEstab
 			WHERE idRetencionAts = @id;
 		
-			PRINT CAST(@idRetencionCompra AS VARCHAR(20))
-			PRINT CAST(@idEntidad AS VARCHAR(20))
+			--PRINT CAST(@idRetencionCompra AS VARCHAR(20))
+			--PRINT CAST(@idEntidad AS VARCHAR(20))
 
 			--SELECT FROM EntidadLogo WHERE idEntidad = @idEntidad
 
