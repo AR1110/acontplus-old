@@ -5,6 +5,7 @@
 
     retencionAtsCtrl.$inject = ['$scope',
                                 'mainService',
+                                'commonService',
                                 'toastService',
                                 '$element',
                                 '$cookies',
@@ -14,7 +15,7 @@
                                 'Blob'
                             ]
 
-    function retencionAtsCtrl($scope, mS, tS, $element, $cookies, uuid2, $window, FileSaver, Blob) {
+    function retencionAtsCtrl($scope, mS, _commonSvc, tS, $element, $cookies, uuid2, $window, FileSaver, Blob) {
         /**Initial Load */
         $scope.genericAnswer = [{ codigo: 'SI' }, { codigo: 'NO' }]
 
@@ -397,10 +398,16 @@
             }
         }
 
-        $scope.docPreview = (item) => {
+        $scope.docPreview = (item, dataDoc) => {
             try {
+                console.log(item)
+                console.log(dataDoc)
                 if (!item) {
-                    tS.toastr('warning', 'Este documento no ha sido registrado desde el modulo de recepcion de documentos')
+                    _commonSvc.viewDetailDocument({
+                        id: dataDoc.id,
+                        codigoDocumento: 'FC'
+                    })
+                    // tS.toastr('warning', 'Este documento no ha sido registrado desde el modulo de recepcion de documentos')
                     return
                 }
                 mS.getData('get', _urlService + 'DocumentoRecibido/Preview/' + item).then(
