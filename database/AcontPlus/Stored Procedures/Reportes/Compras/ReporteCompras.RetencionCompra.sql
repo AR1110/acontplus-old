@@ -14,7 +14,7 @@ IF OBJECT_ID(N'ReporteCompras.RetencionCompra', N'P') IS NOT NULL
 DROP PROCEDURE ReporteCompras.RetencionCompra
 GO
 
---exec ReporteCompras.RetencionCompra '{"id":20, "versionComp": "2.0.0"}'
+-- exec ReporteCompras.RetencionCompra '{"id":20, "versionComp": "2.0.0"}'
 CREATE PROCEDURE ReporteCompras.RetencionCompra	@json NVARCHAR(MAX)
 AS
 BEGIN
@@ -243,7 +243,7 @@ BEGIN
 									,ISNULL(prov.correo, 'S/N') as correoProveedor
 									,ISNULL(prov.telefono, 'S/N') as telefonoProveedor
 									,ISNULL(prov.direccion, 'S/N') as direccionProveedor								
-									,CONVERT(NVARCHAR, FORMAT(rc.fechaEmision, 'dd/MM/yyyy hh:mm')) as fechaEmision 		
+									,CONVERT(NVARCHAR, FORMAT(rc.fechaEmision, 'dd/MM/yyyy')) as fechaEmision 		
 									,CAST((SELECT SUM(valorRetenido) FROM dbo.RetencionCompraDetalle WHERE idRetencionCompra = @id) as numeric(15, 2)) as totalValorRetenido
 								FROM FactElect.RetencionAts        rc WITH (NOLOCK)
 								INNER JOIN Sri.Establecimiento      s WITH (NOLOCK) ON s.codEstab              = rc.codEstab
