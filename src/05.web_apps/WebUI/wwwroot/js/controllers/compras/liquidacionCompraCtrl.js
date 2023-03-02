@@ -286,12 +286,12 @@ function liquidacionCompraCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nom
      $scope.getReport = function (item) {                   
         let dataParms = {
             codEstab: item.codEstab,
-            idFacturaCompra: item.idFacturaCompra,            
+            idLiquidacionCompra: item.idLiquidacionCompra,            
         }
         
         let parameters = {
             reportParams: JSON.stringify({
-                codigo: 'RFC', 
+                codigo: 'RLC', 
                 codEstab: item.codEstab,
                 format: 'pdf',
                 aditionalParams: []

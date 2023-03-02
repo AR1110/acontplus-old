@@ -93,6 +93,7 @@
                                 @* <th md-column>Nro</th> *@
                                 <th md-column>Op.</th>
                                 <th md-column>Comprobante</th>
+                                <th md-column>F. Emisión</th>
                                 <th md-column>serie</th>
                                 <th md-column>Ruc Receptor</th>
                                 <th md-column>Razón Social Receptor</th>
@@ -174,6 +175,7 @@
                                 </td>
                                 @* <td md-cell>{{$index+1}}</td> *@
                                 <td md-cell>{{item.comprobante}}</td>
+                                <td md-cell>{{item.fechaEmision | date:'MM/dd/yyyy'}}</td>
                                 <td md-cell>{{item.serie}}</td>
                                 <td md-cell>{{item.rucReceptor}}</td>
                                 <td md-cell>{{item.razonSocial}}</td>

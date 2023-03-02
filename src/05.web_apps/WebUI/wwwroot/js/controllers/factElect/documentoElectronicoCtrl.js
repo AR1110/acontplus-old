@@ -158,20 +158,26 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
 
 
 
-    const REPORT_CODES = {
-        01: 'RRC',
-        04: 'RFV'
-    }
+    const REPORT_CODES = Object.freeze({
+        '01': 'RF',
+        '03':'RLC',        
+        '04':'RNCC',
+        '06':'RGR',
+        '07': 'RRC',
+    })
 
     //Get Report 
     $scope.getReport = (item) => {
-        try {
+        try {   
+            
+            if((item.codDoc in REPORT_CODES)) return
+            
             let format = 'pdf';
             let dataParms = {
                 versionComp: item.versionComp,
                 id: item.idDocumento,            
                 codEstab: item.codEstab,
-                codigo: 'RRC', 
+                codigo: REPORT_CODES[item.codDoc], 
                 format,            
             }
        
