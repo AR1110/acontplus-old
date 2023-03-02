@@ -1447,8 +1447,7 @@ export class CommonService {
 
 
     //--------------------------------PETICIONES PARA API ADMIN-CLIENTE----------------------
-    async getDataApi({ method, url, data = null, typeUrl }) {
-        //showLoader();
+    async getDataApi({ method, url, data = null, typeUrl }) {        
         let urlApi = '';
         // let urlApi = await this.$http.get('/ConnectionApiAdmin/GetUrl?typeUrl=' + typeUrl).then(({data:response})=>response)    
 
@@ -1458,18 +1457,17 @@ export class CommonService {
         //IP Producción de Desarrollo 
        //urlApi = typeUrl == 1 ? "http://205.209.99.71:8090/" : "http://206.72.196.229:83/";
 
+
         //IP Producción
-       urlApi = typeUrl == 1 ? "http://206.72.196.229:81/" : "http://206.72.196.229:83/";
+        urlApi = typeUrl == 1 ? "http://206.72.196.229:81/" : "http://206.72.196.229:83/";
         
         return this.$http({
             method,
             url: `${urlApi}${url}`,
             data
-        }).then(({ data: response }) => {
-            // hideLoader()
+        }).then(({ data: response }) => {          
             return response
-        }, error => {
-            // hideLoader();
+        }, error => {            
             console.log(error)
         })
     }

@@ -118,7 +118,7 @@ namespace WebUI.Controllers.Admin
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error getting report: " + ex.Message);
+                _logs.LogError("Error getting report (Download): " + ex.ToString());
                 ErrorFile(reportFile);
             }
             return File(reportFile.Content, reportFile.ContentType, reportFile.FileName);
@@ -144,7 +144,7 @@ namespace WebUI.Controllers.Admin
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error getting report: " + ex.Message);
+                _logs.LogError("Error getting report (DownloadDynamic): " + ex.ToString());
                 ErrorFile(reportFile);
             }
             return File(reportFile.Content, reportFile.ContentType, reportFile.FileName);

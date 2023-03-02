@@ -124,12 +124,11 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
             $scope.getFacturas();
 
             let parameters = {
-                idFactura: result.data.id,
-                codEstab: result.data.codEstab,
-                codDoc: TIPO_DOC_FV.codigo,
+                ...result.data,
+                idDocument: result.data.id,
                 codigo: 'RFPT',
-            };
-
+            }           
+            console.log(parameters)
             _commonSvc.askToReportII({
                 parameters: JSON.stringify(parameters)
             })   
@@ -293,9 +292,8 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
                 $scope.getFacturas();
 
                 let parameters = {
-                    idFactura: result.data.id,
-                    codEstab: result.data.codEstab,
-                    codDoc: TIPO_DOC_FV.codigo,
+                    ...result.data,
+                    idDocument: result.data.id,
                     codigo: 'RFPT',
                 };
 
@@ -603,8 +601,7 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
 
 
     $scope.getReportII = function (item) {               
-        let parameters = {
-            isPrint: 1,
+        let parameters = {           
             idDocument: item.idFactura,
             idTipoDocumento : item.idTipoDocumento,
             codEstab: item.codEstab,

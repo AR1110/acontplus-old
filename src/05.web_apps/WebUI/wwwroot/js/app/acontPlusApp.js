@@ -89,29 +89,93 @@ app.run(function ($window, $rootScope) {
     }
 });
 
-app.run(function ($rootScope, $http, $location, $localStorage, jwtHelper) {
-    // keep user logged in after page refresh
-    if ($localStorage.currentUser) {
-        $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.currentUser.token
-        let decodedJwt = jwtHelper.decodeToken($localStorage.currentUser.token)
-        $http.defaults.headers.common['X-IdUsuarioRol'] = decodedJwt.idUsuarioRol
-        //console.log($http.defaults)
+// app.run(function ($rootScope, $http, $location, $localStorage, jwtHelper) {
+//     // keep user logged in after page refresh
+//     if ($localStorage.currentUser) {
+//         $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.currentUser.token
+//         let decodedJwt = jwtHelper.decodeToken($localStorage.currentUser.token)
+//         $http.defaults.headers.common['X-IdUsuarioRol'] = decodedJwt.idUsuarioRol
+//         console.log(decodedJwt)
+//         //console.log($http.defaults)
+//     }
+
+//     // redirect to login page if not logged in and trying to access a restricted page
+//     //$rootScope.$on('$locationChangeStart', function (event, next, current) {
+//     //    let publicPages = ['/login'];
+//     //    let restrictedPage = publicPages.indexOf($location.path()) === -1;
+//     //    if (restrictedPage && !$localStorage.currentUser) {
+//     //        toastr.warning('error', 'Ha perdido session')
+//     //        //$location.path('/Login');
+//     //    }
+//     //});
+// })
+
+app.factory('authInterceptorService', function ($q, $localStorage, jwtHelper) {
+    let authInterceptorServiceFactory = {}
+
+    let _request = (config) => {
+        config.headers = config.headers || {}
+        let authData = $localStorage.currentUser
+        if (authData) {
+            config.headers.Authorization = 'Bearer ' + authData.token
+            let decodedJwt = jwtHelper.decodeToken(authData.token)
+            //console.log(decodedJwt)
+            // const expiry = Number(decodedJwt?.exp)
+            // let expirationDate = (Date.now() > (expiry * 1000))
+            // console.log(expirationDate)
+            config.headers['X-IdUsuarioRol'] = decodedJwt.idUsuarioRol
+        }
+        return config
     }
 
-    // redirect to login page if not logged in and trying to access a restricted page
-    //$rootScope.$on('$locationChangeStart', function (event, next, current) {
-    //    let publicPages = ['/login'];
-    //    let restrictedPage = publicPages.indexOf($location.path()) === -1;
-    //    if (restrictedPage && !$localStorage.currentUser) {
-    //        toastr.warning('error', 'Ha perdido session')
-    //        //$location.path('/Login');
-    //    }
-    //});
+    let _responseError = (rejection) => {
+        if (rejection.status == 401) {
+            let timerInterval = 0
+            Swal.fire({
+                icon: 'warning',
+                title: 'Authenticación',
+                text: 'Ha perdido session, inicie nuevamente',
+                timer: 6000,
+                timerProgressBar: true,
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                    timerInterval = setInterval(() => {
+                        const content = Swal.getHtmlContainer()
+                        if (content) {
+                            const b = content.querySelector('b')
+                            if (b) {
+                                b.textContent = Swal.getTimerLeft()
+                            }
+                        }
+                    }, 100)
+                },
+                willClose: () => {
+                    clearInterval(timerInterval)
+                }
+            }).then((result) => {
+                location.href = '/Login/Index' 
+                if (result.dismiss === Swal.DismissReason.timer) {
+                    location.href = '/Login/Index'
+                }
+            })
+        }
+        return $q.reject(rejection)
+    }
+    authInterceptorServiceFactory.request = _request
+    authInterceptorServiceFactory.responseError = _responseError
+    return authInterceptorServiceFactory
+})
+
+app.config(function ($httpProvider) {
+    $httpProvider.interceptors.push('authInterceptorService')
 })
 
 //app.config(function ($httpProvider) {
 //    $httpProvider.useApplyAsync(true);
 //});
+
+
 //Settings for incons in angularjs materialize
 app.config(['$mdThemingProvider', '$mdIconProvider', function ($mdThemingProvider, $mdIconProvider) {
     // $mdThemingProvider.theme('default').primaryPalette('blue');
@@ -158,23 +222,7 @@ app.constant('sessionDataEntidad', JSON.parse(localStorage.getItem('userData')))
 //     $httpProvider.interceptors.push('interceptorApi');
 // }]);
 
-// app.factory('oauthHttpInterceptor', function ($localStorage) {
-//     return {
-//         request: function (config) {
-//             //if (config.headers.Authorization === 'Bearer') {
-//             //    config.headers.Authorization = 'Bearer ' + $localStorage.currentUser.token
-//             //}
-//              if ($localStorage.currentUser) {
-//                  config.headers.Authorization = 'Bearer ' + $localStorage.currentUser.token
-//      }
-//             return config;
-//         }
-//     };
-// });
 
-// app.config(function ($httpProvider) {
-//     $httpProvider.interceptors.push('oauthHttpInterceptor');
-// });
 
 app.factory('mainService', mainService);
 

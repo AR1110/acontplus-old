@@ -14,6 +14,8 @@
         $scope.infoCompRet.parteRel = 'NO'
         $scope.tiposIdentificacion = []
         $scope.tiposSujRetenido = []
+        $scope.docSustento = {}
+        $scope.docSustento.pagoLocExt = '01'
         $scope.documentos = []
         $scope.sustentos = []
         $scope.sustentosFiltered = []
@@ -102,8 +104,8 @@
                             $scope.formasPago = tempArray[13]
                             $scope.establecimientos = tempArray[14]
                             $scope.puntosEmisionTemp = tempArray[15]
-                            $scope.infoCompRet.fechaEmision = formatDate(new Date())
-                            $scope.getPeriod(null, formatDate(new Date()))
+                            $scope.infoCompRet.fechaEmision = new Date()
+                            $scope.getPeriod(null, new Date())
                             //Only if is new
                             if (!idDocumentoElectronico) {
                                 $scope.infoCompRet.codEstab_Asig = $scope.establecimientos.find(item => item.predeterminado).codEstab_Asig
@@ -144,12 +146,18 @@
                             $scope.tempTaxes = tempArray[2]
                             $scope.retencionesTemp = tempArray[3]
                             $scope.paymentsTemp = tempArray[4]
+                            let totalDocsSust = 0
                             for (const d of tempArray[1]) {
                                 $scope.docSustento = d
                                 $scope.selectSutento($scope.docSustento.codDocSustento)
                                 $scope.addDocSustento(false)
+                                totalDocsSust++
                             }
-
+                            if (tempArray[1].length == totalDocsSust) {
+                                $scope.tempTaxes = []
+                                $scope.retencionesTemp = []
+                                $scope.paymentsTemp = []
+                            }
                             $scope.infoAdded = tempArray[5]
                             hideLoader()
                             $scope.$apply()
@@ -328,6 +336,7 @@
         }
         $scope.tempTaxes = []
         $scope.paymentsTemp = []
+        $scope.totalSinImpuestos = 0.00
         $scope.selectDoc = (item) => {
             try {
                 showLoader()
@@ -350,7 +359,7 @@
 
                                 console.log($scope.tempTaxes)
                                 console.log($scope.paymentsTemp)
-
+                                $scope.totalSinImpuestos = $scope.docData.totalSinImpuestos
                                 $scope.docSustento.codDocSustento = $scope.docData.codDocSustento
                                 $scope.selectSutento($scope.docSustento.codDocSustento)
                                 $scope.docSustento.numDocSustento = $scope.docData.numDocSustento.split('-').join('')
@@ -499,14 +508,14 @@
                             if (t.uniqueIdDoc == guid) {
                                 $scope.tax = t
                                 $scope.addTax(guid, false)
-                                indexxT = $scope.tempTaxes.indexOf(t)
-                                $scope.tempTaxes.splice(indexxT, 1)
                             }
                         } else {
                             $scope.tax = t
                             $scope.addTax(guid, false)
-                            indexxT = $scope.tempTaxes.indexOf(t)
-                            $scope.tempTaxes.splice(indexxT, 1)
+                            indexxT++
+                            if ($scope.tempTaxes.length == indexxT) {
+                                $scope.tempTaxes = []
+                            }
                         }
                     }
                 }
@@ -524,8 +533,6 @@
                                     $scope.porcentajeRetener = $scope.porcentajesRetIva
                                 }
                                 $scope.addRetencion(guid, false)
-                                indexxR = $scope.retencionesTemp.indexOf(r)
-                                $scope.retencionesTemp.splice(indexxR, 1)
                             }
                         } else {
                             $scope.retencion = r
@@ -536,8 +543,10 @@
                                 $scope.porcentajeRetener = $scope.porcentajesRetIva
                             }
                             $scope.addRetencion(guid, false)
-                            indexxR = $scope.retencionesTemp.indexOf(r)
-                            $scope.retencionesTemp.splice(indexxR, 1)
+                            indexxR++
+                            if ($scope.retencionesTemp.length == indexxR) {
+                                $scope.retencionesTemp = []
+                            }
                         }
 
                     }
@@ -549,14 +558,14 @@
                             if (p.uniqueIdDoc == guid) {
                                 $scope.payment = p
                                 $scope.addPayment(guid, false)
-                                indexP = $scope.paymentsTemp.indexOf(p)
-                                $scope.paymentsTemp.splice(indexP, 1)
                             }
                         } else {
                             $scope.payment = p
                             $scope.addPayment(guid, false)
-                            indexP = $scope.paymentsTemp.indexOf(p)
-                            $scope.paymentsTemp.splice(indexP, 1)
+                            indexP++
+                            if ($scope.paymentsTemp.length == indexP) {
+                                $scope.paymentsTemp = []
+                            }
                         }
                     }
                 }
@@ -825,6 +834,10 @@
             }
             $scope.taxesAdded.splice(index, 1)
         }
+
+        $scope.removeTaxTemp = (item) => {
+            $scope.tempTaxes.splice(item, 1)
+        }
         /**End Impuestos */
         /**Retenciones */
         $scope.porcentajesRet = []
@@ -837,7 +850,8 @@
             // $scope.retencion.valorRetenido = ''
             switch (item) {
                 case '1':
-                    $scope.retencion.baseImponible = $scope.taxesAdded.find(tax => (tax.codImpuestoDocSustento == 2 && tax.uniqueIdDoc == uniqueIdDoc)).baseImponible
+                    // $scope.retencion.baseImponible = $scope.taxesAdded.find(tax => (tax.uniqueIdDoc == uniqueIdDoc)).baseImponible
+                    $scope.retencion.baseImponible = $scope.totalSinImpuestos  //$scope.taxesAdded.filter(({ uniqueIdDoc }) => uniqueIdDoc === uniqueIdDoc).reduce((valorActual, previous) => valorActual + previous.baseImponible, 0)
                     $scope.porcentajeRetener = $scope.codigosRetencion
                     console.log($scope.codigosRetencion)
                     break
@@ -1299,7 +1313,31 @@
             }
         }
 
-
+        $scope.deleteDocSust = (item) => {
+            let uniqueIdDoc = $scope.docsAdded[item].uniqueIdDoc
+            if ($scope.taxesAdded.length > 0) {
+                for (let t = 0; t < $scope.taxesAdded.length; t++) {
+                    if (t.uniqueIdDoc == uniqueIdDoc) {
+                        $scope.taxesAdded.splice(t, 1)
+                    }
+                }
+            }
+            if ($scope.retencionAdded.length > 0) {
+                for (let r = 0; r < $scope.retencionAdded.length; r++) {
+                    if (r.uniqueIdDoc == uniqueIdDoc) {
+                        $scope.retencionAdded.splice(r, 1)
+                    }
+                }
+            }
+            if ($scope.paymentsAdded.length > 0) {
+                for (let pay = 0; pay < $scope.taxesAdded.length; pay++) {
+                    if (pay.uniqueIdDoc == uniqueIdDoc) {
+                        $scope.taxesAdded.splice(pay, 1)
+                    }
+                }
+            }
+            $scope.docsAdded.splice(item, 1)
+        }
 
         /**************************************************************************************** */
         /**End Documentos Sustento */

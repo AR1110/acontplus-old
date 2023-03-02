@@ -384,6 +384,7 @@ namespace BL.FactElect
         {
             string totals = string.Empty;
             double subtotalIva0 = 0;
+            double subtotal12 = 0;
             double subtotalNoObjetoIva = 0.00;
             double subtotalExcentoIva = 0.00;
             double ice = 0.00;
@@ -399,11 +400,16 @@ namespace BL.FactElect
             switch (data.codDoc)
             {
                 case "01":
-                    totals += @"<tr><td class=""text-right""><strong>SubTotal 12%</strong></td>
-                                            <td class=""text-right"">" + data.infoFactura.totalSinImpuestos + @"</td>
-                                        </tr>";
                     foreach (var item in data.infoFactura.totalImpuestos)
                     {
+                        if (item.codigo == "2" && item.codigoPorcentaje == "2")
+                        {
+                            totals += @"<tr>
+                                            <td class=""text-right""><strong>SubTotal Iva 12%</strong></td>
+                                            <td class=""text-right"">" + Convert.ToString(subtotal12 += Convert.ToDouble(item.baseImponible)) + @"</td>
+                                        </tr>";
+                        }
+
                         if (item.codigo == "2" && item.codigoPorcentaje == "0")
                         {
                             totals += @"<tr>

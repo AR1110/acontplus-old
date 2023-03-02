@@ -223,7 +223,7 @@ BEGIN
 			SELECT TOP 1 @secuencial = ultimaSecuencia
 			FROM ConfiguracionDocumento cd
 			INNER JOIN dbo.TipoDocumento td ON cd.idTipoDocumento = td.idTipoDocumento
-			WHERE cd.idPuntoEmision = 2 
+			WHERE cd.idPuntoEmision = @idPuntoEmision 
 			AND td.codigoSri = '07'
 			
 			SET @fechaEmision = (SELECT fechaEmision FROM @tblInfoCompRet)

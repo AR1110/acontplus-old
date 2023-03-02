@@ -17,16 +17,15 @@ namespace BL.FactElect
 
                 comp.numeroAutorizacion = nodeAuth.SelectSingleNode("numeroAutorizacion").InnerText;
                 comp.fechaAutorizacion = nodeAuth.SelectSingleNode("fechaAutorizacion").InnerText;
- 
+
                 XmlNode nodeInfoTrib = xmlComp.GetElementsByTagName("infoTributaria")[0];
                 comp.codDoc = nodeInfoTrib.SelectSingleNode("codDoc").InnerText;
                 GetInfoTributaria(comp, nodeInfoTrib);
-                string versionComp = string.Empty;
                 switch (comp.codDoc)
                 {
                     case "01":
                         XmlNode nodeFact = xmlComp.GetElementsByTagName("factura")[0];
-                        versionComp = nodeFact.Attributes["version"].Value;
+                        comp.versionComp = nodeFact.Attributes["version"].Value;
 
                         XmlNode nodeInfoFactura = xmlComp.GetElementsByTagName("infoFactura")[0];
                         if (nodeInfoFactura != null)
@@ -39,11 +38,11 @@ namespace BL.FactElect
                         break;
                     case "03":
                         XmlNode nodeLiq = xmlComp.GetElementsByTagName("liquidacionCompra")[0];
-                        versionComp = nodeLiq.Attributes["version"].Value;
+                        comp.versionComp = nodeLiq.Attributes["version"].Value;
                         break;
                     case "04":
                         XmlNode nodeNC = xmlComp.GetElementsByTagName("notaCredito")[0];
-                        versionComp = nodeNC.Attributes["version"].Value;
+                        comp.versionComp = nodeNC.Attributes["version"].Value;
 
                         XmlNode nodeInfoNotaCredito = xmlComp.GetElementsByTagName("infoNotaCredito")[0];
 
@@ -56,21 +55,21 @@ namespace BL.FactElect
                         break;
                     case "05":
                         XmlNode nodeND = xmlComp.GetElementsByTagName("notaDebito")[0];
-                        versionComp = nodeND.Attributes["version"].Value;
+                        comp.versionComp = nodeND.Attributes["version"].Value;
                         break;
                     case "06":
                         XmlNode nodeGR = xmlComp.GetElementsByTagName("guiaRemision")[0];
-                        versionComp = nodeGR.Attributes["version"].Value;
+                        comp.versionComp = nodeGR.Attributes["version"].Value;
                         break;
                     case "07":
                         XmlNode nodeRet = xmlComp.GetElementsByTagName("comprobanteRetencion")[0];
-                        versionComp = nodeRet.Attributes["version"].Value;
+                        comp.versionComp = nodeRet.Attributes["version"].Value;
 
                         XmlNode nodeInfoCompRetencion = xmlComp.GetElementsByTagName("infoCompRetencion")[0];
 
-                        GetInfoCompRetencion(versionComp, comp, nodeInfoCompRetencion);
+                        GetInfoCompRetencion(comp.versionComp, comp, nodeInfoCompRetencion);
 
-                        if (versionComp == "2.0.0")
+                        if (comp.versionComp == "2.0.0")
                         {
                             GetDocSustento(comp, xmlComp.GetElementsByTagName("docsSustento")[0]);
                         }
@@ -162,7 +161,7 @@ namespace BL.FactElect
                 default:
                     break;
             }
-            
+
         }
         public void GetInvoicePayments(InfoFactura comp, XmlNode payments)
         {
@@ -182,9 +181,12 @@ namespace BL.FactElect
         {
             var detalles = new List<Detalle>();
             var impuestos = new List<Impuesto>();
+            var idDetalle = string.Empty;
             foreach (XmlNode item in details)
             {
                 Detalle detail = new Detalle();
+                idDetalle = Guid.NewGuid().ToString();
+                detail.idDetalle = idDetalle;
                 if (comp.codDoc == "01")
                 {
                     detail.codigoPrincipal = item.SelectSingleNode("codigoPrincipal").InnerText;
@@ -203,6 +205,7 @@ namespace BL.FactElect
                 foreach (XmlElement taxes in item.SelectNodes("impuestos"))
                 {
                     Impuesto tax = new Impuesto();
+                    tax.idDetalle = idDetalle;
                     tax.codArticulo = detail.codigoPrincipal;
                     tax.codigo = taxes.GetElementsByTagName("codigo")[0].InnerText;
                     tax.codigoPorcentaje = taxes.GetElementsByTagName("codigoPorcentaje")[0].InnerText;
@@ -294,20 +297,20 @@ namespace BL.FactElect
                 docSustento.codDocSustento = item.GetElementsByTagName("codDocSustento")[0].InnerText;
                 docSustento.numDocSustento = item.GetElementsByTagName("numDocSustento")[0].InnerText;
                 docSustento.fechaEmisionDocSustento = item.GetElementsByTagName("fechaEmisionDocSustento")[0].InnerText;
-                docSustento.numAutDocSustento = item.GetElementsByTagName("numAutDocSustento")[0].InnerText;
+                docSustento.numAutDocSustento = (item.SelectSingleNode("numAutDocSustento") == null) ? "" : item.GetElementsByTagName("numAutDocSustento")[0].InnerText;
                 docSustento.pagoLocExt = item.GetElementsByTagName("pagoLocExt")[0].InnerText;
-                docSustento.tipoRegi = item.GetElementsByTagName("tipoRegi")[0].InnerText;
-                docSustento.paisEfecPago = item.GetElementsByTagName("paisEfecPago")[0].InnerText;
-                docSustento.aplicConvDobTrib = item.GetElementsByTagName("aplicConvDobTrib")[0].InnerText;
-                docSustento.pagExtSujRetNorLeg = item.GetElementsByTagName("pagExtSujRetNorLeg")[0].InnerText;
-                docSustento.pagoRegFis = item.GetElementsByTagName("pagoRegFis")[0].InnerText;
-                docSustento.totalComprobantesReembolso = item.GetElementsByTagName("totalComprobantesReembolso")[0].InnerText;
-                docSustento.totalBaseImponibleReembolso = item.GetElementsByTagName("totalBaseImponibleReembolso")[0].InnerText;
-                docSustento.totalImpuestoReembolso = item.GetElementsByTagName("totalImpuestoReembolso")[0].InnerText;
+                docSustento.tipoRegi = (item.SelectSingleNode("tipoRegi") == null) ? "" : item.GetElementsByTagName("tipoRegi")[0].InnerText;
+                docSustento.paisEfecPago = (item.SelectSingleNode("paisEfecPago") == null) ? "" : item.GetElementsByTagName("paisEfecPago")[0].InnerText;
+                docSustento.aplicConvDobTrib = (item.SelectSingleNode("aplicConvDobTrib") == null) ? "" : item.GetElementsByTagName("aplicConvDobTrib")[0].InnerText;
+                docSustento.pagExtSujRetNorLeg = (item.SelectSingleNode("pagExtSujRetNorLeg") == null) ? "" : item.GetElementsByTagName("pagExtSujRetNorLeg")[0].InnerText;
+                docSustento.pagoRegFis = (item.SelectSingleNode("pagoRegFis") == null) ? "" : item.GetElementsByTagName("pagoRegFis")[0].InnerText;
+                docSustento.totalComprobantesReembolso = (item.SelectSingleNode("totalComprobantesReembolso") == null) ? "" : item.GetElementsByTagName("totalComprobantesReembolso")[0].InnerText;
+                docSustento.totalBaseImponibleReembolso = (item.SelectSingleNode("totalBaseImponibleReembolso") == null) ? "" : item.GetElementsByTagName("totalBaseImponibleReembolso")[0].InnerText;
+                docSustento.totalImpuestoReembolso = (item.SelectSingleNode("totalImpuestoReembolso") == null) ? "" : item.GetElementsByTagName("totalImpuestoReembolso")[0].InnerText;
                 docSustento.totalSinImpuestos = item.GetElementsByTagName("totalSinImpuestos")[0].InnerText;
                 docSustento.importeTotal = item.GetElementsByTagName("importeTotal")[0].InnerText;
                 GetImpuestoDocSustento(docSustento, item.SelectSingleNode("impuestosDocSustento"));
-                GetRetenciones(docSustento, item.SelectSingleNode("retenciones"));
+                GetRetenciones(docSustento, item.SelectSingleNode("retenciones"), ce);
                 if (docSustento.codDocSustento == "41")
                 {
                     GetReembolsos(docSustento, item.SelectSingleNode("reembolsos"));
@@ -335,9 +338,11 @@ namespace BL.FactElect
             }
             doc.CreateTax(impuestos);
         }
-        public void GetRetenciones(DocSustento doc, XmlNode nodeRetenciones)
+        public void GetRetenciones(DocSustento doc, XmlNode nodeRetenciones, ComprobanteElectronico ce)
         {
             var retenciones = new List<Retencion>();
+            var retToView = new List<ImpuestoRetencion>();
+
             foreach (XmlElement item in nodeRetenciones)
             {
                 Retencion retencion = new Retencion();
@@ -347,7 +352,19 @@ namespace BL.FactElect
                 retencion.porcentajeRetener = item.GetElementsByTagName("porcentajeRetener")[0].InnerText;
                 retencion.valorRetenido = item.GetElementsByTagName("valorRetenido")[0].InnerText;
                 retenciones.Add(retencion);
+
+                ImpuestoRetencion ir = new ImpuestoRetencion();
+                ir.codigo = item.GetElementsByTagName("codigo")[0].InnerText;
+                ir.codigoRetencion = item.GetElementsByTagName("codigoRetencion")[0].InnerText;
+                ir.baseImponible = item.GetElementsByTagName("baseImponible")[0].InnerText;
+                ir.porcentajeRetener = item.GetElementsByTagName("porcentajeRetener")[0].InnerText;
+                ir.valorRetenido = item.GetElementsByTagName("valorRetenido")[0].InnerText;
+                ir.codDocSustento = doc.codDocSustento;
+                ir.numDocSustento = doc.numDocSustento;
+                ir.fechaEmisionDocSustento = doc.fechaEmisionDocSustento;
+                retToView.Add(ir);
             }
+            ce.CreateRetencionTaxes(retToView);
             doc.CreateRetencion(retenciones);
         }
         public void GetReembolsos(DocSustento doc, XmlNode nodeReemb)

@@ -10,7 +10,7 @@ namespace BL.JwtAuthenticationManger
     public class JwtTokenHandler
     {
         public const string JWT_SECURITY_KEY = "acontplusthebest";
-        private const int JWT_TOKEN_VALIDITY_MINS = 8;
+        private const int JWT_TOKEN_VALIDITY_MINS = 14;
         public AuthResponse? GenerateJwtToken(LoginDataDto authRequest)
         {
             try

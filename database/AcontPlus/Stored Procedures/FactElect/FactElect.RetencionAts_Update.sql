@@ -180,6 +180,8 @@ BEGIN
 			,Helper.F_Auto_Sequential(@secuencial)) 
 			 FROM @tblInfoCompRet
 
+			 --print @claveaccesso
+
 			-- --SELECT '0' as code, (select *,  from @tblInfoCompRet for json path) as 'message'
 			-- --return
 			----RETENCION ATS
@@ -190,30 +192,30 @@ BEGIN
 			--		RETURN
 			--	END
 
-			--SET @idRetencionAts = (SELECT TOP 1 idRetencionAts FROM @tblInfoCompRet)
+ 
+			UPDATE ret SET  ret.codEstab = t.codEstab
+			,ret.claveAcceso = @claveAcceso 
+			,ret.estab = t.estab
+			,ret.ptoEmi = t.ptoEmi 
+			,ret.fechaEmision = t.fechaEmision
+			,ret.contribuyentEspecial = t.contribuyentEspecial
+			,ret.obligadoContabilidad = t.obligadoContabilidad
+			,ret.tipoIdentificacionSujetoRetenido = t.tipoIdentificacionSujetoRetenido
+			,ret.tipoSujetoRetenido = t.tipoSujetoRetenido 
+			,ret.parteRel = t.parteRel
+			,ret.idCliente = t.idCliente
+			,ret.razonSocialSujetoRetenido = t.razonSocialSujetoRetenido
+			,ret.identificacionSujetoRetenido = t.identificacionSujetoRetenido
+			,ret.periodoFiscal = t.periodoFiscal
+			,ret.idUsuario = @idUsuario
+			,ret.idProveedor   = @idProveedor
 
-			--UPDATE ret SET  ret.codEstab = t.codEstab
-			--,ret.claveAcceso = @claveAcceso 
-			--,ret.estab = t.estab
-			--,ret.ptoEmi = t.ptoEmi 
-			--,ret.fechaEmision = t.fechaEmision
-			--,ret.contribuyentEspecial = t.contribuyentEspecial
-			--,ret.obligadoContabilidad = t.obligadoContabilidad
-			--,ret.tipoIdentificacionSujetoRetenido = t.tipoIdentificacionSujetoRetenido
-			--,ret.tipoSujetoRetenido = t.tipoSujetoRetenido 
-			--,ret.parteRel = t.parteRel
-			--,ret.idCliente = t.idCliente
-			--,ret.razonSocialSujetoRetenido = t.razonSocialSujetoRetenido
-			--,ret.identificacionSujetoRetenido = t.identificacionSujetoRetenido
-			--,ret.periodoFiscal = t.periodoFiscal
-			--,ret.idUsuario = @idUsuario
-			--,ret.idProveedor   = @idProveedor
-
-			--FROM  FactElect.RetencionAts ret
-			--JOIN (SELECT idRetencionAts, codEstab,estab,ptoEmi,fechaEmision,contribuyentEspecial,obligadoContabilidad
-			--,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente
-			--,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal
-			--FROM @tblInfoCompRet) AS t on ret.idRetencionAts = t.idRetencionAts
+			FROM  FactElect.RetencionAts ret
+			JOIN (SELECT @id idRetencionAts, codEstab,estab,ptoEmi,fechaEmision,contribuyentEspecial,obligadoContabilidad
+			,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,idCliente
+			,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal
+			FROM @tblInfoCompRet) AS t on ret.idRetencionAts = t.idRetencionAts
+			WHERE ret.idRetencionAts = @id
 
 
 			----Documentos de Sustento
@@ -287,21 +289,22 @@ BEGIN
 														AND codDoc = '07' 
 														AND versionComp = '2.0.0')
 
-			UPDATE d SET  d.idPuntoEmision = @idPuntoEmision
-			,d.numEstab = r.estab
-			,d.ptoEmision = r.ptoEmi
-			,d.claveAcceso = @claveAcceso
-			,d.isAutomatic = @isAutomatic
-			,d.fechaEmision = @fechaEmision
-			,d.codigoAutorizacion = @claveAcceso
-			,d.idUsuario = @idUsuario
-			,d.idEntidad = @idEntidad
-			,d.codEstado = 1
-			,d.ruc = @ruc
-			,d.numeroIdentificacion = r.identificacionSujetoRetenido
-			,d.codEstab = r.codEstab
-			FROM DocumentoElectronico d WITH (ROWLOCK)
-			JOIN (SELECT codEstab, estab, ptoEmi, identificacionSujetoRetenido FROM @tblInfoCompRet) r ON  d.idDocumento = @id AND d.codDoc = '07' AND d.versionComp = '2.0.0'
+			UPDATE DocumentoElectronico SET  idPuntoEmision = @idPuntoEmision
+			,numEstab = (SELECT estab FROM @tblInfoCompRet)
+			,ptoEmision = (SELECT ptoEmi FROM @tblInfoCompRet)
+			,claveAcceso = @claveAcceso
+			,isAutomatic = @isAutomatic
+			,fechaEmision = @fechaEmision
+			,codigoAutorizacion = @claveAcceso
+			,idUsuario = @idUsuario
+			,idEntidad = @idEntidad
+			,codEstado = 1
+			,ruc = @ruc
+			,numeroIdentificacion = (SELECT identificacionSujetoRetenido FROM @tblInfoCompRet)
+			,codEstab = (SELECT codEstab FROM @tblInfoCompRet)
+			 
+			--JOIN (SELECT codEstab, estab, ptoEmi, identificacionSujetoRetenido FROM @tblInfoCompRet) r ON
+			WHERE  idDocumento = @id AND codDoc = '07' AND versionComp = '2.0.0'
 
 			SELECT '1' code, 'Retencion actualizada con exito'  as 'message'
 		COMMIT TRAN

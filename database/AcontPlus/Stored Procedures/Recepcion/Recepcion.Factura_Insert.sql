@@ -149,14 +149,19 @@ BEGIN
 
 			SELECT @idFacturaCompra, @idBodega, cd.idArticulo, idMedida, descripcion,
 			cantidad, precioUnitario, CAST(precioTotalSinImpuesto AS decimal(15,5)) / CAST(cantidad AS decimal(18,5)), cd.descuento
-			,'', SUM(cast(ct.baseImponible as numeric(18,2)))
+			,''
+			,(SELECT SUM(cast(ct.baseImponible as numeric(18,2))) FROM Recepcion.Doc_Impuesto_Temp ct WITH(NOLOCK)
+																	WHERE ct.idDocumento = cd.idDocumento
+																	AND ct.codArticulo = cd.codigoPrincipal
+																	AND ct.idDetalle = cd.idDetalle)
+			--AND cd.codigoPrincipal = ct.codArticulo)
 
 			FROM Recepcion.Doc_Detalle_Temp cd
-			LEFT JOIN Recepcion.Doc_Impuesto_Temp ct ON cd.idDocumento = ct.idDocumento
-			AND cd.codigoPrincipal = ct.codArticulo
+			--LEFT JOIN Recepcion.Doc_Impuesto_Temp ct ON cd.idDocumento = ct.idDocumento
+			--AND cd.codigoPrincipal = ct.codArticulo
 			WHERE cd.idDocumento = @idDocumento
-			GROUP BY cd.idArticulo, cd.idMedida, cd.descripcion, cd.cantidad, cd.precioTotalSinImpuesto
-			, cd.precioUnitario, cd.descuento
+			--GROUP BY cd.idArticulo, cd.idMedida, cd.descripcion, cd.cantidad, cd.precioTotalSinImpuesto
+			--, cd.precioUnitario, cd.descuento
 
 			INSERT INTO Compra.FacturaCompraImpuesto(idFac_CompraDetalle, codigo, codigoPorcentaje, tarifa, baseImponible, valor)
 			SELECT fcd.idFacturaCompraDetalle, i.codigo, i.codigoPorcentaje, i.tarifa, i.baseImponible, i.valor

@@ -49,11 +49,15 @@ BEGIN
 	,precioUnitario VARCHAR(15) NOT NULL
 	,descuento VARCHAR(15) NULL
 	,precioTotalSinImpuesto VARCHAR(15) NULL
+	,idDetalle UNIQUEIDENTIFIER
 	)
 
-	INSERT INTO @tmp(idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto, codigo, codigoPorcentaje, valor)
-	SELECT idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto, codigo, codigoPorcentaje, valor
-	FROM OPENJSON(@jsonData) WITH (idDocumento INT
+	INSERT INTO @tmp(idDetalle, idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto, codigo, codigoPorcentaje, valor)
+	SELECT idDetalle, idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto, codigo, codigoPorcentaje, valor
+	FROM OPENJSON(@jsonData) WITH (
+	idDetalle UNIQUEIDENTIFIER '$.idDetalle'
+
+		,idDocumento INT '$.idDocumento'
 	,idArticulo INT '$.idArticulo'
 	,codigoPrincipal VARCHAR(100) '$.codigoPrincipal'
 	,codigoAuxiliar VARCHAR(100) '$.codigoAuxiliar'
@@ -86,8 +90,8 @@ BEGIN
 					DELETE FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp)
 					--DELETE FROM Recepcion.Doc_Impuesto_Temp WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp)
 				END
-			INSERT INTO Recepcion.Doc_Detalle_Temp(idDocumento, idProveedor, idArticulo, idMedida, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, costoNeto, descuento, precioTotalSinImpuesto, idUsuario, isCustom)
-			SELECT idDocumento, @idProveedor, a.idArticulo, m.idMedida, t.codigoPrincipal, t.codigoAuxiliar, cantidad, t.descripcion, precioUnitario, precioUnitario, descuento, precioTotalSinImpuesto, @idUsuario,1
+			INSERT INTO Recepcion.Doc_Detalle_Temp(idDetalle, idDocumento, idProveedor, idArticulo, idMedida, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, costoNeto, descuento, precioTotalSinImpuesto, idUsuario, isCustom)
+			SELECT t.idDetalle, idDocumento, @idProveedor, a.idArticulo, m.idMedida, t.codigoPrincipal, t.codigoAuxiliar, cantidad, t.descripcion, precioUnitario, precioUnitario, descuento, precioTotalSinImpuesto, @idUsuario,1
 			FROM @tmp t
 			LEFT JOIN dbo.Articulo a ON a.codigo = t.codigoPrincipal AND a.idEntidad = @idEntidad
 			LEFT JOIN dbo.Medida m ON a.idMedida = m.idMedida AND a.idEntidad = @idEntidad
@@ -101,8 +105,8 @@ BEGIN
 					DELETE FROM Recepcion.Doc_Impuesto_Temp WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp)
 				END
 
-			INSERT INTO Recepcion.Doc_Impuesto_Temp(idDocumento, codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor)
-			SELECT (SELECT TOP 1 idDocumento FROM @tmp), t.codigoPrincipal, t.codigo, t.codigoPorcentaje, ti.porcentaje, t.precioUnitario, t.valor 
+			INSERT INTO Recepcion.Doc_Impuesto_Temp(idDetalle, idDocumento, codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor)
+			SELECT idDetalle, (SELECT TOP 1 idDocumento FROM @tmp), t.codigoPrincipal, t.codigo, t.codigoPorcentaje, ti.porcentaje, t.precioUnitario, t.valor 
 			FROM @tmp t
 			LEFT JOIN dbo.Articulo a ON a.codigo = t.codigoPrincipal AND a.idEntidad = @idEntidad
 			LEFT JOIN Sri.TarifaImpuesto ti ON t.codigo = ti.codImpuesto AND t.codigoPorcentaje = ti.codigo

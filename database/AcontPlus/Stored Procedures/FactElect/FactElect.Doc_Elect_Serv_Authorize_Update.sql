@@ -1,3 +1,4 @@
+USE ACONTPLUS
 -- ================================================
 -- Template generated from Template Explorer using:
 -- Create Procedure (New Menu).SQL
@@ -35,8 +36,9 @@ BEGIN
 	DECLARE @dateAuth DATETIME
 	DECLARE @idDocumento INT
 	DECLARE @receptor VARCHAR(300)
+	,@versionComp VARCHAR(5)
 
-	SELECT @codDoc = codDoc, @idDocumento = idDocumento FROM dbo.DocumentoElectronico WHERE idDocumentoElectronico = @id
+	SELECT @codDoc = codDoc, @idDocumento = idDocumento, @versionComp = versionComp FROM dbo.DocumentoElectronico WHERE idDocumentoElectronico = @id
 
 	SET @dateAuth = (SELECT CONVERT(datetime2(0), @dateAutorized))
 	
@@ -97,12 +99,25 @@ BEGIN
 
 					IF @codDoc = '07'
 						BEGIN
-							SELECT @receptor = pr.correo FROM dbo.RetencionCompra rc INNER JOIN dbo.Proveedor pr ON pr.idProveedor = rc.idProveedor WHERE rc.idRetencionCompra = @idDocumento
+							IF @versionComp = '1.0.0'
+								BEGIN
+									SELECT @receptor = pr.correo FROM dbo.RetencionCompra rc INNER JOIN dbo.Proveedor pr ON pr.idProveedor = rc.idProveedor WHERE rc.idRetencionCompra = @idDocumento
 
-							UPDATE RetencionCompra SET 
-								 fechaAutorizacionSri = @dateAuth
-								,autorizada = 1
-							WHERE idRetencionCompra = @idDocumento AND estado = 1
+									UPDATE RetencionCompra SET 
+										 fechaAutorizacionSri = @dateAuth
+										,autorizada = 1
+									WHERE idRetencionCompra = @idDocumento AND estado = 1
+								END
+
+							IF @versionComp = '2.0.0'
+								BEGIN
+									SELECT @receptor = pr.correo FROM FactElect.RetencionAts rc INNER JOIN dbo.Proveedor pr ON pr.idProveedor = rc.idProveedor WHERE rc.idRetencionAts = @idDocumento
+
+									--UPDATE RetencionCompra SET 
+									--	 fechaAutorizacionSri = @dateAuth
+									--	,autorizada = 1
+									--WHERE idRetencionCompra = @idDocumento AND estado = 1
+								END
 						END
 
 					IF @receptor IS NOT NULL

@@ -250,6 +250,7 @@
     <Content Include="Reports\GestionReporte\FacturaVentaRG.rdlc" />
     <Content Include="Reports\GestionReporte\IngresoBodegaRG.rdlc" />
     <Content Include="Reports\GestionReporte\ConsolidadoVenta.rdl" />
+    <Content Include="Reports\FactElect\ComprobanteRetencion.rdl" />
     <None Include="Reports\GestionReporte\ArticuloTarifa.rdl" />
     <Content Include="Reports\GestionReporte\KardexRG.rdlc" />
     <Content Include="Reports\GestionReporte\LiquidacionCompraRG.rdlc" />

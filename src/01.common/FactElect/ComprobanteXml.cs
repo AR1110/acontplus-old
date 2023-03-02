@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Text;
@@ -1487,200 +1486,230 @@ namespace FactElect
                 wr.WriteEndElement();
 
                 wr.WriteStartElement("impuestosDocSustento");
-                NodoImpuestosDocSustento(wr, impuestosDocSustento);
+                NodoImpuestosDocSustento(wr, item["idRetAtsDocSustento"].ToString(), impuestosDocSustento);
                 wr.WriteEndElement();
 
                 wr.WriteStartElement("retenciones");
-                NodoRetenciones(wr, retenciones, hasDividendos);
+                NodoRetenciones(wr, item["idRetAtsDocSustento"].ToString(), retenciones, hasDividendos);
                 wr.WriteEndElement();
 
                 if (item["codDocSustento"].ToString() == "41")
                 {
                     wr.WriteStartElement("reembolsos");
-                    NodoReembolsos(wr, reembolsos, detalleImpuestos);
+                    NodoReembolsos(wr, item["idRetAtsDocSustento"].ToString(), reembolsos, detalleImpuestos);
                     wr.WriteEndElement();
                 }
 
                 wr.WriteStartElement("pagos");
-                NodoPagos(wr, pagos);
+                NodoPagosRet(wr, item["idRetAtsDocSustento"].ToString(), pagos);
                 wr.WriteEndElement();
 
                 wr.WriteEndElement();
             }
 
         }
-        public void NodoImpuestosDocSustento(XmlTextWriter wr, DataTable impuestosDocSustento)
+        public void NodoImpuestosDocSustento(XmlTextWriter wr, string idDocSust, DataTable impuestosDocSustento)
         {
 
             foreach (DataRow item in impuestosDocSustento.Rows)
             {
-                wr.WriteStartElement("impuestoDocSustento");
+                if (idDocSust == item["idRetAtsDocSustento"].ToString())
+                {
+                    wr.WriteStartElement("impuestoDocSustento");
 
-                wr.WriteStartElement("codImpuestoDocSustento");
-                wr.WriteString(item["codImpuestoDocSustento"].ToString());
-                wr.WriteEndElement();
+                    wr.WriteStartElement("codImpuestoDocSustento");
+                    wr.WriteString(item["codImpuestoDocSustento"].ToString());
+                    wr.WriteEndElement();
 
-                wr.WriteStartElement("codigoPorcentaje");
-                wr.WriteString(item["codigoPorcentaje"].ToString());
-                wr.WriteEndElement();
+                    wr.WriteStartElement("codigoPorcentaje");
+                    wr.WriteString(item["codigoPorcentaje"].ToString());
+                    wr.WriteEndElement();
 
-                wr.WriteStartElement("baseImponible");
-                wr.WriteString(item["baseImponible"].ToString());
-                wr.WriteEndElement();
+                    wr.WriteStartElement("baseImponible");
+                    wr.WriteString(item["baseImponible"].ToString());
+                    wr.WriteEndElement();
 
-                wr.WriteStartElement("tarifa");
-                wr.WriteString(item["tarifa"].ToString());
-                wr.WriteEndElement();
+                    wr.WriteStartElement("tarifa");
+                    wr.WriteString(item["tarifa"].ToString());
+                    wr.WriteEndElement();
 
-                wr.WriteStartElement("valorImpuesto");
-                wr.WriteString(item["valorImpuesto"].ToString());
-                wr.WriteEndElement();
+                    wr.WriteStartElement("valorImpuesto");
+                    wr.WriteString(item["valorImpuesto"].ToString());
+                    wr.WriteEndElement();
 
-                wr.WriteEndElement();
+                    wr.WriteEndElement();
+                }
             }
         }
-        public void NodoRetenciones(XmlTextWriter wr, DataTable retenciones, bool hasDividendos)
+        public void NodoRetenciones(XmlTextWriter wr, string idDocSust, DataTable retenciones, bool hasDividendos)
         {
             foreach (DataRow item in retenciones.Rows)
             {
-                wr.WriteStartElement("retencion");
-
-                wr.WriteStartElement("codigo");
-                wr.WriteString(item["codigo"].ToString());
-                wr.WriteEndElement();
-
-                wr.WriteStartElement("codigoRetencion");
-                wr.WriteString(item["codigoRetencion"].ToString());
-                wr.WriteEndElement();
-
-                wr.WriteStartElement("baseImponible");
-                wr.WriteString(item["baseImponible"].ToString());
-                wr.WriteEndElement();
-
-                wr.WriteStartElement("porcentajeRetener");
-                wr.WriteString(item["porcentajeRetener"].ToString());
-                wr.WriteEndElement();
-
-                wr.WriteStartElement("valorRetenido");
-                wr.WriteString(item["valorRetenido"].ToString());
-                wr.WriteEndElement();
-
-                if (hasDividendos)
+                if (idDocSust == item["idRetAtsDocSustento"].ToString())
                 {
-                    wr.WriteStartElement("dividendos");
+                    wr.WriteStartElement("retencion");
 
-                    wr.WriteStartElement("fechaPagoDiv");
-                    wr.WriteString(item["fechaPagoDiv"].ToString());
+                    wr.WriteStartElement("codigo");
+                    wr.WriteString(item["codigo"].ToString());
                     wr.WriteEndElement();
 
-                    wr.WriteStartElement("imRentaSoc");
-                    wr.WriteString(item["imRentaSoc"].ToString());
+                    wr.WriteStartElement("codigoRetencion");
+                    wr.WriteString(item["codigoRetencion"].ToString());
                     wr.WriteEndElement();
 
-                    wr.WriteStartElement("ejerFisUtDiv");
-                    wr.WriteString(item["ejerFisUtDiv"].ToString());
+                    wr.WriteStartElement("baseImponible");
+                    wr.WriteString(item["baseImponible"].ToString());
                     wr.WriteEndElement();
 
-                    wr.WriteEndElement();
-                }
-
-                if (Convert.ToBoolean(item["isBanana"]))
-                {
-                    wr.WriteStartElement("compraCajBanano");
-
-                    wr.WriteStartElement("numCajBan");
-                    wr.WriteString(item["numCajBan"].ToString());
+                    wr.WriteStartElement("porcentajeRetener");
+                    wr.WriteString(item["porcentajeRetener"].ToString());
                     wr.WriteEndElement();
 
-                    wr.WriteStartElement("precCajBan");
-                    wr.WriteString(item["precCajBan"].ToString());
+                    wr.WriteStartElement("valorRetenido");
+                    wr.WriteString(item["valorRetenido"].ToString());
                     wr.WriteEndElement();
 
-                    wr.WriteEndElement();
-                }
-
-                wr.WriteEndElement();
-            }
-        }
-        public void NodoReembolsos(XmlTextWriter wr, DataTable reembolsos, DataTable taxes)
-        {
-            foreach (DataRow item in reembolsos.Rows)
-            {
-                wr.WriteStartElement("reembolsoDetalle");
-
-                wr.WriteStartElement("tipoIdentificacionProveedorReembolso");
-                wr.WriteString(item["tipoIdentificacionProveedorReembolso"].ToString());
-                wr.WriteEndElement();
-
-                wr.WriteStartElement("identificacionProveedorReembolso");
-                wr.WriteString(item["identificacionProveedorReembolso"].ToString());
-                wr.WriteEndElement();
-
-                wr.WriteStartElement("codPaisPagoProveedorReembolso");
-                wr.WriteString(item["codPaisPagoProveedorReembolso"].ToString());
-                wr.WriteEndElement();
-
-                wr.WriteStartElement("tipoProveedorReembolso");
-                wr.WriteString(item["tipoProveedorReembolso"].ToString());
-                wr.WriteEndElement();
-
-                wr.WriteStartElement("codDocReembolso");
-                wr.WriteString(item["codDocReembolso"].ToString());
-                wr.WriteEndElement();
-
-                wr.WriteStartElement("estabDocReembolso");
-                wr.WriteString(item["estabDocReembolso"].ToString());
-                wr.WriteEndElement();
-
-                wr.WriteStartElement("ptoEmiDocReembolso");
-                wr.WriteString(item["ptoEmiDocReembolso"].ToString());
-                wr.WriteEndElement();
-
-                wr.WriteStartElement("secuencialDocReembolso");
-                wr.WriteString(item["secuencialDocReembolso"].ToString());
-                wr.WriteEndElement();
-
-                wr.WriteStartElement("fechaEmisionDocReembolso");
-                wr.WriteString(item["fechaEmisionDocReembolso"].ToString());
-                wr.WriteEndElement();
-
-                wr.WriteStartElement("numeroAutorizacionDocReemb");
-                wr.WriteString(item["numeroAutorizacionDocReemb"].ToString());
-                wr.WriteEndElement();
-
-                wr.WriteStartElement("detalleImpuestos");
-                foreach (DataRow tax in taxes.Rows)
-                {
-                    if (item["numeroAutorizacionDocReemb"].ToString() == tax["numeroAutorizacionDocReemb"].ToString())
+                    if (hasDividendos)
                     {
-                        wr.WriteStartElement("detalleImpuesto");
+                        wr.WriteStartElement("dividendos");
 
-                        wr.WriteStartElement("codigo");
-                        wr.WriteString(tax["codigo"].ToString());
+                        wr.WriteStartElement("fechaPagoDiv");
+                        wr.WriteString(item["fechaPagoDiv"].ToString());
                         wr.WriteEndElement();
 
-                        wr.WriteStartElement("codigoPorcentaje");
-                        wr.WriteString(tax["codigoPorcentaje"].ToString());
+                        wr.WriteStartElement("imRentaSoc");
+                        wr.WriteString(item["imRentaSoc"].ToString());
                         wr.WriteEndElement();
 
-                        wr.WriteStartElement("tarifa");
-                        wr.WriteString(tax["tarifa"].ToString());
-                        wr.WriteEndElement();
-
-                        wr.WriteStartElement("baseImponibleReembolso");
-                        wr.WriteString(tax["baseImponibleReembolso"].ToString());
-                        wr.WriteEndElement();
-
-                        wr.WriteStartElement("impuestoReembolso");
-                        wr.WriteString(tax["impuestoReembolso"].ToString());
+                        wr.WriteStartElement("ejerFisUtDiv");
+                        wr.WriteString(item["ejerFisUtDiv"].ToString());
                         wr.WriteEndElement();
 
                         wr.WriteEndElement();
                     }
-                }
-                wr.WriteEndElement();
 
-                wr.WriteEndElement();
+                    if (Convert.ToBoolean(item["isBanana"]))
+                    {
+                        wr.WriteStartElement("compraCajBanano");
+
+                        wr.WriteStartElement("numCajBan");
+                        wr.WriteString(item["numCajBan"].ToString());
+                        wr.WriteEndElement();
+
+                        wr.WriteStartElement("precCajBan");
+                        wr.WriteString(item["precCajBan"].ToString());
+                        wr.WriteEndElement();
+
+                        wr.WriteEndElement();
+                    }
+
+                    wr.WriteEndElement();
+                }
+            }
+        }
+        public void NodoReembolsos(XmlTextWriter wr, string idDocSust, DataTable reembolsos, DataTable taxes)
+        {
+            foreach (DataRow item in reembolsos.Rows)
+            {
+                if (idDocSust == item["idRetAtsDocSustento"].ToString())
+                {
+                    wr.WriteStartElement("reembolsoDetalle");
+
+                    wr.WriteStartElement("tipoIdentificacionProveedorReembolso");
+                    wr.WriteString(item["tipoIdentificacionProveedorReembolso"].ToString());
+                    wr.WriteEndElement();
+
+                    wr.WriteStartElement("identificacionProveedorReembolso");
+                    wr.WriteString(item["identificacionProveedorReembolso"].ToString());
+                    wr.WriteEndElement();
+
+                    wr.WriteStartElement("codPaisPagoProveedorReembolso");
+                    wr.WriteString(item["codPaisPagoProveedorReembolso"].ToString());
+                    wr.WriteEndElement();
+
+                    wr.WriteStartElement("tipoProveedorReembolso");
+                    wr.WriteString(item["tipoProveedorReembolso"].ToString());
+                    wr.WriteEndElement();
+
+                    wr.WriteStartElement("codDocReembolso");
+                    wr.WriteString(item["codDocReembolso"].ToString());
+                    wr.WriteEndElement();
+
+                    wr.WriteStartElement("estabDocReembolso");
+                    wr.WriteString(item["estabDocReembolso"].ToString());
+                    wr.WriteEndElement();
+
+                    wr.WriteStartElement("ptoEmiDocReembolso");
+                    wr.WriteString(item["ptoEmiDocReembolso"].ToString());
+                    wr.WriteEndElement();
+
+                    wr.WriteStartElement("secuencialDocReembolso");
+                    wr.WriteString(item["secuencialDocReembolso"].ToString());
+                    wr.WriteEndElement();
+
+                    wr.WriteStartElement("fechaEmisionDocReembolso");
+                    wr.WriteString(item["fechaEmisionDocReembolso"].ToString());
+                    wr.WriteEndElement();
+
+                    wr.WriteStartElement("numeroAutorizacionDocReemb");
+                    wr.WriteString(item["numeroAutorizacionDocReemb"].ToString());
+                    wr.WriteEndElement();
+
+                    wr.WriteStartElement("detalleImpuestos");
+                    foreach (DataRow tax in taxes.Rows)
+                    {
+                        if (item["numeroAutorizacionDocReemb"].ToString() == tax["numeroAutorizacionDocReemb"].ToString())
+                        {
+                            wr.WriteStartElement("detalleImpuesto");
+
+                            wr.WriteStartElement("codigo");
+                            wr.WriteString(tax["codigo"].ToString());
+                            wr.WriteEndElement();
+
+                            wr.WriteStartElement("codigoPorcentaje");
+                            wr.WriteString(tax["codigoPorcentaje"].ToString());
+                            wr.WriteEndElement();
+
+                            wr.WriteStartElement("tarifa");
+                            wr.WriteString(tax["tarifa"].ToString());
+                            wr.WriteEndElement();
+
+                            wr.WriteStartElement("baseImponibleReembolso");
+                            wr.WriteString(tax["baseImponibleReembolso"].ToString());
+                            wr.WriteEndElement();
+
+                            wr.WriteStartElement("impuestoReembolso");
+                            wr.WriteString(tax["impuestoReembolso"].ToString());
+                            wr.WriteEndElement();
+
+                            wr.WriteEndElement();
+                        }
+                    }
+                    wr.WriteEndElement();
+
+                    wr.WriteEndElement();
+                }
+            }
+        }
+        public void NodoPagosRet(XmlTextWriter wr, string idDocSust, DataTable payments)
+        {
+
+            foreach (DataRow item in payments.Rows)
+            {
+                if (idDocSust == item["idRetAtsDocSustento"].ToString())
+                {
+                    wr.WriteStartElement("pago");
+
+                    wr.WriteStartElement("formaPago");
+                    wr.WriteString(item["formaPago"].ToString());
+                    wr.WriteEndElement();
+
+                    wr.WriteStartElement("total");
+                    wr.WriteString(item["total"].ToString());
+                    wr.WriteEndElement();
+
+                    wr.WriteEndElement();
+                }
             }
         }
         public void NodoDetalle(XmlTextWriter wr, DataTable detail)

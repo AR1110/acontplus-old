@@ -111,10 +111,10 @@ export class ModalUserCtrl{
             typeUrl: 1,            
         }).then(response=>{                      
             if (response.id == "0") {
-                this._tS.warning(response.message, response.titleSms);                    
+                this._tS.toastr('warning', response.message, response.titleSms);                    
             }
             if (response.id == "1") {
-                this._tS.success(response.message, response.titleSms);                                 
+                this._tS.toastr('success', response.message, response.titleSms);                                 
                 this.$uibModalInstance.close(response)
             }
         })
