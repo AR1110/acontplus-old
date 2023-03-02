@@ -32,6 +32,7 @@ BEGIN
 		   --Datos de Validacion 
 		   ,@idFacturaCompra BIGINT 
 		   ,@idTipoDocumento INT
+		   ,@fechaEmision DATE
 
 
 	DECLARE @tmp AS TABLE(
@@ -40,7 +41,6 @@ BEGIN
 		   ,estab VARCHAR(4)
 		   ,ptoEmi VARCHAR(4)
 		   ,claveAcceso NVARCHAR(50)
-		   ,fechaEmision VARCHAR(10)
 		   ,codDoc VARCHAR(2) 
 		   ,totalDescuento DECIMAL(15,5)
 		   ,totalSinImpuestos DECIMAL(15,5)
@@ -61,9 +61,9 @@ BEGIN
 	
 	SELECT @idTipoDocumento = idTipoDocumento FROM dbo.TipoDocumento WHERE codigo = 'FC'
 
-	INSERT INTO @tmp(idDocumento,secuencial, estab, ptoEmi,claveAcceso,fechaEmision,codDoc,totalDescuento,totalSinImpuestos,importeTotal,propina,idSustentoTributario
+	INSERT INTO @tmp(idDocumento,secuencial, estab, ptoEmi,claveAcceso,codDoc,totalDescuento,totalSinImpuestos,importeTotal,propina,idSustentoTributario
 				   ,idTiempoCredito,idCategoriaCompra ,idProveedor, idBodega, observacion, payments)
-	SELECT idDocumento, secuencial, estab,ptoEmi,claveAcceso,fechaEmision,codDoc,totalDescuento,totalSinImpuestos ,importeTotal,propina,idSustentoTributario
+	SELECT idDocumento, secuencial, estab,ptoEmi,claveAcceso,codDoc,totalDescuento,totalSinImpuestos ,importeTotal,propina,idSustentoTributario
 				   ,idTiempoCredito ,idCategoriaCompra,idProveedor, idBodega,observacion, payments
 				   FROM OPENJSON(@jsonComp) WITH (
 										idDocumento INT '$.idDocumento'
@@ -71,7 +71,6 @@ BEGIN
 										,estab VARCHAR(4) '$.estab'
 									   ,ptoEmi VARCHAR(4) '$.ptoEmi'
 									   ,claveAcceso NVARCHAR(50) '$.claveAcceso'
-									   ,fechaEmision VARCHAR(10) '$.fechaEmision'
 									   ,codDoc VARCHAR(2) '$.codDoc'
 									   ,totalDescuento DECIMAL(15,5) '$.totalDescuento'
 									   ,totalSinImpuestos DECIMAL(15,5) '$.totalSinImpuestos'
@@ -96,10 +95,11 @@ BEGIN
 			RETURN 
 		END 
 
-	DECLARE @idDocumento INT
-	,@idBodega INT
+	DECLARE @idDocumento INT,@idBodega INT
 
 	SELECT @idDocumento = idDocumento, @idBodega = idBodega FROM @tmp
+
+	SELECT @fechaEmision = fechaEmision  FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE idDocumento = @idDocumento
 
 	BEGIN TRY 
 		BEGIN TRAN
@@ -133,7 +133,7 @@ BEGIN
 
 			SELECT 1, @idEstadoPago, idSustentoTributario, idProveedor, @codEstab
 			,idCategoriaCompra, idTiempoCredito, secuencial, estab + '-' + ptoEmi, claveAcceso
-			,fechaEmision, fechaEmision, totalSinImpuestos, @subTotalIva,@subTotalNetoIva
+			,@fechaEmision, @fechaEmision, totalSinImpuestos, @subTotalIva,@subTotalNetoIva
 			,@subTotalIvaCero, @subTotalNetoIvaCero, @subTotalNoObjetoIva, @subTotalNetoNoObjetoIva
 			,@subTotalExentoIva, @subTotalNetoExentoIva, totalDescuento, 0.00
 			,@totalIce, @irbpnr, propina, @iva, 0.00, 0.00, importeTotal, observacion, 0.00
@@ -186,9 +186,8 @@ BEGIN
 
 			DECLARE @idTiempoCredito INT
 			,@total DECIMAL(15,5)
-			,@fechaEmision VARCHAR(10)
 
-			SELECT @idTiempoCredito = idTiempoCredito, @total = importeTotal, @fechaEmision = fechaEmision FROM @tmp
+			SELECT @idTiempoCredito = idTiempoCredito, @total = importeTotal FROM @tmp
 
 			INSERT INTO CuotaXPagar 
 				(idTipoDocumento
