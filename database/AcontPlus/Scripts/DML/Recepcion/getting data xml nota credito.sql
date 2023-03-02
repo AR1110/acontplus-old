@@ -8,6 +8,17 @@ versionComp VARCHAR(10) NOT NULL,
 xmlComp xml
 )
 
+DECLARE @devoluciones AS TABLE(
+	idDocumentoRecibido INT,
+	codDocSustento VARCHAR(5),
+	numDocSustento VARCHAR(50),
+	fechaEmisionDocSustento VARCHAR(100),
+	codigo VARCHAR(5),
+	baseImponible NUMERIC(15,5),
+	porcentajeRetener NUMERIC(15,5),
+	valorRetenido NUMERIC(15,5)
+)
+
 INSERT INTO @tmp(idDocumento,versionComp,xmlComp)
 SELECT 
  ci.idDocumento
@@ -17,13 +28,28 @@ FROM Recepcion.DocumentoRecibido ci
 where downloaded = 'DE' AND codDoc = '04' AND complete = 0
 
 
-select '1','','' 
-	 ,r.idDocumento
-	,idTipoDocumento = (SELECT TOP 1 idTipoDocumento FROM dbo.TipoDocumento WHERE codigo = 'NCP')
-	,serieComprobante
-	,saldo = x.y.value('sum(//totalConImpuestos/totalImpuesto/baseImponible) + sum(//totalConImpuestos/totalImpuesto/valor)','NUMERIC(18,2)')
-	,codDoc = 'NCP'
-	,numDocSustento = x.y.value('(numDocModificado)[1]','VARCHAR(15)')
-from @tmp r
+
+
+INSERT INTO @devoluciones(idDocumentoRecibido,codDocSustento, numDocSustento,fechaEmisionDocSustento,codigo,baseImponible,porcentajeRetener,valorRetenido)
+SELECT 
+     idDocumento
+    ,codDocSustento = x.y.value('(codDocModificado)[1]','VARCHAR(5)')
+    ,numDocSustento = x.y.value('(numDocModificado)[1]','VARCHAR(25)')
+    ,fechaEmisionDocSustento = x.y.value('(fechaEmisionDocSustento)[1]','VARCHAR(25)')
+	,codigo = x.y.value('(//totalConImpuestos/totalImpuesto/codigo)[1]','VARCHAR(5)')
+	,baseImponible = x.y.value('(//totalConImpuestos/totalImpuesto/baseImponible)[1]','NUMERIC(18,2)')
+	,porcentajeRetener = x.y.value('(//totalConImpuestos/totalImpuesto/tarifa)[1]','NUMERIC(18,2)')
+	,valorRetenido = x.y.value('(//totalConImpuestos/totalImpuesto/valor)[1]','NUMERIC(18,2)')
+FROM @tmp r
 CROSS APPLY r.xmlComp.nodes('//comprobante/notaCredito/infoNotaCredito') x(y) 
-INNER JOIN Recepcion.DocumentoRecibido dc ON dc.idDocumento = r.idDocumento
+
+SELECT 
+	idDocumentoRecibido
+   ,codDocSustento
+   ,numDocSustento
+   ,fechaEmisionDocSustento
+   ,codigo
+   ,baseImponible
+   ,porcentajeRetener = CASE WHEN codigo = '2' THEN 12.00 ELSE 0 END
+   ,valorRetenido
+FROM @devoluciones

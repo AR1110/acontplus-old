@@ -16,15 +16,15 @@ where idDocumento = 142
 
 
 
-SELECT 
-	ambiente = CASE WHEN x.y.value('(//infoTributaria/ambiente)[1]','varchar(15)') = '2' THEN 'PRODUCCION' ELSE 'PRUEBAS' END
-   ,tipoEmision = CASE WHEN x.y.value('(//infoTributaria/tipoEmision)[1]','varchar(15)') = '1' THEN 'NORMAL' ELSE '' END
-   ,razonSocial = x.y.value('(//infoTributaria/razonSocial)[1]','varchar(150)')
-   ,nombreComercial = x.y.value('(//infoTributaria/nombreComercial)[1]','varchar(150)')
-   ,ruc = x.y.value('(//infoTributaria/ruc)[1]','varchar(15)')
-from @tmp t
-CROSS APPLY t.xmlComp.nodes('//comprobante/comprobanteRetencion') x(y)
-RETURN
+--SELECT 
+--	ambiente = CASE WHEN x.y.value('(//infoTributaria/ambiente)[1]','varchar(15)') = '2' THEN 'PRODUCCION' ELSE 'PRUEBAS' END
+--   ,tipoEmision = CASE WHEN x.y.value('(//infoTributaria/tipoEmision)[1]','varchar(15)') = '1' THEN 'NORMAL' ELSE '' END
+--   ,razonSocial = x.y.value('(//infoTributaria/razonSocial)[1]','varchar(150)')
+--   ,nombreComercial = x.y.value('(//infoTributaria/nombreComercial)[1]','varchar(150)')
+--   ,ruc = x.y.value('(//infoTributaria/ruc)[1]','varchar(15)')
+--from @tmp t
+--CROSS APPLY t.xmlComp.nodes('//comprobante/comprobanteRetencion') x(y)
+--RETURN
 ----RETENCIONES 
 
 DECLARE @mainRet AS TABLE(

@@ -123,3 +123,6 @@
 /src/07.worker_services/WS_Article_Inventory/bin/Release/net6.0/Common.Logs.pdb
 /src/07.worker_services/WS_Article_Inventory/bin/Release/net6.0/Common.Logs.dll
 /src/08.razor_ui/FACT_UI/obj/Debug/net6.0/project.razor.json
+/src/07.worker_services/WS_DocumentoRelacionado/bin/Debug/net6.0
+/src/07.worker_services/WS_DocumentoRelacionado/obj
+/src/08.razor_ui/FACT_UI/obj
