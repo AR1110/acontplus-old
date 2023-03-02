@@ -46,7 +46,7 @@ BEGIN
 	,precioUnitario VARCHAR(15) NOT NULL
 	,descuento VARCHAR(15) NULL
 	,precioTotalSinImpuesto VARCHAR(15) NULL
-	,idDetalle UNIQUEIDENTIFIER NULL
+	,idDetalle INT NULL
 	)
 
 	DECLARE @taxes TABLE(
@@ -56,13 +56,13 @@ BEGIN
 	,tarifa VARCHAR(50)
 	,baseImponible VARCHAR(50)
 	,valor VARCHAR(50)
-	,idDetalle UNIQUEIDENTIFIER NULL
+	,idDetalle INT NULL
 	)
 
 	INSERT INTO @tmp(idDetalle, idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto)
 	SELECT idDetalle, @idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto
 	FROM OPENJSON(@jsonData) WITH (
-		idDetalle UNIQUEIDENTIFIER '$.idDetalle'
+		idDetalle INT '$.idDetalle'
 	,idArticulo INT '$.idArticulo'
 	,codigoPrincipal VARCHAR(100) '$.codigoPrincipal'
 	,codigoAuxiliar VARCHAR(100) '$.codigoAuxiliar'
@@ -77,7 +77,7 @@ BEGIN
 	SELECT idDetalle, codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor
 	FROM OPENJSON(@impuestos) 
 	WITH (
-			idDetalle UNIQUEIDENTIFIER '$.idDetalle'
+			idDetalle INT '$.idDetalle'
 	,codArticulo VARCHAR(100) '$.codArticulo'
 	,codigo VARCHAR(100) '$.codigo'
 	,codigoPorcentaje VARCHAR(100) '$.codigoPorcentaje'

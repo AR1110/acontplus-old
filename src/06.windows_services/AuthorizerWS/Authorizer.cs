@@ -91,31 +91,31 @@ namespace AuthorizerWS
                     ResponseSriDto _response = new ResponseSriDto();
                     DataAccess _dataAccess = new DataAccess();
 
-                    //_response = await _sriService.CheckExistence(dataRow.Field<string>("claveAcceso"), _urlAutorizacion);
-                    //if (_response.estado == "NO EXISTE")
-                    //{
-                    _response = await _sriService.Authorization(dataRow.Field<string>("claveAcceso"), _urlAutorizacion);
+                    _response = await _sriService.CheckExistence(dataRow.Field<string>("claveAcceso"), _urlAutorizacion);
+                    if (_response.estado == "NO EXISTE")
+                    {
+                        _response = await _sriService.Authorization(dataRow.Field<string>("claveAcceso"), _urlAutorizacion);
 
-                    if (_response.estado == "AUTORIZADO")
+                        if (_response.estado == "AUTORIZADO")
+                        {
+                            _dataAccess.Update(dataRow.Field<long>("idDocumentoElectronico"), _response.xmlSri, _response.fechaAutorizacion, 4);
+                            LogWritter.LogInfo(_path, "Doc. Authorized: " + Convert.ToString(dataRow.Field<long>("idDocumentoElectronico")));
+                        }
+                        else
+                        {
+                            _dataAccess.InsertError(dataRow.Field<long>("idDocumentoElectronico"), _response);
+                            _dataAccess.Update(dataRow.Field<long>("idDocumentoElectronico"), "", "", 5);
+                            XmlDocument xmlError = new XmlDocument();
+                            xmlError.LoadXml(_response.ToString());
+
+                            LogWritter.LogWarning(_path, "No se pudo autorizar el documento en el SRI   : " + Convert.ToString(dataRow.Field<long>("idDocumentoElectronico")) + " - ClaveAcceso: " + dataRow.Field<string>("claveAcceso") + " - SRI Info: " + xmlError.OuterXml);
+                        }
+                    }
+                    else if (_response.estado == "AUTORIZADO")
                     {
                         _dataAccess.Update(dataRow.Field<long>("idDocumentoElectronico"), _response.xmlSri, _response.fechaAutorizacion, 4);
                         LogWritter.LogInfo(_path, "Doc. Authorized: " + Convert.ToString(dataRow.Field<long>("idDocumentoElectronico")));
                     }
-                    else
-                    {
-                        _dataAccess.InsertError(dataRow.Field<long>("idDocumentoElectronico"), _response);
-                        _dataAccess.Update(dataRow.Field<long>("idDocumentoElectronico"), "", "", 5);
-                        XmlDocument xmlError = new XmlDocument();
-                        xmlError.LoadXml(_response.ToString());
-
-                        LogWritter.LogWarning(_path, "No se pudo autorizar el documento en el SRI   : " + Convert.ToString(dataRow.Field<long>("idDocumentoElectronico")) + " - ClaveAcceso: " + dataRow.Field<string>("claveAcceso") + " - SRI Info: " + xmlError.OuterXml);
-                    }
-                    //}
-                    //else if (_response.estado == "AUTORIZADO")
-                    //{
-                    //    _dataAccess.Update(dataRow.Field<long>("idDocumentoElectronico"), _response.xmlSri, _response.fechaAutorizacion, 4);
-                    //    LogWritter.LogInfo(_path, "Doc. Authorized: " + Convert.ToString(dataRow.Field<long>("idDocumentoElectronico")));
-                    //}
                 }
             }
             catch (Exception ex)

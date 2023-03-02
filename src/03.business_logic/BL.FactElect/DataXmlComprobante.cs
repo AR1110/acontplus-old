@@ -181,11 +181,10 @@ namespace BL.FactElect
         {
             var detalles = new List<Detalle>();
             var impuestos = new List<Impuesto>();
-            var idDetalle = string.Empty;
+            int idDetalle = 0;
             foreach (XmlNode item in details)
             {
-                Detalle detail = new Detalle();
-                idDetalle = Guid.NewGuid().ToString();
+                Detalle detail = new Detalle(); 
                 detail.idDetalle = idDetalle;
                 if (comp.codDoc == "01")
                 {
@@ -215,6 +214,7 @@ namespace BL.FactElect
                     impuestos.Add(tax);
                 }
                 detalles.Add(detail);
+                idDetalle++;
             }
             comp.CreateTaxes(impuestos);
 

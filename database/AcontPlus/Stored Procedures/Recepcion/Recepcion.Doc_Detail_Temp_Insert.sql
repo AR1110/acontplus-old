@@ -49,13 +49,13 @@ BEGIN
 	,precioUnitario VARCHAR(15) NOT NULL
 	,descuento VARCHAR(15) NULL
 	,precioTotalSinImpuesto VARCHAR(15) NULL
-	,idDetalle UNIQUEIDENTIFIER
+	,idDetalle INT
 	)
 
 	INSERT INTO @tmp(idDetalle, idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto, codigo, codigoPorcentaje, valor)
 	SELECT idDetalle, idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto, codigo, codigoPorcentaje, valor
 	FROM OPENJSON(@jsonData) WITH (
-	idDetalle UNIQUEIDENTIFIER '$.idDetalle'
+	idDetalle INT '$.idDetalle'
 
 		,idDocumento INT '$.idDocumento'
 	,idArticulo INT '$.idArticulo'

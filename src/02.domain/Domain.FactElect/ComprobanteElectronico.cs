@@ -126,7 +126,7 @@
     }
     public class Detalle
     {
-        public string idDetalle { get; set; }
+        public int idDetalle { get; set; }
         public string codigoPrincipal { get; set; }
         public string codigoAuxiliar { get; set; }
         public string descripcion { get; set; }
@@ -154,7 +154,7 @@
     }
     public class Impuesto
     {
-        public string idDetalle { get; set; }
+        public int idDetalle { get; set; }
         public string codArticulo { get; set; }
         public string codigo { get; set; }
         public string codigoPorcentaje { get; set; }

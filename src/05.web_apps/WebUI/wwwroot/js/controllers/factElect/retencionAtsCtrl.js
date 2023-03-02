@@ -60,9 +60,15 @@
             const formatDateMoment = moment.tz(fecha, "America/Guayaquil")
             return formatDateMoment.format("YYYY-MM-DD");
         }
+        const getUTCDate = (date) => {
+            const d = new Date(date);
+            const utcDate = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+            return utcDate;
+        }
 
         function formatDate(fecha) {
-            let _getFecha = new Date(fecha);
+            let _getFecha = new Date(fecha)
+            //let _getFecha = getUTCDate(fecha)
             _getFecha.setMinutes(_getFecha.getMinutes() + _getFecha.getTimezoneOffset());
             return _getFecha;
         }
@@ -617,7 +623,16 @@
                 //console.log($scope.docsAdded)
                 $scope.docSustento = {}
 
-
+                if ($scope.taxesAdded.length > 0) {
+                    angular.forEach($scope.docsAdded, (value, key) => {
+                        for (const taxxx of $scope.taxesAdded) {
+                            if (taxxx.uniqueIdDoc == guid) {
+                                value.totalSinImpuestos += Number(taxxx.baseImponible)
+                                value.importeTotal += (Number(taxxx.baseImponible) + Number(taxxx.valorImpuesto))
+                            }
+                        }
+                    })
+                }
                 if (toBd && idDocumentoElectronico > 0) {
                     setTimeout(() => {
                         $window.location.reload()
@@ -717,13 +732,7 @@
                     tarifa: $scope.tax.tarifa,
                     valorImpuesto: $scope.tax.valorImpuesto
                 })
-                angular.forEach($scope.docsAdded, (value, key) => {
-                    if (value.uniqueIdDoc == uniqueIdDoc) {
-                        value.totalSinImpuestos = Number($scope.tax.baseImponible)
-                        value.importeTotal = (Number($scope.tax.baseImponible) + Number($scope.tax.valorImpuesto))
-                    }
-                    $scope.payment.total = (Number($scope.tax.baseImponible) + Number($scope.tax.valorImpuesto))
-                })
+
 
                 $scope.tax = {}
                 //console.log($scope.docsAdded)
@@ -1605,6 +1614,12 @@
                 console.log(error)
             }
         }
+        $scope.cancel = () => {
+            $window.location.reload();
+        }
+        $scope.back = () => {
+            location.href = '/DocumentoElectronico/Index'
+        }
         /************************************************ */
         /** */
 
@@ -1646,5 +1661,7 @@
                 console.log(error);
             }
         }
+
+        
     }
 })(window.angular);
