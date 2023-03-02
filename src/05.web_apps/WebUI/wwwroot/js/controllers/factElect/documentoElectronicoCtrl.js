@@ -158,6 +158,11 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
 
 
 
+    const REPORT_CODES = {
+        01: 'RRC',
+        04: 'RFV'
+    }
+
     //Get Report 
     $scope.getReport = (item) => {
         try {
