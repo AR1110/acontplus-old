@@ -123,6 +123,13 @@
                                                     <span md-menu-align-target><i class="ti-eye"></i> Editar</span>
                                                 </md-button>
                                             </md-menu-item>
+                                             <md-menu-item ng-if="item.codEstado == 4">
+                                                <md-button
+                                                    ng-click="askToCancel(item)" uib-tooltip="Anular el Documento"
+                                                    tooltip-placement="top">
+                                                    <span md-menu-align-target><i class="ti-close"></i> Anular</span>
+                                                </md-button>
+                                            </md-menu-item>
                                             <md-menu-item>
                                                 <md-button ng-click="getDetalleDoc(item)">
                                                     <span md-menu-align-target><i class="ti-eye"></i> Doc.

@@ -3,11 +3,19 @@
 
     app.controller('retencionAtsCtrl', retencionAtsCtrl);
 
-    retencionAtsCtrl.$inject = ['$scope', 'mainService', 'toastService', '$element', '$cookies', 'uuid2', '$window', 'FileSaver', 'Blob'];
+    retencionAtsCtrl.$inject = ['$scope',
+                                'mainService',
+                                'toastService',
+                                '$element',
+                                '$cookies',
+                                'uuid2',
+                                '$window',
+                                'FileSaver',
+                                'Blob'
+                            ]
 
     function retencionAtsCtrl($scope, mS, tS, $element, $cookies, uuid2, $window, FileSaver, Blob) {
         /**Initial Load */
-
         $scope.genericAnswer = [{ codigo: 'SI' }, { codigo: 'NO' }]
 
         $scope.infoCompRet = {}
@@ -358,8 +366,8 @@
                             let temp = JSON.parse(response.payload)
                             if (temp) {
                                 $scope.docData = JSON.parse(temp[0].doc)[0]
-                                $scope.tempTaxes = JSON.parse(temp[0].taxes)
-                                $scope.paymentsTemp = JSON.parse(temp[0].payments)
+                                $scope.tempTaxes = JSON.parse(temp[0].taxes) || []
+                                $scope.paymentsTemp = JSON.parse(temp[0].payments) || []
                                 console.log($scope.docData)
 
                                 console.log($scope.tempTaxes)
@@ -1661,6 +1669,6 @@
             }
         }
 
-        
+
     }
 })(window.angular);

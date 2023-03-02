@@ -58,7 +58,7 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
                     if (!$scope.isMobile) {
                         document.getElementById('menu_toggle').click();
                     }
-                    $scope.comprobantes = JSON.parse(response.payload)|| [];
+                    $scope.comprobantes = JSON.parse(response.payload) || [];
                     hideLoader();
                 }
             ).catch(error => {
@@ -160,37 +160,37 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
 
     const REPORT_CODES = Object.freeze({
         '01': 'RF',
-        '03':'RLC',        
-        '04':'RNCC',
-        '06':'RGR',
+        '03': 'RLC',
+        '04': 'RNCC',
+        '06': 'RGR',
         '07': 'RRC',
     })
 
     //Get Report 
     $scope.getReport = (item) => {
-        try {   
-            
-            if((item.codDoc in REPORT_CODES)) return
-            
+        try {
+
+            if ((item.codDoc in REPORT_CODES)) return
+
             let format = 'pdf';
             let dataParms = {
                 versionComp: item.versionComp,
-                id: item.idDocumento,            
+                id: item.idDocumento,
                 codEstab: item.codEstab,
-                codigo: REPORT_CODES[item.codDoc], 
-                format,            
+                codigo: REPORT_CODES[item.codDoc],
+                format,
             }
-       
-            const parameters = {               
+
+            const parameters = {
                 dataParams: JSON.stringify(dataParms)
             }
-            
+
             _commonSvc.getReportDynamic({
-                parameters, 
+                parameters,
                 format
-            })     
+            })
         } catch (error) {
-            
+
             console.log(item);
         }
     }
@@ -199,16 +199,16 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
 
 
     $scope.getDetalleDoc = async (item) => {
-        try {            
+        try {
             const tipoDoc = $scope.tiposDocumento.find(doc => doc.codigoSri === item.codDoc);
-            
+
             _commonSvc.viewDetailDocument({
                 id: item.idDocumento,
                 codigoDocumento: tipoDoc.codigo,
                 size: 'xl',
                 windowClass: 'uibModalFullScreen'
-            })  
-            
+            })
+
         } catch (error) {
             console.error(error)
         }
@@ -353,6 +353,67 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
             location.href = '/RetencionAts/Index?id=' + item.idDocumentoElectronico
         } else {
             _tS.toastr('warning', 'No disponible')
+        }
+    }
+    $scope.askToCancel = (item) => {
+        try {
+            if (item.codDoc != '07') {
+                _tS.toastr('info', 'Aun no disponible')
+                return
+            }
+            Swal.fire({
+                title: '¿Está seguro de anular este comprobante?',
+                html: `<small>Asegurese de haber dado de baja este comprobante en el portal del SRI</small>`, // "¡No podrás revertir esto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, eliminar!',
+                cancelButtonText: 'No, cancelar',
+                allowOutsideClick: false
+            }).then((result) => {
+                if (result.value) {
+                    $scope.cancel(item)
+                }
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    $scope.cancel = (item) => {
+        try {
+            let url = '', data = {}, forApi = false
+            switch (item.codDoc) {
+                case '01':
+
+                    break
+                case '07':
+                    if (item.versionComp == '2.0.0') {
+                        url = 'RetencionAts/Cancel/' + item.idDocumentoElectronico
+                        forApi = true
+                    }
+                    break
+
+                default:
+                    break
+            }
+            _mS.getData('put', url, null, forApi).then(
+                response => {
+                    if (response.code == '1') {
+                        _tS.toastr('success', response.message)
+                        setTimeout(() => {
+                            $scope.getComprobantes()
+                        }, 3000)
+                    }
+                    if (response.code == '0') {
+                        _tS.toastr('warning', response.message)
+                    }
+                }, error => {
+                    console.log(error)
+                }
+            )
+        } catch (error) {
+            console.log(error)
         }
     }
 }
