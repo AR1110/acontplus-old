@@ -187,6 +187,7 @@ BEGIN
 			SELECT 
 				@idTipoDocumento = td.idTipoDocumento,
 				@imagen          = el.imagen,
+				@mimeType		= el.mimeType,
 				@claveAcceso     = d.claveAcceso,
 				@idEntidad       = e.idEntidad,
 				@subject         = 'Comprobante Electrónico - Acontplus N°: '+ s.estab+'-'+rc.ptoEmi+'-'+dbo.AFTAutoComplete(rc.secuencial),
@@ -200,14 +201,14 @@ BEGIN
 				@cc              = e.email
 			FROM FactElect.RetencionAts         rc WITH (NOLOCK) 
 			INNER JOIN Sri.Establecimiento       s WITH (NOLOCK) ON s.codestab        = rc.codestab
-			INNER JOIN dbo.Proveedor            pr WITH (NOLOCK) ON pr.idProveedor    = rc.idProveedor
-			INNER JOIN dbo.DocumentoElectronico d  WITH (NOLOCK) ON s.codEstab        = d.codEstab    AND 
+			LEFT JOIN dbo.Proveedor            pr WITH (NOLOCK) ON pr.idProveedor    = rc.idProveedor
+			LEFT JOIN dbo.DocumentoElectronico d  WITH (NOLOCK) ON s.codEstab        = d.codEstab    AND 
 			                                                        d.codDoc          = '07'          AND 
 																	rc.idRetencionAts = d.idDocumento AND 
 																	d.versionComp     = '2.0.0'
-			INNER JOIN dbo.Entidad               e WITH(NOLOCK)  ON e.ruc        = d.ruc 
-			INNER JOIN dbo.TipoDocumento        td WITH (NOLOCK) ON td.codigoSri = '07'
-			INNER JOIN Config.Estab_Logo        el WITH (NOLOCK) ON s.codEstab   = el.codEstab
+			LEFT JOIN dbo.Entidad               e WITH(NOLOCK)  ON e.ruc        = d.ruc 
+			LEFT JOIN dbo.TipoDocumento        td WITH (NOLOCK) ON td.codigoSri = '07'
+			LEFT JOIN Config.Estab_Logo        el WITH (NOLOCK) ON s.codEstab   = el.codEstab
 			WHERE idRetencionAts = @id;
 		
 			--PRINT CAST(@idRetencionCompra AS VARCHAR(20))
@@ -233,7 +234,7 @@ BEGIN
 									,rc.claveAcceso as  claveAcceso 
 									,td.codigoSri as codDoc	
 									,s.contribuyenteEspecial
-									,s.obligadoContabilidad 	
+									,s.obligadoContabilidad obligadoLlevarContabilidad	 
 									,s.dirEstablecimiento  
 									,s.agenteRetencion
 									,s.contribuyenteRimpe
@@ -246,14 +247,14 @@ BEGIN
 									,CAST((SELECT SUM(valorRetenido) FROM dbo.RetencionCompraDetalle WHERE idRetencionCompra = @id) as numeric(15, 2)) as totalValorRetenido
 								FROM FactElect.RetencionAts        rc WITH (NOLOCK)
 								INNER JOIN Sri.Establecimiento      s WITH (NOLOCK) ON s.codEstab              = rc.codEstab
-								INNER JOIN dbo.TipoDocumento       td WITH (NOLOCK) ON td.codigoSri            = '07'
-								INNER JOIN dbo.Proveedor         prov WITH (NOLOCK) ON prov.idProveedor        = rc.idProveedor
-								INNER JOIN dbo.TipoIdentificacion  ti WITH (NOLOCK) ON ti.idTipoIdentificacion = prov.idTipoIdentificacion		
-								INNER JOIN dbo.DocumentoElectronico d WITH (NOLOCK) ON s.codEstab              = d.codEstab
+								inner JOIN dbo.TipoDocumento       td WITH (NOLOCK) ON td.codigoSri            = '07'
+								LEFT JOIN dbo.Proveedor         prov WITH (NOLOCK) ON prov.idProveedor        = rc.idProveedor
+								LEFT JOIN dbo.TipoIdentificacion  ti WITH (NOLOCK) ON ti.idTipoIdentificacion = prov.idTipoIdentificacion		
+								LEFT JOIN dbo.DocumentoElectronico d WITH (NOLOCK) ON s.codEstab              = d.codEstab
 								AND d.codDoc = '07' 
 								AND rc.idRetencionAts = d.idDocumento
 								AND d.versionComp = '2.0.0'
-								INNER JOIN Entidad e WITH(NOLOCK) ON e.ruc = d.ruc 								
+								LEFT JOIN Entidad e WITH(NOLOCK) ON e.ruc = d.ruc 								
  								WHERE rc.idRetencionAts =  @id
 								FOR JSON PATH
 							);
