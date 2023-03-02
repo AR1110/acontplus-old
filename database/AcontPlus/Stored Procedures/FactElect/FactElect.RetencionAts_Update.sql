@@ -151,14 +151,14 @@ BEGIN
 
 			SELECT TOP 1  @idPuntoEmision = idPuntoEmision, @ambiente = ambiente FROM PuntoEmision p INNER JOIN @tblInfoCompRet t ON p.codEstab = t.codEstab AND p.ptoEmi = t.ptoEmi
 	 
-			--SET @idProveedor = (SELECT idProveedor FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND numeroIdentificacion = (SELECT identificacionSujetoRetenido FROM @tblInfoCompRet))
+			SET @idProveedor = ISNULL((SELECT idProveedor FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND LTRIM(RTRIM(numeroIdentificacion)) = (SELECT LTRIM(RTRIM(identificacionSujetoRetenido))  FROM @tblInfoCompRet)),0)
 		
-			--IF (@idProveedor IS NULL OR @idProveedor = 0)
-			--	BEGIN
-			--		SELECT '0' code, 'No se encontro proveedor' as 'message'
-			--		RETURN
-			--	END
- 
+			IF (@idProveedor IS NULL OR @idProveedor = 0)
+				BEGIN
+					SELECT '0' code, 'No se encontro proveedor' as 'message'
+					RETURN
+				END
+
 			----SELECT TOP 1 @secuencial = ultimaSecuencia
 			----FROM ConfiguracionDocumento cd
 			----INNER JOIN dbo.TipoDocumento td ON cd.idTipoDocumento = td.idTipoDocumento

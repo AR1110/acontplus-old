@@ -143,10 +143,9 @@
                         $scope.initialLoad()
                         setTimeout(() => {
                             $scope.infoCompRet = tempArray[0][0]
+                            $scope.infoCompRet.fechaEmision = formatDate(tempArray[0][0].fechaEmision)
                             $scope.infoCompRet.codEstab_Asig = $scope.establecimientos.find(item => (item.codEstab == $scope.infoCompRet.codEstab)).codEstab_Asig
                             $scope.onChangeEstablecimiento()
-                            //console.log(tempArray[0])
-                            $scope.infoCompRet.fechaEmision = formatDate(tempArray[0].fechaEmision)
                             $scope.subContribuyente = tempArray[0].subContribuyente
 
                             $scope.tempTaxes = tempArray[2]
