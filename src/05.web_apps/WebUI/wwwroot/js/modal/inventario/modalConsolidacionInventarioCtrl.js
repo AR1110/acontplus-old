@@ -1119,7 +1119,8 @@ export class ModalConsolidacionEditarCtrl extends ModalConsolidacionCtrl{
         this.data = dataDocumento;
         this.detalleDocumento = detalleDocumento;
 
-       
+    
+        this.disabledInputFechaEmision = true;
         
     }
 
