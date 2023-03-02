@@ -13,8 +13,8 @@ namespace WS_DocRelacionado
 
         public WindowsBackgroundService(ILogger<WindowsBackgroundService> logger,
              IConfiguration configuration,
-             DocRelacionadoService emailService) =>
-             (_logger, _configuration, _docService) = (logger, configuration, emailService);
+             DocRelacionadoService docService) =>
+             (_logger, _configuration, _docService) = (logger, configuration, docService);
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -55,11 +55,8 @@ namespace WS_DocRelacionado
             if (dt.Rows.Count > 0)
             {
                 string jsonResult = JsonConvert.SerializeObject(dt);
-                bool result =  await _docService.Insert(idDocumento,codDoc,jsonResult);
-                if (result)
-                {
-                    await _docService.Update(idDocumento,true);
-                }
+                await _docService.Insert(idDocumento, codDoc, jsonResult);
+                await _docService.Update(idDocumento, true);
             }
             else
             {
