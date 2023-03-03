@@ -13,6 +13,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+USE [AcontPlus]
+GO
 -- =============================================
 -- Author:		<Author,,Name>
 -- Create date: <Create Date,,>
@@ -21,7 +23,7 @@ GO
 IF OBJECT_ID(N'Inventario.Control_Stock_Serv_Update_Stock', N'P') IS NOT NULL
 DROP PROCEDURE Inventario.Control_Stock_Serv_Update_Stock 
 GO
-CREATE PROCEDURE Inventario.Control_Stock_Serv_Update_Stock @idArticulo INT, @stock DECIMAL(15,5)
+CREATE PROCEDURE Inventario.Control_Stock_Serv_Update_Stock @idCotrolStock INT,@idArticulo INT, @stock DECIMAL(15,5)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -30,6 +32,9 @@ BEGIN
 	BEGIN TRY 
 		BEGIN TRAN 
 			UPDATE dbo.Articulo SET stock = @stock WHERE idArticulo = @idArticulo
+
+			DELETE FROM Inventario.ControlStock WHERE idControlStock = @idCotrolStock
+
 		COMMIT TRAN 
 	END TRY 
 

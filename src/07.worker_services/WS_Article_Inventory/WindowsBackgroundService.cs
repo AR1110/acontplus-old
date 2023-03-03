@@ -1,4 +1,5 @@
 using Common.Logs;
+using Domain.Models.Almacen;
 using Newtonsoft.Json;
 using System.Data;
 
@@ -48,29 +49,14 @@ namespace WS_Article_Inventory
         public async void DocumentInventory(DataRow dr)
         {
             LogWriter _log = new LogWriter(_configuration);
-            DataTable dt = await _inventService.GetDocument(Convert.ToInt32(dr["idArticulo"]));
-            if (dt.Rows.Count > 0)
-            {
-                string jsonResult = JsonConvert.SerializeObject(dt);
-                MovementInventory(Convert.ToInt32(dr["idArticulo"]), jsonResult);
-                await _inventService.Delete(Convert.ToInt32(dr["idControlStock"]));
-            }
-            else
-            {
-                _log.LogWarning("Error al traer los documentos con el  articulo id :" + Convert.ToInt32(dr["idArticulo"]));
-
-            }
-        }
-
-        public async void MovementInventory(int idArticulo, string json)
-        {
-            LogWriter _log = new LogWriter(_configuration);
-            DataTable dt = await _inventService.GetMovement(json);
+            int idArticulo = (Convert.ToInt32(dr["idArticulo"]));
+            int idControlStock = (Convert.ToInt32(dr["idContolStock"]));
+            DataTable dt = await _inventService.GetDocument(idArticulo);
             if (dt.Rows.Count > 0)
             {
                 DataRow lastRow = dt.Rows[dt.Rows.Count - 1];
                 decimal stock = Convert.ToDecimal(lastRow["saldo"]);
-                await _inventService.Update(idArticulo, stock);
+                await _inventService.Update(idControlStock, idArticulo, stock);
             }
             else
             {
@@ -78,5 +64,6 @@ namespace WS_Article_Inventory
 
             }
         }
+
     }
 }
