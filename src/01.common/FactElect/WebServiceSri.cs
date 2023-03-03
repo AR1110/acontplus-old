@@ -65,12 +65,16 @@ namespace FactElect
                             {
                                 _response.estado = xEstado[0].InnerText;
                                 XmlNodeList xmessage = doc.GetElementsByTagName("mensaje");
-                                XmlNodeList nodos = ((XmlElement)xmessage[0]).ChildNodes;
-                                foreach (XmlElement nodo in nodos)
+                                if (xmessage.Count > 0)
                                 {
-                                    if (nodo.Name == "mensaje") { _response.message = nodo.InnerText; }
-                                    if (nodo.Name == "informacionAdicional") { _response.informacionAdicional = nodo.InnerText; }
-                                    if (nodo.Name == "tipo") { _response.tipo = nodo.InnerText; }
+                                    XmlNodeList nodos = ((XmlElement)xmessage[0]).ChildNodes;
+                                    foreach (XmlElement nodo in nodos)
+                                    {
+                                        if (nodo.Name == "identificador") { _response.identificador = nodo.InnerText; }
+                                        if (nodo.Name == "mensaje") { _response.message = nodo.InnerText; }
+                                        if (nodo.Name == "informacionAdicional") { _response.informacionAdicional = nodo.InnerText; }
+                                        if (nodo.Name == "tipo") { _response.tipo = nodo.InnerText; }
+                                    }
                                 }
                                 break;
                             }
@@ -85,7 +89,7 @@ namespace FactElect
             {
                 _ = ex.Message;
                 _response.estado = "ERROR";
-                _response.message = "No se pudo verificar la existencia del comprobante";
+                _response.message = "No se pudo verificar la existencia del comprobante" + ex.ToString();
             }
             return _response;
         }
@@ -134,6 +138,7 @@ namespace FactElect
                     XmlNodeList nodos = ((XmlElement)xEstado[0]).ChildNodes;
                     foreach (XmlElement nodo in nodos)
                     {
+                        if (nodo.Name == "identificador") { _response.identificador = nodo.InnerText; }
                         if (nodo.Name == "mensaje") { _response.message = nodo.InnerText; }
                         if (nodo.Name == "informacionAdicional") { _response.informacionAdicional = nodo.InnerText; }
                         if (nodo.Name == "tipo") { _response.tipo = nodo.InnerText; }
@@ -179,7 +184,20 @@ namespace FactElect
                 XmlDocument doc = new XmlDocument();
                 doc.LoadXml(_response.xmlSri);
                 XmlNodeList estadoComp = doc.GetElementsByTagName("estado");
-                _response.estado = estadoComp[0] != null ? estadoComp[0].InnerText : string.Empty;
+
+                XmlNodeList nlNroCompAuth = doc.GetElementsByTagName("numeroComprobantes");
+
+                var nroComp = string.Empty;
+                nroComp = nlNroCompAuth[0] != null ? nlNroCompAuth[0].InnerText : string.Empty;
+
+                if (nroComp == "0")
+                {
+                    _response.estado = "NO AUTORIZADO";
+                }
+                else
+                {
+                    _response.estado = estadoComp[0] != null ? estadoComp[0].InnerText : string.Empty;
+                }
 
                 switch (_response.estado)
                 {
@@ -202,13 +220,18 @@ namespace FactElect
                     default:
                         {
                             XmlNodeList xmessage = doc.GetElementsByTagName("mensaje");
-                            XmlNodeList nodos = ((XmlElement)xmessage[0]).ChildNodes;
-                            foreach (XmlElement nodo in nodos)
+                            if (xmessage.Count > 0)
                             {
-                                if (nodo.Name == "mensaje") { _response.message = nodo.InnerText; }
-                                if (nodo.Name == "informacionAdicional") { _response.informacionAdicional = nodo.InnerText; }
-                                if (nodo.Name == "tipo") { _response.tipo = nodo.InnerText; }
+                                XmlNodeList nodos = ((XmlElement)xmessage[0]).ChildNodes;
+                                foreach (XmlElement nodo in nodos)
+                                {
+                                    if (nodo.Name == "identificador") { _response.identificador = nodo.InnerText; }
+                                    if (nodo.Name == "mensaje") { _response.message = nodo.InnerText; }
+                                    if (nodo.Name == "informacionAdicional") { _response.informacionAdicional = nodo.InnerText; }
+                                    if (nodo.Name == "tipo") { _response.tipo = nodo.InnerText; }
+                                }
                             }
+                            
                             break;
                         }
                 }

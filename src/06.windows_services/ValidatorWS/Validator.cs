@@ -53,7 +53,7 @@ namespace ValidatorWS
                     {
                         return;
                     }
-                    LogWritter.LogInfo(_path, "Service Validator is processing");
+                    //LogWritter.LogInfo(_path, "Service Validator is processing");
                     Parallel.ForEach(dt.AsEnumerable(), drow =>
                     {
                         SendToSri(drow);
