@@ -18,10 +18,10 @@ GO
 -- Create date: 3/01/2023
 -- Description:	SP para leer el xml de documentos recibidos
 -- =============================================
-IF OBJECT_ID(N'FactElect.Document_Recib_Serv_Get_Data_Xml', N'P') IS NOT NULL
-DROP PROCEDURE FactElect.Document_Recib_Serv_Get_Data_Xml 
+IF OBJECT_ID(N'FactElect.Doc_Relac_Serv_Insert', N'P') IS NOT NULL
+DROP PROCEDURE FactElect.Doc_Relac_Serv_Insert
 GO
-CREATE PROCEDURE FactElect.Document_Recib_Serv_Get_Data_Xml
+CREATE PROCEDURE FactElect.Doc_Relac_Serv_Insert
 	@idDocumento INT
    ,@codDoc VARCHAR(5)
    ,@versionComp VARCHAR(10)
@@ -109,9 +109,18 @@ BEGIN
 				END 
 
 		COMMIT TRAN 
-
+		INSERT INTO FactElect.DocRelacionado 
+			(idDocumentoRecibido
+			,codDocSustento
+			,numDocSustento
+			,fechaEmisionDocSustento
+			,codigo
+			,baseImponible
+			,porcentajeRetener
+			,valorRetenido)
 		SELECT
-			codDocSustento
+		    @idDocumento
+		   ,codDocSustento
 		   ,numDocSustento
 		   ,fechaEmisionDocSustento
 		   ,codigo
@@ -119,6 +128,12 @@ BEGIN
 		   ,porcentajeRetener = ISNULL(porcentajeRetener,0) 
 		   ,valorRetenido
 		FROM @DocumentoRelacionado r 
+
+		IF (SELECT COUNT(*) FROM FactElect.DocRelacionado WHERE idDocumentoRecibido = @idDocumento) > 1
+			BEGIN
+				SELECT 1 
+				RETURN 
+			END
 	END TRY 
 
 	BEGIN CATCH 
