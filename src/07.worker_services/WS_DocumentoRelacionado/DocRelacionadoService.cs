@@ -1,7 +1,7 @@
 ﻿using DataAccess;
 using System.Data;
 
-namespace WS_DocRelacionado
+namespace WS_DocumentoRelacionado
 {
     public sealed class DocRelacionadoService
     {

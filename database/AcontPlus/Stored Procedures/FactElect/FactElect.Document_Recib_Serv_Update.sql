@@ -29,9 +29,40 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
+	DECLARE @table as TABLE(
+		idDocRelacionado INT UNIQUE NOT NULL
+	   ,numDocSustento VARCHAR(20)
+	   ,codDocSustento VARCHAR(5)
+	   ,claveAcceso VARCHAR(49)
+	)
+
+
 	BEGIN TRY 
 		BEGIN TRAN 
+			INSERT INTO @table (idDocRelacionado,numDocSustento,codDocSustento,claveAcceso)
+			SELECT 
+			   dr.idDocRelacionado
+			  ,dr.numDocSustento
+			  ,dr.codDocSustento
+			  ,claveAcceso = (SELECT TOP 1 
+								de.claveAcceso
+							  FROM dbo.DocumentoElectronico de 
+							  INNER JOIN dbo.Entidad e ON e.idEntidad = de.idEntidad 
+							  WHERE e.ruc = d.identificacionReceptor
+							  AND de.codDoc = dr.codDocSustento
+  							  AND de.numEstab+de.ptoEmision+Helper.F_Auto_Sequential(de.nroDocumento) = dr.numDocSustento)
+			FROM 
+			FactElect.DocRelacionado dr
+			INNER JOIN Recepcion.DocumentoRecibido d ON d.idDocumento = dr.idDocumentoRecibido
+			WHERE d.idDocumento = @idDocumento
+
 			UPDATE Recepcion.DocumentoRecibido SET complete = 1 WHERE idDocumento = @idDocumento
+
+			UPDATE dr SET 
+				dr.claveAcceso = t.claveAcceso
+			FROM FactElect.DocRelacionado dr 
+			INNER JOIN @table t ON  t.idDocRelacionado = dr.idDocRelacionado
+
 		COMMIT TRAN 
 	END TRY 
 	

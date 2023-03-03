@@ -1,4 +1,4 @@
-namespace WS_DocRelacionado
+namespace WS_DocumentoRelacionado
 {
     public class Program
     {
@@ -14,7 +14,7 @@ namespace WS_DocRelacionado
             IHost host = Host.CreateDefaultBuilder(args)
                  .UseWindowsService(options =>
                  {
-                     options.ServiceName = "WS_DocRelacionado";
+                     options.ServiceName = "WS_DocumentoRelacionado";
                  })
 
                 .ConfigureServices(services =>

@@ -2,7 +2,7 @@ using Common.Logs;
 using Newtonsoft.Json;
 using System.Data;
 
-namespace WS_DocRelacionado
+namespace WS_DocumentoRelacionado
 {
     public class WindowsBackgroundService : BackgroundService
     {
@@ -61,5 +61,6 @@ namespace WS_DocRelacionado
                 _log.LogWarning("Error al registrar la relacion del documento:" + idDocumento);
             }
         }
+
     }
 }

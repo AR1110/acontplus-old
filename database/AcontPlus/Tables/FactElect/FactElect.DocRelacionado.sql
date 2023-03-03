@@ -13,6 +13,6 @@ CREATE TABLE FactElect.DocRelacionado
 	,porcentajeRetener NUMERIC(18,2)
 	,valorRetenido NUMERIC(18,2)
 	,claveAcceso VARCHAR(49) NULL
-	,fechaRegistro DATETIME NOT NULL
+	,fechaRegistro DATETIME DEFAULT GETDATE() NOT NULL
 	,estado VARCHAR(10) DEFAULT 'PE'
 )
