@@ -56,7 +56,7 @@ namespace SignerWS
                     {
                         return;
                     }
-                    LogWritter.LogInfo(_path, "Service Signer is processing");
+                    //LogWritter.LogInfo(_path, "Service Signer is processing");
 
                     Parallel.ForEach(dt.AsEnumerable(), drow =>
                     {

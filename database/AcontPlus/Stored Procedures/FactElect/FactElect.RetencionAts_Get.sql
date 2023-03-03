@@ -68,9 +68,10 @@ BEGIN
 			INNER JOIN Sri.Establecimiento e WITH (NOLOCK)  ON ea.codEstab = e.codEstab
 			WHERE idUsuarioRol = @idRol
 
-			SELECT pa.*
+			SELECT pa.idPtoEmi_asig, ea.codEstab_Asig, pe.idPuntoEmision, pe.ptoEmi, pa.predeterminado, pa.estado
 			FROM Config.PtoEmi_Asig pa  WITH (NOLOCK) 
 			INNER JOIN  Config.Estab_Asig ea WITH (NOLOCK)  ON ea.codEstab_Asig = pa.codEstab_Asig
+			INNER JOIN PuntoEmision pe On pa.idPuntoEmision = pe.idPuntoEmision
  			WHERE ea.idUsuarioRol = @idRol
 
 			RETURN

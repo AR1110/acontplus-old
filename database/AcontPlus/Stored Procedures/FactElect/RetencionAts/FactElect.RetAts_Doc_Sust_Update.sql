@@ -87,6 +87,14 @@ BEGIN
 			
 			WHERE rds.idRetAtsDocSustento = @id
 
+			
+			UPDATE fc SET fc.retencion = 1
+			FROM FacturaCompra fc
+			JOIN (
+				SELECT numAutDocSustento, numDocSustento FROM FactElect.RetAtsDocSustento where idretencionAts = @id
+			) AS t ON fc.nroAutorizacion = t.numAutDocSustento AND  REPLACE(fc.puntoEmision,'-','')+Helper.F_Auto_Sequential(fc.nroDocumento) = t.numDocSustento
+
+
 			SELECT '1' code, 'Documento de sustento actualizado con exito'  as 'message'
 		COMMIT TRAN
 	END TRY

@@ -36,8 +36,8 @@ BEGIN
 				END
 			ELSE
 				BEGIN
-					INSERT INTO dbo.DocumentoElectronicoError(xmlSri, claveAcceso, estado, identificador, mensaje, informacionAdicional, tipo, fechaRegistro)
-					VALUES(@xmlSri, @claveAcceso, @estado, @identificador, @mensaje, @informacionAdicional, @tipo, dbo.ufnGetDateEcuador()) 
+					INSERT INTO dbo.DocumentoElectronicoError(xmlSri, claveAcceso, estado, identificador, mensaje, informacionAdicional, tipo, fechaRegistro, idDocumentoElectronico)
+					VALUES(@xmlSri, @claveAcceso, @estado, @identificador, @mensaje, @informacionAdicional, @tipo, dbo.ufnGetDateEcuador(), @id) 
 				END
 		COMMIT TRAN
 	END TRY
