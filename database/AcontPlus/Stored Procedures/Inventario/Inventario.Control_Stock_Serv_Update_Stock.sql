@@ -23,7 +23,7 @@ GO
 IF OBJECT_ID(N'Inventario.Control_Stock_Serv_Update_Stock', N'P') IS NOT NULL
 DROP PROCEDURE Inventario.Control_Stock_Serv_Update_Stock 
 GO
-CREATE PROCEDURE Inventario.Control_Stock_Serv_Update_Stock @idCotrolStock INT,@idArticulo INT, @stock DECIMAL(15,5)
+CREATE PROCEDURE Inventario.Control_Stock_Serv_Update_Stock @idControlStock INT,@idArticulo INT, @stock DECIMAL(15,5)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -33,7 +33,7 @@ BEGIN
 		BEGIN TRAN 
 			UPDATE dbo.Articulo SET stock = @stock WHERE idArticulo = @idArticulo
 
-			DELETE FROM Inventario.ControlStock WHERE idControlStock = @idCotrolStock
+			DELETE FROM Inventario.ControlStock WHERE idControlStock = @idControlStock
 
 		COMMIT TRAN 
 	END TRY 
