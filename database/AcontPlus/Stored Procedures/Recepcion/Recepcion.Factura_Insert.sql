@@ -129,7 +129,7 @@ BEGIN
 				,subTotalIvaCero,subTotalNetoIvaCero,subTotalNoObjetoIva,subTotalNetoNoObjetoIva
 				,subTotalExentoIva,subTotalNetoExentoIva,totalDescuento,porcentajeDescuento
 				,totalIce,irbpnr,propina,iva,recargo,transporte,total,observacion,retencion
-				,fechaRegistro,idUsuario,idEntidad,estab)
+				,fechaRegistro,idUsuario,idEntidad,estab, isAutomatic)
 
 			SELECT 1, @idEstadoPago, idSustentoTributario, idProveedor, @codEstab
 			,idCategoriaCompra, idTiempoCredito, secuencial, estab + '-' + ptoEmi, claveAcceso
@@ -137,7 +137,8 @@ BEGIN
 			,@subTotalIvaCero, @subTotalNetoIvaCero, @subTotalNoObjetoIva, @subTotalNetoNoObjetoIva
 			,@subTotalExentoIva, @subTotalNetoExentoIva, totalDescuento, 0.00
 			,@totalIce, @irbpnr, propina, @iva, 0.00, 0.00, importeTotal, observacion, 0.00
-			,GETDATE(), @idUsuario, @idEntidad, estab FROM @tmp
+			,GETDATE(), @idUsuario, @idEntidad, estab, 1
+			FROM @tmp
 			
 			SET @idFacturaCompra = @@IDENTITY
 
