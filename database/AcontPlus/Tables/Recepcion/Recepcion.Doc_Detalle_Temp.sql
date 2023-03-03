@@ -20,5 +20,5 @@ idDocumento INT NOT NULL
 ,fechaRegistro DATETIME NOT NULL DEFAULT GETDATE()
 ,idUsuario INT NULL
 ,isCustom BIT NOT NULL DEFAULT 0
-,idDetalle uniqueIdentifier NULL
+,idDetalle INT NULL
 )

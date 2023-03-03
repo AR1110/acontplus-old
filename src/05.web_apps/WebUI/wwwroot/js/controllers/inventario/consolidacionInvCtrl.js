@@ -15,7 +15,8 @@ function consolidacionInvCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nomb
         $scope.accion = accion[0];
     }
 
-    $scope.btnEditDisabled = true;
+    
+    $scope.btnEditDisabled = false;
 
     const TIPO_DOC = _commonSvc.tipoDoc['CIV'];
 

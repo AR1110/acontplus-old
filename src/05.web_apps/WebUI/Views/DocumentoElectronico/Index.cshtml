@@ -93,6 +93,7 @@
                                 @* <th md-column>Nro</th> *@
                                 <th md-column>Op.</th>
                                 <th md-column>Comprobante</th>
+                                <th md-column>F. Emisión</th>
                                 <th md-column>serie</th>
                                 <th md-column>Ruc Receptor</th>
                                 <th md-column>Razón Social Receptor</th>
@@ -120,6 +121,13 @@
                                                     ng-click="edit(item)" uib-tooltip="Editar el Documento"
                                                     tooltip-placement="top">
                                                     <span md-menu-align-target><i class="ti-eye"></i> Editar</span>
+                                                </md-button>
+                                            </md-menu-item>
+                                             <md-menu-item ng-if="item.codEstado == 4">
+                                                <md-button
+                                                    ng-click="askToCancel(item)" uib-tooltip="Anular el Documento"
+                                                    tooltip-placement="top">
+                                                    <span md-menu-align-target><i class="ti-close"></i> Anular</span>
                                                 </md-button>
                                             </md-menu-item>
                                             <md-menu-item>
@@ -174,6 +182,7 @@
                                 </td>
                                 @* <td md-cell>{{$index+1}}</td> *@
                                 <td md-cell>{{item.comprobante}}</td>
+                                <td md-cell>{{item.fechaEmision | date:'MM/dd/yyyy'}}</td>
                                 <td md-cell>{{item.serie}}</td>
                                 <td md-cell>{{item.rucReceptor}}</td>
                                 <td md-cell>{{item.razonSocial}}</td>

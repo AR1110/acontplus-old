@@ -335,6 +335,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
             
              //Tarifa Aplicada al Documento
             this.data.tarifa = this.actividadTipoIva.tarifa;
+            
 
             const data = {
                 factura: this.data,

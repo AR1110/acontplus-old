@@ -14,7 +14,7 @@ IF OBJECT_ID(N'ReporteCompras.RetencionCompra', N'P') IS NOT NULL
 DROP PROCEDURE ReporteCompras.RetencionCompra
 GO
 
---exec ReporteCompras.RetencionCompra '{"id":20, "versionComp": "2.0.0"}'
+-- exec ReporteCompras.RetencionCompra '{"id":20, "versionComp": "2.0.0"}'
 CREATE PROCEDURE ReporteCompras.RetencionCompra	@json NVARCHAR(MAX)
 AS
 BEGIN
@@ -187,6 +187,7 @@ BEGIN
 			SELECT 
 				@idTipoDocumento = td.idTipoDocumento,
 				@imagen          = el.imagen,
+				@mimeType		= el.mimeType,
 				@claveAcceso     = d.claveAcceso,
 				@idEntidad       = e.idEntidad,
 				@subject         = 'Comprobante Electrónico - Acontplus N°: '+ s.estab+'-'+rc.ptoEmi+'-'+dbo.AFTAutoComplete(rc.secuencial),
@@ -195,23 +196,23 @@ BEGIN
 				@telefono        = e.telefono,
 				@razonSocial     = e.razonSocial,
 				@nroDoc          = dbo.AFTGenerarNroDocumento(s.estab + rc.ptoEmi,rc.secuencial),
-				@fecha           = CONVERT(NVARCHAR,FORMAT(rc.fechaEmision, 'dd/MM/yyyy HH:mm')),
+				@fecha           = CONVERT(VARCHAR(106),FORMAT(rc.fechaEmision, 'dd/MM/yyyy'), 106),
 				@nameDoc         = td.descripcion+'-'+dbo.AFTGenerarNroDocumento(s.estab+rc.ptoEmi,rc.secuencial),
 				@cc              = e.email
 			FROM FactElect.RetencionAts         rc WITH (NOLOCK) 
 			INNER JOIN Sri.Establecimiento       s WITH (NOLOCK) ON s.codestab        = rc.codestab
-			INNER JOIN dbo.Proveedor            pr WITH (NOLOCK) ON pr.idProveedor    = rc.idProveedor
-			INNER JOIN dbo.DocumentoElectronico d  WITH (NOLOCK) ON s.codEstab        = d.codEstab    AND 
+			LEFT JOIN dbo.Proveedor            pr WITH (NOLOCK) ON pr.idProveedor    = rc.idProveedor
+			LEFT JOIN dbo.DocumentoElectronico d  WITH (NOLOCK) ON s.codEstab        = d.codEstab    AND 
 			                                                        d.codDoc          = '07'          AND 
 																	rc.idRetencionAts = d.idDocumento AND 
 																	d.versionComp     = '2.0.0'
-			INNER JOIN dbo.Entidad               e WITH(NOLOCK)  ON e.ruc        = d.ruc 
-			INNER JOIN dbo.TipoDocumento        td WITH (NOLOCK) ON td.codigoSri = '07'
-			INNER JOIN Config.Estab_Logo        el WITH (NOLOCK) ON s.codEstab   = el.codEstab
+			LEFT JOIN dbo.Entidad               e WITH(NOLOCK)  ON e.ruc        = d.ruc 
+			LEFT JOIN dbo.TipoDocumento        td WITH (NOLOCK) ON td.codigoSri = '07'
+			LEFT JOIN Config.Estab_Logo        el WITH (NOLOCK) ON s.codEstab   = el.codEstab
 			WHERE idRetencionAts = @id;
 		
-			PRINT CAST(@idRetencionCompra AS VARCHAR(20))
-			PRINT CAST(@idEntidad AS VARCHAR(20))
+			--PRINT CAST(@idRetencionCompra AS VARCHAR(20))
+			--PRINT CAST(@idEntidad AS VARCHAR(20))
 
 			--SELECT FROM EntidadLogo WHERE idEntidad = @idEntidad
 
@@ -220,9 +221,9 @@ BEGIN
 									 rc.idRetencionAts idRetencionCompra
 									,dbo.AFTGenerarNroDocumento(s.estab+rc.ptoEmi,rc.secuencial) nroDocumento
 									,rc.claveAcceso  as nroAutorizacion
-									,CONVERT(NVARCHAR, FORMAT(ISNULL(@fechaAutorizacion,rc.fechaEmision), 'dd/MM/yyyy hh:mm')) as fechaAutorizacion  
+									,CASE WHEN d.codEstado = 4 THEN @fechaAutorizacion ELSE '' END AS fechaAutorizacion -- CONVERT(NVARCHAR, FORMAT(ISNULL(@fechaAutorizacion,rc.fechaEmision), 'dd/MM/yyyy hh:mm')) as fechaAutorizacion  
 									,tipoDocumento = UPPER(td.descripcion)
-									,UPPER(rc.ambiente) as ambiente
+									,CASE WHEN UPPER(rc.ambiente) =1 THEN 'PRUEBAS' ELSE 'PRODUCCIÓN' END as ambiente
 									,CASE WHEN rc.tipoEmision = '1' THEN 'NORMAL' ELSE '' END AS emision
 									,e.razonSocial as razonSocialEntidad
 									,e.nombreComercial as nombreComercialEntidad
@@ -233,7 +234,7 @@ BEGIN
 									,rc.claveAcceso as  claveAcceso 
 									,td.codigoSri as codDoc	
 									,s.contribuyenteEspecial
-									,s.obligadoContabilidad 	
+									,s.obligadoContabilidad obligadoLlevarContabilidad	 
 									,s.dirEstablecimiento  
 									,s.agenteRetencion
 									,s.contribuyenteRimpe
@@ -242,18 +243,18 @@ BEGIN
 									,ISNULL(prov.correo, 'S/N') as correoProveedor
 									,ISNULL(prov.telefono, 'S/N') as telefonoProveedor
 									,ISNULL(prov.direccion, 'S/N') as direccionProveedor								
-									,CONVERT(NVARCHAR, FORMAT(rc.fechaEmision, 'dd/MM/yyyy hh:mm')) as fechaEmision 		
+									,CONVERT(varchar(50), FORMAT(rc.fechaEmision, 'dd/MM/yyyy'), 106) as fechaEmision 		
 									,CAST((SELECT SUM(valorRetenido) FROM dbo.RetencionCompraDetalle WHERE idRetencionCompra = @id) as numeric(15, 2)) as totalValorRetenido
 								FROM FactElect.RetencionAts        rc WITH (NOLOCK)
 								INNER JOIN Sri.Establecimiento      s WITH (NOLOCK) ON s.codEstab              = rc.codEstab
-								INNER JOIN dbo.TipoDocumento       td WITH (NOLOCK) ON td.codigoSri            = '07'
-								INNER JOIN dbo.Proveedor         prov WITH (NOLOCK) ON prov.idProveedor        = rc.idProveedor
-								INNER JOIN dbo.TipoIdentificacion  ti WITH (NOLOCK) ON ti.idTipoIdentificacion = prov.idTipoIdentificacion		
-								INNER JOIN dbo.DocumentoElectronico d WITH (NOLOCK) ON s.codEstab              = d.codEstab
+								inner JOIN dbo.TipoDocumento       td WITH (NOLOCK) ON td.codigoSri            = '07'
+								LEFT JOIN dbo.Proveedor         prov WITH (NOLOCK) ON prov.idProveedor        = rc.idProveedor
+								LEFT JOIN dbo.TipoIdentificacion  ti WITH (NOLOCK) ON ti.idTipoIdentificacion = prov.idTipoIdentificacion		
+								LEFT JOIN dbo.DocumentoElectronico d WITH (NOLOCK) ON s.codEstab              = d.codEstab
 								AND d.codDoc = '07' 
 								AND rc.idRetencionAts = d.idDocumento
 								AND d.versionComp = '2.0.0'
-								INNER JOIN Entidad e WITH(NOLOCK) ON e.ruc = d.ruc 								
+								LEFT JOIN Entidad e WITH(NOLOCK) ON e.ruc = d.ruc 								
  								WHERE rc.idRetencionAts =  @id
 								FOR JSON PATH
 							);
@@ -264,7 +265,7 @@ BEGIN
 									ds.codDocSustento as comprobante
 									,i.descripcion as impuesto
 									,ret.codigoRetencion
-									,rcd.fechaEmisionDocSustento as fechaEmisionComprobante
+									,CONVERT(VARCHAR, FORMAT(rcd.fechaEmisionDocSustento, 'dd/MM/yyyy'), 106) as fechaEmisionComprobante
 									,rcd.numDocSustento nroFactura
 									,CAST(ret.porcentajeRetener as numeric(15, 2)) as porcentajeRetencion
 									,CAST(ret.baseImponible AS numeric(15,2))  as baseImponible 

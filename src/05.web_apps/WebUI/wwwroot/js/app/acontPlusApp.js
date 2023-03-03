@@ -45,6 +45,49 @@ let app = angular.module('acontPlusApp', [
 ]);
 
 
+// Default environment variables
+let __env = {}
+
+// Import variables if present
+if (window) {
+    Object.assign(__env, window.__env)
+}
+
+function disableLogging($logProvider) {
+    $logProvider.debugEnabled(__env.enableDebug)
+}
+
+disableLogging.$inject = ['$logProvider']
+
+app.config(disableLogging)
+
+
+/**************************************************************************
+  * Log bootstrap message
+  *************************************************************************/
+
+function confirmBootstrap($log) {
+    $log.debug('Angular bootstrapped!')
+}
+
+confirmBootstrap.$inject = ['$log']
+
+app.run(confirmBootstrap)
+
+/**************************************************************************
+   * Make environment available in Angular
+   *************************************************************************/
+
+app.constant('__env', __env)
+
+function logEnvironment($log, __env) {
+    $log.debug('Environment variables:')
+    $log.debug(__env)
+}
+
+logEnvironment.$inject = ['$log', '__env']
+
+app.run(logEnvironment)
 
 //Configs
 
@@ -154,7 +197,7 @@ app.factory('authInterceptorService', function ($q, $localStorage, jwtHelper) {
                     clearInterval(timerInterval)
                 }
             }).then((result) => {
-                location.href = '/Login/Index' 
+                location.href = '/Login/Index'
                 if (result.dismiss === Swal.DismissReason.timer) {
                     location.href = '/Login/Index'
                 }
@@ -226,34 +269,34 @@ app.constant('sessionDataEntidad', JSON.parse(localStorage.getItem('userData')))
 
 app.factory('mainService', mainService);
 
-mainService.$inject = ['$http', 'Upload'];
+mainService.$inject = ['$http', 'Upload', '__env'];
 
-function mainService($http, Upload) {
+function mainService($http, Upload, __env) {
     let service = {};
 
-    function getData(method, url, data = null, showLoader = false) {
+    function getData(method, url, data = null, forApi = false) {
         return $http({
             method: method,
-            url: url,
+            url: (forApi) ? __env.apiUrl + url : url,
             data: data
         }).then(response => {
             return response.data
         })
     }
 
-    function getDataFile(url, file, data = null) {
+    function getDataFile(url, file, data = null, forApi = false) {
         return Upload.upload({
-            url: url,
+            url: (forApi) ? __env.apiUrl + url : url,
             data: { file: file, data: data },
         }).then(response => {
             return response.data
         })
     }
 
-    function getFile(method, url, data = null) {
+    function getFile(method, url, data = null, forApi = false) {
         return $http({
             method: method,
-            url: url,
+            url: (forApi) ? __env.apiUrl + url : url,
             data: data,
             responseType: 'blob'
         }).then(response => {

@@ -599,6 +599,7 @@ function documentoRecibidoCtrl(
                             // console.log($scope.infoComprobante);
 
                             $scope.totalTaxes = $scope.fullComprobante.infoFactura.totalImpuestos;
+                            let idDetalle = 0
                             for (const det of $scope.totalTaxes) {
                                 // if (det.codigo == '2' && (det.codigoPorcentaje == '2')) {
 
@@ -606,7 +607,7 @@ function documentoRecibidoCtrl(
                                 if (Number(det.baseImponible) > 0) {
                                     $scope.customDetailTemp.push(
                                         {
-                                            idDetalle: uuid2.newguid(),
+                                            idDetalle: idDetalle,
                                             idDocumento: $scope.selected[0].idDocumento,
                                             idArticulo: 0,
                                             cantidad: 1,
@@ -625,6 +626,7 @@ function documentoRecibidoCtrl(
                                         }
                                     )
                                 }
+                                idDetalle++
                             }
                             console.log($scope.totalTaxes)
                             console.log($scope.customDetailTemp)

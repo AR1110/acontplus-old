@@ -104,6 +104,32 @@ namespace ApiFactElect.Controllers.RetencionAts
             }
 
         }
+        [HttpPut("Cancel/{id}")]
+        public async Task<IActionResult> Cancel(int id)
+        {
+            LogWriter _logs = new LogWriter(_configuration);
+            try
+            {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+
+                DAO _dao = new DAO(_configuration);
+                Dictionary<string, object> parameters = new Dictionary<string, object>
+            {
+                { "id", id },
+                { "idUsuarioRol", idUsuarioRol }
+            };
+                return Ok(await _dao.Default("FactElect.RetencionAts_Cancel", parameters));
+            }
+            catch (Exception ex)
+            {
+                _logs.LogError("Error al anular la retención: " + ex.ToString());
+                return new BadRequestObjectResult(new
+                {
+                    code = 0,
+                    message = "Error al anular la retención"
+                });
+            }
+        }
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

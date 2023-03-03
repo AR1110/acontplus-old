@@ -20,31 +20,9 @@ BEGIN
 	SET NOCOUNT ON;
 	DECLARE @idUsuario INT
 
-	--DECLARE @tblDocs AS TABLE(
-	--	uniqueIdDoc UNIQUEIDENTIFIER NOT NULL
-	--	,codSustento VARCHAR(2) NULL
-	--	,codDocSustento VARCHAR(2) NULL
-	--	,numDocSustento VARCHAR(15) NULL
-	--	,fechaEmisionDocSustento DATE NOT NULL
-	--	,fechaRegistroContable DATE NULL
-	--	,numAutDocSustento VARCHAR(49) NULL
-	--	,pagoLocExt VARCHAR(2) NULL
-	--	,tipoRegi VARCHAR(2) NULL
-	--	,paisEfecPago VARCHAR(3) NULL
-	--	,aplicConvDobTrib VARCHAR(2) NULL
-	--	,pagExtSujRetNorLeg VARCHAR(2) NULL
-	--	,pagoRegFis VARCHAR(2) NULL
-	--	,totalComprobantesReembolso NUMERIC(18,5) NULL
-	--	,totalBaseImponibleReembolso NUMERIC(18,5) NULL
-	--	,totalImpuestoReembolso NUMERIC(18,5) NULL
-	--	,totalSinImpuestos NUMERIC(18,5) NOT NULL
-	--	,importeTotal NUMERIC(18,5) NOT NULL
-	--)
 	SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
 	BEGIN TRY
 		BEGIN TRAN 
-
-			--INSERT INTO @tblDocs(uniqueIdDoc, codSustento, codDocSustento, numDocSustento, fechaEmisionDocSustento, fechaRegistroContable, numAutDocSustento, pagoLocExt, tipoRegi, paisEfecPago, aplicConvDobTrib, pagExtSujRetNorLeg, pagoRegFis, totalComprobantesReembolso, totalBaseImponibleReembolso, totalImpuestoReembolso, totalSinImpuestos, importeTotal)
 			
 			INSERT INTO FactElect.RetAtsDocSustento(idRetencionAts, uniqueIdDoc, codSustento, codDocSustento
 			, numDocSustento, fechaEmisionDocSustento, fechaRegistroContable
@@ -59,8 +37,8 @@ BEGIN
 								,codSustento VARCHAR(2) '$.codSustento'
 								,codDocSustento VARCHAR(2) '$.codDocSustento'
 								,numDocSustento VARCHAR(15) '$.numDocSustento'
-								,fechaEmisionDocSustento DATE '$.fechaEmisionDocSustento'
-								,fechaRegistroContable DATE '$.fechaRegistroContable'
+								,fechaEmisionDocSustento DATETIME '$.fechaEmisionDocSustento'
+								,fechaRegistroContable DATETIME '$.fechaRegistroContable'
 								,numAutDocSustento VARCHAR(49) '$.numAutDocSustento'
 								,pagoLocExt VARCHAR(2) '$.pagoLocExt'
 								,tipoRegi VARCHAR(2) '$.tipoRegi'

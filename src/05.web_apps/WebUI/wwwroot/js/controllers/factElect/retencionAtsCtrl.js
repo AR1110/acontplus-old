@@ -3,11 +3,20 @@
 
     app.controller('retencionAtsCtrl', retencionAtsCtrl);
 
-    retencionAtsCtrl.$inject = ['$scope', 'mainService', 'toastService', '$element', '$cookies', 'uuid2', '$window', 'FileSaver', 'Blob'];
+    retencionAtsCtrl.$inject = ['$scope',
+                                'mainService',
+                                'commonService',
+                                'toastService',
+                                '$element',
+                                '$cookies',
+                                'uuid2',
+                                '$window',
+                                'FileSaver',
+                                'Blob'
+                            ]
 
-    function retencionAtsCtrl($scope, mS, tS, $element, $cookies, uuid2, $window, FileSaver, Blob) {
+    function retencionAtsCtrl($scope, mS, _commonSvc, tS, $element, $cookies, uuid2, $window, FileSaver, Blob) {
         /**Initial Load */
-
         $scope.genericAnswer = [{ codigo: 'SI' }, { codigo: 'NO' }]
 
         $scope.infoCompRet = {}
@@ -60,9 +69,15 @@
             const formatDateMoment = moment.tz(fecha, "America/Guayaquil")
             return formatDateMoment.format("YYYY-MM-DD");
         }
+        const getUTCDate = (date) => {
+            const d = new Date(date);
+            const utcDate = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+            return utcDate;
+        }
 
         function formatDate(fecha) {
-            let _getFecha = new Date(fecha);
+            let _getFecha = new Date(fecha)
+            //let _getFecha = getUTCDate(fecha)
             _getFecha.setMinutes(_getFecha.getMinutes() + _getFecha.getTimezoneOffset());
             return _getFecha;
         }
@@ -137,10 +152,9 @@
                         $scope.initialLoad()
                         setTimeout(() => {
                             $scope.infoCompRet = tempArray[0][0]
+                            $scope.infoCompRet.fechaEmision = formatDate(tempArray[0][0].fechaEmision)
                             $scope.infoCompRet.codEstab_Asig = $scope.establecimientos.find(item => (item.codEstab == $scope.infoCompRet.codEstab)).codEstab_Asig
                             $scope.onChangeEstablecimiento()
-                            //console.log(tempArray[0])
-                            $scope.infoCompRet.fechaEmision = formatDate(tempArray[0].fechaEmision)
                             $scope.subContribuyente = tempArray[0].subContribuyente
 
                             $scope.tempTaxes = tempArray[2]
@@ -353,8 +367,8 @@
                             let temp = JSON.parse(response.payload)
                             if (temp) {
                                 $scope.docData = JSON.parse(temp[0].doc)[0]
-                                $scope.tempTaxes = JSON.parse(temp[0].taxes)
-                                $scope.paymentsTemp = JSON.parse(temp[0].payments)
+                                $scope.tempTaxes = JSON.parse(temp[0].taxes) || []
+                                $scope.paymentsTemp = JSON.parse(temp[0].payments) || []
                                 console.log($scope.docData)
 
                                 console.log($scope.tempTaxes)
@@ -384,10 +398,16 @@
             }
         }
 
-        $scope.docPreview = (item) => {
+        $scope.docPreview = (item, dataDoc) => {
             try {
+                console.log(item)
+                console.log(dataDoc)
                 if (!item) {
-                    tS.toastr('warning', 'Este documento no ha sido registrado desde el modulo de recepcion de documentos')
+                    _commonSvc.viewDetailDocument({
+                        id: dataDoc.id,
+                        codigoDocumento: 'FC'
+                    })
+                    // tS.toastr('warning', 'Este documento no ha sido registrado desde el modulo de recepcion de documentos')
                     return
                 }
                 mS.getData('get', _urlService + 'DocumentoRecibido/Preview/' + item).then(
@@ -617,7 +637,16 @@
                 //console.log($scope.docsAdded)
                 $scope.docSustento = {}
 
-
+                if ($scope.taxesAdded.length > 0) {
+                    angular.forEach($scope.docsAdded, (value, key) => {
+                        for (const taxxx of $scope.taxesAdded) {
+                            if (taxxx.uniqueIdDoc == guid) {
+                                value.totalSinImpuestos += Number(taxxx.baseImponible)
+                                value.importeTotal += (Number(taxxx.baseImponible) + Number(taxxx.valorImpuesto))
+                            }
+                        }
+                    })
+                }
                 if (toBd && idDocumentoElectronico > 0) {
                     setTimeout(() => {
                         $window.location.reload()
@@ -717,13 +746,7 @@
                     tarifa: $scope.tax.tarifa,
                     valorImpuesto: $scope.tax.valorImpuesto
                 })
-                angular.forEach($scope.docsAdded, (value, key) => {
-                    if (value.uniqueIdDoc == uniqueIdDoc) {
-                        value.totalSinImpuestos = Number($scope.tax.baseImponible)
-                        value.importeTotal = (Number($scope.tax.baseImponible) + Number($scope.tax.valorImpuesto))
-                    }
-                    $scope.payment.total = (Number($scope.tax.baseImponible) + Number($scope.tax.valorImpuesto))
-                })
+
 
                 $scope.tax = {}
                 //console.log($scope.docsAdded)
@@ -1605,6 +1628,12 @@
                 console.log(error)
             }
         }
+        $scope.cancel = () => {
+            $window.location.reload();
+        }
+        $scope.back = () => {
+            location.href = '/DocumentoElectronico/Index'
+        }
         /************************************************ */
         /** */
 
@@ -1646,5 +1675,7 @@
                 console.log(error);
             }
         }
+
+
     }
 })(window.angular);

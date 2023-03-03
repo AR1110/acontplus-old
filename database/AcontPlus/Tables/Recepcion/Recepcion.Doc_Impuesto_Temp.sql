@@ -11,5 +11,5 @@ CREATE TABLE Recepcion.Doc_Impuesto_Temp (
 	,tarifa VARCHAR(50)
 	,baseImponible VARCHAR(50)
 	,valor VARCHAR(50)
-	,idDetalle uniqueIdentifier 
+	,idDetalle INT 
 )

@@ -45,8 +45,8 @@ BEGIN
 		,codSustento VARCHAR(2) NULL
 		,codDocSustento VARCHAR(2) NULL
 		,numDocSustento VARCHAR(15) NULL
-		,fechaEmisionDocSustento DATE NOT NULL
-		,fechaRegistroContable DATE NULL
+		,fechaEmisionDocSustento DATETIME NOT NULL
+		,fechaRegistroContable DATETIME NULL
 		,numAutDocSustento VARCHAR(49) NULL
 		,pagoLocExt VARCHAR(2) NULL
 		,tipoRegi VARCHAR(2) NULL
@@ -123,8 +123,8 @@ BEGIN
 				,codSustento VARCHAR(2) '$.codSustento'
 				,codDocSustento VARCHAR(2) '$.codDocSustento'
 				,numDocSustento VARCHAR(15) '$.numDocSustento'
-				,fechaEmisionDocSustento DATE '$.fechaEmisionDocSustento'
-				,fechaRegistroContable DATE '$.fechaRegistroContable'
+				,fechaEmisionDocSustento DATETIME '$.fechaEmisionDocSustento'
+				,fechaRegistroContable DATETIME '$.fechaRegistroContable'
 				,numAutDocSustento VARCHAR(49) '$.numAutDocSustento'
 				,pagoLocExt VARCHAR(2) '$.pagoLocExt'
 				,tipoRegi VARCHAR(2) '$.tipoRegi'
@@ -212,7 +212,7 @@ BEGIN
 			SELECT TOP 1  @idPuntoEmision = idPuntoEmision, @ambiente = ambiente FROM PuntoEmision p INNER JOIN @tblInfoCompRet t ON p.codEstab = t.codEstab
 
 
-			SET @idProveedor = (SELECT idProveedor FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND numeroIdentificacion = (SELECT identificacionSujetoRetenido FROM @tblInfoCompRet))
+			SET @idProveedor = ISNULL((SELECT idProveedor FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND LTRIM(RTRIM(numeroIdentificacion)) = (SELECT LTRIM(RTRIM(identificacionSujetoRetenido))  FROM @tblInfoCompRet)),0)
 		
 			IF (@idProveedor IS NULL OR @idProveedor = 0)
 				BEGIN

@@ -157,6 +157,22 @@
       }
     },
     {
+      "UpstreamPathTemplate": "/api/RetencionAts/cancel/{id}",
+      "UpstreamHttpMethod": [ "Put" ],
+      "DownstreamPathTemplate": "/api/RetencionAts/cancel/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 54948
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    {
       "UpstreamPathTemplate": "/api/RetencionAts",
       "UpstreamHttpMethod": [ "Post" ],
       "DownstreamPathTemplate": "/api/RetencionAts",

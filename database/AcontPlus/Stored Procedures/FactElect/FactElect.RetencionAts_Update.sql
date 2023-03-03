@@ -46,9 +46,30 @@ BEGIN
 		,identificacionSujetoRetenido VARCHAR(13) NULL
 		,periodoFiscal VARCHAR(8) NULL
 	) 
-	BEGIN TRY
-		BEGIN TRAN
-						SELECT @idEntidad = idEntidad 
+
+	IF NOT EXISTS(SELECT 1 FROM FactElect.RetAtsDocSustento WHERE idRetencionAts = @id)
+		BEGIN
+			SELECT '0' code, 'Ingrese al menos un documento de sustento' as 'message'
+			RETURN
+		END
+	
+		IF NOT EXISTS(SELECT 1 FROM FactElect.RetAtsImpDocSustento WHERE idRetencionAts = @id)
+		BEGIN
+					SELECT '0' code, 'Debe agregar al menos un impuesto a los documentos de sustento' as 'message'
+			RETURN
+		END
+			IF NOT EXISTS(SELECT 1 FROM FactElect.RetencionAtsRet WHERE idRetencionAts = @id)
+		BEGIN
+					SELECT '0' code, 'Debe agregar al menos una retencion al documento de sustento' as 'message'
+			RETURN
+		END
+		--IF NOT EXISTS(SELECT 1 FROM FactElect.RetAtsDocSustento WHERE idRetencionAts = @id)
+		--BEGIN
+		--	SELECT '0' code, 'Ingrese al menos un documento de sustento' as 'message'
+		--	RETURN
+		--END
+
+		SELECT @idEntidad = idEntidad 
  			,@idUsuario = idUsuario
 			FROM App.UsuarioRol WHERE idUsuarioRol = @idRol
  
@@ -71,100 +92,41 @@ BEGIN
 					,periodoFiscal VARCHAR(8) '$.periodoFiscal'
 			)
 
-			--INSERT INTO @tblDocs(uniqueIdDoc, codSustento, codDocSustento, numDocSustento, fechaEmisionDocSustento, fechaRegistroContable, numAutDocSustento, pagoLocExt, tipoRegi, paisEfecPago, aplicConvDobTrib, pagExtSujRetNorLeg, pagoRegFis, totalComprobantesReembolso, totalBaseImponibleReembolso, totalImpuestoReembolso, totalSinImpuestos, importeTotal)
-			--SELECT uniqueIdDoc, codSustento, codDocSustento, numDocSustento, fechaEmisionDocSustento, fechaRegistroContable, numAutDocSustento, pagoLocExt, tipoRegi, paisEfecPago, aplicConvDobTrib, pagExtSujRetNorLeg, pagoRegFis, totalComprobantesReembolso, totalBaseImponibleReembolso, totalImpuestoReembolso, totalSinImpuestos, importeTotal
-			--FROM OPENJSON(@docsSust) WITH(
-			--		uniqueIdDoc UNIQUEIDENTIFIER '$.uniqueIdDoc'
-			--	,codSustento VARCHAR(2) '$.codSustento'
-			--	,codDocSustento VARCHAR(2) '$.codDocSustento'
-			--	,numDocSustento VARCHAR(15) '$.numDocSustento'
-			--	,fechaEmisionDocSustento DATETIME '$.fechaEmisionDocSustento'
-			--	,fechaRegistroContable DATETIME '$.fechaRegistroContable'
-			--	,numAutDocSustento VARCHAR(49) '$.numAutDocSustento'
-			--	,pagoLocExt VARCHAR(2) '$.pagoLocExt'
-			--	,tipoRegi VARCHAR(2) '$.tipoRegi'
-			--	,paisEfecPago VARCHAR(3) '$.paisEfecPago'
-			--	,aplicConvDobTrib VARCHAR(2) '$.aplicConvDobTrib'
-			--	,pagExtSujRetNorLeg VARCHAR(2) '$.pagExtSujRetNorLeg'
-			--	,pagoRegFis VARCHAR(2) '$.pagoRegFis'
-			--	,totalComprobantesReembolso NUMERIC(18,5) '$.totalComprobantesReembolso'
-			--	,totalBaseImponibleReembolso NUMERIC(18,5) '$.totalBaseImponibleReembolso'
-			--	,totalImpuestoReembolso NUMERIC(18,5) '$.totalImpuestoReembolso'
-			--	,totalSinImpuestos NUMERIC(18,5) '$.totalSinImpuestos'
-			--	,importeTotal NUMERIC(18,5) '$.importeTotal'
-			--)
-
-			--INSERT INTO @tblTaxes(uniqueIdDoc, codImpuestoDocSustento, codigoPorcentaje, baseImponible, tarifa, valorImpuesto)
-			--SELECT uniqueIdDoc, codImpuestoDocSustento, codigoPorcentaje, baseImponible, tarifa, valorImpuesto
-			--FROM OPENJSON(@impuestos)
-			--WITH(
-			--	uniqueIdDoc UNIQUEIDENTIFIER '$.uniqueIdDoc',
-			--	codImpuestoDocSustento TINYINT '$.codImpuestoDocSustento',
-			--	codigoPorcentaje VARCHAR(4) '$.codigoPorcentaje',
-			--	baseImponible  NUMERIC(18,5) '$.baseImponible',
-			--	tarifa NUMERIC(18,5) '$.tarifa',
-			--	valorImpuesto  NUMERIC(18,5) '$.valorImpuesto' 
-			--)
-
-			--INSERT INTO @tblRetenciones(uniqueIdDoc, codigo, codigoRetencion, baseImponible, porcentajeRetener, valorRetenido, fechaPagoDiv, imRentaSoc, ejerFisUtDiv, numCajBan, precCajBan)
-			--SELECT uniqueIdDoc, codigo, codigoRetencion, baseImponible, porcentajeRetener, valorRetenido, fechaPagoDiv, imRentaSoc, ejerFisUtDiv, numCajBan, precCajBan
-			--FROM OPENJSON(@retenciones) 
-			--WITH(
-			--	uniqueIdDoc UNIQUEIDENTIFIER '$.uniqueIdDoc'
-			--	,codigo TINYINT '$.codigo'
-			--	,codigoRetencion VARCHAR(5) '$.codigoRetencion'
-			--	,baseImponible NUMERIC(18,5) '$.baseImponible'
-			--	,porcentajeRetener NUMERIC(18,5) '$.porcentajeRetener'
-			--	,valorRetenido NUMERIC(18,5) '$.valorRetenido'
-			--	,fechaPagoDiv DATE '$.fechaPagoDiv'
-			--	,imRentaSoc NUMERIC(18,5) '$.imRentaSoc'
-			--	,ejerFisUtDiv INT '$.ejerFisUtDiv'
-			--	,numCajBan INT '$.numCajBan'
-			--	,precCajBan NUMERIC(18,5) '$.precCajBan'
-			--)
-
-			--INSERT INTO @tblPayments(uniqueIdDoc, formaPago, total) 
-			--SELECT uniqueIdDoc, formaPago, total
-			--FROM OPENJSON(@payments)
-			--WITH(
-			--	uniqueIdDoc UNIQUEIDENTIFIER '$.uniqueIdDoc'
-			--	,formaPago VARCHAR(2) '$.formaPago'
-			--	,total NUMERIC(18,5) '$.total'
-			--)
-
-
-			--INSERT INTO @tblAddInfo(nombre, valor)
-			--SELECT nombre, valor
-			--FROM OPENJSON(@infoAdicional)
-			--WITH(
-			--	nombre VARCHAR(100) '$.nombre'
-			--	,valor VARCHAR(300) '$.valor'
-			--)
-
+			--select * from @tblInfoCompRet return
 			
-			----SET @ambiente = 1
+			IF EXISTS (SELECT 1 FROM @tblInfoCompRet
+						where tipoIdentificacionSujetoRetenido = '04' AND LEN(LTRIM(RTRIM(identificacionSujetoRetenido))) != 13)
+				BEGIN
+					SELECT '0' code, 'Revise el numero de identificación del proveedor' as 'message'
+					RETURN
+				END
+
+			IF EXISTS (SELECT 1 FROM @tblInfoCompRet
+						where tipoIdentificacionSujetoRetenido = '05' AND LEN(LTRIM(RTRIM(identificacionSujetoRetenido))) != 10)
+				BEGIN
+					SELECT '0' code, 'Revise el numero de identificación del proveedor' as 'message'
+					RETURN
+				END
+
 			SET @tipoEmision = 1
-
-
 			
 			SET @ruc = (SELECT RUC FROM Entidad WHERE idEntidad = @idEntidad)
 
-			SELECT TOP 1  @idPuntoEmision = idPuntoEmision, @ambiente = ambiente FROM PuntoEmision p INNER JOIN @tblInfoCompRet t ON p.codEstab = t.codEstab AND p.ptoEmi = t.ptoEmi
-	 
-			--SET @idProveedor = (SELECT idProveedor FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND numeroIdentificacion = (SELECT identificacionSujetoRetenido FROM @tblInfoCompRet))
-		
-			--IF (@idProveedor IS NULL OR @idProveedor = 0)
-			--	BEGIN
-			--		SELECT '0' code, 'No se encontro proveedor' as 'message'
-			--		RETURN
-			--	END
- 
-			----SELECT TOP 1 @secuencial = ultimaSecuencia
-			----FROM ConfiguracionDocumento cd
-			----INNER JOIN dbo.TipoDocumento td ON cd.idTipoDocumento = td.idTipoDocumento
-			----WHERE cd.idPuntoEmision = 2 
-			----AND td.codigoSri = '07'
+			SELECT TOP 1  @idPuntoEmision = idPuntoEmision, @ambiente = ambiente FROM PuntoEmision p 
+			INNER JOIN @tblInfoCompRet t ON p.codEstab = t.codEstab AND p.ptoEmi = t.ptoEmi
 			
+			--SELECT TOP 1 idPuntoEmision, ambiente FROM PuntoEmision p 
+			--INNER JOIN @tblInfoCompRet t ON p.codEstab = t.codEstab AND p.ptoEmi = t.ptoEmi
+			--return
+
+			SET @idProveedor = ISNULL((SELECT idProveedor FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND LTRIM(RTRIM(numeroIdentificacion)) = (SELECT LTRIM(RTRIM(identificacionSujetoRetenido))  FROM @tblInfoCompRet)),0)
+		
+			IF (@idProveedor IS NULL OR @idProveedor = 0)
+				BEGIN
+					SELECT '0' code, 'No se encontro proveedor' as 'message'
+					RETURN
+				END
+
 			SELECT @fechaEmision = fechaEmision FROM @tblInfoCompRet
 			
  
@@ -179,19 +141,21 @@ BEGIN
 			,estab+ptoEmi                                                     
 			,Helper.F_Auto_Sequential(@secuencial)) 
 			 FROM @tblInfoCompRet
+			print @ruc
 
-			 --print @claveaccesso
+						print @ambiente
+												print @ambiente
 
-			-- --SELECT '0' as code, (select *,  from @tblInfoCompRet for json path) as 'message'
-			-- --return
-			----RETENCION ATS
+			IF @claveAcceso IS NULL
+				BEGIN
+					SELECT '0' as code, 'Error al generar clave acceso ' as 'message' 
+					RETURN
+				END
+
+
+	BEGIN TRY
+		BEGIN TRAN
 			
-			--IF @claveAcceso IS NULL
-			--	BEGIN
-			--		SELECT '0' as code, 'Error al generar clave acceso ' as 'message' 
-			--		RETURN
-			--	END
-
  
 			UPDATE ret SET  ret.codEstab = t.codEstab
 			,ret.claveAcceso = @claveAcceso 
@@ -216,67 +180,6 @@ BEGIN
 			,razonSocialSujetoRetenido,identificacionSujetoRetenido,periodoFiscal
 			FROM @tblInfoCompRet) AS t on ret.idRetencionAts = t.idRetencionAts
 			WHERE ret.idRetencionAts = @id
-
-
-			----Documentos de Sustento
-
-			--UPDATE FactElect.RetAtsDocSustento(idRetencionAts, uniqueIdDoc, codSustento, codDocSustento
-			--, numDocSustento, fechaEmisionDocSustento, fechaRegistroContable
-			--, numAutDocSustento, pagoLocExt, tipoRegi, paisEfecPago, aplicConvDobTrib, pagExtSujRetNorLeg, pagoRegFis
-			--, totalComprobantesReembolso, totalBaseImponibleReembolso, totalImpuestoReembolso, totalSinImpuestos, importeTotal)
-			--SELECT @idRetencionAts, uniqueIdDoc, codSustento, codDocSustento
-			--, numDocSustento, fechaEmisionDocSustento, fechaRegistroContable
-			--,numAutDocSustento, pagoLocExt, tipoRegi, paisEfecPago, aplicConvDobTrib, pagExtSujRetNorLeg, pagoRegFis
-			--,totalComprobantesReembolso, totalBaseImponibleReembolso, totalImpuestoReembolso, totalSinImpuestos, importeTotal
-			--FROM @tblDocs
-
-			----IMPUESTOS
-
-			--UPDATE FactElect.RetAtsImpDocSustento(idRetencionAts, uniqueIdDoc, codImpuestoDocSustento
-			--, codigoPorcentaje, baseImponible, tarifa, valorImpuesto)
-			--SELECT @idRetencionAts, uniqueIdDoc, codImpuestoDocSustento
-			--,codigoPorcentaje, baseImponible, tarifa, valorImpuesto
-			--FROM @tblTaxes
-
-			--UPDATE tax SET tax.idRetAtsDocSustento = ds.idRetAtsDocSustento
-			--FROM FactElect.RetAtsImpDocSustento tax WITH(NOLOCK)
-			--JOIN (SELECT idRetencionAts, uniqueIdDoc, idRetAtsDocSustento FROM FactElect.RetAtsDocSustento
-			--	  WHERE idRetencionAts = @idRetencionAts) ds ON ds.uniqueIdDoc = tax.uniqueIdDoc
-
-			----RETENCIONES
-			--UPDATE FactElect.RetencionAtsRet(idRetencionAts, uniqueIdDoc, codigo, codigoRetencion
-			--, baseImponible, porcentajeRetener, valorRetenido, fechaPagoDiv, imRentaSoc, ejerFisUtDiv
-			--, numCajBan, precCajBan)
-			--SELECT @idRetencionAts, uniqueIdDoc, codigo, codigoRetencion
-			--, baseImponible, porcentajeRetener, valorRetenido, fechaPagoDiv, imRentaSoc, ejerFisUtDiv
-			--, numCajBan, precCajBan
-			--FROM @tblRetenciones
-
-			--UPDATE ret SET ret.idRetAtsDocSustento = ds.idRetAtsDocSustento
-			--FROM FactElect.RetencionAtsRet ret WITH(NOLOCK)
-			--JOIN (SELECT idRetencionAts, uniqueIdDoc, idRetAtsDocSustento FROM FactElect.RetAtsDocSustento 
-			--WHERE idRetencionAts = @idRetencionAts) ds ON ds.uniqueIdDoc = ret.uniqueIdDoc
-
-			----REEMBOLSOS
-
-			----PAGOS
-
-			--UPDATE FactElect.RetencionAtsPago (idRetencionAts, uniqueIdDoc, formapago, total)
-			--SELECT @idRetencionAts, uniqueIdDoc, formapago, total
-			--FROM @tblPayments
-
-			--UPDATE p SET p.idRetAtsDocSustento = ds.idRetAtsDocSustento
-			--FROM FactElect.RetencionAtsPago p WITH(NOLOCK)
-			--JOIN (SELECT idRetencionAts, uniqueIdDoc, idRetAtsDocSustento FROM FactElect.RetAtsDocSustento
-			--WHERE idRetencionAts = @idRetencionAts) ds ON ds.uniqueIdDoc = p.uniqueIdDoc
-
-			--INFORMACION ADICIONAL
-			
-			--IF EXISTS (SELECT 1 FROM @tblAddInfo)
-			--	BEGIN
-			--		INSERT INTO FactElect.RetAtsInfoAdicional(idRetencionAts, nombre, valor)	
-			--		SELECT @idRetencionAts, nombre, valor FROM @tblAddInfo
-			--	END
 
 			--DocumentoElectronico
 			DECLARE @isAutomatic INT
@@ -317,4 +220,4 @@ BEGIN
 		VALUES (NEWID(), '/PUT', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
 	END CATCH
 END
-GO
+go

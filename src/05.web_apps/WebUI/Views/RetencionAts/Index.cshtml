@@ -28,6 +28,12 @@
             <button class="btn btn-success btn-lg" ng-click="save()">
                 <i class="ti-save"></i> Guardar
             </button>
+            <button class="btn btn-warning btn-lg" ng-click="cancel()">
+                <i class="fa fa-close"></i> Cancelar
+            </button>
+            <button class="btn btn-danger btn-lg" ng-click="back()">
+                <i class="fa fa-backward"></i> Regresar
+            </button>
         </div>
     </md-card>
     <!--MODALS -->
@@ -100,7 +106,7 @@
                                             <td>{{item.secuencial}}</td>
                                             <td>{{item.fechaEmision | date: 'dd/MM/yyyy'}}</td>
                                             <td>
-                                                <button type="button" class="btn btn-info btn-sm" ng-click="docPreview(item.idDocumento)" title="Ver Documento de Sustento"><i class="fa fa-eye"></i></button>
+                                                <button type="button" class="btn btn-info btn-sm" ng-click="docPreview(item.idDocumento, item)" title="Ver Documento de Sustento"><i class="fa fa-eye"></i></button>
                                                 <button type="button" class="btn btn-success btn-sm" ng-click="selectDoc(item)" title="Seleccionar Documento de Sustento"><i class="fas fa-hand-point-right"></i></button>
                                                 @*<button type="submit" id="btnSubmit" class="btn btn-danger btn-sm" ng-click="exportPdf(item.idDocumento)"><i class="fa fa-file-pdf"></i> Descargar</button>*@
                                             </td>
