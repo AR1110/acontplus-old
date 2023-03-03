@@ -23,7 +23,7 @@ GO
 IF OBJECT_ID(N'FactElect.Document_Recib_Serv_Update', N'P') IS NOT NULL
 DROP PROCEDURE FactElect.Document_Recib_Serv_Update 
 GO
-CREATE PROCEDURE FactElect.Document_Recib_Serv_Update @idDocumento INT,@complete BIT
+CREATE PROCEDURE FactElect.Document_Recib_Serv_Update @idDocumento INT
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -31,7 +31,7 @@ BEGIN
 	SET NOCOUNT ON;
 	BEGIN TRY 
 		BEGIN TRAN 
-			UPDATE Recepcion.DocumentoRecibido SET complete = @complete WHERE idDocumento = @idDocumento
+			UPDATE Recepcion.DocumentoRecibido SET complete = 1 WHERE idDocumento = @idDocumento
 		COMMIT TRAN 
 	END TRY 
 	

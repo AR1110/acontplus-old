@@ -51,12 +51,10 @@ namespace WS_DocRelacionado
             int idDocumento = Convert.ToInt32(dr["idDocumento"]);
             string codDoc = Convert.ToString(dr["codDoc"]) ?? "";
             string versionComp = Convert.ToString(dr["versionComp"]) ?? "";
-            DataTable dt = await _docService.GetDataXml(idDocumento, codDoc, versionComp);
-            if (dt.Rows.Count > 0)
+            bool result = await _docService.Insert(idDocumento, codDoc, versionComp);
+            if (result)
             {
-                string jsonResult = JsonConvert.SerializeObject(dt);
-                await _docService.Insert(idDocumento, codDoc, jsonResult);
-                await _docService.Update(idDocumento, true);
+                await _docService.Update(idDocumento);
             }
             else
             {
