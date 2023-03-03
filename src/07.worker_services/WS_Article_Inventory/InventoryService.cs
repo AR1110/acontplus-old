@@ -30,11 +30,11 @@ namespace WS_Article_Inventory
             return _dbAccess.GetDataTable();
         }
 
-        public async Task<bool> Update(int idCotrolStock, int idArticulo , decimal stock)
+        public async Task<bool> Update(int idControlStock, int idArticulo , decimal stock)
         {
             DbAccess _dbAccess = new DbAccess(_config);
             await _dbAccess.SPExecute("Inventario.Control_Stock_Serv_Update_Stock");
-            _dbAccess.AddDynamicParam("idCotrolStock", idCotrolStock);
+            _dbAccess.AddDynamicParam("idControlStock", idControlStock);
             _dbAccess.AddDynamicParam("idArticulo", idArticulo);
             _dbAccess.AddDynamicParam("stock", stock);
             _dbAccess.OnlyExecute();
