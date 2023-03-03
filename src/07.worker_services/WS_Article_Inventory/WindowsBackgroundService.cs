@@ -50,7 +50,7 @@ namespace WS_Article_Inventory
         {
             LogWriter _log = new LogWriter(_configuration);
             int idArticulo = (Convert.ToInt32(dr["idArticulo"]));
-            int idControlStock = (Convert.ToInt32(dr["idContolStock"]));
+            int idControlStock = (Convert.ToInt32(dr["idControlStock"]));
             DataTable dt = await _inventService.GetDocument(idArticulo);
             if (dt.Rows.Count > 0)
             {
