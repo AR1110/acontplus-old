@@ -1,6 +1,4 @@
 using Common.Logs;
-using Domain.Models.Almacen;
-using Newtonsoft.Json;
 using System.Data;
 
 namespace WS_Article_Inventory
@@ -39,7 +37,7 @@ namespace WS_Article_Inventory
 
             catch (Exception ex)
             {
-                _logger.LogError(ex, "{Message}", ex.Message);
+                _logger.LogError(ex, "{Message}", ex.ToString());
                 _log.LogError("Error actualizando el Stock: " + ex.ToString());
                 Environment.Exit(1);
             }
@@ -52,7 +50,7 @@ namespace WS_Article_Inventory
             int idArticulo = (Convert.ToInt32(dr["idArticulo"]));
             int idControlStock = (Convert.ToInt32(dr["idControlStock"]));
             DataTable dt = await _inventService.GetDocument(idArticulo);
-            if (dt.Rows.Count > 0)
+            if (!dt.Columns.Contains("code") && dt.Rows.Count > 0)
             {
                 DataRow lastRow = dt.Rows[dt.Rows.Count - 1];
                 decimal stock = Convert.ToDecimal(lastRow["saldo"]);

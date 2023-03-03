@@ -1039,7 +1039,7 @@ function documentoRecibidoCtrl(
                 codigoAuxiliar: $scope.articleSelected.codigoAuxiliar,
                 descripcion: $scope.articleSelected.descripcion
             }
-            mS.getData('get', _urlService + 'Articulo/' + JSON.stringify(jsonData)).then(
+            mS.getData('get', _urlService + 'Articulo?json=' + JSON.stringify(jsonData)).then(
                 response => {
                     if (response.code == '1') {
                         $scope.articlesTemp = JSON.parse(response.payload)
@@ -1083,7 +1083,7 @@ function documentoRecibidoCtrl(
                 descripcion: $scope.articleMergeSearch.textSearch,
                 tipo: tipo
             }
-            mS.getData('get', _urlService + 'Articulo/' + JSON.stringify(jsonData)).then(
+            mS.getData('get', _urlService + 'Articulo?json=' + JSON.stringify(jsonData)).then(
                 response => {
                     if (response.code == '1') {
                         // if ($scope.articleNotFound) {
@@ -1120,7 +1120,7 @@ function documentoRecibidoCtrl(
                 id: item.idArticulo,
                 tipo: 'H'
             }
-            mS.getData('get', _urlService + 'Articulo/' + JSON.stringify(data)).then(
+            mS.getData('get', _urlService + 'Articulo?json=' + JSON.stringify(data)).then(
                 response => {
                     if (response.code == '1') {
                         $scope.articleHistory = JSON.parse(response.payload)

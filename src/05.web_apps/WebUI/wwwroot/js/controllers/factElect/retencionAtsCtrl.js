@@ -4,16 +4,16 @@
     app.controller('retencionAtsCtrl', retencionAtsCtrl);
 
     retencionAtsCtrl.$inject = ['$scope',
-                                'mainService',
-                                'commonService',
-                                'toastService',
-                                '$element',
-                                '$cookies',
-                                'uuid2',
-                                '$window',
-                                'FileSaver',
-                                'Blob'
-                            ]
+        'mainService',
+        'commonService',
+        'toastService',
+        '$element',
+        '$cookies',
+        'uuid2',
+        '$window',
+        'FileSaver',
+        'Blob'
+    ]
 
     function retencionAtsCtrl($scope, mS, _commonSvc, tS, $element, $cookies, uuid2, $window, FileSaver, Blob) {
         /**Initial Load */
@@ -356,7 +356,7 @@
                 showLoader()
                 let json = {
                     tipo: '3',
-                    id: item.id
+                    id: item.idDocumento
                 }
                 mS.getData('get', '/FacturaCompra/Get?json=' + JSON.stringify(json)).then(
                     response => {
@@ -374,6 +374,8 @@
                                 console.log($scope.tempTaxes)
                                 console.log($scope.paymentsTemp)
                                 $scope.totalSinImpuestos = $scope.docData.totalSinImpuestos
+                                $scope.docSustento.idDocumento = item.idDocumento
+                                $scope.docSustento.isAutomatic = $scope.docData.isAutomatic
                                 $scope.docSustento.codDocSustento = $scope.docData.codDocSustento
                                 $scope.selectSutento($scope.docSustento.codDocSustento)
                                 $scope.docSustento.numDocSustento = $scope.docData.numDocSustento.split('-').join('')
@@ -386,25 +388,23 @@
                             console.log(temp[0].doc)
                         }
                         hideLoader()
-                    }, error => {
-                        hideLoader()
-                        console.log(error)
                     }
-                )
-
+                ).catch(error => {
+                    hideLoader()
+                    console.log(error)
+                })
             } catch (error) {
                 hideLoader()
                 console.log(error)
             }
         }
 
-        $scope.docPreview = (item, dataDoc) => {
+        $scope.docPreview = (item) => {
             try {
                 console.log(item)
-                console.log(dataDoc)
-                if (!item) {
+                if (!item.isAutomatic) {
                     _commonSvc.viewDetailDocument({
-                        id: dataDoc.id,
+                        id: item.idDocumento,
                         codigoDocumento: 'FC'
                     })
                     // tS.toastr('warning', 'Este documento no ha sido registrado desde el modulo de recepcion de documentos')
@@ -415,10 +415,11 @@
                         $('#facturaModal').modal('show')
                         $('#bodyFactura').html(response.payload)
                         console.log(response)
-                    }, error => {
-                        console.log(error)
                     }
-                )
+                ).catch(error => {
+                    hideLoader()
+                    console.log(error)
+                })
             } catch (error) {
                 console.log(error)
             }
@@ -605,14 +606,17 @@
                                     //$scope.tax = {}
                                     tS.toastr('success', response.message)
                                 }
-                            }, error => {
-                                console.log(error)
                             }
-                        )
+                        ).catch(error => {
+                            hideLoader()
+                            console.log(error)
+                        })
                     }
                 }
 
                 $scope.docsAdded.push({
+                    idDocumento: ($scope.docSustento.idDocumento) ? $scope.docSustento.idDocumento : 0,
+                    isAutomatic: $scope.docSustento.isAutomatic,
                     idRetAtsDocSustento: (idDocumentoElectronico) ? $scope.docSustento.idRetAtsDocSustento : 0,
                     uniqueIdDoc: guid,
                     codDocSustento: $scope.docSustento.codDocSustento,
@@ -729,10 +733,11 @@
                                     //$scope.tax = {}
                                     tS.toastr('success', response.message)
                                 }
-                            }, error => {
-                                console.log(error)
                             }
-                        )
+                        ).catch(error => {
+                            hideLoader()
+                            console.log(error)
+                        })
                     }
                 }
                 $scope.taxesAdded.push({
@@ -797,10 +802,11 @@
                                 document.getElementById(uniqueIdDoc + '-btnEditTax').style.display = 'none'
                                 tS.toastr('success', response.message)
                             }
-                        }, error => {
-                            console.log(error)
                         }
-                    )
+                    ).catch(error => {
+                        hideLoader()
+                        console.log(error)
+                    })
                 } else {
                     angular.forEach($scope.taxesAdded, (value, index) => {
                         if (value.uniqueIdDoc == uniqueIdDoc && $scope.indexTax == index) {
@@ -847,8 +853,6 @@
                             if (response.code == '1') {
                                 tS.toastr('success', response.message)
                             }
-                        }, error => {
-                            console.log(error)
                         }
                     )
                 } catch (error) {
@@ -951,8 +955,6 @@
                                     //$scope.retencion = {}
                                     tS.toastr('success', response.message)
                                 }
-                            }, error => {
-                                console.log(error)
                             }
                         )
                     }
@@ -1004,10 +1006,11 @@
                                 document.getElementById(uniqueIdDoc + '-btnEditRet').style.display = 'none'
                                 tS.toastr('success', response.message)
                             }
-                        }, error => {
-                            console.log(error)
                         }
-                    )
+                    ).catch(error => {
+                        hideLoader()
+                        console.log(error)
+                    })
                 } else {
                     angular.forEach($scope.retencionAdded, (value, index) => {
                         if (value.uniqueIdDoc == uniqueIdDoc && $scope.indexRet == index) {
@@ -1054,8 +1057,6 @@
                             if (response.code == '1') {
                                 tS.toastr('success', response.message)
                             }
-                        }, error => {
-                            console.log(error)
                         }
                     )
                 } catch (error) {
@@ -1134,8 +1135,6 @@
                                     //$scope.payment = {}
                                     tS.toastr('success', response.message)
                                 }
-                            }, error => {
-                                console.log(error)
                             }
                         )
                     }
@@ -1182,10 +1181,11 @@
                                     document.getElementById(uniqueIdDoc + '-totalPago').disabled = false
                                     tS.toastr('success', response.message)
                                 }
-                            }, error => {
-                                console.log(error)
                             }
-                        )
+                        ).catch(error => {
+                            hideLoader()
+                            console.log(error)
+                        })
                     } else {
                         angular.forEach($scope.paymentsAdded, (value, index) => {
                             if (value.uniqueIdDoc == uniqueIdDoc && $scope.indexPayment == index) {
@@ -1234,8 +1234,6 @@
                             if (response.code == '1') {
                                 tS.toastr('success', response.message)
                             }
-                        }, error => {
-                            console.log(error)
                         }
                     )
                 } catch (error) {
@@ -1301,10 +1299,11 @@
                                 document.getElementById('btnEditDocSust').style.display = 'none'
                                 tS.toastr('success', response.message)
                             }
-                        }, error => {
-                            console.log(error)
                         }
-                    )
+                    ).catch(error => {
+                        hideLoader()
+                        console.log(error)
+                    })
                 } else {
                     angular.forEach($scope.docsAdded, (value, index) => {
                         if ($scope.indexDoc == index) {
@@ -1400,8 +1399,6 @@
                                     $scope.additionalInfo = {}
                                     tS.toastr('success', response.message)
                                 }
-                            }, error => {
-                                console.log(error)
                             }
                         )
                     }
@@ -1448,10 +1445,11 @@
                                 document.getElementById('btnEditInfoSave').style.display = 'none'
                                 tS.toastr('success', response.message)
                             }
-                        }, error => {
-                            console.log(error)
                         }
-                    )
+                    ).catch(error => {
+                        hideLoader()
+                        console.log(error)
+                    })
                 } catch (error) {
                     console.log(error)
                 }
@@ -1489,8 +1487,6 @@
                             if (response.code == '1') {
                                 tS.toastr('success', response.message)
                             }
-                        }, error => {
-                            console.log(error)
                         }
                     )
                 } catch (error) {
@@ -1618,11 +1614,11 @@
                             }, 2500)
                         }
                         hideLoader()
-                    }, error => {
-                        hideLoader()
-                        console.log(error)
                     }
-                )
+                ).catch(error => {
+                    hideLoader()
+                    console.log(error)
+                })
             } catch (error) {
                 hideLoader()
                 console.log(error)

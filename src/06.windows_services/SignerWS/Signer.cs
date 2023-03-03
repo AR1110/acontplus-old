@@ -6,6 +6,7 @@ using System.Data;
 using System.Threading.Tasks;
 using FactElect;
 using System;
+using System.Security.Cryptography.X509Certificates;
 
 namespace SignerWS
 {
@@ -85,15 +86,33 @@ namespace SignerWS
                 string xmlSigned = string.Empty;
                 if (_comp.Create(dataRow.Field<string>("codDoc"), ds, ref xmlToSign))
                 {
-                    if (new SignDocument().Sign(xmlToSign, _dirCertificates + dataRow.Field<string>("certificate"), dataRow.Field<string>("password"), ref xmlSigned))
+                    //string nameCert = "";
+                    //string password = "";
+                    //X509Certificate2 cert = new X509Certificate2(_dirCertificates + nameCert, password, X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
+
+                    X509Certificate2 cert = new X509Certificate2(_dirCertificates + dataRow.Field<string>("certificate"), dataRow.Field<string>("password"), X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
+                    // Get the value.
+                    string expirationDate = cert.GetExpirationDateString();
+
+                    //DateTime expDate = Convert.ToDateTime("03/03/2024 3:39:09 PM");
+                    int result = DateTime.Compare(DateTime.Now, Convert.ToDateTime(expirationDate));
+                    if (result > 0)
                     {
-                        _dataAccess.Update(dataRow.Field<long>("idDocumentoElectronico"), xmlSigned, 2);
-                        LogWritter.LogInfo(_path, "Doc. Signed: " + Convert.ToString(dataRow.Field<long>("idDocumentoElectronico")));
+                        _dataAccess.UpdateError(dataRow.Field<long>("idDocumentoElectronico"), 0, "Firma Electrónica caducada");
+                        LogWritter.LogWarning(_path, "Firma Electrónica caducada: " + dataRow.Field<string>("certificate"));
                     }
                     else
                     {
-                        _dataAccess.UpdateError(dataRow.Field<long>("idDocumentoElectronico"), 0, "Error al firmar el xml del comprobante");
-                        LogWritter.LogWarning(_path, "Error al firmar el xml del comprobante: " + Convert.ToString(dataRow.Field<long>("idDocumentoElectronico")) + "- Data Doc: " + HelpersNS20.DataHelperNS.DataSetToJSON(ds));
+                        if (new SignDocument().Sign(xmlToSign, _dirCertificates + dataRow.Field<string>("certificate"), dataRow.Field<string>("password"), ref xmlSigned))
+                        {
+                            _dataAccess.Update(dataRow.Field<long>("idDocumentoElectronico"), xmlSigned, 2);
+                            LogWritter.LogInfo(_path, "Doc. Signed: " + Convert.ToString(dataRow.Field<long>("idDocumentoElectronico")));
+                        }
+                        else
+                        {
+                            _dataAccess.UpdateError(dataRow.Field<long>("idDocumentoElectronico"), 0, "Error al firmar el xml del comprobante");
+                            LogWritter.LogWarning(_path, "Error al firmar el xml del comprobante: " + Convert.ToString(dataRow.Field<long>("idDocumentoElectronico")) + "- Data Doc: " + HelpersNS20.DataHelperNS.DataSetToJSON(ds));
+                        }
                     }
                 }
             }

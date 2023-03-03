@@ -1,11 +1,5 @@
 ﻿using DataAccess;
-using Domain.Models.Generic;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WS_Article_Inventory
 {
@@ -32,13 +26,22 @@ namespace WS_Article_Inventory
 
         public async Task<bool> Update(int idControlStock, int idArticulo , decimal stock)
         {
-            DbAccess _dbAccess = new DbAccess(_config);
-            await _dbAccess.SPExecute("Inventario.Control_Stock_Serv_Update_Stock");
-            _dbAccess.AddDynamicParam("idControlStock", idControlStock);
-            _dbAccess.AddDynamicParam("idArticulo", idArticulo);
-            _dbAccess.AddDynamicParam("stock", stock);
-            _dbAccess.OnlyExecute();
-            return true;
+            try
+            {
+                DbAccess _dbAccess = new DbAccess(_config);
+                await _dbAccess.SPExecute("Inventario.Control_Stock_Serv_Update_Stock");
+                _dbAccess.AddDynamicParam("idControlStock", idControlStock);
+                _dbAccess.AddDynamicParam("idArticulo", idArticulo);
+                _dbAccess.AddDynamicParam("stock", stock);
+                _dbAccess.OnlyExecute();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _ = ex.Message;
+                return false;
+            }
+           
         }
 
     }
