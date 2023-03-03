@@ -2,7 +2,7 @@ using Common.Logs;
 using Newtonsoft.Json;
 using System.Data;
 
-namespace WS_DocRelacionado
+namespace WS_DocumentoRelacionado
 {
     public class WindowsBackgroundService : BackgroundService
     {
@@ -13,8 +13,8 @@ namespace WS_DocRelacionado
 
         public WindowsBackgroundService(ILogger<WindowsBackgroundService> logger,
              IConfiguration configuration,
-             DocRelacionadoService emailService) =>
-             (_logger, _configuration, _docService) = (logger, configuration, emailService);
+             DocRelacionadoService docService) =>
+             (_logger, _configuration, _docService) = (logger, configuration, docService);
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -51,20 +51,16 @@ namespace WS_DocRelacionado
             int idDocumento = Convert.ToInt32(dr["idDocumento"]);
             string codDoc = Convert.ToString(dr["codDoc"]) ?? "";
             string versionComp = Convert.ToString(dr["versionComp"]) ?? "";
-            DataTable dt = await _docService.GetDataXml(idDocumento, codDoc, versionComp);
-            if (dt.Rows.Count > 0)
+            bool result = await _docService.Insert(idDocumento, codDoc, versionComp);
+            if (result)
             {
-                string jsonResult = JsonConvert.SerializeObject(dt);
-                bool result =  await _docService.Insert(idDocumento,codDoc,jsonResult);
-                if (result)
-                {
-                    await _docService.Update(idDocumento,true);
-                }
+                await _docService.Update(idDocumento);
             }
             else
             {
                 _log.LogWarning("Error al registrar la relacion del documento:" + idDocumento);
             }
         }
+
     }
 }

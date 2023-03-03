@@ -16,19 +16,27 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
--- Author:		<Author,,Name>
--- Create date: <Create Date,,>
--- Description:	<Description,,>
+-- Author:		Alexis Ramirez
+-- Create date: 3/01/2023
+-- Description:	SP para leer el xml de documentos recibidos
 -- =============================================
 IF OBJECT_ID(N'FactElect.Doc_Relac_Serv_Insert', N'P') IS NOT NULL
-DROP PROCEDURE FactElect.Doc_Relac_Serv_Insert 
+DROP PROCEDURE FactElect.Doc_Relac_Serv_Insert
 GO
-CREATE PROCEDURE FactElect.Doc_Relac_Serv_Insert @idDocumento INT, @codDoc VARCHAR(5),@json VARCHAR(MAX)
+CREATE PROCEDURE FactElect.Doc_Relac_Serv_Insert
+	@idDocumento INT
+   ,@codDoc VARCHAR(5)
+   ,@versionComp VARCHAR(10)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
+
+	DECLARE @tmp as Table(
+		xmlComp xml
+	)
+
 
 	DECLARE @DocumentoRelacionado AS TABLE(
 		codDocSustento VARCHAR(5),
@@ -40,32 +48,102 @@ BEGIN
 		valorRetenido NUMERIC(18,2)
 	)
 
-	BEGIN TRY
+	BEGIN TRY 
 		BEGIN TRAN 
-			INSERT INTO @DocumentoRelacionado(codDocSustento, numDocSustento,fechaEmisionDocSustento,codigo,baseImponible,porcentajeRetener,valorRetenido)
-			SELECT 
-				codDocSustento
-			   ,numDocSustento
+			INSERT INTO @tmp(xmlComp)
+			SELECT  xmlComp = CONVERT(xml,dbo.f_sanitize_xml(convert(varchar(max), ci.xmlDoc.query('/autorizacion/comprobante'))))
+			FROM Recepcion.DocumentoRecibido ci
+			where CI.idDocumento = @idDocumento
+
+			IF @codDoc = '07' 
+				BEGIN 
+					DECLARE @mainRet AS TABLE(retenciones XML)
+
+
+					INSERT INTO @mainRet (retenciones)
+					SELECT CASE WHEN @versionComp = '1.0.0' then xmlComp.query('//comprobanteRetencion') else xmlComp.query('//docsSustento/docSustento') end
+					FROM @tmp
+
+					IF @versionComp = '1.0.0'
+						BEGIN 
+							INSERT INTO @DocumentoRelacionado(codDocSustento, numDocSustento,fechaEmisionDocSustento,codigo,baseImponible,porcentajeRetener,valorRetenido)
+							SELECT  
+								  codDocSustento  = X.Y.value('(codDocSustento)[1]','VARCHAR(2)') 
+								 ,numDocSustento  = X.Y.value('(numDocSustento)[1]','VARCHAR(15)')
+								 ,fechaEmisionDocSustento = X.Y.value('(fechaEmisionDocSustento)[1]','VARCHAR(50)')
+								 ,codigo          = x.y.value('(codigo)[1]','VARCHAR(2)')
+								 ,baseImponible = x.y.value('(baseImponible)[1]','NUMERIC(18,2)')
+								 ,porcentajeRetener = x.y.value('(porcentajeRetener)[1]','NUMERIC(18,2)')
+								 ,valorRetenido = x.y.value('(valorRetenido)[1]','NUMERIC(18,2)')
+							from @mainRet rt 
+							CROSS APPLY rt.retenciones.nodes('//impuestos/impuesto') x(y) 
+						END 
+
+					IF @versionComp = '2.0.0'
+						BEGIN
+							INSERT INTO @DocumentoRelacionado(codDocSustento, numDocSustento,fechaEmisionDocSustento,codigo,baseImponible,porcentajeRetener,valorRetenido)
+							SELECT  
+							  codDocSustento  = X.Y.value('(//docSustento/codDocSustento)[1]','VARCHAR(2)') 
+							 ,numDocSustento  = X.Y.value('(//docSustento/numDocSustento)[1]','VARCHAR(15)')
+							 ,fechaEmisionDocSustento = X.Y.value('(//docSustento/fechaEmisionDocSustento)[1]','VARCHAR(50)')
+							 ,codigo = X.Y.value('(codigo)[1]','VARCHAR(5)')
+							 ,baseImponible = X.Y.value('(baseImponible)[1]','NUMERIC(18,2)')
+							 ,porcentajeRetener = X.Y.value('(porcentajeRetener)[1]','NUMERIC(18,2)')
+							 ,valorRetenido = X.Y.value('(valorRetenido)[1]','NUMERIC(18,2)')
+							FROM @mainRet rt 
+							CROSS APPLY  rt.retenciones.nodes('//docSustento//retenciones/retencion') x(y) 
+						END 
+				END 
+
+			IF @codDoc = '04'
+				BEGIN
+					INSERT INTO @DocumentoRelacionado(codDocSustento, numDocSustento,fechaEmisionDocSustento,codigo,baseImponible,porcentajeRetener,valorRetenido)
+					SELECT 
+						 codDocSustento = x.y.value('(codDocModificado)[1]','VARCHAR(5)')
+						,numDocSustento = x.y.value('(numDocModificado)[1]','VARCHAR(25)')
+						,fechaEmisionDocSustento = x.y.value('(fechaEmisionDocSustento)[1]','VARCHAR(25)')
+						,codigo = x.y.value('(//totalConImpuestos/totalImpuesto/codigo)[1]','VARCHAR(5)')
+						,baseImponible = x.y.value('(//totalConImpuestos/totalImpuesto/baseImponible)[1]','NUMERIC(18,2)')
+						,porcentajeRetener = x.y.value('(//totalConImpuestos/totalImpuesto/tarifa)[1]','NUMERIC(18,2)')
+						,valorRetenido = x.y.value('(//totalConImpuestos/totalImpuesto/valor)[1]','NUMERIC(18,2)')
+					FROM @tmp r
+					CROSS APPLY r.xmlComp.nodes('//comprobante/notaCredito/infoNotaCredito') x(y) 
+				END 
+
+			INSERT INTO FactElect.DocRelacionado 
+				(idDocumentoRecibido
+				,codDocSustento
+				,numDocSustento
+				,fechaEmisionDocSustento
+				,baseImponible
+				,porcentajeRetener
+				,valorRetenido)
+			SELECT
+				idDocumentoRecibido = @idDocumento
+			   ,codDocSustento
+			   ,numDocSustento = REPLACE(numDocSustento,'-','')
 			   ,fechaEmisionDocSustento
-			   ,codigo
-			   ,baseImponible
-			   ,porcentajeRetener 
-			   ,valorRetenido
-			FROM OPENJSON(@json)
-			WITH (
-					codDocSustento VARCHAR(5) '$.codDocSustento',
-					numDocSustento VARCHAR(25) '$.numDocSustento',
-					fechaEmisionDocSustento VARCHAR(100) '$.fechaEmisionDocSustento',
-					codigo VARCHAR(5) '$.codigo',
-					baseImponible NUMERIC(18,2) '$.baseImponible',
-					porcentajeRetener NUMERIC(18,2) '$.porcentajeRetener',
-					valorRetenido NUMERIC(18,2) '$.valorRetenido'
-			     )
+			   ,baseImponible = SUM(baseImponible)
+			   ,porcentajeRetener = SUM(ISNULL(porcentajeRetener,0)) 
+			   ,valorRetenido = SUM(valorRetenido)
+			FROM @DocumentoRelacionado r 
+			GROUP BY codDocSustento
+					,numDocSustento
+					,fechaEmisionDocSustento
+			
+			IF (SELECT COUNT( *) FROM FactElect.DocRelacionado WHERE idDocumentoRecibido = @idDocumento) > 0 
+				BEGIN
+					SELECT CAST(1 as bit) result
+				END 
 
-			INSERT INTO FactElect.DocRelacionado(idDocumentoRecibido,codDocSustento, numDocSustento,fechaEmisionDocSustento,codigo,baseImponible,porcentajeRetener,valorRetenido)
-			SELECT @idDocumento,codDocSustento,numDocSustento,fechaEmisionDocSustento,codigo, baseImponible,porcentajeRetener,valorRetenido FROM @DocumentoRelacionado
-
+			ELSE 
+				BEGIN
+					SELECT CAST(0 as bit) result
+				END 
+				
 		COMMIT TRAN 
+
+		
 	END TRY 
 
 	BEGIN CATCH 
@@ -73,8 +151,10 @@ BEGIN
 		BEGIN
 			ROLLBACK TRAN; 
 		END
+		SELECT CAST(0 as bit) result
 		INSERT INTO ErroresSistema(token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
 		VALUES (NEWID(),'/WS_DocumentoRelacionado/Insert',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),1)
 	END CATCH 
+
 END
 GO
