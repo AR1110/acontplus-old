@@ -18,11 +18,24 @@ AS
 BEGIN
 	SET NOCOUNT ON; 
 	DECLARE @idUsuario INT
-
+	,@idRetencionAts INT
 	SELECT @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol
+	SET @idRetencionAts = (select idDocumento from DocumentoElectronico with (nolock) where idDocumentoElectronico = @id)
 	BEGIN TRY
 		BEGIN TRAN 
-			UPDATE FactElect.RetencionAts SET anuladaSri = 1 WHERE idRetencionAts = @id
+			
+			UPDATE FactElect.RetencionAts SET anuladaSri = 1 WHERE idRetencionAts = @idRetencionAts
+
+			UPDATE fc SET fc.retencion = 0
+			FROM FacturaCompra fc
+			JOIN (
+				SELECT numAutDocSustento, numDocSustento FROM FactElect.RetAtsDocSustento WHERE idRetencionAts = @idRetencionAts
+			) AS t ON fc.nroAutorizacion = t.numAutDocSustento
+			AND  REPLACE(fc.puntoEmision,'-','')+Helper.F_Auto_Sequential(fc.nroDocumento) = t.numDocSustento
+
+
+			UPDATE DocumentoElectronico SET codEstado = 6 WHERE idDocumentoElectronico = @id
+
 			SELECT '1' code, 'Retencion anulada en el SRI con exito'  as 'message'
 		COMMIT TRAN
 	END TRY
