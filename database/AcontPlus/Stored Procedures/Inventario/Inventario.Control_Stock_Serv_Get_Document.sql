@@ -1,3 +1,5 @@
+USE [AcontPlus]
+GO
 -- ================================================
 -- Template generated from Template Explorer using:
 -- Create Procedure (New Menu).SQL
@@ -30,13 +32,9 @@ BEGIN
 	DECLARE @table TABLE
 	(
 	    id INT IDENTITY(1,1) NOT NULL
-	   ,idMedida INT NOT NULL
 	   ,codDoc VARCHAR(5) NOT NULL
 	   ,fechaEmision DATETIME NOT NULL
 	   ,cantidad DECIMAL(15,5) NOT NULL
-	   ,precio DECIMAL(15,5) NOT NULL
-	   ,precioCosto DECIMAL(15,5) NOT NULL
-	   ,total DECIMAL(15,5) NOT NULL
 	   ,movimiento INT NOT NULL
 	   ,particion INT NOT NULL
 	)
@@ -44,13 +42,9 @@ BEGIN
 	INSERT INTO @table 
 	(
 	    
-	    idMedida
-	   ,codDoc
+	    codDoc
 	   ,fechaEmision
 	   ,cantidad
-	   ,precio
-	   ,precioCosto
-	   ,total
 	   ,movimiento
 	   ,particion
 	)
@@ -58,13 +52,9 @@ BEGIN
 	-------------------------ENTRADA-----------------------------------------------
 
 	SELECT 
-		 fcd.idMedida
-		,ep.codigo
+		 ep.codigo
 		,fc.fechaEmision
 		,CAST(fcd.cantidad * dbo.AFTConverFracc(@idArticulo,fcd.idMedida) AS decimal(15,5)) as cantidad
-		,fcd.precioCostoNeto as precio
-		,fcd.precioCostoNeto as precioCosto
-		,fcd.total as total
 		,0 as movimiento 
 		,dbo.AFTMovimientoKardex(fc.fechaEmision,@idArticulo,fcd.idBodega) as particion
 	FROM dbo.FacturaCompraDetalle fcd WITH (NOLOCK)
@@ -75,25 +65,17 @@ BEGIN
 	INSERT INTO @table 
 	(
 	    
-	    idMedida
-	   ,codDoc
+	    codDoc
 	   ,fechaEmision
 	   ,cantidad
-	   ,precio
-	   ,precioCosto
-	   ,total
 	   ,movimiento
 	   ,particion
 	)
 
 	SELECT 
-	     ibd.idMedida
-		,ep.codigo
+	     ep.codigo
 		,ib.fechaEmision
 		,CAST(ibd.cantidad * dbo.AFTConverFracc(@idArticulo,ibd.idMedida) as decimal(15,5)) as cantidad
-		,ibd.precioCostoNeto as precio
-		,ibd.precioCostoNeto as precioCosto
-		,ibd.total as total
 		,0 as movimiento 
 		,dbo.AFTMovimientoKardex(ib.fechaEmision,@idArticulo,ibd.idBodega) as particion
 	FROM dbo.IngresoBodegaDetalle ibd WITH (NOLOCK)
@@ -104,25 +86,17 @@ BEGIN
 	INSERT INTO @table 
 	(
 	    
-	    idMedida
-	   ,codDoc
+	    codDoc
 	   ,fechaEmision
 	   ,cantidad
-	   ,precio
-	   ,precioCosto
-	   ,total
 	   ,movimiento
 	   ,particion
 	) 
 
 	SELECT 
-	     lcd.idMedida
-		,ep.codigo
+	     ep.codigo
 		,lc.fechaEmision
 		,CAST(lcd.cantidad * dbo.AFTConverFracc(@idArticulo,lcd.idMedida) AS DECIMAL(15,5)) as cantidad
-		,lcd.precioCostoNeto as precio
-		,lcd.precioCostoNeto as precioCosto
-		,lcd.total as total
 		,0 as movimiento 
 		,dbo.AFTMovimientoKardex(lc.fechaEmision,@idArticulo,lcd.idBodega) as particion
 	FROM dbo.LiquidacionCompraDetalle lcd WITH (NOLOCK)
@@ -133,25 +107,17 @@ BEGIN
 	INSERT INTO @table 
 	(
 	    
-	    idMedida
-	   ,codDoc
+	    codDoc
 	   ,fechaEmision
 	   ,cantidad
-	   ,precio
-	   ,precioCosto
-	   ,total
 	   ,movimiento
 	   ,particion
 	) 
 
 	SELECT 
-	     ncd.idMedida
-		,ep.codigo
+	     ep.codigo
 		,nc.fechaEmision
 		,CAST(ncd.cantidad * dbo.AFTConverFracc(@idArticulo,ncd.idMedida)as decimal(15,5)) as cantidad
-		,ncd.precioVentaNeto as precio
-		,ncd.precioCosto as precioCosto
-		,ncd.total as total
 		,0 as movimiento 
 		,dbo.AFTMovimientoKardex(nc.fechaEmision,@idArticulo,ncd.idBodega) as particion
 	FROM dbo.NotaCreditoDetalle ncd WITH (NOLOCK)
@@ -162,25 +128,17 @@ BEGIN
 	INSERT INTO @table 
 	(
 	    
-	    idMedida
-	   ,codDoc
+	    codDoc
 	   ,fechaEmision
 	   ,cantidad
-	   ,precio
-	   ,precioCosto
-	   ,total
 	   ,movimiento
 	   ,particion
 	)
 
 	SELECT 
-	    tbd.idMedida,
 		ep.codigo,
 		tb.fechaEmision,
 		CAST(tbd.cantidad * dbo.AFTConverFracc(@idArticulo,tbd.idMedida)AS decimal(15,5)),
-		tbd.precioCosto,
-		tbd.precioCosto,
-		tbd.total,
 		0,
 		dbo.AFTMovimientoKardex(tb.fechaEmision,@idArticulo,tb.idBodegaDestino)
 	FROM dbo.TransferenciaBodegaDetalle tbd WITH (NOLOCK) 
@@ -192,25 +150,17 @@ BEGIN
 	INSERT INTO @table 
 	(
 	    
-	    idMedida
-	   ,codDoc
+	    codDoc
 	   ,fechaEmision
 	   ,cantidad
-	   ,precio
-	   ,precioCosto
-	   ,total
 	   ,movimiento
 	   ,particion
 	)
 
 	SELECT 
-	     fd.idMedida
-		,ep.codigo
+	     ep.codigo
 		,f.fechaEmision
 		,CAST((fd.cantidad) * dbo.AFTConverFracc(@idArticulo,fd.idMedida) AS decimal(15,5)) as cantidad
-		,fd.precioVentaNeto as precio 
-		,fd.precioCosto as precioCosto
-		,fd.total as total 
 		,1 as movimiento 
 		,dbo.AFTMovimientoKardex(f.fechaEmision,@idArticulo,fd.idBodega) as particion
 	FROM dbo.FacturaDetalle   fd WITH (NOLOCK)
@@ -221,25 +171,17 @@ BEGIN
 	INSERT INTO @table 
 	(
 	    
-	    idMedida
-	   ,codDoc
+	    codDoc
 	   ,fechaEmision
 	   ,cantidad
-	   ,precio
-	   ,precioCosto
-	   ,total
 	   ,movimiento
 	   ,particion
 	)
 
 	SELECT 
- 	     ned.idMedida
-		,ep.codigo
+ 	     ep.codigo
 		,ne.fechaEmision
 		,CAST(ned.cantidad  * dbo.AFTConverFracc(@idArticulo,ned.idMedida)AS decimal(15,5)) as cantidad
-		,ned.precioVentaNeto as precio
-		,ned.precioCosto as precioCosto
-		,ned.total as total
 		,1 as movimiento 
 		,dbo.AFTMovimientoKardex(ne.fechaEmision,@idArticulo,ned.idBodega) as particion
 	FROM dbo.NotaEntregaDetalle ned WITH (NOLOCK)
@@ -250,25 +192,17 @@ BEGIN
 	INSERT INTO @table 
 	(
 	    
-	    idMedida
-	   ,codDoc
+	    codDoc
 	   ,fechaEmision
 	   ,cantidad
-	   ,precio
-	   ,precioCosto
-	   ,total
 	   ,movimiento
 	   ,particion
 	) 
 
 	SELECT 
-		 a.idMedida
-		,ep.codigo
+		 ep.codigo
 		,np.fechaEmision
 		,CAST(npd.cantidad * dbo.AFTConverFracc(@idArticulo,a.idMedida)AS decimal(15,5)) as cantidad
-		,npd.precioCostoNeto as precio 
-		,npd.precioCostoNeto as precioCosto
-		,npd.total as total
 		,1 as movimiento 
 		,dbo.AFTMovimientoKardex(np.fechaEmision,@idArticulo,npd.idBodega) as particion
 	FROM dbo.NotaCreditoProveedorDetalle npd WITH (NOLOCK)
@@ -280,25 +214,17 @@ BEGIN
 	INSERT INTO @table 
 	(
 	    
-	    idMedida
-	   ,codDoc
+	    codDoc
 	   ,fechaEmision
 	   ,cantidad
-	   ,precio
-	   ,precioCosto
-	   ,total
 	   ,movimiento
 	   ,particion
 	)
 
 	SELECT
-	    tbd.idMedida,
-		ep.codigo,
+	    ep.codigo,
 		tb.fechaEmision,
 		CAST(tbd.cantidad * dbo.AFTConverFracc(@idArticulo,tbd.idMedida)AS decimal(15,5)),
-		tbd.precioCosto,
-		tbd.precioCosto,
-		tbd.total,
 		1,
 		dbo.AFTMovimientoKardex(tb.fechaEmision,@idArticulo,tb.idBodegaOrigen)
 	FROM dbo.TransferenciaBodegaDetalle tbd WITH (NOLOCK)
@@ -310,25 +236,17 @@ BEGIN
 	INSERT INTO @table 
 	(
 	    
-	    idMedida
-	   ,codDoc
+	    codDoc
 	   ,fechaEmision
 	   ,cantidad
-	   ,precio
-	   ,precioCosto
-	   ,total
 	   ,movimiento
 	   ,particion
 	)
 	
 	SELECT 
-	     cid.idMedida
-		,ed.codigo
+	     ed.codigo
 		,ci.fechaEmision
 		,CAST(cid.cantidad * dbo.AFTConverFracc(@idArticulo,m.idMedida) AS decimal(15,5)) as cantidadEntrada
-		,cid.precioActual as precio
-		,cid.precioActual as precioCosto
-		,CAST(cid.cantidad * cid.precioActual AS decimal(15,5)) as totalEntrada
 		,2 as movimiento 
 		,IIF(ed.codigo = 'A',0,ci.idConsolidacionInventario) as particion
 	FROM dbo.ConsolidacionInventarioDetalle cid WITH (NOLOCK)
@@ -338,18 +256,10 @@ BEGIN
 	WHERE idArticulo = @idArticulo AND ci.estado = 1 AND cid.estado= 1
 	
 
-	SELECT 
-	    id
-	   ,idMedida
-	   ,codDoc
-	   ,fechaEmision
-	   ,cantidad = IIF(movimiento = 1,-1,1) * IIF(codDoc = 'A' OR codDoc = 'TRA',0,cantidad)
-	   ,precio
-	   ,precioCosto
-	   ,total
-	   ,movimiento
-	   ,particion
-	FROM @table ORDER BY fechaEmision ASC
 
+	SELECT 
+		saldo = SUM(SUM(IIF(movimiento = 1,-1,1) * IIF(codDoc = 'A' OR codDoc = 'TRA',0,cantidad))) OVER (PARTITION BY particion ORDER BY fechaEmision,id ASC) 
+	FROM @table 
+	GROUP BY cantidad,particion,fechaEmision,id
 END
 GO
