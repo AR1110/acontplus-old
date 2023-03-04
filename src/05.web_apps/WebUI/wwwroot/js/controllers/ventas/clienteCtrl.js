@@ -40,10 +40,13 @@ function clienteCtrl($scope, _mS, _modalSvc, _nombreModal, toast){
         try {  
             showLoader();
             $scope.dataSearch.bySearch || null;
+            $scope.clientes = [];
             _mS.getData('get', appUrl+ 'Get?json=' + JSON.stringify($scope.dataSearch)).then(response=>{
                 if (response.id == 0) {                                               
+                    $scope.clientes = [];
                     hideLoader();
-                    toast.toastr('warning', response.message, response.titleSms);                        
+                    console.log(response);
+                    return 
                 }
                 $scope.clientes = JSON.parse(response.payload) || [];
                 $scope.totalRecords = $scope.clientes.length > 0? $scope.clientes[0].totalRecords:0                                        

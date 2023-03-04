@@ -51,12 +51,17 @@ function facturaCompraCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreM
             $scope.facturas = [];            
             await _mS.getData('get', '/FacturaCompra/Get?json=' + JSON.stringify($scope.dataSearch)).then(response=>{
                 if(response.code==="0"){
-                    console.warn(response)                    
+                    $scope.facturas = [];
+                    console.warn(response)  
+                    return                  
                 }
 
-                $scope.facturas =  JSON.parse(response.payload) || [];  
-                $scope.cloneFacturas = JSON.parse(JSON.stringify($scope.facturas));
-                $scope.getTotalColumna();                     
+                if(response.code==="1"){
+                    $scope.facturas =  JSON.parse(response.payload) || [];  
+                    $scope.cloneFacturas = JSON.parse(JSON.stringify($scope.facturas));
+                    $scope.getTotalColumna();                     
+                }
+
             })
         } catch (error) {
             console.log(error)

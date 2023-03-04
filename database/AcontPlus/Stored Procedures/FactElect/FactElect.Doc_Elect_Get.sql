@@ -50,7 +50,7 @@ BEGIN
 										 de.idDocumentoElectronico
 										,de.idDocumento
 										,de.codDoc
-										,comprobante = td.descripcion
+										,comprobante = td.descripcion + '' - versión: '' +  de.versionComp
 										,serie = de.numEstab+''-''+de.ptoEmision+''-''+dbo.AFTAutoComplete(de.nroDocumento)
 										,rucReceptor = CASE de.codDoc WHEN ''01'' THEN cl.numeroIdentificacion
 																	  WHEN ''03'' THEN pr.numeroIdentificacion		

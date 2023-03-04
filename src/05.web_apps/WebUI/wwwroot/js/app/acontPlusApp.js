@@ -601,6 +601,9 @@ app.directive('touppercase', function () {
         require: 'ngModel',
         restrict: 'A',
         link: function (scope, element, attrs, modelCtrl) {
+
+            
+
             element.on("keydown", event => {
                 teclaAnterior = teclaAnterior + " " + event.keyCode;
                 var arregloTA = teclaAnterior.split(" ");
@@ -610,7 +613,8 @@ app.directive('touppercase', function () {
             })
 
             function removeAccents(input) {
-                let inputText = input || "";
+
+                let inputText = input.replace(/[\n\r]+/g, ' ') || "";
                 inputText = inputText.normalize('NFD')
                     .replace(/([^n\u0300-\u036f]|n(?!\u0303(?![\u0300-\u036f])))[\u0300-\u036f]+/gi, "$1").normalize();
                 inputText = inputText.replace(/[`#$%^*Ç¨_|+\=?'´",<>\{\}\[\]\\]/gi, '').trim()
@@ -618,7 +622,7 @@ app.directive('touppercase', function () {
                 modelCtrl.$render();
                 return inputText.toUpperCase();
             }
-
+            
 
             modelCtrl.$parsers.push(removeAccents);
             element.css("text-transform", "uppercase");

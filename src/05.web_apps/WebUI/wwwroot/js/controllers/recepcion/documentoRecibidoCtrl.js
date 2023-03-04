@@ -154,6 +154,9 @@ function documentoRecibidoCtrl(
             mS.getData('get', _urlService + 'DocumentoRecibido/Get/' + JSON.stringify($scope.query)).then(response => {
                 if (response.code == "1") {
                     $scope.comprobantes = JSON.parse(response.payload)[0];
+
+                    console.log($scope.comprobantes);
+
                     $scope.cloneComprobantes = JSON.parse(JSON.stringify($scope.comprobantes))
                     //$scope.totalRecords = $scope.comprobantes[0].totalRecords;
                 }
@@ -217,7 +220,6 @@ function documentoRecibidoCtrl(
         let roundedTempNumber = Math.round(tempNumber);
         return roundedTempNumber / factor;
     }
-
 
 
     $scope.initialLoad();
@@ -1494,4 +1496,32 @@ function documentoRecibidoCtrl(
         $scope.modalRef.close()
     }
     //**Config */
+
+
+
+    const COD_REPORTS = {
+        "07": 'RCR'
+    }
+    $scope.getReport = () => {
+        try {
+            let format = 'pdf';
+            let dataParms = {                
+                id: 333,                            
+                codigo: COD_REPORTS['07'],
+                format,            
+            }
+       
+            const parameters = {               
+                dataParams: JSON.stringify(dataParms)
+            }
+            console.log(parameters)
+            _commonSvc.getReportDynamic({
+                parameters, 
+                format
+            })     
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
 }

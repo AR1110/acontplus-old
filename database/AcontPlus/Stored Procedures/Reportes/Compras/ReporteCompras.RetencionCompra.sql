@@ -99,7 +99,7 @@ BEGIN
 									 rc.idRetencionCompra
 									,dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,rc.nroDocumento) nroDocumento
 									,rc.claveAcceso  as nroAutorizacion
-									,CONVERT(NVARCHAR, FORMAT(ISNULL(rc.fechaAutorizacionSri,rc.fechaEmision), 'dd/MM/yyyy hh:mm')) as fechaAutorizacion  
+									,fechaAutorizacion = IIF(rc.fechaAutorizacionSri=NULL, '', CONVERT(NVARCHAR, FORMAT(rc.fechaAutorizacionSri, 'dd/MM/yyyy hh:mm')))
 									,tipoDocumento = 'Retención'
 									,ambiente = IIF(pe.ambiente='1','PRUEBA','PRODCCIÓN')
 									,CASE WHEN rc.emision = '1' THEN 'NORMAL' ELSE '' END AS emision
@@ -221,7 +221,7 @@ BEGIN
 									 rc.idRetencionAts idRetencionCompra
 									,dbo.AFTGenerarNroDocumento(s.estab+rc.ptoEmi,rc.secuencial) nroDocumento
 									,rc.claveAcceso  as nroAutorizacion
-									,CASE WHEN d.codEstado = 4 THEN @fechaAutorizacion ELSE '' END AS fechaAutorizacion -- CONVERT(NVARCHAR, FORMAT(ISNULL(@fechaAutorizacion,rc.fechaEmision), 'dd/MM/yyyy hh:mm')) as fechaAutorizacion  
+									,fechaAutorizacion = IIF(@fechaAutorizacion=NULL, '', CONVERT(NVARCHAR, FORMAT(@fechaAutorizacion, 'dd/MM/yyyy hh:mm')))									
 									,tipoDocumento = UPPER(td.descripcion)
 									,CASE WHEN UPPER(rc.ambiente) =1 THEN 'PRUEBAS' ELSE 'PRODUCCIÓN' END as ambiente
 									,CASE WHEN rc.tipoEmision = '1' THEN 'NORMAL' ELSE '' END AS emision
