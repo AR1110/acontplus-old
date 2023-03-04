@@ -1,3 +1,5 @@
+USE [AcontPlus]
+GO
 -- ================================================
 -- Template generated from Template Explorer using:
 -- Create Procedure (New Menu).SQL
@@ -108,32 +110,40 @@ BEGIN
 					CROSS APPLY r.xmlComp.nodes('//comprobante/notaCredito/infoNotaCredito') x(y) 
 				END 
 
-		COMMIT TRAN 
-		INSERT INTO FactElect.DocRelacionado 
-			(idDocumentoRecibido
-			,codDocSustento
-			,numDocSustento
-			,fechaEmisionDocSustento
-			,codigo
-			,baseImponible
-			,porcentajeRetener
-			,valorRetenido)
-		SELECT
-		    @idDocumento
-		   ,codDocSustento
-		   ,numDocSustento
-		   ,fechaEmisionDocSustento
-		   ,codigo
-		   ,baseImponible
-		   ,porcentajeRetener = ISNULL(porcentajeRetener,0) 
-		   ,valorRetenido
-		FROM @DocumentoRelacionado r 
+			INSERT INTO FactElect.DocRelacionado 
+				(idDocumentoRecibido
+				,codDocSustento
+				,numDocSustento
+				,fechaEmisionDocSustento
+				,baseImponible
+				,porcentajeRetener
+				,valorRetenido)
+			SELECT
+				idDocumentoRecibido = @idDocumento
+			   ,codDocSustento
+			   ,numDocSustento = REPLACE(numDocSustento,'-','')
+			   ,fechaEmisionDocSustento
+			   ,baseImponible = SUM(baseImponible)
+			   ,porcentajeRetener = SUM(ISNULL(porcentajeRetener,0)) 
+			   ,valorRetenido = SUM(valorRetenido)
+			FROM @DocumentoRelacionado r 
+			GROUP BY codDocSustento
+					,numDocSustento
+					,fechaEmisionDocSustento
+			
+			IF (SELECT COUNT( *) FROM FactElect.DocRelacionado WHERE idDocumentoRecibido = @idDocumento) > 0 
+				BEGIN
+					SELECT CAST(1 as bit) result
+				END 
 
-		IF (SELECT COUNT(*) FROM FactElect.DocRelacionado WHERE idDocumentoRecibido = @idDocumento) > 1
-			BEGIN
-				SELECT 1 
-				RETURN 
-			END
+			ELSE 
+				BEGIN
+					SELECT CAST(0 as bit) result
+				END 
+				
+		COMMIT TRAN 
+
+		
 	END TRY 
 
 	BEGIN CATCH 
@@ -141,8 +151,9 @@ BEGIN
 		BEGIN
 			ROLLBACK TRAN; 
 		END
+		SELECT CAST(0 as bit) result
 		INSERT INTO ErroresSistema(token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
-		VALUES (NEWID(),'/WS_DocumentoRelacionado/GetDataXml',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),1)
+		VALUES (NEWID(),'/WS_DocumentoRelacionado/Insert',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),1)
 	END CATCH 
 
 END

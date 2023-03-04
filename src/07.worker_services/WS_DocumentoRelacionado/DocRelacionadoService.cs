@@ -1,7 +1,7 @@
 ﻿using DataAccess;
 using System.Data;
 
-namespace WS_DocRelacionado
+namespace WS_DocumentoRelacionado
 {
     public sealed class DocRelacionadoService
     {
@@ -16,33 +16,23 @@ namespace WS_DocRelacionado
             return _dbAccess.GetDataTable();
         }
 
-        public async Task<DataTable> GetDataXml(int idDocumento, string codDoc, string versionComp)
-        {
-            DbAccess _dbAccess = new DbAccess(_config);
-            await _dbAccess.SPExecute("FactElect.Document_Recib_Serv_Get_Data_Xml");
-            _dbAccess.AddDynamicParam("idDocumento", idDocumento);
-            _dbAccess.AddDynamicParam("codDoc", codDoc);
-            _dbAccess.AddDynamicParam("versionComp", versionComp);
-            return _dbAccess.GetDataTable();
-        }
-
-        public async Task<bool> Insert(int idDocumento, string codDoc, string json)
+        public async Task<bool> Insert(int idDocumento, string codDoc, string versionComp)
         {
             DbAccess _dbAccess = new DbAccess(_config);
             await _dbAccess.SPExecute("FactElect.Doc_Relac_Serv_Insert");
             _dbAccess.AddDynamicParam("idDocumento", idDocumento);
             _dbAccess.AddDynamicParam("codDoc", codDoc);
-            _dbAccess.AddDynamicParam("json", json);
-            return true;
+            _dbAccess.AddDynamicParam("versionComp", versionComp);
+            DataTable dt = _dbAccess.GetDataTable();
+            return Convert.ToBoolean(dt.Rows[0]["result"]);
         }
 
-        public async Task<bool> Update(int idDocumento, bool complete)
+        public async Task Update(int idDocumento)
         {
             DbAccess _dbAccess = new DbAccess(_config);
             await _dbAccess.SPExecute("FactElect.Document_Recib_Serv_Update");
             _dbAccess.AddDynamicParam("idDocumento", idDocumento);
-            _dbAccess.AddDynamicParam("complete", complete);
-            return true;
+            _dbAccess.OnlyExecute();
         }
     }
 }
