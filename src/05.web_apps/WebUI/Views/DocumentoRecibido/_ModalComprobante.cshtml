@@ -422,7 +422,7 @@
     </div>
 </div>
 <div class="modal-footer">
-    <button type="submit" class="btn btn-success" ng-click="askToSave()" title="Guardar">
+    <button type="submit" class="btn btn-success" ng-if="!selected[0].complete" ng-click="askToSave()" title="Guardar">
         <icon class="ti-save"></icon> Guardar
     </button>
     <button class="btn btn-dark" ng-click="closeMainModal()">

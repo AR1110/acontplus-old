@@ -8,10 +8,6 @@
         </div>
     </div>
 
-    <button type="button" class="btn btn-success" ng-click="getReport()">
-        <i class="fa fa-file"></i> Test
-    </button>
-
     <div class="row">
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="card">
@@ -75,7 +71,7 @@
                                 <tr md-row md-select="item" md-select-id="index" md-on-select="showOptions"
                                     md-auto-select
                                     ng-repeat="item in comprobantes"
-                                    style="{{item.colorRow}}" title="{{item.hoverText}}" ng-disabled="item.complete">
+                                    style="{{item.colorRow}}" title="{{item.hoverText}}">
                                     <td md-cell style="{{item.colorCol}}">{{item.comprobante}}</td>
                                     <td md-cell style="{{item.colorCol}}">{{item.serieComprobante}}</td>
                                     <td md-cell style="{{item.colorCol}}">{{item.rucEmisor}}</td>

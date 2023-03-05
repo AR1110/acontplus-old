@@ -1504,10 +1504,13 @@ function documentoRecibidoCtrl(
     }
     $scope.getReport = () => {
         try {
+            if ($scope.selected[0].codDoc != '07') {
+                return
+            }
             let format = 'pdf';
             let dataParms = {                
-                id: 142,                            
-                codigo: COD_REPORTS['07'],
+                id: $scope.selected[0].idDocumento,                            
+                codigo: COD_REPORTS[$scope.selected[0].codDoc],
                 format,            
             }
        

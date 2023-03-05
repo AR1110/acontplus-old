@@ -82,7 +82,11 @@ BEGIN
 	SELECT @rucProv = rucEmisor  FROM Recepcion.DocumentoRecibido WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp) 
 
 	SELECT TOP 1 @idProveedor = idProveedor FROM Proveedor WHERE idEntidad = @idEntidad AND numeroIdentificacion = @rucProv
-
+		IF EXISTS (SELECT 1 FROM Recepcion.DocumentoRecibido WHERE idDocumento =  (SELECT TOP 1 idDocumento FROM @tmp) AND codDoc = '01' AND complete = 1)
+		BEGIN
+			SELECT '1' code, '' AS 'message'
+			RETURN
+		END
 	BEGIN TRY
 		BEGIN TRAN
 			IF EXISTS(SELECT 1 FROM Recepcion.Doc_Detalle_Temp cpt INNER JOIN @tmp t ON cpt.idDocumento = t.idDocumento)
