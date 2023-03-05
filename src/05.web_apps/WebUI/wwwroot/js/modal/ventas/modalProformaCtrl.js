@@ -341,14 +341,16 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl{
 
     async onSave(){                        
         try {            
-            showLoader();
+            
 
             if(!this.isValidaForm()) return
         
-            if(this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total>50 ){
-                this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')           
-                return
-            }
+            // if(this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total>50 ){
+            //     this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')           
+            //     return
+            // }
+
+            showLoader();
         
             this.nroDocumentoSecuencial = await this._commonSvc.generarNroDocumentoVenta({
                 idPuntoEmision: this.data.idPuntoEmision,
@@ -683,10 +685,10 @@ export class ModalProformaEditarCtrl extends ModalProformaCtrl{
         try {                        
             if(!this.isValidaForm()) return
         
-            if(this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total>50 ){
-                this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')           
-                return
-            }               
+            // if(this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total>50 ){
+            //     this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')           
+            //     return
+            // }               
 
             let textAccion = 'Actualizar';   
             const swalWithBootstrapButtons = Swal.mixin({
@@ -869,10 +871,10 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl{
 
             if(!this.isValidaForm()) return
         
-            if(this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total>50 ){
-                this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')           
-                return
-            }
+            // if(this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total>50 ){
+            //     this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')           
+            //     return
+            // }
                       
             this.nroDocumentoSecuencial = await this._commonSvc.generarNroDocumentoVenta({
                 idPuntoEmision: this.data.idPuntoEmision,

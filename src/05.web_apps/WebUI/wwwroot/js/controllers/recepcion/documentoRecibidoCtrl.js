@@ -1506,7 +1506,7 @@ function documentoRecibidoCtrl(
         try {
             let format = 'pdf';
             let dataParms = {                
-                id: 333,                            
+                id: 142,                            
                 codigo: COD_REPORTS['07'],
                 format,            
             }

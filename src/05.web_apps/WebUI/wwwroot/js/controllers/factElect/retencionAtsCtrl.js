@@ -1120,10 +1120,10 @@
                     let totalFp = $scope.paymentsAdded.map(item => (item.total)).reduce((valorActual, previous) => (valorActual + previous), 0)
                     totalFp = totalFp + $scope.payment.total
 
-                    if (importeTotal != totalFp) {
-                        tS.toastr('warning', 'El total de formas de pago es diferente al importe total del documento de sustento')
-                        return
-                    }
+                    // if (importeTotal != totalFp) {
+                    //     tS.toastr('warning', 'El total de formas de pago es diferente al importe total del documento de sustento')
+                    //     return
+                    // }
                     let idRetAtsDocSustento = $scope.docsAdded.find(item => (item.uniqueIdDoc == uniqueIdDoc)).idRetAtsDocSustento
                     if (idRetAtsDocSustento > 0) {
                         mS.getData('post', _urlService + 'DocSustPago/' + idRetAtsDocSustento + '?json=' + JSON.stringify(data)).then(
