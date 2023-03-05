@@ -368,7 +368,7 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Si, eliminar!',
+                confirmButtonText: 'Si, anular!',
                 cancelButtonText: 'No, cancelar',
                 allowOutsideClick: false
             }).then((result) => {
