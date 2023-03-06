@@ -2,10 +2,8 @@
 USE [AcontPlus]
 
 
-
-
--- exec ReporteFact.ComprobanteRetencion '{"id":333,"codigo":"RCR","format":"pdf"}'
--- exec ReporteFact.ComprobanteRetencion '[{"id": 142, "codigo":"RCR","format":"pdf"}]'
+-- exec ReporteFact.ComprobanteRetencion '{"rdlcParams":"[{\"reportPath\":\"\\\/FactElect\\\/ComprobanteRetencion.rdl\",\"format\":\"pdf\",\"contentType\":\"application\\\/pdf\",\"fileName\":\"ComprobanteRetencion.pdf\"}]","id":333}'
+-- exec ReporteFact.ComprobanteRetencion '[{"id": 323, "codigo":"RCR","format":"pdf"}]'
 
 IF OBJECT_ID('ReporteFact.ComprobanteRetencion ')IS NOT NULL
 	DROP PROCEDURE ReporteFact.ComprobanteRetencion
@@ -63,22 +61,20 @@ BEGIN
 	IF(OBJECT_ID('tempdb..#impuestosRetV2') IS NOT NULL) BEGIN DROP TABLE #impuestosRetV2 END
 
 
-	--Select Data Json 
+	--Recuperando Data Json 
 	SELECT 
 		 @id = id
-		,@rdlcParams  = rdlcParams 
-		,@versionComp = versionComp
+		,@rdlcParams  = rdlcParams 		
 	FROM OPENJSON(@json)
 	WITH (
 		 id INT '$.id'
 		,rdlcParams VARCHAR(MAX) '$.rdlcParams'
-		,versionComp VARCHAR(MAX) '$.versionComp'
 	) AS dt 
 
 
 	
 
-	---Variables Generales------------
+	---Set Variables Generales------------
 
 	SELECT
 		
@@ -91,8 +87,6 @@ BEGIN
 	FROM Recepcion.DocumentoRecibido dr WITH (NOLOCK) 
 	INNER JOIN Config.Estab_Logo el WITH (NOLOCK) ON el.codEstab = dr.codEstab
 	WHERE dr.idDocumento = @id 
-
-	--SELECT * FROM Recepcion.DocumentoRecibido WHERE idDocumento = 142 @id
 
 
 	INSERT INTO @xmlCompRet (xmlRet) 
@@ -136,7 +130,6 @@ BEGIN
 
 	SET @headerDs  = (SELECT * FROM #infoRetencion ir FOR JSON PATH)
      
-	 PRINT @versionComp
 	-------VERSION 1.0.0
 	IF @versionComp = '1.0.0'
 		BEGIN 
@@ -155,12 +148,12 @@ BEGIN
 
 			) AS impTemp
 			INNER JOIN Sri.ImpuestoRetencion ir WITH (NOLOCK) ON ir.codigo         = impTemp.codigo
-			INNER JOIN Sri.DocumentoSustento ds WITH (NOLOCK) ON ds.codDocSustento = impTemp.codDocSustento
-		
+			LEFT JOIN Sri.DocumentoSustento ds WITH (NOLOCK) ON ds.codDocSustento = impTemp.codDocSustento
+			
+			--SELECT * FROM #impuestosRetV1
 			SET @detalleDs = (SELECT * FROM #impuestosRetV1 FOR JSON PATH)		
 		END 	
 		
-	--SELECT * FROM #impuestosRetV1
 
 	------VERSION 2.0.0
 	IF @versionComp = '2.0.0'
@@ -178,11 +171,14 @@ BEGIN
 				FROM @xmlCompRet t
 				CROSS APPLY t.xmlRet.nodes('//comprobante/comprobanteRetencion/docsSustento/docSustento') x(y)
 			) AS impTemp
-			INNER JOIN Sri.ImpuestoRetencion ir WITH (NOLOCK) ON ir.codigo        = impTemp.codigo
-			INNER JOIN Sri.DocumentoSustento ds WITH(NOLOCK) ON ds.codDocSustento = impTemp.codDocSustento
+			INNER JOIN Sri.ImpuestoRetencion ir WITH (NOLOCK) ON ir.codigo       = impTemp.codigo
+			LEFT JOIN Sri.DocumentoSustento ds WITH(NOLOCK) ON ds.codDocSustento = impTemp.codDocSustento
+			--SELECT * FROM #impuestosRetV2
+			SET @detalleDs = (SELECT * FROM #impuestosRetV2 FOR JSON PATH)		
 		END 
 
-
+	--	SELECT * FROM #impuestosRetV2
+		
 	SET @infoAdditionalDs = (
 						  SELECT 
 							 y.value('@nombre','VARCHAR(100)') as nombre,  
@@ -193,7 +189,7 @@ BEGIN
 						 )
 
 						  
-	SET @dataSources = (SELECT headerDs = @headerDs, detalleDs = @detalleDs, additionalDs = @infoAdditionalDs FOR JSON PATH)
+	SET @dataSources = (SELECT headerDs = @headerDs, detalleDs = ISNULL(@detalleDs,'[]'), additionalDs = ISNULL(@infoAdditionalDs,'[]') FOR JSON PATH)
 
 	
 	SELECT  imagen       = @imagen
@@ -203,7 +199,7 @@ BEGIN
 			,dataSources = @dataSources
 			,'from'      = 'envio.comprobantes@acontplus.com.ec'
 			,'password'  = 'rmdodmyvosnwxzwt'
-			,'subject'   =  'Comprobante Electrónico - Acontplus N°: '+ (SELECT nroDoc = estab+'-'+ptoEmi+'-'+dbo.AFTAutoComplete(secuencial) FROM #infoRetencion)
+			,'subject'   =  'Comprobante Electrónico - Acontplus N°: '+ @serieComprobante
 			,'cc'        = ISNULL(@cc,'')  
 			,'invoiceName' = ISNULL(@nameDoc,'')
 			,logo = 'logoAcontPlus.jpg'

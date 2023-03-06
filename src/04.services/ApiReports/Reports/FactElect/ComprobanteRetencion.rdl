@@ -87,10 +87,6 @@
         <CommandText />
       </Query>
       <Fields>
-        <Field Name="impuesto">
-          <DataField>docSustento</DataField>
-          <rd:UserDefined>true</rd:UserDefined>
-        </Field>
         <Field Name="baseImponible">
           <DataField>baseImponible</DataField>
           <rd:UserDefined>true</rd:UserDefined>
@@ -103,16 +99,20 @@
           <DataField>valorRetenido</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
-        <Field Name="docSustento">
-          <DataField>docSustento</DataField>
-          <rd:UserDefined>true</rd:UserDefined>
-        </Field>
         <Field Name="numDocSustento">
           <DataField>numDocSustento</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
         <Field Name="fechaEmisionDocSustento">
           <DataField>fechaEmisionDocSustento</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="impuesto">
+          <DataField>impuesto</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="docSustento">
+          <DataField>docSustento</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
       </Fields>
@@ -560,7 +560,7 @@
                 <Sizing>Fit</Sizing>
                 <Top>5.09957cm</Top>
                 <Left>0.17912cm</Left>
-                <Height>1.13552cm</Height>
+                <Height>0.91779cm</Height>
                 <Width>7.95522cm</Width>
                 <ZIndex>12</ZIndex>
                 <Style>
@@ -589,7 +589,7 @@
                   </Paragraph>
                 </Paragraphs>
                 <rd:DefaultName>Textbox72</rd:DefaultName>
-                <Top>6.23509cm</Top>
+                <Top>6.05264cm</Top>
                 <Left>0.17912cm</Left>
                 <Height>0.6cm</Height>
                 <Width>7.95522cm</Width>
@@ -641,7 +641,7 @@
             <KeepTogether>true</KeepTogether>
             <Top>2.61411mm</Top>
             <Left>106.69256mm</Left>
-            <Height>70.77292mm</Height>
+            <Height>68.65625mm</Height>
             <Width>83.22496mm</Width>
             <Style>
               <Border>
@@ -1081,7 +1081,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>headerDs</DataSetName>
-            <Top>74.09259mm</Top>
+            <Top>71.58709mm</Top>
             <Left>2.63189mm</Left>
             <Height>12mm</Height>
             <Width>187.28563mm</Width>
@@ -2407,7 +2407,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>detalleDs</DataSetName>
-            <Top>8.75037cm</Top>
+            <Top>8.49982cm</Top>
             <Left>0.27315cm</Left>
             <Height>1.2cm</Height>
             <Width>18.73895cm</Width>
@@ -2576,7 +2576,7 @@
               </Tablix>
             </ReportItems>
             <KeepTogether>true</KeepTogether>
-            <Top>10.09148cm</Top>
+            <Top>9.84093cm</Top>
             <Left>0.27315cm</Left>
             <Height>1.67979cm</Height>
             <Width>10.49277cm</Width>
