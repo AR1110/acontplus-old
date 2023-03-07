@@ -33,6 +33,11 @@ BEGIN
 			) AS t ON fc.nroAutorizacion = t.numAutDocSustento
 			AND  REPLACE(fc.puntoEmision,'-','')+Helper.F_Auto_Sequential(fc.nroDocumento) = t.numDocSustento
 
+			--IF EXISTS(SELECT 1 FROM Pago p WITH(NOLOCK) INNER JOIN TipoDocumento td ON p.idTipoDocumento = td.idTipoDocumento  
+			--					WHERE td.codigo = 'RV' AND p.idComprobante = @idRetencionAts)
+				--BEGIN
+					--UPDATE Pago WHERE 
+				--END
 
 			UPDATE DocumentoElectronico SET codEstado = 6 WHERE idDocumentoElectronico = @id
 

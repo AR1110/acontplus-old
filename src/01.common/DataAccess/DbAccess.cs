@@ -114,6 +114,10 @@ namespace DataAccess
             catch (Exception ex)
             {
                 _log.LogError("Error in GetDataSet: " + ex.ToString());
+                if (ds.Tables.Count > 0)
+                {
+                    ds = new DataSet();
+                }
                 DtError(ref dtResp, ex.Message);
                 ds.Tables.Add(dtResp);
             }

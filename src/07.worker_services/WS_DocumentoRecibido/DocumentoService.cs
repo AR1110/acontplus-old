@@ -14,7 +14,7 @@ namespace WS_DocumentoRecibido
             _dbAccess.AddDynamicParam("cantDocs", cantDocs);
             return _dbAccess.GetDataTable();
         }
-        public async Task<bool> Update(int idDocumento, string downloaded, string codDoc, string versionComp, string xmlDoc)
+        public async Task<bool> Update(int idDocumento, string downloaded, string codDoc, string versionComp, string fechaEmision, string xmlDoc)
         {
             DbAccess _dbAccess = new DbAccess(_config);
             await _dbAccess.SPExecute("Recepcion.Doc_Serv_Update");
@@ -22,6 +22,7 @@ namespace WS_DocumentoRecibido
             _dbAccess.AddDynamicParam("downloaded", downloaded);
             _dbAccess.AddDynamicParam("codDoc", codDoc);
             _dbAccess.AddDynamicParam("versionComp", versionComp);
+            _dbAccess.AddDynamicParam("fechaEmision", fechaEmision);
             _dbAccess.AddDynamicParam("xmlDoc", xmlDoc);
             _dbAccess.OnlyExecute();
             return true;

@@ -93,7 +93,19 @@ BEGIN
 		BEGIN
 			SELECT '0' code,'Esta Factura de Compra ya se encuentra registrada' AS 'message'
 			RETURN 
-		END 
+		END
+	
+	IF NOT EXISTS (SELECT 1 FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp))
+		BEGIN
+			SELECT '0' code,'No existe detalle para ingresar!' AS 'message'
+			RETURN
+		END
+
+	IF EXISTS (SELECT 1 FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp) AND idArticulo IS NULL)
+		BEGIN
+			SELECT '0' code,'Posee articulos sin vincular, revise el detalle!' AS 'message'
+			RETURN
+		END
 
 	DECLARE @idDocumento INT,@idBodega INT
 
