@@ -25,7 +25,8 @@ BEGIN
 		BEGIN TRAN 
 			
 			UPDATE FactElect.RetencionAts SET anuladaSri = 1 WHERE idRetencionAts = @idRetencionAts
-
+			
+			--ANULA EN FACTURA
 			UPDATE fc SET fc.retencion = 0
 			FROM FacturaCompra fc
 			JOIN (
@@ -33,12 +34,16 @@ BEGIN
 			) AS t ON fc.nroAutorizacion = t.numAutDocSustento
 			AND  REPLACE(fc.puntoEmision,'-','')+Helper.F_Auto_Sequential(fc.nroDocumento) = t.numDocSustento
 
-			--IF EXISTS(SELECT 1 FROM Pago p WITH(NOLOCK) INNER JOIN TipoDocumento td ON p.idTipoDocumento = td.idTipoDocumento  
-			--					WHERE td.codigo = 'RV' AND p.idComprobante = @idRetencionAts)
-				--BEGIN
-					--UPDATE Pago WHERE 
-				--END
+			--ANULA EN PAGOS
+			IF EXISTS(SELECT 1 FROM Pago p WITH(NOLOCK) INNER JOIN TipoDocumento td WITH(NOLOCK) ON p.idTipoDocumento = td.idTipoDocumento  
+								WHERE td.codigo = 'RC' AND p.idComprobante = @idRetencionAts AND p.versionComp = '2.0.0')
+				BEGIN
+					UPDATE p SET p.estado = 0 FROM Pago p WITH(NOLOCK) INNER JOIN TipoDocumento td WITH(NOLOCK) ON p.idTipoDocumento = td.idTipoDocumento
+					WHERE p.idComprobante = @idRetencionAts 
+					AND td.codigo = 'RC' AND p.versionComp = '2.0.0'
+				END
 
+			--ANULA EN DOCUMENTO ELECTRONICO
 			UPDATE DocumentoElectronico SET codEstado = 6 WHERE idDocumentoElectronico = @id
 
 			SELECT '1' code, 'Retencion anulada en el SRI con exito'  as 'message'

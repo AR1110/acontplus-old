@@ -60,7 +60,7 @@
                 <div class="form-group">
                     <label for="pagoLocExt">Pago Local Exterior:</label>
                     <select id="pagoLocExt" class="form-control" ng-model="docSustento.pagoLocExt"
-                        ng-change="enableControls(docSustento.pagoLocExt)">
+                        ng-change="enableControls(docSustento.pagoLocExt)" required>
                         <option>::seleccione::</option>
                         <option ng-value="item.pagoLocExt" ng-repeat="item in tiposPago">{{item.pagoLocExt}} -
                             {{item.descripcion}}</option>
