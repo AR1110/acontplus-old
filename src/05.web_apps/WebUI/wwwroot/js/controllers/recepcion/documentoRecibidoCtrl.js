@@ -20,7 +20,7 @@ function documentoRecibidoCtrl(
     modalService,
     nameModalConst,
     uuid2
-    ) {
+) {
 
     'use strict';
     $scope.title = 'documentoRecibidoCtrl';
@@ -150,22 +150,22 @@ function documentoRecibidoCtrl(
             showLoader();
             $scope.query.startDate = $scope.dateRangePicker.date.startDate
             $scope.query.endDate = $scope.dateRangePicker.date.endDate
-            console.log($scope.query)
+            //console.log($scope.query)
             mS.getData('get', _urlService + 'DocumentoRecibido/Get/' + JSON.stringify($scope.query)).then(response => {
+                if (response.code == "0") {
+                    tS.toastr('warning', response.message)
+                }
                 if (response.code == "1") {
                     $scope.comprobantes = JSON.parse(response.payload)[0];
 
-                    console.log($scope.comprobantes);
+                    //console.log($scope.comprobantes);
 
                     $scope.cloneComprobantes = JSON.parse(JSON.stringify($scope.comprobantes))
                     //$scope.totalRecords = $scope.comprobantes[0].totalRecords;
                 }
-                
-            }, error => {
-                if (error.data) {
-                    tS.toastr('error', error.data.message)
-                }
-                console.log(error.data)
+
+            }).catch((error) => {
+                console.log(error)
             })
             hideLoader();
         } catch (error) {
@@ -191,9 +191,9 @@ function documentoRecibidoCtrl(
                 }, error => {
                     console.log(error);
                 }
-            ) 
+            )
 
-            
+
         } catch (error) {
             console.log(error);
         }
@@ -205,7 +205,7 @@ function documentoRecibidoCtrl(
                 $scope.decimal = response[1][0];
             }
         )
-            
+
     }
 
     $scope.onKeyupSearchFilter = () => {
@@ -543,7 +543,7 @@ function documentoRecibidoCtrl(
             if (element.codigo == '2' && element.codigoPorcentaje == '7') {
                 trTaxes += `<tr><td class="text-right"><strong>SubTotal Excento Iva</strong></td>`
                 trTaxes += `<td class="text-right"> ${parseFloat(element.baseImponible).toLocaleString('en', { style: 'currency', currency: 'USD' })} </td></tr>`
-            } 
+            }
             if (element.codigo == '3') {
                 trTaxes += `<tr><td class="text-right"><strong>ICE</strong></td>`
                 trTaxes += `<td class="text-right"> ${parseFloat(element.valor).toLocaleString('en', { style: 'currency', currency: 'USD' })} </td></tr>`
@@ -577,6 +577,30 @@ function documentoRecibidoCtrl(
         })
 
     }
+    $scope.invoiceDetail = []
+    $scope.getNotaCreditoDetalle = (item) => {
+        try {
+            let data = {
+                tipo: 2,
+                claveAcceso: item
+            }
+            mS.getData('get', 'FacturaDetalle/' + JSON.stringify(data), null, true).then(
+                response => {
+                    if (response.code == '0') {
+                        tS.toastr('warning', response.message)
+                    }
+                    if (response.code == '1') {
+                        $scope.invoiceDetail = JSON.parse(response.payload)
+                    }
+                }
+            ).catch((error) => {
+                console.log(error)
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     $scope.customDetailTemp = []
     $scope.getId = () => {
         try {
@@ -665,7 +689,8 @@ function documentoRecibidoCtrl(
                             break;
                         case "04":
                             $scope.infoNotaCredito = $scope.fullComprobante.infoNotaCredito
-                            $scope.totalTaxes = $scope.fullComprobante.infoNotaCredito.totalImpuestos;
+                            $scope.totalTaxes = $scope.fullComprobante.infoNotaCredito.totalImpuestos
+                            //$scope.getNotaCreditoDetalle($scope.fullComprobante.numeroAutorizacion)
                             //$scope.setTaxes()
                             $('#notaCreditoModal').modal('show')
                             // console.log($scope.comprobante);
@@ -1238,18 +1263,18 @@ function documentoRecibidoCtrl(
     $scope.historyComprasArticle = []
     $scope.getArticleHC = (item) => {
         try {
-            $scope.articleName = item.descripcion
+            //$scope.articleName = item.descripcion
             mS.getData('get', '/CompraHabitual/Get?json=' + JSON.stringify({ tipo: 3, idArticulo: item.idArticulo })).then(
                 response => {
                     if (!response.payload) {
                         tS.toastr('warning', 'Este articulo aun no tiene registros de compra habitual')
                     } else {
                         $scope.historyComprasArticle = JSON.parse(response.payload)
+                        //console.log($scope.historyComprasArticle)
+                        $scope.articleName = $scope.historyComprasArticle[0].articulo
                         $scope.modalRefAHC = modalService.openModalSecond(null, 'DocumentoRecibido/_HistoryCompras.cshtml', 'xl', null, true, 'uibModalFullScreen', $scope)
                         $scope.modalRefAHC.result.then(res => { })
                     }
-                }, error => {
-                    console.log(error)
                 }
             )
         } catch (error) {
@@ -1276,7 +1301,7 @@ function documentoRecibidoCtrl(
     }
     $scope.deleteCH = (item) => {
         try {
-            mS.getData('delete', '/CompraHabitual/Delete?id=' + item.idDocumentoraHabitual).then(
+            mS.getData('delete', '/CompraHabitual/Delete?id=' + item.idCompraHabitual).then(
                 response => {
                     if (response.code == '0') {
                         tS.toastr('warning', response.message)
@@ -1508,20 +1533,20 @@ function documentoRecibidoCtrl(
                 return
             }
             let format = 'pdf';
-            let dataParms = {                
-                id: $scope.selected[0].idDocumento,                            
+            let dataParms = {
+                id: $scope.selected[0].idDocumento,
                 codigo: COD_REPORTS[$scope.selected[0].codDoc],
-                format,            
+                format,
             }
-       
-            const parameters = {               
+
+            const parameters = {
                 dataParams: JSON.stringify(dataParms)
             }
             console.log(parameters)
             _commonSvc.getReportDynamic({
-                parameters, 
+                parameters,
                 format
-            })     
+            })
         } catch (error) {
             console.log(error)
         }
