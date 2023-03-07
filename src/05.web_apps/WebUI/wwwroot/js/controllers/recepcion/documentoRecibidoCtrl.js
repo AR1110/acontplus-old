@@ -1261,22 +1261,34 @@ function documentoRecibidoCtrl(
     };
 
     $scope.historyComprasArticle = []
-    $scope.getArticleHC = (item) => {
+    $scope.getArticleHC = async(item) => {
         try {
+
+            let {MODAL_FILE_CTRL, MODAL_HISTORIAL_COMPRA} = nameModalConst.doc_recibido;        
+            let controller =  (await import('./../../' + MODAL_FILE_CTRL))[MODAL_HISTORIAL_COMPRA['controller']];
+            let template = MODAL_HISTORIAL_COMPRA['template'];
+
+            modalService.openModalCustom({
+                controller,
+                template,
+                size:'xl',
+                params: item
+            })
+
             //$scope.articleName = item.descripcion
-            mS.getData('get', '/CompraHabitual/Get?json=' + JSON.stringify({ tipo: 3, idArticulo: item.idArticulo })).then(
-                response => {
-                    if (!response.payload) {
-                        tS.toastr('warning', 'Este articulo aun no tiene registros de compra habitual')
-                    } else {
-                        $scope.historyComprasArticle = JSON.parse(response.payload)
-                        //console.log($scope.historyComprasArticle)
-                        $scope.articleName = $scope.historyComprasArticle[0].articulo
-                        $scope.modalRefAHC = modalService.openModalSecond(null, 'DocumentoRecibido/_HistoryCompras.cshtml', 'xl', null, true, 'uibModalFullScreen', $scope)
-                        $scope.modalRefAHC.result.then(res => { })
-                    }
-                }
-            )
+            // mS.getData('get', '/CompraHabitual/Get?json=' + JSON.stringify({ tipo: 3, idArticulo: item.idArticulo })).then(
+            //     response => {
+            //         if (!response.payload) {
+            //             tS.toastr('warning', 'Este articulo aun no tiene registros de compra habitual')
+            //         } else {
+            //             $scope.historyComprasArticle = JSON.parse(response.payload)
+            //             //console.log($scope.historyComprasArticle)
+            //             $scope.articleName = $scope.historyComprasArticle[0].articulo
+            //             $scope.modalRefAHC = modalService.openModalSecond(null, 'DocumentoRecibido/_HistoryCompras.cshtml', 'xl', null, true, 'uibModalFullScreen', $scope)
+            //             $scope.modalRefAHC.result.then(res => { })
+            //         }
+            //     }
+            // )
         } catch (error) {
             console.log(error)
         }

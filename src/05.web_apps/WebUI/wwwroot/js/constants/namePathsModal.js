@@ -67,7 +67,6 @@ app.constant('nombreModal', {
             controller: 'InfoAdicionalTipoDocCtrl',
             template: 'Shared/Common/_ModalInfoAdicionalTipoDoc.cshtml'
         }
-
     },
     doc_elect:{
         MODAL_CTRL: 'factElect/docVentaCtrl.js' + CHANGE_VERSION(),
@@ -518,6 +517,14 @@ app.constant('nombreModal', {
         MODAL_EDIT:{
             controller: 'ModalPtoEmisionCtrl',
             template:'Establecimiento/PuntoEmision/_ModalEditar.cshtml'
+        }
+    },
+
+    doc_recibido: {
+        MODAL_FILE_CTRL:'modal/recepcion/modalDocRecibidoCtrl.js',
+        MODAL_HISTORIAL_COMPRA:{
+            controller: 'ModalHistoryComprasCtrl',
+            template: 'DocumentoRecibido/_HistoryCompras.cshtml'
         }
     },
     retencion_compra:{
