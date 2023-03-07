@@ -54,8 +54,7 @@ namespace WS_Article_Inventory
             DataTable dt = await _inventService.GetDocument(idArticulo);
             if (dt.Rows.Count > 0)
             {
-                DataRow lastRow = dt.Rows[dt.Rows.Count - 1];
-                decimal stock = Convert.ToDecimal(lastRow["saldo"]);
+                decimal stock = Convert.ToDecimal(dt.Rows[0]["saldo"]);
                 await _inventService.Update(idControlStock, idArticulo, stock);
             }
             else

@@ -33,6 +33,7 @@ BEGIN
 		   ,@idFacturaCompra BIGINT 
 		   ,@idTipoDocumento INT
 		   ,@fechaEmision DATE
+		   ,@inventory VARCHAR(5)
 
 
 	DECLARE @tmp AS TABLE(
@@ -57,9 +58,11 @@ BEGIN
 
 	SELECT @idEntidad = idEntidad,@idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 
-	SELECT @codEstab = codEstab FROM Config.Estab_Asig WHERE idUsuarioRol = @idRol AND predeterminado = 1
+	SELECT @codEstab = codEstab FROM Config.Estab_Asig  WITH (NOLOCK) WHERE idUsuarioRol = @idRol AND predeterminado = 1
 	
-	SELECT @idTipoDocumento = idTipoDocumento FROM dbo.TipoDocumento WHERE codigo = 'FC'
+	SELECT @idTipoDocumento = idTipoDocumento FROM dbo.TipoDocumento  WITH (NOLOCK) WHERE codigo = 'FC'
+
+	SELECT @inventory = llevaInventario FROM Config.GestionSistema WITH (NOLOCK) WHERE idEntidad = @idEntidad
 
 	INSERT INTO @tmp(idDocumento,secuencial, estab, ptoEmi,claveAcceso,codDoc,totalDescuento,totalSinImpuestos,importeTotal,propina,idSustentoTributario
 				   ,idTiempoCredito,idCategoriaCompra ,idProveedor, idBodega, observacion, payments)
@@ -162,6 +165,12 @@ BEGIN
 			WHERE cd.idDocumento = @idDocumento
 			--GROUP BY cd.idArticulo, cd.idMedida, cd.descripcion, cd.cantidad, cd.precioTotalSinImpuesto
 			--, cd.precioUnitario, cd.descuento
+
+			INSERT INTO Inventario.ControlStock(idTipoDocumento,idDocumento,idArticulo,idBodega)
+			SELECT @idTipoDocumento,@idFacturaCompra,a.idArticulo,idBodega 
+			FROM dbo.FacturaCompraDetalle fc 
+			INNER JOIN dbo.Articulo a ON a.idArticulo = fc.idArticulo 
+			WHERE a.llevaInventario = 1 AND @inventory = 'SI' AND fc.idFacturaCompra = @idFacturaCompra
 
 			INSERT INTO Compra.FacturaCompraImpuesto(idFac_CompraDetalle, codigo, codigoPorcentaje, tarifa, baseImponible, valor)
 			SELECT fcd.idFacturaCompraDetalle, i.codigo, i.codigoPorcentaje, i.tarifa, i.baseImponible, i.valor

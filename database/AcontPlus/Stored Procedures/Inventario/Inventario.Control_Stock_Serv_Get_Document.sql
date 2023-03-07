@@ -39,6 +39,12 @@ BEGIN
 	   ,particion INT NOT NULL
 	)
 
+	DECLARE @tableMovent AS TABLE 
+	(
+		 id INT IDENTITY(1,1)
+		,saldo DECIMAL(15,5)
+	)
+
 	INSERT INTO @table 
 	(
 	    
@@ -256,10 +262,20 @@ BEGIN
 	WHERE idArticulo = @idArticulo AND ci.estado = 1 AND cid.estado= 1
 	
 
-
+	INSERT INTO @tableMovent (saldo)
 	SELECT 
 		saldo = SUM(SUM(IIF(movimiento = 1,-1,1) * IIF(codDoc = 'A' OR codDoc = 'TRA',0,cantidad))) OVER (PARTITION BY particion ORDER BY fechaEmision,id ASC) 
 	FROM @table 
 	GROUP BY cantidad,particion,fechaEmision,id
+
+	IF (SELECT COUNT(*) FROM @table) = 0 
+		BEGIN 
+			SELECT 0.00000 saldo
+		END
+	ELSE 
+		BEGIN
+			SELECT TOP 1 saldo FROM @tableMovent ORDER BY id DESC
+		END 
+	
 END
 GO
