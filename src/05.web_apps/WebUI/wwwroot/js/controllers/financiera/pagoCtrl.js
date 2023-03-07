@@ -59,19 +59,27 @@ function pagoCtrl($timeout, $http, $filter, $scope, mS, _commonSvc, toast, _moda
     
     $scope.pagos=[];
     $scope.getPagos=function(){
-        showLoader();
-        $http.get('/ComprobanteEgreso/Get?json=' + JSON.stringify($scope.dataSearch)).then(({data:response})=>{
-            if(response.id=="0"){
+        try {
+            showLoader();
+            $scope.pagos = [];
+            $http.get('/ComprobanteEgreso/Get?json=' + JSON.stringify($scope.dataSearch)).then(({data:response})=>{
+                if(response.id=="0"){
+                    hideLoader();
+                    $scope.pagos = [];
+                    console.log(response)
+                    return
+                }
+                $scope.pagos = JSON.parse(response.data) || [];                                        
                 hideLoader();
-                toast.toastr('warning', response.message, response.titleSms);
-                return
-            }
-            $scope.pagos = JSON.parse(response.data) || [];                                        
+            }).catch(error=>{
+                $scope.pagos = [];
+                hideLoader();
+                console.log(error)
+            })
+        } catch (error) {
+            $scope.pagos = [];
             hideLoader();
-        }).catch(error=>{
-            hideLoader();
-            toastr.error(error);
-        })
+        }
     }
     $scope.getPagos();
     
@@ -566,9 +574,9 @@ function pagoCtrl($timeout, $http, $filter, $scope, mS, _commonSvc, toast, _moda
 
     //Filtrar el estado de la Cuota 
     $scope.estadoAbonoCuota = function(cuota){
-        let estado = '';            
-        if (form.roundNumber(cuota.cxp.cuota,5) === form.roundNumber(cuota.abono,5)){
-            estado = "Cobrada";
+        let estado = ''; 
+        if (cuota.cxp.cuota === (cuota.abono + cuota.abonoPosfechado)) {
+              estado = "Cobrada";
         } 
         if (cuota.saldo > 0){                
             estado = "Pendiente Parcial"
@@ -624,13 +632,24 @@ function pagoCtrl($timeout, $http, $filter, $scope, mS, _commonSvc, toast, _moda
     $scope.listaPagos=[];
     $scope.abonoMain = 0;
     $scope.validarFormaPago=function(){
-        if($scope.validarAbono($scope.entidadFinanciera, $scope.pago, $scope.banco)){
-            let secuencial = $scope.listaPagos.length + 1; 
-            $scope.abonoMain = $scope.pago.valorPago;
-            $scope.agregarFormaPago(secuencial, $scope.pago.posFechado); 
-            $scope.getValorAbonoFormaPago(secuencial);                                             
-            $scope.calculoTotales();
-            $("#modalPayMoney").modal('hide');                
+        try {
+            if($scope.validarAbono($scope.entidadFinanciera, $scope.pago, $scope.banco)){
+                let secuencial = $scope.listaPagos.length + 1; 
+                
+                $scope.pago.valorPago = Number($scope.pago.valorPago);
+                $scope.abonoMain = $scope.pago.valorPago;
+
+            
+                $scope.agregarFormaPago(secuencial, $scope.pago.posFechado); 
+                
+                $scope.getValorAbonoFormaPago(secuencial);                                             
+                
+                $scope.calculoTotales();
+                
+                $("#modalPayMoney").modal('hide');                
+            }
+        } catch (error) {
+            console.log(error);
         }                                    
     }
 
@@ -817,18 +836,19 @@ function pagoCtrl($timeout, $http, $filter, $scope, mS, _commonSvc, toast, _moda
         //Set Cuotas Afectas
     $scope.cuotasAfectados = [];
     $scope.setPagoCuota = function(val, valor, secuencial, isPosfechado) {
-            if (val.cxp.cuota !== 0) {
-                $scope.cuotasAfectados.push({
-                    detalle: {
-                        idCuotaXPagar: val.cxp.idCuotaXPagar,
-                        abono: form.roundNumber(valor, 5),
-                    },
-                    cuota: form.roundNumber(val.cxp.cuota, 5),
-                    saldo: $scope.verificarEstadoSaldo(val),
-                    isPosfechado,
-                    secuencial
-                });
-            }
+       
+        if (val.cxp.cuota !== 0) {
+            $scope.cuotasAfectados.push({
+                detalle: {
+                    idCuotaXPagar: val.cxp.idCuotaXPagar,
+                    abono: form.roundNumber(Number(valor), 5),
+                },
+                cuota: form.roundNumber(val.cxp.cuota, 5),
+                saldo: $scope.verificarEstadoSaldo(val),
+                isPosfechado,
+                secuencial
+            });
+        }
     };
 
     $scope.getValorAbonoFormaPago=function(secuencial){
@@ -1037,11 +1057,13 @@ function pagoCtrl($timeout, $http, $filter, $scope, mS, _commonSvc, toast, _moda
 
         const parameters = {
             reportParams: JSON.stringify({
+                codEstab: item.codEstab,
                 codigo: "RCEGR", 
                 format: formatType,
                 aditionalParams: []
             }),
             dataParams: JSON.stringify({
+                codEstab: item.codEstab,
                 idComprobanteEgreso: item.idComprobanteEgreso
             })
         }
