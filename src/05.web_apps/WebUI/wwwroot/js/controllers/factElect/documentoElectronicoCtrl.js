@@ -170,8 +170,12 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
     $scope.getReport = (item) => {
         try {
 
-            if ((item.codDoc in REPORT_CODES)) return
+            if(item.codDoc!=='07'){
+                _tS.toastr('warning', 'No Disponible')
+                return
+            }
 
+        
             let format = 'pdf';
             let dataParms = {
                 versionComp: item.versionComp,
@@ -368,7 +372,7 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Si, eliminar!',
+                confirmButtonText: 'Si, anular!',
                 cancelButtonText: 'No, cancelar',
                 allowOutsideClick: false
             }).then((result) => {

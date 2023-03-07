@@ -38,7 +38,7 @@ namespace WS_DocumentoRecibido
 
                         Parallel.ForEach(dt.AsEnumerable(), drow =>
                         {
-                            FastDownload(drow);
+                            Download(drow);
                         });
                         //foreach (DataRow item in dt.Rows)
                         //{
@@ -76,7 +76,7 @@ namespace WS_DocumentoRecibido
                 //await _docService.Update_Error(new Guid(dt.Rows[0]["idDocumento"].ToString()), "ER");
             }
         }
-        public async void FastDownload(DataRow dr)
+        public async void Download(DataRow dr)
         {
             LogWriter _log = new LogWriter(_configuration);
 
@@ -88,37 +88,51 @@ namespace WS_DocumentoRecibido
 
                 XmlNode nodeAuth = xmlDocSri.GetElementsByTagName("autorizacion")[0];
                 XmlNode nodeComp = nodeAuth.SelectSingleNode("comprobante");
-                XmlDocument xmlComp = new XmlDocument();
-                xmlComp.LoadXml(nodeComp.InnerText);
-
-                XmlNode node = xmlComp.GetElementsByTagName("infoTributaria")[0];
-                string codDoc = node.SelectSingleNode("codDoc").InnerText;
-                string versionComp = string.Empty;
-                switch (codDoc)
+                if (nodeComp != null)
                 {
-                    case "01":
-                        versionComp = xmlComp.GetElementsByTagName("factura")[0].Attributes["version"].Value;
-                        break;
-                    case "03":
-                        versionComp = xmlComp.GetElementsByTagName("liquidacionCompra")[0].Attributes["version"].Value;
-                        break;
-                    case "04":
-                        versionComp = xmlComp.GetElementsByTagName("notaCredito")[0].Attributes["version"].Value;
-                        break;
-                    case "05":
-                        versionComp = xmlComp.GetElementsByTagName("notaDebito")[0].Attributes["version"].Value;
-                        break;
-                    case "06":
-                        versionComp = xmlComp.GetElementsByTagName("guiaRemision")[0].Attributes["version"].Value;
-                        break;
-                    case "07":
-                        versionComp = xmlComp.GetElementsByTagName("comprobanteRetencion")[0].Attributes["version"].Value;
-                        break;
-                    default:
-                        break;
+                    XmlDocument xmlComp = new XmlDocument();
+                    xmlComp.LoadXml(nodeComp.InnerText);
+
+                    XmlNode node = xmlComp.GetElementsByTagName("infoTributaria")[0];
+                    string codDoc = node.SelectSingleNode("codDoc").InnerText;
+                    string versionComp = string.Empty, fechaEmision = string.Empty;
+                    switch (codDoc)
+                    {
+                        case "01":
+                            versionComp = xmlComp.GetElementsByTagName("factura")[0].Attributes["version"].Value;
+                            fechaEmision = xmlComp.GetElementsByTagName("infoFactura")[0].SelectSingleNode("fechaEmision").InnerText;
+                            break;
+                        case "03":
+                            versionComp = xmlComp.GetElementsByTagName("liquidacionCompra")[0].Attributes["version"].Value;
+                            fechaEmision = xmlComp.GetElementsByTagName("infoLiquidacionCompra")[0].SelectSingleNode("fechaEmision").InnerText;
+                            break;
+                        case "04":
+                            versionComp = xmlComp.GetElementsByTagName("notaCredito")[0].Attributes["version"].Value;
+                            fechaEmision = xmlComp.GetElementsByTagName("infoNotaCredito")[0].SelectSingleNode("fechaEmision").InnerText;
+                            break;
+                        case "05":
+                            versionComp = xmlComp.GetElementsByTagName("notaDebito")[0].Attributes["version"].Value;
+                            fechaEmision = xmlComp.GetElementsByTagName("infoNotaDebito")[0].SelectSingleNode("fechaEmision").InnerText;
+                            break;
+                        case "06":
+                            versionComp = xmlComp.GetElementsByTagName("guiaRemision")[0].Attributes["version"].Value;
+                            fechaEmision = xmlComp.GetElementsByTagName("infoGuiaRemision")[0].SelectSingleNode("fechaEmision").InnerText;
+                            break;
+                        case "07":
+                            versionComp = xmlComp.GetElementsByTagName("comprobanteRetencion")[0].Attributes["version"].Value;
+                            fechaEmision = xmlComp.GetElementsByTagName("infoCompRetencion")[0].SelectSingleNode("fechaEmision").InnerText;
+                            break;
+                        default:
+                            break;
+                    }
+                    _log.LogInfo("Xml Doc Downloaded: " + dr["claveAcceso"].ToString());
+                    await _docService.Update(Convert.ToInt32(dr["idDocumento"]), "DE", codDoc, versionComp, fechaEmision, nodeAuth.OuterXml);
                 }
-                _log.LogInfo("Xml Doc Downloaded: " + dr["claveAcceso"].ToString());
-                await _docService.Update(Convert.ToInt32(dr["idDocumento"]), "DE", codDoc, versionComp, nodeAuth.OuterXml);
+                else
+                {
+                    _log.LogError("Error getting xml from SRI: " + nodeAuth.OuterXml);
+                    await _docService.Update_Error(Convert.ToInt32(dr["idDocumento"]), "NE");
+                }
             }
             else
             {

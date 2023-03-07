@@ -22,7 +22,7 @@ namespace BL.JwtAuthenticationManger
                 //var user = _users.Where(x => x.userName == authRequest.userName && x.password == authRequest.password).FirstOrDefault();
                 //if (user == null) return null;
 
-                var tokenExpiryTimeStamp = DateTime.Now.AddMinutes(JWT_TOKEN_VALIDITY_MINS);
+                var tokenExpiryTimeStamp = DateTime.Now.AddHours(JWT_TOKEN_VALIDITY_MINS);
                 var tokenKey = Encoding.ASCII.GetBytes(JWT_SECURITY_KEY);
                 var claimsIdentiy = new ClaimsIdentity(new List<Claim>
             {

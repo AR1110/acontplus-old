@@ -59,6 +59,17 @@ BEGIN
 	,idDetalle INT NULL
 	)
 
+	--IF EXISTS (SELECT 1 FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento AND codDoc = '01' AND complete = 1)
+	--	BEGIN
+	--		SELECT '1' code, '' AS 'message'
+	--		RETURN
+	--	END
+	--IF EXISTS (SELECT 1 FROM Recepcion.DocumentoRecibido WHERE codDoc != '01')
+	--	BEGIN
+	--		SELECT '1' code, '' AS 'message'
+	--		RETURN
+	--	END
+
 	INSERT INTO @tmp(idDetalle, idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto)
 	SELECT idDetalle, @idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto
 	FROM OPENJSON(@jsonData) WITH (

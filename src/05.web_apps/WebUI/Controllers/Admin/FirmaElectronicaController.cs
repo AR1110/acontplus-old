@@ -5,6 +5,8 @@ using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Helpers;
+using System.Data;
+using System.Security.Cryptography.X509Certificates;
 
 namespace WebUI.Controllers.Admin
 {
@@ -50,7 +52,9 @@ namespace WebUI.Controllers.Admin
                     ContentType = file.ContentType,
                     Content = FileData.GetFileByte(file)
                 };
-
+                //X509Certificate2 cert = new X509Certificate2(_dirCertificates + dataRow.Field<string>("certificate"), dataRow.Field<string>("password"), X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
+                //// Get the value.
+                //string expirationDate = cert.GetExpirationDateString();
                 string msg = string.Empty;
 
                 if (new FileUpload(_config).Upload(signFile.FileName, signFile.Content, ref msg))

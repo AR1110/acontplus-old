@@ -53,11 +53,15 @@ class ArticuloFraccionadoCtrl{
             this._mS.getData('get','/ArticuloFraccionado/Get?json=' + JSON.stringify({ test: 'kjghksh' })).then(
                 response => {
                     if(response.code=="0"){
+                        this.articuloFraccionados = [];
                         console.log(response)
+                        hideLoader();
                     }
-                    this.articuloFraccionados = JSON.parse(response.payload) || [];
-                    console.log(this.articuloFraccionados)
-                    hideLoader();
+                    if(response.code==="1"){
+                        this.articuloFraccionados = JSON.parse(response.payload) || [];                        
+                        hideLoader();
+
+                    }
                 }
             )  
         } catch (error) {

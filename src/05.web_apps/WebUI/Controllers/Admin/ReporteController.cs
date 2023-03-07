@@ -75,13 +75,16 @@ namespace WebUI.Controllers.Admin
             return View();
         }
 
+
         [HttpGet]
-        public async Task<IActionResult> Get(int pageIndex, int pageSize)
+        public async Task<IActionResult> Get(string json)
         {
-            int idRol = _idRol;
-            var res = await _r.GetAsync(idRol, pageIndex, pageSize);
-            return Ok(res);
+            Dictionary<string, object> parameters = new Dictionary<string, object>();            
+            parameters.Add("json", SqlValidation.ValidateSqlString(json));
+            return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Reporte.R_Get", parameters)));
         }
+
+
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Reporte data)
         {
@@ -89,6 +92,7 @@ namespace WebUI.Controllers.Admin
             var res = await _r.InsertAsync(idRol, data);
             return Ok(res);
         }
+
         [HttpPut]
         public async Task<IActionResult> Put(int idReporte, [FromBody] Reporte data)
         {
@@ -96,6 +100,8 @@ namespace WebUI.Controllers.Admin
             var res = await _r.UpdateAsync(idRol, idReporte, data);
             return Ok(res);
         }
+
+
         [HttpDelete]
         public async Task<IActionResult> Delete(int idReporte)
         {
@@ -103,6 +109,25 @@ namespace WebUI.Controllers.Admin
             var res = await _r.DeleteAsync(idRol, idReporte);
             return Ok(res);
         }
+
+
+        [HttpPost]
+        public async Task<IActionResult> SaveDs(string json)
+        {
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            parameters.Add("json", SqlValidation.ValidateSqlString(json));
+            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Reporte.DataSource_Save", parameters)));
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteDs(string json)
+        {
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            parameters.Add("json", SqlValidation.ValidateSqlString(json));
+            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Reporte.DataSource_Delete", parameters)));
+        }
+
+
         //REPORTS FROM API SERVER FILES BY URL AND FILE NAME
         public async Task<IActionResult> Download([FromBody] ApiReportParams parameters)
         {

@@ -4,16 +4,16 @@
     app.controller('retencionAtsCtrl', retencionAtsCtrl);
 
     retencionAtsCtrl.$inject = ['$scope',
-                                'mainService',
-                                'commonService',
-                                'toastService',
-                                '$element',
-                                '$cookies',
-                                'uuid2',
-                                '$window',
-                                'FileSaver',
-                                'Blob'
-                            ]
+        'mainService',
+        'commonService',
+        'toastService',
+        '$element',
+        '$cookies',
+        'uuid2',
+        '$window',
+        'FileSaver',
+        'Blob'
+    ]
 
     function retencionAtsCtrl($scope, mS, _commonSvc, tS, $element, $cookies, uuid2, $window, FileSaver, Blob) {
         /**Initial Load */
@@ -24,7 +24,6 @@
         $scope.tiposIdentificacion = []
         $scope.tiposSujRetenido = []
         $scope.docSustento = {}
-        $scope.docSustento.pagoLocExt = '01'
         $scope.documentos = []
         $scope.sustentos = []
         $scope.sustentosFiltered = []
@@ -64,7 +63,10 @@
                 $scope.isMobile = false;
             }
         }
-        $scope.detectMobilDevice();
+        $scope.detectMobilDevice()
+
+
+
         function formatDateTimeZone(fecha) {
             const formatDateMoment = moment.tz(fecha, "America/Guayaquil")
             return formatDateMoment.format("YYYY-MM-DD");
@@ -126,7 +128,7 @@
                                 $scope.infoCompRet.codEstab_Asig = $scope.establecimientos.find(item => item.predeterminado).codEstab_Asig
                                 $scope.onChangeEstablecimiento()
                             }
-                            //console.log(tempArray)
+                            $scope.docSustento.pagoLocExt = '01'
                         }
                         if (!$scope.isMobile) {
                             document.getElementById('menu_toggle').click();
@@ -356,7 +358,7 @@
                 showLoader()
                 let json = {
                     tipo: '3',
-                    id: item.id
+                    id: item.idDocumento
                 }
                 mS.getData('get', '/FacturaCompra/Get?json=' + JSON.stringify(json)).then(
                     response => {
@@ -374,6 +376,8 @@
                                 console.log($scope.tempTaxes)
                                 console.log($scope.paymentsTemp)
                                 $scope.totalSinImpuestos = $scope.docData.totalSinImpuestos
+                                $scope.docSustento.idDocumento = item.idDocumento
+                                $scope.docSustento.isAutomatic = $scope.docData.isAutomatic
                                 $scope.docSustento.codDocSustento = $scope.docData.codDocSustento
                                 $scope.selectSutento($scope.docSustento.codDocSustento)
                                 $scope.docSustento.numDocSustento = $scope.docData.numDocSustento.split('-').join('')
@@ -386,25 +390,23 @@
                             console.log(temp[0].doc)
                         }
                         hideLoader()
-                    }, error => {
-                        hideLoader()
-                        console.log(error)
                     }
-                )
-
+                ).catch(error => {
+                    hideLoader()
+                    console.log(error)
+                })
             } catch (error) {
                 hideLoader()
                 console.log(error)
             }
         }
 
-        $scope.docPreview = (item, dataDoc) => {
+        $scope.docPreview = (item) => {
             try {
                 console.log(item)
-                console.log(dataDoc)
-                if (!item) {
+                if (!item.isAutomatic) {
                     _commonSvc.viewDetailDocument({
-                        id: dataDoc.id,
+                        id: item.idDocumento,
                         codigoDocumento: 'FC'
                     })
                     // tS.toastr('warning', 'Este documento no ha sido registrado desde el modulo de recepcion de documentos')
@@ -415,10 +417,11 @@
                         $('#facturaModal').modal('show')
                         $('#bodyFactura').html(response.payload)
                         console.log(response)
-                    }, error => {
-                        console.log(error)
                     }
-                )
+                ).catch(error => {
+                    hideLoader()
+                    console.log(error)
+                })
             } catch (error) {
                 console.log(error)
             }
@@ -552,6 +555,7 @@
                                 if (r.codigo == '2') {
                                     $scope.porcentajeRetener = $scope.porcentajesRetIva
                                 }
+                                //$scope.setPorcentajesRet(r.codigo, guid)
                                 $scope.addRetencion(guid, false)
                             }
                         } else {
@@ -605,14 +609,17 @@
                                     //$scope.tax = {}
                                     tS.toastr('success', response.message)
                                 }
-                            }, error => {
-                                console.log(error)
                             }
-                        )
+                        ).catch(error => {
+                            hideLoader()
+                            console.log(error)
+                        })
                     }
                 }
 
                 $scope.docsAdded.push({
+                    idDocumento: ($scope.docSustento.idDocumento) ? $scope.docSustento.idDocumento : 0,
+                    isAutomatic: $scope.docSustento.isAutomatic,
                     idRetAtsDocSustento: (idDocumentoElectronico) ? $scope.docSustento.idRetAtsDocSustento : 0,
                     uniqueIdDoc: guid,
                     codDocSustento: $scope.docSustento.codDocSustento,
@@ -694,6 +701,26 @@
             return true
         }
 
+        $scope.sumTotalSinImp = (uniqueIdDoc) => {
+            let totalSinImpuestos = 0.00
+            for (const t of $scope.taxesAdded) {
+                if (uniqueIdDoc === t.uniqueIdDoc) {
+                    totalSinImpuestos += Number(t.baseImponible)
+                }
+            }
+            return totalSinImpuestos
+        }
+
+        $scope.sumTaxes = (uniqueIdDoc) => {
+            let importeTotal = 0.00
+            for (const t of $scope.taxesAdded) {
+                if (uniqueIdDoc === t.uniqueIdDoc) {
+                    importeTotal += (Number(t.baseImponible) + Number(t.valorImpuesto))
+                }
+            }
+            return importeTotal
+        }
+
         $scope.addTax = (uniqueIdDoc, toBd) => {
             if ($scope.taxValid(toBd)) {
                 if (toBd) {
@@ -729,10 +756,11 @@
                                     //$scope.tax = {}
                                     tS.toastr('success', response.message)
                                 }
-                            }, error => {
-                                console.log(error)
                             }
-                        )
+                        ).catch(error => {
+                            hideLoader()
+                            console.log(error)
+                        })
                     }
                 }
                 $scope.taxesAdded.push({
@@ -747,6 +775,12 @@
                     valorImpuesto: $scope.tax.valorImpuesto
                 })
 
+                angular.forEach($scope.docsAdded, (value, key) => {
+                    if (value.uniqueIdDoc == uniqueIdDoc) {
+                        value.totalSinImpuestos = $scope.sumTotalSinImp(uniqueIdDoc)
+                        value.importeTotal = $scope.sumTaxes(uniqueIdDoc)
+                    }
+                })
 
                 $scope.tax = {}
                 //console.log($scope.docsAdded)
@@ -797,10 +831,11 @@
                                 document.getElementById(uniqueIdDoc + '-btnEditTax').style.display = 'none'
                                 tS.toastr('success', response.message)
                             }
-                        }, error => {
-                            console.log(error)
                         }
-                    )
+                    ).catch(error => {
+                        hideLoader()
+                        console.log(error)
+                    })
                 } else {
                     angular.forEach($scope.taxesAdded, (value, index) => {
                         if (value.uniqueIdDoc == uniqueIdDoc && $scope.indexTax == index) {
@@ -811,11 +846,18 @@
                             value.valorImpuesto = $scope.tax.valorImpuesto
                         }
                     })
+
+                    angular.forEach($scope.docsAdded, (value, key) => {
+                        if (value.uniqueIdDoc == uniqueIdDoc) {
+                            value.totalSinImpuestos = $scope.sumTotalSinImp(uniqueIdDoc)
+                            value.importeTotal = $scope.sumTaxes(uniqueIdDoc)
+                        }
+                    })
                     $scope.tax = {}
                 }
             }
         }
-        $scope.askToRemoveTax = (index, item) => {
+        $scope.askToRemoveTax = (index, item, d) => {
             if (item.idRetAtsImpDocSustento > 0) {
                 Swal.fire({
                     title: '¿Está seguro de eliminar este impuesto?',
@@ -829,14 +871,14 @@
                     allowOutsideClick: false
                 }).then((result) => {
                     if (result.value) {
-                        $scope.removeTax(index, item)
+                        $scope.removeTax(index, item, d)
                     }
                 })
             } else {
-                $scope.removeTax(index, item)
+                $scope.removeTax(index, item, d)
             }
         }
-        $scope.removeTax = (index, item) => {
+        $scope.removeTax = (index, item, d) => {
             if (item.idRetAtsImpDocSustento > 0) {
                 try {
                     mS.getData('delete', _urlService + 'DocSustImpuesto/' + item.idRetAtsImpDocSustento).then(
@@ -847,8 +889,6 @@
                             if (response.code == '1') {
                                 tS.toastr('success', response.message)
                             }
-                        }, error => {
-                            console.log(error)
                         }
                     )
                 } catch (error) {
@@ -856,37 +896,55 @@
                 }
             }
             $scope.taxesAdded.splice(index, 1)
+            angular.forEach($scope.docsAdded, (value, key) => {
+                if (value.uniqueIdDoc == d.uniqueIdDoc) {
+                    value.totalSinImpuestos = $scope.sumTotalSinImp(d.uniqueIdDoc)
+                    value.importeTotal = $scope.sumTaxes(d.uniqueIdDoc)
+                }
+            })
         }
 
         $scope.removeTaxTemp = (item) => {
-            $scope.tempTaxes.splice(item, 1)
+            //$scope.tempTaxes.splice(item, 1)
         }
         /**End Impuestos */
         /**Retenciones */
         $scope.porcentajesRet = []
         $scope.retencion = {}
         $scope.retencionAdded = []
-
+        $scope.searchTerm = ''
+        $scope.clearSearchTerm = function () {
+            $scope.searchTerm = ''
+            document.getElementById('codRetSearch').value = ''
+        }
         $scope.setPorcentajesRet = (item, uniqueIdDoc) => {
             // $scope.retencion.baseImponible = ''
             // $scope.retencion.porcentajeRetener = ''
             // $scope.retencion.valorRetenido = ''
+            $scope.retencionCodigoSearch = {}
+            $scope.searchTerm = ''
+            let inputCods = document.getElementById('codRetSearch')
+            $element.find(inputCods).on('keydown', function (ev) {
+                ev.stopPropagation()
+            })
+            // $scope.$apply()
             switch (item) {
                 case '1':
-                    // $scope.retencion.baseImponible = $scope.taxesAdded.find(tax => (tax.uniqueIdDoc == uniqueIdDoc)).baseImponible
-                    $scope.retencion.baseImponible = $scope.totalSinImpuestos  //$scope.taxesAdded.filter(({ uniqueIdDoc }) => uniqueIdDoc === uniqueIdDoc).reduce((valorActual, previous) => valorActual + previous.baseImponible, 0)
+                    $scope.retencion.baseImponible = (idDocumentoElectronico) ? $scope.docsAdded.find(ds => (ds.uniqueIdDoc == uniqueIdDoc)).totalSinImpuestos : $scope.totalSinImpuestos  //$scope.taxesAdded.filter(({ uniqueIdDoc }) => uniqueIdDoc === uniqueIdDoc).reduce((valorActual, previous) => valorActual + previous.baseImponible, 0)
                     $scope.porcentajeRetener = $scope.codigosRetencion
-                    console.log($scope.codigosRetencion)
+                    // $scope.retencionCodigoSearch = {}
+                    document.getElementById(uniqueIdDoc + '-selectCodRet').click()
                     break
                 case '2':
-                    //console.log('yes')
                     $scope.retencion.baseImponible = $scope.taxesAdded.find(tax => (tax.codImpuestoDocSustento == 2 && tax.uniqueIdDoc == uniqueIdDoc)).valorImpuesto
                     $scope.porcentajeRetener = $scope.porcentajesRetIva
-                    console.log($scope.porcentajesRetIva)
+                    // $scope.retencionCodigoSearch = {}
+                    document.getElementById(uniqueIdDoc + '-selectCodRet').click()
                     break
                 default:
                     break
             }
+
         }
 
         $scope.setPorcentajeRet = (item, isPorcentaje) => {
@@ -951,8 +1009,6 @@
                                     //$scope.retencion = {}
                                     tS.toastr('success', response.message)
                                 }
-                            }, error => {
-                                console.log(error)
                             }
                         )
                     }
@@ -1004,10 +1060,11 @@
                                 document.getElementById(uniqueIdDoc + '-btnEditRet').style.display = 'none'
                                 tS.toastr('success', response.message)
                             }
-                        }, error => {
-                            console.log(error)
                         }
-                    )
+                    ).catch(error => {
+                        hideLoader()
+                        console.log(error)
+                    })
                 } else {
                     angular.forEach($scope.retencionAdded, (value, index) => {
                         if (value.uniqueIdDoc == uniqueIdDoc && $scope.indexRet == index) {
@@ -1019,6 +1076,8 @@
                         }
                     })
                     $scope.retencion = {}
+                    document.getElementById(uniqueIdDoc + '-btnAddRet').style.display = 'block'
+                    document.getElementById(uniqueIdDoc + '-btnEditRet').style.display = 'none'
                 }
             }
         }
@@ -1054,8 +1113,6 @@
                             if (response.code == '1') {
                                 tS.toastr('success', response.message)
                             }
-                        }, error => {
-                            console.log(error)
                         }
                     )
                 } catch (error) {
@@ -1119,10 +1176,10 @@
                     let totalFp = $scope.paymentsAdded.map(item => (item.total)).reduce((valorActual, previous) => (valorActual + previous), 0)
                     totalFp = totalFp + $scope.payment.total
 
-                    if (importeTotal != totalFp) {
-                        tS.toastr('warning', 'El total de formas de pago es diferente al importe total del documento de sustento')
-                        return
-                    }
+                    // if (importeTotal != totalFp) {
+                    //     tS.toastr('warning', 'El total de formas de pago es diferente al importe total del documento de sustento')
+                    //     return
+                    // }
                     let idRetAtsDocSustento = $scope.docsAdded.find(item => (item.uniqueIdDoc == uniqueIdDoc)).idRetAtsDocSustento
                     if (idRetAtsDocSustento > 0) {
                         mS.getData('post', _urlService + 'DocSustPago/' + idRetAtsDocSustento + '?json=' + JSON.stringify(data)).then(
@@ -1134,8 +1191,6 @@
                                     //$scope.payment = {}
                                     tS.toastr('success', response.message)
                                 }
-                            }, error => {
-                                console.log(error)
                             }
                         )
                     }
@@ -1157,7 +1212,7 @@
             console.log($scope.payment)
             document.getElementById(d.uniqueIdDoc + '-btnAddPaymentAdd').style.display = 'none'
             document.getElementById(d.uniqueIdDoc + '-btnEditPaymentSave').style.display = 'block'
-            document.getElementById(d.uniqueIdDoc + '-totalPago').disabled = true
+            //document.getElementById(d.uniqueIdDoc + '-totalPago').disabled = true
         }
         $scope.updatePayment = (uniqueIdDoc) => {
             if ($scope.paymentValid()) {
@@ -1182,10 +1237,11 @@
                                     document.getElementById(uniqueIdDoc + '-totalPago').disabled = false
                                     tS.toastr('success', response.message)
                                 }
-                            }, error => {
-                                console.log(error)
                             }
-                        )
+                        ).catch(error => {
+                            hideLoader()
+                            console.log(error)
+                        })
                     } else {
                         angular.forEach($scope.paymentsAdded, (value, index) => {
                             if (value.uniqueIdDoc == uniqueIdDoc && $scope.indexPayment == index) {
@@ -1234,8 +1290,6 @@
                             if (response.code == '1') {
                                 tS.toastr('success', response.message)
                             }
-                        }, error => {
-                            console.log(error)
                         }
                     )
                 } catch (error) {
@@ -1301,10 +1355,11 @@
                                 document.getElementById('btnEditDocSust').style.display = 'none'
                                 tS.toastr('success', response.message)
                             }
-                        }, error => {
-                            console.log(error)
                         }
-                    )
+                    ).catch(error => {
+                        hideLoader()
+                        console.log(error)
+                    })
                 } else {
                     angular.forEach($scope.docsAdded, (value, index) => {
                         if ($scope.indexDoc == index) {
@@ -1400,8 +1455,6 @@
                                     $scope.additionalInfo = {}
                                     tS.toastr('success', response.message)
                                 }
-                            }, error => {
-                                console.log(error)
                             }
                         )
                     }
@@ -1448,10 +1501,11 @@
                                 document.getElementById('btnEditInfoSave').style.display = 'none'
                                 tS.toastr('success', response.message)
                             }
-                        }, error => {
-                            console.log(error)
                         }
-                    )
+                    ).catch(error => {
+                        hideLoader()
+                        console.log(error)
+                    })
                 } catch (error) {
                     console.log(error)
                 }
@@ -1489,8 +1543,6 @@
                             if (response.code == '1') {
                                 tS.toastr('success', response.message)
                             }
-                        }, error => {
-                            console.log(error)
                         }
                     )
                 } catch (error) {
@@ -1618,11 +1670,11 @@
                             }, 2500)
                         }
                         hideLoader()
-                    }, error => {
-                        hideLoader()
-                        console.log(error)
                     }
-                )
+                ).catch(error => {
+                    hideLoader()
+                    console.log(error)
+                })
             } catch (error) {
                 hideLoader()
                 console.log(error)
@@ -1675,7 +1727,6 @@
                 console.log(error);
             }
         }
-
 
     }
 })(window.angular);

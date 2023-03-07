@@ -154,6 +154,9 @@ function documentoRecibidoCtrl(
             mS.getData('get', _urlService + 'DocumentoRecibido/Get/' + JSON.stringify($scope.query)).then(response => {
                 if (response.code == "1") {
                     $scope.comprobantes = JSON.parse(response.payload)[0];
+
+                    console.log($scope.comprobantes);
+
                     $scope.cloneComprobantes = JSON.parse(JSON.stringify($scope.comprobantes))
                     //$scope.totalRecords = $scope.comprobantes[0].totalRecords;
                 }
@@ -217,7 +220,6 @@ function documentoRecibidoCtrl(
         let roundedTempNumber = Math.round(tempNumber);
         return roundedTempNumber / factor;
     }
-
 
 
     $scope.initialLoad();
@@ -1039,7 +1041,7 @@ function documentoRecibidoCtrl(
                 codigoAuxiliar: $scope.articleSelected.codigoAuxiliar,
                 descripcion: $scope.articleSelected.descripcion
             }
-            mS.getData('get', _urlService + 'Articulo/' + JSON.stringify(jsonData)).then(
+            mS.getData('get', _urlService + 'Articulo?json=' + JSON.stringify(jsonData)).then(
                 response => {
                     if (response.code == '1') {
                         $scope.articlesTemp = JSON.parse(response.payload)
@@ -1083,7 +1085,7 @@ function documentoRecibidoCtrl(
                 descripcion: $scope.articleMergeSearch.textSearch,
                 tipo: tipo
             }
-            mS.getData('get', _urlService + 'Articulo/' + JSON.stringify(jsonData)).then(
+            mS.getData('get', _urlService + 'Articulo?json=' + JSON.stringify(jsonData)).then(
                 response => {
                     if (response.code == '1') {
                         // if ($scope.articleNotFound) {
@@ -1120,7 +1122,7 @@ function documentoRecibidoCtrl(
                 id: item.idArticulo,
                 tipo: 'H'
             }
-            mS.getData('get', _urlService + 'Articulo/' + JSON.stringify(data)).then(
+            mS.getData('get', _urlService + 'Articulo?json=' + JSON.stringify(data)).then(
                 response => {
                     if (response.code == '1') {
                         $scope.articleHistory = JSON.parse(response.payload)
@@ -1494,4 +1496,35 @@ function documentoRecibidoCtrl(
         $scope.modalRef.close()
     }
     //**Config */
+
+
+
+    const COD_REPORTS = {
+        "07": 'RCR'
+    }
+    $scope.getReport = () => {
+        try {
+            if ($scope.selected[0].codDoc != '07') {
+                return
+            }
+            let format = 'pdf';
+            let dataParms = {                
+                id: $scope.selected[0].idDocumento,                            
+                codigo: COD_REPORTS[$scope.selected[0].codDoc],
+                format,            
+            }
+       
+            const parameters = {               
+                dataParams: JSON.stringify(dataParms)
+            }
+            console.log(parameters)
+            _commonSvc.getReportDynamic({
+                parameters, 
+                format
+            })     
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
 }

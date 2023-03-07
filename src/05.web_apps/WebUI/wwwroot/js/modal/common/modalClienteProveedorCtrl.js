@@ -452,7 +452,7 @@ export class ModalClienteCtrl extends ModalBaseCtrl {
             }
 
 
-            this.data.direccion = this._form.campo(this.data.direccion) ? "" : this.data.direccion;
+            this.data.direccion = this._form.campo(this.data.direccion) ? "" : this._form.letterInline(this.data.direccion);
             this.data.telefono = this.telefonos.length > 0 ? this.telefonos.join(';') : "";
             this.data.correo = this.correos.length > 0 ? this.correos.join(';') : "";
             this.data.placa = this.placas.length > 0 ? this.placas.join(';') : "";
@@ -567,14 +567,31 @@ export class ModalClienteListaCtrl {
 
 
     getSearchCustomer() {
-        this.dataSearch.bySearch = this.dataSearch.bySearch || null;
-        this._mS.getData('get', '/Cliente/Get?json=' + JSON.stringify(this.dataSearch)).then(
-            response => {
-                console.log(response)
-                this.clientes = JSON.parse(response.payload) || [];
-                this.totalRecords = this.clientes.length > 0 ? this.clientes[0].totalRecords : 0
-            }
-        )
+        try {
+            showLoader();
+            this.dataSearch.bySearch = this.dataSearch.bySearch || null;
+            this.clientes = [];
+            this._mS.getData('get', '/Cliente/Get?json=' + JSON.stringify(this.dataSearch)).then(
+                response => {
+                    if(response.code==="0"){
+                        this.clientes = [];
+                        hideLoader();
+                        console.log(response)
+                        return
+                    }
+
+                    if(response.code==="1"){
+                        console.log(response)
+                        this.clientes = JSON.parse(response.payload) || [];
+                        this.totalRecords = this.clientes.length > 0 ? this.clientes[0].totalRecords : 0
+                    }
+                }
+            )
+            
+        } catch (error) {
+            hideLoader();
+            console.log(error)
+        }
     }
 
     seleccionarCliente = (item) => {
@@ -861,14 +878,24 @@ export class ModalProveedorListaCtrl {
     getAllProveedor() {
         try {
             showLoader();
+            this.proveedores = [];
             this._mS.getData('get', '/Proveedor/Get?json=' + JSON.stringify(this.dataSearch)).then(
                 response => {
-                    this.proveedores = JSON.parse(response.payload) || []
-                    this.cloneProveedores = JSON.parse(JSON.stringify(this.proveedores));
-                    hideLoader();
+                    if(response.code==="0"){
+                        this.proveedores = [];
+                        console.log(item)
+                        hideLoader();
+                        return
+                    }
+                    if(response.code==="1"){                        
+                        this.proveedores = JSON.parse(response.payload) || []
+                        this.cloneProveedores = JSON.parse(JSON.stringify(this.proveedores));
+                        hideLoader();
+                    }
                 }
             )
         } catch (error) {
+            this.proveedores = [];
             hideLoader();
             console.error(error)
         }

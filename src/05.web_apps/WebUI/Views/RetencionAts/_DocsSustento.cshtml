@@ -60,7 +60,7 @@
                 <div class="form-group">
                     <label for="pagoLocExt">Pago Local Exterior:</label>
                     <select id="pagoLocExt" class="form-control" ng-model="docSustento.pagoLocExt"
-                        ng-change="enableControls(docSustento.pagoLocExt)">
+                        ng-change="enableControls(docSustento.pagoLocExt)" required>
                         <option>::seleccione::</option>
                         <option ng-value="item.pagoLocExt" ng-repeat="item in tiposPago">{{item.pagoLocExt}} -
                             {{item.descripcion}}</option>
@@ -168,17 +168,17 @@
             </div>
         </div>
         <hr>
-       <!-- <div class="row" ng-repeat="item in docsAdded" ng-if="docsAdded.length > 0">
+        <!-- <div class="row" ng-repeat="item in docsAdded" ng-if="docsAdded.length > 0">
             <div class="col-12">
                 <div class="card">
                     <div class="card body">
                         <h5 class="card-title">{{item.numDocSustento}}</h5>
 
-                        @await Html.PartialAsync("_ImpuestosDocSustento")
+        @await Html.PartialAsync("_ImpuestosDocSustento")
 
-                        @await Html.PartialAsync("_Retenciones")
+        @await Html.PartialAsync("_Retenciones")
 
-                        @await Html.PartialAsync("_Pagos")
+        @await Html.PartialAsync("_Pagos")
                     </div>
                     <div class="card-footer">
                         <button class="btn btn-warning btn-sm" ng-click="editDocSust($index)" title="Editar datos"><i
@@ -216,6 +216,9 @@
                         <td>{{item.fechaEmisionDocSustento | date: 'dd/MM/yyyy'}}</td>
                         <td>{{item.importeTotal | currency}}</td>
                         <td>
+                            <button type="button" class="btn btn-info btn-sm"
+                                ng-click="docPreview(item)" title="Ver Documento de Sustento"><i
+                                    class="fa fa-eye"></i></button>
                             <button class="btn btn-warning btn-sm" ng-click="editDocSust($index)"
                                 title="Editar datos"><i class="ti-pencil"></i></button>
                             <button class="btn btn-danger btn-sm" ng-click="deleteDocSust($index)"

@@ -96,7 +96,19 @@ BEGIN
 		BEGIN
 			SELECT '0' code,'Esta Factura de Compra ya se encuentra registrada' AS 'message'
 			RETURN 
-		END 
+		END
+	
+	IF NOT EXISTS (SELECT 1 FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp))
+		BEGIN
+			SELECT '0' code,'No existe detalle para ingresar!' AS 'message'
+			RETURN
+		END
+
+	IF EXISTS (SELECT 1 FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp) AND idArticulo IS NULL)
+		BEGIN
+			SELECT '0' code,'Posee articulos sin vincular, revise el detalle!' AS 'message'
+			RETURN
+		END
 
 	DECLARE @idDocumento INT,@idBodega INT
 
@@ -132,7 +144,7 @@ BEGIN
 				,subTotalIvaCero,subTotalNetoIvaCero,subTotalNoObjetoIva,subTotalNetoNoObjetoIva
 				,subTotalExentoIva,subTotalNetoExentoIva,totalDescuento,porcentajeDescuento
 				,totalIce,irbpnr,propina,iva,recargo,transporte,total,observacion,retencion
-				,fechaRegistro,idUsuario,idEntidad,estab)
+				,fechaRegistro,idUsuario,idEntidad,estab, isAutomatic)
 
 			SELECT 1, @idEstadoPago, idSustentoTributario, idProveedor, @codEstab
 			,idCategoriaCompra, idTiempoCredito, secuencial, estab + '-' + ptoEmi, claveAcceso
@@ -140,7 +152,8 @@ BEGIN
 			,@subTotalIvaCero, @subTotalNetoIvaCero, @subTotalNoObjetoIva, @subTotalNetoNoObjetoIva
 			,@subTotalExentoIva, @subTotalNetoExentoIva, totalDescuento, 0.00
 			,@totalIce, @irbpnr, propina, @iva, 0.00, 0.00, importeTotal, observacion, 0.00
-			,GETDATE(), @idUsuario, @idEntidad, estab FROM @tmp
+			,GETDATE(), @idUsuario, @idEntidad, estab, 1
+			FROM @tmp
 			
 			SET @idFacturaCompra = @@IDENTITY
 

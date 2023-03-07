@@ -27,6 +27,7 @@ CREATE PROCEDURE Recepcion.Doc_Serv_Update @idDocumento INT
 ,@downloaded VARCHAR(2)
 ,@codDoc VARCHAR(2)
 ,@versionComp VARCHAR(5)
+,@fechaEmision VARCHAR(10)
 ,@xmlDoc XML
 AS
 BEGIN
@@ -38,6 +39,7 @@ BEGIN
 			,dr.xmlDoc = @xmlDoc
 			,dr.downloaded = @downloaded 
 			,versionComp = @versionComp
+			,fechaEmision = @fechaEmision
 			FROM Recepcion.DocumentoRecibido dr WITH (ROWLOCK)
 			WHERE idDocumento = @idDocumento
 		COMMIT TRAN
