@@ -2,9 +2,9 @@
 
 app.controller('articuloCtrl', articuloCtrl);
 
-articuloCtrl.$inject = ['$scope', '$http','mainService', 'modalService', 'nombreModal', 'toastService', 'formulario'];
+articuloCtrl.$inject = ['$scope', 'mainService', 'modalService', 'nombreModal', 'toastService', 'formulario'];
 
-function articuloCtrl($scope, $http, _mS, _modalSvc, _nombreModal, toast, form) {
+function articuloCtrl($scope, _mS, _modalSvc, _nombreModal, toast, form) {
     'use strict';
 
     let accion = JSON.parse(localStorage.getItem("accion"));
@@ -190,7 +190,7 @@ function articuloCtrl($scope, $http, _mS, _modalSvc, _nombreModal, toast, form) 
         })         
         modalRef.result.then(
             response=>{
-                if(typeof response ==='object' && response.id==="1"){
+                if(typeof response ==='object'){
                     $scope.searchArticulo();
                 }
             }
@@ -234,6 +234,14 @@ function articuloCtrl($scope, $http, _mS, _modalSvc, _nombreModal, toast, form) 
             )                        
         }
     }
+
+
+
+
+
+    
+
+
 }
 
 

@@ -1071,14 +1071,19 @@ export class ModalBaseCtrl{
         for(let rowEntity of this.gridOptions.data){
             rowEntity.porcentajeDescuento = porcentajeDescuento;   
             
-            let objCalculo = self.uiGridInvoice.calculoColDef(rowEntity, 0);             
+            let objCalculo = self.uiGridInvoice.calculoColDef(rowEntity);             
         
             objCalculo["porcentajeDescuento"]();
             
             objCalculo["calculoTotalDetalle"]();
             
-        }                     
-        self.data = Object.assign(self.data, self.uiGridInvoice.getTotales());         
+        }       
+        
+        console.log(self.uiGridInvoice.getTotales())
+        self.data = {...self.data, ...self.uiGridInvoice.getTotales()}
+
+      
+        console.log(self.data)        
     }
 
 

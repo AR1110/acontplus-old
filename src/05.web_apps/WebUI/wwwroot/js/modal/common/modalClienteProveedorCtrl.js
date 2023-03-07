@@ -581,12 +581,16 @@ export class ModalClienteListaCtrl {
                     }
 
                     if(response.code==="1"){
-                        console.log(response)
+                        
                         this.clientes = JSON.parse(response.payload) || [];
                         this.totalRecords = this.clientes.length > 0 ? this.clientes[0].totalRecords : 0
+                        hideLoader();
                     }
                 }
-            )
+            ).catch(error=>{
+                console.error(error)
+                hideLoader()
+            })
             
         } catch (error) {
             hideLoader();

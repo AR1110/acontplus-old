@@ -1,6 +1,6 @@
 
 
-import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.32";
+import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.46";
 
 class ModalFacturaCtrl extends ModalBaseCtrl{
     
@@ -232,8 +232,8 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
 
 
     calcularPorcentajeDescuento() {
-        let valor = this.data.porcentajeDescuento || 0;
-        this.data.porcentajeDescuento = Number(valor);
+        let porcentajeDescuento = this.data.porcentajeDescuento;
+
         if(typeof this.data.porcentajeDescuento !=="number" || this.data.porcentajeDescuento === ""){
             this._tS.toastr('warning', 'Ingrese un Número Válido');
             return
@@ -241,8 +241,11 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
 
         if( this.data.porcentajeDescuento <=100 ){
             //redondeo del numero porcentaje 
-            this.data.porcentajeDescuento = this._fS.roundNumber(this.data.porcentajeDescuento, this.decimal.nroTotalSubTotal)            
-            this.setPorcentajeDescuentoAll(this.data.porcentajeDescuento);              
+            // this.data.porcentajeDescuento = this._fS.roundNumber(this.data.porcentajeDescuento, this.decimal.nroTotalSubTotal)            
+            this.setPorcentajeDescuentoAll(this.data.porcentajeDescuento); 
+            
+            console.log(porcentajeDescuento)
+            
         }else{
             this.toast.toastr('warning', 'El Porcentaje de Descuento tiene que ser menor o igual a 100');
         }
@@ -358,7 +361,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
             let resultsDataForm = this._params.dataForm;          
            
 
-            let {UiGridOptions} = await import('./../factElect/uiGridOptions.js' + CHANGE_VERSION());
+            let {UiGridOptions} = await import('./../factElect/uiGridOptions.min.js' + CHANGE_VERSION());
           
             this.establecimientos = resultsDataForm[0];
 
@@ -396,7 +399,8 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
 
 
             this.decimal = resultsDataForm[1][0]
-            this.configDetalle = resultsDataForm[2];
+            this.configDetalle = resultsDataForm[2][0]
+            
             this.tipoIvas = resultsDataForm[3];
             this.tarifas  = resultsDataForm[4];
 
@@ -648,7 +652,7 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl{
 
 
             this.decimal = resultsDataForm[1][0];
-            this.configDetalle = resultsDataForm[2];
+            this.configDetalle = resultsDataForm[2][0]
             this.tipoIvas = resultsDataForm[3];
             this.tarifas  = resultsDataForm[4];
 
@@ -841,7 +845,7 @@ export class ModalFacturaDetalleCtrl extends ModalFacturaCtrl{
 
 
             this.decimal = resultsDataForm[1];
-            this.configDetalle = resultsDataForm[2];
+            this.configDetalle = resultsDataForm[2][0]
             this.tipoIvas = resultsDataForm[3];
             this.tarifas  = resultsDataForm[4];
 
@@ -942,7 +946,7 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl{
 
 
             this.decimal = resultsDataForm[1][0];
-            this.configDetalle = resultsDataForm[2];
+            this.configDetalle = resultsDataForm[2][0]
             this.tipoIvas = resultsDataForm[3];
             this.tarifas  = resultsDataForm[4];
 
