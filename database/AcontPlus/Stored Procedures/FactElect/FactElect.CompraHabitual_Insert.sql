@@ -63,6 +63,22 @@ BEGIN
 				RETURN
 			END
 
+		IF EXISTS(SELECT 1 FROM FactElect.CompraHabitual ch WITH (NOLOCK) 
+							INNER JOIN @tmp t ON ch.codArticulo = t.codArticulo AND ch.ruc = t.ruc)
+			BEGIN
+				DECLARE @idArticleFounded INT 
+				,@articleFounded VARCHAR(600)
+				
+				SET @idArticleFounded = (SELECT TOP 1 ch.idArticulo FROM FactElect.CompraHabitual ch WITH (NOLOCK) 
+																	INNER JOIN @tmp t ON ch.codArticulo = t.codArticulo 
+																	AND ch.ruc = t.ruc)
+
+				SET @articleFounded = (SELECT '(' + codigo + ') - ' + descripcion FROM Articulo WITH (NOLOCK) WHERE idArticulo = @idArticleFounded )
+
+				SELECT '0' code, 'El articulo no pudo ser vinculado, debido a que ya existe una vinculacion previa con este proveedor: '  + @articleFounded as 'message'
+				RETURN
+			END
+
 		SELECT @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 
 		SELECT @codEstab = codEstab FROM Config.Estab_Asig WITH (NOLOCK) WHERE idUsuarioRol = @idRol AND predeterminado = 1
