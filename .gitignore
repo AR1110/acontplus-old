@@ -130,3 +130,6 @@
 /src/08.razor_ui/FACT_UI/obj/Debug/net6.0/FACT_UI.csproj.AssemblyReference.cache
 /src/08.razor_ui/FACT_UI/obj/Debug/net6.0/FACT_UI.csproj.AssemblyReference.cache
 /src/07.worker_services/WS_DocumentoRelacionado/bin/Release/net6.0
+/src/07.worker_services/WS_Notificacion/bin/Debug/net6.0
+/src/07.worker_services/WS_Notificacion/obj
+/src/07.worker_services/WS_Notificacion/bin/Release/net6.0/runtimes

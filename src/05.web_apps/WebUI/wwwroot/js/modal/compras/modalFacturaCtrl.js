@@ -296,6 +296,11 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
 
             if(!this.isValidaForm(textAccion)) return
 
+            if(this.data.nroAutorizacion.length>10){
+                this._tS.toastr('warning', 'Número de Autorización tiene que tener 10 dígitos')
+                return
+            }
+
             this.nroDocumentoSecuencial = await this._commonSvc.generarNroDocumentoCompra({
                 puntoEmision: this.data.puntoEmision,
                 nroDocumento: this.data.nroDocumento,
@@ -544,6 +549,10 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl{
 
             if(!this.isValidaForm(textAccion)) return
 
+            if(this.data.nroAutorizacion.length>10){
+                this._tS.toastr('warning', 'Número de Autorización tiene que tener 10 dígitos')
+                return
+            }
 
              
             const swalWithBootstrapButtons = Swal.mixin({
