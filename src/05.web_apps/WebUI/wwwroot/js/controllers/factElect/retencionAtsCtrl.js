@@ -846,15 +846,14 @@
                             value.valorImpuesto = $scope.tax.valorImpuesto
                         }
                     })
-
-                    angular.forEach($scope.docsAdded, (value, key) => {
-                        if (value.uniqueIdDoc == uniqueIdDoc) {
-                            value.totalSinImpuestos = $scope.sumTotalSinImp(uniqueIdDoc)
-                            value.importeTotal = $scope.sumTaxes(uniqueIdDoc)
-                        }
-                    })
                     $scope.tax = {}
                 }
+                angular.forEach($scope.docsAdded, (value, key) => {
+                    if (value.uniqueIdDoc == uniqueIdDoc) {
+                        value.totalSinImpuestos = $scope.sumTotalSinImp(uniqueIdDoc)
+                        value.importeTotal = $scope.sumTaxes(uniqueIdDoc)
+                    }
+                })
             }
         }
         $scope.askToRemoveTax = (index, item, d) => {
@@ -1019,7 +1018,7 @@
                     codigo: $scope.retencion.codigo,
                     impuesto: $scope.impuestosRet.find(item => item.codigo == $scope.retencion.codigo).descripcion,
                     codigoRetencion: $scope.retencion.codigoRetencion,
-                    codRet: $scope.porcentajeRetener.find(item => item.codigo == $scope.retencion.codigoRetencion).descripcion,
+                    codRet: $scope.retencion.codigoRetencion + ' - ' + $scope.porcentajeRetener.find(item => item.codigo == $scope.retencion.codigoRetencion).descripcion,
                     baseImponible: $scope.retencion.baseImponible,
                     porcentajeRetener: $scope.retencion.porcentajeRetener,
                     valorRetenido: $scope.retencion.valorRetenido
@@ -1301,9 +1300,6 @@
         }
         /**End Pagos */
 
-
-
-
         $scope.editDocSust = (item) => {
             $scope.indexDoc = item
             $scope.docSustento = $scope.docsAdded[item]
@@ -1354,6 +1350,9 @@
                                 document.getElementById('btnAddDocSust').style.display = 'block'
                                 document.getElementById('btnEditDocSust').style.display = 'none'
                                 tS.toastr('success', response.message)
+                                setTimeout(() => {
+                                    $window.location.reload()
+                                }, 2200)
                             }
                         }
                     ).catch(error => {

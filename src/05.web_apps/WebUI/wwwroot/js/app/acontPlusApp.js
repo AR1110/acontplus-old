@@ -222,7 +222,7 @@ app.config(function ($httpProvider) {
 //Settings for incons in angularjs materialize
 app.config(['$mdThemingProvider', '$mdIconProvider', function ($mdThemingProvider, $mdIconProvider) {
     // $mdThemingProvider.theme('default').primaryPalette('blue');
-    $mdIconProvider.fontSet('md', 'material-icons');
+    $mdIconProvider.fontSet('md', 'material-symbols-outlined');
 }]);
 
 /** Trasnlating to spanish buttons pagination ui.boostrap */
@@ -602,7 +602,7 @@ app.directive('touppercase', function () {
         restrict: 'A',
         link: function (scope, element, attrs, modelCtrl) {
 
-            
+
 
             element.on("keydown", event => {
                 teclaAnterior = teclaAnterior + " " + event.keyCode;
@@ -622,7 +622,7 @@ app.directive('touppercase', function () {
                 modelCtrl.$render();
                 return inputText.toUpperCase();
             }
-            
+
 
             modelCtrl.$parsers.push(removeAccents);
             element.css("text-transform", "uppercase");

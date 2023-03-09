@@ -89,7 +89,11 @@ BEGIN
 			WHERE idRetencionAts = @idRetencionATS
 			
 			--DOCUMENTOS DE SUSTENTOS
-			SELECT * FROM FactElect.RetAtsDocSustento WITH (NOLOCK)  WHERE idRetencionAts = @idRetencionATS
+			SELECT rads.*
+			,idDocumento =  ISNULL((SELECT TOP 1 fc.idFacturaCompra FROM FacturaCompra fc 
+			WHERE REPLACE(puntoEmision,'-','')+Helper.F_Auto_Sequential(nroDocumento) = rads.numDocSustento), 0)
+			FROM FactElect.RetAtsDocSustento rads 
+			WHERE idRetencionAts = @idRetencionATS
 
 			--IMPUESTOS DEL DOCUMENTO DE SUSTENTO
 			SELECT * FROM FactElect.RetAtsImpDocSustento WITH (NOLOCK) WHERE idRetencionAts = @idRetencionATS

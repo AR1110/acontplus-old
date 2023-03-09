@@ -10,7 +10,10 @@
           "Host": "localhost",
           "Port": 5415
         }
-      ]
+      ],
+      "HttpHandlerOptions": {
+        "UseTracing": true
+      }
     },
     {
       "UpstreamPathTemplate": "/api/DocumentoRecibido",
@@ -42,6 +45,9 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer",
         "AllowedScopes": []
+      },
+      "HttpHandlerOptions": {
+        "UseTracing": true
       }
     },
     {
@@ -144,6 +150,38 @@
       "UpstreamPathTemplate": "/api/Factura?json={json}",
       "UpstreamHttpMethod": [ "Post", "Put" ],
       "DownstreamPathTemplate": "/api/Factura?json={json}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 12786
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/DocumentoDetalle/{everything}",
+      "UpstreamHttpMethod": [ "Post", "Put" ],
+      "DownstreamPathTemplate": "/api/DocumentoDetalle/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 12786
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/DocumentoDetalle/{id}",
+      "UpstreamHttpMethod": [ "Delete" ],
+      "DownstreamPathTemplate": "/api/DocumentoDetalle/{id}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {

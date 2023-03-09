@@ -1,7 +1,7 @@
 ﻿<div id="notaCreditoModal" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
-            <form ng-submit="saveNotaCredito()">
+            <form ng-submit="save()">
                 <div class="modal-header">
                     <h5 class="modal-title">Nota de Crédito</h5>
                     <button class="close" data-dismiss="modal">&times;</button>
@@ -255,13 +255,14 @@
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                             <div class="form-group">
                                 <label for="obs">Observación:</label>
-                                <textarea name="obs" id="obs" class="form-control" ng-model="notaCredito.obs"></textarea>
+                                <textarea name="obs" id="obs" class="form-control"
+                                    ng-model="notaCredito.obs"></textarea>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    @*<button class="btn btn-success btn-sm"><i class="ti-save"></i> Importar</button>*@
+                    <button class="btn btn-success btn-sm"><i class="ti-save"></i> Guardar</button>
                     <button class="btn btn-dark btn-sm" data-dismiss="modal">&times; Cerrar</button>
                 </div>
             </form>

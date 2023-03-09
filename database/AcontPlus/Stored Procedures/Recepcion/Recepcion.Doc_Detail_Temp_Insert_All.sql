@@ -46,6 +46,8 @@ BEGIN
 	,precioUnitario VARCHAR(15) NOT NULL
 	,descuento VARCHAR(15) NULL
 	,precioTotalSinImpuesto VARCHAR(15) NULL
+	,impuestos XML
+	,detallesAdicionales XML
 	,idDetalle INT NULL
 	)
 
@@ -70,18 +72,20 @@ BEGIN
 	--		RETURN
 	--	END
 
-	INSERT INTO @tmp(idDetalle, idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto)
-	SELECT idDetalle, @idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto
+	INSERT INTO @tmp(idDetalle, idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto, detallesAdicionales, impuestos)
+	SELECT idDetalle, @idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto, detallesAdicionales, impuestos
 	FROM OPENJSON(@jsonData) WITH (
 		idDetalle INT '$.idDetalle'
-	,idArticulo INT '$.idArticulo'
-	,codigoPrincipal VARCHAR(100) '$.codigoPrincipal'
-	,codigoAuxiliar VARCHAR(100) '$.codigoAuxiliar'
-	,cantidad VARCHAR(100) '$.cantidad'
-	,descripcion VARCHAR(300) '$.descripcion'
-	,precioUnitario VARCHAR(15) '$.precioUnitario'
-	,descuento VARCHAR(15) '$.descuento'
-	,precioTotalSinImpuesto VARCHAR(15) '$.precioTotalSinImpuesto'
+		,idArticulo INT '$.idArticulo'
+		,codigoPrincipal VARCHAR(100) '$.codigoPrincipal'
+		,codigoAuxiliar VARCHAR(100) '$.codigoAuxiliar'
+		,cantidad VARCHAR(100) '$.cantidad'
+		,descripcion VARCHAR(300) '$.descripcion'
+		,precioUnitario VARCHAR(15) '$.precioUnitario'
+		,descuento VARCHAR(15) '$.descuento'
+		,precioTotalSinImpuesto VARCHAR(15) '$.precioTotalSinImpuesto'
+		,detallesAdicionales XML '$.detallesAdicionales'
+		,impuestos XML
 	)
 
 	INSERT INTO @taxes(idDetalle, codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor)
@@ -122,10 +126,10 @@ BEGIN
 			IF NOT EXISTS(SELECT 1 FROM Recepcion.Doc_Detalle_Temp cpt INNER JOIN @tmp t ON cpt.idDocumento = t.idDocumento)
 				BEGIN
 					INSERT INTO Recepcion.Doc_Detalle_Temp(idDetalle, idDocumento, idProveedor, idArticulo, idMedida, codigoPrincipal, codigoAuxiliar
-					, cantidad, descripcion, precioUnitario, precioTotalSinImpuesto, costoNeto, descuento, idUsuario)
+					, cantidad, descripcion, precioUnitario, precioTotalSinImpuesto, costoNeto, descuento, detallesAdicionales, impuestos, idUsuario)
 
 					SELECT idDetalle, idDocumento, @idProveedor, ch.idArticulo, m.idMedida, t.codigoPrincipal, t.codigoAuxiliar
-					,cantidad, t.descripcion, precioUnitario, precioTotalSinImpuesto, CAST((CAST(precioTotalSinImpuesto AS decimal(15,5)) / CAST(cantidad AS decimal(18,5))) AS numeric(18,5)), descuento, @idUsuario
+					,cantidad, t.descripcion, precioUnitario, precioTotalSinImpuesto, CAST((CAST(precioTotalSinImpuesto AS decimal(15,5)) / CAST(cantidad AS decimal(18,5))) AS numeric(18,5)), descuento, CASE WHEN LEN(LTRIM(RTRIM(CONVERT(VARCHAR(MAX), detallesAdicionales))))= 0 THEN NULL ELSE detallesAdicionales END,  impuestos, @idUsuario
 					FROM @tmp t
 					LEFT JOIN FactElect.CompraHabitual ch ON t.codigoPrincipal = ch.codArticulo AND ch.ruc = @rucProv
 					LEFT JOIN dbo.Articulo a ON a.codigo = t.codigoPrincipal AND a.idEntidad = @idEntidad

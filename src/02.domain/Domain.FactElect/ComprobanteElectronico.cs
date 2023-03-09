@@ -136,6 +136,8 @@
         public string precioTotalSinImpuesto { get; set; }
         public string detAdicionalNombre { get; set; }
         public string detAdicionalValor { get; set; }
+        public string detallesAdicionales { get; set; }
+        public string impuestos { get; set; }
     }
     public class DetalleFactura
     {
