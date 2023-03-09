@@ -103,8 +103,12 @@ namespace DataAccess
                     using (SqlDataAdapter dataAdapter = new SqlDataAdapter(_command))
                     {
                         dataAdapter.Fill(ds);
-                        if (ds.Tables.Count == 0)
+                        if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
                         {
+                            if (ds.Tables.Count > 0)
+                            {
+                                ds = new DataSet();
+                            }
                             DtWarning(ref dtResp);
                             ds.Tables.Add(dtResp);
                         }
