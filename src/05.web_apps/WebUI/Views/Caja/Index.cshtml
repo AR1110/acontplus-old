@@ -28,18 +28,59 @@
                     <div class="table-responsive">
                         <table class="table table-condensed table-caja">
                             <thead>
-                                <tr>                                    
+                                <tr>    
+                                    <th></th>                                
                                     <th>N°</th>
                                     <th>Caja</th>
                                     <th>Usuario</th>
                                     <th>Turno</th>
                                     <th>Actividad</th>
-                                    <th>Estado</th>
-                                    <th>Op.</th>
+                                    <th>Estado</th>                                    
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="c in cajas">                                    
+                                <tr ng-repeat="c in cajas">
+                                    <td>
+                                        <md-menu>
+                                            <md-button aria-label="Open demo menu" class="md-icon-button"
+                                                        ng-click="$mdMenu.open($event)">
+                                                <icon class="mdi mdi-menu"></icon>
+                                            </md-button>
+                                            <md-menu-content class="md-dense">
+                                                <md-menu-item ng-if="accion.editar">                                            
+                                                    <md-button ng-click="openModalCaja(c)">
+                                                        <span md-menu-align-target><i class="ti-pencil"></i> Editar</span>
+                                                    </md-button>
+                                                </md-menu-item>      
+
+                                                <md-menu-item ng-if="accion.eliminar">                                            
+                                                    <md-button ng-click="askToDeleteCaja(c)">
+                                                        <span md-menu-align-target><i class="ti-trash"></i> Eliminar</span>
+                                                    </md-button>
+                                                </md-menu-item>   
+
+                                                <md-menu-item>                                            
+                                                    <md-button ng-click="openModalApertura(c)">
+                                                        <span md-menu-align-target><i class="ti-briefcase"></i> Aperturar</span>
+                                                    </md-button>
+                                                </md-menu-item>   
+
+                                                <md-menu-item>                                            
+                                                    <md-button ng-click="openModalAsignUsuarioTurno(c)">
+                                                        <span md-menu-align-target><i class="ti-user"></i> Asignar usuario/turno</span>
+                                                    </md-button>
+                                                </md-menu-item>                                                
+
+                                                <md-menu-item>                                            
+                                                    <md-button ng-click="openModalMovimientoCaja(c.caja.idCaja)">
+                                                        <span md-menu-align-target><i class="ti-wallet"></i> Movimientos</span>
+                                                    </md-button>
+                                                </md-menu-item>  
+                                                    
+
+                                            </md-menu-content>
+                                        </md-menu>
+                                    </td>                                    
                                     <td>{{$index+1}}</td>
                                     <td>{{c.caja.descripcion}}</td>
                                     <td>{{c.usuarioAsignado=='0'?'SIN ASIGNAR': c.usuarioAsignado}}</td>
@@ -57,23 +98,7 @@
                                         </div>   
                                     </td>
                                     <td>{{c.conectado}}</td>
-                                    <td ng-bind-html="c.caja.estado | estadoPrimario"></td>
-                                    <td>
-                                        <div class="dropdown dropdownOp">
-                                            <a id="dropdownOp" data-toggle="dropdown" data-boundary="viewport">
-                                                <i class="fa fa-bars"></i>
-                                            </a>
-                                            <div class="dropdown-menu" aria-labelledby="dropdownOp">
-                                                <h6 class="dropdown-header" ng-show="accion.editar || accion.eliminar">Acciones</h6>
-                                                <button class="dropdown-item" type="button" ng-if="accion.editar" ng-click="openModalCaja(c)"><i class="ti-pencil"></i> Editar</button>                                               
-                                                <button class="dropdown-item" type="button" ng-if="accion.eliminar" ng-click="askToDeleteCaja(c)"><i class="ti-trash"></i> Eliminar</button>                                               
-                                                <div class="dropdown-divider"></div>
-                                                <a class="dropdown-item" href="javascript:void(0)"  ng-click="openModalApertura(c)"><i class="ti-briefcase"></i> Aperturar</a>
-                                                <a class="dropdown-item" href="javascript:void(0)" ng-click="openModalAsignUsuarioTurno(c)"><i class="ti-user"></i> Asignar usuario/turno</a>
-                                                <a class="dropdown-item" href="javascript:void(0)" ng-click="openModalMovimientoCaja(c.caja.idCaja)"><i class=" ti-wallet"></i> Movimientos</a>
-                                            </div>
-                                        </div>
-                                    </td>
+                                    <td ng-bind-html="c.caja.estado | estadoPrimario"></td>                                  
                                 </tr>
                             </tbody>
                         </table>

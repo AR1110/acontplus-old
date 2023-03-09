@@ -3,6 +3,11 @@
 impuestoCtrl.$inject = ['$http', '$scope', 'mainService', 'toastService', 'formulario'];
 
 function impuestoCtrl($http, $scope, mS, toast, form) {
+    $scope.showImpuestoRentaV1 = false;
+    if(!$scope.showImpuestoRentaV1){
+        return;
+    }
+    
 
     let accion = JSON.parse(localStorage.getItem("accion"));
     if (accion === null) {
