@@ -25,8 +25,8 @@ DROP PROCEDURE ApiPrinter.Service_Print_Get
 GO
 CREATE PROCEDURE ApiPrinter.Service_Print_Get 
 	@ruc VARCHAR(20)
-   ,@estab VARCHAR(20)
-   ,@idUser VARCHAR(200) =  NULL
+   ,@estab VARCHAR(50)
+   ,@idUser VARCHAR(200) = NULL
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -40,7 +40,9 @@ BEGIN
 			   ,rdlcProps
 			   ,rdlcParams
 			   ,dataSources
-			FROM ApiPrinter.Service_Printer_Document WHERE ruc = @ruc AND numEstab = @estab
+			FROM ApiPrinter.Service_Printer_Document 
+			WHERE ruc = @ruc 
+			  AND numEstab IN (SELECT value FROM string_split(@estab,';'))
 		END 
 
 	ELSE 
@@ -52,8 +54,8 @@ BEGIN
 			   ,dataSources
 			FROM ApiPrinter.Service_Printer_Document 
 			WHERE ruc = @ruc 
-			AND numEstab = @estab 
-			AND idUser IN (SELECT value FROM string_split(@idUser,';'))
+			  AND numEstab IN (SELECT value FROM string_split(@estab,';'))
+			  AND idUser IN (SELECT value FROM string_split(@idUser,';'))
 		END 
 
 	
