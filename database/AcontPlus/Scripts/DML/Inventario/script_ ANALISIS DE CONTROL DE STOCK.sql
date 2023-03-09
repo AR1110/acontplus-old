@@ -35,6 +35,14 @@ DECLARE @ariculo AS TABLE(
 	,stock AS CAST(entrada - salida AS DECIMAL(15,5))
 )
 
+DECLARE @stockBodega AS TABLE(
+	 idBodega INT
+	,idArticulo INT 
+	,entrada DECIMAL(15,5)
+	,salida DECIMAL(15,5)
+	,stock AS CAST(entrada - salida AS DECIMAL(15,5))
+)
+
 SELECT TOP 1 @stockInicial = stock FROM dbo.Articulo WHERE idArticulo = @idArticulo 
 
 INSERT INTO @salidas(idArticulo,idMedida,idBodega,cantidad,precioUnitario,precioCosto)
@@ -46,9 +54,14 @@ SELECT idArticulo,idMedida,idBodega,cantidad,precioCosto,precioCosto  FROM Factu
 select @totalEntradas = SUM(cantidad) from @entradas
 select @totalSalidas = SUM(cantidad) from @salidas
 
-
-insert into @ariculo (idArticulo,entrada,salida)
-select @idArticulo,@totalEntradas,@totalSalidas
+INSERT INTO @ariculo (idArticulo,entrada,salida)
+SELECT @idArticulo,@totalEntradas,@totalSalidas
 
 
 select * from @ariculo
+
+INSERT INTO @stockBodega(idBodega,idArticulo,entrada,salida)
+SELECT top 5 idBodega,@idArticulo,@totalEntradas,@totalSalidas FROM dbo.Bodega
+
+
+SELECT * FROM @stockBodega

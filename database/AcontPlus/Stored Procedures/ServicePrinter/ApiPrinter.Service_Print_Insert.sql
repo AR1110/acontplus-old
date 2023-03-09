@@ -42,7 +42,6 @@ BEGIN
 	DECLARE @idUsuario INT
 	DECLARE @SP VARCHAR(MAX)
     DECLARE @idImpresora INT
-	DECLARE @codValidator VARCHAR(3) = 'A'
 	DECLARE @ruc VARCHAR(15)
 	DECLARE @rdlcProps VARCHAR(MAX)
 	DECLARE @dataSources VARCHAR(MAX)
@@ -64,6 +63,7 @@ BEGIN
 
 	BEGIN TRY	
 		
+
 		SELECT @codEstab          = codEstab 
 			  ,@idDocument        = idDocument
 			  ,@codDoc            = codDoc
@@ -114,7 +114,6 @@ BEGIN
 						  AND nroIdentificacion = @nroIdentificacion 
 						  AND codDoc            = @codDoc
 
-						SET @codValidator = @codDoc
 					END 
 
 			    IF EXISTS (SELECT 1 FROM ApiPrinter.Impresora WHERE codEstab = @codEstab  AND predeterminada = 1 AND nroIdentificacion = @nroIdentificacion AND codDoc = 'A')
@@ -124,11 +123,11 @@ BEGIN
 						WHERE codEstab          = @codEstab 
 						  AND predeterminada    = 1 
 						  AND nroIdentificacion = @nroIdentificacion 
-						  AND codDoc            = @codValidator
+						  AND codDoc            = 'A'
 					END 
 			END 
 
-		ELSE 
+		IF NOT EXISTS (SELECT  1 FROM ApiPrinter.Impresora WHERE codEstab = @codEstab  AND predeterminada = 1 AND nroIdentificacion = @nroIdentificacion)
 			BEGIN
 				IF EXISTS (SELECT 1 FROM ApiPrinter.Impresora WHERE codEstab = @codEstab  AND predeterminada = 1 AND codDoc = @codDoc)
 					BEGIN
@@ -138,7 +137,6 @@ BEGIN
 						  AND predeterminada    = 1 
 						  AND codDoc            = @codDoc
 
-						SET @codValidator =  @codDoc
 					END 
 
 			    IF EXISTS (SELECT 1 FROM ApiPrinter.Impresora WHERE codEstab = @codEstab  AND predeterminada = 1 AND codDoc = 'A')
@@ -147,13 +145,13 @@ BEGIN
 						FROM ApiPrinter.Impresora WITH (NOLOCK)
 						WHERE codEstab          = @codEstab 
 						  AND predeterminada    = 1 
-						  AND codDoc            = @codValidator
+						  AND codDoc            = 'A'
 					END 
 			END 
 
 		IF @idImpresora IS NULL	
 			BEGIN
-				SELECT '0'code,'No tienes configurado una impresora' as message
+				SELECT '0'code,'No tienes configurado una impresora' as 'message'
 				RETURN 
 			END
 
@@ -168,7 +166,8 @@ BEGIN
 		FROM ApiPrinter.Config_Document cd WITH (NOLOCK)
 		INNER JOIN ApiPrinter.Impresora      i WITH (NOLOCK) ON i.idImpresora      = cd.idImpresora
 		INNER JOIN ApiPrinter.TipoImpresora ti WITH (NOLOCK) ON ti.idTipoImpresora = i.idTipoImpresora
-		WHERE cd.idImpresora = @idImpresora AND i.codDoc = @codValidator AND cd.estado = 1
+		WHERE cd.idImpresora = @idImpresora 
+		  AND cd.estado = 1
 
 		SELECT  @dataSources = dataSources FROM ApiPrinter.Document_Data(@idDocument,@idTipoDocumento,@codDoc)
 
@@ -213,7 +212,28 @@ BEGIN
 		IF (@@TRANCOUNT > 0)
 			ROLLBACK TRAN
 		SELECT '0' code,'Error en el procedimiento'+ ERROR_MESSAGE() as 'message'
-		RETURN
+		INSERT INTO ErroresSistema
+					(token
+					,method
+					,errorNumber
+					,errorSeverity 
+					,errorState
+					,errorProcedure
+					,errorLine
+					,errorMessage
+					,errorDate
+					,idUsuario)
+			VALUES
+					(NEWID()
+					,'/Aprobacion/Insert'
+					,ERROR_NUMBER()
+					,ERROR_SEVERITY()
+					,ERROR_STATE()
+					,ERROR_PROCEDURE()
+					,ERROR_LINE()
+					,ERROR_MESSAGE()
+					,GETDATE()
+					,@idUsuario)
 	END CATCH 
 
 END

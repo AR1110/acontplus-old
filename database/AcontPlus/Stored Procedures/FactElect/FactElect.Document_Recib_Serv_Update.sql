@@ -29,6 +29,7 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
+	DECLARE @codDoc AS VARCHAR(5)
 	DECLARE @table as TABLE(
 		idDocRelacionado INT UNIQUE NOT NULL
 	   ,numDocSustento VARCHAR(20)
@@ -38,6 +39,7 @@ BEGIN
 
 
 	BEGIN TRY 
+		SELECT TOP 1 @codDoc = codDoc FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE idDocumento = @idDocumento
 		BEGIN TRAN 
 			INSERT INTO @table (idDocRelacionado,numDocSustento,codDocSustento,claveAcceso)
 			SELECT 
@@ -56,7 +58,16 @@ BEGIN
 			INNER JOIN Recepcion.DocumentoRecibido d ON d.idDocumento = dr.idDocumentoRecibido
 			WHERE d.idDocumento = @idDocumento
 
-			UPDATE Recepcion.DocumentoRecibido SET complete = 1 WHERE idDocumento = @idDocumento
+			IF @codDoc = '04'
+				BEGIN 
+					UPDATE Recepcion.DocumentoRecibido SET downloaded = 'DR' WHERE idDocumento = @idDocumento
+				END 
+
+			IF @codDoc = '07'
+				BEGIN
+					UPDATE Recepcion.DocumentoRecibido SET downloaded = 'DR', complete = 1 WHERE idDocumento = @idDocumento
+				END 
+			
 
 			UPDATE dr SET 
 				dr.claveAcceso = t.claveAcceso

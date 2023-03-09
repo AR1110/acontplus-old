@@ -31,6 +31,6 @@ BEGIN
 	SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	SELECT TOP (@cantDocs) idDocumento,codDoc,versionComp,claveAcceso FROM Recepcion.DocumentoRecibido WHERE codDoc IN ('04','07') AND downloaded = 'DE' AND complete = 0
+	SELECT TOP (@cantDocs) idDocumento,codDoc,versionComp,claveAcceso FROM Recepcion.DocumentoRecibido WHERE codDoc IN ('04','07') AND downloaded = 'DE' 
 END
 GO
