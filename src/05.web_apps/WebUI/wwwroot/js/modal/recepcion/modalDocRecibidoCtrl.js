@@ -7,7 +7,7 @@ export class ModalHistoryComprasCtrl{
     constructor(_mS, _tS, $uibModalInstance, _params) {
 
         this._mS = _mS;
-
+         
         this._tS = _tS;        
 
         this.$uibModalInstance = $uibModalInstance;
