@@ -1,4 +1,4 @@
-<form autocomplete="off" ng-submit="$ctrl.onSave()">
+<form autocomplete="off" >
     <div class="modal-header bg-success text-white">
         <h5 class="modal-title">Nuevo Guia Remisión</h5><br>          
         <button type="button" class="close" ng-click="$ctrl.closeModal()">&times;</button>
@@ -267,7 +267,7 @@
     </div>
 
     <div class="modal-footer">
-        <button type="submit" class="btn btn-success" >
+        <button type="button" class="btn btn-success" ng-click="$ctrl.onSave()">
             <i class="ti-save"></i> Guardar
         </button>
         <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">&times; Cerrar</button>

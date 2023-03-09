@@ -1,4 +1,4 @@
-<form ng-submit="$ctrl.onSave()" autocomplete="off"> 
+<form autocomplete="off"> 
     <div class="modal-header">
         <div class="float-left">
             <div class="icheck-primary">
@@ -390,7 +390,7 @@
             <i class="ti-files"></i> Facturar
         </button>   
 
-        <button type="submit" class="btn btn-success">
+        <button type="button" class="btn btn-success" ng-click="$ctrl.onSave()">
             <i class="ti-save"></i> Guardar
         </button>
         <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">
