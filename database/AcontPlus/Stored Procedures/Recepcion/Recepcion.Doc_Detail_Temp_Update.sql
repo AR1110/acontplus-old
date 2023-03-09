@@ -37,23 +37,25 @@ BEGIN
 	DECLARE @payload VARCHAR(MAX)
 
 	DECLARE @tmp TABLE(
-	todos BIT NULL
-	,idDocumento INT NOT NULL
-	,idProveedor INT NULL
-	,idArticulo INT NULL
-	,codArticulo VARCHAR(100) NULL
-	,idMedida INT
+		todos BIT NULL
+		,idDocumento INT NOT NULL
+		,idProveedor INT NULL
+		,idArticulo INT NULL
+		,codArticulo VARCHAR(100) NULL
+		,idMedida INT
+		,idBodega INT
 	)
 
-	INSERT INTO @tmp(todos, idDocumento, idProveedor, idArticulo, codArticulo, idMedida)
-	SELECT todos, idDocumento, idProveedor, idArticulo, LTRIM(RTRIM(codArticulo)), idMedida
+	INSERT INTO @tmp(todos, idDocumento, idProveedor, idArticulo, codArticulo, idMedida, idBodega)
+	SELECT todos, idDocumento, idProveedor, idArticulo, LTRIM(RTRIM(codArticulo)), idMedida, idBodega
 	FROM OPENJSON(@jsonData) WITH (
-	todos BIT '$.todos'
-	,idDocumento INT '$.idDocumento'
-	,idProveedor INT '$.idProveedor'
-	,idArticulo INT '$.idArticulo'
-	,codArticulo VARCHAR(100) '$.codArticulo'
-	,idMedida INT '$.idMedida'
+		todos BIT '$.todos'
+		,idDocumento INT '$.idDocumento'
+		,idProveedor INT '$.idProveedor'
+		,idArticulo INT '$.idArticulo'
+		,codArticulo VARCHAR(100) '$.codArticulo'
+		,idMedida INT '$.idMedida'
+		,idBodega INT '$.idBodega'
 	)
 
 	IF NOT EXISTS (SELECT 1 FROM @tmp)
@@ -62,7 +64,7 @@ BEGIN
 			RETURN
 		END
 	
-	IF EXISTS(SELECT * FROM @tmp WHERE idProveedor = 0 AND idArticulo = 0)
+	IF EXISTS(SELECT 1 FROM @tmp WHERE idProveedor = 0 AND idArticulo = 0)
 		BEGIN
 			SELECT '0' AS CODE, 'No se pudo actualizar el articulo' AS 'message'
 			RETURN
@@ -90,12 +92,36 @@ BEGIN
 
 			IF EXISTS(SELECT 1 FROM @tmp WHERE todos = 1)
 				BEGIN
-					UPDATE Recepcion.Doc_Detalle_Temp SET idMedida = (SELECT TOP 1 idMedida FROM @tmp)
-					WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp)
+					DECLARE @messageResp VARCHAR(100)
+					IF EXISTS (SELECT 1 FROM @tmp WHERE idBodega > 0)
+						BEGIN
+							UPDATE Recepcion.Doc_Detalle_Temp SET idBodega = (SELECT TOP 1 idBodega FROM @tmp)
+							WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp)
+							SET @messageResp = 'Bodega asignada correctamente'
+						END
+					ELSE
+						BEGIN
+							UPDATE Recepcion.Doc_Detalle_Temp SET idMedida = (SELECT TOP 1 idMedida FROM @tmp)
+							WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp)
+							SET @messageResp = 'Medida asignada correctamente'
+						END
 
-					SET @payload = (SELECT * FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp) FOR JSON AUTO) 
+					SET @payload = (SELECT d.*
+	,impuesto  = (SELECT TOP 1 si.descripcion FROM Recepcion.Doc_Impuesto_Temp i
+											INNER JOIN Sri.Impuesto si ON i.codigo = si.codigo
+														WHERE d.idDocumento = i.idDocumento 
+														AND d.codigoPrincipal = i.codArticulo)
+	,valorImpuesto  = (SELECT SUM(CONVERT(NUMERIC(18,2),i.valor)) FROM Recepcion.Doc_Impuesto_Temp i
+														WHERE d.idDocumento = i.idDocumento 
+														AND d.codigoPrincipal = i.codArticulo)
+	
+	,ISNULL(dd.idDocumentoDetalle, 0) idDocumentoDetalle
+	FROM Recepcion.Doc_Detalle_Temp d
+	LEFT JOIN Recepcion.DocumentoDetalle dd ON d.idArticulo = dd.idArticulo AND dd.idDocumento = (SELECT TOP 1 idDocumento FROM @tmp)
+	
+	WHERE d.idDocumento = (SELECT TOP 1 idDocumento FROM @tmp) FOR JSON AUTO) 
 
-					SELECT '1' AS code, @payload AS payload, 'Medida asignada correctamente'  as 'message'
+					SELECT '1' AS code, @payload AS payload, @messageResp  as 'message'
 				END
 			ELSE
 				BEGIN 
@@ -110,7 +136,20 @@ BEGIN
 					FROM @tmp t) AS atmp ON a.idDocumento = atmp.idDocumento 
 					AND a.codigoPrincipal = LTRIM(RTRIM(atmp.codArticulo))
 
-					SET @payload = (SELECT * FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp) FOR JSON AUTO) 
+					SET @payload = (SELECT d.*
+	,impuesto  = (SELECT TOP 1 si.descripcion FROM Recepcion.Doc_Impuesto_Temp i
+											INNER JOIN Sri.Impuesto si ON i.codigo = si.codigo
+														WHERE d.idDocumento = i.idDocumento 
+														AND d.codigoPrincipal = i.codArticulo)
+	,valorImpuesto  = (SELECT SUM(CONVERT(NUMERIC(18,2),i.valor)) FROM Recepcion.Doc_Impuesto_Temp i
+														WHERE d.idDocumento = i.idDocumento 
+														AND d.codigoPrincipal = i.codArticulo)
+	
+	,ISNULL(dd.idDocumentoDetalle, 0) idDocumentoDetalle
+	FROM Recepcion.Doc_Detalle_Temp d
+	LEFT JOIN Recepcion.DocumentoDetalle dd ON d.idArticulo = dd.idArticulo AND dd.idDocumento = (SELECT TOP 1 idDocumento FROM @tmp)
+	
+	WHERE d.idDocumento = (SELECT TOP 1 idDocumento FROM @tmp) FOR JSON AUTO) 
 
 					SELECT '1' AS code, @payload AS payload, 'Articulo Actualizado'  as 'message'
 				END

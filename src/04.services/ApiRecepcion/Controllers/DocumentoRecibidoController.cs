@@ -91,7 +91,7 @@ namespace ApiRecepcion.Controllers
                             { "jsonData", JsonConvert.SerializeObject(ceXml.detalles) },
                             { "impuestos", JsonConvert.SerializeObject(ceXml.impuestos) }
                         };
-                        if (ceXml.codDoc == "01")
+                        if (ceXml.codDoc == "01" || ceXml.codDoc == "04")
                         {
                             DAO _dao = new DAO(_configuration);
                             _dao.OnlyExec("Recepcion.Doc_Detail_Temp_Insert_All", parametersTemp);

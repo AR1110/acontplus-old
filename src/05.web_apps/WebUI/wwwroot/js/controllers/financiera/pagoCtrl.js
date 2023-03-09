@@ -62,14 +62,16 @@ function pagoCtrl($timeout, $http, $filter, $scope, mS, _commonSvc, toast, _moda
         try {
             showLoader();
             $scope.pagos = [];
-            $http.get('/ComprobanteEgreso/Get?json=' + JSON.stringify($scope.dataSearch)).then(({data:response})=>{
+
+            mS.getData('get','/ComprobanteEgreso/Get?json=' + JSON.stringify($scope.dataSearch)).then(response=>{
                 if(response.id=="0"){
                     hideLoader();
                     $scope.pagos = [];
                     console.log(response)
                     return
                 }
-                $scope.pagos = JSON.parse(response.data) || [];                                        
+                $scope.pagos = JSON.parse(response.data) || []; 
+                console.log(JSON.parse(response.data))                                       
                 hideLoader();
             }).catch(error=>{
                 $scope.pagos = [];
@@ -998,7 +1000,7 @@ function pagoCtrl($timeout, $http, $filter, $scope, mS, _commonSvc, toast, _moda
         
     }
 
-    $scope.deletePayment = function({ idComprobanteEgreso: id }) {
+    $scope.deletePayment = function(item) {
         Swal.fire({
             icon: 'warning',
             html: '<small>Esta seguro/a de Anular este registro de pago ahora?</small>',
@@ -1013,13 +1015,13 @@ function pagoCtrl($timeout, $http, $filter, $scope, mS, _commonSvc, toast, _moda
                 if (!value) {
                     return 'Ingrese la Observación!'
                 }
-                if (value.length <= 15) {
+                if (value.length <= 8) {
                     return 'La observación tiene que tener al menos 15 caracteres!'
                 }
             }
         }).then(result => {
             if (result.isConfirmed) {
-                $scope.postDelete(id, result);
+                $scope.postDelete(item.idComprobanteEgreso, result);
             };
         })
         return

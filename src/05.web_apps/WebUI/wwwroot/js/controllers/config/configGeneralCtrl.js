@@ -22,7 +22,7 @@ function configGeneralCtrl($timeout, $q, _mS, $scope, _commonSvc, _modalSvc, _no
                 _commonSvc.getModuloDecimal(),
                 _commonSvc.getGestionSistema(),
                 _mS.getData('get','/TipoIva/OptionTipoIva').then(response=>response.data),
-                _mS.getData('get','/ConfigVentaDetalle/Get').then(response =>response.data),
+                _mS.getData('get','/ConfigVentaDetalle/Get?json=' + JSON.stringify({})),
                 _mS.getData('get','/NotificacionEntidad/Get?json=' + JSON.stringify({})).then(response=>response.data),
             ])  
             const {valoracionMetodos}  = results[0];
@@ -37,11 +37,12 @@ function configGeneralCtrl($timeout, $q, _mS, $scope, _commonSvc, _modalSvc, _no
             $scope.searchText     = $scope.gestionSistema.nombreFiscal; //Buscar Cliente 
             $scope.searchTextArticle = $scope.gestionSistema.descripcion;
             
-            $scope.tipoIvas       = results[3];
-            $scope.configDetalle  = results[4];
+            $scope.tipoIvas       = results[3];            
+            $scope.configDetalle  = JSON.parse(results[4].payload)[0];
 
+            
             if(results[5]){
-                $scope.entidadNotificaciones = JSON.parse(results[5].data);                      
+               $scope.entidadNotificaciones = JSON.parse(results[5]);                      
             }
 
             hideLoader();
@@ -208,12 +209,14 @@ function configGeneralCtrl($timeout, $q, _mS, $scope, _commonSvc, _modalSvc, _no
     
     //---------------------------------------CONFIGURACIÓN DE MOSTRAR COLUMNAS EN DETALLE VENTA ------------------------------------
     $scope.updateConfigShowDetalle= async()=>{
-        const response = await _mS.getData('put', '/ConfigVentaDetalle/Put', $scope.configDetalle);
-        if (response.id == "0") {
+        const response = await _mS.getData('put', '/ConfigVentaDetalle/Put?json=' + JSON.stringify($scope.configDetalle));
+
+        console.log(response);
+        if (response.code == "0") {
             toastr.warning(response.message, response.titleSms, {positionClass: 'toast-bottom-center'})
             return
         }
-        if (response.id == "1") {
+        if (response.code == "1") {
             $scope.initiload();                
             toastr.success(response.message, response.titleSms, {positionClass: 'toast-bottom-center'})
         }

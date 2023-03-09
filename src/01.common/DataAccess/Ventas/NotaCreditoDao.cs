@@ -292,52 +292,6 @@ namespace DataAccess.Ventas
 
             }
             return _gr;
-        }
-        public async Task<object[]> DataSendEmailAsync(string json)
-        {
-            var send = new Email();
-            var urlSri = "";
-            var invoiceName = "";
-            try
-            {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
-                {
-                    var cmd = new SqlCommand("Ventas.NotaCredito_Send_Email", con);
-                    cmd.Parameters.AddWithValue("json", json);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        _gr.id = reader.GetString(0);
-                        _gr.message = reader.GetString(1);
-                        if (_gr.id == "1")
-                        {
-                            send = new Email()
-                            {
-                                from = reader.GetString(2),
-                                password = reader.GetString(3),
-                                to = reader.GetString(4),
-                                subject = reader.GetString(5),
-                                message = reader.GetString(6),
-                                cc = reader.GetString(7),
-                            };
-                            urlSri = reader.GetString(8);
-                            invoiceName = reader.GetString(9);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _gr.id = "0";
-                _gr.message = ex.Message.ToString();
-            }
-            finally
-            {
-
-            }
-            return new object[] { send, urlSri, invoiceName };
-        }
+        }       
     }
 }

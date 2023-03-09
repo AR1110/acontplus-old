@@ -6,6 +6,7 @@ GO
 CREATE TABLE Recepcion.Doc_Detalle_Temp(
 idDocumento INT NOT NULL
 ,idProveedor INT NULL
+,idBodega INT NULL
 ,idArticulo INT NULL
 ,idMedida INT NULL
 ,codigoPrincipal VARCHAR(100) NOT NULL
@@ -16,7 +17,8 @@ idDocumento INT NOT NULL
 ,descuento VARCHAR(15) NULL
 ,precioTotalSinImpuesto VARCHAR(15) NULL
 ,costoNeto NUMERIC(18,5) NULL
-,impuestos VARCHAR(MAX) NULL
+,detallesAdicionales XML NULL
+,impuestos XML NULL
 ,fechaRegistro DATETIME NOT NULL DEFAULT GETDATE()
 ,idUsuario INT NULL
 ,isCustom BIT NOT NULL DEFAULT 0

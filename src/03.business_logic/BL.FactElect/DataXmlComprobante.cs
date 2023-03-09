@@ -200,7 +200,8 @@ namespace BL.FactElect
                 detail.precioUnitario = item.SelectSingleNode("precioUnitario").InnerText;
                 detail.descuento = item.SelectSingleNode("descuento").InnerText;
                 detail.precioTotalSinImpuesto = item.SelectSingleNode("precioTotalSinImpuesto").InnerText;
-
+                detail.impuestos = (item.SelectSingleNode("impuestos") == null) ? "" : item.SelectNodes("impuestos")[0].OuterXml;
+                detail.detallesAdicionales = (item.SelectSingleNode("detallesAdicionales") == null) ? "" : item.SelectNodes("detallesAdicionales")[0].OuterXml;
                 foreach (XmlElement taxes in item.SelectNodes("impuestos"))
                 {
                     Impuesto tax = new Impuesto();

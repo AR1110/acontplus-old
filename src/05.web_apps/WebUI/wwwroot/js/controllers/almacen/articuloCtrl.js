@@ -2,9 +2,9 @@
 
 app.controller('articuloCtrl', articuloCtrl);
 
-articuloCtrl.$inject = ['$scope', '$http','mainService', 'modalService', 'nombreModal', 'toastService', 'formulario'];
+articuloCtrl.$inject = ['$scope', 'mainService', 'modalService', 'nombreModal', 'toastService', 'formulario'];
 
-function articuloCtrl($scope, $http, _mS, _modalSvc, _nombreModal, toast, form) {
+function articuloCtrl($scope, _mS, _modalSvc, _nombreModal, toast, form) {
     'use strict';
 
     let accion = JSON.parse(localStorage.getItem("accion"));
@@ -51,7 +51,7 @@ function articuloCtrl($scope, $http, _mS, _modalSvc, _nombreModal, toast, form) 
         $scope.articulos = [];        
         _mS.getData('get', '/Articulo/Get?json=' + JSON.stringify($scope.dataSearch)).then(
             response=>{
-                $scope.articulos = JSON.parse(response.data) || []
+                $scope.articulos = response.data ? JSON.parse(response.data) : []
                 $scope.totalRecords = $scope.articulos.length>0? $scope.articulos[0].totalRecords: 0;            
             }
         )     
@@ -190,7 +190,7 @@ function articuloCtrl($scope, $http, _mS, _modalSvc, _nombreModal, toast, form) 
         })         
         modalRef.result.then(
             response=>{
-                if(typeof response ==='object' && response.id==="1"){
+                if(typeof response ==='object'){
                     $scope.searchArticulo();
                 }
             }
@@ -234,6 +234,29 @@ function articuloCtrl($scope, $http, _mS, _modalSvc, _nombreModal, toast, form) 
             )                        
         }
     }
+
+
+
+
+
+    $scope.openModalHistorialCompra = async(item)=>{
+        try {
+            let {MODAL_FILE_CTRL, MODAL_HISTORIAL_COMPRA} = _nombreModal.doc_recibido;        
+            let controller =  (await import('./../../' + MODAL_FILE_CTRL))[MODAL_HISTORIAL_COMPRA['controller']];
+            let template = MODAL_HISTORIAL_COMPRA['template'];
+
+            _modalSvc.openModalCustom({
+                controller,
+                template,
+                size:'xl',
+                params: item
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+
 }
 
 

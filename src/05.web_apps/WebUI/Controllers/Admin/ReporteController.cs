@@ -31,8 +31,10 @@ namespace WebUI.Controllers.Admin
             _httpContextAccessor = httpContextAccessor;
             _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
         }
+
         [Authorize]
         public IActionResult Index() => View();
+        public IActionResult Recepcion() => View("~/Views/Reporte/Recepcion/Index.cshtml");
 
         //Reporte Compra
         [Authorize]
@@ -47,7 +49,6 @@ namespace WebUI.Controllers.Admin
         [Authorize]
         public IActionResult ReporteVenta()
         {
-
             ViewData["idRol"] = _idRol;
             return View();
         }
