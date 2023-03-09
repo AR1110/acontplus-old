@@ -48,24 +48,24 @@ BEGIN
 		BEGIN
 			IF (SELECT tipo FROM @tmp) = 'C'
 				BEGIN
-					SELECT a.idEntidad
-					,a.idArticulo
-					,a.codigo codigoPrincipal
-					,a.codigoAuxiliar
-					,a.descripcion
-					,a.precioCosto precioUnitario
-					,p.nombreFiscal razonSocial
-					INTO #TempFirst
-					FROM dbo.Articulo a  
-					INNER JOIN FacturaCompraDetalle fcd ON a.idArticulo = fcd.idArticulo
-					INNER JOIN FacturaCompra fc ON fcd.idFacturaCompra = fc.idFacturaCompra 
-					AND fc.idEntidad = @idEntidad
-					INNER JOIN Proveedor p ON fc.idProveedor = p.idProveedor 
-					AND p.idEntidad = @idEntidad
-					WHERE  a.codigo = (SELECT t.descripcion FROM @tmp t)  COLLATE SQL_Latin1_General_Cp1_CI_AI
-					AND a.idEntidad = @idEntidad
+					--SELECT a.idEntidad
+					--,a.idArticulo
+					--,a.codigo codigoPrincipal
+					--,a.codigoAuxiliar
+					--,a.descripcion
+					--,a.precioCosto precioUnitario
+					--,p.nombreFiscal razonSocial
+					--INTO #TempFirst
+					--FROM dbo.Articulo a  
+					--INNER JOIN FacturaCompraDetalle fcd ON a.idArticulo = fcd.idArticulo
+					--INNER JOIN FacturaCompra fc ON fcd.idFacturaCompra = fc.idFacturaCompra 
+					--AND fc.idEntidad = @idEntidad
+					--INNER JOIN Proveedor p ON fc.idProveedor = p.idProveedor 
+					--AND p.idEntidad = @idEntidad
+					--WHERE  a.codigo = (SELECT t.descripcion FROM @tmp t)  COLLATE SQL_Latin1_General_Cp1_CI_AI
+					--AND a.idEntidad = @idEntidad
 
-					INSERT INTO #TempFirst
+					--INSERT INTO #TempFirst
 					SELECT a.idEntidad
 					,a.idArticulo
 					,a.codigo codigoPrincipal
@@ -73,13 +73,13 @@ BEGIN
 					,a.descripcion
 					,a.precioCosto precioUnitario
 					,'Sin compras registradas' razonSocial
-					--INTO #Temp
+					INTO #TempFirst
 					FROM dbo.Articulo a
 					WHERE a.codigo = (SELECT t.descripcion FROM @tmp t)  COLLATE SQL_Latin1_General_Cp1_CI_AI
 					AND  a.idEntidad = @idEntidad
-					AND NOT EXISTS (
-						SELECT * FROM FacturaCompraDetalle fcd WHERE a.idArticulo = fcd.idArticulo
-					)
+					--AND NOT EXISTS (
+					--	SELECT * FROM FacturaCompraDetalle fcd WHERE a.idArticulo = fcd.idArticulo
+					--)
 			
 					--SELECT * FROM #Temp
 			
@@ -126,24 +126,24 @@ BEGIN
 					RETURN
 				END
 
-					SELECT a.idEntidad
-					,a.idArticulo
-					,a.codigo codigoPrincipal
-					,a.codigoAuxiliar
-					,a.descripcion
-					,a.precioCosto precioUnitario
-					,p.nombreFiscal razonSocial
-					INTO #TempFirstII
-					FROM dbo.Articulo a  
-					INNER JOIN FacturaCompraDetalle fcd ON a.idArticulo = fcd.idArticulo
-					INNER JOIN FacturaCompra fc ON fcd.idFacturaCompra = fc.idFacturaCompra 
-					AND fc.idEntidad = @idEntidad
-					INNER JOIN Proveedor p ON fc.idProveedor = p.idProveedor 
-					AND p.idEntidad = @idEntidad
-					WHERE   a.descripcion LIKE '%' + (SELECT t.descripcion FROM @tmp t) + '%' COLLATE SQL_Latin1_General_Cp1_CI_AI
-					AND a.idEntidad = @idEntidad
+				--SELECT a.idEntidad
+				--,a.idArticulo
+				--,a.codigo codigoPrincipal
+				--,a.codigoAuxiliar
+				--,a.descripcion
+				--,a.precioCosto precioUnitario
+				--,p.nombreFiscal razonSocial
+				--INTO #TempFirstII
+				--FROM dbo.Articulo a  
+				--INNER JOIN FacturaCompraDetalle fcd ON a.idArticulo = fcd.idArticulo
+				--INNER JOIN FacturaCompra fc ON fcd.idFacturaCompra = fc.idFacturaCompra 
+				--AND fc.idEntidad = @idEntidad
+				--INNER JOIN Proveedor p ON fc.idProveedor = p.idProveedor 
+				--AND p.idEntidad = @idEntidad
+				--WHERE   a.descripcion LIKE '%' + (SELECT t.descripcion FROM @tmp t) + '%' COLLATE SQL_Latin1_General_Cp1_CI_AI
+				--AND a.idEntidad = @idEntidad
 
-					INSERT INTO #TempFirstII
+				--INSERT INTO #TempFirstII
 					SELECT a.idEntidad
 					,a.idArticulo
 					,a.codigo codigoPrincipal
@@ -151,81 +151,77 @@ BEGIN
 					,a.descripcion
 					,a.precioCosto precioUnitario
 					,'Sin compras registradas' razonSocial
-					--INTO #Temp
+					INTO #TempFirstII
 					FROM dbo.Articulo a
 					WHERE a.descripcion LIKE '%' + (SELECT t.descripcion FROM @tmp t) + '%' COLLATE SQL_Latin1_General_Cp1_CI_AI
 					AND  a.idEntidad = @idEntidad
-					AND NOT EXISTS (
-						SELECT * FROM FacturaCompraDetalle fcd WHERE a.idArticulo = fcd.idArticulo
-					)
+					--AND a.idArticulo NOT IN (
+					--	SELECT fcd.idArticulo FROM FacturaCompraDetalle fcd WHERE a.idArticulo = fcd.idArticulo
+					--)
 			
-					--SELECT * FROM #Temp
+ 
 			
-					SELECT * FROM #TempFirstII a WHERE idEntidad = @idEntidad 
-					GROUP BY 
-					 a.idEntidad
-					,a.idArticulo
-					,a.codigoPrincipal
-					,a.codigoAuxiliar
-					,a.descripcion
-					,a.precioUnitario
-					,a.razonSocial
+				SELECT * FROM #TempFirstII a WHERE idEntidad = @idEntidad 
+				GROUP BY 
+				 a.idEntidad
+				,a.idArticulo
+				,a.codigoPrincipal
+				,a.codigoAuxiliar
+				,a.descripcion
+				,a.precioUnitario
+				,a.razonSocial
 
-					DROP TABLE #TempFirstII
-					RETURN
+				DROP TABLE #TempFirstII
+				RETURN
 		END
 
 
-			SELECT a.idEntidad
-			,a.idArticulo
-			,a.codigo codigoPrincipal
-			,a.codigoAuxiliar
-			,a.descripcion
-			,a.precioCosto precioUnitario
-			,p.nombreFiscal razonSocial
-			INTO #Temp
-			FROM dbo.Articulo a  
-			INNER JOIN FacturaCompraDetalle fcd ON a.idArticulo = fcd.idArticulo
-			INNER JOIN FacturaCompra fc ON fcd.idFacturaCompra = fc.idFacturaCompra 
-			AND fc.idEntidad = @idEntidad
-			INNER JOIN Proveedor p ON fc.idProveedor = p.idProveedor 
-			AND p.idEntidad = @idEntidad
-			WHERE  a.codigo = (SELECT t.codigoPrincipal FROM @tmp t)
-			--OR a.codigoAuxiliar = (SELECT t.codigoPrincipal FROM @tmp t)
-			OR a.descripcion LIKE '%' + (SELECT t.descripcion FROM @tmp t) + '%' COLLATE SQL_Latin1_General_Cp1_CI_AI
-			AND a.idEntidad = @idEntidad
-
-			INSERT INTO #Temp
-			SELECT a.idEntidad
-			,a.idArticulo
-			,a.codigo codigoPrincipal
-			,a.codigoAuxiliar
-			,a.descripcion
-			,a.precioCosto precioUnitario
-			,'Sin compras registradas' razonSocial
-			--INTO #Temp
-			FROM dbo.Articulo a
-			WHERE a.codigo = (SELECT t.codigoPrincipal FROM @tmp t)
-			--OR a.codigoAuxiliar = (SELECT t.codigoPrincipal FROM @tmp t)
-			OR a.descripcion LIKE '%' + (SELECT t.descripcion FROM @tmp t) + '%' COLLATE SQL_Latin1_General_Cp1_CI_AI
-			AND  a.idEntidad = @idEntidad
-			AND NOT EXISTS (
-				SELECT * FROM FacturaCompraDetalle fcd WHERE a.idArticulo = fcd.idArticulo
-			)
-			
-			--SELECT * FROM #Temp
-			
-			SELECT * FROM #Temp a WHERE idEntidad = @idEntidad 
-			GROUP BY 
-			 a.idEntidad
-			,a.idArticulo
-			,a.codigoPrincipal
-			,a.codigoAuxiliar
-			,a.descripcion
-			,a.precioUnitario
-			,a.razonSocial
-
-			DROP TABLE #Temp
+	--SELECT a.idEntidad
+	--,a.idArticulo
+	--,a.codigo codigoPrincipal
+	--,a.codigoAuxiliar
+	--,a.descripcion
+	--,a.precioCosto precioUnitario
+	--,p.nombreFiscal razonSocial
+	--INTO #Temp
+	--FROM dbo.Articulo a  
+	--INNER JOIN FacturaCompraDetalle fcd ON a.idArticulo = fcd.idArticulo
+	--INNER JOIN FacturaCompra fc ON fcd.idFacturaCompra = fc.idFacturaCompra 
+	--AND fc.idEntidad = @idEntidad
+	--INNER JOIN Proveedor p ON fc.idProveedor = p.idProveedor 
+	--AND p.idEntidad = @idEntidad
+	--WHERE  a.codigo = (SELECT t.codigoPrincipal FROM @tmp t)
+	--OR a.descripcion LIKE '%' + (SELECT t.descripcion FROM @tmp t) + '%' COLLATE SQL_Latin1_General_Cp1_CI_AI
+	--AND a.idEntidad = @idEntidad
+	
+	--INSERT INTO #Temp
+	SELECT a.idEntidad
+	,a.idArticulo
+	,a.codigo codigoPrincipal
+	,a.codigoAuxiliar
+	,a.descripcion
+	,a.precioCosto precioUnitario
+	,'Sin compras registradas' razonSocial
+	INTO #Temp
+	FROM dbo.Articulo a
+	WHERE a.codigo = (SELECT t.codigoPrincipal FROM @tmp t)
+	OR a.descripcion LIKE '%' + (SELECT t.descripcion FROM @tmp t) + '%' COLLATE SQL_Latin1_General_Cp1_CI_AI
+	AND  a.idEntidad = @idEntidad
+	--AND a.idArticulo NOT IN (
+	--	SELECT fcd.idArticulo FROM FacturaCompraDetalle fcd WHERE a.idArticulo = fcd.idArticulo
+	--)
+		
+	SELECT * FROM #Temp a WHERE idEntidad = @idEntidad 
+	GROUP BY 
+	 a.idEntidad
+	,a.idArticulo
+	,a.codigoPrincipal
+	,a.codigoAuxiliar
+	,a.descripcion
+	,a.precioUnitario
+	,a.razonSocial
+	
+	DROP TABLE #Temp
 
 END
 GO

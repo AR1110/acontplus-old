@@ -108,6 +108,7 @@ BEGIN
 			WHERE codEstab = @codEstab
 			AND codDoc = @codDoc
 			AND CAST(fechaEmision AS DATE) BETWEEN CAST(@startDate AS DATE) AND CAST(@endDate AS DATE)
+			AND downloaded = 'DE'
 			--ORDER BY fechaEmision DESC
 			--CASE WHEN @sortBy = 'razonSocialEmisior' AND @orderBy = 'ASC' THEN razonSocialEmisior END ASC, 
 			--CASE WHEN @sortBy = 'razonSocialEmisior' AND @orderBy = 'DESC' THEN razonSocialEmisior END DESC 
@@ -139,6 +140,8 @@ BEGIN
 	FROM Recepcion.DocumentoRecibido
 	WHERE codEstab = @codEstab
 	AND CAST(fechaEmision AS DATE) BETWEEN CAST(@startDate AS DATE) AND CAST(@endDate AS DATE)
+	AND downloaded = 'DE'
+
 	--ORDER BY fechaEmision DESC
 	--CASE WHEN @sortBy = 'razonSocialEmisior' AND @orderBy = 'ASC' THEN razonSocialEmisior END ASC, 
 	--CASE WHEN @sortBy = 'razonSocialEmisior' AND @orderBy = 'DESC' THEN razonSocialEmisior END DESC 
