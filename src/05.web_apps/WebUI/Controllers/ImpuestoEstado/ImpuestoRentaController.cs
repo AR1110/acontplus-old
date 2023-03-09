@@ -12,7 +12,7 @@ namespace WebUI.Controllers.ImpuestoEstado
     {
         // GET: Impuesto
         private readonly IConfiguration _configuration;
-        
+
         private readonly IHttpContextAccessor _httpContextAccessor;
         private DataAccessObject _dao;
         private readonly int _idRol;
@@ -42,6 +42,10 @@ namespace WebUI.Controllers.ImpuestoEstado
             _gr = await _i.GetAsync(idRol, pageIndex, pageSize);
             return Ok(_gr);
         }
+
+
+        
+
         //Gestion de Informacion 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] RetencionRenta data)
@@ -85,6 +89,35 @@ namespace WebUI.Controllers.ImpuestoEstado
         {
             _gr = await _i.GetIdAsync(idTipoImpuestoRenta);
             return Ok(_gr);
+        }
+
+
+
+        //------------------Crud Impuesto Renta Actualizado 
+        [HttpGet]
+        public async Task<IActionResult> GetAll(string json)
+        {
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            parameters.Add("json", SqlValidation.ValidateSqlString(json));
+            return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Sri.CodigoRetencion_Get", parameters)));
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Insert(string json)
+        {
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            parameters.Add("json", SqlValidation.ValidateSqlString(json));
+            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Sri.CodigoRetencion_Insert", parameters)));
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Update(int id, string json)
+        {
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            parameters.Add("id", id);
+            parameters.Add("json", SqlValidation.ValidateSqlString(json));
+            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Sri.CodigoRetencion_Update", parameters)));
         }
     }
 }

@@ -61,6 +61,15 @@ namespace WebUI.Controllers.GestionFinanciera
 
         }
 
+
+        public async Task<IActionResult> GetMoneda(string json)
+        {
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            parameters.Add("idRol", _idRol);
+            parameters.Add("json", SqlValidation.ValidateSqlString(json));
+            return Ok(DbResponse.SPDataSet(await _dao.GetDataSetAsync("ReporteIngresos.Ingreso_Egreso_Caja", parameters)));
+        }
+
         public async Task<IActionResult> Report(string json)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();

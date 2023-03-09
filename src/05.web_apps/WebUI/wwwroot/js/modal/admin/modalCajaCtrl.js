@@ -266,7 +266,10 @@ export class ModalAsignacionUsuarioTurnoCtrl{
  */
 export class MovimientoCajaCtrl{
     static $inject=['$filter','mainService', 'commonService', 'modalService', '$uibModalInstance', 'toastService', 'params']
-    constructor($filter, _mS, _commonSvc, _modalSvc, $uibModalInstance, _tS, _params){        
+    constructor($filter, _mS, _commonSvc, _modalSvc, $uibModalInstance, _tS, _params){  
+        
+        const self = this
+        
         this.$filter = $filter;
         this._mS = _mS;
         this._commonSvc = _commonSvc;
@@ -280,6 +283,42 @@ export class MovimientoCajaCtrl{
         this.dataSearch = {};
         this.dataSearch.idCaja = this._params.idCaja;
         this.dataSearch.checkBoxDefault = true;
+
+
+        let thisMoment = moment();
+        let endOfMonth = moment(thisMoment).endOf('month');
+        let startOfMonth = moment(thisMoment).startOf('month');
+        //https://www.daterangepicker.com/
+        this.dateRangePicker = {
+            date: { startDate: startOfMonth, endDate: endOfMonth },
+            picker: null,
+            options: {
+                pickerClasses: 'custom-display', //angular-daterangepicker extra
+                buttonClasses: 'btn',
+                applyButtonClasses: 'btn-success',
+                cancelButtonClasses: 'btn-danger',
+                locale: {
+                    applyLabel: "Aplicar",
+                    cancelLabel: 'Cancelar',
+                    customRangeLabel: 'Rango Personalizado',
+                    separator: ' - ',
+                    format: "YYYY-MM-DD", //will give you 2017-01-06
+                    //format: "D-MMM-YY", //will give you 6-Jan-17
+                    //format: "D-MMMM-YY", //will give you 6-January-17
+                },
+                ranges: {
+                    'Ultimos 15 Días': [moment().subtract(14, 'days'), moment()],
+                    'Ultimos 30 Días': [moment().subtract(29, 'days'), moment()]
+                },
+                eventHandlers: {
+                    'apply.daterangepicker': function (event, picker) {
+                        
+                        self.getMovimientosCaja()
+                        console.log('applied')
+                    }
+                }
+            }
+        }
     }
 
     $onInit(){
@@ -295,6 +334,10 @@ export class MovimientoCajaCtrl{
     getMovimientosCaja(){
         try {
             showLoader();
+     
+            // this.dataSearch.dateStart = this.dateRangePicker.date.startDate
+            // this.dataSearch.dateEnd = this.dateRangePicker.date.endDate
+            this.movimientosCaja = [];
             this._mS.getData('get', '/ControlCaja/Get?json=' + JSON.stringify(this.dataSearch)).then(response => {               
                 if(response.code==="0"){ 
                     hideLoader();
@@ -307,6 +350,7 @@ export class MovimientoCajaCtrl{
                 }
             })
         } catch (error) {
+            this.movimientosCaja = [];
             hideLoader();
             console.error(error)
         }        
@@ -487,6 +531,8 @@ export class ModalCierreCajaCtrl{
         this._mS = _mS;
         this._params = _params;
 
+        this.totalArqueo = 0;
+
     }
 
     $onInit(){
@@ -554,6 +600,14 @@ export class ModalCierreCajaCtrl{
 
         }
     }
+
+    // sendEmail(){
+    //     try {
+            
+    //     } catch (error) {
+            
+    //     }        
+    // }
 
     closeModal(){
         this.$uibModalInstance.close();

@@ -3,6 +3,26 @@
     <button class="close" ng-click="$ctrl.closeModal()">&times;</button>
 </div>
 <div class="modal-body">
+
+    @* <div class="row justify-content-center">
+        <div class="row col-xl-4 col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <div class="form-group">
+                <label>Rango de Fechas: </label>
+                <input date-range-picker class="form-control date-picker" type="text"
+                        ng-model="$ctrl.dateRangePicker.date"
+                        picker="$ctrl.dateRangePicker.picker"
+                        picker-classes="extra-class-names"
+                        min="'2014-02-23'"
+                        max="$ctrl.dateRangePicker.maxDate"
+                        options="$ctrl.dateRangePicker.options"
+                        />
+            </div>
+        </div>
+        <div class="row col-xl-4 col-lg-4 col-md-4 col-sm-12 col-xs-12">
+
+        </div>
+    </div> *@
+
     <div class="row justify-content-between justify-content-sm-around">
         <div class="col-xl-6 col-lg-6 col-md-5 col-sm-12 col-xs-12">
             <button type="button" class="btn btn-info" ng-click="$ctrl.openModalFiltro()">

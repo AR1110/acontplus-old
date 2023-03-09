@@ -6,12 +6,22 @@
     <div class="card">
         <div class="row justify-content-end">
             <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                <button type="button" class="btn btn-info btn-sm">
+                    <icon class="mdi mdi-plus"></icon> Nuevo
+                </button>
+            </div>            
+
+
+            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-xs-12">
                 <form class="form-material" autocomplete="off">
                     <div class="input-group">
-                        <input type="text" class="form-control" id="searchCliente" ng-model="$ctrl.dataSearch.bySearch" ng-keyup="$ctrl.onKeyupSearchCliente()" placeholder="Buscar Cliente" />
+                        <input type="text" class="form-control form-control-sm" id="searchCliente" ng-model="$ctrl.dataSearch.bySearch" ng-keyup="$ctrl.onKeyupSearchCliente()" placeholder="Buscar Cliente" />
                         <div class="input-group-append" uib-tooltip="Recargar la tabla" tooltip-placement="top">
-                            <button type="button" class="btn btn-info" ng-click="$ctrl.resetList()">
+                            <button type="button" class="btn btn-info btn-sm" ng-click="$ctrl.resetList()">
                                 <i class="fas fa-undo"></i> 
+                            </button>
+                            <button type="button" class="btn btn-warning btn-sm" ng-click="$ctrl.copyInputSearch()">
+                                <i class="mdi mdi-content-copy"></i> 
                             </button>
                         </div>
                     </div>

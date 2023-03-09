@@ -542,18 +542,52 @@ export class ModalClienteCtrl extends ModalBaseCtrl {
 
 
 export class ModalClienteListaCtrl {
-    static $inject = ['mainService', '$uibModalInstance']
-    constructor(_mS, $uibModalInstance) {
+    
+    static $inject = ['mainService', '$uibModalInstance', 'modalService', 'nombreModal']
+    
+    constructor(_mS, $uibModalInstance, _modalService, _nombreModalConst) {
+        
         this._mS = _mS;
         this.$uibModalInstance = $uibModalInstance;
+        this._modalService = _modalService;
+        this._nombreModalConst = _nombreModalConst;
+
         this.selected = [];
         this.dataSearch = {
             pageIndex: 1,
             pageSize: 100
         }
     }
+
     $onInit() {
         this.getSearchCustomer();
+    }
+
+    async openModalNew(){
+        let {MODAL_CTRL, MODAL_NUEVO} = this._nombreModalConst.cliente;
+        let controller = (await import('./.../modal/' + MODAL_CTRL))[MODAL_NUEVO['controller']];
+        let template = MODAL_NUEVO['template'];
+
+        let params = {
+            tipoValidacion: 'R',
+            data: {
+
+            }
+        }
+
+        let modalRef = this._modalService.openModalCustom({
+            controller,
+            template,
+            params,
+            size:'xl'
+        })
+
+        modalRef.result.then(result => {
+            if(typeof result ==='object'){
+                console.log(result)
+            }
+        })
+
     }
 
     onKeyupSearchCliente() {
@@ -598,6 +632,8 @@ export class ModalClienteListaCtrl {
         }
     }
 
+
+
     seleccionarCliente = (item) => {
         this.$uibModalInstance.close(item)
     }
@@ -605,6 +641,8 @@ export class ModalClienteListaCtrl {
     closeModal() {
         this.$uibModalInstance.close();
     }
+
+
 
 }
 
