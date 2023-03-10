@@ -91,84 +91,9 @@ BEGIN
 							@byEstado INT,
 							@byOrder VARCHAR(10),							
 							@byOrderCampo VARCHAR(50),
-							@byTipoCliente INT ';	
+							@byTipoCliente INT ';
 
-
-
-	INSERT INTO #tableDocument(
-								idPuntoEmision, 
-								idEstadoPago, 
-								idTipoClienteProveedor, 
-								idUsuario, 
-								codEstab, 
-								tipoDoc, 
-								nroDocumento, 
-								fechaEmision, 
-								fechaVencimiento, 
-								cliente, 
-								total, 
-								abono, 
-								saldo, 
-								estado, 
-								codEstado, 
-								fechaRegistro, 
-								usuario
-							  ) SELECT 
-									fv.idPuntoEmision, 
-									ep.idEstadoPago, 
-									cl.idTipoClienteProveedor, 
-									fv.idUsuario, 
-									s.codEstab, 
-									'FV', 
-									dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,fv.nroFactura), 
-									dbo.AFTConvertDate(fv.fechaEmision),
-									dbo.AFTConvertDate(fv.fechaVencimiento),
-									cl.nombreFiscal, 
-									CAST(fv.total AS numeric(15, 2)), 
-									CAST(fv.abono AS numeric(15, 2)), 
-									CAST(fv.saldo AS numeric(15, 2)), 
-									ep.descripcion, 
-									ep.codigo, 
-									fv.fechaRegistro, 
-									u.nombreUsuario
-								FROM dbo.Factura fv  WITH(NOLOCK)	
-								INNER JOIN PuntoEmision                 pe WITH(NOLOCK) ON pe.idPuntoEmision  = fv.idPuntoEmision 
-								INNER JOIN Sri.Establecimiento          s  WITH(NOLOCK) ON s.codEstab         = pe.codEstab
-								INNER JOIN Cliente                      cl WITH(NOLOCK) ON cl.idCliente       = fv.idCliente	
-								INNER JOIN EstadoPago                   ep WITH(NOLOCK) ON ep.idEstadoPago    = fv.idEstadoPago
-								INNER JOIN Usuario                       u WITH(NOLOCK) ON u.idUsuario        = fv.idUsuario								
-								WHERE fv.estado = 1 AND  fv.idEntidad = @byEntidad AND CAST(fv.fechaEmision AS DATE) =  CAST(GETDATE() AS DATE)
-								
-								UNION ALL
-	
-								SELECT 
-									ne.idPuntoEmision, 
-									ep.idEstadoPago, 
-									cl.idTipoClienteProveedor, 
-									ne.idUsuario, es.codEstab, 
-									'NE', 
-									dbo.AFTGenerarNroDocumento(es.estab+pe.ptoEmi,ne.nroDocumento), 
-									dbo.AFTConvertDate(ne.fechaEmision), 
-									dbo.AFTConvertDate(ne.fechaVencimiento), 
-									cl.nombreFiscal, 
-									CAST(ne.total AS numeric(15, 2)), 
-									CAST(ne.abono AS numeric(15, 2)), 
-									CAST(ne.saldo AS numeric(15, 2)), 
-									ep.descripcion, 
-									ep.codigo, 
-									ne.fechaRegistro,
-									u.nombreUsuario
-								FROM dbo.NotaEntrega ne	WITH(NOLOCK)
-								INNER JOIN PuntoEmision         pe WITH(NOLOCK) ON pe.idPuntoEmision = ne.idPuntoEmision 
-								INNER JOIN Sri.Establecimiento  es WITH(NOLOCK) ON es.codEstab       = pe.codEstab
-								INNER JOIN Cliente              cl WITH(NOLOCK) ON cl.idCliente      = ne.idCliente	
-								INNER JOIN EstadoPago           ep WITH(NOLOCK) ON ep.idEstadoPago   = ne.idEstadoPago
-								INNER JOIN Usuario              u  WITH(NOLOCK) ON u.idUsuario       = ne.idUsuario										
-								WHERE ne.estado = 1 AND ne.idEntidad = @byEntidad AND CAST(ne.fechaEmision as date) = CAST(GETDATE() AS DATE)
-
-	SET @sqlQuery = 'SELECT * FROM #tableDocument tmp '
-
-
+							
 	SELECT 
 			    @checkboxSucursalFiltro     = checkboxSucursalFiltro
 			   ,@codEstab                   = codEstab
@@ -214,11 +139,89 @@ BEGIN
 				  checkboxTipoClienteFiltro BIT '$.checkboxTipoClienteFiltro',
 				  byTipoCliente INT             '$.byTipoCliente'
 			) AS jsonValues	
-		
+
+
+
+	INSERT INTO #tableDocument(
+								idPuntoEmision, 
+								idEstadoPago, 
+								idTipoClienteProveedor, 
+								idUsuario, 
+								codEstab, 
+								tipoDoc, 
+								nroDocumento, 
+								fechaEmision, 
+								fechaVencimiento, 
+								cliente, 
+								total, 
+								abono, 
+								saldo, 
+								estado, 
+								codEstado, 
+								fechaRegistro, 
+								usuario
+							  ) SELECT 
+									fv.idPuntoEmision, 
+									ep.idEstadoPago, 
+									cl.idTipoClienteProveedor, 
+									fv.idUsuario, 
+									s.codEstab, 
+									'FV', 
+									dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,fv.nroFactura), 
+									dbo.AFTConvertDate(fv.fechaEmision),
+									dbo.AFTConvertDate(fv.fechaVencimiento),
+									cl.nombreFiscal, 
+									CAST(fv.total AS numeric(15, 2)), 
+									CAST(fv.abono AS numeric(15, 2)), 
+									CAST(fv.saldo AS numeric(15, 2)), 
+									ep.descripcion, 
+									ep.codigo, 
+									fv.fechaRegistro, 
+									u.nombreUsuario
+								FROM dbo.Factura fv  WITH(NOLOCK)	
+								INNER JOIN PuntoEmision                 pe WITH(NOLOCK) ON pe.idPuntoEmision  = fv.idPuntoEmision 
+								INNER JOIN Sri.Establecimiento          s  WITH(NOLOCK) ON s.codEstab         = pe.codEstab
+								INNER JOIN Cliente                      cl WITH(NOLOCK) ON cl.idCliente       = fv.idCliente	
+								INNER JOIN EstadoPago                   ep WITH(NOLOCK) ON ep.idEstadoPago    = fv.idEstadoPago
+								INNER JOIN Usuario                       u WITH(NOLOCK) ON u.idUsuario        = fv.idUsuario								
+								WHERE fv.estado = 1 AND  fv.idEntidad = @byEntidad AND CAST(fv.fechaEmision as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date)
+								--AND CAST(fv.fechaEmision AS DATE) =  CAST(GETDATE() AS DATE)
+								
+								UNION ALL
+	
+								SELECT 
+									ne.idPuntoEmision, 
+									ep.idEstadoPago, 
+									cl.idTipoClienteProveedor, 
+									ne.idUsuario, es.codEstab, 
+									'NE', 
+									dbo.AFTGenerarNroDocumento(es.estab+pe.ptoEmi,ne.nroDocumento), 
+									dbo.AFTConvertDate(ne.fechaEmision), 
+									dbo.AFTConvertDate(ne.fechaVencimiento), 
+									cl.nombreFiscal, 
+									CAST(ne.total AS numeric(15, 2)), 
+									CAST(ne.abono AS numeric(15, 2)), 
+									CAST(ne.saldo AS numeric(15, 2)), 
+									ep.descripcion, 
+									ep.codigo, 
+									ne.fechaRegistro,
+									u.nombreUsuario
+								FROM dbo.NotaEntrega ne	WITH(NOLOCK)
+								INNER JOIN PuntoEmision         pe WITH(NOLOCK) ON pe.idPuntoEmision = ne.idPuntoEmision 
+								INNER JOIN Sri.Establecimiento  es WITH(NOLOCK) ON es.codEstab       = pe.codEstab
+								INNER JOIN Cliente              cl WITH(NOLOCK) ON cl.idCliente      = ne.idCliente	
+								INNER JOIN EstadoPago           ep WITH(NOLOCK) ON ep.idEstadoPago   = ne.idEstadoPago
+								INNER JOIN Usuario              u  WITH(NOLOCK) ON u.idUsuario       = ne.idUsuario										
+								WHERE ne.estado = 1 AND ne.idEntidad = @byEntidad AND CAST(ne.fechaEmision as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date)
+								--CAST(ne.fechaEmision as date) = CAST(GETDATE() AS DATE)
+
+	SET @sqlQuery = 'SELECT * FROM #tableDocument tmp '
+	
 		
 	--BEGIN TRY 
 	
 		------------------------------------------------------BUSQUEDA DE DOS PARAMETRO ---------------------------------
+
 
 		--Sucursal 
 		IF @checkboxSucursalFiltro = 1

@@ -332,6 +332,19 @@ app.constant('nombreModal', {
             template: 'GuiaRemision/_ModalFiltro.cshtml'
         }
     },
+
+    impuesto_renta:{
+        MODAL_FILE_CTRL: 'modal/sri/modalImpuestoRentaCtrl.js' + CHANGE_VERSION(),
+        MODAL_NUEVO:{
+            controller: 'ModalNuevoCtrl',
+            template: 'ImpuestoRenta/_ModalNuevo.cshtml'
+        },
+        MODAL_EDITAR:{
+            controller: 'ModalEditarCtrl',
+            template: 'ImpuestoRenta/_ModalEditar.cshtml'
+        }
+    },
+
     ingreso_bodega: {
         MODAL_FILE_CTRL: 'modal/compras/modalIngresoBodegaCtrl.min.js' + CHANGE_VERSION(),
         MODAL_NUEVO:{
