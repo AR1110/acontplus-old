@@ -1,10 +1,5 @@
 ﻿using DataAccess;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WS_Notificacion
 {
@@ -20,6 +15,14 @@ namespace WS_Notificacion
             _dbAccess.AddDynamicParam("cantidad", cantidad);
             return _dbAccess.GetDataTable();
         }
-
+        public async void Update(int id, string estado, string msgError = null)
+        {
+            DbAccess _dbAccess = new DbAccess(_config);
+            await _dbAccess.SPExecute("App.Notificacion_Serv_Update");
+            _dbAccess.AddDynamicParam("id", id);
+            _dbAccess.AddDynamicParam("estado", estado);
+            _dbAccess.AddDynamicParam("msgError", msgError ?? "");
+            _dbAccess.OnlyExecute();
+        }
     }
 }

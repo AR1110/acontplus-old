@@ -1655,6 +1655,7 @@
                         if (response.code == "1") {
                             $scope.initialLoad()
                             $scope.comprobanteForm = {}
+                            $scope.idProveedor = 0
                             $scope.modalRef.close()
                             tS.toastr("success", response.message)
                         }

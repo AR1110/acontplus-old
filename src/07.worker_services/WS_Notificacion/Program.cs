@@ -27,6 +27,7 @@ namespace WS_Notificacion
                         return configurationBuilder.Build();
 
                     });
+                    services.AddSingleton<Reports>();
                     services.AddSingleton<NotificacionService>();                    
                     services.AddHostedService<WindowsBackgroundService>();
                 })
