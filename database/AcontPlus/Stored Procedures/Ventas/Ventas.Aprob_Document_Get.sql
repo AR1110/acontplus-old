@@ -89,7 +89,7 @@ BEGIN
 		,checkBoxDefault BIT         '$.checkBoxDefault'
 		,codEstab        VARCHAR(25) '$.codEstab'
 		,byCliente       INT         '$.byCliente'
-		,byEstado        INT         '$.byEstado'
+		,byEstado        VARCHAR(5)  '$.byEstado'
 		,byUsuario       INT         '$.byUsuario'
 		,fechaInicio     DATETIME    '$.fechaInicio'
 		,fechaFin        DATETIME    '$.fechaFin'
