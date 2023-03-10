@@ -559,17 +559,27 @@
                         trTaxes += `<td class="text-right"> ${parseFloat(element.valor).toLocaleString('en', { style: 'currency', currency: 'USD' })} </td></tr>`
                     }
                 }
+
                 trTaxes += `<tr><td class="text-right"><strong>Total Sin Impuestos</strong></td>`
                 trTaxes += `<td class="text-right"> ${parseFloat($scope.infoComprobante.totalSinImpuestos).toLocaleString('en', { style: 'currency', currency: 'USD' })} </td></tr>`
 
-                trTaxes += `<tr><td class="text-right"><strong>Descuento</strong></td>`
-                trTaxes += `<td class="text-right"> ${parseFloat($scope.infoComprobante.totalDescuento).toLocaleString('en', { style: 'currency', currency: 'USD' })} </td></tr>`
+                if ($scope.fullComprobante.codDoc == '01') {
 
-                trTaxes += `<tr><td class="text-right"><strong>Propina</strong></td>`
-                trTaxes += `<td class="text-right"> ${parseFloat($scope.infoComprobante.propina).toLocaleString('en', { style: 'currency', currency: 'USD' })} </td></tr>`
+                    trTaxes += `<tr><td class="text-right"><strong>Descuento</strong></td>`
+                    trTaxes += `<td class="text-right"> ${parseFloat($scope.infoComprobante.totalDescuento).toLocaleString('en', { style: 'currency', currency: 'USD' })} </td></tr>`
 
-                trTaxes += `<tr><td class="text-right"><strong>Importe Total</strong></td>`
-                trTaxes += `<td class="text-right"> ${parseFloat($scope.infoComprobante.importeTotal).toLocaleString('en', { style: 'currency', currency: 'USD' })} </td></tr>`
+                    trTaxes += `<tr><td class="text-right"><strong>Propina</strong></td>`
+                    trTaxes += `<td class="text-right"> ${parseFloat($scope.infoComprobante.propina).toLocaleString('en', { style: 'currency', currency: 'USD' })} </td></tr>`
+
+                    trTaxes += `<tr><td class="text-right"><strong>Importe Total</strong></td>`
+                    trTaxes += `<td class="text-right"> ${parseFloat($scope.infoComprobante.importeTotal).toLocaleString('en', { style: 'currency', currency: 'USD' })} </td></tr>`
+                }
+                if ($scope.fullComprobante.codDoc == '04') {
+
+                    trTaxes += `<tr><td class="text-right"><strong>Importe Total</strong></td>`
+                    trTaxes += `<td class="text-right"> ${parseFloat($scope.infoComprobante.valorModificacion).toLocaleString('en', { style: 'currency', currency: 'USD' })} </td></tr>`
+                }
+
 
 
                 $scope.modalRef.rendered.then(res => {
