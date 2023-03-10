@@ -69,7 +69,7 @@
                                 <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
                                     <div class="form-group">
                                         <label class="text-muted">SubEntidad Financiera <span class="text-danger">*</span></label>
-                                        <select class="form-control" ng-model="$ctrl.subEntidad">
+                                        <select class="form-control border-select" ng-model="$ctrl.subEntidad">
                                             <option ng-value="se" ng-repeat="se in $ctrl.subEntidades">{{se.descripcion}}</option>
                                         </select>
                                     </div>
@@ -77,13 +77,13 @@
                                 <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
                                     <div class="form-group">
                                         <label class="control-label">Fecha Emisión</label>
-                                        <input type="date" ng-model="$ctrl.cobro.fechaEmision" ng-required="true" class="form-control">
+                                        <input type="date" ng-model="$ctrl.cobro.fechaEmision" ng-required="true" class="form-control border-select">
                                     </div>
                                 </div>
                                 <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                                     <div class="form-group">
                                         <label class="text-danger">Valor a cancelar</label>
-                                        <input type="text" ng-model="$ctrl.cobro.valorAbono" ng-keyup="$ctrl.setValorEfectivo()"  class="form-control"
+                                        <input type="text" ng-model="$ctrl.cobro.valorAbono" ng-keyup="$ctrl.setValorEfectivo()"  class="form-control border-select" ng-enter="$ctrl.onSave()"
                                                 ng-required="true" valid-number
                                                 placeholder="0.00" />
                                     </div>
@@ -98,24 +98,24 @@
                             <div class="row">
                                 <div class="form-group col-lg-4">
                                     <label class="text-muted">SubEntidad Financiera <span class="text-danger">*</span></label>
-                                    <select class="form-control" ng-model="$ctrl.subEntidad">
+                                    <select class="form-control border-select" ng-model="$ctrl.subEntidad">
                                         <option ng-value="se" ng-repeat="se in $ctrl.subEntidades">{{se.descripcion}}</option>
                                     </select>                                                
                                 </div>                                            
                                 <div class="form-group col-lg-4">
                                     <label class="control-label">Fecha Emisión</label>
-                                    <input type="date" ng-model="$ctrl.cobro.fechaEmision" ng-required="true" class="form-control">                                                
+                                    <input type="date" ng-model="$ctrl.cobro.fechaEmision" ng-required="true" class="form-control border-select">                                                
                                 </div>
                                 <div class="form-group col-lg-4">
                                     <label>Valor</label>
-                                    <input type="text" ng-model="$ctrl.cobro.valorAbono" ng-keyup="$ctrl.setValorEfectivo()" class="form-control" ng-required="true" valid-number
+                                    <input type="text" ng-model="$ctrl.cobro.valorAbono" ng-keyup="$ctrl.setValorEfectivo()" class="form-control border-select" ng-required="true" valid-number  ng-enter="$ctrl.onSave()"
                                                 placeholder="0.00" />                                                
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="form-group col-lg-4">
                                     <label class="text-muted">Número <span class="text-danger">*</span></label>
-                                    <input type="text" ng-model="$ctrl.cobro.nro"  class="form-control" />                                               
+                                    <input type="text" ng-model="$ctrl.cobro.nro"  class="form-control border-select" />                                               
                                 </div>                                            
                                 <div class="form-group col-lg-4">
                                     <label>Ciudad: <span class="text-danger">*</span></label>                                                    
@@ -125,20 +125,20 @@
                                 </div>
                                 <div class="form-group col-lg-4">
                                     <label>Referencia: <span class="text-danger">*</span></label>
-                                    <input type="text" ng-model="$ctrl.cobro.referencia" class="form-control" />                                                                                            
+                                    <input type="text" ng-model="$ctrl.cobro.referencia" class="form-control border-select" />                                                                                            
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-lg-6 col-md-4 col-sm-12 col-xs-12">
                                     <div class="form-group">
                                             <label class="text-muted">Aprobación <span class="text-danger">*</span></label>
-                                            <input type="text" ng-model="$ctrl.cobro.aprobacion"  class="form-control" />
+                                            <input type="text" ng-model="$ctrl.cobro.aprobacion"  class="form-control border-select" />
                                     </div>
                                 </div>
                                 <div class="col-lg-6 col-md-4 col-sm-12 col-xs-12">
                                     <div class="form-group">
                                         <label class="text-muted">Lote <span class="text-danger">*</span></label>
-                                        <input type="text" ng-model="$ctrl.cobro.lote"  class="form-control" />
+                                        <input type="text" ng-model="$ctrl.cobro.lote"  class="form-control border-select" />
                                     </div>
                                 </div>
                             </div>                        
@@ -151,17 +151,17 @@
                             <div class="row">
                                 <div class="form-group col-lg-4">
                                     <label class="text-muted">SubEntidad Financiera <span class="text-danger">*</span></label>
-                                    <select class="form-control" ng-model="$ctrl.subEntidad">
+                                    <select class="form-control border-select" ng-model="$ctrl.subEntidad">
                                         <option ng-value="se" ng-repeat="se in $ctrl.subEntidades">{{se.descripcion}}</option>
                                     </select>                                                
                                 </div>                                            
                                 <div class="form-group col-lg-4">
                                     <label class="control-label">Fecha Emisión</label>
-                                    <input type="date" ng-model="$ctrl.cobro.fechaEmision" ng-required="true" class="form-control">                                                
+                                    <input type="date" ng-model="$ctrl.cobro.fechaEmision" ng-required="true" class="form-control border-select">                                                
                                 </div>
                                 <div class="form-group col-lg-4">
                                     <label>Valor Abono</label>
-                                    <input type="text" ng-model="$ctrl.cobro.valorAbono" ng-keyup="$ctrl.setValorEfectivo()"  class="form-control" ng-required="true" valid-number
+                                    <input type="text" ng-model="$ctrl.cobro.valorAbono" ng-keyup="$ctrl.setValorEfectivo()"  class="form-control" ng-required="true" valid-number  ng-enter="$ctrl.onSave()"
                                                 placeholder="0.00" />                                                
                                 </div>
                             </div>
@@ -169,7 +169,7 @@
                                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                     <div class="form-group">
                                         <label class="text-muted">Banco<span class="text-danger">*</span></label>
-                                        <select class="form-control" ng-model="$ctrl.banco" >
+                                        <select class="form-control border-select" ng-model="$ctrl.banco" >
                                             <option ng-value="b" ng-repeat="b in $ctrl.bancos">{{b.descripcion}}</option>
                                         </select>
                                     </div>
@@ -177,7 +177,7 @@
                                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                     <div class="form-group">
                                         <label class="text-muted">Número <span class="text-danger">*</span></label>
-                                        <input type="text" ng-model="$ctrl.cobro.nro" class="form-control" />
+                                        <input type="text" ng-model="$ctrl.cobro.nro" class="form-control border-select" />
                                     </div>
                                 </div>
                             </div>
@@ -190,17 +190,17 @@
                             <div class="row">
                                 <div class="form-group col-lg-4">
                                     <label class="text-muted">SubEntidad Financiera <span class="text-danger">*</span></label>
-                                    <select class="form-control" ng-model="$ctrl.subEntidad">
+                                    <select class="form-control border-select" ng-model="$ctrl.subEntidad">
                                         <option ng-value="se" ng-repeat="se in $ctrl.subEntidades">{{se.descripcion}}</option>
                                     </select>                                                
                                 </div>                                            
                                 <div class="form-group col-lg-4">
                                     <label class="control-label">Fecha Emisión</label>
-                                    <input type="date" ng-model="$ctrl.cobro.fechaEmision" ng-required="true" class="form-control">                                                
+                                    <input type="date" ng-model="$ctrl.cobro.fechaEmision" ng-required="true" class="form-control border-select">                                                
                                 </div>
                                 <div class="form-group col-lg-4">
                                     <label>Valor</label>
-                                    <input type="text" ng-model="$ctrl.cobro.valorAbono" ng-keyup="$ctrl.setValorEfectivo()" class="form-control" ng-required="true" valid-number
+                                    <input type="text" ng-model="$ctrl.cobro.valorAbono" ng-keyup="$ctrl.setValorEfectivo()" class="form-control border-select" ng-required="true" valid-number  ng-enter="$ctrl.onSave()"
                                                 placeholder="0.00" />                                                
                                 </div>
                             </div>
@@ -219,7 +219,7 @@
                                 <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
                                     <div class="form-group">
                                         <label class="text-muted">Banco<span class="text-danger">*</span></label>
-                                        <select class="form-control" ng-model="$ctrl.banco">
+                                        <select class="form-control border-select" ng-model="$ctrl.banco">
                                             <option ng-value="val" ng-repeat="val in $ctrl.bancos">{{val.descripcion}}</option>
                                         </select>
                                     </div>
@@ -227,7 +227,7 @@
                                 <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
                                     <div class="form-group">
                                         <label class="text-muted">Número <span class="text-danger">*</span></label>
-                                        <input type="text" ng-model="$ctrl.cobro.nro" class="form-control" />
+                                        <input type="text" ng-model="$ctrl.cobro.nro" class="form-control border-select" />
                                     </div>
                                 </div>
                                 <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
@@ -299,7 +299,7 @@
     </form>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-success" ng-click="$ctrl.onSave()"><i class="ti-save"></i> Guardar</button>
-    <button class="btn btn-dark" ng-click="$ctrl.closeModal()">&times; Cerrar</button>
+    <button type="button" autofocus id="btnSaveCobroRapido" class="btn btn-success" ng-click="$ctrl.onSave()"><i class="ti-save"></i> Guardar</button>
+    <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">&times; Cerrar</button>
 </div>
            

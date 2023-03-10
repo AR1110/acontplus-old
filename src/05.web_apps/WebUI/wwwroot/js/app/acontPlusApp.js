@@ -614,10 +614,10 @@ app.directive('touppercase', function () {
 
             function removeAccents(input) {
 
-                let inputText = input.replace(/[\n\r]+/g, ' ') || "";
+                let inputText = input.replace(/[\n\r]+/g, ' ') || " ";
                 inputText = inputText.normalize('NFD')
                     .replace(/([^n\u0300-\u036f]|n(?!\u0303(?![\u0300-\u036f])))[\u0300-\u036f]+/gi, "$1").normalize();
-                inputText = inputText.replace(/[`#$%^*Ç¨_|+\=?'´",<>\{\}\[\]\\]/gi, '').trim()
+                inputText = inputText.replace(/[`#$^*Ç¨_|+\=?'´",<>\{\}\[\]\\]/gi, '').trim()
                 modelCtrl.$setViewValue(inputText);
                 modelCtrl.$render();
                 return inputText.toUpperCase();

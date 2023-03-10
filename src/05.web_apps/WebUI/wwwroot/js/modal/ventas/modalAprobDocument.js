@@ -346,6 +346,37 @@ class ModalBaseCtrl{
     }
 
 
+    trimDetailDoc(){
+        let tempDetails = [];
+        							 						
+        for(let item of this.gridOptionsDetailDocument.data){
+            tempDetails.push({
+                idFacturaDetalle: item.idFacturaDetalle || 0,
+                idArticulo: item.idArticulo,
+                idTarifa: item.idTarifa,
+                idBodega: item.idBodega,
+                idMedida: item.idMedida,
+                idPresentacion: item.idPresentacion || 0,
+                idTipoIva: item.idTipoIva,
+                tarifa: item.tarifa,
+                codigoPorcentaje: item.codigoPorcentaje,
+                ice: item.ice,
+                descripcion: item.descripcion,
+                cantidad: item.cantidad,
+                precioCostoNeto: item.precioCostoNeto,
+                precioUnitario: item.precioUnitario,
+                precioVenta: item.precioUnitario,
+                precioConIva: item.precioConIva,
+                valorDescuento: item.valorDescuento,
+                precioTotalSinImpuesto: item.precioTotalSinImpuesto || 0,
+                porcentajeDescuento: item.porcentajeDescuento,
+                total: item.total,
+                nota: item.nota,
+            })
+        }
+        return tempDetails;
+    }
+
 
     closeModal(){
         this.$uibModalInstance.close();
@@ -1617,7 +1648,7 @@ export class ModalApproveDocCtrl extends ModalBaseCtrl{
             }
 
             this.decimal = resultsDataForm[1][0]
-            this.configDetalle = resultsDataForm[2];
+            this.configDetalle = resultsDataForm[2][0]
             this.tipoIvas = resultsDataForm[3];
             this.tarifas  = resultsDataForm[4];
             
@@ -1872,6 +1903,7 @@ export class ModalApproveDocCtrl extends ModalBaseCtrl{
 
             this.gridOptionsDetailDocument.data.push(item);
         }
+        console.log(this.gridOptionsDetailDocument.data)
     }
 
 
@@ -1980,14 +2012,11 @@ export class ModalApproveDocCtrl extends ModalBaseCtrl{
 
                 const data = {
                     factura: JSON.stringify(factura),
-                    detalle: JSON.stringify(this.gridOptionsDetailDocument.data.map(item=>({
-                        ...item,
-                        precioVenta: item.precioUnitario
-                    }))),
+                    detalle: JSON.stringify(this.trimDetailDoc()),
                     adicional: JSON.stringify(this.infoAdicionalDocumento),
                     manejoArticulo: JSON.stringify([])
                 }                
-                
+               
                 this._mS.getData('post', '/FacturaVenta/Insert', data).then(response=>{
                     if(response.code==="0"){
                         hideLoader();
@@ -2355,7 +2384,8 @@ export class ModalApproveDocEditCtrl extends ModalBaseCtrl{
             })
 
             this.gridOptionsDetailDocument.data.push(item);
-        }        
+        }   
+        console.log(this.gridOptionsDetailDocument.data)     
     }
 
   
@@ -2476,6 +2506,8 @@ export class ModalApproveDocEditCtrl extends ModalBaseCtrl{
                     jsonHeader: JSON.stringify(jsonHeader),
                     jsonDetail: JSON.stringify(tempDetail),                  
                 }
+
+          
               
                 
                 this._mS.getData('put', '/AprobDocument/Update?id=' + this.data.idAprob_Document , data).then(response=>{                    

@@ -109,7 +109,31 @@ function impuestoRentaCtrl($scope, _mS, _tS, _modalSvc, _nombreModalConst){
 
 
     $scope.askToDelete = function(data){
-
+        Swal.fire({
+            text: "Esta seguro de eliminar?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, eliminar!',
+            cancelButtonText:'No, cancelar!',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                _mS.getData('delete', '/ImpuestoRenta/Delete?id=' + data.idCodigoRetencion).then(
+                    response =>{
+                        if(response.code==="0"){
+                            _tS.toastr('warning', response.message);
+                        }
+    
+                        if(response.code==="1"){
+                            _tS.toastr('success', response.message);
+                            $scope.initiload()
+                        }
+                    }
+                )
+              
+            }
+        })
     }
 
 

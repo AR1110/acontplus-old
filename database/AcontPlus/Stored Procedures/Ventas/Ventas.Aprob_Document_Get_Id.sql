@@ -70,7 +70,7 @@ BEGIN
 	INNER JOIN dbo.Articulo a ON a.code_unique      = dt.codArticulo
 	INNER JOIN dbo.Medida   m ON m.codigo           = dt.codMedida
 	INNER JOIN dbo.TipoIva  t ON t.codigoPorcentaje = dt.codigoPorcentaje
-	WHERE dt.uniqueId = @uniqueId
+	WHERE dt.uniqueId = @uniqueId AND dt.estado = 1
 
 END
 
