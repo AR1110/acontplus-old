@@ -365,6 +365,8 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
             sendEmail: false
         }
 
+        console.log(parameters)
+
         _commonSvc.getReport({
             parameters,
             formatType: format

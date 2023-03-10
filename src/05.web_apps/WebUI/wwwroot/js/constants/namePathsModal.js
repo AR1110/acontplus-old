@@ -26,6 +26,10 @@ app.constant('nombreModal', {
             controller: 'ModalApproveDocDetalleCtrl',
             template: 'AprobDocument/_ModalAprobDocumentDetalle.cshtml'
         },
+        MODAL_FILTRO:{
+            controller: 'ModalApproveDocFiltroCtrl',
+            template: 'AprobDocument/_ModalFiltro.cshtml'
+        },
         MODAL_FILTRO_NE:{
             controller: 'ModalNotaEntregaFiltroCtrl',
             template: 'AprobDocument/_ModalNotaEntregaFiltro.cshtml'

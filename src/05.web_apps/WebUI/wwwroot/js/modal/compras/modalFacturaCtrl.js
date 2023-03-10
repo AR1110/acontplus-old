@@ -453,7 +453,7 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl{
     
     constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS, _params){
         super({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS});
-        console.log(_params)
+        
         this.searchProveedorOptions = {}
         this.searchProveedorOptions.showBtnNew = true;
         this.searchProveedorOptions.showBtnList = true;   
@@ -527,7 +527,7 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl{
             // this.nroDocumentoSecuencial = this.data.puntoEmision + '-'+ this.data.nroDocumento.toString()
             this.gridOptions.data = this.detalleDocumento;
             
-            console.log(this)
+            
             this.$scope.$apply();
 
         } catch (error) {
@@ -687,7 +687,7 @@ export class ModalFacturaDetalleCtrl extends ModalFacturaCtrl{
             // this.nroDocumentoSecuencial = this.data.puntoEmision + '-'+ this.data.nroDocumento.toString()
             this.gridOptions.data = this.detalleDocumento;
             
-            console.log(this)
+            
             this.$scope.$apply();
 
         } catch (error) {
@@ -712,7 +712,7 @@ export class ModalFacturaDetalleCtrl extends ModalFacturaCtrl{
             const parameters = {               
                 dataParams: JSON.stringify(dataParms)
             }   
-            console.log(parameters)                
+                          
             this._commonSvc.getReportDynamic({parameters, format})
         } catch (error) {
             console.log(error)

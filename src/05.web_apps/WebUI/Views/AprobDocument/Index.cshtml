@@ -19,9 +19,31 @@
         </div>         
     </div>
 
-    <div class="card">       
+    <div class="card">  
 
-        
+        <div class="card-body">
+            <div class="row justify-content-between">
+                <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                    <button class="btn btn-info" type="button" ng-click="openModalFiltro()">
+                        <icon class="fas fa-filter"></icon> Filtrar
+                    </button>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                    <form class="form-material">
+                        <div class="input-group">
+                            <input type="text" class="form-control border-select" ng-model="dataSearch.bySearch" placeholder="Buscar...">
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-secondary btn-sm" ng-click="getAprobComprobantes()">
+                                    <i class="fas fa-redo"></i> 
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+            
         <div class="card-body">
             <div id="upperScroll" style="overflow-x:scroll; overflow-y: hidden; max-height:20px; width:100%">
                 <div name="innerScroll" ng-style="duelScroll" style="height:20px;"></div>
@@ -44,7 +66,7 @@
                             </tr>
                         </thead>
                         <tbody md-body>
-                            <tr md-row ng-repeat="item in aprobComprobantes track by $index" ng-class="item.style">
+                            <tr md-row ng-repeat="item in aprobComprobantes track by $index" ng-class="item.colorFila">
                                 <td md-cell>
                                     <md-menu>
                                         <md-button aria-label="Open demo menu" class="md-icon-button"
@@ -58,14 +80,14 @@
                                                 </md-button>
                                             </md-menu-item> 
                                            
-                                            <md-menu-item ng-if="accion.editar">                                                                                        
+                                            <md-menu-item ng-if="showBtnEditar(item)">                                                                                        
                                                 <md-button ng-click="openModalEdit(item)">
                                                     <span md-menu-align-target><i class="ti-pencil"></i> Editar</span>
                                                 </md-button>
                                             </md-menu-item> 
 
                                             
-                                            <md-menu-item ng-if="accion.anular">                                                                                        
+                                            <md-menu-item ng-if="showBtnDelete(item)">                                                                                        
                                                 <md-button ng-click="askToDelete(item)">
                                                     <span md-menu-align-target><i class="ti-na"></i> Anular</span>
                                                 </md-button>
@@ -77,12 +99,7 @@
                                                 </md-button>
                                             </md-menu-item> 
 
-                                            <md-menu-item>                                            
-                                                <md-button ng-click="askToDelete(item)">
-                                                    <span md-menu-align-target><i class="mdi mdi-delete-circle"></i> Eliminar</span>
-                                                </md-button>
-                                            </md-menu-item> 
-                                            
+                                                                                    
                                             <md-menu-item  ng-if="accion.reporte">                                                                                        
                                                 <md-button ng-click="getReport(item)">
                                                     <span md-menu-align-target><i class=" ti-file"></i> PDF</span>
