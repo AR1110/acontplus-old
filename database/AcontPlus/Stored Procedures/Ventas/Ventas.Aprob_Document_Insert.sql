@@ -54,13 +54,12 @@ BEGIN
     DECLARE @claveAcceso VARCHAR(50)
 
 	BEGIN TRY 
-		SELECT @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idRol
+		SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 
-		SELECT @ruc = ruc FROM dbo.Entidad WHERE idEntidad = @idEntidad
+		SELECT TOP 1 @ruc = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
 
-		SELECT @codigoPorcentaje = codigoPorcentaje FROM Config.GestionSistema WHERE idEntidad = @idEntidad
+		SELECT TOP 1 @codigoPorcentaje = codigoPorcentaje FROM Config.GestionSistema WITH (NOLOCK) WHERE idEntidad = @idEntidad
 
-		SELECT @idEstadoDocumento = idEstadoPago FROM dbo.EstadoPago WHERE codigo = 'APL'
 
 		SELECT @docOrigen = docOrigen FROM OPENJSON(@jsonHeader) WITH (docOrigen VARCHAR(5) '$.docOrigen')
 
@@ -205,6 +204,8 @@ BEGIN
 
 			IF @docOrigen = 'NE'
 				BEGIN
+					SELECT TOP 1 @idEstadoDocumento = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'TRA'
+
 					UPDATE ne SET	
 						ne.idEstadoPago = @idEstadoDocumento
 					FROM dbo.NotaEntrega ne WITH(NOLOCK)
@@ -214,6 +215,8 @@ BEGIN
 
 			IF @docOrigen = 'PR'
 				BEGIN
+					SELECT TOP 1 @idEstadoDocumento = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'APL'
+
 					UPDATE pr SET	
 						pr.idEstadoDocumento = @idEstadoDocumento
 					FROM dbo.Proforma pr WITH(NOLOCK)
