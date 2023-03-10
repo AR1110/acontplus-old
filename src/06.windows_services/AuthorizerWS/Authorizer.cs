@@ -127,12 +127,9 @@ namespace AuthorizerWS
                     }
                     if (_response.estado == "ERROR")
                     {
-                        _dataAccess.InsertError(dataRow.Field<long>("idDocumentoElectronico"), _response);
-                        _dataAccess.Update(dataRow.Field<long>("idDocumentoElectronico"), "", "", 5);
-                        XmlDocument xmlError = new XmlDocument();
-                        xmlError.LoadXml(_response.ToString());
-
-                        LogWritter.LogError(_path, "No se pudo autorizar el documento en el SRI   : " + Convert.ToString(dataRow.Field<long>("idDocumentoElectronico")) + " - ClaveAcceso: " + dataRow.Field<string>("claveAcceso") + " - SRI Info: " + xmlError.OuterXml);
+                        LogWritter.LogError(_path, "IdDoc --> " + Convert.ToString(dataRow.Field<long>("idDocumentoElectronico")) + " - ClaveAcceso: " + dataRow.Field<string>("claveAcceso") + "\n" + _response.message);
+                        //_dataAccess.InsertError(dataRow.Field<long>("idDocumentoElectronico"), _response);
+                        _dataAccess.Update(dataRow.Field<long>("idDocumentoElectronico"), "", "", 3);
                     }
                 }
             }

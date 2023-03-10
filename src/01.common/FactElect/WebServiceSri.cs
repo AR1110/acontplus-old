@@ -44,6 +44,7 @@ namespace FactElect
 
                 XmlDocument doc = new XmlDocument();
                 doc.LoadXml(_response.xmlSri);
+
                 XmlNodeList numeroComprobantes = doc.GetElementsByTagName("numeroComprobantes");
                 if (numeroComprobantes[0].InnerText == "1")
                 {
@@ -87,7 +88,6 @@ namespace FactElect
             }
             catch (Exception ex)
             {
-                _ = ex.Message;
                 _response.estado = "ERROR";
                 _response.message = "No se pudo verificar la existencia del comprobante" + ex.ToString();
             }
