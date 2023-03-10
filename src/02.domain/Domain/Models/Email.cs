@@ -4,6 +4,7 @@ namespace Domain.Models
 {
     public class Email
     {
+        public string template { get; set; }
         public string host { get; set; }
         public int port { get; set; }
         public bool enableSsl { get; set; }

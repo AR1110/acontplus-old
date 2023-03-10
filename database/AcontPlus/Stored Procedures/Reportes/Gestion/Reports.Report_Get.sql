@@ -9,7 +9,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-IF OBJECT_ID('Reports.Report_Get') IS NOT NULL
+IF OBJECT_ID('Reporte.Report_Get') IS NOT NULL
 BEGIN 
 	DROP PROCEDURE Reporte.Report_Get
 END 
