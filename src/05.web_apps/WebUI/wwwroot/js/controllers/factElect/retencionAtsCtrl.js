@@ -358,7 +358,8 @@
                 showLoader()
                 let json = {
                     tipo: '3',
-                    id: item.idDocumento
+                    id: item.idDocumento,
+                    isAutomatic: item.isAutomatic
                 }
                 mS.getData('get', '/FacturaCompra/Get?json=' + JSON.stringify(json)).then(
                     response => {
@@ -412,7 +413,7 @@
                     // tS.toastr('warning', 'Este documento no ha sido registrado desde el modulo de recepcion de documentos')
                     return
                 }
-                mS.getData('get', _urlService + 'DocumentoRecibido/Preview/' + item).then(
+                mS.getData('get', _urlService + 'DocumentoRecibido/Preview/' + item.idDocumento).then(
                     response => {
                         $('#facturaModal').modal('show')
                         $('#bodyFactura').html(response.payload)

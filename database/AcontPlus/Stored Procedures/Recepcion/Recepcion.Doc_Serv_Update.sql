@@ -40,6 +40,7 @@ BEGIN
 			,dr.downloaded = @downloaded 
 			,versionComp = @versionComp
 			,fechaEmision = @fechaEmision
+			,fechaAutorizacion = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion')))).value('(/autorizacion/fechaAutorizacion)[1]','VARCHAR(49)')
 			FROM Recepcion.DocumentoRecibido dr WITH (ROWLOCK)
 			WHERE idDocumento = @idDocumento
 		COMMIT TRAN

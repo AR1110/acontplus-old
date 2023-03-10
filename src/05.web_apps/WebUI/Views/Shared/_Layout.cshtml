@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿{
+    @inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment hostingEnv
+}
+<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -293,6 +296,7 @@
             </div>
         </div>
         <footer class="footer">
+            <input type="text" id="environmentApp" name="name" value="@hostingEnv.EnvironmentName" hidden />
             &copy; 2021 - AcontPlus @*<a asp-area="" asp-controller="Home" asp-action="Privacy"></a>*@
         </footer>
 
@@ -364,7 +368,7 @@
 
     <!--Directiva Pagination-->
     <script src="~/lib/angular-utils-pagination/dirPagination.min.js"></script>
-    <script src="~/lib/bootstrap-daterangepicker/daterangepicker.min.js"></script> 
+    <script src="~/lib/bootstrap-daterangepicker/daterangepicker.min.js"></script>
     <script src="~/lib/angular-daterangepicker/angular-daterangepicker.min.js"></script>
     <!--angular-jwt-->
     <script src="~/lib/angular-jwt/angular-jwt.min.js"></script>
