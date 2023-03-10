@@ -213,8 +213,13 @@
                                     <tr ng-repeat="item in impuestosRenta |filter:buscar">
                                         <td width="100" ng-if="accion.editar || accion.eliminar">
                                             <div class="justify-content-center">
-                                                <a href="javascript:void(0)" ng-if="accion.eliminar" ng-click="delete(i.retencionRenta)" tooltip class="text-rojo" data-toggle="tooltip" title="Eliminar"><i class="fa fa-trash"></i></a>
-                                                <a href="javascript:void(0)" ng-if="accion.editar" ng-click="abrirModal(i,2)" tooltip class="text-azul m-l-10" title="Actualizar" data-toggle="tooltip"><i class=" fas fa-edit"></i></a>
+                                            
+                                                <button class="btn btn-info btn-sm" ng-if="accion.editar" ng-click="openModalUpdate(item)">
+                                                    <i class="mdi mdi-pencil"></i>
+                                                </button>
+                                                <button class="btn btn-danger btn-sm" ng-if="item.estado" ng-click="askToDelete(item)">
+                                                    <i class="mdi mdi-delete"></i>
+                                                </button>
                                             </div>
                                         </td>
                                         <td>{{$index+1}}</td>
