@@ -194,3 +194,5 @@
 /src/07.worker_services/WS_Notificacion/bin/Release/net6.0/BL.Notificacion.dll
 /src/07.worker_services/WS_Notificacion/bin/Release/net6.0/net6.0.zip
 /src/07.worker_services/WS_Article_Inventory/bin/Release/net6.0/Newtonsoft.Json.dll
+/src/07.worker_services/WS_Validator/bin
+/src/07.worker_services/WS_Validator/obj
