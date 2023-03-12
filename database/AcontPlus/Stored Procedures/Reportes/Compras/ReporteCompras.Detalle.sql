@@ -87,7 +87,7 @@ BEGIN
 							,precioVenta    = ap.precioVenta
 							,precioConIva   = ap.precioConIva
 							,tarifa         = t.descripcion
-							,nota           = a.observaciones
+							,nota           = ISNULL(a.observaciones, '')
 						FROM dbo.FacturaCompraDetalle fcd 
 						INNER JOIN ArticuloPvP ap ON ap.idarticulo = fcd.idArticulo 
 						INNER JOIN Tarifa       t ON t.idTarifa    = ap.idTarifa
@@ -116,7 +116,7 @@ BEGIN
 							,precioVenta    = ap.precioVenta
 							,precioConIva   = ap.precioConIva
 							,tarifa         = t.descripcion
-							,nota           = a.observaciones
+							,nota           = ISNULL(a.observaciones, '')
 						FROM dbo.IngresoBodegaDetalle ibd 
 						INNER JOIN ArticuloPvP ap ON ap.idarticulo = ibd.idArticulo 
 						INNER JOIN Tarifa       t ON t.idTarifa    = ap.idTarifa
@@ -145,7 +145,7 @@ BEGIN
 							,precioVenta    = ap.precioVenta
 							,precioConIva   = ap.precioConIva
 							,tarifa         = t.descripcion
-							,nota           = a.observaciones
+							,nota           = ISNULL(a.observaciones, '')
 						FROM dbo.LiquidacionCompraDetalle lcd 
 						INNER JOIN ArticuloPvP ap ON ap.idarticulo = lcd.idArticulo 
 						INNER JOIN Tarifa       t ON t.idTarifa    = ap.idTarifa

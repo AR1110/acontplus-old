@@ -53,11 +53,13 @@
             </div>
         </div>
 
-        <div class="row" ng-show="$ctrl.showHeader">                        
+        <div class="row" ng-show="$ctrl.showHeader">                                   
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-12">
                 <div class="form-group">
                     <label for="">Proveedor <span class="text-danger">*</span></label>                    
-                    <input type="text" class="form-control" disabled ng-value="$ctrl.proveedor.nombreFiscal">                  
+                    <uib-modal-proveedor-search selected-item-proveedor="$ctrl.selectedItemProveedor(item)" search="$ctrl.searchProveedorOptions" proveedor-data="$ctrl.proveedor"></uib-modal-proveedor-search> 
+                    <span class="ml-5" ng-if="data.loadingSearch"> <i class="fas fa-sync-alt fa-xs"></i> Loading...</span>
+                    <small class="text-danger ml-5" ng-if="data.noResults">No se encontraron resultados</small>
                 </div>
             </div>
             <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-xs-12">

@@ -82,9 +82,11 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
 
     trimDetailDoc(){
         let tempDetails = [];
+        let orderIndex = 1;
         							 						
         for(let item of this.gridOptions.data){
             tempDetails.push({
+                orderIndex: orderIndex++,
                 idFacturaDetalle: item.idFacturaDetalle || 0,
                 idArticulo: item.idArticulo,
                 idTarifa: item.idTarifa,

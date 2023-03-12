@@ -4,15 +4,20 @@ class MdAutocompleteProveedor{
         this._commonSvc = _commonSvc;
         this._modalSvc  = _modalSvc;
         this._nombreModal = _nombreModal;              
-        this.search = {
-            isDisabled: false,
-            noCache: false,
-            selectedItem: null,
-
-        }
+        this.search = this.search || {};
     }
 
-    $onInit(){  
+    $onInit(){ 
+     
+        this.proveedorData = this.proveedorData || {};
+        
+        if (typeof this.proveedorData==='object' && this.proveedorData.idProveedor > 0){            
+            this.dataProveedor = Object.assign({}, this.proveedorData)
+            this.searchText = this.dataProveedor.nombreFiscal;
+            this.idProveedor = this.proveedorData.idProveedor;
+        }
+        // console.log(this.search)
+        // console.log(this.proveedorData)
          //Accion proveedor actualizar
         //  this.search.showBtnNew = this.editData.showBtnNew;
         //  this.search.showBtnList = this.editData.showBtnList;
@@ -175,7 +180,8 @@ app.component('uibModalProveedorSearch', {
     bindings:{
         selectedItemProveedor:'&',
         editData:"<",
-        search:"<"
+        search:"<",
+        proveedorData:"<" // Se agregó en Modal Editar Proveedor
     },
     controller: MdAutocompleteProveedor
 })

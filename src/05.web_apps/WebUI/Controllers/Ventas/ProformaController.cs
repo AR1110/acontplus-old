@@ -31,7 +31,7 @@ namespace WebUI.Controllers.Ventas
             _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
 
         }
-       
+
         [Authorize]
         public IActionResult Index()
         {
@@ -42,9 +42,10 @@ namespace WebUI.Controllers.Ventas
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
-            var res = await _prof.GetAsync(idRol, json);
-            return Ok(res);
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            parameters.Add("idRol", _idRol);
+            parameters.Add("json", SqlValidation.ValidateSqlString(json));
+            return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Ventas.Proforma_Get", parameters)));
         }
 
         [HttpGet]
@@ -82,83 +83,6 @@ namespace WebUI.Controllers.Ventas
             parameters.Add("id", id);
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Ventas.Proforma_Delete", parameters)));
 
-        }
-
-
-
-        public async Task<IActionResult> ConvertToDocument(string codigoDoc, int idProforma, int idTiempoCredito)
-        {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
-            var res = await _prof.ConvertAsync(idRol, codigoDoc, idProforma, idTiempoCredito);
-            return Ok(res);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Download([FromBody] ApiReportParams parameters)
-        {
-            try
-            {
-                parameters.idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
-                var response = await new ApiServer(_urlApi).PostAsync<FileModel>("api/Reporte/Download/", parameters);
-                if (response.Content.Length > 0)
-                {
-                    if (parameters.sendEmail)
-                    {
-                        var email = await SendEmailStructure(parameters, response.Content);
-                        var responseEmail = new SendEmail().Send(email);
-                        if (responseEmail)
-                        {
-                            _gr.id = "1";
-                            _gr.message = "Proforma Enviada Correctamente";
-                        }
-                        else
-                        {
-                            _gr.id = "0";
-                            _gr.message = "No se pudo enviar la Proforma";
-                        }
-                        return Ok(_gr);
-                    }
-                    return File(response.Content, response.ContentType, response.FileName);
-                }
-                else
-                {
-                    _gr.id = "0";
-                    _gr.message = "Problemas en el servidor de documentos";
-                }
-            }
-            catch (Exception ex)
-            {
-                _gr.id = "0";
-                _gr.message = ex.Message;
-            }
-            return Ok(_gr);
-        }
-
-        public async Task<Email> SendEmailStructure(ApiReportParams send, byte[] pdfInvoice)
-        {
-            var email = new Email();
-            List<FileModel> filesToEmail = new List<FileModel>();
-            try
-            {
-                object[] res = await _prof.DataSendEmailAsync(send.dataParams);
-                email = res[0] as Email;
-                var streamPdf = new MemoryStream(pdfInvoice);
-                IFormFile pdfInvoiceGenerated = new FormFile(streamPdf, 0, pdfInvoice.Length, "Proforma", res[1].ToString() + ".pdf") { Headers = new HeaderDictionary(), ContentType = "application/pdf" };
-                var pdfEmail = new FileModel
-                {
-                    FileName = FileExtensions.SanitizeFileName(pdfInvoiceGenerated.FileName),
-                    ContentType = pdfInvoiceGenerated.ContentType,
-                    Content = FileData.GetFileByte(pdfInvoiceGenerated)
-                };
-                filesToEmail.Add(pdfEmail);
-                email.files = filesToEmail;
-            }
-            catch (Exception ex)
-            {
-                _ = ex.Message;
-            }
-
-            return email;
         }
     }
 }

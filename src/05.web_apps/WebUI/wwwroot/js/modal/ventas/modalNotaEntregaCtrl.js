@@ -142,9 +142,11 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl{
 
     trimDetailDoc(){
         let tempDetails = [];
+        let orderIndex = 1;
         							 						
         for(let item of this.gridOptions.data){
             tempDetails.push({
+                orderIndex: orderIndex++,
                 idNotaEntregaDetalle: item.idNotaEntregaDetalle || 0,
                 idFacturaDetalle: item.idFacturaDetalle || 0,
                 idArticulo: item.idArticulo,

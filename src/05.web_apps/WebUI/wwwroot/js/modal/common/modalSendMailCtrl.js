@@ -2,7 +2,7 @@
 
 
 export class SendMailCtrl{
-    static $inject = ['$scope', '$uibModalInstance', 'mainService', 'commonService', 'toastService', 'formulario', 'params']
+    static $inject = ['$scope', '$localStorage', '$uibModalInstance', 'mainService', 'commonService', 'toastService', 'formulario', 'params', 'jwtHelper']
 
     /**
      * 
@@ -14,19 +14,29 @@ export class SendMailCtrl{
      * @param {service} _form 
      * @param {service} _params 
      */
-    constructor($scope, $uibModalInstance, _mS, _commonSvc, _tS, _form, _params){
+    constructor($scope, $localStorage, $uibModalInstance, _mS, _commonSvc, _tS, _form, _params, jwtHelper){
         this.$scope = $scope;
+       
         this.$uibModalInstance = $uibModalInstance;
         this._mS = _mS;
         this._commonSvc = _commonSvc;
         this._tS = _tS;
         this._form = _form;
-        this.data = _params;
+        this.data = _params || {};
+
+        this.jwtHelper = jwtHelper;
+        let authData = $localStorage.currentUser
+        let decodedJwt = jwtHelper.decodeToken(authData.token);
+        this.idUsuarioRol = Number(decodedJwt.idUsuarioRol)
+
         this.correos = [];
+        console.log(this.data)
+        this.TYPE_NOTIFICATION = this.data.TYPE_NOTIFICATION 
 
     }
 
     $onInit(){
+        console.log(this)
         if(this.data.hasOwnProperty("correo") && this.data.correo){
             if(this.data.correo.includes(',')){
                 this.correos = this.data.correo.split(',');
@@ -64,15 +74,39 @@ export class SendMailCtrl{
             }
     
             this._form.showLoaderSendEmail();
-            const data = {
-                codDoc: this.data.codDoc,
-                codEstado: this.data.codEstado,
-                idDocumento: this.data.idDocumento,
-                idDocumentoElectronico: this.data.idDocumentoElectronico ,                            
-                receptor: this.correos.join(';')
-            }
+            let url = '';
+            let data = {}
             
-            this._mS.getData('post', '/NotificacionTributaria/Post?json=' + JSON.stringify(data)).then(response=>{                
+
+
+            switch (this.TYPE_NOTIFICATION) {
+                case "N":
+                    url = '/Notificacion/Post?json='                                       
+                    data = {
+                        subject: this.data.subject,
+                        params: this.data.json,                                                
+                        idUsuarioRol: this.idUsuarioRol,
+                        receptor: this.correos.join(';')
+                    }
+
+                    break;
+            
+                default:
+                    url = '/Notificacion/Post?json='
+                    data = {
+                        codDoc: this.data.codDoc,
+                        codEstado: this.data.codEstado,
+                        idDocumento: this.data.idDocumento,
+                        idDocumentoElectronico: this.data.idDocumentoElectronico,                            
+                        receptor: this.correos.join(';')
+                    }
+                    break;
+            }
+
+            
+            
+            this._mS.getData('post', url + JSON.stringify(data)).then(response=>{  
+                console.log(response)              
                 if(response.code==="0"){
                     this._form.sweetAlert('warning', response.message, response.titleSms);                
                 }

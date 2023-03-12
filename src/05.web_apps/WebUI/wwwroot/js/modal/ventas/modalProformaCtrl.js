@@ -144,9 +144,11 @@ class ModalProformaCtrl extends ModalBaseCtrl{
 
     trimDetailDoc(){
         let tempDetails = [];
+        let orderIndex = 1;
         							 						
         for(let item of this.gridOptions.data){
-            tempDetails.push({             
+            tempDetails.push({  
+                orderIndex: orderIndex++,           
                 idProformaDetalle: item.idProformaDetalle || 0,
                 idArticulo: item.idArticulo,
                 idTarifa: item.idTarifa,
