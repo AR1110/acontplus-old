@@ -7,6 +7,7 @@ using System.Text;
 using Nustache.Core;
 using Microsoft.Extensions.Configuration;
 using Domain.Models;
+using System.Data;
 
 namespace BL.Notificacion
 {
@@ -46,8 +47,10 @@ namespace BL.Notificacion
 
                 string htmlString = File.ReadAllText(pathToHTMLFile);
 
-                var dataMail = JsonConvert.DeserializeObject<Dictionary<string, string>>(email.dataMail);
+                //var dataMail = JsonConvert.DeserializeObject<Dictionary<string, string>>(email.dataMail);
+                var dataMail = JsonConvert.DeserializeObject<IEnumerable<IDictionary<string, object>>>(email.dataMail).FirstOrDefault();
 
+             
                 //Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
                 //Dictionary<string, string> dataEmail = new Dictionary<string, string>();
                 //foreach (var paramRdlc in dataMail.FirstOrDefault())
@@ -116,8 +119,7 @@ namespace BL.Notificacion
             }
             return true;
         }
-        private static string ProcessTemplate(string template,
-           Dictionary<string, string> data)
+        private static string ProcessTemplate(string template, IDictionary<string, object> data)
         {
             //return Regex.Replace(template, "\\{\\{(.*?)\\}\\}", m =>
             //    m.Groups.Count > 1 && data.ContainsKey(m.Groups[1].Value) ? 

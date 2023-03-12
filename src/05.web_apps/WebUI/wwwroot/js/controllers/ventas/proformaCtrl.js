@@ -294,54 +294,42 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
 
 
 
-    $scope.askToSendEmail = function (item) {            
-        Swal.fire({
-            title: '<small>Enviar por Correo</small>',
-            icon: 'warning',
-            html: '<small>¿Está seguro de enviar por correo esté documento?</small>',
-            showDenyButton: true,
-            confirmButtonText: `Si, enviar`,
-            denyButtonText: `No, cancelar`,
-            allowOutsideClick: false
-        }).then(result => {
-            if (result.isConfirmed) {
-                $scope.getSendEmail(item);                    
-            }
-        })
-    }
-
-    $scope.getSendEmail = function (item) {
-        try {
-            let format = 'pdf';
-            let dataParms = {
-                codEstab: item.codEstab,
-                idProforma : item.idProforma           
-            }
-        
-            const parameters = {
-                reportParams: JSON.stringify({
-                    codigo: 'PR', 
-                    format,
-                    codEstab: item.codEstab,
-                    aditionalParams: [                    
-                    ]
-                }),
-                dataParams: JSON.stringify(dataParms),
-                sendEmail: true
-            }
-        
-            _fS.showLoaderSendEmail();
-            _mS.getFile('post', '/Proforma/Download', parameters).then(response => {
-                Swal.close();
-                var fileBlob = new Blob([response.data], { type: response.data.type });
-                var objectUrl = window.URL || window.webkitURL
-                var urlFile = objectUrl.createObjectURL(fileBlob)
-                window.open(urlFile, '_blank');                
+    $scope.askToSendEmail = async (item) =>{ 
+        try { 
+            let params = {
+                TYPE_NOTIFICATION: 'N',
+                serie: item.nroDocumento,
+                correo: item.correo, 
+                subject: 'Documento Proforma - Acontplus N°: ' + item.nroDocumento,
+                json: {                                      
+                    hasFile: true, 
+                    isReport: "SI", 
+                    reportParams: {
+                        codEstab: item.codEstab, 
+                        codigo: "PR", 
+                        format: "pdf"
+                    }, 
+                    spParams: {
+                        id: item.idProforma
+                    }
+                }
+            }                    
+            
+           
+            const { MODAL_SEND_MAIL_CTRL, MODAL_SEND_MAIL_CSHTML } = _nombreModalConst.common;
+            const { SendMailCtrl } = await import('./../../modal/' + MODAL_SEND_MAIL_CTRL);
+            _modalSvc.openModalCustom({
+                controller: SendMailCtrl,
+                template: 'Shared/' + MODAL_SEND_MAIL_CSHTML,
+                size: 'md',
+                params
             })
         } catch (error) {
-            
-        }
+            console.error(error)
+        } 
     }
+
+
 
     //Reporte 
     $scope.getReport = function (item) {
@@ -349,7 +337,7 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
         let format = 'pdf';
 
         let dataParms = {
-            idProforma: item.idProforma ,
+            id: item.idProforma ,
             codEstab: item.codEstab           
         }
        
@@ -357,7 +345,6 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
             reportParams: JSON.stringify({
                 codigo: 'PR', 
                 format,
-                codEstab: item.codEstab,
                 aditionalParams: [                    
                 ]
             }),

@@ -42,7 +42,7 @@ namespace ApiReports.Dao
             try
             {
                 var cmd = new SqlCommand(storedProcedure, con); //PROCEDIMIENTO DE REPORTE DINAMICO
-                cmd.Parameters.AddWithValue("idRol", idRol);
+               // cmd.Parameters.AddWithValue("idRol", idRol);
                 cmd.Parameters.AddWithValue("json", jsonData); //PARAMETROS DINAMICOS parameters: {}
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.CommandTimeout = 0;
