@@ -11,6 +11,6 @@ idNotificacion INT NOT NULL CONSTRAINT pk_idNotificacion PRIMARY KEY IDENTITY(1,
 ,fechaRegistro DATETIME NOT NULL DEFAULT GETDATE()
 ,estado VARCHAR(5) NOT NULL
 ,fechaEnvio DATETIME NULL
-,msgError VARCHAR(300) NULL
+,msgError VARCHAR(MAX) NULL
 ,idUsuario INT NULL
 )
