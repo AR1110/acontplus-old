@@ -1,6 +1,5 @@
 ﻿using DataAccess;
 using Domain.FactElect;
-using Helpers;
 using System.Data;
 
 namespace WS_Validator
@@ -35,12 +34,12 @@ namespace WS_Validator
             DbAccess _db = new DbAccess(_configuration);
             await _db.SPExecute("FactElect.Doc_Elect_Error_Insert");
             _db.AddDynamicParam("id", id);
-            _db.AddDynamicParam("estado", DataHelper.ToDBNullOrDefault(data.estado));
-            _db.AddDynamicParam("identificador", DataHelper.ToDBNullOrDefault(data.identificador));
-            _db.AddDynamicParam("mensaje", DataHelper.ToDBNullOrDefault(data.message));
-            _db.AddDynamicParam("informacionAdicional", DataHelper.ToDBNullOrDefault(data.informacionAdicional));
-            _db.AddDynamicParam("tipo", DataHelper.ToDBNullOrDefault(data.tipo));
-            _db.AddDynamicParam("xmlSri", DataHelper.ToDBNullOrDefault(data.xmlSri));
+            _db.AddDynamicParam("estado", data.estado ?? "");
+            _db.AddDynamicParam("identificador", data.identificador ?? "");
+            _db.AddDynamicParam("mensaje",data.message ?? "");
+            _db.AddDynamicParam("informacionAdicional", data.informacionAdicional ?? "");
+            _db.AddDynamicParam("tipo", data.tipo ?? "");
+            _db.AddDynamicParam("xmlSri", data.xmlSri ?? "");
             _db.OnlyExecute();
         }
     }

@@ -12,6 +12,8 @@ namespace DataAccess
             {
                 case "Int32":
                     return SqlDbType.Int;
+                case "Int64":
+                    return SqlDbType.BigInt;
                 case "String":
                     return SqlDbType.VarChar;
                 case "Boolean":

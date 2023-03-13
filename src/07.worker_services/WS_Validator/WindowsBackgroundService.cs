@@ -1,4 +1,4 @@
-using BL.FactElectF;
+using BL.FactElect;
 using Common.Logs;
 using System.Data;
 using System.Xml;
