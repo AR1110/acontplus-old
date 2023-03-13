@@ -178,6 +178,9 @@ namespace WebUI.Controllers.Admin
 
 
 
+
+
+
         public FileModel ErrorFile(FileModel file)
         {
             var filePath = Path.Combine(_hostingEnviroment.WebRootPath, "archivos", "NotFound.pdf");

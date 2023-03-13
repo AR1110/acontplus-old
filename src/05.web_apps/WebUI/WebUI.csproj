@@ -4229,11 +4229,11 @@
     <ProjectReference Include="..\..\01.common\Common.Logs\Common.Logs.csproj" />
     <ProjectReference Include="..\..\01.common\Common.PdfReports\Common.PdfReports.csproj" />
     <ProjectReference Include="..\..\01.common\DataAccess\DataAccess.csproj" />
-    <ProjectReference Include="..\..\01.common\FactElect\FactElect.csproj" />
     <ProjectReference Include="..\..\01.common\HelpersNS20\HelpersNS20.csproj" />
     <ProjectReference Include="..\..\01.common\Helpers\Helpers.csproj" />
     <ProjectReference Include="..\..\02.domain\Domain.Auth\Domain.Auth.csproj" />
     <ProjectReference Include="..\..\02.domain\Domain\Domain.csproj" />
+    <ProjectReference Include="..\..\03.business_logic\BL.FactElect\BL.FactElect.csproj" />
     <ProjectReference Include="..\..\08.razor_ui\FACT_UI\FACT_UI.csproj" />
   </ItemGroup>
 

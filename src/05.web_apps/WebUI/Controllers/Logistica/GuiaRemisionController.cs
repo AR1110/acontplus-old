@@ -17,14 +17,12 @@ namespace WebUI.Controllers.Logistica
         private readonly int _idRol;
         private GenericResponse _gr = new();
         private GuiaRemisionDao _guideR;
-        public AuthorizationDto _auth;
         private IConfiguration _config;
         private readonly string _urlApi = "";
 
                 
         public GuiaRemisionController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
-            _auth = new AuthorizationDto();
             _config = configuration;
             _urlApi = _config.GetSection("UrlApis").GetSection("AcontPlusApi").Value;
             _dao = new DataAccessObject(_config);

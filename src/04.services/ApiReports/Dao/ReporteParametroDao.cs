@@ -61,5 +61,29 @@ namespace ApiReports.Dao
             }
             return ds;
         }
+        public DataSet GetDataToReport(string storedProcedure, string jsonData)
+        {
+            DataSet ds = new DataSet();
+            try
+            {
+                var cmd = new SqlCommand(storedProcedure, con);
+                cmd.Parameters.AddWithValue("json", jsonData);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandTimeout = 0;
+                con.Open();
+                var dataAdapter = new SqlDataAdapter();
+                dataAdapter.SelectCommand = cmd;
+                dataAdapter.Fill(ds);
+            }
+            catch (Exception ex)
+            {
+                _ = ex.Message;
+            }
+            finally
+            {
+                con.Close();
+            }
+            return ds;
+        }
     }
 }

@@ -4,9 +4,9 @@ using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
-using Domain.Enums;
-using FactElect;
+using Domain.Enums; 
 using Helpers;
+using BL.FactElect;
 
 namespace WebUI.Controllers.GestionTributaria
 {

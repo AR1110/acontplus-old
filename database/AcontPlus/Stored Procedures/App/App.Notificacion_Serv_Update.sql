@@ -36,6 +36,27 @@ BEGIN
 			BEGIN
 				ROLLBACK TRAN
 			END
+					INSERT INTO ErroresSistema
+							 (token
+							 ,method
+							 ,errorNumber
+							 ,errorSeverity 
+							 ,errorState
+							 ,errorProcedure
+							 ,errorLine
+							 ,errorMessage
+							 ,errorDate
+							 )
+						 VALUES
+							 (NEWID()
+							 ,'/Update'
+							 ,ERROR_NUMBER()
+							 ,ERROR_SEVERITY()
+							 ,ERROR_STATE()
+							 ,ERROR_PROCEDURE()
+							 ,ERROR_LINE()
+							 ,ERROR_MESSAGE()
+							 ,GETDATE())
 	END CATCH
 END
 GO

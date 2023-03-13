@@ -41,13 +41,16 @@
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                             <label>Rango de Fechas: </label>
                             <input date-range-picker class="form-control date-picker" type="text"
-                                   ng-model="dateRangePicker.date"
-                                   picker="dateRangePicker.picker"
-                                   picker-classes="extra-class-names"
-                                   min="'2014-02-23'"
-                                   max="dateRangePicker.maxDate"
-                                   options="dateRangePicker.options"
-                                   options="{locale: {separator: " :"}}" />
+                                ng-model="dateRangePicker.date" picker="dateRangePicker.picker"
+                                picker-classes="extra-class-names" min="'2014-02-23'" max="dateRangePicker.maxDate"
+                                options="dateRangePicker.options" options="{locale: {separator: " :"}}" />
+                        </div>
+                        <div
+                            class="col-xl-4 col-lg-4 col-md-4 col-sm-4 offset-xl-4 offset-lg-4 offset-md-4 offset-sm-4 col-12">
+                            <md-button class="md-icon-button" ng-click="refresh()" aria-label="Stock"
+                                title="Actualizar">
+                                <md-icon md-font-set="md" class="text-info">sync</md-icon>
+                            </md-button>
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -69,9 +72,8 @@
                             </thead>
                             <tbody md-body>
                                 <tr md-row md-select="item" md-select-id="index" md-on-select="showOptions"
-                                    md-auto-select
-                                    ng-repeat="item in comprobantes"
-                                    style="{{item.colorRow}}" title="{{item.hoverText}}">
+                                    md-auto-select ng-repeat="item in comprobantes" style="{{item.colorRow}}"
+                                    title="{{item.hoverText}}">
                                     <td md-cell style="{{item.colorCol}}">{{item.comprobante}}</td>
                                     <td md-cell style="{{item.colorCol}}">{{item.serieComprobante}}</td>
                                     <td md-cell style="{{item.colorCol}}">{{item.rucEmisor}}</td>
@@ -91,10 +93,10 @@
                             </tbody>
                         </table>
                         @*<md-table-pagination md-limit="query.limit" md-limit-options="pages" md-page="query.page"
-            md-total="{{totalRecords}}" md-on-paginate="getComprobantes" md-page-select>
-        </md-table-pagination>*@
+                        md-total="{{totalRecords}}" md-on-paginate="getComprobantes" md-page-select>
+                        </md-table-pagination>*@
                     </div>
-                  
+
                 </div>
             </div>
         </div>

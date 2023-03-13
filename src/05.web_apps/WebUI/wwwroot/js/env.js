@@ -19,7 +19,7 @@
 (function (window) {
     window.__env = window.__env || {}
 
-    console.log(document.getElementById('environmentApp').value)
+    //console.log(document.getElementById('environmentApp').value)
 
     // API url
     // For demo purposes we fetch from local file in this plunk

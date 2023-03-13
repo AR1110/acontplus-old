@@ -1,6 +1,6 @@
-﻿{
+﻿@*{
     @inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment hostingEnv
-}
+}*@
 <!DOCTYPE html>
 <html lang="es">
 
@@ -296,7 +296,7 @@
             </div>
         </div>
         <footer class="footer">
-            <input type="text" id="environmentApp" name="name" value="@hostingEnv.EnvironmentName" hidden />
+            @*<input type="text" id="environmentApp" name="name" value="@hostingEnv.EnvironmentName" hidden />*@
             &copy; 2021 - AcontPlus @*<a asp-area="" asp-controller="Home" asp-action="Privacy"></a>*@
         </footer>
 

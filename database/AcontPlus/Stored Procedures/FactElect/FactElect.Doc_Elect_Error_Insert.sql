@@ -15,13 +15,13 @@ IF OBJECT_ID(N'FactElect.Doc_Elect_Error_Insert', N'P') IS NOT NULL
 DROP PROCEDURE FactElect.Doc_Elect_Error_Insert 
 GO
 CREATE PROCEDURE FactElect.Doc_Elect_Error_Insert 
- @id INT
+ @id BIGINT
 ,@estado VARCHAR(30)
 ,@identificador VARCHAR(2)
-,@mensaje VARCHAR(300)
-,@informacionAdicional VARCHAR(500)
+,@mensaje VARCHAR(MAX)
+,@informacionAdicional VARCHAR(MAX)
 ,@tipo VARCHAR(50)
-,@xmlSri XML = NULL
+,@xmlSri XML
 AS
 
 DECLARE @claveAcceso VARCHAR(50)
