@@ -5,10 +5,9 @@ USE [AcontPlus]
 IF OBJECT_ID('App.Notificacion_Serv_Insert') IS NOT NULL
 	DROP PROCEDURE App.Notificacion_Serv_Insert
 GO 
---UPDATE App.Notificacion SET estado ='NE' WHERE idNotificacion = 18
+--UPDATE App.Notificacion SET estado ='NE' WHERE idNotificacion > 18
 --select * from aPP.Notificacion
 --DELETE FROM App.Notificacion WHERE idNotificacion > 11
-
 -- exec App.Notificacion_Serv_Insert '{"params":{"hasFile":true,"isReport":"SI","reportParams":{"codEstab":"ESTAB-000000002","codigo":"PR","format":"pdf"},"spParams":{"id":67}},"idUsuarioRol":38,"receptor":"sengua2017@gmail.com"}'
 
 CREATE PROCEDURE App.Notificacion_Serv_Insert @json VARCHAR(MAX)
@@ -17,7 +16,8 @@ BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
 
-	DECLARE @idUsuario INT 
+	DECLARE @idUsuario INT
+	DECLARE @idEntidad INT 
 	
 	DECLARE @params NVARCHAR(MAX)
 	DECLARE @emailData VARCHAR(MAX)
@@ -36,12 +36,13 @@ BEGIN
 	
 
 	SELECT 
+		@idEntidad = ur.idEntidad,
 	    @idUsuario = ur.idUsuario,
-		@id = js.id,
-		@codigo = js.codigo,
-		@receptor = js.receptor,
-		@params = js.params,
-		@subject = subject
+		@id        = js.id,
+		@codigo    = js.codigo,
+		@receptor  = js.receptor,
+		@params    = js.params,
+		@subject   = subject
 	FROM App.UsuarioRol ur JOIN OPENJSON(@json)		
 	WITH(
 		idUsuarioRol INT '$.idUsuarioRol',
@@ -88,6 +89,19 @@ BEGIN
 							 )
 								 
 			END 
+
+			-- Reporte Control Caja
+			IF @codigo ='RCC'
+				BEGIN 
+					SET @body = (
+									SELECT 
+										fechaEmision = dbo.AFTConvertDate(dbo.ufnGetDateEcuador())+dbo.AFTConvertHora(dbo.ufnGetDateEcuador()),
+									    telefono     = ISNULL(e.telefono, ''),
+										razonSocial  = e.razonSocial
+									FROM dbo.Entidad e WHERE idEntidad = @idEntidad
+									FOR JSON PATH
+								)
+				END 
 
 			
 			
