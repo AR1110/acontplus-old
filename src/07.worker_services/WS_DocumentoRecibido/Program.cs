@@ -1,3 +1,5 @@
+using BL.FactElect;
+
 namespace WS_DocumentoRecibido
 {
     public class Program
@@ -24,6 +26,7 @@ namespace WS_DocumentoRecibido
                         return configurationBuilder.Build();
 
                     });
+                    services.AddSingleton<WebServiceSri>();
                     services.AddSingleton<DocumentoService>();
                     services.AddHostedService<WindowsBackgroundService>();
                 })

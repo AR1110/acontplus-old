@@ -1,5 +1,5 @@
-﻿using Common.Logs;
-using FactElect;
+﻿using BL.FactElect;
+using Common.Logs;
 using System.Data;
 using System.Xml;
 
@@ -14,11 +14,13 @@ namespace WS_DocumentoRecibido
         private readonly IConfiguration _configuration;
         private readonly ILogger<WindowsBackgroundService> _logger;
         private readonly DocumentoService _docService;
+        private readonly WebServiceSri _serviceSri;
 
         public WindowsBackgroundService(ILogger<WindowsBackgroundService> logger,
             IConfiguration configuration,
-            DocumentoService emailService) =>
-            (_logger, _configuration, _docService) = (logger, configuration, emailService);
+            DocumentoService emailService,
+            WebServiceSri serviceSri) =>
+            (_logger, _configuration, _docService, _serviceSri) = (logger, configuration, emailService, serviceSri);
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             LogWriter _log = new LogWriter(_configuration);
@@ -80,7 +82,7 @@ namespace WS_DocumentoRecibido
         {
             LogWriter _log = new LogWriter(_configuration);
 
-            string xml = await new WebServiceSri().GetXmlAsync(dr["claveAcceso"].ToString(), _configuration.GetSection("urlSri").Value);
+            string xml = await _serviceSri.GetXmlAsync(dr["claveAcceso"].ToString(), _configuration.GetSection("urlSri").Value);
             if (xml.Trim().Length > 500)
             {
                 XmlDocument xmlDocSri = new XmlDocument();

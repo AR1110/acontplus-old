@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using System.Text;
 using System.Xml;
 
-namespace BL.FactElectF
+namespace BL.FactElect
 {
     public sealed class WebServiceSri
     {

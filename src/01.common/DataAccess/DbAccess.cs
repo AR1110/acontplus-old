@@ -66,7 +66,7 @@ namespace DataAccess
                     SqlParameter sqlParam = new SqlParameter();
                     sqlParam.ParameterName = paramName;
                     sqlParam.SqlDbType = DbType.Get(paramValue);
-                    sqlParam.Value = paramValue;
+                    sqlParam.Value = paramValue ?? (object)DBNull.Value;
                     _command.Parameters.Add(sqlParam);
                 }
             }
