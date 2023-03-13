@@ -337,14 +337,15 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
         let format = 'pdf';
 
         let dataParms = {
-            id: item.idProforma ,
-            codEstab: item.codEstab           
+            id: item.idProforma ,        
         }
        
         const parameters = {
+            hasService: true,
             reportParams: JSON.stringify({
                 codigo: 'PR', 
                 format,
+                codEstab: item.codEstab,
                 aditionalParams: [                    
                 ]
             }),

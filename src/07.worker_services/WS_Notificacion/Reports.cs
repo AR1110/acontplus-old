@@ -20,6 +20,7 @@ namespace WS_Notificacion
 
                 DbAccess _db = new DbAccess(_config);
                 await _db.SPExecute(dsParams.Tables[0].Rows[0]["storedProcedure"].ToString());
+                _db.AddDynamicParam("idRol", 0);// Por eliminar 
                 _db.AddDynamicParam("json", spParams);
                 DataSet ds = _db.GetDataSet();
 

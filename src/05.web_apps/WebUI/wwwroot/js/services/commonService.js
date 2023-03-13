@@ -226,7 +226,9 @@ export class CommonService {
      */
 
     getGestionFinanciera(json={}){
-        return this.mS.getData('get', '/GestionFinanciera/Get?json=' + JSON.stringify(json)).then(response=>JSON.parse(response.payload))
+        return this.mS.getData('get', '/GestionFinanciera/Get?json=' + JSON.stringify(json)).then(response=>{
+            return JSON.parse(response.payload)
+        })
     }
 
     
