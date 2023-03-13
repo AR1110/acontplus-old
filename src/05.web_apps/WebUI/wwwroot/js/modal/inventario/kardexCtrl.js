@@ -86,6 +86,9 @@ export class KardexCtrl{
                         {
                              title:"Usuario", field:"usuario", hozAlign:"center",  headerSort:false, width:150
                         },
+                        {
+                             title:"Estado", field:"estado", hozAlign:"center",  headerSort:false, width:100
+                        },
 
                     ],
                 },
@@ -96,13 +99,13 @@ export class KardexCtrl{
                             title: "Medida", field: "medidaEntrada", width: 70, headerSort: false, cssClass: "table-entradas",
                         },
                         {
-                            title: "Cant.", field: "cantidadEntrada", bottomCalc: this.sumCantidadEntrada, width: 60, headerSort: false, cssClass: "table-entradas",
+                            title: "Cant.", field: "cantidadEntrada", width: 60, headerSort: false, cssClass: "table-entradas",
                         },
                         {
                             title: "Costo U.", field: "costo", hozAlign: "center", headerSort: false, sorter: "date", width: 75, cssClass: "table-entradas",
                         },
                         {
-                            title: "Total", field: "totalEntrada", bottomCalc: this.sumTotalEntrada, hozAlign: "center", headerSort: false, sorter: "date", width: 75, cssClass: "table-entradas",
+                            title: "Total", field: "totalEntrada",  hozAlign: "center", headerSort: false, sorter: "date", width: 75, cssClass: "table-entradas",
                         },
                     ],
                 },
@@ -113,13 +116,13 @@ export class KardexCtrl{
                             title: "Medida", field: "medidaSalida", width: 70, headerSort: false, cssClass: "table-salidas",
                         },
                         {
-                            title: "Cant.", field: "cantidadSalida", bottomCalc: this.sumCantidadSalida, width: 60, headerSort: false, cssClass: "table-salidas",
+                            title: "Cant.", field: "cantidadSalida", width: 60, headerSort: false, cssClass: "table-salidas",
                         },
                         {
                             title: "P. Venta", field: "venta", hozAlign: "center", headerSort: false, sorter: "date", width: 75, cssClass: "table-salidas",
                         },
                         {
-                            title: "Total", field: "totalSalida", bottomCalc: this.sumTotalSalida, hozAlign: "center", headerSort: false, width: 75, cssClass: "table-salidas",
+                            title: "Total", field: "totalSalida", hozAlign: "center", headerSort: false, width: 75, cssClass: "table-salidas",
                         },
                     ],
                 },
@@ -127,13 +130,13 @@ export class KardexCtrl{
                     title: "Saldos",
                     columns: [
                         {
-                            title: "Cant. ", field: "saldo", width: 60, headerSort: false, bottomCalc: this.sumTotalCantSaldo, cssClass: "table-saldos",
+                            title: "Cant. ", field: "saldo", width: 60, headerSort: false,  cssClass: "table-saldos",
                         },
                         {
-                            title: "Costo U.", field: "precioCosto", width: 70, headerSort: false, bottomCalc: this.sumTotalPrecioCostoSaldo, sorter: "number", cssClass: "table-saldos",
+                            title: "Costo U.", field: "precioCosto", width: 70, headerSort: false,  sorter: "number", cssClass: "table-saldos",
                         },
                         {
-                            title: "Total", field: "totalGeneral", hozAlign: "center", width: 60, headerSort: false, sorter: "number", bottomCalc: this.sumTotalGeneral, bottomCalcParams: { precision: 3 }, cssClass: "table-saldos",
+                            title: "Total", field: "totalGeneral", hozAlign: "center", width: 60, headerSort: false, sorter: "number", cssClass: "table-saldos",
                         },
                     ],
                 },
