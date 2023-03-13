@@ -17,25 +17,15 @@
             this.payload = payload;
             this.data = payload;
         }
-
-
-
-
         public string typeNotify { get; set; }
         public dynamic gestion { get; set; }
         public long lastId { get; set; }
-        public long idTipoDocumento { get; set; }
     }
 
     public class HelpersResponse
     {
-        public string correo { get; set; }
         public string numeroIdentificacion { get; set; }
-        public string tipoValidacion { get; set; }
-        public decimal abono { get; set; }
-        public decimal saldo { get; set; }
-        public decimal total { get; set; }
-        public decimal posfechado { get; set; }
+        public string tipoValidacion { get; set; } 
 
     }
 }
