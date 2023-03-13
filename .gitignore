@@ -292,3 +292,5 @@
 /src/08.razor_ui/Contabilidad_UI/obj
 /src/04.services/ApiCompras/bin/Release/net6.0
 /src/04.services/ApiCompras/obj
+/src/04.services/ApiContabilidad/bin
+/src/04.services/ApiContabilidad/obj
