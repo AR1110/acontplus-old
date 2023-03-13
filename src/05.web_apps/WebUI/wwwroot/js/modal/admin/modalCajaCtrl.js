@@ -410,9 +410,10 @@ export class MovimientoCajaCtrl{
     
     getReport(idControlCaja) {       
         let dataParms = {
-            idControlCaja,            
+            id: idControlCaja,            
         }
         const parameters = {
+            hasService: true,
             reportParams: JSON.stringify({
                 codigo: 'RCC', 
                 format: 'pdf',
@@ -427,6 +428,16 @@ export class MovimientoCajaCtrl{
             formatType:'pdf'
         })        
     }
+
+
+    openMoneyBox(){
+        try {
+            
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
 
     closeModal(){
         this.$uibModalInstance.close(this.isReloadCaja)
@@ -639,6 +650,7 @@ export class ModalCierreCajaCtrl{
                     format: "pdf"
                 }, 
                 spParams: {
+                    idUsuarioRol: this.decodeToken.idUsuarioRol,
                     id: this._params.idControlCaja
                 }
             }
