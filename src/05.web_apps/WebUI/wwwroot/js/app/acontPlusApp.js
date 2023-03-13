@@ -265,6 +265,14 @@ app.constant('sessionDataEntidad', JSON.parse(localStorage.getItem('userData')))
 //     $httpProvider.interceptors.push('interceptorApi');
 // }]);
 
+app.factory('decodeToken', function ($localStorage, jwtHelper){
+    let authData = $localStorage.currentUser;
+    let decodedJwt = {};
+    if (authData) {
+        decodedJwt = jwtHelper.decodeToken(authData.token)
+    }
+    return decodedJwt
+})
 
 
 app.factory('mainService', mainService);

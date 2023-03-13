@@ -14,7 +14,7 @@ GO
 IF OBJECT_ID(N'ReporteGestionFinanc.ControlCaja', N'P') IS NOT NULL
 DROP PROCEDURE ReporteGestionFinanc.ControlCaja
 GO
-CREATE PROCEDURE ReporteGestionFinanc.ControlCaja @idRol INT,@json VARCHAR(max)
+CREATE PROCEDURE ReporteGestionFinanc.ControlCaja @json VARCHAR(max)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -31,9 +31,11 @@ BEGIN
 	DECLARE @otros DECIMAL(15,5)
 	DECLARE @chequesPosf DECIMAL(15,5)
 	DECLARE @direfencia DECIMAL(15,5)
+
+	DECLARE @idRol  INT ;
 	
 
-	SELECT @idControlCaja = idControlCaja  FROM OPENJSON(@json) WITH (idControlCaja INT '$.idControlCaja') AS jsonValues
+	SELECT @idControlCaja = idControlCaja, @idRol = idUsuarioRol  FROM OPENJSON(@json) WITH (idControlCaja INT '$.id', idUsuarioRol INT '$.idUsuarioRol') AS jsonValues
 
 	SELECT @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 

@@ -18,5 +18,7 @@ namespace Domain.Models
         public decimal totalSistema { get; set; }
         public string concepto { get; set; }
         public string detalle { get; set; }
+
+        public string spParams { get; set; }
     }
 }

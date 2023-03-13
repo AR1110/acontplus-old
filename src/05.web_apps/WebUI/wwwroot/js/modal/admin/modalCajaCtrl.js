@@ -6,7 +6,7 @@ export class ModalCajaCtrl{
         this._form             = _form;
         this._params           = _params;
         this.tipoRegistro      = 1;
-        this.data              = {};        
+        this.data              = {};  
     }
      
     $onInit(){        
@@ -410,9 +410,10 @@ export class MovimientoCajaCtrl{
     
     getReport(idControlCaja) {       
         let dataParms = {
-            idControlCaja,            
+            id: idControlCaja,            
         }
         const parameters = {
+            hasService: true,
             reportParams: JSON.stringify({
                 codigo: 'RCC', 
                 format: 'pdf',
@@ -427,6 +428,16 @@ export class MovimientoCajaCtrl{
             formatType:'pdf'
         })        
     }
+
+
+    openMoneyBox(){
+        try {
+            
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
 
     closeModal(){
         this.$uibModalInstance.close(this.isReloadCaja)
@@ -458,7 +469,7 @@ export class ModalFiltroMovimientoCajaCtrl{
     }
 
     $onInit(){   
-        this._commonSvc.getGestionFinanciera().then(response=>{            
+        this._commonSvc.getGestionFinanciera({gestion:true}).then(response=>{            
             this.estadoMovimientos = response[4]            
         })     
         if(Object.entries(this._params).length >0){
@@ -525,43 +536,56 @@ export class ModalFiltroMovimientoCajaCtrl{
  */
 
 export class ModalCierreCajaCtrl{
-    static $inject = ["$uibModalInstance", "mainService", "params"]
-    constructor($uibModalInstance, _mS, _params){
+    static $inject = ["$uibModalInstance", "mainService", "params", 'decodeToken']
+    constructor($uibModalInstance, _mS, _params, decodeToken){
         this.$uibModalInstance = $uibModalInstance;
         this._mS = _mS;
         this._params = _params;
+
+        this.decodeToken = decodeToken;
 
         this.totalArqueo = 0;
 
     }
 
     $onInit(){
-
-        let tempArqueos = [{"idMoneda":1,"cantidad":0,"valor":100.00,"descripcionMonedad":"Billetes de $100"},{"idMoneda":2,"cantidad":0,"valor":50.00,"descripcionMonedad":"Billetes de $50"},{"idMoneda":3,"cantidad":0,"valor":20.00,"descripcionMonedad":"Billetes de $20"},{"idMoneda":4,"cantidad":0,"valor":10.00,"descripcionMonedad":"Billetes de $10"},{"idMoneda":5,"cantidad":0,"valor":5.00,"descripcionMonedad":"Billetes de $5"},{"idMoneda":6,"cantidad":0,"valor":1.00,"descripcionMonedad":"Billetes de $1"},{"idMoneda":7,"cantidad":0,"valor":1.00,"descripcionMonedad":"Monedas de $1"},{"idMoneda":8,"cantidad":0,"valor":0.50,"descripcionMonedad":"Monedas de ¢0.50"},{"idMoneda":9,"cantidad":0,"valor":0.25,"descripcionMonedad":"Monedas de ¢0.25"},{"idMoneda":10,"cantidad":0,"valor":0.10,"descripcionMonedad":"Monedas de ¢0.10"},{"idMoneda":11,"cantidad":0,"valor":0.05,"descripcionMonedad":"Monedas de ¢0.05"},{"idMoneda":12,"cantidad":0,"valor":0.01,"descripcionMonedad":"Monedas de ¢0.01"}]
-
-        this.arqueos = tempArqueos.map(item=>{
-            let obj = {
-                detalleArqueoCaja: {
-                    idMoneda: item.idMoneda,
-                    cantidad: item.cantidad
-                },
-                descripcionMoneda: item.descripcionMonedad,
-                valorMoneda: item.valor            
-            }            
-            return obj;
+        console.log(this)
+        this._mS.getData('get', '/ControlCaja/GetArqueoCaja?json=' + JSON.stringify({idUsuarioRol: 0})).then(resopnse=>{
+            console.log(resopnse)
+            if(resopnse.code==="0"){
+                console.log(resopnse)
+            }
+            if(resopnse.code==="1"){
+                this.arqueos = JSON.parse(resopnse.payload) || []
+                console.log(this.arqueos)
+            }
         })
+
+        // let tempArqueos = [{"idMoneda":1,"cantidad":0,"valor":100.00,"descripcionMonedad":"Billetes de $100"},{"idMoneda":2,"cantidad":0,"valor":50.00,"descripcionMonedad":"Billetes de $50"},{"idMoneda":3,"cantidad":0,"valor":20.00,"descripcionMonedad":"Billetes de $20"},{"idMoneda":4,"cantidad":0,"valor":10.00,"descripcionMonedad":"Billetes de $10"},{"idMoneda":5,"cantidad":0,"valor":5.00,"descripcionMonedad":"Billetes de $5"},{"idMoneda":6,"cantidad":0,"valor":1.00,"descripcionMonedad":"Billetes de $1"},{"idMoneda":7,"cantidad":0,"valor":1.00,"descripcionMonedad":"Monedas de $1"},{"idMoneda":8,"cantidad":0,"valor":0.50,"descripcionMonedad":"Monedas de ¢0.50"},{"idMoneda":9,"cantidad":0,"valor":0.25,"descripcionMonedad":"Monedas de ¢0.25"},{"idMoneda":10,"cantidad":0,"valor":0.10,"descripcionMonedad":"Monedas de ¢0.10"},{"idMoneda":11,"cantidad":0,"valor":0.05,"descripcionMonedad":"Monedas de ¢0.05"},{"idMoneda":12,"cantidad":0,"valor":0.01,"descripcionMonedad":"Monedas de ¢0.01"}]
+
+        // this.arqueos = tempArqueos.map(item=>{
+        //     let obj = {
+        //         detalleArqueoCaja: {
+        //             idMoneda: item.idMoneda,
+        //             cantidad: item.cantidad
+        //         },
+        //         descripcionMoneda: item.descripcionMonedad,
+        //         valorMoneda: item.valor            
+        //     }            
+        //     return obj;
+        // })
         
     }
 
     calcularCantidadMoneda() {            
-        this.totalArqueo =  this.arqueos.map(val=>val.valorMoneda * Number(val.detalleArqueoCaja.cantidad))
+        this.totalArqueo =  this.arqueos.map(val=>val.valor * Number(val.cantidad))
                                             .reduce((acc, curr)=>acc + curr, 0);                                                          
     }
 
     
 
     async guardarCierreCaja(){
-        if(this.arqueos.some(val=>isNaN(val.detalleArqueoCaja.cantidad))){
+        if(this.arqueos.some(val=>isNaN(val.cantidad))){
             Swal.fire({
                 icon:'warning',
                 title:'<small>Cierre de Caja</small>',
@@ -581,24 +605,66 @@ export class ModalCierreCajaCtrl{
         
         if(isConfirmed){
             const data ={
-                totalArqueo: JSON.stringify(this.totalArqueo),
-                detalle: JSON.stringify(this.arqueos.map(item=>(item.detalleArqueoCaja))),
-                idControlCaja: this._params.idControlCaja
+                spParams: JSON.stringify({
+                    totalArqueo: JSON.stringify(this.totalArqueo),
+                    detalle: JSON.stringify(this.arqueos),
+                    idUsuarioRol: Number(this.decodeToken.idUsuarioRol),          
+                })
             }                      
 
-            this._mS.getData('put','/ControlCaja/Update?id=' + data.idControlCaja, data).then(response=>{                
+            this._mS.getData('put','/ControlCaja/Update?id=' + this._params.idControlCaja, data).then(response=>{                
                 if(response.code==="0"){
                     toastr.warning(response.message, response.titleSms);
                     return
                 }
                 if(response.code==="1"){
+                    let dataMail = JSON.parse(response.payload) || {};
                     toastr.success(response.message, response.titleSms);
-                    this.$uibModalInstance.close(response);
+                    
+                    console.log(!dataMail.receptor)
+                    if(dataMail.receptor){
+                        this.sendEmail(dataMail)
+                    }
+
+                   
+                    // this.$uibModalInstance.close(response);
                 }
 
             })
 
         }
+    }
+
+
+    sendEmail(dataMail){
+        const data = {
+            subject: 'Movimiento Caja',
+            idUsuarioRol: this.decodeToken.idUsuarioRol,
+            receptor: dataMail.receptor,  
+            params: {                                    
+                hasFile: true, 
+                isReport: "SI", 
+                reportParams: {
+                    codEstab: dataMail.codEstab, 
+                    codigo: "RCC", 
+                    format: "pdf"
+                }, 
+                spParams: {
+                    idUsuarioRol: this.decodeToken.idUsuarioRol,
+                    id: this._params.idControlCaja
+                }
+            }
+        }
+        this._mS.getData('post',  '/Notificacion/Post?json='  + JSON.stringify(data)).then(response=>{
+            console.log(response);
+            // if(response.code==="0"){
+            //     this._form.sweetAlert('warning', response.message, response.titleSms);                
+            // }
+            // if(response.code==="1"){
+            //     this._form.sweetAlert('success', response.message, response.titleSms, 1000);
+            //     this.$uibModalInstance.close(response)
+            // }
+        })
     }
 
     // sendEmail(){

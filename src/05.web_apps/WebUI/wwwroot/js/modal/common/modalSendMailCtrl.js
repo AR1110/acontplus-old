@@ -106,7 +106,7 @@ export class SendMailCtrl{
             
             
             this._mS.getData('post', url + JSON.stringify(data)).then(response=>{  
-                console.log(response)              
+                          
                 if(response.code==="0"){
                     this._form.sweetAlert('warning', response.message, response.titleSms);                
                 }

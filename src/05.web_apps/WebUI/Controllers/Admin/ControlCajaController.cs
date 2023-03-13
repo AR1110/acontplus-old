@@ -67,11 +67,18 @@ namespace WebUI.Controllers.Admin
         public async Task<IActionResult> Update(int id,[FromBody] ControlCaja data)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
             parameters.Add("id", id);
-            parameters.Add("totalArqueo", data.totalArqueo);
-            parameters.Add("json", data.detalle);
+            parameters.Add("spParams", data.spParams);
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Administrador.ControlCaja_Update", parameters)));
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetArqueoCaja(string json)
+        {
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            parameters.Add("json", SqlValidation.ValidateSqlString(json));
+            return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Administrador.DetalleArqueo_Get", parameters)));
         }
 
         public async Task<IActionResult> Download([FromBody] ApiReportParams parameters)
