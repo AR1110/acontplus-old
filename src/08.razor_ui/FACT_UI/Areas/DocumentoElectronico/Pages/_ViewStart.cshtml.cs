@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace FACT_UI.Areas.MyFeature.Pages.Shared
+namespace FACT_UI.Areas.MyFeatureDoc.Pages
 {
-    public class _FacturaModalModel : PageModel
+    public class _ViewStartModel : PageModel
     {
         public void OnGet()
         {

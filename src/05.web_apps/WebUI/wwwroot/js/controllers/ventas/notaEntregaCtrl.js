@@ -29,6 +29,10 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
     $scope.notaEntregas = [];
 
 
+    $scope.isPrintDocument = false; //Para impresiones termicas al registra el documento 
+    $scope.parametersPrint = {};
+
+
 
     $scope.getTotales = function () {
         try {
@@ -154,29 +158,28 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
             
             if(typeof result !=='object') return                
             
-            $scope.getNotaEntregas();
+            // $scope.getNotaEntregas();
 
-            let parameters = {}
+            $scope.isPrintDocument = true;
             if(result.TIPO_DOC.codigo==="FV"){
-                parameters = {
+                $scope.parametersPrint = {
                     ...result.data,
                     idDocument: result.data.id,
                     codigo: 'RFPT',
                 };
             }else{
-                parameters = {
+                $scope.parametersPrint = {
                     ...result.data,
                     idDocument: result.data.id,
                     codigo: 'RNEPT',
                 }
             }
-            console.log(parameters);
 
-            _commonSvc.askToReportII({
-                parameters: JSON.stringify(parameters)
-            })   
-
-                                              
+            if(result.data.esContado){
+                $scope.openModalRapido(result)
+            }else{
+                $scope.openModalCobroDocumento(result)
+            }                                                
         })
     }
    
@@ -457,10 +460,17 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
         })
 
         $modalRef.result.then(result=>{
-            if(typeof result !=='object') return
 
-            $scope.getNotaEntregas();
+            if($scope.isPrintDocument){
+                $scope.getNotaEntregas()
+                _commonSvc.askToReportII({
+                    parameters: JSON.stringify($scope.parametersPrint)
+                }) 
+            }
 
+            if(typeof result =='object') {
+                $scope.getNotaEntregas();
+            }
         })
     }  
 

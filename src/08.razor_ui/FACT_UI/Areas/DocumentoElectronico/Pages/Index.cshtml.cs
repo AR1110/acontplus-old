@@ -1,7 +1,7 @@
-using Microsoft.AspNetCore.Mvc;
+
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace FACT_UI.Areas.MyFeature
+namespace FACT_UI.Areas.DocumentoElectronico.Pages
 {
     public class IndexModel : PageModel
     {

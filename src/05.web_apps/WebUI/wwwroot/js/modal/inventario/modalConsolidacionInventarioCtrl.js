@@ -1314,3 +1314,23 @@ export class ModalConsolidacionDetalleCtrl extends ModalConsolidacionCtrl{
 }
 
 
+
+
+export class ModalConsolidacionFiltroCtrl extends ModalBaseCtrl {
+    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'toastService', 'formulario', 'params']
+    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc,  _tS, _fS, _params){
+        super({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _tS, _fS, _params})
+        
+    }
+
+
+    $onInit(){
+        console.log(this)
+    }
+
+
+    closeModal(){
+        this.$uibModalInstance.close()
+    }
+}
+

@@ -34,8 +34,8 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
     $scope.mes = new Date().getMonth() + 1;
 
 
-    $scope.isPrint = false; //Para impresiones termicas al registra el documento 
-
+    $scope.isPrintDocument = false; //Para impresiones termicas al registra el documento 
+    $scope.parametersPrint = {};
 
     $scope.getTotales = () => {
         let total = 0, totalAbono = 0, totalSaldo = 0;
@@ -121,19 +121,19 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
             
             if(typeof result !=='object') return                
             
-            $scope.getFacturas();
-
-            let parameters = {
+            // $scope.getFacturas();
+            $scope.isPrintDocument = true;
+            $scope.parametersPrint = {
                 ...result.data,
                 idDocument: result.data.id,
-                codigo: 'RFPT',
-            }           
-            console.log(parameters)
-            _commonSvc.askToReportII({
-                parameters: JSON.stringify(parameters)
-            })   
+                codigo: 'RFPT', 
+            }
 
-                                              
+            if(result.data.esContado){
+                $scope.openModalRapido(result)
+            }else{
+                $scope.openModalCobroDocumento(result)
+            }                                          
         })
     }
 
@@ -287,19 +287,22 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
                 params,
                 windowClass: 'uibModalFullScreen'
             }).result.then(result=>{  
+
                 if(typeof result !=='object') return                
             
-                $scope.getFacturas();
-
-                let parameters = {
+                // $scope.getFacturas();
+                $scope.isPrintDocument = true;
+                $scope.parametersPrint = {
                     ...result.data,
                     idDocument: result.data.id,
-                    codigo: 'RFPT',
-                };
-
-                _commonSvc.askToReportII({
-                    parameters: JSON.stringify(parameters)
-                })                                                 
+                    codigo: 'RFPT', 
+                }
+    
+                if(result.data.esContado){
+                    $scope.openModalRapido(result)
+                }else{
+                    $scope.openModalCobroDocumento(result)
+                }                                                                    
             })
             
         } catch (error) {
@@ -483,9 +486,21 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
         })
 
         $modalRef.result.then(result=>{
-            if(typeof result !=='object') return
 
-            $scope.getFacturas();
+            //Cuando el documento es Nuevo o Duplicado 
+            if($scope.isPrintDocument){
+                $scope.getFacturas();
+                _commonSvc.askToReportII({
+                    parameters: JSON.stringify($scope.parametersPrint)
+                }) 
+                $scope.isPrintDocument= false;
+            }
+
+            if(typeof result =='object') {
+                $scope.getFacturas();
+            }
+
+           
 
         })
     }  

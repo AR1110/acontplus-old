@@ -14,5 +14,8 @@ BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
 
-	SELECT mainDs = (SELECT test='Open Money Box' FOR JSON PATH)
+	--DECLARE @mainDs VARCHAR(100)
+
+	--SET @mainDs = (SELECT test='Open Money Box' FOR JSON PATH)
+
 END 
