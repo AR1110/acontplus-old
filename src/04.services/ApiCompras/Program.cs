@@ -38,10 +38,19 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+else
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.UseHttpsRedirection();
 
+app.UseCors();
+
 app.UseAuthorization();
+
+app.UseMiddleware<JWTMiddleware>();
 
 app.MapControllers();
 
