@@ -15,16 +15,12 @@
 
   <ItemGroup>
     <Compile Remove="Views\ComprobanteImportacion\**" />
-    <Compile Remove="Views\DocumentoElectronico\**" />
     <Compile Remove="wwwroot\lib\angular-toastr\**" />
     <Content Remove="Views\ComprobanteImportacion\**" />
-    <Content Remove="Views\DocumentoElectronico\**" />
     <Content Remove="wwwroot\lib\angular-toastr\**" />
     <EmbeddedResource Remove="Views\ComprobanteImportacion\**" />
-    <EmbeddedResource Remove="Views\DocumentoElectronico\**" />
     <EmbeddedResource Remove="wwwroot\lib\angular-toastr\**" />
     <None Remove="Views\ComprobanteImportacion\**" />
-    <None Remove="Views\DocumentoElectronico\**" />
     <None Remove="wwwroot\lib\angular-toastr\**" />
   </ItemGroup>
 

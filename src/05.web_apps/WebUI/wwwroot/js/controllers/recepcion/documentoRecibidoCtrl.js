@@ -257,7 +257,7 @@
                 }).then(function () {
                     console.log('Confirm')
                 })
-                
+
                 if ($scope.selected[0].complete) {
                     document.getElementById("btnDelete").style.display = "none";
                 }
@@ -275,7 +275,7 @@
                     event.preventDefault()
                 }
                 document.getElementById("btnDocRel").onclick = function (event) {
-                    $scope.getDocsMerge()
+                    $scope.getMergedDocs()
                     event.preventDefault()
                 }
             }
@@ -284,6 +284,34 @@
                 tS.toastr('warning', 'Recuerde no haber modificado el archivo de texto descargado del SRI')
                 $('#newImportModal').modal('show')
             }
+
+            $scope.mergedDocs = []
+            $scope.getMergedDocs = (item) => {
+                try {
+                    $scope.mergedDocs = []
+                    let data = {
+                        tipo: 3,
+                        claveAcceso: item.claveAcceso
+                    }
+                    mS.getData('get', _urlService + 'DocumentoRecibido/Get/' + JSON.stringify(data)).then(
+                        response => {
+                            if (response.code == '0') {
+                                tS.toastr('warning', response.message)
+                            }
+                            if (response.code == '01') {
+                                let arrTemp = JSON.parse(response.payload)
+                                $scope.mergedDocs = arrTemp
+                                $('#docRelModal').modal('show')
+                            }
+                        }
+                    ).catch(error => {
+                        console.log(error)
+                    })
+                } catch (error) {
+                    console.log(error)
+                }
+            }
+
 
             $scope.post = function () {
                 try {
