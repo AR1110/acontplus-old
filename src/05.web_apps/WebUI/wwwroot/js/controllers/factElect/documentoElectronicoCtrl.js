@@ -343,7 +343,7 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
         })
 
         if (isConfirmed) {
-            _mS.getData('put', 'DocumentoElectronico/' + item.idDocumentoElectronico).then(response => {
+            _mS.getData('put', 'DocumentoElectronico/' + item.idDocumentoElectronico, null, true).then(response => {
                 if (response.code === '0') {
                     _tS.toastr('warning', response.message, response.titleSms);
                 }

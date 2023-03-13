@@ -1,4 +1,7 @@
-﻿@{
+﻿@page
+@model FACT_UI.Areas.RetencionAts.Pages.IndexModel
+@{
+    @RouteData.Values["id"]
     ViewData["Title"] = "Index";
 }
 
@@ -127,11 +130,11 @@
         </div>
     </div>
     <!-- END MODALS -->
-    @await Html.PartialAsync("/Views/DocumentoRecibido/_FacturaPreview.cshtml")
+    @await Html.PartialAsync("~/Areas/DocumentoRecibido/Pages/Shared/_FacturaPreview.cshtml")
     <input type="text" name="idDocumentoElectronico" id="idDocumentoElectronico" value="@ViewData["ID"]" hidden />
     <input type="text" name="urlGateway" id="urlGateway" value="@ViewData["urlGateway"]" hidden />
 </div>
 
 @section Scripts {
-    <script src="~/js/controllers/factElect/retencionAtsCtrl.js" asp-append-version="true"></script>
+    <script src="~/js/controllers/factElect/retencionAtsCtrl.min.js" asp-append-version="true"></script>
 }

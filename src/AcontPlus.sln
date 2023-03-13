@@ -89,7 +89,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WS_Authorizer", "07.worker_
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Logs", "01.common\Common.Logs\Common.Logs.csproj", "{9FB1E826-AE16-41A9-B3C8-D4AD22620CFE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Recepcion_UI", "08.razor_ui\Recepcion_UI\Recepcion_UI.csproj", "{4F736207-35EB-49DB-A81A-B91C2ECB6007}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Recepcion_UI", "08.razor_ui\Recepcion_UI\Recepcion_UI.csproj", "{4F736207-35EB-49DB-A81A-B91C2ECB6007}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
