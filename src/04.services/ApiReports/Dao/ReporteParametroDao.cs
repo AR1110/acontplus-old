@@ -66,8 +66,8 @@ namespace ApiReports.Dao
             DataSet ds = new DataSet();
             try
             {
-                var cmd = new SqlCommand(storedProcedure, con); //PROCEDIMIENTO DE REPORTE DINAMICO
-                cmd.Parameters.AddWithValue("json", jsonData); //PARAMETROS DINAMICOS parameters: {}
+                var cmd = new SqlCommand(storedProcedure, con);
+                cmd.Parameters.AddWithValue("json", jsonData);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.CommandTimeout = 0;
                 con.Open();
