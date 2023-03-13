@@ -8,12 +8,10 @@ namespace WebUI.Controllers
     {
         private readonly IConfiguration _config;
         private readonly string _connectionStrings = string.Empty;
-        GenericResponse _gr = new();
-        private TestDao _t;
+        GenericResponse _gr = new(); 
         public TestController(IConfiguration config)
         {
             _config = config;
-            _t = new TestDao(_config);
         }
         public IActionResult Index()
         {

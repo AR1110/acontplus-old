@@ -13,7 +13,6 @@ namespace WebUI.Controllers.Ventas
     {
         private NotaCreditoDao _nc;
         private GenericResponse _gr = new(); 
-        public AuthorizationDto _auth;
         private IConfiguration _config;
         private readonly IHttpContextAccessor _httpContextAccessor; ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
@@ -22,7 +21,6 @@ namespace WebUI.Controllers.Ventas
 
         public NotaCreditoClienteController(IConfiguration config, IHttpContextAccessor httpContextAccessor)
         {
-            _auth = new AuthorizationDto();
             _config = config;
             _dao = new DataAccessObject(_config);
             _nc = new NotaCreditoDao(_config);
