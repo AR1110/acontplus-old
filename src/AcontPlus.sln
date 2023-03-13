@@ -89,6 +89,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WS_Authorizer", "07.worker_
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Logs", "01.common\Common.Logs\Common.Logs.csproj", "{9FB1E826-AE16-41A9-B3C8-D4AD22620CFE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Recepcion_UI", "08.razor_ui\Recepcion_UI\Recepcion_UI.csproj", "{4F736207-35EB-49DB-A81A-B91C2ECB6007}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -235,6 +237,10 @@ Global
 		{9FB1E826-AE16-41A9-B3C8-D4AD22620CFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9FB1E826-AE16-41A9-B3C8-D4AD22620CFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9FB1E826-AE16-41A9-B3C8-D4AD22620CFE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F736207-35EB-49DB-A81A-B91C2ECB6007}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F736207-35EB-49DB-A81A-B91C2ECB6007}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F736207-35EB-49DB-A81A-B91C2ECB6007}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F736207-35EB-49DB-A81A-B91C2ECB6007}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -275,6 +281,7 @@ Global
 		{CFDC334A-5BBA-4DD1-B34D-797696669150} = {92E9DECD-35CF-45AB-9EB4-715AC1FA0941}
 		{C9D21C8F-F423-4BC3-8637-5278A95B8109} = {92E9DECD-35CF-45AB-9EB4-715AC1FA0941}
 		{9FB1E826-AE16-41A9-B3C8-D4AD22620CFE} = {A5715418-3798-4953-A6E5-90054D652FE6}
+		{4F736207-35EB-49DB-A81A-B91C2ECB6007} = {79F40397-A77A-42D3-9A26-12016AC04CB9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BA9DF437-2C4E-4B51-A33F-8A6B93E9A018}

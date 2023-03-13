@@ -1198,10 +1198,6 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Update="Views\DocumentoRecibido\Index.cshtml">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
     <Content Update="wwwroot\assets\icons\crypto-icons\cryptocoins-colors.css">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
@@ -4234,6 +4230,7 @@
     <ProjectReference Include="..\..\02.domain\Domain\Domain.csproj" />
     <ProjectReference Include="..\..\03.business_logic\BL.FactElect\BL.FactElect.csproj" />
     <ProjectReference Include="..\..\08.razor_ui\FACT_UI\FACT_UI.csproj" />
+    <ProjectReference Include="..\..\08.razor_ui\Recepcion_UI\Recepcion_UI.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -4241,11 +4238,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <UpToDateCheckInput Remove="Views\DocumentoRecibido\_FacturaPreview.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Views\DocumentoRecibido\_FacturaPreview.cshtml" />
     <_ContentIncludedByDefault Remove="wwwroot\js\env.js" />
   </ItemGroup>
 

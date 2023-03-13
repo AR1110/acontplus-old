@@ -245,6 +245,7 @@
                                 <button type="button" id="btnImportar" class="btn btn-info btn-sm" title="Importar Comprobante"><i class="ti-upload"></i> Visualizar</button>
                                 <button type="button" id="btnGetXml" class="btn btn-success btn-sm" title="Actualizar Xml Sri"><i class="ti-download"></i> Actualizar Xml</button>
                                 <button type="button" id="btnDelete" class="btn btn-danger btn-sm" title="Eliminar"><i class="ti-trash"></i> Eliminar</button>
+                                <button type="button" id="btnDocRel" class="btn btn-primary btn-sm" title="Documentos relacionados"><i class="fa fa-link"></i> Docs. Rel.</button>
                             </div>`,
                     showCancelButton: true,
                     showConfirmButton: false,
@@ -256,30 +257,27 @@
                 }).then(function () {
                     console.log('Confirm')
                 })
-                //if ($scope.selected[0].hasXml) {
-                //    document.getElementById("btnGetXml").style.display = "none";
-                //}
+                
                 if ($scope.selected[0].complete) {
                     document.getElementById("btnDelete").style.display = "none";
                 }
                 document.getElementById("btnImportar").onclick = function (event) {
-                    // if ($scope.selected[0].comprobante != 'Factura') {
-                    //     Swal.fire({ title: "Info", text: "Documento aun no disponible, para importar" })
-                    //     return
-                    // }
                     $scope.getId()
                     Swal.close()
                     event.preventDefault()
                 }
-
                 document.getElementById("btnGetXml").onclick = function (event) {
                     $scope.putXml()
                     event.preventDefault()
-                };
+                }
                 document.getElementById("btnDelete").onclick = function (event) {
                     $scope.askToDelete()
                     event.preventDefault()
-                };
+                }
+                document.getElementById("btnDocRel").onclick = function (event) {
+                    $scope.getDocsMerge()
+                    event.preventDefault()
+                }
             }
 
             $scope.newImport = function () {
@@ -1595,7 +1593,7 @@
                 if ($scope.detailValid()) {
                     let message = '', title = ''
                     if ($scope.tempDetail.some(item => (["", 0, null, undefined, "0"].includes(item.idArticulo)))) {
-                        message = `<table class="table table-bordered"><caption class="text-danger">Articulos No Vinculados</caption><thead><tr class="small"><th>Cod</th><th>Descripción</th></tr></thead><tbody>`
+                        message = `<table class="table table-bordered"><thead><tr class="small"><th>Cod</th><th>Descripción</th></tr></thead><tbody>`
                         for (const art of $scope.tempDetail) {
                             if (!art.idArticulo || art.idArticulo == 0) {
                                 message += `<tr class="small"><td>${art.codigoPrincipal}</td><td>${art.descripcion}</td></tr>`

@@ -1,22 +1,20 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Configuration;
 
-namespace WebUI.Controllers.Recepcion
+namespace Recepcion_UI.Areas.DocumentoRecibido.Pages
 {
-    [Authorize]
-    public class DocumentoRecibidoController : Controller
+    public class IndexModel : PageModel
     {
         private IConfiguration _configuration;
         private readonly string _apiGateway = string.Empty;
-        public DocumentoRecibidoController(IConfiguration configuration)
+        public IndexModel(IConfiguration configuration)
         {
             _configuration = configuration;
             _apiGateway = _configuration.GetSection("UrlApis").GetSection("ApiGateway").Value;
         }
-        public IActionResult Index()
+        public void OnGet()
         {
             ViewData["urlGateway"] = _apiGateway;
-            return View();
         }
     }
 }
