@@ -286,3 +286,5 @@
 /src/07.worker_services/WS_Notificacion/bin/Release/net6.0
 /src/08.razor_ui/Recepcion_UI/bin
 /src/08.razor_ui/Recepcion_UI/obj
+/src/08.razor_ui/Compra_UI/bin
+/src/08.razor_ui/Compra_UI/obj
