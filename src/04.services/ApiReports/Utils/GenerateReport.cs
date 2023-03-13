@@ -37,7 +37,14 @@ namespace ApiReports.Utils
                 DataSet ds = new DataSet();
                 foreach (DataRow row in reportData.Rows)
                 {
-                    ds = _rp.GetDataToReport(data.idRol, row["storedProcedure"].ToString(), jsonData);
+                    if (data.hasService)
+                    {
+                        ds = _rp.GetDataToReport(row["storedProcedure"].ToString(), jsonData);
+                    }
+                    else
+                    {
+                        ds = _rp.GetDataToReport(data.idRol, row["storedProcedure"].ToString(), jsonData);
+                    }
                     if (ds.Tables.Count > 0)
                     {
                         lr.ReportPath = System.Web.Hosting.HostingEnvironment.MapPath("~/Reports/" + row["reportPath"].ToString());

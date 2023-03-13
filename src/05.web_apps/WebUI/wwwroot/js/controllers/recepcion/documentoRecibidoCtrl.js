@@ -1724,8 +1724,11 @@
                 }
             }
 
-        }
+            $scope.refresh = () => {
+                $scope.getComprobantes()
+            }
 
+        }
     }
 
 )(window.angular)
