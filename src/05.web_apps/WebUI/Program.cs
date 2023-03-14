@@ -14,12 +14,18 @@ namespace testWebApi
             //dynamic origins
             string[] origins = builder.Configuration.GetSection("SafeOrigins").Value.Split('|');
             //for mor information https://docs.microsoft.com/en-us/aspnet/core/mvc/views/view-compilation?view=aspnetcore-6.0&tabs=visual-studio
-            //var mvcBuilder = builder.Services.AddRazorPages();
 
-            //if (builder.Environment.IsDevelopment())
-            //{
-            //    mvcBuilder.AddRazorRuntimeCompilation();
-            //}
+            var mvcBuilder = builder.Services.AddRazorPages();
+            var mvcCtlrViews = builder.Services.AddControllersWithViews();
+            if (!builder.Environment.IsDevelopment())
+            {
+                mvcBuilder.AddRazorRuntimeCompilation();
+                mvcCtlrViews.AddRazorRuntimeCompilation();
+            }
+            else
+            {
+                builder.Services.AddControllersWithViews();
+            }
 
             builder.Services.AddCors(options =>
             {
@@ -33,8 +39,7 @@ namespace testWebApi
             });
 
             // Add services to the container.
-            builder.Services.AddControllersWithViews();
-            builder.Services.AddRazorPages();//.AddRazorRuntimeCompilation();
+            //builder.Services.AddRazorPages();//.AddRazorRuntimeCompilation();
             //SignalR
             builder.Services.AddSignalR();
 
