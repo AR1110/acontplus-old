@@ -754,7 +754,7 @@
                                     $scope.provCliente.ruc = $scope.infoTributaria.ruc
                                     $scope.provCliente.dirMatriz = $scope.infoTributaria.dirMatriz
 
-                                    $scope.modalRef = modalService.openModalSecond(
+                                    $scope.modalRef = modalService.openModalCustom(
                                         {
                                             template: '~/Areas/DocumentoRecibido/Pages/Shared/_ModalComprobante.cshtml',
                                             size: 'xl',
@@ -865,7 +865,7 @@
                                 document.getElementById('idTipoIdentificacionProv').removeAttribute('disabled')
                             }
                             console.log($scope.arraysProvClient)
-                            $scope.modalRefProv = modalService.openModalSecond({
+                            $scope.modalRefProv = modalService.openModalCustom({
                                 template: '~/Areas/DocumentoRecibido/Pages/Shared/_CompImpProveedor.cshtml',
                                 size: 'xl',
                                 windowClass: 'uibModalFullScreen',
@@ -1082,14 +1082,13 @@
                     // }
                     $scope.searchArticle()
 
-                    $scope.modalRefArtMerg = modalService.openModalSecond({
+                    $scope.modalRefArtMerg = modalService.openModalCustom({
                         template: '~/Areas/DocumentoRecibido/Pages/Shared/_ModalArticuloMerge.cshtml',
                         size: 'xl',
                         windowClass: 'uibModalFullScreen',
                         scope: $scope,
                         isRenderRazorPartial: true
-                    }
-                    )
+                    })
 
                     $scope.modalRefArtMerg.result.then(res => {
 
@@ -1114,7 +1113,12 @@
 
                     const { articulo } = nameModalConst;
                     const { ModalArticuloCtrl } = await import('../../modal/' + articulo.MODAL_CTRL)
-                    const modalRef = modalService.openModalSecond(ModalArticuloCtrl, 'Articulo/' + articulo.MODAL_NUEVO_CSHTML, 'xl', dataNew)
+                    const modalRef = modalService.openModalCustom({
+                        controller: ModalArticuloCtrl,
+                        template: 'Articulo/' + articulo.MODAL_NUEVO_CSHTML,
+                        size: 'xl',
+                        params: dataNew
+                    })
                     modalRef.result.then(response => {
                         if (typeof (response) == "object") {
                             $scope.idArticulo = response.idArticulo;
@@ -1236,7 +1240,14 @@
                         response => {
                             if (response.code == '1') {
                                 $scope.articleHistory = JSON.parse(response.payload)
-                                $scope.modalRefArticleHistory = modalService.openModalSecond(null, '~/Areas/DocumentoRecibido/Pages/Shared/_ArticleHistory.cshtml', 'xl', null, true, 'uibModalFullScreen', $scope)
+                                $scope.modalRefArticleHistory = modalService.openModalCustom({
+                                    template: '~/Areas/DocumentoRecibido/Pages/Shared/_ArticleHistory.cshtml',
+                                    size: 'xl',
+                                    windowClass: 'uibModalFullScreen',
+                                    scope: $scope,
+                                    isRenderRazorPartial: true
+                                }
+                                )
 
                                 $scope.modalRefArticleHistory.result.then(res => {
 
@@ -1365,13 +1376,13 @@
 
                     let { MODAL_FILE_CTRL, MODAL_HISTORIAL_COMPRA } = nameModalConst.doc_recibido;
                     let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_HISTORIAL_COMPRA['controller']];
-                    let template = MODAL_HISTORIAL_COMPRA['template'];
 
                     modalService.openModalCustom({
-                        controller,
-                        template,
+                        controller: controller,
+                        template: '~/Areas/DocumentoRecibido/Pages/Shared/_HistoryCompras.cshtml',
                         size: 'xl',
-                        params: item
+                        params: item,
+                        isRenderRazorPartial: true
                     })
 
                     //$scope.articleName = item.descripcion
