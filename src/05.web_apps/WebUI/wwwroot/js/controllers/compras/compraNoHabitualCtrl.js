@@ -40,7 +40,7 @@ function compraNoHabitualCtrl($scope, commonSvc, mS, tS, modalSvc, nombreModal){
         console.log(MODAL_FILE_PATH)
         let modalParms = {
             controller: (await import('./../../' + MODAL_FILE_PATH))[MODAL_NUEVO['controller']],
-            template:  '~/Areas/CompraNoHabitual/Pages/_ModalNuevo.cshtml',
+            template:  MODAL_NUEVO['template'],
             params: {
                 data: {}
             },
