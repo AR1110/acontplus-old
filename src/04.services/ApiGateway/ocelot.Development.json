@@ -7,8 +7,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8094
+          "Host": "localhost",
+          "Port": 5415
         }
       ],
       "HttpHandlerOptions": {

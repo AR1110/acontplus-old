@@ -18,7 +18,7 @@ namespace ApiContabilidad.Controllers
         }
 
         // GET: api/<CuentaPorPagarController>
-        [HttpGet]
+        [HttpGet("{json}")]
         public async Task<IActionResult> Get(string json)
         {
             LogWriter _log = new LogWriter(_configuration);
@@ -37,13 +37,6 @@ namespace ApiContabilidad.Controllers
                 _log.LogError("Error on Cuenta Por Pagar -> Get: \n" + ex.ToString());
                 return BadRequest(ex.Message);
             }
-        }
-
-        // GET api/<CuentaPorPagarController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
         }
 
         // POST api/<CuentaPorPagarController>

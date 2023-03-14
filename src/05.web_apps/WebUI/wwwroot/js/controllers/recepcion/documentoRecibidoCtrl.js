@@ -754,7 +754,14 @@
                                     $scope.provCliente.ruc = $scope.infoTributaria.ruc
                                     $scope.provCliente.dirMatriz = $scope.infoTributaria.dirMatriz
 
-                                    $scope.modalRef = modalService.openModalSecond(null, 'DocumentoRecibido/_ModalComprobante.cshtml', 'xl', null, true, 'uibModalFullScreen', $scope)
+                                    $scope.modalRef = modalService.openModalSecond(
+                                        {
+                                            template: '~/Areas/DocumentoRecibido/Pages/Shared/_ModalComprobante.cshtml',
+                                            size: 'xl',
+                                            windowClass: 'uibModalFullScreen',
+                                            scope: $scope,
+                                            isRenderRazorPartial: true
+                                        })
 
                                     $scope.modalRef.result.then(res => {
                                         $scope.resetMainModal()
@@ -858,7 +865,13 @@
                                 document.getElementById('idTipoIdentificacionProv').removeAttribute('disabled')
                             }
                             console.log($scope.arraysProvClient)
-                            $scope.modalRefProv = modalService.openModalSecond(null, 'DocumentoRecibido/_CompImpProveedor.cshtml', 'xl', null, true, 'uibModalFullScreen', $scope)
+                            $scope.modalRefProv = modalService.openModalSecond({
+                                template: '~/Areas/DocumentoRecibido/Pages/Shared/_CompImpProveedor.cshtml',
+                                size: 'xl',
+                                windowClass: 'uibModalFullScreen',
+                                scope: $scope,
+                                isRenderRazorPartial: true
+                            })
 
                             $scope.modalRefProv.result.then(res => {
 
@@ -1069,7 +1082,14 @@
                     // }
                     $scope.searchArticle()
 
-                    $scope.modalRefArtMerg = modalService.openModalSecond(null, 'DocumentoRecibido/_ModalArticuloMerge.cshtml', 'xl', null, true, 'uibModalFullScreen', $scope)
+                    $scope.modalRefArtMerg = modalService.openModalSecond({
+                        template: '~/Areas/DocumentoRecibido/Pages/Shared/_ModalArticuloMerge.cshtml',
+                        size: 'xl',
+                        windowClass: 'uibModalFullScreen',
+                        scope: $scope,
+                        isRenderRazorPartial: true
+                    }
+                    )
 
                     $scope.modalRefArtMerg.result.then(res => {
 
@@ -1216,7 +1236,7 @@
                         response => {
                             if (response.code == '1') {
                                 $scope.articleHistory = JSON.parse(response.payload)
-                                $scope.modalRefArticleHistory = modalService.openModalSecond(null, 'DocumentoRecibido/_ArticleHistory.cshtml', 'xl', null, true, 'uibModalFullScreen', $scope)
+                                $scope.modalRefArticleHistory = modalService.openModalSecond(null, '~/Areas/DocumentoRecibido/Pages/Shared/_ArticleHistory.cshtml', 'xl', null, true, 'uibModalFullScreen', $scope)
 
                                 $scope.modalRefArticleHistory.result.then(res => {
 

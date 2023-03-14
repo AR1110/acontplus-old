@@ -28,13 +28,14 @@
 
         $scope.initialLoad = () => {
             try {
-                _mS.getData('get', 'CuentaPorPagar?json=' + JSON.stringify({ tipo: 1 }), null, true).then((result) => {
+                _mS.getData('get', 'CuentaPorPagar/' + JSON.stringify({ tipo: 1 }), null, true).then((response) => {
                     if (response.code == '0') {
                         _tS.toastr('warning', response.message)
                     }
                     if (response.code == '1') {
                         _tS.toastr('success', response.message)
                         $scope.cuenntasPorPagar = JSON.parse(response.payload)
+                        console.log($scope.cuenntasPorPagar)
                     }
                 }).catch((error) => {
                     console.log(error)
