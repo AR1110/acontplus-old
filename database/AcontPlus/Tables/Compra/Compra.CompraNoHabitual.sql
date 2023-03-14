@@ -1,7 +1,6 @@
-USE [AcontPlus]
-GO
 
-IF OBJECT_ID('Compra.CompraNoHabitual', 'U') IS NOT NULL
+
+IF OBJECT_ID(N'Compra.CompraNoHabitual', N'U') IS NOT NULL
 	DROP TABLE Compra.CompraNoHabitual
 GO
 
@@ -10,51 +9,30 @@ CREATE TABLE Compra.CompraNoHabitual (
 	,uniqueId VARCHAR(150) UNIQUE NOT NULL
 	,idEntidad INT NOT NULL
 	,idTiempoCredioto INT NOT NULL
-	,idTipoDocumento INT NOT NULL
+	,idTipoDocumento INT NULL
 	,idEstablecimiento INT NOT NULL
-	,idPuntoEmision INT NOT NULL	
+	,idPuntoEmision INT NOT NULL
+	,idProveedor INT NOT NULL
 	,estab VARCHAR(5) NOT NULL
 	,ptoEmi VARCHAR(5) NOT NULL
 	,fechaEmision DATETIME NOT NULL
 	,fechaVencimiento DATETIME NOT NULL
 	,secuencial INT NOT NULL
 	,totalSinImpuestos DECIMAL(15,5)
-	,importeTotal DECIMAL(15,5)
-	,abono DECIMAL(15,5)
-	,saldo as CAST(importeTotal - abono AS DECIMAL(15,5))
+	,importeTotal DECIMAL(15,5)	
 	,estado bit 
+	,fechaRegistro DATETIME NOT NULL
+	,idUsuario INT NULL
 )
 
+
+
+IF OBJECT_ID(N'Compra.CompraNoHabitualDetalle', N'U') IS NOT NULL
+	DROP TABLE Compra.CompraNoHabitualDetalle
+GO
 CREATE TABLE Compra.CompraNoHabitualDetalle(
-	idCompraNoHabitualDetalle INT IDENTITY(1,1) NOT NULL PRIMARY KEY
-)
-
-
-DECLARE @secuencial VARCHAR(MAX)
-
-DECLARE @Entrada AS TABLE(
-	 idEntrada INT 
-	,uniqueId VARCHAR(150) UNIQUE --'C-2022-0000004'
-	,idTiempoCredioto INT
-	,idTipoDocumento INT
-	,idEstablecimiento INT
-	,idPuntoEmision INT
-	,idCategoriaCompra INT
-	,estab VARCHAR(5)
-	,fechaEmision DATETIME 
-	,fechaVencimiento DATETIME
-	,ptoEmi VARCHAR(5)
-	,secuencial INT
-	,totalSinImpuestos DECIMAL(15,5)
-	,importeTotal DECIMAL(15,5)
-	,abono DECIMAL(15,5)
-	,saldo as CAST(importeTotal - abono AS DECIMAL(15,5))
-	,estado bit 
-)
-
-DECLARE @EntradaDetalle as table (
-	 idEntradaDetalle INT
-	,uniqueId VARCHAR(150)
+	idCompraNoHabitualDetalle INT IDENTITY(1,1) NOT NULL PRIMARY KEY	 
+	,uniqueId VARCHAR(150) 
 	,idEntrada INT
 	,idArticulo INT
 	,idTarifa INT
@@ -75,3 +53,18 @@ DECLARE @EntradaDetalle as table (
 	,estado BIT DEFAULT 1 
 
 )
+
+
+IF OBJECT_ID(N'Compra.CompraNoHabitualImpuesto', N'U') IS NOT NULL
+	DROP TABLE Compra.CompraNoHabitualImpuesto
+GO
+CREATE TABLE Compra.CompraNoHabitualImpuesto (
+	idCompraNoHabitualImpuesto INT NOT NULL PRIMARY KEY IDENTITY(1,1)
+	,idCompraNoHabitualDetalle INT NOT NULL
+	,codigo VARCHAR(50) NOT NULL
+	,codigoPorcentaje VARCHAR(5) NULL
+	,tarifa NUMERIC(15,5) NULL
+	,baseImponible NUMERIC(15,5) NULL
+	,valor NUMERIC(15,5) NULL
+)
+ 

@@ -12,6 +12,7 @@ class MdArticuloCtrl{
         this._modalSvc         = _modalSvc;  
         this._nombreModalConst = _nombreModalConst;   
         
+        this.mdNoCache = false;
         this.dataSearch = {
             tipo: 1,
             bySearch : '',
@@ -65,7 +66,7 @@ class MdArticuloCtrl{
         }
         
         return this.$http.get('/Articulo/Search?json=' + JSON.stringify(json)).then(response=>{
-            
+            console.log(response)
             if(response.data.code==='0'){
                 console.log(response)
                 return []

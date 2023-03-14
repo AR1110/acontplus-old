@@ -50,28 +50,48 @@ export class ModalNuevoCtrl extends ModalBaseCtrl{
         this.params = params;
         this.data = {};
 
+        this.dataSearch = {
+            typeList: 1
+        }
+
+        this.establecimientos = [];
+        this.puntosEmision = [];
+        this.decimal = {};
+        this.tipoIvas = [];
+        this.tiemposCredito = [];
+
     }
 
 
     $onInit(){
-        console.log(this)
+        try {
+
+            this.mS.getData('get',  'CompraNoHabitual/Get/' + JSON.stringify(this.dataSearch), null, true).then(response=>{
+                console.log(response)
+            })
+
+        } catch (error) { 
+            console.log(error)
+        }        
     }
 
 
-    async save(){
+    save(){
         try {
             if(!this.isValidForm()) return;
 
             showLoader();
 
-            await this.mS.getData('post', 'CompraNoHabitual/Post', this.data).then(response => {
+            this.mS.getData('post', 'CompraNoHabitual/Post', this.data).then(response => {
                 
                 if(response.code==="0"){
+                    hideLoader();
                     this.form.sweetAlert('warning', response.message)
                     return
                 }
 
                 if(response.code==="1"){
+                    hideLoader();
                     this.form.sweetAlert('success', response.message)
                     this.$uibModalInstance.close(response)
                 }
@@ -79,9 +99,8 @@ export class ModalNuevoCtrl extends ModalBaseCtrl{
 
 
         } catch (error) {
+            hideLoader()
             console.log(error)
-        }finally{
-            hideLoader();
         }
     }
 

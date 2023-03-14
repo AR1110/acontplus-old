@@ -702,10 +702,11 @@
                                     $scope.provCliente.dirMatriz = $scope.infoTributaria.dirMatriz
 
                                     $scope.modalRef = modalService.openModalCustom({
-                                        template: 'DocumentoRecibido/_ModalComprobante.cshtml',
+                                        template: '~/Areas/DocumentoRecibido/Pages/Shared/_ModalComprobante.cshtml',
                                         size: 'xl',
                                         windowClass: 'uibModalFullScreen',
-                                        scope: $scope
+                                        scope: $scope,
+                                        isRenderRazorPartial: true
                                     })
 
                                     $scope.modalRef.result.then(res => {
