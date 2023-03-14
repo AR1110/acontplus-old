@@ -12,11 +12,46 @@
         </div>
     </div>
 
-    <h4>test</h4>
-    <h5>this is correct</h5> 
-    
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsivve">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Proveedor</th>
+                            <th>T. Cred.</th>
+                            <th>Documento</th>
+                            <th>Serie</th>
+                            <th>F. Emi.</th>
+                            <th>F. Venc.</th>
+                            <th>Total</th>
+                            <th>Abono</th>
+                            <th>Saldo</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in cuenntasPorPagar">
+                            <td>{{item.}}</td>
+                            <td>{{item.}}</td>
+                            <td>{{item.}}</td>
+                            <td>{{item.}}</td>
+                            <td>{{item.}}</td>
+                            <td>{{item.}}</td>
+                            <td>{{item.}}</td>
+                            <td>{{item.}}</td>
+                            <td>
+                                <button class="btn btn-success"></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 @section Scripts {
-    <script src="~/js/controllers/contabilidad/cuentaPorPagarCtrl.min.js" asp-append-version="true"></script>
+    <script src="~/js/controllers/contabilidad/cuentaPorPagarCtrl.js" asp-append-version="true"></script>
 }

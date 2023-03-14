@@ -10,7 +10,7 @@ compraNoHabitualCtrl.$inject = ['$scope', 'commonService', 'mainService', 'toast
 function compraNoHabitualCtrl($scope, commonSvc, mS, tS, modalSvc, nombreModal){
     
     //Variables Generales
-    const MODAL_FILE_PATH = nombreModal.compra_no_habitual; 
+    const {MODAL_FILE_PATH} = nombreModal.compra_no_habitual; 
     const {MODAL_NUEVO, MODAL_EDITAR, MODAL_DETALLED} =nombreModal.compra_no_habitual;
 
 
@@ -24,8 +24,8 @@ function compraNoHabitualCtrl($scope, commonSvc, mS, tS, modalSvc, nombreModal){
      * 
      * @param {object} {controller, template, params}
      */
-    $scope.openModal = ({controller, template, params})=>{
-        let modalRef = modalSvc.openModalCustom({controller, template, params, size:'xl', windowClass:'uibModalFullScreen'})
+    $scope.openModal = ({controller, template, params, isRenderRazorPartial})=>{
+        let modalRef = modalSvc.openModalCustom({controller, template, params, size:'xl', windowClass:'uibModalFullScreen', isRenderRazorPartial})
 
         modalRef.result.then(result=>{
             if(typeof result === 'object'){
@@ -37,12 +37,14 @@ function compraNoHabitualCtrl($scope, commonSvc, mS, tS, modalSvc, nombreModal){
 
     //Formulario Nuevo
     $scope.openModalNew = async ()=>{
+        console.log(MODAL_FILE_PATH)
         let modalParms = {
             controller: (await import('./../../' + MODAL_FILE_PATH))[MODAL_NUEVO['controller']],
-            template:  MODAL_NUEVO['template'],
+            template:  '~/Areas/CompraNoHabitual/Pages/_ModalNuevo.cshtml',
             params: {
                 data: {}
-            }
+            },
+            isRenderRazorPartial: true
         }      
        
         $scope.openModal(modalParms)                

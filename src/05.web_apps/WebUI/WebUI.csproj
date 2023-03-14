@@ -4228,6 +4228,7 @@
 		<ProjectReference Include="..\..\02.domain\Domain.Auth\Domain.Auth.csproj" />
 		<ProjectReference Include="..\..\02.domain\Domain\Domain.csproj" />
 		<ProjectReference Include="..\..\03.business_logic\BL.FactElect\BL.FactElect.csproj" />
+		<ProjectReference Include="..\..\08.razor_ui\Compra_UI\Compra_UI.csproj" />
 		<ProjectReference Include="..\..\08.razor_ui\Contabilidad_UI\Contabilidad_UI.csproj" />
 		<ProjectReference Include="..\..\08.razor_ui\FACT_UI\FACT_UI.csproj" />
 		<ProjectReference Include="..\..\08.razor_ui\Recepcion_UI\Recepcion_UI.csproj" />
@@ -4239,19 +4240,6 @@
 
 	<ItemGroup>
 		<_ContentIncludedByDefault Remove="wwwroot\js\env.js" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.15" />
-	</ItemGroup>
-	<ItemGroup>
-		<ViewFiles Include="$(ProjectDir)\Views\**\*.cshtml" />
-	</ItemGroup>
-
-	<Target Name="CopyViewFilesAfterPublish" AfterTargets="Publish">
-		<Copy SourceFiles="@(ViewFiles)"
-		  DestinationFolder="$(PublishDir)\Views\%(RecursiveDir)"
-    />
-	</Target>
+	</ItemGroup> 
 
 </Project>

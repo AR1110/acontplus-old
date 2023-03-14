@@ -997,7 +997,9 @@ export class ModalProveedorCtrl extends ModalBaseCtrl {
             this.data.idTiempoCredito = this.tiempoCreditos.length > 0 ? this.tiempoCreditos[0].idTiempoCredito : 0
 
             //Editar
-            if (this._params) {
+            
+            if (typeof this._params==='object' && this._params.idProveedor>0) {
+                
                 this.tipoRegistro = 2;
                 this._commonSvc.getDataByProveedor(this._params.idProveedor).then(response => {
                     this.data = response;
