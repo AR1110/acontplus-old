@@ -11,6 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\01.common\Common.Logs\Common.Logs.csproj" />
+    <ProjectReference Include="..\..\01.common\DataAccess\DataAccess.csproj" />
     <ProjectReference Include="..\..\03.business_logic\BL.JwtAuthenticationManger\BL.JwtAuthenticationManger.csproj" />
   </ItemGroup>
 

@@ -2,14 +2,25 @@
 @model Compra_UI.CompraNoHabitual.Pages.IndexModel
 @{
     ViewData["title"] = "Index";
+    Layout = "_Layout";
 }
 
 <div ng-controller="compraNoHabitualCtrl">
     <div class="row page-titles">
         <div class="col-md-5 align-self-center">
-            <h5 class="text-themecolor">Compra No Habitual</h5>
+            <h4 class="text-themecolor">Compra No Habitual</h4>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">              
+                <button type="button" ng-click="openModalNew()" class="btn btn-info d-none d-lg-block m-l-15">
+                    <i class="icons-Add-File"></i> Nuevo
+                </button>
+            </div>
         </div>
     </div>
+
+
+
 </div>
 
 @section Scripts{

@@ -204,7 +204,7 @@ app.constant('nombreModal', {
         MODAL_FILE_PATH: 'modal/compras/modalCompraNoHabitualCtrl.js' + CHANGE_VERSION(),
         MODAL_NUEVO:{
             controller: 'ModalNuevoCtrl',
-            template: ''
+            template: '~/Areas/CompraNoHabitual/Pages/_ModalNuevo.cshtml'
         },
         MODAL_EDITAR:{
             controller: 'ModalNuevoCtrl',

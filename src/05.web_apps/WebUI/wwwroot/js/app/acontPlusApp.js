@@ -370,10 +370,11 @@ function modalService($uibModal) {
          * @param {object} params {controller, template, size, params, keyboard=false, animation = true, windowClass = null, scope, props = {}}
          * @returns object 
          */
-        openModalCustom: function ({ controller, template, size, params, keyboard = false, animation = true, windowClass = null, windowTopClass, openedClass, scope, props = {} }) {
+        openModalCustom: function ({ controller, template, size, params, keyboard = false, animation = true, windowClass = null, windowTopClass, openedClass, scope, props = {}, isRenderRazorPartial=false}) {
+           console.log(isRenderRazorPartial)
             return $uibModal.open({
                 animation,
-                templateUrl: `/Home/RenderView?name=${template || 'Shared/ModalNotFound.cshtml'}`,
+                templateUrl: isRenderRazorPartial? `/Home/RenderView?name=${template}` :  `/Home/RenderView?name=~/Views/${template || 'Shared/ModalNotFound.cshtml'}`,
                 controller,
                 controllerAs: '$ctrl',
                 scope,
