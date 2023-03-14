@@ -72,9 +72,9 @@ export class ModalNuevoCtrl extends ModalBaseCtrl{
                 }
 
                 if(response.code==="1"){
-
+                    this.form.sweetAlert('success', response.message)
+                    this.$uibModalInstance.close(response)
                 }
-
             })
 
 
