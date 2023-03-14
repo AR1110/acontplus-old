@@ -57,16 +57,16 @@ DECLARE @cuotaXpagar  as table (
 	,estado VARCHAR(5)
 )
 
-
-SELECT idFacturaCompra
-      ,'C'+'-'+CAST(DATEPART(YEAR,fechaRegistro) AS varchar)+'-'+Helper.F_Auto_Sequential(ROW_NUMBER() over (order by idFacturaCompra asc)) uniqueId 
-	
-FROM FacturaCompra
-
 --select * from Ventas.Aprob_Document_Detailt
 
 --select top 1 * from Recepcion.DocumentoRecibido where codDoc  = '01' 
 
 --select top 1 * from Recepcion.DocumentoDetalle where idDocumento = 1
 
-SELECT top 1 * FROM Ventas.Aprob_Document
+--SELECT top 1 * FROM Ventas.Aprob_Document
+
+SELECT idFacturaCompra
+      ,'C'+CAST(DATEPART(YEAR,fechaRegistro) AS varchar)+Helper.F_Auto_Sequential(ROW_NUMBER() over (PARTITION BY DATEPART(YEAR,fechaRegistro) order by idFacturaCompra asc)) uniqueId 
+FROM FacturaCompra
+
+SELECT LEN('C2022000000001')
