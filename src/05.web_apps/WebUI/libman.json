@@ -145,6 +145,10 @@
     {
       "library": "bootstrap-daterangepicker@3.0.5",
       "destination": "wwwroot/lib/bootstrap-daterangepicker/"
+    },
+    {
+      "library": "angular-media-queries@0.6.1",
+      "destination": "wwwroot/lib/angular-media-queries/"
     }
   ]
 }

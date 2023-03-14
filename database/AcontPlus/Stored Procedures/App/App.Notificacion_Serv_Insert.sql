@@ -5,9 +5,9 @@ USE [AcontPlus]
 IF OBJECT_ID('App.Notificacion_Serv_Insert') IS NOT NULL
 	DROP PROCEDURE App.Notificacion_Serv_Insert
 GO 
---UPDATE App.Notificacion SET estado ='NE' WHERE idNotificacion > 18
+--UPDATE App.Notificacion SET estado ='NE' WHERE idNotificacion = 2
 --select * from aPP.Notificacion
---DELETE FROM App.Notificacion WHERE idNotificacion > 11
+--DELETE FROM App.Notificacion WHERE idNotificacion = 3
 -- exec App.Notificacion_Serv_Insert '{"params":{"hasFile":true,"isReport":"SI","reportParams":{"codEstab":"ESTAB-000000002","codigo":"PR","format":"pdf"},"spParams":{"id":67}},"idUsuarioRol":38,"receptor":"sengua2017@gmail.com"}'
 
 CREATE PROCEDURE App.Notificacion_Serv_Insert @json VARCHAR(MAX)
@@ -93,6 +93,7 @@ BEGIN
 			-- Reporte Control Caja
 			IF @codigo ='RCC'
 				BEGIN 
+				    SET @template = 'EmailTemplate.html'
 					SET @body = (
 									SELECT 
 										fechaEmision = dbo.AFTConvertDate(dbo.ufnGetDateEcuador())+dbo.AFTConvertHora(dbo.ufnGetDateEcuador()),

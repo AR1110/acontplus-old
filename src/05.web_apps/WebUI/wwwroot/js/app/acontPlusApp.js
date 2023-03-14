@@ -41,7 +41,8 @@ let app = angular.module('acontPlusApp', [
     'angularUUID2',
     'angularUtils.directives.dirPagination',
     'daterangepicker',
-    'angular-jwt'
+    'angular-jwt',
+    'matchMedia'
 ]);
 
 

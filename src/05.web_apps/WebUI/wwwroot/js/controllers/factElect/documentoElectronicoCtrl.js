@@ -47,8 +47,9 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
             }
 
             $scope.comprobantes = [];
-            _mS.getData('get', '/DocumentoElectronico/Get?json=' + JSON.stringify($scope.dataSearch)).then(
+            _mS.getData('get', 'DocumentoElectronico/' + JSON.stringify($scope.dataSearch), null, true).then(
                 response => {
+                    
                     if (response.code === "0") {
                         hideLoader()
                         $scope.comprobantes = [];
@@ -58,7 +59,7 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
                     if (!$scope.isMobile) {
                         document.getElementById('menu_toggle').click();
                     }
-                    $scope.comprobantes = JSON.parse(response.payload) || [];
+                    $scope.comprobantes = JSON.parse(response.payload)[0] || [];
                     hideLoader();
                 }
             ).catch(error => {
@@ -86,8 +87,9 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
             }
         )
 
-        _mS.getData('get', '/DocumentoElectronico/GetDataForm').then(response => {
+        _mS.getData('get', 'DocumentoElectronico/GetDataForm', null, true).then(response => {            
             const results = JSON.parse(response.payload) || [];
+            console.log(results);
             $scope.estadoServicios = results[0]
         })
     }
@@ -237,7 +239,7 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
             if (isConfirmed) {
                 showLoader();
                 for (let item of $scope.selectedComprobantes) {
-                    _mS.getData('put', '/DocumentoElectronico/Put?id=' + item.idDocumentoElectronico).then(response => {
+                    _mS.getData('put', 'DocumentoElectronico/' + item.idDocumentoElectronico, null, true).then(response => {
                         let index = $scope.selectedComprobantes.indexOf(item);
                         $scope.selectedComprobantes.splice(index, 1);
                     })
@@ -341,7 +343,7 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
         })
 
         if (isConfirmed) {
-            _mS.getData('put', '/DocumentoElectronico/Put?id=' + item.idDocumentoElectronico).then(response => {
+            _mS.getData('put', 'DocumentoElectronico/' + item.idDocumentoElectronico, null, true).then(response => {
                 if (response.code === '0') {
                     _tS.toastr('warning', response.message, response.titleSms);
                 }

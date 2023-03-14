@@ -86,6 +86,22 @@ function consolidacionInvCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nomb
         })
     }
 
+
+    $scope.openModalFiltro = async ()=>{
+        let {MODAL_FILE_CTRL, MODAL_FILTRO} = _nombreModalConst.consolidacion_inv;
+        let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_FILTRO['controller']];        
+        let template   = MODAL_FILTRO['template'];
+        
+        let params = {
+           
+        }
+      
+        let modalRef = _modalSvc.openModalCustom({
+            controller,
+            template
+        })
+    }
+
     $scope.openModalDetalle = async(item)=>{
         try {
             showLoader();

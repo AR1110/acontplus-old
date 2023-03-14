@@ -142,7 +142,7 @@
             }
         }
         //FOR EDIT
-        if (idDocumentoElectronico) {
+        if (idDocumentoElectronico > 0) {
             try {
                 showLoader()
                 let data = { tipo: 2, idDoc: idDocumentoElectronico }

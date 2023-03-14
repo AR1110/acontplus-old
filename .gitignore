@@ -284,3 +284,13 @@
 /src/03.business_logic/BL.Notificacion/bin/Release/net6.0/Logos/logoAcontPlus.jpg
 /src/03.business_logic/BL.Notificacion/bin/Release/net6.0/Templates/EmailTemplate.html
 /src/07.worker_services/WS_Notificacion/bin/Release/net6.0
+/src/08.razor_ui/Recepcion_UI/bin
+/src/08.razor_ui/Recepcion_UI/obj
+/src/08.razor_ui/Compra_UI/bin
+/src/08.razor_ui/Compra_UI/obj
+/src/08.razor_ui/Contabilidad_UI/bin
+/src/08.razor_ui/Contabilidad_UI/obj
+/src/04.services/ApiCompras/bin/Release/net6.0
+/src/04.services/ApiCompras/obj
+/src/04.services/ApiContabilidad/bin
+/src/04.services/ApiContabilidad/obj

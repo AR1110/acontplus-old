@@ -198,7 +198,27 @@ app.constant('nombreModal', {
             controller: 'ModalCuotaNuevoCtrl',
             template: 'Cobro/_ModalCuotaVenta.cshtml'
         }
-    },    
+    },  
+    
+    compra_no_habitual: {
+        MODAL_FILE_PATH: 'modal/compras/modalCompraNoHabitualCtrl.js' + CHANGE_VERSION(),
+        MODAL_NUEVO:{
+            controller: 'ModalNuevoCtrl',
+            template: ''
+        },
+        MODAL_EDITAR:{
+            controller: 'ModalNuevoCtrl',
+            template: ''
+        },
+        MODAL_DETALLE:{
+            controller: 'ModalNuevoCtrl',
+            template: ''
+        },
+        MODAL_FILTRO:{
+            controller: 'ModalNuevoCtrl',
+            template: ''
+        }
+    },
     consolidacion_inv: {
         MODAL_FILE_CTRL: 'modal/inventario/modalConsolidacionInventarioCtrl.js' + CHANGE_VERSION(),
         MODAL_NUEVO:{

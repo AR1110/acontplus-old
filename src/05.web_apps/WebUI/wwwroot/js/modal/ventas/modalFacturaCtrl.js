@@ -580,11 +580,8 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
                                 TIPO_DOC: this.TIPO_DOC_FV                                             
                             }
 
-                            if(mainData.data.esContado){
-                                this.openModalRapido(mainData)
-                            }else{
-                                this.openModalCobroDocumento(mainData)
-                            }                                  
+                            this.$uibModalInstance.close(mainData)
+                                                          
                         }
                     })
                 }
@@ -1087,11 +1084,8 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl{
                         },
                         TIPO_DOC: this.TIPO_DOC_FV                                             
                     }
-                    if(mainData.data.esContado){
-                        this.openModalRapido(mainData)
-                    }else{
-                        this.openModalCobroDocumento(mainData)
-                    }   
+                    
+                    this.$uibModalInstance.close(mainData)
                                                                           
                 }
             })

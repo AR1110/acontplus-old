@@ -438,11 +438,12 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
                                 TIPO_DOC: this.TIPO_DOC_NE                                             
                             }
 
-                            if(mainData.data.esContado){
-                                this.openModalRapido(mainData)
-                            }else{
-                                this.openModalCobroDocumento(mainData)
-                            }                                                                                       
+                            this.$uibModalInstance.close(mainData)
+                            // if(mainData.data.esContado){
+                            //     this.openModalRapido(mainData)
+                            // }else{
+                            //     this.openModalCobroDocumento(mainData)
+                            // }                                                                                       
                         }
                     })
                 }

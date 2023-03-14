@@ -15,9 +15,6 @@ namespace WebUI.Controllers.Configuracion
         private readonly IHttpContextAccessor _httpContextAccessor; ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
         private readonly int _idRol;
-        GenericResponse _gr = new();        
-
-        private ConfigVentaDetalleDao _cvd;
         public ConfigVentaDetalleController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {   
             _configuration = configuration;
