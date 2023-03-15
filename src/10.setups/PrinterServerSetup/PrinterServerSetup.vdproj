@@ -4,9 +4,9 @@
 "ProjectType" = "8:{978C614F-708E-4E1A-B201-565925725DBA}"
 "IsWebType" = "8:FALSE"
 "ProjectName" = "8:PrinterServerSetup"
-"LanguageId" = "3:1033"
+"LanguageId" = "3:0"
 "CodePage" = "3:1252"
-"UILanguageId" = "3:1033"
+"UILanguageId" = "3:0"
 "SccProjectName" = "8:"
 "SccLocalPath" = "8:"
 "SccAuxPath" = "8:"
@@ -232,12 +232,6 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_0E769F4A02C5A50C90EC796202713A1F"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_8D387164CA0042238E66C23CE1824AF1"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -307,6 +301,12 @@
         "OwnerKey" = "8:_9282E5F3FB5C90EEE9BB7D6324004943"
         "MsmSig" = "8:_UNDEFINED"
         }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_0E769F4A02C5A50C90EC796202713A1F"
+        "MsmSig" = "8:_UNDEFINED"
+        }
     }
     "Configurations"
     {
@@ -325,6 +325,22 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
+            }
         }
         "Release"
         {
@@ -341,12 +357,84 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
+            }
         }
     }
     "Deployable"
     {
         "CustomAction"
         {
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_781FC215FAD54E8FA0707EB0DB8B2AE1"
+            {
+            "Name" = "8:Primary output from PrinterServer (Active)"
+            "Condition" = "8:"
+            "Object" = "8:_8D387164CA0042238E66C23CE1824AF1"
+            "FileType" = "3:2"
+            "InstallAction" = "3:4"
+            "Arguments" = "8:"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:1"
+            "Identifier" = "8:_F9F27F79_D25C_4E3B_AD9A_8713519BD999"
+            "InstallerClass" = "11:TRUE"
+            "CustomActionData" = "8:"
+            }
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_85B47E5E65BE4E67979E73D16051D805"
+            {
+            "Name" = "8:Primary output from PrinterServer (Active)"
+            "Condition" = "8:"
+            "Object" = "8:_8D387164CA0042238E66C23CE1824AF1"
+            "FileType" = "3:2"
+            "InstallAction" = "3:3"
+            "Arguments" = "8:"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:1"
+            "Identifier" = "8:_A57C7885_06AD_415E_90A8_85AB1AE31EE0"
+            "InstallerClass" = "11:TRUE"
+            "CustomActionData" = "8:"
+            }
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_978EF117BA9743FA860B3A39D5FFE473"
+            {
+            "Name" = "8:Primary output from PrinterServer (Active)"
+            "Condition" = "8:"
+            "Object" = "8:_8D387164CA0042238E66C23CE1824AF1"
+            "FileType" = "3:2"
+            "InstallAction" = "3:2"
+            "Arguments" = "8:"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:1"
+            "Identifier" = "8:_97EA6B20_38F4_4699_A4AA_1F7C068F6B40"
+            "InstallerClass" = "11:TRUE"
+            "CustomActionData" = "8:"
+            }
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_DF4F8DC4348440C1B075841484032538"
+            {
+            "Name" = "8:Primary output from PrinterServer (Active)"
+            "Condition" = "8:"
+            "Object" = "8:_8D387164CA0042238E66C23CE1824AF1"
+            "FileType" = "3:2"
+            "InstallAction" = "3:1"
+            "Arguments" = "8:"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:1"
+            "Identifier" = "8:_2F1D4385_7CDF_44CB_A41D_BC5DDCF41556"
+            "InstallerClass" = "11:TRUE"
+            "CustomActionData" = "8:"
+            }
         }
         "DefaultFeature"
         {
@@ -1042,7 +1130,7 @@
         }
         "MsiBootstrapper"
         {
-        "LangId" = "3:1033"
+        "LangId" = "3:0"
         "RequiresElevation" = "11:FALSE"
         }
         "Product"
@@ -1061,12 +1149,12 @@
         "Manufacturer" = "8:Acontplus"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
-        "Title" = "8:PrinterServerSetup"
+        "Title" = "8:Acontplus Printer"
         "Subject" = "8:"
         "ARPCONTACT" = "8:Acontplus"
         "Keywords" = "8:"
-        "ARPCOMMENTS" = "8:"
-        "ARPURLINFOABOUT" = "8:"
+        "ARPCOMMENTS" = "8:Aplicacion para impresión rapida"
+        "ARPURLINFOABOUT" = "8:https://acontplus.com.ec/"
         "ARPPRODUCTICON" = "8:"
         "ARPIconIndex" = "3:0"
         "SearchPath" = "8:"
@@ -1735,7 +1823,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_8D387164CA0042238E66C23CE1824AF1"
             {
-            "SourcePath" = "8:..\\..\\09.desktop_apps\\PrinterServer\\obj\\Debug\\PrinterServer.exe"
+            "SourcePath" = "8:..\\..\\09.desktop_apps\\PrinterServer\\obj\\Release\\PrinterServer.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_2245CF7C009645EB8CD0C499D83ACC6B"

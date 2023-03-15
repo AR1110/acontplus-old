@@ -96,7 +96,7 @@ namespace PrinterServer
         public static void Main(string[] args)
         {
             //Desaparecemos la consola
-            Magician.DisappearConsole();
+            //Magician.DisappearConsole();
 
             // Create a Http server and start listening for incoming connections
             listener = new HttpListener();
