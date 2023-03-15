@@ -22,7 +22,16 @@ class MdArticuloCtrl{
         
         this.$scope.$on("editArticulo", (e, itemArticulo)=>{
             this.openModalArticulo(itemArticulo)
-        })      
+        })  
+
+
+        // let element = document.getElementById("custom-template-md-autocomplete-articulo");
+        // element.addEventListener('keydown keypress', e=>{
+        //     console.log(e.keyCode)
+        // })
+
+        
+
     }
 
     $onInit(){
@@ -58,13 +67,14 @@ class MdArticuloCtrl{
 
     }
     
-    async getDynamicSearchArticles(textSearch){  
+    getDynamicSearchArticles(searchText){  
+ 
         let json =  {
-            busqueda: this._commonSvc.removeAccents(textSearch),
+            busqueda: this._commonSvc.removeAccents(searchText),
             condicion: false,
             fraccionado: false,
         }
-        
+       
         return this.$http.get('/Articulo/Search?json=' + JSON.stringify(json)).then(response=>{
             console.log(response)
             if(response.data.code==='0'){
@@ -91,8 +101,7 @@ class MdArticuloCtrl{
             
             return articulos;
 
-        }) 
-               
+        })                                
     }
 
     async getDynamicSearchArticlesSimple(textSearch){  
@@ -110,25 +119,35 @@ class MdArticuloCtrl{
        
     }
 
-    
-
-    async getArticuloByCode(){
+    getArticuloByCode(){
+       
+        let textSearch = this.searchText;   
+        this.textSearch = null;    
+       
         try {
-            if(this.searchText===null || this.searchText===undefined || this.searchText==='') return
-            let result = await this._commonSvc.articuloSearchGeneral({
-                textSearch: this.searchText,
-                code: true
-            }) 
+            if(textSearch===null || textSearch===undefined || textSearch==='') {
+                this.searchText  = null;
+                return
+            }
 
-            if(result===null || result ===undefined || (Array.isArray(result) && result.length===0)) return  
             
-            //Tomamos  posicion 1 para obtener datos del articulo                  
-            this.selectArticleSearch(result[0])
-            this.searchText = '';
+            this._commonSvc.articuloSearchGeneral({textSearch,code: true}).then(response=>{
+
+                if(response===null || response ===undefined || (Array.isArray(response) && response.length===0)){
+                    this.searchText  = null;
+                    return
+                }
+
+                //Tomamos  posicion 1 para obtener datos del articulo                  
+                this.selectArticleSearch(response[0])
+                this.searchText = null
+            })                                   
         } catch (error) {
             console.error(error)
         }
     }
+
+    
 
     selectArticleSearch (item){  
       
@@ -143,7 +162,7 @@ class MdArticuloCtrl{
             idPresentacion: item.idPresentacion,
             presentacion: 'A'
         }  
-        this.selectedItem = '';
+        this.selectedItem = null
              
         this.validarGetDataArticulo();
     }

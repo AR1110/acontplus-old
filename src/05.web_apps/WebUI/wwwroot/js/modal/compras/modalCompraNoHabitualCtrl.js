@@ -8,6 +8,48 @@ export class ModalBaseCtrl{
     }
 
 
+    askToChangeEstablecimiento(){
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+              confirmButton: 'btn btn-success ml-2',
+              cancelButton: 'btn btn-danger'
+            },
+            buttonsStyling: false
+        })
+          
+        swalWithBootstrapButtons.fire({
+            title: 'Cambiar Establecimiento?',
+            html: "<small>Se cambiará Punto de Emisión y Bodega</small>",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Si, cambiar!',
+            cancelButtonText: 'No, cancelar!',
+            reverseButtons: true
+        }).then(result=>{
+            if(result.isConfirmed){
+                this.changeEstableciminto();
+            }
+        })
+    }
+
+    changeEstableciminto(){
+        try {
+            if(this.establecimientos.length>0){
+                let dataEstab = this.establecimientos.find(item=>(item.predeterminado));
+                
+                this.data.codEstab_Asig = dataEstab.codEstab_Asig
+                this.data.codEstab = dataEstab.codEstab;
+                
+                this.puntosEmision = this.puntosEmisionTemporal.filter(item=>item.codEstab_Asig===this.data.codEstab_Asig)
+
+                this.data.idPuntoEmision = this.puntosEmision.find(item=>(item.predeterminado)).idPuntoEmision
+            }        
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     isValidForm(){
         if(!this.data.idPuntoEmision || !this.data.idPuntoEmision ===0){
             this.tS.toastr('warning', 'Seleccione el Punto de Emisión')
@@ -51,7 +93,7 @@ export class ModalNuevoCtrl extends ModalBaseCtrl{
         this.data = {};
 
         this.dataSearch = {
-            typeList: 1
+            typeList: 2
         }
 
         this.establecimientos = [];
@@ -59,18 +101,48 @@ export class ModalNuevoCtrl extends ModalBaseCtrl{
         this.decimal = {};
         this.tipoIvas = [];
         this.tiemposCredito = [];
+        this.bodegas = [];
 
     }
 
 
     $onInit(){
         try {
+            showLoader();
+            this.mS.getData('get',  'CompraNoHabitual/' + JSON.stringify({typeList: 2}), null, true).then(response=>{
+                if(response.code=="0"){
+                    hideLoader();
+                    console.log(response)
+                }
 
-            this.mS.getData('get',  'CompraNoHabitual/' + JSON.stringify(this.dataSearch), null, true).then(response=>{
-                console.log(response)
+                if(response.code==="1"){
+
+                    let mainData = JSON.parse(response.payload);
+                    
+                    this.establecimientos = mainData[0];                
+                    
+                    this.puntosEmisionTemporal = mainData[1];
+                    
+                    this.decimal = mainData[2][0];
+                    this.tipoIvas = mainData[3];
+                    this.tiemposCredito = mainData[4];
+    
+                    this.changeEstableciminto();
+                    
+                    this.mS.getData('get',  'CompraNoHabitual/' + JSON.stringify({typeList: 3, codEstab: this.data.codEstab }), null, true).then(response=>{
+                        if(response.code==="0"){
+                            console.log(response)
+                        }
+                        if(response.code==="1"){
+                            this.bodegas = response.payload? JSON.parse(response.payload): [];
+                        }
+                    })
+                    hideLoader();
+                }
             })
 
         } catch (error) { 
+            hideLoader();
             console.log(error)
         }        
     }
