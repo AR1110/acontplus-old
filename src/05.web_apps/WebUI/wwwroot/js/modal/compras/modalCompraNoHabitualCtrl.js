@@ -66,7 +66,7 @@ export class ModalNuevoCtrl extends ModalBaseCtrl{
     $onInit(){
         try {
 
-            this.mS.getData('get',  'CompraNoHabitual/Get/' + JSON.stringify(this.dataSearch), null, true).then(response=>{
+            this.mS.getData('get',  'CompraNoHabitual/' + JSON.stringify(this.dataSearch), null, true).then(response=>{
                 console.log(response)
             })
 
