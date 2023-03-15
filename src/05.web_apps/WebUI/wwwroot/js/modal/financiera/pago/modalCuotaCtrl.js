@@ -42,8 +42,8 @@ export class ModalCompraCuotaCtrl{
 
     convertirCuota(){
         return this.cuotasTemp.map((val)=>{
-            let fechaVencimiento = val.cxp.fechaVencimiento.split(" ")[0].split("/").reverse().join("/");                           
-            val.cxp.fechaVencimiento = new Date(fechaVencimiento);
+            let fechaVencimiento = val.fechaVencimiento.split(" ")[0].split("/").reverse().join("/");                           
+            val.fechaVencimiento = new Date(fechaVencimiento);
             return val;
         })
     }
@@ -54,7 +54,7 @@ export class ModalCompraCuotaCtrl{
     }
 
     getTotalCuota(){            
-        let total = this.cuotas.map(val => parseFloat(val.cxp.cuota)).reduce((prev, curr) =>prev + curr, 0);
+        let total = this.cuotas.map(val => parseFloat(val.cuota)).reduce((prev, curr) =>prev + curr, 0);
         return this._form.roundNumber(total, this.NUM_MAX_ROUND);
     }
 
@@ -72,7 +72,7 @@ export class ModalCompraCuotaCtrl{
             icon: 'warning',
             html: `<small>Está seguro/a de generar <h3><b>${tiempoCredito.numeroCuota} </b></h3> 
                    ${tiempoCredito.numeroCuota===1?'Cuota':'Cuotas'} del Comprobante 
-                   <b>N°. ${this.data.nroDocumento}</b></small>`,
+                   <b>N°. ${this.data.serieComprobante}</b></small>`,
             showDenyButton: true,
             confirmButtonText: `Si, generar`,
             denyButtonText: `No, cancelar`,
@@ -82,23 +82,24 @@ export class ModalCompraCuotaCtrl{
 
         if(isConfirmed){        
             let data = {
-                cxp: {
-                    idComprobante: this.data.id,
-                    idTipoDocumento: this.TIPO_DOC.idTipoDocumento,
-                },
+                idCuentaPorPagar: this.data.id,
                 idTiempoCredito: this.data.idTiempoCredito,
-                fechaEmision: this.data.fechaEmision,
-                total: this.data.total
+                codPago: this.data.codPago
             };
 
-            this._mS.getData('post', '/CuotaXPagar/Post', data).then(response => {
-                if (response.id === "0") {
+            this._mS.getData('post','CuentaPorPagar/'+ JSON.stringify(data), null, true).then(response => {
+                if (response.code === "0") {
                     this._form.sweetAlert('warning', response.message, response.titleSms);                                                               
                     return
                 }
-                if (response.id == "1") {
+                if (response.code == "1") {
                     this._form.sweetAlert('success', response.message, response.titleSms, 1000); 
-                    this.$uibModalInstance.close(response)                                    
+                    let cuotas = response.payload ? JSON.parse(response.payload) : []
+                    this.cuotas = cuotas.map(item=>{
+                        item.fechaVencimiento = this._form.formatDate(item.fechaVencimiento);
+                        return item
+                    })  
+                                       
                 }
             })
 
@@ -147,7 +148,7 @@ export class ModalCompraCuotaCtrl{
 
     //Set Valor Entrada de las cuotas de una Factura 
     setValorEntrada(valorEntrada) {    
-        try {
+        // try {
             
             
             if([null, undefined, '0', ""].includes(valorEntrada)){
@@ -160,7 +161,7 @@ export class ModalCompraCuotaCtrl{
 
             let total = 0, valorCuota = 0;
 
-            total = this.data.total - parseFloat(valorEntrada);
+            total = this.data.importeTotal - parseFloat(valorEntrada);
             total = this._form.roundNumber(total, 5);
             
             valorCuota = total / this.getNumeroCuota();
@@ -169,28 +170,28 @@ export class ModalCompraCuotaCtrl{
             
             for (let val of this.cuotas) {
                 if (val.nroCuota === "E") {
-                    val.cxp.cuota = valorCuota === 0 ? this.data.total : valorEntrada;
+                    val.cuota = valorCuota === 0 ? this.data.importeTotal : valorEntrada;
                 }
                 if (val.nroCuota !== "E") {
-                    val.cxp.cuota = valorCuota;
+                    val.cuota = valorCuota;
                 }
             }
 
             this.totalCuota = this._form.roundNumber(this.getTotalCuota(), this.NUM_MAX_ROUND)
             
-        } catch (error) {
-            toastr.error(error)                
-        }                
+        // } catch (error) {
+        //     console.log(error)              
+        // }                
     }
 
 
     //Set valor por cuota 
     setValorCuota(cuota) {  
-        try {
+        // try {
                                         
-            if ([null, undefined, "", "0", "-"].includes(cuota.cxp.cuota)) {            
+            if ([null, undefined, "", "0", "-"].includes(cuota.cuota)) {            
                 setTimeout(() => {
-                    $("#setValcuota" + cuota.cxp.idCuotaXPagar).select();
+                    $("#setValcuota" + cuota.idCuotaXPagar).select();
                 }, 50);
                 return
             }
@@ -198,41 +199,44 @@ export class ModalCompraCuotaCtrl{
 
             let menorCuotas = this.cuotas.filter((val, index, arrayCuota) => index <= arrayCuota.indexOf(cuota));
             let mayorCuotas = this.cuotas.filter((val, index, arrayCuota) => index > arrayCuota.indexOf(cuota));
-            let rowTotalCuota = menorCuotas.map(val => Number(val.cxp.cuota)).reduce((prev, curr) => prev + curr, 0);
+            let rowTotalCuota = menorCuotas.map(val => Number(val.cuota)).reduce((prev, curr) => prev + curr, 0);
 
-            if (rowTotalCuota > this.data.total) {
-                toastr.warning('El valor de la Cuota tiene que ser menor al Total de la Factura');                    
+            if (rowTotalCuota > this.data.importeTotal) {
+                toastr.warning('El valor de la Cuota tiene que ser menor al Total del Documento');                    
             }
 
             if (mayorCuotas.length > 0) {
-                let total = this.data.total - rowTotalCuota; //Total Cuota - total Factura  
+                let total = this.data.importeTotal - rowTotalCuota; //Total Cuota - total Factura  
+                console.log(rowTotalCuota, this.data.importeTotal)
                 let numeroCuota = mayorCuotas.length;
                 let valorCuota = total / numeroCuota;
 
+                console.log(this.cuotas)
+                console.log(valorCuota)
                 angular.forEach(this.cuotas, (val, index, arrayCuotas) => {
                     //Si la Cuota tiene entrada 
                     if (val.nroCuota !== "E" && index > arrayCuotas.indexOf(cuota)) {
-                        val.cxp.cuota = this._form.roundNumber(valorCuota, 5);
+                        val.cuota = this._form.roundNumber(valorCuota, 5);
                     } else if (index > arrayCuotas.indexOf(cuota)) {
-                        val.cxp.cuota = this._form.roundNumber(valorCuota, 5);
+                        val.cuota = this._form.roundNumber(valorCuota, 5);
                     }
                 });
 
             }
 
             this.totalCuota = this._form.roundNumber(this.getTotalCuota(), this.NUM_MAX_ROUND) //Suma Total Cuota            
-            let diferencia = this.data.total - this.totalCuota;
+            let diferencia = this.data.importeTotal - this.totalCuota;
             this.totalDiferencia = this._form.roundNumber(diferencia, this.NUM_MAX_ROUND)     
-        } catch (error) {
-            toastr.error(error)                
-        }   
+        // } catch (error) {
+        //    console.log(error)    
+        // }   
     }
 
     //Set date fecha Vencimiento by cuota 
     setFechaVencimientoCuota(cuota) {
-        let inputFvcto = $("#fechaVencimiento" + cuota.cxp.idCuotaXPagar);
+        let inputFvcto = $("#fechaVencimiento" + cuota.idCuotaXPagar);
 
-        if (this._form.campo(cuota.cxp.fechaVencimiento)) {
+        if (this._form.campo(cuota.fechaVencimiento)) {
             inputFvcto.removeClass('is-valid');
             inputFvcto.addClass('is-invalid');
             return
@@ -243,7 +247,7 @@ export class ModalCompraCuotaCtrl{
 
         for (let i = 0; i < this.cuotas.length; i++) {
             if (i < this.cuotas.indexOf(cuota)) {
-                if (cuota.cxp.fechaVencimiento <= this.cuotas[i].cxp.fechaVencimiento) {
+                if (cuota.fechaVencimiento <= this.cuotas[i].fechaVencimiento) {
                     inputFvcto.removeClass('is-valid');
                     inputFvcto.addClass('is-invalid');
                     return
@@ -258,22 +262,22 @@ export class ModalCompraCuotaCtrl{
 
     //Guardar Cuotas Modificadas
     async guardarCuota() {            
-        if (this.cuotas.some(val => val.nroCuota === "E" && [null, undefined, "", 0, "0", ".", "-"].includes(val.cxp.cuota))) {
+        if (this.cuotas.some(val => val.nroCuota === "E" && [null, undefined, "", 0, "0", ".", "-"].includes(val.cuota))) {
             toastr.warning('Ingrese el Valor de la Entrada', 'Guardar Cuotas');
             return
         }
 
-        if (this.cuotas.some(val => [null, undefined, "", 0, "0", ".", "-"].includes(val.cxp.cuota) || val.cxp.cuota < 0)) {
+        if (this.cuotas.some(val => [null, undefined, "", 0, "0", ".", "-"].includes(val.cuota) || val.cuota < 0)) {
             toastr.warning('Verifique el valor de las Cuotas', 'Guardar Cuotas');
             return
         }
 
-        if (this.cuotas.some(val => [null, undefined, ""].includes(val.cxp.fechaVencimiento) || $("#fechaVencimiento" + val.cxp.idCuotaXPagar).hasClass('is-invalid'))) {
+        if (this.cuotas.some(val => [null, undefined, ""].includes(val.fechaVencimiento) || $("#fechaVencimiento" + val.idCuotaPorPagar).hasClass('is-invalid'))) {
             toastr.warning('Ingrese las fechas de vencimiento correctamente');
             return
         }
         
-        if (this._form.roundNumber(this.totalCuota) !== this._form.roundNumber(this.data.total)) {
+        if (this._form.roundNumber(this.totalCuota) !== this._form.roundNumber(this.data.importeTotal)) {
             this._form.sweetAlert('warning', 'El valor total del Documento no coincide con el valor total de la Cuota')            
             return
         }
@@ -281,7 +285,7 @@ export class ModalCompraCuotaCtrl{
         let {isConfirmed} = await Swal.fire({
             icon: 'warning',
             html: `<small>Está seguro/a de guardar las cuotas de este Comprobante
-                    N°: <b>${this.data.nroDocumento}</b></small>`,
+                    N°: <b>${this.data.serieComprobante}</b></small>`,
             showConfirmButton: true,
             confirmButtonText: 'Si, guardar',
             showCancelButton: true,
@@ -290,17 +294,21 @@ export class ModalCompraCuotaCtrl{
         })
         
         if(isConfirmed){
-            let cuotas = this.cuotas.map(({cxp})=>cxp);
+            let cuotas = this.cuotas;
 
-            this._mS.getData('post', `/CuotaXPagar/Put?idComprobante=${this.data.id}&idTipDoc=${this.TIPO_DOC.idTipoDocumento}`, cuotas)
+            this._mS.getData('put', 'CuentaPorPagar/' + this.data.id+'/' + JSON.stringify(cuotas), null, true)
             .then(response => {
-                if (response.id === "0") {
+                if (response.code === "0") {
                     this._form.sweetAlert('warning', response.message, response.titleSms);
                     return
                 }
-                if (response.id === "1") {
+                if (response.code === "1") {
                     this._form.sweetAlert('success', response.message, response.titleSms, 1000);
-                    this.$uibModalInstance.close(response);                                   
+                    let cuotas = response.payload ? JSON.parse(response.payload) : []
+                    this.cuotas = cuotas.map(item=>{
+                        item.fechaVencimiento = this._form.formatDate(item.fechaVencimiento);
+                        return item
+                    })                                    
                 }
             });
         }            
