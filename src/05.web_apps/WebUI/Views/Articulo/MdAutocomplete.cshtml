@@ -54,6 +54,8 @@
     
 </style>
 
+<input type="text" ng->
+
 @* <div ng-submit="$event.preventDefault()">         *@
     <div class="mb-1">        
         <md-autocomplete 
@@ -62,8 +64,8 @@
         uib-tooltip="Buscar Artículo por descripción o Código "
         tooltip-placement="top"
         tooltip-trigger="'mouseenter'"
-        
-        md-no-cache="$ctrl.mdNoCache"  
+
+        md-no-cache="true"  
         ng-enter="$ctrl.getArticuloByCode();"              
         md-selected-item="$ctrl.selectedItem"
         md-search-text-change="$ctrl.searchTextChange($ctrl.searchText)"

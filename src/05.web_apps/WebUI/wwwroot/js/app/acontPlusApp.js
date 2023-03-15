@@ -345,7 +345,7 @@ function modalService($uibModal) {
         openModal: function (controller, template, size, params, animation = true, windowClass = null, props = {}) {
             return $uibModal.open({
                 animation,
-                templateUrl: `/Home/RenderView?name=${template || 'Shared/ModalNotFound.cshtml'}`,
+                templateUrl: `/Home/RenderView?name=~/Views/${template || '~/Views/Shared/ModalNotFound.cshtml'}`,
                 controller: controller,
                 size,
                 windowClass,
@@ -402,7 +402,7 @@ function modalService($uibModal) {
         openModalSecond: function (controller, template, size, params, animation = true, windowClass = null, $scope, props = {}) {
             return $uibModal.open({
                 animation,
-                templateUrl: `/Home/RenderView?name=${template || 'Shared/ModalNotFound.cshtml'}`,
+                templateUrl: `/Home/RenderView?name=~/Views/${template || '~/Views/Shared/ModalNotFound.cshtml'}`,
                 controller,
                 controllerAs: '$ctrl',
                 scope: $scope,
@@ -504,31 +504,6 @@ app.directive('master', function () { //declaration
 })
 
 
-//Validate Date format
-app.directive('validDate', ['$timeout', 'formulario', function ($timeout, form) {
-    return {
-        scope: {
-            ngModel: '='
-        },
-        link: function (scope, elem, attr, ctrl) {
-            elem.on('blur', function () {
-                $timeout(function () {
-                    scope.ngModel = scope.ngModel || new Date();
-                    scope.$parent.getFechaVencimiento(scope.ngModel)
-                    elem.removeClass('is-invalid');
-                });
-            });
-            elem.on('keyup', function () {
-                if (isNaN(Date.parse(scope.ngModel))) {
-                    elem.addClass('is-invalid');
-                } else {
-                    // elem.removeClass('is-invalid');
-                    // elem.addClass('is-valid');                       
-                }
-            })
-        }
-    }
-}]);
 
 
 app.directive('decimal', function () {
@@ -865,7 +840,7 @@ app.directive('ngEnter', function () {
                 scope.$apply(function () {
                     scope.$eval(attrs.ngEnter);
                 });
-
+               
                 event.preventDefault();
             }
         })
