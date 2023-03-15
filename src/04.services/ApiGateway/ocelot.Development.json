@@ -375,8 +375,25 @@
     },
     {
       "UpstreamPathTemplate": "/api/CuentaPorPagar/{everything}",
-      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "UpstreamHttpMethod": [ "Get", "Post", "Delete", "Options" ],
       "DownstreamPathTemplate": "/api/CuentaPorPagar/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 52813
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/CuentaPorPagar/{id}?json={json}",
+      "UpstreamHttpMethod": [ "Put" ],
+      "DownstreamPathTemplate": "/api/CuentaPorPagar/{id}?json={json}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {

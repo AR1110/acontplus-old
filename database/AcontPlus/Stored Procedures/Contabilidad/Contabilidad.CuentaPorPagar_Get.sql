@@ -1,3 +1,5 @@
+USE [Acontplus]
+GO
 -- ================================================
 -- Template generated from Template Explorer using:
 -- Create Procedure (New Menu).SQL
@@ -28,27 +30,65 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	DECLARE @idEntidad INT 
+	DECLARE @tipo INT 
+	DECLARE @idCuentaPorPagar AS INT 
+	DECLARE @sql AS NVARCHAR(MAX) = 'SELECT TOP 50
+											 pp.idCuentaPorPagar
+											,idTiempoCredito = ISNULL(pp.idTiempoCredito,0)
+											,identificacion = p.numeroIdentificacion
+											,nombreFiscal = p.nombreFiscal
+											,pp.codDoc
+											,pp.serieComprobante
+											,fechaEmision = Format(pp.fechaEmision, ''yyyy-MM-dd'') 
+											,fechaVencimiento = Format(pp.fechaVencimiento, ''yyyy-MM-dd'') 
+											,importeTotal 
+											,abono = ISNULL(abono,0)
+											,saldo = ISNULL(saldo,0)
+											,diasCredito = ISNULL(tc.diasCredito,0)
+											,estado = ep.descripcion
+											,codPago = ep.codigo
+											,colorRow  = CASE ep.codigo WHEN ''A''  THEN ''#28a745'' 
+																	    WHEN ''PA'' THEN ''#28a745''
+																	    ELSE ''''
+														END 
+										FROM Contabilidad.CuentaPorPagar pp WITH (NOLOCK)
+										INNER JOIN dbo.Proveedor      p WITH (NOLOCK) ON p.idProveedor      = pp.idProveedor
+   										 LEFT JOIN dbo.TiempoCredito tc WITH (NOLOCK) ON tc.idTiempoCredito = pp.idTiempoCredito
+										INNER JOIN dbo.EstadoPago    ep WITH (NOLOCK) ON ep.idEstadoPago    = pp.idEstadoPago
+										WHERE pp.idEntidad = @idEntidad'
+
+	DECLARE @params AS NVARCHAR(MAX) = '@idEntidad AS INT'
 
 	SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
-	SELECT TOP 50
-		 pp.idCuentaPorPagar
-		,idTiempoCredito = ISNULL(pp.idTiempoCredito,0)
-		,identificacion = p.numeroIdentificacion
-		,nombreFiscal = p.nombreFiscal
-		,pp.codDoc
-		,pp.serieComprobante
-		,fechaEmision = Format(pp.fechaEmision, 'yyyy-MM-dd hh:mm') 
-		,importeTotal 
-		,abono = ISNULL(abono,0)
-		,saldo = ISNULL(saldo,0)
-		,diasCredito = ISNULL(tc.diasCredito,0)
-		,estado = ep.descripcion
-		,codPago = ep.codigo
-	FROM Contabilidad.CuentaPorPagar pp WITH (NOLOCK)
-	INNER JOIN dbo.Proveedor      p WITH (NOLOCK) ON p.idProveedor      = pp.idProveedor
-	INNER JOIN dbo.TiempoCredito tc WITH (NOLOCK) ON tc.idTiempoCredito = pp.idTiempoCredito
-	INNER JOIN dbo.EstadoPago    ep WITH (NOLOCK) ON ep.idEstadoPago    = pp.idEstadoPago
-	WHERE pp.idEntidad = @idEntidad
+	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT '$.tipo')
+
+	IF @tipo = 1
+		BEGIN
+			EXEC sp_executesql 
+			      @sql
+			     ,@params 
+			     ,@idEntidad    = @idEntidad
+		END 
+
+	IF @tipo = 2 
+		BEGIN
+			
+			SELECT @idCuentaPorPagar = idCuentaPorPagar FROM OPENJSON(@json) WITH (idCuentaPorPagar INT '$.idCuentaPorPagar')
+
+			SELECT 
+				 c.idCuotaPorPagar
+				,fechaVencimiento = Format(c.fechaVencimiento, 'yyyy-MM-dd')
+				,c.nroCuota
+				,c.cuota
+				,c.abono
+				,c.saldo
+				,ep.descripcion
+				,ep.codigo
+			FROM Contabilidad.CuotaPorPagar c 
+			INNER JOIN dbo.EstadoPago ep ON ep.idEstadoPago = c.idEstadoPago
+			WHERE c.idCuentaPorPagar = @idCuentaPorPagar	
+			  AND c.estado = 1 
+		END 
 END
 GO

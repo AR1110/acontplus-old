@@ -15,34 +15,70 @@
     <div class="card">
         <div class="card-body">
             <div class="table-responsivve">
-                <table class="table table-bordered">
+                <table class="table table-borderless">
                     <thead>
-                        <tr>
+                        <tr class="small">
+                            <th></th>   
                             <th>Proveedor</th>
-                            <th>T. Cred.</th>
-                            <th>Documento</th>
+                            <th>Cred.</th>
+                            <th>Doc</th>
                             <th>Serie</th>
-                            <th>F. Emi.</th>
-                            <th>F. Venc.</th>
+                            <th>F.Emi</th>
+                            <th>Venc</th>
                             <th>Total</th>
                             <th>Abono</th>
                             <th>Saldo</th>
-                            <th></th>
+                            <th class="">Estado</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="item in cuenntasPorPagar">
-                            <td>{{item.}}</td>
-                            <td>{{item.}}</td>
-                            <td>{{item.}}</td>
-                            <td>{{item.}}</td>
-                            <td>{{item.}}</td>
-                            <td>{{item.}}</td>
-                            <td>{{item.}}</td>
-                            <td>{{item.}}</td>
+                        <tr ng-repeat="item in cuentasPorPagar" class="small" ng-style="item.colorRow">
                             <td>
-                                <button class="btn btn-success"></button>
+                                <md-menu>
+                                    <md-button aria-label="Open demo menu" class="md-icon-button"
+                                               ng-click="$mdMenu.open($event)">
+                                        <icon class="mdi mdi-menu"></icon>
+                                    </md-button>
+
+                                    <md-menu-content class="md-dense">
+
+                                        <md-menu-item>
+                                            <md-button ng-click="askToDelete(item)" >
+                                                <span md-menu-align-target><i class="ti-na"></i> Anular</span>
+                                            </md-button>
+                                        </md-menu-item>
+
+                                        <md-menu-item>
+                                            <md-button ng-click="opcionCobro(item)" >
+                                                <span md-menu-align-target><i class=" fas fa-hand-holding-usd"></i> Pago</span>
+                                            </md-button>
+                                        </md-menu-item>
+
+                                        <md-menu-item>
+                                            <md-button ng-click="openModalCuota(item)" >
+                                                <span md-menu-align-target><i class=" fas fa-hand-holding-usd"></i> Cuotas</span>
+                                            </md-button>
+                                        </md-menu-item>
+
+                                        <md-menu-item>
+                                            <md-button ng-click="openModalHistorialCobro(item)">
+                                                <span md-menu-align-target><i class=" fas fa-tasks"></i> Hist. Mov.</span>
+                                            </md-button>
+                                        </md-menu-item>
+
+                                    </md-menu-content>
+                                </md-menu>
                             </td>
+                            <td>{{item.nombreFiscal}}</td>
+                            <td>{{item.diasCredito}} días</td>
+                            <td>{{item.codDoc}}</td>
+                            <td>{{item.serieComprobante}}</td>
+                            <td>{{item.fechaEmision}}</td>
+                            <td>{{item.fechaVencimiento}}</td>
+                            <td class="text-right">{{item.importeTotal | currency}}</td>
+                            <td class="text-right">{{item.abono | currency}}</td>
+                            <td class="text-right">{{item.saldo | currency}}</td>
+                            <td class="text-right">{{item.estado}}</td>
                         </tr>
                     </tbody>
                 </table>

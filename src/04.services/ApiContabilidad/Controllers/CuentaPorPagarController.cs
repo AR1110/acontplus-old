@@ -40,15 +40,48 @@ namespace ApiContabilidad.Controllers
         }
 
         // POST api/<CuentaPorPagarController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpPost("{json}")]
+        public async Task<IActionResult> Post(string json)
         {
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                Dictionary<string, object> _params = new Dictionary<string, object>();
+                _params["idUsuarioRol"] = idUsuarioRol;
+                _params["json"] = SqlValidation.ValidateSqlString(json);
+                DAO _dao = new DAO(_configuration);
+                return Ok(await _dao.Default("Contabilidad.CuentaPorPagar_Insert", _params));
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error on Cuenta Por Pagar -> Post: \n" + ex.ToString());
+                return BadRequest(ex.Message);
+            }
         }
 
         // PUT api/<CuentaPorPagarController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> Put(int id, string json)
         {
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                Dictionary<string, object> _params = new Dictionary<string, object>();
+                _params["idUsuarioRol"] = idUsuarioRol;
+                _params["idCuentaPorPagar"] = id;
+                _params["json"] = SqlValidation.ValidateSqlString(json);
+                DAO _dao = new DAO(_configuration);
+                return Ok(await _dao.GetDataTable("Contabilidad.CuentaPorPagar_Update", _params));
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error on Cuenta Por Pagar -> Put: \n" + ex.ToString());
+                return BadRequest(ex.Message);
+            }
         }
 
         // DELETE api/<CuentaPorPagarController>/5
