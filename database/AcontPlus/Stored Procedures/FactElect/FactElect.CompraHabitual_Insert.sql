@@ -32,6 +32,8 @@ BEGIN
 	SET NOCOUNT ON;
 	DECLARE @codEstab VARCHAR(50)
 	DECLARE @idUsuario INT
+	DECLARE @idEntidad INT
+
 
 	DECLARE @tmp AS TABLE(
 		idProveedor INT NOT NULL
@@ -49,6 +51,7 @@ BEGIN
 	--		SELECT '0' code, 'Este articulo ya existe como compra habitual' as 'message'
 	--		RETURN
 	--	END
+	SET @idEntidad = (SELECT idEntidad FROM AFTDataRol(@idRol))
 
 	BEGIN TRY
 		INSERT INTO @tmp(idProveedor, ruc, idArticulo, codArticulo)
@@ -64,12 +67,14 @@ BEGIN
 			END
 
 		IF EXISTS(SELECT 1 FROM FactElect.CompraHabitual ch WITH (NOLOCK) 
+							INNER JOIN Proveedor p ON ch.idProveedor = p.idProveedor AND p.idEntidad = @idEntidad
 							INNER JOIN @tmp t ON ch.codArticulo = t.codArticulo AND ch.ruc = t.ruc)
 			BEGIN
 				DECLARE @idArticleFounded INT 
 				,@articleFounded VARCHAR(600)
 				
 				SET @idArticleFounded = (SELECT TOP 1 ch.idArticulo FROM FactElect.CompraHabitual ch WITH (NOLOCK) 
+																	INNER JOIN Proveedor p ON ch.idProveedor = p.idProveedor AND p.idEntidad = @idEntidad
 																	INNER JOIN @tmp t ON ch.codArticulo = t.codArticulo 
 																	AND ch.ruc = t.ruc)
 

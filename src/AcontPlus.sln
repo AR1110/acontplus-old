@@ -99,6 +99,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiCompras", "04.services\A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiContabilidad", "04.services\ApiContabilidad\ApiContabilidad.csproj", "{12C4078D-6CA2-4614-A5D9-E88848636260}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "09.desktop_apps", "09.desktop_apps", "{2C0717C9-FE1B-4004-BF4D-8127EDFB02F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrinterServer", "09.desktop_apps\PrinterServer\PrinterServer.csproj", "{34905C9A-CEF3-497A-8507-08EC2FD0FDF2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "10.setups", "10.setups", "{EE774869-3841-4957-B232-0180BF1A9FC4}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "PrinterServerSetup", "10.setups\PrinterServerSetup\PrinterServerSetup.vdproj", "{F9DF7452-D5DB-4550-97A4-9D005CB4F321}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -265,6 +273,12 @@ Global
 		{12C4078D-6CA2-4614-A5D9-E88848636260}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12C4078D-6CA2-4614-A5D9-E88848636260}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12C4078D-6CA2-4614-A5D9-E88848636260}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34905C9A-CEF3-497A-8507-08EC2FD0FDF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34905C9A-CEF3-497A-8507-08EC2FD0FDF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34905C9A-CEF3-497A-8507-08EC2FD0FDF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34905C9A-CEF3-497A-8507-08EC2FD0FDF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9DF7452-D5DB-4550-97A4-9D005CB4F321}.Debug|Any CPU.ActiveCfg = Debug
+		{F9DF7452-D5DB-4550-97A4-9D005CB4F321}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -310,6 +324,8 @@ Global
 		{6B352099-2E4C-448A-8CA6-EC0BABC03DFB} = {79F40397-A77A-42D3-9A26-12016AC04CB9}
 		{145BF3E4-0056-46DB-94FD-137274615361} = {E643720B-EDD4-43FF-80CF-2040B07B6D3C}
 		{12C4078D-6CA2-4614-A5D9-E88848636260} = {E643720B-EDD4-43FF-80CF-2040B07B6D3C}
+		{34905C9A-CEF3-497A-8507-08EC2FD0FDF2} = {2C0717C9-FE1B-4004-BF4D-8127EDFB02F2}
+		{F9DF7452-D5DB-4550-97A4-9D005CB4F321} = {EE774869-3841-4957-B232-0180BF1A9FC4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BA9DF437-2C4E-4B51-A33F-8A6B93E9A018}

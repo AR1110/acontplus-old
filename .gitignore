@@ -294,3 +294,8 @@
 /src/04.services/ApiCompras/obj
 /src/04.services/ApiContabilidad/bin
 /src/04.services/ApiContabilidad/obj
+/src/09.desktop_apps/PrinterServer/bin
+/src/09.desktop_apps/PrinterServer/obj
+/src/10.setups/PrinterServerSetup/Debug
+/src/10.setups/PrinterServerSetup/Release
+/src/09.desktop_apps/PrinterServer/SqlServerTypes
