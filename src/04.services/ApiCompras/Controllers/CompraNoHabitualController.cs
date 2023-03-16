@@ -33,7 +33,7 @@ namespace ApiCompras.Controllers
                     {"idRol", idUsuarioRol },
                     {"json", SqlValidation.ValidateSqlString(json)}
                 };
-                return Ok(await _dao.GetDataTable("Compra.CompraNoHabitual_Get", parameters));
+                return Ok(await _dao.GetDataSet("Compras.CompraNoHabitual_Get", parameters));
             }catch(Exception ex)
             {
                 _logs.LogError("Error al obtener datos de Compra No Habitual: " + ex.ToString());

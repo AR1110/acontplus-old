@@ -350,7 +350,7 @@ function facturaCompraCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreM
             hideLoader()
         }
         
-    }
+     }
 
 
      //---------------------------MODAL PAGO  --------------------------------------------

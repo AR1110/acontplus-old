@@ -8,12 +8,12 @@
         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-xs-12 b-r">
             <strong>Proveedor:</strong>
             <br>                        
-            <p class="text-muted">{{$ctrl.data.proveedor}}</p>
+            <p class="text-muted">{{$ctrl.data.nombreFiscal}}</p>
         </div>
         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-xs-12 b-r">
             <strong>Nro. Documento:</strong>
             <br>
-            <p class="text-muted">{{$ctrl.data.nroDocumento}}</p>
+            <p class="text-muted">{{$ctrl.data.serieComprobante}}</p>
         </div>
         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-xs-12 b-r">
             <strong>Fecha Emisión:</strong>
@@ -22,7 +22,7 @@
         </div>
         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-xs-12 b-r">
             <strong>Total:</strong>
-            <h4>${{$ctrl.data.total}}</h4>
+            <h4>${{$ctrl.data.importeTotal}}</h4>
         </div>
     </div>
     <md-divider></md-divider>
@@ -31,11 +31,11 @@
             <div class="form-group">
                 <label>Tiempo Crédito</label>
                 <div class="input-group">                                
-                    <select class="form-control" ng-model="$ctrl.data.idTiempoCredito" ng-change="$ctrl.generarNuevaCuota()">
+                    <select ng-disabled = "$ctrl.data.codPago!='PE'" class="form-control" ng-model="$ctrl.data.idTiempoCredito" ng-change="$ctrl.generarNuevaCuota()">
                             <option ng-value="item.idTiempoCredito" ng-repeat="item in $ctrl.tiempoCreditos">{{item.descripcion}}</option>
                     </select>
                     <div class="input-group-append">                        
-                        <button type="button" ng-click="$ctrl.generarNuevaCuota()" class="btn btn-outline-secondary btn-sm">
+                        <button ng-disabled = "$ctrl.data.codPago!='PE'" type="button" ng-click="$ctrl.generarNuevaCuota()" class="btn btn-outline-secondary btn-sm">
                             <i class=" fas fa-redo fa-xs"></i>
                         </button>
                         @* <button type="button" ng-click="openModalTiempoCredito()" class="btn btn-outline-secondary btn-sm">
@@ -48,10 +48,10 @@
         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-12">
             <label>Configurar Fecha: <code>dd/MM/yyyy</code></label>
             <div class="input-group">
-                <input type="date" ng-model="$ctrl.configFecha" class="form-control" aria-label="Config. Fecha Vencimiento">
+                <input ng-disabled = "$ctrl.data.codPago!='PE'" type="date" ng-model="$ctrl.configFecha" class="form-control" aria-label="Config. Fecha Vencimiento">
                 <div class="input-group-append">
-                    <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">Op.</button>
-                    <div class="dropdown-menu">
+                    <button ng-disabled = "$ctrl.data.codPago!='PE'" class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">Op.</button>
+                    <div class="dropdown-menu" >
                         <a class="dropdown-item" ng-click="$ctrl.getConfigFechaCuota(true)" href="javascript:void(0)">Fin Mes</a>
                         <a class="dropdown-item" ng-click="$ctrl.getConfigFechaCuota(false)" href="javascript:void(0)">Mismo Dia</a>
                     </div>
@@ -77,29 +77,29 @@
                         <!--Input Entrada-->
                         <input type="text" ng-if="cuota.nroCuota==='E'" decimal
                                 autocomplete="off" id="valorEntrada"
-                                ng-model="cuota.cxp.cuota" 
-                                ng-keyup="$ctrl.setValorEntrada(cuota.cxp.cuota)"
+                                ng-model="cuota.cuota" 
+                                ng-keyup="$ctrl.setValorEntrada(cuota.cuota)"
                                 class="form-control" />
                                 
                         <!--Input Cuota -->
                         <input type="text" ng-if="cuota.nroCuota!=='E'" autocomplete="off"
-                                id="setValcuota{{cuota.cxp.idCuotaXPagar}}" decimal
+                                id="setValcuota{{cuota.idCuotaPorPagar}}" decimal
                                 ng-keyup="$ctrl.setValorCuota(cuota)"
-                                ng-model="cuota.cxp.cuota" class="form-control" />
+                                ng-model="cuota.cuota" class="form-control" />
                     </td>
                     <td width="100">
-                        <span ng-if="cuota.nroCuota=='E'" class="ml-1">{{c.cxp.fechaVencimiento | date:'dd/MM/yyyy'}}</span>
+                        <span ng-if="cuota.nroCuota=='E'" class="ml-1">{{c.fechaVencimiento | date:'dd/MM/yyyy'}}</span>
                         
                         <input type="date" min="2020-01-01" max="2030-12-31"
-                                id="fechaVencimiento{{cuota.cxp.idCuotaXPagar}}"
+                                id="fechaVencimiento{{cuota.idCuotaPorPagar}}"
                                 ng-if="cuota.nroCuota!=='E'"
-                                ng-model="cuota.cxp.fechaVencimiento"
+                                ng-model="cuota.fechaVencimiento"
                                 ng-change="$ctrl.setFechaVencimientoCuota(cuota)"
                                 class="form-control" required />
                         <small class="invalid-feedback">Fecha Vcto. no válida </small>
                     </td>
                     <td width="100">
-                        {{$ctrl.getFechaEscritaCuota(cuota.cxp.fechaVencimiento)}}
+                        {{$ctrl.getFechaEscritaCuota(cuota.fechaVencimiento)}}
                     </td>
                 </tr>                               
             </tbody>
@@ -121,7 +121,7 @@
 
 
 <div class="modal-footer">
-    <button type="button" class="btn btn-success" ng-click="$ctrl.guardarCuota()">
+    <button ng-if="$ctrl.data.codPago =='PE'" type="button" class="btn btn-success" ng-click="$ctrl.guardarCuota()">
         <i class="ti-save"></i> Guardar
     </button>
     <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">&times; Cerrar</button>
