@@ -32,7 +32,14 @@ BEGIN
 	DECLARE @idEntidad INT 
 	DECLARE @tipo INT 
 	DECLARE @idCuentaPorPagar AS INT 
-	DECLARE @sql AS NVARCHAR(MAX) = 'SELECT TOP 50
+
+	SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
+
+	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT '$.tipo')
+
+	IF @tipo = 1
+		BEGIN
+			DECLARE @sql AS NVARCHAR(MAX) = 'SELECT TOP 50
 											 pp.idCuentaPorPagar
 											,idTiempoCredito = ISNULL(pp.idTiempoCredito,0)
 											,identificacion = p.numeroIdentificacion
@@ -57,14 +64,8 @@ BEGIN
 										INNER JOIN dbo.EstadoPago    ep WITH (NOLOCK) ON ep.idEstadoPago    = pp.idEstadoPago
 										WHERE pp.idEntidad = @idEntidad'
 
-	DECLARE @params AS NVARCHAR(MAX) = '@idEntidad AS INT'
-
-	SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
-
-	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT '$.tipo')
-
-	IF @tipo = 1
-		BEGIN
+			DECLARE @params AS NVARCHAR(MAX) = '@idEntidad AS INT'
+			
 			EXEC sp_executesql 
 			      @sql
 			     ,@params 

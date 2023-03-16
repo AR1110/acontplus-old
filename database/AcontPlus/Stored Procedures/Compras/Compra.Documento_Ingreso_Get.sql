@@ -68,41 +68,65 @@ BEGIN
 							)
 
 	
-	SELECT @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
+	SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
+	IF @typeList = 1 
+		BEGIN
+			SELECT 
+				 serieComprobante = es.estab+'-'+pt.ptoEmi+'-'+Helper.F_Auto_Sequential(di.secuencial)
+				,fechaEmision     = FORMAT(di.fechaEmision,'yyyy-MM-dd')
+				,nombreFiscal     = pr.nombreFiscal
+				,importeTotal     = di.importeTotal
+				,usuario          = us.nombreUsuario
+			FROM Compra.Documento_Ingreso  di WITH (NOLOCK)
+			INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = di.idEstablecimiento
+			INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision    = di.idPuntoEmision
+			INNER JOIN dbo.Proveedor       pr WITH (NOLOCK) ON pr.idProveedor       = di.idProveedor
+			INNER JOIN dbo.Usuario         us WITH (NOLOCK) ON us.idUsuario         = di.idUsuario
+			WHERE di.idEntidad = @idEntidad
+		END 
 
 	IF @typeList = 2
-	BEGIN
+		BEGIN
 		
-		--Establecimiento 
-		SELECT ea.codEstab_Asig, ea.predeterminado, e.*
-		FROM Config.Estab_Asig         ea WITH (NOLOCK) 
-		INNER JOIN Sri.Establecimiento e WITH (NOLOCK)  ON ea.codEstab = e.codEstab
-		WHERE idUsuarioRol = @idUsuarioRol
-		ORDER BY ea.predeterminado DESC
+			--=================================Establecimiento====================================================== 
+			SELECT ea.codEstab, ea.predeterminado, es.nombreComercial,es.estab
+			FROM Config.Estab_Asig         ea WITH (NOLOCK) 
+			INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON ea.codEstab = es.codEstab
+			WHERE idUsuarioRol = @idUsuarioRol
+			ORDER BY ea.predeterminado DESC
 
 
-		--Punto Emisión
-		SELECT  pa.idPtoEmi_asig, ea.codEstab_Asig, pe.idPuntoEmision, pe.ptoEmi, pa.predeterminado, pa.estado
-		FROM Config.PtoEmi_Asig      pa  WITH (NOLOCK) 
-		INNER JOIN  Config.Estab_Asig ea WITH (NOLOCK)  ON ea.codEstab_Asig = pa.codEstab_Asig
-		INNER JOIN PuntoEmision pe On pa.idPuntoEmision = pe.idPuntoEmision
- 		WHERE ea.idUsuarioRol = @idUsuarioRol
+			--================================Punto Emisión==========================================================
+			SELECT ea.codEstab,pa.predeterminado,pe.ptoEmi
+			FROM Config.PtoEmi_Asig       pa WITH (NOLOCK) 
+			INNER JOIN Config.Estab_Asig  ea WITH (NOLOCK) ON ea.codEstab_Asig  = pa.codEstab_Asig
+			INNER JOIN dbo.PuntoEmision   pe WITH (NOLOCK) ON pa.idPuntoEmision = pe.idPuntoEmision
+ 			WHERE ea.idUsuarioRol = @idUsuarioRol
 
-		--Configuracion Decimal 
-		SELECT nroPrecio, nroCantidad, nroIva, nroDescuentoDetalle, nroTotalDetalle, nroTotalSubTotal, nroDescuento, nroIce
-		FROM Config.CantidadDecimal WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codTransaccion = 'C'
+			--================================Bodegas=================================================================
+			SELECT ea.codEstab,ab.predeterminado,bo.descripcion
+			FROM Config.Bodeg_Asig        ab WITH (NOLOCK) 
+			INNER JOIN Config.Estab_Asig  ea WITH (NOLOCK) ON ea.codEstab_Asig = ab.codEstab_Asig
+			INNER JOIN dbo.Bodega         bo WITH (NOLOCK) ON bo.idBodega      = ab.idBodega
+ 			WHERE ea.idUsuarioRol = @idUsuarioRol
 
-		--Tipo Iva
-		SELECT idTipoIva, descripcion, tarifa = porcentaje, codigoPorcentaje = CAST(codigoPorcentaje AS VARCHAR)
-		FROM dbo.TipoIva WITH (NOLOCK) 
-		WHERE estado = 1
 
-		-- Tiempo Crédito 
-		SELECT idTiempoCredito, descripcion, diasCredito, numeroCuota 
-		FROM TiempoCredito WITH (NOLOCK) 
-		WHERE idEntidad = @idEntidad AND gestion = 0 AND estado = 1
-		RETURN 
+			--==============================Configuracion Decimal============================================================== 
+			SELECT nroPrecio, nroCantidad, nroIva, nroDescuentoDetalle, nroTotalDetalle, nroTotalSubTotal, nroDescuento, nroIce
+			FROM Config.CantidadDecimal WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codTransaccion = 'C'
+
+
+			--=============================Impuestos===========================================================================
+			SELECT codigo = codImpuesto, codigoPorcentaje = codigo, descripcion = 'Iva '+descripcion,tarifa = porcentaje 
+			FROM sri.TarifaImpuesto WHERE estado = 1 AND codImpuesto = 2
+
+			--============================Impuestos por tipo de Actividad======================================================
+			SELECT ea.codEstab,codigoPorcentaje = ae.codTarifaImpuesto,tarifa = ae.porcentaje
+			FROM Config.Estab_Asig            ea WITH (NOLOCK) 
+			INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON ea.codEstab = es.codEstab
+			INNER JOIN Sri.ActividadEconomica ae WITH (NOLOCK) ON ae.codigo   = es.actividad
+			WHERE idUsuarioRol = @idUsuarioRol
 	END 
 END
 GO

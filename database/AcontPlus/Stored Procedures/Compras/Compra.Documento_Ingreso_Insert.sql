@@ -56,6 +56,7 @@ BEGIN
 	DECLARE @idEstadoPago AS INT
 
 	--==========Tablas temporales para la validacion===================
+
 	DECLARE @document AS TABLE(
 		 idEstablecimiento INT NOT NULL 
         ,idPuntoEmision INT NOT NULL
@@ -93,7 +94,6 @@ BEGIN
 	)
 
 	BEGIN TRY
-		SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
 		SELECT @documento = documento, @detalles = detalles, @impuestos = impuestos 
 		FROM OPENJSON(@json)
@@ -102,7 +102,8 @@ BEGIN
 			 ,impuestos NVARCHAR(MAX) '$.impuestos' AS JSON) as dt
 
 
-		INSERT INTO @document (idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,fechaEmision,totalSinImpuestos,importeTotal,inventory)
+		INSERT INTO @document 
+		      (idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,fechaEmision,totalSinImpuestos,importeTotal,inventory)
 		SELECT idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,fechaEmision,totalSinImpuestos,importeTotal,inventory
 		FROM OPENJSON(@documento)
 		WITH (idEstablecimiento INT '$.idEstablecimiento' 
@@ -116,7 +117,8 @@ BEGIN
 			 ,inventory VARCHAR(5) '$.inventory'
 		     ) as dt
 		
-		INSERT INTO @detail(idArticulo,idTarifa,idMedida,idBodega,codigoPrincipal,codigoAuxiliar,descripcion,cantidad,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje)
+		INSERT INTO @detail
+		      (idArticulo,idTarifa,idMedida,idBodega,codigoPrincipal,codigoAuxiliar,descripcion,cantidad,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje)
 		SELECT idArticulo,idTarifa,idMedida,idBodega,codigoPrincipal,codigoAuxiliar,descripcion,cantidad,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje
 		FROM OPENJSON(@detalles)
 		WITH (
@@ -134,7 +136,8 @@ BEGIN
 			   ,codigoPorcentaje VARCHAR(5) '$.codigoPorcentaje'
 		     ) as dt
 		
-		INSERT INTO @taxes (codigoPorcentaje,tarifa,baseImponible,valor)
+		INSERT INTO @taxes 
+		      (codigoPorcentaje,tarifa,baseImponible,valor)
 		SELECT codigoPorcentaje,tarifa,baseImponible,valor
 		FROM OPENJSON(@impuestos)
 		WITH (
@@ -143,6 +146,10 @@ BEGIN
                ,baseImponible NUMERIC(18,5) '$.baseImponible'
                ,valor NUMERIC(18,5) '$.valor'
 			 ) as dt
+
+		
+		----======================================Recuperar datos de las Tablas===========================================================
+		SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
 		SELECT @idPuntoEmision = idPuntoEmision,@inventory = inventory FROM @document
 		
@@ -156,6 +163,9 @@ BEGIN
 
 		SELECT @serieComprobante = estab+'-'+ptoEmi+'-'+Helper.F_Auto_Sequential(@secuencial) FROM @document
 
+		
+		--==================================Validacion de la informacion============================================================
+
 		IF EXISTS (SELECT 1 FROM Compra.Documento_Ingreso WHERE uniqueId = @uniqueId)
 			BEGIN
 				SELECT '0' code,'Este Id ya se encuentra registrado' as 'message'
@@ -165,6 +175,18 @@ BEGIN
 		IF EXISTS (SELECT 1 FROM Compra.Documento_Ingreso WHERE idPuntoEmision = @idPuntoEmision AND secuencial = @secuencial)
 			BEGIN
 				SELECT '0' code,'Este secuencial ya se encuentra registrado' as 'message'
+				RETURN 
+			END 
+
+		IF (SELECT COUNT(*) FROM @detail) = 0
+			BEGIN
+				SELECT '0' code,'Se encontro un error en el detalle del documento' as 'message'
+				RETURN 
+			END 
+
+		IF (SELECT COUNT(*) FROM @taxes) = 0
+			BEGIN
+				SELECT '0' code,'Se encontro un error en los impuestos del documento' as 'message'
 				RETURN 
 			END 
 
@@ -186,8 +208,8 @@ BEGIN
 			
 			INSERT INTO Compra.Documento_Ingreso_Taxes
                   (idDocumentoIngreso,codigo,codigoPorcentaje,tarifa,baseImponible,valor)
-		   SELECT @idDocumentoIngreso,codigo,codigoPorcentaje,tarifa,baseImponible,valor
-		   FROM @taxes
+			SELECT @idDocumentoIngreso,codigo,codigoPorcentaje,tarifa,baseImponible,valor
+			FROM @taxes
 			
 			--==============================================================Inventario============================================================================================
 			IF @inventory = 'SI'
@@ -199,7 +221,6 @@ BEGIN
 					FROM Compra.Documento_Ingreso_Detail d WITH (NOLOCK)
 					INNER JOIN dbo.Articulo a WITH (NOLOCK) ON a.idArticulo = d.idArticulo
 					WHERE d.idDocumentoIngreso = @idDocumentoIngreso AND a.llevaInventario = 1
-				
 				END 
 
 			--===========================================================Contabilidad=================================================================================================
@@ -210,7 +231,7 @@ BEGIN
 		    FROM Compra.Documento_Ingreso d WITH (NOLOCK)
 		    INNER JOIN dbo.Proveedor p WITH (NOLOCK) ON p.idProveedor = d.idProveedor 
 		    WHERE d.idDocumentoIngreso = @idDocumentoIngreso
-
+			
 		COMMIT TRAN 
 		SELECT '0' code,'Registrado Correctamente' as 'message'
 		RETURN 
@@ -220,7 +241,7 @@ BEGIN
 		SELECT '0' code, 'Error en base de datos: ' + ERROR_MESSAGE() as 'message'
 		IF (@@TRANCOUNT > 0)
 			ROLLBACK TRAN
-		INSERT INTO ErroresSistema([token], [method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [errorDate], [idUsuario])
+		INSERT INTO ErroresSistema([token],[method],[errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [errorDate], [idUsuario])
 		VALUES (NEWID(), 'DocumentoIngreso/Post', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
 	END CATCH
 END
