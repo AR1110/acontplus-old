@@ -759,6 +759,8 @@ class ModalCompraBaseCtrl{
         
         self.focusColumnCantidad();
         self.uiGridInvoice.countIndex();
+
+        console.log(entity)
     }
 
 

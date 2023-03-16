@@ -12,14 +12,8 @@ function compraNoHabitualCtrl($scope, commonSvc, mS, tS, modalSvc, nombreModal){
     //Variables Generales
     const {MODAL_FILE_PATH} = nombreModal.compra_no_habitual; 
     const {MODAL_NUEVO, MODAL_EDITAR, MODAL_DETALLED} =nombreModal.compra_no_habitual;
-
-
     //Filtro 
     $scope.dataSearch = {};
-    
-
-    
-
     /**
      * 
      * @param {object} {controller, template, params}

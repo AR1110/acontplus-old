@@ -8,88 +8,58 @@
     </div>
     <div class="modal-body">
         <div class="row" ng-show="$ctrl.showHeader">
-            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">            
-                <div class="row">
-                    <div class="col-xl-12 col-md-12 col-sm-12 col-xs-12">
-                        <div class="form-group">
-                            <label for="categoria">Estab.: <span class="text-danger">*</span></label>                  
-                            <select class="form-control border-select" ng-model="$ctrl.data.codEstab_Asig" ng-change="$ctrl.onChangeEstablecimiento()">
-                                <option ng-value="item.codEstab_Asig" ng-repeat="item in $ctrl.establecimientos">
-                                    {{item.nombreComercial}}
-                                </option>
-                            </select> 
-                        </div> 
-                    </div>
+            <div class="col-xl-5 col-lg-5 col-md-6 col-sm-12 col-xs-12">
+                <div class="form-group">
+                    <label for="categoria">Estab.: <span class="text-danger">*</span></label>
+                    <select class="form-control border-select" ng-model="$ctrl.data.codEstab" ng-change="$ctrl.changeEstablecimiento()">
+                        <option ng-value="item.codEstab" ng-repeat="item in $ctrl.establecimientos">
+                            {{item.nombreComercial}}
+                        </option>
+                    </select>
                 </div>
             </div>
 
-            <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-xs-12">
-                <div class="row">
-                    <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
-                        <div class="form-group">
-                            <label for="">Proveedor <span class="text-danger">*</span></label>                    
-                            <uib-modal-proveedor-search selected-item-proveedor="$ctrl.selectedItemProveedor(item)" search="$ctrl.searchProveedorOptions"></uib-modal-proveedor-search>                            
-                        </div>
-                    </div>
-
-                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
-                        <div class="form-group">
-                            <label>Nro. Identificación: </label>
-                            <input type="text" class="form-control" ng-model="$ctrl.proveedor.numeroIdentificacion" ng-disabled="true">                            
-                        </div>
-                    </div>
-
-                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
-                        <div class="form-group">
-                            <label>Dirección: </label>
-                            <input type="text" ng-model="$ctrl.proveedor.direccion" ng-disabled="true" class="form-control" />
-                        </div>
-                    </div>
-                </div>                       
-            </div>
-        </div>
-
-        <div class="row" ng-if="$ctrl.showHeader">
-            <div class="col-lg-2 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
                 <div class="form-group">
                     <label for="puntoEmision">Punto Emision <span class="text-danger">*</span></label>
                     <select name="puntoEmision" id="puntoEmision" class="form-control border-select" ng-model="$ctrl.data.idPuntoEmision">
                         <option ng-value="item.idPuntoEmision" ng-repeat="item in $ctrl.puntosEmision">
                             {{item.ptoEmi}}
-                        </option>                        
+                        </option>
                     </select>
-                </div>            
+                </div>
             </div>
 
-            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">  
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
                 <div class="form-group">
-                    <label>Tiempo Credito: <span class="text-danger">*</span> </label>
-                    <div class="input-group">                     
-                        <select class="form-control border-select" ng-model="$ctrl.data.idTiempoCredito" ng-change="$ctrl.getFechaVencimiento()">
-                                <option ng-value="item.idTiempoCredito" ng-repeat="item in $ctrl.tiempoCreditos">{{item.descripcion}}</option>
-                        </select>
-                        <div class="input-group-append">
-                            <button type="button" class="btn btn-secondary btn-sm" ng-click="$ctrl.realoadCreditTime()">
-                                <i class="mdi mdi-cached"></i>
-                            </button>
-                        </div>
-                    </div>                
-                </div>                                                                                                        
-            </div>
-
-            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
-                <div class="form-group">
-                    <label>F. Emisión: </label>
-                    <input type="date" class="form-control" ng-model="$ctrl.data.fechaEmision" ng-keyup="$ctrl.getFechaVencimiento()" ng-change="$ctrl.getFechaVencimiento()"  />
+                    <label>Fecha Emisión: </label>
+                    <input type="date" class="form-control" ng-model="$ctrl.data.fechaEmision" ng-keyup="$ctrl.getFechaVencimiento()" ng-change="$ctrl.getFechaVencimiento()" />
                     <small class="form-text text-info">{{$ctrl.fechaEmisionEscrita}}</small>
-                </div>                
-            </div> 
+                </div>
+            </div>
 
-            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
+           
+        </div>
+
+        <div class="row" ng-if="$ctrl.showHeader">
+            <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
                 <div class="form-group">
-                    <label>F. de Vencimiento: </label>
-                    <input type="date" class="form-control"  ng-model="$ctrl.data.fechaVencimiento" disabled />
-                    <small class="form-text text-info">{{$ctrl.fechaVencimientoEscrita}}</small>
+                    <label for="">Proveedor <span class="text-danger">*</span></label>
+                    <uib-modal-proveedor-search selected-item-proveedor="$ctrl.selectedItemProveedor(item)" search="$ctrl.searchProveedorOptions"></uib-modal-proveedor-search>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
+                <div class="form-group">
+                    <label>Nro. Identificación: </label>
+                    <input type="text" class="form-control" ng-model="$ctrl.proveedor.numeroIdentificacion" ng-disabled="true">
+                </div>
+            </div>
+
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                <div class="form-group">
+                    <label>Dirección: </label>
+                    <input type="text" ng-model="$ctrl.proveedor.direccion" ng-disabled="true" class="form-control" />
                 </div>
             </div>
         </div>
@@ -116,14 +86,14 @@
         </div>
 
 
-@*                     
+                     
         <div id="grid" ui-grid="$ctrl.gridOptions"
             ui-grid-edit
             ui-grid-resize-columns
             ui-grid-cellNav
             ui-grid-auto-resize
             class="grid">
-        </div> *@
+        </div> 
 
         <div class="row">
             <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-xs-12">

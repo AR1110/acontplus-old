@@ -1,22 +1,36 @@
-
-
-
-
-IF OBJECT_ID('Compras.CompraNoHabitual_Get')IS NOT NULL
-	DROP PROCEDURE Compras.CompraNoHabitual_Get
+USE [AcontPlus]
 GO 
 
---Autor: Emilio Senguana 
---Date: 14-03-2023
-
-CREATE PROCEDURE Compras.CompraNoHabitual_Get @idRol INT, @json VARCHAR(700)
+-- ================================================
+-- Template generated from Template Explorer using:
+-- Create Procedure (New Menu).SQL
+--
+-- Use the Specify Values for Template Parameters 
+-- command (Ctrl-Shift-M) to fill in the parameter 
+-- values below.
+--
+-- This block of comments will not be included in
+-- the definition of the procedure.
+-- ================================================
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		Alexis Ramirez
+-- Create date: 03/16/2023
+-- Description:	SP para listar las compras que no tiene documento validado por el sri.
+-- =============================================
+IF OBJECT_ID(N'Compra.Documento_Ingreso_Get', N'P') IS NOT NULL
+DROP PROCEDURE Compra.Documento_Ingreso_Get
+GO
+CREATE PROCEDURE Compra.Documento_Ingreso_Get @idUsuarioRol INT, @json VARCHAR(MAX)
 AS
-BEGIN 
+BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
-	DECLARE @typeList INT = 0;
-	DECLARE @idEntidad INT;
-	DECLARE @idUsuarioRol INT 
+	DECLARE @typeList INT = 0
+	DECLARE @idEntidad INT
 	DECLARE @params VARCHAR(400) = ''
 	
 	DECLARE @codEstab VARCHAR(100)
@@ -54,7 +68,7 @@ BEGIN
 							)
 
 	
-	SELECT @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
+	SELECT @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
 
 	IF @typeList = 2
@@ -64,7 +78,7 @@ BEGIN
 		SELECT ea.codEstab_Asig, ea.predeterminado, e.*
 		FROM Config.Estab_Asig         ea WITH (NOLOCK) 
 		INNER JOIN Sri.Establecimiento e WITH (NOLOCK)  ON ea.codEstab = e.codEstab
-		WHERE idUsuarioRol = @idRol
+		WHERE idUsuarioRol = @idUsuarioRol
 		ORDER BY ea.predeterminado DESC
 
 
@@ -73,7 +87,7 @@ BEGIN
 		FROM Config.PtoEmi_Asig      pa  WITH (NOLOCK) 
 		INNER JOIN  Config.Estab_Asig ea WITH (NOLOCK)  ON ea.codEstab_Asig = pa.codEstab_Asig
 		INNER JOIN PuntoEmision pe On pa.idPuntoEmision = pe.idPuntoEmision
- 		WHERE ea.idUsuarioRol = @idRol
+ 		WHERE ea.idUsuarioRol = @idUsuarioRol
 
 		--Configuracion Decimal 
 		SELECT nroPrecio, nroCantidad, nroIva, nroDescuentoDetalle, nroTotalDetalle, nroTotalSubTotal, nroDescuento, nroIce
@@ -90,16 +104,5 @@ BEGIN
 		WHERE idEntidad = @idEntidad AND gestion = 0 AND estado = 1
 		RETURN 
 	END 
-
-
-	IF @typeList = 3
-		BEGIN 
-			SELECT * FROM Bodega WHERE codEstab = @codEstab
-			RETURN 
-		END
-		
-
-
-
-
-END 
+END
+GO
