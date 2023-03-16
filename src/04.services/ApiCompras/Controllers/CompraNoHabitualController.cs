@@ -30,7 +30,7 @@ namespace ApiCompras.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 DAO _dao = new DAO(_configuration);
                 Dictionary<string, object> parameters = new Dictionary<string, object> {
-                    {"idRol", idUsuarioRol },
+                    {"idUsuarioRol", idUsuarioRol },
                     {"json", SqlValidation.ValidateSqlString(json)}
                 };
                 return Ok(await _dao.GetDataSet("Compras.CompraNoHabitual_Get", parameters));

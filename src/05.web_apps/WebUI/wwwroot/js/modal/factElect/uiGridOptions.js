@@ -269,6 +269,18 @@ export class UiGridOptions{
                     toastr.error(`CALCULO TIPO IVA: ${error}`)                     
                 }
             },
+            'codigoPorcentaje': ()=>{
+                try {
+                    if(rowEntity.idTipoIva===oldValue) return
+
+                    let tipoIva          =  this.tipoIvas.find(item=>item.codigoPorcentaje===rowEntity.codigoPorcentaje);                   
+                    rowEntity.tarifa     = tipoIva.tarifa;
+                    rowEntity.codigoPorcentaje = tipoIva.codigoPorcentaje;                    
+                    calculoColumnas["precioUnitario"]();                        
+                } catch (error) {
+                    toastr.error(`CALCULO TIPO IVA: ${error}`)                     
+                }
+            },
             'idTarifa':()=>{
                 try {
                     if(rowEntity.idTarifa===oldValue) return
