@@ -1,13 +1,13 @@
 
 
 <div class="modal-header">
-    <h5 class="modal-title">Pago</h5>
+    <h5 class="modal-title"><i class="far fa-money-bill-alt"></i> Pago</h5>
     <button class="close" ng-click="closeModal()">&times;</button>
 </div>
 
 <div class="modal-body">
 
-    <div class="row justify-content-end">
+    @* <div class="row justify-content-end">
         <div class="col-xl-3 col-lg-3 col-md-3">
             <div class="ml-auto">
                 <button type="button" class="btn btn-info btn-block" ng-click="openModalFormaPago()">
@@ -15,16 +15,17 @@
                 </button>
             </div>            
         </div>
-    </div>
+    </div> *@
+
     <div class="row">        
         <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-xs-12">
             <div class="card border border-info">
                 <div class="card-header bg-info text-white">
                     <h6 class="card-title">Cuotas</h6>
                 </div>                
-                <md-table-container>
+                <md-table-container style=" max-height: 400px;">
                     <table md-table>
-                        <thead md-head md-order="query.order">
+                        <thead md-head>
                             <tr md-row>                                                                        
                                 <th md-column><span></span></th>
                                 <th md-column><span>Nro. Cuota</span></th>
@@ -52,6 +53,42 @@
                                 <td md-cell>{{cuota.cuota}}</td>
                                 <td md-cell>{{cuota.abono}}</td>
                                 <td md-cell>{{cuota.saldo}}</td>
+                                <td md-cell>{{cuota.descripcion}}</td> 
+                            </tr>
+                        </tbody>
+                    </table>
+                </md-table-container>                
+            </div>
+
+            <div class="card border border-dark">
+                <div class="card-header bg-secondary">
+                    <h6 class="card-title">Datos de pago</h6>
+                </div>                
+                <md-table-container style=" max-height: 400px;">
+                    <table md-table>
+                        <thead md-head>
+                            <tr md-row>                                                                        
+                                <th md-column><span>Op.</span></th>
+                                <th md-column><span>N°</span></th>
+                                <th md-column><span>Fecha Emisión</span></th>
+                                <th md-column><span>Sub Entidad</span></th>
+                                <th md-column><span>Valor</span></th>
+                                <th md-column><span>Tipo Doc.</span></th>
+                                <th md-column><span>Número</span></th>                                
+                            </tr>
+                        </thead>
+                        <tbody md-body>                         
+                            <tr md-row ng-repeat="item in datosPagos">
+                                <td md-cell>
+                                    <button class="btn btn-danger btn-sm" ng-click="askToDeleteDatoPago(item)">
+                                        <i class="mdi mdi-delete"></i>
+                                    </button>
+                                </td>
+                                <td md-cell>{{cuota.nroCuota}}</td>
+                                <td md-cell>{{cuota.cuota}}</td>
+                                <td md-cell>{{cuota.abono}}</td>
+                                <td md-cell>{{cuota.saldo}}</td>
+                                <td md-cell>{{cuota.descripicion}}</td> 
                                 <td md-cell>{{cuota.descripicion}}</td> 
                             </tr>
                         </tbody>
@@ -62,7 +99,45 @@
         </div>
 
         <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-xs-12">
-
+            <div class="card">
+                <button type="button" class="btn btn-info btn-block" ng-click="openModalFormaPago()">
+                    <icon class="ti-plus"></icon> Nuevo Abono
+                </button>
+                
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Total:                     
+                            <span class="badge badge-primary badge-pill">
+                                {{data.importeTotal | currency}}
+                            </span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Abono:
+                            <span class="badge badge-primary badge-pill">
+                                {{data.abono | currency}}
+                            </span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Abono Posf.                  
+                            <span class="badge badge-primary badge-pill">
+                                {{data.abonoPosfechado | currency}}
+                            </span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Total Abono:                  
+                            <span class="badge badge-primary badge-pill">
+                                {{data.abonoPosfechado | currency}}
+                            </span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-danger">
+                            Cambio:               
+                            <span>
+                                {{data.abonoPosfechado | currency}}
+                            </span>
+                        </li>
+                    </ul>
+            
+            </div>                                 
         </div>
     </div>    
 

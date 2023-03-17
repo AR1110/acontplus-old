@@ -1,52 +1,282 @@
 
 
 <div class="modal-header">
-    <h5 class="modal-title">Forma Pago</h5>
+    <h5 class="modal-title"><i class="fab fa-wpforms"></i> Forma de Pago</h5>
     <button type="button" class="close" ng-click="closeModal()">&times;</button>
 </div>
 
-
 <div class="modal-body">
-    <md-tabs class="md-primary" md-center-tabs md-dynamic-height md-border-bottom>
-      <md-tab label="one">
-        <md-content class="md-padding">
-          <h2 class="md-display-1">Tab One</h2>
-          <p class="md-body-1">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis ante augue.
-            Phasellus volutpat neque ac dui mattis vulputate. Etiam consequat aliquam cursus. In
-            sodales pretium ultrices. Maecenas lectus est, sollicitudin consectetur felis nec,
-            feugiat ultricies mi.
-          </p>
-        </md-content>
-      </md-tab>
-      <md-tab label="two">
-        <md-content class="md-padding">
-          <h2 class="md-display-1">Tab Two</h2>
-          <p class="md-body-1">
-            Morbi viverra, ante vel aliquet tincidunt, leo dolor pharetra quam, at semper massa
-            orci nec magna. Donec posuere nec sapien sed laoreet. Etiam cursus nunc in
-            condimentum facilisis. Etiam in tempor tortor. Vivamus faucibus egestas enim,
-            at convallis diam pulvinar vel. Cras ac orci eget nisi maximus cursus.
-          </p>
-        </md-content>
-      </md-tab>
-      <md-tab label="three">
-        <md-content class="md-padding">
-          <h2 class="md-display-1">Tab Three</h2>
-          <p class="md-body-1">
-            Integer turpis erat, porttitor vitae mi faucibus, laoreet interdum tellus. Curabitur
-            posuere molestie dictum. Morbi eget congue risus, quis rhoncus quam. Suspendisse
-            vitae hendrerit erat, at posuere mi. Cras eu fermentum nunc. Sed id ante eu orci
-            commodo volutpat non ac est.
-          </p>
-        </md-content>
-      </md-tab>
-    </md-tabs>    
+    <md-tabs class="md-default" md-selected="selectedIndexTab" md-center-tabs md-dynamic-height md-border-bottom>
+        <md-tab ng-repeat="item in entidadesFinancieras" ng-click="onChangeTabEntidadEntifiera(item)">
+            <md-tab-label>{{item.descripcion}}</md-tab-label>
+            <md-tab-body>
+                <div class="card border border-info mt-2">
+                    <div class="card-body" ng-if="item.codigo==='TAR'">
+                        <div class="row">
+                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label class="text-muted">SubEntidad Financiera: <span class="text-danger">*</span></label>
+                                    <select class="form-control border-select" ng-model="data.idSubEntidadFinanciera">
+                                        <option ng-value="item.idSubEntidadFinanciera" ng-repeat="item in subEntidadesFinancieras">{{item.descripcion}}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label class="text-muted">Fecha Emisión: <span class="text-danger">*</span></label>
+                                    <input type="date" ng-model="data.fechaEmision" class="form-control border-select">
+                                </div>
+                            </div>
+
+                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label class="text-danger">Valor Abono: <span class="text-danger">*</span> </label>
+                                    <input type="text" ng-model="data.valorAbono" class="form-control border-select" onClick="select()" decimal placeholder="0.00" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label class="text-muted">Número <span class="text-danger">*</span></label>
+                                    <input type="text" ng-model="data.nro" class="form-control border-select" />
+                                </div>
+                            </div>
+
+                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label for="ciudad">Ciudad: <span class="text-danger">*</span></label>
+                                    <select class="form-control border-select" ng-model="data.idCiudad">
+                                        <option ng-value="item.idCiudad" ng-repeat="item in ciudades">
+                                            {{item.descripcion}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label for="Referencia">Referencia: <span class="text-danger">*</span></label>
+                                    <input type="text" ng-model="data.referencia" class="form-control border-select" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label class="text-muted">Aprobación <span class="text-danger">*</span></label>
+                                    <input type="text" ng-model="data.aprobacion" class="form-control border-select" />
+                                </div>
+                            </div>
+
+                            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label for="lote">Lote: <span class="text-danger">*</span> </label>
+                                    <input type="text" ng-model="data.lote" class="form-control border-select" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!--EFECTIVO-->
+                    <div class="card-body" ng-if="item.codigo=='EFE'">
+                        <div class="row">
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                <div class="form-group">
+                                    <label class="text-muted">SubEntidad Financiera: <span class="text-danger">*</span></label>
+                                    <select class="form-control border-select" ng-model="data.idSubEntidadFinanciera">
+                                        <option ng-value="item.idSubEntidadFinanciera" ng-repeat="item in subEntidadesFinancieras">
+                                            {{item.descripcion}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                <div class="form-group">
+                                    <label class="text-muted">Fecha Emisión: <span class="text-danger">*</span></label>
+                                    <input type="date" ng-model="data.fechaEmision" class="form-control border-select">
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label class="text-danger">Valor Abono *</label>
+                                    <input type="text" ng-model="data.valorAbono" class="form-control border-select" decimal
+                                           placeholder="0.00" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="card-body" ng-if="item.codigo==='TRA'">
+                        <div class="row">
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                <div class="form-group">
+                                    <label class="text-muted">SubEntidad Financiera: <span class="text-danger">*</span></label>
+                                    <select class="form-control border-select" ng-model="data.idSubEntidadFinanciera">
+                                        <option ng-value="item.idSubEntidadFinanciera" ng-repeat="item in subEntidadesFinancieras">
+                                            {{item.descripcion}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                <div class="form-group">
+                                    <label class="text-muted">Fecha Emisión: <span class="text-danger">*</span></label>
+                                    <input type="date" ng-model="data.fechaEmision" class="form-control border-select">
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label class="text-danger">Valor Abono *</label>
+                                    <input type="text" ng-model="data.valorAbono" class="form-control border-select" decimal placeholder="0.00" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label class="text-muted">Banco: <span class="text-danger">*</span></label>
+                                    <select class="form-control border-select" ng-model="data.idBanco">
+                                        <option ng-value="item.idBanco" ng-repeat="item in bancos">
+                                            {{item.descripcion}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label class="text-muted">Número <span class="text-danger">*</span></label>
+                                    <input type="text" ng-model="data.nro" class="form-control border-select" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--CHEQUE-->
+                    <div class="card-body" ng-if="item.codigo=='CHE'">
+                        <div class="row">
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                <div class="form-group">
+                                    <label class="text-muted">SubEntidad Financiera: <span class="text-danger">*</span></label>
+                                    <select class="form-control border-select" ng-model="data.idSubEntidadFinanciera">
+                                        <option ng-value="item.idSubEntidadFinanciera" ng-repeat="item in subEntidadesFinancieras">
+                                            {{item.descripcion}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                <div class="form-group">
+                                    <label class="text-muted">Fecha Emisión: <span class="text-danger">*</span></label>
+                                    <input type="date" ng-model="data.fechaEmision" class="form-control border-select">
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label class="text-danger">Valor Abono *</label>
+                                    <input type="text" ng-model="data.valorAbono" class="form-control border-select" decimal placeholder="0.00" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label class="text-muted">Ciudad</label>
+                                    <select class="form-control border-select" ng-model="data.idCiudad">
+                                        <option ng-value="item.idCiudad" ng-repeat="item in ciudades">{{item.descripcion}}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label class="text-muted">Banco: <span class="text-danger">*</span></label>
+                                    <select class="form-control" ng-model="data.idBanco">
+                                        <option ng-value="item.idBanco" ng-repeat="item in bancos">
+                                            {{item.descripcion}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label class="text-muted">Número: <span class="text-danger">*</span></label>
+                                    <input type="text" ng-model="data.nro" class="form-control border-select" />
+                                </div>
+                            </div>                            
+                        </div>
+                       
+                        <div class="row">
+                            <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label for="">Dirigido a:</label>
+                                    <input type="text" class="form-control border-select" ng-model="data.referencia">
+                                </div>
+                            </div>
+
+                            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">                             
+                                <div class="form-group">
+                                    <label class="text-muted">PosFechado</label>
+                                    <div class="icheck-primary">
+                                        <input type="checkbox" ng-model="data.posFechado" id="posFechado" />
+                                        <label for="posFechado"></label>
+                                    </div>
+                                </div>                            
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--DOCUMENTO-->
+                    <div class="card-body" ng-if="item.codigo=='DOC'">
+                        <div class="table-responsive">
+                            <table class="table table-condensed table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>N°.</th>
+                                        <th><span>N°. Documento</span></th>
+                                        <th><span>Tipo Documento</span></th>
+                                        <th><span>Total</span></th>
+                                        <th>Op.</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="item in documentos">
+                                        <td>{{$index+1}}</td>
+                                        <td>{{item.nroDocumento}}</td>
+                                        <td>{{item.tipoDocumento}}</td>
+                                        <td>${{item.total}}</td>
+                                        <td>
+                                            <button class="btn btn-warning btn-sm" ng-click="askToAddDocumento(item)">
+                                                <i class="fas fa-arrow-circle-down fa-xs"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr ng-if="documentos.length===0" class="text-center">
+                                        <td colspan="5">No hay registros en esta tabla</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </md-tab-body>
+    </md-tab>
+</md-tabs>
 </div>
 
 
 <div class="modal-footer">
-    <button type="button" class="btn btn-default" ng-click="addFormaPago()">
+    <button type="button" class="btn btn-success" ng-click="addFormaPago()">
         <i class="far fa-plus-square"></i> Agregar
     </button>
     <button type="button" class="btn btn-dark" ng-click="closeModal()">

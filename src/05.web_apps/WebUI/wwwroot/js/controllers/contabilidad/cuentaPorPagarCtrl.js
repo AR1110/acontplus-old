@@ -62,8 +62,9 @@
                         $scope.cuentasPorPagar = [];
                         _tS.toastr('warning', response.message)
                     }
-                    if (response.code == '1') {                        
-                        $scope.cuentasPorPagar = JSON.parse(response.payload)
+                    if (response.code == '1') {  
+                        console.log(response.payload)                      
+                        $scope.cuentasPorPagar = JSON.parse(response.payload)[0]
                         hideLoader();
                     }                    
                 }).catch((error) => {
@@ -90,7 +91,7 @@
 
                 showLoader();
                 await _mS.getData('get', 'CuentaPorPagar/' + JSON.stringify({ idCuentaPorPagar : item.idCuentaPorPagar, tipo: 2 }), null, true).then(response => {
-                    let cuotas = response.payload ? JSON.parse(response.payload) : []
+                    let cuotas = response.payload ? JSON.parse(response.payload)[0] : []
                     params = {
                         cuotas,
                         data: {
@@ -155,7 +156,7 @@
 
                     if(response.code==="1"){
                        
-                        let cuotas = JSON.parse(response.payload) || [];
+                        let cuotas = JSON.parse(response.payload)[0] || [];
                        
                         modalParams.params = {
                             data: item,
@@ -225,6 +226,8 @@
             cuotas,
         }];
 
+        console.log($scope.selectedDocumentos)
+
         
         $scope.formaPagos = [];
         $scope.detallePagos = [];
@@ -233,14 +236,6 @@
         $scope.displayCuota = (item)=>{
             item.display = !item.display
         }
-
-
-
-
-
-
-
-
 
         
         $scope.closeModal = ()=>{
@@ -274,30 +269,64 @@
 
 
 
-    //--------------------------------------------START FORMA PAGO--------------------------------------------------
+    //-----------------------------------------START FORMA PAGO--------------------------------------------------
     app.controller("formaPagoCtrl", formaPagoCtrl);
 
     formaPagoCtrl.$inject = ["$scope", "$uibModalInstance", "mainService", "params"];
 
     function formaPagoCtrl($scope, $uibModalInstance, mS, params){
 
+        $scope.data = {};
+
+        $scope.data.fechaEmision = new Date();
+
         console.log(params);
 
+
+        //Se inicializa al abrir modal 
         $scope.initialLoad = ()=>{
+
             mS.getData('get', 'CuentaPorPagar/' + JSON.stringify({tipo: 3}), null, true).then(response=>{
+              
                 if(response.code==="0"){
                     console.log(response)
                 }
+              
                 if(response.code==="1"){
+                    
                     let tempData = JSON.parse(response.payload);
-                    console.log(tempData)
+                    
+                    $scope.entidadesFinancieras = tempData[0];
+                    $scope.tempSubEntidadesFinancieras = tempData[1];
 
+                    $scope.dataEntidadFinanciera = $scope.entidadesFinancieras.find(item=>item.codigo==='EFE');
+                                      
+                    $scope.bancos = tempData[2];
+                    $scope.ciudades = tempData[3];
+
+                    $scope.onChangeTabEntidadEntifiera();
+                    console.log($scope.ciudades)
+                    console.log($scope.entidadesFinancieras)
+                    console.log($scope.subEntidadesFinancieras)
                 }
             })
         }
 
-
         $scope.initialLoad();
+
+
+        $scope.onChangeTabEntidadEntifiera = (item)=>{
+           if(!item){
+               $scope.selectedIndexTab = $scope.entidadesFinancieras.indexOf($scope.dataEntidadFinanciera); 
+               $scope.data.idEntidadFinanciera = $scope.dataEntidadFinanciera.idEntidadFinanciera;
+            }else{
+                $scope.data.idEntidadFinanciera = item.idEntidadFinanciera;
+            }
+                    
+            $scope.subEntidadesFinancieras = $scope.tempSubEntidadesFinancieras.filter(item=>item.idEntidadFinanciera===$scope.data.idEntidadFinanciera)                    
+            $scope.data.idSubEntidadFinanciera = $scope.subEntidadesFinancieras[0].idSubEntidadFinanciera;            
+            console.log($scope.data.idSubEntidadFinanciera, $scope.subEntidadesFinancieras)
+        }
 
         $scope.closeModal = ()=>{
             $uibModalInstance.close();
