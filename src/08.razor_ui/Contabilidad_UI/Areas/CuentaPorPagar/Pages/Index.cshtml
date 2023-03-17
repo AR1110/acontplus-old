@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Index";
     Layout = "_Layout";
-}
+} 
 
 <div ng-controller="cuentaPorPagarCtrl">
     <div class="row page-titles">
@@ -12,80 +12,69 @@
         </div>
     </div>
 
+    
     <div class="card">
-        <div class="card-body">
-            <div class="table-responsivve">
-                <table class="table table-borderless">
-                    <thead>
-                        <tr class="small">
-                            <th></th>   
-                            <th>Proveedor</th>
-                            <th>Cred.</th>
-                            <th>Doc</th>
-                            <th>Serie</th>
-                            <th>F.Emi</th>
-                            <th>Venc</th>
-                            <th>Total</th>
-                            <th>Abono</th>
-                            <th>Saldo</th>
-                            <th class="">Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="item in cuentasPorPagar" class="small" ng-style="item.colorRow">
-                            <td>
-                                <md-menu>
-                                    <md-button aria-label="Open demo menu" class="md-icon-button"
-                                               ng-click="$mdMenu.open($event)">
-                                        <icon class="mdi mdi-menu"></icon>
-                                    </md-button>
+        <section layout="row" layout-sm="column" layout-align="center center" layout-wrap>
+            @* <md-button class="md-raised">Button</md-button> *@
+            @* <md-button class="md-raised md-primary" ng-click="openModalPago()" ng-if="selectedDocumentos.length>0">Pagar</md-button> *@
+            @* <md-button ng-disabled="true" class="md-raised md-primary">Disabled</md-button> *@
+            @* <md-button class="md-raised md-warn">Warn</md-button> *@
+            @* <div class="label">Raised</div> *@
+        </section>
 
-                                    <md-menu-content class="md-dense">
+        <md-table-container style="max-height: 400px;">
+            <table md-table md-row-select="options.rowSelection" multiple="{{options.multiSelect}}"  ng-model="selectedDocumentos" md-progress="promise">
+                <thead fix-head md-head>
+                    <tr md-row>
+                        <th md-column ><span></span></th>
+                        <th md-column ><span>Cod. Doc</span></th>
+                        <th md-column ><span>Serie</span></th>
+                        <th md-column ><span>Proveedor</span></th>
+                        <th md-column>Fecha Emisión</th>
+                        <th md-column>Fecha Vcto.</th>
+                        <th md-column>Total</th>
+                        <th md-column>Abono</th>
+                        <th md-column>Saldo</th>
+                        <th md-column>Estado</th>
+                    </tr>
+                </thead>
+                <tbody md-body>
+                    <tr md-row md-select="item" md-on-select="getCuota"  md-select-id="idCuentaPorPagar" md-auto-select ng-repeat="item in cuentasPorPagar">
+                        <td md-cell>
+                            <md-menu>
+                                <md-button aria-label="Open demo menu" class="md-icon-button"
+                                            ng-click="$mdMenu.open($event)">
+                                    <icon class="mdi mdi-menu"></icon>
+                                </md-button>
+                                <md-menu-content class="md-dense">
+                                    <md-menu-item>
+                                        <md-button ng-click="openModalCuota(item)"><span
+                                            md-menu-align-target>Cuotas</span>
+                                        </md-button>
+                                    </md-menu-item>
 
-                                        <md-menu-item>
-                                            <md-button ng-click="askToDelete(item)" >
-                                                <span md-menu-align-target><i class="ti-na"></i> Anular</span>
-                                            </md-button>
-                                        </md-menu-item>
-
-                                        <md-menu-item>
-                                            <md-button ng-click="opcionCobro(item)" >
-                                                <span md-menu-align-target><i class=" fas fa-hand-holding-usd"></i> Pago</span>
-                                            </md-button>
-                                        </md-menu-item>
-
-                                        <md-menu-item>
-                                            <md-button ng-click="openModalCuota(item)" >
-                                                <span md-menu-align-target><i class=" fas fa-hand-holding-usd"></i> Cuotas</span>
-                                            </md-button>
-                                        </md-menu-item>
-
-                                        <md-menu-item>
-                                            <md-button ng-click="openModalHistorialCobro(item)">
-                                                <span md-menu-align-target><i class=" fas fa-tasks"></i> Hist. Mov.</span>
-                                            </md-button>
-                                        </md-menu-item>
-
-                                    </md-menu-content>
-                                </md-menu>
-                            </td>
-                            <td>{{item.nombreFiscal}}</td>
-                            <td>{{item.diasCredito}} días</td>
-                            <td>{{item.codDoc}}</td>
-                            <td>{{item.serieComprobante}}</td>
-                            <td>{{item.fechaEmision}}</td>
-                            <td>{{item.fechaVencimiento}}</td>
-                            <td class="text-right">{{item.importeTotal | currency}}</td>
-                            <td class="text-right">{{item.abono | currency}}</td>
-                            <td class="text-right">{{item.saldo | currency}}</td>
-                            <td class="text-right">{{item.estado}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+                                    <md-menu-item>
+                                        <md-button ng-click="openModalPago(item)"><span
+                                            md-menu-align-target>Pago</span>
+                                        </md-button>
+                                    </md-menu-item>                                    
+                                </md-menu-content>
+                            </md-menu>
+                        </td>
+                        <td md-cell>{{item.codDoc}}</td>
+                        <td md-cell>{{item.serieComprobante}}</td>
+                        <td md-cell>{{item.nombreFiscal}}</td>
+                        <td md-cell>{{item.fechaEmision}}</td>
+                        <td md-cell>{{item.fechaVencimiento}}</td>
+                        <td md-cell>{{item.importeTotal | number: 1}}</td>
+                        <td md-cell>{{item.abono}}</td>
+                        <td md-cell>{{item.saldo}}</td>
+                        <td md-cell>{{item.estado}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </md-table-container>
     </div>
-
 </div>
 
 @section Scripts {

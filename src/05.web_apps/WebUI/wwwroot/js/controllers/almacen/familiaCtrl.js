@@ -55,7 +55,12 @@ function familiaCtrl($http, $filter, $scope, _modalSvc, _nombreModal, toast) {
     $scope.openModal = async (item)=>{
         const {familia} = _nombreModal;
         const {ModalFamiliaCtrl} = await import('./../../modal/' + familia.MODAL_FAMILIA_CTRL);
-        const modalDialogRef = _modalSvc.openModalSecond(ModalFamiliaCtrl, `Familia/${familia.MODAL_FAMILIA_CSHTML}`,'md', item);
+        const modalDialogRef = _modalSvc.openModalCustom({
+                controller: ModalFamiliaCtrl,
+                template: `Familia/${familia.MODAL_FAMILIA_CSHTML}`,
+                size: 'md',
+                params: item
+            })             
         modalDialogRef.result.then(result=>{
             if(typeof result==="object" && result.id==="1"){
                 $scope.getFamilias();

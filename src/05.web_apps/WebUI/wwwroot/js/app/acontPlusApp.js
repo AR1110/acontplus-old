@@ -226,6 +226,7 @@ app.config(['$mdThemingProvider', '$mdIconProvider', function ($mdThemingProvide
     $mdIconProvider.fontSet('md', 'material-symbols-outlined');
 }]);
 
+
 /** Trasnlating to spanish buttons pagination ui.boostrap */
 app.config(['uibPaginationConfig', function (uibPaginationConfig) {
     uibPaginationConfig.firstText = 'Primera',

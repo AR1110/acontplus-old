@@ -404,6 +404,23 @@
       }
     },
     {
+      "UpstreamPathTemplate": "/api/CuotaPorPagar/{json}",
+      "UpstreamHttpMethod": [ "Put" ],
+      "DownstreamPathTemplate": "/api/CuotaPorPagar/{json}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 52813
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+
+    {
       "UpstreamPathTemplate": "/api/CompraNoHabitual/{everything}",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
       "DownstreamPathTemplate": "/api/CompraNoHabitual/{everything}",

@@ -30,8 +30,7 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	DECLARE @idEntidad INT 
-	DECLARE @tipo INT 
-	DECLARE @idCuentaPorPagar AS INT 
+	DECLARE @tipo INT 	
 
 	SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
@@ -74,22 +73,45 @@ BEGIN
 
 	IF @tipo = 2 
 		BEGIN
+			DECLARE @codPago VARCHAR(5)
+			DECLARE @idCuentaPorPagar AS INT 
+			SELECT @idCuentaPorPagar = idCuentaPorPagar, @codPago = codPago FROM OPENJSON(@json) WITH (idCuentaPorPagar INT '$.idCuentaPorPagar', codPago VARCHAR(5) '$.codPago')
 			
-			SELECT @idCuentaPorPagar = idCuentaPorPagar FROM OPENJSON(@json) WITH (idCuentaPorPagar INT '$.idCuentaPorPagar')
-
-			SELECT 
-				 c.idCuotaPorPagar
-				,fechaVencimiento = Format(c.fechaVencimiento, 'yyyy-MM-dd')
-				,c.nroCuota
-				,c.cuota
-				,c.abono
-				,c.saldo
-				,ep.descripcion
-				,ep.codigo
-			FROM Contabilidad.CuotaPorPagar c 
-			INNER JOIN dbo.EstadoPago ep ON ep.idEstadoPago = c.idEstadoPago
-			WHERE c.idCuentaPorPagar = @idCuentaPorPagar	
-			  AND c.estado = 1 
+			IF @codPago IS NULL
+				BEGIN 
+					SELECT 
+						 c.idCuotaPorPagar
+						,fechaVencimiento = Format(c.fechaVencimiento, 'yyyy-MM-dd')
+						,c.nroCuota
+						,c.cuota
+						,c.abono
+						,c.saldo
+						,ep.descripcion
+						,ep.codigo
+					FROM Contabilidad.CuotaPorPagar c 
+					INNER JOIN dbo.EstadoPago ep ON ep.idEstadoPago = c.idEstadoPago
+					WHERE c.idCuentaPorPagar = @idCuentaPorPagar	
+					AND c.estado = 1
+				END 
+			
+			ELSE IF @codPago IS NOT NULL
+				BEGIN 
+					SELECT 
+						 c.idCuotaPorPagar
+						,fechaVencimiento = Format(c.fechaVencimiento, 'yyyy-MM-dd')
+						,c.nroCuota
+						,c.cuota
+						,c.abono
+						,c.saldo
+						,ep.descripcion
+						,ep.codigo
+					FROM Contabilidad.CuotaPorPagar c 
+					INNER JOIN dbo.EstadoPago ep ON ep.idEstadoPago = c.idEstadoPago
+					WHERE c.idCuentaPorPagar = @idCuentaPorPagar	
+					AND c.estado = 1 AND ep.codigo !='PA'
+				END 
+				
+			 
 		END 
 END
 GO

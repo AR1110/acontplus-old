@@ -1,0 +1,79 @@
+
+
+<div class="modal-header">
+    <h5 class="modal-title">Pago</h5>
+    <button class="close" ng-click="closeModal()">&times;</button>
+</div>
+
+<div class="modal-body">
+
+    <div class="row justify-content-end">
+        <div class="col-xl-3 col-lg-3 col-md-3">
+            <div class="ml-auto">
+                <button type="button" class="btn btn-info btn-block" ng-click="openModalFormaPago()">
+                    <icon class="ti-plus"></icon> Nuevo Abono
+                </button>
+            </div>            
+        </div>
+    </div>
+    <div class="row">        
+        <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-xs-12">
+            <div class="card border border-info">
+                <div class="card-header bg-info text-white">
+                    <h6 class="card-title">Cuotas</h6>
+                </div>                
+                <md-table-container>
+                    <table md-table>
+                        <thead md-head md-order="query.order">
+                            <tr md-row>                                                                        
+                                <th md-column><span></span></th>
+                                <th md-column><span>Nro. Cuota</span></th>
+                                <th md-column><span>Cuota</span></th>
+                                <th md-column><span>Abono</span></th>
+                                <th md-column><span>Saldo</span></th>
+                                <th md-column><span>Estado</span></th>                                
+                            </tr>
+                        </thead>
+                        <tbody md-body>
+                            <tr md-row ng-repeat-start="group in selectedDocumentos">
+                                <td md-cell colspan="1" class="text-left" ng-click="displayCuota(group)">
+                                    <span ng-if="group.display"><i class="fas fa-caret-square-down"></i></span>
+                                    <span ng-if="!group.display"><i class="fas fa-caret-square-right"></i></span>
+                                </td>
+                                <td md-cell colspan="3">{{group.codDoc}} - {{group.serieComprobante}}</td>  
+                                <td md-cell colspan="2">
+                                    <strong>${{group.importeTotal}}</strong>
+                                </td>     
+
+                            </tr>
+                            <tr md-row ng-repeat-end ng-repeat="cuota in group.cuotas" ng-show="group.display">
+                                <td md-cell></td>
+                                <td md-cell>{{cuota.nroCuota}}</td>
+                                <td md-cell>{{cuota.cuota}}</td>
+                                <td md-cell>{{cuota.abono}}</td>
+                                <td md-cell>{{cuota.saldo}}</td>
+                                <td md-cell>{{cuota.descripicion}}</td> 
+                            </tr>
+                        </tbody>
+                    </table>
+                </md-table-container>
+                
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-xs-12">
+
+        </div>
+    </div>    
+
+
+</div>
+
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-success">
+        <i class="ti-save"></i> Guardar
+    </button>
+    <button type="button" class="btn btn-dark" ng-click="closeModal()">&times; Cerrar</button>
+</div>
+
