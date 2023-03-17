@@ -300,3 +300,6 @@
 /src/10.setups/PrinterServerSetup/Release
 /src/09.desktop_apps/PrinterServer/SqlServerTypes
 /src/04.services/ApiConfig/ApiConfig.csproj.user
+/src/03.business_logic/BL.Reports/bin/Debug/net6.0
+/src/03.business_logic/BL.Reports/obj
+/src/04.services/ApiReports.zip
