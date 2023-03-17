@@ -1403,7 +1403,7 @@ export class CommonService {
 
     print(params) {
         try {
-            let urlPrinter = (params[0].urlPrinter) ? params[0].urlPrinter + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + params[0].dataSources : __env.urlPrint + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + params[0].dataSources
+            let urlPrinter = (params[0].urlPrinter) ? params[0].urlPrinter + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + params[0].dataSources + '&rdlcParams=' + params[0].rdlcParams: __env.urlPrint + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + params[0].dataSources + '&rdlcParams=' + params[0].rdlcParams
             fetch(urlPrinter).then(function (response) {
                 if (response.ok) {
                     toastr.success('Impresion correcta!', '', { positionClass: 'toast-bottom-right', progressBar: true })
