@@ -299,3 +299,4 @@
 /src/10.setups/PrinterServerSetup/Debug
 /src/10.setups/PrinterServerSetup/Release
 /src/09.desktop_apps/PrinterServer/SqlServerTypes
+/src/04.services/ApiConfig/ApiConfig.csproj.user

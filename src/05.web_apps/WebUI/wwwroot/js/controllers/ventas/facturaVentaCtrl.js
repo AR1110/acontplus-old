@@ -490,7 +490,7 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
             //Cuando el documento es Nuevo o Duplicado 
             if($scope.isPrintDocument){
                 $scope.getFacturas();
-                _commonSvc.askToReportII({
+                _commonSvc.askToPrint({
                     parameters: JSON.stringify($scope.parametersPrint)
                 }) 
                 $scope.isPrintDocument= false;
@@ -615,7 +615,7 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
 
 
 
-    $scope.getReportII = function (item) {               
+    $scope.print = function (item) {               
         let parameters = {           
             idDocument: item.idFactura,
             idTipoDocumento : item.idTipoDocumento,
@@ -624,7 +624,7 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
             nroIdentificacion : item.nroIdentificacion,
         }        
 
-        _commonSvc.askToReportII({
+        _commonSvc.askToPrint({
             parameters: JSON.stringify(parameters)
         })
         

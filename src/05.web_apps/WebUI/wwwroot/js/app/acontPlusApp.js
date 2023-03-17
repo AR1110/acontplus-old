@@ -267,7 +267,7 @@ app.constant('sessionDataEntidad', JSON.parse(localStorage.getItem('userData')))
 //     $httpProvider.interceptors.push('interceptorApi');
 // }]);
 
-app.factory('decodeToken', function ($localStorage, jwtHelper){
+app.factory('decodeToken', function ($localStorage, jwtHelper) {
     let authData = $localStorage.currentUser;
     let decodedJwt = {};
     if (authData) {
@@ -284,7 +284,7 @@ mainService.$inject = ['$http', 'Upload', '__env'];
 function mainService($http, Upload, __env) {
     let service = {};
 
-    function getData(method, url, data = null, forApi = false) {
+    function _getData(method, url, data = null, forApi = false) {
         return $http({
             method: method,
             url: (forApi) ? __env.apiUrl + url : url,
@@ -294,7 +294,7 @@ function mainService($http, Upload, __env) {
         })
     }
 
-    function getDataFile(url, file, data = null, forApi = false) {
+    function _getDataFile(url, file, data = null, forApi = false) {
         return Upload.upload({
             url: (forApi) ? __env.apiUrl + url : url,
             data: { file: file, data: data },
@@ -303,7 +303,7 @@ function mainService($http, Upload, __env) {
         })
     }
 
-    function getFile(method, url, data = null, forApi = false) {
+    function _getFile(method, url, data = null, forApi = false) {
         return $http({
             method: method,
             url: (forApi) ? __env.apiUrl + url : url,
@@ -313,11 +313,11 @@ function mainService($http, Upload, __env) {
             return response
         })
     }
-
-    service.getData = getData;
-    service.getDataFile = getDataFile;
-    service.getFile = getFile;
-    return service;
+    
+    service.getData = _getData
+    service.getDataFile = _getDataFile
+    service.getFile = _getFile
+    return service
 }
 
 //Toastr Notifications//
@@ -372,11 +372,11 @@ function modalService($uibModal) {
          * @param {object} params {controller, template, size, params, keyboard=false, animation = true, windowClass = null, scope, props = {}}
          * @returns object 
          */
-        openModalCustom: function ({ controller, template, size, params, keyboard = false, animation = true, windowClass = null, windowTopClass, openedClass, scope, props = {}, isRenderRazorPartial=false}) {
-           console.log(isRenderRazorPartial)
+        openModalCustom: function ({ controller, template, size, params, keyboard = false, animation = true, windowClass = null, windowTopClass, openedClass, scope, props = {}, isRenderRazorPartial = false }) {
+            console.log(isRenderRazorPartial)
             return $uibModal.open({
                 animation,
-                templateUrl: isRenderRazorPartial? `/Home/RenderView?name=${template}` :  `/Home/RenderView?name=~/Views/${template || 'Shared/ModalNotFound.cshtml'}`,
+                templateUrl: isRenderRazorPartial ? `/Home/RenderView?name=${template}` : `/Home/RenderView?name=~/Views/${template || 'Shared/ModalNotFound.cshtml'}`,
                 controller,
                 controllerAs: '$ctrl',
                 scope,
@@ -842,7 +842,7 @@ app.directive('ngEnter', function () {
                 scope.$apply(function () {
                     scope.$eval(attrs.ngEnter);
                 });
-               
+
                 event.preventDefault();
             }
         })

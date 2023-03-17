@@ -8,10 +8,11 @@
         'mainService',
         'toastService',
         'FileSaver',
-        'Blob'
+        'Blob',
+        'commonService'
     ]
 
-    function consumoTpvCtrl($scope, mS, tS, FileSaver, Blob) {
+    function consumoTpvCtrl($scope, mS, tS, FileSaver, Blob, _cS) {
         $scope.search = ''
         $scope.client = {}
         $scope.schedule = []
@@ -196,6 +197,7 @@
                             if ($scope.enterKeyPressed) {
                                 $scope.enterKeyPressed = false
                             }
+                            _cS.print(JSON.parse(response.payload))
                             startAgain()
                             tS.toastr('success', response.message)
                         } else {
@@ -247,6 +249,7 @@
                     response => {
                         if (response.code == '1') {
                             $scope.otherRecord = {}
+                            _cS.print(JSON.parse(response.payload))
                             startAgain()
                             $('#modalOther').modal('hide')
                             tS.toastr('success', response.message)

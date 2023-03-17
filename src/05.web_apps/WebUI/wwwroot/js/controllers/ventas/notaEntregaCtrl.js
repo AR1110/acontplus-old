@@ -298,7 +298,7 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
                     }
                 }
     
-                _commonSvc.askToReportII({
+                _commonSvc.askToPrint({
                     parameters: JSON.stringify(parameters)
                 })   
     
@@ -463,7 +463,7 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
 
             if($scope.isPrintDocument){
                 $scope.getNotaEntregas()
-                _commonSvc.askToReportII({
+                _commonSvc.askToPrint({
                     parameters: JSON.stringify($scope.parametersPrint)
                 }) 
             }
@@ -575,7 +575,7 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
 
 
 
-    $scope.getReportII = function (item) {                   
+    $scope.print = function (item) {                   
         let parameters = {
             isPrint: 1,
             idDocument: item.idNotaEntrega,           
@@ -586,7 +586,7 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
             codigo: 'RNEPT'
         }
         
-        _commonSvc.askToReportII({
+        _commonSvc.askToPrint({
             parameters: JSON.stringify(parameters)
         })
         
