@@ -134,7 +134,8 @@ BEGIN
 			
 
 			IF (@print = 1)
-
+				BEGIN
+									
 						SET @rdlcParams = 
 							(
 								SELECT razonSocial = @razonSocial
@@ -156,35 +157,38 @@ BEGIN
 							)
 
 					SET  @rdlcProps = (SELECT rdlcProps = (SELECT rdlcName = 'TicketTpv.rdl',printerName = @printerName,isThermal = @isThermal, 'format' = @format, deviceInfo = @deviceInfo FOR JSON PATH))
-
-				BEGIN
-
+					
 					IF @printerName IS  NULL
-					BEGIN
-						SET @idConsumoTpv = NULL
-						SELECT '0' code, 'No tienes configurada ninguna impresora' as 'message'
-						RETURN
-					END 
-					INSERT INTO ApiPrinter.Service_Printer_Document
-					(
-						idService_Printer_Document
-					   ,ruc
-					   ,numEstab
-					   ,rdlcProps
-					   ,rdlcParams
-					   ,fechaRegistro
-					)
-					SELECT 
-						NEWID()
-					   ,@ruc
-					   ,@estab
-					   ,@rdlcProps
-					   ,@rdlcParams
-					   ,dbo.ufnGetDateEcuador()
-					WHERE @estado = 1
+						BEGIN
+							SET @idConsumoTpv = NULL
+							SELECT '0' code, 'No tienes configurada ninguna impresora' as 'message'
+						END 
+					ELSE
+						BEGIN 
+							SELECT '1' code, 'Registrado correctamente' as 'message', payload = (SELECT @rdlcProps rdlcProps, @rdlcParams rdlcParams FOR JSON PATH)
+						END
+					--INSERT INTO ApiPrinter.Service_Printer_Document
+					--(
+					--	idService_Printer_Document
+					--   ,ruc
+					--   ,numEstab
+					--   ,rdlcProps
+					--   ,rdlcParams
+					--   ,fechaRegistro
+					--)
+					--SELECT 
+					--	NEWID()
+					--   ,@ruc
+					--   ,@estab
+					--   ,@rdlcProps
+					--   ,@rdlcParams
+					--   ,dbo.ufnGetDateEcuador()
+					--WHERE @estado = 1
 				END
-
-			SELECT '1' code, 'Registrado correctamente' as 'message'
+			ELSE
+				BEGIN
+					SELECT '1' code, 'Registrado correctamente' as 'message'--, payload = (SELECT @rdlcProps rdlcProps, @rdlcParams rdlcParams FOR JSON PATH)
+				END
 		COMMIT TRAN
 	END TRY
 

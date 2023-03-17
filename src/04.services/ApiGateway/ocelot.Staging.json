@@ -173,6 +173,38 @@
       }
     },
     {
+      "UpstreamPathTemplate": "/api/DocumentoElectronico/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Put", "Delete", "Options" ],
+      "DownstreamPathTemplate": "/api/DocumentoElectronico/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 8097
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/DocumentoElectronico/GetDataForm",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamPathTemplate": "/api/DocumentoElectronico/GetDataForm",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 8097
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    {
       "UpstreamPathTemplate": "/api/RetencionAts/{everything}",
       "UpstreamHttpMethod": [ "Get", "Put", "Delete", "Options" ],
       "DownstreamPathTemplate": "/api/RetencionAts/{everything}",
@@ -293,6 +325,71 @@
         {
           "Host": "205.209.99.71",
           "Port": 8097
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/CuentaPorPagar/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Delete", "Options" ],
+      "DownstreamPathTemplate": "/api/CuentaPorPagar/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 52813
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/CuentaPorPagar/{id}?json={json}",
+      "UpstreamHttpMethod": [ "Put" ],
+      "DownstreamPathTemplate": "/api/CuentaPorPagar/{id}?json={json}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 52813
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/CompraNoHabitual/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "DownstreamPathTemplate": "/api/CompraNoHabitual/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 55793
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/Impresion/?json={json}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamPathTemplate": "/api/Impresion/?json={json}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 8098
         }
       ],
       "AuthenticationOptions": {

@@ -3,7 +3,7 @@ GO
 IF OBJECT_ID(N'v_DocElectronico', N'V') IS NOT NULL
 DROP VIEW v_DocElectronico
 GO
-CREATE VIEW v_DocElectronico AS (SELECT top 10 
+CREATE VIEW v_DocElectronico AS (SELECT
 de.idDocumentoElectronico
 ,e.idEntidad
 ,e.razonSocial entidad
