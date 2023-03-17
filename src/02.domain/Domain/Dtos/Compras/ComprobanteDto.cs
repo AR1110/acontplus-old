@@ -2,8 +2,9 @@
 {
     public class ComprobanteDto
     {
-        public string Comprobante { get; set; }
-        public string Detalles { get; set; }
+        public int id { get; set; }
+        public string comprobante { get; set; }
+        public string detalles { get; set; }
         public string impuestos { get; set; }
     }
 }

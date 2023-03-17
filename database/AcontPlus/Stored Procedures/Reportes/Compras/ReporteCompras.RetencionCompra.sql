@@ -111,8 +111,8 @@ BEGIN
 									,e.direccion as direccionEntidad			
 									,s.dirEstablecimiento 
 									,rc.claveAcceso as  claveAcceso 
-									,s.agenteRetencion
-									,s.contribuyenteRimpe
+									,contribuyenteRimpe = ISNULL(s.contribuyenteRimpe,'')
+							        ,agenteRetencion = ISNULL('AGENTE DE RETENCION RESOLUCION NRO: '+s.agenteRetencion,'') 
 									,obligadoLlevarContabilidad = s.obligadoContabilidad			 			
 									,prov.numeroIdentificacion as nroIdentificacion
 									,prov.nombreFiscal as nombreFiscalProveedor
@@ -236,8 +236,8 @@ BEGIN
 									,s.contribuyenteEspecial
 									,s.obligadoContabilidad obligadoLlevarContabilidad	 
 									,s.dirEstablecimiento  
-									,s.agenteRetencion
-									,s.contribuyenteRimpe
+									,contribuyenteRimpe = ISNULL(s.contribuyenteRimpe,'')
+							        ,agenteRetencion = ISNULL('AGENTE DE RETENCION RESOLUCION NRO: '+s.agenteRetencion,'') 
 									,prov.numeroIdentificacion as nroIdentificacion
 									,prov.nombreFiscal as nombreFiscalProveedor
 									,ISNULL(prov.correo, 'S/N') as correoProveedor

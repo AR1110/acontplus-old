@@ -23,7 +23,12 @@ GO
 IF OBJECT_ID(N'Compra.Documento_Ingreso_Update', N'P') IS NOT NULL
 DROP PROCEDURE Compra.Documento_Ingreso_Update
 GO
-CREATE PROCEDURE Compra.Documento_Ingreso_Update @idUsuarioRol INT,@json VARCHAR(MAX)
+CREATE PROCEDURE Compra.Documento_Ingreso_Update 
+	@idUsuarioRol AS INT
+   ,@idDocumentoIngreso AS INT 
+   ,@comprobante AS VARCHAR(MAX)
+   ,@detalles AS VARCHAR(MAX)
+   ,@impuestos AS VARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -33,13 +38,8 @@ BEGIN
 	--=============Datos capturados desde BD===========================
 	DECLARE @idUsuario AS INT 
 
-	--============Datos del Json=======================================
-	DECLARE @documento AS VARCHAR(MAX)
-	DECLARE @detalles AS VARCHAR(MAX)
-	DECLARE @impuestos AS VARCHAR(MAX)
 
 	--===========Datos para la validacion de informacion===============
-	DECLARE @idDocumentoIngreso AS INT 
 	DECLARE @uniqueId AS VARCHAR(20)
 
 	--==============Parametros para el area de contabilidad============
@@ -53,7 +53,6 @@ BEGIN
 	--==========Tablas temporales para la validacion===================
 	DECLARE @document AS TABLE(
 		 idDocumentoIngreso INT NOT NULL
-		,uniqueId VARCHAR(20) NOT NULL
 		,idEstablecimiento INT NOT NULL 
         ,idPuntoEmision INT NOT NULL
         ,idProveedor INT NOT NULL
@@ -91,23 +90,13 @@ BEGIN
 	)
 
 	BEGIN TRY 
-		
-		SELECT @documento = documento, @detalles = detalles, @impuestos = impuestos 
-		FROM OPENJSON(@json)
-		WITH (documento NVARCHAR(MAX) '$.documento' AS JSON 
-		     ,detalles  NVARCHAR(MAX) '$.detalles'  AS JSON
-			 ,impuestos NVARCHAR(MAX) '$.impuestos' AS JSON) as dt
-
-
 
 		INSERT INTO @document 
-		      (idDocumentoIngreso,uniqueId,idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,fechaEmision,totalSinImpuestos,importeTotal,inventory)
-		SELECT idDocumentoIngreso,uniqueId,idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,fechaEmision,totalSinImpuestos,importeTotal,inventory
-		FROM OPENJSON(@documento)
+		      (idDocumentoIngreso,idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,fechaEmision,totalSinImpuestos,importeTotal,inventory)
+		SELECT @idDocumentoIngreso,idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,fechaEmision,totalSinImpuestos,importeTotal,inventory
+		FROM OPENJSON(@comprobante)
 		WITH (
-		      idDocumentoIngreso INT '$.idDocumentoIngreso'
-		     ,uniqueId VARCHAR(20) '$.uniqueId' 
-			 ,idEstablecimiento INT '$.idEstablecimiento' 
+		      idEstablecimiento INT '$.idEstablecimiento' 
 			 ,idPuntoEmision INT '$.idPuntoEmision'
 			 ,idProveedor INT '$.idProveedor' 
 			 ,estab VARCHAR(5) '$.estab' 
@@ -151,11 +140,13 @@ BEGIN
 		----======================================Recuperar datos de las Tablas===========================================================
 		SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
-		SELECT @idDocumentoIngreso = idDocumentoIngreso, @uniqueId =  uniqueId,@inventory = inventory FROM @document 
+		SELECT TOP 1 @uniqueId =  uniqueId FROM Compra.Documento_Ingreso WITH (NOLOCK) WHERE idDocumentoIngreso = @idDocumentoIngreso 
 
 		SELECT TOP 1 @idEstadoPago = idEstadoPago, @idTiempoCredito = idTiempoCredito FROM Contabilidad.CuentaPorPagar WITH (NOLOCK) WHERE uniqueId = @uniqueId
 
 		SELECT TOP 1 @codPago = codigo FROM dbo.EstadoPago WITH (NOLOCK) WHERE idEstadoPago = @idEstadoPago
+
+		SELECT @inventory = inventory FROM @document 
 
 
 		--==================================Validacion de la informacion============================================================

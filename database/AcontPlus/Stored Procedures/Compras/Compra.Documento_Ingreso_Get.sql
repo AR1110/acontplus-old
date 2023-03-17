@@ -73,24 +73,27 @@ BEGIN
 	IF @typeList = 1 
 		BEGIN
 			SELECT 
-				 serieComprobante = es.estab+'-'+pt.ptoEmi+'-'+Helper.F_Auto_Sequential(di.secuencial)
+				 di.idDocumentoIngreso
+				,serieComprobante = es.estab+'-'+pt.ptoEmi+'-'+Helper.F_Auto_Sequential(di.secuencial)
 				,fechaEmision     = FORMAT(di.fechaEmision,'yyyy-MM-dd')
 				,nombreFiscal     = pr.nombreFiscal
 				,importeTotal     = di.importeTotal
+				,estado           = IIF(di.estado = 0, 'Anulado','Activo')
 				,usuario          = us.nombreUsuario
+				,colorRow         = IIF(di.estado = 0, 'rojo','')
 			FROM Compra.Documento_Ingreso  di WITH (NOLOCK)
 			INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = di.idEstablecimiento
 			INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision    = di.idPuntoEmision
 			INNER JOIN dbo.Proveedor       pr WITH (NOLOCK) ON pr.idProveedor       = di.idProveedor
 			INNER JOIN dbo.Usuario         us WITH (NOLOCK) ON us.idUsuario         = di.idUsuario
-			WHERE di.idEntidad = @idEntidad
+			WHERE di.idEntidad =  @idEntidad
 		END 
 
 	IF @typeList = 2
 		BEGIN
-		
+
 			--=================================Establecimiento====================================================== 
-			SELECT ea.codEstab, ea.predeterminado, es.nombreComercial,es.estab
+			SELECT es.idEstablecimiento,ea.codEstab, ea.predeterminado, es.nombreComercial,es.estab
 			FROM Config.Estab_Asig         ea WITH (NOLOCK) 
 			INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON ea.codEstab = es.codEstab
 			WHERE idUsuarioRol = @idUsuarioRol
@@ -98,14 +101,15 @@ BEGIN
 
 
 			--================================Punto Emisión==========================================================
-			SELECT ea.codEstab,pa.predeterminado,pe.ptoEmi
-			FROM Config.PtoEmi_Asig       pa WITH (NOLOCK) 
-			INNER JOIN Config.Estab_Asig  ea WITH (NOLOCK) ON ea.codEstab_Asig  = pa.codEstab_Asig
-			INNER JOIN dbo.PuntoEmision   pe WITH (NOLOCK) ON pa.idPuntoEmision = pe.idPuntoEmision
+			SELECT pe.idPuntoEmision,ea.codEstab,pa.predeterminado,ptoEmi = es.estab+'-'+pe.ptoEmi,puntoEmi= pe.ptoEmi 
+			FROM Config.PtoEmi_Asig        pa WITH (NOLOCK) 
+			INNER JOIN Config.Estab_Asig   ea WITH (NOLOCK) ON ea.codEstab_Asig  = pa.codEstab_Asig
+			INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pa.idPuntoEmision = pe.idPuntoEmision
+			INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = ea.codEstab
  			WHERE ea.idUsuarioRol = @idUsuarioRol
 
 			--================================Bodegas=================================================================
-			SELECT ea.codEstab,ab.predeterminado,bo.descripcion
+			SELECT bo.idBodega,ea.codEstab,ab.predeterminado,bo.descripcion
 			FROM Config.Bodeg_Asig        ab WITH (NOLOCK) 
 			INNER JOIN Config.Estab_Asig  ea WITH (NOLOCK) ON ea.codEstab_Asig = ab.codEstab_Asig
 			INNER JOIN dbo.Bodega         bo WITH (NOLOCK) ON bo.idBodega      = ab.idBodega
@@ -118,7 +122,7 @@ BEGIN
 
 
 			--=============================Impuestos===========================================================================
-			SELECT codigo = codImpuesto, codigoPorcentaje = codigo, descripcion = 'Iva '+descripcion,tarifa = porcentaje 
+			SELECT codImpuesto = codImpuesto, codigoPorcentaje = codigo, descripcion = 'Iva '+descripcion,tarifa = porcentaje 
 			FROM sri.TarifaImpuesto WHERE estado = 1 AND codImpuesto = 2
 
 			--============================Impuestos por tipo de Actividad======================================================
@@ -127,6 +131,25 @@ BEGIN
 			INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON ea.codEstab = es.codEstab
 			INNER JOIN Sri.ActividadEconomica ae WITH (NOLOCK) ON ae.codigo   = es.actividad
 			WHERE idUsuarioRol = @idUsuarioRol
+
+			--===============================Inventario========================================================================
+			SELECT TOP 1 inventory =  llevaInventario FROM Config.GestionSistema WITH (NOLOCK) WHERE idEntidad = @idEntidad
 	END 
+
+	IF @typeList = 3
+		BEGIN
+			DECLARE @idPuntoEmision AS INT 
+			
+			DECLARE @secuencial AS INT 
+
+			SELECT @idPuntoEmision = idPuntoEmision FROM OPENJSON(@json) WITH (idPuntoEmision INT '$.idPuntoEmision')
+
+			SELECT @secuencial = COUNT(*)+1 FROM Compra.Documento_Ingreso WITH (NOLOCK) WHERE idPuntoEmision = @idPuntoEmision
+
+			SELECT serieComprobante = es.estab+'-'+pe.ptoEmi+'-'+Helper.F_Auto_Sequential(@secuencial) 
+			FROM dbo.PuntoEmision pe WITH (NOLOCK)
+			INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = pe.codEstab
+			WHERE pe.idPuntoEmision = @idPuntoEmision
+		END 
 END
 GO
