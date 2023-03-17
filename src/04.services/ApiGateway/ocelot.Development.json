@@ -195,6 +195,38 @@
       }
     },
     {
+      "UpstreamPathTemplate": "/api/DocumentoElectronico/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Put", "Delete", "Options" ],
+      "DownstreamPathTemplate": "/api/DocumentoElectronico/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 54948
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/DocumentoElectronico/GetDataForm",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamPathTemplate": "/api/DocumentoElectronico/GetDataForm",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 54948
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    {
       "UpstreamPathTemplate": "/api/RetencionAts/{everything}",
       "UpstreamHttpMethod": [ "Get", "Put", "Delete", "Options" ],
       "DownstreamPathTemplate": "/api/RetencionAts/{everything}",
@@ -242,41 +274,6 @@
         "AllowedScopes": []
       }
     },
-
-    {
-      "UpstreamPathTemplate": "/api/DocumentoElectronico/{everything}",
-      "UpstreamHttpMethod": [ "Get", "Put", "Delete", "Options" ],
-      "DownstreamPathTemplate": "/api/DocumentoElectronico/{everything}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 54948
-        }
-      ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": []
-      }
-    },
-
-    {
-      "UpstreamPathTemplate": "/api/DocumentoElectronico/GetDataForm",
-      "UpstreamHttpMethod": [ "Get" ],
-      "DownstreamPathTemplate": "/api/DocumentoElectronico/GetDataForm",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 54948
-        }
-      ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": []
-      }
-    },
-
     {
       "UpstreamPathTemplate": "/api/DocSustento{everything}",
       "UpstreamHttpMethod": [ "Post", "Put", "Delete" ],
