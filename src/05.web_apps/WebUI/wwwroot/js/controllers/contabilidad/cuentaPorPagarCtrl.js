@@ -1,6 +1,10 @@
 ﻿
+
 (function () {
+
     'use strict';
+
+    const FILE_PATH_PARTIAL_UI = '~/Areas/CuentaPorPagar/Pages/'
 
     app.controller('cuentaPorPagarCtrl', cuentaPorPagarCtrl)
 
@@ -11,7 +15,7 @@
         $scope.selectedDocumentos = [];
 
         let {MODAL_PAGO_LOTE}= _nombreModalConst.pago;
-        const FILE_PATH_PARTIAL_UI = '~/Areas/CuentaPorPagar/Pages/'
+        
 
         $scope.options = {
             limitOptions: [5, 10, 15],
@@ -58,8 +62,7 @@
                         $scope.cuentasPorPagar = [];
                         _tS.toastr('warning', response.message)
                     }
-                    if (response.code == '1') {
-                        console.log('iniy')
+                    if (response.code == '1') {                        
                         $scope.cuentasPorPagar = JSON.parse(response.payload)
                         hideLoader();
                     }                    
@@ -127,22 +130,50 @@
 
         $scope.openModalPago = async(item)=>{
             try {
-                $scope.getCuota(item)
                 
-                let modalRef = _modalSvc.openModalCustom({
+                //Params Modal
+                let modalParams = {
                     controller: 'modalPagoCtrl',
                     template: FILE_PATH_PARTIAL_UI + 'Shared/_ModalPago.cshtml',
-                    size: 'xl',
-                    params: {
-                        name: 'hola'
-                    },
+                    size: 'xl',                   
                   //  windowClass: 'uibModalFullScreen',
                     isRenderRazorPartial: true
-                })
+                }
 
-                modalRef.result.then(result=>{
-                    console.log(result)
+                //Params APi 
+                let spParams = JSON.stringify({
+                    idCuentaPorPagar: item.idCuentaPorPagar,
+                    codPago: 'PE',
+                    tipo: 2
                 })
+                
+                _mS.getData('get', 'CuentaPorPagar/' + spParams, null, true).then(response =>{
+                    
+                    if(response.code==="0"){
+                        _form.sweetAlert('warning', response.message)
+                    }
+
+                    if(response.code==="1"){
+                       
+                        let cuotas = JSON.parse(response.payload) || [];
+                       
+                        modalParams.params = {
+                            data: item,
+                            cuotas
+                        }
+                        
+                        //Open Modal 
+                        let modalRef = _modalSvc.openModalCustom(modalParams)
+                        modalRef.result.then(result=>{
+                            console.log(result)
+                        })
+                    }
+
+                })
+                
+               
+
+                
             } catch (error) {
                 console.log(error)
             }
@@ -166,7 +197,6 @@
 
     function modalCuotaCtrl($scope, $uibModalInstance, params){
 
-
     }
 
 
@@ -180,13 +210,36 @@
 
     app.controller("modalPagoCtrl", modalPagoCtrl);
 
-    modalPagoCtrl.$inject = ['$scope', '$uibModalInstance', 'params'];
+    modalPagoCtrl.$inject = ['$scope', '$uibModalInstance', 'modalService',  'params'];
 
-    function modalPagoCtrl($scope, $uibModalInstance, params){
+    function modalPagoCtrl($scope, $uibModalInstance, _modalSvc, params){
+
+        let {data, cuotas}  = params;
+
+        $scope.data = Object.assign({}, data);
         
-        $scope.selectedDocumentos = [];
+
+        
+        $scope.selectedDocumentos = [{
+            ...data,
+            cuotas,
+        }];
+
+        
         $scope.formaPagos = [];
         $scope.detallePagos = [];
+
+
+        $scope.displayCuota = (item)=>{
+            item.display = !item.display
+        }
+
+
+
+
+
+
+
 
 
         
@@ -194,6 +247,22 @@
             $uibModalInstance.close();
         }
 
+
+        $scope.openModalFormaPago = ()=>{
+            try {
+                let modalRef = _modalSvc.openModalCustom({
+                    controller: 'formaPagoCtrl',
+                    template: FILE_PATH_PARTIAL_UI + 'Shared/_ModalFormaPago.cshtml',
+                    size: 'lg',   
+                    isRenderRazorPartial: true                 
+                })
+                modalRef.result.then(result => {
+
+                })
+            } catch (error) {
+                
+            }
+        }
 
 
         $scope.save = ()=>{
@@ -208,11 +277,31 @@
     //--------------------------------------------START FORMA PAGO--------------------------------------------------
     app.controller("formaPagoCtrl", formaPagoCtrl);
 
-    formaPagoCtrl.$inject = ["$scope", "$uibModalInstance", "params"];
+    formaPagoCtrl.$inject = ["$scope", "$uibModalInstance", "mainService", "params"];
 
-    function formaPagoCtrl($scope, $uibModalInstance, params){
+    function formaPagoCtrl($scope, $uibModalInstance, mS, params){
+
+        console.log(params);
+
+        $scope.initialLoad = ()=>{
+            mS.getData('get', 'CuentaPorPagar/' + JSON.stringify({tipo: 3}), null, true).then(response=>{
+                if(response.code==="0"){
+                    console.log(response)
+                }
+                if(response.code==="1"){
+                    let tempData = JSON.parse(response.payload);
+                    console.log(tempData)
+
+                }
+            })
+        }
 
 
+        $scope.initialLoad();
+
+        $scope.closeModal = ()=>{
+            $uibModalInstance.close();
+        }
 
     }
 

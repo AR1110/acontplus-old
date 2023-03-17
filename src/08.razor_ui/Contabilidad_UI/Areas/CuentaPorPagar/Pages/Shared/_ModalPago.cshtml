@@ -6,223 +6,66 @@
 </div>
 
 <div class="modal-body">
-    <div class="card">
-        <div class="card-header">
-            <div class="d-grid gap-2 col-4 d-md-flex justify-content-md-end">                                
-                <button class="btn btn-info btn-block">Nuevo Abono</button>
-            </div>
-        </div>
-        <div class="card-body">
 
-            <div class="row">
-                <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-xs-12">
-                    <div class="card border border-info">              
-                        <div class="card-body">
-                            <h6 class="card-title">Cuotas</h6>
-                            <md-table-container>
-                                <table md-table md-row-select="options.rowSelection" multiple="{{options.multiSelect}}" ng-model="selected" md-progress="promise">
-                                    <thead md-head md-order="query.order">
-                                    <tr md-row>
-                                        <th md-column ><span>Doc</span></th>
-                                        <th md-column ><span>Serie Comprobante</span></th>
-                                        <th md-column ><span>Userame</span></th>
-                                        <th md-column ><span>Email</span></th>
-                                        <th md-column md-order-by="type"><span>Type</span></th>
-                                    </tr>
-                                    </thead>
-                                    <tbody md-body>
-                                    <tr md-row ng-repeat="user in users.data">
-                                        <td md-cell>{{user.firstName}}</td>
-                                        <td md-cell>{{user.lastName}}</td>
-                                        <td md-cell>{{user.userName}}</td>
-                                        <td md-cell>{{user.email}}</td>
-                                        <td md-cell>{{user.type.name}}</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </md-table-container>                    
-                        </div>
-                    </div>
-
-                    <div class="card border border-info">              
-                        <div class="card-body">
-                            <h6 class="card-title">Abonos</h6>
-                            <md-table-container>
-                                <table md-table md-row-select="options.rowSelection" multiple="{{options.multiSelect}}" ng-model="selected" md-progress="promise">
-                                    <thead md-head md-order="query.order">
-                                    <tr md-row>
-                                        <th md-column ><span>First Name</span></th>
-                                        <th md-column md-order-by="name"><span>Last Name</span></th>
-                                        <th md-column md-order-by="name"><span>Userame</span></th>
-                                        <th md-column md-order-by="name"><span>Email</span></th>
-                                        <th md-column md-order-by="type"><span>Type</span></th>
-                                    </tr>
-                                    </thead>
-                                    <tbody md-body>
-                                    <tr md-row md-select="user" md-auto-select="options.autoSelect" ng-repeat="user in users.data | filter: filter.search | orderBy: query.order | limitTo: query.perPage">
-                                        <td md-cell>{{user.firstName}}</td>
-                                        <td md-cell>{{user.lastName}}</td>
-                                        <td md-cell>{{user.userName}}</td>
-                                        <td md-cell>{{user.email}}</td>
-                                        <td md-cell>{{user.type.name}}</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </md-table-container>                    
-                        </div>
-                    </div>
-
-
-                </div>
-
-                <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-xs-12">
-                    <div class="card border border-info">                                                                      
-                        <div class="card-body">                           
-                            <div class="row pb-1">
-                                <div class="col-md-12">
-                                    <div class="row">
-                                        <div class="col-7 py-2">
-                                            <span>Total</span>
-                                        </div>
-                                        <div class="col-5 py-2">
-                                            @* <span class="font-medium"></span> *@
-                                            <h4 class="text-success">${{$ctrl.data.total}}</h4>
-                                        </div>
-                                    </div>
-
-                                    <div class="row bg-primary text-white" ng-if="$ctrl.data.totalAbonoAnterior>0">
-                                        <div class="col-7 py-2">
-                                            <span>Abono Anterior</span>
-                                        </div>
-                                        <div class="col-5 py-2">
-                                            :<span class="font-medium">${{$ctrl.data.totalAbonoAnterior}}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-7 py-2">
-                                            <span>Abono</span>
-                                        </div>
-                                        <div class="col-5 py-2">
-                                            :<span class="font-medium">
-                                                ${{$ctrl.data.abono}}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-7 py-2">
-                                            <span>Abono Posf.</span>
-                                        </div>
-                                        <div class="col-5 py-2">
-                                            :<span class="font-medium">
-                                                ${{$ctrl.data.abonoPosfechado}}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-7 py-2">
-                                            <span>Total Abono</span>
-                                        </div>
-                                        <div class="col-5 py-2">
-                                            :<span class="font-medium">
-                                                ${{$ctrl.data.abonoTotal}}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-7 py-2">
-                                            <span>Saldo</span>
-                                        </div>
-                                        <div class="col-5 py-2">
-                                            :<span class="font-medium">
-                                                ${{$ctrl.data.saldo}}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row bg-dark text-white">
-                                        <div class="col-7 py-2">
-                                            <span>Cambio</span>
-                                        </div>
-                                        <div class="col-5 py-2">
-                                            :<span class="font-medium">
-                                                ${{$ctrl.data.valorCambio}}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>                                        
-                            </div>                            
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+    <div class="row justify-content-end">
+        <div class="col-xl-3 col-lg-3 col-md-3">
+            <div class="ml-auto">
+                <button type="button" class="btn btn-info btn-block" ng-click="openModalFormaPago()">
+                    <icon class="ti-plus"></icon> Nuevo Abono
+                </button>
+            </div>            
         </div>
     </div>
-
-    
-
-    <div class="row">
-        <div class="col-md-3 col-xs-6 b-r"> <strong>Tipo Doc.</strong>
-            <br>
-            <p class="text-muted">{{header.nombreFiscal}}</p>
-        </div>
-        <div class="col-md-3 col-xs-6 b-r"> <strong>Mobile</strong>
-            <br>
-            <p class="text-muted">(123) 456 7890</p>
-        </div>
-        <div class="col-md-3 col-xs-6 b-r"> <strong>Email</strong>
-            <br>
-            <p class="text-muted">johnathan@admin.com</p>
-        </div>
-        <div class="col-md-3 col-xs-6"> <strong>Location</strong>
-            <br>
-            <p class="text-muted">London</p>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12">
-            <div class="row">
-                <div class="col-md-3 col-xs-6 b-r"><strong>Serien Comprobante</strong>
-                    <br>
-                    <p class="text-muted">{{header.nombreFiscal}}</p>
+    <div class="row">        
+        <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-xs-12">
+            <div class="card border border-info">
+                <div class="card-header bg-info text-white">
+                    <h6 class="card-title">Cuotas</h6>
                 </div>                
+                <md-table-container>
+                    <table md-table>
+                        <thead md-head md-order="query.order">
+                            <tr md-row>                                                                        
+                                <th md-column><span></span></th>
+                                <th md-column><span>Nro. Cuota</span></th>
+                                <th md-column><span>Cuota</span></th>
+                                <th md-column><span>Abono</span></th>
+                                <th md-column><span>Saldo</span></th>
+                                <th md-column><span>Estado</span></th>                                
+                            </tr>
+                        </thead>
+                        <tbody md-body>
+                            <tr md-row ng-repeat-start="group in selectedDocumentos">
+                                <td md-cell colspan="1" class="text-left" ng-click="displayCuota(group)">
+                                    <span ng-if="group.display"><i class="fas fa-caret-square-down"></i></span>
+                                    <span ng-if="!group.display"><i class="fas fa-caret-square-right"></i></span>
+                                </td>
+                                <td md-cell colspan="3">{{group.codDoc}} - {{group.serieComprobante}}</td>  
+                                <td md-cell colspan="2">
+                                    <strong>${{group.importeTotal}}</strong>
+                                </td>     
+
+                            </tr>
+                            <tr md-row ng-repeat-end ng-repeat="cuota in group.cuotas" ng-show="group.display">
+                                <td md-cell></td>
+                                <td md-cell>{{cuota.nroCuota}}</td>
+                                <td md-cell>{{cuota.cuota}}</td>
+                                <td md-cell>{{cuota.abono}}</td>
+                                <td md-cell>{{cuota.saldo}}</td>
+                                <td md-cell>{{cuota.descripicion}}</td> 
+                            </tr>
+                        </tbody>
+                    </table>
+                </md-table-container>
+                
             </div>
         </div>
-        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-xs-12">
 
-        </div>       
-    </div>
+        <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-xs-12">
 
-    <div class="card">
-
-    </div>
-
-    <div class="row">
-        
+        </div>
     </div>    
 
-    <div class="row">
-        <div class="col-xl-12 col-lg-12 col-md-12 col-xs-12">
-            
-        </div>
-
-        <div class="col-xl-12 col-lg-12 col-md-12 col-xs-12">
-            <div class="card border border-info">
-                <div class="card-header bg-transparent">
-                    <h6 class="card-title">Abonos</h6>
-                </div>
-                <div class="card-body">
-
-                </div>
-            </div>
-        </div>
-    </div>
-
-    
 
 </div>
 
