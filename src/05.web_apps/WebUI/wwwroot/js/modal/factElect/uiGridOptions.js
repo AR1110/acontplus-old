@@ -788,9 +788,12 @@ export class UiGridOptionsCompra{
         if (this.gridOptions.data.length > 0 && this.getSubTotalSinImpuesto() > 0) {
 
             //Total Detalle No tiene que ser mayor al total sin impuesto
+            
             totalDetalle = this.getTotalDetalle()>this.getSubTotalSinImpuesto()? this.getSubTotalSinImpuesto(): this.getTotalDetalle();
 
-            total = ((this.getSubTotalSinImpuesto() - totalDetalle) * 100) / this.getSubTotalSinImpuesto();
+            console.log('calculate total_porcentaje_descuento')
+            total = ((this.getSubTotalSinImpuesto() - totalDetalle ) * 100) / this.getSubTotalSinImpuesto();
+            
         }
         
         return this._fS.roundNumber(total, this.decimal.nroPorcentaje);

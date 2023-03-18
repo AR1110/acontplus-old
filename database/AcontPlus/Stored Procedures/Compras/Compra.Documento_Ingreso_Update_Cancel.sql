@@ -63,7 +63,13 @@ BEGIN
 
 		--==================================Validacion de la informacion============================================================
 
-		IF @codPago = 'PE'
+		IF EXISTS (SELECT 1 FROM Compra.Documento_Ingreso WHERE idDocumentoIngreso = @idDocumentoIngreso AND estado = 0 )
+			BEGIN
+				SELECT '0' code,'El Documento ya se encuentra anulado' as 'message'
+				RETURN 
+			END 
+
+		IF @codPago != 'PE'
 			BEGIN 
 				SELECT '0' code,'El Documento tiene un proceso contable no puede ser editado' as 'message'
 				RETURN  
@@ -90,14 +96,12 @@ BEGIN
 					WHERE d.idDocumentoIngreso = @idDocumentoIngreso AND ar.llevaInventario = 1
 				END 
 
-			 DELETE FROM Compra.Documento_Ingreso_Detail WHERE estado = 0 AND idDocumentoIngreso = @idDocumentoIngreso
-
 			 --===========================================================Contabilidad=================================================================================================
 			UPDATE Contabilidad.CuentaPorPagar SET idEstadoPago = @idEstadoPago, abono = 0 WHERE uniqueId = @uniqueId
 
 
 		COMMIT TRAN 
-		SELECT '0' code,'Anulado Correctamente' as 'message'
+		SELECT '1' code,'Anulado Correctamente' as 'message'
 		RETURN
 	END TRY 
 

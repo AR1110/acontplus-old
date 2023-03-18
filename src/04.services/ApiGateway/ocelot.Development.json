@@ -455,9 +455,9 @@
     },
 
     {
-      "UpstreamPathTemplate": "/api/CompraNoHabitual/cancel/{id}",
+      "UpstreamPathTemplate": "/api/CompraNoHabitual/Cancel/{id}",
       "UpstreamHttpMethod": [ "Put" ],
-      "DownstreamPathTemplate": "/api/CompraNoHabitual/cancel/{id}",
+      "DownstreamPathTemplate": "/api/CompraNoHabitual/Cancel/{id}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {

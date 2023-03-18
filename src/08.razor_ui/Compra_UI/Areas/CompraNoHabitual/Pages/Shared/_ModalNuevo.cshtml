@@ -9,24 +9,33 @@
     <div class="modal-body">
         <div class="row" ng-show="$ctrl.showHeader">
             <div class="col-xl-5 col-lg-5 col-md-6 col-sm-12 col-xs-12">
-                <div class="form-group">
+                <div class="form-group" >
                     <label for="categoria">Estab.: <span class="text-danger">*</span></label>
-                    <select class="form-control border-select" ng-model="$ctrl.data.codEstab" ng-change="$ctrl.changeEstablecimiento()">
+
+                    <!--Nuevo-->
+                    <select class="form-control border-select" ng-model="$ctrl.data.codEstab" ng-change="$ctrl.changeEstablecimiento()" ng-disabled="$ctrl.data.idDocumentoIngreso>0">
                         <option ng-value="item.codEstab" ng-repeat="item in $ctrl.establecimientos">
                             {{item.nombreComercial}}
                         </option>
                     </select>
+
+
                 </div>
             </div>
 
             <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
                 <div class="form-group">
                     <label for="puntoEmision">Punto Emision <span class="text-danger">*</span></label>
-                    <select name="puntoEmision" id="puntoEmision" class="form-control border-select" ng-model="$ctrl.data.idPuntoEmision">
+
+                    <!--Nuevo-->
+                    <select name="puntoEmision" id="puntoEmision" class="form-control border-select" ng-model="$ctrl.data.idPuntoEmision" ng-if="!($ctrl.data.idDocumentoIngreso>0)">
                         <option ng-value="item.idPuntoEmision" ng-repeat="item in $ctrl.puntosEmision">
                             {{item.ptoEmi}}
                         </option>
                     </select>
+
+                    <!--Editar-->
+                    <input type="text" ng-value="$ctrl.data.ptoEmi"  class="form-control border-select" disabled ng-if="$ctrl.data.idDocumentoIngreso>0" />
                 </div>
             </div>
 
@@ -45,7 +54,11 @@
             <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
                 <div class="form-group">
                     <label for="">Proveedor <span class="text-danger">*</span></label>
-                    <uib-modal-proveedor-search selected-item-proveedor="$ctrl.selectedItemProveedor(item)" search="$ctrl.searchProveedorOptions"></uib-modal-proveedor-search>
+                    <uib-modal-proveedor-search
+                        selected-item-proveedor="$ctrl.selectedItemProveedor(item)" 
+                        search="$ctrl.searchProveedorOptions"
+                        proveedor-data="$ctrl.proveedor">
+                    </uib-modal-proveedor-search>
                 </div>
             </div>
 
@@ -169,28 +182,7 @@
                             </table>  
                         </div> 
                     </div>
-
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                        <div class="table-responsive">
-                            <table class="table table-clear table-sm">
-                                <tbody>                                   
-                                    <tr>
-                                        <td class="left">
-                                            <strong class="text-dark">IRBPNR</strong>
-                                        </td>
-                                        <td class="right">${{$ctrl.data.irbpnr}}</td>
-                                    </tr>
-
-                                    @*<tr>
-                                        <td class="left">
-                                            <strong class="text-dark">Propina</strong>
-                                        </td>
-                                        <td class="right">${{$ctrl.data.propina}}</td>
-                                    </tr>*@                                                                               
-                                </tbody>
-                            </table>  
-                        </div> 
-                    </div>                      
+                                       
                 </div>
                 <md-divider></md-divider>
                 <div class="row mt-2" ng-if="$ctrl.showSubtotales">

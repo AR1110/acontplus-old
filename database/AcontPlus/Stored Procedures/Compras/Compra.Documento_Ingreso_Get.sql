@@ -31,63 +31,104 @@ BEGIN
 	SET LANGUAGE SPANISH;
 	DECLARE @typeList INT = 0
 	DECLARE @idEntidad INT
-	DECLARE @params VARCHAR(400) = ''
 	
-	DECLARE @codEstab VARCHAR(100)
-	DECLARE @byProveedor INT
-	DECLARE @checkBoxDate BIT
-	DECLARE @typeDate VARCHAR(5)
-	DECLARE @dateStart DATETIME
-	DECLARE @dateEnd DATETIME
-	DECLARE @checkBoxEstado BIT
-	DECLARE @byEstado INT	
 
-	SELECT
-		@codEstab     = codEstab,
-		@typeList     = typeList, 
-		@byProveedor  = byProveedor, 
-		@checkBoxDate = checkBoxDate, 
-		@typeDate     = typeDate, 
-		@dateStart    = dateStart, 
-		@dateEnd      = dateEnd, 
-		@checkBoxEstado = checkBoxEstado, 
-		@byEstado     = byEstado
-	
-	FROM OPENJSON(@json) WITH(		
-								typeList INT '$.typeList',		
-								codEstab VARCHAR(100) '$.codEstab',
-								byProveedor INT '$.byProveedor',
+	SELECT @typeList = typeList FROM OPENJSON(@json) WITH(typeList INT '$.typeList')
 
-								checkBoxDate BIT '$.checkBoxDate',
-								typeDate VARCHAR(5) '$.typeDate',
-								dateStart DATETIME '$.dateStart',
-								dateEnd DATETIME '$.dateEnd',
-
-								checkBoxEstado BIT '$.checkBoxEstado',
-								byEstado INT '$.byEstado'		
-							)
-
-	
 	SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
 	IF @typeList = 1 
 		BEGIN
-			SELECT 
-				 di.idDocumentoIngreso
-				,serieComprobante = es.estab+'-'+pt.ptoEmi+'-'+Helper.F_Auto_Sequential(di.secuencial)
-				,fechaEmision     = FORMAT(di.fechaEmision,'yyyy-MM-dd')
-				,nombreFiscal     = pr.nombreFiscal
-				,importeTotal     = di.importeTotal
-				,estado           = IIF(di.estado = 0, 'Anulado','Activo')
-				,usuario          = us.nombreUsuario
-				,colorRow         = IIF(di.estado = 0, 'rojo','')
-			FROM Compra.Documento_Ingreso  di WITH (NOLOCK)
-			INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = di.idEstablecimiento
-			INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision    = di.idPuntoEmision
-			INNER JOIN dbo.Proveedor       pr WITH (NOLOCK) ON pr.idProveedor       = di.idProveedor
-			INNER JOIN dbo.Usuario         us WITH (NOLOCK) ON us.idUsuario         = di.idUsuario
-			WHERE di.idEntidad =  @idEntidad
-			ORDER BY di.idDocumentoIngreso DESC
+
+			DECLARE @sql AS NVARCHAR(MAX) = 'SELECT TOP (100)
+												 di.idDocumentoIngreso
+												,serieComprobante = es.estab+''-''+pt.ptoEmi+''-''+Helper.F_Auto_Sequential(di.secuencial)
+												,fechaEmision     = FORMAT(di.fechaEmision,''yyyy-MM-dd'')
+												,nombreFiscal     = pr.nombreFiscal
+												,importeTotal     = di.importeTotal
+												,estado           = IIF(di.estado = 0, ''Anulado'',''Activo'')
+												,usuario          = us.nombreUsuario
+												,colorRow         = IIF(di.estado = 0, ''rojo'','''')
+											 FROM Compra.Documento_Ingreso  di WITH (NOLOCK)
+											 INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = di.idEstablecimiento
+											 INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision    = di.idPuntoEmision
+											 INNER JOIN dbo.Proveedor       pr WITH (NOLOCK) ON pr.idProveedor       = di.idProveedor
+											 INNER JOIN dbo.Usuario         us WITH (NOLOCK) ON us.idUsuario         = di.idUsuario
+											 WHERE di.idEntidad = @idEntidad '
+
+			DECLARE @params AS NVARCHAR(MAX) = '@idEntidad AS INT
+											   ,@codEstab AS VARCHAR(20)
+											   ,@dateStart AS DATETIME
+											   ,@dateEnd AS DATETIME
+											   ,@idProveedor AS INT
+											   ,@estado AS BIT'
+
+			DECLARE @codEstab AS VARCHAR(20)
+			DECLARE @checkBoxProveedor AS BIT 
+			DECLARE @checkBoxEstab AS BIT 
+			DECLARE @checkBoxFecha AS BIT
+			DECLARE @checkBoxEstado AS BIT
+			DECLARE @idProveedor AS INT
+			DECLARE @estado AS BIT
+			DECLARE @dateStart AS DATE
+			DECLARE @dateEnd AS DATE
+			DECLARE @typeStatus AS VARCHAR(5)
+
+			SELECT @checkBoxEstab     = checkBoxEstab
+				  ,@checkBoxProveedor = checkBoxProveedor
+				  ,@checkBoxFecha     = checkBoxFecha
+				  ,@checkBoxEstado    = checkBoxEstado
+				  ,@codEstab          = codEstab
+				  ,@idProveedor       = idProveedor
+				  ,@dateStart         = dateStart
+				  ,@dateEnd           = dateEnd
+				  ,@typeStatus        = estado
+			FROM OPENJSON(@json)
+			WITH (codEstab  VARCHAR(20) '$.codEstab'
+			     ,checkBoxEstab     BIT '$.checkBoxEstab'
+			     ,checkBoxProveedor BIT '$.checkBoxProveedor'
+			     ,checkBoxFecha     BIT '$.checkBoxFecha'
+			     ,checkBoxEstado    BIT '$.checkBoxEstado'
+				 ,idProveedor       INT '$.idProveedor'
+				 ,dateStart    DATETIME '$.dateStart'
+				 ,dateEnd      DATETIME '$.dateEnd'
+				 ,estado	 VARCHAR(5) '$.estado'
+				 ) as dt
+
+			IF @checkBoxFecha = 1
+				BEGIN
+					SET @sql = @sql+'AND CAST(di.fechaEmision AS DATE) BETWEEN CAST(@dateStart AS DATE) AND CAST(@dateEnd AS DATE) '
+				END 
+
+			IF @checkBoxEstab = 1
+				BEGIN
+					SET @sql = @sql+'AND es.codEstab = @codEstab '
+				END 
+
+
+			IF @checkBoxProveedor = 1 
+				BEGIN
+					SET @sql = @sql+'AND di.idProveedor = @idProveedor  '
+				END 
+
+			IF @checkBoxEstado = 1
+				BEGIN
+					SET @estado = IIF(@typeStatus= 'AC',1,0)
+
+					SET @sql = @sql+'AND di.estado = @estado '
+				END 
+
+			SET @sql = @sql + 'ORDER BY di.idDocumentoIngreso DESC '
+
+			EXEC sp_executesql 
+			      @sql
+			     ,@params 
+			     ,@idEntidad   = @idEntidad
+				 ,@codEstab    = @codEstab
+				 ,@dateStart   = @dateStart
+				 ,@dateEnd     = @dateEnd
+				 ,@idProveedor = @idProveedor
+				 ,@estado      = @estado
 		END 
 
 	IF @typeList = 2
@@ -196,11 +237,12 @@ BEGIN
 			SELECT @decuento = descuento FROM @taxes
 
 			SELECT 
-				 es.idEstablecimiento
+				 di.idDocumentoIngreso
+				,es.idEstablecimiento
 				,pe.idPuntoEmision
 				,pe.codEstab
-				,es.estab
-				,pe.ptoEmi
+				,ptoEmi = es.estab+'-'+pe.ptoEmi
+				,es.nombreComercial
 				,secuencial              = Helper.F_Auto_Sequential(di.secuencial)
 				,di.fechaEmision
 				,subTotalIva             = @subTotalIva
@@ -212,6 +254,8 @@ BEGIN
 				,subTotalNetoExentoIva   = @subTotalNetoExentoIva
 				,subTotalNetoNoObjetoIva = @subTotalNetoNoObjetoIva
 				,subTotalSinImpuestos    = di.totalSinImpuestos
+				,tarifa = 12
+				,codigoPorcentaje = '2'
 				,iva = @iva
 				,totalDescuento = @decuento 
 				,total = di.importeTotal
@@ -225,19 +269,29 @@ BEGIN
 				,nombreComercial = ISNULL(pr.nombreComercial,'')
 				,nombreFiscal = ISNULL(pr.nombreFiscal,'')
 				,direccion = ISNULL(pr.direccion,'')
+				,pr.numeroIdentificacion
 			FROM Compra.Documento_Ingreso  di WITH (NOLOCK)
 			INNER JOIN dbo.Proveedor pr WITH (NOLOCK) ON pr.idProveedor = di.idProveedor
 			WHERE di.idDocumentoIngreso = @idDocumentoIngreso
 
 			SELECT	
-				 dt.idArticulo
+				 dt.idDocumentoIngresoDetail
+				,dt.idArticulo
 				,dt.idMedida
 				,dt.idBodega
+				,codigo = dt. codigoPrincipal
+				,codigoPrincipal = dt. codigoPrincipal
+				,codigoAuxiliar = dt. codigoAuxiliar
+				,costoNeto
 				,dt.cantidad
 				,dt.descripcion
 				,dt.precioUnitario
-				,dt.descuento
+				,precioCostoNeto = dt.precioUnitario - descuento 
+				,valorDescuento = dt.descuento
+				,porcentajeDescuento = CAST((descuento / precioUnitario) * 100 AS numeric(18,5))
+				,totalDescuento = CAST(cantidad * descuento AS numeric(18,5))
 				,dt.precioTotalSinImpuesto
+				,total = dt.precioTotalSinImpuesto
 				,dt.codigoPorcentaje
 				,tarifa = ti.porcentaje
 			FROM Compra.Documento_Ingreso_Detail dt WITH (NOLOCK)
@@ -247,6 +301,27 @@ BEGIN
 			SELECT tx.* 
 			FROM Compra.Documento_Ingreso_Taxes tx  WITH (NOLOCK)
 			WHERE tx.idDocumentoIngreso = @idDocumentoIngreso
+
+			--================================Bodegas=================================================================
+			SELECT bo.idBodega,ea.codEstab,ab.predeterminado,bo.descripcion
+			FROM Config.Bodeg_Asig        ab WITH (NOLOCK) 
+			INNER JOIN Config.Estab_Asig  ea WITH (NOLOCK) ON ea.codEstab_Asig = ab.codEstab_Asig
+			INNER JOIN dbo.Bodega         bo WITH (NOLOCK) ON bo.idBodega      = ab.idBodega
+ 			WHERE ea.idUsuarioRol = @idUsuarioRol
+
+
+			--==============================Configuracion Decimal============================================================== 
+			SELECT nroPrecio, nroCantidad, nroIva, nroDescuentoDetalle, nroTotalDetalle, nroTotalSubTotal, nroDescuento, nroIce
+			FROM Config.CantidadDecimal WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codTransaccion = 'C'
+
+
+			--=============================Impuestos===========================================================================
+			SELECT codImpuesto = codImpuesto, codigoPorcentaje = codigo, descripcion = 'Iva '+descripcion,tarifa = porcentaje 
+			FROM sri.TarifaImpuesto WHERE estado = 1 AND codImpuesto = 2
+
+			--===============================Inventario========================================================================
+			SELECT TOP 1 inventory =  llevaInventario FROM Config.GestionSistema WITH (NOLOCK) WHERE idEntidad = @idEntidad
+
 		END 
 END
 GO

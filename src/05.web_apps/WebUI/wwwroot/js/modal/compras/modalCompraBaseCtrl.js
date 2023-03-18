@@ -909,7 +909,7 @@ class ModalCompraBaseCtrl{
         for(let rowEntity of this.gridOptions.data){
             rowEntity.porcentajeDescuento = porcentajeDescuento;   
             
-            let objCalculo = self.uiGridInvoice.calculoColDef(rowEntity, 0);             
+            let objCalculo = self.uiGridInvoice.calculoColDef(rowEntity);             
         
             objCalculo["porcentajeDescuento"]();
             
