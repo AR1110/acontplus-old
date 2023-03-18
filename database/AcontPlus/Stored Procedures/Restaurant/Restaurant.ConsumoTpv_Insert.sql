@@ -134,7 +134,8 @@ BEGIN
 			
 
 			IF (@print = 1)
-
+				BEGIN
+									
 						SET @rdlcParams = 
 							(
 								SELECT razonSocial = @razonSocial
@@ -156,9 +157,7 @@ BEGIN
 							)
 
 					SET  @rdlcProps = (SELECT rdlcProps = (SELECT rdlcName = 'TicketTpv.rdl',printerName = @printerName,isThermal = @isThermal, 'format' = @format, deviceInfo = @deviceInfo FOR JSON PATH))
-
-				BEGIN
-
+					
 					IF @printerName IS  NULL
 						BEGIN
 							SET @idConsumoTpv = NULL
@@ -186,7 +185,10 @@ BEGIN
 					--   ,dbo.ufnGetDateEcuador()
 					--WHERE @estado = 1
 				END
-
+			ELSE
+				BEGIN
+					SELECT '1' code, 'Registrado correctamente' as 'message'--, payload = (SELECT @rdlcProps rdlcProps, @rdlcParams rdlcParams FOR JSON PATH)
+				END
 		COMMIT TRAN
 	END TRY
 
