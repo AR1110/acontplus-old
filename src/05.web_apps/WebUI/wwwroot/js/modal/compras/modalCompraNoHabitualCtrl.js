@@ -1,5 +1,5 @@
 
-import './modalCompraBaseCtrl.min.js?v=0.5'
+import './modalCompraBaseCtrl.min.js?v=0.6'
 
 class ModalCompraNoHabitualCtrl extends window.modalCompraBaseCtrl {
     
@@ -90,7 +90,7 @@ class ModalCompraNoHabitualCtrl extends window.modalCompraBaseCtrl {
         return this.gridOptions.data.map(item=>{
             let data = {
                 index : index++,
-                idCompraNoHabitualDetalle: item.idCompraNoHabitualDetalle || 0,
+                idDocumentoIngresoDetail: item.idDocumentoIngresoDetail || 0,
                 idArticulo: item.idArticulo,
                 idMedida: item.idMedida,
                 idBodega: item.idBodega,
@@ -191,12 +191,25 @@ class ModalCompraNoHabitualCtrl extends window.modalCompraBaseCtrl {
                 this.puntosEmision = this.puntosEmisionTemporal.filter(item=>item.codEstab===this.data.codEstab)
                 this.data.idPuntoEmision = this.puntosEmision.find(item=>(item.predeterminado)).idPuntoEmision;
 
-                console.log(this.data.codEstab, this.bodegasTemporal)
+                
                 this.bodegas = this.bodegasTemporal.filter(item=>item.codEstab === this.data.codEstab);
                 this.idBodega = this.bodegas.find(item=>(item.predeterminado)).idBodega;
 
                 //Actividad Tipo iVA 
                 this.actividadTipoIva = this.actividadTipoIvaTemporal.find(item=>item.codEstab===this.data.codEstab)
+
+                let indexBodega = this.gridOptions.columnDefs.findIndex(item=>item.field==='idBodega');                    
+                this.gridOptions.columnDefs[indexBodega].editDropdownOptionsArray = this.bodegas;
+
+                for(let item of this.gridOptions.data){
+                    item.idBodega = this.idBodega;
+                }  
+                
+                //Recalculamos los valos de subtotales 
+    
+                this.uiGridInvoice.actividadTipoIva = this.actividadTipoIva;
+                this.data = Object.assign(this.data, this.uiGridInvoice.getTotales());
+                
             }     
             
 
@@ -206,8 +219,140 @@ class ModalCompraNoHabitualCtrl extends window.modalCompraBaseCtrl {
     }
 
 
-    closeModal(){
-        this.$uibModalInstance.close();
+
+    async onSave(){
+        try {
+           
+          
+           
+            let textAccion = this.data.idDocumentoIngreso>0?'Actualizar': 'Guardar'; 
+            let method =  this.data.idDocumentoIngreso>0?'put': 'post'; 
+            let url =  this.data.idDocumentoIngreso>0? 'CompraNoHabitual/' + this.data.idDocumentoIngreso : 'CompraNoHabitual'; 
+            let serieComprobante= this.data.ptoEmi+'-'+this.data.secuencial;
+
+            if(!this.isValidaForm()) return;
+            
+            if(!this.data.idDocumentoIngreso){
+                console.log('generate sequemn')
+                //===============================Generar el Numero de Secuencial============================
+                showLoader();
+                serieComprobante = await this._mS.getData('get', 'CompraNoHabitual/' + JSON.stringify({ idPuntoEmision: this.data.idPuntoEmision,typeList : 3 }), null, true).then(response=>{
+                    if(response.code==="0"){
+                        console.log(response)
+                        hideLoader();
+                        return null;
+                    }
+                    if(response.code==="1"){
+                        hideLoader();
+                        return JSON.parse(response.payload)[0][0].serieComprobante
+                    }
+                })
+                if(!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE"
+            }
+
+           
+
+             
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                  confirmButton: 'btn btn-success',
+                  cancelButton: 'btn btn-danger ml-2'
+                },
+                buttonsStyling: false
+            })
+              
+            swalWithBootstrapButtons.fire({
+                title: `<small>${textAccion} Documento no Habitual</small>`,
+                html: `<small>Esta Ud. seguro de ${textAccion} este Documento <b> Nro. ${serieComprobante}</b></small>?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: `Si, ${textAccion}!`,
+                cancelButtonText: 'No, cancelar!',
+                reverseButtons: false,
+                allowOutsideClick:false,
+                allowEscapeKey:false
+            }).then(result=>{
+
+                if(result.isConfirmed){
+                    showLoader();
+
+                    
+                    this.data.idProveedor = this.proveedor.idProveedor                                          
+                    
+                    //Tarifa Aplicada al Documento
+                    this.data.tarifa = this.actividadTipoIva.tarifa;
+
+                    let idEstablecimiento, estab, ptoEmi;
+                    if(this.data.idDocumentoIngreso>0){
+
+                    }else{
+                        idEstablecimiento = this.establecimientos.find(item=>item.codEstab===this.data.codEstab).idEstablecimiento;
+                        estab = this.establecimientos.find(item=>item.codEstab===this.data.codEstab).estab;
+                        ptoEmi = this.puntosEmision.find(item=>item.idPuntoEmision===this.data.idPuntoEmision).puntoEmi;
+                    }
+        
+                    const data = {
+                        comprobante: JSON.stringify({
+                            idEstablecimiento,
+                            idPuntoEmision : this.data.idPuntoEmision,
+                            idProveedor : this.data.idProveedor,
+                            estab,
+                            ptoEmi,
+                            fechaEmision : this.data.fechaEmision,
+                            totalSinImpuestos : this.data.subTotalSinImpuestos,
+                            importeTotal : this.data.total,
+                            inventory : this.data.inventory       
+                        }),
+                        detalles: JSON.stringify(this.trimDetail()),
+                        impuestos: JSON.stringify(this.taxes())
+                    }
+                    
+        
+                    this._mS.getData(method, url, data,true).then(response=>{
+                        if(response.code =='0'){  
+                            hideLoader();                  
+                            this._fS.sweetAlert('warning', response.message, response.titleSms);   
+                        }
+        
+                        if (response.code == "1") {
+                            hideLoader();
+                            this._fS.sweetAlert('success', response.message, response.titleSms, 1000);   
+                            
+                            this.$uibModalInstance.close(response)
+                        }     
+                    }) 
+
+
+                }
+
+            })  
+                                  
+        } catch (error) {
+            hideLoader()
+            console.log(error)
+        }
+    }
+
+
+    selectedItemProveedor(item){
+        try {
+            this.proveedor = item;
+            this.searchProveedorOptions.showBtnEdit = true;                                   
+            this.$scope.$apply();
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
+    async closeModal(){
+        
+        if(this.gridOptions.data.length>0)       {
+            //
+            this.$uibModalInstance.close();
+        }else{
+            this.$uibModalInstance.close();
+        }
     }
 }
 
@@ -250,7 +395,9 @@ export class ModalAddCtrl extends ModalCompraNoHabitualCtrl{
                     let mainData = JSON.parse(response.payload);                    
                     
                     this.establecimientos = mainData[0]; 
-                    this.data.codEstab = this.establecimientos.find(item=>(item.predeterminado)).codEstab;               
+                    this.data.codEstab = this.establecimientos.find(item=>(item.predeterminado)).codEstab; 
+                    
+                    
                     
                     this.puntosEmisionTemporal = mainData[1];
                     this.bodegasTemporal       = mainData[2];
@@ -258,10 +405,20 @@ export class ModalAddCtrl extends ModalCompraNoHabitualCtrl{
 
                     this.decimal = mainData[3][0];
                     this.tipoIvas = mainData[4];  
-                    this.data.inventory = mainData[6][0].inventory; 
-                                        
-                    this.changeEstablecimiento();
-
+                    this.data.inventory = mainData[6][0].inventory;     
+                    
+                    
+                    this.puntosEmision = this.puntosEmisionTemporal.filter(item=>item.codEstab===this.data.codEstab)
+                    this.data.idPuntoEmision = this.puntosEmision.find(item=>(item.predeterminado)).idPuntoEmision;
+    
+                    
+                    this.bodegas = this.bodegasTemporal.filter(item=>item.codEstab === this.data.codEstab);
+                    this.idBodega = this.bodegas.find(item=>(item.predeterminado)).idBodega;
+    
+                    //Actividad Tipo iVA 
+                    this.actividadTipoIva = this.actividadTipoIvaTemporal.find(item=>item.codEstab===this.data.codEstab)
+    
+                    
 
                     this.setColumnDefs();
 
@@ -285,7 +442,10 @@ export class ModalAddCtrl extends ModalCompraNoHabitualCtrl{
                     let indexTipoIva = this.gridOptions.columnDefs.findIndex(item=>item.field==='codigoPorcentaje');                    
                     this.gridOptions.columnDefs[indexTipoIva].editDropdownOptionsArray = this.tipoIvas;
 
-                    console.log(this.tipoIvas)
+                    let indexBodega = this.gridOptions.columnDefs.findIndex(item=>item.field==='idBodega');                    
+                    this.gridOptions.columnDefs[indexBodega].editDropdownOptionsArray = this.bodegas;
+                                                        
+                    
                     this.uiGridInvoice =  new UiGridOptionsCompra({
                         $scope: this.$scope,
                         gridOptions: this.gridOptions,
@@ -295,52 +455,12 @@ export class ModalAddCtrl extends ModalCompraNoHabitualCtrl{
                         decimal: this.decimal,
                         actividadTipoIva: this.actividadTipoIva
                     })
-                  
+
                     hideLoader() ;
                 
                 }
             })
-            // this.establecimientos = resultsDataForm[0];
-
-            // if(this.establecimientos.length>0){
-                                             
-            //     let dataEstab = this.establecimientos[0];             
-            //     let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
-                
-            //     this.puntosEmision = resultsDataFormEstab[0];
-                
-            //     if(this.puntosEmision.length>0){
-            //         this.data.idPuntoEmision = this.puntosEmision[0].idPuntoEmision
-            //     }else{
-            //         this._tS.toastr('warning', 'No tienes asignado ningún Punto de Emisión')
-            //     }
-                
-            //     this.data.codEstab   = dataEstab.codEstab;
-            //     this.cloneCodEstab   = dataEstab.codEstab;
-                               
-            //     this.bodegas       = resultsDataFormEstab[1];                
-            //     this.idBodega      = this.bodegas.length>0?this.bodegas[0].idBodega:0;
-            //     this.cloneIdBodega = this.idBodega;
-
-            //     this.actividadTipoIva = resultsDataFormEstab[2][0]               
-            // }else{
-            //     this._tS.toastr('info', 'No tienes asignado ningún Establecimiento')
-            // }
-
-            // this.decimal = resultsDataForm[1][0]
-            // this.tipoIvas = resultsDataForm[2];
-            // this.tiempoCreditos = resultsDataForm[3];
-            
-            // this.data.idTiempoCredito = this.tiempoCreditos.length>0?this.tiempoCreditos[0].idTiempoCredito: 0;
-
-            // this.categoriaCompras = resultsDataForm[4];
-            // this.sustentoTributarios = resultsDataForm[5];
-
-           
-                                    
-
-         
-
+                                   
             this.$scope.$apply();
 
         } catch (error) {
@@ -351,155 +471,146 @@ export class ModalAddCtrl extends ModalCompraNoHabitualCtrl{
     }
 
 
-    async onSave(){
-        try {
-           
-            showLoader();
-           
-            let textAccion = 'Guardar';  
-            //===============================Generar el Numero de Secuencial============================
-            showLoader();
-            let serieComprobante = await this._mS.getData('get', 'CompraNoHabitual/' + JSON.stringify({ idPuntoEmision: this.data.idPuntoEmision,typeList : 3 }), null, true).then(response=>{
-                if(response.code==="0"){
-                    console.log(response)
-                    hideLoader();
-                    return null;
-                }
-                if(response.code==="1"){
-                    hideLoader();
-                    return JSON.parse(response.payload)[0][0].serieComprobante
-                }
-            })
-
-           
-            if(!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE"
-
-             
-            const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                  confirmButton: 'btn btn-success',
-                  cancelButton: 'btn btn-danger ml-2'
-                },
-                buttonsStyling: false
-            })
-              
-            let {isConfirmed} = await swalWithBootstrapButtons.fire({
-                title: '<small>Guardar Documento no Habitual</small>',
-                html: `<small>Esta Ud. seguro de ${textAccion} este Documento <b> Nro. ${serieComprobante}</b></small>?`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Si, guardar!',
-                cancelButtonText: 'No, cancelar!',
-                reverseButtons: false,
-                allowOutsideClick:false,
-                allowEscapeKey:false
-            })       
-           
-            
-            if(!isConfirmed) return
-
-            showLoader();
-            this.data.idProveedor = this.proveedor.idProveedor                                          
-            
-            //Tarifa Aplicada al Documento
-            this.data.tarifa = this.actividadTipoIva.tarifa;
-
-            const data = {
-                comprobante: JSON.stringify({
-                    idEstablecimiento : this.establecimientos.find(item=>item.codEstab===this.data.codEstab).idEstablecimiento,
-                    idPuntoEmision : this.data.idPuntoEmision,
-                    idProveedor : this.data.idProveedor,
-                    estab : this.establecimientos.find(item=>item.codEstab===this.data.codEstab).estab,
-                    ptoEmi : this.puntosEmision.find(item=>item.idPuntoEmision===this.data.idPuntoEmision).puntoEmi,
-                    fechaEmision : this.data.fechaEmision,
-                    totalSinImpuestos : this.data.subTotalSinImpuestos,
-                    importeTotal : this.data.total,
-                    inventory : this.data.inventory       
-                }),
-                detalles: JSON.stringify(this.trimDetail()),
-                impuestos: JSON.stringify(this.taxes())
-            }
-
-            this._mS.getData('post', 'CompraNoHabitual', data,true).then(response=>{
-                if(response.code =='0'){  
-                    hideLoader();                  
-                    this._fS.sweetAlert('warning', response.message, response.titleSms);   
-                }
-
-                if (response.code == "1") {
-                    hideLoader();
-                    this._fS.sweetAlert('success', response.message, response.titleSms, 1000);   
-                    
-                    this.$uibModalInstance.close(response)
-                }     
-            })                        
-        } catch (error) {
-            console.log(error)
-        }
-    }
+   
 
 
-    selectedItemProveedor(item){
-        try {
-            this.proveedor = item;
-            this.searchProveedorOptions.showBtnEdit = true;                                   
-            this.$scope.$apply();
-        } catch (error) {
-            console.log(error)
-        }
-    }
+}
 
 
-    async closeModal(){
-        if(this.gridOptions.data.length===0){
-            this.$uibModalInstance.close();
-            return
-        }
+export class ModalUpdateCtrl extends ModalCompraNoHabitualCtrl{
 
-        const swalWithBootstrapButtons = Swal.mixin({
-            customClass: {
-              confirmButton: 'btn btn-success',
-              denyButton:'btn btn-info ml-2',
-              cancelButton: 'btn btn-danger ml-2'
-            },
-            buttonsStyling: false
-        })
+    static $inject = ['$scope', '$timeout', '$uibModalInstance',  'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario', 'params']
+    
+    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS, params){
+        super({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS});         
         
-        swalWithBootstrapButtons.fire({
-            title: 'Salir ?',
-            html: "<small>Tienes un documento en proceso, desea salir ahora?</small>",
-            icon: 'warning',
-            showCancelButton: true,
-            showConfirmButton:true,
-            showDenyButton:true,
-            confirmButtonText: 'Apartar',
-            denyButtonText: 'Si, salir',
-            cancelButtonText: 'No, cancelar!',
-            focusDeny:true,
-            reverseButtons: false
-        }).then(result=>{
+        this.params = params;
 
-            if(result.isConfirmed){
-                this.askToSaveStorage();
-            }
+        this.searchProveedorOptions = {}
+        this.searchProveedorOptions.showBtnNew = true;
+        this.searchProveedorOptions.showBtnList = true;   
+        this.searchProveedorOptions.showBtnEdit = true;   
+        
+        this.data.fechaEmision = new Date();
 
-            if(result.isDenied){
-                this.$uibModalInstance.close();
-            }
-            
-        })        
+        this.CELL_TEMPLATE_OPTION = `<a  ng-click="grid.appScope.$ctrl.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
+                           <a  ng-click="grid.appScope.$ctrl.openModalArticleEdit(row.entity)" style="cursor:pointer;" class="btn btn-success btn-xs text-white" title = "Editar Articulo" ><i class="fa fa-edit"></i></a >                                  
+                           <a  ng-click="grid.appScope.$ctrl.abrirModalDatoAdicional(row.entity)" style="cursor:pointer;" ng-show='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar Dato Adicional al Articulo" > <i class="fas fa-tags"></i></a >                                  
+                        `;
+    
+        this.CAMPOS = ["codEstab",  "idProveedor", "idPuntoEmision",  "fechaEmision", "gridOptions", "gridOptionsBodega"];
     }
 
+    async $onInit(){
 
-    async askToSaveStorage(){
         try {
-            await this._storageSvc.askToSaveDetailDoc("IngresoBodegaDetalle", this.gridOptions.data);
-            this.$uibModalInstance.close(); 
+            showLoader();            
+         
+            let {UiGridOptionsCompra} = await import('./../factElect/uiGridOptions.min.js' + CHANGE_VERSION());
+            
+            
+
+            this.data = this.params[0][0];
+            this.data.fechaEmision = this._fS.formatDate(this.data.fechaEmision)
+
+
+           
+
+            this.actividadTipoIva = {
+                tarifa: this.data.tarifa,
+                codigoPorcentaje: this.data.codigoPorcentaje
+            }
+
+            this.establecimientos = [{
+                codEstab: this.data.codEstab,
+                nombreComercial: this.data.nombreComercial
+            }]
+
+            this.proveedor = this.params[1][0];
+
+
+            //Detalle
+            this.gridOptions.data = this.params[2];
+            for(let item of this.gridOptions.data){
+               
+                const data = {
+                    idArticulo: item.idArticulo
+                }
+                
+                this._commonSvc.getDataArticuloParaCompra({ json: data }).then(response => {
+                    const results = JSON.parse(response.payload);
+                    item.medidas = results[1]
+                    item.etiquetas = results[2]
+                })  
+                
+                //Por Anlizar 
+                item.subTotal =  item.cantidad * item.precioUnitario;
+                item.ice = 0;
+                item.totalIce = 0;
+            }
+
+            
+
+            //Bodegas 
+            this.bodegas = this.params[4].filter(item=>item.codEstab===this.data.codEstab);
+            this.idBodega = this.bodegas.find(item=>(item.predeterminado)).idBodega;
+            
+            
+            //Ddecimal 
+            this.decimal = this.params[5][0]
+            
+            //Impuestos al Iva
+            this.tipoIvas = this.params[6];
+
+            this.data.inventory = this.params[7][0].inventory; 
+
+            //Calculos
+            let porcentajeDescuento = (((this.data.subTotalSinImpuestos -this.data.total) / 100 ) * this.data.subTotalSinImpuestos )
+            this.data.porcentajeDescuento = this._fS.roundNumber(porcentajeDescuento, this.decimal.nroTotalSubTotal)
+
+            this.setColumnDefs();
+
+            //Eliminar Mas Adelante 
+            this.gridOptions.columnDefs[7] =  {
+                name: 'I.V.A',
+                field: 'codigoPorcentaje',                    
+                width: '8%',
+                minWidth:'100',
+                type: 'text',
+                editableCellTemplate: 'ui-grid/dropdownEditor',
+                cellFilter: 'cellFilterTipoIva:this',
+                editDropdownValueLabel: 'descripcion',
+                editDropdownIdLabel: 'codigoPorcentaje',
+                enableCellEdit: true,
+                enableCellEditOnFocus:true,
+            //    visible: config.porcentajeIva
+            }
+
+            let indexTipoIva = this.gridOptions.columnDefs.findIndex(item=>item.field==='codigoPorcentaje');                    
+            this.gridOptions.columnDefs[indexTipoIva].editDropdownOptionsArray = this.tipoIvas;
+            
+            this.uiGridInvoice =  new UiGridOptionsCompra({
+                $scope: this.$scope,
+                gridOptions: this.gridOptions,
+                _fS: this._fS,                
+                _tS: this._tS,
+                tipoIvas: this.tipoIvas,
+                decimal: this.decimal,
+                actividadTipoIva: this.actividadTipoIva
+            })
+
+           
+            this.$scope.$apply();
+
         } catch (error) {
-            console.log(error)
-        }             
+            console.log(error)            
+        }finally{
+            hideLoader()
+        }
     }
 
+
+   
 
 
 }

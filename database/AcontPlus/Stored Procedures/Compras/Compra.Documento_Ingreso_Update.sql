@@ -53,12 +53,7 @@ BEGIN
 	--==========Tablas temporales para la validacion===================
 	DECLARE @document AS TABLE(
 		 idDocumentoIngreso INT NOT NULL
-		,idEstablecimiento INT NOT NULL 
-        ,idPuntoEmision INT NOT NULL
         ,idProveedor INT NOT NULL
-        ,codDoc VARCHAR(5) DEFAULT 'D' NOT NULL
-		,estab VARCHAR(5) NOT NULL
-        ,ptoEmi VARCHAR(5) NOT NULL
         ,fechaEmision DATETIME NOT NULL
         ,totalSinImpuestos NUMERIC (18,5) NOT NULL
         ,importeTotal NUMERIC (18,5) NOT NULL
@@ -68,7 +63,6 @@ BEGIN
 	DECLARE @detail AS TABLE(
 		 idDocumentoIngresoDetail INT NOT NULL
 		,idArticulo INT NOT NULL
-        ,idTarifa INT NOT NULL
         ,idMedida INT NOT NULL
         ,idBodega INT NOT NULL
         ,codigoPrincipal VARCHAR(100) NOT NULL
@@ -76,13 +70,15 @@ BEGIN
         ,descripcion VARCHAR(300) NOT NULL
         ,cantidad NUMERIC (18,5)   NOT NULL
         ,precioUnitario NUMERIC (18,5)  NOT NULL
+        ,costoNeto NUMERIC (18,5)  NOT NULL
         ,descuento NUMERIC (18,5)  NOT NULL
         ,precioTotalSinImpuesto NUMERIC (18,5)  NOT NULL
         ,codigoPorcentaje VARCHAR(5) NOT NULL
 	)
 
 	DECLARE @taxes AS TABLE(
-		 codigo VARCHAR(5) DEFAULT '2' NOT NULL
+		 idArticulo INT NOT NULL
+		,codigo VARCHAR(5)  NOT NULL
         ,codigoPorcentaje VARCHAR(5) NOT NULL
         ,tarifa NUMERIC(18,5) NOT NULL
         ,baseImponible NUMERIC(18,5) NOT NULL
@@ -92,15 +88,11 @@ BEGIN
 	BEGIN TRY 
 
 		INSERT INTO @document 
-		      (idDocumentoIngreso,idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,fechaEmision,totalSinImpuestos,importeTotal,inventory)
-		SELECT @idDocumentoIngreso,idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,fechaEmision,totalSinImpuestos,importeTotal,inventory
+		      (idDocumentoIngreso,idProveedor,fechaEmision,totalSinImpuestos,importeTotal,inventory)
+		SELECT @idDocumentoIngreso,idProveedor,fechaEmision,totalSinImpuestos,importeTotal,inventory
 		FROM OPENJSON(@comprobante)
 		WITH (
-		      idEstablecimiento INT '$.idEstablecimiento' 
-			 ,idPuntoEmision INT '$.idPuntoEmision'
-			 ,idProveedor INT '$.idProveedor' 
-			 ,estab VARCHAR(5) '$.estab' 
-			 ,ptoEmi VARCHAR(5) '$.ptoEmi' 
+		      idProveedor INT '$.idProveedor' 
 			 ,fechaEmision DATETIME '$.fechaEmision'
 			 ,totalSinImpuestos NUMERIC (18,5) '$.totalSinImpuestos'
 			 ,importeTotal NUMERIC (18,5) '$.importeTotal'
@@ -108,13 +100,12 @@ BEGIN
 		     ) as dt
 		
 		INSERT INTO @detail
-		      (idDocumentoIngresoDetail,idArticulo,idTarifa,idMedida,idBodega,codigoPrincipal,codigoAuxiliar,descripcion,cantidad,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje)
-		SELECT idDocumentoIngresoDetail,idArticulo,idTarifa,idMedida,idBodega,codigoPrincipal,codigoAuxiliar,descripcion,cantidad,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje
+		      (idDocumentoIngresoDetail,idArticulo,idMedida,idBodega,codigoPrincipal,codigoAuxiliar,descripcion,cantidad,precioUnitario,costoNeto,descuento,precioTotalSinImpuesto,codigoPorcentaje)
+		SELECT idDocumentoIngresoDetail,idArticulo,idMedida,idBodega,codigoPrincipal,codigoAuxiliar,descripcion,cantidad,precioUnitario,costoNeto,descuento,precioTotalSinImpuesto,codigoPorcentaje
 		FROM OPENJSON(@detalles)
 		WITH (
 			    idDocumentoIngresoDetail INT '$.idDocumentoIngresoDetail'
 			   ,idArticulo INT '$.idArticulo'
-			   ,idTarifa INT '$.idTarifa'
 			   ,idMedida INT '$.idMedida'
 			   ,idBodega INT '$.idBodega'
 			   ,codigoPrincipal VARCHAR(100) '$.codigoPrincipal'
@@ -122,16 +113,19 @@ BEGIN
 			   ,descripcion VARCHAR(300) '$.descripcion'
 			   ,cantidad NUMERIC (18,5) '$.cantidad'  
 			   ,precioUnitario NUMERIC (18,5) '$.precioUnitario' 
+			   ,costoNeto NUMERIC (18,5) '$.costoNeto' 
 			   ,descuento NUMERIC (18,5) '$.descuento' 
 			   ,precioTotalSinImpuesto NUMERIC (18,5) '$.precioTotalSinImpuesto' 
 			   ,codigoPorcentaje VARCHAR(5) '$.codigoPorcentaje'
 		     ) as dt
 		
-		INSERT INTO @taxes (codigoPorcentaje,tarifa,baseImponible,valor)
-		SELECT codigoPorcentaje,tarifa,baseImponible,valor
+		INSERT INTO @taxes (idArticulo,codigo,codigoPorcentaje,tarifa,baseImponible,valor)
+		SELECT idArticulo,codigo,codigoPorcentaje,tarifa,baseImponible,valor
 		FROM OPENJSON(@impuestos)
 		WITH (
-			    codigoPorcentaje VARCHAR(5) '$.codigoPorcentaje'
+			    idArticulo INT '$.idArticulo'
+			   ,codigo VARCHAR(5) '$.codigo'
+			   ,codigoPorcentaje VARCHAR(5) '$.codigoPorcentaje'
 		       ,tarifa NUMERIC(18,5) '$.tarifa'
                ,baseImponible NUMERIC(18,5) '$.baseImponible'
                ,valor NUMERIC(18,5) '$.valor'
@@ -157,7 +151,7 @@ BEGIN
 				RETURN
 			END 
 
-		IF @codPago = 'PE'
+		IF @codPago != 'PE'
 			BEGIN 
 				SELECT '0' code,'El Documento tiene un proceso contable no puede ser editado' as 'message'
 				RETURN  
@@ -189,8 +183,7 @@ BEGIN
 			UPDATE Compra.Documento_Ingreso_Detail SET estado = 0 WHERE idDocumentoIngreso = @idDocumentoIngreso
 
 			UPDATE dd SET
-				dd.idTarifa = dt.idTarifa
-			   ,dd.idMedida = dt.idMedida
+				dd.idMedida = dt.idMedida
 			   ,dd.idBodega = dt.idBodega
 			   ,dd.cantidad = dt.cantidad
 			   ,dd.precioUnitario = dt.precioUnitario
@@ -202,16 +195,16 @@ BEGIN
 			INNER JOIN @detail dt ON dt.idDocumentoIngresoDetail = dd.idDocumentoIngresoDetail
 
 			INSERT INTO Compra.Documento_Ingreso_Detail
-			       (idDocumentoIngreso,idArticulo,idTarifa,idMedida,idBodega,codigoPrincipal,codigoAuxiliar,descripcion,cantidad,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje)
-			SELECT @idDocumentoIngreso,idArticulo,idTarifa,idMedida,idBodega,codigoPrincipal,codigoAuxiliar,descripcion,cantidad,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje
-			FROM @detail
+			       (idDocumentoIngreso,idArticulo,idMedida,idBodega,codigoPrincipal,codigoAuxiliar,descripcion,cantidad,precioUnitario,costoNeto,descuento,precioTotalSinImpuesto,codigoPorcentaje)
+			SELECT @idDocumentoIngreso,idArticulo,idMedida,idBodega,codigoPrincipal,codigoAuxiliar,descripcion,cantidad,precioUnitario,costoNeto,descuento,precioTotalSinImpuesto,codigoPorcentaje
+			FROM @detail WHERE idDocumentoIngresoDetail = 0 
 
 
 			DELETE FROM Compra.Documento_Ingreso_Taxes WHERE idDocumentoIngreso = @idDocumentoIngreso
 
 			INSERT INTO Compra.Documento_Ingreso_Taxes
-                  (idDocumentoIngreso,codigo,codigoPorcentaje,tarifa,baseImponible,valor)
-			SELECT @idDocumentoIngreso,codigo,codigoPorcentaje,tarifa,baseImponible,valor
+                   (idDocumentoIngreso,idArticulo,codigo,codigoPorcentaje,tarifa,baseImponible,valor)
+			SELECT @idDocumentoIngreso,idArticulo,codigo,codigoPorcentaje,tarifa,baseImponible,valor
 			FROM @taxes
 
 			
@@ -241,7 +234,7 @@ BEGIN
 			 INNER JOIN dbo.Proveedor            pr WITH (NOLOCK) ON pr.idProveedor = di.idProveedor 
 
 		COMMIT TRAN 
-		SELECT '0' code,'Actualizado Correctamente' as 'message'
+		SELECT '1' code,'Actualizado Correctamente' as 'message'
 		RETURN
 
 	END TRY 

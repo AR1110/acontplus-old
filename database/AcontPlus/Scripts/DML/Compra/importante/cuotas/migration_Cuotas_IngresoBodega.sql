@@ -1,0 +1,25 @@
+use [AcontPlus]
+
+--alter table dbo.CuotaXPagar ADD uniqueId VARCHAR(20)
+
+declare @table as table(
+	 idCuotaXPagar INT NOT NULL
+	,uniqueId VARCHAR(20) NOT NULL
+)
+
+INSERT INTO @table (idCuotaXPagar,uniqueId)
+SELECT cxp.idCuotaXPagar
+	  ,ib.uniqueId
+FROM CuotaXPagar cxp 
+INNER JOIN dbo.TipoDocumento td ON td.idTipoDocumento = cxp.idTipoDocumento
+INNER JOIN dbo.IngresoBodega ib ON ib.idIngresoBodega = cxp.idComprobante AND cxp.idTipoDocumento = ib.idTipoDocumento
+where td.codigo = 'IB'
+
+UPDATE cxp set
+	cxp.uniqueId = t.uniqueId
+FROM CuotaXPagar cxp 
+INNER JOIN @table t ON t.idCuotaXPagar = cxp.idCuotaXPagar
+
+
+
+--select * from Contabilidad.CuentaPorPagar
