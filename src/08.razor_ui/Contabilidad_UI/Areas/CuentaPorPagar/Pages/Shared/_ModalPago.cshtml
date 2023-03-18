@@ -6,7 +6,26 @@
 </div>
 
 <div class="modal-body">
-
+    <div class="card">
+        <div class="row justify-content-center">
+            <div class="col-md-3 col-xs-6 b-r"> <small class="text-muted">Proveedor</small>
+                <br>
+                <h6>{{data.nombreFiscal}}</h6>
+            </div>
+            <div class="col-md-3 col-xs-6 b-r"> <small class="text-muted">Nro. Identificación</small>
+                <br>
+                <h6>{{data.identificacion}}</h6>
+            </div>
+            @* <div class="col-md-3 col-xs-6 b-r"> <strong>Email</strong>
+                <br>
+                <p class="text-muted">johnathan@admin.com</p>
+            </div>
+            <div class="col-md-3 col-xs-6"> <strong>Location</strong>
+                <br>
+                <p class="text-muted">London</p>
+            </div> *@
+        </div>
+    </div>
     @* <div class="row justify-content-end">
         <div class="col-xl-3 col-lg-3 col-md-3">
             <div class="ml-auto">
@@ -138,6 +157,9 @@
                                     </div>
                                 </td>
                             </tr>
+                            <tr class="text-center" ng-if="datosPago.length === 0">
+                                <td colspan="8">No hay datos</td>
+                            </tr>
                         </tbody>
                     </table>
                 </md-table-container>
@@ -158,28 +180,28 @@
                                 {{data.importeTotal | currency}}
                             </h5></span>
                         </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            Abono:
+                        <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-info" ng-if="data.totalAbonoAnterior>0">
+                            Abono Anterior:
                             <span>
-                                {{data.abono | currency}}
+                                {{data.totalAbonoAnterior | currency}}
                             </span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            Abono Posf.                  
+                           Abono                 
                             <span>
-                                {{data.abonoPosfechado | currency}}
+                                {{data.totalValorAbono | currency}}
                             </span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            Total Abono:                  
+                            Saldo:                  
                             <span>
-                                {{data.abonoPosfechado | currency}}
+                                {{data.totalSaldo | currency}}
                             </span>
-                        </li>
+                        </li> 
                         <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-danger">
                             Cambio:               
                             <span>
-                                {{data.abonoPosfechado | currency}}
+                                {{data.valorCambio | currency}}
                             </span>
                         </li>
                     </ul>

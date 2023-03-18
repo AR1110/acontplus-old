@@ -14,19 +14,32 @@
 
     
     <div class="card">
-        <section layout="row" layout-sm="column" layout-align="center center" layout-wrap>
-            @* <md-button class="md-raised">Button</md-button> *@
-            @* <md-button class="md-raised md-primary" ng-click="openModalPago()" ng-if="selectedDocumentos.length>0">Pagar</md-button> *@
-            @* <md-button ng-disabled="true" class="md-raised md-primary">Disabled</md-button> *@
-            @* <md-button class="md-raised md-warn">Warn</md-button> *@
-            @* <div class="label">Raised</div> *@
-        </section>
+        <div class="card-body">
+            <div class="row justify-content-between">
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                <button class="btn btn-info">
+                    <i class="fas fa-filter"></i> Filtro
+                </button>
+            </div>                       
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                <div class="input-group">
+                    <input type="text" class="form-control" ng-keyup="filterLocalRetencion()" ng-model="textSearch" placeholder="Buscar Factura de Venta" />
+                    <div class="input-gorup-appen">
+                        <button type="button" class="btn btn-secondary" ng-click="getFacturas()">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>    
+        </div>   
 
         <md-table-container style="max-height: 400px;">
             <table md-table md-row-select="options.rowSelection" multiple="{{options.multiSelect}}"  ng-model="selectedDocumentos" md-progress="promise">
                 <thead fix-head md-head>
                     <tr md-row>
                         <th md-column ><span></span></th>
+                        <th md-column ><span>N°</span></th>
                         <th md-column ><span>Cod. Doc</span></th>
                         <th md-column ><span>Serie</span></th>
                         <th md-column ><span>Proveedor</span></th>
@@ -61,6 +74,7 @@
                                 </md-menu-content>
                             </md-menu>
                         </td>
+                        <td md-cell>{{$index+1}}</td>
                         <td md-cell>{{item.codDoc}}</td>
                         <td md-cell>{{item.serieComprobante}}</td>
                         <td md-cell>{{item.nombreFiscal}}</td>
