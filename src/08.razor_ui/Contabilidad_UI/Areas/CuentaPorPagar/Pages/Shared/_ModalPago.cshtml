@@ -48,7 +48,11 @@
 
                             </tr>
                             <tr md-row ng-repeat-end ng-repeat="cuota in group.cuotas" ng-show="group.display">
-                                <td md-cell></td>
+                                <td md-cell>
+                                    <button class="btn btn-secondary btn-xs" ng-if="cuota.esCuotaAfectada" ng-click="showPagoDetalle(cuota)">
+                                        <i class="ti-eye"></i>
+                                    </button>
+                                </td>
                                 <td md-cell>{{cuota.nroCuota}}</td>
                                 <td md-cell>{{cuota.cuota}}</td>
                                 <td md-cell>{{cuota.abono}}</td>
@@ -75,21 +79,64 @@
                                 <th md-column><span>Valor</span></th>
                                 <th md-column><span>Tipo Doc.</span></th>
                                 <th md-column><span>Número</span></th>                                
+                                <th md-column><span></span></th>                                
                             </tr>
                         </thead>
                         <tbody md-body>                         
-                            <tr md-row ng-repeat="item in datosPagos">
+                            <tr md-row ng-repeat-start="item in datosPago">
                                 <td md-cell>
                                     <button class="btn btn-danger btn-sm" ng-click="askToDeleteDatoPago(item)">
                                         <i class="mdi mdi-delete"></i>
                                     </button>
                                 </td>
-                                <td md-cell>{{cuota.nroCuota}}</td>
-                                <td md-cell>{{cuota.cuota}}</td>
-                                <td md-cell>{{cuota.abono}}</td>
-                                <td md-cell>{{cuota.saldo}}</td>
-                                <td md-cell>{{cuota.descripicion}}</td> 
-                                <td md-cell>{{cuota.descripicion}}</td> 
+                                <td md-cell>{{$index+1}}</td>
+                                <td md-cell>{{item.fechaEmision | date:'MM/dd/yyyy  h:mma'}}</td>
+                                <td md-cell>{{item.subEntidadFinanciera}}</td>
+                                <td md-cell>{{item.valorAbono}}</td>
+                                <td md-cell>{{item.tipoDocumento}}</td>
+                                <td md-cell>{{item.nro}}</td> 
+                                <td md-cell ng-click="displayInfoDatosPago(item)">
+                                    <span ng-if="item.display"><i class="fas fa-caret-square-down"></i></span>
+                                    <span ng-if="!item.display"><i class="fas fa-caret-square-right"></i></span>
+                                </td>
+                            </tr>
+                            <tr md-row ng-repeat-end ng-if="item.display">
+                                <td colspan="8">
+                                    <div class="row ml-5 mr-5">
+                                        <div class="col-md-4 col-xs-6 b-r">
+                                            <small class="text-muted">Ciudad</small>
+                                            <br>
+                                            <h6>{{item.ciudad}}</h6>
+                                        </div>
+                                        <div class="col-md-4 col-xs-6 b-r"> 
+                                            <small class="text-muted">Referencia</small>
+                                            <br>
+                                            <h6>{{item.referencia}}</h6>
+                                        </div>
+                                        <div class="col-md-4 col-xs-6 b-r">
+                                            <small class="text-muted">Aprobación</small>
+                                            <br>
+                                            <h6>{{item.aprobacion}}</h6>
+                                        </div>
+                                    </div>
+                                    <div class="row ml-5 mr-5">
+                                        <div class="col-md-4 col-xs-6">
+                                            <small class="text-muted">Lote</small>
+                                            <br>
+                                            <h6>{{item.lote}}</h6>
+                                        </div>
+                                        <div class="col-md-4 col-xs-6">
+                                            <small class="text-muted">PosFechado</small>
+                                            <br>
+                                            <h6><span class="badge badge-success">{{item.posFechado?'SI':'NO'}}</span></h6>
+                                        </div>
+                                        <div class="col-md-4 col-xs-6">
+                                            <small class="text-muted">Banco</small>
+                                            <br>
+                                            <h6><span class="badge badge-success">{{item.banco}}</span></h6>
+                                        </div>
+                                    </div>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -107,25 +154,25 @@
                     <ul class="list-group">
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             Total:                     
-                            <span class="badge badge-primary badge-pill">
+                            <span><h5>
                                 {{data.importeTotal | currency}}
-                            </span>
+                            </h5></span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             Abono:
-                            <span class="badge badge-primary badge-pill">
+                            <span>
                                 {{data.abono | currency}}
                             </span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             Abono Posf.                  
-                            <span class="badge badge-primary badge-pill">
+                            <span>
                                 {{data.abonoPosfechado | currency}}
                             </span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             Total Abono:                  
-                            <span class="badge badge-primary badge-pill">
+                            <span>
                                 {{data.abonoPosfechado | currency}}
                             </span>
                         </li>
