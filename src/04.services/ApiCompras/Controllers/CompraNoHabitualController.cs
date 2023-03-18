@@ -61,7 +61,7 @@ namespace ApiCompras.Controllers
                     {"detalles", SqlValidation.ValidateSqlString(data.detalles)},
                     {"impuestos", SqlValidation.ValidateSqlString(data.impuestos)}
                 };
-                return Ok(await _dao.GetDataSet("Compra.Documento_Ingreso_Insert", parameters));
+                return Ok(await _dao.Default("Compra.Documento_Ingreso_Insert", parameters));
             }
             catch (Exception ex)
             {
@@ -90,7 +90,7 @@ namespace ApiCompras.Controllers
                     {"detalles", SqlValidation.ValidateSqlString(data.detalles)},
                     {"impuestos", SqlValidation.ValidateSqlString(data.impuestos)}
                 };
-                return Ok(await _dao.GetDataSet("Compra.Documento_Ingreso_Update", parameters));
+                return Ok(await _dao.Default("Compra.Documento_Ingreso_Update", parameters));
             }
             catch (Exception ex)
             {
@@ -116,7 +116,7 @@ namespace ApiCompras.Controllers
                     {"idUsuarioRol", idUsuarioRol },
                     {"idDocumentoIngreso", id},
                 };
-                return Ok(await _dao.GetDataSet("Compra.Documento_Ingreso_Update_Cancel", parameters));
+                return Ok(await _dao.Default("Compra.Documento_Ingreso_Update_Cancel", parameters));
             }
             catch (Exception ex)
             {

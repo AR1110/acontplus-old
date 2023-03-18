@@ -78,13 +78,15 @@ BEGIN
         ,descripcion VARCHAR(300) NOT NULL
         ,cantidad NUMERIC (18,5)   NOT NULL
         ,precioUnitario NUMERIC (18,5)  NOT NULL
+        ,costoNeto NUMERIC (18,5)  NOT NULL
         ,descuento NUMERIC (18,5)  NOT NULL
         ,precioTotalSinImpuesto NUMERIC (18,5)  NOT NULL
         ,codigoPorcentaje VARCHAR(5) NOT NULL
 	)
 
 	DECLARE @taxes AS TABLE(
-		 codigo VARCHAR(5)  NOT NULL
+		 idArticulo INT NOT NULL
+		,codigo VARCHAR(5)  NOT NULL
         ,codigoPorcentaje VARCHAR(5) NOT NULL
         ,tarifa NUMERIC(18,5) NOT NULL
         ,baseImponible NUMERIC(18,5) NOT NULL
@@ -109,8 +111,8 @@ BEGIN
 		     ) as dt
 		
 		INSERT INTO @detail
-		      (idArticulo,idMedida,idBodega,codigoPrincipal,codigoAuxiliar,descripcion,cantidad,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje)
-		SELECT idArticulo,idMedida,idBodega,codigoPrincipal,codigoAuxiliar,descripcion,cantidad,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje
+		      (idArticulo,idMedida,idBodega,codigoPrincipal,codigoAuxiliar,descripcion,cantidad,precioUnitario,costoNeto,descuento,precioTotalSinImpuesto,codigoPorcentaje)
+		SELECT idArticulo,idMedida,idBodega,codigoPrincipal,codigoAuxiliar,descripcion,cantidad,precioUnitario,costoNeto,descuento,precioTotalSinImpuesto,codigoPorcentaje
 		FROM OPENJSON(@detalles)
 		WITH (
 				idArticulo INT '$.idArticulo'
@@ -128,11 +130,12 @@ BEGIN
 		     ) as dt
 		
 		INSERT INTO @taxes 
-		      (codigo,codigoPorcentaje,tarifa,baseImponible,valor)
-		SELECT codigo,codigoPorcentaje,tarifa,baseImponible,valor
+		      (idArticulo,codigo,codigoPorcentaje,tarifa,baseImponible,valor)
+		SELECT idArticulo,codigo,codigoPorcentaje,tarifa,baseImponible,valor
 		FROM OPENJSON(@impuestos)
 		WITH (
-			    codigo VARCHAR(5) '$.codigo'
+			    idArticulo INT '$.idArticulo'
+			   ,codigo VARCHAR(5) '$.codigo'
 			   ,codigoPorcentaje VARCHAR(5) '$.codigoPorcentaje'
 		       ,tarifa NUMERIC(18,5) '$.tarifa'
                ,baseImponible NUMERIC(18,5) '$.baseImponible'
@@ -182,8 +185,6 @@ BEGIN
 				RETURN 
 			END 
 
-		SELECT '0' code,'json Comprobabte: '+ @comprobante as 'message'
-		RETURN 
 
 		BEGIN TRAN 
 			--============================================================Administracion=========================================================================================
@@ -196,13 +197,13 @@ BEGIN
 
 			
 			INSERT INTO Compra.Documento_Ingreso_Detail
-			       (idDocumentoIngreso,idArticulo,idMedida,idBodega,codigoPrincipal,codigoAuxiliar,descripcion,cantidad,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje)
-			SELECT @idDocumentoIngreso,idArticulo,idMedida,idBodega,codigoPrincipal,codigoAuxiliar,descripcion,cantidad,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje
+			       (idDocumentoIngreso,idArticulo,idMedida,idBodega,codigoPrincipal,codigoAuxiliar,descripcion,cantidad,precioUnitario,costoNeto,descuento,precioTotalSinImpuesto,codigoPorcentaje)
+			SELECT @idDocumentoIngreso,idArticulo,idMedida,idBodega,codigoPrincipal,codigoAuxiliar,descripcion,cantidad,precioUnitario,costoNeto,descuento,precioTotalSinImpuesto,codigoPorcentaje
 			FROM @detail
 			
 			INSERT INTO Compra.Documento_Ingreso_Taxes
-                  (idDocumentoIngreso,codigo,codigoPorcentaje,tarifa,baseImponible,valor)
-			SELECT @idDocumentoIngreso,codigo,codigoPorcentaje,tarifa,baseImponible,valor
+                   (idDocumentoIngreso,idArticulo,codigo,codigoPorcentaje,tarifa,baseImponible,valor)
+			SELECT @idDocumentoIngreso,idArticulo,codigo,codigoPorcentaje,tarifa,baseImponible,valor
 			FROM @taxes
 			
 			--==============================================================Inventario============================================================================================
@@ -227,7 +228,7 @@ BEGIN
 		    WHERE d.idDocumentoIngreso = @idDocumentoIngreso
 			
 		COMMIT TRAN 
-		SELECT '0' code,'Registrado Correctamente' as 'message'
+		SELECT '1' code,'Registrado Correctamente' as 'message'
 		RETURN 
 	END TRY 
 

@@ -87,6 +87,7 @@ BEGIN
 			INNER JOIN dbo.Proveedor       pr WITH (NOLOCK) ON pr.idProveedor       = di.idProveedor
 			INNER JOIN dbo.Usuario         us WITH (NOLOCK) ON us.idUsuario         = di.idUsuario
 			WHERE di.idEntidad =  @idEntidad
+			ORDER BY di.idDocumentoIngreso DESC
 		END 
 
 	IF @typeList = 2
@@ -150,6 +151,102 @@ BEGIN
 			FROM dbo.PuntoEmision pe WITH (NOLOCK)
 			INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = pe.codEstab
 			WHERE pe.idPuntoEmision = @idPuntoEmision
+		END 
+
+	IF @typeList = 4
+		BEGIN
+			DECLARE @idDocumentoIngreso AS INT
+			DECLARE @subTotalIva AS NUMERIC(18,5)
+			DECLARE @subTotalIvaCero AS NUMERIC(18,5)
+			DECLARE @subTotalExentoIva AS NUMERIC(18,5)
+			DECLARE @subTotalNoObjetoIva AS NUMERIC(18,5)
+			DECLARE @subTotalNetoIva AS NUMERIC(18,5)
+			DECLARE @subTotalNetoIvaCero AS NUMERIC(18,5)
+			DECLARE @subTotalNetoExentoIva AS NUMERIC(18,5)
+			DECLARE @subTotalNetoNoObjetoIva AS NUMERIC(18,5)
+			DECLARE @iva AS NUMERIC(18,5)
+			DECLARE @decuento AS NUMERIC(18,5)
+
+			DECLARE @taxes AS TABLE (
+				 descuento NUMERIC(18,5) NOT NULL
+				,codigoPorcentaje VARCHAR(5) NOT NULL
+				,tarifa NUMERIC(18,5) NOT NULL
+				,baseImponible NUMERIC(18,5) NOT NULL
+				,valor NUMERIC(18,5) NOT NULL
+			)
+				
+			SELECT @idDocumentoIngreso = idDocumentoIngreso FROM OPENJSON(@json) WITH (idDocumentoIngreso INT '$.idDocumentoIngreso')
+
+
+			INSERT INTO @taxes (descuento,codigoPorcentaje,tarifa,baseImponible,valor)
+			SELECT 
+				 descuento = (SELECT ISNULL(SUM(descuento),0) FROM Compra.Documento_Ingreso_Detail dt WHERE dt.idDocumentoIngreso = tX.idDocumentoIngreso AND dt.codigoPorcentaje  = tx.codigoPorcentaje)
+				,tx.codigoPorcentaje
+				,tx.tarifa
+				,tx.baseImponible
+				,tx.valor
+			FROM Compra.Documento_Ingreso_Taxes tX 
+			WHERE tx.idDocumentoIngreso = @idDocumentoIngreso
+
+			SELECT @subTotalIvaCero     = ISNULL(SUM(baseImponible),0), @subTotalNetoIvaCero     = ISNULL(SUM(baseImponible - descuento),0)  FROM @taxes WHERE codigoPorcentaje = '0' 
+			SELECT @subTotalIva         = ISNULL(SUM(baseImponible),0), @subTotalNetoIva         = ISNULL(SUM(baseImponible - descuento),0),@iva = ISNULL(SUM(valor),0) FROM @taxes WHERE codigoPorcentaje = '2' 
+			SELECT @subTotalNoObjetoIva = ISNULL(SUM(baseImponible),0), @subTotalNetoNoObjetoIva = ISNULL(SUM(baseImponible - descuento),0)  FROM @taxes WHERE codigoPorcentaje = '6' 
+			SELECT @subTotalExentoIva   = ISNULL(SUM(baseImponible),0), @subTotalNetoExentoIva   = ISNULL(SUM(baseImponible - descuento),0)  FROM @taxes WHERE codigoPorcentaje = '7' 
+
+			SELECT @decuento = descuento FROM @taxes
+
+			SELECT 
+				 es.idEstablecimiento
+				,pe.idPuntoEmision
+				,pe.codEstab
+				,es.estab
+				,pe.ptoEmi
+				,secuencial              = Helper.F_Auto_Sequential(di.secuencial)
+				,di.fechaEmision
+				,subTotalIva             = @subTotalIva
+				,subTotalIvaCero         = @subTotalIvaCero
+				,subTotalExentoIva       = @subTotalExentoIva
+				,subTotalNoObjetoIva     = @subTotalNoObjetoIva
+				,subTotalNetoIva         = @subTotalNetoIva
+				,subTotalNetoIvaCero     = @subTotalNetoIvaCero
+				,subTotalNetoExentoIva   = @subTotalNetoExentoIva
+				,subTotalNetoNoObjetoIva = @subTotalNetoNoObjetoIva
+				,subTotalSinImpuestos    = di.totalSinImpuestos
+				,iva = @iva
+				,totalDescuento = @decuento 
+				,total = di.importeTotal
+			FROM Compra.Documento_Ingreso  di WITH (NOLOCK)
+			INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision = di.idPuntoEmision
+			INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pe.codEstab
+			WHERE di.idDocumentoIngreso = @idDocumentoIngreso
+
+			SELECT 
+				 di.idProveedor
+				,nombreComercial = ISNULL(pr.nombreComercial,'')
+				,nombreFiscal = ISNULL(pr.nombreFiscal,'')
+				,direccion = ISNULL(pr.direccion,'')
+			FROM Compra.Documento_Ingreso  di WITH (NOLOCK)
+			INNER JOIN dbo.Proveedor pr WITH (NOLOCK) ON pr.idProveedor = di.idProveedor
+			WHERE di.idDocumentoIngreso = @idDocumentoIngreso
+
+			SELECT	
+				 dt.idArticulo
+				,dt.idMedida
+				,dt.idBodega
+				,dt.cantidad
+				,dt.descripcion
+				,dt.precioUnitario
+				,dt.descuento
+				,dt.precioTotalSinImpuesto
+				,dt.codigoPorcentaje
+				,tarifa = ti.porcentaje
+			FROM Compra.Documento_Ingreso_Detail dt WITH (NOLOCK)
+			INNER JOIN Sri.TarifaImpuesto ti WITH (NOLOCK) ON ti.codigo = dt.codigoPorcentaje
+			WHERE dt.idDocumentoIngreso = @idDocumentoIngreso
+
+			SELECT tx.* 
+			FROM Compra.Documento_Ingreso_Taxes tx  WITH (NOLOCK)
+			WHERE tx.idDocumentoIngreso = @idDocumentoIngreso
 		END 
 END
 GO

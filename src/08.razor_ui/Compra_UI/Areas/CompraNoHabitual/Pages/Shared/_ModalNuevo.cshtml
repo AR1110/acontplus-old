@@ -181,12 +181,12 @@
                                         <td class="right">${{$ctrl.data.irbpnr}}</td>
                                     </tr>
 
-                                    <tr>
+                                    @*<tr>
                                         <td class="left">
                                             <strong class="text-dark">Propina</strong>
                                         </td>
                                         <td class="right">${{$ctrl.data.propina}}</td>
-                                    </tr>                                                                               
+                                    </tr>*@                                                                               
                                 </tbody>
                             </table>  
                         </div> 
@@ -220,20 +220,6 @@
                                     </button>
                                 </div>
                             </div>                                    
-                        </div>
-                    </div>
-
-                    <div class="col-lg-2 col-md-6 col-sm-12 col-xs-12">
-                        <div class="form-group">
-                            <label>Transporte</label>
-                            <input type="text" decimal ng-model="$ctrl.data.transporte" ng-blur="$ctrl.sumaTransporteRecargo()" class="form-control border-select" placeholder="0.00" />
-                        </div>
-                    </div>
-
-                    <div class="col-lg-2 col-md-6 col-sm-12 col-xs-12">
-                        <div class="form-group">
-                            <label>Rercargo</label>
-                            <input type="text" decimal ng-model="$ctrl.data.recargo" ng-blur="$ctrl.sumaTransporteRecargo()" class="form-control border-select" placeholder="0.00" />
                         </div>
                     </div>
 

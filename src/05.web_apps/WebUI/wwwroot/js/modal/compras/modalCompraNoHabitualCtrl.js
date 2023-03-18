@@ -405,7 +405,7 @@ export class ModalAddCtrl extends ModalCompraNoHabitualCtrl{
             this.data.tarifa = this.actividadTipoIva.tarifa;
 
             const data = {
-                comprobante: {
+                comprobante: JSON.stringify({
                     idEstablecimiento : this.establecimientos.find(item=>item.codEstab===this.data.codEstab).idEstablecimiento,
                     idPuntoEmision : this.data.idPuntoEmision,
                     idProveedor : this.data.idProveedor,
@@ -415,12 +415,12 @@ export class ModalAddCtrl extends ModalCompraNoHabitualCtrl{
                     totalSinImpuestos : this.data.subTotalSinImpuestos,
                     importeTotal : this.data.total,
                     inventory : this.data.inventory       
-                },
-                detalles: this.trimDetail(),
-                impuestos: this.taxes()
+                }),
+                detalles: JSON.stringify(this.trimDetail()),
+                impuestos: JSON.stringify(this.taxes())
             }
 
-            this._mS.getData('post', 'CompraNoHabitual', data, true).then(response=>{
+            this._mS.getData('post', 'CompraNoHabitual', data,true).then(response=>{
                 if(response.code =='0'){  
                     hideLoader();                  
                     this._fS.sweetAlert('warning', response.message, response.titleSms);   
