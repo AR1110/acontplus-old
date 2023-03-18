@@ -18,7 +18,7 @@ CREATE TABLE Compra.Documento_Ingreso (
 	,secuencial INT NOT NULL
 	,totalSinImpuestos DECIMAL(15,5)
 	,importeTotal DECIMAL(15,5)	
-	,estado BIT 
+	,estado DEFAULT 1 BIT 
 	,fechaRegistro DATETIME NOT NULL
 	,idUsuario INT NOT NULL
     ,idEntidad INT NOT NULL
@@ -33,7 +33,6 @@ CREATE TABLE Compra.Documento_Ingreso_Detail(
 	 idDocumentoIngresoDetail INT IDENTITY(1,1) NOT NULL PRIMARY KEY	 
 	,idDocumentoIngreso INT FOREIGN KEY REFERENCES Compra.Documento_Ingreso(idDocumentoIngreso) NOT NULL
 	,idArticulo INT FOREIGN KEY REFERENCES dbo.Articulo(idArticulo) NOT NULL
-	,idTarifa INT FOREIGN KEY REFERENCES dbo.Tarifa(idTarifa) NOT NULL
 	,idMedida INT FOREIGN KEY REFERENCES dbo.Medida(idMedida) NOT NULL
 	,idBodega INT FOREIGN KEY REFERENCES dbo.Bodega(idBodega) NOT NULL
 	,codigoPrincipal VARCHAR(100) NOT NULL
@@ -41,10 +40,11 @@ CREATE TABLE Compra.Documento_Ingreso_Detail(
 	,descripcion VARCHAR(500) NOT NULL
 	,cantidad DECIMAL(15,5) NOT NULL
 	,precioUnitario DECIMAL(15,5) NOT NULL
+	,costoNeto DECIMAL(15,5) NOT NULL
 	,descuento DECIMAL(15,5) NOT NULL
 	,precioTotalSinImpuesto DECIMAL(15,5) NOT NULL
 	,codigoPorcentaje VARCHAR(5) NOT NULL
-	,estado BIT DEFAULT 1 
+	,estado BIT DEFAULT 1 NOT NULL 
 
 )
 
@@ -53,13 +53,14 @@ IF OBJECT_ID(N'Compra.Documento_Ingreso_Taxes', N'U') IS NOT NULL
 	DROP TABLE Compra.Documento_Ingreso_Taxes
 GO
 CREATE TABLE Compra.Documento_Ingreso_Taxes (
-	 DocumentoIngresoTaxes INT NOT NULL PRIMARY KEY IDENTITY(1,1)
+	 idDocumentoIngresoTaxes INT NOT NULL PRIMARY KEY IDENTITY(1,1)
 	,idDocumentoIngreso INT FOREIGN KEY REFERENCES Compra.Documento_Ingreso(idDocumentoIngreso) NOT NULL
+	,idArticulo INT FOREIGN KEY REFERENCES dbo.Articulo(idArticulo) NOT NULL
 	,codigo VARCHAR(50) NOT NULL
 	,codigoPorcentaje VARCHAR(5) NULL
 	,tarifa NUMERIC(15,5) NULL
 	,baseImponible NUMERIC(15,5) NULL
 	,valor NUMERIC(15,5) NULL
-	,estado BIT NOT NULL
+	,estado BIT DEFAULT 1 NOT NULL
 )
  

@@ -422,7 +422,7 @@
 
     {
       "UpstreamPathTemplate": "/api/CompraNoHabitual/{everything}",
-      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "UpstreamHttpMethod": [ "Get", "Put", "Delete", "Options" ],
       "DownstreamPathTemplate": "/api/CompraNoHabitual/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -436,6 +436,41 @@
         "AllowedScopes": []
       }
     },
+
+    {
+      "UpstreamPathTemplate": "/api/CompraNoHabitual",
+      "UpstreamHttpMethod": [ "Post" ],
+      "DownstreamPathTemplate": "/api/CompraNoHabitual",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 55793
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/CompraNoHabitual/cancel/{id}",
+      "UpstreamHttpMethod": [ "Put" ],
+      "DownstreamPathTemplate": "/api/CompraNoHabitual/cancel/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 54948
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+
     {
       "UpstreamPathTemplate": "/api/Impresion/?json={json}",
       "UpstreamHttpMethod": [ "Get" ],

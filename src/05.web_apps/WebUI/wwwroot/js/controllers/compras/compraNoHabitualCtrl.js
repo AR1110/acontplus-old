@@ -1,6 +1,4 @@
 
-
-
 app.controller('compraNoHabitualCtrl', compraNoHabitualCtrl);
 
 
@@ -50,20 +48,20 @@ function compraNoHabitualCtrl($scope, commonSvc, mS, tS, modalSvc, nombreModal){
         try {
             showLoader();
             $scope.comprasNoHabitual = [];
-            mS.getData('get', 'CompraNoHabitual/Get/' + JSON.stringify($scope.dataSearch)).then(response=>{
+            mS.getData('get', 'CompraNoHabitual/' + JSON.stringify({ typeList : 1 }), null, true).then(response=>{
                 if(response.code==="0"){
                     console.log(response)
                     hideLoader();
                 }
 
                 if(response.code==="1"){
-                    $scope.comprasNoHabitual = JSON.parse(response.payload) || []; //
+                    $scope.documentoIngreso = JSON.parse(response.payload)[0] || []; //
                     hideLoader();
                 }
             })
 
         } catch (error) {
-            $scope.comprasNoHabitual = [];
+            $scope.documentoIngreso = [];
             console.log(error)
         }
     }
@@ -81,7 +79,7 @@ function compraNoHabitualCtrl($scope, commonSvc, mS, tS, modalSvc, nombreModal){
             console.log(error);
         }
     }
-
+    $scope.initiload();
 
    
 

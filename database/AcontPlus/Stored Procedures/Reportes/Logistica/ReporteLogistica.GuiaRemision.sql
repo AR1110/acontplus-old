@@ -95,8 +95,8 @@ BEGIN
 							,s.contribuyenteEspecial
 							,s.obligadoContabilidad 
 							,s.nombreComercial
-							,agenteRetencion
-							,contribuyenteRimpe 
+							,contribuyenteRimpe = ISNULL(s.contribuyenteRimpe,'')
+							,agenteRetencion = ISNULL('AGENTE DE RETENCION RESOLUCION NRO: '+s.agenteRetencion,'')
 							,nroIdentificacionTransportista = t.nroIdentificacion
 							,nombreTransportista       = t.nombre 
 							,placa                     = v.placa

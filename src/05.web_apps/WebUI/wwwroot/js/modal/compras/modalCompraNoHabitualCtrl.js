@@ -1,5 +1,5 @@
 
-import './modalCompraBaseCtrl.min.js?v=0.3'
+import './modalCompraBaseCtrl.min.js?v=0.5'
 
 class ModalCompraNoHabitualCtrl extends window.modalCompraBaseCtrl {
     
@@ -91,23 +91,34 @@ class ModalCompraNoHabitualCtrl extends window.modalCompraBaseCtrl {
             let data = {
                 index : index++,
                 idCompraNoHabitualDetalle: item.idCompraNoHabitualDetalle || 0,
-                idBodega: item.idBodega,
                 idArticulo: item.idArticulo,
                 idMedida: item.idMedida,
-
+                idBodega: item.idBodega,
+                codigoPrincipal : item.codigoPrincipal,
+                codigoAuxiliar : item.codigoAuxiliar,
                 descripcion: item.descripcion,
                 cantidad: item.cantidad,
                 precioUnitario: item.precioUnitario,
-                precioCostoNeto: item.precioCostoNeto,
-                porcentajeDescuento: item.porcentajeDescuento,
-                valorDescuento: item.valorDescuento,
-                ice: item.ice,
-                iva: item.iva,
-
+                costoNeto : item.costoNeto,
+                descuento: item.valorDescuento,
+                precioTotalSinImpuesto: item.total,
                 codigoPorcentaje: item.codigoPorcentaje,
-                tarifa: item.tarifa,
-                nota: item.nota || null,
-                total: item.total,
+            }
+            return data;
+        })
+    }
+
+    taxes(){
+        let index = 1
+        return this.gridOptions.data.map(item=>{
+            let data = {
+                index : index++,
+                idArticulo: item.idArticulo,
+                codigo : "2",
+                codigoPorcentaje: item.codigoPorcentaje,
+                tarifa : item.tarifa,
+                baseImponible : item.total,
+                valor : (item.tarifa/100) * item.total,
             }
             return data;
         })
@@ -246,7 +257,8 @@ export class ModalAddCtrl extends ModalCompraNoHabitualCtrl{
                     this.actividadTipoIvaTemporal = mainData[5]
 
                     this.decimal = mainData[3][0];
-                    this.tipoIvas = mainData[4];   
+                    this.tipoIvas = mainData[4];  
+                    this.data.inventory = mainData[6][0].inventory; 
                                         
                     this.changeEstablecimiento();
 
@@ -345,18 +357,22 @@ export class ModalAddCtrl extends ModalCompraNoHabitualCtrl{
             showLoader();
            
             let textAccion = 'Guardar';  
+            //===============================Generar el Numero de Secuencial============================
+            showLoader();
+            let serieComprobante = await this._mS.getData('get', 'CompraNoHabitual/' + JSON.stringify({ idPuntoEmision: this.data.idPuntoEmision,typeList : 3 }), null, true).then(response=>{
+                if(response.code==="0"){
+                    console.log(response)
+                    hideLoader();
+                    return null;
+                }
+                if(response.code==="1"){
+                    hideLoader();
+                    return JSON.parse(response.payload)[0][0].serieComprobante
+                }
+            })
 
-            if(!this.isValidaForm(textAccion)) return
-
-            this.nroDocumentoSecuencial = await this._commonSvc.generarNroDocumentoCompra({
-                idPuntoEmision: this.data.idPuntoEmision,                
-                codigoDocumento: this.TIPO_DOC.codigo,                
-            })       
-            
            
-            hideLoader();
-           
-            if(!this.nroDocumentoSecuencial) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE"
+            if(!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE"
 
              
             const swalWithBootstrapButtons = Swal.mixin({
@@ -368,8 +384,8 @@ export class ModalAddCtrl extends ModalCompraNoHabitualCtrl{
             })
               
             let {isConfirmed} = await swalWithBootstrapButtons.fire({
-                title: '<small>Guardar Ingreso Bodega</small>',
-                html: `<small>Esta Ud. seguro de ${textAccion} este Documento <b> Nro. ${this.nroDocumentoSecuencial}</b></small>?`,
+                title: '<small>Guardar Documento no Habitual</small>',
+                html: `<small>Esta Ud. seguro de ${textAccion} este Documento <b> Nro. ${serieComprobante}</b></small>?`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Si, guardar!',
@@ -389,19 +405,28 @@ export class ModalAddCtrl extends ModalCompraNoHabitualCtrl{
             this.data.tarifa = this.actividadTipoIva.tarifa;
 
             const data = {
-                ingresoBodega: this.data,
-                detalle: this.trimDetail(),
-                manejoArticuloDetalle: this.datosAdicionalesArticulo
+                comprobante: JSON.stringify({
+                    idEstablecimiento : this.establecimientos.find(item=>item.codEstab===this.data.codEstab).idEstablecimiento,
+                    idPuntoEmision : this.data.idPuntoEmision,
+                    idProveedor : this.data.idProveedor,
+                    estab : this.establecimientos.find(item=>item.codEstab===this.data.codEstab).estab,
+                    ptoEmi : this.puntosEmision.find(item=>item.idPuntoEmision===this.data.idPuntoEmision).puntoEmi,
+                    fechaEmision : this.data.fechaEmision,
+                    totalSinImpuestos : this.data.subTotalSinImpuestos,
+                    importeTotal : this.data.total,
+                    inventory : this.data.inventory       
+                }),
+                detalles: JSON.stringify(this.trimDetail()),
+                impuestos: JSON.stringify(this.taxes())
             }
 
-            this._mS.getData('post', '/IngresoBodega/Post', data).then(response=>{
-                
-                if(response.id==='0'){  
+            this._mS.getData('post', 'CompraNoHabitual', data,true).then(response=>{
+                if(response.code =='0'){  
                     hideLoader();                  
                     this._fS.sweetAlert('warning', response.message, response.titleSms);   
                 }
 
-                if (response.id == "1") {
+                if (response.code == "1") {
                     hideLoader();
                     this._fS.sweetAlert('success', response.message, response.titleSms, 1000);   
                     

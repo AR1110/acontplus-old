@@ -21,10 +21,10 @@ GO
 -- Create date: 03/16/2023
 -- Description:	SP para dar de baja a las compra
 -- =============================================
-IF OBJECT_ID(N'Compra.Documento_Ingreso_Delete', N'P') IS NOT NULL
-DROP PROCEDURE Compra.Documento_Ingreso_Delete
+IF OBJECT_ID(N'Compra.Documento_Ingreso_Update_Cancel', N'P') IS NOT NULL
+DROP PROCEDURE Compra.Documento_Ingreso_Update_Cancel
 GO
-CREATE PROCEDURE Compra.Documento_Ingreso_Delete @idUsuarioRol INT, @idDocumentoIngreso INT
+CREATE PROCEDURE Compra.Documento_Ingreso_Update_Cancel @idUsuarioRol INT, @idDocumentoIngreso INT
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -106,7 +106,7 @@ BEGIN
 		IF (@@TRANCOUNT > 0)
 			ROLLBACK TRAN
 		INSERT INTO ErroresSistema([token], [method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [errorDate], [idUsuario])
-		VALUES (NEWID(), 'DocumentoIngreso/Put', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
+		VALUES (NEWID(), 'DocumentoIngreso/PutCancel', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
 	END CATCH 
 
 
