@@ -404,8 +404,25 @@
       }
     },
     {
+      "UpstreamPathTemplate": "/api/CuotaPorPagar/{json}",
+      "UpstreamHttpMethod": [ "Put" ],
+      "DownstreamPathTemplate": "/api/CuotaPorPagar/{json}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 52813
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+
+    {
       "UpstreamPathTemplate": "/api/CompraNoHabitual/{everything}",
-      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "UpstreamHttpMethod": [ "Get", "Put", "Delete", "Options" ],
       "DownstreamPathTemplate": "/api/CompraNoHabitual/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -419,6 +436,41 @@
         "AllowedScopes": []
       }
     },
+
+    {
+      "UpstreamPathTemplate": "/api/CompraNoHabitual",
+      "UpstreamHttpMethod": [ "Post" ],
+      "DownstreamPathTemplate": "/api/CompraNoHabitual",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 55793
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/CompraNoHabitual/Cancel/{id}",
+      "UpstreamHttpMethod": [ "Put" ],
+      "DownstreamPathTemplate": "/api/CompraNoHabitual/Cancel/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 54948
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+
     {
       "UpstreamPathTemplate": "/api/Impresion/?json={json}",
       "UpstreamHttpMethod": [ "Get" ],

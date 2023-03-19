@@ -30,7 +30,7 @@ namespace ApiContabilidad.Controllers
                 _params["idUsuarioRol"] = idUsuarioRol;
                 _params["json"] = SqlValidation.ValidateSqlString(json);
                 DAO _dao = new DAO(_configuration);
-                return Ok(await _dao.GetDataTable("Contabilidad.CuentaPorPagar_Get", _params));
+                return Ok(await _dao.GetDataSet("Contabilidad.CuentaPorPagar_Get", _params));
             }
             catch (Exception ex)
             {
@@ -88,6 +88,7 @@ namespace ApiContabilidad.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+            
         }
     }
 }

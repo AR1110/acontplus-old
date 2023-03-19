@@ -54,7 +54,7 @@
     
 </style>
 
-<input type="text" ng->
+
 
 @* <div ng-submit="$event.preventDefault()">         *@
     <div class="mb-1">        
@@ -71,7 +71,7 @@
         md-search-text-change="$ctrl.searchTextChange($ctrl.searchText)"
         md-search-text="$ctrl.searchText"
         md-selected-item-change="$ctrl.selectArticleSearch(item)"
-        md-items="item in $ctrl.getDynamicSearchArticles($ctrl.searchText)"
+        md-items="item in $ctrl.articulos"
         md-item-text="item.descripcion"
         md-min-length="2"
         ng-focus="$ctrl.focusDescripcionArticulo('#custom-template-md-autocomplete-articulo')"

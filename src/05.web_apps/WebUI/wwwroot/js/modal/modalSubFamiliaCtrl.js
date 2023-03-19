@@ -39,7 +39,11 @@ export class ModalSubFamiliaCtrl {
     async openModalFamilia() {
         const { familia } = this._nombreModal;
         const { ModalFamiliaCtrl } = await import(`./../modal/${familia.MODAL_FAMILIA_CTRL}`);
-        const modalDialogRef = this._modalSvc.openModalSecond(ModalFamiliaCtrl, `Familia/${familia.MODAL_FAMILIA_CSHTML}`, 'md');
+        const modalDialogRef = this._modalSvc.openModalCustom({
+            controller: ModalFamiliaCtrl,
+            template:  `Familia/${familia.MODAL_FAMILIA_CSHTML}`,
+            size: 'md'
+        });
         modalDialogRef.result.then(result => {
             if (typeof result === 'object') {
                 this.getSubFamilias();

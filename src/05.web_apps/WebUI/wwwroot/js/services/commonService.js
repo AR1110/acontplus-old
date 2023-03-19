@@ -148,6 +148,7 @@ export class CommonService {
 
 
     removeAccents(str) {
+        str = str || ''
         return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     }
 
@@ -1446,11 +1447,11 @@ export class CommonService {
         //urlApi = typeUrl == 1 ? "http://localhost:36779/" : "https://localhost:7224/";
 
         //IP Producción de Desarrollo 
-        //urlApi = typeUrl == 1 ? "http://205.209.99.71:8090/" : "http://206.72.196.229:83/";
+        urlApi = typeUrl == 1 ? "http://205.209.99.71:8090/" : "http://206.72.196.229:83/";
 
 
         //IP Producción
-        urlApi = typeUrl == 1 ? "http://206.72.196.229:81/" : "http://206.72.196.229:83/";
+        //urlApi = typeUrl == 1 ? "http://206.72.196.229:81/" : "http://206.72.196.229:83/";
 
         return this.$http({
             method,

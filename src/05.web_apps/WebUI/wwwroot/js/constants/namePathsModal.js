@@ -201,14 +201,14 @@ app.constant('nombreModal', {
     },  
     
     compra_no_habitual: {
-        MODAL_FILE_PATH: 'modal/compras/modalCompraNoHabitualCtrl.js' + CHANGE_VERSION(),
+        MODAL_FILE_PATH: 'modal/compras/modalCompraNoHabitualCtrl.min.js' + CHANGE_VERSION(),
         MODAL_NUEVO:{
-            controller: 'ModalNuevoCtrl',
+            controller: 'ModalAddCtrl',
             template: '~/Areas/CompraNoHabitual/Pages/Shared/_ModalNuevo.cshtml'
         },
         MODAL_EDITAR:{
-            controller: 'ModalNuevoCtrl',
-            template: ''
+            controller: 'ModalUpdateCtrl',
+            template: '~/Areas/CompraNoHabitual/Pages/Shared/_ModalNuevo.cshtml'
         },
         MODAL_DETALLE:{
             controller: 'ModalNuevoCtrl',

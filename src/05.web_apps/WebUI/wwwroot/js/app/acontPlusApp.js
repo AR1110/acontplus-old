@@ -226,6 +226,7 @@ app.config(['$mdThemingProvider', '$mdIconProvider', function ($mdThemingProvide
     $mdIconProvider.fontSet('md', 'material-symbols-outlined');
 }]);
 
+
 /** Trasnlating to spanish buttons pagination ui.boostrap */
 app.config(['uibPaginationConfig', function (uibPaginationConfig) {
     uibPaginationConfig.firstText = 'Primera',
@@ -773,9 +774,8 @@ app.filter('mapTipoIva', () => {
 });
 
 app.filter('cellFilterTipoIva', () => {
-    let result = {
-        '0': 'Seleccione IVA'
-    };
+    let result = { };
+    
     return (input, context) => {
 
         let fieldLevel = (context.editDropdownOptionsArray == undefined) ? context.col.colDef : context;
@@ -783,12 +783,14 @@ app.filter('cellFilterTipoIva', () => {
         let idField = fieldLevel.editDropdownIdLabel;
         let valueField = fieldLevel.editDropdownValueLabel;
 
+        console.log(idField, valueField, map)
         if (typeof map !== "undefined") {
             for (let value of map) {
-                result[value.idTipoIva] = value.descripcion
+               result[value[idField]] = value.descripcion
+             //  result[idField] = value.descripcion
             }
         }
-
+        console.log(input)
         if (!input) {
             return result[0];
         } else {

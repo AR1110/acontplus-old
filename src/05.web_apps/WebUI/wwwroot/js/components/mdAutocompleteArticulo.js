@@ -24,14 +24,67 @@ class MdArticuloCtrl{
             this.openModalArticulo(itemArticulo)
         })  
 
+        this.articulos = [];
+            
 
-        // let element = document.getElementById("custom-template-md-autocomplete-articulo");
-        // element.addEventListener('keydown keypress', e=>{
-        //     console.log(e.keyCode)
-        // })
+        setTimeout(()=>{
+            
+            document.querySelector("#custom-template-md-autocomplete-articulo").addEventListener('keyup', this.debounce(() => {
+                
+                let json =  {
+                    busqueda: this._commonSvc.removeAccents(this.searchText),
+                    condicion: false,
+                    fraccionado: false,
+                }
+                this.articulos = [];
 
-        
+                this._mS.getData('get', '/Articulo/Search?json=' + JSON.stringify(json)).then(response=>{
+                        console.log('init fetch')
+                        if(response.code==='0'){
+                            console.log(response)
+                            this.articulos = [];
+                        }
 
+                        if(response.code==='1'){
+                            
+                            let articulos = JSON.parse(response.payload) || [];
+
+                            if(articulos.length>0){
+
+                                articulos.unshift({
+                                    showHeader: true,
+                                    priceSale: JSON.parse(articulos[0].priceSale),
+                                    warehouses: JSON.parse(articulos[0].warehouses)
+                    
+                                })
+
+                                this.articulos = articulos.map(item=>{
+                                    if(!item.hasOwnProperty('showHeader')){
+                                        item.priceSale = JSON.parse(item.priceSale)
+                                        item.warehouses = JSON.parse(item.warehouses)
+                                    } 
+                                    return item;
+                                })
+
+                            }                                
+                        }            
+                    })  
+                
+            }))
+
+        }, 100)
+
+    }
+
+
+    debounce(callback, wait) {      
+        let timerId;
+        return (...args) => {
+            clearTimeout(timerId);
+            timerId = setTimeout(() => {
+            callback(...args);
+            }, wait);
+        };     
     }
 
     $onInit(){
@@ -47,13 +100,8 @@ class MdArticuloCtrl{
         }
     }
 
-    $onChanges(){
-       
-    }
-
-
     // $scope.gridApi.grid.cellNav.clearFocus();
-    focusDescripcionArticulo(id) {        
+    focusDescripcionArticulo(id) {                
         this.$timeout( ()=> {
             this.focusMe(id);
         });
@@ -67,41 +115,37 @@ class MdArticuloCtrl{
 
     }
     
-    getDynamicSearchArticles(searchText){  
- 
-        let json =  {
-            busqueda: this._commonSvc.removeAccents(searchText),
-            condicion: false,
-            fraccionado: false,
-        }
-       
-        return this.$http.get('/Articulo/Search?json=' + JSON.stringify(json)).then(response=>{
-            console.log(response)
-            if(response.data.code==='0'){
-                console.log(response)
-                return []
-            }
 
-            let articulos = JSON.parse(response.data.payload) || [];
-            if(articulos.length>0){
-                articulos.unshift({
-                    showHeader: true,
-                    priceSale: JSON.parse(articulos[0].priceSale),
-                    warehouses: JSON.parse(articulos[0].warehouses)
     
-                })
-                articulos = articulos.map(item=>{
-                    if(!item.hasOwnProperty('showHeader')){
-                        item.priceSale = JSON.parse(item.priceSale)
-                        item.warehouses = JSON.parse(item.warehouses)
-                    } 
-                    return item;
-                })
-            }
-            
-            return articulos;
 
-        })                                
+    getDynamicSearchArticles(){             
+        // return this.$http.get('/Articulo/Search?json=' + JSON.stringify(json)).then(response=>{
+        //     console.log(response)
+        //     if(response.data.code==='0'){
+        //         console.log(response)
+        //         return []
+        //     }
+
+        //     let articulos = JSON.parse(response.data.payload) || [];
+        //     if(articulos.length>0){
+        //         articulos.unshift({
+        //             showHeader: true,
+        //             priceSale: JSON.parse(articulos[0].priceSale),
+        //             warehouses: JSON.parse(articulos[0].warehouses)
+    
+        //         })
+        //         articulos = articulos.map(item=>{
+        //             if(!item.hasOwnProperty('showHeader')){
+        //                 item.priceSale = JSON.parse(item.priceSale)
+        //                 item.warehouses = JSON.parse(item.warehouses)
+        //             } 
+        //             return item;
+        //         })
+        //     }
+            
+        //     return articulos;
+
+        // })                        
     }
 
     async getDynamicSearchArticlesSimple(textSearch){  
@@ -112,20 +156,23 @@ class MdArticuloCtrl{
         
        
         let deferred = this.$q.defer();
-        this.$timeout(()=> { 
-            deferred.resolve(results); 
-        }, Math.random() * 1000, false);
+        deferred.resolve(results); 
         return deferred.promise;              
        
     }
 
+ 
+
     getArticuloByCode(){
-       
-        let textSearch = this.searchText;   
-        this.textSearch = null;    
-       
+           
         try {
-            if(textSearch===null || textSearch===undefined || textSearch==='') {
+            this.articulos = [];
+
+            let textSearch = this.searchText;  
+    
+            this.textSearch = null;    
+            
+            if(!textSearch) {
                 this.searchText  = null;
                 return
             }
@@ -133,7 +180,7 @@ class MdArticuloCtrl{
             
             this._commonSvc.articuloSearchGeneral({textSearch,code: true}).then(response=>{
 
-                if(response===null || response ===undefined || (Array.isArray(response) && response.length===0)){
+                if(!response || (Array.isArray(response) && response.length===0)){
                     this.searchText  = null;
                     return
                 }
@@ -152,10 +199,10 @@ class MdArticuloCtrl{
     selectArticleSearch (item){  
       
         if(typeof item==='object' && item.hasOwnProperty('showHeader')){
-            this.searchText = '';
+            this.searchText = null
             return
         }
-        if(item===null || item===undefined || !item.hasOwnProperty('idArticulo') )return
+        if(!item || !item.hasOwnProperty('idArticulo') )return
         
         this.dataArticulo = {
             idArticulo: item.idArticulo,
@@ -167,6 +214,7 @@ class MdArticuloCtrl{
         this.validarGetDataArticulo();
     }
     
+
     async openModalArticulo(item){             
         const { MODAL_CTRL,  MODAL_NUEVO_CSHTML} = this._nombreModalConst.articulo;
         const { ModalArticuloCtrl } = await import('./../modal/' + MODAL_CTRL);
@@ -198,7 +246,8 @@ class MdArticuloCtrl{
             size:'xl',
             params: item,
             windowClass: 'uibModalFullScreen'
-        })         
+        })     
+
         modalRef.result.then(response => {
             if (typeof response !== 'object') return
             this.dataArticulo = {
@@ -276,7 +325,7 @@ class MdArticuloCtrl{
                 json: this.dataArticulo
             }).then(response=>JSON.parse(response.payload));
 
-            console.log(results)
+            
 
             let responseMsg = results[0][0];  
 

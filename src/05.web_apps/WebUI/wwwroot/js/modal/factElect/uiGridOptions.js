@@ -269,6 +269,18 @@ export class UiGridOptions{
                     toastr.error(`CALCULO TIPO IVA: ${error}`)                     
                 }
             },
+            'codigoPorcentaje': ()=>{
+                try {
+                    if(rowEntity.idTipoIva===oldValue) return
+
+                    let tipoIva          =  this.tipoIvas.find(item=>item.codigoPorcentaje===rowEntity.codigoPorcentaje);                   
+                    rowEntity.tarifa     = tipoIva.tarifa;
+                    rowEntity.codigoPorcentaje = tipoIva.codigoPorcentaje;                    
+                    calculoColumnas["precioUnitario"]();                        
+                } catch (error) {
+                    toastr.error(`CALCULO TIPO IVA: ${error}`)                     
+                }
+            },
             'idTarifa':()=>{
                 try {
                     if(rowEntity.idTarifa===oldValue) return
@@ -776,9 +788,12 @@ export class UiGridOptionsCompra{
         if (this.gridOptions.data.length > 0 && this.getSubTotalSinImpuesto() > 0) {
 
             //Total Detalle No tiene que ser mayor al total sin impuesto
+            
             totalDetalle = this.getTotalDetalle()>this.getSubTotalSinImpuesto()? this.getSubTotalSinImpuesto(): this.getTotalDetalle();
 
-            total = ((this.getSubTotalSinImpuesto() - totalDetalle) * 100) / this.getSubTotalSinImpuesto();
+            console.log('calculate total_porcentaje_descuento')
+            total = ((this.getSubTotalSinImpuesto() - totalDetalle ) * 100) / this.getSubTotalSinImpuesto();
+            
         }
         
         return this._fS.roundNumber(total, this.decimal.nroPorcentaje);
