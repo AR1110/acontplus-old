@@ -8,28 +8,10 @@
 
     app.controller('cuentaPorPagarCtrl', cuentaPorPagarCtrl)
 
-    cuentaPorPagarCtrl.$inject = ['$scope', 'toastService', 'mainService', 'screenSize', '$timeout' ,'modalService', 'formulario']
+    cuentaPorPagarCtrl.$inject = ['$scope','$q', 'toastService', 'commonService', 'mainService', 'screenSize', '$timeout' ,'modalService', 'formulario']
 
-    function cuentaPorPagarCtrl($scope, _tS, _mS, _sS, $timeout, _modalSvc, _form) {
-
-        $scope.selectedDocumentos = [];
-    
-        $scope.options = {
-            limitOptions: [5, 10, 15],
-            rowSelection: true,
-            multiSelect: true,
-            autoSelect: true,
-            decapitate: false,
-            largeEditDialog: false,
-            boundaryLinks: true,
-            limitSelect: true,
-            pageSelect: true,
-            order: '',
-            limit: 5,
-            page: 1
-        };
-
-        
+    function cuentaPorPagarCtrl($scope, $q, _tS, commonSvc, _mS, _sS, $timeout, _modalSvc, _form) {
+                 
         $scope.isMobile = _sS.on('xs, sm', function (isMatch) {
             $scope.isMobile = isMatch
         })
@@ -46,34 +28,100 @@
             }, 1100)
         }
 
-        $scope.cuentasPorPagar = []
+        //Filter 
+        let thisMoment = moment()
+        let endOfMonth = moment(thisMoment).endOf('month')
+        let startOfMonth = moment(thisMoment).startOf('month')
+        //https://www.daterangepicker.com/
+        $scope.dateRangePicker = {
+            date: { startDate: startOfMonth, endDate: endOfMonth },
+            picker: null,
+            options: {
+                pickerClasses: 'custom-display', //angular-daterangepicker extra
+                buttonClasses: 'btn',
+                applyButtonClasses: 'btn-success',
+                cancelButtonClasses: 'btn-danger',
+                locale: {
+                    applyLabel: "Aplicar",
+                    cancelLabel: 'Cancelar',
+                    customRangeLabel: 'Rango Personalizado',
+                    separator: ' - ',
+                    format: "YYYY-MM-DD", //will give you 2017-01-06
+                    //format: "D-MMM-YY", //will give you 6-Jan-17
+                    //format: "D-MMMM-YY", //will give you 6-January-17
+                },
+                ranges: {
+                    // 'Hoy': [moment(), moment()],
+                    // 'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Ultimos 15 Días': [moment().subtract(14, 'days'), moment()],
+                    'Ultimos 30 Días': [moment().subtract(29, 'days'), moment()]
+                },
+                eventHandlers: {
+                    'apply.daterangepicker': function (event, picker) {
+                        $scope.initialLoad()
+                        console.log('applied')
+                    }
+                }
+            }
+        }
 
+        $scope.dataSearch = {
+            codEstab: 'ALL'
+        }
+
+        $scope.cuentasPorPagar = [];
+        $scope.selectedDocumentos = [];
+    
+        $scope.options = {
+            limitOptions: [5, 10, 15],
+            rowSelection: true,
+            multiSelect: true,
+            autoSelect: true,
+            decapitate: false,
+            largeEditDialog: false,
+            boundaryLinks: true,
+            limitSelect: true,
+            pageSelect: true,
+            order: '',
+            limit: 5,
+            page: 1
+        };      
+
+        $scope.getCuentasPorPagar = ()=>{
+            showLoader();
+              
+            $scope.cuentasPorPagar = [];
+            
+            console.log($scope.dataSearch)
+          
+            $scope.promise = _mS.getData('get', 'CuentaPorPagar/' + JSON.stringify({ tipo: 1 }), null, true).then((response) => {
+                
+                if (response.code == '0') {
+                    hideLoader();
+                    $scope.cuentasPorPagar = [];
+                    _tS.toastr('warning', response.message)
+                }
+                
+                if (response.code == '1') {                                           
+                    $scope.cuentasPorPagar = JSON.parse(response.payload)[0];
+                    console.log($scope.cuentasPorPagar)                        
+                    hideLoader();
+                }                    
+
+            }).catch((error) => {
+                $scope.cuentasPorPagar = [];
+                console.log(error)
+            })            
+        }
 
         $scope.initialLoad = () => {
             try {
-              
-                showLoader();
-              
-                $scope.cuentasPorPagar = [];
-              
-                _mS.getData('get', 'CuentaPorPagar/' + JSON.stringify({ tipo: 1 }), null, true).then((response) => {
-                    
-                    if (response.code == '0') {
-                        hideLoader();
-                        $scope.cuentasPorPagar = [];
-                        _tS.toastr('warning', response.message)
-                    }
-                    
-                    if (response.code == '1') {  
-                        console.log(response.payload)                      
-                        $scope.cuentasPorPagar = JSON.parse(response.payload)[0]
-                        hideLoader();
-                    }                    
+                $scope.getCuentasPorPagar();
 
-                }).catch((error) => {
-                    $scope.cuentasPorPagar = [];
-                    console.log(error)
+                commonSvc.getEstabAsign().then(response=>{            
+                    $scope.establecimientos = response;                                                                     
                 })
+
             } catch (error) {
                 $scope.cuentasPorPagar = [];
                 console.log(error)
@@ -124,6 +172,13 @@
                 hideLoader()
                 console.log(error)
             }                        
+        }
+
+        $scope.selectedRow = (item)=>{
+            $scope.proveedor ={
+                idProveedor: item.idProveedor
+            }
+            console.log(item)
         }
 
 
