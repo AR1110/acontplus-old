@@ -8,7 +8,7 @@ using System.Data;
 
 namespace BL.Reports
 {
-    public class Reports
+    public sealed class Reports
     {
         private readonly IConfiguration _configuration;
         public Reports(IConfiguration configuration)
