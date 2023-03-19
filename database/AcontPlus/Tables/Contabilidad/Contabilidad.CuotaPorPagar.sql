@@ -16,4 +16,5 @@ CREATE TABLE Contabilidad.CuotaPorPagar
 	,saldo AS CAST(cuota - abono AS NUMERIC(18,5))
 	,entrada BIT NULL
 	,estado BIT DEFAULT 1 
+	,idCuotaXPagar BIGINT  FOREIGN KEY REFERENCES dbo.CuotaXPagar(idCuotaXPagar) NOT NULL
 )
