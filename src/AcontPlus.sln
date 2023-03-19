@@ -107,7 +107,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "10.setups", "10.setups", "{
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "PrinterServerSetup", "10.setups\PrinterServerSetup\PrinterServerSetup.vdproj", "{F9DF7452-D5DB-4550-97A4-9D005CB4F321}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BL.Reports", "03.business_logic\BL.Reports\BL.Reports.csproj", "{8AA315D7-680B-4EA3-8F1D-D7F152DC7159}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BL.Reports", "03.business_logic\BL.Reports\BL.Reports.csproj", "{8AA315D7-680B-4EA3-8F1D-D7F152DC7159}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

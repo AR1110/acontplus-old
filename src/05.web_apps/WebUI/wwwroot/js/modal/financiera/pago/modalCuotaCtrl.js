@@ -1,5 +1,5 @@
 
-import ApiPaths from './../../../constants/apiPaths.min.js'
+
 
 export class ModalCompraCuotaCtrl{
     
@@ -296,7 +296,7 @@ export class ModalCompraCuotaCtrl{
         if(isConfirmed){
             let cuotas = this.cuotas;
 
-            this._mS.getData('put', 'CuentaPorPagar/' + this.data.id+'/' + JSON.stringify(cuotas), null, true)
+            this._mS.getData('put', 'CuentaPorPagar/' + this.data.id + '?json=' + JSON.stringify(cuotas), null, true)
             .then(response => {
                 if (response.code === "0") {
                     this._form.sweetAlert('warning', response.message, response.titleSms);

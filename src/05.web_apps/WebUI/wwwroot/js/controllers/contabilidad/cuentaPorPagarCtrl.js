@@ -13,10 +13,7 @@
     function cuentaPorPagarCtrl($scope, _tS, _mS, _sS, $timeout, _modalSvc, _nombreModalConst, _form) {
 
         $scope.selectedDocumentos = [];
-
-        let {MODAL_PAGO_LOTE}= _nombreModalConst.pago;
-        
-
+    
         $scope.options = {
             limitOptions: [5, 10, 15],
             rowSelection: true,
@@ -54,19 +51,25 @@
 
         $scope.initialLoad = () => {
             try {
+              
                 showLoader();
+              
                 $scope.cuentasPorPagar = [];
+              
                 _mS.getData('get', 'CuentaPorPagar/' + JSON.stringify({ tipo: 1 }), null, true).then((response) => {
+                    
                     if (response.code == '0') {
                         hideLoader();
                         $scope.cuentasPorPagar = [];
                         _tS.toastr('warning', response.message)
                     }
+                    
                     if (response.code == '1') {  
                         console.log(response.payload)                      
                         $scope.cuentasPorPagar = JSON.parse(response.payload)[0]
                         hideLoader();
                     }                    
+
                 }).catch((error) => {
                     $scope.cuentasPorPagar = [];
                     console.log(error)
@@ -83,17 +86,18 @@
       
         $scope.openModalCuota = async(item)=>{    
             try {
-                let {MODAL_FILE_CUOTA, MODAL_COMPRA_CUOTA} = _nombreModalConst.pago;
-                let controller = (await import('./../../' + MODAL_FILE_CUOTA))[MODAL_COMPRA_CUOTA['controller']] 
-                let template   = MODAL_COMPRA_CUOTA['template'];
-                
-                let params = {}
-
+                let modalParams = {
+                    controller: 'modalCuotaCtrl',
+                    template: FILE_PATH_PARTIAL_UI + 'Shared/_ModalCuota.cshtml',
+                    size: 'xl'
+                }
+               
                 showLoader();
-                await _mS.getData('get', 'CuentaPorPagar/' + JSON.stringify({ idCuentaPorPagar : item.idCuentaPorPagar, tipo: 2 }), null, true).then(response => {
-                    console.log(response)
+                _mS.getData('get', 'CuentaPorPagar/' + JSON.stringify({ idCuentaPorPagar : item.idCuentaPorPagar, tipo: 2 }), null, true).then(response => {
+                    
                     let cuotas = response.payload ? JSON.parse(response.payload)[0] : []
-                    params = {
+                    
+                    modalParams.params = {
                         cuotas,
                         data: {
                             ...item,
@@ -102,27 +106,21 @@
                             numeroIdentificacion: item.identificacion
                         },
                     }  
+
+                    let modalRef = _modalSvc.openModalCustom(modalParams);
+                    modalRef.result.then(res=>{
+                        if(typeof res ==='object'){
+                            $scope.initialLoad();                    
+    
+                        }
+                    })
+                    hideLoader()
                 })
-
-                const modalRef = _modalSvc.openModalCustom({
-                    controller,
-                    template,
-                    size: 'xl',
-                    params
-                })         
-                modalRef.result.then(res=>{
-                    if(typeof res ==='object'){
-                        $scope.initialLoad();                    
-
-                    }
-                })
-
+               
             } catch (error) {
-                console.log(error)
-            }finally{
                 hideLoader()
-            }
-            
+                console.log(error)
+            }                        
         }
 
 
@@ -191,11 +189,326 @@
     //---------------------------------------------START CUOTAS----------------------------------------------------
     app.controller("modalCuotaCtrl", modalCuotaCtrl);
 
-    modalCuotaCtrl.$inject = ["$scope", "$uibModalInstance", "params"];
+    modalCuotaCtrl.$inject = ["$scope", "$uibModalInstance", "mainService", "commonService", "formulario", "toastService", "params"];
 
-    function modalCuotaCtrl($scope, $uibModalInstance, params){
+    function modalCuotaCtrl($scope, $uibModalInstance, mS, commonSvc, fS, tS, params) {
+        
+        let {data, cuotas} = params;
+        
+        const NUM_MAX_ROUND = 3;
+
+        $scope.tiempoCreditos = [];
+
+        $scope.data = Object.assign({}, data);
+        
+        $scope.cloneIdTiempoCredito = $scope.data.idTiempoCredito; //Clonamos tiempo de credito agregado al documento 
+        $scope.configFecha     = fS.formatDate($scope.data.fechaEmision);
+        $scope.totalDiferencia = 0;
+        $scope.totalCuota = 0;   
+        
+        
+        $scope.initialLoad = ()=>{
+            
+            commonSvc.getAllTiempoCredito(false).then(response=>{            
+                $scope.tiempoCreditos = response;       
+            })
+    
+            
+            $scope.cuotas = cuotas.map(item=>{
+                let fechaVencimiento = item.fechaVencimiento.split(" ")[0].split("/").reverse().join("/");                           
+                item.fechaVencimiento = new Date(fechaVencimiento);
+                return item;
+            })
+            let totalCuota = $scope.cuotas.map(val => parseFloat(val.cuota)).reduce((prev, curr) =>prev + curr, 0);
+            $scope.totalCuota = fS.roundNumber(totalCuota, NUM_MAX_ROUND);
+
+        }
+
+        $scope.initialLoad();
+
+
+        //Obtenemos fecha escrita de fecha vencimiento de la cuota 
+        $scope.getFechaVencimientoEscrita = (fechaVencimiento)=>{
+            return fS.getFechaEscritaCompleta(fechaVencimiento)
+        }
+
+        
+        //Generar Nueva cuota 
+        $scope.generarNuevaCuota = ()=>{  
+            let tiempoCredito = $scope.tiempoCreditos.find(item=>item.idTiempoCredito===$scope.data.idTiempoCredito);
+
+            Swal.fire({
+                icon: 'warning',
+                html: `<small>Está seguro/a de generar <h3><b>${tiempoCredito.numeroCuota} </b></h3> ${tiempoCredito.numeroCuota===1?'Cuota':'Cuotas'} del Comprobante <b>N°. ${$scope.data.serieComprobante}</b></small>`,
+                showDenyButton: true,
+                confirmButtonText: `Si, generar`,
+                denyButtonText: `No, cancelar`,
+                allowOutsideClick: false,
+                allowEscapeKey:false                        
+            }).then(result=>{
+                if(result.isConfirmed){
+                    let data = {
+                        idCuentaPorPagar: $scope.data.id,
+                        idTiempoCredito: $scope.data.idTiempoCredito,
+                        codPago: $scope.data.codPago
+                    };
+        
+                    mS.getData('post', 'CuentaPorPagar/'+ JSON.stringify(data), null, true).then(response => {
+                        if (response.code === "0") {
+                            fS.sweetAlert('warning', response.message, response.titleSms);                                                                                       
+                        }
+                        if (response.code == "1") {
+                          
+                            fS.sweetAlert('success', response.message, response.titleSms, 1000); 
+                          
+                            let cuotas = response.payload ? JSON.parse(response.payload) : []
+                          
+                            $scope.cuotas = cuotas.map(item=>{
+                                item.fechaVencimiento = fS.formatDate(item.fechaVencimiento);
+                                return item
+                            })  
+                                            
+                        }
+                    })
+                }else{
+                    $scope.data.idTiempoCredito = $scope.cloneIdTiempoCredito;                
+                }
+            })
+        }
+
+
+
+        $scope.getConfigFechaCuota = (validacion)=>{
+            try {
+                if(!$scope.configFecha){
+                    fS.sweetAlert('warning', 'Fecha Inválida', 'Configuración de Fecha');
+                    return
+                }
+                if ($scope.configFecha.getFullYear().toString().length !== 4) {
+                    fS.sweetAlert('warning', 'El Formato del Año es incorrecto', 'Configuración de Fecha');
+                    return                       
+                }
+        
+                if (!validacion && $scope.configFecha.getDate() >= 28) {
+                    fS.sweetAlert('warning', 'Para la opción <code>Mismo Día</code>, el día tiene que ser menor a 28 días!', 'Configuración de Fecha');                        
+                    return
+                }
+                
+                showLoader();
+                let configFecha = fS.formatDate($scope.configFecha);                       
+                
+        
+                mS.getData('post', `/CuotaXPagar/NuevaFechaCuota?validacion=${validacion}&fecha=${configFecha}`, $scope.cuotas).then(
+                    response => {
+                        if (response.id === "0") {
+                            hideLoader()
+                            fS.sweetAlert('warning', response.message, response.titleSms);
+                            return                            
+                        }
+                        if (response.id === "1") {
+                            hideLoader()
+                            fS.sweetAlert('success', 'Fecha de las cuotas configurado correctamente', 'Configuración Fecha', 1000)                
+                            $scope.$uibModalInstance.close(response)
+                        }
+                    })
+            } catch (error) {
+               console.log(error) 
+            }
+        }
+        
+        
+        $scope.setValorEntrada = (valorEntrada)=> {    
+            try {
+            
+            
+                if([null, undefined, '0', ""].includes(valorEntrada)){
+                    setTimeout(() => {
+                        $("#valorEntrada").select();
+                    }, 50);
+                    valorEntrada = 0;
+                    return                
+                }
+
+                let total = 0;
+                let valorCuota = 0;
+                let numeroCuota = $scope.tiempoCreditos.find(item=>item.idTiempoCredito===$scope.data.idTiempoCredito).numeroCuota;
+                
+
+                total = $scope.data.importeTotal - parseFloat(valorEntrada);
+                total = fS.roundNumber(total, 5);
+                
+                valorCuota = total / numeroCuota
+                valorCuota = fS.roundNumber(valorCuota, 5);
+
+                
+                for (let item of $scope.cuotas) {
+                    if (item.nroCuota === "E") {
+                        item.cuota = valorCuota === 0 ? $scope.data.importeTotal : valorEntrada;
+                    }
+                    if (item.nroCuota !== "E") {
+                        item.cuota = valorCuota;
+                    }
+                }
+
+                let totalCuota = $scope.cuotas.map(val => parseFloat(val.cuota)).reduce((prev, curr) =>prev + curr, 0);
+                $scope.totalCuota = fS.roundNumber(totalCuota, $scope.NUM_MAX_ROUND)
+            
+            } catch (error) {
+                console.log(error)              
+            }                
+        }
+        
+        //Set valor por cuota 
+        $scope.setValorCuota = (cuota)=> {  
+            try {
+                                        
+                if ([null, undefined, "", "0", "-"].includes(cuota.cuota)) {            
+                    setTimeout(() => {
+                        $("#setValcuota" + cuota.idCuotaXPagar).select();
+                    }, 50);
+                    return
+                }
+            
+
+                let cuotasIndexMenor = $scope.cuotas.filter((val, index, arrayCuota) => index <= arrayCuota.indexOf(cuota));
+                let cuotasIndexMayor = $scope.cuotas.filter((val, index, arrayCuota) => index > arrayCuota.indexOf(cuota));
+                let totalCuotaIndexMenor = cuotasIndexMenor.map(val => Number(val.cuota)).reduce((prev, curr) => prev + curr, 0);
+
+                if (totalCuotaIndexMenor > $scope.data.importeTotal) {
+                    tS.toastr('warning', 'El valor de la Cuota tiene que ser menor al Total del Documento');                    
+                }
+
+                if (cuotasIndexMayor.length > 0) {
+                    let total = $scope.data.importeTotal - totalCuotaIndexMenor; //Total Cuota - total Factura  
+                    
+                    let numeroCuota = cuotasIndexMayor.length;
+                    let valorCuota = total / numeroCuota;
+
+                    
+                    angular.forEach($scope.cuotas, (val, index, arrayCuotas) => {
+                        //Si la Cuota tiene entrada 
+                        if (val.nroCuota !== "E" && index > arrayCuotas.indexOf(cuota)) {
+                            val.cuota = fS.roundNumber(valorCuota, 5);
+                        } else if (index > arrayCuotas.indexOf(cuota)) {
+                            val.cuota = fS.roundNumber(valorCuota, 5);
+                        }
+                    });
+
+                }
+
+                let totalCuota = $scope.cuotas.map(val => parseFloat(val.cuota)).reduce((prev, curr) =>prev + curr, 0);
+                $scope.totalCuota = fS.roundNumber(totalCuota, NUM_MAX_ROUND) //Suma Total Cuota            
+                
+                let diferencia = $scope.data.importeTotal - $scope.totalCuota;
+                $scope.totalDiferencia = fS.roundNumber(diferencia, NUM_MAX_ROUND)     
+            } catch (error) {
+                console.log(error)    
+            }   
+        }
+
+        //Set date fecha Vencimiento by cuota 
+        $scope.setFechaVencimientoCuota = (cuota)=>{
+            let inputFvcto = $("#fechaVencimiento" + cuota.idCuotaXPagar);
+
+            if (!cuota.fechaVencimiento) {
+                inputFvcto.removeClass('is-valid');
+                inputFvcto.addClass('is-invalid');
+                return
+            } else {
+                inputFvcto.addClass('is-valid');
+                inputFvcto.removeClass('is-invalid');
+            }
+
+            for (let i = 0; i < $scope.cuotas.length; i++) {
+                if (i < $scope.cuotas.indexOf(cuota)) {
+                    if (cuota.fechaVencimiento <= $scope.cuotas[i].fechaVencimiento) {
+                        inputFvcto.removeClass('is-valid');
+                        inputFvcto.addClass('is-invalid');
+                        return
+                    } else {
+                        inputFvcto.removeClass('is-invalid');
+                        inputFvcto.addClass('is-valid');
+                    }
+                }
+            }
+        }
+
+
+        //Guardar Cuotas Modificadas
+        $scope.guardarCuota = ()=> {            
+            try {
+
+                if ($scope.cuotas.some(val => val.nroCuota === "E" && [null, undefined, "", 0, "0", ".", "-"].includes(val.cuota))) {
+                    tS.toatsr('warning', 'Ingrese el Valor de la Entrada', 'Guardar Cuotas');
+                    return
+                }
+    
+                if ($scope.cuotas.some(val => [null, undefined, "", 0, "0", ".", "-"].includes(val.cuota) || val.cuota < 0)) {
+                    tS.toastr('warning', 'Verifique el valor de las Cuotas', 'Guardar Cuotas');
+                    return
+                }
+    
+                if ($scope.cuotas.some(val => [null, undefined, ""].includes(val.fechaVencimiento) 
+                    || $("#fechaVencimiento" + val.idCuotaPorPagar).hasClass('is-invalid'))
+                ) {
+                    tS.toatsr('warning', 'Ingrese las fechas de vencimiento correctamente');
+                    return
+                }
+                
+                if (fS.roundNumber($scope.totalCuota) !== fS.roundNumber($scope.data.importeTotal)) {
+                    fS.sweetAlert('warning', 'El valor total del Documento no coincide con el valor total de la Cuota')            
+                    return
+                }
+    
+                Swal.fire({
+                    icon: 'warning',
+                    html: `<small>Está seguro/a de guardar las cuotas de este Comprobante
+                            N°: <b>${$scope.data.serieComprobante}</b></small>`,
+                    showConfirmButton: true,
+                    confirmButtonText: 'Si, guardar',
+                    showCancelButton: true,
+                    cancelButtonText: 'No, cancelar',
+                    allowOutsideClick: false
+                }).then(result => {
+                   
+                    if(result.isConfirmed){
+
+                        showLoader();
+                        mS.getData('put', 'CuentaPorPagar/' + $scope.data.id + '?json=' + JSON.stringify($scope.cuotas), null, true)
+                        .then(response => {
+                            if (response.code === "0") {
+                                hideLoader()
+                                fS.sweetAlert('warning', response.message, response.titleSms);
+                                return
+                            }
+                            if (response.code === "1") {
+                                hideLoader()
+                                fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                                let cuotas = response.payload ? JSON.parse(response.payload) : []
+                                $scope.cuotas = cuotas.map(item=>{
+                                    item.fechaVencimiento = fS.formatDate(item.fechaVencimiento);
+                                    return item
+                                })                                    
+                            }
+                        });
+
+                    }
+                })               
+            } catch (error) {
+                console.log(error);
+            }                        
+        }
+
+        $scope.closeModal = ()=>{
+            $uibModalInstance.close()
+        }
+
+
+
 
     }
+
+
 
 
     //---------------------------------------------END CUOTAS--------------------------------------------------
