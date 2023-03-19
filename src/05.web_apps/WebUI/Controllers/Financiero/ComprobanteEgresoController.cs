@@ -3,10 +3,10 @@ using DataAccess;
 using DataAccess.GestionFinanciera;
 using DataAccess.Tesoreria;
 using Domain.Models;
-using Domain.ViewModels.GestionFinanciera;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Domain.Dtos.Contabilidad;
 
 namespace WebUI.Controllers.GestionFinanciera
 {
@@ -38,20 +38,17 @@ namespace WebUI.Controllers.GestionFinanciera
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(int idTipoDoc, int idComprobante, [FromBody] ComprobanteEgresoViewModel data)
+        public async Task<IActionResult> Post( [FromBody] PagoDto data)
         {
             GenericResponse _response = new GenericResponse();
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
-            parameters.Add("idTipoDocumento", idTipoDoc);
-            parameters.Add("idComprobante", idComprobante);
-            parameters.Add("idProveedor", data.comprobanteEgreso.idProveedor);
-            parameters.Add("codEstab", data.comprobanteEgreso.codEstab);
-            parameters.Add("total", data.comprobanteEgreso.total);
-            parameters.Add("jsonPago", JsonConvert.SerializeObject(data.pagos));
-            parameters.Add("jsonPagoDetalle", JsonConvert.SerializeObject(data.pagoDetalle));
+            parameters.Add("idUsuarioRol", _idRol);
+            parameters.Add("comprobante", SqlValidation.ValidateSqlString(data.comprobante));
+            parameters.Add("pago", SqlValidation.ValidateSqlString(data.pago));
+            parameters.Add("pagoDetalle", SqlValidation.ValidateSqlString(data.pagoDetalle));
+            parameters.Add("historial", SqlValidation.ValidateSqlString(data.historial));
             _response = DbResponse.SPDefault(await _dao.GetDataTableAsync("GestFinanc.ComprobanteEgreso_Insert", parameters));
-            if (_response.id == "1")
+            if (_response.code == "1")
             {
                 _ef.Update(_idRol, _response.payload);
             }
