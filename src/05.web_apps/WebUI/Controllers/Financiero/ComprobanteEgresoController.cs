@@ -44,7 +44,7 @@ namespace WebUI.Controllers.GestionFinanciera
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("idUsuarioRol", _idRol);
             parameters.Add("comprobante", SqlValidation.ValidateSqlString(data.comprobante));
-            parameters.Add("pago", SqlValidation.ValidateSqlString(data.pago));
+            parameters.Add("pagos", SqlValidation.ValidateSqlString(data.pago));
             parameters.Add("pagoDetalle", SqlValidation.ValidateSqlString(data.pagoDetalle));
             parameters.Add("historial", SqlValidation.ValidateSqlString(data.historial));
             _response = DbResponse.SPDefault(await _dao.GetDataTableAsync("GestFinanc.ComprobanteEgreso_Insert", parameters));

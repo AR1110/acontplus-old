@@ -8,9 +8,9 @@
 
     app.controller('cuentaPorPagarCtrl', cuentaPorPagarCtrl)
 
-    cuentaPorPagarCtrl.$inject = ['$scope', 'toastService', 'mainService', 'screenSize', '$timeout' ,'modalService', 'nombreModal', 'formulario']
+    cuentaPorPagarCtrl.$inject = ['$scope', 'toastService', 'mainService', 'screenSize', '$timeout' ,'modalService', 'formulario']
 
-    function cuentaPorPagarCtrl($scope, _tS, _mS, _sS, $timeout, _modalSvc, _nombreModalConst, _form) {
+    function cuentaPorPagarCtrl($scope, _tS, _mS, _sS, $timeout, _modalSvc, _form) {
 
         $scope.selectedDocumentos = [];
     
@@ -89,11 +89,14 @@
                 let modalParams = {
                     controller: 'modalCuotaCtrl',
                     template: FILE_PATH_PARTIAL_UI + 'Shared/_ModalCuota.cshtml',
-                    size: 'xl'
+                    size: 'xl',
+                    isRenderRazorPartial: true
                 }
+
+                let spParams = { idCuentaPorPagar : item.idCuentaPorPagar, tipo: 2 }
                
                 showLoader();
-                _mS.getData('get', 'CuentaPorPagar/' + JSON.stringify({ idCuentaPorPagar : item.idCuentaPorPagar, tipo: 2 }), null, true).then(response => {
+                _mS.getData('get', 'CuentaPorPagar/' + JSON.stringify(spParams), null, true).then(response => {
                     
                     let cuotas = response.payload ? JSON.parse(response.payload)[0] : []
                     
@@ -126,7 +129,7 @@
 
         $scope.openModalPago = async(item)=>{
             try {
-                
+                console.log(item)
                 //Params Modal
                 let modalParams = {
                     controller: 'modalPagoCtrl',
@@ -166,10 +169,6 @@
                     }
 
                 })
-                
-               
-
-                
             } catch (error) {
                 console.log(error)
             }
@@ -502,15 +501,7 @@
         $scope.closeModal = ()=>{
             $uibModalInstance.close()
         }
-
-
-
-
     }
-
-
-
-
     //---------------------------------------------END CUOTAS--------------------------------------------------
 
 
@@ -523,12 +514,11 @@
 
     app.controller("modalPagoCtrl", modalPagoCtrl);
 
-    modalPagoCtrl.$inject = ['$scope', '$uibModalInstance', 'modalService', 'formulario',  'params'];
+    modalPagoCtrl.$inject = ['$scope', '$uibModalInstance', 'mainService', 'modalService', 'formulario',  'params'];
 
-    function modalPagoCtrl($scope, $uibModalInstance, _modalSvc, fS, params){
+    function modalPagoCtrl($scope, $uibModalInstance, mS, _modalSvc, fS, params){
 
         let {data, cuotas}  = params;
-        console.log(params);
 
         $scope.data = Object.assign({}, data);
 
@@ -539,9 +529,10 @@
         $scope.data.saldo = $scope.data.importeTotal;
         $scope.data.valorCambio = 0;  
 
-        $scope.datosPago = [];
-        $scope.documentos = []; 
+        $scope.datosPago = [];        
         $scope.pagosDetalle = [];
+        $scope.historialPagos = [];
+
         
     
     
@@ -560,11 +551,11 @@
 
 
         $scope.getTotalesCuota = ()=>{
-            let groupCuotas = $scope.selectedDocumentos.flatMap(item=>item.cuotas);
+            //let groupCuotas = $scope.selectedDocumentos.flatMap(item=>item.cuotas);
             let totalCuota = 0, totalAbonoAnterior = 0, totalSaldo = 0;
 
-            for(let item of groupCuotas){
-                totalCuota         += item.cuota;
+            for(let item of $scope.selectedDocumentos){
+                totalCuota         += item.importeTotal;
                 totalAbonoAnterior += item.abono;
                 totalSaldo         += item.saldo;
             }
@@ -600,17 +591,23 @@
         }
 
 
-
-        
-        
-
         $scope.openModalFormaPago = ()=>{
             try {
+
+                if ($scope.data.totalSaldo == 0) {
+                    fS.sweetAlert('warning', 'No hay cuotas pendientes.')
+                    return
+                }
+
                 let params = {
-                    idProveedor: $scope.data.idProveedor,
+                    proveedor: {
+                        idProveedor: $scope.data.idProveedor,
+                        nombreFiscal: $scope.data.nombreFiscal
+                    },
                     importeTotal: $scope.data.importeTotal,                    
                     saldo: $scope.data.totalSaldo,
                 };
+
                 let modalRef = _modalSvc.openModalCustom({
                     controller: 'formaPagoCtrl',
                     template: FILE_PATH_PARTIAL_UI + 'Shared/_ModalFormaPago.cshtml',
@@ -618,7 +615,9 @@
                     isRenderRazorPartial: true,
                     params                 
                 })
+
                 modalRef.result.then(result => {
+
                     if(typeof result==='object') {
                         try {
                             $scope.indexDatoPago       = $scope.datosPago.length + 1;
@@ -632,7 +631,7 @@
                             $scope.addDatosPago(result, abonoCuota);
                         
                             $scope.calculoTotales();
-                            fS.sweetAlert('success', 'Agregado Correctamente');
+                            fS.sweetAlert('success', 'Agregado Correctamente', '', 1000);
                         } catch (error) {
                             Swal.fire({
                                 icon: 'error',
@@ -641,7 +640,6 @@
                             console.log(error);
                         }
                     }
-                    console.log('close Forma Pago')
                 })
             } catch (error) {
                 console.log(error);
@@ -651,9 +649,11 @@
 
         //Add 
         $scope.addFormaPago = ()=>{
-           
-            
+                       
             for(let group of $scope.selectedDocumentos){
+             
+                $scope.group = group;
+             
                 for(let item of group.cuotas){
                     
                     if(typeof $scope.valorAbonoFormaPago !=='number' || $scope.valorAbonoFormaPago===0) return;
@@ -671,7 +671,7 @@
     
                     item.cuota = fS.roundNumber(item.cuota, 5);
                     item.abono = fS.roundNumber(item.abono, 5);
-                   // item.abonoPosfechado = fS.roundNumber(item.abonoPosfechado, 5);
+                    item.abonoPosfechado = fS.roundNumber(item.abonoPosfechado, 5);
                     item.saldo = $scope.getValorSaldo(item) //Verificamos el saldo de la Cuota 
                     item.descripcion = $scope.getEstadoCuota(item);
 
@@ -693,7 +693,7 @@
                 item.abono = $scope.esAbonoPosfechado ? 0: $scope.valorAbonoFormaPago;
 
                 //Si el abono pago es posfechado
-                // item.abonoPosfechado =  $scope.esAbonoPosfechado ? $scope.valorAbonoFormaPago : 0;
+                item.abonoPosfechado =  $scope.esAbonoPosfechado ? $scope.valorAbonoFormaPago : 0;
                 item.saldo = item.saldo - $scope.valorAbonoFormaPago;
 
                 $scope.addPagoDetalle(item, $scope.valorAbonoFormaPago)
@@ -705,7 +705,7 @@
                 item.abono = $scope.esAbonoPosfechado ? 0 : item.cuota;
                 
                 //Si el abono pago es posfechado
-                //item.abonoPosfechado = $scope.esAbonoPosfechado ? item.cuota : 0; 
+                item.abonoPosfechado = $scope.esAbonoPosfechado ? item.cuota : 0; 
 
                 item.saldo = $scope.valorAbonoFormaPago -= item.saldo;
 
@@ -724,7 +724,7 @@
             if (item.saldo >= $scope.valorAbonoFormaPago) {
                 
                 if ($scope.esAbonoPosfechado) {
-                    //item.abonoPosfechado = $scope.valorAbonoFormaPago + item.abonoPosfechado;
+                    item.abonoPosfechado = $scope.valorAbonoFormaPago + item.abonoPosfechado;
                 } else {
                     item.abono = $scope.valorAbonoFormaPago + item.abono;
                 }
@@ -737,7 +737,7 @@
             } else if (item.saldo <= $scope.valorAbonoFormaPago) {
                
                 if ($scope.esAbonoPosfechado) {
-                    //item.abonoPosfechado = item.abonoPosfechado + item.saldo;
+                    item.abonoPosfechado = item.abonoPosfechado + item.saldo;
                 } else {
                     item.abono = item.abono + item.saldo;
                 }
@@ -754,12 +754,13 @@
          * 
          * @param {object} item 
          * @param {number} abono 
-         * @returns void()
+         * @returns void
          */
         $scope.addPagoDetalle = (item, abono)=>{
             if(item.cuota==0) return;
 
             $scope.pagosDetalle.push({
+                idCuentaPorPagar: $scope.group.idCuentaPorPagar,
                 idCuotaPorPagar: item.idCuotaPorPagar,
                 abono,
                 cuota: item.cuota,
@@ -776,7 +777,7 @@
          * @returns number
          */
         $scope.getValorSaldo = (item)=> {
-            let total = item.abono //+ item.abonoPosfechado;
+            let total = item.abono + item.abonoPosfechado;
             return fS.roundNumber(total, 5) === fS.roundNumber(item.cuota, 5) ? 0 : fS.roundNumber(item.saldo, 5);
         }
 
@@ -788,7 +789,7 @@
          */
         $scope.getEstadoCuota = (item)=> {
             let estado = '';
-            if (item.cuota === (item.abono)) estado = 'PAGADA' //+ cuota.abonoPosfechado)) estado = 'Pagada';
+            if (item.cuota === (item.abono + item.abonoPosfechado)) estado = 'PAGADA'
             if (item.saldo > 0) estado = "PENDIENTE PARCIAL";
             if (item.cuota === item.saldo) estado = "PENDIENTE";
             return estado
@@ -798,11 +799,11 @@
         $scope.showPagoDetalle = (data) => {
             
             let tempPagosDetalle = $scope.pagosDetalle.filter(item=>item.idCuotaPorPagar===data.idCuotaPorPagar);
-            let pagoDetalle = [];
+            let infoPagosDetalle = [];
           
             for(let pd of tempPagosDetalle){
                 let dataPago = $scope.datosPago.find(item=>item.secuencial===pd.secuencial);
-                pagoDetalle.push({
+                infoPagosDetalle.push({
                     ...pd,
                     subEntidadFinanciera: dataPago.subEntidadFinanciera,
                     posFechado: dataPago.posFechado?'SI':'NO'
@@ -825,7 +826,7 @@
                             </tr>
                         </thead
                         <tbody>
-                            ${pagoDetalle.map((item) => (`<tr>
+                            ${infoPagosDetalle.map((item) => (`<tr>
                                                             <td>${index++}</td>
                                                             <td>${item.subEntidadFinanciera}</td>                                                            
                                                             <td>${item.abono}</td>
@@ -865,29 +866,35 @@
                 cancelButtonText: 'No, cancelar'
             }).then(result => {
                 if (result.isConfirmed) {
-                    $scope.pagosDetalle = [];
 
-                    let index = $scope.datosPago.indexOf(item);
-                    $scope.datosPago.splice(index, 1);
+                    $scope.$apply(()=>{
+
+                        $scope.pagosDetalle = [];
+    
+                        let index = $scope.datosPago.indexOf(item);
+                        $scope.datosPago.splice(index, 1);
+                        
+                        //Todas las cuotas en su estado original 
+                        $scope.selectedDocumentos = JSON.parse(JSON.stringify($scope.cloneSelectedDocumentos));
+                        $scope.getTotalesCuota();    
+    
+                        if ($scope.datosPago.length == 0) return
                     
-                    //Todas las cuotas en su estado original 
-                    $scope.selectedDocumentos = JSON.parse(JSON.stringify($scope.cloneSelectedDocumentos));
-                    $scope.getTotalesCuota();    
+                        //Recalculamos las cuotas con los abonos restantes   
+                        $scope.indexDatoPago = 0
+                        for(let item of $scope.datosPago) {
+                            $scope.indexDatoPago++;
+                            $scope.valorAbonoFormaPago = item.valorAbono;
+                            $scope.esAbonoPosfechado   = item.isPosfechado;
+                            $scope.addFormaPago();
+                        }
+                       
+                        $scope.calculoTotales();
 
-                    if ($scope.datosPago.length == 0) return
-                
-                    //Recalculamos las cuotas con los abonos restantes   
-                    $scope.indexDatoPago = 0
-                    for(let item of $scope.datosPago) {
-                        $scope.indexDatoPago++;
-                        $scope.valorAbonoFormaPago = item.valorAbono;
-                        $scope.esAbonoPosfechado   = item.isPosfechado;
-                        $scope.addFormaPago();
-                    }
-                   
-                    $scope.calculoTotales();
 
-                    $scope.$apply();
+                    })
+
+                    
                 }
             })
         }
@@ -896,17 +903,97 @@
 
 
         $scope.save = ()=>{
+        
+            try {
+                if($scope.datosPago.length===0) {
+                    fS.sweetAlert('warning', 'Ingrese al menos un Pago')
+                    return
+                }
+    
+                Swal.fire({
+                    title: '<small>Guardar Pago</small>',
+                    html: "<small class='text-muted'>Esta seguro de guardar este pago ahora?</small> !",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Si, guardar!',
+                    cancelButtonText: 'No, cancelar!'
+                }).then((result) => {
+                  
+                    if (result.isConfirmed) {
+                        showLoader();
+                        let historialPagos = [];
 
-            if($scope.datosPago.length===0) {
-                fS.sweetAlert('warning', 'Ingrese al menos un Pago')
-                return
+                        for(let item of $scope.selectedDocumentos){
+                            let totalAbono = $scope.pagosDetalle.filter(pd =>pd.idCuentaPorPagar===item.idCuentaPorPagar)
+                                                                .map(fpd=>fpd.abono).reduce((prev, curr)=>prev + curr, 0);
+                            if(totalAbono > 0){
+                                historialPagos.push({
+                                    idCuentaPorPagar: item.idCuentaPorPagar,
+                                    abono: totalAbono
+                                })
+                            }else break;
+                        }
+
+                        
+                        let spParams = {
+                            comprobante: JSON.stringify({
+                                idProveedor: $scope.data.idProveedor,
+                                total: $scope.data.totalValorAbono,
+                                codEstab: $scope.data.codEstab,
+                                numeroIdentificacion: $scope.data.identificacion,
+                                nombreFiscal: $scope.data.nombreFiscal
+                            }),
+                            pago: JSON.stringify($scope.datosPago.map(item=>({
+                                idEntidadFinanciera: item.idEntidadFinanciera,
+                                idSubEntidadFinanciera: item.idSubEntidadFinanciera,
+                                idBanco: item.idBanco,
+                                idCuentaBancaria: item.idCuentaBancaria,
+                                idTipoDocumento: item.idTipoDocumento,
+                                idComprobante: item.idComprobante,
+                                fechaEmision: item.fechaEmision,
+                                nro: item.nro,
+                                valor: item.valorAbono,
+                                abono: item.abonoCuota,
+                                secuencial: item.secuencial,
+                                lote: item.lote,
+                                aprobacion: item.aprobacion,
+                                referencia: item.referencia,
+                                controlCaja: item.controlCaja,
+                                posfechado: item.posFechado,
+                            }))),
+                            pagoDetalle: JSON.stringify($scope.pagosDetalle.map(item=>({
+                                idCuotaPorPagar: item.idCuotaPorPagar,
+                                abono: item.abono,
+                                secuencial: item.secuencial                            
+                            }))),
+                            historial: JSON.stringify(historialPagos),
+                        }
+                        mS.getData('post', '/ComprobanteEgreso/Post', spParams).then(response=>{
+                            console.log(response)
+                            if(response.code==="0"){
+                                hideLoader();
+                                fS.sweetAlert('warning', response.message)
+                            }
+
+                            if(response.code==="1"){
+                                hideLoader();
+                                fS.sweetAlert('success', response.message, '', 1000);
+                                $uibModalInstance.close(response)
+                            }
+                        }).catch(error=>{
+                            hideLoader();
+                            console.log(error)
+                        })                     
+                    }
+                })
+            } catch (error) {
+                hideLoader();
+                console.log(error)
             }
-
-            if($scope.data.importeTotal){
-                fS.sweetAlert('warning', '')
-            }
-
         }
+
 
         $scope.closeModal = ()=>{
             $uibModalInstance.close();
@@ -926,15 +1013,17 @@
 
     function formaPagoCtrl($scope, $uibModalInstance, mS, tS, params){
 
-        const VALOR_ABONO_ORIGINAL = params.saldo;
+        let {saldo, proveedor} = params;
+        const VALOR_ABONO_ORIGINAL = saldo;
        
         $scope.data = {};
+        $scope.data.posFechado = false
+        $scope.proveedor = proveedor;
 
         $scope.data.fechaEmision = new Date();        
         $scope.data.valorAbono = params.saldo;
+
         
-       
-        console.log(params);
 
         //Entidad Financiera Documento 
         $scope.documentosElectronicos = [];
@@ -952,7 +1041,7 @@
         //Se inicializa al abrir modal 
         $scope.initialLoad = ()=>{
 
-            mS.getData('get', 'CuentaPorPagar/' + JSON.stringify({tipo: 3, idProveedor: params.idProveedor}), null, true).then(response=>{
+            mS.getData('get', 'CuentaPorPagar/' + JSON.stringify({tipo: 3, idProveedor: $scope.proveedor.idProveedor}), null, true).then(response=>{
               
                 if(response.code==="0"){
                     console.log(response)
@@ -984,8 +1073,7 @@
 
         $scope.onChangeTabEntidadEntifiera = (item)=>{
             try {
-                console.log($scope.selectedIndexTab)
-                
+                             
                 let {idEntidadFinanciera, codigo} = $scope.entidadesFinancieras.at($scope.selectedIndexTab)
 
                 if(codigo==='DOC'){
@@ -1153,6 +1241,7 @@
                 idComprobante: item.idComprobante,
                 tipoDocumento: item.tipoDocumento,
                 valorAbono: item.saldo || $scope.data.valorAbono,
+                controlCaja: subEntidadFinanciera.controlCaja
             }
         }
 

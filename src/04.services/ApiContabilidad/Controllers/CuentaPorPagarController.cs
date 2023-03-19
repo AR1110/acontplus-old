@@ -75,7 +75,7 @@ namespace ApiContabilidad.Controllers
                 _params["idCuentaPorPagar"] = id;
                 _params["json"] = SqlValidation.ValidateSqlString(json);
                 DAO _dao = new DAO(_configuration);
-                return Ok(await _dao.GetDataTable("Contabilidad.CuentaPorPagar_Update", _params));
+                return Ok(await _dao.Default("Contabilidad.CuentaPorPagar_Update", _params));
             }
             catch (Exception ex)
             {

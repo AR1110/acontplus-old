@@ -93,27 +93,29 @@
                             <tr md-row>                                                                        
                                 <th md-column><span>Op.</span></th>
                                 <th md-column><span>N°</span></th>
-                                <th md-column><span>Fecha Emisión</span></th>
+                                <th md-column><span>F. Emisión</span></th>
                                 <th md-column><span>Sub Entidad</span></th>
                                 <th md-column><span>Valor</span></th>
                                 <th md-column><span>Tipo Doc.</span></th>
-                                <th md-column><span>Número</span></th>                                
+                                <th md-column><span>Nro.</span></th>                                
+                                <th md-column><span>Abono</span></th>                                
                                 <th md-column><span></span></th>                                
                             </tr>
                         </thead>
                         <tbody md-body>                         
                             <tr md-row ng-repeat-start="item in datosPago">
                                 <td md-cell>
-                                    <button class="btn btn-danger btn-sm" ng-click="askToDeleteDatoPago(item)">
+                                    <button class="btn btn-danger btn-xs" ng-click="askToDeleteDatoPago(item)">
                                         <i class="mdi mdi-delete"></i>
                                     </button>
                                 </td>
                                 <td md-cell>{{$index+1}}</td>
                                 <td md-cell>{{item.fechaEmision | date:'MM/dd/yyyy  h:mma'}}</td>
                                 <td md-cell>{{item.subEntidadFinanciera}}</td>
-                                <td md-cell>{{item.valorAbono}}</td>
+                                <td md-cell>{{item.valorAbono | currency}}</td>
                                 <td md-cell>{{item.tipoDocumento}}</td>
                                 <td md-cell>{{item.nro}}</td> 
+                                <td md-cell>{{item.abonoCuota | currency}}</td> 
                                 <td md-cell ng-click="displayInfoDatosPago(item)">
                                     <span ng-if="item.display"><i class="fas fa-caret-square-down"></i></span>
                                     <span ng-if="!item.display"><i class="fas fa-caret-square-right"></i></span>
@@ -123,34 +125,34 @@
                                 <td colspan="8">
                                     <div class="row ml-5 mr-5">
                                         <div class="col-md-4 col-xs-6 b-r">
-                                            <small class="text-muted">Ciudad</small>
+                                            <small class="text-muted">Ciudad: </small>
                                             <br>
                                             <h6>{{item.ciudad}}</h6>
                                         </div>
                                         <div class="col-md-4 col-xs-6 b-r"> 
-                                            <small class="text-muted">Referencia</small>
+                                            <small class="text-muted">Referencia: </small>
                                             <br>
                                             <h6>{{item.referencia}}</h6>
                                         </div>
                                         <div class="col-md-4 col-xs-6 b-r">
-                                            <small class="text-muted">Aprobación</small>
+                                            <small class="text-muted">Aprobación:</small>
                                             <br>
                                             <h6>{{item.aprobacion}}</h6>
                                         </div>
                                     </div>
                                     <div class="row ml-5 mr-5">
                                         <div class="col-md-4 col-xs-6">
-                                            <small class="text-muted">Lote</small>
+                                            <small class="text-muted">Lote:</small>
                                             <br>
                                             <h6>{{item.lote}}</h6>
                                         </div>
                                         <div class="col-md-4 col-xs-6">
-                                            <small class="text-muted">PosFechado</small>
+                                            <small class="text-muted">PosFechado:</small>
                                             <br>
                                             <h6><span class="badge badge-success">{{item.posFechado?'SI':'NO'}}</span></h6>
                                         </div>
                                         <div class="col-md-4 col-xs-6">
-                                            <small class="text-muted">Banco</small>
+                                            <small class="text-muted">Banco: </small>
                                             <br>
                                             <h6><span class="badge badge-success">{{item.banco}}</span></h6>
                                         </div>
@@ -215,7 +217,7 @@
 
 
 <div class="modal-footer">
-    <button type="button" class="btn btn-success">
+    <button type="button" class="btn btn-success" ng-click="save()">
         <i class="ti-save"></i> Guardar
     </button>
     <button type="button" class="btn btn-dark" ng-click="closeModal()">&times; Cerrar</button>

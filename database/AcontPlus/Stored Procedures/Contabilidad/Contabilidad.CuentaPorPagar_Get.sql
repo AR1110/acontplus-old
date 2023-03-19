@@ -42,6 +42,7 @@ BEGIN
 											 pp.idCuentaPorPagar
 											,idTiempoCredito = ISNULL(pp.idTiempoCredito,0)
 											,idProveedor = pp.idProveedor
+											,es.codEstab
 											,identificacion = p.numeroIdentificacion
 											,nombreFiscal = p.nombreFiscal
 											,pp.codDoc
@@ -60,7 +61,8 @@ BEGIN
 														END 
 										FROM Contabilidad.CuentaPorPagar pp WITH (NOLOCK)
 										INNER JOIN dbo.Proveedor      p WITH (NOLOCK) ON p.idProveedor      = pp.idProveedor
-   										 LEFT JOIN dbo.TiempoCredito tc WITH (NOLOCK) ON tc.idTiempoCredito = pp.idTiempoCredito
+										INNER JOIN Sri.Establecimiento es WITH(NOLOCK) ON es.idEstablecimiento = pp.idEstablecimiento
+   										LEFT JOIN dbo.TiempoCredito tc WITH (NOLOCK) ON tc.idTiempoCredito = pp.idTiempoCredito
 										INNER JOIN dbo.EstadoPago    ep WITH (NOLOCK) ON ep.idEstadoPago    = pp.idEstadoPago
 										WHERE pp.idEntidad = @idEntidad'
 
