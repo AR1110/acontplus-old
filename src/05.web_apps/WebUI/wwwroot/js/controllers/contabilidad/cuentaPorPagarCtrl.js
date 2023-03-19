@@ -471,9 +471,11 @@
                 }).then(result => {
                    
                     if(result.isConfirmed){
-
                         showLoader();
-                        mS.getData('put', 'CuentaPorPagar/' + $scope.data.id + '?json=' + JSON.stringify($scope.cuotas), null, true)
+                        let data = {
+                            cuotas: JSON.stringify($scope.cuotas)
+                        }
+                        mS.getData('put', 'CuentaPorPagar/' + $scope.data.id, data, true)
                         .then(response => {
                             if (response.code === "0") {
                                 hideLoader()
@@ -489,11 +491,15 @@
                                     return item
                                 })                                    
                             }
-                        });
+                        }).catch(error => {
+                            hideLoader();
+                            console.log(error)
+                        })
 
                     }
                 })               
             } catch (error) {
+                hideLoader();
                 console.log(error);
             }                        
         }
@@ -743,7 +749,7 @@
                 }
                 
                 let resultValorAbono = $scope.valorAbonoFormaPago -= item.saldo;
-                $scope.valorAbonoFormaPago = fS.roundNumber(resultValorAbono, 10);
+                $scope.valorAbonoFormaPago = fS.roundNumber(resultValorAbono, 5);
                 
                 $scope.addPagoDetalle(item, item.saldo);
             }
@@ -762,8 +768,8 @@
             $scope.pagosDetalle.push({
                 idCuentaPorPagar: $scope.group.idCuentaPorPagar,
                 idCuotaPorPagar: item.idCuotaPorPagar,
-                abono,
-                cuota: item.cuota,
+                abono: fS.roundNumber(abono, 5),
+                cuota: fS.roundNumber(item.cuota, 5),
                 saldo: $scope.getValorSaldo(item),
                 secuencial: $scope.indexDatoPago
             })
@@ -797,7 +803,7 @@
 
 
         $scope.showPagoDetalle = (data) => {
-            
+            console.log($scope.pagosDetalle)
             let tempPagosDetalle = $scope.pagosDetalle.filter(item=>item.idCuotaPorPagar===data.idCuotaPorPagar);
             let infoPagosDetalle = [];
           
@@ -1264,6 +1270,7 @@
         
 
     }
+    //---------------------------------------END FORM PAYMENT----------------------------------------------------
 
 
 

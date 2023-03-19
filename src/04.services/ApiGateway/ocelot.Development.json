@@ -372,7 +372,7 @@
     },
     {
       "UpstreamPathTemplate": "/api/CuentaPorPagar/{everything}",
-      "UpstreamHttpMethod": [ "Get", "Post", "Delete", "Options" ],
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
       "DownstreamPathTemplate": "/api/CuentaPorPagar/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
