@@ -1,4 +1,5 @@
 using BL.JwtAuthenticationManger;
+using Helpers;
 
 namespace ApiRecepcion
 {
@@ -18,13 +19,16 @@ namespace ApiRecepcion
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddTransient<IConfiguration>(config =>
-            {
-                IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-                configurationBuilder.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
-                return configurationBuilder.Build();
+            //builder.Services.AddTransient<IConfiguration>(config =>
+            //{
+            //    IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
+            //    configurationBuilder.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
+            //    return configurationBuilder.Build();
 
-            });
+            //});
+
+            builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
+            ConfigHelper.AddJsonFiles(builder.Configuration);
 
             var app = builder.Build();
 

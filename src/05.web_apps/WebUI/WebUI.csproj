@@ -12,11 +12,11 @@
 		<Nullable>disable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
-	
+
 	<ItemGroup Label="Global-Tool Watch">
 		<Watch Include="..\RazorClassLibRazorComponent\**\*.razor" />
 	</ItemGroup>
-	
+
 	<ItemGroup>
 		<Compile Remove="Views\ComprobanteImportacion\**" />
 		<Compile Remove="wwwroot\lib\angular-toastr\**" />
@@ -33,13 +33,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Remove="appsettings.json" />
 		<Content Remove="wwwroot\js\controllers\reportes\impuestoCtrl.min.js" />
 		<Content Remove="wwwroot\js\env.js" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Include="appsettings.json" />
 		<None Include="bundleconfig.json" />
 		<None Include="wwwroot\archivos\NotFound.pdf" />
 		<None Include="wwwroot\assets\icons\crypto-icons\cryptocoins.woff2" />
@@ -4239,6 +4237,21 @@
 
 	<ItemGroup>
 		<_ContentIncludedByDefault Remove="wwwroot\js\env.js" />
-	</ItemGroup> 
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="..\..\00.shared_settings\sharedsettings.Development.json" Link="00.sharedsettings\sharedsettings.Development.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="..\..\00.shared_settings\sharedsettings.Staging.json" Link="00.sharedsettings\sharedsettings.Staging.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="..\..\00.shared_settings\sharedsettings.Production.json" Link="00.sharedsettings\sharedsettings.Production.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="..\..\00.shared_settings\" />
+	</ItemGroup>
 
 </Project>
