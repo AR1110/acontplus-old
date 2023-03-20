@@ -1,0 +1,13 @@
+USE AcontPlus
+
+CREATE TABLE Config.Reporte(
+idReporte INT NOT NULL CONSTRAINT pk_reporte PRIMARY KEY IDENTITY(1,1)
+,codigo VARCHAR(100) NOT NULL UNIQUE
+,reportPath VARCHAR(150) NOT NULL
+,contentType VARCHAR(50) NOT NULL
+,storedProcedure VARCHAR(100) NOT NULL
+,nombreReporte VARCHAR(200) NOT NULL
+,estado BIT NOT NULL DEFAULT 1
+,idUsuario INT NULL
+,fechaRegistro DATETIME NOT NULL DEFAULT GETDATE()
+)

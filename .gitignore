@@ -304,3 +304,6 @@
 /src/03.business_logic/BL.Reports/obj
 /src/04.services/ApiReports.zip
 /src/03.business_logic/BL.Reports/bin/Release/net6.0
+/src/02.domain/Domain.Config/bin/Debug/net6.0
+/src/02.domain/Domain.Config/obj
+/src/02.domain/Domain.Config/bin/Release/net6.0

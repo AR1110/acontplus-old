@@ -1,6 +1,4 @@
-﻿using WebUI.ApiClient;
-using DataAccess.Ventas;
-using WebUI.Utils;
+﻿using DataAccess.Ventas;
 using Domain.Models;
 using Domain.ViewModels.Ventas;
 using Microsoft.AspNetCore.Authorization;
@@ -12,19 +10,15 @@ namespace WebUI.Controllers.Ventas
 {
     public class ProformaController : Controller
     {
-
-        private readonly string _urlApi = "";
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor; ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
         private readonly int _idRol;
-        GenericResponse _gr = new();
         private ProformaDao _prof;
 
         public ProformaController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
-            _urlApi = configuration.GetSection("UrlApis").GetSection("AcontPlusApi").Value;
             _dao = new DataAccessObject(_configuration);
             _prof = new ProformaDao(_configuration);
             _httpContextAccessor = httpContextAccessor;

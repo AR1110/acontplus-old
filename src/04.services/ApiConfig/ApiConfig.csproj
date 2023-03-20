@@ -19,6 +19,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\01.common\DataAccess\DataAccess.csproj" />
+		<ProjectReference Include="..\..\02.domain\Domain.Config\Domain.Config.csproj" />
 		<ProjectReference Include="..\..\03.business_logic\BL.JwtAuthenticationManger\BL.JwtAuthenticationManger.csproj" />
 	</ItemGroup>
 

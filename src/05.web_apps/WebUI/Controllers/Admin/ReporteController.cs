@@ -15,7 +15,7 @@ namespace WebUI.Controllers.Admin
         private readonly IWebHostEnvironment _hostingEnviroment;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private IConfiguration _config;
-        private readonly string _urlApi = "";
+        private readonly string _apiGateway = "";
         private DataAccessObject _dao;
         private readonly int _idRol;
         private ReporteDao _r;
@@ -27,7 +27,7 @@ namespace WebUI.Controllers.Admin
             _logs = new LogWriter(_config);
             _hostingEnviroment = hostEnvironment;
             _r = new ReporteDao(_config);
-            _urlApi = _config.GetSection("UrlApis").GetSection("AcontPlusApi").Value;
+            _apiGateway = _config.GetSection("UrlApis").GetSection("ApiGateway").Value;
             _httpContextAccessor = httpContextAccessor;
             _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
         }
@@ -136,7 +136,7 @@ namespace WebUI.Controllers.Admin
             try
             {
                 parameters.idRol = _idRol;
-               reportFile = await new ApiServer(_urlApi).PostAsync<FileModel>("api/Reporte/Download", parameters);               
+               reportFile = await new ApiServer(_apiGateway).PostAsync<FileModel>("api/Reporte/Download", parameters);               
                 if (reportFile.Content == null || reportFile.Content.Length == 0)
                 {
                     ErrorFile(reportFile);
@@ -150,7 +150,6 @@ namespace WebUI.Controllers.Admin
             return File(reportFile.Content, reportFile.ContentType, reportFile.FileName);
         }
 
-
         //Dynamic Report 
         [HttpPost]
         public async Task<IActionResult> DownloadDynamic([FromBody] ApiReportParamsDto data)
@@ -162,7 +161,7 @@ namespace WebUI.Controllers.Admin
             FileModel reportFile = new FileModel();
             try
             {
-                reportFile = await new ApiServer(_urlApi).PostAsync<FileModel>("api/Reporte/DynamicReport", data);
+                reportFile = await new ApiServer(_apiGateway).PostAsync<FileModel>("api/Reporte/DynamicReport", data);
                 if (reportFile.Content == null || reportFile.Content.Length == 0)
                 {
                     ErrorFile(reportFile);

@@ -1,12 +1,9 @@
-﻿using WebUI.ApiClient;
-using DataAccess;
+﻿using DataAccess;
 using WebUI.Utils;
 using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Helpers;
-using System.Data;
-using System.Security.Cryptography.X509Certificates;
 
 namespace WebUI.Controllers.Admin
 {
@@ -16,11 +13,9 @@ namespace WebUI.Controllers.Admin
         private readonly string _connectionStrings = string.Empty;
         GenericResponse _response = new();
         private FirmaElectronicaDao _fe;
-        private readonly string _urlApi = "";
         public FirmaElectronicaController(IConfiguration config)
         {
             _config = config;
-            _urlApi = _config.GetSection("UrlApis").GetSection("AcontPlusApi").Value;
             _fe = new FirmaElectronicaDao(_config);
         }
        
