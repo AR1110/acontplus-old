@@ -12,21 +12,90 @@
         </div>
     </div>
 
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
+                    <small for="estab" class="text-muted">Establecimiento</small>
+                    <select class="form-control form-control-sm border-select" name="estab" id="estab" ng-model="dataSearch.codEstab" ng-change="getCuentasPorPagar()">
+                        <option value="ALL">Todos</option>
+                        <option ng-value="item.codEstab" ng-repeat="item in establecimientos">{{item.nombreComercial}}</option>
+                    </select>                    
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
+                    <small for="tipoDocumento" class="text-muted">Tipo Documento</small>
+                    <select name="tipoDoc" id="tipoDoc" class="form-control form-control-sm border-select">
+                            <option ng-value="item.codDoc" ng-repeat="item in tipoDocumentos">
+                                {{item.descripcion}}
+                            </option>
+                        </select>                   
+                </div>
+
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
+                    <small class="text-muted" for="estado">Estado</small>
+                    <select name="tipoDoc" id="tipoDoc" class="form-control form-control-sm border-select">
+                            <option ng-value="item.codDoc" ng-repeat="item in tipoDocumentos">
+                                {{item.descripcion}}
+                            </option>
+                        </select>                    
+                </div>
+
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                    <small class="text-muted">Proveedor</small>
+                    <div class="input-group input-group-sm mb-3">
+                        <input type="text" name="proveedorSearch" id="proveedorSearch" class="form-control form-control-sm border-select" placeholder="...">
+                        <div class="input-group-append">
+                          
+                                <button class="btn btn-success" type="button" ng-click="getCuentasPorPagar()">
+                                    <i class="mdi mdi-account-search"></i>
+                                </button>
+                                <button class="btn btn-danger" type="button" ng-click="getCuentasPorPagar()">
+                                    <i class="mdi mdi-close-circle-outline"></i>
+                                </button>
+                            
+                        </div>
+                    </div>       
+                </div>
+            </div>
+
+            <div class="row justify-content-between">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
+                    <small class="text-muted">Rango de Fechas: </small>
+                    <input  class="form-control form-control-sm date-picker" type="text"
+                            ng-model="dateRangePicker.date" picker="dateRangePicker.picker"
+                            picker-classes="extra-class-names" min="'2014-02-23'" max="dateRangePicker.maxDate"
+                            date-range-picker 
+                            options="dateRangePicker.options" />
+                </div> 
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">   
+                    <small class="text-muted">Buscador Filtro</small> 
+                    <div class="input-group input-group-sm mb-3">
+                        <input type="text" class="form-control form-control-sm boder-select"  placeholder="...">
+                        <div class="input-group-append">
+                            <button class="btn btn-info" type="button" ng-click="getCuentasPorPagar()">
+                                <i class="mdi mdi-refresh"></i>
+                            </button>
+                        </div>
+                    </div>                   
+                </div>               
+            </div>
+        </div>
+    </div>
+
     
     <div class="card">
-        <section layout="row" layout-sm="column" layout-align="center center" layout-wrap>
-            @* <md-button class="md-raised">Button</md-button> *@
-            @* <md-button class="md-raised md-primary" ng-click="openModalPago()" ng-if="selectedDocumentos.length>0">Pagar</md-button> *@
-            @* <md-button ng-disabled="true" class="md-raised md-primary">Disabled</md-button> *@
-            @* <md-button class="md-raised md-warn">Warn</md-button> *@
-            @* <div class="label">Raised</div> *@
-        </section>
+        <div class="card-body">
+            <div class="row justify-content-end">                   
+            
+        </div>    
+        </div>   
 
         <md-table-container style="max-height: 400px;">
             <table md-table md-row-select="options.rowSelection" multiple="{{options.multiSelect}}"  ng-model="selectedDocumentos" md-progress="promise">
                 <thead fix-head md-head>
                     <tr md-row>
                         <th md-column ><span></span></th>
+                        <th md-column ><span>N°</span></th>
                         <th md-column ><span>Cod. Doc</span></th>
                         <th md-column ><span>Serie</span></th>
                         <th md-column ><span>Proveedor</span></th>
@@ -39,7 +108,13 @@
                     </tr>
                 </thead>
                 <tbody md-body>
-                    <tr md-row md-select="item" md-on-select="getCuota"  md-select-id="idCuentaPorPagar" md-auto-select ng-repeat="item in cuentasPorPagar">
+                    <tr md-row
+                        ng-disabled="item.codPago=='PA' || (selectedDocumentos.length>0 && item.idProveedor !==proveedor.idProveedor)"
+                        md-select="item" 
+                        md-on-select="selectedRow"  
+                        md-select-id="idCuentaPorPagar" 
+                        md-auto-select 
+                        ng-repeat="item in cuentasPorPagar" md-raised>
                         <td md-cell>
                             <md-menu>
                                 <md-button aria-label="Open demo menu" class="md-icon-button"
@@ -54,13 +129,14 @@
                                     </md-menu-item>
 
                                     <md-menu-item>
-                                        <md-button ng-click="openModalPago(item)"><span
+                                        <md-button ng-click="openModalPago(item)" ng-disabled="item.codPago==='PA' || selectedDocumentos.length>0"><span
                                             md-menu-align-target>Pago</span>
                                         </md-button>
                                     </md-menu-item>                                    
                                 </md-menu-content>
                             </md-menu>
                         </td>
+                        <td md-cell>{{$index+1}}</td>
                         <td md-cell>{{item.codDoc}}</td>
                         <td md-cell>{{item.serieComprobante}}</td>
                         <td md-cell>{{item.nombreFiscal}}</td>
@@ -78,5 +154,5 @@
 </div>
 
 @section Scripts {
-    <script src="~/js/controllers/contabilidad/cuentaPorPagarCtrl.js" asp-append-version="true"></script>
+    <script src="~/js/controllers/contabilidad/cuentaPorPagarCtrl.min.js?v=0.17" asp-append-version="true"></script>
 }

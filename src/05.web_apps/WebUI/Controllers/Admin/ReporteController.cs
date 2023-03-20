@@ -136,7 +136,7 @@ namespace WebUI.Controllers.Admin
             try
             {
                 parameters.idRol = _idRol;
-               reportFile = await new ApiServer(_urlApi).PostAsync<FileModel>("api/Reporte/Download/", parameters);               
+               reportFile = await new ApiServer(_urlApi).PostAsync<FileModel>("api/Reporte/Download", parameters);               
                 if (reportFile.Content == null || reportFile.Content.Length == 0)
                 {
                     ErrorFile(reportFile);
@@ -162,7 +162,7 @@ namespace WebUI.Controllers.Admin
             FileModel reportFile = new FileModel();
             try
             {
-                reportFile = await new ApiServer(_urlApi).PostAsync<FileModel>("api/Reporte/DynamicReport/", data);
+                reportFile = await new ApiServer(_urlApi).PostAsync<FileModel>("api/Reporte/DynamicReport", data);
                 if (reportFile.Content == null || reportFile.Content.Length == 0)
                 {
                     ErrorFile(reportFile);

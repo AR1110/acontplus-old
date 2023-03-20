@@ -1,5 +1,6 @@
 ﻿using Common.Logs;
 using DataAccess;
+using Domain.Dtos.Contabilidad;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,7 +31,7 @@ namespace ApiContabilidad.Controllers
                 _params["idUsuarioRol"] = idUsuarioRol;
                 _params["json"] = SqlValidation.ValidateSqlString(json);
                 DAO _dao = new DAO(_configuration);
-                return Ok(await _dao.GetDataTable("Contabilidad.CuentaPorPagar_Get", _params));
+                return Ok(await _dao.GetDataSet("Contabilidad.CuentaPorPagar_Get", _params));
             }
             catch (Exception ex)
             {
@@ -63,7 +64,7 @@ namespace ApiContabilidad.Controllers
 
         // PUT api/<CuentaPorPagarController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, string json)
+        public async Task<IActionResult> Put(int id, CuentaPorPagarDto data)
         {
             LogWriter _log = new LogWriter(_configuration);
             GenericResponse _response = new GenericResponse();
@@ -73,9 +74,9 @@ namespace ApiContabilidad.Controllers
                 Dictionary<string, object> _params = new Dictionary<string, object>();
                 _params["idUsuarioRol"] = idUsuarioRol;
                 _params["idCuentaPorPagar"] = id;
-                _params["json"] = SqlValidation.ValidateSqlString(json);
+                _params["json"] = SqlValidation.ValidateSqlString(data.cuotas);
                 DAO _dao = new DAO(_configuration);
-                return Ok(await _dao.GetDataTable("Contabilidad.CuentaPorPagar_Update", _params));
+                return Ok(await _dao.Default("Contabilidad.CuentaPorPagar_Update", _params));
             }
             catch (Exception ex)
             {

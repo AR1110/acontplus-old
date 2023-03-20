@@ -15,10 +15,12 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 -- =============================================
 -- Author:		Alexis Ramirez
 -- Create date: 03/14/2023
 -- Description:	SP para actualizar el tiempo de credito de la cuenta x pagar esa solo se podre editar al estar pendiente
+-- Contabilidad.CuotaPorPagar
 -- =============================================
 IF OBJECT_ID(N'Contabilidad.CuentaPorPagar_Insert', N'P') IS NOT NULL
 DROP PROCEDURE Contabilidad.CuentaPorPagar_Insert

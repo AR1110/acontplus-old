@@ -1,70 +1,43 @@
-﻿using ApiReports.Controllers;
-using ApiReports.Dao;
+﻿using Helpers;
 using HelpersNS20;
 using HelpersNS20.Dtos;
-using Microsoft.Reporting.WebForms;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Reporting.NETCore;
 using Newtonsoft.Json;
-using System;
 using System.Data;
 
-namespace ApiReports.Utils
+namespace BL.Reports
 {
-    public class GenerateReport
+    public sealed class Reports
     {
-        private readonly string _dirLogs = string.Empty;
-        private ReporteParametroDao _rp = new ReporteParametroDao();
-        public GenerateReport()
+        private readonly IConfiguration _configuration;
+        public Reports(IConfiguration configuration)
         {
-            _dirLogs = System.Configuration.ConfigurationManager.AppSettings["dirLogs"];
+            _configuration = configuration;
         }
-        public byte[] ByteReport(ApiReportParamsDto data, ref string mimeType, ref string fileName)
+        public byte[] ByteReport(DataSet dsParams, DataSet ds)
         {
-            string format = "";
             using (LocalReport lr = new LocalReport())
             {
-                DataSet dsParams = new DataSet();
-                if (!_rp.GetByCodeAsync(data, ref dsParams)) //OBTENEMOS PARAMETROS DINAMICOS
-                    return null;
+                if (dsParams.Tables[0].Rows.Count == 0)
+                    return null; 
 
-                if (dsParams.Tables.Count == 0)
-                    return null;
-
-                DataTable reportData = dsParams.Tables[0]; //Datos del reporte
-                DataTable dataSources = dsParams.Tables[1]; //DataSources del reporte (Tablixs)
-                DataTable rdlcParams = dsParams.Tables[2]; //Parametros del reporte reporte
-
-                string jsonData = data.dataParams; //ENVIAMOS NUEVAMENTE LOS PARAMETROS PARA OBTENER LA INFORMACION EN EL REPORTE
-                DataSet ds = new DataSet();
-                foreach (DataRow row in reportData.Rows)
+                if (ds.Tables[0].Rows.Count > 0)
                 {
-                    if (data.hasService)
-                    {
-                        ds = _rp.GetDataToReport(row["storedProcedure"].ToString(), jsonData);
-                    }
-                    else
-                    {
-                        ds = _rp.GetDataToReport(data.idRol, row["storedProcedure"].ToString(), jsonData);
-                    }
-                    if (ds.Tables.Count > 0)
-                    {
-                        lr.ReportPath = System.Web.Hosting.HostingEnvironment.MapPath("~/Reports/" + row["reportPath"].ToString());
-                        format = row["format"].ToString();
-                        fileName = row["fileName"].ToString();
-                    }
-                    else
-                    {
-                        return null;
-                    }
+                    lr.ReportPath = _configuration.GetSection("dirReports").Value + dsParams.Tables[0].Rows[0]["reportPath"].ToString();
                 }
-
+                else
+                {
+                    return null;
+                }
                 //Recorremos los datatbles con sus respectivas posiciones,para llenar la información
-                foreach (DataRow row in dataSources.Rows)
+                foreach (DataRow row in dsParams.Tables[1].Rows)
                 {
                     lr.DataSources.Add(new ReportDataSource(row["dataSource"].ToString(), ds.Tables[Convert.ToInt32(row["position"])]));
                 }
                 //Recorremos los parametros del reporte como logos, textos, etc
-                ReportParameter[] p = new ReportParameter[rdlcParams.Rows.Count];
-                foreach (DataRow row in rdlcParams.Rows)
+                ReportParameter[] p = new ReportParameter[dsParams.Tables[2].Rows.Count];
+                foreach (DataRow row in dsParams.Tables[2].Rows)
                 {
                     if (Convert.ToBoolean(row["isByte"]))
                     {
@@ -77,7 +50,7 @@ namespace ApiReports.Utils
                 }
                 lr.SetParameters(p);
 
-                return lr.Render(format, null, out mimeType, out _, out _, out _, out _);
+                return lr.Render(dsParams.Tables[0].Rows[0]["format"].ToString(), null, out _, out _, out _, out _, out _);
             }
         }
 
@@ -87,13 +60,11 @@ namespace ApiReports.Utils
             string mimeTypeImg = "";
             using (LocalReport lr = new LocalReport())
             {
-                CodigoBarraController _cb = new CodigoBarraController();
-
                 foreach (var item in parameters.rdlcParams)
                 {
                     if (item.Key == "reportPath")
                     {
-                        lr.ReportPath = System.Web.Hosting.HostingEnvironment.MapPath("~/Reports/" + item.Value.ToString());
+                        lr.ReportPath = _configuration.GetSection("dirReports").Value + item.Value.ToString();
 
                     }
                     if (item.Key == "format")
@@ -132,8 +103,7 @@ namespace ApiReports.Utils
                     //}
                     if (item.Key == "claveAcceso")
                     {
-                        byte[] barcode = _cb.Get(item.Value);
-                        lr.SetParameters(new ReportParameter("barcode", FileExtensionsNS.getBase64FromByte((byte[])barcode)));
+                        lr.SetParameters(new ReportParameter("barcode", Convert.ToBase64String(BarcodeGen.Create(item.Value), 0, BarcodeGen.Create(item.Value).Length)));
                         lr.SetParameters(new ReportParameter("mimeTypeBarcode", "image/png"));
                     }
                 }
@@ -141,4 +111,5 @@ namespace ApiReports.Utils
             }
         }
     }
+
 }

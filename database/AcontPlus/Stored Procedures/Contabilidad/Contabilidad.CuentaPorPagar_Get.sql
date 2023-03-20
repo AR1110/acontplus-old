@@ -41,6 +41,8 @@ BEGIN
 			DECLARE @sql AS NVARCHAR(MAX) = 'SELECT TOP 50
 											 pp.idCuentaPorPagar
 											,idTiempoCredito = ISNULL(pp.idTiempoCredito,0)
+											,idProveedor = pp.idProveedor
+											,es.codEstab
 											,identificacion = p.numeroIdentificacion
 											,nombreFiscal = p.nombreFiscal
 											,pp.codDoc
@@ -59,7 +61,8 @@ BEGIN
 														END 
 										FROM Contabilidad.CuentaPorPagar pp WITH (NOLOCK)
 										INNER JOIN dbo.Proveedor      p WITH (NOLOCK) ON p.idProveedor      = pp.idProveedor
-   										 LEFT JOIN dbo.TiempoCredito tc WITH (NOLOCK) ON tc.idTiempoCredito = pp.idTiempoCredito
+										INNER JOIN Sri.Establecimiento es WITH(NOLOCK) ON es.idEstablecimiento = pp.idEstablecimiento
+   										LEFT JOIN dbo.TiempoCredito tc WITH (NOLOCK) ON tc.idTiempoCredito = pp.idTiempoCredito
 										INNER JOIN dbo.EstadoPago    ep WITH (NOLOCK) ON ep.idEstadoPago    = pp.idEstadoPago
 										WHERE pp.idEntidad = @idEntidad'
 
@@ -109,9 +112,94 @@ BEGIN
 					INNER JOIN dbo.EstadoPago ep ON ep.idEstadoPago = c.idEstadoPago
 					WHERE c.idCuentaPorPagar = @idCuentaPorPagar	
 					AND c.estado = 1 AND ep.codigo !='PA'
-				END 
+				END 							 
+			END
+			
+
+
+
+		--Forma Pago
+		IF @tipo = 3
+			BEGIN
 				
-			 
-		END 
+				DECLARE @idProveedor INT = (SELECT idProveedor FROM OPENJSON(@json)WITH(idProveedor INT '$.idProveedor'))
+				DECLARE @rucEmisor  VARCHAR(13)
+				DECLARE @table AS TABLE
+				(
+					idComprobante BIGINT 
+				   ,idTipoDocumento BIGINT 
+				   ,nroDocumento VARCHAR(20)
+				   ,saldo DECIMAL(15,5)
+				   ,tipoDocumento VARCHAR(50)
+				)
+
+				DECLARE @pagoDocuments AS TABLE 
+				(
+					 idComprobante INT
+					,codDoc VARCHAR(5)
+				)
+
+				SELECT * FROM EntidadFinanciera WHERE estado = 1
+				SELECT * FROM SubEntidadFinanciera WHERE idEntidad = @idEntidad AND estado = 1
+				SELECT * FROM Banco WHERE estado = 1
+				SELECT * FROM Ciudad WHERE estado = 1
+
+				INSERT INTO @pagoDocuments(idComprobante,codDoc)
+				SELECT p.idComprobante,td.codigoSri FROM Pago p WITH (NOLOCK) 
+													INNER JOIN dbo.TipoDocumento     td WITH (NOLOCK) ON p.idTipoDocumento      = td.idTipoDocumento 
+													INNER JOIN dbo.EntidadFinanciera ef WITH (NOLOCK) ON ef.idEntidadFinanciera = p.idEntidadFinanciera
+													INNER JOIN dbo.ComprobanteEgreso ce WITH (NOLOCK) ON ce.idComprobanteEgreso = p.idComprobanteEgreso
+													WHERE ef.codigo = 'DOC' AND ce.estado = 1  AND ce.idEntidad = @idEntidad
+
+
+				INSERT INTO @table (idComprobante,idTipoDocumento,nroDocumento,saldo,tipoDocumento)
+				SELECT 
+					 de.idDocumentoElectronico
+					,idTipoDocumento = (SELECT idTipoDocumento FROM dbo.TipoDocumento td (NOLOCK) WHERE td.codigo = 'RC')
+					,nroDocumento    = de.numEstab+'-'+de.ptoEmision+'-'+Helper.F_Auto_Sequential(de.nroDocumento)
+					,saldo           = (SELECT rc.total FROM dbo.RetencionCompra rc  WITH (NOLOCK) WHERE rc.idRetencionCompra = de.idDocumento)
+					,codigo          = 'Retención versión: 1.0.0'
+				FROM dbo.DocumentoElectronico de WITH (NOLOCK) 
+				WHERE de.codDoc          = '07' 
+				  AND de.versionComp     = '1.0.0' 
+				  AND de.idEntidad       = @idEntidad
+				  AND de.codEstado       = 4
+				  AND de.idContribuyente = @idProveedor
+				  AND de.idDocumentoElectronico NOT IN (SELECT idComprobante FROM @pagoDocuments t WHERE t.codDoc = '07')
+
+				INSERT INTO @table (idComprobante,idTipoDocumento,nroDocumento,saldo,tipoDocumento)
+				SELECT 
+					 de.idDocumentoElectronico
+					,idTipoDocumento = (SELECT idTipoDocumento FROM dbo.TipoDocumento td WHERE td.codigo = 'RC')
+					,nroDocumento = de.numEstab+'-'+de.ptoEmision+'-'+Helper.F_Auto_Sequential(de.nroDocumento)
+					,saldo = (SELECT SUM(ats.valorRetenido) FROM FactElect.RetencionAtsRet ats WHERE ats.idRetencionAts = de.idDocumento)
+					,codigo = 'Retención versión: 2.0.0'
+				FROM dbo.DocumentoElectronico de 
+				WHERE de.codDoc = '07'
+				  AND de.versionComp = '2.0.0'
+				  AND de.codEstado = 4
+				  AND de.idEntidad = @idEntidad
+				  AND de.numeroIdentificacion = (SELECT TOP 1 numeroIdentificacion FROM dbo.Proveedor WITH (NOLOCK) WHERE idProveedor = @idProveedor)
+				  AND de.idDocumentoElectronico NOT IN (SELECT idComprobante FROM @pagoDocuments t WHERE t.codDoc = '07')
+
+
+				INSERT INTO @table (idComprobante,idTipoDocumento,nroDocumento,saldo,tipoDocumento)
+				SELECT 
+					 d.idDocRelacionado
+					,idTipoDocumento = (SELECT TOP 1 idTipoDocumento FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo = 'NC')
+					,dr.serieComprobante
+					,saldo = d.valorRetenido
+					,codDoc = 'Nota Crédito Version:'+dr.versionComp
+				FROM factelect.DocRelacionado d
+				INNER JOIN Recepcion.DocumentoRecibido dr ON dr.idDocumento = d.idDocumentoRecibido
+				WHERE dr.codDoc = '04' 
+				  AND dr.identificacionReceptor = (SELECT TOP 1 numeroIdentificacion FROM dbo.Proveedor WITH (NOLOCK) WHERE idProveedor = @idProveedor)
+				  AND dr.rucEmisor = @rucEmisor 
+				  AND d.idDocRelacionado NOT IN (SELECT idComprobante FROM @pagoDocuments t WHERE t.codDoc = '04')
+
+				SELECT * FROM @table
+
+				
+			END 
 END
 GO

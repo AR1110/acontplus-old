@@ -61,14 +61,14 @@ BEGIN
 		BEGIN TRAN 
 			INSERT INTO @cuotas (idCuotaPorPagar,fechaVencimiento,cuota)
 			SELECT idCuotaPorPagar,fechaVencimiento,cuota
-			FROM OPENJSON(@json) WITH (idCuotaPorPagar INT '$.idCuotaPorPagar',fechaVencimiento DATE '$.fechaVencimiento', cuota NUMERIC(18,5))
+			FROM OPENJSON(@json) WITH (idCuotaPorPagar INT '$.idCuotaPorPagar',fechaVencimiento DATE '$.fechaVencimiento', cuota NUMERIC(18,5) '$.cuota')
 
 			SELECT @fechaVencimiento =  MAX(fechaVencimiento) FROM @cuotas 
 
 			UPDATE xc SET 
 				 xc.fechaVencimiento = c.fechaVencimiento
 				,xc.cuota = c.cuota
-			FROM Contabilidad.CuotaPoragar xc
+			FROM Contabilidad.CuotaPorPagar xc
 			INNER JOIN @cuotas c ON c.idCuotaPorPagar = xc.idCuotaPorPagar
 			WHERE xc.idCuentaPorPagar = @idCuentaPorPagar
 
@@ -90,8 +90,7 @@ BEGIN
 			                FOR JSON PATH)
 
 		COMMIT TRAN 
-		SELECT '1'code,'Actualizado Correctamente' as 'message', @payload payload
-		RETURN  
+		SELECT '1'code,'Actualizado Correctamente' as 'message',@payload payload
 	END TRY 
 
 	BEGIN CATCH 
