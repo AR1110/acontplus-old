@@ -48,10 +48,6 @@ namespace WebUI.Controllers.GestionFinanciera
             parameters.Add("pagoDetalle", SqlValidation.ValidateSqlString(data.pagoDetalle));
             parameters.Add("historial", SqlValidation.ValidateSqlString(data.historial));
             _response = DbResponse.SPDefault(await _dao.GetDataTableAsync("GestFinanc.ComprobanteEgreso_Insert", parameters));
-            if (_response.code == "1")
-            {
-                _ef.Update(_idRol, _response.payload);
-            }
             return Ok(_response);
         }
 
