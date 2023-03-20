@@ -1,5 +1,5 @@
 ﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
     ViewData["Title"] = "Reporte";
@@ -57,11 +57,11 @@
                         <tr ng-repeat-start="item in reports | filter:textSearch">
                             <td ng-if="accion.editar || accion.eliminar">
                                 <button class="btn btn-outline-warning btn-sm" ng-if="accion.editar"
-                                        ng-click="openModal(item, 2)">
+                                    ng-click="openModal(item, 2)">
                                     <span class="ti-pencil"></span>
                                 </button>
                                 <button class="btn btn-outline-danger btn-sm" ng-if="accion.eliminar"
-                                        ng-click="askToDelete(item)">
+                                    ng-click="askToDelete(item)">
                                     <span class="ti-trash"></span>
                                 </button>
                             </td>
@@ -79,8 +79,7 @@
                         <tr ng-if="item.expanded" ng-repeat-end="">
                             <td colspan="7">
                                 <div class="ml-5 mr-5">
-                                    <button type="button" class="btn btn-info btn-sm"
-                                            ng-click="openModalDs(item)">
+                                    <button type="button" class="btn btn-info btn-sm" ng-click="openModalDs(item)">
                                         <i class="ti-plus"></i> Nuevo
                                     </button>
                                     <div class="table-responsive">
@@ -97,11 +96,11 @@
                                                 <tr ng-repeat="ds in item.dataSources">
                                                     <td>
                                                         <button type="button" class="btn btn-warning btn-xs"
-                                                                ng-click="openModalEditDs(item, ds)">
+                                                            ng-click="openModalEditDs(item, ds)">
                                                             <span class="ti-pencil"></span>
                                                         </button>
                                                         <button class="btn btn-danger btn-xs"
-                                                                ng-click="askToDeleteDs(item, ds)">
+                                                            ng-click="askToDeleteDs(item, ds)">
                                                             <span class="ti-trash"></span>
                                                         </button>
                                                     </td>
@@ -122,9 +121,9 @@
     </div> >
 
     <!--Reporte Modal-->
-    <div class="modal fade" id="reporteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog" role="document">
+    <div id="reporteModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <form ng-submit="save()">
                     <div class="modal-header">
@@ -138,38 +137,18 @@
                     </div>
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                 <div class="form-group">
                                     <label for="codigo">Código</label>
                                     <input type="text" class="form-control" id="codigo" ng-model="reporte.codigo"
-                                           placeholder="RR" required>
+                                        placeholder="RR" required>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="col-xl-8 col-lg-6 col-md-8 col-sm-8 col-12">
                                 <div class="form-group">
                                     <label for="reportPath">Report Path</label>
                                     <input type="text" class="form-control" id="reportPath"
-                                           ng-model="reporte.reportPath" placeholder="Example.rdlc" required>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                                <div class="form-group">
-                                    <label for="dataSource">Data Source</label>
-                                    <input type="text" class="form-control" id="dataSource"
-                                           ng-model="reporte.dataSource" placeholder="exampleDs" required>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                                <div class="form-group">
-                                    <label for="contentType">Content Type</label>
-                                    <input type="text" class="form-control" id="contentType"
-                                           ng-model="reporte.contentType" placeholder="application/pdf" required>
+                                        ng-model="reporte.reportPath" placeholder="Example.rdlc" required>
                                 </div>
                             </div>
                         </div>
@@ -178,16 +157,23 @@
                                 <div class="form-group">
                                     <label for="storedProcedure">Stored Procedure</label>
                                     <input type="text" class="form-control" id="storedProcedure"
-                                           ng-model="reporte.storedProcedure" placeholder="ASPExampleReport" required>
+                                        ng-model="reporte.storedProcedure" placeholder="" required>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                                <div class="form-group">
+                                    <label for="contentType">Content Type</label>
+                                    <input type="text" class="form-control" id="contentType"
+                                        ng-model="reporte.contentType" placeholder="application/pdf" required>
+                                </div>
+                            </div>
+                            <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-12">
                                 <div class="form-group">
                                     <label for="nombreReport">Nombre Reporte</label>
                                     <input type="text" class="form-control" id="nombreReport"
-                                           ng-model="reporte.nombreReporte" placeholder="Example" required>
+                                        ng-model="reporte.nombreReporte" placeholder="Example" required>
                                 </div>
                             </div>
                         </div>
@@ -222,7 +208,7 @@
 
     <!--Reporte Modal-->
     <div class="modal fade" id="dataSourceModal" tabindex="-1" role="dialog" aria-labelledby="dSModalLabel"
-         aria-hidden="true">
+        aria-hidden="true">
         <div class="modal-dialog modal-sm" role="document">
             <div class="modal-content">
                 <form ng-submit="saveDs()">
@@ -240,7 +226,7 @@
                                 <div class="form-group">
                                     <label for="codigo">DataSource</label>
                                     <input type="text" class="form-control" id="codigo" ng-model="dataSource.dataSource"
-                                           placeholder="mainDs" required>
+                                        placeholder="mainDs" required>
                                 </div>
                             </div>
                         </div>
@@ -249,7 +235,7 @@
                                 <div class="form-group">
                                     <label for="dsPosition">Índice</label>
                                     <input type="text" class="form-control" id="dsPosition"
-                                           ng-model="dataSource.position" valid-number placeholder="0" required>
+                                        ng-model="dataSource.position" valid-number placeholder="0" required>
                                 </div>
                             </div>
                         </div>

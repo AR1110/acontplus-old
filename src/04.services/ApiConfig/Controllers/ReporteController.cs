@@ -44,7 +44,11 @@ namespace ApiConfig.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 Dictionary<string, object> _params = new Dictionary<string, object>();
                 _params["idUsuarioRol"] = idUsuarioRol;
-                _params["json"] = JsonConvert.SerializeObject(data);
+                _params["codigo"] = data.codigo;
+                _params["reportPath"] = data.reportPath;
+                _params["contentType"] = data.contentType;
+                _params["storedProcedure"] = data.storedProcedure;
+                _params["nombreReporte"] = data.nombreReporte;
                 DAO _dao = new DAO(_configuration);
                 return Ok(await _dao.Default("Config.Reporte_Insert", _params));
             }
