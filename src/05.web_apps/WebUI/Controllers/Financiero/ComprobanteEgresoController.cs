@@ -37,6 +37,14 @@ namespace WebUI.Controllers.GestionFinanciera
             return View();
         }
 
+
+        [HttpGet]
+        public async Task<IActionResult> Get(string json)
+        {
+            var res = await _ce.GetAsync(_idRol, json);
+            return Ok(res);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Post( [FromBody] PagoDto data)
         {
@@ -51,26 +59,14 @@ namespace WebUI.Controllers.GestionFinanciera
             return Ok(_response);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
-        {
-            var res = await _ce.GetAsync(_idRol, json);
-            return Ok(res);
-        }
-
-
-        public async Task<IActionResult> Eliminar(int idComprobanteEgreso, string observacion)
+        public async Task<IActionResult> Cancel(int id, string observacion)
         {
             GenericResponse _response = new GenericResponse();
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
-            parameters.Add("id", idComprobanteEgreso);
+            parameters.Add("idUsuarioRol", _idRol);
+            parameters.Add("idComprobanteEgreso", id);
             parameters.Add("observacion", observacion);
-            _response = DbResponse.SPDefault(await _dao.GetDataTableAsync("GestFinanc.ComprobanteEgreso_Delete", parameters));
-            if (_response.id == "1")
-            {
-                _ef.Update(_idRol, _response.payload);
-            }
+            _response = DbResponse.SPDefault(await _dao.GetDataTableAsync("GestFinanc.ComprobanteEgreso_Update_Cancel", parameters));
             return Ok(_response);
         }
 

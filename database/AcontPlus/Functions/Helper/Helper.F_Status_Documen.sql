@@ -29,21 +29,26 @@ AS
 BEGIN
 	-- Declare the return variable here
 	DECLARE @idEstadoPago AS INT 
+	DECLARE @residuo AS NUMERIC(18,5)
 
-	IF @abono = @importeTotal
+	SELECT @residuo = @importeTotal - @abono
+
+	IF @residuo = 0  
 		BEGIN
 			SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PA'
 		END 
 
-	IF @abono = 0 
-		BEGIN
-			SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PA'
-		END 
-
-	ELSE
+	IF @residuo > 0 
 		BEGIN
 			SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PP'
 		END
+
+	IF @abono = 0 
+		BEGIN
+			SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PE'
+		END 
+
+	
 		
 
 
