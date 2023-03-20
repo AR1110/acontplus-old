@@ -66,8 +66,14 @@
         }
 
         $scope.dataSearch = {
-            codEstab: 'ALL'
+            codEstab: 'ALL',
+            codDoc: 'ALL',
+            codEstado: 'ALL',
         }
+
+        $scope.tipoDocumentos = [
+            
+        ];
 
         $scope.cuentasPorPagar = [];
         $scope.selectedDocumentos = [];
@@ -94,7 +100,7 @@
             
             let dataSearch = JSON.stringify({
                 tipo: 1,
-                checkboxFecha: true,
+              //  checkboxFecha: true,
                 checkboxEstab: $scope.dataSearch.codEstab==='ALL' ? $scope.dataSearch.checkboxEstab = false: $scope.dataSearch.checkboxEstab,
                 codEstab: $scope.dataSearch.codEstab,
                 checkboxEstado: $scope.dataSearch.codEstado==='ALL' ? $scope.dataSearch.checkboxEstado = false: $scope.dataSearch.checkboxEstado,
@@ -138,7 +144,15 @@
                 })
 
                 _mS.getData('get', '/TipoDocumento/Get').then(response => {
-                    $scope.tipoDocumentos = JSON.parse(response.payload);
+                    let tempDocs = JSON.parse(response.data)                    
+                    $scope.tipoDocumentos = tempDocs.filter(item=>['FC', 'LC'].includes(item.codigo))
+                    console.log(JSON.parse(response.payload))
+
+                })
+
+                commonSvc.getEstadoDocByCodDoc('CP').then(response => {
+                    console.log(response)
+                    $scope.estadoDocumentos = response;
                 })
 
             } catch (error) {
@@ -194,10 +208,51 @@
         }
 
         $scope.selectedRow = (item)=>{
-            $scope.proveedor ={
-                idProveedor: item.idProveedor
+            try {
+                $scope.proveedor ={
+                    idProveedor: item.idProveedor
+                }
+                
+                mS.getData('get', '')
+                
+            } catch (error) {
+                
             }
-            console.log(item)
+           
+        }
+
+        $scope.getCuotaCuentaPorPagar = (item)=>{
+            //Params APi 
+            let spParams = JSON.stringify({
+                idCuentaPorPagar: item.idCuentaPorPagar,
+                codPago: 'PE',
+                tipo: 2
+            })
+
+            _mS.getData('get', 'CuentaPorPagar/' + spParams, null, true).then(response =>{                    
+                if(response.code==="0"){
+                    _form.sweetAlert('warning', response.message)
+                }
+
+                if(response.code==="1"){
+                   
+                    let cuotas = JSON.parse(response.payload)[0] || [];
+                   
+                    modalParams.params = {
+                        data: item,
+                        cuotas
+                    }
+                    
+                    //Open Modal 
+                    let modalRef = _modalSvc.openModalCustom(modalParams)
+                    modalRef.result.then(result=>{
+                        console.log(result)
+                    })
+                }
+
+            })
+
+
         }
 
 
@@ -238,7 +293,9 @@
                         //Open Modal 
                         let modalRef = _modalSvc.openModalCustom(modalParams)
                         modalRef.result.then(result=>{
-                            console.log(result)
+                            if(typeof result==='object'){
+                                $scope.getCuentasPorPagar();
+                            }
                         })
                     }
 
@@ -703,7 +760,9 @@
                             $scope.indexDatoPago       = $scope.datosPago.length + 1;
                             $scope.esAbonoPosfechado   = result.isPosfechado;
                             $scope.valorAbonoFormaPago = result.valorAbono;
-                                                      
+                            
+                            console.log($scope.valorAbonoFormaPago)
+                            
                             $scope.addFormaPago();
 
                             let abonoCuota = $scope.pagosDetalle.filter(item=>item.secuencial===$scope.indexDatoPago)
@@ -735,6 +794,8 @@
                 $scope.group = group;
              
                 for(let item of group.cuotas){
+                    
+                    item.abonoPosfechado = 0;
                     
                     if(typeof $scope.valorAbonoFormaPago !=='number' || $scope.valorAbonoFormaPago===0) return;
 
