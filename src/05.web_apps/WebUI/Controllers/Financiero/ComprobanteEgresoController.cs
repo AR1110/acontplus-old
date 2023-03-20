@@ -18,7 +18,6 @@ namespace WebUI.Controllers.GestionFinanciera
         private DataAccessObject _dao;
         private readonly int _idRol;
         private EstadoFinancieroDao _ef;
-        private ComprobanteEgresoDao _ce;
 
         public ComprobanteEgresoController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
@@ -26,7 +25,6 @@ namespace WebUI.Controllers.GestionFinanciera
             _dao = new DataAccessObject(_configuration);
             _ef = new EstadoFinancieroDao(_configuration);
             _ci = new ComprobanteIngresoDao(_configuration);
-            _ce = new ComprobanteEgresoDao(_configuration);
             _httpContextAccessor = httpContextAccessor;
             _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
         }
@@ -41,8 +39,13 @@ namespace WebUI.Controllers.GestionFinanciera
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            var res = await _ce.GetAsync(_idRol, json);
-            return Ok(res);
+
+            GenericResponse _response = new GenericResponse();
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            parameters.Add("idUsuarioRol", _idRol);
+            parameters.Add("json", SqlValidation.ValidateSqlString(json));
+            _response = DbResponse.SPDataTable(await _dao.GetDataTableAsync("GestFinanc.ComprobanteEgreso_Insert", parameters));
+            return Ok(_response);
         }
 
         [HttpPost]
@@ -68,14 +71,6 @@ namespace WebUI.Controllers.GestionFinanciera
             parameters.Add("observacion", observacion);
             _response = DbResponse.SPDefault(await _dao.GetDataTableAsync("GestFinanc.ComprobanteEgreso_Update_Cancel", parameters));
             return Ok(_response);
-        }
-
-
-        public async Task<IActionResult> GetByDocument(int idTipoDocumento, int idComprobante)
-        {
-           var res = await _ce.GetByDocumentAsync(_idRol, idTipoDocumento, idComprobante);
-            return Ok(res);
-
         }
     }
 }
