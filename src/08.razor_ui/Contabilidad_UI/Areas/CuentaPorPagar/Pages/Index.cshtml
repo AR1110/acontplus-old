@@ -114,7 +114,7 @@
                         md-on-select="selectedRow"  
                         md-select-id="idCuentaPorPagar" 
                         md-auto-select 
-                        ng-repeat="item in cuentasPorPagar" md-raised>
+                        ng-repeat="item in cuentasPorPagar" ng-style="{'background-color': item.colorRow}">
                         <td md-cell>
                             <md-menu>
                                 <md-button aria-label="Open demo menu" class="md-icon-button"
@@ -154,5 +154,5 @@
 </div>
 
 @section Scripts {
-    <script src="~/js/controllers/contabilidad/cuentaPorPagarCtrl.min.js?v=0.17" asp-append-version="true"></script>
+    <script src="~/js/controllers/contabilidad/cuentaPorPagarCtrl.min.js?v=0.22" asp-append-version="true"></script>
 }

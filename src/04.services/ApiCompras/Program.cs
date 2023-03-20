@@ -1,4 +1,6 @@
 using BL.JwtAuthenticationManger;
+using Helpers;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -11,12 +13,15 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
-builder.Services.AddTransient<IConfiguration>(sp =>
-{
-    IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-    configurationBuilder.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
-    return configurationBuilder.Build();
-});
+//builder.Services.AddTransient<IConfiguration>(sp =>
+//{
+//    IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
+//    configurationBuilder.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
+//    return configurationBuilder.Build();
+//});
+
+builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
+ConfigHelper.AddJsonFiles(builder.Configuration);
 
 string[] origins = builder.Configuration.GetSection("SafeOrigins").Value.Split('|');
 builder.Services.AddCors(options =>

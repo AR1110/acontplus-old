@@ -46,7 +46,7 @@
                     rdlcParams: JSON.parse(tempArray.rdlcParams)[0]
                 } 
                 let urlReports = document.getElementById('urlReports').value
-                mS.getFile('POST', urlReports + 'api/Reporte/GetReport', parameters).then(
+                mS.getFile('POST', urlReports + 'api/Reporte/DownloadDynamic', parameters).then(
                     response => {
                         if (response) {
                             hideLoader()

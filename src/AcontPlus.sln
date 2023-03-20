@@ -107,7 +107,15 @@ Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "PrinterServerSetup", "10.se
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BL.Reports", "03.business_logic\BL.Reports\BL.Reports.csproj", "{8AA315D7-680B-4EA3-8F1D-D7F152DC7159}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiReports", "04.services\ApiReports\ApiReports.csproj", "{D898C547-F847-49F4-87F0-0D6115CAF984}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiReports", "04.services\ApiReports\ApiReports.csproj", "{D898C547-F847-49F4-87F0-0D6115CAF984}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "00.shared_settings", "00.shared_settings", "{0A9A67D0-56DF-45E4-A4CF-2BDE956C6F17}"
+	ProjectSection(SolutionItems) = preProject
+		00.shared_settings\sharedsettings.Development.json = 00.shared_settings\sharedsettings.Development.json
+		00.shared_settings\sharedsettings.json = 00.shared_settings\sharedsettings.json
+		00.shared_settings\sharedsettings.Production.json = 00.shared_settings\sharedsettings.Production.json
+		00.shared_settings\sharedsettings.Staging.json = 00.shared_settings\sharedsettings.Staging.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

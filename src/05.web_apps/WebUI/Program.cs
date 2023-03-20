@@ -2,6 +2,7 @@ using WebUI.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using WebUI.Hubs;
+using Helpers;
 
 namespace testWebApi
 {
@@ -96,14 +97,17 @@ namespace testWebApi
 
             builder.Services.AddScoped<CustomCookieAuthenticationEvents>();
 
-            builder.Services.AddTransient<IConfiguration>(sp =>
-            {
-                IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-                configurationBuilder.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
-                return configurationBuilder.Build();
-            });
+            //builder.Services.AddTransient<IConfiguration>(sp =>
+            //{
+            //    IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
+            //    configurationBuilder.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
+            //    return configurationBuilder.Build();
+            //});
 
             builder.Services.AddHttpContextAccessor();
+
+            builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
+            ConfigHelper.AddJsonFiles(builder.Configuration);
 
             var app = builder.Build();
 
