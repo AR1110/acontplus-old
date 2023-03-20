@@ -1,11 +1,22 @@
-(function() {
+(function () {
     'use strict';
     angular.module('acontPlusApp')
         .controller('reporteCtrl', reporteCtrl);
 
-    reporteCtrl.$inject = ['$scope', 'mainService', 'toastService', 'FileSaver', 'Blob'];
+    reporteCtrl.$inject = ['$scope', 'mainService', 'toastService', 'FileSaver', 'Blob', 'screenSize', '$timeout'];
 
-    function reporteCtrl($scope, mS, tS, FileSaver, Blob) {
+    function reporteCtrl($scope, mS, tS, FileSaver, Blob, _sS, $timeout) {
+
+        $scope.isMobile = _sS.on('xs, sm', function (isMatch) {
+            $scope.isMobile = isMatch
+        })
+
+        if (!$scope.isMobile) {
+            $timeout(() => {
+                document.getElementById('menu_toggle').click()
+            }, 1100)
+        }
+
         let accion = JSON.parse(localStorage.getItem("accion"));
         if (accion === null) {
             location.href = "/Home/Index";
@@ -13,45 +24,43 @@
             $scope.accion = accion[0];
         }
 
-        let url = '/Reporte/';
-
         $scope.reports = [];
 
-        $scope.initialLoad = function() {
-            
+        $scope.initialLoad = function () {
+
             try {
                 $scope.reports = [];
-                mS.getData('get', url + 'Get?json=' + JSON.stringify({typeList: 1})).then(response=>{
+                mS.getData('get', 'Reporte/Get/' + JSON.stringify({ typeList: 1 }), null, true).then(response => {
                     console.log(response)
-                    if(response.code==="0"){
+                    if (response.code === "0") {
                         $scope.reports = [];
                         console.log(response)
                     }
-                    if(response.code=="1"){
+                    if (response.code == "1") {
                         console.log(JSON.parse(response.payload))
-                        $scope.reports = JSON.parse(response.payload) || [];                        
+                        $scope.reports = JSON.parse(response.payload) || [];
                     }
                 })
             } catch (error) {
-                console.log(error)            
+                console.log(error)
             }
 
         }
         $scope.initialLoad();
 
 
-        $scope.expandDetalle = function(item) {
+        $scope.expandDetalle = function (item) {
             try {
                 item.expanded = !item.expanded;
                 showLoader()
-                mS.getData('get', url + 'Get?json=' + JSON.stringify({typeList: 2, id: item.idReporteParametro})).then(response => {
+                mS.getData('get', 'ReporteDataSource/?json=' + JSON.stringify({ typeList: 2, id: item.idReporteParametro })).then(response => {
                     console.log(response);
-                    if(response.code==="0"){
+                    if (response.code === "0") {
                         item.dataSources = []
                         hideLoader()
                         console.log(response)
                     }
-                    if(response.code==="1"){                    
+                    if (response.code === "1") {
                         item.dataSources = JSON.parse(response.payload) || []
                         hideLoader();
                     }
@@ -66,7 +75,7 @@
 
         $scope.operation = 0;
         $scope.reporte = {};
-        $scope.openModal = function(data = null, type) {
+        $scope.openModal = function (data = null, type) {
 
             if (type == 1 || type == 2) {
                 $scope.operation = type;
@@ -84,18 +93,18 @@
 
         };
 
-        $scope.save = function() {
+        $scope.save = function () {
             var method = '';
             var urlMethod = '';
             if ($scope.operation == 1) {
                 method = 'Post';
-                urlMethod = 'Post';
+                urlMethod = 'Reporte';
             } else {
                 method = 'Put';
-                urlMethod = 'Put?idReporte=' + $scope.reporte.idReporte;
+                urlMethod = 'Reporte/' + $scope.reporte.idReporte;
             };
 
-            mS.getData(method, url + urlMethod, $scope.reporte).then(function(response) {
+            mS.getData(method, urlMethod, $scope.reporte).then(function (response) {
                 if (response.id == 0) {
                     tS.toastr('warning', response.message);
                     return;
@@ -105,12 +114,12 @@
                     $scope.initialLoad();
                     $('#reporteModal').modal('hide');
                 };
-            }, function(error) {
+            }, function (error) {
                 console.log(error);
             });
         };
 
-        $scope.askToDelete = function(item) {
+        $scope.askToDelete = function (item) {
             Swal.fire({
                 title: 'Eliminar',
                 text: "¿Está seguro de eliminar los parametros del reporte: " + item.reportPath + "?",
@@ -129,8 +138,8 @@
         };
 
 
-        $scope.delete = function(item) {
-            mS.getData('Delete', url + 'Delete?idReporte=' + item.idReporte).then(function(response) {
+        $scope.delete = function (item) {
+            mS.getData('Delete', 'Reporte/' + item.idReporte).then(function (response) {
                 if (response.id == 0) {
                     tS.toastr('warning', response.message);
                     return;
@@ -139,12 +148,12 @@
                     tS.toastr('success', response.message);
                     $scope.initialLoad();
                 };
-            }, function(error) {
+            }, function (error) {
                 console.log(error);
             });
         };
 
-        $scope.getBarcode = function(item) {
+        $scope.getBarcode = function (item) {
             JsBarcode("#barcode", item, {
                 format: "CODE128",
                 lineColor: "#000",
@@ -157,7 +166,7 @@
             return barcodeData;
         };
 
-        $scope.getReport = function(item) {
+        $scope.getReport = function (item) {
             var format = '', barcode = '';
             if (item == 1) {
                 format = 'pdf'
@@ -178,7 +187,7 @@
                 }),
                 dataParams: JSON.stringify({ testProp: 'param for get Data' })
             };
-            mS.getFile('Post', '/Reporte/Download', parameters).then(function(response) {
+            mS.getFile('Post', '/Reporte/Download', parameters).then(function (response) {
                 if (item == 1) {
                     var fileBlob = new Blob([response.data], {
                         type: response.data.type
@@ -212,7 +221,7 @@
                     //};
                     return;
                 };
-            }, function(error) {
+            }, function (error) {
                 console.log(error);
                 return;
             });
@@ -223,60 +232,60 @@
 
 
 
-        $scope.openModalDs = (item)=>{
+        $scope.openModalDs = (item) => {
             $scope.tempDataSource = item;
             $scope.operationDs = 1;
             $scope.dataSource = {}
             $("#dataSourceModal").modal('show');
         }
 
-        $scope.openModalEditDs = (item, dataDs)=>{
+        $scope.openModalEditDs = (item, dataDs) => {
 
-            $scope.tempDataSource = item;            
+            $scope.tempDataSource = item;
             $scope.operationDs = 2;
             $scope.dataSource = Object.assign({}, dataDs)
             $("#dataSourceModal").modal('show');
         }
 
 
-        $scope.saveDs = ()=>{
-            if(!$scope.dataSource.dataSource){
+        $scope.saveDs = () => {
+            if (!$scope.dataSource.dataSource) {
                 tS.toastr('warning', 'Ingrese el DataSource')
                 return
             }
 
-            if([null, undefined, ""].includes($scope.dataSource.position)){
+            if ([null, undefined, ""].includes($scope.dataSource.position)) {
                 tS.toastr('warning', 'Ingrese el índice')
                 return
             }
 
-            if($scope.operationDs===1){
+            if ($scope.operationDs === 1) {
                 $scope.dataSource.idReporteParametro = $scope.tempDataSource.idReporteParametro
             }
-            
-            $scope.dataSource.typeRegister =  $scope.operationDs;
+
+            $scope.dataSource.typeRegister = $scope.operationDs;
             console.log($scope.dataSource)
-            mS.getData('post',  url + 'SaveDs?json=' + JSON.stringify($scope.dataSource)).then(response=>{
+            mS.getData('post', 'ReporteDataSource/?json=' + JSON.stringify($scope.dataSource)).then(response => {
                 console.log(response)
-                if(response.code=="0"){
+                if (response.code == "0") {
                     tS.toastr('warning', response.message)
                 }
-                if(response.code=="1"){
+                if (response.code == "1") {
                     $("#dataSourceModal").modal('hide');
                     $scope.dataSource = {}
-                    mS.getData('get', url + 'Get?json=' + JSON.stringify({typeList: 2, id: $scope.tempDataSource.idReporteParametro})).then(response => {
-                    
-                        if(response.code==="0"){
+                    mS.getData('get', url + 'Get?json=' + JSON.stringify({ typeList: 2, id: $scope.tempDataSource.idReporteParametro })).then(response => {
+
+                        if (response.code === "0") {
                             $scope.tempDataSource.dataSources = []
                             hideLoader()
                             console.log(response)
                         }
-                        if(response.code==="1"){                    
+                        if (response.code === "1") {
                             $scope.tempDataSource.dataSources = JSON.parse(response.payload) || []
                             hideLoader();
                         }
                     })
-                    
+
                     tS.toastr('success', response.message)
                 }
             })
@@ -284,34 +293,34 @@
         }
 
 
-        $scope.askToDeleteDs = async(item, dataDs)=>{
-            try {    
-                Swal.fire({                    
+        $scope.askToDeleteDs = async (item, dataDs) => {
+            try {
+                Swal.fire({
                     text: "Esta seguro de eliminar?",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
                     confirmButtonText: 'Si, eliminar!',
-                    cancelButtonText:'No, cancelar!',
+                    cancelButtonText: 'No, cancelar!',
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        mS.getData('delete',  url + 'DeleteDs?json=' + JSON.stringify(dataDs)).then(response=>{
+                        mS.getData('delete', 'ReporteDataSource/?json=' + JSON.stringify(dataDs)).then(response => {
                             console.log(response)
-                            if(response.code=="0"){
+                            if (response.code == "0") {
                                 tS.toastr('warning', response.message)
                             }
-                            if(response.code=="1"){
+                            if (response.code == "1") {
                                 let index = item.dataSources.indexOf(dataDs, 1);
                                 item.dataSources.splice(index, 1);
                                 tS.toastr('success', response.message)
                             }
-                        })                       
+                        })
                     }
-                })                                                      
+                })
             } catch (error) {
-                console.log(error)            
-           }            
+                console.log(error)
+            }
         }
 
 

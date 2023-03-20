@@ -17,13 +17,11 @@ namespace WebUI.Controllers.Ingresos
         private DataAccessObject _dao;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private IConfiguration _config;
-        private readonly string _urlApi = "";
         private readonly int _idRol;
 
         public RetencionCompraController(IConfiguration config, IHttpContextAccessor httpContextAccessor)
         {
             _config = config;
-            _urlApi = _config.GetSection("UrlApis").GetSection("AcontPlusApi").Value;
             _httpContextAccessor = httpContextAccessor;
             _dao = new DataAccessObject(_config);
             _gra = new GenerateRetencionDao(_config);

@@ -470,11 +470,26 @@
         "AllowedScopes": []
       }
     },
-
     {
       "UpstreamPathTemplate": "/api/Impresion/?json={json}",
       "UpstreamHttpMethod": [ "Get" ],
       "DownstreamPathTemplate": "/api/Impresion/?json={json}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 44354
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/Reporte/{method}/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "DownstreamPathTemplate": "/api/Reporte/{method}/{everything}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {

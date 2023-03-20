@@ -17,7 +17,6 @@ namespace WebUI.Controllers.Compras
         private readonly int _idRol;
         GenericResponse _gr = new();
         private NotaCreditoProveedorDao _ncprov;
-        private readonly string _urlApi = "";
         public NotaCreditoProveedorController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
@@ -25,7 +24,6 @@ namespace WebUI.Controllers.Compras
             _ncprov = new NotaCreditoProveedorDao(_configuration);
             _httpContextAccessor = httpContextAccessor;
             _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
-            _urlApi = _configuration.GetSection("UrlApis").GetSection("AcontPlusApi").Value;
         }
 
         [Authorize]
@@ -84,34 +82,5 @@ namespace WebUI.Controllers.Compras
             var res = await _ncprov.DeleteAsync(idRol, id);
             return Ok(res);
         }
-
-
-
-        //Generar Reporte
-        public async Task<IActionResult> Download([FromBody] ApiReportParams parameters)
-        {
-            try
-            {
-                parameters.idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
-                var response = await new ApiServer(_urlApi).PostAsync<FileModel>("api/NotaCreditoProveedor/Get/", parameters);
-                if (response.Content.Length > 0)
-                {
-                    return File(response.Content, response.ContentType, response.FileName);
-                }
-                else
-                {
-                    _gr.id = "0";
-                    _gr.message = "Problemas en el servidor de documentos";
-                }
-            }
-            catch (Exception ex)
-            {
-                _gr.id = "0";
-                _gr.message = ex.Message;
-            }
-            return Ok(_gr);
-        }
-
-
     }
 }
