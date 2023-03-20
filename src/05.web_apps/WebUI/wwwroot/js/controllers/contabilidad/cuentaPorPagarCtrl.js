@@ -104,7 +104,7 @@
             
             let dataSearch = {
                 tipo: 1,
-              //  checkboxFecha: true,
+                checkboxFecha: true,
                 checkboxEstab: $scope.dataSearch.codEstab==='ALL' ? $scope.dataSearch.checkboxEstab = false: $scope.dataSearch.checkboxEstab=true,
                 codEstab: $scope.dataSearch.codEstab,
                 checkboxEstado: $scope.dataSearch.codEstado==='ALL' ? $scope.dataSearch.checkboxEstado = false: $scope.dataSearch.checkboxEstado=true,
@@ -216,6 +216,7 @@
                 let modalRef = _modalSvc.openModalCustom(modalParams)
                 modalRef.result.then(result=>{
                     if(typeof result==='object'){
+                        $scope.selectedDocumentos = [];
                         $scope.getCuentasPorPagar();
                     }
                 })
@@ -269,6 +270,7 @@
                     }
 
                     if(response.code==="1"){
+                        console.log(JSON.parse(response.payload)[0])
                         item.cuotas = JSON.parse(response.payload)[0] || [];                                                   
                         hideLoader();
                     }                   
@@ -371,6 +373,7 @@
                         let modalRef = _modalSvc.openModalCustom(modalParams)
                         modalRef.result.then(result=>{
                             if(typeof result==='object'){
+                                $scope.selectedDocumentos = [];
                                 $scope.getCuentasPorPagar();
                             }
                         })
@@ -384,6 +387,43 @@
 
             } catch (error) {
                 hideLoader();                
+                console.log(error)
+            }
+        }
+
+
+        $scope.openModalHistorialMov = (item)=>{
+            try {
+
+                let modalParams = {
+                    template: FILE_PATH_PARTIAL_UI + 'Shared/_ModalHistorialPago.cshtml',
+                    controller: 'historialMovimientoCtrl',
+                    size:'xl',
+                    isRenderRazorPartial: true
+                }
+
+                let spParams = JSON.stringify({
+                    tipo: 4,
+                    idCuentaPorPagar: item.idCuentaPorPagar
+                })
+                
+                showLoader();
+                _mS.getData('get', 'CuentaPorPagar/' + spParams, null, true).then(response=>{
+                    if(response.code==='0'){
+                        hideLoader()
+                        _form.sweetAlert('warning', response.message)
+                    }
+                    if(response.code==='1'){                        
+                        modalParams.params = {
+                            data: item,
+                            historialMovimientos: JSON.parse(response.payload)[0]
+                        }
+                        _modalSvc.openModalCustom(modalParams)
+                        hideLoader()
+                    }
+                })
+            } catch (error) {
+                hideLoader(); 
                 console.log(error)
             }
         }
@@ -1163,11 +1203,11 @@
                         
                         let spParams = {
                             comprobante: JSON.stringify({
-                                idProveedor: $scope.data.idProveedor,
+                                idProveedor: $scope.proveedor.idProveedor,
                                 total: $scope.data.totalValorAbono,
                                 codEstab: $scope.data.codEstab,
-                                numeroIdentificacion: $scope.data.identificacion,
-                                nombreFiscal: $scope.data.nombreFiscal
+                                numeroIdentificacion: $scope.proveedor.identificacion,
+                                nombreFiscal: $scope.proveedor.nombreFiscal
                             }),
                             pago: JSON.stringify($scope.datosPago.map(item=>({
                                 idEntidadFinanciera: item.idEntidadFinanciera,
@@ -1498,7 +1538,22 @@
 
 
     //=======================================START MOVIMIENTO CAJA============================================== 
-    
+    app.controller('historialMovimientoCtrl', historialMovimientoCtrl);
+
+    historialMovimientoCtrl.$inject = ["$scope", "$uibModalInstance", "params"]
+    function historialMovimientoCtrl($scope, $uibModalInstance, params) {
+     
+        let {data, historialMovimientos} = params
+        
+        $scope.data = Object.assign({}, data)
+        $scope.historialMovimientos = historialMovimientos;
+
+
+        $scope.closeModal = ()=>{
+            $uibModalInstance.close();
+        }
+
+    }
 
 
 })(window.angular)
