@@ -28,10 +28,12 @@
             }, 1100)
         }
 
+
         //Filter 
         let thisMoment = moment()
         let endOfMonth = moment(thisMoment).endOf('month')
         let startOfMonth = moment(thisMoment).startOf('month')
+       
         //https://www.daterangepicker.com/
         $scope.dateRangePicker = {
             date: { startDate: startOfMonth, endDate: endOfMonth },
@@ -72,7 +74,9 @@
         }
 
         $scope.tipoDocumentos = [
-            
+            {codigo: '03', descripcion: 'LIQUIDACION COMPRA'},
+            {codigo: 'FC', descripcion: 'FACTURA'},
+            {codigo: 'DH', descripcion: 'DOCUMENTO NO HABITUAL'},
         ];
 
         $scope.cuentasPorPagar = [];
@@ -80,7 +84,7 @@
     
         $scope.options = {
             limitOptions: [5, 10, 15],
-            rowSelection: true,
+            rowSelection: false,
             multiSelect: true,
             autoSelect: true,
             decapitate: false,
@@ -98,28 +102,34 @@
               
             $scope.cuentasPorPagar = [];
             
-            let dataSearch = JSON.stringify({
+            let dataSearch = {
                 tipo: 1,
               //  checkboxFecha: true,
-                checkboxEstab: $scope.dataSearch.codEstab==='ALL' ? $scope.dataSearch.checkboxEstab = false: $scope.dataSearch.checkboxEstab,
+                checkboxEstab: $scope.dataSearch.codEstab==='ALL' ? $scope.dataSearch.checkboxEstab = false: $scope.dataSearch.checkboxEstab=true,
                 codEstab: $scope.dataSearch.codEstab,
-                checkboxEstado: $scope.dataSearch.codEstado==='ALL' ? $scope.dataSearch.checkboxEstado = false: $scope.dataSearch.checkboxEstado,
+                checkboxEstado: $scope.dataSearch.codEstado==='ALL' ? $scope.dataSearch.checkboxEstado = false: $scope.dataSearch.checkboxEstado=true,
                 codEstado: $scope.dataSearch.codEstado,
-                checkboxTipoDoc: $scope.dataSearch.codDoc ==='ALL' ? $scope.dataSearch.checkboxTipoDoc =false: $scope.dataSearch.checkboxTipoDoc,
-                checkboxProveedor: $scope.dataSearch.idProveedor>0? $scope.dataSearch.checkboxProveedor = true: $scope.dataSearch.checkboxProveedor,
+                checkboxTipoDoc: $scope.dataSearch.codDoc ==='ALL' ? $scope.dataSearch.checkboxTipoDoc =false: $scope.dataSearch.checkboxTipoDoc = true,
+                codDoc: $scope.dataSearch.codDoc,
+                checkboxProveedor: $scope.dataSearch.idProveedor>0? $scope.dataSearch.checkboxProveedor = true: $scope.dataSearch.checkboxProveedor=false,
                 idProveedor: $scope.dataSearch.idProveedor,
                 dateStart:  $scope.dateRangePicker.date.startDate,
                 dateEnd:  $scope.dateRangePicker.date.endDate
-            })
+            }
 
-            console.log(dataSearch)
+            //Activar seleccion multiple para pago  por lote 
+            if(dataSearch.checkboxEstab && dataSearch.checkboxProveedor){
+                $scope.options.rowSelection = true;
+            }else{
+                $scope.options.rowSelection = false;
+            }        
           
-            $scope.promise = _mS.getData('get', 'CuentaPorPagar/' + dataSearch, null, true).then(response => {
+            $scope.promise = _mS.getData('get', 'CuentaPorPagar/' + JSON.stringify(dataSearch), null, true).then(response => {
                 
                 if (response.code == '0') {
                     hideLoader();
                     $scope.cuentasPorPagar = [];
-                    _tS.toastr('warning', response.message)
+                    console.log(response)
                 }
                 
                 if (response.code == '1') {                                           
@@ -143,13 +153,6 @@
                     console.log($scope.establecimientos)                                                                  
                 })
 
-                _mS.getData('get', '/TipoDocumento/Get').then(response => {
-                    let tempDocs = JSON.parse(response.data)                    
-                    $scope.tipoDocumentos = tempDocs.filter(item=>['FC', 'LC'].includes(item.codigo))
-                    console.log(JSON.parse(response.payload))
-
-                })
-
                 commonSvc.getEstadoDocByCodDoc('CP').then(response => {
                     console.log(response)
                     $scope.estadoDocumentos = response;
@@ -163,7 +166,135 @@
 
         $scope.initialLoad()
 
-         //======================================MODAL CUOTA================================================
+
+        //----------------------------------------FILTRO------------------------------------------------------------
+        //-------------------------------------------Proveedor filter------------------------------
+        $scope.proveedorFilte={};
+        $scope.searchProveedorFilter = (textSearch)=>{
+            console.log(textSearch)
+            return  commonSvc.proveedorSearch(textSearch)
+        };
+
+        $scope.selectedOnChangeFilter = (item)=> {            
+            $scope.dataSearch.idProveedor = item.proveedor.idProveedor            
+        }
+
+        $scope.getCuentasPorProveedor = ()=>{
+            if($scope.dataSearch.idProveedor>0){
+                $scope.getCuentasPorPagar();
+            }else{
+                _tS.toastr('warning', 'Seleccione el Proveedor')
+            }
+        }
+
+        $scope.cancelCuentasPorProveedor = ()=>{
+            $scope.dataSearch.selectedProveedor = null;
+            $scope.dataSearch.idProveedor = 0;
+            $scope.getCuentasPorPagar();
+        }
+
+
+        //-------------------------------------PAGO ----------------------------
+        $scope.openModalPagoLote = ()=>{
+            if($scope.dataSearch.codEstab!=='ALL' && $scope.dataSearch.idProveedor > 0 && $scope.options.rowSelection){
+
+                let modalParams = {
+                    controller: 'modalPagoCtrl',
+                    template: FILE_PATH_PARTIAL_UI + 'Shared/_ModalPago.cshtml',
+                    size: 'xl',                   
+                  //  windowClass: 'uibModalFullScreen',
+                    isRenderRazorPartial: true
+                }
+                
+
+                modalParams.params = {
+                    data: $scope.selectedDocumentos[0],
+                    selectedDocumentos: $scope.selectedDocumentos,                    
+                }
+                
+                //Open Modal 
+                let modalRef = _modalSvc.openModalCustom(modalParams)
+                modalRef.result.then(result=>{
+                    if(typeof result==='object'){
+                        $scope.getCuentasPorPagar();
+                    }
+                })
+
+
+            }else{
+
+                _form.sweetAlert(
+                    'info', 
+                    `<div class="text-left">
+                        Para realizar Pago por Lote realice lo siguiente: 
+                        <ol>
+                            <li value="01">Seleccione el Establecimiento.</li>                            
+                            <li>Seleccione el Proveedor</li>                            
+                            <li>Seleccione los documentos <span class="text-danger"><b>pendientes</b></span> </li>                    
+                        </ol>
+                    </div>`
+                )
+            }
+        }
+
+       
+        //Obtenemos las cuotas
+        $scope.getCuotaCuentaPorPagar = (item)=>{
+            //Params APi 
+            let spParams = JSON.stringify({
+                idCuentaPorPagar: item.idCuentaPorPagar,
+                codPago: 'PE',
+                tipo: 2
+            })
+
+            return _mS.getData('get', 'CuentaPorPagar/' + spParams, null, true);
+        }
+
+
+        $scope.selectedRow = (item)=>{
+            try {                
+                $scope.proveedor ={
+                    idProveedor: item.idProveedor
+                }
+                
+                showLoader();
+              
+                
+                $scope.getCuotaCuentaPorPagar(item).then(response=>{
+                   
+                    if(response.code==="0"){
+                        hideLoader();
+                        console.log(response)
+                        $scope.deleteDocSeleted(item);
+                    }
+
+                    if(response.code==="1"){
+                        item.cuotas = JSON.parse(response.payload)[0] || [];                                                   
+                        hideLoader();
+                    }                   
+                }).catch(error =>{
+                    hideLoader();
+                    console.log(error)
+                })                
+                
+                
+            } catch (error) {
+                $scope.deleteDocSeleted(item);
+                hideLoader();
+                console.log(error)
+            }
+           
+        }
+
+        $scope.deleteDocSeleted = (item)=> {
+            let index = $scope.selectedDocumentos.indexOf(item);
+            $scope.selectedDocumentos.splice(index, 1);
+        }
+    
+
+
+    
+        //======================================MODAL CUOTA================================================
       
         $scope.openModalCuota = async(item)=>{    
             try {
@@ -207,58 +338,9 @@
             }                        
         }
 
-        $scope.selectedRow = (item)=>{
-            try {
-                $scope.proveedor ={
-                    idProveedor: item.idProveedor
-                }
-                
-                mS.getData('get', '')
-                
-            } catch (error) {
-                
-            }
-           
-        }
-
-        $scope.getCuotaCuentaPorPagar = (item)=>{
-            //Params APi 
-            let spParams = JSON.stringify({
-                idCuentaPorPagar: item.idCuentaPorPagar,
-                codPago: 'PE',
-                tipo: 2
-            })
-
-            _mS.getData('get', 'CuentaPorPagar/' + spParams, null, true).then(response =>{                    
-                if(response.code==="0"){
-                    _form.sweetAlert('warning', response.message)
-                }
-
-                if(response.code==="1"){
-                   
-                    let cuotas = JSON.parse(response.payload)[0] || [];
-                   
-                    modalParams.params = {
-                        data: item,
-                        cuotas
-                    }
-                    
-                    //Open Modal 
-                    let modalRef = _modalSvc.openModalCustom(modalParams)
-                    modalRef.result.then(result=>{
-                        console.log(result)
-                    })
-                }
-
-            })
-
-
-        }
-
-
+       
         $scope.openModalPago = async(item)=>{
-            try {
-                console.log(item)
+            try {                
                 //Params Modal
                 let modalParams = {
                     controller: 'modalPagoCtrl',
@@ -268,26 +350,21 @@
                     isRenderRazorPartial: true
                 }
 
-                //Params APi 
-                let spParams = JSON.stringify({
-                    idCuentaPorPagar: item.idCuentaPorPagar,
-                    codPago: 'PE',
-                    tipo: 2
-                })
-                
-                _mS.getData('get', 'CuentaPorPagar/' + spParams, null, true).then(response =>{
+                showLoader();
+                $scope.getCuotaCuentaPorPagar(item).then(response => {
                     
                     if(response.code==="0"){
-                        _form.sweetAlert('warning', response.message)
+                        hideLoader()
+                       console.log(response)
                     }
-
+    
                     if(response.code==="1"){
                        
-                        let cuotas = JSON.parse(response.payload)[0] || [];
+                        item.cuotas = JSON.parse(response.payload)[0] || [];
                        
                         modalParams.params = {
-                            data: item,
-                            cuotas
+                            selectedDocumentos: [item],
+                            data: item
                         }
                         
                         //Open Modal 
@@ -297,10 +374,16 @@
                                 $scope.getCuentasPorPagar();
                             }
                         })
+                        hideLoader()
                     }
 
-                })
+                }).catch(error=>{
+                    hideLoader()
+                    console.log(error)
+                })                
+
             } catch (error) {
+                hideLoader();                
                 console.log(error)
             }
         }
@@ -655,29 +738,32 @@
 
     function modalPagoCtrl($scope, $uibModalInstance, mS, _modalSvc, fS, params){
 
-        let {data, cuotas}  = params;
+        let {data, selectedDocumentos}  = params;
 
-        $scope.data = Object.assign({}, data);
+        $scope.proveedor = {
+            idProveedor: data.idProveedor,
+            nombreFiscal: data.nombreFiscal,
+            identificacion: data.identificacion
+        };
+
+        $scope.data = {
+            codEstab: data.codEstab,
+        }
 
         $scope.data.totalAbonoAnterior = 0;
-        $scope.data.abono = 0;
-        $scope.data.abonoPosfechado = 0;
-        $scope.data.abonoTotal = 0;
-        $scope.data.saldo = $scope.data.importeTotal;
+        $scope.data.totalValorAbono = 0;                
+        $scope.data.totalSaldo = 0
         $scope.data.valorCambio = 0;  
 
         $scope.datosPago = [];        
         $scope.pagosDetalle = [];
         $scope.historialPagos = [];
 
-        
     
-    
-        $scope.selectedDocumentos = [{
-            ...data,
-            cuotas        
-        }]
+        $scope.selectedDocumentos = [];
+        $scope.cloneSelectedDocumentos = [];
 
+        $scope.selectedDocumentos =     JSON.parse(JSON.stringify(selectedDocumentos));        
         $scope.cloneSelectedDocumentos = JSON.parse(JSON.stringify($scope.selectedDocumentos));
 
 
@@ -737,10 +823,7 @@
                 }
 
                 let params = {
-                    proveedor: {
-                        idProveedor: $scope.data.idProveedor,
-                        nombreFiscal: $scope.data.nombreFiscal
-                    },
+                    proveedor: $scope.proveedor,
                     importeTotal: $scope.data.importeTotal,                    
                     saldo: $scope.data.totalSaldo,
                 };
@@ -1182,31 +1265,36 @@
         //Se inicializa al abrir modal 
         $scope.initialLoad = ()=>{
 
-            mS.getData('get', 'CuentaPorPagar/' + JSON.stringify({tipo: 3, idProveedor: $scope.proveedor.idProveedor}), null, true).then(response=>{
+            try {
+                mS.getData('get', 'CuentaPorPagar/' + JSON.stringify({tipo: 3, idProveedor: $scope.proveedor.idProveedor}), null, true).then(response=>{
               
-                if(response.code==="0"){
-                    console.log(response)
-                }
-              
-                if(response.code==="1"){
-                    
-                    let tempData = JSON.parse(response.payload);
-
-                    console.log(tempData)
-                    
-                    $scope.entidadesFinancieras = tempData[0];
-                    $scope.tempSubEntidadesFinancieras = tempData[1];
-
-                    $scope.selectedIndexTab = $scope.entidadesFinancieras.findIndex(item=>item.codigo==='EFE');
-                                      
-                    $scope.bancos = tempData[2];
-                    $scope.ciudades = tempData[3];
-
-                    //Documentos Retencion Compra y Nota de Credito
-                    $scope.documentosElectronicos =  tempData[4];  
-
-                }
-            })
+                    if(response.code==="0"){
+                        console.log(response)
+                    }
+                  
+                    if(response.code==="1"){
+                        
+                        let tempData = JSON.parse(response.payload);
+    
+                        console.log(tempData)
+                        
+                        $scope.entidadesFinancieras = tempData[0];
+                        $scope.tempSubEntidadesFinancieras = tempData[1];
+    
+                        $scope.selectedIndexTab = $scope.entidadesFinancieras.findIndex(item=>item.codigo==='EFE');
+                                          
+                        $scope.bancos = tempData[2];
+                        $scope.ciudades = tempData[3];
+    
+                        //Documentos Retencion Compra y Nota de Credito
+                        $scope.documentosElectronicos =  tempData[4];  
+    
+                    }
+                })
+            } catch (error) {
+                console.log('Initiload Form Payment', error);
+            }
+            
         }
 
         $scope.initialLoad();
@@ -1407,6 +1495,10 @@
     }
     //---------------------------------------END FORM PAYMENT----------------------------------------------------
 
+
+
+    //=======================================START MOVIMIENTO CAJA============================================== 
+    
 
 
 })(window.angular)

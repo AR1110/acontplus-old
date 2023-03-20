@@ -805,6 +805,7 @@ export class ModalBaseCtrl{
             // }else{
                 this.addItem();
             // }
+            
 
             this.indexRow = this.gridOptions.data.findIndex(val => val.idArticulo === this.dataArticulo.articulo.idArticulo);           
 
@@ -888,14 +889,19 @@ export class ModalBaseCtrl{
         
         self.data = Object.assign(self.data, self.uiGridInvoice.getTotales()); 
 
-        this.focusColumnCantidad();
+        this.focusColumnCantidad(entity);
         
         
     }
 
-    focusColumnCantidad() {
-        const self = this;
-        let index = self.gridOptions.columnDefs.findIndex(item=>item.field==='cantidad')
+    focusColumnCantidad(entity={}) {
+        let self = this, index = 0;
+
+        if(entity.llevaInventario){
+            index = self.gridOptions.columnDefs.findIndex(item=>item.field==='cantidad')
+        }else{
+            index = self.gridOptions.columnDefs.findIndex(item=>item.field==='descripcion')
+        }
         self.$scope.gridApi.cellNav.scrollToFocus(
             self.gridOptions.data[0],
             self.gridOptions.columnDefs[2]
