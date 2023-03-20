@@ -31,7 +31,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while getting reports: \n" + ex.ToString());
+                _log.LogError("Error while getting datasources: \n" + ex.ToString());
                 return BadRequest(ex.Message);
             }
         }
@@ -50,7 +50,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while insert report: \n" + ex.ToString());
+                _log.LogError("Error while insert datasource: \n" + ex.ToString());
                 return BadRequest(ex.Message);
             }
         }
@@ -70,7 +70,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while updating report: \n" + ex.ToString());
+                _log.LogError("Error while updating datasource: \n" + ex.ToString());
                 return BadRequest(ex.Message);
             }
         }
@@ -89,7 +89,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while deleting report: \n" + ex.ToString());
+                _log.LogError("Error while deleting datasource: \n" + ex.ToString());
                 return BadRequest(ex.Message);
             }
         }

@@ -2,8 +2,10 @@
 using PrinterServer.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -133,7 +135,7 @@ namespace PrinterServer
                             }
                             dataReport.dataSources = ldDataSources;
                         }
-                        if (item.Key == "rdlcParams")
+                        if (item.Key == "rdlcParams" && item.Value != "undefined")
                         {
                             var _arrayParams = JsonConvert.DeserializeObject<IEnumerable<IDictionary<string, string>>>(item.Value);
                             foreach (var paramRdlc in _arrayParams.FirstOrDefault())
@@ -175,11 +177,19 @@ namespace PrinterServer
                 }
                 catch (HttpListenerException hle)
                 {
-                    _ = hle.Message;
+                    var appLog = new EventLog("Application");
+                    var eventSource = "PrinterServer";
+                    appLog.Source = CreateEventSource(eventSource);
+                    appLog.WriteEntry(hle.StackTrace, EventLogEntryType.Error); 
+                    Console.WriteLine("Error in listener {0}", hle.Message);
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    _ = e.Message;
+                    var appLog = new EventLog("Application");
+                    var eventSource = "PrinterServer";
+                    appLog.Source = CreateEventSource(eventSource);
+                    appLog.WriteEntry(ex.StackTrace, EventLogEntryType.Error); 
+                    Console.WriteLine("Error in server {0}", ex.Message);
                     runServer = true;
                     // decide to continue or return
                 }
@@ -205,5 +215,26 @@ namespace PrinterServer
             // Close the listener
             listener.Close();
         }
+        public static string CreateEventSource(string currentAppName)
+        {
+            string eventSource = currentAppName;
+            bool sourceExists;
+            try
+            {
+                // searching the source throws a security exception ONLY if not exists!
+                sourceExists = EventLog.SourceExists(eventSource);
+                if (!sourceExists)
+                {   // no exception until yet means the user as admin privilege
+                    EventLog.CreateEventSource(eventSource, "Application");
+                }
+            }
+            catch (SecurityException)
+            {
+                eventSource = "Application";
+            }
+
+            return eventSource;
+        }
+
     }
 }
