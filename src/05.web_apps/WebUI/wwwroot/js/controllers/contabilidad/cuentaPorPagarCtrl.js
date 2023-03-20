@@ -92,9 +92,23 @@
               
             $scope.cuentasPorPagar = [];
             
-            console.log($scope.dataSearch)
+            let dataSearch = JSON.stringify({
+                tipo: 1,
+                checkboxFecha: true,
+                checkboxEstab: $scope.dataSearch.codEstab==='ALL' ? $scope.dataSearch.checkboxEstab = false: $scope.dataSearch.checkboxEstab,
+                codEstab: $scope.dataSearch.codEstab,
+                checkboxEstado: $scope.dataSearch.codEstado==='ALL' ? $scope.dataSearch.checkboxEstado = false: $scope.dataSearch.checkboxEstado,
+                codEstado: $scope.dataSearch.codEstado,
+                checkboxTipoDoc: $scope.dataSearch.codDoc ==='ALL' ? $scope.dataSearch.checkboxTipoDoc =false: $scope.dataSearch.checkboxTipoDoc,
+                checkboxProveedor: $scope.dataSearch.idProveedor>0? $scope.dataSearch.checkboxProveedor = true: $scope.dataSearch.checkboxProveedor,
+                idProveedor: $scope.dataSearch.idProveedor,
+                dateStart:  $scope.dateRangePicker.date.startDate,
+                dateEnd:  $scope.dateRangePicker.date.endDate
+            })
+
+            console.log(dataSearch)
           
-            $scope.promise = _mS.getData('get', 'CuentaPorPagar/' + JSON.stringify({ tipo: 1 }), null, true).then((response) => {
+            $scope.promise = _mS.getData('get', 'CuentaPorPagar/' + dataSearch, null, true).then(response => {
                 
                 if (response.code == '0') {
                     hideLoader();
@@ -119,7 +133,12 @@
                 $scope.getCuentasPorPagar();
 
                 commonSvc.getEstabAsign().then(response=>{            
-                    $scope.establecimientos = response;                                                                     
+                    $scope.establecimientos = response;   
+                    console.log($scope.establecimientos)                                                                  
+                })
+
+                _mS.getData('get', '/TipoDocumento/Get').then(response => {
+                    $scope.tipoDocumentos = JSON.parse(response.payload);
                 })
 
             } catch (error) {

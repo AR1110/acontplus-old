@@ -30,7 +30,10 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	DECLARE @idEntidad INT 
-	DECLARE @tipo INT 	
+	DECLARE @tipo INT 
+	
+	--Varibles Generales 
+	DECLARE @idProveedor INT 
 
 	SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
@@ -38,6 +41,18 @@ BEGIN
 
 	IF @tipo = 1
 		BEGIN
+			DECLARE @checkboxFecha BIT 
+			DECLARE @checkboxEstab BIT
+			DECLARE @codEstab VARCHAR(100)
+			DECLARE @checkboxTipoDoc BIT
+			DECLARE @codDoc VARCHAR(10)
+			DECLARE @checkboxEstado BIT 
+			DECLARE @codEstado VARCHAR(5)
+			DECLARE @checkboxProveedor BIT 
+			DECLARE @dateStart DATETIME 
+			DECLARE @dateEnd DATETIME
+
+
 			DECLARE @sql AS NVARCHAR(MAX) = 'SELECT TOP 50
 											 pp.idCuentaPorPagar
 											,idTiempoCredito = ISNULL(pp.idTiempoCredito,0)
@@ -55,8 +70,8 @@ BEGIN
 											,diasCredito = ISNULL(tc.diasCredito,0)
 											,estado = ep.descripcion
 											,codPago = ep.codigo
-											,colorRow  = CASE ep.codigo WHEN ''A''  THEN ''#28a745'' 
-																	    WHEN ''PA'' THEN ''#28a745''
+											,colorRow  = CASE ep.codigo WHEN ''A''  THEN ''#ED9D9D'' 
+																	    WHEN ''PA'' THEN ''#cfeaff''
 																	    ELSE ''''
 														END 
 										FROM Contabilidad.CuentaPorPagar pp WITH (NOLOCK)
@@ -66,12 +81,76 @@ BEGIN
 										INNER JOIN dbo.EstadoPago    ep WITH (NOLOCK) ON ep.idEstadoPago    = pp.idEstadoPago
 										WHERE pp.idEntidad = @idEntidad'
 
-			DECLARE @params AS NVARCHAR(MAX) = '@idEntidad AS INT'
+			DECLARE @params AS NVARCHAR(MAX) = '@idEntidad AS INT,
+												@codEstab VARCHAR(100),
+												@codDoc VARCHAR(5),
+												@codEstado VARCHAR(10),
+												@idProveedor INT,
+												@dateStart DATETIME,
+												@dateEnd DATETIME'
+
+			SELECT 
+				@checkboxFecha = checkboxFecha,
+				@checkboxEstab = checkboxEstab,
+				@codEstab      = codEstab,
+				@checkboxTipoDoc = checkboxTipoDoc,
+				@codDoc          = codDoc,
+				@checkboxEstado  = checkboxEstado,
+				@codEstado       = codEstado,
+				@checkboxProveedor = checkboxProveedor,
+				@idProveedor       = idProveedor,
+				@dateStart         = dateStart,
+				@dateEnd           = dateEnd
+			FROM OPENJSON(@json)
+			WITH (
+				checkboxFecha BIT '$.checkboxFecha',
+				checkboxEstab BIT '$.checkboxEstab',
+				codEstab VARCHAR(100) '$.codEstab',
+				checkboxTipoDoc BIT '$.checkboxTipoDoc',
+				codDoc VARCHAR(10) '$.codDoc',
+				checkboxEstado BIT '$.checkboxEstado',
+				codEstado VARCHAR(5) '$.codEstado',
+				checkboxProveedor BIT '$.checkboxProveedor',
+				idProveedor INT '$.idProveedor',
+				dateStart DATETIME '$.dateStart',
+				dateEnd DATETIME '$.dateEnd'
+			)
+
+			IF @checkboxFecha = 1
+				BEGIN
+					SET @sql = @sql + ' AND CAST(pp.fechaEmision AS DATE) BETWEEN CAST(@dateStart AS DATE) AND CAST(@dateEnd AS DATE) '
+				END 
+
+			IF @checkboxEstab = 1
+				BEGIN
+					SET @sql = @sql + ' AND es.codEstab = @codEstab'
+				END 
+
+			IF @checkboxTipoDoc = 1
+				BEGIN
+					SET @sql = @sql + ' AND pp.codDoc= @codDoc '
+				END 
+
+			IF @checkboxEstado = 1
+				BEGIN
+					SET @sql = @sql + ' AND ep.codigo= @codEstado'
+				END 
+
+			IF @checkboxProveedor = 1
+				BEGIN
+					SET @sql = @sql + ' AND pp.idProveedor= @idProveedor'
+				END 
 			
 			EXEC sp_executesql 
 			      @sql
 			     ,@params 
 			     ,@idEntidad    = @idEntidad
+				 ,@codEstab     = @codEstab
+				 ,@codDoc       = @codDoc
+				 ,@codEstado    = @codEstado
+				 ,@idProveedor  = @idProveedor
+				 ,@dateStart    = @dateStart
+				 ,@dateEnd      = @dateEnd
 		END 
 
 	IF @tipo = 2 
@@ -122,7 +201,7 @@ BEGIN
 		IF @tipo = 3
 			BEGIN
 				
-				DECLARE @idProveedor INT = (SELECT idProveedor FROM OPENJSON(@json)WITH(idProveedor INT '$.idProveedor'))
+				SET @idProveedor = (SELECT idProveedor FROM OPENJSON(@json)WITH(idProveedor INT '$.idProveedor'))
 				DECLARE @rucEmisor  VARCHAR(13)
 				DECLARE @table AS TABLE
 				(
