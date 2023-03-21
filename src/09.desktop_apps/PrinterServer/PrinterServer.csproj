@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{34905C9A-CEF3-497A-8507-08EC2FD0FDF2}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>PrinterServer</RootNamespace>
     <AssemblyName>PrinterServer</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
@@ -80,6 +80,7 @@
     </Compile>
     <Compile Include="Magician.cs" />
     <Compile Include="Models\ApiPrintRequest.cs" />
+    <Compile Include="NetAclChecker.cs" />
     <Compile Include="PrintReport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqlServerTypes\Loader.cs" />

@@ -93,7 +93,7 @@ namespace PrinterServer
                     }
                     //Console.WriteLine($"key: {key}");
                     //Console.WriteLine($"value: {value}");
-                    
+
 
                     var dataReport = new ApiPrintRequest();
                     Dictionary<string, string> rdlcProps = new Dictionary<string, string>();
@@ -180,7 +180,7 @@ namespace PrinterServer
                     var appLog = new EventLog("Application");
                     var eventSource = "PrinterServer";
                     appLog.Source = CreateEventSource(eventSource);
-                    appLog.WriteEntry(hle.StackTrace, EventLogEntryType.Error); 
+                    appLog.WriteEntry(hle.StackTrace, EventLogEntryType.Error);
                     Console.WriteLine("Error in listener {0}", hle.Message);
                 }
                 catch (Exception ex)
@@ -188,7 +188,7 @@ namespace PrinterServer
                     var appLog = new EventLog("Application");
                     var eventSource = "PrinterServer";
                     appLog.Source = CreateEventSource(eventSource);
-                    appLog.WriteEntry(ex.StackTrace, EventLogEntryType.Error); 
+                    appLog.WriteEntry(ex.StackTrace, EventLogEntryType.Error);
                     Console.WriteLine("Error in server {0}", ex.Message);
                     runServer = true;
                     // decide to continue or return
@@ -204,9 +204,29 @@ namespace PrinterServer
 
             // Create a Http server and start listening for incoming connections
             listener = new HttpListener();
-            listener.Prefixes.Add(url);
+
+            string hostname = Dns.GetHostName(); // Retrive the Name of HOST
+            string myIP = Dns.GetHostEntry(hostname).AddressList[0].ToString(); 
+            for (int i = 0; i <= Dns.GetHostEntry(hostname).AddressList.Length - 1; i++)
+            {
+                if (Dns.GetHostEntry(hostname).AddressList[i].IsIPv6LinkLocal == false)
+                {
+                    myIP = Dns.GetHostEntry(hostname).AddressList[i].ToString();
+                }
+            }
+            myIP = $"http://{myIP}:8000/";
+            if (!string.IsNullOrEmpty(myIP))
+            {
+                NetAclChecker.AddAddress(myIP);
+                listener.Prefixes.Add(myIP);
+                Console.WriteLine("Listening for connections on {0}", myIP);
+            }
+            else
+            {
+                listener.Prefixes.Add(url);
+                Console.WriteLine("Listening for connections on {0}", url);
+            }
             listener.Start();
-            Console.WriteLine("Listening for connections on {0}", url);
 
             // Handle requests
             Task listenTask = HandleIncomingConnections();

@@ -117,7 +117,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "00.shared_settings", "00.sh
 		00.shared_settings\sharedsettings.Staging.json = 00.shared_settings\sharedsettings.Staging.json
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.Config", "02.domain\Domain.Config\Domain.Config.csproj", "{A30C9355-CEED-4E9E-98BD-8207657A9E9D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.Config", "02.domain\Domain.Config\Domain.Config.csproj", "{A30C9355-CEED-4E9E-98BD-8207657A9E9D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -304,6 +304,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{92E9DECD-35CF-45AB-9EB4-715AC1FA0941} = {79F40397-A77A-42D3-9A26-12016AC04CB9}
 		{DE366B58-FF27-4303-84DC-DECAA4956401} = {A5715418-3798-4953-A6E5-90054D652FE6}
 		{DE82EF9E-4EFD-4011-9D7F-D5E48619995B} = {A5715418-3798-4953-A6E5-90054D652FE6}
 		{5277B7FA-D26B-4E33-BED0-1659A85550F6} = {A5715418-3798-4953-A6E5-90054D652FE6}
