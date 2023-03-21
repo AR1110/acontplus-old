@@ -15,8 +15,7 @@ namespace WebUI.Controllers.Ventas
         private GenericResponse _gr = new(); 
         private IConfiguration _config;
         private readonly IHttpContextAccessor _httpContextAccessor; ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
-        private DataAccessObject _dao;
-        private readonly string _urlApi = "";
+        private DataAccessObject _dao; 
         private readonly int _idRol;
 
         public NotaCreditoClienteController(IConfiguration config, IHttpContextAccessor httpContextAccessor)
@@ -25,7 +24,6 @@ namespace WebUI.Controllers.Ventas
             _dao = new DataAccessObject(_config);
             _nc = new NotaCreditoDao(_config);
             _httpContextAccessor = httpContextAccessor;
-            _urlApi = _config.GetSection("UrlApis").GetSection("AcontPlusApi").Value;
             _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);           
         }
 

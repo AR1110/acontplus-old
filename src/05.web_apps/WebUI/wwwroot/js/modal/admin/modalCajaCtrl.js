@@ -357,7 +357,7 @@ export class MovimientoCajaCtrl{
     }
 
     theURLTableMovimientoCaja(){
-        return  '/Home/RenderView?name=' + 'Caja/_mdTableMovimientoCaja.cshtml';        
+        return  '/Home/RenderView?name=' + '~/Views/Caja/_mdTableMovimientoCaja.cshtml';        
     }
 
 
@@ -432,7 +432,7 @@ export class MovimientoCajaCtrl{
 
     openMoneyBox(){
         try {
-            
+            console.log('open money box')
         } catch (error) {
             console.log(error);
         }

@@ -17,13 +17,11 @@ namespace WebUI.Controllers.Inventario
     public class ConsolidacionInventarioController : Controller
     {
         private readonly IConfiguration _config;
-        private readonly string _urlApi = "";
         GenericResponse _gr = new();
         private ConsolidacionInventarioDao _cinv;
         public ConsolidacionInventarioController(IConfiguration config)
         {
             _config = config;
-            _urlApi = _config.GetSection("UrlApis").GetSection("AcontPlusApi").Value;
             _cinv = new ConsolidacionInventarioDao(_config);
         }
      
@@ -69,34 +67,6 @@ namespace WebUI.Controllers.Inventario
         {            
             var res = await _cinv.GetIdAsync(id);
             return Ok(res);
-        }
-
-        //Generar Reporte
-        public async Task<IActionResult> Download([FromBody] ApiReportParams parameters)
-        {
-            try
-            {
-
-
-
-                parameters.idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
-                var response = await new ApiServer(_urlApi).PostAsync<FileModel>("api/ConsolidacionInv/Get/", parameters);
-                if (response.Content.Length > 0)
-                {
-                    return File(response.Content, response.ContentType, response.FileName);
-                }
-                else
-                {
-                    _gr.id = "0";
-                    _gr.message = "Problemas en el servidor de documentos";
-                }
-            }
-            catch (Exception ex)
-            {
-                _gr.id = "0";
-                _gr.message = ex.Message;
-            }
-            return Ok(_gr);
         }
     }
 }

@@ -13,8 +13,6 @@ namespace WebUI.Controllers.Restaurant
         private readonly IWebHostEnvironment _environment;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly int _idRol;
-        private readonly string _urlApiReports = string.Empty;
-        private readonly string _urlPrint = string.Empty;
         public ConsumoTpvController(IConfiguration config,
             IWebHostEnvironment environment,
                                     IHttpContextAccessor httpContextAccessor)
@@ -23,18 +21,13 @@ namespace WebUI.Controllers.Restaurant
             _httpContextAccessor = httpContextAccessor;
             _environment = environment;
             _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
-            _urlApiReports = _config.GetSection("UrlApis").GetSection("AcontPlusApi").Value;
-            _urlPrint = _config.GetSection("UrlApis").GetSection("UrlApiPrint").Value;
         }
         public IActionResult Index()
         {
-            ViewData["urlReports"] = _urlApiReports;
-            ViewData["_urlPrint"] = _urlPrint;
             return View();
         }
         public IActionResult Report()
         {
-            ViewData["urlReports"] = _urlApiReports;
             return View();
         }
 

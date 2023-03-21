@@ -1,6 +1,4 @@
-﻿using WebUI.ApiClient;
-using DataAccess.Logistica;
-using Domain.Dtos;
+﻿using DataAccess.Logistica;
 using Domain.Models;
 using Domain.ViewModels.Logistica;
 using Microsoft.AspNetCore.Authorization;
@@ -18,13 +16,11 @@ namespace WebUI.Controllers.Logistica
         private GenericResponse _gr = new();
         private GuiaRemisionDao _guideR;
         private IConfiguration _config;
-        private readonly string _urlApi = "";
 
                 
         public GuiaRemisionController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _config = configuration;
-            _urlApi = _config.GetSection("UrlApis").GetSection("AcontPlusApi").Value;
             _dao = new DataAccessObject(_config);
             _guideR = new GuiaRemisionDao(_config);
             _httpContextAccessor = httpContextAccessor;
@@ -77,33 +73,6 @@ namespace WebUI.Controllers.Logistica
             parameters.Add("idRol", _idRol);
             parameters.Add("id", id);
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Logistica.GuiaRemision_Delete", parameters)));
-        }
-
-        //Generar Reporte
-        public async Task<IActionResult> Download([FromBody] ApiReportParams parameters)
-        {
-            try
-            {
-                parameters.idRol = _idRol;
-                var response = await new ApiServer(_urlApi).PostAsync<FileModel>("api/Reporte/Download/", parameters);
-                if (response.Content.Length > 0)
-                {
-                    return File(response.Content, response.ContentType, response.FileName);
-                }               
-                else
-                {
-                    _gr.id = "0";
-                    _gr.message = "Problemas en el servidor de documentos";
-                }
-            }
-            catch (Exception ex)
-            {
-                _gr.id = "0";
-                _gr.message = ex.Message;
-            }
-
-            
-            return Ok(_gr);
         }
     }
 }

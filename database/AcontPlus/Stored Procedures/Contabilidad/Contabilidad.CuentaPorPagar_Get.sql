@@ -23,6 +23,9 @@ GO
 IF OBJECT_ID(N'Contabilidad.CuentaPorPagar_Get', N'P') IS NOT NULL
 DROP PROCEDURE Contabilidad.CuentaPorPagar_Get
 GO
+
+--  Contabilidad.CuentaPorPagar_Get 38, '{"tipo":1,"checkboxEstab":false,"codEstab":"ALL","checkboxEstado":false,"codEstado":"ALL","checkboxTipoDoc":false,"dateStart":"2023-03-01T05:00:00.000Z","dateEnd":"2023-04-01T04:59:59.999Z"}'
+
 CREATE PROCEDURE Contabilidad.CuentaPorPagar_Get @idUsuarioRol INT, @json VARCHAR(MAX)
 AS
 BEGIN
@@ -33,11 +36,12 @@ BEGIN
 	DECLARE @tipo INT 
 	
 	--Varibles Generales 
-	DECLARE @idProveedor INT 
+	DECLARE @idProveedor INT
+	DECLARE @idCuentaPorPagar INT 
 
 	SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
-	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT '$.tipo')
+	SELECT @tipo = tipo, @idCuentaPorPagar = idCuentaPorPagar FROM OPENJSON(@json) WITH (tipo INT '$.tipo', idCuentaPorPagar INT '$.idCuentaPorPagar')
 
 	IF @tipo = 1
 		BEGIN
@@ -155,9 +159,8 @@ BEGIN
 
 	IF @tipo = 2 
 		BEGIN
-			DECLARE @codPago VARCHAR(5)
-			DECLARE @idCuentaPorPagar AS INT 
-			SELECT @idCuentaPorPagar = idCuentaPorPagar, @codPago = codPago FROM OPENJSON(@json) WITH (idCuentaPorPagar INT '$.idCuentaPorPagar', codPago VARCHAR(5) '$.codPago')
+			DECLARE @codPago VARCHAR(5)			
+			SELECT @codPago = codPago FROM OPENJSON(@json) WITH (codPago VARCHAR(5) '$.codPago')
 			
 			IF @codPago IS NULL
 				BEGIN 
@@ -280,5 +283,28 @@ BEGIN
 
 				
 			END 
+
+		IF @tipo = 4 
+			BEGIN 				
+				SELECT
+					ce.nroIdentificacion
+					,ce.nombreFiscal
+					,ce.total
+					,tipoDocumento = 'CE-' + es.estab + '-' + Helper.F_Auto_Sequential(ce.nroDocumento) 
+					,usuario = u.nombreUsuario
+					,estado = IIF(ce.estado=1, 'ACTIVO', 'ANULADA')
+					,fechaRegistro = FORMAT(ce.fechaRegistro, 'yyyy-dd-mm hh:mm')
+
+				FROM Contabilidad.Historial_Pago hp 
+				INNER JOIN ComprobanteEgreso ce WITH(NOLOCK) ON ce.idComprobanteEgreso = hp.idComprobanteEgreso
+				INNER JOIN Sri.Establecimiento es WITH(NOLOCK) ON es.codEstab = ce.codEstab 
+				INNER JOIN Usuario u WITH(NOLOCK) ON u.idUsuario = ce.idUsuario
+				WHERE hp.idCuentaPorPagar = @idCuentaPorPagar
+
+			END 
+
+			
+		
+		
 END
 GO

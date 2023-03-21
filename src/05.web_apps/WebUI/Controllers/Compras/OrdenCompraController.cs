@@ -17,7 +17,6 @@ namespace WebUI.Controllers.Compras
         private readonly int _idRol;
         GenericResponse _gr = new();
         private OrdenCompraDao _oc;
-        private readonly string _urlApi = "";
 
         public OrdenCompraController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
@@ -27,7 +26,6 @@ namespace WebUI.Controllers.Compras
             _oc = new OrdenCompraDao(_configuration);
             _httpContextAccessor = httpContextAccessor;
             _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
-            _urlApi = configuration.GetSection("UrlApis").GetSection("AcontPlusApi").Value;
         }
 
         [Authorize]
@@ -77,35 +75,5 @@ namespace WebUI.Controllers.Compras
             parameters.Add("id", id);
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Compra.Orden_Delete", parameters)));
         }
-
-
-        //Generar Reporte
-        public async Task<IActionResult> Download([FromBody] ApiReportParams parameters)
-        {
-            try
-            {
-                
-                 
-
-                parameters.idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
-                var response = await new ApiServer(_urlApi).PostAsync<FileModel>("api/OrdenCompra/Get/", parameters);
-                if (response.Content.Length > 0)
-                {
-                    return File(response.Content, response.ContentType, response.FileName);
-                }
-                else
-                {
-                    _gr.id = "0";
-                    _gr.message = "Problemas en el servidor de documentos";
-                }
-            }
-            catch (Exception ex)
-            {
-                _gr.id = "0";
-                _gr.message = ex.Message;
-            }
-            return Ok(_gr);
-        }
-
     }
 }

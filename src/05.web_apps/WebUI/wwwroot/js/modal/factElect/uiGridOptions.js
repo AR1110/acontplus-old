@@ -600,6 +600,10 @@ export class UiGridOptionsCompra{
 
     calculoColDef(rowEntity, oldValue){                                 
         const calculoColumnas =  {
+            'descripcion': ()=>{
+                let descripcion = rowEntity.descripcion || '';
+                rowEntity.descripcion = descripcion.toUpperCase();
+            },
             'cantidad': ()=>{                     
                 if(rowEntity.cantidad===oldValue) return
                 rowEntity.cantidad = this._fS.roundNumber(rowEntity.cantidad, this.decimal.nroCantidad);

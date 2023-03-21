@@ -17,7 +17,7 @@ namespace Helpers
         {
             if (!env.HasValue)
                 env = EnvHelper.GetEnvironment();
-            configurationBuilder.AddJsonFile($"appsettings.json", optional: false, reloadOnChange: true);
+            configurationBuilder.AddJsonFile($"appsettings.{env}.json", optional: false, reloadOnChange: true);
             configurationBuilder.AddJsonFile($"00.sharedsettings/sharedsettings.{env}.json", optional: false, reloadOnChange: true);
         }
     }

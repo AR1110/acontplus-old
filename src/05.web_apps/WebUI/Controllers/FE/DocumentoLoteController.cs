@@ -16,7 +16,6 @@ namespace WebUI.Controllers.FE
             _configuration = configuration;
             _dl = new DocumentoLoteDao(_configuration);
             //_config = config;
-            //_urlApi = _config.GetSection("UrlApis").GetSection("AcontPlusApi").Value;
         }
 
         public IActionResult Index()
