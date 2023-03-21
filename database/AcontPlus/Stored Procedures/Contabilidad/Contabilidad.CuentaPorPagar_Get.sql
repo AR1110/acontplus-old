@@ -24,7 +24,7 @@ IF OBJECT_ID(N'Contabilidad.CuentaPorPagar_Get', N'P') IS NOT NULL
 DROP PROCEDURE Contabilidad.CuentaPorPagar_Get
 GO
 
---  Contabilidad.CuentaPorPagar_Get 38, '{"tipo":1,"checkboxEstab":false,"codEstab":"ALL","checkboxEstado":false,"codEstado":"ALL","checkboxTipoDoc":false,"dateStart":"2023-03-01T05:00:00.000Z","dateEnd":"2023-04-01T04:59:59.999Z"}'
+--  Contabilidad.CuentaPorPagar_Get 38, '{"tipo":1}'
 
 CREATE PROCEDURE Contabilidad.CuentaPorPagar_Get @idUsuarioRol INT, @json VARCHAR(MAX)
 AS
@@ -58,26 +58,29 @@ BEGIN
 
 
 			DECLARE @sql AS NVARCHAR(MAX) = 'SELECT TOP 50
-											 pp.idCuentaPorPagar
-											,idTiempoCredito = ISNULL(pp.idTiempoCredito,0)
-											,idProveedor = pp.idProveedor
-											,es.codEstab
-											,identificacion = p.numeroIdentificacion
-											,nombreFiscal = p.nombreFiscal
-											,pp.codDoc
-											,pp.serieComprobante
-											,fechaEmision = Format(pp.fechaEmision, ''yyyy-MM-dd'') 
-											,fechaVencimiento = Format(pp.fechaVencimiento, ''yyyy-MM-dd'') 
-											,importeTotal 
-											,abono = ISNULL(abono,0)
-											,saldo = ISNULL(saldo,0)
-											,diasCredito = ISNULL(tc.diasCredito,0)
-											,estado = ep.descripcion
-											,codPago = ep.codigo
-											,colorRow  = CASE ep.codigo WHEN ''A''  THEN ''#ED9D9D'' 
-																	    WHEN ''PA'' THEN ''#cfeaff''
-																	    ELSE ''''
-														END 
+												 pp.idCuentaPorPagar
+												,idTiempoCredito = ISNULL(pp.idTiempoCredito,0)
+												,idProveedor = pp.idProveedor
+												,es.codEstab
+												,identificacion = p.numeroIdentificacion
+												,nombreFiscal = p.nombreFiscal
+												,codDoc = CASE pp.codDoc WHEN ''03'' THEN ''Liquidacion'' 
+												                         WHEN ''FC'' THEN ''F.Fisica'' 
+																		 WHEN ''DH'' THEN ''C.N.Habitual''
+														  END
+												,pp.serieComprobante
+												,fechaEmision = Format(pp.fechaEmision, ''yyyy-MM-dd'') 
+												,fechaVencimiento = Format(pp.fechaVencimiento, ''yyyy-MM-dd'') 
+												,importeTotal 
+												,abono = ISNULL(abono,0)
+												,saldo = ISNULL(saldo,0)
+												,diasCredito = ISNULL(tc.diasCredito,0)
+												,estado = ep.descripcion
+												,codPago = ep.codigo
+												,colorRow  = CASE ep.codigo WHEN ''A''  THEN ''#ED9D9D'' 
+																			WHEN ''PA'' THEN ''#cfeaff''
+																			ELSE ''''
+															END 
 										FROM Contabilidad.CuentaPorPagar pp WITH (NOLOCK)
 										INNER JOIN dbo.Proveedor      p WITH (NOLOCK) ON p.idProveedor      = pp.idProveedor
 										INNER JOIN Sri.Establecimiento es WITH(NOLOCK) ON es.idEstablecimiento = pp.idEstablecimiento
@@ -144,6 +147,8 @@ BEGIN
 				BEGIN
 					SET @sql = @sql + ' AND pp.idProveedor= @idProveedor'
 				END 
+
+			SET @sql = @sql+' ORDER BY pp.idCuentaPorPagar DESC '
 			
 			EXEC sp_executesql 
 			      @sql
