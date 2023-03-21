@@ -215,7 +215,7 @@ namespace PrinterServer
                 }
             }
             myIP = $"http://{myIP}:8000/";
-            if (!string.IsNullOrEmpty(myIP))
+            if (!string.IsNullOrEmpty(myIP) && myIP != "http://127.0.0.1:8000/")
             {
                 NetAclChecker.AddAddress(myIP);
                 listener.Prefixes.Add(myIP);

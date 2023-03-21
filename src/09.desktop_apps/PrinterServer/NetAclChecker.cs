@@ -18,9 +18,20 @@ namespace PrinterServer
             psi.Verb = "runas";
             psi.CreateNoWindow = true;
             psi.WindowStyle = ProcessWindowStyle.Hidden;
-            psi.UseShellExecute = true;
+            psi.UseShellExecute = false;
+            psi.RedirectStandardOutput = true;
 
             Process.Start(psi).WaitForExit();
+
+            //Process p = new Process();
+            //p.StartInfo.FileName = "netsh";
+            //p.StartInfo.Arguments = args;
+            //p.StartInfo.UseShellExecute = false;
+            //p.StartInfo.CreateNoWindow = true;
+            //p.StartInfo.RedirectStandardOutput = true;
+            //p.StartInfo.Verb = "runas";
+            //p.Start();
+            //p.WaitForExit();
         }
     }
 }
