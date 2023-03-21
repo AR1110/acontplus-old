@@ -92,31 +92,7 @@
                                                         <span md-menu-align-target><i class="ti-trash"></i> Eliminar</span>
                                                     </md-button>
                                                 </md-menu-item>
-
-                                                <md-menu-item>
-                                                    <md-button ng-click="retencionAutomatica(f)">
-                                                        <span md-menu-align-target><icon class="fa fa-recycle"></icon> Retención</span>
-                                                    </md-button>
-                                                </md-menu-item>
-
-                                                <md-menu-item>
-                                                    <md-button ng-click="openModalCuota(f)">
-                                                        <span md-menu-align-target><icon class="fas fa-donate"></icon> Cuotas</span>
-                                                    </md-button>
-                                                </md-menu-item>
-
-                                                <md-menu-item ng-if="accion.cobroPago">
-                                                    <md-button ng-click="openModalPago(f)">
-                                                        <span md-menu-align-target><icon class="far fa-money-bill-alt"></icon> Pago</span>
-                                                    </md-button>
-                                                </md-menu-item>                        
-
-                                                <md-menu-item ng-if="accion.historialFinanciero">
-                                                    <md-button ng-click="openModalHistorialPago(f)">
-                                                        <span md-menu-align-target><icon class=" fas fa-tasks"></icon> Hist. Mov.</span>
-                                                    </md-button>
-                                                </md-menu-item>   
-
+                                                
                                                 <md-menu-item ng-if="accion.reporte" >
                                                     <md-button ng-click="getReport(f)">
                                                         <span md-menu-align-target><icon class=" ti-file"></icon> PDF</span>

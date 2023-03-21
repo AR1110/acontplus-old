@@ -8,9 +8,9 @@
 
     app.controller('cuentaPorPagarCtrl', cuentaPorPagarCtrl)
 
-    cuentaPorPagarCtrl.$inject = ['$scope','$q', 'toastService', 'commonService', 'mainService', 'screenSize', '$timeout' ,'modalService', 'formulario']
+    cuentaPorPagarCtrl.$inject = ['$scope', 'toastService', 'commonService', 'mainService', 'screenSize', '$timeout' ,'modalService', 'formulario']
 
-    function cuentaPorPagarCtrl($scope, $q, _tS, commonSvc, _mS, _sS, $timeout, _modalSvc, _form) {
+    function cuentaPorPagarCtrl($scope, _tS, commonSvc, _mS, _sS, $timeout, _modalSvc, _form) {
                  
         $scope.isMobile = _sS.on('xs, sm', function (isMatch) {
             $scope.isMobile = isMatch
@@ -98,50 +98,57 @@
         };      
 
         $scope.getCuentasPorPagar = ()=>{
-            showLoader();
+            try {
+                showLoader();
               
-            $scope.cuentasPorPagar = [];
-            
-            let dataSearch = {
-                tipo: 1,
-                checkboxFecha: true,
-                checkboxEstab: $scope.dataSearch.codEstab==='ALL' ? $scope.dataSearch.checkboxEstab = false: $scope.dataSearch.checkboxEstab=true,
-                codEstab: $scope.dataSearch.codEstab,
-                checkboxEstado: $scope.dataSearch.codEstado==='ALL' ? $scope.dataSearch.checkboxEstado = false: $scope.dataSearch.checkboxEstado=true,
-                codEstado: $scope.dataSearch.codEstado,
-                checkboxTipoDoc: $scope.dataSearch.codDoc ==='ALL' ? $scope.dataSearch.checkboxTipoDoc =false: $scope.dataSearch.checkboxTipoDoc = true,
-                codDoc: $scope.dataSearch.codDoc,
-                checkboxProveedor: $scope.dataSearch.idProveedor>0? $scope.dataSearch.checkboxProveedor = true: $scope.dataSearch.checkboxProveedor=false,
-                idProveedor: $scope.dataSearch.idProveedor,
-                dateStart:  $scope.dateRangePicker.date.startDate,
-                dateEnd:  $scope.dateRangePicker.date.endDate
-            }
-
-            //Activar seleccion multiple para pago  por lote 
-            if(dataSearch.checkboxEstab && dataSearch.checkboxProveedor){
-                $scope.options.rowSelection = true;
-            }else{
-                $scope.options.rowSelection = false;
-            }        
-          
-            $scope.promise = _mS.getData('get', 'CuentaPorPagar/' + JSON.stringify(dataSearch), null, true).then(response => {
+                $scope.cuentasPorPagar = [];
                 
-                if (response.code == '0') {
+                let dataSearch = {
+                    tipo: 1,
+                    checkboxFecha: true,
+                    checkboxEstab: $scope.dataSearch.codEstab==='ALL' ? $scope.dataSearch.checkboxEstab = false: $scope.dataSearch.checkboxEstab=true,
+                    codEstab: $scope.dataSearch.codEstab,
+                    checkboxEstado: $scope.dataSearch.codEstado==='ALL' ? $scope.dataSearch.checkboxEstado = false: $scope.dataSearch.checkboxEstado=true,
+                    codEstado: $scope.dataSearch.codEstado,
+                    checkboxTipoDoc: $scope.dataSearch.codDoc ==='ALL' ? $scope.dataSearch.checkboxTipoDoc =false: $scope.dataSearch.checkboxTipoDoc = true,
+                    codDoc: $scope.dataSearch.codDoc,
+                    checkboxProveedor: $scope.dataSearch.idProveedor>0? $scope.dataSearch.checkboxProveedor = true: $scope.dataSearch.checkboxProveedor=false,
+                    idProveedor: $scope.dataSearch.idProveedor,
+                    dateStart:  $scope.dateRangePicker.date.startDate._d,
+                    dateEnd:  $scope.dateRangePicker.date.endDate._d
+                }
+
+                //Activar seleccion multiple para pago  por lote 
+                if(dataSearch.checkboxEstab && dataSearch.checkboxProveedor){
+                    $scope.options.rowSelection = true;
+                }else{
+                    $scope.options.rowSelection = false;
+                }        
+                
+            
+
+                $scope.promise = _mS.getData('get', 'CuentaPorPagar?json=' + JSON.stringify(dataSearch), null, true).then(response => {
+                    
+                    if (response.code == '0') {
+                        hideLoader();
+                        $scope.cuentasPorPagar = [];
+                        console.log(response)
+                    }
+                    
+                    if (response.code == '1') {                                           
+                        $scope.cuentasPorPagar = JSON.parse(response.payload)[0];
+                        console.log($scope.cuentasPorPagar)                        
+                        hideLoader();
+                    }                    
+
+                }).catch((error) => {
                     hideLoader();
                     $scope.cuentasPorPagar = [];
-                    console.log(response)
-                }
-                
-                if (response.code == '1') {                                           
-                    $scope.cuentasPorPagar = JSON.parse(response.payload)[0];
-                    console.log($scope.cuentasPorPagar)                        
-                    hideLoader();
-                }                    
-
-            }).catch((error) => {
-                $scope.cuentasPorPagar = [];
+                    console.log(error)
+                })
+            } catch (error) {
                 console.log(error)
-            })            
+            }            
         }
 
         $scope.initialLoad = () => {
@@ -196,7 +203,7 @@
 
         //-------------------------------------PAGO ----------------------------
         $scope.openModalPagoLote = ()=>{
-            if($scope.dataSearch.codEstab!=='ALL' && $scope.dataSearch.idProveedor > 0 && $scope.options.rowSelection){
+            if($scope.dataSearch.codEstab!=='ALL' && $scope.dataSearch.idProveedor > 0 && $scope.options.rowSelection && $scope.selectedDocumentos.length>0){
 
                 let modalParams = {
                     controller: 'modalPagoCtrl',
@@ -242,13 +249,14 @@
         //Obtenemos las cuotas
         $scope.getCuotaCuentaPorPagar = (item)=>{
             //Params APi 
-            let spParams = JSON.stringify({
-                idCuentaPorPagar: item.idCuentaPorPagar,
-                codPago: 'PE',
-                tipo: 2
-            })
+            let spParams =  JSON.stringify({
+                    idCuentaPorPagar: item.idCuentaPorPagar,
+                    codPago: 'PE',
+                    tipo: 2
+                })
+            
 
-            return _mS.getData('get', 'CuentaPorPagar/' + spParams, null, true);
+            return _mS.getData('get', 'CuentaPorPagar?json=' + spParams, null, true);
         }
 
 
@@ -307,10 +315,11 @@
                     isRenderRazorPartial: true
                 }
 
-                let spParams = { idCuentaPorPagar : item.idCuentaPorPagar, tipo: 2 }
+                let spParams = JSON.stringify({ idCuentaPorPagar : item.idCuentaPorPagar, tipo: 2 })
+                
                
                 showLoader();
-                _mS.getData('get', 'CuentaPorPagar/' + JSON.stringify(spParams), null, true).then(response => {
+                _mS.getData('get', 'CuentaPorPagar?json=' + spParams, null, true).then(response => {
                     
                     let cuotas = response.payload ? JSON.parse(response.payload)[0] : []
                     
@@ -357,7 +366,7 @@
                     
                     if(response.code==="0"){
                         hideLoader()
-                       console.log(response)
+                        console.log(response)
                     }
     
                     if(response.code==="1"){
@@ -403,12 +412,13 @@
                 }
 
                 let spParams = JSON.stringify({
-                    tipo: 4,
-                    idCuentaPorPagar: item.idCuentaPorPagar
-                })
+                        tipo: 4,
+                        idCuentaPorPagar: item.idCuentaPorPagar
+                    })
+                
                 
                 showLoader();
-                _mS.getData('get', 'CuentaPorPagar/' + spParams, null, true).then(response=>{
+                _mS.getData('get', 'CuentaPorPagar?json=' + spParams, null, true).then(response=>{
                     if(response.code==='0'){
                         hideLoader()
                         _form.sweetAlert('warning', response.message)
@@ -1306,7 +1316,9 @@
         $scope.initialLoad = ()=>{
 
             try {
-                mS.getData('get', 'CuentaPorPagar/' + JSON.stringify({tipo: 3, idProveedor: $scope.proveedor.idProveedor}), null, true).then(response=>{
+                let spParams = JSON.stringify({tipo: 3, idProveedor: $scope.proveedor.idProveedor})
+                
+                mS.getData('get', 'CuentaPorPagar?json=' + spParams, null, true).then(response=>{
               
                     if(response.code==="0"){
                         console.log(response)
@@ -1534,6 +1546,8 @@
 
     }
     //---------------------------------------END FORM PAYMENT----------------------------------------------------
+
+
 
 
 

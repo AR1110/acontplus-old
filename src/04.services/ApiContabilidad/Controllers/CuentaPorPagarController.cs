@@ -19,7 +19,7 @@ namespace ApiContabilidad.Controllers
         }
 
         // GET: api/<CuentaPorPagarController>
-        [HttpGet("{json}")]
+        [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
             LogWriter _log = new LogWriter(_configuration);
@@ -85,11 +85,6 @@ namespace ApiContabilidad.Controllers
             }
         }
 
-        // DELETE api/<CuentaPorPagarController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-            
-        }
+      
     }
 }

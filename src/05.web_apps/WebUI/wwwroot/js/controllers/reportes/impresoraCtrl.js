@@ -7,12 +7,14 @@ function impresoraCtrl($scope, _commonSvc, mS, tS) {
     $scope.printers = [];
     $scope.data = {};
 
+    $scope.disabledInputIpMaquina = false;
+
     $scope.initialLoad = () => {
         mS.getData('get','/Impresora/Get?json=' + JSON.stringify({ tipo: 1 })).then(response => {
             $scope.printers = [];
             if(response.payload) {
                 $scope.printers = JSON.parse(response.payload) || [];
-                console.log($scope.printers)
+                
                 $scope.printers = $scope.printers.map(item=>{
                     item.copyPrint = item.copyPrint==2?true:false;
                     return item;
@@ -39,6 +41,17 @@ function impresoraCtrl($scope, _commonSvc, mS, tS) {
         $scope.data.predeterminada = true;
         $('#addUpdatePrinter').modal('show')
     }
+
+    $scope.onChangeIsServer = ()=>{
+     
+        if($scope.data.isServer){
+            $scope.data.ipMaquina = '127.0.0.1:8000';
+            $scope.disabledInputIpMaquina = true;
+        }else{
+            $scope.disabledInputIpMaquina = false;
+            $scope.data.ipMaquina = null;
+        }
+    }
       
     $scope.openEdit = (id) => {
         mS.getData("get","/Impresora/GetId?id=" + id).then(response => {
@@ -63,7 +76,8 @@ function impresoraCtrl($scope, _commonSvc, mS, tS) {
     }
 
     $scope.saveEdit = () => {
-        try {           
+        try {   
+            
             if (!$scope.data.codEstab) {                
                 tS.toastr('warning', 'Seleccione el Establecimiento')
                 return
@@ -96,6 +110,15 @@ function impresoraCtrl($scope, _commonSvc, mS, tS) {
                     tS.toastr('warning', 'El Nro de cedula debe ser de 10 caractares')
                     return
                 }
+            }
+
+            if($scope.data.isServer){
+                $scope.data.ipMaquina='127.0.0.1:8000'
+            }
+
+            if(!$scope.data.ipMaquina){
+                tS.toastr('warning', 'Ingrese el Ip de la máquina')
+                return
             }
 
             if($scope.documents.every(item=>!item.estado)){ 
@@ -138,8 +161,10 @@ function impresoraCtrl($scope, _commonSvc, mS, tS) {
                     tS.toastr('warning', response.message)
                 }
                 if (response.code == "1") {
+                    hideLoader();
                     $scope.initialLoad()
-                    hideLoader()
+                    $scope.disabledInputIpMaquina = false;
+
                     $('#addUpdatePrinter').modal('hide')
                     tS.toastr('success', response.message)
                 }
@@ -230,6 +255,8 @@ function impresoraCtrl($scope, _commonSvc, mS, tS) {
     }
 
     $('#addUpdatePrinter').on('hidden.bs.modal', function () {
+        $scope.disabledInputIpMaquina = false;
+        $scope.initialLoad();
        $scope.data = {};
     });
 }

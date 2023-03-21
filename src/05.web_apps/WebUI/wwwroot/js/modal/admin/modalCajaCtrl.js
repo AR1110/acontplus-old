@@ -463,15 +463,12 @@ export class ModalFiltroMovimientoCajaCtrl{
         this.dataSearch.mes = new Date().getMonth() + 1;
 
         this.estadoMovimientos = [
-            {id: "0", descripcion: "CERRADO" },
-            {id: "1", descripcion: "ABIERTO" },
+            {statusMovement: 0, descripcion: "CERRADO" },
+            {statusMovement: 1, descripcion: "ABIERTO" },
         ]
     }
 
-    $onInit(){   
-        this._commonSvc.getGestionFinanciera({gestion:true}).then(response=>{            
-            this.estadoMovimientos = response[4]            
-        })     
+    $onInit(){          
         if(Object.entries(this._params).length >0){
             this.dataSearch.mes = this._params.mes;
         }
@@ -504,6 +501,7 @@ export class ModalFiltroMovimientoCajaCtrl{
         }
 
         if(this.dataSearch.checkBoxStatus){
+            console.log(this.dataSearch)
             if(this.dataSearch.statusMovement===null || this.dataSearch.statusMovement===undefined || this.dataSearch.statusMovement===""){
                 this._tS.toastr('warning', 'Seleccione el Estado');
                 return

@@ -41,6 +41,7 @@ BEGIN
 	   ,s.codEstab
 	   ,s.estab
 	   ,s.nombreComercial
+	   ,i.ipMaquina
 	FROM ApiPrinter.Impresora i WITH (NOLOCK) 
 	LEFT JOIN Sri.Establecimiento s WITH (NOLOCK) ON s.codEstab = i.codEstab
 	LEFT JOIN ApiPrinter.TipoImpresora ti WITH (NOLOCK) ON ti.idTipoImpresora = i.idTipoImpresora
@@ -48,7 +49,7 @@ BEGIN
 
 	SELECT 
 		idConfig_Document 
-	   ,descripcion = IIF(codDoc = 'FV','FACTURA','NOTA DE ENTREGA')
+	   ,descripcion = UPPER((SELECT descripcion FROM TipoDocumento WHERE codigo = codDoc))
 	   ,codDoc
 	   ,estado
 	   ,copyPrint = IIF(copyPrint = 1,CAST(0 AS BIT),CAST(1 AS BIT))
