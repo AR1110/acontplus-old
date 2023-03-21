@@ -99,22 +99,22 @@
             var urlMethod = '';
             if ($scope.operation == 1) {
                 method = 'Post';
-                urlMethod = 'Reporte';
+                urlMethod = 'Reporte/Post';
             } else {
                 method = 'Put';
-                urlMethod = 'Reporte/' + $scope.reporte.idReporte;
+                urlMethod = 'Reporte/Put/' + $scope.reporte.idReporte;
             };
 
-            mS.getData(method, urlMethod, $scope.reporte).then(function (response) {
-                if (response.id == 0) {
+            mS.getData(method, urlMethod, $scope.reporte, true).then(function (response) {
+                if (response.code == 0) {
                     tS.toastr('warning', response.message);
                     return;
-                };
-                if (response.id == 1) {
+                }
+                if (response.code == 1) {
                     tS.toastr('success', response.message);
                     $scope.initialLoad();
                     $('#reporteModal').modal('hide');
-                };
+                }
             }, function (error) {
                 console.log(error);
             });
@@ -141,11 +141,11 @@
 
         $scope.delete = function (item) {
             mS.getData('Delete', 'Reporte/' + item.idReporte).then(function (response) {
-                if (response.id == 0) {
+                if (response.code == 0) {
                     tS.toastr('warning', response.message);
                     return;
                 };
-                if (response.id == 1) {
+                if (response.code == 1) {
                     tS.toastr('success', response.message);
                     $scope.initialLoad();
                 };
