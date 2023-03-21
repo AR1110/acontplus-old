@@ -58,6 +58,7 @@ BEGIN
     DECLARE @printer VARCHAR(150)
     DECLARE @isThermal BIT
     DECLARE @format VARCHAR(200)
+	DECLARE @urlPrinter VARCHAR(200)
     DECLARE @deviceInfo VARCHAR(max)
     DECLARE @copyPrint INT
 	-------------END----------------
@@ -156,6 +157,7 @@ BEGIN
 			,@format       = ti.formato
 			,@deviceInfo   = ti.deviceInfo
 			,@copyPrint    = cd.copyPrint
+			,@urlPrinter   = i.ipMaquina
 		FROM ApiPrinter.Config_Document cd WITH (NOLOCK)
 		INNER JOIN ApiPrinter.Impresora      i WITH (NOLOCK) ON i.idImpresora      = cd.idImpresora
 		INNER JOIN ApiPrinter.TipoImpresora ti WITH (NOLOCK) ON ti.idTipoImpresora = i.idTipoImpresora
@@ -171,6 +173,6 @@ BEGIN
 								,deviceInfo = @deviceInfo
 						  FOR JSON PATH
 						  ) 
-		SELECT '1' code, payload = (SELECT  @rdlcProps rdlcProps, @dataSources dataSources FOR JSON PATH)
+		SELECT '1' code, payload = (SELECT 'http://' + @urlPrinter urlPrinter,  @rdlcProps rdlcProps, @dataSources dataSources FOR JSON PATH)
 END
 GO
