@@ -1,4 +1,5 @@
 ﻿using Helpers;
+using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using System.Net;
 using System.Net.Http.Headers;
@@ -31,10 +32,18 @@ namespace WebUI.ApiClient
 
             response.EnsureSuccessStatusCode();
         }
-        public async Task<T> PostAsync<T>(string url, object content)
+        public async Task<T> PostAsync<T>(string url, object content, HttpRequest request = null)
         {
             EnsureHttpClientCreated();
-            _httpClient.DefaultRequestHeaders.Authorization = null;
+            request.Headers.TryGetValue("Authorization", out StringValues headerValues);
+            if (!string.IsNullOrEmpty(headerValues.FirstOrDefault().ToString()))
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", headerValues.FirstOrDefault().ToString().Replace("Bearer ", ""));
+            }
+            else
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = null;
+            }
             HttpResponseMessage response = await _httpClient.PostAsync(url, ApiHelper.CreateHttpContent(content));
             var data = JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
             return data;

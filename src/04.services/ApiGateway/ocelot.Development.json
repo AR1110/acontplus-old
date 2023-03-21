@@ -519,9 +519,9 @@
       }
     },
     {
-      "UpstreamPathTemplate": "/api/ReporteDataSource/Post",
+      "UpstreamPathTemplate": "/api/ReporteDataSource/",
       "UpstreamHttpMethod": [ "Post" ],
-      "DownstreamPathTemplate": "/api/ReporteDataSource/Post",
+      "DownstreamPathTemplate": "/api/ReporteDataSource/",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -535,9 +535,9 @@
       }
     },
     {
-      "UpstreamPathTemplate": "/api/ReporteDataSource/{method}/{everything}",
+      "UpstreamPathTemplate": "/api/ReporteDataSource/{everything}",
       "UpstreamHttpMethod": [ "Get", "Put", "Delete" ],
-      "DownstreamPathTemplate": "/api/ReporteDataSource/{method}/{everything}",
+      "DownstreamPathTemplate": "/api/ReporteDataSource/{everything}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -560,7 +560,11 @@
           "Host": "localhost",
           "Port": 44320
         }
-      ]
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
     },
     {
       "UpstreamPathTemplate": "/api/Reporte/DynamicReport",

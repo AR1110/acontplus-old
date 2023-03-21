@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.StaticFiles;
 using Helpers;
 using HelpersNS20.Dtos;
 using Common.Logs;
+using Microsoft.Extensions.Primitives;
 
 namespace WebUI.Controllers.Admin
 {
@@ -80,7 +81,7 @@ namespace WebUI.Controllers.Admin
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();            
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("json", SqlValidation.ValidateSqlString(json));
             return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Reporte.R_Get", parameters)));
         }
@@ -135,8 +136,14 @@ namespace WebUI.Controllers.Admin
             FileModel reportFile = new FileModel();
             try
             {
+                // Request.Headers.TryGetValue("Authorization", out StringValues headerValues);
+                // string jsonWebToken = headerValues.FirstOrDefault();
+                // Request.Headers.TryGetValue("X-IdUsuarioRol", out StringValues headerUsuarioRol);
+                // string idUsuarioRol = headerUsuarioRol.FirstOrDefault();
+                // Console.WriteLine(jsonWebToken);
+                // Console.WriteLine(idUsuarioRol);
                 parameters.idRol = _idRol;
-               reportFile = await new ApiServer(_apiGateway).PostAsync<FileModel>("api/Reporte/Download", parameters);               
+                reportFile = await new ApiServer(_apiGateway).PostAsync<FileModel>("api/Reporte/Download", parameters, Request);
                 if (reportFile.Content == null || reportFile.Content.Length == 0)
                 {
                     ErrorFile(reportFile);
@@ -153,11 +160,11 @@ namespace WebUI.Controllers.Admin
         //Dynamic Report 
         [HttpPost]
         public async Task<IActionResult> DownloadDynamic([FromBody] ApiReportParamsDto data)
-        {            
-            Dictionary<string, object> parameters = new Dictionary<string, object>();            
+        {
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("json", SqlValidation.ValidateSqlString(data.dataParams));
-            var _dt = DbResponse.SPDataTable(await _dao.GetDataTableAsync("Reporte.Management_Get_To_Print", parameters));           
-            data.reportParams = _dt.payload;            
+            var _dt = DbResponse.SPDataTable(await _dao.GetDataTableAsync("Reporte.Management_Get_To_Print", parameters));
+            data.reportParams = _dt.payload;
             FileModel reportFile = new FileModel();
             try
             {

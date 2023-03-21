@@ -5,6 +5,7 @@ using HelpersNS20;
 using HelpersNS20.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.Primitives;
 using Microsoft.Reporting.NETCore;
 using Newtonsoft.Json;
 using System.Data;
@@ -118,7 +119,8 @@ namespace ApiReports.Controllers
         public async Task<IActionResult> Download(ApiReportParamsDto data)
         {
             LogWriter _log = new LogWriter(_configuration);
-
+            Request.Headers.TryGetValue("Authorization", out StringValues headerValues);
+            string jsonWebToken = headerValues.FirstOrDefault();
             FileModelDto _response = new FileModelDto();
             //ReporteDao _r = new ReporteDao();
             string mimeType = string.Empty;
@@ -130,12 +132,12 @@ namespace ApiReports.Controllers
                 _db.AddDynamicParam("json", data.reportParams);
                 DataSet dsParams = _db.GetDataSet();
 
-                //int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
 
                 await _db.SPExecute(dsParams.Tables[0].Rows[0]["storedProcedure"].ToString());
                 if (!data.hasService)
                 {
-                    _db.AddDynamicParam("idRol", data.idRol);
+                    _db.AddDynamicParam("idRol", idUsuarioRol);
                 }
                 _db.AddDynamicParam("json", data.dataParams);
                 DataSet ds = _db.GetDataSet();
