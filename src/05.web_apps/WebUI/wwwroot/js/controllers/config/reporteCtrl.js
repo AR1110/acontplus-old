@@ -51,6 +51,7 @@
 
         $scope.expandDetalle = function (item) {
             try {
+
                 item.expanded = !item.expanded;
                 showLoader()
                 mS.getData('get', 'ReporteDataSource/?json=' + JSON.stringify({ typeList: 2, id: item.idReporteParametro })).then(response => {
