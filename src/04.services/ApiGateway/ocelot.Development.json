@@ -372,8 +372,25 @@
     },
     {
       "UpstreamPathTemplate": "/api/CuentaPorPagar/{everything}",
-      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "UpstreamHttpMethod": [ "Post", "Put", "Delete"],
       "DownstreamPathTemplate": "/api/CuentaPorPagar/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 52813
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/CuentaPorPagar?json={json}",
+      "UpstreamHttpMethod": [ "Get"],
+      "DownstreamPathTemplate": "/api/CuentaPorPagar?json={json}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -391,22 +408,6 @@
       "UpstreamPathTemplate": "/api/CuentaPorPagar/{id}?json={json}",
       "UpstreamHttpMethod": [ "Put" ],
       "DownstreamPathTemplate": "/api/CuentaPorPagar/{id}?json={json}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 52813
-        }
-      ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": []
-      }
-    },
-    {
-      "UpstreamPathTemplate": "/api/CuotaPorPagar/{json}",
-      "UpstreamHttpMethod": [ "Put" ],
-      "DownstreamPathTemplate": "/api/CuotaPorPagar/{json}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
