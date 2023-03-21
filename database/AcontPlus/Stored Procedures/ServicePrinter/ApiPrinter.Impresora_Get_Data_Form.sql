@@ -42,8 +42,16 @@ BEGIN
 
 	SELECT idTipoImpresora,codigo,descripcion FROM ApiPrinter.TipoImpresora WITH (NOLOCK) WHERE estado = 1
 
-	SELECT 'FV'codDoc,'FACTURA' descripcion,CAST(1 AS BIT)estado, CAST(0 AS BIT) copyPrint
-	UNION ALL
-	SELECT 'NE'codDoc,'NOTA DE ENTREGA' descripcion,CAST(1 AS BIT)estado, CAST(0 AS BIT) copyPrint
+	--SELECT 'FV'codDoc,'FACTURA' descripcion,CAST(1 AS BIT)estado, CAST(0 AS BIT) copyPrint
+	--UNION ALL
+	--SELECT 'NE'codDoc,'NOTA DE ENTREGA' descripcion,CAST(1 AS BIT)estado, CAST(0 AS BIT) copyPrint
+	--UNION ALL
+	--SELECT 'NE'codDoc, 'PROFORMA'
+	SELECT 
+		codDoc = codigo,
+		descripcion = UPPER(descripcion),
+		estado = CAST(1 AS BIT),
+		copyPrint = CAST(0 AS BIT)
+	FROM TipoDocumento WHERE codigo IN ('FV', 'NE', 'PR')
 END
 GO

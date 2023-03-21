@@ -113,8 +113,8 @@
                 codDoc: $scope.dataSearch.codDoc,
                 checkboxProveedor: $scope.dataSearch.idProveedor>0? $scope.dataSearch.checkboxProveedor = true: $scope.dataSearch.checkboxProveedor=false,
                 idProveedor: $scope.dataSearch.idProveedor,
-                dateStart:  $scope.dateRangePicker.date.startDate,
-                dateEnd:  $scope.dateRangePicker.date.endDate
+                dateStart:  $scope.dateRangePicker.date.startDate._d,
+                dateEnd:  $scope.dateRangePicker.date.endDate._d
             }
 
             //Activar seleccion multiple para pago  por lote 
@@ -123,7 +123,9 @@
             }else{
                 $scope.options.rowSelection = false;
             }        
-          
+            console.log(dataSearch)
+            console.log($scope.dateRangePicker.date.startDate._d)
+
             $scope.promise = _mS.getData('get', 'CuentaPorPagar/' + JSON.stringify(dataSearch), null, true).then(response => {
                 
                 if (response.code == '0') {
@@ -139,6 +141,7 @@
                 }                    
 
             }).catch((error) => {
+                hideLoader();
                 $scope.cuentasPorPagar = [];
                 console.log(error)
             })            
