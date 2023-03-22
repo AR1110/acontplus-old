@@ -1,4 +1,5 @@
 ﻿using Microsoft.Reporting.Map.WebForms.BingMaps;
+using Newtonsoft.Json.Linq;
 using PrinterServer.Models;
 using System;
 using System.Drawing;
@@ -26,9 +27,8 @@ namespace PrinterServer
             _data = data;
             _printDoc = new PrintDocument();
             string printerName = _data.rdlcProps.FirstOrDefault(x => x.Key == "printerName").Value;
-            //_printDoc.PrinterSettings.PrinterName = "BSC10";
-            _printDoc.PrinterSettings.PrinterName = "POS-80C";
-
+            //_printDoc.PrinterSettings.PrinterName = printerName;
+            _printDoc.PrinterSettings.PrinterName = "Microsoft XPS Document Writer";
             _printDoc.PrintPage += new PrintPageEventHandler(FormatPage);
             _printDoc.Print();
             return true;
@@ -49,15 +49,51 @@ namespace PrinterServer
             int startY = 5;
             _graphics.DrawString(text, font, new SolidBrush(Color.Black), startX + xoffset, startY + offset);
         }
+        void InsertHeaderStyleItem(string description, string quatity, string valor, string total, int offset)
+        {
+            Font minifont = new Font("Arial", 5);
+            int startX = 10;
+            int startY = 7;
+
+            _graphics.DrawString(description, minifont,
+                         new SolidBrush(Color.Black), startX + 5, startY + offset);
+
+            _graphics.DrawString(quatity, minifont,
+                     new SolidBrush(Color.Black), startX + 130, startY + offset);
+
+            _graphics.DrawString(valor, minifont,
+                        new SolidBrush(Color.Black), startX + 165, startY + offset);
+
+            _graphics.DrawString(total, minifont,
+                     new SolidBrush(Color.Black), startX + 200, startY + offset);
+        }
+        void InsertItem(string description, string quatity, string valor, string total, int offset)
+        {
+            Font minifont = new Font("Arial", 5);
+            int startX = 10;
+            int startY = 5;
+
+            _graphics.DrawString(description, minifont,
+                         new SolidBrush(Color.Black), startX + 5, startY + offset);
+
+            _graphics.DrawString(quatity, minifont,
+                     new SolidBrush(Color.Black), startX + 130, startY + offset);
+
+            _graphics.DrawString(valor, minifont,
+                        new SolidBrush(Color.Black), startX + 165, startY + offset);
+
+            _graphics.DrawString(total, minifont,
+                     new SolidBrush(Color.Black), startX + 200, startY + offset);
+        }
         private void FormatPage(object sender, PrintPageEventArgs e)
         {
             _graphics = e.Graphics;
             Font minifont = new Font("Arial", 5);
             Font itemfont = new Font("Arial", 6);
-            Font smallFont = new Font("Arial", 8);
-            Font mediumFont = new Font("Arial", 10);
-            Font largeFont = new Font("Arial", 12);
-            Font drawFontBold = new Font("Arial", 12, FontStyle.Bold);
+            Font smallFont = new Font("Arial", 5);
+            Font mediumFont = new Font("Arial", 6);
+            Font largeFont = new Font("Arial", 7);
+            Font drawFontBold = new Font("Arial", 7, FontStyle.Bold);
 
 
             int offsset = 10;
@@ -68,16 +104,60 @@ namespace PrinterServer
 
             offsset = offsset + largeinc + 10;
 
-            string underline = "-------------------------------------";
-            DrawLine(underline, largeFont, offsset, 0);
+            string underLine = "--------------------------------------------------";
+            DrawLine(underLine, largeFont, offsset, 0);
 
             offsset = offsset + mediuminc;
             var data = _data.dataSources.First(x => x.Key == "encabezadoDs").Value;
             DrawStart(data[0]["razonSocial"], drawFontBold, offsset);
+
             offsset = offsset + mediuminc;
             DrawStart(data[0]["nombreComercial"], drawFontBold, offsset);
+
             offsset = offsset + mediuminc;
             DrawStart("RUC: " + data[0]["ruc"], drawFontBold, offsset);
+
+            offsset = offsset + mediuminc;
+            DrawStart(data[0]["regimen"], drawFontBold, offsset);
+
+            offsset = offsset + mediuminc;
+            DrawStart("Teléfono: " + data[0]["telefonoEntidad"], drawFontBold, offsset);
+
+            offsset = offsset + mediuminc;
+            DrawStart("Dirección: " + data[0]["dirMatriz"], drawFontBold, offsset);
+
+            offsset += mediuminc;
+            DrawStart("FACTURA NRO: " + data[0]["nroFactura"], drawFontBold, offsset);
+
+            offsset += mediuminc;
+            DrawStart("RUC/CI: " + data[0]["nroIdentificacion"], drawFontBold, offsset);
+
+            offsset += mediuminc;
+            DrawStart("Direcc: " + data[0]["direccionComprador"], drawFontBold, offsset);
+
+            offsset += mediuminc;
+            DrawStart("Fecha: " + data[0]["fechaEmision"], drawFontBold, offsset);
+
+            offsset = offsset + smallinc;
+            underLine = "--------------------------------------------------";
+            DrawLine(underLine, largeFont, offsset, 0);
+
+            offsset = offsset + largeinc;
+            InsertHeaderStyleItem("Descripción ", "Cantidad ", " P.U.", "Total", offsset);
+
+
+            offsset = offsset + largeinc;
+            var details = _data.dataSources.First(x => x.Key == "detalleDs").Value;
+
+            foreach (var source in details)
+            {
+                InsertItem(source.FirstOrDefault(x=> x.Key=="descripcion").Value,
+                    source.FirstOrDefault(x => x.Key == "cantidad").Value,
+                    source.FirstOrDefault(x => x.Key == "precioUnitario").Value,
+                    source.FirstOrDefault(x => x.Key == "precioTotal").Value,
+                    offsset);
+                offsset = offsset + smallinc;
+            }
 
 
         }
