@@ -22,58 +22,7 @@ class MdArticuloCtrl{
         
         this.$scope.$on("editArticulo", (e, itemArticulo)=>{
             this.openModalArticulo(itemArticulo)
-        })  
-
-        this.articulos = [];
-            
-
-        setTimeout(()=>{
-            
-            document.querySelector("#custom-template-md-autocomplete-articulo").addEventListener('keyup', this.debounce(() => {
-                
-                let json =  {
-                    busqueda: this._commonSvc.removeAccents(this.searchText),
-                    condicion: false,
-                    fraccionado: false,
-                }
-                this.articulos = [];
-
-                this._mS.getData('get', '/Articulo/Search?json=' + JSON.stringify(json)).then(response=>{
-                        console.log('init fetch')
-                        if(response.code==='0'){
-                            console.log(response)
-                            this.articulos = [];
-                        }
-
-                        if(response.code==='1'){
-                            
-                            let articulos = JSON.parse(response.payload) || [];
-
-                            if(articulos.length>0){
-
-                                articulos.unshift({
-                                    showHeader: true,
-                                    priceSale: JSON.parse(articulos[0].priceSale),
-                                    warehouses: JSON.parse(articulos[0].warehouses)
-                    
-                                })
-
-                                this.articulos = articulos.map(item=>{
-                                    if(!item.hasOwnProperty('showHeader')){
-                                        item.priceSale = JSON.parse(item.priceSale)
-                                        item.warehouses = JSON.parse(item.warehouses)
-                                    } 
-                                    return item;
-                                })
-
-                            }                                
-                        }            
-                    })  
-                
-            }))
-
-        }, 100)
-
+        })          
     }
 
 
@@ -118,34 +67,41 @@ class MdArticuloCtrl{
 
     
 
-    getDynamicSearchArticles(){             
-        // return this.$http.get('/Articulo/Search?json=' + JSON.stringify(json)).then(response=>{
-        //     console.log(response)
-        //     if(response.data.code==='0'){
-        //         console.log(response)
-        //         return []
-        //     }
+    getDynamicSearchArticles(){  
+        
+        let json =  {
+            busqueda: this._commonSvc.removeAccents(this.searchText),
+            condicion: false,
+            fraccionado: false,
+        }
 
-        //     let articulos = JSON.parse(response.data.payload) || [];
-        //     if(articulos.length>0){
-        //         articulos.unshift({
-        //             showHeader: true,
-        //             priceSale: JSON.parse(articulos[0].priceSale),
-        //             warehouses: JSON.parse(articulos[0].warehouses)
+        return this.$http.get('/Articulo/Search?json=' + JSON.stringify(json)).then(response=>{
+            console.log(response)
+            if(response.data.code==='0'){
+                console.log(response)
+                return []
+            }
+
+            let articulos = JSON.parse(response.data.payload) || [];
+            if(articulos.length>0){
+                articulos.unshift({
+                    showHeader: true,
+                    priceSale: JSON.parse(articulos[0].priceSale),
+                    warehouses: JSON.parse(articulos[0].warehouses)
     
-        //         })
-        //         articulos = articulos.map(item=>{
-        //             if(!item.hasOwnProperty('showHeader')){
-        //                 item.priceSale = JSON.parse(item.priceSale)
-        //                 item.warehouses = JSON.parse(item.warehouses)
-        //             } 
-        //             return item;
-        //         })
-        //     }
+                })
+                articulos = articulos.map(item=>{
+                    if(!item.hasOwnProperty('showHeader')){
+                        item.priceSale = JSON.parse(item.priceSale)
+                        item.warehouses = JSON.parse(item.warehouses)
+                    } 
+                    return item;
+                })
+            }
             
-        //     return articulos;
+            return articulos;
 
-        // })                        
+        })                        
     }
 
     async getDynamicSearchArticlesSimple(textSearch){  

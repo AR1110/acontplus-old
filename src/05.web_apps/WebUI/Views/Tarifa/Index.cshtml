@@ -23,13 +23,7 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-lg-9 col-md-9 col-sm-6 col-xs-6">
-                            <span class="form-group pull-left page-size form-inline">
-                                <select class="form-control control-color"
-                                        ng-model="pageSize"
-                                        ng-change="changePageSize()"
-                                        ng-options="ra for ra in recordsQuantity">
-                                </select>
-                            </span>
+                           
                         </div>
                         <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
                             <input type="text" class="form-control" ng-model="buscar" placeholder="Buscar Tarifa" />
@@ -63,16 +57,7 @@
                                         No existen registros disponibles en esta tabla;
                                     </td>
                                 </tr>
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td align="center" colspan="6">
-                                        <div class="pull-left">
-                                            <ul uib-pagination total-items="totalRecords" items-Per-Page="pageSize" ng-change="pagechanged()" ng-model="pageIndex" max-size="maxSize" class="pagination" boundary-links="true" rotate="false"></ul>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tfoot>
+                            </tbody>                           
                         </table>
                     </div>
                 </div>

@@ -61,22 +61,29 @@ BEGIN
 			SET	@color = '#FB0909'
 		END 
 
-	-----------------------------HISTORIAL DE MOVIMIENTO POR DOCUMENTO DEL CONTROL DE CAJA-----------------------------
-     SELECT 
-	      nroComprobante = nroCobro,
-		  tipDoc,
-		  nroDoc,
-		  fechaEmision = dbo.AFTConvertDate(fechaEmision)+dbo.AFTConvertHora(fechaEmision),
-		  persona = nombreComercial,
-		  total = CAST(total AS numeric(15,2)),
-		  abono = CAST(abono AS numeric(15,2)),
-		  saldo = CAST(saldo AS numeric(15,2)),
-		  pay =   pay
-	 FROM AFTAdministracionCaja()
-	 WHERE estado = 1 AND idEntidad = @idEntidad AND idControlCaja = @idControlCaja
-	 ORDER BY tipo,nroDoc,nroCobro ASC 
+	----info Ds 
+	 SELECT 
+		nroControl         = cc.idControlCaja,
+		caja               = c.descripcion,
+		apertura           = dbo.AFTConvertDate(cc.fechaApertura)+dbo.AFTConvertHora(cc.fechaApertura),
+		cierre             = ISNULL(dbo.AFTConvertDate(cc.fechaCierre)+dbo.AFTConvertHora(cc.fechaCierre),'Pendiente'),
+		usuario            = u.nombreCompleto,
+		estado             = CASE WHEN cc.estado = 1 THEN 'ABIERTA' ELSE 'CERRADA' END,
+		entrada            = CAST(cc.entrada AS numeric(15,2)),
+		efectivoSistema    = CAST(ISNULL(@efectivoSistema,0) AS numeric(15,2)),
+		efectivoArqueo     = CAST(ISNULL(@efectivoArqueo,0) AS numeric(15,2)),
+		otros              = CAST(ISNULL(@otros,0) AS numeric(15,2)),
+		totalSistema       = CAST(ISNULL(@totalSistema,0) AS numeric(15,2)),
+		totalArqueo        = CAST(ISNULL(@totalArqueo,0)  AS numeric(15,2)),
+		diferencia         = CAST(ISNULL(@direfencia,0)   AS numeric(15,2)),
+		color              = @color
+	 FROM dbo.ControlCaja cc WITH (NOLOCK)
+	 INNER JOIN dbo.Caja            c WITH (NOLOCK) ON c.idCaja    = cc.idCaja
+	 INNER JOIN dbo.AsignacionCaja ac WITH (NOLOCK) ON ac.idCaja   = c.idCaja
+	 INNER JOIN dbo.Usuario         u WITH (NOLOCK) ON u.idUsuario = ac.idUsuario
+	 WHERE cc.idControlCaja = @idControlCaja
 
-	 ------------------------------------------------END----------------------------------------------------------------
+	
 
 
 
@@ -113,26 +120,24 @@ BEGIN
 	 FROM AFTDocumentoForPayment() 
 	 WHERE gestion = 1 AND idEntidad = @idEntidad AND CAST(fechaEmision AS date) = CAST(@fechaApertura AS date)
 
-	 SELECT 
-		nroControl         = cc.idControlCaja,
-		caja               = c.descripcion,
-		apertura           = dbo.AFTConvertDate(cc.fechaApertura)+dbo.AFTConvertHora(cc.fechaApertura),
-		cierre             = ISNULL(dbo.AFTConvertDate(cc.fechaCierre)+dbo.AFTConvertHora(cc.fechaCierre),'Pendiente'),
-		usuario            = u.nombreCompleto,
-		estado             = CASE WHEN cc.estado = 1 THEN 'ABIERTA' ELSE 'CERRADA' END,
-		entrada            = CAST(cc.entrada AS numeric(15,2)),
-		efectivoSistema    = CAST(ISNULL(@efectivoSistema,0) AS numeric(15,2)),
-		efectivoArqueo     = CAST(ISNULL(@efectivoArqueo,0) AS numeric(15,2)),
-		otros              = CAST(ISNULL(@otros,0) AS numeric(15,2)),
-		totalSistema       = CAST(ISNULL(@totalSistema,0) AS numeric(15,2)),
-		totalArqueo        = CAST(ISNULL(@totalArqueo,0)  AS numeric(15,2)),
-		diferencia         = CAST(ISNULL(@direfencia,0)   AS numeric(15,2)),
-		color              = @color
-	 FROM dbo.ControlCaja cc WITH (NOLOCK)
-	 INNER JOIN dbo.Caja            c WITH (NOLOCK) ON c.idCaja    = cc.idCaja
-	 INNER JOIN dbo.AsignacionCaja ac WITH (NOLOCK) ON ac.idCaja   = c.idCaja
-	 INNER JOIN dbo.Usuario         u WITH (NOLOCK) ON u.idUsuario = ac.idUsuario
-	 WHERE cc.idControlCaja = @idControlCaja
+
+	 -----------------------------HISTORIAL DE MOVIMIENTO POR DOCUMENTO DEL CONTROL DE CAJA-----------------------------
+     SELECT 
+	      nroComprobante = nroCobro,
+		  tipDoc,
+		  nroDoc,
+		  fechaEmision = dbo.AFTConvertDate(fechaEmision)+dbo.AFTConvertHora(fechaEmision),
+		  persona = nombreComercial,
+		  total = CAST(total AS numeric(15,2)),
+		  abono = CAST(abono AS numeric(15,2)),
+		  saldo = CAST(saldo AS numeric(15,2)),
+		  pay =   pay
+	 FROM AFTAdministracionCaja()
+	 WHERE estado = 1 AND idEntidad = @idEntidad AND idControlCaja = @idControlCaja
+	 ORDER BY tipo,nroDoc,nroCobro ASC 
+
+	 ------------------------------------------------END----------------------------------------------------------------
+	
 
 	 SELECT @chequesPosf as chequePosfechado
 	 
