@@ -26,19 +26,21 @@ namespace PrinterServer
             _data = data;
             _printDoc = new PrintDocument();
             string printerName = _data.rdlcProps.FirstOrDefault(x => x.Key == "printerName").Value;
-            _printDoc.PrinterSettings.PrinterName = printerName;
+            //_printDoc.PrinterSettings.PrinterName = "BSC10";
+            _printDoc.PrinterSettings.PrinterName = "POS-80C";
+
             _printDoc.PrintPage += new PrintPageEventHandler(FormatPage);
             _printDoc.Print();
             return true;
         }
 
-        void DrawStart(string text, int offset)
+        void DrawStart(string text, Font font, int offset)
         {
             int startX = 10;
             int startY = 5;
-            Font minifont = new Font("Arial", 5);
+            //Font minifont = new Font("Arial", 5);
 
-            _graphics.DrawString(text, minifont, new SolidBrush(Color.Black), startX + 5, startY + offset);
+            _graphics.DrawString(text, font, new SolidBrush(Color.Black), startX + 5, startY + offset);
         }
 
         void DrawLine(string text, Font font, int offset, int xoffset)
@@ -55,6 +57,8 @@ namespace PrinterServer
             Font smallFont = new Font("Arial", 8);
             Font mediumFont = new Font("Arial", 10);
             Font largeFont = new Font("Arial", 12);
+            Font drawFontBold = new Font("Arial", 12, FontStyle.Bold);
+
 
             int offsset = 10;
             int smallinc = 10, mediuminc = 12, largeinc = 12;
@@ -68,9 +72,12 @@ namespace PrinterServer
             DrawLine(underline, largeFont, offsset, 0);
 
             offsset = offsset + mediuminc;
-            var data = _data.dataSources.First(x=> x.Key == "encabezadoDs").Value;
-            //var empresa = data.First(x => x.TryGetValue("razonSocial", out string test));
-             DrawStart(data[0]["razonSocial"], offsset);
+            var data = _data.dataSources.First(x => x.Key == "encabezadoDs").Value;
+            DrawStart(data[0]["razonSocial"], drawFontBold, offsset);
+            offsset = offsset + mediuminc;
+            DrawStart(data[0]["nombreComercial"], drawFontBold, offsset);
+            offsset = offsset + mediuminc;
+            DrawStart("RUC: " + data[0]["ruc"], drawFontBold, offsset);
 
 
         }
