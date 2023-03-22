@@ -87,6 +87,7 @@
     <Compile Include="PrintReport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqlServerTypes\Loader.cs" />
+    <Compile Include="ThermalPrint.cs" />
     <Compile Include="Utils\DataHelper.cs" />
   </ItemGroup>
   <ItemGroup>
