@@ -126,8 +126,8 @@
         <CommandText />
       </Query>
       <Fields>
-        <Field Name="tipoDoc">
-          <DataField>tipoDoc</DataField>
+        <Field Name="tipDoc">
+          <DataField>tipDoc</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
         <Field Name="total">
@@ -186,8 +186,8 @@
           <DataField>nroComprobante</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
-        <Field Name="tipoDoc">
-          <DataField>tipoDoc</DataField>
+        <Field Name="tipDoc">
+          <DataField>tipDoc</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
         <Field Name="nroDoc">
@@ -220,7 +220,7 @@
         </Field>
       </Fields>
     </DataSet>
-    <DataSet Name="Totales">
+    <DataSet Name="TotalesDs">
       <Query>
         <DataSourceName>ComprobantesFinancieros</DataSourceName>
         <CommandText />
@@ -2366,7 +2366,7 @@
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value>=UCase(Fields!tipDoc.Value)</Value>
+                                      <Value>=Fields!tipDoc.Value</Value>
                                       <Style>
                                         <FontSize>7pt</FontSize>
                                       </Style>
@@ -2521,14 +2521,14 @@
                         </TablixCell>
                         <TablixCell>
                           <CellContents>
-                            <Textbox Name="Textbox25">
+                            <Textbox Name="saldo1">
                               <CanGrow>true</CanGrow>
                               <KeepTogether>true</KeepTogether>
                               <Paragraphs>
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value>=Fields!total.Value-Fields!abono.Value</Value>
+                                      <Value>=Fields!saldo.Value</Value>
                                       <Style>
                                         <FontSize>7pt</FontSize>
                                       </Style>
@@ -2539,7 +2539,7 @@
                                   </Style>
                                 </Paragraph>
                               </Paragraphs>
-                              <rd:DefaultName>Textbox25</rd:DefaultName>
+                              <rd:DefaultName>saldo1</rd:DefaultName>
                               <Style>
                                 <Border>
                                   <Style>Solid</Style>
