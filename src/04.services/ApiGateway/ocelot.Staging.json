@@ -17,6 +17,11 @@
   },
   "Routes": [
     {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
       "DownstreamHostAndPorts": [
         {
           "Host": "205.209.99.71",

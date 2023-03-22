@@ -21,8 +21,7 @@ CREATE PROCEDURE Config.ReporteDS_Update @idUsuarioRol INT
 AS
 BEGIN 
 	SET NOCOUNT ON;
-	SET LANGUAGE SPANISH;  
-	DECLARE @idReporteParametro INT 
+	SET LANGUAGE SPANISH;   
 	DECLARE @dataSource VARCHAR(50)
 	DECLARE @position INT 
 	DECLARE @estado BIT
@@ -30,15 +29,12 @@ BEGIN
 
 	SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
 
-	SELECT  
-		@idReporteParametro = idReporteParametro,
+	SELECT   
 		@dataSource   = dataSource,
 		@position     = position,
 		@estado       = estado 
 	FROM OPENJSON(@json)
-	WITH( 
-		id INT '$.idReporteDataSource',
-		idReporteParametro INT '$.idReporteParametro',
+	WITH(  
 		dataSource VARCHAR(50) '$.dataSource',
 		position INT '$.position',
 		estado BIT '$.estado'
@@ -46,7 +42,7 @@ BEGIN
 
 	BEGIN TRY
 		BEGIN TRAN  
-			UPDATE dbo.ReporteDataSource SET position = @position, dataSource = @dataSource, estado = @estado WHERE idReporteDataSource = @id					
+			UPDATE Config.ReporteDataSource SET position = @position, dataSource = @dataSource, estado = @estado WHERE idReporteDataSource = @id					
 			SELECT '1'code, 'message' =  'Actualizado Existosamente'
 		COMMIT TRAN
 	END TRY 

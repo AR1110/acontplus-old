@@ -23,6 +23,13 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT * FROM Config.Reporte WITH(NOLOCK)
+	SELECT r.*
+	,nextDs = CASE WHEN (SELECT COUNT(*) FROM Config.ReporteDataSource ds WHERE  ds.idReporte = r.idReporte) > 0 THEN
+	(SELECT TOP 1 position + 1 FROM Config.ReporteDataSource ds WHERE  ds.idReporte = r.idReporte ORDER BY position DESC)
+	ELSE 0
+	END
+	,dataSources = (SELECT * FROM Config.ReporteDataSource ds WHERE  ds.idReporte = r.idReporte  FOR JSON PATH)
+	FROM Config.Reporte r WITH(NOLOCK)
+	
 END
 GO

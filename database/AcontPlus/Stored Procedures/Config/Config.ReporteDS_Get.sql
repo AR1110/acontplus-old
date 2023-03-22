@@ -26,7 +26,11 @@ BEGIN
 		,idReporteDataSource INT
 	)
 
-	SELECT * FROM Config.ReporteDataSource WHERE idReporte = (SELECT TOP 1 idReporte FROM @params)
-
+	INSERT INTO @params(idReporte, idReporteDataSource)
+	SELECT idReporte, idReporteDataSource FROM OPENJSON(@json) WITH(idReporte INT '$.idReporte', idReporteDataSource INT '$.idReporteDataSource')
+	IF EXISTS (SELECT 1 FROM @params WHERE idReporte > 0)
+		BEGIN
+			SELECT * FROM Config.ReporteDataSource WHERE idReporte = (SELECT TOP 1 idReporte FROM @params)
+		END
 
 END 
