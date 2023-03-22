@@ -35,10 +35,13 @@ namespace WebUI.ApiClient
         public async Task<T> PostAsync<T>(string url, object content, HttpRequest request = null)
         {
             EnsureHttpClientCreated();
-            request.Headers.TryGetValue("Authorization", out StringValues headerValues);
-            if (!string.IsNullOrEmpty(headerValues.FirstOrDefault().ToString()))
+            if (request != null)
             {
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", headerValues.FirstOrDefault().ToString().Replace("Bearer ", ""));
+                request.Headers.TryGetValue("Authorization", out StringValues headerValues);
+                if (!string.IsNullOrEmpty(headerValues.FirstOrDefault().ToString()))
+                {
+                    _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", headerValues.FirstOrDefault().ToString().Replace("Bearer ", ""));
+                }
             }
             else
             {
