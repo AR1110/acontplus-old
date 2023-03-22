@@ -1,12 +1,10 @@
 ﻿using BL.Reports;
 using Common.Logs;
 using DataAccess;
-using HelpersNS20;
 using HelpersNS20.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Primitives;
-using Microsoft.Reporting.NETCore;
 using Newtonsoft.Json;
 using System.Data;
 
@@ -59,7 +57,7 @@ namespace ApiReports.Controllers
                 }
                 else
                 {
-                    fileName = dsParams.Tables[0].Rows[0]["fileName"].ToString();
+                    fileName = dsParams.Tables[0].Rows[0].Field<string>("fileName");
 
                     var provider = new FileExtensionContentTypeProvider();
                     if (!provider.TryGetContentType(fileName, out mimeType))
