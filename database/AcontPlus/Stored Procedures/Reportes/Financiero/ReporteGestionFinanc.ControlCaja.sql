@@ -9,7 +9,7 @@ GO
 -- Author:		<Author,,Name>
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
--- exec ReporteGestionFinanc.ControlCaja 38,'[{"idControlCaja":"35"}]'
+-- exec ReporteGestionFinanc.ControlCaja '[{"id":"35"}]'
 -- =============================================
 IF OBJECT_ID(N'ReporteGestionFinanc.ControlCaja', N'P') IS NOT NULL
 DROP PROCEDURE ReporteGestionFinanc.ControlCaja
