@@ -20,7 +20,7 @@ namespace BL.Reports
             using (LocalReport lr = new LocalReport())
             {
                 if (dsParams.Tables[0].Rows.Count == 0)
-                    return null; 
+                    return null;
 
                 if (ds.Tables[0].Rows.Count > 0)
                 {
@@ -36,19 +36,23 @@ namespace BL.Reports
                     lr.DataSources.Add(new ReportDataSource(row["dataSource"].ToString(), ds.Tables[Convert.ToInt32(row["position"])]));
                 }
                 //Recorremos los parametros del reporte como logos, textos, etc
-                ReportParameter[] p = new ReportParameter[dsParams.Tables[2].Rows.Count];
-                foreach (DataRow row in dsParams.Tables[2].Rows)
+                if (Convert.ToBoolean(dsParams.Tables[0].Rows[0]["hasParams"]))
                 {
-                    if (Convert.ToBoolean(row["isByte"]))
+                    //Recorremos los parametros del reporte como logos, textos, etc
+                    ReportParameter[] p = new ReportParameter[dsParams.Tables[2].Rows.Count];
+                    foreach (DataRow row in dsParams.Tables[2].Rows)
                     {
-                        p[Convert.ToInt32(row["position"])] = new ReportParameter(row["paramName"].ToString(), FileExtensionsNS.getBase64FromByte((byte[])row["paramByte"]));
+                        if (Convert.ToBoolean(row["isByte"]))
+                        {
+                            p[Convert.ToInt32(row["position"])] = new ReportParameter(row["paramName"].ToString(), FileExtensionsNS.getBase64FromByte((byte[])row["paramByte"]));
+                        }
+                        else
+                        {
+                            p[Convert.ToInt32(row["position"])] = new ReportParameter(row["paramName"].ToString(), row["paramValue"].ToString());
+                        }
                     }
-                    else
-                    {
-                        p[Convert.ToInt32(row["position"])] = new ReportParameter(row["paramName"].ToString(), row["paramValue"].ToString());
-                    }
+                    lr.SetParameters(p);
                 }
-                lr.SetParameters(p);
 
                 return lr.Render(dsParams.Tables[0].Rows[0]["format"].ToString(), null, out _, out _, out _, out _, out _);
             }

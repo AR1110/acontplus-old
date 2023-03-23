@@ -120,7 +120,7 @@ namespace WS_Notificacion
                                 return false;
                             };
 
-                            fileName = dsParams.Tables[0].Rows[0]["fileName"].ToString();
+                            fileName = dsParams.Tables[0].Rows[0].Field<string>("fileName");
 
                             var provider = new FileExtensionContentTypeProvider();
                             if (!provider.TryGetContentType(fileName, out mimeType))

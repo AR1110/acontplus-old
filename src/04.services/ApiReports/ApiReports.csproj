@@ -61,9 +61,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Content Include="Reports\ConsumoEmpresaTpv.rdl">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
 	  <Content Include="Reports\ConsumoGeneralTpv.rdl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
@@ -170,6 +167,9 @@
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 	  <Content Include="Reports\Ventas\AprobDocument.rdl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Reports\ConsumoEmpresaTpv.rdl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 	  <Content Include="Reports\Ventas\NotaCreditoCliente.rdlc">

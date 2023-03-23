@@ -22,7 +22,7 @@ BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH; 
  
-	DECLARE @idReporteParametro INT 
+	DECLARE @idReporte INT 
 	DECLARE @dataSource VARCHAR(50)
 	DECLARE @position INT 
 	DECLARE @estado BIT
@@ -31,13 +31,13 @@ BEGIN
 	SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
 
 	SELECT  
-		@idReporteParametro = idReporteParametro,
+		@idReporte = idReporte,
 		@dataSource   = dataSource,
 		@position     = position,
 		@estado       = estado 
 	FROM OPENJSON(@json)
 	WITH(
-		idReporteParametro INT '$.idReporteParametro',
+		idReporte INT '$.idReporte',
 		dataSource VARCHAR(50) '$.dataSource',
 		position INT '$.position',
 		estado BIT '$.estado'
@@ -45,7 +45,7 @@ BEGIN
 
 	BEGIN TRY
 		BEGIN TRAN  
-			INSERT INTO dbo.ReporteDataSource(idReporteParametro, position, dataSource)VALUES(@idReporteParametro, @position, @dataSource)										
+			INSERT INTO Config.ReporteDataSource(idReporte, position, dataSource)VALUES(@idReporte, @position, @dataSource)										
 	 
 			SELECT '1'code, 'message' = 'Registrado Existosamente'
 		COMMIT TRAN

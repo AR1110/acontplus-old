@@ -3,9 +3,9 @@
 
     app.controller('reporteTpvCtrl', reporteTpvCtrl);
 
-    reporteTpvCtrl.$inject = ['$scope', 'mainService', 'toastService'];
+    reporteTpvCtrl.$inject = ['$scope', 'mainService', 'toastService', '$localStorage', 'jwtHelper'];
 
-    function reporteTpvCtrl($scope, mS, tS) {
+    function reporteTpvCtrl($scope, mS, tS, $localStorage, jwtHelper) {
         $scope.configurations = []
         $scope.empresas = []
 
@@ -36,17 +36,38 @@
         }
         $scope.initialLoad()
 
-        $scope.getReportApi = (data) => {
+        $scope.getReport = () => {
             try {
                 showLoader()
-                let tempArray = JSON.parse(data)[0][0]
-                let parameters = {
-                    rdlcProps: JSON.parse(tempArray.rdlcProps)[0],
-                    dataSources: JSON.parse(tempArray.dataSources)[0],
-                    rdlcParams: JSON.parse(tempArray.rdlcParams)[0]
-                } 
-                let urlReports = document.getElementById('urlReports').value
-                mS.getFile('POST', urlReports + 'api/Reporte/DownloadDynamic', parameters).then(
+                // let tempArray = JSON.parse(data)[0][0]
+                // let parameters = {
+                //     rdlcProps: JSON.parse(tempArray.rdlcProps)[0],
+                //     dataSources: JSON.parse(tempArray.dataSources)[0],
+                //     rdlcParams: JSON.parse(tempArray.rdlcParams)[0]
+                // } 
+                let format = 2
+                let dataParams = {
+                    tipo: 7,
+                    idConfigTpv: document.getElementById('idConfigTpv').value,
+                    idEmpresa: $scope.report.idEmpresa,
+                    fechaInicio: $scope.report.fechaInicio,
+                    fechaFin: $scope.report.fechaFin
+                }
+                let authData = $localStorage.currentUser
+                let decodedJwt = {}
+                if (authData) {
+                     decodedJwt = jwtHelper.decodeToken(authData.token) 
+                }
+                let data = {
+                    reportParams: JSON.stringify({
+                        idUsuarioRol: decodedJwt.idUsuarioRol,
+                        codigo: 'RCETPV',
+                        format: format == 1 ? 'pdf' : 'excel',
+                        hasParams: false
+                    }),
+                    dataParams: JSON.stringify(dataParams)
+                }
+                 mS.getFile('POST', '/Reporte/Download', data).then(
                     response => {
                         if (response) {
                             hideLoader()
@@ -65,31 +86,31 @@
                 console.log(error)
             }
         }
-        
-        
-        $scope.getReport = () => {
-            try {
-                let format = 2
-                let data = {
-                    tipo: 7,
-                    formato: format == 1 ? 'pdf' : 'excel',
-                    idConfigTpv: document.getElementById('idConfigTpv').value,
-                    idEmpresa: $scope.report.idEmpresa,
-                    fechaInicio: $scope.report.fechaInicio,
-                    fechaFin: $scope.report.fechaFin
-                }
-                mS.getData('get', '/consumoTpv/Get?json=' + JSON.stringify(data)).then(
-                    response => {
-                        if (response.code == '1') {
-                            $scope.getReportApi(response.payload)
-                        }
-                    }, error => {
-                        console.log(error)
-                    }
-                )
-            } catch (error) {
-                console.log(error)
-            }
-        }
+
+
+        // $scope.getReport = () => {
+        //     try {
+        //         let format = 2
+        //         let data = {
+        //             tipo: 7,
+        //             formato: format == 1 ? 'pdf' : 'excel',
+        //             idConfigTpv: document.getElementById('idConfigTpv').value,
+        //             idEmpresa: $scope.report.idEmpresa,
+        //             fechaInicio: $scope.report.fechaInicio,
+        //             fechaFin: $scope.report.fechaFin
+        //         }
+        //         mS.getData('get', '/consumoTpv/Get?json=' + JSON.stringify(data)).then(
+        //             response => {
+        //                 if (response.code == '1') {
+        //                     $scope.getReportApi(response.payload)
+        //                 }
+        //             }, error => {
+        //                 console.log(error)
+        //             }
+        //         )
+        //     } catch (error) {
+        //         console.log(error)
+        //     }
+        // }
     }
 })(window.angular);

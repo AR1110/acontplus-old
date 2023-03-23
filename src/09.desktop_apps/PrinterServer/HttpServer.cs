@@ -145,17 +145,17 @@ namespace PrinterServer
                             dataReport.rdlcParams = rdlcParams;
                         }
                     }
-
-                    if (PrintReport.DynamicPrint(dataReport))
-                    {
-                        resp.StatusCode = 200;
-                        resp.StatusDescription = "OK";
-                    }
-                    else
-                    {
-                        resp.StatusCode = 400;
-                        resp.StatusDescription = "Bad Request";
-                    }
+                    new ThermalPrint().Print(dataReport);
+                    //if (PrintReport.DynamicPrint(dataReport))
+                    //{
+                    //    resp.StatusCode = 200;
+                    //    resp.StatusDescription = "OK";
+                    //}
+                    //else
+                    //{
+                    //    resp.StatusCode = 400;
+                    //    resp.StatusDescription = "Bad Request";
+                    //}
 
                     // Write the response info
                     string disableSubmit = !runServer ? "disabled" : "";
@@ -180,7 +180,7 @@ namespace PrinterServer
                     var appLog = new EventLog("Application");
                     var eventSource = "PrinterServer";
                     appLog.Source = CreateEventSource(eventSource);
-                    appLog.WriteEntry(hle.StackTrace, EventLogEntryType.Error);
+                    appLog.WriteEntry("HttpListener exception: " + hle.ToString(), EventLogEntryType.Error);
                     Console.WriteLine("Error in listener {0}", hle.Message);
                 }
                 catch (Exception ex)
@@ -188,7 +188,7 @@ namespace PrinterServer
                     var appLog = new EventLog("Application");
                     var eventSource = "PrinterServer";
                     appLog.Source = CreateEventSource(eventSource);
-                    appLog.WriteEntry(ex.StackTrace, EventLogEntryType.Error);
+                    appLog.WriteEntry("Server Exception: " + ex.ToString(), EventLogEntryType.Error);
                     Console.WriteLine("Error in server {0}", ex.Message);
                     runServer = true;
                     // decide to continue or return
@@ -206,7 +206,7 @@ namespace PrinterServer
             listener = new HttpListener();
 
             string hostname = Dns.GetHostName(); // Retrive the Name of HOST
-            string myIP = Dns.GetHostEntry(hostname).AddressList[0].ToString(); 
+            string myIP = Dns.GetHostEntry(hostname).AddressList[0].ToString();
             for (int i = 0; i <= Dns.GetHostEntry(hostname).AddressList.Length - 1; i++)
             {
                 if (Dns.GetHostEntry(hostname).AddressList[i].IsIPv6LinkLocal == false)
@@ -219,11 +219,19 @@ namespace PrinterServer
             {
                 NetAclChecker.AddAddress(myIP);
                 listener.Prefixes.Add(myIP);
+                var appLog = new EventLog("Application");
+                var eventSource = "PrinterServer";
+                appLog.Source = CreateEventSource(eventSource);
+                appLog.WriteEntry($"Listening for connections on {myIP}", EventLogEntryType.Information);
                 Console.WriteLine("Listening for connections on {0}", myIP);
             }
             else
             {
                 listener.Prefixes.Add(url);
+                var appLog = new EventLog("Application");
+                var eventSource = "PrinterServer";
+                appLog.Source = CreateEventSource(eventSource);
+                appLog.WriteEntry($"Listening for connections on {url}", EventLogEntryType.Information);
                 Console.WriteLine("Listening for connections on {0}", url);
             }
             listener.Start();

@@ -1,11 +1,10 @@
 ﻿using BL.Reports;
 using Common.Logs;
 using DataAccess;
-using HelpersNS20;
 using HelpersNS20.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
-using Microsoft.Reporting.NETCore;
+using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using System.Data;
 
@@ -22,103 +21,13 @@ namespace ApiReports.Controllers
             _configuration = configuration;
             _report = report;
         }
-        [HttpPost("GetReport")]
-        public IActionResult GetReport([FromBody] ApiReportParamsDto parameters)
-        {
-            LogWriter _log = new LogWriter(_configuration);
-            FileModelDto _response = new FileModelDto();
-            try
-            {
-                byte[] report = null;
-                using (LocalReport lr = new LocalReport())
-                {
-                    string format = string.Empty;
-                    string deviceInfo = string.Empty;
-                    string fileName = string.Empty;
-                    foreach (var item in parameters.rdlcProps)
-                    {
-                        if (item.Key == "rdlcName")
-                        {
-                            lr.ReportPath = _configuration.GetSection("dirReports").Value + item.Value;
-                        }
-                        if (item.Key == "format")
-                        {
-                            format = item.Value;
-                        }
-                        if (item.Key == "fileName")
-                        {
-                            fileName = item.Value;
-                        }
-                    }
-
-                    foreach (var item in parameters.dataSources)
-                    {
-                        lr.DataSources.Add(new ReportDataSource(item.Key, DataHelperNS.JsonToDataTable(JsonConvert.SerializeObject(item.Value))));
-                    }
-                    if (parameters.rdlcParams != null)
-                    {
-                        int index = 0;
-                        ReportParameter[] rp = new ReportParameter[parameters.rdlcParams.Keys.Count];
-                        foreach (var item in parameters.rdlcParams)
-                        {
-                            rp[index++] = new ReportParameter(item.Key, item.Value);
-                        }
-                        lr.SetParameters(rp);
-                    }
-                    report = lr.Render(format,
-                                       deviceInfo,
-                                       PageCountMode.Actual,
-                                       out string mimeType,
-                                       out string encoding,
-                                       out string fileNameExtension,
-                                       out string[] streams,
-                                       out Warning[] warnings);
-                    //_response.message = "Report Created";
-
-                    _response.ContentType = mimeType;
-                    _response.FileName = fileName + "." + fileNameExtension;
-                    _response.Content = report;
-
-                    //Uncomment to preview report in postman
-                    if (report == null || report.Length == 0)
-                    {
-                        ReportError.ReportNotFound(_response);
-                    }
-
-                    //async Task<IActionResult> response = Request.CreateResponse(HttpStatusCode.OK);
-
-                    //Set the Response Content.
-                    //response.Content = new ByteArrayContent(_response.Content);
-
-                    //Set the Response Content Length.
-                    //response.Content.Headers.ContentLength = _response.Content.LongLength;
-
-                    //Set the Content Disposition Header Value and FileName. 
-                    //response.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment");
-                    //response.Content.Headers.ContentDisposition.FileName = _response.FileName;
-
-                    //Set the File Content Type. 
-                    //response.Content.Headers.ContentType = new MediaTypeHeaderValue(mimeType);
-                    return File(_response.Content, _response.ContentType, _response.FileName);
-
-                    //End Preview
-
-
-                    //return this.Request.CreateResponse(HttpStatusCode.OK, _response);
-                }
-            }
-            catch (Exception ex)
-            {
-                _log.LogError("Error in GetReport: \n" + ex.ToString());
-                return BadRequest();
-            }
-        }
         //method for backend request to db
         [HttpPost("Download")]
         public async Task<IActionResult> Download(ApiReportParamsDto data)
         {
             LogWriter _log = new LogWriter(_configuration);
-
+            Request.Headers.TryGetValue("Authorization", out StringValues headerValues);
+            string jsonWebToken = headerValues.FirstOrDefault();
             FileModelDto _response = new FileModelDto();
             //ReporteDao _r = new ReporteDao();
             string mimeType = string.Empty;
@@ -130,12 +39,12 @@ namespace ApiReports.Controllers
                 _db.AddDynamicParam("json", data.reportParams);
                 DataSet dsParams = _db.GetDataSet();
 
-                //int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
 
                 await _db.SPExecute(dsParams.Tables[0].Rows[0]["storedProcedure"].ToString());
                 if (!data.hasService)
                 {
-                    _db.AddDynamicParam("idRol", data.idRol);
+                    _db.AddDynamicParam("idRol", idUsuarioRol);
                 }
                 _db.AddDynamicParam("json", data.dataParams);
                 DataSet ds = _db.GetDataSet();
@@ -148,7 +57,7 @@ namespace ApiReports.Controllers
                 }
                 else
                 {
-                    fileName = dsParams.Tables[0].Rows[0]["fileName"].ToString();
+                    fileName = dsParams.Tables[0].Rows[0].Field<string>("fileName");
 
                     var provider = new FileExtensionContentTypeProvider();
                     if (!provider.TryGetContentType(fileName, out mimeType))

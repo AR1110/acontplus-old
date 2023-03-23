@@ -74,7 +74,7 @@ namespace ApiConfig.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpGet("{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             LogWriter _log = new LogWriter(_configuration);

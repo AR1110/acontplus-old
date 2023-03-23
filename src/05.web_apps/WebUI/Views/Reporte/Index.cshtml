@@ -41,7 +41,7 @@ For more information on enabling MVC for empty projects, visit https://go.micros
             </md-toolbar>
             <div class="table-responsive">
                 <table class="table">
-                    <thead>
+                    <thead class="small">
                         <tr>
                             <th ng-if="accion.editar || accion.eliminar">Op.</th>
                             <th>N°</th>
@@ -54,7 +54,7 @@ For more information on enabling MVC for empty projects, visit https://go.micros
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat-start="item in reports | filter:textSearch">
+                        <tr ng-repeat-start="item in reports | filter:textSearch" class="small">
                             <td ng-if="accion.editar || accion.eliminar">
                                 <button class="btn btn-outline-warning btn-sm" ng-if="accion.editar"
                                     ng-click="openModal(item, 2)">
@@ -66,8 +66,8 @@ For more information on enabling MVC for empty projects, visit https://go.micros
                                 </button>
                             </td>
                             <td ng-click="expandDetalle(item)">
-                                <span ng-if="cc.expanded"><i class="fas fa-caret-square-down"></i></span>
-                                <span ng-if="!cc.expanded"><i class="fas fa-caret-square-right"></i></span>
+                                <span ng-if="item.expanded"><i class="fa fa-eye-slash"></i></span>
+                                <span ng-if="!item.expanded"><i class="fa fa-eye" title="Ver data sources"></i></span>
                             </td>
                             <td>{{item.idReporte}}</td>
                             <td>{{item.codigo}}</td>
@@ -85,7 +85,7 @@ For more information on enabling MVC for empty projects, visit https://go.micros
                                     <div class="table-responsive">
                                         <table class="table table-no-bordered table-sm">
                                             <thead>
-                                                <tr>
+                                                <tr class="small">
                                                     <th>Op</th>
                                                     <th>Data Source</th>
                                                     <th>Posición</th>
@@ -93,7 +93,7 @@ For more information on enabling MVC for empty projects, visit https://go.micros
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr ng-repeat="ds in item.dataSources">
+                                                <tr ng-repeat="ds in item.dataSources" class="small">
                                                     <td>
                                                         <button type="button" class="btn btn-warning btn-xs"
                                                             ng-click="openModalEditDs(item, ds)">
@@ -224,22 +224,23 @@ For more information on enabling MVC for empty projects, visit https://go.micros
                         <div class="row">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="form-group">
-                                    <label for="codigo">DataSource</label>
-                                    <input type="text" class="form-control" id="codigo" ng-model="dataSource.dataSource"
-                                        placeholder="mainDs" required>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                                <div class="form-group">
-                                    <label for="dsPosition">Índice</label>
+                                    <label for="dsPosition">Posición</label>
                                     <input type="text" class="form-control" id="dsPosition"
                                         ng-model="dataSource.position" valid-number placeholder="0" required>
                                 </div>
                             </div>
                         </div>
 
+                        <div class="row">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <label for="codigo">DataSource</label>
+                                    <input type="text" class="form-control" id="codigo" ng-model="dataSource.dataSource"
+                                        placeholder="mainDs" required>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="row" ng-show="operationDs === 2">
                             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-6">
                                 <div class="icheck-warning">
@@ -277,5 +278,5 @@ For more information on enabling MVC for empty projects, visit https://go.micros
 
 
 @section scripts{
-    <script src="~/js/controllers/config/reporteCtrl.min.js" asp-asp-append-version="true"></script>
+    <script src="~/js/controllers/config/reporteCtrl.min.js" asp-append-version="true"></script>
 }

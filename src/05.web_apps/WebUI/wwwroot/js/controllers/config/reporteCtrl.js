@@ -38,7 +38,9 @@
                     }
                     if (response.code == "1") {
                         console.log(JSON.parse(response.payload))
-                        $scope.reports = JSON.parse(response.payload) || [];
+                        let tempArray = JSON.parse(response.payload)
+                        $scope.reports = tempArray || []
+                        // $scope.dataSources = tempArray[1] || []
                     }
                 })
             } catch (error) {
@@ -51,20 +53,26 @@
 
         $scope.expandDetalle = function (item) {
             try {
-                item.expanded = !item.expanded;
-                showLoader()
-                mS.getData('get', 'ReporteDataSource/?json=' + JSON.stringify({ typeList: 2, id: item.idReporteParametro })).then(response => {
-                    console.log(response);
-                    if (response.code === "0") {
-                        item.dataSources = []
-                        hideLoader()
-                        console.log(response)
-                    }
-                    if (response.code === "1") {
-                        item.dataSources = JSON.parse(response.payload) || []
-                        hideLoader();
-                    }
-                })
+                item.expanded = !item.expanded
+                // for (const ds of $scope.dataSources) {
+                //     if (item.idReporte == ds.idReporte) {
+                //         item.dataSources.push(ds)
+                //     }
+                // }
+                item.dataSources = JSON.parse(item.dataSources)
+                //showLoader()
+                // mS.getData('get', 'ReporteDataSource/?json=' + JSON.stringify({ typeList: 2, id: item.idReporte })).then(response => {
+                //     console.log(response);
+                //     if (response.code === "0") {
+                //         item.dataSources = []
+                //         hideLoader()
+                //         console.log(response)
+                //     }
+                //     if (response.code === "1") {
+                //         item.dataSources = JSON.parse(response.payload) || []
+                //         hideLoader();
+                //     }
+                // })
             } catch (error) {
                 hideLoader()
                 console.log(error)
@@ -236,6 +244,7 @@
             $scope.tempDataSource = item;
             $scope.operationDs = 1;
             $scope.dataSource = {}
+            $scope.dataSource.position = item.nextDs
             $("#dataSourceModal").modal('show');
         }
 
@@ -258,14 +267,19 @@
                 tS.toastr('warning', 'Ingrese el índice')
                 return
             }
-
+            let methodDs = '', urlDs = ''
             if ($scope.operationDs === 1) {
-                $scope.dataSource.idReporteParametro = $scope.tempDataSource.idReporteParametro
+                $scope.dataSource.idReporte = $scope.tempDataSource.idReporte
+                methodDs = 'post'
+                urlDs = 'ReporteDataSource/'
+            } else {
+                methodDs = 'put'
+                urlDs = 'ReporteDataSource/' + $scope.dataSource.idReporteDataSource
             }
 
             $scope.dataSource.typeRegister = $scope.operationDs;
             console.log($scope.dataSource)
-            mS.getData('post', 'ReporteDataSource/?json=' + JSON.stringify($scope.dataSource)).then(response => {
+            mS.getData(methodDs, urlDs, $scope.dataSource, true).then(response => {
                 console.log(response)
                 if (response.code == "0") {
                     tS.toastr('warning', response.message)
@@ -273,7 +287,7 @@
                 if (response.code == "1") {
                     $("#dataSourceModal").modal('hide');
                     $scope.dataSource = {}
-                    mS.getData('get', url + 'Get?json=' + JSON.stringify({ typeList: 2, id: $scope.tempDataSource.idReporteParametro })).then(response => {
+                    mS.getData('get', 'ReporteDataSource/?json=' + JSON.stringify({ idReporte: $scope.tempDataSource.idReporte }), null, true).then(response => {
 
                         if (response.code === "0") {
                             $scope.tempDataSource.dataSources = []
@@ -305,7 +319,7 @@
                     cancelButtonText: 'No, cancelar!',
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        mS.getData('delete', 'ReporteDataSource/?json=' + JSON.stringify(dataDs)).then(response => {
+                        mS.getData('delete', 'ReporteDataSource/' + dataDs.idReporteDataSource, null, true).then(response => {
                             console.log(response)
                             if (response.code == "0") {
                                 tS.toastr('warning', response.message)
