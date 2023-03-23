@@ -7,7 +7,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Security;
 using System.Text;
-using System.Web.UI.WebControls;
 
 namespace PrinterServer
 {
@@ -27,7 +26,8 @@ namespace PrinterServer
             _printDoc = new PrintDocument();
             string printerName = _data.rdlcProps.FirstOrDefault(x => x.Key == "printerName").Value;
             //_printDoc.PrinterSettings.PrinterName = printerName;
-            _printDoc.PrinterSettings.PrinterName = "Microsoft XPS Document Writer";
+            //_printDoc.PrinterSettings.PrinterName = "BSC10";
+            _printDoc.PrinterSettings.PrinterName = "POS-80C";
             _printDoc.PrintPage += new PrintPageEventHandler(FormatPage);
             _printDoc.Print();
             return true;
@@ -37,21 +37,22 @@ namespace PrinterServer
         {
             int startX = 10;
             int startY = 5;
-            _graphics.DrawString(string.Join("", text.Select((c, i) => i > 0 && i % 49 == 0 ? string.Format(Environment.NewLine + c) : c.ToString())), font, new SolidBrush(Color.Black), new Point(startX, startY + offset));
+            _graphics.DrawString(string.Join("", text.Select((c, i) => i > 0 && i % 80 == 0 ? string.Format(Environment.NewLine + c) : c.ToString())), font, new SolidBrush(Color.Black), new Point(startX, startY + offset));
         }
 
-        void DrawTotals(string text, Font font, int offset)
-        {
-            int startX = 100;
-            int startY = 5;
-            _graphics.DrawString(text, font, new SolidBrush(Color.Black), startX, startY + offset);
-        }
-
-        void DrawLine(string text, Font font, int offset, int xoffset)
+        void DrawTotals(string label, string value, int offset)
         {
             int startX = 10;
             int startY = 5;
-            _graphics.DrawString(text, font, new SolidBrush(Color.Black), startX + xoffset, startY + offset);
+            _graphics.DrawString(label, new Font("Arial", 5, FontStyle.Bold), new SolidBrush(Color.Black), startX + 150, startY + offset);
+            _graphics.DrawString(value, new Font("Arial", 5), new SolidBrush(Color.Black), startX + 250, startY + offset);
+        }
+
+        void DrawLine(string text, int offset, int xoffset)
+        {
+            int startX = 10;
+            int startY = 5;
+            _graphics.DrawString(text, new Font("Arial", 10, FontStyle.Bold), new SolidBrush(Color.Black), startX + xoffset, startY + offset);
         }
         void InsertHeaderStyleItem(string description, string quatity, string valor, string total, int offset)
         {
@@ -63,13 +64,13 @@ namespace PrinterServer
                          new SolidBrush(Color.Black), startX + 5, startY + offset);
 
             _graphics.DrawString(quatity, minifont,
-                     new SolidBrush(Color.Black), startX + 100, startY + offset);
+                     new SolidBrush(Color.Black), startX + 150, startY + offset);
 
             _graphics.DrawString(valor, minifont,
-                        new SolidBrush(Color.Black), startX + 140, startY + offset);
+                        new SolidBrush(Color.Black), startX + 200, startY + offset);
 
             _graphics.DrawString(total, minifont,
-                     new SolidBrush(Color.Black), startX + 170, startY + offset);
+                     new SolidBrush(Color.Black), startX + 250, startY + offset);
         }
         public string GetPrintReadyString(string originalString)
         {
@@ -104,20 +105,20 @@ namespace PrinterServer
             {
                 description = description.Substring(0, 60);
             }
-            _graphics.DrawString(string.Join("", description.Select((c, i) => i > 0 && i % 21 == 0 ? string.Format(Environment.NewLine + c) : c.ToString())), minifont,
+            _graphics.DrawString(string.Join("", description.Select((c, i) => i > 0 && i % 32 == 0 ? string.Format(Environment.NewLine + c) : c.ToString())), minifont,
                          new SolidBrush(Color.Black), new Point(startX, startY + offset));
 
             //_graphics.DrawString(GetPrintReadyString(description), minifont,
             //       new SolidBrush(Color.Black), new Point(startX, startY + offset));
 
             _graphics.DrawString(quatity, minifont,
-                     new SolidBrush(Color.Black), startX + 100, startY + offset);
+                     new SolidBrush(Color.Black), startX + 150, startY + offset);
 
             _graphics.DrawString(valor, minifont,
-                        new SolidBrush(Color.Black), startX + 140, startY + offset);
+                        new SolidBrush(Color.Black), startX + 200, startY + offset);
 
             _graphics.DrawString(total, minifont,
-                     new SolidBrush(Color.Black), startX + 170, startY + offset);
+                     new SolidBrush(Color.Black), startX + 250, startY + offset);
         }
         private void FormatPage(object sender, PrintPageEventArgs e)
         {
@@ -138,8 +139,8 @@ namespace PrinterServer
 
             offsset = offsset + largeinc + 10;
 
-            string underLine = "-------------------------------------------------";
-            DrawLine(underLine, largeFont, offsset, 0);
+            string underLine = "-------------------------------------------------------------------------------";
+            DrawLine(underLine, offsset, 0);
 
             offsset = offsset + mediuminc;
             var data = _data.dataSources.First(x => x.Key == "encabezadoDs").Value;
@@ -173,8 +174,7 @@ namespace PrinterServer
             DrawTitle("Fecha: " + data[0]["fechaEmision"], drawFontBold, offsset);
 
             offsset = offsset + smallinc;
-            underLine = "--------------------------------------------------";
-            DrawLine(underLine, largeFont, offsset, 0);
+            DrawLine(underLine, offsset, 0);
 
             offsset = offsset + largeinc;
             InsertHeaderStyleItem("Descripción ", "Cantidad ", " P.U.", "Total", offsset);
@@ -196,24 +196,24 @@ namespace PrinterServer
             offsset = offsset + smallinc;
             string porcentajeIva = "", subtotalIva12 = "";
             data[0].TryGetValue("porcentajeIva", out porcentajeIva);
-            data[0].TryGetValue("subtotalIva12", out subtotalIva12);
-            DrawTotals(porcentajeIva + "    " + subtotalIva12, smallFont, offsset); 
+            data[0].TryGetValue("subTotalIva12", out subtotalIva12);
+            DrawTotals(porcentajeIva, subtotalIva12, offsset); 
             offsset = offsset + smallinc;
 
             string subtotalIva0 = "" ;
-            data[0].TryGetValue("subtotalIva0", out subtotalIva0);
+            data[0].TryGetValue("subTotalIva0", out subtotalIva0);
             if (!string.IsNullOrEmpty(subtotalIva0))
             {
-                DrawTotals("Subtotal 0      " + subtotalIva0, smallFont, offsset);
+                DrawTotals("Subtotal 0", subtotalIva0, offsset);
                 offsset = offsset + smallinc;
             }
           
 
             string subtotalNoObjetoIva = "";
-            data[0].TryGetValue("subtotalNoObjetoIva", out subtotalNoObjetoIva);
+            data[0].TryGetValue("subTotalNoObjetoIva", out subtotalNoObjetoIva);
             if (!string.IsNullOrEmpty(subtotalNoObjetoIva))
             {
-                DrawTotals("Subtotal No Obj. Iva    " + subtotalNoObjetoIva, smallFont, offsset);
+                DrawTotals("Subtotal No Obj. Iva", subtotalNoObjetoIva, offsset);
                 offsset = offsset + smallinc;
             }
            
@@ -222,16 +222,16 @@ namespace PrinterServer
             data[0].TryGetValue("subtotalExcentoIva", out subtotalExcentoIva);
             if (!string.IsNullOrEmpty(subtotalExcentoIva))
             {
-                DrawTotals("Subtotal Exc. Iva.  " + subtotalExcentoIva, smallFont, offsset);
+                DrawTotals("Subtotal Exc. Iva", subtotalExcentoIva, offsset);
                 offsset = offsset + smallinc;
             }
          
 
             string subtotalSinImpuestos = "";
-            data[0].TryGetValue("subtotalSinImpuestos", out subtotalSinImpuestos);
+            data[0].TryGetValue("subTotalSinImpuestos", out subtotalSinImpuestos);
             if (!string.IsNullOrEmpty(subtotalSinImpuestos))
             {
-                DrawTotals("Subtotal sin Imp.   " + subtotalSinImpuestos, smallFont, offsset);
+                DrawTotals("Subtotal sin Imp.", subtotalSinImpuestos, offsset);
                 offsset = offsset + smallinc;
             }
            
@@ -240,7 +240,7 @@ namespace PrinterServer
             data[0].TryGetValue("totalDescuentos", out totalDescuentos);
             if (!string.IsNullOrEmpty(totalDescuentos))
             {
-                DrawTotals("Descuento.      " + totalDescuentos, smallFont, offsset);
+                DrawTotals("Descuento", totalDescuentos, offsset);
                 offsset = offsset + smallinc;
             }
            
@@ -249,7 +249,7 @@ namespace PrinterServer
             data[0].TryGetValue("ice", out ice);
             if (!string.IsNullOrEmpty(ice))
             {
-                DrawTotals("Ice " + ice, smallFont, offsset);
+                DrawTotals("Ice", ice, offsset);
                 offsset = offsset + smallinc;
             }
             
@@ -257,13 +257,13 @@ namespace PrinterServer
             string tipoIva = "", iva12 = "";
             data[0].TryGetValue("tipoIva", out tipoIva);
             data[0].TryGetValue("iva12", out iva12);
-            DrawTotals(tipoIva + "      " + iva12, smallFont, offsset);
+            DrawTotals(tipoIva, iva12, offsset);
             offsset = offsset + smallinc;
 
             string valorTotal = "";
             data[0].TryGetValue("valorTotal", out valorTotal);
 
-            DrawTotals("TOTAL " + valorTotal, smallFont, offsset);
+            DrawTotals("TOTAL", valorTotal, offsset);
 
             offsset = offsset + smallinc;
             string formaPago = "", pago = "";
@@ -271,7 +271,7 @@ namespace PrinterServer
             data[0].TryGetValue("pago", out pago);
             if (!string.IsNullOrEmpty(formaPago))
             {
-                DrawTotals(formaPago + "        " + pago, smallFont, offsset);
+                DrawTotals(formaPago, pago, offsset);
                 offsset = offsset + smallinc;
             }
        
@@ -280,7 +280,7 @@ namespace PrinterServer
             data[0].TryGetValue("cambio", out cambio);
             if (!string.IsNullOrEmpty(cambio))
             {
-                DrawTotals("Cambio      " + cambio, smallFont, offsset);
+                DrawTotals("Cambio", cambio, offsset);
                 offsset = offsset + smallinc;
             } 
             
