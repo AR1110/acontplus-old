@@ -70,7 +70,7 @@ BEGIN
 																 WHEN ''06'' THEN cl.correo
 																 WHEN ''07'' THEN pr.correo
 													   END
-										,de.fechaEmision
+										,fechaEmision =   FORMAT(de.fechaEmision, ''dd/MM/yyyy hh:mm'') 
 										,claveAcceso
 										,fechaAutorizacion
 										,estado = es.descripcion

@@ -126,6 +126,13 @@ app.constant('nombreModal', {
             controller: 'ModalFiltroCtrl',
             template:'Articulo/_ModalArticuloFiltro.cshtml'
         },
+        MODAL_ARTICULO_IMPUESTO:{
+            controller: 'ModalArticuloImpuestoCtrl',
+            template:'Articulo/_ModalArticuloImpuesto.cshtml'
+        },
+        MODAL_ARTICULO_IMPUESTO_RETENCION:{
+
+        },
         MODAL_ARTICULO_IMAGEN:{
             controller: 'ModalArticuloImagenCtrl',
             template:'Articulo/_ModalArticuloImagen.cshtml'
@@ -133,6 +140,9 @@ app.constant('nombreModal', {
         MODAL_IMAGEN_DETALLE:{
             controller: 'ModalArticuloImagenDetalleCtrl',
             template:'Articulo/_ModalArticuloImagenDetalle.cshtml'
+        },
+        MODAL_HISTORIAL_COMPRA: {
+
         }
     },
     articulo_impuesto: {
@@ -577,7 +587,7 @@ app.constant('nombreModal', {
         MODAL_FILE_CTRL:'modal/recepcion/modalDocRecibidoCtrl.js',
         MODAL_HISTORIAL_COMPRA:{
             controller: 'ModalHistoryComprasCtrl',
-            template: 'DocumentoRecibido/_HistoryCompras.cshtml'
+            template: '~/Areas/DocumentoRecibido/Pages/Shared/_HistoryCompras.cshtml'
         }
     },
     retencion_compra:{

@@ -79,7 +79,7 @@
                                             </md-button>
                                             <md-menu-content class="md-dense">                                               
                                                 <md-menu-item ng-if="accion.editar">                                                                                        
-                                                    <md-button   ng-click="openModalArticulo(a)">
+                                                    <md-button   ng-click="openModalEditar(a)">
                                                         <span md-menu-align-target><i class="ti-pencil"></i> Editar</span>
                                                     </md-button>
                                                 </md-menu-item> 
@@ -138,7 +138,13 @@
                                     <td md-cell>{{a.tipoArticulo}}</td>
                                     <td md-cell>{{a.subFamilia}}</td>                                    
                                     <td md-cell>
-                                        <h6><span ng-class="a.style">{{a.stock}}</span></h6>
+                                        <h6>
+                                            <span ng-class="a.style" 
+                                                  ng-mouseover="showBodegas(a)" 
+                                                  popover-trigger="'mouseenter'" 
+                                                  uib-popover-template="dynamicPopover.templateUrl">{{a.stock}}
+                                            </span>
+                                        </h6>
                                     </td>
                                     <td md-cell ng-bind-html="a.estado | estadoPrimario"></td>
                                 </tr>
@@ -157,9 +163,32 @@
             </div>
         </div>  
     </div>                                                                                                            
-
 </div>
 
+
+
 @section Scripts{  
-    <script src="~/js/controllers/almacen/articuloCtrl.min.js" asp-append-version="true"></script>   
+    <script src="~/js/controllers/almacen/articuloCtrl.min.js" asp-append-version="true"></script> 
+    <script type="text/ng-template" id="myPopoverTemplate.html">
+        <div class="table-responsive">
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>Sucursal</th>
+                        <th>Bodega</th>
+                        <th>Stock</th>
+                        <th>Ub.</th>
+                    </tr>
+                </thead>
+                <tbody ng-repeat="s in branchs" class="small">
+                    <tr ng-repeat="ub in s.warehouses">
+                        <td ng-if="$first" rowspan="2">{{s.branchOffice}}</td>
+                        <td>{{ub.bodega}}</td>
+                        <td>{{ub.stock}}</td>
+                        <td>{{ub.ubicacion}}</td>
+                    <tr>
+                </tbody>
+            </table>
+        </div>              
+    </script>  
 }

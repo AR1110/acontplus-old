@@ -21,6 +21,7 @@
             MODAL_CTRL, 
             MODAL_NUEVO, 
             MODAL_FILTRO, 
+            MODAL_ARTICULO_IMPUESTO,
             MODAL_ARTICULO_IMAGEN,
             MODAL_IMAGEN_DETALLE
         } = nombreModalConst.articulo;
@@ -34,6 +35,12 @@
 
         $scope.articulos = [];
 
+        $scope.dynamicPopover = {
+            content: 'Hello, World!',
+            templateUrl: 'myPopoverTemplate.html',
+            title: 'Title'
+        }
+
 
         //Nuevo Articulo
         $scope.openModalNew = async()=>{
@@ -45,7 +52,7 @@
                     reload: true,
                     params: null                                                           
                 }
-                console.log(modalParams)
+
                 $scope.openModal(modalParams);                                  
             } catch (error) {
                 console.log(error);
@@ -79,12 +86,20 @@
             }
         }
 
+        $scope.searchArticulo = ()=>{
+            $scope.articulos = [];
+            
+            $scope.getArticulos();
+        }
+
 
 
         $scope.getArticulos = ()=>{
             try {
                 showLoader();
+                
                 mS.getData('get', '/Articulo/Get?json=' + JSON.stringify($scope.dataSearch)).then(response=>{
+                    
                     if(response.code==="0"){
                         hideLoader();
                         $scope.articulos = [];
@@ -105,6 +120,23 @@
         $scope.getArticulos();
 
 
+        $scope.openModalEditar = async(params)=>{
+            try {
+                let modalParams = {
+                    controller: (await import('./../../modal/' + MODAL_CTRL))[MODAL_NUEVO['controller']],
+                    template: MODAL_NUEVO['template'],                    
+                    reload: true,
+                    params                                                           
+                }
+                
+                $scope.openModal(modalParams);
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        
+
+
         $scope.openModal = ({controller, template, size='xl', params, reload=false})=>{
             try {
                 
@@ -120,11 +152,6 @@
             } catch (error) {
                 console.log(error);
             }
-        }
-
-
-        $scope.getArticulos = ()=>{
-
         }
 
 
@@ -175,6 +202,16 @@
             }
         }
 
+        $scope.showBodegas =(item)=>{
+            mS.getData('get', '/Articulo/GetId?id=' + item.idArticulo).then(response=>{
+                const results = JSON.parse(response.payload) || [];
+                $scope.branchs = results[4].map(val=>{
+                    val.warehouses = JSON.parse(val.warehouses)
+                    return val;
+                })
+            })            
+        }
+
 
         $scope.askToDelete = (item)=>{
             Swal.fire({
@@ -213,18 +250,19 @@
 
         //---------------------------------------------Articulo Impuesto --------------------------
 
-        $scope.abrirModalImpuestoArticulo = async(data)=> {
+        $scope.abrirModalImpuestoArticulo = async(params)=> {
             try {                                
-                let controller = (await import('./../../modal/' + MODAL_CTRL))[MODAL_ARTICULO_IMAGEN['controller']]
-                let template = MODAL_ARTICULO_IMAGEN['template']
+                let controller = (await import('./../../modal/' + MODAL_CTRL))[MODAL_ARTICULO_IMPUESTO['controller']]
+                let template = MODAL_ARTICULO_IMPUESTO['template']
 
-                
-                modalSvc.openModalCustom({
-                    controller: ModalArticuloImpuestoCtrl,
-                    template: MODAL_ARTICULO_IMPUESTO_CSHTML,
+                let modalParams = {
+                    controller,
+                    template,
                     size:'xl',
-                    params: data
-                })
+                    reload: false,
+                    params
+                }
+                $scope.openModal(modalParams)               
             } catch (error) {
                 console.log(error);
             }        
@@ -257,41 +295,34 @@
 
 
         //-------------------------------Gestión de Imagenes -------------------------------
-        $scope.openModalArticuloImagen = async(item)=> {               
-            const {MODAL_CTRL, MODAL_ARTICULO_IMAGEN_CSHTML} = nombreModalConst.articulo
-            const {ModalArticuloImagenCtrl} = await import('./../../modal/'+ MODAL_CTRL);
-
-            const modalRef = modalSvc.openModalCustom({
-                controller: ModalArticuloImagenCtrl,
-                template: `Articulo/${MODAL_ARTICULO_IMAGEN_CSHTML}`,
-                size: 'lg',
-                params: item
-            })         
-            modalRef.result.then(
-                response=>{
-                    if(typeof response ==='object'){
-                        $scope.getArticulos();
-                    }
-                }
-            )                   
+        $scope.openModalArticuloImagen = async(params)=> { 
+            try {
+                let controller = (await import('./../../modal/'+ MODAL_CTRL))[MODAL_ARTICULO_IMAGEN['controller']];
+                let template = MODAL_ARTICULO_IMAGEN['template']
+                let modalParams = {controller, template, size:'lg', params, reload: true}
+                $scope.openModal(modalParams)
+            } catch (error) {
+                console.log(error)
+            }                                   
         } 
 
 
         //     //Presentacion del imagen 
-        $scope.openModalImagen = async(item)=> {
+        $scope.openModalImagen = async(params)=> {
             try {
-                
+                let controller = (await import('./../../modal/'+ MODAL_CTRL))[MODAL_IMAGEN_DETALLE['controller']];
+                let template = MODAL_IMAGEN_DETALLE['template'];
+                let modalParams = {
+                    controller,
+                    template,
+                    size:'xl',
+                    params,
+                    reload: false
+                }
+                $scope.openModal(modalParams)
             } catch (error) {
-                
-            }
-            const {MODAL_CTRL, MODAL_IMAGEN_DETALLE_CSHTML} = _nombreModal.articulo;
-            const {ModalArticuloImagenDetalleCtrl} = await import('./../../modal/'+ MODAL_CTRL);
-            _modalSvc.openModalCustom({
-                controller: ModalArticuloImagenDetalleCtrl,
-                template: `Articulo/${MODAL_IMAGEN_DETALLE_CSHTML}`,
-                size:'xl',
-                params: item
-            })                     
+                console.log(error);
+            }                                    
         }
 
         $scope.updateStockArticle = async(item)=>{
@@ -305,13 +336,13 @@
             })
 
             if(isConfirmed){
-                _mS.getData('get','/ControlStock/Update?id=' + item.idArticulo).then(
+                mS.getData('get','/ControlStock/Update?id=' + item.idArticulo).then(
                     response=>{
                         if(response.id==='0'){
                             form.sweetAlert('warning', response.message, response.titleSms);                    
                         }
                         if(response.id==='1'){
-                            $scope.searchArticulo();
+                            $scope.getArticulos();
                             form.sweetAlert('success', response.message, response.titleSms, 1000);                    
                         }
                     }
@@ -321,19 +352,18 @@
 
 
 
-
-
         $scope.openModalHistorialCompra = async(item)=>{
             try {
-                let {MODAL_FILE_CTRL, MODAL_HISTORIAL_COMPRA} = _nombreModal.doc_recibido;        
+                let {MODAL_FILE_CTRL, MODAL_HISTORIAL_COMPRA} = nombreModalConst.doc_recibido;        
                 let controller =  (await import('./../../' + MODAL_FILE_CTRL))[MODAL_HISTORIAL_COMPRA['controller']];
                 let template = MODAL_HISTORIAL_COMPRA['template'];
-
-                _modalSvc.openModalCustom({
+               
+                modalSvc.openModalCustom({
                     controller,
                     template,
                     size:'xl',
-                    params: item
+                    params: item,
+                    isRenderRazorPartial: true
                 })
             } catch (error) {
                 console.log(error);
