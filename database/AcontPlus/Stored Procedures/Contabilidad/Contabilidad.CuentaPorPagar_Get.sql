@@ -24,7 +24,7 @@ IF OBJECT_ID(N'Contabilidad.CuentaPorPagar_Get', N'P') IS NOT NULL
 DROP PROCEDURE Contabilidad.CuentaPorPagar_Get
 GO
 
---  Contabilidad.CuentaPorPagar_Get 38, '{"tipo":1}'
+--  Contabilidad.CuentaPorPagar_Get 44, '{"tipo":1}'
 
 CREATE PROCEDURE Contabilidad.CuentaPorPagar_Get @idUsuarioRol INT, @json VARCHAR(MAX)
 AS
@@ -64,7 +64,8 @@ BEGIN
 												,es.codEstab
 												,identificacion = p.numeroIdentificacion
 												,nombreFiscal = p.nombreFiscal
-												,codDoc = CASE pp.codDoc WHEN ''03'' THEN ''Liquidacion'' 
+												,codDoc = CASE pp.codDoc WHEN ''01'' THEN ''Factura''
+												                         WHEN ''03'' THEN ''Liquidacion'' 
 												                         WHEN ''FC'' THEN ''F.Fisica'' 
 																		 WHEN ''DH'' THEN ''C.N.Habitual''
 														  END

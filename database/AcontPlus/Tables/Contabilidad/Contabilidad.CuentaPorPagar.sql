@@ -16,7 +16,7 @@ CREATE TABLE Contabilidad.CuentaPorPagar
 	,fechaEmision DATETIME NOT NULL
 	,fechaVencimiento DATETIME NULL
 	,importeTotal NUMERIC(18,5) NOT NULL
-	,abono NUMERIC(18,5) NULL
+	,abono NUMERIC(18,5) DEFAULT 0 NOT NULL
 	,saldo AS CAST(importeTotal - abono AS NUMERIC(18,5)) 
 	,idEntidad INT NOT NULL
 	,idUsuario INT NOT NULL
