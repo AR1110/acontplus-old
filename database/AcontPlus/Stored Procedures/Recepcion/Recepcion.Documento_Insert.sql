@@ -21,6 +21,8 @@ BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
 	DECLARE @idUsuario INT
+	DECLARE @idEntidad INT
+	DECLARE @identificacionReceptor AS VARCHAR(20)
 	DECLARE @codEstab  VARCHAR(50)
 	,@idEstab INT
 
@@ -38,11 +40,13 @@ BEGIN
 	,importeTotal VARCHAR(50) NULL
 	)
 
-	SELECT @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
+	SELECT @idUsuario = idUsuario,@idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 	
 	SELECT @codEstab = codEstab FROM Config.Estab_Asig WITH (NOLOCK) WHERE idUsuarioRol = @idRol AND predeterminado = 1
 
-	SET @idEstab = (SELECT idEstablecimiento FROM SRI.Establecimiento WHERE CODESTAB = @codEstab)
+	SELECT TOP 1  @identificacionReceptor = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
+
+	SET @idEstab = (SELECT idEstablecimiento FROM SRI.Establecimiento WITH (NOLOCK) WHERE codEstab = @codEstab)
 
 	BEGIN TRY
 		BEGIN TRAN
@@ -68,9 +72,10 @@ BEGIN
 			INSERT  INTO Recepcion.DocumentoRecibido(idEstablecimiento, [codEstab], [comprobante], [serieComprobante], [rucEmisor], [razonSocialEmisior], [fechaEmision], [fechaAutorizacion], [tipoEmision], [identificacionReceptor], [claveAcceso], [numeroAutorizacion], [importeTotal], [idUsuario], [fechaRegistro], downloaded)
 			SELECT @idEstab, @codEstab, comprobante, serieComprobante, rucEmisor, razonSocialEmisior, fechaEmision, fechaAutorizacion, tipoEmision, identificacionReceptor, claveAcceso, numeroAutorizacion, CONVERT(DECIMAL(18,2), Ltrim(rtrim(ISNULL(importeTotal, 0)))), @idUsuario, dbo.ufnGetDateEcuador(), 'ND'
 			FROM @Comprobantes t
-			WHERE NOT EXISTS (SELECT * FROM Recepcion.DocumentoRecibido c WITH (NOLOCK)
-										WHERE c.codEstab = @codEstab
-										AND t.claveAcceso = c.claveAcceso)
+			WHERE t.identificacionReceptor = @identificacionReceptor AND  NOT EXISTS (SELECT * 
+			                                                                          FROM Recepcion.DocumentoRecibido c WITH (NOLOCK)
+																					  WHERE c.codEstab = @codEstab
+																						AND t.claveAcceso = c.claveAcceso)
 
 			SELECT '1' code, 'Importación Exitosa'  as 'message'
 		COMMIT TRAN

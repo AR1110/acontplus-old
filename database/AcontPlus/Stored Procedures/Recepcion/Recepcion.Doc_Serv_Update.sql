@@ -34,6 +34,8 @@ BEGIN
 	SET NOCOUNT ON;
 
 	DECLARE @idEntidad INT
+	,@idProveedor INT 
+	,@idEstadoPago INT
 	,@idTipoIdentificacion INT
 	,@identificacion VARCHAR(25)
 	,@razonSocial VARCHAR(300)
@@ -145,6 +147,19 @@ BEGIN
 								END
 						END
 				END
+
+				
+				--===========================================================Contabilidad=================================================================================================
+			
+				SELECT TOP 1 @idProveedor = pr.idProveedor FROM dbo.Proveedor pr WITH (NOLOCK) WHERE pr.numeroIdentificacion = @identificacion AND pr.idEntidad = @idEntidad
+
+				SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago ep WHERE ep.codigo = 'PE'
+
+				INSERT INTO Contabilidad.CuentaPorPagar
+					  (idEstablecimiento,idProveedor,idEstadoPago,codDoc,uniqueId,serieComprobante,identificacion,fechaEmision,importeTotal,idEntidad,idUsuario)
+				SELECT idEstablecimiento,@idProveedor,@idEstadoPago,codDoc,claveAcceso,serieComprobante,@identificacion,CONVERT (date, fechaEmision, 103),importeTotal,@idEntidad,dr.idUsuario
+				FROM Recepcion.DocumentoRecibido dr WITH (NOLOCK)
+				WHERE dr.idDocumento = @idDocumento AND dr.codDoc = '01'
 
 		COMMIT TRAN
 	END TRY
