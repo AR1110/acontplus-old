@@ -4,7 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 
-namespace HelpersNS20
+namespace SignerWS
 {
     public class FileExtensionsNS
     {

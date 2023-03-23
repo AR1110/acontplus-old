@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 
-namespace HelpersNS20
+namespace PrinterWS
 {
     public static class DataHelperNS
     {

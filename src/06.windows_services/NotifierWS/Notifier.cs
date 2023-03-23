@@ -1,5 +1,4 @@
-﻿using HelpersNS20.Dtos;
-using Logs;
+﻿using Logs;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -56,7 +55,7 @@ namespace NotifierWS
                 }
                 catch (Exception ex)
                 {
-                    LogWritter.LogError(_path, "Error al enviar notificaciones de los docs: " + " - " + ex.Message + "Docs: " + HelpersNS20.DataHelperNS.DataTableToJSON(dt));
+                    LogWritter.LogError(_path, "Error al enviar notificaciones de los docs: " + " - " + ex.Message + "Docs: " + DataHelperNS.DataTableToJSON(dt));
                 }
                 finally
                 {

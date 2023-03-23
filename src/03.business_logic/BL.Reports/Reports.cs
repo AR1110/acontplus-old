@@ -1,6 +1,5 @@
-﻿using Helpers;
-using HelpersNS20;
-using HelpersNS20.Dtos;
+﻿using Domain.Dtos;
+using Helpers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Reporting.NETCore;
 using Newtonsoft.Json;
@@ -44,7 +43,7 @@ namespace BL.Reports
                     {
                         if (Convert.ToBoolean(row["isByte"]))
                         {
-                            p[Convert.ToInt32(row["position"])] = new ReportParameter(row["paramName"].ToString(), FileExtensionsNS.getBase64FromByte((byte[])row["paramByte"]));
+                            p[Convert.ToInt32(row["position"])] = new ReportParameter(row["paramName"].ToString(), FileExtensions.GetBase64FromByte((byte[])row["paramByte"]));
                         }
                         else
                         {
@@ -88,7 +87,7 @@ namespace BL.Reports
                 {
                     foreach (var item in parameters.dataSources)
                     {
-                        lr.DataSources.Add(new ReportDataSource(item.Key, DataHelperNS.JsonToDataTable(JsonConvert.SerializeObject(item.Value))));
+                        lr.DataSources.Add(new ReportDataSource(item.Key, DataHelper.JsonToDataTable(JsonConvert.SerializeObject(item.Value))));
                     }
                 }
 
@@ -98,7 +97,7 @@ namespace BL.Reports
                     if (item.Key == "imagen")
                     {
                         byte[] array = Convert.FromBase64String(item.Value);
-                        lr.SetParameters(new ReportParameter("logo", FileExtensionsNS.getBase64FromByte((byte[])array)));
+                        lr.SetParameters(new ReportParameter("logo", FileExtensions.GetBase64FromByte((byte[])array)));
                         lr.SetParameters(new ReportParameter("mimeType", mimeTypeImg));
                     }
                     //if (item.Key == "mimeType")

@@ -4,7 +4,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace HelpersNS20
+namespace NotifierWS
 {
     public static class DataEncrypt
     {

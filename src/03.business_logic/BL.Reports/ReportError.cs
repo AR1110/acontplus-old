@@ -1,4 +1,4 @@
-﻿using HelpersNS20.Dtos;
+﻿using Domain.Dtos;
 
 namespace BL.Reports
 {

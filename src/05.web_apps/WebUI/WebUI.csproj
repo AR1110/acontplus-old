@@ -4223,7 +4223,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\01.common\DataAccess\DataAccess.csproj" />
-		<ProjectReference Include="..\..\01.common\HelpersNS20\HelpersNS20.csproj" />
 		<ProjectReference Include="..\..\01.common\Helpers\Helpers.csproj" />
 		<ProjectReference Include="..\..\02.domain\Domain.Auth\Domain.Auth.csproj" />
 		<ProjectReference Include="..\..\02.domain\Domain\Domain.csproj" />

@@ -3,17 +3,19 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="iTextSharp.LGPLv2.Core" Version="3.3.3" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0" />
     <PackageReference Include="ReportViewerCore.NETCore" Version="15.1.17" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\01.common\HelpersNS20\HelpersNS20.csproj" />
     <ProjectReference Include="..\..\01.common\Helpers\Helpers.csproj" />
+    <ProjectReference Include="..\..\02.domain\Domain.FactElect\Domain.FactElect.csproj" />
+    <ProjectReference Include="..\..\02.domain\Domain\Domain.csproj" />
   </ItemGroup>
 
 </Project>
