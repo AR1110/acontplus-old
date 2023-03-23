@@ -1,6 +1,4 @@
-﻿using Microsoft.Reporting.Map.WebForms.BingMaps;
-using Newtonsoft.Json.Linq;
-using PrinterServer.Models;
+﻿using PrinterServer.Models;
 using System;
 using System.Drawing;
 using System.Drawing.Printing;
@@ -9,6 +7,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Security;
 using System.Text;
+using System.Web.UI.WebControls;
 
 namespace PrinterServer
 {
@@ -28,19 +27,24 @@ namespace PrinterServer
             _printDoc = new PrintDocument();
             string printerName = _data.rdlcProps.FirstOrDefault(x => x.Key == "printerName").Value;
             //_printDoc.PrinterSettings.PrinterName = printerName;
-            _printDoc.PrinterSettings.PrinterName = "POS-80C";
+            _printDoc.PrinterSettings.PrinterName = "Microsoft XPS Document Writer";
             _printDoc.PrintPage += new PrintPageEventHandler(FormatPage);
             _printDoc.Print();
             return true;
         }
 
-        void DrawStart(string text, Font font, int offset)
+        void DrawTitle(string text, Font font, int offset)
         {
             int startX = 10;
             int startY = 5;
-            //Font minifont = new Font("Arial", 5);
+            _graphics.DrawString(string.Join("", text.Select((c, i) => i > 0 && i % 49 == 0 ? string.Format(Environment.NewLine + c) : c.ToString())), font, new SolidBrush(Color.Black), new Point(startX, startY + offset));
+        }
 
-            _graphics.DrawString(text, font, new SolidBrush(Color.Black), startX + 5, startY + offset);
+        void DrawTotals(string text, Font font, int offset)
+        {
+            int startX = 100;
+            int startY = 5;
+            _graphics.DrawString(text, font, new SolidBrush(Color.Black), startX, startY + offset);
         }
 
         void DrawLine(string text, Font font, int offset, int xoffset)
@@ -51,7 +55,7 @@ namespace PrinterServer
         }
         void InsertHeaderStyleItem(string description, string quatity, string valor, string total, int offset)
         {
-            Font minifont = new Font("Arial", 5);
+            Font minifont = new Font("Arial", 5, FontStyle.Bold);
             int startX = 10;
             int startY = 7;
 
@@ -59,31 +63,61 @@ namespace PrinterServer
                          new SolidBrush(Color.Black), startX + 5, startY + offset);
 
             _graphics.DrawString(quatity, minifont,
-                     new SolidBrush(Color.Black), startX + 130, startY + offset);
+                     new SolidBrush(Color.Black), startX + 100, startY + offset);
 
             _graphics.DrawString(valor, minifont,
-                        new SolidBrush(Color.Black), startX + 165, startY + offset);
+                        new SolidBrush(Color.Black), startX + 140, startY + offset);
 
             _graphics.DrawString(total, minifont,
-                     new SolidBrush(Color.Black), startX + 200, startY + offset);
+                     new SolidBrush(Color.Black), startX + 170, startY + offset);
+        }
+        public string GetPrintReadyString(string originalString)
+        {
+            string result = "";
+            for (var i = 0; i < originalString.Length; i += 22)
+                result += (originalString.Substring(i, Math.Min(22, originalString.Length - i)) + Environment.NewLine);
+            return result;
         }
         void InsertItem(string description, string quatity, string valor, string total, int offset)
         {
             Font minifont = new Font("Arial", 5);
             int startX = 10;
-            int startY = 5;
+            int startY = 7;
+            //_graphics.DrawString(description, minifont,
+            //             new SolidBrush(Color.Black), startX + 5, startY + offset);
 
-            _graphics.DrawString(description, minifont,
-                         new SolidBrush(Color.Black), startX + 5, startY + offset);
+            //StringFormat format1 = new StringFormat();
+            //format1.Trimming = StringTrimming.EllipsisWord;
+            //var txtLength = description.Trim().Length;
+            //string s = string.Empty;
+            //_graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
+            ////string LongText = "This is a really long text that should be automatically wrapped to a certain rectangle.";
+            ////Rectangle DestinationRectangle = new Rectangle(10, 10, 100, 150);
+            ////_graphics.DrawRectangle(Pens.Red, DestinationRectangle);
+            //using (StringFormat sf = new StringFormat())
+            //{
+            //    _graphics.DrawString(description, minifont, Brushes.Black, new RectangleF(startX, startY + offset, 120F, 600), sf);
+            //}
+            ////_graphics.DrawString(s, minifont, Brushes.Black, new RectangleF(startX, startY + offset, 500F, 500F), format1);
+            int textLength = description.Length;
+            if (textLength > 60)
+            {
+                description = description.Substring(0, 60);
+            }
+            _graphics.DrawString(string.Join("", description.Select((c, i) => i > 0 && i % 21 == 0 ? string.Format(Environment.NewLine + c) : c.ToString())), minifont,
+                         new SolidBrush(Color.Black), new Point(startX, startY + offset));
+
+            //_graphics.DrawString(GetPrintReadyString(description), minifont,
+            //       new SolidBrush(Color.Black), new Point(startX, startY + offset));
 
             _graphics.DrawString(quatity, minifont,
-                     new SolidBrush(Color.Black), startX + 130, startY + offset);
+                     new SolidBrush(Color.Black), startX + 100, startY + offset);
 
             _graphics.DrawString(valor, minifont,
-                        new SolidBrush(Color.Black), startX + 165, startY + offset);
+                        new SolidBrush(Color.Black), startX + 140, startY + offset);
 
             _graphics.DrawString(total, minifont,
-                     new SolidBrush(Color.Black), startX + 200, startY + offset);
+                     new SolidBrush(Color.Black), startX + 170, startY + offset);
         }
         private void FormatPage(object sender, PrintPageEventArgs e)
         {
@@ -93,50 +127,50 @@ namespace PrinterServer
             Font smallFont = new Font("Arial", 5);
             Font mediumFont = new Font("Arial", 6);
             Font largeFont = new Font("Arial", 7);
-            Font drawFontBold = new Font("Arial", 7, FontStyle.Bold);
+            Font drawFontBold = new Font("Arial", 6, FontStyle.Bold);
 
 
             int offsset = 10;
-            int smallinc = 10, mediuminc = 12, largeinc = 12;
+            int smallinc = 10, mediuminc = 12, largeinc = 15;
 
             //Image image = new Image();
             //e.Graphics.DrawImage(image, 50, 100, 30);
 
             offsset = offsset + largeinc + 10;
 
-            string underLine = "--------------------------------------------------";
+            string underLine = "-------------------------------------------------";
             DrawLine(underLine, largeFont, offsset, 0);
 
             offsset = offsset + mediuminc;
             var data = _data.dataSources.First(x => x.Key == "encabezadoDs").Value;
-            DrawStart(data[0]["razonSocial"], drawFontBold, offsset);
+            DrawTitle(data[0]["razonSocial"], drawFontBold, offsset);
 
             offsset = offsset + mediuminc;
-            DrawStart(data[0]["nombreComercial"], drawFontBold, offsset);
+            DrawTitle(data[0]["nombreComercial"], drawFontBold, offsset);
 
             offsset = offsset + mediuminc;
-            DrawStart("RUC: " + data[0]["ruc"], drawFontBold, offsset);
+            DrawTitle("RUC: " + data[0]["ruc"], drawFontBold, offsset);
 
             offsset = offsset + mediuminc;
-            DrawStart(data[0]["regimen"], drawFontBold, offsset);
+            DrawTitle(data[0]["regimen"], drawFontBold, offsset);
 
             offsset = offsset + mediuminc;
-            DrawStart("Teléfono: " + data[0]["telefonoEntidad"], drawFontBold, offsset);
+            DrawTitle("Teléfono: " + data[0]["telefonoEntidad"], drawFontBold, offsset);
 
             offsset = offsset + mediuminc;
-            DrawStart("Dirección: " + data[0]["dirMatriz"], drawFontBold, offsset);
+            DrawTitle("Dirección: " + data[0]["dirMatriz"], drawFontBold, offsset);
 
             offsset += mediuminc;
-            DrawStart("FACTURA NRO: " + data[0]["nroFactura"], drawFontBold, offsset);
+            DrawTitle("FACTURA NRO: " + data[0]["nroFactura"], drawFontBold, offsset);
 
             offsset += mediuminc;
-            DrawStart("RUC/CI: " + data[0]["nroIdentificacion"], drawFontBold, offsset);
+            DrawTitle("RUC/CI: " + data[0]["nroIdentificacion"], drawFontBold, offsset);
 
             offsset += mediuminc;
-            DrawStart("Direcc: " + data[0]["direccionComprador"], drawFontBold, offsset);
+            DrawTitle("Direcc: " + data[0]["direccionComprador"], drawFontBold, offsset);
 
             offsset += mediuminc;
-            DrawStart("Fecha: " + data[0]["fechaEmision"], drawFontBold, offsset);
+            DrawTitle("Fecha: " + data[0]["fechaEmision"], drawFontBold, offsset);
 
             offsset = offsset + smallinc;
             underLine = "--------------------------------------------------";
@@ -145,20 +179,125 @@ namespace PrinterServer
             offsset = offsset + largeinc;
             InsertHeaderStyleItem("Descripción ", "Cantidad ", " P.U.", "Total", offsset);
 
-
             offsset = offsset + largeinc;
             var details = _data.dataSources.First(x => x.Key == "detalleDs").Value;
 
             foreach (var source in details)
             {
-                InsertItem(source.FirstOrDefault(x=> x.Key=="descripcion").Value,
+                InsertItem(source.FirstOrDefault(x => x.Key == "descripcion").Value,
                     source.FirstOrDefault(x => x.Key == "cantidad").Value,
                     source.FirstOrDefault(x => x.Key == "precioUnitario").Value,
                     source.FirstOrDefault(x => x.Key == "precioTotal").Value,
                     offsset);
-                offsset = offsset + smallinc;
+
+                offsset = offsset + 30;
             }
 
+            offsset = offsset + smallinc;
+            string porcentajeIva = "", subtotalIva12 = "";
+            data[0].TryGetValue("porcentajeIva", out porcentajeIva);
+            data[0].TryGetValue("subtotalIva12", out subtotalIva12);
+            DrawTotals(porcentajeIva + "    " + subtotalIva12, smallFont, offsset); 
+            offsset = offsset + smallinc;
+
+            string subtotalIva0 = "" ;
+            data[0].TryGetValue("subtotalIva0", out subtotalIva0);
+            if (!string.IsNullOrEmpty(subtotalIva0))
+            {
+                DrawTotals("Subtotal 0      " + subtotalIva0, smallFont, offsset);
+                offsset = offsset + smallinc;
+            }
+          
+
+            string subtotalNoObjetoIva = "";
+            data[0].TryGetValue("subtotalNoObjetoIva", out subtotalNoObjetoIva);
+            if (!string.IsNullOrEmpty(subtotalNoObjetoIva))
+            {
+                DrawTotals("Subtotal No Obj. Iva    " + subtotalNoObjetoIva, smallFont, offsset);
+                offsset = offsset + smallinc;
+            }
+           
+
+            string subtotalExcentoIva = "";
+            data[0].TryGetValue("subtotalExcentoIva", out subtotalExcentoIva);
+            if (!string.IsNullOrEmpty(subtotalExcentoIva))
+            {
+                DrawTotals("Subtotal Exc. Iva.  " + subtotalExcentoIva, smallFont, offsset);
+                offsset = offsset + smallinc;
+            }
+         
+
+            string subtotalSinImpuestos = "";
+            data[0].TryGetValue("subtotalSinImpuestos", out subtotalSinImpuestos);
+            if (!string.IsNullOrEmpty(subtotalSinImpuestos))
+            {
+                DrawTotals("Subtotal sin Imp.   " + subtotalSinImpuestos, smallFont, offsset);
+                offsset = offsset + smallinc;
+            }
+           
+
+            string totalDescuentos = "";
+            data[0].TryGetValue("totalDescuentos", out totalDescuentos);
+            if (!string.IsNullOrEmpty(totalDescuentos))
+            {
+                DrawTotals("Descuento.      " + totalDescuentos, smallFont, offsset);
+                offsset = offsset + smallinc;
+            }
+           
+
+            string ice = "";
+            data[0].TryGetValue("ice", out ice);
+            if (!string.IsNullOrEmpty(ice))
+            {
+                DrawTotals("Ice " + ice, smallFont, offsset);
+                offsset = offsset + smallinc;
+            }
+            
+
+            string tipoIva = "", iva12 = "";
+            data[0].TryGetValue("tipoIva", out tipoIva);
+            data[0].TryGetValue("iva12", out iva12);
+            DrawTotals(tipoIva + "      " + iva12, smallFont, offsset);
+            offsset = offsset + smallinc;
+
+            string valorTotal = "";
+            data[0].TryGetValue("valorTotal", out valorTotal);
+
+            DrawTotals("TOTAL " + valorTotal, smallFont, offsset);
+
+            offsset = offsset + smallinc;
+            string formaPago = "", pago = "";
+            data[0].TryGetValue("formaPago", out formaPago);
+            data[0].TryGetValue("pago", out pago);
+            if (!string.IsNullOrEmpty(formaPago))
+            {
+                DrawTotals(formaPago + "        " + pago, smallFont, offsset);
+                offsset = offsset + smallinc;
+            }
+       
+
+            string cambio = "";
+            data[0].TryGetValue("cambio", out cambio);
+            if (!string.IsNullOrEmpty(cambio))
+            {
+                DrawTotals("Cambio      " + cambio, smallFont, offsset);
+                offsset = offsset + smallinc;
+            } 
+            
+            DrawTitle("CLAVE ACCESO ", drawFontBold, offsset);
+            offsset = offsset + smallinc;
+            string claveAcceso = "";
+            data[0].TryGetValue("codigoAutorizacion", out claveAcceso);
+            DrawTitle(claveAcceso, drawFontBold, offsset);
+
+            offsset = offsset + smallinc;
+            string usuario = "";
+            data[0].TryGetValue("usuario", out usuario);
+            if (!string.IsNullOrEmpty(usuario))
+            {
+                DrawTitle("Usuario:     " + usuario, drawFontBold, offsset);
+                offsset = offsset + smallinc;
+            }
 
         }
         public static bool PrintNetwork(ApiPrintRequest data)
