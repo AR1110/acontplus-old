@@ -169,7 +169,7 @@
                                     </md-menu-item>     
 
                                     <md-menu-item>
-                                        <md-button ng-click="openModalHistorialMov(item)" ng-disabled="!(item.codPago==='PA')"><span
+                                        <md-button ng-click="openModalHistorialMov(item)" ng-disabled="(item.codPago==='PE')"><span
                                             md-menu-align-target>Hist. Movimiento</span>
                                         </md-button>
                                     </md-menu-item>     
@@ -183,9 +183,9 @@
                         <td md-cell>{{item.nombreFiscal}}</td>
                         <td md-cell>{{item.fechaEmision}}</td>
                         <td md-cell>{{item.fechaVencimiento}}</td>
-                        <td md-cell>{{item.importeTotal | number: 1}}</td>
-                        <td md-cell>{{item.abono}}</td>
-                        <td md-cell>{{item.saldo}}</td>
+                        <td md-cell>${{item.importeTotal}}</td>
+                        <td md-cell>${{item.abono}}</td>
+                        <td md-cell>${{item.saldo}}</td>
                         <td md-cell>{{item.estado}}</td>
                     </tr>
                 </tbody>

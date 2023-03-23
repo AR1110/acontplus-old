@@ -265,14 +265,15 @@ export class ModalAsignacionUsuarioTurnoCtrl{
  * Class Modal Movimiento Caja
  */
 export class MovimientoCajaCtrl{
-    static $inject=['$filter','mainService', 'commonService', 'modalService', '$uibModalInstance', 'toastService', 'params']
-    constructor($filter, _mS, _commonSvc, _modalSvc, $uibModalInstance, _tS, _params){  
+    static $inject=['$filter', 'mainService', 'commonService', 'decodeToken', 'modalService', '$uibModalInstance', 'toastService', 'params']
+    constructor($filter, _mS, _commonSvc, decodeToken, _modalSvc, $uibModalInstance, _tS, _params){  
         
         const self = this
         
         this.$filter = $filter;
         this._mS = _mS;
         this._commonSvc = _commonSvc;
+        this.decodeToken = decodeToken;
         this._modalSvc = _modalSvc;
         this.$uibModalInstance = $uibModalInstance;
         this._tS = _tS;
@@ -410,17 +411,17 @@ export class MovimientoCajaCtrl{
     
     getReport(idControlCaja) {       
         let dataParms = {
-            id: idControlCaja,            
+            id: idControlCaja,
+            idUsuarioRol: Number(this.decodeToken.idUsuarioRol),         
         }
         const parameters = {
-            hasService: true,
+            hasService: true, //reporte sin idRol, si es true el idRol(idUsuariol) enviamos en un json
             reportParams: JSON.stringify({
                 codigo: 'RCC', 
                 format: 'pdf',
                 aditionalParams: []
             }),
-            dataParams: JSON.stringify(dataParms),
-            sendEmail:false
+            dataParams: JSON.stringify(dataParms)
         }
 
         this._commonSvc.getReport({
@@ -547,7 +548,7 @@ export class ModalCierreCajaCtrl{
     }
 
     $onInit(){
-        console.log(this)
+       
         this._mS.getData('get', '/ControlCaja/GetArqueoCaja?json=' + JSON.stringify({idUsuarioRol: 0})).then(resopnse=>{
             console.log(resopnse)
             if(resopnse.code==="0"){

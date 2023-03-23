@@ -593,74 +593,53 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
     }
 
 
-
-
-
-    $scope.askToSendEmail = async (item)=> {
-        let { isConfirmed } = await Swal.fire({
-            title: '<small>Enviar por Correo</small>',
-            icon: 'warning',
-            html: '<small>¿Está seguro de enviar por correo esté documento?</small>',
-            showDenyButton: true,
-            confirmButtonText: `Si, enviar`,
-            denyButtonText: `No, cancelar`,
-            allowOutsideClick: false
-        });
-
-        if (isConfirmed) {
-            $scope.getSendEmail(item);            
-        }
-    }
-
-
-    
-    $scope.getSendEmail = function (item) {
-        try {
-            _fS.showLoaderSendEmail();
-            let format = 'pdf';
-            let dataParms = {
-                codEstab: item.codEstab,
-                idNotaEntrega: item.idNotaEntrega        
-            }
+    $scope.askToSendEmail = async (item) =>{ 
+        try { 
+            console.log(item)
+            let params = {
+                TYPE_NOTIFICATION: 'N',
+                serie: item.nroDocumento,
+                correo: item.correo, 
+                subject: 'Documento Nota Entrega - Acontplus N°: ' + item.nroDocumento,
+                json: {                                      
+                    hasFile: true, 
+                    isReport: "SI", 
+                    reportParams: {
+                        codEstab: item.codEstab, 
+                        codigo: "RNE", 
+                        format: "pdf"
+                    }, 
+                    spParams: {
+                        id: item.idNotaEntrega
+                    }
+                }
+            }                    
+            
            
-            const parameters = {
-                reportParams: JSON.stringify({
-                    codigo: 'RNE', 
-                    format,
-                    codEstab: item.codEstab,
-                    aditionalParams: [
-                        
-                    ]
-                }),
-                dataParams: JSON.stringify(dataParms),
-                sendEmail: true
-            }
-           
-            _mS.getFile('post', '/NotaEntrega/Download', parameters).then(response => {
-                Swal.close();
-                let fileBlob = new Blob([response.data], { type: response.data.type });
-                let objectUrl = window.URL || window.webkitURL;
-                let urlFile = objectUrl.createObjectURL(fileBlob);
-                window.open(urlFile, '_blank');
-                return;
-            }, error => console.log(error));
+            const { MODAL_SEND_MAIL_CTRL, MODAL_SEND_MAIL_CSHTML } = _nombreModalConst.common;
+            const { SendMailCtrl } = await import('./../../modal/' + MODAL_SEND_MAIL_CTRL);
+            _modalSvc.openModalCustom({
+                controller: SendMailCtrl,
+                template: 'Shared/' + MODAL_SEND_MAIL_CSHTML,
+                size: 'md',
+                params
+            })
         } catch (error) {
-            Swal.close();
-            console.log(error)
-        }
+            console.error(error)
+        } 
     }
-
 
 
     $scope.getReport = function (item) {           
         let format = 'pdf';
         let dataParms = {
-            codEstab: item.codEstab,
-            idNotaEntrega: item.idNotaEntrega        
+            id: item.idNotaEntrega        
         }
        
         const parameters = {
+            hasService: true,
             reportParams: JSON.stringify({
+                hasParams: true,
                 codigo: 'RNE', 
                 codEstab: item.codEstab,
                 format,
@@ -674,23 +653,7 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
         _commonSvc.getReport({
             parameters,
             formatType: format
-        })           
-        // let format = 'pdf';
-        // let dataParms = {
-        //     id: item.idNotaEntrega,            
-        //     idSucursal: item.idSucursal,
-        //     codigo: 'RNE', 
-        //     format,            
-        // }
-
-        // let parameters = {               
-        //     dataParams: JSON.stringify(dataParms)
-        // }
-
-        // _commonSvc.getReportDynamic({
-        //     parameters,
-        //     format
-        // })              
+        })              
     }
 
 
