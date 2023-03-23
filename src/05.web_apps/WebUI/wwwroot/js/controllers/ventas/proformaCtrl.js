@@ -343,17 +343,15 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
         const parameters = {
             hasService: true,
             reportParams: JSON.stringify({
+                hasParams: true,
                 codigo: 'PR', 
                 format,
                 codEstab: item.codEstab,
                 aditionalParams: [                    
                 ]
             }),
-            dataParams: JSON.stringify(dataParms),
-            sendEmail: false
+            dataParams: JSON.stringify(dataParms)
         }
-
-        console.log(parameters)
 
         _commonSvc.getReport({
             parameters,

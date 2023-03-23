@@ -27,14 +27,32 @@
         $scope.recordsQuantity = [5, 10, 25, 50];
 
         $scope.getCategorias = function() {
-            mS.getData('get', '/CategoriaCompra/Get?pageIndex=' + $scope.pageIndex + '&pageSize=' + $scope.pageSize).then(response => {
-                if (response.id == "0") {
-                    toast.toastr("warning", response.message, response.titleSms);
-                    return
-                }                
-                $scope.categoriaCompras = response.data;                
-                if (response.data.length > 0) $scope.totalRecords = response.data[0].totalRecords;
-            }, error => console.log(error))
+            try {
+                showLoader();
+                $scope.categoriaCompras = [];
+                mS.getData('get', '/CategoriaCompra/Get?pageIndex=' + $scope.pageIndex + '&pageSize=' + $scope.pageSize).then(response => {
+                    if (response.id == "0") {
+                        hideLoader();
+                        $scope.categoriaCompras=[];
+                        toast.toastr("warning", response.message, response.titleSms);
+                        return
+                    }                
+                    if(response.id == "1") {
+                        hideLoader();
+                        $scope.categoriaCompras = response.data;  
+                                  
+                        $scope.totalRecords = $scope.categoriaCompras.length>0?  $scope.categoriaCompras[0].totalRecords: 0
+                    }
+                }).catch(error => {
+                    $scope.categoriaCompras = [];
+                    console.log(error)
+                    hideLoader();
+                })
+            } catch (error) {
+                hideLoader();
+                $scope.categoriaCompras =[];
+                console.log(error);
+            }
         }
         $scope.getCategorias();
 

@@ -231,6 +231,7 @@
 
         $scope.postCheck = (url)=>{                                   
             _mS.getData('post', url).then(response=>{
+                console.log(response)
                 if(response.id==="0"){
                     form.sweetAlert('warning', response.message, response.titleSms);                    
                     return
@@ -255,7 +256,7 @@
                 return
             }
 
-            let {isConfirmed} = await Swal.fire({
+            let {isConfirmed, value} = await Swal.fire({
                 icon:'warning',
                 title:`<small>Anular ${tipoCheque}</small>`,
                 html:`<small>Está seguro/a de anular este <b>${tipoCheque}</b> del Cliente <strong>${item.persona}</strong> ahora?</small>`,
@@ -267,7 +268,7 @@
                         Swal.showValidationMessage('Ingrese la Observación');
                         return
                     }
-                    if(text.length<15){
+                    if(text.length<8){
                         Swal.showValidationMessage('tiene que tener al menos 15 caracteres!');
                         return
                     }
@@ -284,9 +285,9 @@
             if(isConfirmed){
                 let url;                    
                 if(item.gestion===1){
-                    url = `/Cobro/Put?idCobro=${item.id}&observacion=${result.value}&anular=true`
+                    url = `/Cobro/Put?idCobro=${item.id}&observacion=${value}&anular=true`
                 }else{
-                    url = `/Pago/Put?idPago=${item.id}&observacion=${result.value}&anular=true`;
+                    url = `/Pago/Put?idPago=${item.id}&observacion=${value}&anular=true`;
                 }
                 $scope.postCheck(url);
             }                      

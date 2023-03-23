@@ -395,7 +395,10 @@ function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form,
         try {
             showLoader();
             _mS.getData('get', `/Cobro/GetByComprobante?idComprobanteIngreso=${item.idComprobanteIngreso}`).then(response=>{
-                console.log(response)
+                if(response.code===null || response.code===undefined){
+                    console.log(response)
+                    hideLoader()
+                }
                 if(response.id==="0"){
                     hideLoader();
                     form.sweetAlert('warning', response.message, response.titleSms)
@@ -409,7 +412,9 @@ function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form,
             });  
         } catch (error) {
             console.log(error)
-        }                                  
+        } finally{
+            hideLoader()
+        }                                 
     };
 
     $scope.getCobroDetalle = (data)=> {

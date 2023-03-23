@@ -71,7 +71,7 @@
         md-search-text-change="$ctrl.searchTextChange($ctrl.searchText)"
         md-search-text="$ctrl.searchText"
         md-selected-item-change="$ctrl.selectArticleSearch(item)"
-        md-items="item in $ctrl.articulos"
+        md-items="item in $ctrl.getDynamicSearchArticles()"
         md-item-text="item.descripcion"
         md-min-length="2"
         ng-focus="$ctrl.focusDescripcionArticulo('#custom-template-md-autocomplete-articulo')"

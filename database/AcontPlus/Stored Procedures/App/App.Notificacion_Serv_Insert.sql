@@ -45,14 +45,15 @@ BEGIN
 		@subject   = subject
 	FROM App.UsuarioRol ur JOIN OPENJSON(@json)		
 	WITH(
-		idUsuarioRol INT '$.idUsuarioRol',
-		codigo VARCHAR(5) '$.params.reportParams.codigo',
-		id INT '$.params.spParams.id',
-		receptor VARCHAR(100) '$.receptor',
-		params NVARCHAR(MAX) '$.params' AS JSON,
-		subject VARCHAR(100)
+		idUsuarioRol        INT '$.idUsuarioRol',
+		codigo       VARCHAR(5) '$.params.reportParams.codigo',
+		id                 INT  '$.params.spParams.id',
+		receptor   VARCHAR(100) '$.receptor',
+		params    NVARCHAR(MAX) '$.params' AS JSON,
+		subject   VARCHAR(100)
 	) as js ON js.idUsuarioRol = ur.idUsuarioRol
 
+	SET @template = 'EmailTemplate.html'
 	
 	--SELECT @idUsuario, @id, @codigo, @receptor
 
@@ -61,6 +62,7 @@ BEGIN
 	BEGIN TRY
 		BEGIN TRAN 
 
+		--Proforma 
 		IF @codigo = 'PR'
 			BEGIN 
 				IF @id IS NULL
@@ -69,7 +71,7 @@ BEGIN
 						RETURN
 					END 
 
-				SET @template = 'EmailTemplate.html'
+				
 				SET @body = (
 								SELECT cliente      = cl.nombreComercial, 
 										documento    = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,pr.nroDocumento),
@@ -90,10 +92,38 @@ BEGIN
 								 
 			END 
 
+			--Nota Entrega --
+			IF @codigo ='RNE'
+				BEGIN
+					IF @id IS NULL
+					BEGIN	
+						SELECT '0'code, 'Id No Valido' as 'message', 'Reenvío por Correo' as titleSms	
+						RETURN
+					END 
+
+				
+					SET @body = (
+									SELECT cliente      = cl.nombreComercial, 
+											documento    = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,ne.nroDocumento),
+											fechaEmision = dbo.AFTConvertDate(ne.fechaEmision)+dbo.AFTConvertHora(ne.fechaEmision),
+											importeTotal = Herramientas.Round_Out(ne.total, cd.nroTotalSubTotal),																   
+											telefono     = ISNULL(e.telefono, ''),
+											razonSocial  = e.razonSocial
+										
+									FROM dbo.NotaEntrega ne 
+									INNER JOIN Cliente               cl ON cl.idCliente      = ne.idCliente 
+									INNER JOIN dbo.PuntoEmision      pe ON pe.idPuntoEmision = ne.idPuntoEmision
+									INNER JOIN Sri.Establecimiento    s ON s.codEstab        = pe.codEstab
+									INNER JOIN dbo.Entidad            e ON e.idEntidad       = ne.idEntidad
+									LEFT JOIN Config.CantidadDecimal cd ON cd.idEntidad      = ne.idEntidad AND codTransaccion = 'V'
+									WHERE ne.idNotaEntrega = @id
+									FOR JSON PATH
+								 )
+				END 
+
 			-- Reporte Control Caja
 			IF @codigo ='RCC'
 				BEGIN 
-				    SET @template = 'EmailTemplate.html'
 					SET @body = (
 									SELECT 
 										fechaEmision = dbo.AFTConvertDate(dbo.ufnGetDateEcuador())+dbo.AFTConvertHora(dbo.ufnGetDateEcuador()),

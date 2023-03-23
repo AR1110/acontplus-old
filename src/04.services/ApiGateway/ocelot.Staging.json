@@ -180,25 +180,6 @@
           "Port": 8096
         }
       ],
-      "DownstreamPathTemplate": "/api/Articulo?json={json}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Get"
-      ],
-      "UpstreamPathTemplate": "/api/Articulo?json={json}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "205.209.99.71",
-          "Port": 8096
-        }
-      ],
       "DownstreamPathTemplate": "/api/Articulo/{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
