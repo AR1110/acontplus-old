@@ -4231,6 +4231,7 @@
 		<ProjectReference Include="..\..\08.razor_ui\Contabilidad_UI\Contabilidad_UI.csproj" />
 		<ProjectReference Include="..\..\08.razor_ui\FACT_UI\FACT_UI.csproj" />
 		<ProjectReference Include="..\..\08.razor_ui\Recepcion_UI\Recepcion_UI.csproj" />
+		<ProjectReference Include="..\..\08.razor_ui\Reports_UI\Reports_UI.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

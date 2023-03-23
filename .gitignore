@@ -307,3 +307,5 @@
 /src/02.domain/Domain.Config/bin/Debug/net6.0
 /src/02.domain/Domain.Config/obj
 /src/02.domain/Domain.Config/bin/Release/net6.0
+/src/08.razor_ui/Reports_UI/bin
+/src/08.razor_ui/Reports_UI/obj
