@@ -194,7 +194,7 @@ BEGIN
 			,ruc = @ruc
 			,numeroIdentificacion = (SELECT identificacionSujetoRetenido FROM @tblInfoCompRet)
 			,codEstab = (SELECT codEstab FROM @tblInfoCompRet)
-			 
+			,idContribuyente = @idProveedor
 			--JOIN (SELECT codEstab, estab, ptoEmi, identificacionSujetoRetenido FROM @tblInfoCompRet) r ON
 			WHERE  idDocumento = @id AND codDoc = '07' AND versionComp = '2.0.0'
 
