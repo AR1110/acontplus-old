@@ -141,45 +141,71 @@ namespace PrinterServer
 
             string underLine = "-------------------------------------------------------------------------------";
             DrawLine(underLine, offsset, 0);
-
             offsset = offsset + mediuminc;
+
             var data = _data.dataSources.First(x => x.Key == "encabezadoDs").Value;
+
             DrawTitle(data[0]["razonSocial"], drawFontBold, offsset);
-
             offsset = offsset + mediuminc;
-            DrawTitle(data[0]["nombreComercial"], drawFontBold, offsset);
 
-            offsset = offsset + mediuminc;
+            string nombreComercial = "";
+            data[0].TryGetValue("nombreComercial", out nombreComercial);
+            if (!string.IsNullOrEmpty(nombreComercial))
+            {
+                DrawTitle(nombreComercial, drawFontBold, offsset);
+                offsset = offsset + mediuminc;
+            }
+
             DrawTitle("RUC: " + data[0]["ruc"], drawFontBold, offsset);
-
             offsset = offsset + mediuminc;
-            DrawTitle(data[0]["regimen"], drawFontBold, offsset);
 
-            offsset = offsset + mediuminc;
+            string regimen = "";
+            data[0].TryGetValue("regimen", out regimen);
+            if (!string.IsNullOrEmpty(regimen))
+            {
+                DrawTitle(regimen, drawFontBold, offsset);
+                offsset = offsset + mediuminc;
+            }
+
             DrawTitle("Teléfono: " + data[0]["telefonoEntidad"], drawFontBold, offsset);
-
             offsset = offsset + mediuminc;
-            DrawTitle("Dirección: " + data[0]["dirMatriz"], drawFontBold, offsset);
 
-            offsset += mediuminc;
-            DrawTitle("FACTURA NRO: " + data[0]["nroFactura"], drawFontBold, offsset);
+            string dirMatriz = "";
+            data[0].TryGetValue("dirMatriz", out dirMatriz);
+            if (!string.IsNullOrEmpty(dirMatriz))
+            {
+                DrawTitle("Dirección: " + dirMatriz, drawFontBold, offsset);
+                offsset += mediuminc;
+            }
 
-            offsset += mediuminc;
+            string nroFactura = "";
+            data[0].TryGetValue("nroFactura", out nroFactura);
+            if (!string.IsNullOrEmpty(nroFactura))
+            {
+                DrawTitle("FACTURA NRO: " + nroFactura, drawFontBold, offsset);
+                offsset += mediuminc;
+            }
+
             DrawTitle("RUC/CI: " + data[0]["nroIdentificacion"], drawFontBold, offsset);
-
             offsset += mediuminc;
-            DrawTitle("Direcc: " + data[0]["direccionComprador"], drawFontBold, offsset);
 
-            offsset += mediuminc;
+            string direccionComprador = "";
+            data[0].TryGetValue("direccionComprador", out direccionComprador);
+            if (!string.IsNullOrEmpty(direccionComprador))
+            {
+                DrawTitle("Direcc: " + direccionComprador, drawFontBold, offsset);
+                offsset += mediuminc;
+            }
+
             DrawTitle("Fecha: " + data[0]["fechaEmision"], drawFontBold, offsset);
-
             offsset = offsset + smallinc;
+
             DrawLine(underLine, offsset, 0);
-
             offsset = offsset + largeinc;
+
             InsertHeaderStyleItem("Descripción ", "Cantidad ", " P.U.", "Total", offsset);
-
             offsset = offsset + largeinc;
+
             var details = _data.dataSources.First(x => x.Key == "detalleDs").Value;
 
             foreach (var source in details)
