@@ -27,17 +27,30 @@ namespace PrinterServer
             string printerName = _data.rdlcProps.FirstOrDefault(x => x.Key == "printerName").Value;
             //_printDoc.PrinterSettings.PrinterName = printerName;
             //_printDoc.PrinterSettings.PrinterName = "BSC10";
-            _printDoc.PrinterSettings.PrinterName = "POS-80C";
+            _printDoc.PrinterSettings.PrinterName = "Microsoft XPS Document Writer";
             _printDoc.PrintPage += new PrintPageEventHandler(FormatPage);
             _printDoc.Print();
             return true;
         }
 
-        void DrawTitle(string text, Font font, int offset)
+        void DrawTitle(string text, Font font, int offset, string label = null)
         {
             int startX = 10;
             int startY = 5;
-            _graphics.DrawString(string.Join("", text.Select((c, i) => i > 0 && i % 80 == 0 ? string.Format(Environment.NewLine + c) : c.ToString())), font, new SolidBrush(Color.Black), new Point(startX, startY + offset));
+            if (!string.IsNullOrEmpty(label))
+            {
+                int labelLength = 30 + label.Length;
+                if (label.Length > 11)
+                {
+                    labelLength += 50;
+                }
+                _graphics.DrawString(label, new Font("Arial", 6, FontStyle.Bold), new SolidBrush(Color.Black), startX, startY + offset);
+                _graphics.DrawString(string.Join("", text.Select((c, i) => i > 0 && i % 80 == 0 ? string.Format(Environment.NewLine + c) : c.ToString())), font, new SolidBrush(Color.Black), new Point(startX + labelLength, startY + offset));
+            }
+            else
+            {
+                _graphics.DrawString(string.Join("", text.Select((c, i) => i > 0 && i % 80 == 0 ? string.Format(Environment.NewLine + c) : c.ToString())), font, new SolidBrush(Color.Black), new Point(startX, startY + offset));
+            }
         }
 
         void DrawTotals(string label, string value, int offset)
@@ -156,7 +169,7 @@ namespace PrinterServer
                 offsset = offsset + mediuminc;
             }
 
-            DrawTitle("RUC: " + data[0]["ruc"], drawFontBold, offsset);
+            DrawTitle(data[0]["ruc"], mediumFont, offsset, "RUC: ");
             offsset = offsset + mediuminc;
 
             string regimen = "";
@@ -166,38 +179,92 @@ namespace PrinterServer
                 DrawTitle(regimen, drawFontBold, offsset);
                 offsset = offsset + mediuminc;
             }
+            string telefono = string.Empty;
+            data[0].TryGetValue("telefonoEntidad", out telefono);
+            if (!string.IsNullOrEmpty(telefono))
+            {
+                DrawTitle(telefono, mediumFont, offsset, "Teléfono: ");
+                offsset = offsset + mediuminc;
+            }
 
-            DrawTitle("Teléfono: " + data[0]["telefonoEntidad"], drawFontBold, offsset);
-            offsset = offsset + mediuminc;
+            data[0].TryGetValue("telefono", out telefono);
+            if (!string.IsNullOrEmpty(telefono))
+            {
+                DrawTitle(telefono, mediumFont, offsset, "Teléfono: ");
+                offsset = offsset + mediuminc;
+            }
 
             string dirMatriz = "";
             data[0].TryGetValue("dirMatriz", out dirMatriz);
             if (!string.IsNullOrEmpty(dirMatriz))
             {
-                DrawTitle("Dirección: " + dirMatriz, drawFontBold, offsset);
+                DrawTitle(dirMatriz, mediumFont, offsset, "Dirección: ");
                 offsset += mediuminc;
+            }
+
+            if (string.IsNullOrEmpty(dirMatriz))
+            {
+                data[0].TryGetValue("direccion", out dirMatriz);
+                if (!string.IsNullOrEmpty(dirMatriz))
+                {
+                    DrawTitle(dirMatriz, mediumFont, offsset, "Dirección: ");
+                    offsset += mediuminc;
+                }
             }
 
             string nroFactura = "";
             data[0].TryGetValue("nroFactura", out nroFactura);
             if (!string.IsNullOrEmpty(nroFactura))
             {
-                DrawTitle("FACTURA NRO: " + nroFactura, drawFontBold, offsset);
+                DrawTitle(nroFactura, mediumFont, offsset, "FACTURA NRO: ");
                 offsset += mediuminc;
             }
 
-            DrawTitle("RUC/CI: " + data[0]["nroIdentificacion"], drawFontBold, offsset);
+            string nroDoc = "";
+            data[0].TryGetValue("nroDoc", out nroDoc);
+            if (!string.IsNullOrEmpty(nroDoc))
+            {
+                DrawTitle(nroDoc, mediumFont, offsset, "NOTA DE ENTREGA Nro.: ");
+                offsset += mediuminc;
+            }
+
+            DrawLine(underLine, offsset, 0);
+            offsset = offsset + largeinc;
+
+            string cliente = string.Empty;
+            data[0].TryGetValue("cliente", out cliente);
+            if (!string.IsNullOrEmpty(cliente))
+            {
+                DrawTitle(cliente, mediumFont, offsset, "Cliente: ");
+                offsset += mediuminc;
+            }
+
+            data[0].TryGetValue("razonSocialComprador", out cliente);
+            if (!string.IsNullOrEmpty(cliente))
+            {
+                DrawTitle(cliente, mediumFont, offsset, "Cliente: ");
+                offsset += mediuminc;
+            }
+
+            DrawTitle(data[0]["nroIdentificacion"], mediumFont, offsset, "RUC/CI: ");
             offsset += mediuminc;
 
             string direccionComprador = "";
             data[0].TryGetValue("direccionComprador", out direccionComprador);
             if (!string.IsNullOrEmpty(direccionComprador))
             {
-                DrawTitle("Direcc: " + direccionComprador, drawFontBold, offsset);
+                DrawTitle(direccionComprador, mediumFont, offsset, "Direcc: ");
                 offsset += mediuminc;
             }
 
-            DrawTitle("Fecha: " + data[0]["fechaEmision"], drawFontBold, offsset);
+            data[0].TryGetValue("direccionCliente", out direccionComprador);
+            if (!string.IsNullOrEmpty(direccionComprador))
+            {
+                DrawTitle(direccionComprador, mediumFont, offsset, "Direcc: ");
+                offsset += mediuminc;
+            }
+
+            DrawTitle(data[0]["fechaEmision"], mediumFont, offsset, "Fecha: ");
             offsset = offsset + smallinc;
 
             DrawLine(underLine, offsset, 0);
@@ -223,17 +290,16 @@ namespace PrinterServer
             string porcentajeIva = "", subtotalIva12 = "";
             data[0].TryGetValue("porcentajeIva", out porcentajeIva);
             data[0].TryGetValue("subTotalIva12", out subtotalIva12);
-            DrawTotals(porcentajeIva, subtotalIva12, offsset); 
+            DrawTotals(porcentajeIva, subtotalIva12, offsset);
             offsset = offsset + smallinc;
 
-            string subtotalIva0 = "" ;
+            string subtotalIva0 = "";
             data[0].TryGetValue("subTotalIva0", out subtotalIva0);
             if (!string.IsNullOrEmpty(subtotalIva0))
             {
                 DrawTotals("Subtotal 0", subtotalIva0, offsset);
                 offsset = offsset + smallinc;
             }
-          
 
             string subtotalNoObjetoIva = "";
             data[0].TryGetValue("subTotalNoObjetoIva", out subtotalNoObjetoIva);
@@ -242,7 +308,6 @@ namespace PrinterServer
                 DrawTotals("Subtotal No Obj. Iva", subtotalNoObjetoIva, offsset);
                 offsset = offsset + smallinc;
             }
-           
 
             string subtotalExcentoIva = "";
             data[0].TryGetValue("subtotalExcentoIva", out subtotalExcentoIva);
@@ -251,7 +316,6 @@ namespace PrinterServer
                 DrawTotals("Subtotal Exc. Iva", subtotalExcentoIva, offsset);
                 offsset = offsset + smallinc;
             }
-         
 
             string subtotalSinImpuestos = "";
             data[0].TryGetValue("subTotalSinImpuestos", out subtotalSinImpuestos);
@@ -260,7 +324,6 @@ namespace PrinterServer
                 DrawTotals("Subtotal sin Imp.", subtotalSinImpuestos, offsset);
                 offsset = offsset + smallinc;
             }
-           
 
             string totalDescuentos = "";
             data[0].TryGetValue("totalDescuentos", out totalDescuentos);
@@ -269,7 +332,6 @@ namespace PrinterServer
                 DrawTotals("Descuento", totalDescuentos, offsset);
                 offsset = offsset + smallinc;
             }
-           
 
             string ice = "";
             data[0].TryGetValue("ice", out ice);
@@ -278,7 +340,6 @@ namespace PrinterServer
                 DrawTotals("Ice", ice, offsset);
                 offsset = offsset + smallinc;
             }
-            
 
             string tipoIva = "", iva12 = "";
             data[0].TryGetValue("tipoIva", out tipoIva);
@@ -300,7 +361,6 @@ namespace PrinterServer
                 DrawTotals(formaPago, pago, offsset);
                 offsset = offsset + smallinc;
             }
-       
 
             string cambio = "";
             data[0].TryGetValue("cambio", out cambio);
@@ -308,15 +368,21 @@ namespace PrinterServer
             {
                 DrawTotals("Cambio", cambio, offsset);
                 offsset = offsset + smallinc;
-            } 
-            
-            DrawTitle("CLAVE ACCESO ", drawFontBold, offsset);
-            offsset = offsset + smallinc;
+            }
+
+
             string claveAcceso = "";
             data[0].TryGetValue("codigoAutorizacion", out claveAcceso);
-            DrawTitle(claveAcceso, drawFontBold, offsset);
 
-            offsset = offsset + smallinc;
+            if (!string.IsNullOrEmpty(claveAcceso))
+            {
+                DrawTitle("CLAVE ACCESO ", drawFontBold, offsset);
+                offsset = offsset + smallinc;
+
+                DrawTitle(claveAcceso, drawFontBold, offsset);
+                offsset = offsset + smallinc;
+            }
+
             string usuario = "";
             data[0].TryGetValue("usuario", out usuario);
             if (!string.IsNullOrEmpty(usuario))
