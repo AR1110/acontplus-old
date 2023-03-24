@@ -17,8 +17,8 @@ namespace PrintServer
             ProcessStartInfo psi = new ProcessStartInfo("netsh", args);
             psi.CreateNoWindow = true;
             psi.WindowStyle = ProcessWindowStyle.Hidden;
-            psi.UseShellExecute = true;
-            psi.RedirectStandardOutput = false;
+            psi.UseShellExecute = false;
+            psi.RedirectStandardOutput = true;
             psi.Verb = "runas";
 
             Process.Start(psi).WaitForExit();
