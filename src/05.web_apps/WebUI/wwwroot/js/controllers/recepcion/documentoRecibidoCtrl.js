@@ -291,6 +291,7 @@
             $scope.getMergedDocs = (item) => {
              
                 try {
+                    console.log($scope.selected)
                     $scope.mergedDocs = []
                     let data = {
                         tipo: 3,
