@@ -141,17 +141,25 @@ namespace PrintServer
                             dataReport.rdlcParams = rdlcParams;
                         }
                     }
-                    new ThermalPrint().Print(dataReport);
-                    //if (PrintReport.DynamicPrint(dataReport))
-                    //{
-                    //    resp.StatusCode = 200;
-                    //    resp.StatusDescription = "OK";
-                    //}
-                    //else
-                    //{
-                    //    resp.StatusCode = 400;
-                    //    resp.StatusDescription = "Bad Request";
-                    //}
+                    var printerProp = Convert.ToBoolean(dataReport.rdlcProps.FirstOrDefault(x=> x.Key=="isThermal").Value);
+                    if (printerProp)
+                    {
+                        new ThermalPrint().Print(dataReport);
+                    }
+                    else
+                    {
+                        if (PrintReport.DynamicPrint(dataReport))
+                        {
+                            resp.StatusCode = 200;
+                            resp.StatusDescription = "OK";
+                        }
+                        else
+                        {
+                            resp.StatusCode = 400;
+                            resp.StatusDescription = "Bad Request";
+                        }
+                    }
+
 
                     // Write the response info
                     string disableSubmit = !runServer ? "disabled" : "";
