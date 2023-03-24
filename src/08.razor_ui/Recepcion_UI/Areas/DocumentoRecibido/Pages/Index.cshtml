@@ -59,10 +59,10 @@
                             </md-button>
                         </div>
                     </div>
-                    <div class="table-responsive">
+                    <div class="table-responsive" style="max-height: 400px;">
                         <table md-table md-row-select ng-model="selected" md-progress="promise">
                             <caption>Lista de Importaciones</caption>
-                            <thead md-head md-order="query.sortBy">
+                            <thead md-head md-order="query.sortBy" fix-head>
                                 <tr md-row>
                                     <th md-column>Doc.</th>
                                     <th md-column md-order-by="serieComprobante">Serie</th>
@@ -110,6 +110,7 @@
     @await Html.PartialAsync("_NewImport")
     @await Html.PartialAsync("_Retencion")
     @await Html.PartialAsync("_NotaCredito")
+    @await Html.PartialAsync("_Doc_Relacionado")
 
     <input type="text" name="urlGateway" id="urlGateway" value="@ViewData["urlGateway"]" hidden />
 

@@ -156,21 +156,23 @@
                     //console.log($scope.query)
                     mS.getData('get', _urlService + 'DocumentoRecibido/Get/' + JSON.stringify($scope.query)).then(response => {
                         if (response.code == "0") {
+                            hideLoader()
                             tS.toastr('warning', response.message)
                         }
                         if (response.code == "1") {
                             $scope.comprobantes = JSON.parse(response.payload)[0];
-
+                            
                             //console.log($scope.comprobantes)
-
+                            
                             $scope.cloneComprobantes = JSON.parse(JSON.stringify($scope.comprobantes))
                             //$scope.totalRecords = $scope.comprobantes[0].totalRecords;
+                            hideLoader()
                         }
 
                     }).catch((error) => {
+                        hideLoader()
                         console.log(error)
-                    })
-                    hideLoader()
+                    })                    
                 } catch (error) {
                     hideLoader()
                     console.log(error)
@@ -287,11 +289,12 @@
 
             $scope.mergedDocs = []
             $scope.getMergedDocs = (item) => {
+             
                 try {
                     $scope.mergedDocs = []
                     let data = {
                         tipo: 3,
-                        claveAcceso: item.claveAcceso
+                        claveAcceso: $scope.selected[0].claveAcceso
                     }
                     mS.getData('get', _urlService + 'DocumentoRecibido/Get/' + JSON.stringify(data)).then(
                         response => {
@@ -301,16 +304,21 @@
                             if (response.code == '01') {
                                 let arrTemp = JSON.parse(response.payload)
                                 $scope.mergedDocs = arrTemp
-                                $('#docRelModal').modal('show')
                             }
                         }
-                    ).catch(error => {
-                        console.log(error)
-                    })
+                        ).catch(error => {
+                            console.log(error)
+                        })
+                        Swal.close()
+                        $('#docRelModal').modal('show');
                 } catch (error) {
                     console.log(error)
                 }
             }
+
+            $("#docRelModal").on('hide.bs.modal', () => {
+                console.log('close doc_relacionado')
+            })
 
 
             $scope.post = function () {

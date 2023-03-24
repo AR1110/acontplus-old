@@ -6,10 +6,42 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
-                
+                <md-table-container>
+                    <table md-table>
+                        <thead md-head>
+                            <tr md-row>
+                                <th md-column>N°.</th>
+                                <th md-column>Doc.</th>
+                                <th md-column>Serie Comprobante</th>
+                                <th md-column>Fecha Emisión</th>                             
+                                <th md-column>Clave Accesso</th>
+                                <th md-column>Total</th>
+                                <th md-column>Op.</th>
+                            </tr>
+                        </thead>
+                        <tbody md-body>
+                            <tr md-row ng-repeat="item in mergedDocs">
+                                <td md-cell>{{$index+1}}</td>
+                                <td md-cell>{{item.documento}}</td>
+                                <td md-cell>{{item.serieComprobante}}</td>
+                                <td md-cell>{{item.fechaEmision}}</td>
+                                <td md-cell>{{item.claveAcceso}}</td>
+                                <td md-cell>{{item.importeTotal}}</td>
+                                <td md-cell>
+                                    <buttion type="button" class="btn btn-outline-secondary btn-sm" ng-click="viewDocument(item)">
+                                        <i class="ti-eye"></i>
+                                    </buttion>
+                                    <buttion type="button" class="btn btn-outline-danger btn-sm" ng-click="viewDocument(item)">
+                                        <i class="ti-file"></i>
+                                    </buttion>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </md-table-container>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-dark btn-sm">&times; Cerrar</button>
+                <button type="button" class="btn btn-dark btn-sm" data-dismiss="modal">&times; Cerrar</button>
             </div>
         </div>
     </div>
