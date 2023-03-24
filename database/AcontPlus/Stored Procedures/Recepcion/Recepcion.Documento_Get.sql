@@ -19,7 +19,7 @@ GO
 -- Create date: 2022-07-31
 -- Description:	SP PARA LISTAR LOS COMPROBANTES ELECTRONICOS DEL SRI IMPORTADOS
 -- =============================================
---Recepcion.Documento_Get 38, '{"orderBy":"","sortBy":"","limit":10,"page":1,"codDoc":"01"}'
+--Recepcion.Documento_Get 44, '{"orderBy":"","sortBy":"","limit":10,"page":1,"codDoc":"04", "tipo": 3}'
 IF OBJECT_ID(N'Recepcion.Documento_Get ', N'P') IS NOT NULL
 DROP PROCEDURE Recepcion.Documento_Get 
 GO
@@ -41,6 +41,8 @@ BEGIN
 	DECLARE @startDate DATETIME
 	DECLARE @endDate DATETIME
 	DECLARE @tipo VARCHAR(1)
+
+	DECLARE @claveAcceso VARCHAR(50)
 	--SET @@pageNumber=2
 	--SET @@pageNumber=4 
 
@@ -48,6 +50,7 @@ BEGIN
 	SELECT @codDoc = codDoc, @startDate = startDate
 	, @endDate = endDate 
 	, @tipo = tipo --, @PageNumber = pageNumber, @rowsOfPage = limit, @orderBy= orderBy, @sortBy = sortBy
+	,@claveAcceso = claveAcceso 
 	FROM OPENJSON(@JSON) WITH(limit INT '$.limit'
 							,pageNumber INT '$.page' 
 							,orderBy VARCHAR(5) '$.orderBy'
@@ -56,6 +59,7 @@ BEGIN
 							,startDate DATETIME '$.startDate'
 							,endDate DATETIME '$.endDate'
 							,tipo VARCHAR(1) '$.tipo'
+							,claveAcceso VARCHAR(50) '$.claveAcceso'
 							)
 	SELECT @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 
@@ -80,6 +84,17 @@ BEGIN
 			SELECT * FROM Medida WHERE idEntidad = @idEntidad
 			RETURN
 		END
+
+
+	--Documento Relacionado 
+	IF @tipo = 3
+		BEGIN 
+			SELECT * FROM FactElect.DocRelacionado  dr
+			INNER JOIN Recepcion.DocumentoRecibido dc WITH(NOLOCK) ON dc.idDocumento =  dr.idDocumentoRecibido 
+			WHERE dc.codDoc = @codDoc
+			RETURN
+		END 
+
 
 
 	IF LEN(@codDoc) > 1
@@ -147,5 +162,9 @@ BEGIN
 	--CASE WHEN @sortBy = 'razonSocialEmisior' AND @orderBy = 'DESC' THEN razonSocialEmisior END DESC 
 	--OFFSET (@pageNumber-1)*@rowsOfPage ROWS
 	--FETCH NEXT @rowsOfPage ROWS ONLY
+
+
+	
+
 END
 GO

@@ -26,8 +26,8 @@ namespace PrinterServer
             _printDoc = new PrintDocument();
             string printerName = _data.rdlcProps.FirstOrDefault(x => x.Key == "printerName").Value;
             //_printDoc.PrinterSettings.PrinterName = printerName;
-            //_printDoc.PrinterSettings.PrinterName = "BSC10";
-            _printDoc.PrinterSettings.PrinterName = "Microsoft XPS Document Writer";
+            _printDoc.PrinterSettings.PrinterName = "BSC10";
+           // _printDoc.PrinterSettings.PrinterName = "Microsoft XPS Document Writer";
             _printDoc.PrintPage += new PrintPageEventHandler(FormatPage);
             _printDoc.Print();
             return true;

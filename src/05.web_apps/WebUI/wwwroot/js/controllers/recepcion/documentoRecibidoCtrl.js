@@ -290,12 +290,12 @@
             $scope.mergedDocs = []
             $scope.getMergedDocs = (item) => {
              
-                try {
-                    console.log($scope.selected)
+                try {                  
                     $scope.mergedDocs = []
                     let data = {
                         tipo: 3,
-                        claveAcceso: $scope.selected[0].claveAcceso
+                        idDocumento: $scope.selected[0].idDocumento,
+                        codDoc: $scope.selected[0].codDoc
                     }
                     mS.getData('get', _urlService + 'DocumentoRecibido/Get/' + JSON.stringify(data)).then(
                         response => {

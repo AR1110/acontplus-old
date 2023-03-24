@@ -331,6 +331,25 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
 
 
 
+    //Impresión 
+
+    $scope.print = function (item) {                   
+        let parameters = {            
+            idDocument: item.idProforma,           
+            idTipoDocumento : item.idTipoDocumento,
+            codEstab: item.codEstab,
+            codDoc: TIPO_DOC_PR.codigo,
+            nroIdentificacion : item.nroIdentificacion,
+            codigo: 'RNEPT'
+        }
+        
+        _commonSvc.askToPrint({
+            parameters: JSON.stringify(parameters)
+        })
+        
+    }
+
+
     //Reporte 
     $scope.getReport = function (item) {
         
@@ -339,6 +358,8 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
         let dataParms = {
             id: item.idProforma ,        
         }
+
+
        
         const parameters = {
             hasService: true,
