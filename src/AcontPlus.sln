@@ -122,6 +122,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "AcontplusPrint", "10.setups\AcontplusPrint\AcontplusPrint.vdproj", "{FFF4C8B9-8C34-4936-BFC1-D67A676ACB2C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -298,6 +300,8 @@ Global
 		{ED39E4B8-6DA8-49F6-ABD4-204CD30B177A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED39E4B8-6DA8-49F6-ABD4-204CD30B177A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED39E4B8-6DA8-49F6-ABD4-204CD30B177A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFF4C8B9-8C34-4936-BFC1-D67A676ACB2C}.Debug|Any CPU.ActiveCfg = Debug
+		{FFF4C8B9-8C34-4936-BFC1-D67A676ACB2C}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -346,6 +350,7 @@ Global
 		{A30C9355-CEED-4E9E-98BD-8207657A9E9D} = {7FF4B39E-DC60-48EE-822A-A17F3EF8CD3B}
 		{8B88919A-46E5-4CE9-A61E-C890CD6F5CA9} = {79F40397-A77A-42D3-9A26-12016AC04CB9}
 		{ED39E4B8-6DA8-49F6-ABD4-204CD30B177A} = {2C0717C9-FE1B-4004-BF4D-8127EDFB02F2}
+		{FFF4C8B9-8C34-4936-BFC1-D67A676ACB2C} = {EE774869-3841-4957-B232-0180BF1A9FC4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BA9DF437-2C4E-4B51-A33F-8A6B93E9A018}

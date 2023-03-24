@@ -9,7 +9,54 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Reports\AperturaCaja.rdl" />
+    <None Remove="Reports\FacturaInyeccion.rdl" />
+    <None Remove="Reports\FacturaMatricial.rdl" />
+    <None Remove="Reports\FacturaTermica.rdl" />
+    <None Remove="Reports\MovimientoCaja.rdl" />
+    <None Remove="Reports\NotaEntregaInyeccion.rdl" />
+    <None Remove="Reports\NotaEntregaMatricial.rdl" />
+    <None Remove="Reports\NotaEntregaTermica.rdl" />
+    <None Remove="Reports\Test.rdlc" />
+    <None Remove="Reports\TicketTpv.rdl" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Reports\AperturaCaja.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\FacturaInyeccion.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\FacturaMatricial.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\FacturaTermica.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\MovimientoCaja.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\NotaEntregaInyeccion.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\NotaEntregaMatricial.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\NotaEntregaTermica.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Test.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\TicketTpv.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="ReportViewerCore.NETCore" Version="15.1.17" />
     <PackageReference Include="System.Diagnostics.EventLog" Version="7.0.0" />
     <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
   </ItemGroup>
