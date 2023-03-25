@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.CuotaDoc
-{
+{ 
     public class CuotaXCobrarController : Controller
     {
         private readonly IConfiguration _configuration;
