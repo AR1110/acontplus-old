@@ -220,55 +220,7 @@ namespace DataAccess.CuotasXCobrar
             }
             return _gr;
         }
-        public async Task<GenericResponse> GetNewDate(bool validacion, DateTime fecha, List<CuotaXCobrar> data)
-        {
-            var list = new List<CuotaXCobrarViewModel>();
-            try
-            {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
-                {
-                    var getFacha = Convert.ToDateTime(fecha);
-                    var cmd = new SqlCommand("ASPHelperNewFechaCuota", con);
-                    cmd.Parameters.AddWithValue("validacion", validacion);
-                    cmd.Parameters.AddWithValue("fecha", fecha);
-                    var cuotas = JsonConvert.SerializeObject(data); cmd.Parameters.Add(new SqlParameter("jsonCuotas", cuotas));
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        _gr.id = reader.GetString(0);
-                        _gr.message = reader.GetString(1);
-                        if (_gr.id == "1")
-                        {
-                            var item = new CuotaXCobrarViewModel
-                            {
-                                cxc = new CuotaXCobrar()
-                                {
-                                    idCuotaXCobrar = reader.GetInt64(2),
-                                    fechaVencimiento = reader.GetString(3),
-                                    cuota = reader.GetDecimal(4),
-                                    nroCuota = reader.GetInt32(5),
-                                },
-                                nroCuota = reader.GetString(6),
-                            };
-                            list.Add(item);
-                        }
-                    }
-                }
-                _gr.data = list;
-            }
-            catch (Exception ex)
-            {
-                _gr.id = "0";
-                _gr.message = ex.Message.ToString();
-            }
-            finally
-            {
-
-            }
-            return _gr;
-        }
+      
     }
 
 }

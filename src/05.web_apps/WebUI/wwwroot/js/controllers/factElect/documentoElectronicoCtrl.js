@@ -163,8 +163,8 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
     const REPORT_CODES = Object.freeze({
         '01': 'RF',
         '03': 'RLC',
-        //'04': 'RNCC',
-        //'06': 'RGR',
+        '04': 'RNCC',
+        '06': 'RGR',
         '07': 'RRC',
     })
 

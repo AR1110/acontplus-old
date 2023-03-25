@@ -1,5 +1,5 @@
-<div class="modal-header bg-info text-white">
-    <h5 class="modal-title">Cuotas</h5>
+<div class="modal-header">
+    <h5 class="modal-title"><i class="mdi mdi-timetable"></i> Cuotas</h5>
     <button class="close" ng-click="closeModal()">&times;</button>
 </div>
 
@@ -45,16 +45,17 @@
                 </div>                            
             </div>
         </div>
-        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-12">
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-612col-xs-12">
             <label>Configurar Fecha: <code>dd/MM/yyyy</code></label>
             <div class="input-group">
                 <input ng-disabled = "data.codPago!='PE'" type="date" ng-model="configFecha" class="form-control border-select" aria-label="Config. Fecha Vencimiento">
                 <div class="input-group-append">
-                    <button ng-disabled = "data.codPago!='PE'" class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">Op.</button>
-                    <div class="dropdown-menu" >
-                        <a class="dropdown-item" ng-click="getConfigFechaCuota(true)" href="javascript:void(0)">Fin Mes</a>
-                        <a class="dropdown-item" ng-click="getConfigFechaCuota(false)" href="javascript:void(0)">Mismo Dia</a>
-                    </div>
+                    <button type="button" ng-disabled="data.codPago !=='PE'" ng-click="getConfigFechaCuota(true)" class="btn btn-info" uib-tooltip="">
+                        <i class="mdi mdi-update"></i> Fin Mes
+                    </button>
+                    <button type="button" ng-disabled="data.codPago !=='PE'" ng-click="getConfigFechaCuota(false)" class="btn btn-success" uib-tooltip='El día tiene que ser menor a 28 días'>
+                        <i class="mdi mdi-av-timer"></i> Mismo Dia
+                    </button>                  
                 </div>
             </div>
         </div>
@@ -83,7 +84,7 @@
                                 
                         <!--Input Cuota -->
                         <input type="text" ng-if="cuota.nroCuota!=='E'" autocomplete="off"
-                                id="setValcuota{{cuota.idCuotaPorPagar}}" decimal
+                                id="setValcuota{{cuota.idCuotaPorPagar}}" decimal onClick="select()"
                                 ng-keyup="setValorCuota(cuota)"
                                 ng-model="cuota.cuota" class="form-control border-select" />
                     </td>

@@ -467,7 +467,7 @@
         $scope.cloneIdTiempoCredito = $scope.data.idTiempoCredito; //Clonamos tiempo de credito agregado al documento 
         $scope.configFecha     = fS.formatDate($scope.data.fechaEmision);
         $scope.totalDiferencia = 0;
-        $scope.totalCuota = 0;   
+        $scope.totalCuota = $scope.data.importeTotal;          
         
         
         $scope.initialLoad = ()=>{
@@ -541,6 +541,8 @@
 
 
 
+        //Fin de Mes => 1
+        //Mismo dia => 0
         $scope.getConfigFechaCuota = (validacion)=>{
             try {
                 if(!$scope.configFecha){
@@ -557,26 +559,50 @@
                     return
                 }
                 
-                showLoader();
-                let configFecha = fS.formatDate($scope.configFecha);                       
-                
-        
-                mS.getData('post', `/CuotaXPagar/NuevaFechaCuota?validacion=${validacion}&fecha=${configFecha}`, $scope.cuotas).then(
-                    response => {
-                        if (response.id === "0") {
-                            hideLoader()
-                            fS.sweetAlert('warning', response.message, response.titleSms);
-                            return                            
-                        }
-                        if (response.id === "1") {
-                            hideLoader()
-                            fS.sweetAlert('success', 'Fecha de las cuotas configurado correctamente', 'Configuración Fecha', 1000)                
-                            $scope.$uibModalInstance.close(response)
-                        }
-                    })
+                if(validacion){
+                    $scope.getEndOfMonthDates($scope.configFecha)
+                }else{
+                    $scope.getSameDayOfMonth($scope.configFecha);
+                }
+               
             } catch (error) {
                console.log(error) 
             }
+        }
+        
+
+        $scope.getEndOfMonthDates = (startDate)=>{
+            let currentDate = new Date(startDate)
+
+            for(let item of $scope.cuotas){
+            
+                // Obtener el último día del mes actual
+                const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
+                
+                // Establecer la fecha actual en el último día del mes actual
+                currentDate.setDate(lastDayOfMonth);
+                
+                // Agregar la fecha vecimiento 
+                item.fechaVencimiento = new Date(currentDate)
+            
+                // Establecer la fecha actual en el primer día del mes siguiente
+                currentDate.setDate(1);
+                currentDate.setMonth(currentDate.getMonth() + 1);
+            }
+        }
+
+
+        $scope.getSameDayOfMonth = (date)=> {
+            const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+            const dayOfMonth = date.getDate() <= daysInMonth ? date.getDate() : daysInMonth;
+            let index = 0;
+            for (let item of $scope.cuotas) {
+                const newDate = new Date(date);
+                newDate.setMonth(date.getMonth() + index++);
+                newDate.setDate(dayOfMonth);
+                item.fechaVencimiento = newDate;               
+            }
+            
         }
         
         
@@ -748,6 +774,7 @@
                             }
                             if (response.code === "1") {
                                 hideLoader()
+                                $scope.reload = true
                                 fS.sweetAlert('success', response.message, response.titleSms, 1000);
                                 let cuotas = response.payload ? JSON.parse(response.payload) : []
                                 $scope.cuotas = cuotas.map(item=>{
@@ -769,7 +796,11 @@
         }
 
         $scope.closeModal = ()=>{
-            $uibModalInstance.close()
+            let obj = null
+            if($scope.reload){
+                obj = {reload: true}
+            }
+            $uibModalInstance.close(obj)
         }
     }
     //---------------------------------------------END CUOTAS--------------------------------------------------
@@ -1527,6 +1558,11 @@
         }
 
         $scope.addDocumentoElectronico = (item)=>{
+            if (item.saldo===0) {
+                tS.toastr('warning', 'El Valor de Abono tiene que ser mayor a 0', 'Pago');
+                return
+            }
+
             Swal.fire({                
                 html: `<small>Abonar el valor <h3>$${item.saldo}</h3> del Documento ${item.tipoDocumento}?</small>`,
                 icon: 'warning',
