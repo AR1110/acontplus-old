@@ -49,6 +49,7 @@ BEGIN
     DECLARE @estab VARCHAR(5)
 	DECLARE @invoice VARCHAR(15) = 'Factura'
 	DECLARE @note VARCHAR(15) = 'NotaEntrega'
+	
 	DECLARE @identificacion VARCHAR(15)
 	------------END-----------------------
 	
@@ -166,7 +167,10 @@ BEGIN
 
 		SELECT  @dataSources = dataSources FROM ApiPrinter.Document_Data(@idDocument,@idTipoDocumento,@codDoc)
 
-		SET @rdlcProps = (SELECT rdlcName = IIF(@codDoc = 'FV',@invoice,@note)+@printer+'.rdl'
+		SET @rdlcProps = (SELECT rdlcName = CASE @codDoc WHEN 'FV' THEN @invoice+@printer+'.rdl' 
+		                                                 WHEN 'NE' THEN @note+@printer+'.rdl'
+														 WHEN 'PR' THEN 'Proforma' + @printer +'.rdl'
+														 END
 								,printerName = @printerName	 
 								,isThermal =@isThermal
 								,'format' = @format
