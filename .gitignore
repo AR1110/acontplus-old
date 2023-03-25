@@ -312,3 +312,5 @@
 /src/09.desktop_apps/PrintServer/bin/Debug/net6.0
 /src/09.desktop_apps/PrintServer/obj
 /src/09.desktop_apps/PrintServer/bin/Release/net6.0
+/src/10.setups/AcontplusPrint/Debug
+/src/10.setups/AcontplusPrint/Release
