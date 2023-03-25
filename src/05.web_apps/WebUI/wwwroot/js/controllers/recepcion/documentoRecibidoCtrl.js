@@ -288,6 +288,7 @@
             }
 
             $scope.mergedDocs = []
+            $scope.showOptionsMergeDoc = false;            
             $scope.getMergedDocs = (item) => {
              
                 try {                  
@@ -295,16 +296,21 @@
                     let data = {
                         tipo: 3,
                         idDocumento: $scope.selected[0].idDocumento,
-                        codDoc: $scope.selected[0].codDoc
+                        codDoc: $scope.selected[0].codDoc,
+                        claveAcceso: $scope.selected[0].claveAcceso
                     }
+                    console.log(data)
+                    console.log($scope.selected[0])
                     mS.getData('get', _urlService + 'DocumentoRecibido/Get/' + JSON.stringify(data)).then(
                         response => {
+                            console.log(response)
                             if (response.code == '0') {
                                 tS.toastr('warning', response.message)
                             }
-                            if (response.code == '01') {
-                                let arrTemp = JSON.parse(response.payload)
-                                $scope.mergedDocs = arrTemp
+                            if (response.code == '1') {
+                                let arrTemp = JSON.parse(response.payload)[0]
+                                $scope.mergedDocs = arrTemp;
+                                console.log($scope.mergedDocs)
                             }
                         }
                         ).catch(error => {

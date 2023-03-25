@@ -43,6 +43,7 @@ BEGIN
 	DECLARE @tipo VARCHAR(1)
 
 	DECLARE @claveAcceso VARCHAR(50)
+	DECLARE @idDocumento INT 
 	--SET @@pageNumber=2
 	--SET @@pageNumber=4 
 
@@ -51,6 +52,7 @@ BEGIN
 	, @endDate = endDate 
 	, @tipo = tipo --, @PageNumber = pageNumber, @rowsOfPage = limit, @orderBy= orderBy, @sortBy = sortBy
 	,@claveAcceso = claveAcceso 
+	,@idDocumento = idDocumento
 	FROM OPENJSON(@JSON) WITH(limit INT '$.limit'
 							,pageNumber INT '$.page' 
 							,orderBy VARCHAR(5) '$.orderBy'
@@ -59,6 +61,7 @@ BEGIN
 							,startDate DATETIME '$.startDate'
 							,endDate DATETIME '$.endDate'
 							,tipo VARCHAR(1) '$.tipo'
+							,idDocumento INT '$.idDocumento'
 							,claveAcceso VARCHAR(50) '$.claveAcceso'
 							)
 	SELECT @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
@@ -89,9 +92,40 @@ BEGIN
 	--Documento Relacionado 
 	IF @tipo = 3
 		BEGIN 
-			SELECT * FROM FactElect.DocRelacionado  dr
-			INNER JOIN Recepcion.DocumentoRecibido dc WITH(NOLOCK) ON dc.idDocumento =  dr.idDocumentoRecibido 
-			WHERE dc.codDoc = @codDoc
+			IF @codDoc='04'
+				BEGIN 
+					SELECT comprobante, serieComprobante, rucEmisor, razonSocialEmisior, fechaEmision, claveAcceso, importeTotal from (
+							SELECT 
+								comprobante,
+								serieComprobante,
+								rucEmisor, 
+								razonSocialEmisior,
+								fechaEmision,
+								claveAcceso,
+								importeTotal,
+								Replace(serieComprobante, '-', '') AS numDocSustento
+								FROM Recepcion.DocumentoRecibido
+						) t
+						WHERE t.numDocSustento = (SELECT numDocSustento FROM FactElect.DocRelacionado WITH(NOLOCK) WHERE codDocSustento = '01' AND idDocumentoRecibido = @idDocumento )
+				END 
+
+			IF @codDoc = '01'
+				BEGIN 
+					SELECT 
+						comprobante = 'Retención',
+						serieComprobante = rAts.estab + rAts.ptoEmi + Helper.F_Auto_Sequential(rAts.secuencial),
+						rucEmisor = rAts.identificacionSujetoRetenido,
+						razonSocialEmisior = rAts.razonSocialSujetoRetenido,
+						fechaEmision = CONVERT(NVARCHAR,FORMAT(rAts.fechaEmision, 'dd/MM/yyyy HH:mm')),
+						rAts.claveAcceso,
+						importeTotal= 0
+					FROM FactElect.RetAtsDocSustento retDoc
+					INNER JOIN FactElect.RetencionAts rAts
+					ON rAts.idRetencionAts = retDoc.idRetencionAts
+					WHERE retDoc.numAutDocSustento = '2502202301099001751400121430030008264700000000017'
+					SELECT * FROM FactElect.RetencionAts
+				END 
+
 			RETURN
 		END 
 

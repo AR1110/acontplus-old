@@ -60,7 +60,9 @@ BEGIN
 										,total                   = ad.importeTotal
 										,codEstado               = ad.codEstado
 										,estado			         = ep.descripcion
-										,colorFila               = CASE ad.codEstado WHEN ''A'' THEN ''table-danger'' ELSE '''' END 
+										,colorFila               = CASE ad.codEstado WHEN ''A'' THEN ''table-danger'' 
+																					 WHEN ''APR'' THEN  ''table-success''
+																					 ELSE '''' END 
 								  FROM Ventas.Aprob_Document ad
 								  INNER JOIN dbo.EstadoPago ep ON ep.codigo = ad.codEstado
 								  INNER JOIN dbo.Cliente cl ON cl.idCliente = ad.idCliente
