@@ -24,29 +24,32 @@ namespace PrintServer
                     bool isThermal = false;
                     string format = string.Empty;
                     string deviceInfo = string.Empty;
-                    foreach (var item in parameters.rdlcProps)
+                    foreach (var props in parameters.rdlcProps)
                     {
-                        if (item.Key == "rdlcName")
+                        foreach (var item in props)
                         {
-                            lr.ReportPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", item.Value); ;
-                            //lr.ReportPath = Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath("~/Reports"), item.Value);
-                        }
-                        if (item.Key == "printerName")
-                        {
-                            printerName = item.Value;
-                        }
-                        if (item.Key == "isThermal")
-                        {
-                            isThermal = Convert.ToBoolean(item.Value);
+                            if (item.Key == "rdlcName")
+                            {
+                                lr.ReportPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", item.Value); ;
+                                //lr.ReportPath = Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath("~/Reports"), item.Value);
+                            }
+                            if (item.Key == "printerName")
+                            {
+                                printerName = item.Value;
+                            }
+                            if (item.Key == "isThermal")
+                            {
+                                isThermal = Convert.ToBoolean(item.Value);
 
-                        }
-                        if (item.Key == "format")
-                        {
-                            format = item.Value;
-                        }
-                        if (item.Key == "deviceInfo")
-                        {
-                            deviceInfo = item.Value;
+                            }
+                            if (item.Key == "format")
+                            {
+                                format = item.Value;
+                            }
+                            if (item.Key == "deviceInfo")
+                            {
+                                deviceInfo = item.Value;
+                            }
                         }
                     }
                     if (parameters.dataSources != null)
@@ -122,7 +125,7 @@ namespace PrintServer
             catch (Exception ex)
             {
                 var appLog = new EventLog("Application");
-                var eventSource = "PrinterServer";
+                var eventSource = "PrintServer";
                 appLog.Source = CreateEventSource(eventSource);
                 appLog.WriteEntry(ex.StackTrace, EventLogEntryType.Error);
                 return false;

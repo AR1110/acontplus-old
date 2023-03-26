@@ -1,6 +1,7 @@
 ﻿using PrintServer.Models;
 using System.Drawing;
 using System.Drawing.Printing;
+using System.IO;
 
 namespace PrintServer
 {
@@ -16,15 +17,60 @@ namespace PrintServer
         }
         public bool Print(ApiPrintRequest data)
         {
+            bool response = false;
             _data = data;
             _printDoc = new PrintDocument();
-            string printerName = _data.rdlcProps.FirstOrDefault(x => x.Key == "printerName").Value;
-            _printDoc.PrinterSettings.PrinterName = printerName;
-            //_printDoc.PrinterSettings.PrinterName = "BSC10";
-            //_printDoc.PrinterSettings.PrinterName = "Microsoft XPS Document Writer";
-            _printDoc.PrintPage += new PrintPageEventHandler(FormatPage);
-            _printDoc.Print();
-            return true;
+            //string printerName = _data.rdlcProps[0].FirstOrDefault(x => x.Key == "printerName").Value;
+            string machine = string.Empty;
+            //var props = _data.rdlcProps[0].TryGetValue("computerName", out machine);
+            bool isThermal = false;
+            var test = new List<PrinterDto>();
+            foreach (var props in _data.rdlcProps)
+            {
+                var p = new PrinterDto();
+                foreach (var item in props)
+                {
+                    if (item.Key == "computerName")
+                    {
+                        p.machine = item.Value;
+                    }
+                    if (item.Key == "printerName")
+                    {
+                        p.name = item.Value;
+                    }
+                    if (item.Key == "isThermal")
+                    {
+                        isThermal = Convert.ToBoolean(item.Value);
+                    }
+                }
+                test.Add(p);
+            }
+            if (isThermal)
+            {
+                if (test.Contains(new PrinterDto { machine = Environment.UserDomainName }))
+                {
+                    var printers = new List<PrinterDto>();
+                    new Printer().Get(ref printers);
+                    foreach (var item in printers)
+                    {
+                        if (test.Contains(new PrinterDto { name = item.name }))
+                        {
+                            _printDoc.PrinterSettings.PrinterName = item.name;
+                            //_printDoc.PrinterSettings.PrinterName = "BSC10";
+                            //_printDoc.PrinterSettings.PrinterName = "Microsoft XPS Document Writer";
+                            _printDoc.PrintPage += new PrintPageEventHandler(FormatPage);
+                            _printDoc.Print();
+                            response = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            else
+            {
+               
+            }
+            return response;
         }
 
         void DrawTitle(string text, Font font, int offset, string label = null)

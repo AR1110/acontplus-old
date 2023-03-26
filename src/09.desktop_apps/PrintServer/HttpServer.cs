@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using PrintServer.Models;
+using PrintServer.Utils;
 using System.Diagnostics;
 using System.Net;
 using System.Security;
@@ -69,9 +70,8 @@ namespace PrintServer
                     //    resp.AddHeader("Access-Control-Allow-Methods", "GET, POST");
                     //    resp.AddHeader("Access-Control-Max-Age", "1728000");
                     //}
-
-                    resp.AppendHeader("Access-Control-Allow-Headers", "*");
                     resp.AppendHeader("Access-Control-Allow-Origin", "*");
+                    resp.AppendHeader("Access-Control-Allow-Headers", "*");
 
                     // Make sure we don't increment the page views counter if `favicon.ico` is requested
                     if (req.Url.AbsolutePath != "/favicon.ico")
@@ -90,7 +90,16 @@ namespace PrintServer
                     //Console.WriteLine($"key: {key}");
                     //Console.WriteLine($"value: {value}");
 
-
+                    //if (Convert.ToBoolean(_dparams.FirstOrDefault(x => x.Key == "getMachine").Value))
+                    //{
+                    //    var obj = new { DomainName = Environment.UserDomainName };
+                    //    var json = JsonConvert.SerializeObject(obj);
+                    //    pageData = json;
+                    //    resp.StatusCode = 200;
+                    //    resp.StatusDescription = "OK";
+                    //}
+                    //else
+                    //{
                     var dataReport = new ApiPrintRequest();
                     Dictionary<string, string> rdlcProps = new Dictionary<string, string>();
 
@@ -102,12 +111,25 @@ namespace PrintServer
                     {
                         if (item.Key == "rdlcProps")
                         {
-                            var _arrayProps = JsonConvert.DeserializeObject<IEnumerable<IDictionary<string, string>>>(item.Value);
-                            foreach (var paramRdlc in _arrayProps.FirstOrDefault())
+                            //var _arrayProps = JsonConvert.DeserializeObject<IEnumerable<IDictionary<string, string>>>(item.Value);
+                            //foreach (var paramRdlc in _arrayProps.FirstOrDefault())
+                            //{
+                            //    rdlcProps.Add(paramRdlc.Key, paramRdlc.Value);
+                            //}
+                            //dataReport.rdlcProps = rdlcProps;
+                            var dataDS = JsonConvert.DeserializeObject<IEnumerable<IDictionary<string, string>>>(item.Value);
+                            List<Dictionary<string, string>> rdlcPropssss = new List<Dictionary<string, string>>();
+
+                            foreach (var valueII in dataDS)
                             {
-                                rdlcProps.Add(paramRdlc.Key, paramRdlc.Value);
+                                Dictionary<string, string> itemDs = new Dictionary<string, string>();
+                                foreach (var de in valueII)
+                                {
+                                    itemDs.Add(de.Key, de.Value);
+                                }
+                                rdlcPropssss.Add(itemDs);
                             }
-                            dataReport.rdlcProps = rdlcProps;
+                            dataReport.rdlcProps = rdlcPropssss;
                         }
                         if (item.Key == "dataSources")
                         {
@@ -141,30 +163,55 @@ namespace PrintServer
                             dataReport.rdlcParams = rdlcParams;
                         }
                     }
-                    var printerProp = Convert.ToBoolean(dataReport.rdlcProps.FirstOrDefault(x=> x.Key=="isThermal").Value);
-                    if (printerProp)
+
+                    if (new ThermalPrint().Print(dataReport))
                     {
-                        new ThermalPrint().Print(dataReport);
+                        var obj = new { code = "1", message = "Impresion correcta!" };
+                        var json = JsonConvert.SerializeObject(obj);
+                        pageData = json;
+                        resp.StatusCode = 200;
+                        resp.StatusDescription = "OK";
                     }
                     else
                     {
-                        if (PrintReport.DynamicPrint(dataReport))
-                        {
-                            resp.StatusCode = 200;
-                            resp.StatusDescription = "OK";
-                        }
-                        else
-                        {
-                            resp.StatusCode = 400;
-                            resp.StatusDescription = "Bad Request";
-                        }
+                        var obj = new { code = "0", message = "Error al imprimir!" };
+                        var json = JsonConvert.SerializeObject(obj);
+                        pageData = json;
+                        resp.StatusCode = 400;
+                        resp.StatusDescription = "Bad Request";
                     }
 
+                    //var printerProp = Convert.ToBoolean(dataReport.rdlcProps.FirstOrDefault(x => x.Key == "isThermal").Value);
+                    //if (printerProp)
+                    //{
+                        
+                    //}
+                    //else
+                    //{
+                    //    if (PrintReport.DynamicPrint(dataReport))
+                    //    {
+                    //        var obj = new { code = "1", message = "Impresion correcta!" };
+                    //        var json = JsonConvert.SerializeObject(obj);
+                    //        pageData = json;
+                    //        resp.StatusCode = 200;
+                    //        resp.StatusDescription = "OK";
+                    //    }
+                    //    else
+                    //    {
+                    //        var obj = new { code = "0", message = "Error al imprimir!" };
+                    //        var json = JsonConvert.SerializeObject(obj);
+                    //        pageData = json;
+                    //        resp.StatusCode = 400;
+                    //        resp.StatusDescription = "Bad Request";
+                    //    }
+                    //}
+                    //}
 
                     // Write the response info
                     string disableSubmit = !runServer ? "disabled" : "";
-                    byte[] data = Encoding.UTF8.GetBytes(String.Format(pageData, pageViews, disableSubmit));
-                    resp.ContentType = "text/html";
+                    //byte[] data = Encoding.UTF8.GetBytes(String.Format(pageData, pageViews, disableSubmit));
+                    byte[] data = Encoding.UTF8.GetBytes(pageData);
+                    resp.ContentType = "application/json";
                     resp.ContentEncoding = Encoding.UTF8;
                     resp.ContentLength64 = data.LongLength;
 
@@ -183,7 +230,7 @@ namespace PrintServer
                 {
                     var appLog = new EventLog("Application");
                     var eventSource = "PrinterServer";
-                    appLog.Source = CreateEventSource(eventSource);
+                    appLog.Source = EventsLogs.CreateEventSource(eventSource);
                     appLog.WriteEntry("HttpListener exception: " + hle.ToString(), EventLogEntryType.Error);
                     Console.WriteLine("Error in listener {0}", hle.Message);
                 }
@@ -191,7 +238,7 @@ namespace PrintServer
                 {
                     var appLog = new EventLog("Application");
                     var eventSource = "PrinterServer";
-                    appLog.Source = CreateEventSource(eventSource);
+                    appLog.Source = EventsLogs.CreateEventSource(eventSource);
                     appLog.WriteEntry("Server Exception: " + ex.ToString(), EventLogEntryType.Error);
                     Console.WriteLine("Error in server {0}", ex.Message);
                     runServer = true;
@@ -225,7 +272,7 @@ namespace PrintServer
                 listener.Prefixes.Add(myIP);
                 var appLog = new EventLog("Application");
                 var eventSource = "PrinterServer";
-                appLog.Source = CreateEventSource(eventSource);
+                appLog.Source = EventsLogs.CreateEventSource(eventSource);
                 appLog.WriteEntry($"Listening for connections on {myIP}", EventLogEntryType.Information);
                 Console.WriteLine("Listening for connections on {0}", myIP);
             }
@@ -234,7 +281,7 @@ namespace PrintServer
                 listener.Prefixes.Add(url);
                 var appLog = new EventLog("Application");
                 var eventSource = "PrinterServer";
-                appLog.Source = CreateEventSource(eventSource);
+                appLog.Source = EventsLogs.CreateEventSource(eventSource);
                 appLog.WriteEntry($"Listening for connections on {url}", EventLogEntryType.Information);
                 Console.WriteLine("Listening for connections on {0}", url);
             }
@@ -246,26 +293,6 @@ namespace PrintServer
 
             // Close the listener
             listener.Close();
-        }
-        public static string CreateEventSource(string currentAppName)
-        {
-            string eventSource = currentAppName;
-            bool sourceExists;
-            try
-            {
-                // searching the source throws a security exception ONLY if not exists!
-                sourceExists = EventLog.SourceExists(eventSource);
-                if (!sourceExists)
-                {   // no exception until yet means the user as admin privilege
-                    EventLog.CreateEventSource(eventSource, "Application");
-                }
-            }
-            catch (SecurityException)
-            {
-                eventSource = "Application";
-            }
-
-            return eventSource;
         }
 
     }
