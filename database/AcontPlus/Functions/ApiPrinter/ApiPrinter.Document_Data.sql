@@ -19,6 +19,7 @@ GO
 -- Author:		<Author,,Name>
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
+
 -- =============================================
 ALTER FUNCTION ApiPrinter.Document_Data 
 (
@@ -58,7 +59,9 @@ BEGIN
 		BEGIN
 			SET @header = (
 					SELECT 
-						 nroFactura = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,f.nroFactura) 
+					    codDoc = 'FV'
+						,nroDoc = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,f.nroFactura) 
+						,labelNroDoc = 'FACTURA Nro. '
 						,codigoAutorizacion = f.claveAcceso
 						,fechaEmision = CONVERT(NVARCHAR, FORMAT(f.fechaEmision, 'dd/MM/yyyy hh:mm'))  
 						,fechaVencimiento = CONVERT(NVARCHAR,FORMAT(f.fechaVencimiento, 'dd/MM/yyyy'))   
@@ -129,7 +132,10 @@ BEGIN
 	IF @codDoc = 'NE'
 		BEGIN
 			SET @header = (SELECT 
-							 nroDoc = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,ne.nroDocumento)			
+							
+							codDoc = 'NE'
+							,nroDoc = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,ne.nroDocumento)	
+							,labelNroDoc = 'NOTA DE ENTREGA Nro. '  
 							,tipoDoc = 'NOTA DE ENTREGA'
 							,razonSocial = e.razonSocial
 							,nombreComercial = s.nombreComercial
@@ -193,8 +199,11 @@ BEGIN
 	IF @codDoc ='PR'
 		BEGIN 
 			SET @header = (SELECT 
-								 idProforma = pr.idProforma
-								,nroDoc = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,pr.nroDocumento) 			 
+								 
+								 codDoc = 'PR'
+								,idProforma = pr.idProforma
+								,nroDoc = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,pr.nroDocumento) 
+								,labelNroDoc = 'PROFORMA Nro. '  
 								,tipoDoc = UPPER(td.descripcion)+':'
 								,fechaEmision = dbo.AFTConvertDate(pr.fechaEmision)+dbo.AFTConvertHora(pr.fechaEmision)
 								,razonSocial = LTRIM(RTRIM(e.razonSocial)) 
@@ -236,6 +245,7 @@ BEGIN
 							INNER JOIN dbo.TipoIva            tiv ON  tiv.idTipoIva          = pr.idTipoIva
 							WHERE pr.idProforma = @idDocument FOR JSON PATH  
 						)
+
 			 SET @detail = (SELECT 
 								 codigo = a.codigo
 								,cantidad = CAST(prd.cantidad as numeric(15,2)) 
@@ -245,9 +255,10 @@ BEGIN
 								,valorDescuento =  CAST(prd.valorDescuento as numeric(15,2)) 
 								,medida = m.descripcion
 							FROM dbo.ProformaDetalle prd
-							INNER JOIN dbo.Medida   m ON m.idMedida   = prd.idMedida
+							LEFT JOIN dbo.Medida   m ON m.idMedida   = prd.idMedida
 							INNER JOIN dbo.Articulo a ON a.idArticulo = prd.idArticulo 
-							WHERE prd.idProforma = @idDocument AND prd.estado = 1 FOR JSON PATH)
+							WHERE prd.idProforma = @idDocument --AND prd.estado = 1 
+							FOR JSON PATH)
 		END 
 
 	SET @dataSources = (SELECT encabezadoDs = @header, detalleDs = @detail FOR JSON PATH )

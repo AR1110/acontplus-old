@@ -20,6 +20,7 @@ GO
 -- Create date: 2023-03-16
 -- Description:	sp for get data to print
 -- =============================================
+ -- ApiPrinter.Impresion_Get 48, 
 IF OBJECT_ID(N'ApiPrinter.Impresion_Get', N'P') IS NOT NULL
 DROP PROCEDURE ApiPrinter.Impresion_Get
 GO

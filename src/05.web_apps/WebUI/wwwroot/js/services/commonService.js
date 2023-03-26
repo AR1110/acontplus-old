@@ -1402,9 +1402,24 @@ export class CommonService {
         }
     }
 
-    print(params) {
+    async print(params) {
         try {
-            let urlPrinter = (params[0].urlPrinter) ? params[0].urlPrinter + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + params[0].dataSources + '&rdlcParams=' + params[0].rdlcParams: __env.urlPrint + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + params[0].dataSources + '&rdlcParams=' + params[0].rdlcParams
+
+              
+            // console.log('init get name computer')           
+            // console.log('end get name computer')
+
+            // let response = await fetch(`${params[0].urlPrinter}?getMachine=true`);
+            // if (!response.ok) {
+            //   throw new Error('Network response was not ok');
+            // }
+            // const data = await response.json();
+            // console.log(data);
+
+            
+
+            let urlPrinter = (params[0].urlPrinter) ? params[0].urlPrinter + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + params[0].dataSources + '&rdlcParams=' + params[0].rdlcParams: __env.urlPrint + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + params[0].dataSources + '&rdlcParams=' + params[0].rdlcParams + '&getMachine=' + false;
+
             fetch(urlPrinter).then(function (response) {
                 if (response.ok) {
                     toastr.success('Impresion correcta!', '', { positionClass: 'toast-bottom-right', progressBar: true })
