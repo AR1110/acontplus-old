@@ -173,7 +173,8 @@ BEGIN
 		INNER JOIN ApiPrinter.Impresora      i WITH (NOLOCK) ON i.idImpresora      = cd.idImpresora
 		INNER JOIN ApiPrinter.TipoImpresora ti WITH (NOLOCK) ON ti.idTipoImpresora = i.idTipoImpresora
 		WHERE cd.idImpresora = @idImpresora 
-		  AND cd.estado = 1 FOR JSON PATH)
+		AND cd.codDoc = @codDoc 
+		AND cd.estado = 1 FOR JSON PATH)
 
 		SELECT  @dataSources = dataSources FROM ApiPrinter.Document_Data(@idDocument,@idTipoDocumento,@codDoc)
 

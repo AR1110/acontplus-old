@@ -1,9 +1,9 @@
-﻿using PrintServer.Models;
-using PrintServer.Utils;
+﻿using Domain.Config.Dtos;
+using Helpers;
 using System.Diagnostics;
 using System.Management;
 
-namespace PrintServer
+namespace BL.Print
 {
     public class Printer
     {
@@ -17,15 +17,19 @@ namespace PrintServer
 
                 SelectQuery selectQuery = new SelectQuery();
                 selectQuery.QueryString = "Select * from win32_Printer";
-                ManagementObjectSearcher MOS = new ManagementObjectSearcher(objScope, selectQuery);
-                ManagementObjectCollection MOC = MOS.Get();
-                foreach (ManagementObject mo in MOC)
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(objScope, selectQuery))
                 {
-                    PrinterDto item = new PrinterDto();
-                    item.name = mo["Name"].ToString();
-                    printers.Add(item);
+                    foreach (ManagementObject printer in searcher.Get())
+                    {
+                        PrinterDto item = new PrinterDto();
+                        item.name = printer["Name"].ToString();
+                        item.driverName = printer["DriverName"].ToString();
+                        item.isDefault = Convert.ToBoolean(printer["Default"]);
+                        item.machine = Environment.MachineName;
+                        printers.Add(item);
+                    }
                 }
-                //json = JsonConvert.SerializeObject(printers);
+
             }
             catch (Exception ex)
             {

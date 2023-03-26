@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace PrintServer
+namespace BL.Print
 {
     public static class NetAclChecker
     {

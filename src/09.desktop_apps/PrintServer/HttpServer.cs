@@ -1,9 +1,9 @@
-﻿using Newtonsoft.Json;
-using PrintServer.Models;
-using PrintServer.Utils;
+﻿using BL.Print;
+using Domain.Config.Dtos;
+using Helpers;
+using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Net;
-using System.Security;
 using System.Text;
 using System.Web;
 
@@ -86,83 +86,9 @@ namespace PrintServer
                         key = key.Replace("?", "");
                         value = HttpUtility.UrlDecode(kvPair[1]);
                         _dparams.Add(key, value);
-                    }
-                    //Console.WriteLine($"key: {key}");
-                    //Console.WriteLine($"value: {value}");
-
-                    //if (Convert.ToBoolean(_dparams.FirstOrDefault(x => x.Key == "getMachine").Value))
-                    //{
-                    //    var obj = new { DomainName = Environment.UserDomainName };
-                    //    var json = JsonConvert.SerializeObject(obj);
-                    //    pageData = json;
-                    //    resp.StatusCode = 200;
-                    //    resp.StatusDescription = "OK";
-                    //}
-                    //else
-                    //{
-                    var dataReport = new ApiPrintRequest();
-                    Dictionary<string, string> rdlcProps = new Dictionary<string, string>();
-
-                    Dictionary<string, string> rdlcParams = new Dictionary<string, string>();
-
-                    Dictionary<string, List<Dictionary<string, string>>> ldDataSources = new Dictionary<string, List<Dictionary<string, string>>>();
-
-                    foreach (var item in _dparams)
-                    {
-                        if (item.Key == "rdlcProps")
-                        {
-                            //var _arrayProps = JsonConvert.DeserializeObject<IEnumerable<IDictionary<string, string>>>(item.Value);
-                            //foreach (var paramRdlc in _arrayProps.FirstOrDefault())
-                            //{
-                            //    rdlcProps.Add(paramRdlc.Key, paramRdlc.Value);
-                            //}
-                            //dataReport.rdlcProps = rdlcProps;
-                            var dataDS = JsonConvert.DeserializeObject<IEnumerable<IDictionary<string, string>>>(item.Value);
-                            List<Dictionary<string, string>> rdlcPropssss = new List<Dictionary<string, string>>();
-
-                            foreach (var valueII in dataDS)
-                            {
-                                Dictionary<string, string> itemDs = new Dictionary<string, string>();
-                                foreach (var de in valueII)
-                                {
-                                    itemDs.Add(de.Key, de.Value);
-                                }
-                                rdlcPropssss.Add(itemDs);
-                            }
-                            dataReport.rdlcProps = rdlcPropssss;
-                        }
-                        if (item.Key == "dataSources")
-                        {
-                            var arrayDS = JsonConvert.DeserializeObject<IEnumerable<IDictionary<string, string>>>(item.Value.ToString());
-
-                            foreach (var dataSource in arrayDS.FirstOrDefault())
-                            {
-                                var dataDS = JsonConvert.DeserializeObject<IEnumerable<IDictionary<string, string>>>(dataSource.Value);
-                                List<Dictionary<string, string>> dataSources = new List<Dictionary<string, string>>();
-
-                                foreach (var valueII in dataDS)
-                                {
-                                    Dictionary<string, string> itemDs = new Dictionary<string, string>();
-                                    foreach (var de in valueII)
-                                    {
-                                        itemDs.Add(de.Key, de.Value);
-                                    }
-                                    dataSources.Add(itemDs);
-                                }
-                                ldDataSources.Add(dataSource.Key, dataSources);
-                            }
-                            dataReport.dataSources = ldDataSources;
-                        }
-                        if (item.Key == "rdlcParams" && item.Value != "undefined")
-                        {
-                            var _arrayParams = JsonConvert.DeserializeObject<IEnumerable<IDictionary<string, string>>>(item.Value);
-                            foreach (var paramRdlc in _arrayParams.FirstOrDefault())
-                            {
-                                rdlcParams.Add(paramRdlc.Key, paramRdlc.Value);
-                            }
-                            dataReport.rdlcParams = rdlcParams;
-                        }
-                    }
+                    } 
+                    var dataReport = new ApiPrintRequestDto();
+                    dataReport.Create(_dparams);
 
                     if (new ThermalPrint().Print(dataReport))
                     {
@@ -180,32 +106,6 @@ namespace PrintServer
                         resp.StatusCode = 400;
                         resp.StatusDescription = "Bad Request";
                     }
-
-                    //var printerProp = Convert.ToBoolean(dataReport.rdlcProps.FirstOrDefault(x => x.Key == "isThermal").Value);
-                    //if (printerProp)
-                    //{
-                        
-                    //}
-                    //else
-                    //{
-                    //    if (PrintReport.DynamicPrint(dataReport))
-                    //    {
-                    //        var obj = new { code = "1", message = "Impresion correcta!" };
-                    //        var json = JsonConvert.SerializeObject(obj);
-                    //        pageData = json;
-                    //        resp.StatusCode = 200;
-                    //        resp.StatusDescription = "OK";
-                    //    }
-                    //    else
-                    //    {
-                    //        var obj = new { code = "0", message = "Error al imprimir!" };
-                    //        var json = JsonConvert.SerializeObject(obj);
-                    //        pageData = json;
-                    //        resp.StatusCode = 400;
-                    //        resp.StatusDescription = "Bad Request";
-                    //    }
-                    //}
-                    //}
 
                     // Write the response info
                     string disableSubmit = !runServer ? "disabled" : "";
@@ -250,9 +150,6 @@ namespace PrintServer
 
         public static void Main(string[] args)
         {
-            //Desaparecemos la consola
-            //Magician.DisappearConsole();
-
             // Create a Http server and start listening for incoming connections
             listener = new HttpListener();
 

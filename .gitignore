@@ -314,3 +314,5 @@
 /src/09.desktop_apps/PrintServer/bin/Release/net6.0
 /src/10.setups/AcontplusPrint/Debug
 /src/10.setups/AcontplusPrint/Release
+/src/03.business_logic/BL.Print/bin
+/src/03.business_logic/BL.Print/obj

@@ -1,74 +1,81 @@
-﻿using PrintServer.Models;
+﻿using BL.Reports;
+using Domain.Config.Dtos;
 using System.Drawing;
 using System.Drawing.Printing;
-using System.IO;
 
-namespace PrintServer
+namespace BL.Print
 {
     public class ThermalPrint
     {
         private PrintDocument _printDoc;
         private Graphics _graphics;
         private int initialHeight = 360;
-        private ApiPrintRequest _data;
+        private ApiPrintRequestDto _data;
         public ThermalPrint()
         {
-            _data = new ApiPrintRequest();
+            _data = new ApiPrintRequestDto();
         }
-        public bool Print(ApiPrintRequest data)
+        public bool Print(ApiPrintRequestDto data)
         {
             bool response = false;
             _data = data;
             _printDoc = new PrintDocument();
-            //string printerName = _data.rdlcProps[0].FirstOrDefault(x => x.Key == "printerName").Value;
-            string machine = string.Empty;
-            //var props = _data.rdlcProps[0].TryGetValue("computerName", out machine);
-            bool isThermal = false;
-            var test = new List<PrinterDto>();
-            foreach (var props in _data.rdlcProps)
+
+            List<PrinterDto> incomePrinters = _data.rdlcProps.Select(d => new PrinterDto
             {
-                var p = new PrinterDto();
-                foreach (var item in props)
+                machine = d["computerName"],
+                name = d["printerName"],
+                isThermal = Convert.ToBoolean(d["isThermal"])
+            }).ToList();
+
+            if (incomePrinters.Any(p => p.machine == Environment.MachineName))
+            {
+                var foundedPrinters = new List<PrinterDto>();
+                new Printer().Get(ref foundedPrinters);
+
+                string machine = string.Empty, incomePrinter = string.Empty, printerToPrint = string.Empty;
+                bool isThermal = false;
+
+                machine = incomePrinters.Find(p => p.machine == Environment.MachineName).machine;
+
+                if (foundedPrinters != null && foundedPrinters.Count > 0)
                 {
-                    if (item.Key == "computerName")
+                    incomePrinter = incomePrinters.Find(p => p.machine == machine).name;
+                    printerToPrint = foundedPrinters.Find(p => p.machine == machine && p.name == incomePrinter).name;
+                    isThermal = incomePrinters.Find(p => p.machine == machine && p.name == printerToPrint).isThermal;
+
+                    if (!string.IsNullOrEmpty(printerToPrint) && isThermal)
                     {
-                        p.machine = item.Value;
+                        _printDoc.PrinterSettings.PrinterName = printerToPrint;
+                        _printDoc.PrintPage += new PrintPageEventHandler(FormatPage);
+                        _printDoc.Print();
+                        response = true;
                     }
-                    if (item.Key == "printerName")
+                    //using report viewer
+                    if (!string.IsNullOrEmpty(printerToPrint) && !isThermal)
                     {
-                        p.name = item.Value;
-                    }
-                    if (item.Key == "isThermal")
-                    {
-                        isThermal = Convert.ToBoolean(item.Value);
+                        response = Reports.Reports.DynamicPrint(_data, printerToPrint);
                     }
                 }
-                test.Add(p);
-            }
-            if (isThermal)
-            {
-                if (test.Contains(new PrinterDto { machine = Environment.UserDomainName }))
+                else
                 {
-                    var printers = new List<PrinterDto>();
-                    new Printer().Get(ref printers);
-                    foreach (var item in printers)
+                    incomePrinter = incomePrinters.Find(p => p.machine == machine).name;
+                    isThermal = incomePrinters.Find(p => p.machine == machine && p.name == incomePrinter).isThermal;
+
+                    if (!string.IsNullOrEmpty(printerToPrint) && isThermal)
                     {
-                        if (test.Contains(new PrinterDto { name = item.name }))
-                        {
-                            _printDoc.PrinterSettings.PrinterName = item.name;
-                            //_printDoc.PrinterSettings.PrinterName = "BSC10";
-                            //_printDoc.PrinterSettings.PrinterName = "Microsoft XPS Document Writer";
-                            _printDoc.PrintPage += new PrintPageEventHandler(FormatPage);
-                            _printDoc.Print();
-                            response = true;
-                            break;
-                        }
+                        _printDoc.PrinterSettings.PrinterName = printerToPrint;
+                        _printDoc.PrintPage += new PrintPageEventHandler(FormatPage);
+                        _printDoc.Print();
+                        response = true;
+                    }
+                    //using report viewer
+                    if (!string.IsNullOrEmpty(printerToPrint) && !isThermal)
+                    {
+                        response = Reports.Reports.DynamicPrint(_data, printerToPrint);
                     }
                 }
-            }
-            else
-            {
-               
+
             }
             return response;
         }
@@ -252,11 +259,15 @@ namespace PrintServer
                 }
             }
 
+            string labelNroDoc = string.Empty;
+            data[0].TryGetValue("labelNroDoc", out labelNroDoc);
+ 
+
             string nroFactura = "";
             data[0].TryGetValue("nroFactura", out nroFactura);
             if (!string.IsNullOrEmpty(nroFactura))
             {
-                DrawTitle(nroFactura, mediumFont, offsset, "FACTURA NRO: ");
+                DrawTitle(nroFactura, mediumFont, offsset, labelNroDoc);
                 offsset += mediuminc;
             }
 
@@ -264,7 +275,7 @@ namespace PrintServer
             data[0].TryGetValue("nroDoc", out nroDoc);
             if (!string.IsNullOrEmpty(nroDoc))
             {
-                DrawTitle(nroDoc, mediumFont, offsset, "NOTA DE ENTREGA Nro.: ");
+                DrawTitle(nroDoc, mediumFont, offsset, labelNroDoc);
                 offsset += mediuminc;
             }
 

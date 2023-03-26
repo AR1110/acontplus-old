@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Security;
 
-namespace PrintServer.Utils
+namespace Helpers
 {
     public static class EventsLogs
     {
