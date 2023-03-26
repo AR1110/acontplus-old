@@ -154,7 +154,8 @@ BEGIN
 		FROM ApiPrinter.Config_Document cd WITH (NOLOCK)
 		INNER JOIN ApiPrinter.Impresora      i WITH (NOLOCK) ON i.idImpresora      = cd.idImpresora
 		INNER JOIN ApiPrinter.TipoImpresora ti WITH (NOLOCK) ON ti.idTipoImpresora = i.idTipoImpresora
-		WHERE cd.idImpresora = @idImpresora 
+		WHERE  cd.codDoc = @codDoc
+		AND i.codEstab = @codEstab 
 		  AND cd.estado = 1  
 	SET @rdlcProps = (SELECT
 			 i.nombreImpresora printerName
@@ -172,8 +173,9 @@ BEGIN
 		FROM ApiPrinter.Config_Document cd WITH (NOLOCK)
 		INNER JOIN ApiPrinter.Impresora      i WITH (NOLOCK) ON i.idImpresora      = cd.idImpresora
 		INNER JOIN ApiPrinter.TipoImpresora ti WITH (NOLOCK) ON ti.idTipoImpresora = i.idTipoImpresora
-		WHERE cd.idImpresora = @idImpresora 
-		AND cd.codDoc = @codDoc 
+		WHERE  cd.codDoc = @codDoc
+		AND i.codEstab = @codEstab 
+
 		AND cd.estado = 1 FOR JSON PATH)
 
 		SELECT  @dataSources = dataSources FROM ApiPrinter.Document_Data(@idDocument,@idTipoDocumento,@codDoc)

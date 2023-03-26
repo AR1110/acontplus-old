@@ -204,15 +204,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:AcontplusPrint"
-        "ProductCode" = "8:{59A7F97D-9958-4239-B6C2-F489EBF41A69}"
-        "PackageCode" = "8:{1EB9E873-5563-44F6-B929-8391BD3C6BC1}"
+        "ProductCode" = "8:{A7A45541-1830-4428-8791-20300D0E05D4}"
+        "PackageCode" = "8:{05E6626F-B8ED-4996-A1E1-E2B2D1249017}"
         "UpgradeCode" = "8:{4C769266-369C-4EA0-A387-4B25C0D7E8E7}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:1.0.2"
+        "ProductVersion" = "8:1.0.3"
         "Manufacturer" = "8:Acontplus"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -904,7 +904,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_447F477C8A4F4986BC3DAAB9150885B9"
             {
-            "SourcePath" = "8:..\\..\\09.desktop_apps\\PrintServer\\obj\\Release\\net6.0\\apphost.exe"
+            "SourcePath" = "8:..\\..\\09.desktop_apps\\PrintServer\\obj\\Debug\\net6.0\\apphost.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_1197F1C2C5664704A82C3274AD240747"

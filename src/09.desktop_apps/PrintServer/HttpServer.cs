@@ -167,11 +167,14 @@ namespace PrintServer
             {
                 NetAclChecker.AddAddress(myIP);
                 listener.Prefixes.Add(myIP);
+                listener.Prefixes.Add(url);
                 var appLog = new EventLog("Application");
                 var eventSource = "PrinterServer";
                 appLog.Source = EventsLogs.CreateEventSource(eventSource);
                 appLog.WriteEntry($"Listening for connections on {myIP}", EventLogEntryType.Information);
+                appLog.WriteEntry($"Listening for connections on {url}", EventLogEntryType.Information);
                 Console.WriteLine("Listening for connections on {0}", myIP);
+                Console.WriteLine("Listening for connections on {0}", url); 
             }
             else
             {
