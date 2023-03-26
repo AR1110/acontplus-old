@@ -86,11 +86,12 @@ namespace BL.Print
             int startY = 5;
             if (!string.IsNullOrEmpty(label))
             {
-                int labelLength = 30 + label.Length;
-                if (label.Length > 11)
-                {
-                    labelLength += 50;
-                }
+                //int labelLength = 30 + label.Length;
+                //if (label.Length > 11)
+                //{
+                //    labelLength += 50;
+                //}
+                int labelLength = 65;
                 _graphics.DrawString(label, new Font("Arial", 6, FontStyle.Bold), new SolidBrush(Color.Black), startX, startY + offset);
                 _graphics.DrawString(string.Join("", text.Select((c, i) => i > 0 && i % 80 == 0 ? string.Format(Environment.NewLine + c) : c.ToString())), font, new SolidBrush(Color.Black), new Point(startX + labelLength, startY + offset));
             }
@@ -161,11 +162,11 @@ namespace BL.Print
             //}
             ////_graphics.DrawString(s, minifont, Brushes.Black, new RectangleF(startX, startY + offset, 500F, 500F), format1);
             int textLength = description.Length;
-            if (textLength > 60)
+            if (textLength >= 37)
             {
-                description = description.Substring(0, 60);
+                description = description.Substring(0, 37);
             }
-            _graphics.DrawString(string.Join("", description.Select((c, i) => i > 0 && i % 32 == 0 ? string.Format(Environment.NewLine + c) : c.ToString())), minifont,
+            _graphics.DrawString(string.Join("", description.Select((c, i) => i > 0 && i % 37 == 0 ? string.Format(Environment.NewLine + c) : c.ToString())), minifont,
                          new SolidBrush(Color.Black), new Point(startX, startY + offset));
 
             //_graphics.DrawString(GetPrintReadyString(description), minifont,
@@ -189,6 +190,7 @@ namespace BL.Print
             Font mediumFont = new Font("Arial", 6);
             Font largeFont = new Font("Arial", 7);
             Font drawFontBold = new Font("Arial", 6, FontStyle.Bold);
+            Font drawFontBold8 = new Font("Arial", 10, FontStyle.Bold);
 
 
             int offsset = 10;
@@ -205,6 +207,10 @@ namespace BL.Print
 
             var data = _data.dataSources.First(x => x.Key == "encabezadoDs").Value;
 
+
+            DrawTitle(data[0]["tipoDoc"], drawFontBold8, offsset);
+            offsset = offsset + largeinc + 5;
+
             DrawTitle(data[0]["razonSocial"], drawFontBold, offsset);
             offsset = offsset + mediuminc;
 
@@ -219,13 +225,7 @@ namespace BL.Print
             DrawTitle(data[0]["ruc"], mediumFont, offsset, "RUC: ");
             offsset = offsset + mediuminc;
 
-            string regimen = "";
-            data[0].TryGetValue("regimen", out regimen);
-            if (!string.IsNullOrEmpty(regimen))
-            {
-                DrawTitle(regimen, drawFontBold, offsset);
-                offsset = offsset + mediuminc;
-            }
+            
             string telefono = string.Empty;
             data[0].TryGetValue("telefonoEntidad", out telefono);
             if (!string.IsNullOrEmpty(telefono))
@@ -267,7 +267,7 @@ namespace BL.Print
             data[0].TryGetValue("nroFactura", out nroFactura);
             if (!string.IsNullOrEmpty(nroFactura))
             {
-                DrawTitle(nroFactura, mediumFont, offsset, labelNroDoc);
+                DrawTitle(nroFactura, mediumFont, offsset, "Nro. Doc. :");
                 offsset += mediuminc;
             }
 
@@ -275,8 +275,32 @@ namespace BL.Print
             data[0].TryGetValue("nroDoc", out nroDoc);
             if (!string.IsNullOrEmpty(nroDoc))
             {
-                DrawTitle(nroDoc, mediumFont, offsset, labelNroDoc);
+                DrawTitle(nroDoc, mediumFont, offsset, "Nro. Doc. :");
                 offsset += mediuminc;
+            }
+
+            string ambiente = "";
+            data[0].TryGetValue("ambiente", out ambiente);
+            if (!string.IsNullOrEmpty(ambiente))
+            {
+                DrawTitle(ambiente, mediumFont, offsset, "AMBIENTE: ");
+                offsset += mediuminc;
+            }
+
+            string emision = "";
+            data[0].TryGetValue("emision", out emision);
+            if (!string.IsNullOrEmpty(emision))
+            {
+                DrawTitle(emision, mediumFont, offsset, "EMISIÓN: ");
+                offsset += mediuminc;
+            }
+
+            string regimen = "";
+            data[0].TryGetValue("regimen", out regimen);
+            if (!string.IsNullOrEmpty(regimen))
+            {
+                DrawTitle(regimen, drawFontBold, offsset);
+                offsset = offsset + mediuminc;
             }
 
             DrawLine(underLine, offsset, 0);
@@ -334,7 +358,7 @@ namespace BL.Print
                     source.FirstOrDefault(x => x.Key == "precioTotal").Value,
                     offsset);
 
-                offsset = offsset + 30;
+                offsset = offsset + 8;
             }
 
             offsset = offsset + smallinc;
@@ -432,6 +456,15 @@ namespace BL.Print
 
                 DrawTitle(claveAcceso, drawFontBold, offsset);
                 offsset = offsset + smallinc;
+            }
+
+            string observacion = "";
+            data[0].TryGetValue("observacion", out observacion);
+
+            if (!string.IsNullOrEmpty(observacion))
+            {
+                DrawTitle(observacion, mediumFont, offsset);
+                offsset = offsset + mediuminc;
             }
 
             string usuario = "";

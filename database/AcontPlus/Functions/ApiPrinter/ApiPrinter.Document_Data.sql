@@ -62,6 +62,8 @@ BEGIN
 					    codDoc = 'FV'
 						,nroDoc = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,f.nroFactura) 
 						,labelNroDoc = 'FACTURA Nro. '
+						,ambiente = IIF(pe.ambiente=2, 'PRODUCCIÓN', 'PRUEBAS')
+						,emision = IIF(f.emision=1, 'NORMAL', '')
 						,codigoAutorizacion = f.claveAcceso
 						,fechaEmision = CONVERT(NVARCHAR, FORMAT(f.fechaEmision, 'dd/MM/yyyy hh:mm'))  
 						,fechaVencimiento = CONVERT(NVARCHAR,FORMAT(f.fechaVencimiento, 'dd/MM/yyyy'))   
@@ -91,7 +93,7 @@ BEGIN
 						,propina = CAST(f.propina as numeric(15,2))  
 						,importeTotal = CAST(f.total as numeric(15,2)) 
 						,direccion = cl.direccion  
-						,telefono = cl.telefono 
+						,telefonoCliente = cl.telefono 
 						,email = cl.correo 
 						,valorTotal = CAST(f.total as numeric(15,2))
 						,regimen = UPPER(s.contribuyenteRimpe)
@@ -142,7 +144,7 @@ BEGIN
 							,ruc = e.ruc
 							,direccion = e.direccion 
 							,email = e.email 
-							,telefono = ISNULL(e.telefono, 'SN') 
+							,telefonoEntidad = ISNULL(e.telefono, 'SN') 
 							,fechaEmision = CONVERT(NVARCHAR, FORMAT(ne.fechaEmision, 'dd/MM/yyyy hh:mm')) 
 							,fechaVencimiento = CONVERT(NVARCHAR, FORMAT(ne.fechaVencimiento, 'dd/MM/yyyy hh:mm')) 
 							,s.dirEstablecimiento  
