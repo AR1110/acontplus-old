@@ -16,9 +16,9 @@
       }
     },
     {
-      "UpstreamPathTemplate": "/api/DocumentoRecibido",
+      "UpstreamPathTemplate": "/api/DocumentoRecibido/{jsonData}",
       "UpstreamHttpMethod": [ "Post" ],
-      "DownstreamPathTemplate": "/api/DocumentoRecibido",
+      "DownstreamPathTemplate": "/api/DocumentoRecibido/{jsonData}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {

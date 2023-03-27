@@ -53,6 +53,7 @@ BEGIN
 	, @tipo = tipo --, @PageNumber = pageNumber, @rowsOfPage = limit, @orderBy= orderBy, @sortBy = sortBy
 	,@claveAcceso = claveAcceso 
 	,@idDocumento = idDocumento
+	,@codEstab = codEstab
 	FROM OPENJSON(@JSON) WITH(limit INT '$.limit'
 							,pageNumber INT '$.page' 
 							,orderBy VARCHAR(5) '$.orderBy'
@@ -63,10 +64,11 @@ BEGIN
 							,tipo VARCHAR(1) '$.tipo'
 							,idDocumento INT '$.idDocumento'
 							,claveAcceso VARCHAR(50) '$.claveAcceso'
+							,codEstab VARCHAR(50) '$.codEstab'
 							)
 	SELECT @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 
-	SELECT @codEstab = codEstab FROM Config.Estab_Asig WHERE idUsuarioRol = @idRol AND predeterminado = 1
+	--SELECT @codEstab = codEstab FROM Config.Estab_Asig WHERE idUsuarioRol = @idRol AND predeterminado = 1
 
 
 	IF @tipo = '1'
@@ -122,8 +124,7 @@ BEGIN
 					FROM FactElect.RetAtsDocSustento retDoc
 					INNER JOIN FactElect.RetencionAts rAts
 					ON rAts.idRetencionAts = retDoc.idRetencionAts
-					WHERE retDoc.numAutDocSustento = '2502202301099001751400121430030008264700000000017'
-					SELECT * FROM FactElect.RetencionAts
+					WHERE retDoc.numAutDocSustento = @claveAcceso
 				END 
 
 			RETURN

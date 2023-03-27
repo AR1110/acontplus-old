@@ -14,6 +14,7 @@ IF OBJECT_ID(N'Recepcion.Documento_Insert ', N'P') IS NOT NULL
 DROP PROCEDURE Recepcion.Documento_Insert
 GO
 CREATE PROCEDURE Recepcion.Documento_Insert @idRol INT
+,@jsonData VARCHAR(MAX)
 ,@json VARCHAR(MAX)
 ,@backendInfo VARCHAR(MAX) = NULL
 AS
@@ -42,9 +43,11 @@ BEGIN
 
 	SELECT @idUsuario = idUsuario,@idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 	
-	SELECT @codEstab = codEstab FROM Config.Estab_Asig WITH (NOLOCK) WHERE idUsuarioRol = @idRol AND predeterminado = 1
+	--SELECT @codEstab = codEstab FROM Config.Estab_Asig WITH (NOLOCK) WHERE idUsuarioRol = @idRol AND predeterminado = 1
 
 	SELECT TOP 1  @identificacionReceptor = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
+
+	SET @codEstab = (SELECT codEstab FROM OPENJSON(@jsonData) WITH(codEstab VARCHAR(MAX) '$.codEstab'))
 
 	SET @idEstab = (SELECT idEstablecimiento FROM SRI.Establecimiento WITH (NOLOCK) WHERE codEstab = @codEstab)
 
@@ -75,7 +78,14 @@ BEGIN
 			WHERE t.identificacionReceptor = @identificacionReceptor AND  NOT EXISTS (SELECT * 
 			                                                                          FROM Recepcion.DocumentoRecibido c WITH (NOLOCK)
 																					  WHERE c.codEstab = @codEstab
-																						AND t.claveAcceso = c.claveAcceso)
+																					  AND t.claveAcceso = c.claveAcceso)
+			INSERT  INTO Recepcion.DocumentoRecibido(idEstablecimiento, [codEstab], [comprobante], [serieComprobante], [rucEmisor], [razonSocialEmisior], [fechaEmision], [fechaAutorizacion], [tipoEmision], [identificacionReceptor], [claveAcceso], [numeroAutorizacion], [importeTotal], [idUsuario], [fechaRegistro], downloaded)
+			SELECT @idEstab, @codEstab, comprobante, serieComprobante, rucEmisor, razonSocialEmisior, fechaEmision, fechaAutorizacion, tipoEmision, identificacionReceptor, claveAcceso, numeroAutorizacion, CONVERT(DECIMAL(18,2), Ltrim(rtrim(ISNULL(importeTotal, 0)))), @idUsuario, dbo.ufnGetDateEcuador(), 'ND'
+			FROM @Comprobantes t
+			WHERE t.identificacionReceptor = SUBSTRING(ltrim(rtrim(@identificacionReceptor)), 1, 10) AND  NOT EXISTS (SELECT * 
+			                                                                          FROM Recepcion.DocumentoRecibido c WITH (NOLOCK)
+																					  WHERE c.codEstab = @codEstab
+																					  AND t.claveAcceso = c.claveAcceso)
 
 			SELECT '1' code, 'Importación Exitosa'  as 'message'
 		COMMIT TRAN

@@ -209,8 +209,8 @@ namespace ApiRecepcion.Controllers
 
         //    }
         //}
-        [HttpPost]
-        public async Task<IActionResult> Post(IFormFile file)
+        [HttpPost("{jsonData}")]
+        public async Task<IActionResult> Post(string jsonData, IFormFile file)
         {
             LogWriter _logs = new LogWriter(_configuration);
             GenericResponse _response = new GenericResponse();
@@ -233,6 +233,7 @@ namespace ApiRecepcion.Controllers
                     Dictionary<string, object> parameters = new Dictionary<string, object>
                     {
                         { "idRol", idUsuarioRol},
+                        { "jsonData", jsonData },
                         { "json", DataHelper.DataTableToJSON(dt) }
                     };
                     _response = await _dao.Default("Recepcion.Documento_Insert", parameters);
