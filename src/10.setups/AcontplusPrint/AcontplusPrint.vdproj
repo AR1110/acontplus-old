@@ -90,6 +90,11 @@
                     "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
                     "ProductCode" = "8:.NETFramework,Version=v4.7.2"
                     }
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.NetCore.DesktopRuntime.6.0.x64"
+                    {
+                    "Name" = "8:.NET Desktop Runtime 6.0.15 (x64)"
+                    "ProductCode" = "8:Microsoft.NetCore.DesktopRuntime.6.0.x64"
+                    }
                     "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.NetCore.DesktopRuntime.6.0.x86"
                     {
                     "Name" = "8:.NET Desktop Runtime 6.0.15 (x86)"
@@ -204,15 +209,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:AcontplusPrint"
-        "ProductCode" = "8:{A7A45541-1830-4428-8791-20300D0E05D4}"
-        "PackageCode" = "8:{05E6626F-B8ED-4996-A1E1-E2B2D1249017}"
+        "ProductCode" = "8:{201A625F-A8DC-4EEE-B4A5-18651D27205B}"
+        "PackageCode" = "8:{4B384CBD-17BA-4CA8-8A45-479033E226A7}"
         "UpgradeCode" = "8:{4C769266-369C-4EA0-A387-4B25C0D7E8E7}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:1.0.3"
+        "ProductVersion" = "8:1.0.5"
         "Manufacturer" = "8:Acontplus"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -411,7 +416,7 @@
                                                             "Condition" = "8:"
                                                             "Transitive" = "11:FALSE"
                                                             "ValueTypes" = "3:1"
-                                                            "Value" = "8:C:\\Program Files (x86)\\Acontplus\\AcontplusPrint\\PrintServer.exe"
+                                                            "Value" = "8:C:\\Program Files (x86)\\Acontplus\\AcontplusPrint\\Acontplus Print.exe"
                                                             }
                                                         }
                                                     }

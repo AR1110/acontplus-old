@@ -147,9 +147,16 @@ namespace PrintServer
             }
         }
 
-
+        
         public static void Main(string[] args)
         {
+           NetAclChecker.RunProcessAsAdmin();
+            //        string executablePath = Assembly.GetEntryAssembly().Location;
+
+            //        RegistryKey rk = Registry.CurrentUser.OpenSubKey
+            //("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+            //        rk.SetValue("AcontplusPrint", executablePath);
+
             // Create a Http server and start listening for incoming connections
             listener = new HttpListener();
 
@@ -162,11 +169,12 @@ namespace PrintServer
                     myIP = Dns.GetHostEntry(hostname).AddressList[i].ToString();
                 }
             }
-            myIP = $"http://{myIP}:9100/";
+            myIP = $"http://{myIP}:9101/";
             if (!string.IsNullOrEmpty(myIP) && myIP != "http://127.0.0.1:9100/")
             {
-                NetAclChecker.AddAddress(myIP);
+                //NetAclChecker.AddAddress(myIP);
                 listener.Prefixes.Add(myIP);
+                //NetAclChecker.AddAddress(url);
                 listener.Prefixes.Add(url);
                 var appLog = new EventLog("Application");
                 var eventSource = "PrinterServer";
