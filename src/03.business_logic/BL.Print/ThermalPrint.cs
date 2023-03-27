@@ -1,5 +1,4 @@
-﻿using BL.Reports;
-using Domain.Config.Dtos;
+﻿using Domain.Config.Dtos;
 using System.Drawing;
 using System.Drawing.Printing;
 
@@ -30,51 +29,53 @@ namespace BL.Print
 
             if (incomePrinters.Any(p => p.machine == Environment.MachineName))
             {
-                var foundedPrinters = new List<PrinterDto>();
-                new Printer().Get(ref foundedPrinters);
+                //var foundedPrinters = new List<PrinterDto>();
+                //new Printer().Get(ref foundedPrinters);
 
-                string machine = string.Empty, incomePrinter = string.Empty, printerToPrint = string.Empty;
-                bool isThermal = false;
+                //string machine = string.Empty, incomePrinter = string.Empty, printerToPrint = string.Empty;
+                //bool isThermal = false;
 
-                machine = incomePrinters.Find(p => p.machine == Environment.MachineName).machine;
+                var obj = incomePrinters.Find(p => p.machine == Environment.MachineName);
 
-                if (foundedPrinters != null && foundedPrinters.Count > 0)
+                //if (foundedPrinters != null && foundedPrinters.Count > 0)
+                //{
+                //incomePrinter = incomePrinters.Find(p => p.machine == machine).name;
+                //printerToPrint = foundedPrinters.Find(p => p.machine == machine && p.name == incomePrinter).name;
+                //isThermal = incomePrinters.Find(p => p.machine == machine && p.name == printerToPrint).isThermal;
+
+                if (obj != null)
                 {
-                    incomePrinter = incomePrinters.Find(p => p.machine == machine).name;
-                    printerToPrint = foundedPrinters.Find(p => p.machine == machine && p.name == incomePrinter).name;
-                    isThermal = incomePrinters.Find(p => p.machine == machine && p.name == printerToPrint).isThermal;
-
-                    if (!string.IsNullOrEmpty(printerToPrint) && isThermal)
+                    if (obj.isThermal)
                     {
-                        _printDoc.PrinterSettings.PrinterName = printerToPrint;
+                        _printDoc.PrinterSettings.PrinterName = obj.name;
                         _printDoc.PrintPage += new PrintPageEventHandler(FormatPage);
                         _printDoc.Print();
                         response = true;
                     }
-                    //using report viewer
-                    if (!string.IsNullOrEmpty(printerToPrint) && !isThermal)
+                    else
                     {
-                        response = Reports.Reports.DynamicPrint(_data, printerToPrint);
+                        response = Reports.Reports.DynamicPrint(_data, obj.name);
                     }
                 }
-                else
-                {
-                    incomePrinter = incomePrinters.Find(p => p.machine == machine).name;
-                    isThermal = incomePrinters.Find(p => p.machine == machine && p.name == incomePrinter).isThermal;
+                //}
+                //else
+                //{
+                //    //incomePrinter = incomePrinters.Find(p => p.machine == machine).name;
+                //    //isThermal = incomePrinters.Find(p => p.machine == machine && p.name == incomePrinter).isThermal;
 
-                    if (!string.IsNullOrEmpty(printerToPrint) && isThermal)
-                    {
-                        _printDoc.PrinterSettings.PrinterName = printerToPrint;
-                        _printDoc.PrintPage += new PrintPageEventHandler(FormatPage);
-                        _printDoc.Print();
-                        response = true;
-                    }
-                    //using report viewer
-                    if (!string.IsNullOrEmpty(printerToPrint) && !isThermal)
-                    {
-                        response = Reports.Reports.DynamicPrint(_data, printerToPrint);
-                    }
-                }
+                //    if (!string.IsNullOrEmpty(obj.name) && obj.isThermal)
+                //    {
+                //        _printDoc.PrinterSettings.PrinterName = obj.name;
+                //        _printDoc.PrintPage += new PrintPageEventHandler(FormatPage);
+                //        _printDoc.Print();
+                //        response = true;
+                //    }
+                //    //using report viewer
+                //    if (!string.IsNullOrEmpty(obj.name) && !obj.isThermal)
+                //    {
+                //        response = Reports.Reports.DynamicPrint(_data, obj.name);
+                //    }
+                //}
 
             }
             return response;
@@ -225,16 +226,9 @@ namespace BL.Print
             DrawTitle(data[0]["ruc"], mediumFont, offsset, "RUC: ");
             offsset = offsset + mediuminc;
 
-            
+
             string telefono = string.Empty;
             data[0].TryGetValue("telefonoEntidad", out telefono);
-            if (!string.IsNullOrEmpty(telefono))
-            {
-                DrawTitle(telefono, mediumFont, offsset, "Teléfono: ");
-                offsset = offsset + mediuminc;
-            }
-
-            data[0].TryGetValue("telefono", out telefono);
             if (!string.IsNullOrEmpty(telefono))
             {
                 DrawTitle(telefono, mediumFont, offsset, "Teléfono: ");
@@ -261,7 +255,7 @@ namespace BL.Print
 
             string labelNroDoc = string.Empty;
             data[0].TryGetValue("labelNroDoc", out labelNroDoc);
- 
+
 
             string nroFactura = "";
             data[0].TryGetValue("nroFactura", out nroFactura);
@@ -300,6 +294,22 @@ namespace BL.Print
             if (!string.IsNullOrEmpty(regimen))
             {
                 DrawTitle(regimen, drawFontBold, offsset);
+                offsset = offsset + mediuminc;
+            }
+
+            string agenteRetencion = "";
+            data[0].TryGetValue("agenteRetencion", out agenteRetencion);
+            if (!string.IsNullOrEmpty(agenteRetencion))
+            {
+                DrawTitle(agenteRetencion, drawFontBold, offsset);
+                offsset = offsset + mediuminc;
+            }
+
+            string obligadoContabilidad = "";
+            data[0].TryGetValue("obligadoContabilidad", out obligadoContabilidad);
+            if (!string.IsNullOrEmpty(obligadoContabilidad))
+            {
+                DrawTitle(obligadoContabilidad, drawFontBold, offsset, "Obligado Contabilidad: ");
                 offsset = offsset + mediuminc;
             }
 

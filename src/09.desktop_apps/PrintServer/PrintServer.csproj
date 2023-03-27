@@ -20,6 +20,7 @@
 		<None Remove="Reports\NotaEntregaInyeccion.rdl" />
 		<None Remove="Reports\NotaEntregaMatricial.rdl" />
 		<None Remove="Reports\NotaEntregaTermica.rdl" />
+		<None Remove="Reports\ProformaInyeccion.rdl" />
 		<None Remove="Reports\Test.rdlc" />
 		<None Remove="Reports\TicketTpv.rdl" />
 	</ItemGroup>
@@ -49,6 +50,9 @@
 		</Content>
 		<Content Include="Reports\NotaEntregaTermica.rdl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Reports\ProformaInyeccion.rdl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 		<Content Include="Reports\Test.rdlc">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>

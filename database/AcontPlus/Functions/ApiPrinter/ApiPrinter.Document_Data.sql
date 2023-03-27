@@ -76,7 +76,8 @@ BEGIN
 						,dirMatriz = e.direccion 
 						,s.dirEstablecimiento
 						,s.contribuyenteEspecial 
-						,s.obligadoContabilidad 
+						,s.obligadoContabilidad
+						,s.agenteRetencion 
 						,razonSocialComprador = cl.nombreFiscal  
 						,nroIdentificacion = cl.numeroIdentificacion
 						,direccionComprador = cl.direccion 
@@ -149,6 +150,9 @@ BEGIN
 							,fechaVencimiento = CONVERT(NVARCHAR, FORMAT(ne.fechaVencimiento, 'dd/MM/yyyy hh:mm')) 
 							,s.dirEstablecimiento  
 							,s.contribuyenteEspecial
+						    ,s.obligadoContabilidad
+						    ,s.agenteRetencion 
+							,regimen = UPPER(s.contribuyenteRimpe)
 							,cliente = cl.nombreFiscal 
 							,nroIdentificacion = cl.numeroIdentificacion
 							,direccionCliente = cl.direccion
@@ -218,6 +222,11 @@ BEGIN
 								,nroIdentificacion = cl.numeroIdentificacion 
 								,direccionCliente = ISNULL(cl.direccion, '')
 								,correoCliente = ISNULL(cl.correo, '')
+
+								,s.contribuyenteEspecial 
+						        ,s.obligadoContabilidad
+						        ,s.agenteRetencion 
+								,regimen = UPPER(s.contribuyenteRimpe)
 								,telefonoCliente = ISNULL(cl.telefono, '')
 								,ciudadCliente = ISNULL(c.descripcion, 'S/N')
 								,subTotalNetoIva = CAST(pr.subTotalNetoIva AS numeric(15,2)) 
@@ -233,9 +242,10 @@ BEGIN
 								,propina = CAST(pr.propina AS numeric(15,2))  
 								,importeTotal = CAST(pr.total AS numeric(15,2))
 								,valorTotal = CAST(pr.total AS numeric(15,2))
-								,observacion = ISNULL(pr.observacion, 'S/N')		
+								,observacion = ISNULL(UPPER(pr.observacion), '')		
 								,porcentajeIva = 'SUBTOTAL IVA '+CAST(CAST(pr.tarifa AS numeric(15,0)) AS nvarchar)+'%'
 								,tipoIva = 'IVA '+CAST(CAST(pr.tarifa AS numeric(15,0)) AS nvarchar)+'%'
+						
 							FROM dbo.Proforma pr
 							INNER JOIN dbo.PuntoEmision       pe  ON pe.idPuntoEmision       = pr.idPuntoEmision 
 							INNER JOIN Sri.Establecimiento    s   ON s.codEstab              = pe.codEstab
