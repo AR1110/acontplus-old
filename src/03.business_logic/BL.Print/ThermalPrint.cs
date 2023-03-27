@@ -305,11 +305,11 @@ namespace BL.Print
                 offsset = offsset + mediuminc;
             }
 
-            string obligadoContabilidad = "";
-            data[0].TryGetValue("obligadoContabilidad", out obligadoContabilidad);
-            if (!string.IsNullOrEmpty(obligadoContabilidad))
+            string labelObligadoContabilidad = "";
+            data[0].TryGetValue("labelObligadoContabilidad", out labelObligadoContabilidad);
+            if (!string.IsNullOrEmpty(labelObligadoContabilidad))
             {
-                DrawTitle(obligadoContabilidad, drawFontBold, offsset, "Obligado Contabilidad: ");
+                DrawTitle(labelObligadoContabilidad, drawFontBold, offsset);
                 offsset = offsset + mediuminc;
             }
 
