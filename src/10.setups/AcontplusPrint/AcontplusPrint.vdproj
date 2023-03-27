@@ -210,7 +210,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:AcontplusPrint"
         "ProductCode" = "8:{4F1A417B-B65E-4E81-8ABD-ACBD8519F7EA}"
-        "PackageCode" = "8:{1CB978FF-1892-4CD7-B67A-F7562C1D6CA1}"
+        "PackageCode" = "8:{F097E087-1269-4490-BE9D-805F8B1CB34E}"
         "UpgradeCode" = "8:{4C769266-369C-4EA0-A387-4B25C0D7E8E7}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -909,7 +909,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_447F477C8A4F4986BC3DAAB9150885B9"
             {
-            "SourcePath" = "8:..\\..\\09.desktop_apps\\PrintServer\\obj\\Release\\net6.0\\apphost.exe"
+            "SourcePath" = "8:..\\..\\09.desktop_apps\\PrintServer\\obj\\Debug\\net6.0\\apphost.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_1197F1C2C5664704A82C3274AD240747"

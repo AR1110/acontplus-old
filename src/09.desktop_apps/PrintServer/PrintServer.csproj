@@ -52,7 +52,7 @@
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 		<Content Include="Reports\ProformaInyeccion.rdl">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</Content>
 		<Content Include="Reports\Test.rdlc">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
