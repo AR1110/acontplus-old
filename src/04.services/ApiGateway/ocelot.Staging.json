@@ -75,12 +75,12 @@
           "Port": 8096
         }
       ],
-      "DownstreamPathTemplate": "/api/DocumentoRecibido",
+      "DownstreamPathTemplate": "/api/DocumentoRecibido/{jsonData}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Post"
       ],
-      "UpstreamPathTemplate": "/api/DocumentoRecibido"
+      "UpstreamPathTemplate": "/api/DocumentoRecibido/{jsonData}"
     },
     {
       "AuthenticationOptions": {
