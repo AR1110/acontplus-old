@@ -169,7 +169,7 @@ namespace PrintServer
                     myIP = Dns.GetHostEntry(hostname).AddressList[i].ToString();
                 }
             }
-            myIP = $"http://{myIP}:9101/";
+            myIP = $"http://{myIP}:9200/";
             if (!string.IsNullOrEmpty(myIP) && myIP != "http://127.0.0.1:9100/")
             {
                 //NetAclChecker.AddAddress(myIP);
