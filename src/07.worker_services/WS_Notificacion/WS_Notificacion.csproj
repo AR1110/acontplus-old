@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Worker">
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -11,13 +11,13 @@
 	  <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
 	  <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
 	<PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="7.0.0" />
-	<PackageReference Include="ReportViewerCore.NETCore" Version="15.1.17" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\01.common\Common.Logs\Common.Logs.csproj" />
     <ProjectReference Include="..\..\01.common\DataAccess\DataAccess.csproj" />
     <ProjectReference Include="..\..\03.business_logic\BL.Notificacion\BL.Notificacion.csproj" />
+    <ProjectReference Include="..\..\03.business_logic\BL.Reports\BL.Reports.csproj" />
   </ItemGroup>
 
   <ItemGroup>

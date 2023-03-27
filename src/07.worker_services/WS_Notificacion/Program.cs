@@ -1,3 +1,5 @@
+using BL.Reports;
+
 namespace WS_Notificacion
 {
     public class Program

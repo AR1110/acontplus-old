@@ -125,11 +125,23 @@
                 limit: 50,
                 page: 1,
                 codDoc: '',
+                codEstab: '',
                 startDate: '',
                 endDate: ''
-            };
+            }
+
+            $scope.initialLoad = () => {
+                $scope.query.codDoc = $scope.doc.codigoSri
+                _commonSvc.getEstabAsign().then(response => {
+                    $scope.establecimientos = response
+                    let codEstab = $scope.establecimientos.length > 0 ? $scope.establecimientos[0].codEstab : 0
+                    $scope.query.codEstab = codEstab
+                    $scope.getComprobantes()
+                })
+            }
+            $scope.initialLoad()
+
             $scope.getDocs = function (doc) {
-                $scope.query.codDoc = $scope.doc.codigoSri;
                 $scope.getComprobantes()
                 debugger;
                 console.log(doc)
@@ -161,9 +173,9 @@
                         }
                         if (response.code == "1") {
                             $scope.comprobantes = JSON.parse(response.payload)[0];
-                            
+
                             //console.log($scope.comprobantes)
-                            
+
                             $scope.cloneComprobantes = JSON.parse(JSON.stringify($scope.comprobantes))
                             //$scope.totalRecords = $scope.comprobantes[0].totalRecords;
                             hideLoader()
@@ -172,7 +184,7 @@
                     }).catch((error) => {
                         hideLoader()
                         console.log(error)
-                    })                    
+                    })
                 } catch (error) {
                     hideLoader()
                     console.log(error)
@@ -288,10 +300,10 @@
             }
 
             $scope.mergedDocs = []
-            $scope.showOptionsMergeDoc = false;            
+            $scope.showOptionsMergeDoc = false;
             $scope.getMergedDocs = (item) => {
-             
-                try {                  
+
+                try {
                     $scope.mergedDocs = []
                     let data = {
                         tipo: 3,
@@ -313,11 +325,11 @@
                                 console.log($scope.mergedDocs)
                             }
                         }
-                        ).catch(error => {
-                            console.log(error)
-                        })
-                        Swal.close()
-                        $('#docRelModal').modal('show');
+                    ).catch(error => {
+                        console.log(error)
+                    })
+                    Swal.close()
+                    $('#docRelModal').modal('show');
                 } catch (error) {
                     console.log(error)
                 }
@@ -337,7 +349,7 @@
                         alert('No ha seleccionado ningun archivo')
                         return;
                     }
-                    mS.getDataFile(_urlService + 'DocumentoRecibido', file).then(
+                    mS.getDataFile(_urlService + 'DocumentoRecibido/' + JSON.stringify({ codEstab: $scope.query.codEstab }), file).then(
                         response => {
                             if (response.code == 0) {
                                 hideLoader()

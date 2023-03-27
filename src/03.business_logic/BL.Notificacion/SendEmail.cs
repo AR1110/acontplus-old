@@ -64,8 +64,9 @@ namespace BL.Notificacion
                 AlternateView altView = AlternateView.CreateAlternateViewFromString(emailBody, null, MediaTypeNames.Text.Html);
                 message.AlternateViews.Add(altView);
 
-                string pathLogo = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logos", email.logo);
+                //string pathLogo = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logos", email.logo);
 
+               string pathLogo = Path.Combine(_configuration.GetSection("Media").GetSection("Images").Value, "Logos", email.logo);
 
                 LinkedResource linkedResource = new LinkedResource(pathLogo, "image/jpg");
                 linkedResource.ContentId = "Pic1";

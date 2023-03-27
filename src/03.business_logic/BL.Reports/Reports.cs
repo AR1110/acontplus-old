@@ -42,19 +42,31 @@ namespace BL.Reports
                 if (Convert.ToBoolean(dsParams.Tables[0].Rows[0]["hasParams"]))
                 {
                     //Recorremos los parametros del reporte como logos, textos, etc
-                    ReportParameter[] p = new ReportParameter[dsParams.Tables[2].Rows.Count];
-                    foreach (DataRow row in dsParams.Tables[2].Rows)
+                    //ReportParameter[] p = new ReportParameter[dsParams.Tables[2].Rows.Count];
+                    //foreach (DataRow row in dsParams.Tables[2].Rows)
+                    //{
+                    //    if (Convert.ToBoolean(row["isByte"]))
+                    //    {
+                    //        p[Convert.ToInt32(row["position"])] = new ReportParameter(row["paramName"].ToString(), FileExtensions.GetBase64FromByte((byte[])row["paramByte"]));
+                    //    }
+                    //    else
+                    //    {
+                    //        p[Convert.ToInt32(row["position"])] = new ReportParameter(row["paramName"].ToString(), row["paramValue"].ToString());
+                    //    }
+                    //}
+                    //lr.SetParameters(p);
+
+                    foreach (DataRow item in dsParams.Tables[2].Rows)
                     {
-                        if (Convert.ToBoolean(row["isByte"]))
+                        if (Convert.ToBoolean(item["isByte"]))
                         {
-                            p[Convert.ToInt32(row["position"])] = new ReportParameter(row["paramName"].ToString(), FileExtensions.GetBase64FromByte((byte[])row["paramByte"]));
+                            lr.SetParameters(new[] { new ReportParameter(item["paramName"].ToString(), Helpers.FileExtensions.GetBase64FromByte((byte[])item["paramByte"])) });
                         }
                         else
                         {
-                            p[Convert.ToInt32(row["position"])] = new ReportParameter(row["paramName"].ToString(), row["paramValue"].ToString());
+                            lr.SetParameters(new[] { new ReportParameter(item["paramName"].ToString(), item["paramValue"].ToString()) });
                         }
                     }
-                    lr.SetParameters(p);
                 }
 
                 return lr.Render(dsParams.Tables[0].Rows[0]["format"].ToString(), null, out _, out _, out _, out _, out _);
