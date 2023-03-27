@@ -6,7 +6,7 @@ namespace BL.Print
     {
         public static void AddAddress(string address)
         {
-            AddAddress(address, Environment.UserDomainName, Environment.UserName);
+            AddAddress(address, Environment.MachineName, Environment.UserName);
         }
 
         public static void AddAddress(string address, string domain, string user)
