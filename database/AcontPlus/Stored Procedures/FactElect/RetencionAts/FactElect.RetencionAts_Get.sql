@@ -92,6 +92,8 @@ BEGIN
 			SELECT rads.*
 			,idDocumento =  ISNULL((SELECT TOP 1 fc.idFacturaCompra FROM FacturaCompra fc 
 			WHERE REPLACE(puntoEmision,'-','')+Helper.F_Auto_Sequential(nroDocumento) = rads.numDocSustento), 0)
+			,isAutomatic = ISNULL((SELECT TOP 1 fc.isAutomatic FROM FacturaCompra fc 
+			WHERE REPLACE(puntoEmision,'-','')+Helper.F_Auto_Sequential(nroDocumento) = rads.numDocSustento), 0)
 			FROM FactElect.RetAtsDocSustento rads 
 			WHERE idRetencionAts = @idRetencionATS
 

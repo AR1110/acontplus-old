@@ -53,13 +53,6 @@ namespace WebUI.Controllers.CuotaDoc
             return Ok(res);
         }
 
-        //Set y Get Nuevo Fecha Vcto Cuota 
-        [HttpPost]
-        public async Task<IActionResult> NuevaFechaCuota(bool validacion, string fecha, [FromBody] List<CuotaXPagar> data)
-        {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
-            var res = await _cxp.GetNewDate(validacion, fecha, data);
-            return Ok(res);
-        }
+       
     }
 }

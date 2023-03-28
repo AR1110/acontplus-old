@@ -4223,7 +4223,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\01.common\DataAccess\DataAccess.csproj" />
-		<ProjectReference Include="..\..\01.common\HelpersNS20\HelpersNS20.csproj" />
 		<ProjectReference Include="..\..\01.common\Helpers\Helpers.csproj" />
 		<ProjectReference Include="..\..\02.domain\Domain.Auth\Domain.Auth.csproj" />
 		<ProjectReference Include="..\..\02.domain\Domain\Domain.csproj" />
@@ -4232,6 +4231,7 @@
 		<ProjectReference Include="..\..\08.razor_ui\Contabilidad_UI\Contabilidad_UI.csproj" />
 		<ProjectReference Include="..\..\08.razor_ui\FACT_UI\FACT_UI.csproj" />
 		<ProjectReference Include="..\..\08.razor_ui\Recepcion_UI\Recepcion_UI.csproj" />
+		<ProjectReference Include="..\..\08.razor_ui\Reports_UI\Reports_UI.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

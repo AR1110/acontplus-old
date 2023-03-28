@@ -18,7 +18,7 @@ namespace PrinterServer
         //reg add HKEY_CURRENT_USER\SOFTWARE\Policies\Google\Chrome /t REG_DWORD /v InsecurePrivateNetworkRequestsAllowed /d 1 /f
         //reg add HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Edge /t REG_DWORD /v InsecurePrivateNetworkRequestsAllowed /d 1 /f
         public static HttpListener listener;
-        public static string url = "http://127.0.0.1:8000/";
+        public static string url = "http://127.0.0.1:9100/";
         public static int pageViews = 0;
         public static int requestCount = 0;
         public static string pageData =
@@ -214,8 +214,8 @@ namespace PrinterServer
                     myIP = Dns.GetHostEntry(hostname).AddressList[i].ToString();
                 }
             }
-            myIP = $"http://{myIP}:8000/";
-            if (!string.IsNullOrEmpty(myIP) && myIP != "http://127.0.0.1:8000/")
+            myIP = $"http://{myIP}:9100/";
+            if (!string.IsNullOrEmpty(myIP) && myIP != "http://127.0.0.1:9100/")
             {
                 NetAclChecker.AddAddress(myIP);
                 listener.Prefixes.Add(myIP);

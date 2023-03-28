@@ -340,6 +340,16 @@ namespace BL.FactElect
                     xtr.WriteString(dr["parteRelVtas"].ToString());
                     xtr.WriteEndElement();
                 }
+                if (dr["tpIdCliente"].ToString() == "06")
+                {
+                    xtr.WriteStartElement("tipoCliente");
+                    xtr.WriteString(dr["tipoCliente"].ToString());
+                    xtr.WriteEndElement();
+
+                    xtr.WriteStartElement("denoCli");
+                    xtr.WriteString(dr["denoCli"].ToString());
+                    xtr.WriteEndElement();
+                }
 
                 xtr.WriteStartElement("tipoComprobante");
                 xtr.WriteString(dr["tipoComprobante"].ToString());

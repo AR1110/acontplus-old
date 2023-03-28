@@ -125,11 +125,23 @@
                 limit: 50,
                 page: 1,
                 codDoc: '',
+                codEstab: '',
                 startDate: '',
                 endDate: ''
-            };
+            }
+
+            $scope.initialLoad = () => {
+                $scope.query.codDoc = $scope.doc.codigoSri
+                _commonSvc.getEstabAsign().then(response => {
+                    $scope.establecimientos = response
+                    let codEstab = $scope.establecimientos.length > 0 ? $scope.establecimientos[0].codEstab : 0
+                    $scope.query.codEstab = codEstab
+                    $scope.getComprobantes()
+                })
+            }
+            $scope.initialLoad()
+
             $scope.getDocs = function (doc) {
-                $scope.query.codDoc = $scope.doc.codigoSri;
                 $scope.getComprobantes()
                 debugger;
                 console.log(doc)
@@ -156,6 +168,7 @@
                     //console.log($scope.query)
                     mS.getData('get', _urlService + 'DocumentoRecibido/Get/' + JSON.stringify($scope.query)).then(response => {
                         if (response.code == "0") {
+                            hideLoader()
                             tS.toastr('warning', response.message)
                         }
                         if (response.code == "1") {
@@ -165,12 +178,13 @@
 
                             $scope.cloneComprobantes = JSON.parse(JSON.stringify($scope.comprobantes))
                             //$scope.totalRecords = $scope.comprobantes[0].totalRecords;
+                            hideLoader()
                         }
 
                     }).catch((error) => {
+                        hideLoader()
                         console.log(error)
                     })
-                    hideLoader()
                 } catch (error) {
                     hideLoader()
                     console.log(error)
@@ -286,31 +300,44 @@
             }
 
             $scope.mergedDocs = []
+            $scope.showOptionsMergeDoc = false;
             $scope.getMergedDocs = (item) => {
+
                 try {
                     $scope.mergedDocs = []
                     let data = {
                         tipo: 3,
-                        claveAcceso: item.claveAcceso
+                        idDocumento: $scope.selected[0].idDocumento,
+                        codDoc: $scope.selected[0].codDoc,
+                        claveAcceso: $scope.selected[0].claveAcceso
                     }
+                    console.log(data)
+                    console.log($scope.selected[0])
                     mS.getData('get', _urlService + 'DocumentoRecibido/Get/' + JSON.stringify(data)).then(
                         response => {
+                            console.log(response)
                             if (response.code == '0') {
                                 tS.toastr('warning', response.message)
                             }
-                            if (response.code == '01') {
-                                let arrTemp = JSON.parse(response.payload)
-                                $scope.mergedDocs = arrTemp
-                                $('#docRelModal').modal('show')
+                            if (response.code == '1') {
+                                let arrTemp = JSON.parse(response.payload)[0]
+                                $scope.mergedDocs = arrTemp;
+                                console.log($scope.mergedDocs)
                             }
                         }
                     ).catch(error => {
                         console.log(error)
                     })
+                    Swal.close()
+                    $('#docRelModal').modal('show');
                 } catch (error) {
                     console.log(error)
                 }
             }
+
+            $("#docRelModal").on('hide.bs.modal', () => {
+                console.log('close doc_relacionado')
+            })
 
 
             $scope.post = function () {
@@ -322,7 +349,7 @@
                         alert('No ha seleccionado ningun archivo')
                         return;
                     }
-                    mS.getDataFile(_urlService + 'DocumentoRecibido', file).then(
+                    mS.getDataFile(_urlService + 'DocumentoRecibido/' + JSON.stringify({ codEstab: $scope.query.codEstab }), file).then(
                         response => {
                             if (response.code == 0) {
                                 hideLoader()

@@ -163,5 +163,10 @@ namespace Helpers
             }
             return storedProcedure;
         }
+        public static DataTable JsonToDataTable(string json)
+        {
+            DataTable dt = (DataTable)JsonConvert.DeserializeObject(json, (typeof(DataTable)));
+            return dt;
+        }
     }
 }

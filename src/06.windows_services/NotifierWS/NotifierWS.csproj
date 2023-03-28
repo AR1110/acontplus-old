@@ -117,10 +117,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApiReportParamsDto.cs" />
     <Compile Include="DataAccess.cs" />
+    <Compile Include="Utils\DataEncrypt.cs" />
     <Compile Include="Email.cs" />
     <Compile Include="FileModel.cs" />
     <Compile Include="GenerateReport.cs" />
+    <Compile Include="Utils\LogWritter.cs" />
     <Compile Include="Notifier.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -136,6 +139,8 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SendEmail.cs" />
+    <Compile Include="Utils\DataHelperNS.cs" />
+    <Compile Include="Utils\FileExtensionsNS.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -156,16 +161,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="SqlServerTypes\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\01.common\HelpersNS20\HelpersNS20.csproj">
-      <Project>{5277B7FA-D26B-4E33-BED0-1659A85550F6}</Project>
-      <Name>HelpersNS20</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\01.common\Logs\Logs.csproj">
-      <Project>{E42A1404-1EFB-46A8-9911-A7100FD46985}</Project>
-      <Name>Logs</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

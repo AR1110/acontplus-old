@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Helpers;
-using HelpersNS20.Dtos;
 using Common.Logs;
+using Domain.Dtos;
 
 namespace WebUI.Controllers.Admin
 {

@@ -20,6 +20,7 @@ GO
 -- Create date: 2023-03-16
 -- Description:	sp for get data to print
 -- =============================================
+ -- ApiPrinter.Impresion_Get 48, 
 IF OBJECT_ID(N'ApiPrinter.Impresion_Get', N'P') IS NOT NULL
 DROP PROCEDURE ApiPrinter.Impresion_Get
 GO
@@ -49,6 +50,7 @@ BEGIN
     DECLARE @estab VARCHAR(5)
 	DECLARE @invoice VARCHAR(15) = 'Factura'
 	DECLARE @note VARCHAR(15) = 'NotaEntrega'
+	
 	DECLARE @identificacion VARCHAR(15)
 	------------END-----------------------
 	
@@ -148,31 +150,47 @@ BEGIN
 				SELECT '0'code,'No tienes configurado una impresora' as 'message'
 				RETURN 
 			END
-
-		SELECT TOP 1
-			 @printerName  = i.nombreImpresora
-			,@computerName = i.nombreEquipo 
-			,@printer      = ti.descripcion
-			,@isThermal    = ti.isThermal
-			,@format       = ti.formato
-			,@deviceInfo   = ti.deviceInfo
-			,@copyPrint    = cd.copyPrint
-			,@urlPrinter   = i.ipMaquina
+			SELECT TOP 1 @urlPrinter = ipMaquina
 		FROM ApiPrinter.Config_Document cd WITH (NOLOCK)
 		INNER JOIN ApiPrinter.Impresora      i WITH (NOLOCK) ON i.idImpresora      = cd.idImpresora
 		INNER JOIN ApiPrinter.TipoImpresora ti WITH (NOLOCK) ON ti.idTipoImpresora = i.idTipoImpresora
-		WHERE cd.idImpresora = @idImpresora 
-		  AND cd.estado = 1
+		WHERE  cd.codDoc = @codDoc
+		AND i.codEstab = @codEstab 
+		  AND cd.estado = 1  
+	SET @rdlcProps = (SELECT
+			 i.nombreImpresora printerName
+			,i.nombreEquipo computerName
+			,ti.descripcion
+			,ti.isThermal
+			,ti.formato
+			,ti.deviceInfo
+			,cd.copyPrint
+			,i.ipMaquina
+			,rdlcName = CASE @codDoc WHEN 'FV' THEN @invoice+ti.descripcion+'.rdl' 
+		                                                 WHEN 'NE' THEN @note+ti.descripcion+'.rdl'
+														 WHEN 'PR' THEN 'Proforma' + ti.descripcion +'.rdl'
+														 END
+		FROM ApiPrinter.Config_Document cd WITH (NOLOCK)
+		INNER JOIN ApiPrinter.Impresora      i WITH (NOLOCK) ON i.idImpresora      = cd.idImpresora
+		INNER JOIN ApiPrinter.TipoImpresora ti WITH (NOLOCK) ON ti.idTipoImpresora = i.idTipoImpresora
+		WHERE  cd.codDoc = @codDoc
+		AND i.codEstab = @codEstab 
+
+		AND cd.estado = 1 FOR JSON PATH)
 
 		SELECT  @dataSources = dataSources FROM ApiPrinter.Document_Data(@idDocument,@idTipoDocumento,@codDoc)
 
-		SET @rdlcProps = (SELECT rdlcName = IIF(@codDoc = 'FV',@invoice,@note)+@printer+'.rdl'
-								,printerName = @printerName	 
-								,isThermal =@isThermal
-								,'format' = @format
-								,deviceInfo = @deviceInfo
-						  FOR JSON PATH
-						  ) 
+		--SET @rdlcProps = (SELECT rdlcName = CASE @codDoc WHEN 'FV' THEN @invoice+@printer+'.rdl' 
+		--                                                 WHEN 'NE' THEN @note+@printer+'.rdl'
+		--												 WHEN 'PR' THEN 'Proforma' + @printer +'.rdl'
+		--												 END
+		--						,computerName = @computerName 
+		--						,printerName = @printerName	 
+		--						,isThermal =@isThermal
+		--						,'format' = @format
+		--						,deviceInfo = @deviceInfo
+		--				  FOR JSON PATH
+		--				  ) 
 		SELECT '1' code, payload = (SELECT 'http://' + @urlPrinter urlPrinter,  @rdlcProps rdlcProps, @dataSources dataSources FOR JSON PATH)
 END
 GO

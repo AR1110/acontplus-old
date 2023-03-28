@@ -172,12 +172,11 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
     $scope.getReport = (item) => {
         try {
 
-            if(item.codDoc!=='07'){
+            if(!(Object.keys(REPORT_CODES).includes(item.codDoc))){
                 _tS.toastr('warning', 'No Disponible')
                 return
             }
 
-        
             let format = 'pdf';
             let dataParms = {
                 versionComp: item.versionComp,
@@ -254,8 +253,6 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
         } catch (error) {
             console.log(error)
         }
-
-
     }
 
 

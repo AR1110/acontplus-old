@@ -70,7 +70,7 @@ app.constant('nombreModal', {
         MODAL_INFO_ADICIONAL_DOC:{
             controller: 'InfoAdicionalTipoDocCtrl',
             template: 'Shared/Common/_ModalInfoAdicionalTipoDoc.cshtml'
-        }
+        }       
     },
     doc_elect:{
         MODAL_CTRL: 'factElect/docVentaCtrl.js' + CHANGE_VERSION(),
@@ -117,7 +117,33 @@ app.constant('nombreModal', {
         MODAL_ARTICULO_IMPUESTO_RETENCION_CSHTML:'Articulo/_ModalArticuloImpuestoRetencion.cshtml',
         MODAL_DETALLE_CSHTML:'Articulo/_ModalArticuloDetalle.cshtml',
         MODAL_ARTICULO_IMPUESTO_CSHTML: 'Articulo/_ModalArticuloImpuesto.cshtml',
-        MODAL_ARTICULO_FRACCIONADO_CSHTML: 'ArticuloFraccionado/_ModalArticuloFraccionado.cshtml'
+        MODAL_ARTICULO_FRACCIONADO_CSHTML: 'ArticuloFraccionado/_ModalArticuloFraccionado.cshtml',
+        MODAL_NUEVO:{
+            controller: 'ModalArticuloCtrl',
+            template:'Articulo/_ModalNuevoArticulo.cshtml'
+        },
+        MODAL_FILTRO:{
+            controller: 'ModalFiltroCtrl',
+            template:'Articulo/_ModalArticuloFiltro.cshtml'
+        },
+        MODAL_ARTICULO_IMPUESTO:{
+            controller: 'ModalArticuloImpuestoCtrl',
+            template:'Articulo/_ModalArticuloImpuesto.cshtml'
+        },
+        MODAL_ARTICULO_IMPUESTO_RETENCION:{
+
+        },
+        MODAL_ARTICULO_IMAGEN:{
+            controller: 'ModalArticuloImagenCtrl',
+            template:'Articulo/_ModalArticuloImagen.cshtml'
+        },
+        MODAL_IMAGEN_DETALLE:{
+            controller: 'ModalArticuloImagenDetalleCtrl',
+            template:'Articulo/_ModalArticuloImagenDetalle.cshtml'
+        },
+        MODAL_HISTORIAL_COMPRA: {
+
+        }
     },
     articulo_impuesto: {
         MODAL_CTRL: 'modalArticuloImpuestoCtrl.min.js' + CHANGE_VERSION(),
@@ -561,7 +587,7 @@ app.constant('nombreModal', {
         MODAL_FILE_CTRL:'modal/recepcion/modalDocRecibidoCtrl.js',
         MODAL_HISTORIAL_COMPRA:{
             controller: 'ModalHistoryComprasCtrl',
-            template: 'DocumentoRecibido/_HistoryCompras.cshtml'
+            template: '~/Areas/DocumentoRecibido/Pages/Shared/_HistoryCompras.cshtml'
         }
     },
     retencion_compra:{

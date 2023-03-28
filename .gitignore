@@ -307,3 +307,12 @@
 /src/02.domain/Domain.Config/bin/Debug/net6.0
 /src/02.domain/Domain.Config/obj
 /src/02.domain/Domain.Config/bin/Release/net6.0
+/src/08.razor_ui/Reports_UI/bin
+/src/08.razor_ui/Reports_UI/obj
+/src/09.desktop_apps/PrintServer/bin/Debug/net6.0
+/src/09.desktop_apps/PrintServer/obj
+/src/09.desktop_apps/PrintServer/bin/Release/net6.0
+/src/10.setups/AcontplusPrint/Debug
+/src/10.setups/AcontplusPrint/Release
+/src/03.business_logic/BL.Print/bin
+/src/03.business_logic/BL.Print/obj

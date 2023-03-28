@@ -1,7 +1,7 @@
 ﻿using BL.Reports;
 using Common.Logs;
 using DataAccess;
-using HelpersNS20.Dtos;
+using Domain.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Primitives;

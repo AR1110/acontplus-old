@@ -3,29 +3,21 @@
     <button class="close" ng-click="$ctrl.closeModal()">&times;</button>
 </div>
 <div class="modal-body">  
-    <div class="list-group list-group-horizontal" id="list-tab" role="tablist" >
-        <a class="list-group-item list-group-item-action active" ng-click="$ctrl.onTabArticulo(1)"  data-toggle="list" href="javascript:void(0)" role="tab">General</a>
-        <a class="list-group-item list-group-item-action" ng-click="$ctrl.onTabArticulo(3)" data-toggle="list" ng-show="$ctrl.tipoRegistro==2" href="javascript:void(0)" role="tab">Código de Barras</a>
-        
-        <!--Habilitar ubicacion-->
-        <a class="list-group-item list-group-item-action" ng-click="$ctrl.onTabArticulo(4)" data-toggle="list"  href="javascript:void(0)" role="tab">Ubicación</a>   
 
-        <a class="list-group-item list-group-item-action" ng-click="$ctrl.onTabArticulo(2)" data-toggle="list" href="javascript:void(0)" role="tab">Datos adicionales</a>        
-        @* <a class="list-group-item list-group-item-action" ng-click="$ctrl.onTabArticulo(5)" data-toggle="list"  ng-show="$ctrl.tipoRegistro==2" href="javascript:void(0)" role="tab">Impuesto</a> *@
-    </div>                                                            
-    <div class="tab-content" id="nav-tabContent">
-        <div  ng-show="$ctrl.step==1" role="tabpanel" >
-            <div class="card border mt-2">
-                <div class="card-body">
+    <uib-tabset>
+        <uib-tab index="0" heading="General">
+            <div class="card">
+                <div class="card-body border-mb">
+                    
                     <div class="row">
-                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12">
                             <div class="form-group">
                                 <label class="form-control-label" for="descripcion">Nombre Articulo: <span class="text-danger">*</span> </label>
                                 <input type="text" autocomplete="off" ng-model="$ctrl.data.descripcion" name="articuloDescripcion" touppercase class="form-control border-select" placeholder="Ej: Laptop-HP">
                             </div>
                         </div>
                         
-                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12">
                             <div class="form-group ">
                                 <label class="control-label">Sub Familia: <span class="text-danger">*</span></label>
                                 <div class="input-group">
@@ -40,99 +32,110 @@
                                 </div>
                             </div>
                         </div>                       
-                    </div> 
+                    </div>
 
                     <div class="row" ng-show="$ctrl.tipoRegistro===1">
-                        <div class="col-lg-6">
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12">
                             <div class="row">
-                                <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                                    <label for="">Código: <span class="text-danger">*</span></label>
-                                    <input type="text" ng-model="$ctrl.data.codigo" ng-focus="delayFocus('.codigo')" class="form-control border-select codigo" placeholder="Ej: COM050">
+                                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                                    <div class="form-group">
+                                        <label for="">Código: <span class="text-danger">*</span></label>
+                                        <input type="text" ng-model="$ctrl.data.codigo" ng-focus="delayFocus('.codigo')" class="form-control border-select codigo" placeholder="Ej: COM050">
+                                    </div>
                                 </div>
-                                <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                                    <label for="">Código Aux: </label>
-                                    <input type="text" ng-model="$ctrl.data.codigoAuxiliar" ng-focus="delayFocus('.codigoAuxiliar')" class="form-control border-select codigoAuxiliar" placeholder="Ej: COM050">
+
+                                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                                    <div class="form-group">
+                                        <label for="">Código Aux: </label>
+                                        <input type="text" ng-model="$ctrl.data.codigoAuxiliar" ng-focus="delayFocus('.codigoAuxiliar')" class="form-control border-select codigoAuxiliar" placeholder="Ej: COM050">
+                                    </div>
                                 </div>
-                                <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                                    <label for="">Código de Barra: <span class="text-danger">*</span> </label>
-                                    <input type="text" class="form-control border-select codigoBarra" ng-focus="delayFocus('.codigoBarra')" ng-model="$ctrl.data.codigoBarra" touppercase placeholder="H20089" value="" />                   
+
+                                <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="form-group">                                        
+                                        <label for="">Código de Barra: <span class="text-danger">*</span> </label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control border-select codigoBarra" ng-focus="delayFocus('.codigoBarra')" ng-model="$ctrl.data.codigoBarra" touppercase placeholder="H20089" value="" /> 
+                                            <div class="input-group-append">
+                                                <button class="btn btn-outline-secondary" ng-click="$ctrl.getBarcode()">
+                                                    <i class="fas fa-barcode"></i>
+                                                </button>
+                                            </div>
+                                        </div>                  
+                                    </div>
                                 </div>
                             </div>
                         </div>    
-                        <div class="col-lg-6">
+
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12">
                             <div class="row">
-                                <div class="form-group col-lg-6 col-md-3 col-sm-6 col-xs-6">
-                                    <label for="">Tipo Artículo: <span class="text-danger">*</span> </label>
-                                    <select class="form-control border-select tipoArticulo" ng-model="$ctrl.data.idTipoArticulo" ng-focus="delayFocus('.tipoArticulo')">
-                                            <option ng-value="item.idTipoArticulo" ng-repeat="item in $ctrl.tipoArticulos">{{item.descripcion}}</option>
-                                    </select>
-                                </div>
-                                <div class="form-group col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                                    <label for="">U. Medida</label>
-                                    <div class="input-group">
-                                        <select class="form-control border-select medida"  ng-model="$ctrl.data.idMedida" ng-focus="delayFocus('.medida')">
-                                                <option ng-value="item.idMedida" ng-repeat="item in $ctrl.medidas">{{item.descripcion}}</option>
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                    <div class="form-group">
+                                        <label for="">Tipo Artículo: <span class="text-danger">*</span> </label>
+                                        <select class="form-control border-select tipoArticulo" ng-model="$ctrl.data.idTipoArticulo" ng-focus="delayFocus('.tipoArticulo')">
+                                                <option ng-value="item.idTipoArticulo" ng-repeat="item in $ctrl.tipoArticulos">{{item.descripcion}}</option>
                                         </select>
-                                        <div class="input-group-append">
-                                            <button class="btn btn-outline-secondary btn-sm"  ng-click="$ctrl.openModalMedida()" tabindex="-1"><i class="fa fa-plus fa-xs"></i></button>
-                                        </div>                            
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                    <div class="form-group">
+                                        <label for="">U. Medida</label>
+                                        <div class="input-group">
+                                            <select class="form-control border-select medida"  ng-model="$ctrl.data.idMedida" ng-focus="delayFocus('.medida')">
+                                                    <option ng-value="item.idMedida" ng-repeat="item in $ctrl.medidas">{{item.descripcion}}</option>
+                                            </select>
+                                            <div class="input-group-append">
+                                                <button class="btn btn-outline-secondary btn-sm"  ng-click="$ctrl.openModalMedida()" tabindex="-1"><i class="fa fa-plus fa-xs"></i></button>
+                                            </div>                            
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>                           
                     </div>  
 
+
                     <div class="row" ng-show="$ctrl.tipoRegistro===1">  
-                        <div class="form-group col-lg-2 col-md-2 col-sm-6 col-xs-6">
+                        <div class="form-group col-lg-2 col-md-6 col-sm-6 col-xs-12">
                             <label for="">Tipo Iva: </label>
                             <select class="form-control border-select tipoIva" ng-model="$ctrl.tipoIva" ng-change="$ctrl.recalculateTarifaAdd()" ng-focus="delayFocus('.tipoIva')"
                                     ng-options="ti as ti.descripcion for ti in $ctrl.tipoIvas track by ti.idTipoIva">
                             </select>
                         </div>
-                        <div class="form-group col-lg-2 col-md-2 col-sm-6 col-xs-6">
+                        <div class="form-group col-lg-2 col-md-6 col-sm-6 col-xs-6">
                             <label for="">Precio Costo: <span class="text-danger">*</span></label>
                             <input type="text" class="form-control border-select precioCosto" decimal ng-focus="delayFocus('.precioCosto')"
                             ng-model="$ctrl.data.precioCosto" ng-blur="$ctrl.redondearPrecioCosto()"  ng-change="$ctrl.recalculateTarifaAdd()" placeholder="0.00">
                         </div>                          
-                        <div class="form-group col-lg-2 col-md-2 col-sm-4 col-xs-6 text-center ">
+                        <div class="form-group col-lg-2 col-md-6 col-sm-6 col-xs-12 text-center ">
                             <label>Inventario: </label>
                             <div class="icheck-primary ">
                                 <input type="checkbox" id="llevarInventarioAgregar1" name="llevarInventarioAgregar1" ng-model="$ctrl.data.llevaInventario" />
                                 <label for="llevarInventarioAgregar1"></label>
                             </div>
                         </div>
-                        <div class="form-group col-lg-2 col-md-2 col-sm-4 col-xs-6 text-center">
+                        <div class="form-group col-lg-2 col-md-3 col-sm-6 col-xs-12 text-center">
                             <label>Adicionales: </label>
                             <div class="icheck-primary">
                                 <input type="checkbox" id="datosAdicionalesAgregar1" name="datosAdicionalesAgregar1" ng-model="$ctrl.data.datosAdicionales" />
                                 <label for="datosAdicionalesAgregar1"></label>
                             </div>
                         </div>
-                        <div class="form-group col-lg-2 col-md-2 col-sm-4 col-xs-6 text-center" ng-show="$ctrl.data.datosAdicionales">
+                        <div class="form-group col-lg-2 col-md-3 col-sm-6 col-xs-12 text-center" ng-show="$ctrl.data.datosAdicionales">
                             <label>Actividades: </label>
                             <select ng-model="$ctrl.data.idActividad" class="form-control">
                                 <option ng-value="item.idActividadEtiqueta" ng-repeat="item in $ctrl.etiquetaActividades">{{item.descripcion}}</option>
                             </select>                    
                         </div>
-                        <div class="form-group col-lg-2 col-md-2 col-sm-4 col-xs-6 text-center">
+                        <div class="form-group col-lg-2 col-md-3 col-sm-6 col-xs-12 text-center">
                             <label for="">Fraccionable: </label>
                             <div class="icheck-primary">
                                 <input type="checkbox" id="productoFraccionableAgregar1" name="productoFraccionableAgregar1" ng-model="$ctrl.data.productoFraccionable" />
                                 <label for="productoFraccionableAgregar1"></label>
                             </div>
                         </div>
-                    </div>
-
-                    <!--Ui Grid Tarifa-->
-                    <div class="row" ng-show="$ctrl.tipoRegistro===1">
-                        <div class="col-xl-10 col-lg-10 col-md-10 col-sm-12 col-xs-12">                                                        
-                            <div ui-grid="$ctrl.gridOptions" ui-grid-edit
-                                ui-grid-resize-columns
-                                ui-grid-cellNav
-                                ui-grid-auto-resize class="grid"></div>                            
-                        </div>
-                    </div>
-
+                    </div> 
 
                     <!--ACTUALIZAR-->                 
                     <div ng-show="$ctrl.tipoRegistro==2">
@@ -147,8 +150,17 @@
                                 <input type="text" ng-model="$ctrl.data.codigoAuxiliar" class="form-control border-select codigoAuxiliarUp" ng-focus="delayFocus('.codigoAuxiliarUp')"  placeholder="Ej: COM050">
                             </div>
                             <div class="form-group col-lg-2 col-md-2">
-                                <label for="">Codigo de Barra</label>
-                                <input type="text" ng-model="$ctrl.data.codigoBarra"  class="form-control border-select codeBarraUp" ng-focus="delayFocus('.codeBarraUp')" >
+                               <div class="form-group">                                        
+                                    <label for="">Código de Barra: <span class="text-danger">*</span> </label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control border-select codigoBarraUp" ng-focus="delayFocus('.codigoBarraUp')" ng-model="$ctrl.data.codigoBarra" touppercase placeholder="H20089" value="" /> 
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-secondary" ng-click="$ctrl.getBarcode()">
+                                                <i class="fas fa-barcode"></i>
+                                            </button>
+                                        </div>
+                                    </div>                  
+                                </div>
                             </div>
                         
                             <div class="form-group col-lg-2 col-md-4 col-sm-6 col-xs-6">
@@ -233,26 +245,23 @@
                                 </md-radio-group>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="row">
-                            <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12">
-                    
-                                    <div ui-grid="$ctrl.gridOptions"
-                                        ui-grid-edit
-                                        ui-grid-resize-columns
-                                        ui-grid-cellNav
-                                        ui-grid-auto-resize class="grid"></div>
-                                
-                            </div>
+
+                    <div class="row">
+                        <div class="col-xl-10 col-lg-10 col-md-10 col-sm-12 col-xs-12">
+                            <div ui-grid="$ctrl.gridOptions" ui-grid-edit
+                                ui-grid-resize-columns
+                                ui-grid-cellNav
+                                ui-grid-auto-resize class="grid"></div>  
                         </div>
-                           
                     </div>
                 </div>
-            </div>               
-        </div>
 
-        <div  ng-show="$ctrl.step===2" role="tabpanel">
-            <div class="card border mt-2">
+            </div>                      
+        </uib-tab>
+        <uib-tab index="1" heading="Datos Adicionales" select="$ctrl.onTabArticulo(2)"> 
+            <div class="card">
                 <div class="card-body">
                     <p><b class="text-info">Articulo: </b> <b class="text-success">{{$ctrl.data.descripcion}}</b></p>
                     <div class="row">
@@ -353,18 +362,14 @@
                         </div>
                     </div>
                 </div>
-            </div>            
-        </div> 
+            </div>
+        </uib-tab>
 
-
-        <!--Código Barra-->
-        <div ng-show="$ctrl.step===3" role="tabpanel">
-
+        <uib-tab index="2" heading="Código de Barras" select="$ctrl.onTabArticulo(3)" ng-show="$ctrl.tipoRegistro===2">
             <div class="card border border mt-2">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 border-right">
-                            
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 border-right">                            
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="form-group">
@@ -448,111 +453,100 @@
                          </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </div>            
+        </uib-tab>
 
-
-
-        <!--Ubicacion-->
-        <div ng-show="$ctrl.step===4" role="tabpanel">
-            <div class="card border mt-2">
-
-                <!--Agregar-->
-                <div class="card-body" ng-if="$ctrl.tipoRegistro===1">
-                    <div class="row">
-                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                            <div class="form-group">                                        
-                                <label for="">Bodega: <span class="text-danger">*</span> </label>
-                                <select class="form-control" ng-model="$ctrl.data.idBodega">
-                                    <option ng-value="item.idBodega" ng-repeat="item in $ctrl.bodegas">{{item.descripcion}}</option>
-                                    </select>
-                                </div>                        
-                        </div>
-                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                            <div class="form-group">
-                                <label for="">Ubicación <span class="text-danger">*</span></label>
-                                <input type="text" ng-model="$ctrl.data.ubicacion" class="form-control border-select" placeholder="Ej: S/N" />
+        <uib-tab index="4" heading="Ubicación" select="$ctrl.onTabArticulo(4)" ng-if="$ctrl.tipoRegistro===2">
+            <!--Agregar-->
+            <div class="card-body" ng-if="$ctrl.tipoRegistro===1">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">                                        
+                            <label for="">Bodega: <span class="text-danger">*</span> </label>
+                            <select class="form-control" ng-model="$ctrl.data.idBodega">
+                                <option ng-value="item.idBodega" ng-repeat="item in $ctrl.bodegas">{{item.descripcion}}</option>
+                                </select>
                             </div>                        
-                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label for="">Ubicación <span class="text-danger">*</span></label>
+                            <input type="text" ng-model="$ctrl.data.ubicacion" class="form-control border-select" placeholder="Ej: S/N" />
+                        </div>                        
                     </div>
                 </div>
+            </div>
 
 
 
-               <!--Actualizar-->
-                <div class="card-body" ng-if="$ctrl.tipoRegistro===2">
-                    <div class="row">
-                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 border-right">                            
-                            <div class="row">
-                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div class="form-group">                                        
-                                        <label for="">Bodega: <span class="text-danger">*</span> </label>
-                                        <select class="form-control" ng-model="$ctrl._aUbic.data.idBodega">
-                                                <option ng-value="item.idBodega" ng-repeat="item in $ctrl._aUbic.bodegas">{{item.descripcion}}</option>
-                                        </select>
-                                    </div>
+            <!--Actualizar-->
+            <div class="card-body" ng-if="$ctrl.tipoRegistro===2">
+                <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 border-right">                            
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group">                                        
+                                    <label for="">Bodega: <span class="text-danger">*</span> </label>
+                                    <select class="form-control" ng-model="$ctrl._aUbic.data.idBodega">
+                                            <option ng-value="item.idBodega" ng-repeat="item in $ctrl._aUbic.bodegas">{{item.descripcion}}</option>
+                                    </select>
                                 </div>
-
-                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div class="form-group">
-                                        <label for="">Ubicación <span class="text-danger">*</span></label>
-                                        <input type="text" ng-model="$ctrl._aUbic.data.ubicacion" class="form-control border-select" placeholder="Ej: S/N" />
-                                    </div>
-                                </div>
-
-                                <div class="ml-auto">
-                                    @* ng-click="$ctrl._aUbic.saveUpdate()" *@
-                                    <button class="btn btn-success" ng-click="$ctrl._aUbic.saveUpdate()">
-                                        <i class="{{$ctrl._aUbic.tipoRegistro==1?'ti-save':'ti-pencil'}}"></i> 
-                                        {{$ctrl._aUbic.tipoRegistro==1?'Guardar':'Actualizar'}}
-                                    </button>
-                                    <button  type="button" class="btn btn-dark" ng-click="$ctrl._aUbic.reset()">
-                                        Limpiar
-                                    </button>
-                                </div>
-                            </div>                                                                                                                    
-                        </div> 
-                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
-                            <div class="table-responsive">
-                                <table class="table table-condensed table-sm">
-                                    <thead>
-                                        <tr>
-                                            <th>N°</th>
-                                            <th>Bodega</th>
-                                            <th>Ubicación</th>
-                                            <th>Op.</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr ng-repeat="item in $ctrl._aUbic.articuloUbicaciones">
-                                            <td>{{$index+1}}</td>
-                                            <td>{{item.descripcion}}</td>
-                                            <td>{{item.ubicacion}}</td>
-                                            <td>
-                                                <a class="text-success" ng-click="$ctrl._aUbic.editUbicacionArt(item)" href="javascript:;" title="Editar">
-                                                    <i class="fa fa-edit"></i>
-                                                </a>
-                                                <a class="text-danger" ng-click="$ctrl._aUbic.deleteUbicacionArt(item)" href="javascript:;" title="Eliminar">
-                                                    <i class="fa fa-trash"></i>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
                             </div>
+
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label for="">Ubicación <span class="text-danger">*</span></label>
+                                    <input type="text" ng-model="$ctrl._aUbic.data.ubicacion" class="form-control border-select" placeholder="Ej: S/N" />
+                                </div>
+                            </div>
+
+                            <div class="ml-auto">
+                                @* ng-click="$ctrl._aUbic.saveUpdate()" *@
+                                <button class="btn btn-success" ng-click="$ctrl._aUbic.saveUpdate()">
+                                    <i class="{{$ctrl._aUbic.tipoRegistro==1?'ti-save':'ti-pencil'}}"></i> 
+                                    {{$ctrl._aUbic.tipoRegistro==1?'Guardar':'Actualizar'}}
+                                </button>
+                                <button  type="button" class="btn btn-dark" ng-click="$ctrl._aUbic.reset()">
+                                    Limpiar
+                                </button>
+                            </div>
+                        </div>                                                                                                                    
+                    </div> 
+                    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                        <div class="table-responsive">
+                            <table class="table table-condensed table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>N°</th>
+                                        <th>Bodega</th>
+                                        <th>Ubicación</th>
+                                        <th>Op.</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="item in $ctrl._aUbic.articuloUbicaciones">
+                                        <td>{{$index+1}}</td>
+                                        <td>{{item.descripcion}}</td>
+                                        <td>{{item.ubicacion}}</td>
+                                        <td>
+                                            <a class="text-success" ng-click="$ctrl._aUbic.editUbicacionArt(item)" href="javascript:;" title="Editar">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+                                            <a class="text-danger" ng-click="$ctrl._aUbic.deleteUbicacionArt(item)" href="javascript:;" title="Eliminar">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </uib-tab>
+    </uib-tabset>
 
-
-        <!--Impuesto-->
-        <div ng-show="$ctrl.step===5" role="tabpanel">
-
-        </div>
-
-    </div>                       
+                       
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-success" ng-click="$ctrl.saveUpdateArticulo()">{{$ctrl.tipoRegistro==1?'Guardar':'Actualizar'}}</button>

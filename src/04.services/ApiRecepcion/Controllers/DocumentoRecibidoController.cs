@@ -11,7 +11,6 @@ using BL.FactElect;
 using Domain.FactElect;
 using Newtonsoft.Json;
 using System.Text;
-using Common.PdfReports;
 
 namespace ApiRecepcion.Controllers
 {
@@ -162,56 +161,56 @@ namespace ApiRecepcion.Controllers
             }
             return Ok(_response);
         }
-        [HttpGet("Export/{id}")]
-        public async Task<IActionResult> Export(int id)
-        {
-            LogWriter _logs = new LogWriter(_configuration);
-            ComprobanteElectronico ceXml = new ComprobanteElectronico();
+        //[HttpGet("Export/{id}")]
+        //public async Task<IActionResult> Export(int id)
+        //{
+        //    LogWriter _logs = new LogWriter(_configuration);
+        //    ComprobanteElectronico ceXml = new ComprobanteElectronico();
 
-            GenericResponse _response = new GenericResponse();
-            try
-            {
-                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                DbAccess _db = new DbAccess(_configuration);
-                Dictionary<string, object> parameters = new Dictionary<string, object>();
-                await _db.SPExecute("Recepcion.Documento_Get_Id");
-                _db.AddDynamicParam("idRol", idUsuarioRol);
-                _db.AddDynamicParam("idDocumento", id);
-                DataTable dt = _db.GetDataTable();
+        //    GenericResponse _response = new GenericResponse();
+        //    try
+        //    {
+        //        int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+        //        DbAccess _db = new DbAccess(_configuration);
+        //        Dictionary<string, object> parameters = new Dictionary<string, object>();
+        //        await _db.SPExecute("Recepcion.Documento_Get_Id");
+        //        _db.AddDynamicParam("idRol", idUsuarioRol);
+        //        _db.AddDynamicParam("idDocumento", id);
+        //        DataTable dt = _db.GetDataTable();
 
-                if (dt.Rows.Count > 0 && dt.Columns.Contains("xmlDoc"))
-                {
-                    _response.code = "1";
-                    string xmlDoc = dt.Rows[0]["xmlDoc"].ToString();
-                    XmlDocument xdoc = new XmlDocument();
-                    xdoc.LoadXml(xmlDoc);
-                    string sms = string.Empty;
-                    DataXmlComprobante _getXmlSriData = new DataXmlComprobante();
-                    if (!_getXmlSriData.GetData(xdoc, ref ceXml, ref sms))
-                    {
-                        _response.Create("0", sms);
-                    }
-                    else
-                    {
-                        //_response.payload = DocumentoXmlToHtml.CreateHtml(ceXml);
-                    }
-                }
-                else
-                {
-                    _response.Create(code: "0", message: "No se encontro xml");
-                }
-                return File(new DocElectPdf().PdfData(ceXml), "application/pdf", "Factura_" + ceXml.infoTributaria.estab + "-" + ceXml.infoTributaria.ptoEmi + "-" + ceXml.infoTributaria.secuencial + ".pdf");
-            }
-            catch (Exception ex)
-            {
-                _logs.LogError("Error getting data of doc: " + ex.ToString());
-                //return BadRequest(Response.StatusCode);
-                return File(new DocElectPdf().PdfData(ceXml), "application/pdf", "report.pdf");
+        //        if (dt.Rows.Count > 0 && dt.Columns.Contains("xmlDoc"))
+        //        {
+        //            _response.code = "1";
+        //            string xmlDoc = dt.Rows[0]["xmlDoc"].ToString();
+        //            XmlDocument xdoc = new XmlDocument();
+        //            xdoc.LoadXml(xmlDoc);
+        //            string sms = string.Empty;
+        //            DataXmlComprobante _getXmlSriData = new DataXmlComprobante();
+        //            if (!_getXmlSriData.GetData(xdoc, ref ceXml, ref sms))
+        //            {
+        //                _response.Create("0", sms);
+        //            }
+        //            else
+        //            {
+        //                //_response.payload = DocumentoXmlToHtml.CreateHtml(ceXml);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            _response.Create(code: "0", message: "No se encontro xml");
+        //        }
+        //        return File(new DocElectPdf().PdfData(ceXml), "application/pdf", "Factura_" + ceXml.infoTributaria.estab + "-" + ceXml.infoTributaria.ptoEmi + "-" + ceXml.infoTributaria.secuencial + ".pdf");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logs.LogError("Error getting data of doc: " + ex.ToString());
+        //        //return BadRequest(Response.StatusCode);
+        //        return File(new DocElectPdf().PdfData(ceXml), "application/pdf", "report.pdf");
 
-            }
-        }
-        [HttpPost]
-        public async Task<IActionResult> Post(IFormFile file)
+        //    }
+        //}
+        [HttpPost("{jsonData}")]
+        public async Task<IActionResult> Post(string jsonData, IFormFile file)
         {
             LogWriter _logs = new LogWriter(_configuration);
             GenericResponse _response = new GenericResponse();
@@ -234,6 +233,7 @@ namespace ApiRecepcion.Controllers
                     Dictionary<string, object> parameters = new Dictionary<string, object>
                     {
                         { "idRol", idUsuarioRol},
+                        { "jsonData", jsonData },
                         { "json", DataHelper.DataTableToJSON(dt) }
                     };
                     _response = await _dao.Default("Recepcion.Documento_Insert", parameters);

@@ -65,7 +65,7 @@ namespace SignerWS
                 }
                 catch (Exception ex)
                 {
-                    LogWritter.LogError(_path, "Error al firmar los docs: " + " - " + ex.Message + "Docs: " + HelpersNS20.DataHelperNS.DataTableToJSON(dt));
+                    LogWritter.LogError(_path, "Error al firmar los docs: " + " - " + ex.Message + "Docs: " + DataHelperNS.DataTableToJSON(dt));
                 }
                 finally
                 {
@@ -110,7 +110,7 @@ namespace SignerWS
                         else
                         {
                             _dataAccess.UpdateError(dataRow.Field<long>("idDocumentoElectronico"), 0, "Error al firmar el xml del comprobante");
-                            LogWritter.LogWarning(_path, "Error al firmar el xml del comprobante: " + Convert.ToString(dataRow.Field<long>("idDocumentoElectronico")) + "- Data Doc: " + HelpersNS20.DataHelperNS.DataSetToJSON(ds));
+                            LogWritter.LogWarning(_path, "Error al firmar el xml del comprobante: " + Convert.ToString(dataRow.Field<long>("idDocumentoElectronico")) + "- Data Doc: " + DataHelperNS.DataSetToJSON(ds));
                         }
                     }
                 }
@@ -118,7 +118,7 @@ namespace SignerWS
             catch (Exception ex)
             {
                 _dataAccess.UpdateError(dataRow.Field<long>("idDocumentoElectronico"), 0, Convert.ToString(dataRow.Field<long>("idDocumentoElectronico")) + " - " + ex.Message);
-                LogWritter.LogError(_path, "Error al crear el xml del comprobante: " + Convert.ToString(dataRow.Field<long>("idDocumentoElectronico")) + " - " + ex.Message + "- Data Doc: " + HelpersNS20.DataHelperNS.DataSetToJSON(ds));
+                LogWritter.LogError(_path, "Error al crear el xml del comprobante: " + Convert.ToString(dataRow.Field<long>("idDocumentoElectronico")) + " - " + ex.Message + "- Data Doc: " + DataHelperNS.DataSetToJSON(ds));
             }
         }
     }

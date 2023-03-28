@@ -220,6 +220,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
         try {
             showLoader();
             let resultsDataForm = await this.initiload();
+            console.log(resultsDataForm)
             let {UiGridOptionsCompra} = await import('./../factElect/uiGridOptions.min.js' + CHANGE_VERSION());
 
             this.establecimientos = resultsDataForm[0];

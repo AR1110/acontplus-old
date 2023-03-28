@@ -1,7 +1,6 @@
 ﻿using System.ServiceProcess;
 using System.Configuration;
 using Logs;
-using HelpersNS20.Dtos;
 using System.Timers;
 using System;
 
@@ -73,7 +72,7 @@ namespace PrinterWS
                     string ruc = ConfigurationManager.AppSettings["ruc"].ToString();
                     string estab = ConfigurationManager.AppSettings["estab"].ToString();
                     string idUser = ConfigurationManager.AppSettings["idUser"].ToString();
-                    ApiPrintRequestDto res = new ApiPrintRequestDto();
+                    ApiReportParamsDto res = new ApiReportParamsDto();
 
                     if (!new DataPrint().Get(ruc, estab,idUser, ref res)) return;
 

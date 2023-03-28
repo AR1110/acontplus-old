@@ -16,9 +16,9 @@
       }
     },
     {
-      "UpstreamPathTemplate": "/api/DocumentoRecibido",
+      "UpstreamPathTemplate": "/api/DocumentoRecibido/{jsonData}",
       "UpstreamHttpMethod": [ "Post" ],
-      "DownstreamPathTemplate": "/api/DocumentoRecibido",
+      "DownstreamPathTemplate": "/api/DocumentoRecibido/{jsonData}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -559,7 +559,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7097
+          "Port": 44320
         }
       ],
       "AuthenticationOptions": {

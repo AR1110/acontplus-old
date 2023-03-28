@@ -37,6 +37,74 @@ class ModalBaseCtrl {
         })
     }
 
+
+     //generate barcode
+
+     getBarcode = function () {
+        // console.log(item)
+        if (!this.data.codigoBarra || !this.data.descripcion) {
+            this._toastr.toastr('warning', "Debe ingresar la descripción y el código de barra del artículo para generar el código de barras")
+            return
+        }
+        let codigoBarra = this.data.codigoBarra;
+        let descripcion = this.data.descripcion;
+        let barcodeCard = null;        
+
+        Swal.fire({
+            // icon:'info',
+            html:`<div class="card">
+                    <card class="card-header text-center bg-transparent">
+                        Código de Barra
+                    </card>
+                    <div class="card-body border border-danger" id="cardBusiness">                        
+                        <h6 class="text-center">${descripcion}</h6>
+                        <img id="barcode" alt="">
+                    </div>
+                    <div class="card-footer">                     
+                        <button type="button" class="btn btn-success btn-block" id="btnBarcodeExport">
+                            <i class="ti-download"></i> Descargar
+                        </button>
+                    </div>
+                </div>`,
+                showConfirmButton: false,
+                showCancelButton: false,   
+                showDenyButton: false,             
+        })
+
+        JsBarcode("#barcode", codigoBarra, {
+            format: "CODE128",
+            lineColor: "#000",
+            width: 2,
+            // height: 75,
+            // displayValue: false
+        });
+
+        document.getElementById("btnBarcodeExport").addEventListener("click", e=>{
+            
+            let container = document.getElementById("cardBusiness");; /* full page */
+                         
+            html2canvas(container, { allowTaint: true }).then(function (canvas) {
+    
+                let link = document.createElement("a")
+                document.body.appendChild(link)
+                link.download = codigoBarra + "_barcode.jpg"
+    
+                link.href = canvas.toDataURL()
+                link.target = '_blank';
+                link.click()
+                link.download()            
+                // let image = new Image();
+                // image.src = canvas.toDataURL()
+    
+                // let w = window.open("", '_blank');
+                // w.document.write(image.outerHTML);
+                // w.document.close();
+            });               
+        })            
+        
+    }
+
+
 }
 
 /**

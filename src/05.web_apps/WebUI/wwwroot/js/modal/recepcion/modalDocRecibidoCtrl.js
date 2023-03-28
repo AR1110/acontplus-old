@@ -22,6 +22,7 @@ export class ModalHistoryComprasCtrl{
     }
 
     $onInit(){
+      
         this.getArticleHC();
     }
 

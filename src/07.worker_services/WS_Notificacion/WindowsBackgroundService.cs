@@ -1,4 +1,5 @@
 using BL.Notificacion;
+using BL.Reports;
 using Common.Logs;
 using DataAccess;
 using Domain.Models;
@@ -112,7 +113,11 @@ namespace WS_Notificacion
                             _db.AddDynamicParam("json", reportParams);
                             DataSet dsParams = _db.GetDataSet();
 
-                            bytesPdf = await _reports.Create(dsParams, spParams);
+                            await _db.SPExecute(dsParams.Tables[0].Rows[0]["storedProcedure"].ToString());
+                            _db.AddDynamicParam("json", spParams);
+                            DataSet ds = _db.GetDataSet();
+
+                            bytesPdf = _reports.ByteReport(dsParams, ds);
 
                             if (bytesPdf == null || bytesPdf.Length == 0)
                             {

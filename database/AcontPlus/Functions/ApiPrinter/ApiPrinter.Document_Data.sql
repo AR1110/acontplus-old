@@ -19,6 +19,7 @@ GO
 -- Author:		<Author,,Name>
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
+
 -- =============================================
 ALTER FUNCTION ApiPrinter.Document_Data 
 (
@@ -58,7 +59,11 @@ BEGIN
 		BEGIN
 			SET @header = (
 					SELECT 
-						 nroFactura = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,f.nroFactura) 
+					    codDoc = 'FV'
+						,nroDoc = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,f.nroFactura) 
+						,labelNroDoc = 'FACTURA Nro. '
+						,ambiente = IIF(pe.ambiente=2, 'PRODUCCIÓN', 'PRUEBAS')
+						,emision = IIF(f.emision=1, 'NORMAL', '')
 						,codigoAutorizacion = f.claveAcceso
 						,fechaEmision = CONVERT(NVARCHAR, FORMAT(f.fechaEmision, 'dd/MM/yyyy hh:mm'))  
 						,fechaVencimiento = CONVERT(NVARCHAR,FORMAT(f.fechaVencimiento, 'dd/MM/yyyy'))   
@@ -88,7 +93,7 @@ BEGIN
 						,propina = CAST(f.propina as numeric(15,2))  
 						,importeTotal = CAST(f.total as numeric(15,2)) 
 						,direccion = cl.direccion  
-						,telefono = cl.telefono 
+						,telefonoCliente = cl.telefono 
 						,email = cl.correo 
 						,valorTotal = CAST(f.total as numeric(15,2))
 						,regimen = UPPER(s.contribuyenteRimpe)
@@ -129,14 +134,17 @@ BEGIN
 	IF @codDoc = 'NE'
 		BEGIN
 			SET @header = (SELECT 
-							 nroDoc = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,ne.nroDocumento)			
+							
+							codDoc = 'NE'
+							,nroDoc = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,ne.nroDocumento)	
+							,labelNroDoc = 'NOTA DE ENTREGA Nro. '  
 							,tipoDoc = 'NOTA DE ENTREGA'
 							,razonSocial = e.razonSocial
 							,nombreComercial = s.nombreComercial
 							,ruc = e.ruc
 							,direccion = e.direccion 
 							,email = e.email 
-							,telefono = ISNULL(e.telefono, 'SN') 
+							,telefonoEntidad = ISNULL(e.telefono, 'SN') 
 							,fechaEmision = CONVERT(NVARCHAR, FORMAT(ne.fechaEmision, 'dd/MM/yyyy hh:mm')) 
 							,fechaVencimiento = CONVERT(NVARCHAR, FORMAT(ne.fechaVencimiento, 'dd/MM/yyyy hh:mm')) 
 							,s.dirEstablecimiento  
@@ -188,6 +196,71 @@ BEGIN
 						INNER JOIN dbo.Medida   m WITH (NOLOCK) ON m.idMedida   = ned.idMedida
 						INNER JOIN dbo.Articulo a WITH (NOLOCK) ON a.idArticulo = ned.idArticulo 
 						WHERE ned.idNotaEntrega = @idDocument AND ned.estado = 1 FOR JSON PATH)
+		END 
+
+	IF @codDoc ='PR'
+		BEGIN 
+			SET @header = (SELECT 
+								 
+								 codDoc = 'PR'
+								,idProforma = pr.idProforma
+								,nroDoc = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,pr.nroDocumento) 
+								,labelNroDoc = 'PROFORMA Nro. '  
+								,tipoDoc = UPPER(td.descripcion)+':'
+								,fechaEmision = dbo.AFTConvertDate(pr.fechaEmision)+dbo.AFTConvertHora(pr.fechaEmision)
+								,razonSocial = LTRIM(RTRIM(e.razonSocial)) 
+								,nombreComercial = s.nombreComercial
+								,ruc = e.ruc
+								,direccionEntidad = e.direccion
+								,telefonoEntidad = e.telefono  
+								,emailEntidad = e.email 	
+								,razonSocialCliente = cl.nombreFiscal
+								,nroIdentificacion = cl.numeroIdentificacion 
+								,direccionCliente = ISNULL(cl.direccion, '')
+								,correoCliente = ISNULL(cl.correo, '')
+								,telefonoCliente = ISNULL(cl.telefono, '')
+								,ciudadCliente = ISNULL(c.descripcion, 'S/N')
+								,subTotalNetoIva = CAST(pr.subTotalNetoIva AS numeric(15,2)) 
+								,subTotalIva12   =  CAST(pr.subTotalIva AS numeric(15,2)) 
+								,subTotalNoObjetoIva =  CAST(pr.subTotalNoObjetoIva AS numeric(15,2)) 
+								,subTotalIva0 =  CAST(pr.subTotalIvaCero AS numeric(15,2))
+								,subtotalExcentoIva = CAST(pr.subTotalExentoIva AS numeric(15,2))
+								,ice = CAST(pr.totalIce AS numeric(15,2)) 
+								,irbpnr = CAST(pr.irbpnr AS numeric(15,2))
+								,subTotalSinImpuestos = CAST(pr.subTotalSinImpuestos AS numeric(15,2)) 
+								,totalDescuentos = CAST(pr.totalDescuento AS numeric(15,2))
+								,iva12 = CAST(pr.iva AS numeric(15,2)) 
+								,propina = CAST(pr.propina AS numeric(15,2))  
+								,importeTotal = CAST(pr.total AS numeric(15,2))
+								,valorTotal = CAST(pr.total AS numeric(15,2))
+								,observacion = ISNULL(pr.observacion, 'S/N')		
+								,porcentajeIva = 'SUBTOTAL IVA '+CAST(CAST(pr.tarifa AS numeric(15,0)) AS nvarchar)+'%'
+								,tipoIva = 'IVA '+CAST(CAST(pr.tarifa AS numeric(15,0)) AS nvarchar)+'%'
+							FROM dbo.Proforma pr
+							INNER JOIN dbo.PuntoEmision       pe  ON pe.idPuntoEmision       = pr.idPuntoEmision 
+							INNER JOIN Sri.Establecimiento    s   ON s.codEstab              = pe.codEstab
+							INNER JOIN dbo.TipoDocumento      td  ON td.idTipoDocumento      = pr.idTipoDocumento
+							INNER JOIN dbo.Cliente            cl  ON cl.idCliente            = pr.idCliente
+							INNER JOIN dbo.TipoIdentificacion ti  ON ti.idTipoIdentificacion = cl.idTipoIdentificacion
+							 LEFT JOIN dbo.Ciudad             c   ON c.idCiudad              = cl.idCiudad
+							INNER JOIN dbo.Entidad            e   ON e.idEntidad             = pr.idEntidad
+							INNER JOIN dbo.TipoIva            tiv ON  tiv.idTipoIva          = pr.idTipoIva
+							WHERE pr.idProforma = @idDocument FOR JSON PATH  
+						)
+
+			 SET @detail = (SELECT 
+								 codigo = a.codigo
+								,cantidad = CAST(prd.cantidad as numeric(15,2)) 
+								,descripcion = prd.descripcion 
+								,precioUnitario = CAST(prd.precioUnitario as numeric(15,2))
+								,precioTotal = CAST(prd.total as numeric(15,2))
+								,valorDescuento =  CAST(prd.valorDescuento as numeric(15,2)) 
+								,medida = m.descripcion
+							FROM dbo.ProformaDetalle prd
+							LEFT JOIN dbo.Medida   m ON m.idMedida   = prd.idMedida
+							INNER JOIN dbo.Articulo a ON a.idArticulo = prd.idArticulo 
+							WHERE prd.idProforma = @idDocument --AND prd.estado = 1 
+							FOR JSON PATH)
 		END 
 
 	SET @dataSources = (SELECT encabezadoDs = @header, detalleDs = @detail FOR JSON PATH )

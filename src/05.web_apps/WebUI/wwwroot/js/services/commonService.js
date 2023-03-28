@@ -1402,9 +1402,24 @@ export class CommonService {
         }
     }
 
-    print(params) {
+    async print(params) {
         try {
-            let urlPrinter = (params[0].urlPrinter) ? params[0].urlPrinter + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + params[0].dataSources + '&rdlcParams=' + params[0].rdlcParams: __env.urlPrint + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + params[0].dataSources + '&rdlcParams=' + params[0].rdlcParams
+
+              
+            // console.log('init get name computer')           
+            // console.log('end get name computer')
+
+            // let response = await fetch(`${params[0].urlPrinter}?getMachine=true`);
+            // if (!response.ok) {
+            //   throw new Error('Network response was not ok');
+            // }
+            // const data = await response.json();
+            // console.log(data);
+
+            
+
+            let urlPrinter = (params[0].urlPrinter) ? params[0].urlPrinter + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + params[0].dataSources + '&rdlcParams=' + params[0].rdlcParams: __env.urlPrint + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + params[0].dataSources + '&rdlcParams=' + params[0].rdlcParams + '&getMachine=' + false;
+
             fetch(urlPrinter).then(function (response) {
                 if (response.ok) {
                     toastr.success('Impresion correcta!', '', { positionClass: 'toast-bottom-right', progressBar: true })
@@ -1444,10 +1459,10 @@ export class CommonService {
         // let urlApi = await this.$http.get('/ConnectionApiAdmin/GetUrl?typeUrl=' + typeUrl).then(({data:response})=>response)    
 
         //IP Local 
-        //urlApi = typeUrl == 1 ? "http://localhost:36779/" : "https://localhost:7224/";
+        urlApi = typeUrl == 1 ? "http://localhost:7166/" : "https://localhost:7166/";
 
         //IP Producción de Desarrollo 
-        urlApi = typeUrl == 1 ? "http://205.209.99.71:8090/" : "http://206.72.196.229:83/";
+        //urlApi = typeUrl == 1 ? "http://205.209.99.71:8090/" : "http://206.72.196.229:83/";
 
 
         //IP Producción

@@ -19,7 +19,7 @@ GO
 -- Create date: 2022-07-31
 -- Description:	SP PARA LISTAR LOS COMPROBANTES ELECTRONICOS DEL SRI IMPORTADOS
 -- =============================================
---Recepcion.Documento_Get 38, '{"orderBy":"","sortBy":"","limit":10,"page":1,"codDoc":"01"}'
+--Recepcion.Documento_Get 44, '{"orderBy":"","sortBy":"","limit":10,"page":1,"codDoc":"04", "tipo": 3}'
 IF OBJECT_ID(N'Recepcion.Documento_Get ', N'P') IS NOT NULL
 DROP PROCEDURE Recepcion.Documento_Get 
 GO
@@ -41,6 +41,9 @@ BEGIN
 	DECLARE @startDate DATETIME
 	DECLARE @endDate DATETIME
 	DECLARE @tipo VARCHAR(1)
+
+	DECLARE @claveAcceso VARCHAR(50)
+	DECLARE @idDocumento INT 
 	--SET @@pageNumber=2
 	--SET @@pageNumber=4 
 
@@ -48,6 +51,9 @@ BEGIN
 	SELECT @codDoc = codDoc, @startDate = startDate
 	, @endDate = endDate 
 	, @tipo = tipo --, @PageNumber = pageNumber, @rowsOfPage = limit, @orderBy= orderBy, @sortBy = sortBy
+	,@claveAcceso = claveAcceso 
+	,@idDocumento = idDocumento
+	,@codEstab = codEstab
 	FROM OPENJSON(@JSON) WITH(limit INT '$.limit'
 							,pageNumber INT '$.page' 
 							,orderBy VARCHAR(5) '$.orderBy'
@@ -56,10 +62,13 @@ BEGIN
 							,startDate DATETIME '$.startDate'
 							,endDate DATETIME '$.endDate'
 							,tipo VARCHAR(1) '$.tipo'
+							,idDocumento INT '$.idDocumento'
+							,claveAcceso VARCHAR(50) '$.claveAcceso'
+							,codEstab VARCHAR(50) '$.codEstab'
 							)
 	SELECT @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 
-	SELECT @codEstab = codEstab FROM Config.Estab_Asig WHERE idUsuarioRol = @idRol AND predeterminado = 1
+	--SELECT @codEstab = codEstab FROM Config.Estab_Asig WHERE idUsuarioRol = @idRol AND predeterminado = 1
 
 
 	IF @tipo = '1'
@@ -80,6 +89,47 @@ BEGIN
 			SELECT * FROM Medida WHERE idEntidad = @idEntidad
 			RETURN
 		END
+
+
+	--Documento Relacionado 
+	IF @tipo = 3
+		BEGIN 
+			IF @codDoc='04'
+				BEGIN 
+					SELECT comprobante, serieComprobante, rucEmisor, razonSocialEmisior, fechaEmision, claveAcceso, importeTotal from (
+							SELECT 
+								comprobante,
+								serieComprobante,
+								rucEmisor, 
+								razonSocialEmisior,
+								fechaEmision,
+								claveAcceso,
+								importeTotal,
+								Replace(serieComprobante, '-', '') AS numDocSustento
+								FROM Recepcion.DocumentoRecibido
+						) t
+						WHERE t.numDocSustento = (SELECT numDocSustento FROM FactElect.DocRelacionado WITH(NOLOCK) WHERE codDocSustento = '01' AND idDocumentoRecibido = @idDocumento )
+				END 
+
+			IF @codDoc = '01'
+				BEGIN 
+					SELECT 
+						comprobante = 'Retención',
+						serieComprobante = rAts.estab + rAts.ptoEmi + Helper.F_Auto_Sequential(rAts.secuencial),
+						rucEmisor = rAts.identificacionSujetoRetenido,
+						razonSocialEmisior = rAts.razonSocialSujetoRetenido,
+						fechaEmision = CONVERT(NVARCHAR,FORMAT(rAts.fechaEmision, 'dd/MM/yyyy HH:mm')),
+						rAts.claveAcceso,
+						importeTotal= 0
+					FROM FactElect.RetAtsDocSustento retDoc
+					INNER JOIN FactElect.RetencionAts rAts
+					ON rAts.idRetencionAts = retDoc.idRetencionAts
+					WHERE retDoc.numAutDocSustento = @claveAcceso
+				END 
+
+			RETURN
+		END 
+
 
 
 	IF LEN(@codDoc) > 1
@@ -147,5 +197,9 @@ BEGIN
 	--CASE WHEN @sortBy = 'razonSocialEmisior' AND @orderBy = 'DESC' THEN razonSocialEmisior END DESC 
 	--OFFSET (@pageNumber-1)*@rowsOfPage ROWS
 	--FETCH NEXT @rowsOfPage ROWS ONLY
+
+
+	
+
 END
 GO

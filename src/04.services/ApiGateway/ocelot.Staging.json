@@ -75,12 +75,12 @@
           "Port": 8096
         }
       ],
-      "DownstreamPathTemplate": "/api/DocumentoRecibido",
+      "DownstreamPathTemplate": "/api/DocumentoRecibido/{jsonData}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Post"
       ],
-      "UpstreamPathTemplate": "/api/DocumentoRecibido"
+      "UpstreamPathTemplate": "/api/DocumentoRecibido/{jsonData}"
     },
     {
       "AuthenticationOptions": {
@@ -167,6 +167,25 @@
         "Put"
       ],
       "UpstreamPathTemplate": "/api/Doc_Rec_DetailTemp?json={json}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 8096
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Articulo?json={json}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "UpstreamPathTemplate": "/api/Articulo?json={json}"
     },
     {
       "AuthenticationOptions": {
