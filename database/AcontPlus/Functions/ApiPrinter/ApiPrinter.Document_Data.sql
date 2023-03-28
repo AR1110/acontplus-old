@@ -120,7 +120,7 @@ BEGIN
 		SET @detail = (
 						SELECT 
 							 codigo         = a.codigo 
-							,descripcion    = fd.descripcion 
+							,descripcion    = REPLACE(fd.descripcion, '#', '%23')
 							,medida         = me.descripcion
 							,cantidad       = CAST(fd.cantidad as numeric(15,2))
 							,precioUnitario = CAST(fd.precioVenta as numeric(15,2))
