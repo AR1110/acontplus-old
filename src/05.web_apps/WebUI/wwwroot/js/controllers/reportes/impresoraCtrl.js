@@ -9,6 +9,9 @@ function impresoraCtrl($scope, _commonSvc, mS, tS) {
 
     $scope.disabledInputIpMaquina = false;
 
+    $scope.isDisabledAsigEquipo = true;
+    $scope.data.asignar = true
+
     $scope.initialLoad = () => {
         mS.getData('get','/Impresora/Get?json=' + JSON.stringify({ tipo: 1 })).then(response => {
             $scope.printers = [];
@@ -45,7 +48,7 @@ function impresoraCtrl($scope, _commonSvc, mS, tS) {
     $scope.onChangeIsServer = ()=>{
      
         if($scope.data.isServer){
-            $scope.data.ipMaquina = '127.0.0.1:8000';
+            $scope.data.ipMaquina = '127.0.0.1:9100';
             $scope.disabledInputIpMaquina = true;
         }else{
             $scope.disabledInputIpMaquina = false;
@@ -101,19 +104,19 @@ function impresoraCtrl($scope, _commonSvc, mS, tS) {
                     return
                 }
 
-                if (!$scope.data.nroIdentificacion){
-                    tS.toastr('warning', 'Escriba el Nro de identificación')
-                    return
-                }
+                // if (!$scope.data.nroIdentificacion){
+                //     tS.toastr('warning', 'Escriba el Nro de identificación')
+                //     return
+                // }
 
-                if ($scope.data.nroIdentificacion.length != 10){
-                    tS.toastr('warning', 'El Nro de cedula debe ser de 10 caractares')
-                    return
-                }
+                // if ($scope.data.nroIdentificacion.length != 10){
+                //     tS.toastr('warning', 'El Nro de cedula debe ser de 10 caractares')
+                //     return
+                // }
             }
 
             if($scope.data.isServer){
-                $scope.data.ipMaquina='127.0.0.1:8000'
+                $scope.data.ipMaquina='127.0.0.1:9100'
             }
 
             if(!$scope.data.ipMaquina){

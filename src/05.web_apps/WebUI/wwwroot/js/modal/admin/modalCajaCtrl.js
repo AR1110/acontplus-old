@@ -619,8 +619,8 @@ export class ModalCierreCajaCtrl{
                 if(response.code==="1"){
                     let dataMail = JSON.parse(response.payload) || {};
                     toastr.success(response.message, response.titleSms);
-                    
-                    console.log(!dataMail.receptor)
+                    this.$uibModalInstance.close(response)
+                  
                     if(dataMail.receptor){
                         this.sendEmail(dataMail)
                     }
@@ -644,6 +644,7 @@ export class ModalCierreCajaCtrl{
                 hasFile: true, 
                 isReport: "SI", 
                 reportParams: {
+                    hasParams: true,
                     codEstab: dataMail.codEstab, 
                     codigo: "RCC", 
                     format: "pdf"

@@ -139,7 +139,7 @@
                                 <div class="form-group">
                                     <label for="">Asignar Equipo</label>
                                     <div class="icheck-info">
-                                        <input type="checkbox" id="asignarEquipo" ng-model="data.asignar" ng-change="clearNameEquipment()" />
+                                        <input type="checkbox" id="asignarEquipo" ng-model="data.asignar" ng-disabled="isDisabledAsigEquipo" ng-change="clearNameEquipment()" />
                                         <label for="asignarEquipo"></label>
                                     </div>
                                 </div>
@@ -153,13 +153,6 @@
                                 </div>
                             </div>
 
-                            <div ng-if="data.asignar" class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
-                                <div class="form-group">
-                                    <label for="identificacion">C.I: del Usuario <span class="text-danger">*</span> </label>
-                                    <input type="text" id="identificacion" class="form-control border-select"
-                                           valid-number ng-model="data.nroIdentificacion" placeholder="2200386874">
-                                </div>
-                            </div>
                         </div>
 
                         <div class="row">
@@ -176,7 +169,7 @@
                             <div class="col-xl-4 colg-4 col-md-6 col-sm-12 col-xs-12">
                                 <div class="form-group">
                                     <label for="isServer">IP Máquina: <span class="text-info"></span></label>
-                                    <input type="text" class="form-control border-select" ng-model="data.ipMaquina"  placeholder="192.62.1.8:8000"   ng-disabled="disabledInputIpMaquina">
+                                    <input type="text" class="form-control border-select" ng-model="data.ipMaquina"  placeholder="127.0.0.1:9100"   ng-disabled="disabledInputIpMaquina">
                                 </div>
                             </div>
                             <div class="col-xl-4 colg-4 col-md-6 col-sm-12 col-xs-12">                                 
