@@ -90,11 +90,6 @@
                     "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
                     "ProductCode" = "8:.NETFramework,Version=v4.7.2"
                     }
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.NetCore.DesktopRuntime.6.0.x64"
-                    {
-                    "Name" = "8:.NET Desktop Runtime 6.0.15 (x64)"
-                    "ProductCode" = "8:Microsoft.NetCore.DesktopRuntime.6.0.x64"
-                    }
                     "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.NetCore.DesktopRuntime.6.0.x86"
                     {
                     "Name" = "8:.NET Desktop Runtime 6.0.15 (x86)"
@@ -209,15 +204,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:AcontplusPrint"
-        "ProductCode" = "8:{4F1A417B-B65E-4E81-8ABD-ACBD8519F7EA}"
-        "PackageCode" = "8:{82864758-9B12-4C6D-A27B-6A70108C64B4}"
+        "ProductCode" = "8:{DC028B0B-E6C7-4BE5-82B5-B62BB22D42CC}"
+        "PackageCode" = "8:{B7809987-19EB-4C75-B6D6-CCFEE46CCDA1}"
         "UpgradeCode" = "8:{4C769266-369C-4EA0-A387-4B25C0D7E8E7}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:1.0.6"
+        "ProductVersion" = "8:1.0.7"
         "Manufacturer" = "8:Acontplus"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
