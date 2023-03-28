@@ -28,7 +28,7 @@
                     <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
                         <div class="icheck-info">
                             <input type="checkbox" ng-change="onChangeSucursalFiltro()" ng-model="dataSearch.checkboxSucursalFiltro" name="checkboxSucursalFiltro" id="checkboxSucursalFiltro">
-                            <label for="checkboxSucursalFiltro">Sucursal</label>
+                            <label for="checkboxSucursalFiltro">Estab.:</label>
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
@@ -100,7 +100,7 @@
                 <div class="row">
                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" ng-if="dataSearch.checkboxSucursalFiltro ">
                         <div class="form-group">
-                            <label for="sucursal">Sucursal</label>
+                            <label for="sucursal">Estab.:</label>
                             <select class="form-control" ng-model="dataSearch.codEstab" ng-change="getAsignacionByRol()">
                                 <option ng-value="item.codEstab" ng-repeat="item in sucursales">{{item.nombreComercial}}</option>
                             </select>
@@ -230,7 +230,7 @@
                                 <option value="lc.nroDocumento" ng-if="dataSearch.tipoDoc=='LC'">Nro Liquidacion Compra</option>                               
                                 <option value="ncp.nroDoc" ng-if="dataSearch.tipoDoc=='NCP'">Nro Nota Crédito</option>                               
                                 <option value="rc.nroDocumento" ng-if="dataSearch.tipoDoc=='RC'">Nro Retencion</option>
-                                <option value="ib.nroDocumento" ng-if="dataSearch.tipoDoc=='IB'">Nro Ingreso Bodega</option>
+                                <option value="nroDocumento" ng-if="dataSearch.tipoDoc=='IB'">Nro Ingreso Bodega</option>
                                 <option value="oc.nroDocumento" ng-if="dataSearch.tipoDoc=='OC'">Nro Orden Compra</option>
 
                                 <!--Fechas -->
@@ -238,7 +238,7 @@
                                 <option value="lc.fechaEmision" ng-if="dataSearch.tipoDoc=='LC'">Fecha Emisión</option>
                                 <option value="ncp.fechaEmision" ng-if="dataSearch.tipoDoc=='NCP'">Fecha Emisión</option>
                                 <option value="rc.fechaEmision" ng-if="dataSearch.tipoDoc=='RC'">Fecha Emisión</option>
-                                <option value="ib.fechaEmision" ng-if="dataSearch.tipoDoc=='IB'">Fecha Emisión</option>
+                                <option value="fechaEmision" ng-if="dataSearch.tipoDoc=='IB'">Fecha Emisión</option>
                                 <option value="oc.fechaEmision" ng-if="dataSearch.tipoDoc=='OC'">Fecha Emisión</option>
                                 <option value="prov.idProveedor">Proveedor</option>
                             </select>

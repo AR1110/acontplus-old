@@ -22,7 +22,33 @@ class MdArticuloCtrl{
         
         this.$scope.$on("editArticulo", (e, itemArticulo)=>{
             this.openModalArticulo(itemArticulo)
-        })          
+        })  
+        
+        
+        this.$timeout(()=>{
+            let inputBarcode = $("#inputBarcode");
+            let inputMdAutocomplete = $("#custom-template-md-autocomplete-articulo")
+
+            console.log('init')
+            inputMdAutocomplete.on('keyup', e=>{
+                console.log(e.keyCode)
+                if (e.key === '' || e.keyCode === 32) {
+
+                        inputBarcode.hide();
+                       
+                }
+            })
+
+            inputBarcode.on('keyup', e=>{
+                if (e.key === '' || e.keyCode === 32) {
+
+                        inputMdAutocomplete.hide();
+                    
+                }
+            })
+
+            inputBarcode.hide();
+        })
     }
 
 
@@ -68,12 +94,15 @@ class MdArticuloCtrl{
     
 
     getDynamicSearchArticles(){  
-        
+        console.log('init')
         let json =  {
             busqueda: this._commonSvc.removeAccents(this.searchText),
             condicion: false,
             fraccionado: false,
         }
+
+        if(json.busqueda.length<3) return []
+
 
         return this.$http.get('/Articulo/Search?json=' + JSON.stringify(json)).then(response=>{
             console.log(response)

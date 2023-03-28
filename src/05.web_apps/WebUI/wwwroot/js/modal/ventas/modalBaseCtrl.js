@@ -897,7 +897,7 @@ export class ModalBaseCtrl{
     focusColumnCantidad(entity={}) {
         let self = this, index = 0;
 
-        if(entity.llevaInventario){
+        if(self.dataArticulo.articulo.llevaInventario){
             index = self.gridOptions.columnDefs.findIndex(item=>item.field==='cantidad')
         }else{
             index = self.gridOptions.columnDefs.findIndex(item=>item.field==='descripcion')
@@ -1085,11 +1085,8 @@ export class ModalBaseCtrl{
             
         }       
         
-        console.log(self.uiGridInvoice.getTotales())
         self.data = {...self.data, ...self.uiGridInvoice.getTotales()}
-
       
-        console.log(self.data)        
     }
 
 
