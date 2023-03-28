@@ -56,16 +56,18 @@ namespace BL.Reports
                     //    }
                     //}
                     //lr.SetParameters(p);
-
-                    foreach (DataRow item in dsParams.Tables[2].Rows)
+                    if (dsParams.Tables[2].Rows.Count > 0)
                     {
-                        if (Convert.ToBoolean(item["isByte"]))
+                        foreach (DataRow item in dsParams.Tables[2].Rows)
                         {
-                            lr.SetParameters(new[] { new ReportParameter(item["paramName"].ToString(), Helpers.FileExtensions.GetBase64FromByte((byte[])item["paramByte"])) });
-                        }
-                        else
-                        {
-                            lr.SetParameters(new[] { new ReportParameter(item["paramName"].ToString(), item["paramValue"].ToString()) });
+                            if (Convert.ToBoolean(item["isByte"]))
+                            {
+                                lr.SetParameters(new[] { new ReportParameter(item["paramName"].ToString(), Helpers.FileExtensions.GetBase64FromByte((byte[])item["paramByte"])) });
+                            }
+                            else
+                            {
+                                lr.SetParameters(new[] { new ReportParameter(item["paramName"].ToString(), item["paramValue"].ToString()) });
+                            }
                         }
                     }
                 }
