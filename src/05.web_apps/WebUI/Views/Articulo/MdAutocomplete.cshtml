@@ -57,8 +57,8 @@
 
 
 @* <div ng-submit="$event.preventDefault()">         *@
-    <div class="mb-1">        
-        <md-autocomplete 
+    <div class="mb-1" id="">        
+        <md-autocomplete id="mainContentMdAutocomplete"
         input-focus
         md-input-id="custom-template-md-autocomplete-articulo"
         uib-tooltip="Buscar Artículo por descripción o Código "
@@ -150,7 +150,7 @@
 
         
        
-        <input type="text" class="form-control border-select" ng-model="inputByCorde"  ng-enter="$ctrl.getArticuloByCode();"     id="inputBarcode" placeholder="Ingrese el código de barra">
+        <input type="text" class="form-control border-select" ng-model="$ctrl.inputByCorde"  ng-enter="$ctrl.getDataArticuloByEnterCode();"     id="inputBarcode" placeholder="Ingrese el código de barra">
        
 
         <a href="javascript:void(0)" class="btn btn-success btn-xs mt-1" ng-click="$ctrl.openModalArticulo()">
