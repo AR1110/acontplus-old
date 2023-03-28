@@ -202,16 +202,15 @@ BEGIN
 					AND c.estado = 1 AND ep.codigo !='PA'
 				END 							 
 			END
-			
-
-
 
 		--Forma Pago
 		IF @tipo = 3
 			BEGIN
 				
 				SET @idProveedor = (SELECT idProveedor FROM OPENJSON(@json)WITH(idProveedor INT '$.idProveedor'))
-				DECLARE @rucEmisor  VARCHAR(13)
+				DECLARE @rucEmisor  VARCHAR(15)
+				DECLARE @identificacionReceptor VARCHAR(13)
+				DECLARE @cedula VARCHAR(10)
 				DECLARE @table AS TABLE
 				(
 					idComprobante BIGINT 
@@ -227,10 +226,15 @@ BEGIN
 					,codDoc VARCHAR(5)
 				)
 
+				SELECT TOP 1 @rucEmisor = numeroIdentificacion FROM Proveedor WITH (NOLOCK) WHERE idProveedor = @idProveedor
+
+				SELECT TOP 1 @identificacionReceptor = ruc , @cedula = ruc FROM Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
+				
 				SELECT * FROM EntidadFinanciera WHERE estado = 1
 				SELECT * FROM SubEntidadFinanciera WHERE idEntidad = @idEntidad AND estado = 1
 				SELECT * FROM Banco WHERE estado = 1
 				SELECT * FROM Ciudad WHERE estado = 1
+
 
 				INSERT INTO @pagoDocuments(idComprobante,codDoc)
 				SELECT p.idComprobante,td.codigoSri FROM Pago p WITH (NOLOCK) 
@@ -267,7 +271,7 @@ BEGIN
 				  AND de.versionComp = '2.0.0'
 				  AND de.codEstado = 4
 				  AND de.idEntidad = @idEntidad
-				  AND de.numeroIdentificacion = (SELECT TOP 1 numeroIdentificacion FROM dbo.Proveedor WITH (NOLOCK) WHERE idProveedor = @idProveedor)
+				  AND de.numeroIdentificacion = @rucEmisor
 				  AND de.idDocumentoElectronico NOT IN (SELECT idComprobante FROM @pagoDocuments t WHERE t.codDoc = '07')
 
 
@@ -281,10 +285,24 @@ BEGIN
 				FROM factelect.DocRelacionado d
 				INNER JOIN Recepcion.DocumentoRecibido dr ON dr.idDocumento = d.idDocumentoRecibido
 				WHERE dr.codDoc = '04' 
-				  AND dr.identificacionReceptor = (SELECT TOP 1 numeroIdentificacion FROM dbo.Proveedor WITH (NOLOCK) WHERE idProveedor = @idProveedor)
+				  AND dr.identificacionReceptor = @identificacionReceptor
 				  AND dr.rucEmisor = @rucEmisor 
 				  AND d.idDocRelacionado NOT IN (SELECT idComprobante FROM @pagoDocuments t WHERE t.codDoc = '04')
 
+
+				INSERT INTO @table (idComprobante,idTipoDocumento,nroDocumento,saldo,tipoDocumento)
+				SELECT 
+					 d.idDocRelacionado
+					,idTipoDocumento = (SELECT TOP 1 idTipoDocumento FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo = 'NC')
+					,dr.serieComprobante
+					,saldo = d.valorRetenido
+					,codDoc = 'Nota Crédito Version:'+dr.versionComp
+				FROM factelect.DocRelacionado d
+				INNER JOIN Recepcion.DocumentoRecibido dr ON dr.idDocumento = d.idDocumentoRecibido
+				WHERE dr.codDoc = '04' 
+				  AND dr.identificacionReceptor = @cedula
+				  AND dr.rucEmisor = @rucEmisor 
+				  AND d.idDocRelacionado NOT IN (SELECT idComprobante FROM @pagoDocuments t WHERE t.codDoc = '04')
 				SELECT * FROM @table
 
 				
@@ -308,9 +326,6 @@ BEGIN
 				WHERE hp.idCuentaPorPagar = @idCuentaPorPagar
 
 			END 
-
-			
-		
 		
 END
 GO
