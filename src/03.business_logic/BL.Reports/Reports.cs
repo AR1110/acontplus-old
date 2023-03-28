@@ -1,4 +1,5 @@
-﻿using Domain.Config.Dtos;
+﻿using Common.Logs;
+using Domain.Config.Dtos;
 using Domain.Dtos;
 using Helpers;
 using Microsoft.Extensions.Configuration;

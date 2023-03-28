@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Security;
 
-namespace Helpers
+namespace Common.Logs
 {
     public static class EventsLogs
     {

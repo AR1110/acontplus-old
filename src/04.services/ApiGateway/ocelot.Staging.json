@@ -1,679 +1,719 @@
 {
-  "GlobalConfiguration": {
-    "BaseUrl": "http://205.209.99.71:8093/",
-    "RateLimitOptions": {
-      "ClientIdHeader": "Test",
-      "ClientWhitelist": [
-      ],
-      "DisableRateLimitHeaders": false,
-      "EnableRateLimiting": true,
-      "httptatusCode": 999,
-      "Limit": 1,
-      "Period": "60s",
-      "PeriodTimespan": 1,
-      "QuotaExceededMessage": "Request not allowed"
+    "GlobalConfiguration": {
+        "BaseUrl": "http://205.209.99.71:8093/",
+        "RateLimitOptions": {
+            "ClientIdHeader": "Test",
+            "ClientWhitelist": [
+            ],
+            "DisableRateLimitHeaders": false,
+            "EnableRateLimiting": true,
+            "httptatusCode": 999,
+            "Limit": 1,
+            "Period": "60s",
+            "PeriodTimespan": 1,
+            "QuotaExceededMessage": "Request not allowed"
+        },
+        "RequestIdKey": "OcRequestId"
     },
-    "RequestIdKey": "OcRequestId"
-  },
-  "Routes": [
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
+    "Routes": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8091
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Reporte/Download",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Post"
-      ],
-      "UpstreamPathTemplate": "/api/Reporte/Download"
-    },
-    {
-      "DownstreamHostAndPorts": [
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8091
+                }
+            ],
+            "DownstreamPathTemplate": "/api/Reporte/Download",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Post"
+            ],
+            "UpstreamPathTemplate": "/api/Reporte/Download"
+        },
         {
-          "Host": "205.209.99.71",
-          "Port": 8091
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Reporte/DynamicReport",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Post"
-      ],
-      "UpstreamPathTemplate": "/api/Reporte/DynamicReport"
-    },
-    {
-      "DownstreamHostAndPorts": [
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8091
+                }
+            ],
+            "DownstreamPathTemplate": "/api/Reporte/DynamicReport",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Post"
+            ],
+            "UpstreamPathTemplate": "/api/Reporte/DynamicReport"
+        },
         {
-          "Host": "205.209.99.71",
-          "Port": 8094
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Account",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Post"
-      ],
-      "UpstreamPathTemplate": "/api/Account"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8094
+                }
+            ],
+            "DownstreamPathTemplate": "/api/Account",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Post"
+            ],
+            "UpstreamPathTemplate": "/api/Account"
+        },
         {
-          "Host": "205.209.99.71",
-          "Port": 8096
-        }
-      ],
-      "DownstreamPathTemplate": "/api/DocumentoRecibido/{jsonData}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Post"
-      ],
-      "UpstreamPathTemplate": "/api/DocumentoRecibido/{jsonData}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8096
+                }
+            ],
+            "DownstreamPathTemplate": "/api/DocumentoRecibido/{jsonData}",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Post"
+            ],
+            "UpstreamPathTemplate": "/api/DocumentoRecibido/{jsonData}"
+        },
         {
-          "Host": "205.209.99.71",
-          "Port": 8096
-        }
-      ],
-      "DownstreamPathTemplate": "/api/DocumentoRecibido/{everything}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Get",
-        "Put",
-        "Delete",
-        "Options"
-      ],
-      "UpstreamPathTemplate": "/api/DocumentoRecibido/{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8096
+                }
+            ],
+            "DownstreamPathTemplate": "/api/DocumentoRecibido/{everything}",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Get",
+                "Put",
+                "Delete",
+                "Options"
+            ],
+            "UpstreamPathTemplate": "/api/DocumentoRecibido/{everything}"
+        },
         {
-          "Host": "205.209.99.71",
-          "Port": 8096
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Proveedor/{everything}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Get",
-        "Post",
-        "Put",
-        "Delete",
-        "Options"
-      ],
-      "UpstreamPathTemplate": "/api/Proveedor/{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8096
+                }
+            ],
+            "DownstreamPathTemplate": "/api/Proveedor/{everything}",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Get",
+                "Post",
+                "Put",
+                "Delete",
+                "Options"
+            ],
+            "UpstreamPathTemplate": "/api/Proveedor/{everything}"
+        },
         {
-          "Host": "205.209.99.71",
-          "Port": 8096
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Doc_Rec_DetailTemp/{everything}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Get",
-        "Delete",
-        "Options"
-      ],
-      "UpstreamPathTemplate": "/api/Doc_Rec_DetailTemp/{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8096
+                }
+            ],
+            "DownstreamPathTemplate": "/api/Doc_Rec_DetailTemp/{everything}",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Get",
+                "Delete",
+                "Options"
+            ],
+            "UpstreamPathTemplate": "/api/Doc_Rec_DetailTemp/{everything}"
+        },
         {
-          "Host": "205.209.99.71",
-          "Port": 8096
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Doc_Rec_DetailTemp?json={json}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Post",
-        "Put"
-      ],
-      "UpstreamPathTemplate": "/api/Doc_Rec_DetailTemp?json={json}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8096
+                }
+            ],
+            "DownstreamPathTemplate": "/api/Doc_Rec_DetailTemp?json={json}",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Post",
+                "Put"
+            ],
+            "UpstreamPathTemplate": "/api/Doc_Rec_DetailTemp?json={json}"
+        },
         {
-          "Host": "205.209.99.71",
-          "Port": 8096
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Articulo?json={json}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Get"
-      ],
-      "UpstreamPathTemplate": "/api/Articulo?json={json}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8096
+                }
+            ],
+            "DownstreamPathTemplate": "/api/Articulo?json={json}",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Get"
+            ],
+            "UpstreamPathTemplate": "/api/Articulo?json={json}"
+        },
         {
-          "Host": "205.209.99.71",
-          "Port": 8096
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Articulo/{everything}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Get",
-        "Post",
-        "Put",
-        "Delete",
-        "Options"
-      ],
-      "UpstreamPathTemplate": "/api/Articulo/{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8096
+                }
+            ],
+            "DownstreamPathTemplate": "/api/Articulo/{everything}",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Get",
+                "Post",
+                "Put",
+                "Delete",
+                "Options"
+            ],
+            "UpstreamPathTemplate": "/api/Articulo/{everything}"
+        },
         {
-          "Host": "205.209.99.71",
-          "Port": 8096
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Factura/{everything}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Get",
-        "Delete",
-        "Options"
-      ],
-      "UpstreamPathTemplate": "/api/Factura/{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8096
+                }
+            ],
+            "DownstreamPathTemplate": "/api/Factura/{everything}",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Get",
+                "Delete",
+                "Options"
+            ],
+            "UpstreamPathTemplate": "/api/Factura/{everything}"
+        },
         {
-          "Host": "205.209.99.71",
-          "Port": 8096
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Factura?json={json}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Post",
-        "Put"
-      ],
-      "UpstreamPathTemplate": "/api/Factura?json={json}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8096
+                }
+            ],
+            "DownstreamPathTemplate": "/api/Factura?json={json}",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Post",
+                "Put"
+            ],
+            "UpstreamPathTemplate": "/api/Factura?json={json}"
+        },
         {
-          "Host": "205.209.99.71",
-          "Port": 8096
-        }
-      ],
-      "DownstreamPathTemplate": "/api/DocumentoDetalle/{everything}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Post",
-        "Put"
-      ],
-      "UpstreamPathTemplate": "/api/DocumentoDetalle/{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8096
+                }
+            ],
+            "DownstreamPathTemplate": "/api/DocumentoDetalle/{everything}",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Post",
+                "Put"
+            ],
+            "UpstreamPathTemplate": "/api/DocumentoDetalle/{everything}"
+        },
         {
-          "Host": "205.209.99.71",
-          "Port": 8096
-        }
-      ],
-      "DownstreamPathTemplate": "/api/DocumentoDetalle/{id}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Delete"
-      ],
-      "UpstreamPathTemplate": "/api/DocumentoDetalle/{id}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8096
+                }
+            ],
+            "DownstreamPathTemplate": "/api/DocumentoDetalle/{id}",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Delete"
+            ],
+            "UpstreamPathTemplate": "/api/DocumentoDetalle/{id}"
+        },
         {
-          "Host": "205.209.99.71",
-          "Port": 8097
-        }
-      ],
-      "DownstreamPathTemplate": "/api/DocumentoElectronico/{everything}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Get",
-        "Put",
-        "Delete",
-        "Options"
-      ],
-      "UpstreamPathTemplate": "/api/DocumentoElectronico/{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8097
+                }
+            ],
+            "DownstreamPathTemplate": "/api/DocumentoElectronico/{everything}",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Get",
+                "Put",
+                "Delete",
+                "Options"
+            ],
+            "UpstreamPathTemplate": "/api/DocumentoElectronico/{everything}"
+        },
         {
-          "Host": "205.209.99.71",
-          "Port": 8097
-        }
-      ],
-      "DownstreamPathTemplate": "/api/DocumentoElectronico/GetDataForm",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Get"
-      ],
-      "UpstreamPathTemplate": "/api/DocumentoElectronico/GetDataForm"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8097
+                }
+            ],
+            "DownstreamPathTemplate": "/api/DocumentoElectronico/GetDataForm",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Get"
+            ],
+            "UpstreamPathTemplate": "/api/DocumentoElectronico/GetDataForm"
+        },
         {
-          "Host": "205.209.99.71",
-          "Port": 8097
-        }
-      ],
-      "DownstreamPathTemplate": "/api/RetencionAts/{everything}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Get",
-        "Put",
-        "Delete",
-        "Options"
-      ],
-      "UpstreamPathTemplate": "/api/RetencionAts/{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8097
+                }
+            ],
+            "DownstreamPathTemplate": "/api/RetencionAts/{everything}",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Get",
+                "Put",
+                "Delete",
+                "Options"
+            ],
+            "UpstreamPathTemplate": "/api/RetencionAts/{everything}"
+        },
         {
-          "Host": "205.209.99.71",
-          "Port": 8097
-        }
-      ],
-      "DownstreamPathTemplate": "/api/RetencionAts",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Post"
-      ],
-      "UpstreamPathTemplate": "/api/RetencionAts"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8097
+                }
+            ],
+            "DownstreamPathTemplate": "/api/RetencionAts",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Post"
+            ],
+            "UpstreamPathTemplate": "/api/RetencionAts"
+        },
         {
-          "Host": "205.209.99.71",
-          "Port": 8097
-        }
-      ],
-      "DownstreamPathTemplate": "/api/DocSustento{everything}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Post",
-        "Put",
-        "Delete"
-      ],
-      "UpstreamPathTemplate": "/api/DocSustento{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8097
+                }
+            ],
+            "DownstreamPathTemplate": "/api/DocSustento{everything}",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Post",
+                "Put",
+                "Delete"
+            ],
+            "UpstreamPathTemplate": "/api/DocSustento{everything}"
+        },
         {
-          "Host": "205.209.99.71",
-          "Port": 8097
-        }
-      ],
-      "DownstreamPathTemplate": "/api/DocSustImpuesto{everything}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Post",
-        "Put",
-        "Delete"
-      ],
-      "UpstreamPathTemplate": "/api/DocSustImpuesto{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8097
+                }
+            ],
+            "DownstreamPathTemplate": "/api/DocSustImpuesto{everything}",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Post",
+                "Put",
+                "Delete"
+            ],
+            "UpstreamPathTemplate": "/api/DocSustImpuesto{everything}"
+        },
         {
-          "Host": "205.209.99.71",
-          "Port": 8097
-        }
-      ],
-      "DownstreamPathTemplate": "/api/DocSustPago{everything}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Post",
-        "Put",
-        "Delete"
-      ],
-      "UpstreamPathTemplate": "/api/DocSustPago{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8097
+                }
+            ],
+            "DownstreamPathTemplate": "/api/DocSustPago{everything}",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Post",
+                "Put",
+                "Delete"
+            ],
+            "UpstreamPathTemplate": "/api/DocSustPago{everything}"
+        },
         {
-          "Host": "205.209.99.71",
-          "Port": 8097
-        }
-      ],
-      "DownstreamPathTemplate": "/api/DocSustRetencion{everything}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Post",
-        "Put",
-        "Delete"
-      ],
-      "UpstreamPathTemplate": "/api/DocSustRetencion{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8097
+                }
+            ],
+            "DownstreamPathTemplate": "/api/DocSustRetencion{everything}",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Post",
+                "Put",
+                "Delete"
+            ],
+            "UpstreamPathTemplate": "/api/DocSustRetencion{everything}"
+        },
         {
-          "Host": "205.209.99.71",
-          "Port": 8097
-        }
-      ],
-      "DownstreamPathTemplate": "/api/RetAtsInfoAdicional/{everything}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Get",
-        "Post"
-      ],
-      "UpstreamPathTemplate": "/api/RetAtsInfoAdicional/{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8097
+                }
+            ],
+            "DownstreamPathTemplate": "/api/RetAtsInfoAdicional/{everything}",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Get",
+                "Post"
+            ],
+            "UpstreamPathTemplate": "/api/RetAtsInfoAdicional/{everything}"
+        },
         {
-          "Host": "205.209.99.71",
-          "Port": 8097
-        }
-      ],
-      "DownstreamPathTemplate": "/api/RetAtsInfoAdicional{everything}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Post",
-        "Put",
-        "Delete"
-      ],
-      "UpstreamPathTemplate": "/api/RetAtsInfoAdicional{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8097
+                }
+            ],
+            "DownstreamPathTemplate": "/api/RetAtsInfoAdicional{everything}",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Post",
+                "Put",
+                "Delete"
+            ],
+            "UpstreamPathTemplate": "/api/RetAtsInfoAdicional{everything}"
+        },
         {
-          "Host": "205.209.99.71",
-          "Port": 8098
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Reporte/Post",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Post"
-      ],
-      "UpstreamPathTemplate": "/api/Reporte/Post"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8098
+                }
+            ],
+            "DownstreamPathTemplate": "/api/Reporte/Post",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Post"
+            ],
+            "UpstreamPathTemplate": "/api/Reporte/Post"
+        },
         {
-          "Host": "205.209.99.71",
-          "Port": 8098
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Reporte/{method}/{everything}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Get",
-        "Put",
-        "Delete"
-      ],
-      "UpstreamPathTemplate": "/api/Reporte/{method}/{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8098
+                }
+            ],
+            "DownstreamPathTemplate": "/api/Reporte/{method}/{everything}",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Get",
+                "Put",
+                "Delete"
+            ],
+            "UpstreamPathTemplate": "/api/Reporte/{method}/{everything}"
+        },
         {
-          "Host": "205.209.99.71",
-          "Port": 8098
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Impresion/?json={json}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Get"
-      ],
-      "UpstreamPathTemplate": "/api/Impresion/?json={json}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8098
+                }
+            ],
+            "DownstreamPathTemplate": "/api/Impresion/?json={json}",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Get"
+            ],
+            "UpstreamPathTemplate": "/api/Impresion/?json={json}"
+        },
         {
-          "Host": "205.209.99.71",
-          "Port": 8099
-        }
-      ],
-      "DownstreamPathTemplate": "/api/CuentaPorPagar/{everything}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Post",
-        "Put",
-        "Delete"
-      ],
-      "UpstreamPathTemplate": "/api/CuentaPorPagar/{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8099
+                }
+            ],
+            "DownstreamPathTemplate": "/api/CuentaPorPagar/{everything}",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Post",
+                "Put",
+                "Delete"
+            ],
+            "UpstreamPathTemplate": "/api/CuentaPorPagar/{everything}"
+        },
         {
-          "Host": "205.209.99.71",
-          "Port": 8099
-        }
-      ],
-      "DownstreamPathTemplate": "/api/CuentaPorPagar?json={json}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Get"
-      ],
-      "UpstreamPathTemplate": "/api/CuentaPorPagar?json={json}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8099
+                }
+            ],
+            "DownstreamPathTemplate": "/api/CuentaPorPagar?json={json}",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Get"
+            ],
+            "UpstreamPathTemplate": "/api/CuentaPorPagar?json={json}"
+        },
         {
-          "Host": "205.209.99.71",
-          "Port": 8099
-        }
-      ],
-      "DownstreamPathTemplate": "/api/CuentaPorPagar/{id}?json={json}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Put"
-      ],
-      "UpstreamPathTemplate": "/api/CuentaPorPagar/{id}?json={json}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8099
+                }
+            ],
+            "DownstreamPathTemplate": "/api/CuentaPorPagar/{id}?json={json}",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Put"
+            ],
+            "UpstreamPathTemplate": "/api/CuentaPorPagar/{id}?json={json}"
+        },
         {
-          "Host": "205.209.99.71",
-          "Port": 8001
-        }
-      ],
-      "DownstreamPathTemplate": "/api/CompraNoHabitual/{everything}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Get",
-        "Put",
-        "Delete",
-        "Options"
-      ],
-      "UpstreamPathTemplate": "/api/CompraNoHabitual/{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8001
+                }
+            ],
+            "DownstreamPathTemplate": "/api/CompraNoHabitual/{everything}",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Get",
+                "Put",
+                "Delete",
+                "Options"
+            ],
+            "UpstreamPathTemplate": "/api/CompraNoHabitual/{everything}"
+        },
         {
-          "Host": "205.209.99.71",
-          "Port": 8001
-        }
-      ],
-      "DownstreamPathTemplate": "/api/CompraNoHabitual",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Post"
-      ],
-      "UpstreamPathTemplate": "/api/CompraNoHabitual"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8001
+                }
+            ],
+            "DownstreamPathTemplate": "/api/CompraNoHabitual",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Post"
+            ],
+            "UpstreamPathTemplate": "/api/CompraNoHabitual"
+        },
         {
-          "Host": "205.209.99.71",
-          "Port": 8001
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8001
+                }
+            ],
+            "DownstreamPathTemplate": "/api/CompraNoHabitual/Cancel/{id}",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Put"
+            ],
+            "UpstreamPathTemplate": "/api/CompraNoHabitual/Cancel/{id}"
+        },
+        {
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8098
+                }
+            ],
+            "DownstreamPathTemplate": "/api/ReporteDataSource/",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Post"
+            ],
+            "UpstreamPathTemplate": "/api/ReporteDataSource/"
+        },
+        {
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8098
+                }
+            ],
+            "DownstreamPathTemplate": "/api/ReporteDataSource/{everything}",
+            "DownstreamScheme": "http",
+            "UpstreamHttpMethod": [
+                "Get",
+                "Put",
+                "Delete"
+            ],
+            "UpstreamPathTemplate": "/api/ReporteDataSource/{everything}"
         }
-      ],
-      "DownstreamPathTemplate": "/api/CompraNoHabitual/Cancel/{id}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Put"
-      ],
-      "UpstreamPathTemplate": "/api/CompraNoHabitual/Cancel/{id}"
-    }
-  ]
+    ]
 }

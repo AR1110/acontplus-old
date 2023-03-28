@@ -4227,11 +4227,21 @@
 		<ProjectReference Include="..\..\02.domain\Domain.Auth\Domain.Auth.csproj" />
 		<ProjectReference Include="..\..\02.domain\Domain\Domain.csproj" />
 		<ProjectReference Include="..\..\03.business_logic\BL.FactElect\BL.FactElect.csproj" />
-		<ProjectReference Include="..\..\08.razor_ui\Compra_UI\Compra_UI.csproj" />
-		<ProjectReference Include="..\..\08.razor_ui\Contabilidad_UI\Contabilidad_UI.csproj" />
-		<ProjectReference Include="..\..\08.razor_ui\FACT_UI\FACT_UI.csproj" />
-		<ProjectReference Include="..\..\08.razor_ui\Recepcion_UI\Recepcion_UI.csproj" />
-		<ProjectReference Include="..\..\08.razor_ui\Reports_UI\Reports_UI.csproj" />
+		<ProjectReference Include="..\..\08.razor_ui\Compra_UI\Compra_UI.csproj">
+		  <TreatAsUsed>true</TreatAsUsed>
+		</ProjectReference>
+		<ProjectReference Include="..\..\08.razor_ui\Contabilidad_UI\Contabilidad_UI.csproj">
+		  <TreatAsUsed>true</TreatAsUsed>
+		</ProjectReference>
+		<ProjectReference Include="..\..\08.razor_ui\FACT_UI\FACT_UI.csproj">
+		  <TreatAsUsed>true</TreatAsUsed>
+		</ProjectReference>
+		<ProjectReference Include="..\..\08.razor_ui\Recepcion_UI\Recepcion_UI.csproj">
+		  <TreatAsUsed>true</TreatAsUsed>
+		</ProjectReference>
+		<ProjectReference Include="..\..\08.razor_ui\Reports_UI\Reports_UI.csproj">
+		  <TreatAsUsed>true</TreatAsUsed>
+		</ProjectReference>
 	</ItemGroup>
 
 	<ItemGroup>
