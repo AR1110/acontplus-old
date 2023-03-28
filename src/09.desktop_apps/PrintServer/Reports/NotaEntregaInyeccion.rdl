@@ -1719,7 +1719,7 @@
             <DataSetName>encabezadoDs</DataSetName>
             <Top>4.83775cm</Top>
             <Left>15.19047cm</Left>
-            <Height>3.5564cm</Height>
+            <Height>3.55636cm</Height>
             <Width>4.61603cm</Width>
             <ZIndex>1</ZIndex>
             <Style>
@@ -2016,7 +2016,7 @@
             <DataSetName>encabezadoDs</DataSetName>
             <Top>0.06934cm</Top>
             <Left>1.92168cm</Left>
-            <Height>2.33cm</Height>
+            <Height>2.32998cm</Height>
             <Width>7.70254cm</Width>
             <ZIndex>2</ZIndex>
             <Style>
@@ -2930,7 +2930,6 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox49</rd:DefaultName>
                 <Top>0.01437cm</Top>
-                <Left>0cm</Left>
                 <Height>0.6cm</Height>
                 <Width>7.21618cm</Width>
                 <ZIndex>1</ZIndex>

@@ -27,8 +27,8 @@
         <CommandText />
       </Query>
       <Fields>
-        <Field Name="nroFactura">
-          <DataField>nroFactura</DataField>
+        <Field Name="nroDoc">
+          <DataField>nroDoc</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
         <Field Name="razonSocial">
@@ -149,6 +149,10 @@
         </Field>
         <Field Name="fechaVencimiento">
           <DataField>fechaVencimiento</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="labelAgenteRetencion">
+          <DataField>labelAgenteRetencion</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
       </Fields>
@@ -914,7 +918,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>detalleDs</DataSetName>
-            <Top>3.73157cm</Top>
+            <Top>4.81635cm</Top>
             <Left>0.25361cm</Left>
             <Height>0.98834cm</Height>
             <Width>19.60129cm</Width>
@@ -1729,7 +1733,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>encabezadoDs</DataSetName>
-            <Top>4.89629cm</Top>
+            <Top>5.98107cm</Top>
             <Left>15.23887cm</Left>
             <Height>3.45438cm</Height>
             <Width>4.61603cm</Width>
@@ -1803,7 +1807,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!nroFactura.Value, "encabezadoDs")</Value>
+                        <Value>=First(Fields!nroDoc.Value, "encabezadoDs")</Value>
                         <Style>
                           <FontSize>7pt</FontSize>
                         </Style>
@@ -2219,7 +2223,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>OBLIGADO A LLEVAR CONTABILIDAD:</Value>
+                                  <Value>OBLIGADO  CONTABILIDAD:</Value>
                                   <Style>
                                     <FontSize>6pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -2278,44 +2282,10 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <ColSpan>2</ColSpan>
                       </CellContents>
                     </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="regimen">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>=Fields!regimen.Value</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                    <FontSize>7pt</FontSize>
-                                    <FontWeight>Bold</FontWeight>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Left</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>regimen</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Style>None</Style>
-                            </Border>
-                            <VerticalAlign>Middle</VerticalAlign>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
+                    <TablixCell />
                   </TablixCells>
                 </TablixRow>
               </TablixRows>
@@ -2750,7 +2720,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>encabezadoDs</DataSetName>
-            <Top>2.73442cm</Top>
+            <Top>3.8192cm</Top>
             <Left>0.25361cm</Left>
             <Height>0.85604cm</Height>
             <Width>19.60129cm</Width>
@@ -2941,7 +2911,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>encabezadoDs</DataSetName>
-            <Top>4.89629cm</Top>
+            <Top>5.98107cm</Top>
             <Left>0.25361cm</Left>
             <Height>0.77178cm</Height>
             <Width>5.01292cm</Width>
@@ -2952,8 +2922,80 @@
               </Border>
             </Style>
           </Tablix>
+          <Textbox Name="Textbox44">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!labelAgenteRetencion.Value, "encabezadoDs")</Value>
+                    <Style>
+                      <FontSize>6pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Center</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox43</rd:DefaultName>
+            <Top>3.13597cm</Top>
+            <Left>0.25361cm</Left>
+            <Height>0.40101cm</Height>
+            <Width>12.01916cm</Width>
+            <ZIndex>6</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <VerticalAlign>Middle</VerticalAlign>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox45">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!regimen.Value, "encabezadoDs")</Value>
+                    <Style>
+                      <FontSize>6pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Center</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox43</rd:DefaultName>
+            <Top>2.6644cm</Top>
+            <Left>0.25361cm</Left>
+            <Height>0.40101cm</Height>
+            <Width>12.01916cm</Width>
+            <ZIndex>7</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <VerticalAlign>Middle</VerticalAlign>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
         </ReportItems>
-        <Height>85.387mm</Height>
+        <Height>116.60784mm</Height>
         <Style>
           <Border>
             <Style>None</Style>

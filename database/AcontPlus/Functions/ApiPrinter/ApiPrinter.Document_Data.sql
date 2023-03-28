@@ -61,6 +61,7 @@ BEGIN
 					SELECT 
 					    codDoc = 'FV'
 						,nroDoc = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,f.nroFactura) 
+						,nroFactura = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,f.nroFactura) 
 						,labelNroDoc = 'FACTURA Nro. '
 						,ambiente = IIF(pe.ambiente=2, 'PRODUCCIÓN', 'PRUEBAS')
 						,emision = IIF(f.emision=1, 'NORMAL', '')
@@ -77,6 +78,8 @@ BEGIN
 						,s.dirEstablecimiento
 						,s.contribuyenteEspecial 
 						,s.obligadoContabilidad
+						,labelObligadoContabilidad = 'Obligado Contabilidad: ' + s.obligadoContabilidad
+						,labelAgenteRetencion = ISNULL('AGENTE DE RETENCION RESOLUCION NRO: '+s.agenteRetencion,'') 
 						,s.agenteRetencion 
 						,razonSocialComprador = cl.nombreFiscal  
 						,nroIdentificacion = cl.numeroIdentificacion
@@ -151,8 +154,7 @@ BEGIN
 							,s.dirEstablecimiento  
 							,s.contribuyenteEspecial
 						    ,s.obligadoContabilidad
-						    ,s.agenteRetencion 
-							,regimen = UPPER(s.contribuyenteRimpe)
+
 							,cliente = cl.nombreFiscal 
 							,nroIdentificacion = cl.numeroIdentificacion
 							,direccionCliente = cl.direccion
@@ -225,7 +227,8 @@ BEGIN
 
 								,s.contribuyenteEspecial 
 						        ,s.obligadoContabilidad
-						        ,s.agenteRetencion 
+								,labelObligadoContabilidad = 'Obligado Contabilidad: ' + s.obligadoContabilidad
+								,labelAgenteRetencion = ISNULL('AGENTE DE RETENCION RESOLUCION NRO: '+s.agenteRetencion,'') 
 								,regimen = UPPER(s.contribuyenteRimpe)
 								,telefonoCliente = ISNULL(cl.telefono, '')
 								,ciudadCliente = ISNULL(c.descripcion, 'S/N')

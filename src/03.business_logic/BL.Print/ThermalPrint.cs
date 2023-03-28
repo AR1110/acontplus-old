@@ -256,15 +256,6 @@ namespace BL.Print
             string labelNroDoc = string.Empty;
             data[0].TryGetValue("labelNroDoc", out labelNroDoc);
 
-
-            string nroFactura = "";
-            data[0].TryGetValue("nroFactura", out nroFactura);
-            if (!string.IsNullOrEmpty(nroFactura))
-            {
-                DrawTitle(nroFactura, mediumFont, offsset, "Nro. Doc. :");
-                offsset += mediuminc;
-            }
-
             string nroDoc = "";
             data[0].TryGetValue("nroDoc", out nroDoc);
             if (!string.IsNullOrEmpty(nroDoc))
@@ -297,11 +288,11 @@ namespace BL.Print
                 offsset = offsset + mediuminc;
             }
 
-            string agenteRetencion = "";
-            data[0].TryGetValue("agenteRetencion", out agenteRetencion);
-            if (!string.IsNullOrEmpty(agenteRetencion))
+            string labelAgenteRetencion = "";
+            data[0].TryGetValue("labelAgenteRetencion", out labelAgenteRetencion);
+            if (!string.IsNullOrEmpty(labelAgenteRetencion))
             {
-                DrawTitle(agenteRetencion, drawFontBold, offsset);
+                DrawTitle(labelAgenteRetencion, drawFontBold, offsset);
                 offsset = offsset + mediuminc;
             }
 
