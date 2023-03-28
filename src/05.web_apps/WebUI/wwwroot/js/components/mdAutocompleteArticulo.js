@@ -1,7 +1,7 @@
 class MdArticuloCtrl{
     
-    static $inject = ['$http', 'mainService', '$scope','$timeout', '$q', 'commonService', 'modalService', 'nombreModal']
-    constructor($http, _mS, $scope, $timeout, $q, _commonSvc, _modalSvc, _nombreModalConst){
+    static $inject = ['$http', 'mainService', '$scope','$timeout', '$q', 'commonService', 'modalService', 'nombreModal', 'toastService']
+    constructor($http, _mS, $scope, $timeout, $q, _commonSvc, _modalSvc, _nombreModalConst, tS){
         //this.self = this;
         this.$http             = $http;
         this._mS               = _mS;
@@ -12,6 +12,8 @@ class MdArticuloCtrl{
         this._modalSvc         = _modalSvc;  
         this._nombreModalConst = _nombreModalConst;   
         
+        this.tS = tS
+
         this.mdNoCache = false;
         this.dataSearch = {
             tipo: 1,
@@ -27,23 +29,30 @@ class MdArticuloCtrl{
         
         this.$timeout(()=>{
             let inputBarcode = $("#inputBarcode");
+            let mainContentMdAutocomplete = $("#mainContentMdAutocomplete");
             let inputMdAutocomplete = $("#custom-template-md-autocomplete-articulo")
 
-            console.log('init')
+          
             inputMdAutocomplete.on('keyup', e=>{
                 console.log(e.keyCode)
                 if (e.key === '' || e.keyCode === 32) {
-
-                        inputBarcode.hide();
-                       
+                   // inputMdAutocomplete.hide();
+                    mainContentMdAutocomplete.hide();
+                    inputBarcode.show();
+                    inputBarcode.focus();
+                    inputBarcode.val().trim();
+                    this.tS.toastr('info', 'Búsqueda de Articulo por Código Barra')
                 }
             })
 
             inputBarcode.on('keyup', e=>{
                 if (e.key === '' || e.keyCode === 32) {
-
-                        inputMdAutocomplete.hide();
-                    
+                    inputBarcode.hide();
+                    //inputMdAutocomplete.show();
+                    mainContentMdAutocomplete.show();
+                    inputMdAutocomplete.focus();
+                    inputMdAutocomplete.val().trim()
+                    this.tS.toastr('info', 'Búsqueda de Articulo por Descripción o Código')
                 }
             })
 
@@ -146,6 +155,39 @@ class MdArticuloCtrl{
        
     }
 
+
+
+    getDataArticuloByEnterCode(){
+        try {
+
+            this.articulos = [];
+
+            let textSearch = this.inputByCorde;  
+    
+            this.inputByCorde = null;    
+            
+            if(!textSearch) {
+                this.searchText  = null;
+                return
+            }
+
+            
+            this._commonSvc.articuloSearchGeneral({textSearch,code: true}).then(response=>{
+
+                if(!response || (Array.isArray(response) && response.length===0)){
+                    this.searchText  = null;
+                    return
+                }
+
+                //Tomamos  posicion 1 para obtener datos del articulo                  
+                this.selectArticleSearch(response[0])
+                this.searchText = null
+            })    
+            
+        } catch (error) {
+            console.log(error)
+        }
+    }
  
 
     getArticuloByCode(){
