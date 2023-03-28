@@ -3,9 +3,9 @@
 
     app.controller('reporteTpvCtrl', reporteTpvCtrl);
 
-    reporteTpvCtrl.$inject = ['$scope', 'mainService', 'toastService', '$localStorage', 'jwtHelper'];
+    reporteTpvCtrl.$inject = ['$scope', 'mainService', 'toastService', '$localStorage', 'jwtHelper', 'FileSaver', 'Blob'];
 
-    function reporteTpvCtrl($scope, mS, tS, $localStorage, jwtHelper) {
+    function reporteTpvCtrl($scope, mS, tS, $localStorage, jwtHelper, FileSaver, Blob) {
         $scope.configurations = []
         $scope.empresas = []
 
@@ -56,7 +56,7 @@
                 let authData = $localStorage.currentUser
                 let decodedJwt = {}
                 if (authData) {
-                     decodedJwt = jwtHelper.decodeToken(authData.token) 
+                    decodedJwt = jwtHelper.decodeToken(authData.token)
                 }
                 let data = {
                     reportParams: JSON.stringify({
@@ -67,14 +67,17 @@
                     }),
                     dataParams: JSON.stringify(dataParams)
                 }
-                 mS.getFile('POST', '/Reporte/Download', data).then(
+                mS.getFile('POST', '/Reporte/Download', data).then(
                     response => {
                         if (response) {
                             hideLoader()
-                            let fileBlob = new Blob([response.data], { type: response.headers()['content-type'] });
-                            let objectUrl = window.URL || window.webkitURL;
-                            let urlFile = objectUrl.createObjectURL(fileBlob)
-                            window.open(urlFile, "_blank")
+                            let fileBlob = new Blob([response.data], { type: response.headers()['content-type'] })
+                            let fileName = response.headers()['content-disposition'].split(';')[1].split('=')[1].replace('"', "")
+                            fileName = fileName.replace('"', "")
+                            //let objectUrl = window.URL || window.webkitURL
+                            FileSaver.saveAs(fileBlob, fileName)
+                            // let urlFile = objectUrl.createObjectURL(fileBlob)
+                            // window.open(urlFile, "_blank")
                         }
                     }, error => {
                         hideLoader()

@@ -108,15 +108,17 @@ BEGIN
 	SELECT @razonSocial = razonSocial FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
 
 	SELECT @nombreComercial = nombreComercial FROM Sri.Establecimiento WITH (NOLOCK) WHERE codEstab = @codEstab
-
-	SELECT @printerName = i.nombreImpresora
-		  ,@isThermal = ti.isThermal
-		  ,@format = ti.formato
-		  ,@deviceInfo = ti.deviceInfo
+	SET @rdlcProps = (
+	SELECT  i.nombreImpresora
+		    ,CAST(0 AS bit) isThermal
+		   ,ti.formato
+		  ,ti.deviceInfo
+		  ,i.nombreEquipo computerName
+		  ,rdlcName = 'TicketTpv.rdl'
 	FROM ApiPrinter.Impresora i
 	INNER JOIN ApiPrinter.TipoImpresora ti ON ti.idTipoImpresora = i.idTipoImpresora
-	WHERE i.codEstab = @codEstab 
-	AND predeterminada = 1
+	WHERE i.codEstab = @codEstab
+	  FOR JSON PATH)
 
 	SELECT @estado =  estado FROM Restaurant.ConfigPrinter WHERE codEstab = @codEstab
 
@@ -156,7 +158,7 @@ BEGIN
 								FOR JSON PATH
 							)
 
-					SET  @rdlcProps = (SELECT rdlcProps = (SELECT rdlcName = 'TicketTpv.rdl',printerName = @printerName,isThermal = @isThermal, 'format' = @format, deviceInfo = @deviceInfo FOR JSON PATH))
+					--SET  @rdlcProps = (SELECT rdlcProps = (SELECT rdlcName = 'TicketTpv.rdl',printerName = @printerName,isThermal = @isThermal, 'format' = @format, deviceInfo = @deviceInfo FOR JSON PATH))
 					
 					IF @printerName IS  NULL
 						BEGIN
