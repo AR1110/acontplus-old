@@ -305,6 +305,7 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
                     hasFile: true, 
                     isReport: "SI", 
                     reportParams: {
+                        hasParams: true,
                         codEstab: item.codEstab, 
                         codigo: "PR", 
                         format: "pdf"

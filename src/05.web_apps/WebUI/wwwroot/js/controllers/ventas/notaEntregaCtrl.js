@@ -595,7 +595,6 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
 
     $scope.askToSendEmail = async (item) =>{ 
         try { 
-            console.log(item)
             let params = {
                 TYPE_NOTIFICATION: 'N',
                 serie: item.nroDocumento,
@@ -605,6 +604,7 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
                     hasFile: true, 
                     isReport: "SI", 
                     reportParams: {
+                        hasParams: true, 
                         codEstab: item.codEstab, 
                         codigo: "RNE", 
                         format: "pdf"

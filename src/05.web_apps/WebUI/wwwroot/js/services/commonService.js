@@ -1459,14 +1459,14 @@ export class CommonService {
         // let urlApi = await this.$http.get('/ConnectionApiAdmin/GetUrl?typeUrl=' + typeUrl).then(({data:response})=>response)    
 
         //IP Local 
-        urlApi = typeUrl == 1 ? "http://localhost:7166/" : "https://localhost:7166/";
+       // urlApi = typeUrl == 1 ? "http://localhost:7166/" : "https://localhost:7166/";
 
         //IP Producción de Desarrollo 
         //urlApi = typeUrl == 1 ? "http://205.209.99.71:8090/" : "http://206.72.196.229:83/";
 
 
         //IP Producción
-        //urlApi = typeUrl == 1 ? "http://206.72.196.229:81/" : "http://206.72.196.229:83/";
+        urlApi = typeUrl == 1 ? "http://206.72.196.229:81/" : "http://206.72.196.229:83/";
 
         return this.$http({
             method,
