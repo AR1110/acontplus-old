@@ -373,7 +373,7 @@ function modalService($uibModal) {
          * @returns object 
          */
         openModalCustom: function ({ controller, template, size, params, keyboard = false, animation = true, windowClass = null, windowTopClass, openedClass, scope, props = {}, isRenderRazorPartial = false }) {
-            console.log(isRenderRazorPartial)
+            
             return $uibModal.open({
                 animation,
                 templateUrl: isRenderRazorPartial ? `/Home/RenderView?name=${template}` : `/Home/RenderView?name=~/Views/${template || 'Shared/ModalNotFound.cshtml'}`,
@@ -783,14 +783,13 @@ app.filter('cellFilterTipoIva', () => {
         let idField = fieldLevel.editDropdownIdLabel;
         let valueField = fieldLevel.editDropdownValueLabel;
 
-        console.log(idField, valueField, map)
         if (typeof map !== "undefined") {
             for (let value of map) {
                result[value[idField]] = value.descripcion
              //  result[idField] = value.descripcion
             }
         }
-        console.log(input)
+     
         if (!input) {
             return result[0];
         } else {

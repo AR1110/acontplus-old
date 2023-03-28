@@ -16,7 +16,7 @@ function reporteCompraCtrl($http, $scope, _commonSvc, mS, toast, form, FileSaver
     $scope.dataSearch.checkboxEstadoFiltro = false;
     $scope.dataSearch.checkboxUsuarioFiltro = false;
 
-    $scope.dataSearch.byOrderCampo = 'fc.fechaEmision';
+    $scope.dataSearch.byOrderCampo = 'fechaEmision';
     $scope.dataSearch.byOrder = 'ASC';
     $scope.dataSearch.byTipoFormato = 'pdf'; 
 
@@ -25,7 +25,7 @@ function reporteCompraCtrl($http, $scope, _commonSvc, mS, toast, form, FileSaver
         { codigo: 'LC', descripcion: 'Liquidación de Compra', codigoReporte: 'LCRG' },
         { codigo: 'NCP',descripcion: 'Nota de Crédito',      codigoReporte: 'NCPRG' },
         { codigo: 'RC', descripcion: 'Retención de Compra',   codigoReporte: 'RCRG' },
-        { codigo: 'IB', descripcion: 'Ingreso Bodega',   codigoReporte: 'IBRG' },
+        { codigo: 'IB', descripcion: 'Compra No Habitual',   codigoReporte: 'IBRG' },
         { codigo: 'OC', descripcion: 'Orden de Compra',   codigoReporte: 'OCRG' }
     ];
 
@@ -138,7 +138,7 @@ function reporteCompraCtrl($http, $scope, _commonSvc, mS, toast, form, FileSaver
 
         //INGRESO DE BODEGA 
         if ($scope.dataSearch.tipoDoc === "IB") {
-            $scope.dataSearch.byOrderCampo = "ib.fechaEmision";
+            $scope.dataSearch.byOrderCampo = "fechaEmision";
             $scope.dataSearch.checkboxCategoriaFiltro = false;                
             $scope.dataSearch.checkboxRetencionFiltro = false;
             $scope.dataSearch.checkboxDevolucionFiltro = false;

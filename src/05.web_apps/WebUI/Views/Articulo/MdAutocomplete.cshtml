@@ -73,7 +73,6 @@
         md-selected-item-change="$ctrl.selectArticleSearch(item)"
         md-items="item in $ctrl.getDynamicSearchArticles()"
         md-item-text="item.descripcion"
-        md-min-length="2"
         ng-focus="$ctrl.focusDescripcionArticulo('#custom-template-md-autocomplete-articulo')"
         md-escape-options="clear"
         input-aria-label="Buscador Articulo"
@@ -147,7 +146,13 @@
             @* <md-not-found>
                 No hay estados coincidentes con "{{searchText}}"       
             </md-not-found> *@
-        </md-autocomplete>       
+        </md-autocomplete> 
+
+        
+       
+        <input type="text" class="form-control border-select"  ng-enter="$ctrl.getArticuloByCode();"     id="inputBarcode" placeholder="Ingrese el código de barra">
+       
+
         <a href="javascript:void(0)" class="btn btn-success btn-xs mt-1" ng-click="$ctrl.openModalArticulo()">
             <i class="fas fa-plus"></i> Nuevo
         </a>
@@ -155,4 +160,7 @@
             <i class="fas fa-search"></i> Lista
         </a>
     </div>
+
+
+
 @* </div> *@
