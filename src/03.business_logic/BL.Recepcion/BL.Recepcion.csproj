@@ -6,9 +6,4 @@
     <Nullable>disable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\01.common\DataAccess\DataAccess.csproj" />
-    <ProjectReference Include="..\..\01.common\Helpers\Helpers.csproj" />
-  </ItemGroup>
-
 </Project>

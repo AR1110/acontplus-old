@@ -14,11 +14,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	  <ProjectReference Include="..\..\01.common\Helpers\Helpers.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\01.common\Helpers\Helpers.csproj" />
+	  <Folder Include="Models\Reports\" />
 	</ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
 ﻿using BL.Print;
+using Common.Logs;
 using Domain.Config.Dtos;
 using Helpers;
 using Newtonsoft.Json;

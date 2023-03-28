@@ -26,13 +26,14 @@ BEGIN
 	DECLARE @isThermal BIT
 	DECLARE @format VARCHAR(200)
 	DECLARE @deviceInfo VARCHAR(max)
-	DECLARE @rdlcParams VARCHAR(MAX)
+	DECLARE @dataSources VARCHAR(MAX)
 	DECLARE @rdlcProps VARCHAR(MAX)
 	DECLARE @razonSocial VARCHAR(500)
 	DECLARE @nombreComercial VARCHAR(500)
 	DECLARE @estab VARCHAR(5)
 	DECLARE @ruc VARCHAR(20)
 	DECLARE @estado BIT 
+	DECLARE @urlPrinter VARCHAR(300)
 
 	DECLARE @tmp AS TABLE (
 		idConfigTpv VARCHAR(2)
@@ -108,8 +109,15 @@ BEGIN
 	SELECT @razonSocial = razonSocial FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
 
 	SELECT @nombreComercial = nombreComercial FROM Sri.Establecimiento WITH (NOLOCK) WHERE codEstab = @codEstab
+	
+	SELECT TOP 1 @urlPrinter = ipMaquina
+		FROM ApiPrinter.Config_Document cd WITH (NOLOCK)
+		INNER JOIN ApiPrinter.Impresora      i WITH (NOLOCK) ON i.idImpresora      = cd.idImpresora
+		INNER JOIN ApiPrinter.TipoImpresora ti WITH (NOLOCK) ON ti.idTipoImpresora = i.idTipoImpresora
+		WHERE i.codEstab = @codEstab 
+
 	SET @rdlcProps = (
-	SELECT  i.nombreImpresora
+	SELECT  i.nombreImpresora printerName
 		    ,CAST(0 AS bit) isThermal
 		   ,ti.formato
 		  ,ti.deviceInfo
@@ -138,7 +146,7 @@ BEGIN
 			IF (@print = 1)
 				BEGIN
 									
-						SET @rdlcParams = 
+						SET @dataSources = 
 							(
 								SELECT razonSocial = @razonSocial
 								,nombreComercial = @nombreComercial
@@ -160,14 +168,16 @@ BEGIN
 
 					--SET  @rdlcProps = (SELECT rdlcProps = (SELECT rdlcName = 'TicketTpv.rdl',printerName = @printerName,isThermal = @isThermal, 'format' = @format, deviceInfo = @deviceInfo FOR JSON PATH))
 					
-					IF @printerName IS  NULL
+					IF NOT EXISTS(SELECT 1 FROM ApiPrinter.Impresora i
+											INNER JOIN ApiPrinter.TipoImpresora ti ON ti.idTipoImpresora = i.idTipoImpresora
+											WHERE i.codEstab = @codEstab)
 						BEGIN
 							SET @idConsumoTpv = NULL
 							SELECT '0' code, 'No tienes configurada ninguna impresora' as 'message'
 						END 
 					ELSE
 						BEGIN 
-							SELECT '1' code, 'Registrado correctamente' as 'message', payload = (SELECT @rdlcProps rdlcProps, @rdlcParams rdlcParams FOR JSON PATH)
+							SELECT '1' code, 'Registrado correctamente' as 'message', payload = (SELECT 'http://' + @urlPrinter urlPrinter, @rdlcProps rdlcProps, @dataSources dataSources FOR JSON PATH)
 						END
 					--INSERT INTO ApiPrinter.Service_Printer_Document
 					--(

@@ -1,5 +1,4 @@
-﻿using BL.Recepcion;
-using Common.Logs;
+﻿using Common.Logs;
 using DataAccess;
 using Helpers;
 using Microsoft.AspNetCore.Authorization;
