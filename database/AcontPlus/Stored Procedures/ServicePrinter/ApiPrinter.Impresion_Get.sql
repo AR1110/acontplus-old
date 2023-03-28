@@ -84,10 +84,11 @@ BEGIN
 
 		SELECT  @ruc = ruc, @estab = estab FROM Sri.Establecimiento WITH (NOLOCK) WHERE codEstab = @codEstab
 
+
 		
 		IF NOT EXISTS (SELECT 1 FROM ApiPrinter.Impresora WHERE codEstab = @codEstab)
 			BEGIN
-				SELECT '0' code,'No tienes ninguna impresora configurada' as 'message'
+				SELECT '0' code,'No tienes ninguna impresora configurada'  as 'message'
 				RETURN 
 			END
 
@@ -145,11 +146,11 @@ BEGIN
 					END 
 			END 
 
-		IF @idImpresora IS NULL	
-			BEGIN
-				SELECT '0'code,'No tienes configurado una impresora' as 'message'
-				RETURN 
-			END
+		--IF @idImpresora IS NULL	
+		--	BEGIN
+		--		SELECT '0'code,'No tienes configurado una impresora' as 'message'
+		--		RETURN 
+		--	END
 			SELECT TOP 1 @urlPrinter = ipMaquina
 		FROM ApiPrinter.Config_Document cd WITH (NOLOCK)
 		INNER JOIN ApiPrinter.Impresora      i WITH (NOLOCK) ON i.idImpresora      = cd.idImpresora
