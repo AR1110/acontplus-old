@@ -20,5 +20,5 @@ UPDATE lc set
 FROM LiquidacionCompra lc
 INNER JOIN @table t ON t.idLiquidacionCompra = lc.idLiquidacionCompra
 
-
+select * from liquidacioncompra
 

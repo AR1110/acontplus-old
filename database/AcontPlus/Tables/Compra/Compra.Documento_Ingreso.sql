@@ -16,9 +16,9 @@ CREATE TABLE Compra.Documento_Ingreso (
 	,ptoEmi VARCHAR(5) NOT NULL
 	,fechaEmision DATETIME NOT NULL
 	,secuencial INT NOT NULL
-	,totalSinImpuestos DECIMAL(15,5)
+	,totalSinImpuestos DECIMAL(15,5) NOT NULL
 	,importeTotal DECIMAL(15,5)	
-	,estado DEFAULT 1 BIT 
+	,estado BIT  DEFAULT 1 NOT NULL
 	,fechaRegistro DATETIME NOT NULL
 	,idUsuario INT NOT NULL
     ,idEntidad INT NOT NULL

@@ -12,6 +12,6 @@ go
 
 --ALTER TABLE pagodetalle  DROP CONSTRAINT [FK__PagoDetal__idCuo__1486F2C8]
 
---ALTER TABLE pagodetalle DROP COLUMN [idCuotaXPagar]}
+--ALTER TABLE pagodetalle DROP COLUMN [idCuotaXPagar]
 
 select * from pagodetalle

@@ -163,7 +163,7 @@ BEGIN
 				 ,@dateEnd      = @dateEnd
 		END 
 
-	IF @tipo = 2 
+	IF @tipo = 2
 		BEGIN
 			DECLARE @codPago VARCHAR(5)			
 			SELECT @codPago = codPago FROM OPENJSON(@json) WITH (codPago VARCHAR(5) '$.codPago')
@@ -203,8 +203,8 @@ BEGIN
 				END 							 
 			END
 
-		--Forma Pago
-		IF @tipo = 3
+	--Forma Pago
+	IF @tipo = 3
 			BEGIN
 				
 				SET @idProveedor = (SELECT idProveedor FROM OPENJSON(@json)WITH(idProveedor INT '$.idProveedor'))
@@ -308,24 +308,24 @@ BEGIN
 				
 			END 
 
-		IF @tipo = 4 
-			BEGIN 				
-				SELECT
-					ce.nroIdentificacion
-					,ce.nombreFiscal
-					,ce.total
-					,tipoDocumento = 'CE-' + es.estab + '-' + Helper.F_Auto_Sequential(ce.nroDocumento) 
-					,usuario = u.nombreUsuario
-					,estado = IIF(ce.estado=1, 'ACTIVO', 'ANULADA')
-					,fechaRegistro = FORMAT(ce.fechaRegistro, 'yyyy-dd-mm hh:mm')
+	IF @tipo = 4
+		BEGIN 				
+			SELECT
+				ce.nroIdentificacion
+				,ce.nombreFiscal
+				,ce.total
+				,tipoDocumento = 'CE-' + es.estab + '-' + Helper.F_Auto_Sequential(ce.nroDocumento) 
+				,usuario = u.nombreUsuario
+				,estado = IIF(ce.estado=1, 'ACTIVO', 'ANULADA')
+				,fechaRegistro = FORMAT(ce.fechaRegistro, 'yyyy-dd-mm hh:mm')
 
-				FROM Contabilidad.Historial_Pago hp 
-				INNER JOIN ComprobanteEgreso ce WITH(NOLOCK) ON ce.idComprobanteEgreso = hp.idComprobanteEgreso
-				INNER JOIN Sri.Establecimiento es WITH(NOLOCK) ON es.codEstab = ce.codEstab 
-				INNER JOIN Usuario u WITH(NOLOCK) ON u.idUsuario = ce.idUsuario
-				WHERE hp.idCuentaPorPagar = @idCuentaPorPagar
+			FROM Contabilidad.Historial_Pago hp 
+			INNER JOIN ComprobanteEgreso ce WITH(NOLOCK) ON ce.idComprobanteEgreso = hp.idComprobanteEgreso
+			INNER JOIN Sri.Establecimiento es WITH(NOLOCK) ON es.codEstab = ce.codEstab 
+			INNER JOIN Usuario u WITH(NOLOCK) ON u.idUsuario = ce.idUsuario
+			WHERE hp.idCuentaPorPagar = @idCuentaPorPagar
 
-			END 
+		END 
 		
 END
 GO
