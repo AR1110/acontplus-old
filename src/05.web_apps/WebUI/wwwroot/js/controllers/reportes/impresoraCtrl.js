@@ -259,6 +259,9 @@ function impresoraCtrl($scope, _commonSvc, mS, tS) {
 
     $('#addUpdatePrinter').on('hidden.bs.modal', function () {
         $scope.disabledInputIpMaquina = false;
+        $scope.isDisabledAsigEquipo = true;
+        $scope.data.asignar = true
+
         $scope.initialLoad();
        $scope.data = {};
     });
