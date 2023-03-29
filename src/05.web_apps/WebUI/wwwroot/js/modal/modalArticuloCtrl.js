@@ -562,7 +562,10 @@ export class ModalArticuloCtrl extends ModalBaseCtrl{
                         idArticulo: this.tipoRegistro === 1 ? response.lastId : this._params.idArticulo,
                         idPresentacion: this.tipoRegistro === 1 ? response.data : this._params.idPresentacion,
                         presentacion: this.tipoRegistro === 1 ? response.gestion : this._params.presentacion,
-                        idMedida: this.data.idMedida
+                        idMedida: this.data.idMedida,
+                        codigoPrincipal: this.data.codigo,
+                        codigoAuxiliar: this.data.codigoAuxiliar,
+                        codigoBarra: this.data.codigoBarra
                     }
                     this.$uibModalInstance.close(data)
                     this._toastr.toastr('success', response.message, response.titleSms);                                              

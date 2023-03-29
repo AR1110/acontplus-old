@@ -72,6 +72,14 @@ BEGIN
 		FROM dbo.LiquidacionCompra WHERE idLiquidacionCompra = @id		
 	END 
 
+	IF @codDoc = 'CNH'
+	BEGIN 
+		SELECT 
+			@idEntidad = idEntidad
+		FROM Compra.Documento_Ingreso WHERE idDocumentoIngreso = @id		
+	END 
+
+
 
 	SELECT 
 		@nroPrecio = ISNULL(nroPrecio, 2)
@@ -202,6 +210,35 @@ BEGIN
 						FOR JSON PATH
 					)
 	END 
+
+
+	IF @codDoc = 'CNH'
+		BEGIN 
+			SET @detailDs = (SELECT 
+							 id              =did.idDocumentoIngresoDetail
+							,idArticulo     = did.idArticulo
+							,codigo         = a.codigo
+							,descripcion    = did.descripcion
+							,cantidad       = Herramientas.Round_Out(did.cantidad,@nroCantidad) 
+							,medida         = m.descripcion
+							,tipoIva        = ti.descripcion
+							,precioUnitario = Herramientas.Round_Out(did.precioUnitario,@nroPrecio) 
+							,valorDescuento = Herramientas.Round_Out( CAST(cantidad * descuento AS numeric(18,5)), @nroDescuentoDetalle)
+							,total          = Herramientas.Round_Out(did.precioTotalSinImpuesto,@nroTotalDetalle)		
+							,precioVenta    = ap.precioVenta
+							,precioConIva   = ap.precioConIva
+							,tarifa         = t.descripcion
+							,nota           = ISNULL(a.observaciones, '')
+						FROM Compra.Documento_Ingreso_Detail did 
+						INNER JOIN ArticuloPvP ap ON ap.idarticulo = did.idArticulo 
+						INNER JOIN Tarifa       t ON t.idTarifa    = ap.idTarifa
+						INNER JOIN dbo.Medida   m ON m.idMedida    = did.idMedida		
+						INNER JOIN dbo.Articulo a ON a.idArticulo  = did.idArticulo 
+						INNER JOIN dbo.TipoIva ti ON ti.idTipoIva  = a.idTipoIva
+						WHERE did.idDocumentoIngreso = @id AND did.estado = 1 ORDER BY did.idDocumentoIngresoDetail ASC
+						FOR JSON PATH		
+			)
+		END 
 	
 	SET @dataSources = (SELECT detailDs = ISNULL(@detailDs, '[]') FOR JSON PATH)	
 
