@@ -9,7 +9,7 @@ function compraNoHabitualCtrl($scope, commonSvc, mS, tS, modalSvc, nombreModal, 
     
     //Variables Generales
     const {MODAL_FILE_PATH} = nombreModal.compra_no_habitual; 
-    const {MODAL_NUEVO, MODAL_EDITAR, MODAL_DETALLED} =nombreModal.compra_no_habitual;
+    const {MODAL_NUEVO, MODAL_EDITAR, MODAL_DETALLE} =nombreModal.compra_no_habitual;
     
     //Filtro 
     $scope.dataSearch = {
@@ -247,6 +247,43 @@ function compraNoHabitualCtrl($scope, commonSvc, mS, tS, modalSvc, nombreModal, 
         }
     }
     $scope.initiload();
+
+
+
+
+    $scope.openModalDetalle = async(item) => {
+        try {
+
+            try {
+
+                let modalParams = {
+                    controller: (await import('./../../' + MODAL_FILE_PATH))[MODAL_DETALLE['controller']],
+                    template:  MODAL_DETALLE['template'],
+                    isRenderRazorPartial: true
+                }
+                
+                mS.getData('get', 'CompraNoHabitual/' + JSON.stringify({ idDocumentoIngreso : item.idDocumentoIngreso ,typeList : 4 }), null, true).then(response=>{
+                    if(response.code==="0"){
+                        console.log(response)
+                        hideLoader();
+                    }
+        
+                    if(response.code==="1"){
+                        
+                        modalParams.params = JSON.parse(response.payload);
+                       $scope.openModal(modalParams)
+    
+                        hideLoader();
+                    }
+                })
+            } catch (error) {
+                console.log(error)
+            }
+
+        } catch (error) {
+            console.log(error);   
+        }
+    }
 
    
 

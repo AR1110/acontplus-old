@@ -9,7 +9,7 @@ END
 GO
 
 
--- exec ReporteVentas.Aprob_Document '{"id":2}'
+-- exec ReporteVentas.Aprob_Document '{"id":82}'
 CREATE PROCEDURE ReporteVentas.Aprob_Document @json VARCHAR(MAX)
 AS
 BEGIN

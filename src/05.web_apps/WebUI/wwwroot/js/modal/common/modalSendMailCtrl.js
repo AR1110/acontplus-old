@@ -92,7 +92,7 @@ export class SendMailCtrl{
                     break;
             
                 default:
-                    url = '/Notificacion/Post?json='
+                    url = '/NotificacionTributaria/Post?json='
                     data = {
                         codDoc: this.data.codDoc,
                         codEstado: this.data.codEstado,

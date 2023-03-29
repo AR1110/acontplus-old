@@ -1813,6 +1813,33 @@
                 $scope.getComprobantes()
             }
 
+
+
+            $scope.exportToExcel = () =>{                               
+                try {
+                    let format = 'excel';
+                    let dataParms = {
+                        isReportImport: true,     
+                        codEstab: $scope.selected[0].codEstab,
+                        id: $scope.selected[0].idDocumento,                                     
+                        codigo: 'RCD', 
+                        codDoc: $scope.selected[0].codDoc, 
+                        format,            
+                    }
+
+                    
+                
+                    const parameters = {               
+                        dataParams: JSON.stringify(dataParms)
+                    }   
+                    console.log(parameters)
+                                  
+                    _commonSvc.getReportDynamic({parameters, format})
+                } catch (error) {
+                    console.log(error)
+                }
+            }
+
         }
     }
 

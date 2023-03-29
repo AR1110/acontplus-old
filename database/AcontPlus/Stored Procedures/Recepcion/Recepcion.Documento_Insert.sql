@@ -36,8 +36,8 @@ BEGIN
 	,fechaAutorizacion VARCHAR(50)  NULL
 	,tipoEmision VARCHAR(20)  NULL
 	,identificacionReceptor VARCHAR(15) NULL
-	,claveAcceso VARCHAR(50)  NULL
-	,numeroAutorizacion VARCHAR(50) NOT NULL
+	,claveAcceso VARCHAR(50)  UNIQUE NULL
+	,numeroAutorizacion VARCHAR(50) UNIQUE NOT NULL
 	,importeTotal VARCHAR(50) NULL
 	)
 
@@ -49,7 +49,7 @@ BEGIN
 
 	SET @codEstab = (SELECT codEstab FROM OPENJSON(@jsonData) WITH(codEstab VARCHAR(MAX) '$.codEstab'))
 
-	SET @idEstab = (SELECT idEstablecimiento FROM SRI.Establecimiento WITH (NOLOCK) WHERE codEstab = @codEstab)
+	SET @idEstab = (SELECT idEstablecimiento FROM Sri.Establecimiento WITH (NOLOCK) WHERE codEstab = @codEstab)
 
 	BEGIN TRY
 		BEGIN TRAN
@@ -79,6 +79,7 @@ BEGIN
 			                                                                          FROM Recepcion.DocumentoRecibido c WITH (NOLOCK)
 																					  WHERE c.codEstab = @codEstab
 																					  AND t.claveAcceso = c.claveAcceso)
+
 			INSERT  INTO Recepcion.DocumentoRecibido(idEstablecimiento, [codEstab], [comprobante], [serieComprobante], [rucEmisor], [razonSocialEmisior], [fechaEmision], [fechaAutorizacion], [tipoEmision], [identificacionReceptor], [claveAcceso], [numeroAutorizacion], [importeTotal], [idUsuario], [fechaRegistro], downloaded)
 			SELECT @idEstab, @codEstab, comprobante, serieComprobante, rucEmisor, razonSocialEmisior, fechaEmision, fechaAutorizacion, tipoEmision, identificacionReceptor, claveAcceso, numeroAutorizacion, CONVERT(DECIMAL(18,2), Ltrim(rtrim(ISNULL(importeTotal, 0)))), @idUsuario, dbo.ufnGetDateEcuador(), 'ND'
 			FROM @Comprobantes t
@@ -87,9 +88,12 @@ BEGIN
 																					  WHERE c.codEstab = @codEstab
 																					  AND t.claveAcceso = c.claveAcceso)
 
-			SELECT '1' code, 'Importación Exitosa'  as 'message'
+			
 		COMMIT TRAN
+		SELECT '1' code, 'Importación Exitosa'  as 'message'
+		RETURN 
 	END TRY
+
 	BEGIN CATCH
 		SELECT '0' code, 'Error en base de datos: ' + ERROR_MESSAGE() as 'message'
 		IF (@@TRANCOUNT > 0)
