@@ -66,6 +66,11 @@ BEGIN
 				RETURN
 			END
 
+		IF EXISTS (SELECT 1 FROM @tmp WHERE LEN(Rtrim(ltrim(codArticulo))) = 0)
+			BEGIN
+				SELECT '0' code, 'No existe codigo de articulo' as 'message'
+			END
+
 		IF EXISTS(SELECT 1 FROM FactElect.CompraHabitual ch WITH (NOLOCK) 
 							INNER JOIN Proveedor p ON ch.idProveedor = p.idProveedor AND p.idEntidad = @idEntidad
 							INNER JOIN @tmp t ON ch.codArticulo = t.codArticulo AND ch.ruc = t.ruc)
@@ -80,7 +85,7 @@ BEGIN
 
 				SET @articleFounded = (SELECT '(' + codigo + ') - ' + descripcion FROM Articulo WITH (NOLOCK) WHERE idArticulo = @idArticleFounded )
 
-				SELECT '0' code, 'El articulo no pudo ser vinculado, debido a que ya existe una vinculacion previa con este proveedor: '  + @articleFounded as 'message'
+				SELECT '1' code, 'El articulo ya se encuentra vinculado previa con este proveedor: '  + @articleFounded as 'message'
 				RETURN
 			END
 
