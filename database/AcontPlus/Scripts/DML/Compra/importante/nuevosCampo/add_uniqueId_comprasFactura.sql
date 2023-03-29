@@ -25,3 +25,6 @@ UPDATE fc set
 	fc.uniqueid = t.uniqueId
 FROM FacturaCompra fc
 INNER JOIN @table t ON t.idFacturaCompra = fc.idFacturaCompra
+
+
+--select * from facturacompra

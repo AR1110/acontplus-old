@@ -24,15 +24,15 @@ select
 
 
 
-	--update ib set
-	--	ib.uniqueid = t.uniqueId
-	--FROM dbo.IngresoBodega ib 
-	--INNER JOIN @table t ON t.idIngresoBodega = ib.idIngresoBodega
+	update ib set
+		ib.uniqueid = t.uniqueId
+	FROM dbo.IngresoBodega ib 
+	INNER JOIN @table t ON t.idIngresoBodega = ib.idIngresoBodega
 
-	--update ibd SET 
-	--	ibd.uniqueid = ib.uniqueId
-	--FROM dbo.IngresoBodegaDetalle ibd 
-	--INNER JOIN IngresoBodega ib ON ib.idIngresoBodega = ibd.idIngresoBodega
+	update ibd SET 
+		ibd.uniqueid = ib.uniqueId
+	FROM dbo.IngresoBodegaDetalle ibd 
+	INNER JOIN IngresoBodega ib ON ib.idIngresoBodega = ibd.idIngresoBodega
 
 	select idIngresoBodega,uniqueId from IngresoBodega 
 
