@@ -66,14 +66,6 @@ class ModalIngresoBodegaCtrl extends window.modalCompraBaseCtrl {
         this.datosAdicionalesArticulo = [];
     }
 
-    selectedItemProveedor(item){
-        this.proveedor = item;
-        this.searchProveedorOptions.showBtnEdit = true;
-        this.$scope.$apply();
-    }
-    
-
-
      /**
      * 
      * @param {*} entity Datos del Articulo 
@@ -122,7 +114,7 @@ class ModalIngresoBodegaCtrl extends window.modalCompraBaseCtrl {
 
 
     calcularPorcentajeDescuento() {
-        console.log(this.data.porcentajeDescuento)
+        this.data.porcentajeDescuento = this.data.porcentajeDescuento || 0;
         if(typeof this.data.porcentajeDescuento !=="number" || this.data.porcentajeDescuento === ""){
             this._tS.toastr('warning', 'Ingrese un Número Válido');
             return
@@ -140,6 +132,7 @@ class ModalIngresoBodegaCtrl extends window.modalCompraBaseCtrl {
     //Calcular Porcentaje  Descuento 
     calcularDescuento() {
         try {
+            this.data.totalDescuento = this.data.totalDescuento || 0;
             if(typeof this.data.totalDescuento!=='number' || this.data.totalDescuento === ""){
                 this._tS.toastr('warning', 'Ingrese un númeto válido', 'Valor Descuento');
                 return
@@ -185,10 +178,12 @@ class ModalIngresoBodegaCtrl extends window.modalCompraBaseCtrl {
 
 export class ModalIngresoBodegaNuevoCtrl extends ModalIngresoBodegaCtrl{
 
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario']
+    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'storageService', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario']
     
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS){
+    constructor($scope, $timeout, $uibModalInstance, _storageSvc, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS){
         super({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS});
+        
+        this._storageSvc = _storageSvc;
         
         this.searchProveedorOptions = {}
         this.searchProveedorOptions.showBtnNew = true;
@@ -263,6 +258,20 @@ export class ModalIngresoBodegaNuevoCtrl extends ModalIngresoBodegaCtrl{
             this.getFechaVencimiento();
 
             this.deleteColumnIce();
+
+            if(Object.keys(this._storageSvc.getObject("IngresoBodegaDetalle")).length>0){
+                this._storageSvc.restoreInvoiceDetail("IngresoBodegaDetalle").then(result=>{
+                    if(result.isConfirmed){
+                        this.gridOptions.data = JSON.parse(result.dataInvoiceDetail[result.value]);                           
+                        delete result.dataInvoiceDetail[result.value];
+                                        
+                        this._storageSvc.setObject("IngresoBodegaDetalle", result.dataInvoiceDetail) 
+                                                                                       
+                        this.data = Object.assign(this.data, this.uiGridInvoice.getTotales());  
+                    }
+
+                })
+            }
 
             this.$scope.$apply();
 
@@ -347,6 +356,78 @@ export class ModalIngresoBodegaNuevoCtrl extends ModalIngresoBodegaCtrl{
             hideLoader()
         }
     }
+
+
+    selectedItemProveedor(item){
+        try {
+            this.proveedor = item;
+            this.searchProveedorOptions.showBtnEdit = true;
+
+            this.data.idTiempoCredito = this.proveedor.idTiempoCredito || 0;
+            this.data.fechaEmision = new Date();
+            this.getFechaVencimiento();
+            this.$scope.$apply();
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    async realoadCreditTime(){
+        let resultsDataForm = await this.initiload();
+        this.tiempoCreditos = resultsDataForm[3];
+    }
+
+
+    async closeModal(){
+        if(this.gridOptions.data.length===0){
+            this.$uibModalInstance.close();
+            return
+        }
+
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+              confirmButton: 'btn btn-success',
+              denyButton:'btn btn-info ml-2',
+              cancelButton: 'btn btn-danger ml-2'
+            },
+            buttonsStyling: false
+        })
+        
+        swalWithBootstrapButtons.fire({
+            title: 'Salir ?',
+            html: "<small>Tienes un documento en proceso, desea salir ahora?</small>",
+            icon: 'warning',
+            showCancelButton: true,
+            showConfirmButton:true,
+            showDenyButton:true,
+            confirmButtonText: 'Apartar',
+            denyButtonText: 'Si, salir',
+            cancelButtonText: 'No, cancelar!',
+            focusDeny:true,
+            reverseButtons: false
+        }).then(result=>{
+
+            if(result.isConfirmed){
+                this.askToSaveStorage();
+            }
+
+            if(result.isDenied){
+                this.$uibModalInstance.close();
+            }
+            
+        })        
+    }
+
+
+    async askToSaveStorage(){
+        try {
+            await this._storageSvc.askToSaveDetailDoc("IngresoBodegaDetalle", this.gridOptions.data);
+            this.$uibModalInstance.close(); 
+        } catch (error) {
+            console.log(error)
+        }             
+    }
+
 
 
 }

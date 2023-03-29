@@ -1,3 +1,5 @@
+USE [AcontPlus]
+GO
 -- ================================================
 -- Template generated from Template Explorer using:
 -- Create Procedure (New Menu).SQL
@@ -41,6 +43,7 @@ BEGIN
 	FROM Config.Estab_Asig es WITH (NOLOCK) 
 	INNER JOIN Sri.Establecimiento sr WITH (NOLOCK) ON sr.codEstab = es.codEstab
 	WHERE es.idUsuarioRol = @idRol 
+	ORDER BY es.predeterminado DESC
 
 	SELECT 
 		nroPrecio
@@ -76,6 +79,9 @@ BEGIN
 	WHERE idEntidad = @idEntidad AND estado = 1
 	ORDER BY idCategoriaCompra DESC
 
-	SELECT idSustentoTributario, descripcion FROM SustentoTributario WHERE estado = 1
+	SELECT idSustentoTributario, descripcion = codigo + ' - ' + descripcion FROM SustentoTributario WHERE estado = 1
+
+	SELECT * FROM SustentoTributario
+
 END
 GO

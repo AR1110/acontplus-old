@@ -36,13 +36,13 @@ function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form,
     $scope.getCobros = async()=>{
         try {
             showLoader();
+            $scope.cobros = [];            
             await _mS.getData('get', '/ComprobanteIngreso/Get?json=' + JSON.stringify($scope.dataSearch)).then(response=>{
                 if(response.code==="0"){
                     console.warn(response)                    
                 }
 
-                $scope.cobros =  JSON.parse(response.payload) || [];   
-                console.log($scope.cobros)             
+                $scope.cobros =  JSON.parse(response.payload) || [];                             
             })
         } catch (error) {
             console.log(error)
@@ -52,13 +52,12 @@ function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form,
     }
 
     $scope.initiload = ()=>{
-        _mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response=>{
-            let results = JSON.parse(response.payload) || [];
-            $scope.establecimientos = results[0];
+        _commonSvc.getEstabAsign().then(response=>{
+            $scope.establecimientos = response
             let codEstab = $scope.establecimientos.length>0?$scope.establecimientos[0].codEstab: 0;            
             $scope.dataSearch.codEstab = codEstab;
-            $scope.getCobros();
-        })
+            $scope.getCobros();            
+        })       
     }
     $scope.initiload();
 
@@ -361,6 +360,7 @@ function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form,
 
 
     $scope.askToDelete = async (item)=>{
+        
         let {isConfirmed, value} = await Swal.fire({
             icon: 'warning',                
             html: '<small>Esta seguro/a de Anular este registro ahora?</small>',
@@ -374,10 +374,7 @@ function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form,
             inputValidator: (value) => {
                 if (!value) {
                     return 'Ingrese la Observación!'
-                }
-                if (value.length <= 8) {
-                    return 'La Observacion tiene que tener al menos 15 caracteres!'
-                }
+                }                
             }
         })  
         
@@ -398,7 +395,10 @@ function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form,
         try {
             showLoader();
             _mS.getData('get', `/Cobro/GetByComprobante?idComprobanteIngreso=${item.idComprobanteIngreso}`).then(response=>{
-                console.log(response)
+                if(response.code===null || response.code===undefined){
+                    console.log(response)
+                    hideLoader()
+                }
                 if(response.id==="0"){
                     hideLoader();
                     form.sweetAlert('warning', response.message, response.titleSms)
@@ -412,7 +412,9 @@ function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form,
             });  
         } catch (error) {
             console.log(error)
-        }                                  
+        } finally{
+            hideLoader()
+        }                                 
     };
 
     $scope.getCobroDetalle = (data)=> {

@@ -1,194 +1,127 @@
-﻿using ApiReports.Dao;
-using System;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
-using ApiReports.Utils;
-using HelpersNS20.Dtos;
-using Microsoft.Reporting.WebForms;
+﻿using BL.Reports;
+using Common.Logs;
+using DataAccess;
+using Domain.Dtos;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
-using System.IO;
-using HelpersNS20;
-using System.Net.Http.Headers;
-using System.Collections.Generic;
-using System.Linq;
+using System.Data;
 
 namespace ApiReports.Controllers
 {
-    public class ReporteController : ApiController
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ReporteController : ControllerBase
     {
-        private readonly string _dirLogs = string.Empty;
-        public ReporteController()
+        private readonly IConfiguration _configuration;
+        private readonly Reports _report;
+        public ReporteController(IConfiguration configuration, Reports report)
         {
-            _dirLogs = System.Configuration.ConfigurationManager.AppSettings["dirLogs"];
-        } 
-        //Method for backend dynamic request
-        [HttpPost]
-        [Route("api/Reporte/GetReport")]
-        public HttpResponseMessage GetReport(ApiReportParamsDto parameters)
-        {
-            FileModelDto _response = new FileModelDto();
-            try
-            {
-                byte[] report = null;
-                using (LocalReport lr = new LocalReport())
-                {
-                    string format = string.Empty;
-                    string deviceInfo = string.Empty;
-                    string fileName = string.Empty;
-                    foreach (var item in parameters.rdlcProps)
-                    {
-                        if (item.Key == "rdlcName")
-                        {
-                            lr.ReportPath = Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath("~/Reports"), item.Value);
-                        }
-                        if (item.Key == "format")
-                        {
-                            format = item.Value;
-                        }
-                        if (item.Key == "fileName")
-                        {
-                            fileName = item.Value;
-                        }
-                    }
-                 
-                    foreach (var item in parameters.dataSources)
-                    {
-                        lr.DataSources.Add(new ReportDataSource(item.Key, DataHelperNS.JsonToDataTable(JsonConvert.SerializeObject(item.Value))));
-                    }
-                    if (parameters.rdlcParams != null)
-                    {
-                        int index = 0;
-                        ReportParameter[] rp = new ReportParameter[parameters.rdlcParams.Keys.Count];
-                        foreach (var item in parameters.rdlcParams)
-                        {
-                            rp[index++] = new ReportParameter(item.Key, item.Value);
-                        }
-                        lr.SetParameters(rp);
-                    }
-                    report = lr.Render(format,
-                                       deviceInfo,
-                                       PageCountMode.Actual,
-                                       out string mimeType,
-                                       out string encoding,
-                                       out string fileNameExtension,
-                                       out string[] streams,
-                                       out Warning[] warnings);
-                    //_response.message = "Report Created";
-
-                    _response.ContentType = mimeType;
-                    _response.FileName = fileName + "." + fileNameExtension;
-                    _response.Content = report;
-
-                    //Uncomment to preview report in postman
-                    if (report == null || report.Length == 0)
-                    {
-                        ApiError.ReportNotFound(_response);
-                    } 
-
-                    HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.OK);
-
-                    //Set the Response Content.
-                    response.Content = new ByteArrayContent(_response.Content);
-
-                    //Set the Response Content Length.
-                    response.Content.Headers.ContentLength = _response.Content.LongLength;
-
-                    //Set the Content Disposition Header Value and FileName. 
-                    response.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment");
-                    response.Content.Headers.ContentDisposition.FileName = _response.FileName;
-
-                    //Set the File Content Type. 
-                    response.Content.Headers.ContentType = new MediaTypeHeaderValue(mimeType);
-                    return response;
-
-                    //End Preview
-
-                   
-                    //return this.Request.CreateResponse(HttpStatusCode.OK, _response);
-                }
-            }
-            catch (Exception ex)
-            {
-                Logs.LogWritter.LogError(_dirLogs, "Error in GetReport: " + ex.Message + " --> \n" + ex.StackTrace);
-                return this.Request.CreateResponse(HttpStatusCode.BadRequest, "Error al crear el reporte");
-            }
+            _configuration = configuration;
+            _report = report;
         }
         //method for backend request to db
-        [HttpPost]
-        [Route("api/Reporte/Download")]
-        public HttpResponseMessage Download(ApiReportParamsDto data)
+        [HttpPost("Download")]
+        public async Task<IActionResult> Download(ApiReportParamsDto data)
         {
+            LogWriter _log = new LogWriter(_configuration);
+            Request.Headers.TryGetValue("Authorization", out StringValues headerValues);
+            string jsonWebToken = headerValues.FirstOrDefault();
             FileModelDto _response = new FileModelDto();
-            ReporteDao _r = new ReporteDao();
+            //ReporteDao _r = new ReporteDao();
             string mimeType = string.Empty;
             string fileName = string.Empty;
             try
             {
-                byte[] bytes = new GenerateReport().ByteReport(data, ref mimeType, ref fileName);
+                DbAccess _db = new DbAccess(_configuration);
+                await _db.SPExecute("Reporte.Report_Get");
+                _db.AddDynamicParam("json", data.reportParams);
+                DataSet dsParams = _db.GetDataSet();
+
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+
+                await _db.SPExecute(dsParams.Tables[0].Rows[0]["storedProcedure"].ToString());
+                if (!data.hasService)
+                {
+                    _db.AddDynamicParam("idRol", idUsuarioRol);
+                }
+                _db.AddDynamicParam("json", data.dataParams);
+                DataSet ds = _db.GetDataSet();
+
+
+                byte[] bytes = _report.ByteReport(dsParams, ds);
                 if (bytes == null || bytes.Length == 0)
                 {
-                    ApiError.ReportNotFound(_response);
+                    ReportError.ReportNotFound(_response);
                 }
                 else
                 {
+                    fileName = dsParams.Tables[0].Rows[0].Field<string>("fileName");
+
+                    var provider = new FileExtensionContentTypeProvider();
+                    if (!provider.TryGetContentType(fileName, out mimeType))
+                    {
+                        mimeType = "application/octet-stream";
+                    }
                     _response.Create(bytes, mimeType, fileName);
                 }
-                return Request.CreateResponse(HttpStatusCode.OK, _response);
+                return Ok(_response);
             }
             catch (Exception ex)
             {
-                Logs.LogWritter.LogError(_dirLogs, "Error in Download: " + ex.Message + " --> \n" + ex.StackTrace);
-                ApiError.ReportNotFound(_response);
+                _log.LogError("Error in Download: \n" + ex.ToString());
+                ReportError.ReportNotFound(_response);
+                return Ok(_response);
             }
-            return Request.CreateResponse(HttpStatusCode.OK, _response);
         }
 
 
         //Dynamic Report --> From Client
-        [HttpPost]
-        [Route("api/Reporte/DynamicReport")]
-        public HttpResponseMessage DynamicReport(ApiReportParamsDto data)
+        [HttpPost("DynamicReport")]
+        public IActionResult DynamicReport([FromBody] ApiReportParamsDto data)
         {
-            FileModelDto _response = new FileModelDto();            
+            LogWriter _log = new LogWriter(_configuration);
+
+            FileModelDto _response = new FileModelDto();
             string mimeType = string.Empty;
             string fileName = string.Empty;
             byte[] bytes = null;
             try
             {
                 ApiReportParamsDto _dataReport = ConverToModelReportParams(data);
-                bytes = new GenerateReport().ByteReportDynamic(_dataReport, ref mimeType, ref fileName);
+                bytes = _report.ByteReportDynamic(_dataReport, ref mimeType, ref fileName);
                 if (bytes == null || bytes.Length == 0)
                 {
-                    ApiError.ReportNotFound(_response);
+                    ReportError.ReportNotFound(_response);
                 }
                 else
                 {
                     _response.Create(bytes, mimeType, fileName);
                 }
-                return Request.CreateResponse(HttpStatusCode.OK, _response);
+                return Ok(_response);
             }
             catch (Exception ex)
             {
-                Logs.LogWritter.LogError(_dirLogs, "Error in DynamicReport: " + ex.Message + " --> \n" + ex.StackTrace);
-                ApiError.ReportNotFound(_response);
+                _log.LogError("Error in DynamicReport: \n" + ex.ToString());
+                ReportError.ReportNotFound(_response);
+                return Ok(_response);
             }
-            return Request.CreateResponse(HttpStatusCode.OK, _response);
         }
 
         public static ApiReportParamsDto ConverToModelReportParams(ApiReportParamsDto data)
         {
-            ApiReportParamsDto _response = new ApiReportParamsDto();           
-            Dictionary<string, string> rdlcParams = new Dictionary<string, string>();            
+            ApiReportParamsDto _response = new ApiReportParamsDto();
+            Dictionary<string, string> rdlcParams = new Dictionary<string, string>();
             var _arrayProps = JsonConvert.DeserializeObject<IEnumerable<IDictionary<string, string>>>(data.reportParams);
 
             foreach (var item in _arrayProps.FirstOrDefault())
             {
                 if (item.Key == "imagen" && !string.IsNullOrEmpty(item.Value))
-                {                  
-                    rdlcParams.Add(item.Key, item.Value);                     
+                {
+                    rdlcParams.Add(item.Key, item.Value);
                 }
-                if(item.Key=="mimeType" && !string.IsNullOrEmpty(item.Value))
+                if (item.Key == "mimeType" && !string.IsNullOrEmpty(item.Value))
                 {
                     rdlcParams.Add(item.Key, item.Value);
                 }
@@ -200,12 +133,12 @@ namespace ApiReports.Controllers
 
                 if (item.Key == "rdlcParams" && !string.IsNullOrEmpty(item.Value.ToString()))
                 {
-                    var arrayParams = JsonConvert.DeserializeObject<IEnumerable<IDictionary<string, string>>>(item.Value);                    
+                    var arrayParams = JsonConvert.DeserializeObject<IEnumerable<IDictionary<string, string>>>(item.Value);
                     foreach (var paramRdlc in arrayParams.FirstOrDefault())
                     {
                         rdlcParams.Add(paramRdlc.Key, paramRdlc.Value);
                     }
-                    
+
                 }
 
                 if (item.Key == "dataSources" && !string.IsNullOrEmpty(item.Value.ToString()))
@@ -237,6 +170,5 @@ namespace ApiReports.Controllers
 
             return _response;
         }
-
     }
 }

@@ -26,6 +26,10 @@ app.constant('nombreModal', {
             controller: 'ModalApproveDocDetalleCtrl',
             template: 'AprobDocument/_ModalAprobDocumentDetalle.cshtml'
         },
+        MODAL_FILTRO:{
+            controller: 'ModalApproveDocFiltroCtrl',
+            template: 'AprobDocument/_ModalFiltro.cshtml'
+        },
         MODAL_FILTRO_NE:{
             controller: 'ModalNotaEntregaFiltroCtrl',
             template: 'AprobDocument/_ModalNotaEntregaFiltro.cshtml'
@@ -66,8 +70,7 @@ app.constant('nombreModal', {
         MODAL_INFO_ADICIONAL_DOC:{
             controller: 'InfoAdicionalTipoDocCtrl',
             template: 'Shared/Common/_ModalInfoAdicionalTipoDoc.cshtml'
-        }
-
+        }       
     },
     doc_elect:{
         MODAL_CTRL: 'factElect/docVentaCtrl.js' + CHANGE_VERSION(),
@@ -114,7 +117,33 @@ app.constant('nombreModal', {
         MODAL_ARTICULO_IMPUESTO_RETENCION_CSHTML:'Articulo/_ModalArticuloImpuestoRetencion.cshtml',
         MODAL_DETALLE_CSHTML:'Articulo/_ModalArticuloDetalle.cshtml',
         MODAL_ARTICULO_IMPUESTO_CSHTML: 'Articulo/_ModalArticuloImpuesto.cshtml',
-        MODAL_ARTICULO_FRACCIONADO_CSHTML: 'ArticuloFraccionado/_ModalArticuloFraccionado.cshtml'
+        MODAL_ARTICULO_FRACCIONADO_CSHTML: 'ArticuloFraccionado/_ModalArticuloFraccionado.cshtml',
+        MODAL_NUEVO:{
+            controller: 'ModalArticuloCtrl',
+            template:'Articulo/_ModalNuevoArticulo.cshtml'
+        },
+        MODAL_FILTRO:{
+            controller: 'ModalFiltroCtrl',
+            template:'Articulo/_ModalArticuloFiltro.cshtml'
+        },
+        MODAL_ARTICULO_IMPUESTO:{
+            controller: 'ModalArticuloImpuestoCtrl',
+            template:'Articulo/_ModalArticuloImpuesto.cshtml'
+        },
+        MODAL_ARTICULO_IMPUESTO_RETENCION:{
+
+        },
+        MODAL_ARTICULO_IMAGEN:{
+            controller: 'ModalArticuloImagenCtrl',
+            template:'Articulo/_ModalArticuloImagen.cshtml'
+        },
+        MODAL_IMAGEN_DETALLE:{
+            controller: 'ModalArticuloImagenDetalleCtrl',
+            template:'Articulo/_ModalArticuloImagenDetalle.cshtml'
+        },
+        MODAL_HISTORIAL_COMPRA: {
+
+        }
     },
     articulo_impuesto: {
         MODAL_CTRL: 'modalArticuloImpuestoCtrl.min.js' + CHANGE_VERSION(),
@@ -195,7 +224,27 @@ app.constant('nombreModal', {
             controller: 'ModalCuotaNuevoCtrl',
             template: 'Cobro/_ModalCuotaVenta.cshtml'
         }
-    },    
+    },  
+    
+    compra_no_habitual: {
+        MODAL_FILE_PATH: 'modal/compras/modalCompraNoHabitualCtrl.min.js' + CHANGE_VERSION(),
+        MODAL_NUEVO:{
+            controller: 'ModalAddCtrl',
+            template: '~/Areas/CompraNoHabitual/Pages/Shared/_ModalNuevo.cshtml'
+        },
+        MODAL_EDITAR:{
+            controller: 'ModalUpdateCtrl',
+            template: '~/Areas/CompraNoHabitual/Pages/Shared/_ModalNuevo.cshtml'
+        },
+        MODAL_DETALLE:{
+            controller: 'ModalNuevoCtrl',
+            template: ''
+        },
+        MODAL_FILTRO:{
+            controller: 'ModalNuevoCtrl',
+            template: ''
+        }
+    },
     consolidacion_inv: {
         MODAL_FILE_CTRL: 'modal/inventario/modalConsolidacionInventarioCtrl.js' + CHANGE_VERSION(),
         MODAL_NUEVO:{
@@ -333,6 +382,19 @@ app.constant('nombreModal', {
             template: 'GuiaRemision/_ModalFiltro.cshtml'
         }
     },
+
+    impuesto_renta:{
+        MODAL_FILE_CTRL: 'modal/sri/modalImpuestoRentaCtrl.js' + CHANGE_VERSION(),
+        MODAL_NUEVO:{
+            controller: 'ModalNuevoCtrl',
+            template: 'ImpuestoRenta/_ModalNuevo.cshtml'
+        },
+        MODAL_EDITAR:{
+            controller: 'ModalEditarCtrl',
+            template: 'ImpuestoRenta/_ModalEditar.cshtml'
+        }
+    },
+
     ingreso_bodega: {
         MODAL_FILE_CTRL: 'modal/compras/modalIngresoBodegaCtrl.min.js' + CHANGE_VERSION(),
         MODAL_NUEVO:{
@@ -520,6 +582,14 @@ app.constant('nombreModal', {
             template:'Establecimiento/PuntoEmision/_ModalEditar.cshtml'
         }
     },
+
+    doc_recibido: {
+        MODAL_FILE_CTRL:'modal/recepcion/modalDocRecibidoCtrl.js',
+        MODAL_HISTORIAL_COMPRA:{
+            controller: 'ModalHistoryComprasCtrl',
+            template: '~/Areas/DocumentoRecibido/Pages/Shared/_HistoryCompras.cshtml'
+        }
+    },
     retencion_compra:{
         MODAL_FILE_CTRL: 'modal/common/modalRetencionCtrl.js' + CHANGE_VERSION(),
         MODAL_NUEVO:{
@@ -555,7 +625,7 @@ app.constant('nombreModal', {
         },
         MODAL_DETALLE:{
             controller: 'ModalRetencionVentaDetalleCtrl',
-            template: 'RetencionVenta/_ModalEditar.cshtml'
+            template: 'RetencionVenta/_ModalDetalle.cshtml'
         },
         MODAL_FILTRO:{           
             controller: 'ModalRetencionVentaFiltroCtrl',
@@ -568,6 +638,10 @@ app.constant('nombreModal', {
         MODAL_CSHTML: '_ModalTransportista.cshtml',
         MODAL_LISTA: '_ModalProveedorLista.cshtml',
         MODAL_NUEVO:{
+            controller: 'ModalTransportistaCtrl',
+            template: 'Transportista/_ModalTransportista.cshtml'
+        },
+        MODAL_EDITAR:{
             controller: 'ModalTransportistaCtrl',
             template: 'Transportista/_ModalTransportista.cshtml'
         }

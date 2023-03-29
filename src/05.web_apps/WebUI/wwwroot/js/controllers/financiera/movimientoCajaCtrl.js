@@ -451,7 +451,7 @@ class MovimientoCajaCtrl{
         }
 
         
-        this._commonSvc.askToReportII({
+        this._commonSvc.askToPrint({
             parameters: JSON.stringify(parameters)
         })
     }

@@ -57,25 +57,62 @@ function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombre
     }
 
     $scope.openModalDetalle = async(item)=>{
-        let {MODAL_FILE_CTRL, MODAL_DETALLE} = _nombreModal.retencion_venta;
-        let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_DETALLE['controller']];
-        let template = MODAL_DETALLE['template'];
+        try {
+            let {MODAL_FILE_CTRL, MODAL_DETALLE} = _nombreModal.retencion_venta;
+            let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_DETALLE['controller']];
+            let template = MODAL_DETALLE['template'];
 
-        $scope.openModalParam({
-            controller,
-            template,
-        })
+            let response = await _commonSvc.getDataTipoDocVenta({
+                id: item.idRetencionVenta,
+                codigoDocumento: TIPO_DOC.codigo
+            })
+            
+            if(!response.isComplete) return
+            
+            let params = {
+                TIPO_REGISTRO: "DETALLE",
+                data: response,                
+            }
+            hideLoader();
+            $scope.openModalParam({
+                controller,
+                template,
+                params
+            })
+        } catch (error) {
+            
+        }
     }
 
     $scope.openModalEditar = async(item)=>{
-        let {MODAL_FILE_CTRL, MODAL_EDITAR} = _nombreModal.retencion_venta;
-        let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_EDITAR['controller']];
-        let template = MODAL_EDITAR['template'];
-
-        $scope.openModalParam({
-            controller,
-            template,
-        })
+        try {
+            showLoader();
+            let {MODAL_FILE_CTRL, MODAL_EDITAR} = _nombreModal.retencion_venta;
+            let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_EDITAR['controller']];        
+            let template = MODAL_EDITAR['template'];
+            let response = await _commonSvc.getDataTipoDocVenta({
+                id: item.idRetencionVenta,
+                codigoDocumento: TIPO_DOC.codigo
+            })
+            console.log(response)
+            if(!response.isComplete) return
+            
+            let params = {
+                TIPO_REGISTRO: "EDITAR",
+                data: response,                
+            }
+            hideLoader();
+            $scope.openModalParam({
+                controller,
+                template,
+                params
+            })
+        } catch (error) {
+            hideLoader();
+            console.log(error)            
+        }finally{
+            hideLoader();
+        }
     }
 
     $scope.openModalParam = async({controller, template, size='xl', params})=>{
@@ -188,13 +225,15 @@ function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombre
     $scope.getRetencionesVenta = ()=> {
         try {
             showLoader();
+            
+            $scope.retencionesVenta  = []
             _mS.getData('get', '/RetencionVenta/Get?json=' + JSON.stringify($scope.dataSearch)).then(response => {
+                console.log(response)
                 if (response.id === "0") {
                     hideLoader();
-                    toast.toastr('warning', response.message, response.titleSms);
+                    console.log(response)
                     return
-                }
-                console.log(response.data)
+                }                
                 
                 $scope.retencionesVenta = JSON.parse(response.data) || [];                
                 $scope.copiaRetencionesVenta = JSON.parse(JSON.stringify($scope.retencionesVenta));
@@ -223,15 +262,20 @@ function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombre
     $scope.initiload();
 
     $scope.getTotalesColumna = ()=> {
-        let totalIva = 0, totalRenta = 0, total = 0;
-        for (let val of $scope.retencionesVenta) {
-            totalIva += val.totalIva;
-            totalRenta += val.totalRenta;
-            total += val.total;
+        try {
+            let totalIva = 0, totalRenta = 0, total = 0;
+            for (let val of $scope.retencionesVenta) {
+                totalIva += val.totalIva;
+                totalRenta += val.totalRenta;
+                total += val.total;
+            }
+            $scope.totalIva = form.roundNumber(totalIva, 5);
+            $scope.totalRenta = form.roundNumber(totalRenta, 5);
+            $scope.total = form.roundNumber(total,5)
+        } catch (error) {
+            hideLoader()
+            console.log(error)
         }
-        $scope.totalIva = form.roundNumber(totalIva, 5);
-        $scope.totalRenta = form.roundNumber(totalRenta, 5);
-        $scope.total = form.roundNumber(total,5)
     };
 
     $scope.filterLocalRVenta = ()=> {
@@ -257,21 +301,32 @@ function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombre
         };
     }
 
+
     //Eliminar Retencion Venta
     $scope.delete = (item)=> {
-        form.showLoaderAnular();
-        $http.post('/RetencionVenta/Delete?idRetencionVenta=' + item.idRetencionVenta)
-        .then(({data:response}) => {
-            if (response.id == "0") {
-                form.sweetAlert('warning', response.message, response.titleSms);                    
-            }
-            if (response.id == "1") {
-                form.sweetAlert('success', response.message, response.titleSms, 1000);
-                $scope.getRetencionesVenta();                    
-            }
-        }, error => console.log(error));
-
+        try {
+            showLoader();
+            _mS.getData('delete', '/RetencionVenta/Delete?id=' + item.idRetencionVenta).then(response=>{
+                if (response.id == "0") {
+                    hideLoader()
+                    form.sweetAlert('warning', response.message, response.titleSms);                    
+                }
+                if (response.id == "1") {
+                    hideLoader()
+                    form.sweetAlert('success', response.message, response.titleSms, 1000);
+                    $scope.getRetencionesVenta();                    
+                }
+            })
+        } catch (error) {
+            hideLoader()
+        }        
     }
 
    
+    $scope.getReport = function(){
+        Swal.fire({
+            icon:'info',
+            html: `<small>No Disponible</small>`
+        })
+    }
 }

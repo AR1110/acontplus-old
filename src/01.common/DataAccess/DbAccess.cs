@@ -34,7 +34,7 @@ namespace DataAccess
             catch (Exception ex)
             {
                 Close();
-                _log.LogError("Error in SPExecute: " + ex.Message);
+                _log.LogError("Error in SPExecute: " + ex.ToString());
             }
         }
         public void AddParameter(string paramName, SqlDbType paramType, object paramValue, bool isNull = false)
@@ -54,7 +54,7 @@ namespace DataAccess
             catch (Exception ex)
             {
                 Close();
-                _log.LogError("Error in AddParameter: " + ex.Message);
+                _log.LogError("Error in AddParameter: " + ex.ToString());
             }
         }
         public void AddDynamicParam(string paramName, object paramValue)
@@ -66,14 +66,14 @@ namespace DataAccess
                     SqlParameter sqlParam = new SqlParameter();
                     sqlParam.ParameterName = paramName;
                     sqlParam.SqlDbType = DbType.Get(paramValue);
-                    sqlParam.Value = paramValue;
+                    sqlParam.Value = paramValue ?? (object)DBNull.Value;
                     _command.Parameters.Add(sqlParam);
                 }
             }
             catch (Exception ex)
             {
                 Close();
-                _log.LogError("Error in AddDynamicParam: " + ex.Message);
+                _log.LogError("Error in AddDynamicParam: " + ex.ToString());
             }
         }
         public void OnlyExecute()
@@ -84,7 +84,7 @@ namespace DataAccess
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in OnlyExecute: " + ex.Message);
+                _log.LogError("Error in OnlyExecute: " + ex.ToString());
             }
             finally
             {
@@ -103,8 +103,12 @@ namespace DataAccess
                     using (SqlDataAdapter dataAdapter = new SqlDataAdapter(_command))
                     {
                         dataAdapter.Fill(ds);
-                        if (ds.Tables.Count == 0)
+                        if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
                         {
+                            if (ds.Tables.Count > 0)
+                            {
+                                ds = new DataSet();
+                            }
                             DtWarning(ref dtResp);
                             ds.Tables.Add(dtResp);
                         }
@@ -113,7 +117,11 @@ namespace DataAccess
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in GetDataSet: " + ex.Message);
+                _log.LogError("Error in GetDataSet: " + ex.ToString());
+                if (ds.Tables.Count > 0)
+                {
+                    ds = new DataSet();
+                }
                 DtError(ref dtResp, ex.Message);
                 ds.Tables.Add(dtResp);
             }
@@ -143,8 +151,8 @@ namespace DataAccess
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in GetDataTable: " + ex.Message);
-                DtError(ref dt, ex.Message);
+                _log.LogError("Error in GetDataTable: " + ex.ToString());
+                DtError(ref dt, ex.ToString());
             }
             finally
             {
@@ -166,7 +174,7 @@ namespace DataAccess
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in Close: " + ex.Message);
+                _log.LogError("Error in Close: " + ex.ToString());
             }
         }
         public void DtColumns(ref DataTable dt)

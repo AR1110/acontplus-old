@@ -10,7 +10,7 @@ GO
 -- Create date: 2021-10-06
 -- Description:	SP para listar los clietes
 -- =============================================
---[Ventas].[Cliente_Get] 38,'[]'
+-- Ventas.Aprob_Document_Get_Id 14
 IF OBJECT_ID(N'Ventas.Aprob_Document_Get_Id', N'P') IS NOT NULL
 DROP PROCEDURE Ventas.Aprob_Document_Get_Id 
 GO
@@ -70,7 +70,7 @@ BEGIN
 	INNER JOIN dbo.Articulo a ON a.code_unique      = dt.codArticulo
 	INNER JOIN dbo.Medida   m ON m.codigo           = dt.codMedida
 	INNER JOIN dbo.TipoIva  t ON t.codigoPorcentaje = dt.codigoPorcentaje
-	WHERE dt.uniqueId = @uniqueId
+	WHERE dt.uniqueId = @uniqueId AND dt.estado = 1 ORDER BY dt.idAprob_Document_Detailt ASC 
 
 END
 

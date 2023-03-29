@@ -41,7 +41,7 @@ BEGIN
 	   ,sr.actividad
 	FROM Config.Estab_Asig es WITH (NOLOCK) 
 	INNER JOIN Sri.Establecimiento sr WITH (NOLOCK) ON sr.codEstab = es.codEstab
-	WHERE es.idUsuarioRol = @idRol 
+	WHERE es.idUsuarioRol = @idRol ORDER BY es.predeterminado DESC
 
 	SELECT 
 		nroPrecio
@@ -77,7 +77,7 @@ BEGIN
 	   ,predeterminada
 	   ,codigo 
 	FROM Tarifa WITH (NOLOCK) 
-	WHERE idEntidad = 4 AND estado = 1
+	WHERE idEntidad = @idEntidad AND estado = 1
 
 	SELECT 
 		idTiempoCredito

@@ -162,6 +162,14 @@
           <DataField>tipoRegimen</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="contribuyenteRimpe">
+          <DataField>contribuyenteRimpe</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="agenteRetencion">
+          <DataField>agenteRetencion</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>ComprobantesElectronicosCompra</rd:DataSetName>
@@ -201,21 +209,6 @@
     <ReportSection>
       <Body>
         <ReportItems>
-          <Image Name="logo">
-            <Source>Database</Source>
-            <Value>=Parameters!logo.Value</Value>
-            <MIMEType>=Parameters!mimeType.Value</MIMEType>
-            <Sizing>FitProportional</Sizing>
-            <Top>0.26141cm</Top>
-            <Left>0.10266cm</Left>
-            <Height>2.7376cm</Height>
-            <Width>9.01904cm</Width>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-            </Style>
-          </Image>
           <Textbox Name="Textbox18">
             <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
@@ -236,11 +229,10 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox18</rd:DefaultName>
-            <Top>3.17262cm</Top>
-            <Left>0.10266cm</Left>
+            <Top>3.2523cm</Top>
+            <Left>0.10529cm</Left>
             <Height>0.6cm</Height>
-            <Width>9.01904cm</Width>
-            <ZIndex>1</ZIndex>
+            <Width>9.01416cm</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -271,11 +263,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox19</rd:DefaultName>
-            <Top>3.87846cm</Top>
-            <Left>0.10266cm</Left>
+            <Top>3.95814cm</Top>
+            <Left>0.10529cm</Left>
             <Height>0.6cm</Height>
-            <Width>9.01904cm</Width>
-            <ZIndex>2</ZIndex>
+            <Width>9.01416cm</Width>
+            <ZIndex>1</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -307,11 +299,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox20</rd:DefaultName>
-            <Top>4.58429cm</Top>
-            <Left>0.10266cm</Left>
+            <Top>4.59342cm</Top>
+            <Left>0.10528cm</Left>
             <Height>0.6cm</Height>
             <Width>1.66215cm</Width>
-            <ZIndex>3</ZIndex>
+            <ZIndex>2</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -340,11 +332,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox21</rd:DefaultName>
-            <Top>4.58429cm</Top>
-            <Left>1.76481cm</Left>
+            <Top>4.59342cm</Top>
+            <Left>1.76743cm</Left>
             <Height>0.6cm</Height>
             <Width>7.35689cm</Width>
-            <ZIndex>4</ZIndex>
+            <ZIndex>3</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -375,11 +367,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox20</rd:DefaultName>
-            <Top>5.25485cm</Top>
-            <Left>0.10266cm</Left>
+            <Top>5.26398cm</Top>
+            <Left>0.10528cm</Left>
             <Height>0.6cm</Height>
             <Width>1.66215cm</Width>
-            <ZIndex>5</ZIndex>
+            <ZIndex>4</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -408,11 +400,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox21</rd:DefaultName>
-            <Top>5.25485cm</Top>
-            <Left>1.76481cm</Left>
+            <Top>5.26398cm</Top>
+            <Left>1.76743cm</Left>
             <Height>0.6cm</Height>
             <Width>7.35688cm</Width>
-            <ZIndex>6</ZIndex>
+            <ZIndex>5</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -443,11 +435,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox20</rd:DefaultName>
-            <Top>5.9254cm</Top>
-            <Left>0.10266cm</Left>
+            <Top>5.93453cm</Top>
+            <Left>0.10528cm</Left>
             <Height>0.6cm</Height>
             <Width>1.66215cm</Width>
-            <ZIndex>7</ZIndex>
+            <ZIndex>6</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -476,11 +468,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox21</rd:DefaultName>
-            <Top>5.9254cm</Top>
-            <Left>1.76481cm</Left>
+            <Top>5.93453cm</Top>
+            <Left>1.76743cm</Left>
             <Height>0.6cm</Height>
             <Width>7.35688cm</Width>
-            <ZIndex>8</ZIndex>
+            <ZIndex>7</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -511,11 +503,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox26</rd:DefaultName>
-            <Top>6.63124cm</Top>
-            <Left>0.10266cm</Left>
+            <Top>6.64037cm</Top>
+            <Left>0.10528cm</Left>
             <Height>0.6cm</Height>
             <Width>5.11938cm</Width>
-            <ZIndex>9</ZIndex>
+            <ZIndex>8</ZIndex>
             <Style>
               <Border />
               <VerticalAlign>Middle</VerticalAlign>
@@ -544,11 +536,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox27</rd:DefaultName>
-            <Top>6.63124cm</Top>
-            <Left>5.25732cm</Left>
+            <Top>6.64037cm</Top>
+            <Left>5.25994cm</Left>
             <Height>0.6cm</Height>
             <Width>3.86438cm</Width>
-            <ZIndex>10</ZIndex>
+            <ZIndex>9</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -617,9 +609,9 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox30</rd:DefaultName>
                 <Top>0.18201cm</Top>
-                <Left>5.25167cm</Left>
+                <Left>5.55154cm</Left>
                 <Height>0.6cm</Height>
-                <Width>5.40222cm</Width>
+                <Width>5.10235cm</Width>
                 <ZIndex>1</ZIndex>
                 <Style>
                   <Border>
@@ -776,11 +768,11 @@
               </Textbox>
             </ReportItems>
             <KeepTogether>true</KeepTogether>
-            <Top>8.22502cm</Top>
-            <Left>0.10266cm</Left>
+            <Top>8.38981cm</Top>
+            <Left>0.09029cm</Left>
             <Height>1.65014cm</Height>
             <Width>18.72846cm</Width>
-            <ZIndex>11</ZIndex>
+            <ZIndex>10</ZIndex>
             <Style>
               <Border>
                 <Style>Solid</Style>
@@ -1403,11 +1395,11 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>RetencionCompraDetalleDs</DataSetName>
-            <Top>10.01627cm</Top>
-            <Left>0.10266cm</Left>
+            <Top>10.24821cm</Top>
+            <Left>0.09029cm</Left>
             <Height>1.2cm</Height>
             <Width>18.72847cm</Width>
-            <ZIndex>12</ZIndex>
+            <ZIndex>11</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1772,11 +1764,11 @@
               </Tablix>
             </ReportItems>
             <KeepTogether>true</KeepTogether>
-            <Top>11.39266cm</Top>
-            <Left>0.10267cm</Left>
+            <Top>11.6246cm</Top>
+            <Left>0.0903cm</Left>
             <Height>3.71569cm</Height>
             <Width>10.65388cm</Width>
-            <ZIndex>13</ZIndex>
+            <ZIndex>12</ZIndex>
             <Style>
               <Border>
                 <Style>Solid</Style>
@@ -2325,28 +2317,117 @@
             </ReportItems>
             <KeepTogether>true</KeepTogether>
             <Top>0.26141cm</Top>
-            <Left>9.71359cm</Left>
-            <Height>7.75535cm</Height>
+            <Left>9.71621cm</Left>
+            <Height>6.97896cm</Height>
             <Width>9.11753cm</Width>
-            <ZIndex>14</ZIndex>
+            <ZIndex>13</ZIndex>
             <Style>
               <Border>
                 <Style>Solid</Style>
               </Border>
             </Style>
           </Rectangle>
+          <Image Name="logo">
+            <Source>Database</Source>
+            <Value>=Parameters!logo.Value</Value>
+            <MIMEType>=Parameters!mimeType.Value</MIMEType>
+            <Sizing>FitProportional</Sizing>
+            <Top>0.26141cm</Top>
+            <Left>0.10528cm</Left>
+            <Height>2.89437cm</Height>
+            <Width>9.01417cm</Width>
+            <ZIndex>14</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>10pt</PaddingLeft>
+              <PaddingRight>10pt</PaddingRight>
+              <PaddingTop>10pt</PaddingTop>
+              <PaddingBottom>5pt</PaddingBottom>
+            </Style>
+          </Image>
+          <Textbox Name="Textbox15">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!agenteRetencion.Value, "RetencionCompraDs")</Value>
+                    <Style>
+                      <FontSize>7pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox15</rd:DefaultName>
+            <Top>7.3462cm</Top>
+            <Left>0.10583cm</Left>
+            <Height>0.4436cm</Height>
+            <Width>9.01849cm</Width>
+            <ZIndex>15</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <VerticalAlign>Top</VerticalAlign>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox17">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!contribuyenteRimpe.Value, "RetencionCompraDs")</Value>
+                    <Style>
+                      <FontSize>8pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox17</rd:DefaultName>
+            <Top>7.7898cm</Top>
+            <Left>0.10528cm</Left>
+            <Height>0.52945cm</Height>
+            <Width>9.01362cm</Width>
+            <ZIndex>16</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
         </ReportItems>
-        <Height>7.33333in</Height>
+        <Height>6.37976in</Height>
         <Style />
       </Body>
-      <Width>7.4415in</Width>
+      <Width>7.44253in</Width>
       <Page>
-        <PageHeight>29.7cm</PageHeight>
-        <PageWidth>21cm</PageWidth>
-        <LeftMargin>1cm</LeftMargin>
-        <RightMargin>1cm</RightMargin>
-        <TopMargin>1cm</TopMargin>
-        <BottomMargin>1cm</BottomMargin>
+        <PageHeight>29cm</PageHeight>
+        <PageWidth>20cm</PageWidth>
+        <LeftMargin>0.5cm</LeftMargin>
+        <RightMargin>0.5cm</RightMargin>
+        <TopMargin>0.25cm</TopMargin>
+        <BottomMargin>0.25cm</BottomMargin>
         <ColumnSpacing>0.13cm</ColumnSpacing>
         <Style />
       </Page>

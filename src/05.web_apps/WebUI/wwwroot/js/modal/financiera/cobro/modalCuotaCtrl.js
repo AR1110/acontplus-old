@@ -34,7 +34,9 @@ export class ModalCuotaNuevoCtrl extends ModalBaseCtrl{
 
         this.TIPO_DOC = TIPO_DOC;
 
-        this.configFecha = this._fS.formatDate(this.data.fechaEmision);
+        
+        let currentDate = new Date(this.data.fechaEmision.split('/').reverse());
+        this.configFecha = this._fS.formatDate(currentDate);
         this.totalCuota = 0;
         this.totalDiferencia = 0;
 
@@ -126,7 +128,7 @@ export class ModalCuotaNuevoCtrl extends ModalBaseCtrl{
                 idTipoDocumento: this.TIPO_DOC.idTipoDocumento,
             },
             idTiempoCredito: this.data.idTiempoCredito,
-            fechaEmision:this.data.fechaEmision,
+            fechaEmision:  new Date(this.data.fechaEmision.split('/').reverse()),
             total: this.data.total
         };
 
@@ -135,6 +137,7 @@ export class ModalCuotaNuevoCtrl extends ModalBaseCtrl{
                 this._fS.sweetAlert('warning', response.message, response.titleSms);                                                       
             }
             if (response.id == "1") {
+                
                 this._fS.sweetAlert('success', response.message, response.titleSms, 1000);                   
                 this.$uibModalInstance.close(response)                                                    
             }
@@ -143,6 +146,8 @@ export class ModalCuotaNuevoCtrl extends ModalBaseCtrl{
 
 
 
+    //valid = 1 fin mes 
+    //valid = 0 mismo fecha 
     setNewFechaVcto(valid) {                                                 
         
         try {
@@ -159,35 +164,52 @@ export class ModalCuotaNuevoCtrl extends ModalBaseCtrl{
             if (!valid && this.configFecha.getDate() >= 28) {
                 this._fS.sweetAlert('warning','Para la opción <code>Mismo Día</code>, el día tiene que ser menor a 28 días!');               
                 return
-            };
-            
-            //console.log($scope.data.configFecha);
-            let fechaConfig = this._fS.formatDate(this.configFecha);
-            //let fechaConfig = cuotaVentaSvc.getFechaAsString($scope.data.configFecha);
-            let cuotas = this.cuotas.map(val => {
-                return {
-                    idCuotaXCobrar: val.cxc.idCuotaXCobrar,
-                    cuota: Number(val.cxc.cuota),
-                    fechaVencimiento: val.cxc.fechaVencimiento,
-                    nroCuota: val.cxc.nroCuota
-                }
-            })
+            }
 
-            console.log(fechaConfig)
+            if(valid){
+                this.getEndOfMonthDates(this.configFecha)
+            }else{
+                this.getSameDayOfMonth(this.configFecha)
+            }
             
-            this._mS.getData('post', '/CuotaXCobrar/GenerateNewDate?valid=' + valid + '&fecha=' + fechaConfig, cuotas).then(response => {
-                if (response.id == "0") {
-                    this._fS.sweetAlert('warning', response.message, response.titleSms);                   
-                    return
-                }
-                if (response.id == "1") {
-                    this._fS.sweetAlert('warning', response.message, response.titleSms);    
-                    this.$uibModalInstance.close(response)                                
-                }
-            });
+            
         } catch (error) {
             console.log(error)
         }
+    }
+
+    getEndOfMonthDates(startDate){
+        let currentDate = new Date(startDate)
+
+        for(let item of this.cuotas){
+
+            // Obtener el último día del mes actual
+            const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
+            
+            // Establecer la fecha actual en el último día del mes actual
+            currentDate.setDate(lastDayOfMonth);
+            
+            // Agregar la fecha vecimiento 
+            item.cxc.fechaVencimiento = new Date(currentDate)
+        
+            // Establecer la fecha actual en el primer día del mes siguiente
+            currentDate.setDate(1);
+            currentDate.setMonth(currentDate.getMonth() + 1);
+        }
+    }
+
+
+    getSameDayOfMonth(date){
+        const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+        const dayOfMonth = date.getDate() <= daysInMonth ? date.getDate() : daysInMonth;
+        let index = 0;
+        for (let item of this.cuotas) {
+            const newDate = new Date(date);
+            newDate.setMonth(date.getMonth() + index++);
+            newDate.setDate(dayOfMonth);
+            item.cxc.fechaVencimiento = newDate;               
+        }
+        
     }
 
 

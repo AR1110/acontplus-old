@@ -145,55 +145,7 @@ namespace DataAccess.CuotaDocumento
             }
             return _gr;
         }
-        public async Task<GenericResponse> GetNewDate(bool validacion, string fecha, List<CuotaXPagar> data)
-        {
-            var list = new List<CuotaXPagarViewModel>();
-            try
-            {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
-                {
-                    var cmd = new SqlCommand("ASPHelperNewFechaCuotaCompra", con);
-                    cmd.Parameters.AddWithValue("validacion", validacion);
-                    cmd.Parameters.AddWithValue("fecha", Convert.ToDateTime(fecha));
-                    var cuotas = JsonConvert.SerializeObject(data); cmd.Parameters.Add(new SqlParameter("jsonCuotas", cuotas));
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        _gr.id = reader.GetString(0);
-                        _gr.message = reader.GetString(1);
-                        if (_gr.id == "1")
-                        {
-                            var item = new CuotaXPagarViewModel
-                            {
-                                cxp = new CuotaXPagar()
-                                {
-                                    idCuotaXPagar = reader.GetInt64(2),
-                                    fechaVencimiento = reader.GetString(3),
-                                    cuota = reader.GetDecimal(4),
-                                    nroCuota = reader.GetInt32(5),
-                                },
-                                nroCuota = reader.GetString(6),
-                            };
-                            list.Add(item);
-                        }
-                    }
-                }
-                _gr.data = list;
-            }
-            catch (Exception ex)
-            {
-                _gr.id = "0";
-                _gr.message = ex.Message.ToString();
-            }
-            finally
-            {
-
-            }
-            return _gr;
-        }
-
+       
         public async Task<GenericResponse> InsertAsync(int idRol, CuotaXPagarViewModel data)
         {
             try

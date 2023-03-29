@@ -1,12 +1,12 @@
 USE AcontPlus
 GO
-INSERT INTO Compra.FacturaCompraImpuesto(idFac_CompraDetalle, codigo, codigoPorcentaje, tarifa, baseImponible, valor)
-SELECT  idFacturaCompraDetalle, codigo, codigoPorcentaje, tarifa, baseImponible, valor FROM CompraS.FacturaCompraImpuesto
-GO
-DROP TABLE CompraS.FacturaCompraImpuesto
-GO
-DROP SCHEMA CompraS
-GO
+--INSERT INTO Compra.FacturaCompraImpuesto(idFac_CompraDetalle, codigo, codigoPorcentaje, tarifa, baseImponible, valor)
+--SELECT  idFacturaCompraDetalle, codigo, codigoPorcentaje, tarifa, baseImponible, valor FROM CompraS.FacturaCompraImpuesto
+--GO
+--DROP TABLE CompraS.FacturaCompraImpuesto
+--GO
+--DROP SCHEMA CompraS
+--GO
 
 INSERT INTO Compra.FacturaCompraImpuesto(idFac_CompraDetalle, codigo, codigoPorcentaje, tarifa, baseImponible, valor)
 SELECT idFacturaCompraDetalle, i.codigo, ti.codigoPorcentaje, CONVERT(VARCHAR, CAST(ti.porcentaje AS INT)), fcd.precioCosto, fcd.iva  FROM facturacompradetalle fcd 
@@ -18,7 +18,7 @@ SELECT idFac_CompraDetalle FROM Compra.FacturaCompraImpuesto
 )
 AND (ice IS NULL OR ICE = 0) 
 
-
+GO
 INSERT INTO Compra.FacturaCompraImpuesto(idFac_CompraDetalle, codigo, codigoPorcentaje, tarifa, baseImponible, valor)
 
 SELECT idFacturaCompraDetalle, 3, tic.codigo, CONVERT(VARCHAR, CAST(tic.porcentaje AS INT)), fcd.precioCosto, fcd.iva  FROM facturacompradetalle fcd 

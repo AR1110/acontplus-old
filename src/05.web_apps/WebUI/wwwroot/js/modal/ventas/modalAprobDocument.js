@@ -2,7 +2,7 @@ let UiGridOptions = {};
 async function loadImport() {
     ({UiGridOptions} = await import('./../factElect/uiGridOptions.min.js' + CHANGE_VERSION()));    
 }
-loadImport();
+loadImport(); 
 
 
 class ModalBaseCtrl{
@@ -345,6 +345,39 @@ class ModalBaseCtrl{
         }
     }
 
+
+    trimDetailDoc(){
+        let tempDetails = [];
+        let orderIndex = 1;
+        							 						
+        for(let item of this.gridOptionsDetailDocument.data){
+            tempDetails.push({
+                orderIndex: orderIndex++,
+                idFacturaDetalle: item.idFacturaDetalle || 0,
+                idArticulo: item.idArticulo,
+                idTarifa: item.idTarifa,
+                idBodega: item.idBodega,
+                idMedida: item.idMedida,
+                idPresentacion: item.idPresentacion || 0,
+                idTipoIva: item.idTipoIva,
+                tarifa: item.tarifa,
+                codigoPorcentaje: item.codigoPorcentaje,
+                ice: item.ice,
+                descripcion: item.descripcion,
+                cantidad: item.cantidad,
+                precioCostoNeto: item.precioCostoNeto,
+                precioUnitario: item.precioUnitario,
+                precioVenta: item.precioUnitario,
+                precioConIva: item.precioConIva,
+                valorDescuento: item.valorDescuento,
+                precioTotalSinImpuesto: item.precioTotalSinImpuesto || 0,
+                porcentajeDescuento: item.porcentajeDescuento,
+                total: item.total,
+                nota: item.nota,
+            })
+        }
+        return tempDetails;
+    }
 
 
     closeModal(){
@@ -1617,7 +1650,7 @@ export class ModalApproveDocCtrl extends ModalBaseCtrl{
             }
 
             this.decimal = resultsDataForm[1][0]
-            this.configDetalle = resultsDataForm[2];
+            this.configDetalle = resultsDataForm[2][0]
             this.tipoIvas = resultsDataForm[3];
             this.tarifas  = resultsDataForm[4];
             
@@ -1872,6 +1905,7 @@ export class ModalApproveDocCtrl extends ModalBaseCtrl{
 
             this.gridOptionsDetailDocument.data.push(item);
         }
+        console.log(this.gridOptionsDetailDocument.data)
     }
 
 
@@ -1980,14 +2014,11 @@ export class ModalApproveDocCtrl extends ModalBaseCtrl{
 
                 const data = {
                     factura: JSON.stringify(factura),
-                    detalle: JSON.stringify(this.gridOptionsDetailDocument.data.map(item=>({
-                        ...item,
-                        precioVenta: item.precioUnitario
-                    }))),
+                    detalle: JSON.stringify(this.trimDetailDoc()),
                     adicional: JSON.stringify(this.infoAdicionalDocumento),
                     manejoArticulo: JSON.stringify([])
                 }                
-                
+               
                 this._mS.getData('post', '/FacturaVenta/Insert', data).then(response=>{
                     if(response.code==="0"){
                         hideLoader();
@@ -2355,7 +2386,8 @@ export class ModalApproveDocEditCtrl extends ModalBaseCtrl{
             })
 
             this.gridOptionsDetailDocument.data.push(item);
-        }        
+        }   
+        console.log(this.gridOptionsDetailDocument.data)     
     }
 
   
@@ -2476,6 +2508,8 @@ export class ModalApproveDocEditCtrl extends ModalBaseCtrl{
                     jsonHeader: JSON.stringify(jsonHeader),
                     jsonDetail: JSON.stringify(tempDetail),                  
                 }
+
+          
               
                 
                 this._mS.getData('put', '/AprobDocument/Update?id=' + this.data.idAprob_Document , data).then(response=>{                    
@@ -2840,4 +2874,175 @@ export class ModalApproveDocDetalleCtrl extends ModalBaseCtrl{
             this.gridOptionsDetailDocument.data.push(item);
         }        
     }    
+}
+
+
+
+
+
+export class ModalApproveDocFiltroCtrl extends ModalBaseCtrl{
+
+    static $inject = ['$scope', '$uibModalInstance', 'mainService', 'commonService', 'formulario', 'toastService', 'params']
+
+    constructor($scope, $uibModalInstance, _mS, _commonSvc, _fS, _tS, _params){
+        super(_commonSvc)
+        
+
+        this.$scope = $scope;
+        this.$uibModalInstance = $uibModalInstance;
+        this._mS = _mS;        
+        this._fS = _fS;
+        this._tS = _tS;
+
+        let {dataSearch, clienteFiltro, usuarioSearchFiltro, mes} = _params;
+
+        this.dataSearch = dataSearch || {};
+        this.clienteFiltro = clienteFiltro || {}
+        this.usuarioSearchFiltro = usuarioSearchFiltro || {};
+
+        this.meses = this._fS.meses();
+        this.mes = mes;
+
+    }
+
+    async $onInit(){
+        try {
+            showLoader();
+            let resultsDataForm = await this.initiload();
+            this.estadoDocumentos = await this._commonSvc.getEstadoDocByCodDoc('PRE');               
+            this.establecimientos = resultsDataForm[0];
+            // this.dataSearch.codEstab = this.establecimientos.length>0? this.establecimientos[0].codEstab: 0;
+            
+            this.$scope.$apply();
+        } catch (error) {
+            console.log(error)
+        } finally{
+            hideLoader();
+        }
+    }
+
+    onKeyupClienteSearchFiltro(){
+        if(!this.clienteFiltro.nombreFiscal){
+            this.clienteFiltro = {};
+            this.dataSearch.byCliente = 0;
+        }
+    }
+
+    selectedClienteSearchFiltro(item){
+        this.clienteFiltro.nombreFiscal = item.nombreFiscal;
+        this.dataSearch.byCliente = item.idCliente;
+    }
+
+    //---------------Fecha------------
+    onChangeFechaFiltro(){
+        this.mes = new Date().getMonth() + 1;
+        this.dataSearch.tipoFecha = 'FE' //Por Defecto por fecha Emisión de la Factura Venta 
+        this.getFechaInicioFinFilter(this.mes)
+    }
+
+    getFechaInicioFinFilter(mes){
+        let { fechaInicio, fechaFin } = this._fS.getFechaInicioFinFilter(mes);
+        this.dataSearch.fechaInicio = fechaInicio;
+        this.dataSearch.fechaFin = fechaFin;
+    }
+
+
+    //---------------Usuario--------------------    
+    usuarioSearchDynamic(textSearch){
+        return this._commonSvc.usuarioSearch({
+            idRol: document.getElementById('idRol').value,
+            busqueda: textSearch
+        })
+    }
+
+    onKeyupUsuarioSearchFiltro(){
+        if(this.usuarioSearchFiltro.nombreCompleto==='' || this.usuarioSearchFiltro.nombreCompleto===null || this.usuarioSearchFiltro.nombreCompleto===undefined){
+            this.usuarioSearchFiltro = {};
+            this.dataSearch.byUsuario = 0;
+        }
+    }
+
+    selectedUsuarioSearchFiltro(item){
+        this.usuarioSearchFiltro.nombreCompleto = item.nombreCompleto;
+        this.dataSearch.byUsuario = item.idUsuario;        
+    }
+
+
+
+    getSearch(){
+        let titutoToast = "Búsqueda";
+        if (!this.dataSearch.codEstab || this.dataSearch.codEstab===0) {
+            this._tS.toastr('warning', 'Por favor seleccione una Sucursal', titutoToast);
+            return;
+        }
+
+        if (this.dataSearch.checkBoxCliente) {
+            if (!this.dataSearch.byCliente || this.dataSearch.byCliente === 0) {
+                this._tS.toastr('warning', 'Seleccione el Cliente', titutoToast);
+                return;
+            }
+        }
+
+        if (this.dataSearch.checkBoxUsuario) {
+            if (!this.dataSearch.byUsuario || this.dataSearch.byUsuario===0) {
+                this._tS.toastr('warning', '   Ingrese el Usuario', titutoToast);
+                return
+            }
+        }     
+
+
+        if (this.dataSearch.checkBoxEstado) {
+            if (!this.dataSearch.byEstado || this.dataSearch.byEstado === 0) {
+                this._tS.toastr('warning', 'Por favor seleccione el Estado', titutoToast);
+                return
+            }
+        }
+
+        if (this.dataSearch.checkBoxFecha) {
+            if (!this.dataSearch.fechaInicio) {
+                this._tS.toastr('warning', 'Ingrese la Fecha Inicio', titutoToast);
+                return
+            }
+
+            if(!this.dataSearch.fechaInicio instanceof Date && !isNaN(this.dataSearch.fechaInicio)){
+                this._tS.toastr('warning', 'Ingrese una Fecha Válida');
+                return
+            }
+
+            if (!this.dataSearch.fechaFin) {
+                this._tS.toastr('warning', 'Ingrese la Fecha Fin');
+                return
+            }
+
+            if(!this.dataSearch.fechaFin instanceof Date && !isNaN(this.dataSearch.fechaFin)){
+                this._tS.toastr('warning', 'Ingrese una Fecha Válida');
+                return
+            }
+
+            if (!(Date.parse(this.dataSearch.fechaInicio) <= Date.parse(this.dataSearch.fechaFin))) {
+                this._tS.toastr('warning', 'Fecha Fin no puede se menor a Fecha Inicio');
+                return
+            }
+        }
+
+         
+        
+        this.$uibModalInstance.close({
+            dataSearch: this.dataSearch,
+            clienteFiltro: this.clienteFiltro,
+            usuarioSearchFiltro: this.usuarioSearchFiltro,
+            mes: this.mes,
+            isSearch: true
+        });
+    }
+
+    closeModal(){
+        this.$uibModalInstance.close({
+            dataSearch: this.dataSearch,
+            clienteFiltro: this.clienteFiltro,
+            usuarioSearchFiltro: this.usuarioSearchFiltro,
+            mes: this.mes,
+            isSearch: false
+        });       
+    }
 }

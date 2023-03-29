@@ -1,7 +1,7 @@
 
 
 
-import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.28";
+import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.35";
 
 class ModalNotaCreditoCtrl extends ModalBaseCtrl{
     constructor({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS}){
@@ -132,7 +132,7 @@ class ModalNotaCreditoCtrl extends ModalBaseCtrl{
         
             let dataMedida = medidas[0];
 
-            console.log(this.dataArticulo)
+            
                 
             entity.idArticulo           = articulo.idArticulo;
             entity.codigo               = articulo.codigoArticulo;                
@@ -150,8 +150,7 @@ class ModalNotaCreditoCtrl extends ModalBaseCtrl{
             entity.idMedida             = dataMedida.idMedida; //Medida por defecto 
             entity.adicional            = datosAdicionales; //
 
-            console.log(JSON.parse(dataMedida.tarifas))
-            console.log(self)
+       
             entity.articuloTarifas      = JSON.parse(dataMedida.tarifas);
             let tarifa                  = entity.articuloTarifas.find(item=>item.idTarifa===self.idTarifa);                                      
             entity.idTarifa             = self.idTarifa;  
@@ -193,7 +192,8 @@ class ModalNotaCreditoCtrl extends ModalBaseCtrl{
 
 
     calcularPorcentajeDescuento() {
-        console.log(this.data.porcentajeDescuento)
+        let valor = this.data.porcentajeDescuento || 0;
+        this.data.porcentajeDescuento = Number(valor);
         if(typeof this.data.porcentajeDescuento !=="number" || this.data.porcentajeDescuento === ""){
             this._tS.toastr('warning', 'Ingrese un Número Válido');
             return
@@ -211,6 +211,9 @@ class ModalNotaCreditoCtrl extends ModalBaseCtrl{
     //Calcular Porcentaje  Descuento 
     calcularDescuento() {
         try {
+            let valor = this.data.totalDescuento || 0;
+            this.data.totalDescuento = Number(valor)
+            
             if(typeof this.data.totalDescuento!=='number' || this.data.totalDescuento === ""){
                 this._tS.toastr('warning', 'Ingrese un númeto válido', 'Valor Descuento');
                 return
@@ -271,7 +274,8 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl{
                 this.cloneIdBodega = this.idBodega;
 
                 this.actividadTipoIva = resultsDataFormEstab[2][0]
-                console.log(this.actividadTipoIva)
+                
+              
             }else{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
             }
@@ -311,6 +315,8 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl{
                 decimal: this.decimal, 
                 actividadTipoIva: this.actividadTipoIva
             })
+
+            this.uiGridInvoice.idTarifa = this.idTarifa;
             
 
             
@@ -361,23 +367,25 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl{
     async getInvoiceByCustomer(){
         try {
             showLoader();
-            let json = {                
+            let json = {     
                 checkBoxNotaCredito: true,     
                 byNotaCredito: false,           
                 checkBoxEstado: true,
-                byEstado: 13, //Autorizadas
+                byEstado: 15, //Autorizadas 13 en desarrollo
                 checkBoxCliente: true,
                 byCliente: this.cliente.idCliente,
                 checkBoxDefault: false,
                 codEstab: this.data.codEstab
             }
+
+            console.log(json)
             this._mS.getData('get', '/FacturaVenta/Get?json=' + JSON.stringify(json)).then(response => {
                 if (response.code === "0") {                                      
                     console.warn(response)
                 }
                 if (response.code === "1") {                                      
                     this.facturas = JSON.parse(response.payload) || []; 
-                    console.log(this.facturas)          
+                            
                 }
             })
         } catch (error) {          
@@ -481,7 +489,7 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl{
           
 
             await this._mS.getData('post', '/NotaCreditoCliente/Insert', data).then(response=>{
-                console.log(response)
+                
                 if(response.id==='0'){                    
                     this._fS.sweetAlert('warning', response.message, response.titleSms);                    
                 }
@@ -579,6 +587,7 @@ export class ModalNotaCreditoEditarCtrl extends ModalNotaCreditoCtrl{
                 decimal: this.decimal, 
                 actividadTipoIva: this.actividadTipoIva
             })
+            this.uiGridInvoice.idTarifa = this.idTarifa;
             
             //Cargamos los Datos 
             this.data = Object.assign({}, this.dataDocumento);    
@@ -643,7 +652,7 @@ export class ModalNotaCreditoEditarCtrl extends ModalNotaCreditoCtrl{
             }
           
             await this._mS.getData('put', '/NotaCreditoCliente/Update?id=' + this.data.idNotaCredito, data).then(response=>{
-                console.log(response)
+                
                 if(response.id==='0'){                    
                     this._fS.sweetAlert('warning', response.message, response.titleSms);                    
                 }
@@ -696,6 +705,7 @@ export class ModalNotaCreditoDetalleCtrl extends ModalNotaCreditoCtrl{
     async $onInit(){
         try {
             showLoader();
+            console.log(this)
             let resultsDataForm = await this.initiload();            
             let {UiGridOptions} = await import('./../factElect/uiGridOptions.min.js' + CHANGE_VERSION());
            
@@ -710,7 +720,7 @@ export class ModalNotaCreditoDetalleCtrl extends ModalNotaCreditoCtrl{
 
                 this.bodegas       = resultsDataFormEstab[1];                
                 this.idBodega      = this.bodegas.length>0?this.bodegas[0].idBodega:0;
-                this.cloneIdBodega = this.idBodega;                
+                             
             }else{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
             }
@@ -721,36 +731,19 @@ export class ModalNotaCreditoDetalleCtrl extends ModalNotaCreditoCtrl{
             this.tipoIvas = resultsDataForm[3];
             this.tarifas  = resultsDataForm[4];
 
-            this.idTarifa = this.tarifas.length>0?this.tarifas[0].idTarifa:0;
-            this.cloneIdTarifa = this.idTarifa;
+            this.idTarifa = this.tarifas.length>0?this.tarifas[0].idTarifa:0;            
 
             this.tiempoCreditos = resultsDataForm[5];
            
             this.setColumnDefsVista();            
            
-            this.uiGridInvoice =  new UiGridOptions({
-                $scope: this.$scope,
-                gridOptions: this.gridOptions,
-                _fS: this._fS,
-                _mS: this._mS,
-                _tS: this._tS,
-                tipoIvas: this.tipoIvas
-            })
-
-            this.uiGridInvoice.setInitiload({
-                bodegas: this.bodegas,                 
-                tipoIvas: this.tipoIvas, 
-                decimal: this.decimal, 
-                actividadTipoIva: this.actividadTipoIva
-            })
-            
+    
             //Cargamos los Datos 
             this.data = this.dataDocumento;
             this.nroDocSecuencial = this.data.nroDocSecuencial;
             this.gridOptions.data = this.detalleDocumento;            
 
-            this.fechaEmisionEscrita = this._fS.getFechaEscrita(this.data.fechaEmision);
-            this.fechaVencimientoEscrita = this._fS.getFechaEscrita(this.data.fechaVencimiento);
+            this.fechaEmisionEscrita = this._fS.getFechaEscrita(this.data.fechaEmision);            
             
             this.$scope.$apply();            
 

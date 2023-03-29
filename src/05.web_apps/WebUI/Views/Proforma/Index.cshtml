@@ -86,6 +86,14 @@
                                                     <span md-menu-align-target><i class=" ti-file"></i> PDF</span>
                                                 </md-button>
                                             </md-menu-item>
+
+                                            <md-menu-item>
+                                                <md-button ng-click="print(p)">
+                                                    <span md-menu-align-target>
+                                                        <icon class="mdi mdi-cloud-print-outline"></icon> Impresión
+                                                    </span>
+                                                </md-button>
+                                            </md-menu-item>
                                             
                                             <md-menu-item ng-if="accion.enviarCorreo">                                                                                      
                                                 <md-button ng-click="askToSendEmail(p)">
@@ -125,6 +133,7 @@
     </div>
 </div>
 
-@section Scripts{               
+@section Scripts{ 
+    <script src="~/js/services/storageService.min.js" asp-append-version="true"></script>                         
     <script src="~/js/controllers/ventas/proformaCtrl.js" asp-append-version="true"></script>             
 }

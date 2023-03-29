@@ -2,6 +2,7 @@ using WebUI.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using WebUI.Hubs;
+using Helpers;
 
 namespace testWebApi
 {
@@ -13,12 +14,14 @@ namespace testWebApi
             //dynamic origins
             string[] origins = builder.Configuration.GetSection("SafeOrigins").Value.Split('|');
             //for mor information https://docs.microsoft.com/en-us/aspnet/core/mvc/views/view-compilation?view=aspnetcore-6.0&tabs=visual-studio
-            var mvcBuilder = builder.Services.AddRazorPages();
 
-            if (builder.Environment.IsDevelopment())
-            {
-                mvcBuilder.AddRazorRuntimeCompilation();
-            }
+            //var mvcBuilder = builder.Services.AddRazorPages();
+            //if (builder.Environment.IsDevelopment())
+            //{
+            //    mvcBuilder.AddRazorRuntimeCompilation();
+            //}
+
+            builder.Services.AddControllersWithViews();
 
             builder.Services.AddCors(options =>
             {
@@ -32,8 +35,7 @@ namespace testWebApi
             });
 
             // Add services to the container.
-            builder.Services.AddControllersWithViews();
-
+            builder.Services.AddRazorPages();//.AddRazorRuntimeCompilation();
             //SignalR
             builder.Services.AddSignalR();
 
@@ -95,14 +97,17 @@ namespace testWebApi
 
             builder.Services.AddScoped<CustomCookieAuthenticationEvents>();
 
-            builder.Services.AddTransient<IConfiguration>(sp =>
-            {
-                IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-                configurationBuilder.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
-                return configurationBuilder.Build();
-            });
+            //builder.Services.AddTransient<IConfiguration>(sp =>
+            //{
+            //    IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
+            //    configurationBuilder.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
+            //    return configurationBuilder.Build();
+            //});
 
             builder.Services.AddHttpContextAccessor();
+
+            builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
+            ConfigHelper.AddJsonFiles(builder.Configuration);
 
             var app = builder.Build();
 
@@ -130,9 +135,8 @@ namespace testWebApi
 
             app.UseAuthentication(); //added manually
 
-            app.UseAuthorization();            
+            app.UseAuthorization();
 
-            app.MapRazorPages(); //added manually
 
             app.UseCookiePolicy(cookiePolicyOptions);
 
@@ -141,6 +145,7 @@ namespace testWebApi
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
             app.MapHub<NotificationHub>("/notificationHub");
+            app.MapRazorPages(); //added manually
 
             app.Run();
         }

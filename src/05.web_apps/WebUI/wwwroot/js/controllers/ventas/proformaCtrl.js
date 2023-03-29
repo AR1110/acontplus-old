@@ -45,7 +45,7 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
                 }else{                                
                     $scope.dataSearch.checkBoxDefault = true;
                 } 
-                console.log($scope.dataSearch)
+                
             await _mS.getData('get', '/Proforma/Get?json=' + JSON.stringify($scope.dataSearch)).then(response=>{                              
                 if(response.id==='0'){
                     $scope.proformas = []
@@ -68,12 +68,12 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
     }    
 
     $scope.initiload = ()=>{
-        _mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response=>{
-            let results = JSON.parse(response.payload) || [];
-            let establecimientos = results[0];
-            let codEstab = establecimientos.length>0?establecimientos[0].codEstab: 0;            
+        _commonSvc.getEstabAsign().then(response=>{            
+            $scope.establecimientos = response;
+            let codEstab = $scope.establecimientos.length>0? $scope.establecimientos[0].codEstab: 0;            
             $scope.dataSearch.codEstab = codEstab;
             $scope.getProformas();
+            
         })
     }
     $scope.initiload();
@@ -85,7 +85,7 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
         let {MODAL_FILE_CTRL, MODAL_NUEVO} = _nombreModalConst.proforma;
         let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_NUEVO['controller']];
         let template   = MODAL_NUEVO['template'];
-        console.log(MODAL_FILE_CTRL)
+        
         let params = {
             TIPO_REGISTRO: 'NUEVO'
         }
@@ -294,54 +294,62 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
 
 
 
-    $scope.askToSendEmail = function (item) {            
-        Swal.fire({
-            title: '<small>Enviar por Correo</small>',
-            icon: 'warning',
-            html: '<small>¿Está seguro de enviar por correo esté documento?</small>',
-            showDenyButton: true,
-            confirmButtonText: `Si, enviar`,
-            denyButtonText: `No, cancelar`,
-            allowOutsideClick: false
-        }).then(result => {
-            if (result.isConfirmed) {
-                $scope.getSendEmail(item);                    
-            }
-        })
-    }
-
-    $scope.getSendEmail = function (item) {
-        try {
-            let format = 'pdf';
-            let dataParms = {
-                codEstab: item.codEstab,
-                idProforma : item.idProforma           
-            }
-        
-            const parameters = {
-                reportParams: JSON.stringify({
-                    codigo: 'PR', 
-                    format,
-                    codEstab: item.codEstab,
-                    aditionalParams: [                    
-                    ]
-                }),
-                dataParams: JSON.stringify(dataParms),
-                sendEmail: true
-            }
-        
-            _fS.showLoaderSendEmail();
-            _mS.getFile('post', '/Proforma/Download', parameters).then(response => {
-                Swal.close();
-                var fileBlob = new Blob([response.data], { type: response.data.type });
-                var objectUrl = window.URL || window.webkitURL
-                var urlFile = objectUrl.createObjectURL(fileBlob)
-                window.open(urlFile, '_blank');                
+    $scope.askToSendEmail = async (item) =>{ 
+        try { 
+            let params = {
+                TYPE_NOTIFICATION: 'N',
+                serie: item.nroDocumento,
+                correo: item.correo, 
+                subject: 'Documento Proforma - Acontplus N°: ' + item.nroDocumento,
+                json: {                                      
+                    hasFile: true, 
+                    isReport: "SI", 
+                    reportParams: {
+                        hasParams: true,
+                        codEstab: item.codEstab, 
+                        codigo: "PR", 
+                        format: "pdf"
+                    }, 
+                    spParams: {
+                        id: item.idProforma
+                    }
+                }
+            }                    
+            
+           
+            const { MODAL_SEND_MAIL_CTRL, MODAL_SEND_MAIL_CSHTML } = _nombreModalConst.common;
+            const { SendMailCtrl } = await import('./../../modal/' + MODAL_SEND_MAIL_CTRL);
+            _modalSvc.openModalCustom({
+                controller: SendMailCtrl,
+                template: 'Shared/' + MODAL_SEND_MAIL_CSHTML,
+                size: 'md',
+                params
             })
         } catch (error) {
-            
-        }
+            console.error(error)
+        } 
     }
+
+
+
+    //Impresión 
+
+    $scope.print = function (item) {                   
+        let parameters = {            
+            idDocument: item.idProforma,           
+            idTipoDocumento : item.idTipoDocumento,
+            codEstab: item.codEstab,
+            codDoc: TIPO_DOC_PR.codigo,
+            nroIdentificacion : item.nroIdentificacion,
+            codigo: 'RNEPT'
+        }
+        
+        _commonSvc.askToPrint({
+            parameters: JSON.stringify(parameters)
+        })
+        
+    }
+
 
     //Reporte 
     $scope.getReport = function (item) {
@@ -349,20 +357,22 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
         let format = 'pdf';
 
         let dataParms = {
-            idProforma: item.idProforma ,
-            codEstab: item.codEstab           
+            id: item.idProforma ,        
         }
+
+
        
         const parameters = {
+            hasService: true,
             reportParams: JSON.stringify({
+                hasParams: true,
                 codigo: 'PR', 
                 format,
                 codEstab: item.codEstab,
                 aditionalParams: [                    
                 ]
             }),
-            dataParams: JSON.stringify(dataParms),
-            sendEmail: false
+            dataParams: JSON.stringify(dataParms)
         }
 
         _commonSvc.getReport({

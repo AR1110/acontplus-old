@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.CuotaDoc
-{
+{ 
     public class CuotaXCobrarController : Controller
     {
         private readonly IConfiguration _configuration;
@@ -51,15 +51,7 @@ namespace WebUI.Controllers.CuotaDoc
             return Ok(res);
         }
 
-        //Set y Get Nuevo Fecha Vcto Cuota 
-        [HttpPost]
-        public async Task<IActionResult> GenerateNewDate(bool valid, DateTime fecha, [FromBody] List<CuotaXCobrar> data)
-        {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
-            var res = await _cxc.GetNewDate(valid, fecha, data);
-            return Ok(res);
-        }
-
+      
 
     }
 }

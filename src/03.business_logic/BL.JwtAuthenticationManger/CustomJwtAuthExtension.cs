@@ -22,6 +22,8 @@ namespace BL.JwtAuthenticationManger
                     ValidateIssuerSigningKey = true,
                     ValidateIssuer = false,
                     ValidateAudience = false,
+                    RequireExpirationTime = true,
+                    ClockSkew = TimeSpan.FromSeconds(0),
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(JwtTokenHandler.JWT_SECURITY_KEY))
                 };
             });

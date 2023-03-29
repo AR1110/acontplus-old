@@ -7,7 +7,7 @@
       "destination": "wwwroot/lib/jquery/"
     },
     {
-      "library": "bootstrap@4.6.1",
+      "library": "bootstrap@4.6.2",
       "destination": "wwwroot/lib/bootstrap/"
     },
     {
@@ -87,11 +87,11 @@
       "destination": "wwwroot/lib/angular-file-saver/"
     },
     {
-      "library": "Chart.js@3.8.0",
+      "library": "Chart.js@3.8.2",
       "destination": "wwwroot/lib/Chart.js/"
     },
     {
-      "library": "moment-timezone@0.5.33",
+      "library": "moment-timezone@0.5.39",
       "destination": "wwwroot/lib/moment-timezone/"
     },
     {
@@ -135,7 +135,7 @@
       "destination": "wwwroot/lib/angular-filter/"
     },
     {
-      "library": "microsoft-signalr@7.0.0",
+      "library": "microsoft-signalr@7.0.3",
       "destination": "wwwroot/lib/microsoft-signalr/"
     },
     {
@@ -145,6 +145,10 @@
     {
       "library": "bootstrap-daterangepicker@3.0.5",
       "destination": "wwwroot/lib/bootstrap-daterangepicker/"
+    },
+    {
+      "library": "angular-media-queries@0.6.1",
+      "destination": "wwwroot/lib/angular-media-queries/"
     }
   ]
 }

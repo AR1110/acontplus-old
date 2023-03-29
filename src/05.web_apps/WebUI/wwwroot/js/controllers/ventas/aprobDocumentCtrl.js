@@ -4,13 +4,24 @@ app.controller('aprobComprobanteCtrl', aprobComprobanteCtrl);
 aprobComprobanteCtrl.$inject = ['$scope', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService'];
 
 function aprobComprobanteCtrl($scope, mS, commonSvc, _modalSvc, _nombreModalConst, _form, _tS){
+    
     let accion = JSON.parse(localStorage.getItem("accion")); 
+    
     if (accion === null) {
         location.href = "/Home/Index";
         return
     } else {
         $scope.accion = accion[0];
-    }    
+    }
+    
+    $scope.dataSearch = {
+        pageIndex: 1,
+        pageSize: 10000
+    }
+
+    $scope.clienteFiltro = {}
+    $scope.usuarioSearchFiltro = {};
+    $scope.mes = new Date().getMonth() + 1;
 
     $scope.askToOpenModalOption = async()=>{
         const swalWithBootstrapButtons = Swal.mixin({
@@ -61,37 +72,101 @@ function aprobComprobanteCtrl($scope, mS, commonSvc, _modalSvc, _nombreModalCons
         })      
     }
 
+
+    $scope.openModalFiltro = async function(){
+        let {MODAL_FILE_CTRL, MODAL_FILTRO} = _nombreModalConst.aprob_comp;                            
+        let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_FILTRO['controller']]        
+        let template   = MODAL_FILTRO['template'];
+        
+        let params = {
+            dataSearch: $scope.dataSearch,
+            clienteFiltro: $scope.clienteFiltro,
+            usuarioSearchFiltro: $scope.usuarioSearchFiltro,
+            mes: $scope.mes
+        }
+        
+        let modalRef = _modalSvc.openModalCustom({
+            controller,
+            template,
+            params,
+            size:'lg'
+        })
+        
+        modalRef.result.then(result=>{
+            let {dataSearch, clienteFiltro, usuarioSearchFiltro, mes, isSearch} = result;
+            $scope.dataSearch = dataSearch;
+            $scope.clienteFiltro = clienteFiltro;
+            $scope.usuarioSearchFiltro =  usuarioSearchFiltro;
+            $scope.mes = mes;
+            if(isSearch){
+                $scope.getAprobComprobantes();
+            }
+        })     
+    }
+
+
     $scope.getAprobComprobantes = ()=>{
         try {
             showLoader();
-            mS.getData('get', '/AprobDocument/Get?json=' + JSON.stringify({})).then(response=>{                
+            $scope.aprobComprobantes = [];
+
+            if($scope.dataSearch.checkBoxCliente ||
+                $scope.dataSearch.checkBoxFecha || 
+                $scope.dataSearch.checkBoxUsuario || 
+                $scope.dataSearch.checkBoxEstado){              
+                    $scope.dataSearch.checkBoxDefault = false
+                }else{                                
+                    $scope.dataSearch.checkBoxDefault = true;
+                }    
+
+            mS.getData('get', '/AprobDocument/Get?json=' + JSON.stringify($scope.dataSearch)).then(response=>{                
                 if(response.code==='0'){
                     hideLoader();
+                    $scope.aprobComprobantes = [];
                     console.warn(response)
                     return
                 }
                 if(response.code==='1'){
                     $scope.aprobComprobantes = JSON.parse(response.payload) || [];
-                    console.log($scope.aprobComprobantes)
+                    
                     const total = $scope.aprobComprobantes.map(item=>item.total).reduce((prev, acc)=>prev + acc, 0)
                     $scope.total = _form.roundNumber(total, 2)
                     hideLoader();
                 }
             }).catch(error=>{
+                $scope.aprobComprobantes = [];
                 console.log(error)
             })
         } catch (error) {
+            $scope.aprobComprobantes = [];
             console.log(error)
 
         }
     }
 
-    $scope.getAprobComprobantes();
+    $scope.initiload = ()=>{
+        commonSvc.getEstabAsign().then(response=>{            
+            $scope.establecimientos = response;
+            let codEstab = $scope.establecimientos.length>0? $scope.establecimientos[0].codEstab: 0;            
+            $scope.dataSearch.codEstab = codEstab;            
+            $scope.getAprobComprobantes();
+        })
+    }
+    $scope.initiload();
+    
 
 
     $scope.showBtnApprove = (item)=>{
         return !['APR', 'A'].includes(item.codEstado)
-    }   
+    } 
+    
+    $scope.showBtnEditar = (item)=>{
+        return !['APR', 'A'].includes(item.codEstado)
+    }
+
+    $scope.showBtnDelete = (item)=>{
+        return !['APR', 'A'].includes(item.codEstado)
+    }
    
     $scope.openModalDetalle = async(item)=>{
         try {

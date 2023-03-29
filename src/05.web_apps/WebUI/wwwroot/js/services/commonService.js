@@ -1,7 +1,7 @@
 export class CommonService {
-    static $inject = ["$http", "mainService", "FileSaver", "formulario", "modalService", "nombreModal"];
+    static $inject = ["$http", "mainService", "FileSaver", "formulario", "modalService", "nombreModal", "__env"];
 
-    constructor($http, mS, FileSaver, form, _modalSvc, _nombreModalConst) {
+    constructor($http, mS, FileSaver, form, _modalSvc, _nombreModalConst, __env) {
         this.$http = $http;
         this.mS = mS;
         this.FileSaver = FileSaver;
@@ -126,28 +126,29 @@ export class CommonService {
         });
     }
 
-    getEstabAsign(json={}){
-        return this.mS.getData('get', '/EstabAsig/Get?json=' + JSON.stringify(json)).then(response=>{          
-            if(response.code==="0"){
+    getEstabAsign(json = {}) {
+        return this.mS.getData('get', '/EstabAsig/Get?json=' + JSON.stringify(json)).then(response => {
+            if (response.code === "0") {
                 throw response
-            }         
-            return JSON.parse(response.payload) || [];            
+            }
+            return JSON.parse(response.payload) || [];
         })
     }
 
-    getDataFormEstabAsig(json={}){
-        return this.mS.getData('get', '/EstabAsig/GetDataForm?json=' + JSON.stringify(json)).then(response=>{
-            
-            if(response.code==='0'){                
+    getDataFormEstabAsig(json = {}) {
+        return this.mS.getData('get', '/EstabAsig/GetDataForm?json=' + JSON.stringify(json)).then(response => {
+
+            if (response.code === '0') {
                 throw response
             }
             return JSON.parse(response.payload)
         })
     }
 
-  
+
 
     removeAccents(str) {
+        str = str || ''
         return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     }
 
@@ -166,13 +167,13 @@ export class CommonService {
 
     //Obtenemos todas las configuraciones(decimales por modulo, tipo iva asignado a una Entidad)
     getGestionConfig(json) {
-        return this.mS.getData('get',"/Configuracion/Get?json=" + JSON.stringify(json)).then(response => {
-            
-            if(response.id==='0')            {
+        return this.mS.getData('get', "/Configuracion/Get?json=" + JSON.stringify(json)).then(response => {
+
+            if (response.id === '0') {
                 toastr.warning(response)
             }
-                return JSON.parse(response.data)
-            });
+            return JSON.parse(response.data)
+        });
     }
 
 
@@ -225,14 +226,16 @@ export class CommonService {
      * @return [4]=>Estado Movimiento
      */
 
-    getGestionFinanciera(json={}){
-        return this.mS.getData('get', '/GestionFinanciera/Get?json=' + JSON.stringify(json)).then(response=>JSON.parse(response.payload))
+    getGestionFinanciera(json = {}) {
+        return this.mS.getData('get', '/GestionFinanciera/Get?json=' + JSON.stringify(json)).then(response => {
+            return JSON.parse(response.payload)
+        })
     }
 
-    
+
     //Buscador Empleado 
-    querySearchEmpleado(search) {        
-        if(search===null || search===undefined || search ==='' ) return
+    querySearchEmpleado(search) {
+        if (search === null || search === undefined || search === '') return
         return this.mS.getData('get', '/Empleado/Search?busqueda=' + search).then(response => {
             return response.data;
         })
@@ -261,9 +264,9 @@ export class CommonService {
             url: 'apiCliente/Usuario/Search/' + JSON.stringify(json),
             typeUrl: 1
         }).then(response => {
-            if(response.id==='0'){
+            if (response.id === '0') {
                 console.warn(response.message)
-            }            
+            }
             // if(response.id==='0'){
             //   toastr.warning(response.message, response.titleSms)
             //   return
@@ -288,11 +291,11 @@ export class CommonService {
 
     //---------------------------------------START CLIENTE-----------------------------------------
     clienteSearch(textSearch) {
-        return this.mS.getData('get', '/Cliente/Search?json=' + JSON.stringify({ textSearch })).then(response => {            
-            if(response.id==='0'){
+        return this.mS.getData('get', '/Cliente/Search?json=' + JSON.stringify({ textSearch })).then(response => {
+            if (response.id === '0') {
                 console.warn(response)
                 return
-            }                        
+            }
             return JSON.parse(response.payload) || []
         })
     }
@@ -303,7 +306,7 @@ export class CommonService {
      * @returns data;
      */
     async getDataCliente(id) {
-        
+
         try {
             let data = {};
             if (id === null || id === 0 || id === undefined) return data
@@ -372,7 +375,7 @@ export class CommonService {
     }
 
     getDataByProveedor(idProveedor) {
-        try {            
+        try {
             showLoader();
             return this.mS.getData('get', '/Proveedor/GetId?idProveedor=' + idProveedor).then(
                 response => {
@@ -486,17 +489,17 @@ export class CommonService {
 
 
     //Buscador Articulo en datatable
-    articuloSearchGeneral({ textSearch, code = false}) {
+    articuloSearchGeneral({ textSearch, code = false }) {
         const json = {
             bySearch: this.removeAccents(textSearch),
             code
         }
         // let articulos = [];
-        
+
         if (textSearch.length < 3) return
 
         return this.mS.getData('get', '/Articulo/Get?json=' + JSON.stringify(json)).then(response => {
-            if(response.code==='0'){
+            if (response.code === '0') {
                 throw response;
             }
             let articulos = JSON.parse(response.data) || []
@@ -576,48 +579,54 @@ export class CommonService {
      * 3. Ventas 
      */
 
-    async generarNroDocumentoVenta({ puntoEmision, idPuntoEmision, nroDocumento, codigoDocumento}){        
+    async generarNroDocumentoVenta({ puntoEmision, idPuntoEmision, nroDocumento, codigoDocumento }) {
         let nroDocumentoSecuencial = null;
         return await this.mS.getData('get', `/GenerarNroDoc/GenerarNroDocVenta?puntoEmision=${puntoEmision}&idPuntoEmision=${idPuntoEmision}&nroDocumento=${nroDocumento}&codigoDocumento=${codigoDocumento}`)
-        .then(response => {
-            if (response.id === "0") {
-                Swal.fire({
-                    title: `<small>${response.titleSms}</small>`,
-                    icon: "warning",
-                    html: `<small>${response.message}</small>`,
-                    allowOutsideClick: false,
-                });
-                return nroDocumentoSecuencial;
-            }
-            if (response.id === "1") {
-                return (nroDocumentoSecuencial = response.data);
-            }
-        })
+            .then(response => {
+                if (response.id === "0") {
+                    Swal.fire({
+                        title: `<small>${response.titleSms}</small>`,
+                        icon: "warning",
+                        html: `<small>${response.message}</small>`,
+                        allowOutsideClick: false,
+                    });
+                    return nroDocumentoSecuencial;
+                }
+                if (response.id === "1") {
+                    return (nroDocumentoSecuencial = response.data);
+                }
+            })
     }
 
-    async generarNroDocumentoCompra({ puntoEmision, idPuntoEmision, nroDocumento, codigoDocumento}){
+    async generarNroDocumentoCompra({ puntoEmision, idPuntoEmision, nroDocumento, codigoDocumento }) {
         let nroDocumentoSecuencial = null;
         return await this.mS.getData('get', `/GenerarNroDoc/GenerarNroDocCompra?puntoEmision=${puntoEmision}&idPuntoEmision=${idPuntoEmision}&nroDocumento=${nroDocumento}&codigoDocumento=${codigoDocumento}`)
-        .then(response => {
-            if (response.id === "0") {
-                Swal.fire({
-                    title: `<small>${response.titleSms}</small>`,
-                    icon: "warning",
-                    html: `<small>${response.message}</small>`,
-                    allowOutsideClick: false,
-                });
-                return nroDocumentoSecuencial;
-            }
-            if (response.id === "1") {
-                return (nroDocumentoSecuencial = response.data);
-            }
-        })
+            .then(response => {
+                if (response.id === "0") {
+                    Swal.fire({
+                        title: `<small>${response.titleSms}</small>`,
+                        icon: "warning",
+                        html: `<small>${response.message}</small>`,
+                        allowOutsideClick: false,
+                    });
+                    return nroDocumentoSecuencial;
+                }
+                if (response.id === "1") {
+                    return (nroDocumentoSecuencial = response.data);
+                }
+            })
     }
 
-    
+
     //--------------------------------------METODOS RELACIONADOS AL TIPO DOCUMENTO---------------------------
-    async generarNroDocumento({ puntoEmision, idPuntoEmision, nroDocumento, codigoDocumento, tipoDoc='C'}) {
-        let nroDocumentoSecuencial = null;                   
+
+
+    getDataFormVenta() {
+
+    }
+
+    async generarNroDocumento({ puntoEmision, idPuntoEmision, nroDocumento, codigoDocumento, tipoDoc = 'C' }) {
+        let nroDocumentoSecuencial = null;
         let url = tipoDoc === 'C' ? 'GenerarNroDocCompra' : 'GenerarNroDocVenta';
         return await this.mS.getData('get', `/GenerarNroDoc/${url}?puntoEmision=${puntoEmision}&idPuntoEmision=${idPuntoEmision}&nroDocumento=${nroDocumento}&codigoDocumento=${codigoDocumento}`)
             .then(response => {
@@ -638,11 +647,11 @@ export class CommonService {
 
     //-------------------------------------------------GET DATA TIPO DOCUMENTO COMPRA ---------------------
     setUiGridDetalleCompra(detalleCompra, nombrePrecio = 'precioUnitario') {
-        
+
         let index = 1;
-        return detalleCompra.map(item => {                
+        return detalleCompra.map(item => {
             item.n = index++
-           
+
             const data = {
                 idArticulo: item.idArticulo
             }
@@ -657,18 +666,18 @@ export class CommonService {
             let subTotal = item.cantidad * item.precioUnitario;
             let totalDescuento = item.cantidad * item.valorDescuento;
 
-            if (!item.hasOwnProperty("total")){
-                let total = (item.precioUnitario - item.valorDescuento) * item.cantidad; 
-                item.total =  total;
+            if (!item.hasOwnProperty("total")) {
+                let total = (item.precioUnitario - item.valorDescuento) * item.cantidad;
+                item.total = total;
             }
 
 
             item.subTotal = subTotal;
-            item.totalDescuento = totalDescuento;                                
+            item.totalDescuento = totalDescuento;
             item.totalIce = item.cantidad * item.ice;
             return item;
         })
-       
+
     }
 
     async getDataTipoDocCompra({ id, codigoDocumento }) {
@@ -683,14 +692,14 @@ export class CommonService {
 
         const TIPO_DOC = this.tipoDoc[codigoDocumento];
 
-        if(!(id>0)){
+        if (!(id > 0)) {
             throw "ID DOCUMENTO NO VÁLIDO"
         }
-        
+
         switch (codigoDocumento) {
-            case "FC":                
+            case "FC":
                 await this.mS.getData('get', `/FacturaCompra/GetId?id=${id}`).then(response => {
-                    
+
                     if (response.code == "0") {
                         this.form.sweetAlert('warning', response.message)
                         throw response.message
@@ -701,18 +710,18 @@ export class CommonService {
                         dataDocumento = dataMain[0][0];
                         dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision);
                         dataDocumento.fechaVencimiento = this.form.formatDate(dataDocumento.fechaVencimiento)
-                        proveedor     = dataMain[1][0];
+                        proveedor = dataMain[1][0];
                         detalleDocumento = this.setUiGridDetalleCompra(dataMain[2]);
                         datosAdicionalesArticulo = dataMain[3];
-                                               
-                        isComplete = true;                        
+
+                        isComplete = true;
                     }
                 });
                 break;
 
             case "IB":
-                
-                await this.mS.getData('get',`/IngresoBodega/GetId?id=${id}`).then(response=> {
+
+                await this.mS.getData('get', `/IngresoBodega/GetId?id=${id}`).then(response => {
                     if (response.code === "0") {
                         this.form.sweetAlert('warning', response.message)
                         throw response.message
@@ -723,104 +732,104 @@ export class CommonService {
                         dataDocumento = dataMain[0][0];
                         dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision);
                         dataDocumento.fechaVencimiento = this.form.formatDate(dataDocumento.fechaVencimiento)
-                        proveedor     = dataMain[1][0];
+                        proveedor = dataMain[1][0];
                         detalleDocumento = this.setUiGridDetalleCompra(dataMain[2]);
                         datosAdicionalesArticulo = dataMain[3];
-                                               
 
-                        isComplete = true;                        
+
+                        isComplete = true;
                     }
                 });
                 break;
 
-            case "LC":                
-                await this.mS.getData('get', "/LiquidacionCompra/GetId?id=" +  id).then(response => {
-                        if (response.code == "0") {
-                            this.form.sweetAlert('warning', response.message)
-                            throw response.message
-                        }
-                        if (response.code == "1") {
-                            let dataMain = JSON.parse(response.payload)
-                            
-                            dataDocumento = dataMain[0][0];
-                            dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision);
-                            dataDocumento.fechaVencimiento = this.form.formatDate(dataDocumento.fechaVencimiento)
-                            proveedor     = dataMain[1][0];
-                            detalleDocumento = this.setUiGridDetalleCompra(dataMain[2]);
-                            infoAdicionalDocumento = dataMain[3];
+            case "LC":
+                await this.mS.getData('get', "/LiquidacionCompra/GetId?id=" + id).then(response => {
+                    if (response.code == "0") {
+                        this.form.sweetAlert('warning', response.message)
+                        throw response.message
+                    }
+                    if (response.code == "1") {
+                        let dataMain = JSON.parse(response.payload)
 
-                            isComplete = true;                            
-                        }
-                    })
+                        dataDocumento = dataMain[0][0];
+                        dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision);
+                        dataDocumento.fechaVencimiento = this.form.formatDate(dataDocumento.fechaVencimiento)
+                        proveedor = dataMain[1][0];
+                        detalleDocumento = this.setUiGridDetalleCompra(dataMain[2]);
+                        infoAdicionalDocumento = dataMain[3];
+
+                        isComplete = true;
+                    }
+                })
 
                 break;
 
             case 'NCP':
                 showLoader();
                 await this.mS.getData('get', '/NotaCreditoProveedor/GetId?id=' + id).then(response => {
-                        if (response.code === '0') {
-                            this.form.sweetAlert('warning', response.message)
-                            throw response.message                                                        
-                        }
-                        if (response.code === '1') {
-                            let dataMain = JSON.parse(response.payload);
+                    if (response.code === '0') {
+                        this.form.sweetAlert('warning', response.message)
+                        throw response.message
+                    }
+                    if (response.code === '1') {
+                        let dataMain = JSON.parse(response.payload);
 
-                            dataDocumento = dataMain[0][0];
-                            dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision);
-                            factura = dataMain[1][0]
+                        dataDocumento = dataMain[0][0];
+                        dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision);
+                        factura = dataMain[1][0]
 
-                            proveedor = dataMain[2][0];
-                            
-                            detalleDocumento = this.setUiGridDetalleCompra(dataMain[3]);                     
-                            isComplete = true;                            
-                        }
-                    })
+                        proveedor = dataMain[2][0];
+
+                        detalleDocumento = this.setUiGridDetalleCompra(dataMain[3]);
+                        isComplete = true;
+                    }
+                })
                 break
 
 
             case 'OC':
                 await this.mS.getData('get', '/OrdenCompra/GetId?id=' + id).then(response => {
 
-                        if (response.code === '0') {
-                            this.form.sweetAlert('warning', response.message)
-                            throw response.message
-                        }
-                        if (response.code === '1') {
-                            let dataMain = JSON.parse(response.payload) || [];
-                            
-                            dataDocumento = dataMain[0][0];
-                            dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision);                        
-                            proveedor     = dataMain[1][0];
-                            detalleDocumento = this.setUiGridDetalleCompra(dataMain[2]);
-                            infoAdicionalDocumento = dataMain[3];
+                    if (response.code === '0') {
+                        this.form.sweetAlert('warning', response.message)
+                        throw response.message
+                    }
+                    if (response.code === '1') {
+                        let dataMain = JSON.parse(response.payload) || [];
 
-                            isComplete = true;                            
-                        }
-                    })
+                        dataDocumento = dataMain[0][0];
+                        dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision);
+                        proveedor = dataMain[1][0];
+                        detalleDocumento = this.setUiGridDetalleCompra(dataMain[2]);
+                        infoAdicionalDocumento = dataMain[3];
+
+                        isComplete = true;
+                    }
+                })
                 break
 
             case "RC":
                 showLoader();
-                await this.mS.getData('get', '/RetencionCompra/GetId?id=' + id).then(response=>{
+                await this.mS.getData('get', '/RetencionCompra/GetId?id=' + id).then(response => {
                     if (response.code == "0") {
                         hideLoader();
-                        form.sweetAlert("warning", response.message, response.titleSms);              
+                        form.sweetAlert("warning", response.message, response.titleSms);
                     }
-                    if(response.code==='1'){
-                        let dataMain = JSON.parse(response.payload)      
-                        
+                    if (response.code === '1') {
+                        let dataMain = JSON.parse(response.payload)
+
                         dataDocumento = dataMain[0][0];
-                        dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision);                        
-                        
-                        proveedor     = dataMain[1][0];
-                        
+                        dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision);
+
+                        proveedor = dataMain[1][0];
+
                         detalleDocumento = dataMain[2];
-                        
+
                         infoAdicionalDocumento = dataMain[3];
 
-                        isComplete = true;  
+                        isComplete = true;
                         hideLoader();
-                    }                    
+                    }
                 })
                 break
             default:
@@ -855,8 +864,8 @@ export class CommonService {
     getDetalleVenta(detalleVenta, nombrePrecio = 'precioUnitario') {
         try {
             let index = 1;
-            return detalleVenta.map(item => {                            
-                item.n = index++;                
+            return detalleVenta.map(item => {
+                item.n = index++;
 
                 let data = {
                     idArticulo: item.idArticulo,
@@ -866,16 +875,16 @@ export class CommonService {
 
                 //Cambiar la peticion para actualizaciòn de detalle de Documento 
                 this.getDataArticuloParaVenta({ json: data }).then(response => {
-                    
-                        let results = JSON.parse(response.data);
-                        let responseMsg = results[0][0];
 
-                        if (responseMsg.code === '1' || responseMsg.code === '2') {
-                            item.medidas = results[1];
-                            let dataMedida = item.medidas.find(m => m.idMedida === item.idMedida) || {};
-                            item.articuloTarifas = JSON.parse(dataMedida.tarifas);
-                        }
+                    let results = JSON.parse(response.data);
+                    let responseMsg = results[0][0];
+
+                    if (responseMsg.code === '1' || responseMsg.code === '2') {
+                        item.medidas = results[1];
+                        let dataMedida = item.medidas.find(m => m.idMedida === item.idMedida) || {};
+                        item.articuloTarifas = JSON.parse(dataMedida.tarifas);
                     }
+                }
                 )
 
                 let subTotal = item.cantidad * item[nombrePrecio] || 0;
@@ -903,30 +912,29 @@ export class CommonService {
         const TIPO_DOC = this.tipoDoc[codigoDocumento];
 
         switch (codigoDocumento) {
-            case "FV":                
-                await this.mS.getData('get',"/FacturaVenta/GetId?id=" + id).then(response => {
-                    if (response.id === "0") {                        
+            case "FV":
+                await this.mS.getData('get', "/FacturaVenta/GetId?id=" + id).then(response => {
+                    if (response.id === "0") {
                         this.form.sweetAlert('warning', response.message)
-                        toastr.warning(response.message, response.titleSms)
                         throw response.message
                     }
                     if (response.id === "1") {
                         let dataMain = JSON.parse(response.payload);
-                        let detalle  = dataMain[2];
-                        dataDocumento          = dataMain[0][0];
-                        dataDocumento.nroDocSecuencial   = `${dataDocumento.estab}-${dataDocumento.ptoEmi}-${dataDocumento.secuencial}`;
-                        dataDocumento.ptoEmi   = `${dataDocumento.estab}-${dataDocumento.ptoEmi}`
+                        let detalle = dataMain[2];
+                        dataDocumento = dataMain[0][0];
+                        dataDocumento.nroDocSecuencial = `${dataDocumento.estab}-${dataDocumento.ptoEmi}-${dataDocumento.secuencial}`;
+                        dataDocumento.ptoEmi = `${dataDocumento.estab}-${dataDocumento.ptoEmi}`
                         //Fechas                         
                         dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision);
-                        dataDocumento.fechaVencimiento = this.form.formatDate(dataDocumento.fechaVencimiento);                       
+                        dataDocumento.fechaVencimiento = this.form.formatDate(dataDocumento.fechaVencimiento);
 
-                        cliente                = dataMain[1][0];
-                        detalleDocumento       = this.getDetalleVenta(detalle, 'precioUnitario');
+                        cliente = dataMain[1][0];
+                        detalleDocumento = this.getDetalleVenta(detalle, 'precioUnitario');
                         infoAdicionalDocumento = dataMain[3];
                         actividadTipoIva = {
                             tarifa: dataDocumento.tarifa,
                             codigoPorcentaje: dataDocumento.codigoPorcentaje
-                        }                        
+                        }
                         isComplete = true;
                         hideLoader();
                     }
@@ -934,148 +942,123 @@ export class CommonService {
                 break;
 
             case "NE":
-               // showLoader();
+                // showLoader();
                 await this.mS.getData('get', "/NotaEntrega/GetId?id=" + id).then(response => {
                     if (response.code == "0") {
                         this.form.sweetAlert('warning', response.message)
-                        toastr.warning(response.message, response.titleSms)
                         throw response.message
                     }
 
                     if (response.code == "1") {
-                        
+
                         let dataMain = JSON.parse(response.payload);
-                        
-                        let detalle  = dataMain[2];
-                        dataDocumento          = dataMain[0][0];
-                        dataDocumento.nroDocSecuencial   = `${dataDocumento.estab}-${dataDocumento.ptoEmi}-${dataDocumento.secuencial}`;
-                        dataDocumento.ptoEmi   = `${dataDocumento.estab}-${dataDocumento.ptoEmi}`
+
+                        let detalle = dataMain[2];
+                        dataDocumento = dataMain[0][0];
+                        dataDocumento.nroDocSecuencial = `${dataDocumento.estab}-${dataDocumento.ptoEmi}-${dataDocumento.secuencial}`;
+                        dataDocumento.ptoEmi = `${dataDocumento.estab}-${dataDocumento.ptoEmi}`
                         //Fechas                         
                         dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision);
-                        dataDocumento.fechaVencimiento = this.form.formatDate(dataDocumento.fechaVencimiento);                       
+                        dataDocumento.fechaVencimiento = this.form.formatDate(dataDocumento.fechaVencimiento);
 
-                        cliente                = dataMain[1][0];
-                        detalleDocumento       = this.getDetalleVenta(detalle, 'precioUnitario');
+                        cliente = dataMain[1][0];
+                        detalleDocumento = this.getDetalleVenta(detalle, 'precioUnitario');
                         infoAdicionalDocumento = dataMain[3];
                         actividadTipoIva = {
                             tarifa: dataDocumento.tarifa,
                             codigoPorcentaje: dataDocumento.codigoPorcentaje
                         }
-                        
+
                         isComplete = true;
-                      //  hideLoader();
+                        //  hideLoader();
                     }
                 });
                 break;
 
             case "PR":
-            
+
                 await this.mS.getData('get', '/Proforma/GetId?id=' + id).then(response => {
                     if (response.code === "0") {
                         this.form.sweetAlert('warning', response.message)
-                        toastr.warning(response.message, response.titleSms)
-                        throw response.message                        
+                        throw response.message
                     }
                     if (response.code === "1") {
                         let dataMain = JSON.parse(response.payload);
-                       
-                        let detalle  = dataMain[2];
-                        dataDocumento          = dataMain[0][0];
-                        dataDocumento.nroDocSecuencial   = `${dataDocumento.estab}-${dataDocumento.ptoEmi}-${dataDocumento.secuencial}`;
-                        dataDocumento.ptoEmi   = `${dataDocumento.estab}-${dataDocumento.ptoEmi}`
-                        //Fechas                         
-                        dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision);                                      
 
-                        cliente                = dataMain[1][0];
-                        
-                        detalleDocumento       = this.getDetalleVenta(detalle, 'precioUnitario');
+                        let detalle = dataMain[2];
+                        dataDocumento = dataMain[0][0];
+                        dataDocumento.nroDocSecuencial = `${dataDocumento.estab}-${dataDocumento.ptoEmi}-${dataDocumento.secuencial}`;
+                        dataDocumento.ptoEmi = `${dataDocumento.estab}-${dataDocumento.ptoEmi}`
+                        //Fechas                         
+                        dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision);
+
+                        cliente = dataMain[1][0];
+
+                        detalleDocumento = this.getDetalleVenta(detalle, 'precioUnitario');
                         infoAdicionalDocumento = dataMain[3];
                         actividadTipoIva = {
                             tarifa: dataDocumento.tarifa,
                             codigoPorcentaje: dataDocumento.codigoPorcentaje
-                        }                        
-                        isComplete = true;                                              
+                        }
+                        isComplete = true;
                     }
                 });
                 break;
 
             case "NC":
-                showLoader();
                 await this.mS.getData('get', '/NotaCreditoCliente/GetId?id=' + id).then(response => {
-                        if (response.code == "0") {
-                            this.form.sweetAlert('warning', response.message)
-                            toastr.warning(response.message, response.titleSms)
-                            throw response.message   
+                    if (response.code == "0") {
+                        this.form.sweetAlert('warning', response.message)
+                        throw response.message
+                    }
+                    if (response.code === "1") {
+                        let dataMain = JSON.parse(response.payload);
+
+                        let detalle = dataMain[3];
+
+                        dataDocumento = dataMain[0][0];
+
+                        //Fechas                         
+                        dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision);
+
+                        factura = dataMain[1][0]
+
+                        cliente = dataMain[2][0];
+
+
+                        detalleDocumento = this.getDetalleVenta(detalle, 'precioUnitario');
+
+                        infoAdicionalDocumento = dataMain[4];
+
+                        actividadTipoIva = {
+                            tarifa: dataDocumento.tarifa,
+                            codigoPorcentaje: dataDocumento.codigoPorcentaje
                         }
-                        if (response.code === "1") {
-                            let dataMain = JSON.parse(response.payload); 
-                                                    
-                            let detalle  = dataMain[3];
+                        isComplete = true;
 
-                            dataDocumento          = dataMain[0][0];
-                           
-                            //Fechas                         
-                            dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision);                                      
-
-                            factura = dataMain[1][0]
-                           
-                            cliente                = dataMain[2][0];
-
-                            
-                            detalleDocumento       = this.getDetalleVenta(detalle, 'precioUnitario');
-                            
-                            infoAdicionalDocumento = dataMain[4];
-
-                            actividadTipoIva = {
-                                tarifa: dataDocumento.tarifa,
-                                codigoPorcentaje: dataDocumento.codigoPorcentaje
-                            }                        
-                            isComplete = true; 
-                            
-                        }
-                    });
+                    }
+                });
                 break
 
             case "RV":
-                showLoader();
-                await this.mS.getData('get','/RetencionVenta/GetId?idRetencionVenta=' + item.idRetencionVenta).then(response=>{                    
-                        if (response.id == "0") {
-                            hideLoader();
-                            this.form.sweetAlert("warning", response.message, response.titleSms)
-                        }
-                        
-                        if (response.id === "1") {
+                await this.mS.getData('get', '/RetencionVenta/GetId?id=' + id).then(response => {
+                    console.log(response)
+                    if (response.code == "0") {
+                        this.form.sweetAlert('warning', response.message)
+                        throw response.message
+                    }
 
-                            let { retencion: data, detalle } = response.data;
+                    if (response.code === "1") {
+                        let dataMain = JSON.parse(response.payload)
 
-                            cliente = {
-                                idCliente: data.retencion.idCliente,
-                                nombreFiscal: data.nombreFiscal,
-                                numeroIdentificacion: data.nroIdentificacion,
-                                direccion: data.direccion,
-                                correo: data.correo,
-                                // emails: this.form.getInputTagAsSplit(data.correo),
-                            }
-
-                            dataTipoDocumento = {
-                                idTipoDocumento: TIPO_DOC.idTipoDocumento,
-                                documentoDescripcion: TIPO_DOC.descripcion,
-                                nroDocumento: item.nroDoc,
-                                tipoDocumento: TIPO_DOC.codigo,
-                            }
-
-                            dataDocumento = data.retencion;
-                            dataDocumento.nroFactura = item.nroFactura
-                            let countIndex = 1;
-                            detalleDocumento = detalle.map(val => {
-                                val.num = countIndex++;
-                                return val;
-                            })
-                            // infoAdicionalDocumento = infoAdicional;
-                            isComplete = true;
-                            hideLoader();
-                        }
-                    });
+                        dataDocumento = dataMain[0][0];
+                        dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision)
+                        cliente = dataMain[1][0];
+                        factura = dataMain[2][0];
+                        detalleDocumento = dataMain[3];
+                        isComplete = true;
+                    }
+                });
                 break;
         }
 
@@ -1097,32 +1080,32 @@ export class CommonService {
 
     /**------------------------------------------------- OTROS DOCUMENTOS-------------------*/
 
-    async getDataGuiaRemision(id){
-        
+    async getDataGuiaRemision(id) {
+
         let isComplete = false;
-        let dataDocumento = {}, cliente = {}, transportista = {}, vehiculo = {}, empleado = {}, detalleDocumento = [], infoAdicionalDocumento=[]
+        let dataDocumento = {}, cliente = {}, transportista = {}, vehiculo = {}, empleado = {}, detalleDocumento = [], infoAdicionalDocumento = []
 
-        if(!id) throw "ID DOCUMENTO INVÁLIDO";
+        if (!id) throw "ID DOCUMENTO INVÁLIDO";
 
-        await this.mS.getData('get', '/GuiaRemision/GetId?id=' + id).then(response=>{
-            
-            if(response.code=="0"){
+        await this.mS.getData('get', '/GuiaRemision/GetId?id=' + id).then(response => {
+
+            if (response.code == "0") {
                 this.form.sweetAlert('warning', response.message)
                 throw response.message
             }
 
-            if(response.code==="1"){
+            if (response.code === "1") {
                 let dataMain = JSON.parse(response.payload)
-                
+
                 dataDocumento = dataMain[0][0];
                 dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision);
                 dataDocumento.fechaInicio = this.form.formatDate(dataDocumento.fechaInicio);
                 dataDocumento.fechaFin = this.form.formatDate(dataDocumento.fechaFin);
 
-                cliente       = dataMain[1][0];
+                cliente = dataMain[1][0];
                 transportista = dataMain[2][0];
-                vehiculo      = dataMain[3][0];
-                empleado      = dataMain[4][0];
+                vehiculo = dataMain[3][0];
+                empleado = dataMain[4][0];
                 detalleDocumento = dataMain[5];
                 infoAdicionalDocumento = dataMain[6];
                 isComplete = true;
@@ -1153,38 +1136,42 @@ export class CommonService {
      */
     async getDataConsolidacionInventario(id) {
         let isComplete = false, dataTipoDocumento = {}, dataDocumento = {}, detalleDocumento = [];
-                
-        await this.mS.getData('get', '/ConsolidacionInventario/GetId?id=' + id).then(response => {
-         
-                if (response.code === '0') {
-                    this.form.sweetAlert('warning', response.message)
-                    throw response.message
-                }
-                if (response.code === '1') {
-                    let dataMain = JSON.parse(response.payload);
 
-                    dataDocumento = dataMain[0][0];
-                    dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision)
-                    
-                    detalleDocumento = dataMain[1].map(item=>{
-                        let json = {
-                            idArticulo: item.idArticulo
-                        }
-        
-                        //Obtenemos medidas y etiquetas 
-                        this.getDataArticuloParaCompra({
-                            json
-                        }).then(response=>{
-                            let results = JSON.parse(response.payload);                                      
-                            item.medidas= results[1]                                                  
-                        });                                        
-                        item.total = item.cantidad * item.precioActual;   
-                        return item;
+        await this.mS.getData('get', '/ConsolidacionInventario/GetId?id=' + id).then(response => {
+
+            if (response.code === '0') {
+                this.form.sweetAlert('warning', response.message)
+                throw response.message
+            }
+            if (response.code === '1') {
+                let dataMain = JSON.parse(response.payload);
+
+                dataDocumento = dataMain[0][0];
+                dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision)
+
+
+                detalleDocumento = dataMain[1].map((item, index) => {
+                    let json = {
+                        idArticulo: item.idArticulo
+                    }
+
+                    //Obtenemos medidas y etiquetas 
+                    this.getDataArticuloParaCompra({
+                        json
+                    }).then(response => {
+                        let results = JSON.parse(response.payload);
+                        item.medidas = results[1]
                     })
-                    isComplete = true;
-                    
-                }
-            })
+
+                    item.num = index + 1;
+                    item.total = item.cantidad * item.precioActual;
+
+                    return item;
+                })
+                isComplete = true;
+
+            }
+        })
 
         return {
             isComplete,
@@ -1202,17 +1189,17 @@ export class CommonService {
      */
 
     async getDataTransferenciaBodega(id) {
-        let dataDocumento = {}, establecimientoOrigen = {}, establecimientoDestino = {}, detalleDocumento = [], isComplete=false;
-        if(!id) throw "ID DOCUMENTO INVÁLIDO";
+        let dataDocumento = {}, establecimientoOrigen = {}, establecimientoDestino = {}, detalleDocumento = [], isComplete = false;
+        if (!id) throw "ID DOCUMENTO INVÁLIDO";
 
         await this.mS.getData('get', `/TransferenciaBodega/GetId?id=${id}`).then(response => {
-            
-            if(response.code==="0"){
+
+            if (response.code === "0") {
                 this.form.sweetAlert('warning', response.message)
                 throw response.message
             }
 
-            if(response.code==="1"){
+            if (response.code === "1") {
                 let dataMain = JSON.parse(response.payload);
 
                 dataDocumento = dataMain[0][0];
@@ -1228,7 +1215,7 @@ export class CommonService {
 
                     detalleDocumento.push(item)
                 }
-                
+
 
                 isComplete = true;
             }
@@ -1283,7 +1270,7 @@ export class CommonService {
         try {
             showLoader();
             await this.mS.getFile(method, url, parameters).then(response => {
-               
+
                 if (formatType === "pdf") {
                     let fileBlob = new Blob([response.data], {
                         type: response.data.type,
@@ -1315,10 +1302,10 @@ export class CommonService {
                         .split("=")[1];
                     this.FileSaver.saveAs(serverData, fileName);
                 }
-            })           
+            })
         } catch (error) {
             console.log(error)
-        }finally{
+        } finally {
             hideLoader();
         }
     }
@@ -1328,13 +1315,13 @@ export class CommonService {
      * @param {object} param {parameters, format}
      */
 
-    getReportDynamic({parameters, format}){
+    getReportDynamic({ parameters, format }) {
         try {
             showLoader();
-           
-            this.mS.getFile('post', '/Reporte/DownloadDynamic', JSON.stringify(parameters)).then(response=>{
+
+            this.mS.getFile('post', '/Reporte/DownloadDynamic', JSON.stringify(parameters)).then(response => {
                 hideLoader();
-                
+
                 if (format === "pdf") {
                     let fileBlob = new Blob([response.data], {
                         type: response.data.type,
@@ -1356,20 +1343,20 @@ export class CommonService {
                         height=650
                         screenY=${y}
                         screenX=${x}`
-                        )
+                    )
                 } else {
                     let serverData = new Blob([response.data], {
                         type: response.headers()["content-type"],
                     })
-                    
+
                     let fileName = response.headers()["content-disposition"].split(";")[1].split("=")[1];
                     this.FileSaver.saveAs(serverData, fileName);
                 }
-            })            
+            })
         } catch (error) {
             hideLoader();
             console.log(error)
-        }    
+        }
     }
 
 
@@ -1379,7 +1366,7 @@ export class CommonService {
      * @param {*} parameters 
      */
 
-    async askToReportII({ parameters }) {
+    async askToPrint({ parameters }) {
 
         let { isConfirmed } = await Swal.fire({
             icon: 'warning',
@@ -1389,59 +1376,63 @@ export class CommonService {
             denyButtonText: 'No, cancelar',
             allowOutsideClick: false
         })
-
-
         if (isConfirmed) {
-            this.getPrinter(parameters);
+            this.getPrinter(parameters)
         }
     }
 
     getPrinter(parameters) {
         try {
-            this.mS.getData('Post', `/Impresora/PostService?json=${parameters}`).then(
+            let url = `Impresion/?json=${parameters}`
+            this.mS.getData('get', url, null, true).then(
                 response => {
-
                     if (response.code === '0') {
                         toastr.warning(response.message)
-                        return
                     }
-
                     if (response.code === '1') {
-                        toastr.success(response.message)
-                        return
-                    }                  
+                        this.print(JSON.parse(response.payload))
+                    }
                 }
-            )
-
+            ).catch(error => {
+                console.log(error)
+            })
         } catch (error) {
             console.log(error)
             toastr.error(error)
         }
-
     }
 
-    getReportII(params) {
+    async print(params) {
+        try {
 
-        showLoader();
-        // let url = `${this.dataPrint.ipMaquina}`;
-        // let url = `https://localhost:44307`
-        // let url = `https://localhost:44361/`
+              
+            // console.log('init get name computer')           
+            // console.log('end get name computer')
 
-        // console.log(params)
-        this.mS.getData('post', params.urlPrintService, params).then(
-            response => {
-                hideLoader();
-                if (response.code == "1") {
-                    toastr.success(response.message, "")
+            // let response = await fetch(`${params[0].urlPrinter}?getMachine=true`);
+            // if (!response.ok) {
+            //   throw new Error('Network response was not ok');
+            // }
+            // const data = await response.json();
+            // console.log(data);
+
+            
+
+            let urlPrinter = (params[0].urlPrinter) ? params[0].urlPrinter + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + params[0].dataSources + '&rdlcParams=' + params[0].rdlcParams: __env.urlPrint + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + params[0].dataSources + '&rdlcParams=' + params[0].rdlcParams + '&getMachine=' + false;
+
+            fetch(urlPrinter).then(function (response) {
+                if (response.ok) {
+                    toastr.success('Impresion correcta!', '', { positionClass: 'toast-bottom-right', progressBar: true })
                 } else {
-                    toastr.warning(response.message, "")
+                    toastr.warning('Error al imprimir!', '', { positionClass: 'toast-bottom-right', progressBar: true })
                 }
-            }
-        ).catch(error => {
-            hideLoader();
-            let msg = error.config ? error.config.url : error
-            toastr.error(msg, error.xhrStatus)
-        })
+            }).catch(function (error) {
+                console.log('Hubo un problema al imprimir:' + error.message);
+            })
+        } catch (error) {
+            hideLoader()
+            console.log(error)
+        }
     }
 
 
@@ -1464,28 +1455,26 @@ export class CommonService {
 
     //--------------------------------PETICIONES PARA API ADMIN-CLIENTE----------------------
     async getDataApi({ method, url, data = null, typeUrl }) {
-        //showLoader();
-
+        let urlApi = '';
         // let urlApi = await this.$http.get('/ConnectionApiAdmin/GetUrl?typeUrl=' + typeUrl).then(({data:response})=>response)    
 
         //IP Local 
-        // let urlApi = typeUrl == 1 ? "https://localhost:36779/" : "https://localhost:7224/";
+       // urlApi = typeUrl == 1 ? "http://localhost:7166/" : "https://localhost:7166/";
 
         //IP Producción de Desarrollo 
-        //let urlApi = typeUrl == 1 ? "http://205.209.99.71:8090/" : "http://206.72.196.229:83/";
+        //urlApi = typeUrl == 1 ? "http://205.209.99.71:8090/" : "http://206.72.196.229:83/";
+
 
         //IP Producción
-        let urlApi = typeUrl == 1 ? "http://206.72.196.229:81/" : "http://206.72.196.229:83/";
-        
+        urlApi = typeUrl == 1 ? "http://206.72.196.229:81/" : "http://206.72.196.229:83/";
+
         return this.$http({
             method,
             url: `${urlApi}${url}`,
             data
         }).then(({ data: response }) => {
-            // hideLoader()
             return response
         }, error => {
-            // hideLoader();
             console.log(error)
         })
     }
@@ -1498,12 +1487,12 @@ export class CommonService {
      * @param {String} param1 fileExtension
      * @param {String} param2 fileName
      */
-    exportTableToExcel({arr, fileExtension = '.xlsx', fileName}){       
+    exportTableToExcel({ arr, fileExtension = '.xlsx', fileName }) {
         try {
             showLoader();
-            const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";                     
+            const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
             const ws = XLSX.utils.json_to_sheet(arr);
-            
+
             const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
             const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
             const data = new Blob([excelBuffer], { type: fileType });
@@ -1513,7 +1502,7 @@ export class CommonService {
             hideLoader();
             console.log(error)
         }
-        
+
     }
 
 
@@ -1526,14 +1515,14 @@ export class CommonService {
      * 
      */
 
-    async viewDetailDocument({id, codigoDocumento, size, windowClass}){
+    async viewDetailDocument({ id, codigoDocumento, size, windowClass = "uibModalFullScreen" }) {
         try {
-            let controller=null, template=null, params = {}, response = {}, isComplete=false;
-            switch(codigoDocumento){
+            let controller = null, template = null, params = {}, response = {}, isComplete = false;
+            switch (codigoDocumento) {
                 case "FV":
-                    let {factura_venta} = this._nombreModalConst;
+                    let { factura_venta } = this._nombreModalConst;
                     controller = (await import('./../' + factura_venta.MODAL_FILE_CTRL))[factura_venta.MODAL_DETALLE['controller']];
-                    template   = factura_venta.MODAL_DETALLE['template'];
+                    template = factura_venta.MODAL_DETALLE['template'];
 
                     response = await this.getDataTipoDocVenta({
                         id,
@@ -1544,14 +1533,14 @@ export class CommonService {
                         TIPO_REGISTRO: 'DETALLE',
                         data: response,
                     }
-                    
-                break
+
+                    break
 
                 case "NE":
 
-                    let {nota_entrega} = this._nombreModalConst;
+                    let { nota_entrega } = this._nombreModalConst;
                     controller = (await import('./../' + nota_entrega.MODAL_FILE_CTRL))[nota_entrega.MODAL_DETALLE['controller']];
-                    template   = nota_entrega.MODAL_DETALLE['template'];
+                    template = nota_entrega.MODAL_DETALLE['template'];
 
                     response = await this.getDataTipoDocVenta({
                         id,
@@ -1563,10 +1552,78 @@ export class CommonService {
                         data: response,
                     }
 
-                break
+                    break
+
+
+                case "NC":
+                    let { nota_credito_cliente } = this._nombreModalConst;
+                    controller = (await import('./../' + nota_credito_cliente.MODAL_FILE_CTRL))[nota_credito_cliente.MODAL_DETALLE['controller']];
+                    template = nota_credito_cliente.MODAL_DETALLE['template'];
+
+                    response = await this.getDataTipoDocVenta({
+                        id,
+                        codigoDocumento
+                    })
+
+                    params = {
+                        TIPO_REGISTRO: 'DETALLE',
+                        data: response,
+                    }
+
+                    break
+
+
+                case "FC":
+                    let { factura_compra } = this._nombreModalConst;
+                    controller = (await import('./../' + factura_compra.MODAL_FILE_CTRL))[factura_compra.MODAL_DETALLE['controller']];
+                    template = factura_compra.MODAL_DETALLE['template'];
+
+                    response = await this.getDataTipoDocCompra({
+                        id,
+                        codigoDocumento
+                    })
+
+                    params = {
+                        TIPO_REGISTRO: 'DETALLE',
+                        data: response
+                    }
+
+                    break
+
+                case "IB":
+                    let { ingreso_bodega } = this._nombreModalConst;
+                    controller = (await import('./../' + ingreso_bodega.MODAL_FILE_CTRL))[ingreso_bodega.MODAL_DETALLE['controller']];
+                    template = ingreso_bodega.MODAL_DETALLE['template'];
+
+                    response = await this.getDataTipoDocCompra({
+                        id,
+                        codigoDocumento
+                    })
+
+                    params = {
+                        TIPO_REGISTRO: 'DETALLE',
+                        data: response
+                    }
+
+                    break
+
+
+                case "CIV":
+                    let { consolidacion_inv } = this._nombreModalConst;
+                    controller = (await import('./../' + consolidacion_inv.MODAL_FILE_CTRL))[consolidacion_inv.MODAL_DETALLE['controller']];
+                    template = consolidacion_inv.MODAL_DETALLE['template'];
+
+                    response = await this.getDataConsolidacionInventario(id)
+
+                    params = {
+                        TIPO_REGISTRO: 'DETALLE',
+                        data: response
+                    }
+
+                    break
             }
 
-        
+
 
             this._modalSvc.openModalCustom({
                 controller,
@@ -1574,7 +1631,7 @@ export class CommonService {
                 params,
                 size,
                 windowClass
-            })   
+            })
 
         } catch (error) {
             console.log(error)

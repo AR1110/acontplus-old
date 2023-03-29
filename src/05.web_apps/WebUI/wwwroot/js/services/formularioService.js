@@ -135,6 +135,14 @@
             return '/Home/RenderView?name=' + urlView;        
         }
 
+
+        formSvc.letterInline = (text)=>{
+            if(text){
+                return text.replace(/[\n\r]+/g, ' ')
+            }
+            return text;
+        }
+
         formSvc.removeAccents = (str) => {
             // return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
             let inputText = str || ""
@@ -213,7 +221,7 @@
            return formatDateMoment.format(format);
         }
 
-        formSvc.formatDate
+        
 
         
 

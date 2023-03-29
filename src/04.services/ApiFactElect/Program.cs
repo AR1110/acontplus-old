@@ -1,3 +1,6 @@
+using BL.JwtAuthenticationManger;
+using Helpers;
+
 namespace ApiFactElect
 {
     public class Program
@@ -9,17 +12,21 @@ namespace ApiFactElect
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddCustomJwtAuthentication();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddTransient<IConfiguration>(sp =>
-            {
-                IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-                configurationBuilder.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
-                return configurationBuilder.Build();
-            });
+            //builder.Services.AddTransient<IConfiguration>(sp =>
+            //{
+            //    IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
+            //    configurationBuilder.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
+            //    return configurationBuilder.Build();
+            //});
 
+            builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
+            ConfigHelper.AddJsonFiles(builder.Configuration);
 
             string[] origins = builder.Configuration.GetSection("SafeOrigins").Value.Split('|');
             builder.Services.AddCors(options =>
@@ -47,11 +54,14 @@ namespace ApiFactElect
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
+            app.UseCors();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
-            app.UseCors();
+            app.UseMiddleware<JWTMiddleware>();
 
             app.MapControllers();
 

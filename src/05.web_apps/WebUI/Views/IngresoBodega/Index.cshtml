@@ -79,26 +79,7 @@
                                                 <md-button ng-click="askToDelete(item)" ng-disabled="item.anulada">
                                                     <span md-menu-align-target><icon class="ti-na"></icon> Anular</span>
                                                 </md-button>
-                                            </md-menu-item>
-
-
-                                            <md-menu-item>
-                                                <md-button ng-click="openModalCuota(item)">
-                                                    <span md-menu-align-target><i class="fas fa-donate"></i> Cuotas</span>
-                                                </md-button>
-                                            </md-menu-item>
-
-                                            <md-menu-item ng-if="accion.cobroPago">
-                                                <md-button ng-click="openModalPago(item)" ng-disabled="item.pago || item.anulada">
-                                                    <span md-menu-align-target><i class=" far fa-money-bill-alt"></i> Pago</span>
-                                                </md-button>
-                                            </md-menu-item>
-
-                                            <md-menu-item ng-if="accion.historialFinanciero">
-                                                <md-button ng-click="openModalHistorialPago(item)">
-                                                    <span md-menu-align-target><icon class=" fas fa-tasks"></icon> Hist. Mov.</span>
-                                                </md-button>
-                                            </md-menu-item>
+                                            </md-menu-item>                                            
 
                                             <md-menu-item ng-if="accion.reporte">
                                                 <md-button ng-click="getReport(item)">
@@ -135,6 +116,7 @@
 </div>
 
 @section Scripts{      
+    <script src="~/js/services/storageService.min.js" asp-append-version="true"></script>  
     <script src="~/js/components/mdAutocompleteProveedor.min.js" asp-append-version="true"></script>  
     <script src="~/js/controllers/compras/ingresoBodegaCtrl.js" asp-append-version="true"></script>    
   

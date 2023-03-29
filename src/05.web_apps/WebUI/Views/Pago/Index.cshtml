@@ -2,20 +2,6 @@
     ViewData["title"]="Pagos";
 }
 
-<style> 
-     .modal-full-screen-width {
-        width: 95%;
-        max-width: none; 
-        height: 90%;         
-    } 
-  
-    .typeahead-group-header {
-        padding: 3px 20px;
-        border-bottom: 1px solid black;
-        font-weight: bold;
-    }
-</style>
-
 
 <div ng-controller="pagoCtrl">
     <div class="row page-titles">
@@ -29,7 +15,7 @@
                     <li class="breadcrumb-item"><a href="javascript:void(0)">Tesorería</a></li>
                     <li class="breadcrumb-item active">Pagos</li>
                 </ol> *@
-                <button type="button" class="btn btn-info m-l-15" ng-if="accion.crear" ng-click="newPayment()"><i class="fa fa-plus-circle"></i> Nuevo</button>
+                @* <button type="button" class="btn btn-info m-l-15" ng-if="accion.crear" ng-click="newPayment()"><i class="fa fa-plus-circle"></i> Nuevo</button> *@
             </div>
         </div>
     </div>
@@ -37,20 +23,28 @@
     @await Html.PartialAsync("_ModalPagoFiltro.cshtml")
 
     <div class="row">
-        <div class="col-lg-12 col-md-12">                       
-            <md-card>
-                <md-toolbar class="md-table-toolbar md-default _md _md-toolbar-transitions">
-                    <div class="md-toolbar-tools">
-                        <div class="col-lg-9 col-md-9 col-sm-1">
-                            <button type="button" class="btn btn-info" ng-click="openModalPagoFiltro()"><i class="fas fa-filter"></i> Filtro</button>
-                        </div>
-                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                            <form class="form-material">
-                                <input type="text" class="form-control" ng-model="buscar" placeholder="Buscar Pagos">
-                            </form>
-                        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="row justify-content-between">
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                        <button type="button" class="btn btn-info" ng-click="openModalPagoFiltro()"><i class="fas fa-filter"></i> Filtro</button>
                     </div>
-                </md-toolbar>                  
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                        <form class="form-material">
+                            <div class="input-group">
+                                <input type="text" class="form-control" ng-model="buscar" placeholder="Buscar Pagos">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary">
+                                        <i class="fas fa-redo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>                
+            </div>
+
+            <div class="card-body">
                 <md-table-container style="max-height: 400px;">
                     <table md-table>
                         <thead fix-head md-head md-order="options.order"  md-on-reorder="pagos">
@@ -74,7 +68,7 @@
                                         </button>
                                         <div class="dropdown-menu"  aria-labelledby="dropdownMenu">
                                         <button class="dropdown-item" type="button" ng-if="accion.historialFinanciero" ng-click="openModalHistorialPago(p)"><i class="ti-menu"></i> Detalle</button>
-                                        <button class="dropdown-item" type="button" ng-if="accion.eliminar"  ng-click="deletePayment(p)">&times; Anular</button>                            
+                                        <button class="dropdown-item" type="button" ng-if="accion.eliminar"  ng-click="askToCancel(p)">&times; Anular</button>                            
                                         <button class="dropdown-item" type="button" ng-if="accion.reporte" ng-click="getReport(p)"><i class="ti-file"></i> PDF</button>                                            
                                         </div>
                                     </div>                                                     
@@ -97,81 +91,13 @@
                             </tr>
                         </tfoot>
                     </table>
-                </md-table-container>                   
-            </md-card>
-                                           
+                </md-table-container>   
+            </div>
         </div>
-    </div>    
-
-    <!--Modal Payment-->
-    <partial name="_modalPayment"></partial> 
-    <partial name="_modalPayMoney"></partial>
-
-  
+        
+    </div>      
 </div>
 @section Scripts{ 
-    <script src="~/js/controllers/financiera/pagoCtrl.js" asp-append-version="true"></script>
-    <script type="text/ng-template" id="asideSubTotalPago">
-        <div class="table-responsive">
-            <table class="table table-clear table-sm">                
-                <tbody>
-                    <tr>
-                        <td class="left"><h4><strong>Total</strong></h4></td>
-                        <td class="right"><h4>{{pago.total|currency:'$'}}</h4></td>
-                    </tr>
-                     <tr ng-show="pago.totalAbonoAnterior>0">
-                        <td class="left"><strong>Abono Anterior</strong></td>
-                        <td class="right"><span class="badge badge-danger">{{pago.totalAbonoAnterior|currency:'$'}}</span></td>
-                    </tr>
-
-                    
-                    <tr>
-                        <td class="left"><strong>Abono</strong></td>
-                        <td class="right">{{pago.abono - pago.abonoPosfechado|currency:'$'}}</td>
-                    </tr>
-                    <tr>
-                        <td class="left"><strong>Abono Posf.</strong></td>
-                        <td class="right">{{pago.abonoPosfechado|currency:'$'}}</td>
-                    </tr>
-                    <tr>
-                        <td class="left"><strong>Total Abono</strong></td>
-                        <td class="right"><strong>{{pago.totalPago | currency:'$'}}</strong></td>
-                    </tr>
-                    <tr>
-                        <td class="left"><strong>Saldo</strong></td>
-                        <td class="right"><strong>{{pago.saldo|currency:'$'}}</strong></td>
-                    </tr>
-                    <tr>
-                        <td class="left"><h4 class="text-danger">Cambio</h4></td>
-                        <td class="right"><h4 class="text-danger">{{pago.valorCambio}}</h4></td>
-                    </tr>
-                </tbody>
-            </table> 
-        </div>    
-    </script>
-   
-    <script type="text/ng-template" id="viewPopoverAbonoCuota.html">
-        <div class="table-responsive">
-            <table class="table table-no-bordered  text-center">
-                <thead>
-                    <tr>
-                        <th>Cuota</th>
-                        <th>Abono</th>
-                        <th>Saldo</th>
-                        <th>PosF.</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr ng-repeat="c in viewCuotaAbonos" class="text-muted">
-                        <td>{{c.cuota|currency:'$'}}</td>
-                        <td>{{c.detalle.abono|currency:'$'}}</td>
-                        <td>{{c.saldo|currency:'$'}}</td>
-                        <td>{{c.isPosfechado?'SI':'NO'}}</td>
-                    </tr>
-
-                </tbody>
-            </table>
-        </div>
-    </script>
+    <script src="~/js/controllers/financiera/pagoCtrl.min.js" asp-append-version="true"></script>
 }
 

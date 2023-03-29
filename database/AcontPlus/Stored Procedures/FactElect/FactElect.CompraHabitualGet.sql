@@ -45,7 +45,8 @@ BEGIN
 				END
 			SELECT ch.*
 			,p.nombreFiscal proveedor
-			,a.descripcion articulo
+			,a.codigo codArticuloAcontplus
+			,'(' + a.codigo + ') -> ' + a.descripcion articulo
 			FROM FactElect.CompraHabitual ch
 			INNER JOIN Proveedor p ON ch.idProveedor = p.idProveedor
 			INNER JOIN Articulo a ON ch.idArticulo = a.idArticulo

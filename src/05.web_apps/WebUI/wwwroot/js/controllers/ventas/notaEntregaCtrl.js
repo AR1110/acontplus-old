@@ -29,17 +29,25 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
     $scope.notaEntregas = [];
 
 
+    $scope.isPrintDocument = false; //Para impresiones termicas al registra el documento 
+    $scope.parametersPrint = {};
+
+
 
     $scope.getTotales = function () {
-        let total = 0, totalAbono = 0, totalSaldo = 0;
-        for (let val of $scope.notaEntregas) {
-            total += val.total;
-            totalAbono += val.abono;
-            totalSaldo += val.saldo;
-        };
-        $scope.total = _fS.roundNumber(total, 5);
-        $scope.totalAbono = _fS.roundNumber(totalAbono, 5);
-        $scope.totalSaldo = _fS.roundNumber(totalSaldo, 5);
+        try {
+            let total = 0, totalAbono = 0, totalSaldo = 0;
+            for (let val of $scope.notaEntregas) {
+                total += val.total;
+                totalAbono += val.abono;
+                totalSaldo += val.saldo;
+            };
+            $scope.total = _fS.roundNumber(total, 5);
+            $scope.totalAbono = _fS.roundNumber(totalAbono, 5);
+            $scope.totalSaldo = _fS.roundNumber(totalSaldo, 5);
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     $scope.getNotaEntregas = async()=>{
@@ -56,13 +64,14 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
                 }
 
             await _mS.getData('get', '/NotaEntrega/Get?json=' + JSON.stringify($scope.dataSearch)).then(response=>{
+                $scope.notaEntregas = [];
                 if(response.code==="0"){
-                    $scope.notaEntregas = [];
+                    $scope.getTotales();
                     console.warn(response.message);
                     return
                 }
                 $scope.notaEntregas = JSON.parse(response.data) || [];
-                console.log($scope.notaEntregas)
+                
                 $scope.cloneNotaEntregas = JSON.parse(JSON.stringify($scope.notaEntregas));
                 $scope.getTotales();
             })
@@ -78,13 +87,15 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
     }
 
     $scope.initiload = ()=>{
-        _mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response=>{
-            let results = JSON.parse(response.payload) || [];
-            let establecimientos = results[0];
-            let codEstab = establecimientos.length>0?establecimientos[0].codEstab: 0;            
+        _commonSvc.getEstabAsign().then(response=>{      
+            $scope.establecimientos = response;
+            let codEstab = $scope.establecimientos.length>0? $scope.establecimientos[0].codEstab: 0;            
+                                                        
             $scope.dataSearch.codEstab = codEstab;
             $scope.getNotaEntregas();
+            
         })
+
     }
     $scope.initiload();
 
@@ -147,31 +158,28 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
             
             if(typeof result !=='object') return                
             
-            $scope.getNotaEntregas();
+            // $scope.getNotaEntregas();
 
-            let parameters = {}
+            $scope.isPrintDocument = true;
             if(result.TIPO_DOC.codigo==="FV"){
-                parameters = {
-                    idFactura: result.data.id,
-                    codEstab: result.data.codEstab,
-                    codDoc: 'FV',
+                $scope.parametersPrint = {
+                    ...result.data,
+                    idDocument: result.data.id,
                     codigo: 'RFPT',
                 };
             }else{
-                parameters = {
-                    isPrint: 1,
-                    idNotaEntrega: result.data.id,
-                    codEstab: result.data.codEstab,
-                    codDoc: TIPO_DOC_NE.codigo,
+                $scope.parametersPrint = {
+                    ...result.data,
+                    idDocument: result.data.id,
                     codigo: 'RNEPT',
                 }
             }
 
-            _commonSvc.askToReportII({
-                parameters: JSON.stringify(parameters)
-            })   
-
-                                              
+            if(result.data.esContado){
+                $scope.openModalRapido(result)
+            }else{
+                $scope.openModalCobroDocumento(result)
+            }                                                
         })
     }
    
@@ -278,22 +286,19 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
                 let parameters = {}
                 if(result.TIPO_DOC.codigo==="FV"){
                     parameters = {
-                        idFactura: result.data.id,
-                        codEstab: result.data.codEstab,
-                        codDoc: 'FV',
+                        ...result.data,
+                        idDocument: result.data.id,
                         codigo: 'RFPT',
                     };
                 }else{
                     parameters = {
-                        isPrint: 1,
-                        idNotaEntrega: result.data.id,
-                        codEstab: result.data.codEstab,
-                        codDoc: TIPO_DOC_NE.codigo,
+                        ...result.data,
+                        idDocument: result.data.id,
                         codigo: 'RNEPT',
                     }
                 }
     
-                _commonSvc.askToReportII({
+                _commonSvc.askToPrint({
                     parameters: JSON.stringify(parameters)
                 })   
     
@@ -318,7 +323,7 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
             params,
             windowClass: 'uibModalFullScreen'
         }).result.then(result=>{  
-            console.log(result)          
+                  
             if(typeof result==='object'){
                 $scope.getNotaEntregas();
             }
@@ -356,7 +361,7 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
                     didOpen: () => {
                         Swal.showLoading();
                         _mS.getData('delete', '/NotaEntrega/Delete?id=' + item.idNotaEntrega).then(response=> {
-                            console.log(response)
+                            
                             if (response.code === "0") {
                                 _fS.sweetAlert('warning', response.message, response.titleSms);
                             }
@@ -455,10 +460,17 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
         })
 
         $modalRef.result.then(result=>{
-            if(typeof result !=='object') return
 
-            $scope.getNotaEntregas();
+            if($scope.isPrintDocument){
+                $scope.getNotaEntregas()
+                _commonSvc.askToPrint({
+                    parameters: JSON.stringify($scope.parametersPrint)
+                }) 
+            }
 
+            if(typeof result =='object') {
+                $scope.getNotaEntregas();
+            }
         })
     }  
 
@@ -563,90 +575,71 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
 
 
 
-    $scope.getReportII = function (item) {                   
+    $scope.print = function (item) {                   
         let parameters = {
             isPrint: 1,
-            idNotaEntrega: item.idNotaEntrega,
+            idDocument: item.idNotaEntrega,           
+            idTipoDocumento : item.idTipoDocumento,
             codEstab: item.codEstab,
             codDoc: TIPO_DOC_NE.codigo,
-            codigo: 'RNEPT',
+            nroIdentificacion : item.nroIdentificacion,
+            codigo: 'RNEPT'
         }
-               
-        _commonSvc.askToReportII({
+        
+        _commonSvc.askToPrint({
             parameters: JSON.stringify(parameters)
         })
         
     }
 
 
-
-
-
-    $scope.askToSendEmail = async (ne)=> {
-        let { isConfirmed } = await Swal.fire({
-            title: '<small>Enviar por Correo</small>',
-            icon: 'warning',
-            html: '<small>¿Está seguro de enviar por correo esté documento?</small>',
-            showDenyButton: true,
-            confirmButtonText: `Si, enviar`,
-            denyButtonText: `No, cancelar`,
-            allowOutsideClick: false
-        });
-
-        if (isConfirmed) {
-            $scope.getSendEmail(ne);            
-        }
-    }
-
-
-    
-    $scope.getSendEmail = function (ne) {
-        try {
-            _fS.showLoaderSendEmail();
-            let format = 'pdf';
-            let dataParms = {
-                codEstab: item.codEstab,
-                idNotaEntrega: ne.idNotaEntrega        
-            }
+    $scope.askToSendEmail = async (item) =>{ 
+        try { 
+            let params = {
+                TYPE_NOTIFICATION: 'N',
+                serie: item.nroDocumento,
+                correo: item.correo, 
+                subject: 'Documento Nota Entrega - Acontplus N°: ' + item.nroDocumento,
+                json: {                                      
+                    hasFile: true, 
+                    isReport: "SI", 
+                    reportParams: {
+                        hasParams: true, 
+                        codEstab: item.codEstab, 
+                        codigo: "RNE", 
+                        format: "pdf"
+                    }, 
+                    spParams: {
+                        id: item.idNotaEntrega
+                    }
+                }
+            }                    
+            
            
-            const parameters = {
-                reportParams: JSON.stringify({
-                    codigo: 'RNE', 
-                    format,
-                    codEstab: item.codEstab,
-                    aditionalParams: [
-                        
-                    ]
-                }),
-                dataParams: JSON.stringify(dataParms),
-                sendEmail: true
-            }
-           
-            _mS.getFile('post', '/NotaEntrega/Download', parameters).then(response => {
-                Swal.close();
-                let fileBlob = new Blob([response.data], { type: response.data.type });
-                let objectUrl = window.URL || window.webkitURL;
-                let urlFile = objectUrl.createObjectURL(fileBlob);
-                window.open(urlFile, '_blank');
-                return;
-            }, error => console.log(error));
+            const { MODAL_SEND_MAIL_CTRL, MODAL_SEND_MAIL_CSHTML } = _nombreModalConst.common;
+            const { SendMailCtrl } = await import('./../../modal/' + MODAL_SEND_MAIL_CTRL);
+            _modalSvc.openModalCustom({
+                controller: SendMailCtrl,
+                template: 'Shared/' + MODAL_SEND_MAIL_CSHTML,
+                size: 'md',
+                params
+            })
         } catch (error) {
-            Swal.close();
-            console.log(error)
-        }
+            console.error(error)
+        } 
     }
-
 
 
     $scope.getReport = function (item) {           
         let format = 'pdf';
         let dataParms = {
-            codEstab: item.codEstab,
-            idNotaEntrega: item.idNotaEntrega        
+            id: item.idNotaEntrega        
         }
        
         const parameters = {
+            hasService: true,
             reportParams: JSON.stringify({
+                hasParams: true,
                 codigo: 'RNE', 
                 codEstab: item.codEstab,
                 format,
@@ -660,23 +653,7 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
         _commonSvc.getReport({
             parameters,
             formatType: format
-        })           
-        // let format = 'pdf';
-        // let dataParms = {
-        //     id: item.idNotaEntrega,            
-        //     idSucursal: item.idSucursal,
-        //     codigo: 'RNE', 
-        //     format,            
-        // }
-
-        // let parameters = {               
-        //     dataParams: JSON.stringify(dataParms)
-        // }
-
-        // _commonSvc.getReportDynamic({
-        //     parameters,
-        //     format
-        // })              
+        })              
     }
 
 

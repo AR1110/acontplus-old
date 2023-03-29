@@ -1,13 +1,14 @@
 using DataAccess;
 using Domain.Admin.Models;
+using Domain.Auth.Dtos;
 using Helpers;
 using Microsoft.Extensions.Configuration;
+using System.Data;
 
 namespace BL.Admin.Data
 {
     public class LoginService
     {
-        private readonly GenericResponse _response = new();
         private readonly IConfiguration _config;
         public LoginService(IConfiguration config)
         {
@@ -15,19 +16,22 @@ namespace BL.Admin.Data
         }
         public async Task<GenericResponse> LoginAsync(Login data)
         {
+            GenericResponse _response = new GenericResponse();
             try
             {
                 DbAccess adb = new DbAccess(_config);
-                await adb.SPExecute("Config.Login");
+                await adb.SPExecute("Sec_App.Login");
                 adb.AddDynamicParam("@username", data.Username);
-                adb.AddDynamicParam("@password", data.Username);
-                //adb.ReadAsync(getData, ref respDb);
-                //_response.code = respDb[0].ToString();
-                //_response.message = respDb[1].ToString();
-                //if (_response.code == "0" && getData)
-                //{
-                //    _response.payload = respDb[2].ToString();
-                //}
+                adb.AddDynamicParam("@password", data.Password);
+                DataTable dt = adb.GetDataTable();
+                if (dt.Rows[0]["code"].ToString() == "-1")
+                {
+                    _response.Create(code: "-1", message: "Error al logearse");
+                }
+                else
+                {
+                    _response.Create(code: "0", message: "Login exitoso", payload: DataHelper.BindData<LoginDataDto>(dt));
+                }
             }
             catch (Exception ex)
             {

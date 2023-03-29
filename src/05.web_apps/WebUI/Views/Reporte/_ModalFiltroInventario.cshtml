@@ -6,8 +6,9 @@
                 <button class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
+            
                 <div class="row justify-content-between">
-                    <div class="col-xl-2 col-lg-2 col-md-3 col-sm-6 col-xs-12">
+                    @* <div class="col-xl-2 col-lg-2 col-md-3 col-sm-6 col-xs-12">
                         <div class="icheck-info">
                             <input type="checkbox" ng-model="dataSearch.checkboxSucursalFiltro" ng-change="onChangeCheckboxSucursal()" name="checkboxSucursalFiltro" id="checkboxSucursalFiltro" class="form-control">
                             <label for="checkboxSucursalFiltro">Establecimiento</label>
@@ -19,7 +20,7 @@
                             <input type="checkbox" ng-model="dataSearch.checkboxBodegaFiltro" ng-change="onChangeCheckboxBodega()" name="checkboxBodegaFiltro" id="checkboxBodegaFiltro" class="form-control">
                             <label for="checkboxBodegaFiltro">Bodega</label>
                         </div>
-                    </div>
+                    </div> *@
 
                     <div class="col-xl-2 col-lg-2 col-md-3 col-sm-6 col-xs-12">
                         <div class="icheck-info">
@@ -37,6 +38,18 @@
                 <hr>
 
                 <div class="row">
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label for="tipoReporte">Tipo Reporte</label>
+                            <select class="form-control" ng-model="dataSearch.byTipoReporte" ng-change="onChangeTipoReporte()">
+                                <option ng-value="1">Con Valoración</option>
+                                <option ng-value="2">Con Lista de Precios</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                @* <div class="row">
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12" ng-if="dataSearch.checkboxSucursalFiltro">
                         <div class="form-group">
                             <label>Establecimiento:</label>
@@ -53,7 +66,7 @@
                             </select>
                         </div>
                     </div>
-                </div>
+                </div> *@
 
                 <div class="row">
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12" ng-if="dataSearch.checkboxSubFamiliaFiltro">
@@ -87,6 +100,7 @@
                             </select>
                         </div>
                     </div>
+                    
                     <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-xs-12">                  
                         <div class="icheck-info mt-3">
                             <input type="radio" ng-model="dataSearch.byOrder" value='ASC' name="radioByOrder" id="byOrderAsc">
@@ -97,15 +111,7 @@
                             <label for="byOrderDesc">Descendente</label>
                         </div>
                     </div>
-                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                        <div class="form-group">
-                            <label for="tipoReporte">Tipo Reporte</label>
-                            <select class="form-control" ng-model="dataSearch.byTipoReporte" ng-change="onChangeTipoReporte()">
-                                <option ng-value="1">Con Valoración</option>
-                                <option ng-value="2">Con Lista de Precios</option>
-                            </select>
-                        </div>
-                    </div> 
+
                     <div class="col-xl-3 col-lg-3 col-md-6 col-sm-4 col-xs-12">
                         <div class="form-group">
                             <label for="tipoFormato">Tipo Formato</label>

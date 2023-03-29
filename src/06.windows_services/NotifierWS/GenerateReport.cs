@@ -1,6 +1,4 @@
-﻿using HelpersNS20;
-using HelpersNS20.Dtos;
-using Microsoft.Reporting.WebForms;
+﻿using Microsoft.Reporting.WebForms;
 using Newtonsoft.Json;
 using System;
 using System.Configuration;

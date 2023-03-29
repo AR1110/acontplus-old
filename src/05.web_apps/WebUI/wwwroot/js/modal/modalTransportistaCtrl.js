@@ -66,13 +66,14 @@ export class ModalTransportistaCtrl{
 
         let method = this.tipoRegistro ===1?'post':'put';
         this._mS.getData(method, url, this.data).then(response => {
-            if (response.id === "0") {
+            console.log(response)
+            if (response.id === "0" || response.code === "0") {
                 toastr.warning(response.message);
                 return;
             }
-            if (response.id === "1") {
+            if (response.id === "1" || response.code === "1") {
                 toastr.success(response.message);
-               this.$uibModalInstance.close(response)
+                this.$uibModalInstance.close(response)
             }
         })
 

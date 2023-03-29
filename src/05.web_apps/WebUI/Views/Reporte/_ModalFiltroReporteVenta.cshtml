@@ -34,7 +34,7 @@
                             <label for="checkboxPuntoEmisionFiltro">Punto Emisión</label>
                         </div>
                     </div>
-                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-xs-12" ng-if="dataSearch.codDoc!=='FVNE'">
                         <div class="icheck-info">
                             <input type="checkbox" ng-change="onChangeClienteFiltro()"
                             ng-model="dataSearch.checkboxClienteFiltro" ng-disabled="dataSearch.codDoc===''"
@@ -134,8 +134,10 @@
                 
 
                 <div class="row">
-                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" ng-show="dataSearch.checkboxClienteFiltro">
-                        @await Html.PartialAsync("~/Views/Cliente/_ClienteAutocompleteFiltro.cshtml")
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" ng-if="dataSearch.codDoc!=='FVNE'">
+                        <div ng-show="dataSearch.checkboxClienteFiltro">
+                            @await Html.PartialAsync("~/Views/Cliente/_ClienteAutocompleteFiltro.cshtml")
+                        </div>
                     </div>
 
                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" ng-show="dataSearch.checkboxUsuarioFiltro">
@@ -186,6 +188,13 @@
 
                             <!--Nota Credito Cliente -->
                             <select class="form-control" ng-model="dataSearch.byEstado" ng-show="dataSearch.codDoc=='NC'">
+                                <option ng-value="item.id" ng-repeat="item in estadoPagosNC">
+                                    {{item.descripcion}}
+                                </option>
+                            </select>
+
+                            <!--CONSOLIDADO VENTA  -->
+                            <select class="form-control" ng-model="dataSearch.byEstado" ng-show="dataSearch.codDoc=='FVNE'">
                                 <option ng-value="item.id" ng-repeat="item in estadoPagosNC">
                                     {{item.descripcion}}
                                 </option>
@@ -264,7 +273,7 @@
                                 <option value="nc.fechaEmision" ng-if="dataSearch.codDoc=='NC'">Fecha</option>
                                 <option value="rv.fechaEmision" ng-if="dataSearch.codDoc=='RV'">Fecha</option>
                                 <option value="pr.fechaEmision" ng-if="dataSearch.codDoc==='PR'">Fecha</option>
-
+                                <option value="doc.fechaEmision" ng-if="dataSearch.codDoc==='FVNE'">Fecha</option>
 
                                 <option value="cl.idCliente">Cliente</option>
                             </select>

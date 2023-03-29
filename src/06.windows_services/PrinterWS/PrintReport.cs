@@ -1,6 +1,4 @@
-﻿using HelpersNS20;
-using HelpersNS20.Dtos;
-using Logs;
+﻿using Logs;
 using Microsoft.Reporting.WebForms;
 using Newtonsoft.Json;
 using System;
@@ -8,7 +6,6 @@ using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.Drawing.Printing;
 using System.IO;
-using System.Threading;
 
 namespace PrinterWS
 {
@@ -21,7 +18,7 @@ namespace PrinterWS
         }
         //visit https://social.msdn.microsoft.com/Forums/vstudio/en-US/47179a04-e464-429a-92b0-2389d77a1219/report-printing?forum=vbgeneral
         
-        public bool DynamicPrint(ApiPrintRequestDto parameters, ref string errorMessage)
+        public bool DynamicPrint(ApiReportParamsDto parameters, ref string errorMessage)
         {
             var streams = new List<Stream>();
             try

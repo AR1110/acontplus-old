@@ -1,5 +1,5 @@
-﻿using Domain.Auth.Models;
-using Domain.ViewModels;
+﻿using Domain.Auth.Dtos;
+using Domain.Auth.Models;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -10,17 +10,8 @@ namespace BL.JwtAuthenticationManger
     public class JwtTokenHandler
     {
         public const string JWT_SECURITY_KEY = "acontplusthebest";
-        private const int JWT_TOKEN_VALIDITY_MINS = 20;
-        public List<Usuario> _users;
-        public JwtTokenHandler()
-        {
-            _users = new List<Usuario>
-            {
-                new Usuario{userName="ipaz", password="123456", role="admin"},
-                new Usuario{userName="aramirez", password="123456", role="Administrator"}
-            };
-        }
-        public AuthResponse? GenerateJwtToken(LoginData authRequest)
+        private const int JWT_TOKEN_VALIDITY_MINS = 14;
+        public AuthResponse? GenerateJwtToken(LoginDataDto authRequest)
         {
             try
             {
@@ -31,17 +22,20 @@ namespace BL.JwtAuthenticationManger
                 //var user = _users.Where(x => x.userName == authRequest.userName && x.password == authRequest.password).FirstOrDefault();
                 //if (user == null) return null;
 
-                var tokenExpiryTimeStamp = DateTime.Now.AddMinutes(JWT_TOKEN_VALIDITY_MINS);
+                var tokenExpiryTimeStamp = DateTime.Now.AddHours(JWT_TOKEN_VALIDITY_MINS);
                 var tokenKey = Encoding.ASCII.GetBytes(JWT_SECURITY_KEY);
                 var claimsIdentiy = new ClaimsIdentity(new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Name, authRequest.userName),
-                //new Claim("Role", authRequest.role),
-                    new Claim("idRol", Convert.ToString(authRequest.idRol)),
                         new Claim(ClaimTypes.UserData, Convert.ToString(authRequest.userName)),
                         new Claim(ClaimTypes.NameIdentifier, authRequest.userName),
                         new Claim(ClaimTypes.Name, authRequest.fullName),
-                        new Claim(ClaimTypes.Role, authRequest.role)
+                        new Claim(ClaimTypes.Role, authRequest.role),
+                        new Claim("idUsuarioRol", Convert.ToString(authRequest.idUsuarioRol)),
+                        new Claim("nroIdentificacion", authRequest.nroIdentificacion),
+                    //new Claim("image",  authRequest.image),
+                    new Claim("ruc", authRequest.ruc),
+                    new Claim("razonSocial", authRequest.razonSocial),
 
             });
                 var signingCredentials = new SigningCredentials(
@@ -54,7 +48,7 @@ namespace BL.JwtAuthenticationManger
                 var securityTokenDescriptor = new SecurityTokenDescriptor
                 {
                     Subject = claimsIdentiy,
-                    Expires = date.AddMinutes(JWT_TOKEN_VALIDITY_MINS),
+                    Expires = date.AddHours(JWT_TOKEN_VALIDITY_MINS),
                     SigningCredentials = signingCredentials
                 };
                 var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
@@ -62,7 +56,6 @@ namespace BL.JwtAuthenticationManger
                 var token = jwtSecurityTokenHandler.WriteToken(securityToken);
                 return new AuthResponse
                 {
-                    userName = authRequest.userName,
                     expiresIn = (int)tokenExpiryTimeStamp.Subtract(DateTime.Now).TotalSeconds,
                     jwtToken = token
                 };

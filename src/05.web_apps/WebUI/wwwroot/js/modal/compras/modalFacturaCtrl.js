@@ -88,13 +88,6 @@ class ModalFacturaCtrl extends window.modalCompraBaseCtrl {
         })          
     }
 
-    selectedItemProveedor(item){
-        this.proveedor = item;
-        this.searchProveedorOptions.showBtnEdit = true;
-        console.log(item)
-    }
-    
-
 
      /**
      * 
@@ -144,7 +137,7 @@ class ModalFacturaCtrl extends window.modalCompraBaseCtrl {
 
 
     calcularPorcentajeDescuento() {
-        console.log(this.data.porcentajeDescuento)
+        this.data.porcentajeDescuento = this.data.porcentajeDescuento || 0;
         if(typeof this.data.porcentajeDescuento !=="number" || this.data.porcentajeDescuento === ""){
             this._tS.toastr('warning', 'Ingrese un Número Válido');
             return
@@ -162,6 +155,7 @@ class ModalFacturaCtrl extends window.modalCompraBaseCtrl {
     //Calcular Porcentaje  Descuento 
     calcularDescuento() {
         try {
+            this.data.totalDescuento = this.data.totalDescuento || 0;
             if(typeof this.data.totalDescuento!=='number' || this.data.totalDescuento === ""){
                 this._tS.toastr('warning', 'Ingrese un númeto válido', 'Valor Descuento');
                 return
@@ -200,11 +194,13 @@ class ModalFacturaCtrl extends window.modalCompraBaseCtrl {
 
 export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
 
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario']
+    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'storageService', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario']
     
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS){
+    constructor($scope, $timeout, $uibModalInstance, _storageSvc, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS){
         super({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS});
         
+        this._storageSvc = _storageSvc;
+
         this.searchProveedorOptions = {}
         this.searchProveedorOptions.showBtnNew = true;
         this.searchProveedorOptions.showBtnList = true;   
@@ -224,6 +220,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
         try {
             showLoader();
             let resultsDataForm = await this.initiload();
+            console.log(resultsDataForm)
             let {UiGridOptionsCompra} = await import('./../factElect/uiGridOptions.min.js' + CHANGE_VERSION());
 
             this.establecimientos = resultsDataForm[0];
@@ -267,9 +264,24 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
             })
             
             this.data.fechaEmision = new Date();
-            this.getFechaVencimiento()
-            this.$scope.$apply();
+            this.getFechaVencimiento();
 
+            if(Object.keys(this._storageSvc.getObject("facturaCompraDetalle")).length>0){
+                this._storageSvc.restoreInvoiceDetail("facturaCompraDetalle").then(result=>{
+                    if(result.isConfirmed){
+                        this.gridOptions.data = JSON.parse(result.dataInvoiceDetail[result.value]);                           
+                        delete result.dataInvoiceDetail[result.value];
+                                        
+                        this._storageSvc.setObject("facturaCompraDetalle", result.dataInvoiceDetail) 
+                                                                                       
+                        this.data = Object.assign(this.data, this.uiGridInvoice.getTotales());  
+                    }
+
+                })
+            }
+
+
+            this.$scope.$apply();
         } catch (error) {
             console.log(error)            
         }finally{
@@ -284,6 +296,11 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
             let textAccion = 'Guardar';  
 
             if(!this.isValidaForm(textAccion)) return
+
+            if(this.data.nroAutorizacion.length>10){
+                this._tS.toastr('warning', 'Número de Autorización tiene que tener 10 dígitos')
+                return
+            }
 
             this.nroDocumentoSecuencial = await this._commonSvc.generarNroDocumentoCompra({
                 puntoEmision: this.data.puntoEmision,
@@ -324,11 +341,12 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
             
              //Tarifa Aplicada al Documento
             this.data.tarifa = this.actividadTipoIva.tarifa;
+            
 
             const data = {
                 factura: this.data,
                 detalle: this.trimDetail(),
-                manejoArticuloDetalle: this.datosAdicionalesArticulo
+                manejoArticuloDetalle: this.datosAdicionalesArticulo || []
             }
 
             await this._mS.getData('post', '/FacturaCompra/Post', data).then(response=>{
@@ -350,6 +368,83 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
     }
 
 
+    selectedItemProveedor(item){
+        try {
+            this.proveedor = item;
+            this.searchProveedorOptions.showBtnEdit = true;
+
+            
+
+            this.data.idTiempoCredito = this.proveedor.idTiempoCredito;
+            
+            this.data.fechaEmision = new Date();
+            this.getFechaVencimiento();
+
+            this.$scope.$apply();        
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
+
+    async realoadCreditTime(){
+        let resultsDataForm = await this.initiload();
+        this.tiempoCreditos = resultsDataForm[3];
+    }
+
+
+    async closeModal(){
+        if(this.gridOptions.data.length===0){
+            this.$uibModalInstance.close();
+            return
+        }
+
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+              confirmButton: 'btn btn-success',
+              denyButton:'btn btn-info ml-2',
+              cancelButton: 'btn btn-danger ml-2'
+            },
+            buttonsStyling: false
+        })
+        
+        swalWithBootstrapButtons.fire({
+            title: 'Salir ?',
+            html: "<small>Tienes un documento en proceso, desea salir ahora?</small>",
+            icon: 'warning',
+            showCancelButton: true,
+            showConfirmButton:true,
+            showDenyButton:true,
+            confirmButtonText: 'Apartar',
+            denyButtonText: 'Si, salir',
+            cancelButtonText: 'No, cancelar!',
+            focusDeny:true,
+            reverseButtons: false
+        }).then(result=>{
+
+            if(result.isConfirmed){
+                this.askToSaveStorage();
+            }
+
+            if(result.isDenied){
+                this.$uibModalInstance.close();
+            }
+            
+        })        
+    }
+
+
+    async askToSaveStorage(){
+        try {
+            await this._storageSvc.askToSaveDetailDoc("facturaCompraDetalle", this.gridOptions.data);
+            this.$uibModalInstance.close(); 
+        } catch (error) {
+            console.log(error)
+        }             
+    }
+
+
 }
 
 
@@ -361,10 +456,11 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl{
     
     constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS, _params){
         super({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS});
-        console.log(_params)
+        
         this.searchProveedorOptions = {}
         this.searchProveedorOptions.showBtnNew = true;
         this.searchProveedorOptions.showBtnList = true;   
+        this.searchProveedorOptions.showBtnEdit = true;   
         
         this.data.fechaEmision = new Date();
 
@@ -376,6 +472,7 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl{
         this.CAMPOS = ["codEstab", "idSustentoTributario", "idCategoriaCompra", "idProveedor", "puntoEmision", "nroDoc", "nroAutorizacion", "idTiempoCredito", "fechaEmision", "fechaVencimiento", "validFechaVcto", "gridOptions", "gridOptionsBodega"];
         let {TIPO_REGISTRO, data} = _params;        
         let {dataDocumento, proveedor, detalleDocumento, datosAdicionalesArticulo} = data;
+        console.log(data)
         this.dataDocumento = dataDocumento;
         this.proveedor = proveedor;
         this.detalleDocumento = detalleDocumento;
@@ -435,7 +532,7 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl{
             // this.nroDocumentoSecuencial = this.data.puntoEmision + '-'+ this.data.nroDocumento.toString()
             this.gridOptions.data = this.detalleDocumento;
             
-            console.log(this)
+            
             this.$scope.$apply();
 
         } catch (error) {
@@ -446,6 +543,28 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl{
     }
 
 
+
+    selectedItemProveedor(item){
+        try {
+            this.proveedor = item;
+            this.searchProveedorOptions.showBtnEdit = true;
+    
+            // this.data.idTiempoCredito = this.proveedor.idTiempoCredito;
+            
+            // this.data.fechaEmision = new Date();
+            // this.getFechaVencimiento();
+
+            this.$scope.$apply();        
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
+   
+
+
+
     async onSave(){
         try {
             
@@ -453,6 +572,10 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl{
 
             if(!this.isValidaForm(textAccion)) return
 
+            if(this.data.nroAutorizacion.length>10){
+                this._tS.toastr('warning', 'Número de Autorización tiene que tener 10 dígitos')
+                return
+            }
 
              
             const swalWithBootstrapButtons = Swal.mixin({
@@ -587,7 +710,7 @@ export class ModalFacturaDetalleCtrl extends ModalFacturaCtrl{
             // this.nroDocumentoSecuencial = this.data.puntoEmision + '-'+ this.data.nroDocumento.toString()
             this.gridOptions.data = this.detalleDocumento;
             
-            console.log(this)
+            
             this.$scope.$apply();
 
         } catch (error) {
@@ -611,7 +734,8 @@ export class ModalFacturaDetalleCtrl extends ModalFacturaCtrl{
         
             const parameters = {               
                 dataParams: JSON.stringify(dataParms)
-            }                   
+            }   
+                          
             this._commonSvc.getReportDynamic({parameters, format})
         } catch (error) {
             console.log(error)

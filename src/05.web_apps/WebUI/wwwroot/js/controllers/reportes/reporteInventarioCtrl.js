@@ -1,9 +1,11 @@
 
+
 app.controller('reporteInventarioCtrl', reporteInventarioCtrl);
 
 reporteInventarioCtrl.$inject=['$scope','commonService', 'mainService', 'formulario', 'toastService',  'FileSaver', 'Blob'];
 
 function reporteInventarioCtrl($scope, _commonSvc, mS, form, toast, FileSaver, Blob){
+   
     $scope.dataSearch = {};
     $scope.dataSearch.byOrderCampo = 'ar.descripcion';
     $scope.dataSearch.byOrder = 'ASC';
@@ -17,36 +19,13 @@ function reporteInventarioCtrl($scope, _commonSvc, mS, form, toast, FileSaver, B
             $scope.bodegas = response[1]
         })
     }
-
-    // $scope.getAsignacionByRol = async()=>{
-        
-    //     const asignaciones = JSON.parse(await _commonSvc.getAsignacionByRol())
-    //     $scope.sucursales = asignaciones[0];          
-    //     $scope.dataSearch.bySucursal = $scope.sucursales[0].idSucursal; //Para Filtro avanzado                                   
-
-    //     //Puntos de Emisión 
-    //     $scope.puntosEmision = asignaciones[1];
-    //     if($scope.puntosEmision.length>0){
-    //         $scope.puntoEmision = $scope.puntosEmision[0];
-    //     }else{
-    //         toastr.info('No tienes asignado ningún punto de Emisión')
-    //     }
-
-    //     //Bodegas 
-    //     $scope.bodegas = asignaciones[3];
-    //     if($scope.bodegas.length>0){
-            
-            
-    //     }else{
-    //         toastr.info('No tienes asignado ningúna bodega');
-    //     }
-    // }
-    
     
     $scope.load = function(){
         
         _commonSvc.getEstabAsign().then(response=>{            
+          
             $scope.sucursales = response;  
+          
             if($scope.sucursales.length>0){
                 let dataEstab = $scope.sucursales[0]
                 $scope.dataSearch.codEstab = dataEstab.codEstab; //Para Filtro avanzado 
@@ -84,7 +63,7 @@ function reporteInventarioCtrl($scope, _commonSvc, mS, form, toast, FileSaver, B
         if($scope.dataSearch.checkboxBodegaFiltro){                
             $scope.dataSearch.checkboxDetalleBodegaFiltro = false;
         }
-    };
+    }
 
     $scope.onChangeTipoReporte = function(){
         if($scope.dataSearch.byTipoReporte===2){
@@ -94,19 +73,19 @@ function reporteInventarioCtrl($scope, _commonSvc, mS, form, toast, FileSaver, B
     }
 
     $scope.filtrar = async function(){
-        if($scope.dataSearch.checkboxSucursalFiltro){
-            if(form.campo($scope.dataSearch.codEstab)){
-                toast.toastr('warning', 'Seleccione la Sucursal', 'Reporte');
-                return
-            }
-        }
+        // if($scope.dataSearch.checkboxSucursalFiltro){
+        //     if(form.campo($scope.dataSearch.codEstab)){
+        //         toast.toastr('warning', 'Seleccione la Sucursal', 'Reporte');
+        //         return
+        //     }
+        // }
 
-        if($scope.dataSearch.checkboxBodegaFiltro){
-            if(form.campo($scope.dataSearch.byBodega)){
-                toast.toastr('warning', 'Seleccione la Bodega', 'Reporte');
-                return
-            }
-        }
+        // if($scope.dataSearch.checkboxBodegaFiltro){
+        //     if(form.campo($scope.dataSearch.byBodega)){
+        //         toast.toastr('warning', 'Seleccione la Bodega', 'Reporte');
+        //         return
+        //     }
+        // }
 
         if($scope.dataSearch.checkboxSubFamiliaFiltro){
             if(form.campo($scope.dataSearch.bySubFamilia)){
@@ -120,52 +99,35 @@ function reporteInventarioCtrl($scope, _commonSvc, mS, form, toast, FileSaver, B
                 toast.toastr('warning', 'Seleccione el Stock', 'Reporte');
                 return
             }
-        };
+        }
 
-        
-        
-        let loaderGif = $scope.dataSearch.byTipoFormato==="pdf"?'document-office.gif':'transfer-file.gif'
-        form.showLoaderForm('Descargando...', 'Espere', `/assets/images/gif/${loaderGif}`)
-        $scope.getReport();                
-        return
-                    
-    };       
+        $scope.getReport();                                            
+    }     
 
     $scope.getReport = function() {   
         let fechaHoy = new Date();
         let fecha = fechaHoy.getDate() + '-' + ( fechaHoy.getMonth() + 1 ) + '-' + fechaHoy.getFullYear();       
-        var hora = fechaHoy.getHours() + ':' + fechaHoy.getMinutes();
+        let hora = fechaHoy.getHours() + ':' + fechaHoy.getMinutes();
         
-        $scope.dataSearch.filtroFecha =  fecha + ' ' + hora;
-
+        let codigo = $scope.dataSearch.byTipoReporte ===1?'INVRV': 'INVAT'
+        
+        $scope.dataSearch.filtroFecha =  fecha + ' ' + hora;        
+        
      
         const parameters = {
             reportParams: JSON.stringify({
-                codigo: 'INVRG', 
+                codigo,
                 format: $scope.dataSearch.byTipoFormato,
                 aditionalParams: []
             }),
             dataParams: JSON.stringify($scope.dataSearch)
-        };
-        mS.getFile('Post', '/Reporte/Download', parameters).then(response=>{
-            Swal.close();
-            
-            if ($scope.dataSearch.byTipoFormato == 'pdf' || $scope.dataSearch.byTipoFormato == 'excel') {
-                let fileBlob = new Blob([response.data], {
-                    type: response.data.type
-                });
-                let objectUrl = window.URL || window.webkitURL;
-                let urlFile = objectUrl.createObjectURL(fileBlob);
-                window.open(urlFile, '_blank');
-                return;
-            } else {
-                let serverData = new Blob([response.data], { type: response.headers()['content-type'] });
-                let fileName = response.headers()['content-disposition'].split(';')[1].split('=')[1];
-                FileSaver.saveAs(serverData, fileName);                    
-                return;
-            };
-        }, error=>console.log(error));
-    };
+        }
+
+        _commonSvc.getReport({
+            parameters,
+            formatType: $scope.dataSearch.byTipoFormato
+        })        
+    }
 
 
 

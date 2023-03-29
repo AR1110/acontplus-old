@@ -1,3 +1,5 @@
+using BL.JwtAuthenticationManger;
+
 namespace AdminUI
 {
     public class Program
@@ -10,6 +12,9 @@ namespace AdminUI
             // Add services to the container.
 
             builder.Services.AddControllersWithViews();
+
+            //custom jwt
+            builder.Services.AddCustomJwtAuthentication();
 
             builder.Services.AddTransient<IConfiguration>(sp =>
             {
@@ -30,11 +35,16 @@ namespace AdminUI
 
             app.UseCors(policy =>
             {
+                policy.AllowCredentials();
+                policy.WithExposedHeaders("Content-Disposition");
                 policy.AllowAnyHeader();
                 policy.AllowAnyMethod();
                 policy.WithOrigins(origins);
             });
 
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.UseMiddleware<JWTMiddleware>();
 
             app.MapControllerRoute(
                 name: "default",

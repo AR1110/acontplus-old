@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
   <AutoRefresh>0</AutoRefresh>
   <DataSources>
@@ -7,6 +7,7 @@
         <DataProvider>System.Data.DataSet</DataProvider>
         <ConnectString>/* Local Connection */</ConnectString>
       </ConnectionProperties>
+      <rd:SecurityType>None</rd:SecurityType>
       <rd:DataSourceID>ad8cce51-92f5-4376-8c75-80e06cec652c</rd:DataSourceID>
     </DataSource>
     <DataSource Name="ComprobantesElectronicos">
@@ -14,6 +15,7 @@
         <DataProvider>System.Data.DataSet</DataProvider>
         <ConnectString>/* Local Connection */</ConnectString>
       </ConnectionProperties>
+      <rd:SecurityType>None</rd:SecurityType>
       <rd:DataSourceID>a30b919f-a46b-4e23-ab77-9c1d7bf61626</rd:DataSourceID>
     </DataSource>
   </DataSources>
@@ -279,21 +281,6 @@
     <ReportSection>
       <Body>
         <ReportItems>
-          <Image Name="logo">
-            <Source>Database</Source>
-            <Value>=Parameters!logo.Value</Value>
-            <MIMEType>=Parameters!mimeType.Value</MIMEType>
-            <Sizing>FitProportional</Sizing>
-            <Top>0.58816cm</Top>
-            <Left>0.57891cm</Left>
-            <Height>3.04716cm</Height>
-            <Width>10.03458cm</Width>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-            </Style>
-          </Image>
           <Rectangle Name="Rectangle1">
             <ReportItems>
               <Textbox Name="Textbox48">
@@ -314,9 +301,9 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox48</rd:DefaultName>
                 <Top>0.215cm</Top>
-                <Left>1.94097cm</Left>
+                <Left>2.09972cm</Left>
                 <Height>0.6cm</Height>
-                <Width>6.12067cm</Width>
+                <Width>6.78213cm</Width>
                 <Style>
                   <Border />
                   <PaddingLeft>2pt</PaddingLeft>
@@ -332,7 +319,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!tipoDocumento.Value, "NotaCreditoClienteDs")</Value>
+                        <Value>NOTA DE CRÉDITO</Value>
                         <Style>
                           <FontWeight>Bold</FontWeight>
                         </Style>
@@ -345,9 +332,9 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox49</rd:DefaultName>
                 <Top>0.88555cm</Top>
-                <Left>0.087cm</Left>
+                <Left>0.24575cm</Left>
                 <Height>0.6441cm</Height>
-                <Width>7.97463cm</Width>
+                <Width>8.63609cm</Width>
                 <ZIndex>1</ZIndex>
                 <Style>
                   <Border>
@@ -380,9 +367,9 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox50</rd:DefaultName>
                 <Top>1.60021cm</Top>
-                <Left>1.45653cm</Left>
+                <Left>1.61528cm</Left>
                 <Height>0.56473cm</Height>
-                <Width>6.60511cm</Width>
+                <Width>7.26657cm</Width>
                 <ZIndex>2</ZIndex>
                 <Style>
                   <Border />
@@ -413,9 +400,9 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox51</rd:DefaultName>
                 <Top>2.83549cm</Top>
-                <Left>0.087cm</Left>
+                <Left>0.24575cm</Left>
                 <Height>0.51181cm</Height>
-                <Width>7.97463cm</Width>
+                <Width>8.63609cm</Width>
                 <ZIndex>3</ZIndex>
                 <Style>
                   <Border />
@@ -446,9 +433,9 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox52</rd:DefaultName>
                 <Top>3.41785cm</Top>
-                <Left>4.06986cm</Left>
+                <Left>4.22861cm</Left>
                 <Height>0.6cm</Height>
-                <Width>3.99177cm</Width>
+                <Width>4.65323cm</Width>
                 <ZIndex>4</ZIndex>
                 <Style>
                   <Border />
@@ -479,7 +466,7 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox53</rd:DefaultName>
                 <Top>4.05313cm</Top>
-                <Left>2.18791cm</Left>
+                <Left>2.34666cm</Left>
                 <Height>0.6cm</Height>
                 <Width>2.18884cm</Width>
                 <ZIndex>5</ZIndex>
@@ -512,9 +499,9 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox71</rd:DefaultName>
                 <Top>4.05313cm</Top>
-                <Left>5.9878cm</Left>
+                <Left>6.14655cm</Left>
                 <Height>0.6cm</Height>
-                <Width>2.07384cm</Width>
+                <Width>2.7353cm</Width>
                 <ZIndex>6</ZIndex>
                 <Style>
                   <Border />
@@ -546,8 +533,9 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox72</rd:DefaultName>
                 <Top>6.82963cm</Top>
+                <Left>0.15875cm</Left>
                 <Height>0.6cm</Height>
-                <Width>7.97463cm</Width>
+                <Width>8.63609cm</Width>
                 <ZIndex>7</ZIndex>
                 <Style>
                   <Border />
@@ -576,7 +564,7 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox126</rd:DefaultName>
                 <Top>0.215cm</Top>
-                <Left>0.087cm</Left>
+                <Left>0.24575cm</Left>
                 <Height>0.6cm</Height>
                 <Width>1.78341cm</Width>
                 <ZIndex>8</ZIndex>
@@ -609,7 +597,7 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox127</rd:DefaultName>
                 <Top>1.60021cm</Top>
-                <Left>0.087cm</Left>
+                <Left>0.24575cm</Left>
                 <Height>0.56473cm</Height>
                 <Width>1.29897cm</Width>
                 <ZIndex>9</ZIndex>
@@ -641,9 +629,9 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox128</rd:DefaultName>
                 <Top>2.27077cm</Top>
-                <Left>0.087cm</Left>
+                <Left>0.24575cm</Left>
                 <Height>0.49417cm</Height>
-                <Width>7.97463cm</Width>
+                <Width>8.63609cm</Width>
                 <ZIndex>10</ZIndex>
                 <Style>
                   <Border />
@@ -674,7 +662,7 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox129</rd:DefaultName>
                 <Top>3.41785cm</Top>
-                <Left>0.087cm</Left>
+                <Left>0.24575cm</Left>
                 <Height>0.6cm</Height>
                 <Width>3.9123cm</Width>
                 <ZIndex>11</ZIndex>
@@ -708,7 +696,7 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox130</rd:DefaultName>
                 <Top>4.05313cm</Top>
-                <Left>0.087cm</Left>
+                <Left>0.24575cm</Left>
                 <Height>0.6cm</Height>
                 <Width>2.10091cm</Width>
                 <ZIndex>12</ZIndex>
@@ -742,7 +730,7 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox131</rd:DefaultName>
                 <Top>4.05313cm</Top>
-                <Left>4.44731cm</Left>
+                <Left>4.60606cm</Left>
                 <Height>0.6cm</Height>
                 <Width>1.46993cm</Width>
                 <ZIndex>13</ZIndex>
@@ -773,9 +761,9 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox138</rd:DefaultName>
                 <Top>4.79424cm</Top>
-                <Left>0.087cm</Left>
+                <Left>0.24575cm</Left>
                 <Height>0.6cm</Height>
-                <Width>7.97463cm</Width>
+                <Width>8.63609cm</Width>
                 <ZIndex>14</ZIndex>
                 <Style>
                   <Border />
@@ -791,9 +779,9 @@
                 <MIMEType>=Parameters!mimeTypeBarcode.Value</MIMEType>
                 <Sizing>Fit</Sizing>
                 <Top>5.50008cm</Top>
-                <Left>0.087cm</Left>
+                <Left>0.24575cm</Left>
                 <Height>1.15316cm</Height>
-                <Width>7.97463cm</Width>
+                <Width>8.63609cm</Width>
                 <ZIndex>15</ZIndex>
                 <Style>
                   <Border>
@@ -803,85 +791,16 @@
               </Image>
             </ReportItems>
             <KeepTogether>true</KeepTogether>
-            <Top>0.58816cm</Top>
-            <Left>11.22398cm</Left>
+            <Top>0.40581cm</Top>
+            <Left>10.47541cm</Left>
             <Height>7.90587cm</Height>
-            <Width>8.13971cm</Width>
-            <ZIndex>1</ZIndex>
+            <Width>9.14513cm</Width>
             <Style>
               <Border>
                 <Style>Solid</Style>
               </Border>
             </Style>
           </Rectangle>
-          <Textbox Name="Textbox43">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>=First(Fields!razonSocialEntidad.Value, "NotaCreditoClienteDs")</Value>
-                    <Style>
-                      <FontSize>8pt</FontSize>
-                      <FontWeight>Bold</FontWeight>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style>
-                  <TextAlign>Center</TextAlign>
-                </Style>
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox43</rd:DefaultName>
-            <Top>4.00601cm</Top>
-            <Left>0.57891cm</Left>
-            <Height>0.6cm</Height>
-            <Width>10.03458cm</Width>
-            <ZIndex>2</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <VerticalAlign>Middle</VerticalAlign>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox44">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>=First(Fields!nombreComercialEntidad.Value, "NotaCreditoClienteDs")</Value>
-                    <Style>
-                      <FontSize>7pt</FontSize>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style>
-                  <TextAlign>Center</TextAlign>
-                </Style>
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox44</rd:DefaultName>
-            <Top>4.64129cm</Top>
-            <Left>0.57891cm</Left>
-            <Height>0.6cm</Height>
-            <Width>10.03458cm</Width>
-            <ZIndex>3</ZIndex>
-            <Style>
-              <Border />
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
           <Textbox Name="Textbox45">
             <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
@@ -902,10 +821,10 @@
             </Paragraphs>
             <rd:DefaultName>Textbox45</rd:DefaultName>
             <Top>5.31185cm</Top>
-            <Left>2.37917cm</Left>
+            <Left>2.06167cm</Left>
             <Height>0.6cm</Height>
-            <Width>8.23432cm</Width>
-            <ZIndex>4</ZIndex>
+            <Width>7.21392cm</Width>
+            <ZIndex>1</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -937,10 +856,10 @@
             </Paragraphs>
             <rd:DefaultName>Textbox46</rd:DefaultName>
             <Top>7.42935cm</Top>
-            <Left>5.5219cm</Left>
+            <Left>5.2044cm</Left>
             <Height>0.6cm</Height>
-            <Width>5.09158cm</Width>
-            <ZIndex>5</ZIndex>
+            <Width>4.07119cm</Width>
+            <ZIndex>2</ZIndex>
             <Style>
               <Border />
               <VerticalAlign>Middle</VerticalAlign>
@@ -970,10 +889,10 @@
             </Paragraphs>
             <rd:DefaultName>Textbox116</rd:DefaultName>
             <Top>6.01768cm</Top>
-            <Left>2.37917cm</Left>
+            <Left>2.06167cm</Left>
             <Height>0.6cm</Height>
-            <Width>8.23432cm</Width>
-            <ZIndex>6</ZIndex>
+            <Width>7.21392cm</Width>
+            <ZIndex>3</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1006,10 +925,10 @@
             </Paragraphs>
             <rd:DefaultName>Textbox117</rd:DefaultName>
             <Top>5.31185cm</Top>
-            <Left>0.57892cm</Left>
+            <Left>0.26142cm</Left>
             <Height>0.6cm</Height>
             <Width>1.76497cm</Width>
-            <ZIndex>7</ZIndex>
+            <ZIndex>4</ZIndex>
             <Style>
               <Border />
               <VerticalAlign>Middle</VerticalAlign>
@@ -1040,10 +959,10 @@
             </Paragraphs>
             <rd:DefaultName>Textbox118</rd:DefaultName>
             <Top>6.01768cm</Top>
-            <Left>0.57892cm</Left>
+            <Left>0.26142cm</Left>
             <Height>0.6cm</Height>
             <Width>1.76497cm</Width>
-            <ZIndex>8</ZIndex>
+            <ZIndex>5</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1076,10 +995,10 @@
             </Paragraphs>
             <rd:DefaultName>Textbox119</rd:DefaultName>
             <Top>7.42935cm</Top>
-            <Left>0.57892cm</Left>
+            <Left>0.26142cm</Left>
             <Height>0.6cm</Height>
             <Width>4.90771cm</Width>
-            <ZIndex>9</ZIndex>
+            <ZIndex>6</ZIndex>
             <Style>
               <Border />
               <VerticalAlign>Middle</VerticalAlign>
@@ -1109,10 +1028,10 @@
             </Paragraphs>
             <rd:DefaultName>Textbox116</rd:DefaultName>
             <Top>6.68824cm</Top>
-            <Left>2.37917cm</Left>
+            <Left>2.06167cm</Left>
             <Height>0.6cm</Height>
-            <Width>8.23432cm</Width>
-            <ZIndex>10</ZIndex>
+            <Width>7.21392cm</Width>
+            <ZIndex>7</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1145,10 +1064,10 @@
             </Paragraphs>
             <rd:DefaultName>Textbox118</rd:DefaultName>
             <Top>6.68824cm</Top>
-            <Left>0.57892cm</Left>
+            <Left>0.26142cm</Left>
             <Height>0.6cm</Height>
             <Width>1.76497cm</Width>
-            <ZIndex>11</ZIndex>
+            <ZIndex>8</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1448,10 +1367,10 @@
             </ReportItems>
             <KeepTogether>true</KeepTogether>
             <Top>8.7939cm</Top>
-            <Left>0.57891cm</Left>
+            <Left>0.26141cm</Left>
             <Height>2.30597cm</Height>
-            <Width>18.78478cm</Width>
-            <ZIndex>12</ZIndex>
+            <Width>19.35913cm</Width>
+            <ZIndex>9</ZIndex>
             <Style>
               <Border>
                 <Style>Solid</Style>
@@ -1465,7 +1384,7 @@
                   <Width>1.47404cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>9.37771cm</Width>
+                  <Width>9.95204cm</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1.7089cm</Width>
@@ -2002,10 +1921,10 @@
             </TablixRowHierarchy>
             <DataSetName>NotaCreditoClienteDetalleDs</DataSetName>
             <Top>12.91669cm</Top>
-            <Left>0.57892cm</Left>
+            <Left>0.26142cm</Left>
             <Height>1.2cm</Height>
-            <Width>18.78479cm</Width>
-            <ZIndex>13</ZIndex>
+            <Width>19.35912cm</Width>
+            <ZIndex>10</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2369,10 +2288,10 @@
             </ReportItems>
             <KeepTogether>true</KeepTogether>
             <Top>14.29093cm</Top>
-            <Left>0.57891cm</Left>
+            <Left>0.26141cm</Left>
             <Height>7.07458cm</Height>
             <Width>11.30154cm</Width>
-            <ZIndex>14</ZIndex>
+            <ZIndex>11</ZIndex>
             <Style>
               <Border>
                 <Style>Solid</Style>
@@ -3217,11 +3136,11 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>NotaCreditoClienteDs</DataSetName>
-            <Top>14.29093cm</Top>
-            <Left>13.13956cm</Left>
+            <Top>14.25699cm</Top>
+            <Left>13.39641cm</Left>
             <Height>5.17121cm</Height>
             <Width>6.22413cm</Width>
-            <ZIndex>15</ZIndex>
+            <ZIndex>12</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -3514,10 +3433,10 @@
             </ReportItems>
             <KeepTogether>true</KeepTogether>
             <Top>11.20571cm</Top>
-            <Left>0.57891cm</Left>
+            <Left>0.26141cm</Left>
             <Height>1.53459cm</Height>
-            <Width>18.78478cm</Width>
-            <ZIndex>16</ZIndex>
+            <Width>19.35913cm</Width>
+            <ZIndex>13</ZIndex>
             <Style>
               <Border>
                 <Style>Solid</Style>
@@ -3528,7 +3447,7 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>10.03457cm</Width>
+                  <Width>9.01418cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -3588,16 +3507,103 @@
             </TablixRowHierarchy>
             <DataSetName>NormativaDs</DataSetName>
             <Top>8.12334cm</Top>
-            <Left>0.57891cm</Left>
+            <Left>0.26141cm</Left>
             <Height>0.6cm</Height>
-            <Width>10.03457cm</Width>
-            <ZIndex>17</ZIndex>
+            <Width>9.01418cm</Width>
+            <ZIndex>14</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
               </Border>
             </Style>
           </Tablix>
+          <Image Name="logo">
+            <Source>Database</Source>
+            <Value>=Parameters!logo.Value</Value>
+            <MIMEType>=Parameters!mimeType.Value</MIMEType>
+            <Sizing>FitProportional</Sizing>
+            <Top>0.40581cm</Top>
+            <Left>0.26142cm</Left>
+            <Height>2.89437cm</Height>
+            <Width>9.01417cm</Width>
+            <ZIndex>15</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>10pt</PaddingLeft>
+              <PaddingRight>10pt</PaddingRight>
+              <PaddingTop>5pt</PaddingTop>
+              <PaddingBottom>5pt</PaddingBottom>
+            </Style>
+          </Image>
+          <Textbox Name="Textbox11">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!razonSocialEntidad.Value, "NotaCreditoClienteDs")</Value>
+                    <Style>
+                      <FontSize>8pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Center</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox11</rd:DefaultName>
+            <Top>3.30018cm</Top>
+            <Left>0.26142cm</Left>
+            <Height>0.6cm</Height>
+            <Width>9.01417cm</Width>
+            <ZIndex>16</ZIndex>
+            <Style>
+              <Border />
+              <VerticalAlign>Middle</VerticalAlign>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox15">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!nombreComercialEntidad.Value, "NotaCreditoClienteDs")</Value>
+                    <Style>
+                      <FontSize>8pt</FontSize>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Center</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox11</rd:DefaultName>
+            <Top>3.93546cm</Top>
+            <Left>0.26142cm</Left>
+            <Height>0.67055cm</Height>
+            <Width>9.01417cm</Width>
+            <ZIndex>17</ZIndex>
+            <Style>
+              <Border />
+              <VerticalAlign>Middle</VerticalAlign>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
         </ReportItems>
         <Height>8.81109in</Height>
         <Style>
@@ -3606,7 +3612,7 @@
           </Border>
         </Style>
       </Body>
-      <Width>7.73224in</Width>
+      <Width>7.83641in</Width>
       <Page>
         <PageHeight>26cm</PageHeight>
         <PageWidth>21cm</PageWidth>

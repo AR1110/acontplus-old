@@ -111,7 +111,7 @@
                                                     </md-menu-item>
 
                                                     <md-menu-item>
-                                                        <md-button ng-click="getReportII(ne)">
+                                                        <md-button ng-click="print(ne)">
                                                             <span md-menu-align-target>
                                                                 <icon class="mdi mdi-cloud-print-outline"></icon> Impresión
                                                             </span>
@@ -169,6 +169,7 @@
 
 </div>
 
-@section Scripts{            
+@section Scripts{ 
+    <script src="~/js/services/storageService.min.js" asp-append-version="true"></script>           
     <script src="~/js/controllers/ventas/notaEntregaCtrl.js" asp-append-version="true"></script>      
 }

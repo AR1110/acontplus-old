@@ -1,3 +1,5 @@
+USE [AcontPlus]
+GO
 -- ================================================
 -- Template generated from Template Explorer using:
 -- Create Procedure (New Menu).SQL
@@ -21,7 +23,7 @@ GO
 IF OBJECT_ID(N'Sri.Establecimiento_Delete', N'P') IS NOT NULL
 DROP PROCEDURE Sri.Establecimiento_Delete 
 GO
-CREATE PROCEDURE Sri.Establecimiento_Delete @id INT
+CREATE PROCEDURE Sri.Establecimiento_Delete @idRol INT,@id INT
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from

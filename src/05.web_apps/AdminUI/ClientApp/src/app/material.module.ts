@@ -33,12 +33,10 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 
 
 import {DialogModule} from '@angular/cdk/dialog';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FlexLayoutModule } from '@angular/flex-layout';
 
 
-import { ToastrModule } from 'ngx-toastr';
 import { MatTreeModule } from '@angular/material/tree';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -76,9 +74,7 @@ import { MatTreeModule } from '@angular/material/tree';
     MatTreeModule,
     DialogModule,
     ReactiveFormsModule,
-    FormsModule,
-    FlexLayoutModule,
-    ToastrModule
+    FormsModule
   ]
 })
 

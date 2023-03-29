@@ -50,10 +50,14 @@ function retencionCompraCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombr
     $scope.getRetenciones = async()=>{
         try {
             showLoader();
+
+            $scope.retenciones = [];
+
             await _mS.getData('get', '/RetencionCompra/Get?json=' + JSON.stringify($scope.dataSearch)).then(response=>{
                 if(response.code==="0"){
                     console.warn(response)                    
-                }                
+                } 
+                           
                 $scope.retenciones =  JSON.parse(response.data) || [];    
                 $scope.copiaRetenciones = JSON.parse(JSON.stringify($scope.retenciones))        
                 $scope.getTotalesColumna();    

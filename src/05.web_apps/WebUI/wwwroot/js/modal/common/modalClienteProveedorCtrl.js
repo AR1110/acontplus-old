@@ -11,7 +11,7 @@ export class ModalBaseCtrl {
         this._nombreModal = _nombreModal;
         this._form = _form;
         this._tS = _tS;
-        this._params = _params;
+        this._params = _params || {}
     }
 
     initiload({ esCredito, tipoValidacion, tipoClienteProveedor }) {
@@ -64,24 +64,12 @@ export class ModalBaseCtrl {
 
         this._mS.getData('get', `/${this.dataSearchValidacion.url}/Get?json=` + JSON.stringify(this.dataSearchValidacion)).then(response => {
             if (response.code === "0") {
-                this._tS.toastr('warning', response.message, response.titleSms);
+               console.log(response)
             }
             if (response.code === "1") {
                 const data = JSON.parse(response.payload)[0];
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.addEventListener('mouseenter', Swal.stopTimer)
-                        toast.addEventListener('mouseleave', Swal.resumeTimer)
-                    }
-                })
-
-                Toast.fire({
-                    icon: 'info',
+                
+                Swal.fire({
                     title: `${this.dataSearchValidacion.titulo}`,
                     html: `
                         <small><strong>Nro. Identificación</strong></small>
@@ -89,8 +77,38 @@ export class ModalBaseCtrl {
                         <p class="text-muted small">${data.numeroIdentificacion}</p>
                         <small><strong>Nombre Fiscal</strong></small> <br>
                         <p class="text-muted small">${data.nombreFiscal}</p>
-                    `
-                })
+
+                        <small><strong>Nombre Comercial</strong></small> <br>
+                        <p class="text-muted small">${data.nombreComercial}</p>
+                    `,
+                    allowOutsideClick: false,
+                    allowEnterKey: false,
+                    icon: 'info',                                        
+                  })
+
+                // const Toast = Swal.mixin({
+                //     toast: true,
+                //     position: 'top-end',
+                //     showConfirmButton: false,
+                //     timer: 3000,
+                //     timerProgressBar: true,
+                //     didOpen: (toast) => {
+                //         toast.addEventListener('mouseenter', Swal.stopTimer)
+                //         toast.addEventListener('mouseleave', Swal.resumeTimer)
+                //     }
+                // })
+
+                // Toast.fire({
+                //     icon: 'info',
+                //     title: `${this.dataSearchValidacion.titulo}`,
+                //     html: `
+                //         <small><strong>Nro. Identificación</strong></small>
+                //         <br>
+                //         <p class="text-muted small">${data.numeroIdentificacion}</p>
+                //         <small><strong>Nombre Fiscal</strong></small> <br>
+                //         <p class="text-muted small">${data.nombreFiscal}</p>
+                //     `
+                // })
             }
         })
     }
@@ -102,95 +120,11 @@ export class ModalBaseCtrl {
 }
 
 
-/***
- *
- * ------------------------------------START CLIENTE-------------------------
- *
-*/
-export class ModalClienteCtrl extends ModalBaseCtrl {
 
-    static $inject = [
-        '$scope',
-        'mainService',
-        'commonService',
-        '$uibModalInstance',
-        'modalService',
-        'nombreModal',
-        'formulario',
-        'toastService',
-        'params'
-    ];
 
-    constructor($scope, _mS, _commonSvc, $uibModalInstance, _modalSvc, _nombreModal, _form, _tS, _params) {
+class ModalBaseCliente extends ModalBaseCtrl{
+    constructor({ $scope, _mS, _commonSvc, $uibModalInstance, _modalSvc, _nombreModal, _form, _tS, _params }) {
         super({ $scope, _mS, _commonSvc, $uibModalInstance, _modalSvc, _nombreModal, _form, _tS, _params })
-
-        this.initiloadParams = { esCredito: true, tipoValidacion: 'V', tipoClienteProveedor: 'CL' };
-
-        this.tabContent = 0; //Por defecto tab general
-        this.data = {};
-        this.tipoRegistro = 1;
-
-        this.correos = [];
-        this.telefonos = [];
-        this.placas = [];
-
-        this.isDisableInputIdentificacion = false;
-    }
-
-
-
-    async $onInit() {
-        try {
-            showLoader();
-            const results = await this.initiload(this.initiloadParams);
-
-            this.tipoIdentificaciones = results[0];
-            this.data.idTipoIdentificacion = this.tipoIdentificaciones[0].idTipoIdentificacion;
-            this.data.codigoIdentificacion = this.tipoIdentificaciones[0].codigoIdentificacion;
-
-            this.subContribuyentes = results[1];
-            this.tipoClientes = results[2];
-            this.tipoEntidades = results[3];
-            this.ciudadPronvincias = results[4];
-
-            this.tiempoCreditos = results[5];
-            this.data.idTiempoCredito = this.tiempoCreditos.length > 0 ? this.tiempoCreditos[0].idTiempoCredito : 0
-
-            this._mS.getData('get', '/Empresa/Get?json=' + JSON.stringify({ typeList: 2 })).then(response => {                
-                if(response.data){
-                    this.empresas = JSON.parse(response.data)
-                }
-            }),
-            this._mS.getData('get', '/Cargo/Get?json=' + JSON.stringify({ typeList: 2 })).then(response => {
-                if(response.data){
-                    this.cargos = JSON.parse(response.data)
-                }
-            })
-
-            //Editar
-            //Cuando editamos
-            if (this._params) {
-                this._commonSvc.getDataCliente(this._params.idCliente).then(response => {
-                    this.isDisableInputIdentificacion = false;
-                    this.tipoRegistro = 2
-                    this.data = response;
-                    this.correos = this.data.correos;
-                    this.telefonos = this.data.telefonos;
-
-                    this.selectedEmpleado = this.data.empleado;
-                    this.placas = this.data.placas;
-
-                    //Cuando el estado este Inactivo se presenta el estado para activar
-                    this.showEstado = !this.data.estado;
-                    this.$scope.$apply();
-                })
-            }
-            this.$scope.$apply();
-            hideLoader()
-        } catch (error) {
-            hideLoader();
-            console.log(error)
-        }
     }
 
     //Depurando lista de ciudad y provincia
@@ -229,8 +163,11 @@ export class ModalClienteCtrl extends ModalBaseCtrl {
         this.message = ''
         this.data.numeroIdentificacion = '';
 
+        this.isDisableInputIdentificacion = false;
+
         //Tipo Identificacion Consumir Final
         if (this.data.codigoIdentificacion === 'CF') {
+            this.isDisableInputIdentificacion = true;
             this.data.numeroIdentificacion = '9'.repeat(13)
         }
     }
@@ -242,8 +179,11 @@ export class ModalClienteCtrl extends ModalBaseCtrl {
             bySearch: this.data.numeroIdentificacion,
             titulo: 'Cliente Registrado.'
         }
+       
         let codigoIdentificacion = this.tipoIdentificaciones.find(item => item.idTipoIdentificacion === this.data.idTipoIdentificacion).codigoIdentificacion;
+        
         if (this._form.campo(this.data.numeroIdentificacion)) return
+
 
         //Validamos Número de Cedula
         if (codigoIdentificacion === 'C') {
@@ -262,15 +202,19 @@ export class ModalClienteCtrl extends ModalBaseCtrl {
             if (this.data.numeroIdentificacion.toString().length < 13) {
                 this.typeNotify = 'is-invalid';
                 this.message = 'Número de RUC debe tener 13 dígitos';
-            } else {
-                this.typeNotify = 'is-valid';
-                this.message = '';
-                this.verificarSiExisteNumIdentificacion();
+                return
+            } 
+            
+            if(this.data.numeroIdentificacion.slice(this.data.numeroIdentificacion.length - 3) !=='001'){
+                this.typeNotify = 'is-invalid';
+                this.message = 'Número de RUC tiene que contener (001) en últimos dígitos';
+                return
             }
-            // else {
-            //     this.validarNumIdentificacion();
-            //     return
-            // }
+            
+      
+            this.typeNotify = 'is-valid';
+            this.message = '';
+            this.verificarSiExisteNumIdentificacion();                       
         }
 
 
@@ -307,6 +251,7 @@ export class ModalClienteCtrl extends ModalBaseCtrl {
             template: 'Empresa/' + MODAL_CSHTML,
             size: 'md'
         })
+
         modalRef.result.then(async res => {
             if (typeof res === 'object') {
                 const results = await this.initiload(this.initiloadParams);
@@ -335,11 +280,7 @@ export class ModalClienteCtrl extends ModalBaseCtrl {
             size: 'md'
         })
 
-        modalRef.result.then(res => {
-            if (typeof res === 'object') {
-
-            }
-        })
+       
     }
 
     async openModalCargo() {
@@ -359,109 +300,6 @@ export class ModalClienteCtrl extends ModalBaseCtrl {
     }
 
 
-
-    saveUpdateCliente() {
-        try {
-
-            let tituloModal = this.tipoRegistro == 1 ? 'Guardar' : 'Actualizar';
-            if (this._form.campo(this.data.numeroIdentificacion)) {
-                this._tS.toastr('warning', 'Ingrese Número de Identificación', tituloModal)
-                return;
-            };
-
-            if ($("#numeroIdentificacion").hasClass('is-invalid')) {
-                this._tS.toastr('warning', 'Ingrese el número de Identificación válido', tituloModal);
-                return
-            }
-
-            if (this.data.codigoIdentificacion === "CF" && this.data.numeroIdentificacion.length !== 13) {
-                this._tS.toastr('warning', 'Número de Consumidor Final tiene que ser de 13 dígitos', tituloModal);
-                return
-            }
-
-            if (this.data.codigoIdentificacion === "C" && this.data.numeroIdentificacion.length !== 10) {
-                this._tS.toastr('warning', 'Número de Cédula tiene que ser de 10 dígitos', tituloModal);
-                return
-            }
-
-            if (this.data.codigoIdentificacion === "R" && this.data.numeroIdentificacion.length !== 13) {
-                this._tS.toastr('warning', 'Número de RUC tiene que ser de 13 dígitos', tituloModal);
-                return
-            }
-
-            if (this.data.codigoIdentificacion === "R" && this.data.numeroIdentificacion.slice(-3) !== '001') {
-                this._tS.toastr('warning', 'Número de RUC tiene que contener 001', tituloModal);
-                return
-            }
-
-
-
-
-            if (this._form.campo(this.data.idSubContribuyente)) {
-                this._tS.toastr('warning', 'Seleccione el Contribuyente', tituloModal)
-                return
-            }
-            if (this._form.campo(this.data.nombreFiscal)) {
-                this._tS.toastr('warning', 'Ingrese el nombre Fiscal', tituloModal)
-                return
-            }
-            if (this._form.campo(this.data.nombreComercial)) {
-                this._tS.toastr('warning', 'Ingrese el nombre Comercial', tituloModal)
-                return
-            }
-            // if (this._form.campo(this.data.idCiudad)) {
-            //     toast.toastr('warning', 'Seleccione la Ciudad', tituloModal);
-            //     return;
-            // }
-            // if (this._form.campo(this.data.idTipoClienteProveedor)) {
-            //     toast.toastr('warning', 'Seleccione el Tipo Cliente', tituloModal)
-            //     return;
-            // }
-            // if (this._form.campo(this.data.idTipoEntidad)) {
-            //     toast.toastr('warning', 'Seleccione el Tipo Entidad', tituloModal)
-            //     return;
-            // }
-            if (this.correos.length > 0) {
-                if (!this.correos.every(item => this.validarEmail(item))) {
-                    this._tS.toastr('warning', 'Verifique que los correos del destinatario esten ingresado correctamente', tituloModal);
-                    return
-                }
-            }
-
-
-            this.data.direccion = this._form.campo(this.data.direccion) ? null : this.data.direccion;
-            this.data.telefono = this.telefonos.length > 0 ? this.telefonos.join(';') : null;
-            this.data.correo = this.correos.length > 0 ? this.correos.join(';') : null;
-            this.data.placa = this.placas.length > 0 ? this.placas.join(';') : null;
-
-            const url = this.tipoRegistro === 1 ? '/Cliente/Post' : '/Cliente/Put?idCliente=' + this.data.idCliente;
-            const method = this.tipoRegistro === 1 ? 'post' : 'put';
-            showLoader();
-            this._mS.getData(method, url, this.data).then(async response => {
-                if (response.id === "0") {
-                    hideLoader();
-                    this._tS.toastr('warning', response.message, response.titleSms);
-                    return
-                }
-                if (response.id === "1") {
-                    let idCliente = this.tipoRegistro === 1 ? response.payload : this._params.idCliente;
-                    let dataCliente = await this._commonSvc.getDataCliente(idCliente);
-
-                    this.$uibModalInstance.close(dataCliente)
-                    this._tS.toastr('success', response.message, response.titleSms);
-                    hideLoader();
-
-                }
-            })
-        } catch (error) {
-            console.error(error)
-        }
-    }
-
-
-    closeModal() {
-        this.$uibModalInstance.close();
-    }
 
     //generate barcode
 
@@ -513,24 +351,541 @@ export class ModalClienteCtrl extends ModalBaseCtrl {
             // w.document.close();
         });
     }
+
+
+
+
+    isValidForm(){
+        let tituloModal = this.tipoRegistro == 1 ? 'Guardar' : 'Actualizar';
+        if (this._form.campo(this.data.numeroIdentificacion)) {
+            this._tS.toastr('warning', 'Ingrese Número de Identificación', tituloModal)
+            return;
+        };
+
+        if ($("#numeroIdentificacion").hasClass('is-invalid')) {
+            this._tS.toastr('warning', 'Ingrese el número de Identificación válido', tituloModal);
+            return
+        }
+
+        if (this.data.codigoIdentificacion === "CF" && this.data.numeroIdentificacion.length !== 13) {
+            this._tS.toastr('warning', 'Número de Consumidor Final tiene que ser de 13 dígitos', tituloModal);
+            return
+        }
+
+        if (this.data.codigoIdentificacion === "C" && this.data.numeroIdentificacion.length !== 10) {
+            this._tS.toastr('warning', 'Número de Cédula tiene que ser de 10 dígitos', tituloModal);
+            return
+        }
+
+        if (this.data.codigoIdentificacion === "R" && this.data.numeroIdentificacion.length !== 13) {
+            this._tS.toastr('warning', 'Número de RUC tiene que ser de 13 dígitos', tituloModal);
+            return
+        }
+
+        if (this.data.codigoIdentificacion === "R" && this.data.numeroIdentificacion.slice(-3) !== '001') {
+            this._tS.toastr('warning', 'Número de RUC tiene que contener 001', tituloModal);
+            return
+        }
+
+        if (this._form.campo(this.data.idSubContribuyente)) {
+            this._tS.toastr('warning', 'Seleccione el Contribuyente', tituloModal)
+            return
+        }
+        if (this._form.campo(this.data.nombreFiscal)) {
+            this._tS.toastr('warning', 'Ingrese el nombre Fiscal', tituloModal)
+            return
+        }
+        if (this._form.campo(this.data.nombreComercial)) {
+            this._tS.toastr('warning', 'Ingrese el nombre Comercial', tituloModal)
+            return
+        }
+        // if (this._form.campo(this.data.idCiudad)) {
+        //     toast.toastr('warning', 'Seleccione la Ciudad', tituloModal);
+        //     return;
+        // }
+        // if (this._form.campo(this.data.idTipoClienteProveedor)) {
+        //     toast.toastr('warning', 'Seleccione el Tipo Cliente', tituloModal)
+        //     return;
+        // }
+        // if (this._form.campo(this.data.idTipoEntidad)) {
+        //     toast.toastr('warning', 'Seleccione el Tipo Entidad', tituloModal)
+        //     return;
+        // }
+        if (this.correos.length > 0) {
+            if (!this.correos.every(item => this.validarEmail(item))) {
+                this._tS.toastr('warning', 'Verifique que los correos del destinatario esten ingresado correctamente', tituloModal);
+                return
+            }
+        }
+
+
+        this.data.direccion = this._form.campo(this.data.direccion) ? "" : this._form.letterInline(this.data.direccion);
+        this.data.telefono = this.telefonos.length > 0 ? this.telefonos.join(';') : "";
+        this.data.correo = this.correos.length > 0 ? this.correos.join(';') : "";
+        this.data.placa = this.placas.length > 0 ? this.placas.join(';') : "";
+
+        return true;
+
+    }
+
+}
+
+
+/***
+ *
+ * ------------------------------------START CLIENTE-------------------------
+ *
+*/
+export class ModalClienteCtrl extends ModalBaseCliente {
+
+    static $inject = [
+        '$scope',
+        'mainService',
+        'commonService',
+        '$uibModalInstance',
+        'modalService',
+        'nombreModal',
+        'formulario',
+        'toastService',
+        'params'
+    ];
+
+    constructor($scope, _mS, _commonSvc, $uibModalInstance, _modalSvc, _nombreModal, _form, _tS, _params) {
+        super({ $scope, _mS, _commonSvc, $uibModalInstance, _modalSvc, _nombreModal, _form, _tS, _params })
+
+        this.initiloadParams = { esCredito: true, tipoValidacion: 'V', tipoClienteProveedor: 'CL' };
+
+        this.tabContent = 0; //Por defecto tab general
+        this.data = {};
+        this.tipoRegistro = 1;
+
+        this.correos = [];
+        this.telefonos = [];
+        this.placas = [];
+
+        this.isDisableInputIdentificacion = false;
+        this.isDisableSelectIdentificacion = false;
+    }
+
+
+
+    async $onInit() {
+        try {
+            showLoader();
+            const results = await this.initiload(this.initiloadParams);
+
+            this.tipoIdentificaciones = results[0];
+            this.data.idTipoIdentificacion = this.tipoIdentificaciones[0].idTipoIdentificacion;
+            this.data.codigoIdentificacion = this.tipoIdentificaciones[0].codigoIdentificacion;
+
+            this.subContribuyentes = results[1];
+            this.tipoClientes = results[2];
+            this.tipoEntidades = results[3];
+            this.ciudadPronvincias = results[4];
+
+            this.tiempoCreditos = results[5];
+            this.data.idTiempoCredito = this.tiempoCreditos.length > 0 ? this.tiempoCreditos[0].idTiempoCredito : 0
+
+            this._mS.getData('get', '/Empresa/Get?json=' + JSON.stringify({ typeList: 2 })).then(response => {                
+                if(response.data){
+                    this.empresas = JSON.parse(response.data)
+                }
+            }),
+            this._mS.getData('get', '/Cargo/Get?json=' + JSON.stringify({ typeList: 2 })).then(response => {
+                if(response.data){
+                    this.cargos = JSON.parse(response.data)
+                }
+            })
+
+            //Editar
+            //Cuando editamos
+            if (this._params.idCliente>0) {
+                this._commonSvc.getDataCliente(this._params.idCliente).then(response => {
+                    this.isDisableInputIdentificacion = false;
+                    this.tipoRegistro = 2
+                    this.data = response;
+                    this.correos = this.data.correos;
+                    this.telefonos = this.data.telefonos;
+
+                    this.selectedEmpleado = this.data.empleado;
+                    this.placas = this.data.placas;
+
+                    //Cuando el estado este Inactivo se presenta el estado para activar
+                    this.showEstado = !this.data.estado;
+                    this.$scope.$apply();
+                })
+            }
+            this.$scope.$apply();
+            hideLoader()
+        } catch (error) {
+            hideLoader();
+            console.log(error)
+        }
+    }
+
+
+    saveUpdateCliente() {
+        try {
+
+            if(!this.isValidForm()) return;
+            
+            const url = this.tipoRegistro === 1 ? '/Cliente/Post' : '/Cliente/Put?idCliente=' + this.data.idCliente;
+            const method = this.tipoRegistro === 1 ? 'post' : 'put';
+            showLoader();
+            this._mS.getData(method, url, this.data).then(async response => {
+                if (response.id === "0") {
+                    hideLoader();
+                    this._tS.toastr('warning', response.message, response.titleSms);
+                    return
+                }
+                if (response.id === "1") {
+                    let idCliente = this.tipoRegistro === 1 ? response.payload : this._params.idCliente;
+                    let dataCliente = await this._commonSvc.getDataCliente(idCliente);
+
+                    this.$uibModalInstance.close(dataCliente)
+                    this._tS.toastr('success', response.message, response.titleSms);
+                    hideLoader();
+
+                }
+            })
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+
+    closeModal() {
+        this.$uibModalInstance.close();
+    }
+
+    
+}
+
+
+
+
+//-------------------------------------------NUEVO CLIENTE-------------------------------------------
+
+export class ModalClienteNuevoCtrl extends ModalBaseCliente{
+
+    static $inject = [
+        '$scope',
+        'mainService',
+        'commonService',
+        '$uibModalInstance',
+        'modalService',
+        'nombreModal',
+        'formulario',
+        'toastService',
+        'params'
+    ];
+
+    constructor($scope, _mS, _commonSvc, $uibModalInstance, _modalSvc, _nombreModal, _form, _tS, _params) {
+        super({ $scope, _mS, _commonSvc, $uibModalInstance, _modalSvc, _nombreModal, _form, _tS, _params })
+
+        this.initiloadParams = { esCredito: true, tipoValidacion: 'V', tipoClienteProveedor: 'CL' };
+
+        this.tabContent = 0; //Por defecto tab general
+        this.data = {};
+        this.tipoRegistro = 1;
+
+        this.correos = [];
+        this.telefonos = [];
+        this.placas = [];
+
+        this.isDisableInputIdentificacion = false;
+        this.isDisableSelectIdentificacion = false;
+
+
+    }
+
+
+
+    async $onInit() {
+        try {
+            showLoader();
+            const results = await this.initiload(this.initiloadParams);
+
+            this.tipoIdentificaciones = results[0];
+            this.data.idTipoIdentificacion = this.tipoIdentificaciones[0].idTipoIdentificacion;
+            this.data.codigoIdentificacion = this.tipoIdentificaciones[0].codigoIdentificacion;
+
+            this.subContribuyentes = results[1];
+            this.tipoClientes = results[2];
+            this.tipoEntidades = results[3];
+            this.ciudadPronvincias = results[4];
+
+            this.tiempoCreditos = results[5];
+            this.data.idTiempoCredito = this.tiempoCreditos.length > 0 ? this.tiempoCreditos[0].idTiempoCredito : 0
+
+            this._mS.getData('get', '/Empresa/Get?json=' + JSON.stringify({ typeList: 2 })).then(response => {                
+                if(response.data){
+                    this.empresas = JSON.parse(response.data)
+                }
+            }),
+            this._mS.getData('get', '/Cargo/Get?json=' + JSON.stringify({ typeList: 2 })).then(response => {
+                if(response.data){
+                    this.cargos = JSON.parse(response.data)
+                }
+            })
+
+        
+            if(this._params.typeModule==='M_CLIENTE_LISTA'){
+
+                let text = await navigator.clipboard.readText();
+                console.log(text);
+                
+            }
+            
+            this.$scope.$apply();
+            hideLoader()
+        } catch (error) {
+            hideLoader();
+            console.log(error)
+        }
+    }
+
+
+    saveUpdateCliente() {
+        try {
+
+            
+            if(!this.isValidForm()) return;
+                                    
+            showLoader();
+            this._mS.getData('post',  '/Cliente/Post', this.data).then(async response => {
+                if (response.id === "0") {
+                    hideLoader();
+                    this._tS.toastr('warning', response.message, response.titleSms);
+                    return
+                }
+                if (response.id === "1") {
+                    let idCliente = this.tipoRegistro === 1 ? response.payload : this._params.idCliente;
+                    let dataCliente = await this._commonSvc.getDataCliente(idCliente);
+
+                    this.$uibModalInstance.close(dataCliente)
+                    this._tS.toastr('success', response.message, response.titleSms);
+                    hideLoader();
+
+                }
+            })
+        } catch (error) {
+            hideLoader();
+            console.error(error)
+        }
+    }
+
+
+    closeModal() {
+        this.$uibModalInstance.close();
+    } 
+}
+
+
+//--------------------------------------------MODAL-EDITAR-CLIENTE---------------------------------------------------------
+export class ModalClienteEditarCtrl extends ModalBaseCliente{
+    static $inject = [
+        '$scope',
+        'mainService',
+        'commonService',
+        '$uibModalInstance',
+        'modalService',
+        'nombreModal',
+        'formulario',
+        'toastService',
+        'params'
+    ];
+
+    constructor($scope, _mS, _commonSvc, $uibModalInstance, _modalSvc, _nombreModal, _form, _tS, _params) {
+        super({ $scope, _mS, _commonSvc, $uibModalInstance, _modalSvc, _nombreModal, _form, _tS, _params })
+
+        this.initiloadParams = { esCredito: true, tipoValidacion: 'V', tipoClienteProveedor: 'CL' };
+
+        this.tabContent = 0; //Por defecto tab general
+        this.data = {};
+        this.tipoRegistro = 1;
+
+        this.correos = [];
+        this.telefonos = [];
+        this.placas = [];
+
+        this.isDisableInputIdentificacion = false;
+        this.isDisableSelectIdentificacion = false;
+
+        this.tipoRegistro = 2
+    }
+
+
+
+    async $onInit() {
+        try {
+            showLoader();
+            const results = await this.initiload(this.initiloadParams);
+
+            this.tipoIdentificaciones = results[0];
+            this.data.idTipoIdentificacion = this.tipoIdentificaciones[0].idTipoIdentificacion;
+            this.data.codigoIdentificacion = this.tipoIdentificaciones[0].codigoIdentificacion;
+
+            this.subContribuyentes = results[1];
+            this.tipoClientes = results[2];
+            this.tipoEntidades = results[3];
+            this.ciudadPronvincias = results[4];
+
+            this.tiempoCreditos = results[5];
+            this.data.idTiempoCredito = this.tiempoCreditos.length > 0 ? this.tiempoCreditos[0].idTiempoCredito : 0
+
+            this._mS.getData('get', '/Empresa/Get?json=' + JSON.stringify({ typeList: 2 })).then(response => {                
+                if(response.data){
+                    this.empresas = JSON.parse(response.data)
+                }
+            }),
+            this._mS.getData('get', '/Cargo/Get?json=' + JSON.stringify({ typeList: 2 })).then(response => {
+                if(response.data){
+                    this.cargos = JSON.parse(response.data)
+                }
+            })
+
+            //Editar
+            //Cuando editamos
+            if (this._params.idCliente>0) {
+                this._commonSvc.getDataCliente(this._params.idCliente).then(response => {
+                    this.isDisableInputIdentificacion = false;                   
+                    this.data = response;
+                    this.correos = this.data.correos;
+                    this.telefonos = this.data.telefonos;
+
+                    this.selectedEmpleado = this.data.empleado;
+                    this.placas = this.data.placas;
+
+                    //Cuando el estado este Inactivo se presenta el estado para activar
+                    this.showEstado = !this.data.estado;
+                    this.$scope.$apply();
+                })
+            }
+            this.$scope.$apply();
+            hideLoader()
+        } catch (error) {
+            hideLoader();
+            console.log(error)
+        }
+    }
+
+
+    saveUpdateCliente() {
+        try {
+
+            if(!this.isValidForm()) return;
+            
+            showLoader();
+            this._mS.getData('put', '/Cliente/Put?idCliente=' + this.data.idCliente, this.data).then(async response => {
+                if (response.id === "0") {
+                    hideLoader();
+                    this._tS.toastr('warning', response.message, response.titleSms);
+                    return
+                }
+                if (response.id === "1") {
+                    let idCliente = this.tipoRegistro === 1 ? response.payload : this._params.idCliente;
+                    let dataCliente = await this._commonSvc.getDataCliente(idCliente);
+
+                    this.$uibModalInstance.close(dataCliente)
+                    this._tS.toastr('success', response.message, response.titleSms);
+                    hideLoader();
+
+                }
+            })
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+
+    closeModal() {
+        this.$uibModalInstance.close();
+    }
 }
 
 
 
 
 export class ModalClienteListaCtrl {
-    static $inject = ['mainService', '$uibModalInstance']
-    constructor(_mS, $uibModalInstance) {
+    
+    static $inject = ['mainService', '$uibModalInstance', 'modalService', 'nombreModal', 'toastService']
+    
+    constructor(_mS, $uibModalInstance, _modalService, _nombreModalConst, _tS) {
+        
         this._mS = _mS;
         this.$uibModalInstance = $uibModalInstance;
+        this._modalService = _modalService;
+        this._nombreModalConst = _nombreModalConst;
+        this._tS = _tS;
         this.selected = [];
         this.dataSearch = {
             pageIndex: 1,
             pageSize: 100
         }
     }
+
     $onInit() {
         this.getSearchCustomer();
+    }
+
+
+    copyTextSearch(){
+        if(!this.dataSearch.bySearch) return
+
+        let copyText = document.getElementById("searchCliente");
+        
+        copyText.select();
+        copyText.setSelectionRange(0, 99999);
+
+        navigator.clipboard.writeText(this.dataSearch.bySearch);
+        this._tS.toastr('info', 'Copiado: ' + this.dataSearch.bySearch)
+    }
+
+
+    async openModalNew(){
+        let {MODAL_CTRL, MODAL_NUEVO} = this._nombreModalConst.cliente;
+        // let controller = (await import('./../modal/' + MODAL_CTRL))[MODAL_NUEVO['controller']];
+        let template = MODAL_NUEVO['template'];
+
+        let params = {
+            typeModule: 'M_CLIENTE_LISTA',
+            data: {
+
+            }
+        }
+
+        this.openModal({
+            controller: ModalClienteNuevoCtrl,
+            template,
+            params
+        })
+    }
+
+    openModalEditar(params){
+        let {MODAL_CTRL, MODAL_EDITAR} = this._nombreModalConst.cliente;
+        // let controller = (await import('./../modal/' + MODAL_CTRL))[MODAL_NUEVO['controller']];
+        let template = MODAL_EDITAR['template'];
+        this.openModal({
+            controller: ModalClienteEditarCtrl,
+            template,
+            params
+        })
+    }
+
+    openModal({controller, template, params}){
+        let modalRef = this._modalService.openModalCustom({
+            controller,
+            template,
+            params,
+            size:'xl'
+        })
+
+        modalRef.result.then(result => {
+            if(typeof result ==='object'){
+                this.seleccionarCliente(result);                
+            }
+        })
     }
 
     onKeyupSearchCliente() {
@@ -538,21 +893,44 @@ export class ModalClienteListaCtrl {
     }
 
     resetList() {
-        this.dataSearch.bySearch = null;
+        this.dataSearch.bySearch = this.dataSearch.bySearch || null;
         this.getSearchCustomer();
     }
 
 
     getSearchCustomer() {
-        this.dataSearch.bySearch || null;
-        this._mS.getData('get', '/Cliente/Get?json=' + JSON.stringify(this.dataSearch)).then(
-            response => {
-                console.log(response)
-                this.clientes = JSON.parse(response.payload) || [];
-                this.totalRecords = this.clientes.length > 0 ? this.clientes[0].totalRecords : 0
-            }
-        )
+        try {
+            showLoader();
+            this.dataSearch.bySearch = this.dataSearch.bySearch || null;
+            this.clientes = [];
+            this._mS.getData('get', '/Cliente/Get?json=' + JSON.stringify(this.dataSearch)).then(
+                response => {
+                    if(response.code==="0"){
+                        this.clientes = [];
+                        hideLoader();
+                        console.log(response)
+                        return
+                    }
+
+                    if(response.code==="1"){
+                        
+                        this.clientes = JSON.parse(response.payload) || [];
+                        this.totalRecords = this.clientes.length > 0 ? this.clientes[0].totalRecords : 0
+                        hideLoader();
+                    }
+                }
+            ).catch(error=>{
+                console.error(error)
+                hideLoader()
+            })
+            
+        } catch (error) {
+            hideLoader();
+            console.log(error)
+        }
     }
+
+
 
     seleccionarCliente = (item) => {
         this.$uibModalInstance.close(item)
@@ -561,6 +939,8 @@ export class ModalClienteListaCtrl {
     closeModal() {
         this.$uibModalInstance.close();
     }
+
+
 
 }
 
@@ -617,7 +997,9 @@ export class ModalProveedorCtrl extends ModalBaseCtrl {
             this.data.idTiempoCredito = this.tiempoCreditos.length > 0 ? this.tiempoCreditos[0].idTiempoCredito : 0
 
             //Editar
-            if (this._params) {
+            
+            if (typeof this._params==='object' && this._params.idProveedor>0) {
+                
                 this.tipoRegistro = 2;
                 this._commonSvc.getDataByProveedor(this._params.idProveedor).then(response => {
                     this.data = response;
@@ -668,11 +1050,19 @@ export class ModalProveedorCtrl extends ModalBaseCtrl {
                     this.typeNotify = 'is-invalid';
                     this.message = 'Número de RUC debe tener 13 dígitos';
                     this.id = 0;
-                } else {
-                    this.typeNotify = 'is-valid';
-                    this.message = '';
-                    this.verificarSiExisteNumIdentificacion();
-                }
+                    return
+                } 
+                
+                if(this.data.numeroIdentificacion.slice(this.data.numeroIdentificacion.length - 3) !=='001'){
+                    this.typeNotify = 'is-invalid';
+                    this.message = 'Número de RUC tiene que contener (001) en últimos dígitos';
+                    return
+                } 
+
+                this.typeNotify = 'is-valid';
+                this.message = '';
+                this.verificarSiExisteNumIdentificacion();
+                
                 // else {
                 //     this.validarNumIdentificacion();
                 // }
@@ -710,6 +1100,8 @@ export class ModalProveedorCtrl extends ModalBaseCtrl {
 
     saveAndUpdate() {
         try {
+
+            
             let tituloModal = this.tipoRegistro === 1 ? 'Guardar' : 'Actualizar';
 
             if (this._form.campo(this.data.numeroIdentificacion)) {
@@ -828,14 +1220,24 @@ export class ModalProveedorListaCtrl {
     getAllProveedor() {
         try {
             showLoader();
+            this.proveedores = [];
             this._mS.getData('get', '/Proveedor/Get?json=' + JSON.stringify(this.dataSearch)).then(
                 response => {
-                    this.proveedores = JSON.parse(response.payload) || []
-                    this.cloneProveedores = JSON.parse(JSON.stringify(this.proveedores));
-                    hideLoader();
+                    if(response.code==="0"){
+                        this.proveedores = [];
+                        console.log(item)
+                        hideLoader();
+                        return
+                    }
+                    if(response.code==="1"){                        
+                        this.proveedores = JSON.parse(response.payload) || []
+                        this.cloneProveedores = JSON.parse(JSON.stringify(this.proveedores));
+                        hideLoader();
+                    }
                 }
             )
         } catch (error) {
+            this.proveedores = [];
             hideLoader();
             console.error(error)
         }

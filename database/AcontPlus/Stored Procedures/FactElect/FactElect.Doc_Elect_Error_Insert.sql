@@ -15,13 +15,13 @@ IF OBJECT_ID(N'FactElect.Doc_Elect_Error_Insert', N'P') IS NOT NULL
 DROP PROCEDURE FactElect.Doc_Elect_Error_Insert 
 GO
 CREATE PROCEDURE FactElect.Doc_Elect_Error_Insert 
- @id INT
+ @id BIGINT
 ,@estado VARCHAR(30)
 ,@identificador VARCHAR(2)
-,@mensaje VARCHAR(300)
-,@informacionAdicional VARCHAR(500)
+,@mensaje VARCHAR(MAX)
+,@informacionAdicional VARCHAR(MAX)
 ,@tipo VARCHAR(50)
-,@xmlSri XML = NULL
+,@xmlSri XML
 AS
 
 DECLARE @claveAcceso VARCHAR(50)
@@ -30,8 +30,15 @@ SELECT @claveAcceso = claveAcceso FROM dbo.DocumentoElectronico WHERE idDocument
 BEGIN
 	BEGIN TRY 
 		BEGIN TRAN  
-			INSERT INTO dbo.DocumentoElectronicoError(xmlSri, claveAcceso, estado, identificador, mensaje, informacionAdicional, tipo, fechaRegistro)
-			VALUES(@xmlSri, @claveAcceso, @estado, @identificador, @mensaje, @informacionAdicional, @tipo, dbo.ufnGetDateEcuador()) 
+			IF (@identificador = '43')
+				BEGIN
+					UPDATE dbo.DocumentoElectronico SET codEstado = 3 WHERE idDocumentoElectronico = @id
+				END
+			ELSE
+				BEGIN
+					INSERT INTO dbo.DocumentoElectronicoError(xmlSri, claveAcceso, estado, identificador, mensaje, informacionAdicional, tipo, fechaRegistro, idDocumentoElectronico)
+					VALUES(@xmlSri, @claveAcceso, @estado, @identificador, @mensaje, @informacionAdicional, @tipo, dbo.ufnGetDateEcuador(), @id) 
+				END
 		COMMIT TRAN
 	END TRY
 	BEGIN CATCH

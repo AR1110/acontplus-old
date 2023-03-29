@@ -170,6 +170,54 @@ class ModalBaseCtrl{
             this.infoAdicionalDocumento = infoAdicionalDocumento
         })
     }
+
+
+
+
+    async onChangeSucursal(){
+        try {
+
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                  confirmButton: 'btn btn-success',
+                  cancelButton: 'btn btn-danger ml-2'
+                },
+                buttonsStyling: false
+              })
+              
+              let {isConfirmed} = await  swalWithBootstrapButtons.fire({
+                title: '<small>Cambiar Establecimiento?</small>',
+                html: "<small>Esta seguro de cambiar <b>Punto de Emisión</b>?</small>",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Si, cambiar!',
+                cancelButtonText: 'No, cancelar!',
+                reverseButtons: false,
+                allowOutsideClick:false,
+                allowEscapeKey:false
+            })
+
+            if(!isConfirmed){
+                this.data.codEstab = this.cloneCodEstab;
+                this.$scope.$apply();
+                return
+            }
+
+            this.cloneCodEstab = this.data.codEstab;
+
+            let dataEstab = this.establecimientos.find(item=>item.codEstab===this.data.codEstab);   
+            
+            //Obtenemos Puntos de Emision y Bodegas 
+            let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
+           
+            this.puntosEmision = resultsDataFormEstab[0];
+            this.data.idPuntoEmision = this.puntosEmision.length>0 ? this.puntosEmision[0].idPuntoEmision: 0;
+ 
+            this.$scope.$apply();
+        } catch (error) {
+            console.trace(error)
+        }       
+    }
     
     closeModal(){
         this.$uibModalInstance.close();
@@ -588,7 +636,7 @@ class ModalRetencionCompraCtrl extends ModalBaseCtrl{
             if(item.codigoSri===1){
                 totalRenta += item.baseImponible;
             }else{
-                totalIva += val.baseImponible;
+                totalIva += item.baseImponible;
             }
             totalBaseImponible += item.baseImponible;
         }
@@ -638,6 +686,59 @@ class ModalRetencionCompraCtrl extends ModalBaseCtrl{
         let total = this.gridOptions.data.map(val=>val.valorRetenido).reduce((prev, curr)=>prev+curr,0);            
         return this._form.roundNumber(total,5);
     }
+
+
+    async generateRetencion() {   
+        try {            
+            showLoader();
+            this.gridOptions.data = [];
+            await this._mS.getData('get', `/GenerateRetencion/GetGenerateRetencionCompra?idFacturaCompra=${this.idComprobante}`).then(response=>{
+                
+                console.log(response)
+                if (response.id === "0") {                      
+                    this._form.sweetAlert('warning', response.message, response.titleSms);                    
+                }
+
+                if (response.id === "1") {     
+                    // this.gridOptions.data = response.data;    
+                    
+                    for(let item of response.data){
+                        let obj = {
+                            ...item,
+                            ...item.retencionCompraDetalle,
+                            tipoImpuesto: item.tipoRetencion
+
+                        }                        
+                        this.gridOptions.data.push(obj);
+                    }
+
+                    
+                    const { totalBaseImponible, totalRenta, totalIva } = this.getTotales();
+                    
+                    this.data.total = this._form.roundNumber(totalBaseImponible,5);
+                    this.data.totalRenta = this._form.roundNumber(totalRenta,5);
+                    this.data.totalIva = this._form.roundNumber(totalIva,5);                                                            
+                }
+
+                if(response.id=="2"){                
+                    const data={
+                        tipoRetencion: this.TIPO_DOC.codigo,
+                        idProveedor: this.proveedor.idProveedor,
+                        idSubContribuyente: response.gestion,
+                        idFactura: this.idComprobante,
+                        idConfigContribuyente: response.lastId
+                    }
+                    this.openModalArticuloImpuesto(data)                    
+                }
+            })                
+        } catch (error) {            
+            console.error(error)
+        }finally{
+            hideLoader();
+        }             
+    }
+
+
 }
 
 
@@ -717,7 +818,17 @@ export class ModalRetencionCompraNuevoCtrl extends ModalRetencionCompraCtrl{
             if (!(this.data.idPuntoEmision>0)) {
                 this._toastr.toastr('warning', 'Seleccione el Punto de Emisión', tituloModal);
                 return;
-            }           
+            }   
+            
+            if(!(this.proveedor.idProveedor>0)){
+                this._toastr.toastr('warning', 'Seleccione el Proveedor', tituloModal);
+                return;
+            }
+
+            if(!(this.idComprobante>0)){
+                this._toastr.toastr('warning', 'Seleccione la Factura', tituloModal);
+                return;
+            }
 
             if (!this.data.fechaEmision) {
                 this._toastr.toastr('warning', 'Ingrese la Fecha de Emisión', tituloModal);
@@ -782,58 +893,6 @@ export class ModalRetencionCompraNuevoCtrl extends ModalRetencionCompraCtrl{
             console.log(error)
         }                                            
     }
-
-
-    async generateRetencion() {   
-        try {            
-            showLoader();
-            
-            await this._mS.getData('get', `/GenerateRetencion/GetGenerateRetencionCompra?idFacturaCompra=${this.idComprobante}`).then(response=>{
-                
-                console.log(response)
-                if (response.id === "0") {                      
-                    this._form.sweetAlert('warning', response.message, response.titleSms);                    
-                }
-
-                if (response.id === "1") {     
-                    // this.gridOptions.data = response.data;    
-                    
-                    for(let item of response.data){
-                        let obj = {
-                            ...item,
-                            ...item.retencionCompraDetalle
-                        }
-                        this.gridOptions.data.push(obj);
-                    }
-
-                    
-                    const { totalBaseImponible, totalRenta, totalIva } = this.getTotales();
-                    
-                    this.data.total = this._form.roundNumber(totalBaseImponible,5);
-                    this.data.totalRenta = this._form.roundNumber(totalRenta,5);
-                    this.data.totalIva = this._form.roundNumber(totalIva,5);                                                            
-                }
-
-                if(response.id=="2"){                
-                    const data={
-                        tipoRetencion: this.TIPO_DOC.codigo,
-                        idProveedor: this.proveedor.idProveedor,
-                        idSubContribuyente: response.gestion,
-                        idFactura: this.idComprobante,
-                        idConfigContribuyente: response.lastId
-                    }
-                    this.openModalArticuloImpuesto(data)                    
-                }
-            })                
-        } catch (error) {            
-            console.error(error)
-        }finally{
-            hideLoader();
-        }             
-    }
-
-
-
 }
 
 
@@ -983,7 +1042,7 @@ export class ModalRetencionCompraEditarCtrl extends ModalRetencionCompraCtrl{
 }
 
 
-export class ModalRetencionAutomaticaCtrl extends ModalBaseCtrl{
+export class ModalRetencionCompraAutomaticaCtrl extends ModalRetencionCompraCtrl{
     static $inject = [
         '$scope',
         '$timeout', 
@@ -995,49 +1054,145 @@ export class ModalRetencionAutomaticaCtrl extends ModalBaseCtrl{
         'uiGridConstants', 
         'toastService',
         'formulario',
+        'toastService',
         'params'
     ]
-    constructor($scope, $timeout, _mS, _commonSvc, _modalSvc, _nombreModal, $uibModalInstance, uiGridConstants, toastr, _form, _params){                              
-        super({$scope, $timeout, _mS, _commonSvc, _modalSvc, _nombreModal, $uibModalInstance, uiGridConstants, toastr, _form, codigoDocumento: "RC"})
-        this.scopeParent = this;
-        this.tipoDoc           = this._commonSvc.tipoDoc['RC']
-
-        this.sucursal    = {};
+    constructor($scope, $timeout, _mS, _commonSvc, _modalSvc, _nombreModal,  $uibModalInstance, uiGridConstants, toastr, _form, _tS, _params){                              
+        super({$scope, $timeout, _mS, _commonSvc, _modalSvc, _nombreModal, $uibModalInstance, uiGridConstants, toastr, _form})
+        
         this._params = _params;
-        this.asignacionesData = {}; //(data sucursal, puntos emisiones y bodegas)
-        this.puntoEmision = {};
-        this.data = {};
+        let {data} = _params;
+        this.data = Object.assign({}, data);
         this.data.fechaEmision = new Date();
     }
 
-    $onInit(){
-        try {            
-            const {dataDocumento, dataTipoDocumento, proveedor} = this._params;
-            this.dataTipoDocumento = dataTipoDocumento;
-            this.proveedor = proveedor;
-            this.idComprobante = this.dataTipoDocumento.idComprobante;
+    async $onInit(){
+        try {      
+            
+            let resultsDataForm = await this.initiload();
+            
+            this.establecimientos = resultsDataForm[0];
+
+            if(this.establecimientos.length>0){
+                                             
+                let dataEstab = this.establecimientos.find(item=>item.codEstab===this.data.codEstab)             
+                let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
+                
+                this.puntosEmision = resultsDataFormEstab[0];
+                if(this.puntosEmision.length>0)            {
+                    this.data.idPuntoEmision = this.puntosEmision[0].idPuntoEmision;
+                }
+                this.cloneCodEstab   = this.data.codEstab;                   
+            }else{
+                this._tS.toastr('info', 'No tienes asignado ningún Establecimiento')
+            }
+
+            this.proveedor.idProveedor = this.data.idProveedor;
+            this.proveedor.proveedor = this.data.proveedor,
+            this.proveedor.numeroIdentificacion = this.data.nroIdentificacion;
+            this.proveedor.direccion = this.data.direccion
+                    
+            this.factura = {
+                idFacturaCompra: this.data.idFacturaCompra,
+                nroFactura: this.data.nroDocumento
+            }
+            this.idComprobante = this.data.idFacturaCompra;   
+
+            this.setColumnDefs();
+
             this.generateRetencion();
             
         } catch (error) {
-            
+            console.log(error)
         }
     }
+       
 
-    
-    setAsignaciones(item){                         
-        this.sucursal = item.sucursal;
-        this.asignacionesData = item;
+    //Guardar Retencion 
+    async guardarRetencionCompra() {
+        try {
+            const tituloModal = 'Guardar Retencion';        
+            if(this._form.campo(this.factura.idFacturaCompra)){
+                this._toastr.toastr('warning', 'El id del documento no existe', tituloModal);
+                return;               
+            }
+            if (this._form.campo(this.data.idPuntoEmision)) {
+                this._toastr.toastr('warning', 'Seleccione el Punto de Emisión', tituloModal);
+                return;
+            }           
+
+            if (this._form.campo(this.data.fechaEmision)) {
+                this._toastr.toastr('warning', 'Ingrese la Fecha de Emisión', tituloModal);
+                return;
+            };
+        
+
+            if (this.gridOptions.data.length===0) {
+                this._toastr.toastr('warning', 'No existe detalle de esta retención', tituloModal);
+                return;
+            };
+
+            if (this.gridOptions.data.some(val => [null, undefined, ""].includes(val.impuesto))) {
+                this._toastr.toastr('warning', 'Complete los campos en el Detalle', tituloModal);
+                return;
+            }
+
+            this.nroDocumentoSecuencial = await this.generarNroSecuencial();
+
+            if(!this.nroDocumentoSecuencial) return "NO SE GENERO CORRECTAMENTE EL NÚMERO DE DOCUMENTO"
+            
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                confirmButton: 'btn btn-success',
+                cancelButton: 'btn btn-danger ml-2'
+                },
+                buttonsStyling: false
+            })
+            
+            swalWithBootstrapButtons.fire({
+                title: '<small>Guardar Retención</small>',
+                html:`<small>Esta seguro/a de guardar esta Retención Compra Nro. <b>${this.nroDocumentoSecuencial}</b> de la Factura N°. <b>${this.data.nroDocumento}<b></b></small>`, 
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Si, guardar!',
+                cancelButtonText: 'No, cancelar!',
+                reverseButtons: true
+            }).then(result=>{
+
+                if(result.isConfirmed){
+                    showLoader();
+
+                    let retencionCompra = {
+                        idFacturaCompra: this.factura.idFacturaCompra,
+                        idProveedor: this.proveedor.idProveedor,
+                        idPuntoEmision: this.data.idPuntoEmision,
+                        total: this.getTotalValorRetenido(),
+                        fechaEmision: this.data.fechaEmision,
+                        concepto: this.data.concepto||''
+                    }
+            
+                    let data = {
+                        adicional: this.infoAdicionalDocumento,
+                        retencionCompra,
+                        dataDetalle: this.gridOptions.data
+                    }
+                        
+                    this._mS.getData('post', '/RetencionCompra/Insert', data) .then(response=>{
+                            if (response.id === "0") {                        
+                                this._form.sweetAlert('warning', response.message, response.titleSms);                        
+                            }
+                            if (response.id == "1") {                        
+                                this._form.sweetAlert('success', response.message, response.titleSms, 1000);                                                                   
+                                this.$uibModalInstance.close({response:1});                            
+                            }
+                        }
+                    )                                             
+                }
+            })
+        } catch (error) {
+            console.log(error)
+        }
     }
-
-    
-    setItemPuntoEmision(item){
-        this.puntoEmision = item;                
-    }
-
-   
-
-
-    
 }
 
 
@@ -1178,6 +1333,21 @@ class ModalRetencionVentaCtrl extends ModalBaseCtrl{
     }
 
 
+    async viewDetailInvoice(){
+        try {
+            
+            this._commonSvc.viewDetailDocument({
+                id: this.factura.idFactura,
+                codigoDocumento: 'FV',
+                size: 'xl',                
+            })
+
+        } catch (error) {
+            console.log(error)            
+        }        
+    }
+
+
     setColumnDefs(){
         this.gridOptions.columnDefs =  [                    
             {
@@ -1307,8 +1477,6 @@ class ModalRetencionVentaCtrl extends ModalBaseCtrl{
                 name: "descripción",
                 field: "impuesto",
                 allowCellFocus: false,
-                cellTemplate: this.cellTemplateImpuesto,
-                editableCellTemplate: this.cellTemplateImpuesto,
                 width: '40%',
                 minWidth: '100'
             },
@@ -1325,8 +1493,8 @@ class ModalRetencionVentaCtrl extends ModalBaseCtrl{
                     aggregation.rendered = aggregation.value;
                 }, aggregationLabel: "Total: ",                    
                 footerCellFilter: 'number:2',
-                enableCellEdit: true,
-                enableCellEditOnFocus: true,
+                enableCellEdit: false,
+                enableCellEditOnFocus: false,
                 footerCellFilter: 'number:2',
                 cellClass: 'body-text-retencion',
                 type: 'number',
@@ -1374,12 +1542,12 @@ class ModalRetencionVentaCtrl extends ModalBaseCtrl{
             //},
             {
                 name: 'Op',
-                headerCellTemplate: '<button type="button" ng-click="grid.appScope.$ctrl.addItem()" class="btn btn-secondary  btn-sm"><i class="fa fa-plus-circle"></i></button>',
+                headerCellTemplate: '<button type="button" class="btn btn-secondary  btn-sm disabled"><i class="fa fa-plus-circle"></i></button>',
                 enableCellEdit: false,
                 enableColumnMenu: false,
                 width: '2%',
                 minWidth: '50',
-                cellTemplate: '<a class="btn btn-danger btn-xs text-white"  style="cursor:pointer;" title="Eliminar Retencion agregada" ng-click="grid.appScope.$ctrl.deleteRow(row)"><i class="ti-trash"></i></a>',
+                cellTemplate: '<a class="btn btn-danger btn-xs text-white disabled"  style="cursor:pointer;" title="Eliminar Retencion agregada"><i class="ti-trash"></i></a>',
             }
         ]
     }
@@ -1529,12 +1697,12 @@ class ModalRetencionVentaCtrl extends ModalBaseCtrl{
             let method = this.tipoRegistro===1?'post':'put';
 
             this._mS.getData(method, url, data).then(response=>{
-                if (response.id === "0") {
+                if (response.id === "0" || response.code=="0") {
                     hideLoader();
                     this._form.sweetAlert('warning', response.message, response.titleSms);                    
                 }
     
-                if (response.id === "1") {
+                if (response.id === "1" || response.code==="1") {
                     hideLoader();
                     this._form.sweetAlert('success', response.message, response.titleSms, 1000);
                     this.$uibModalInstance.close(response)                               
@@ -1638,8 +1806,9 @@ export class ModalRetencionVentaNuevoCtrl extends ModalRetencionVentaCtrl{
             "checkBoxDefault": false,
             "checkBoxCliente": true,
             "byCliente": this.cliente.idCliente,
-            "checkBoxEstado": true,
-            "byEstado": 13            
+            "checkBoxEstado": false,
+            "byEstado": 13,
+            "paraNotaCredito": true            
         }      
         await this._mS.getData('get', '/FacturaVenta/Get?json=' + JSON.stringify(dataSearch)).then(response=>{
             if (response.id === "0") {
@@ -1817,43 +1986,54 @@ export class ModalRetencionVentaEditarCtrl extends ModalRetencionVentaCtrl{
     ]
     constructor($scope, $timeout, _mS, _commonSvc, _modalSvc, _nombreModal,  $uibModalInstance, uiGridConstants, toastr, _form, _tS, _params){                              
         super({$scope, $timeout, _mS, _commonSvc, _modalSvc, _nombreModal, $uibModalInstance, uiGridConstants, toastr, _form, codigoDocumento: "RV"})        
+        
         this._tS     = _tS;
         this._params = {};       
         this.cliente = {}
         this.data = {};
-        this.data.fechaEmision = new Date();
+        this.tipoRegistro = 2;
+        
+        let {data, TIPO_REGISTRO} = _params;
 
-        this.factura  ={};
-        this.facturas = [];
-        this.infoAdicionalDocumento=[];
-        this.tipoRegistro = 1;
 
-        this.search = {
-            isDisabled: false,
-            noCache: true,
-            showBtnList: true,
-            showBtnEdit: false            
-        }
-       
+        let {dataDocumento, cliente, factura, detalleDocumento} = data;
+        this.data = dataDocumento;
+        this.cliente = cliente;
+        this.factura = factura;
+        this.detalleDocumento = detalleDocumento;
+
     }
 
     async $onInit(){
         try {
-            let results = await this.initiload();
-            this.establecimientos = results[0];
-            
-            if(this.establecimientos.length>0){
-                this.data.codEstab = this.establecimientos[0].codEstab;
-            }else{
-                this._tS.toastr('info', 'No tienes asignado ningún Establecimiento')
-            }            
+            this._commonSvc.getEstabAsign().then(response=>{            
+                this.establecimientos = response;  
+                if(this.establecimientos.length===0){
+                    toastr.warning('NO TIENES ASIGNADO NINGUNA SUCURSAL')                   
+                }                
+            })
+
+            this.setColumnDefs();   
+
+            this.gridOptions.data = this.detalleDocumento.map(item=>{
+                item.detalle = {
+                    idRetencionVentaDetalle: item.idRetencionVentaDetalle,
+                    idImpuesto: item.idImpuesto,
+                    idRetencion: item.idRetencion,
+                    baseImponible: item.baseImponible,
+                    porcentajeRetencion: item.porcentajeRetencion,
+                    valorRetenido: item.valorRetenido,                    
+                }                
+                console.log(item)
+                return item;
+            })
         } catch (error) {
             console.log(error)
-        }
+        }      
     }    
 }
 
-export class ModalRetencionVentaDetalleCtrl extends ModalBaseCtrl{
+export class ModalRetencionVentaDetalleCtrl extends ModalRetencionVentaCtrl{
     static $inject = [
         '$scope',
         '$timeout',
@@ -1873,130 +2053,45 @@ export class ModalRetencionVentaDetalleCtrl extends ModalBaseCtrl{
         this.scopeParent = this;            
 
         this._tS     = toastr;
+
         
-        this._params = _params;
+        let {data, TIPO_REGISTRO} = _params;        
         
-        this.gridOptionsRetencionVentaDetalle = {
-            enableColumnMenus: false,
-            enableSorting: false,
-            enableFiltering: false,
-            enableRowHashing: false,
-            enableColumnReordering: true,
-            showGridFooter: false,             
-            columnDefs: this.columnDefs()                
-        }
-    } 
+        let {dataDocumento, cliente, factura, detalleDocumento} = data;
+        this.data = dataDocumento;
+        this.cliente = cliente;
+        this.factura = factura;
+        this.detalleDocumento = detalleDocumento;
+
+    }
 
     async $onInit(){
-        
-        let {cliente, dataTipoDocumento, dataDocumento, detalleDocumento, infoAdicionalDocumento} = this._params;
-        const results        = await this.initiload();
-        const asignaciones   = results[0]; 
-               
-        this.sucursales      = asignaciones[0];        
-                
-        this.dataTipoDocumento = dataTipoDocumento;
-        this.cliente           = cliente;
-        this.data              = dataDocumento;
-       
-        this.factura = {
-            idFactura: this.data.idFactura,
-            nroDocumento: this.data.nroFactura
-        }
-    
-        this.data.fechaEmision       = this._form.formatDate(this.data.fechaEmision);
-        this.fechaEmisionEscrita     = this._form.getFechaEscrita(this.data.fechaEmision);        
-        this.gridOptionsRetencionVentaDetalle.data = detalleDocumento;
+        try {
+            this._commonSvc.getEstabAsign().then(response=>{            
+                this.establecimientos = response;  
+                if(this.establecimientos.length===0){
+                    toastr.warning('NO TIENES ASIGNADO NINGUNA SUCURSAL')                   
+                }                
+            })
 
-        this.$scope.$apply();
-    }
-    
-    columnDefs(){
-        return [
-            {
-                name: 'N°', field: 'num', visible: true,
-                enableCellEdit: false,
-                allowCellFocus:false,
-                width: '5%', minWidth: '50',
-            },
-            {
-                name: 'Impuesto',
-                field: 'tipoImpuesto',
-                type: 'string',
-                width: '10%',
-                minWidth: '100',
-                allowCellFocus:false,
-                enableCellEdit:false,
-                headerCellClass: 'header-text-retencion',
-                cellClass: 'body-text-retencion',
-            },
-            {
-                name: 'Cod. Imp.',
-                field: 'codigoImpuesto',
-                type: 'string',
-                width: '10%',
-                minWidth: '100',
-                enableCellEdit: false,            
-                headerCellClass: 'header-text-retencion',
-                cellClass: 'body-text-retencion',
-                allowCellFocus:false,
-            },
-            {
-                name: "descripción",
-                field: "impuesto",
-                allowCellFocus: false,
-                enableCellEdit: false,
-                width: '43%',
-                minWidth:'100'
-            },
-            {
-                name: 'B. Imponible',
-                field: 'detalle.baseImponible',
-                enableColumnMenu: false,
-                aggregationType: this.uiGridConstants.aggregationTypes.sum,
-                min: 0,
-                minWidth: 110,
-                footerCellFilter: 'number:2',
-                cellEditableCondition: function (scope) {
-                    return scope.row.entity.impuesto !==''
-                },
-                cellFilter: "currency:'$'",
-                enableCellEdit: false,
-                enableCellEditOnFocus: false,
-                type: 'number',
-                width: '10%',
-                minWidth:'100'
-            },
-            {
-                name: 'porcentaje',
-                field: 'detalle.porcentajeRetencion',
-                enableColumnMenu: false,
-                cellFilter: "currency:'%'",
-                enableCellEdit: false,
-                allowCellFocus:false,
-                minWidth: 110,
-                type: 'number',
-                width: '10%',
-                minWidth:'100'
-            },
-            {
-                name: 'V. Retenido',
-                field: 'detalle.valorRetenido',
-                aggregationType: this.uiGridConstants.aggregationTypes.sum,
-                footerCellFilter: 'number:2',
-                cellFilter: "currency:'$'",
-                enableCellEdit: false,
-                allowCellFocus:false,
-                enableCellEditOnFocus: false,
-                enableColumnMenu: false,
-                minWidth: 110,
-                type: 'number',
-                width: '10%',
-                minWidth:'100'
-            }           
-        ];
-    }          
-    
+            this.setColumnDefsView();   
+
+            this.gridOptions.data = this.detalleDocumento.map(item=>{
+                item.detalle = {
+                    idRetencionVentaDetalle: item.idRetencionVentaDetalle,
+                    idImpuesto: item.idImpuesto,
+                    idRetencion: item.idRetencion,
+                    baseImponible: item.baseImponible,
+                    porcentajeRetencion: item.porcentajeRetencion,
+                    valorRetenido: item.valorRetenido,                    
+                }                
+                console.log(item)
+                return item;
+            })
+        } catch (error) {
+            console.log(error)
+        }      
+    } 
 
     closeModal(){
         this.$uibModalInstance.close();

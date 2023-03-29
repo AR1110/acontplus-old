@@ -48,14 +48,20 @@ function facturaCompraCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreM
     $scope.getFacturas = async()=>{
         try {
             showLoader();
+            $scope.facturas = [];            
             await _mS.getData('get', '/FacturaCompra/Get?json=' + JSON.stringify($scope.dataSearch)).then(response=>{
                 if(response.code==="0"){
-                    console.warn(response)                    
+                    $scope.facturas = [];
+                    console.warn(response)  
+                    return                  
                 }
 
-                $scope.facturas =  JSON.parse(response.payload) || [];  
-                $scope.cloneFacturas = JSON.parse(JSON.stringify($scope.facturas));
-                $scope.getTotalColumna();                     
+                if(response.code==="1"){
+                    $scope.facturas =  JSON.parse(response.payload) || [];  
+                    $scope.cloneFacturas = JSON.parse(JSON.stringify($scope.facturas));
+                    $scope.getTotalColumna();                     
+                }
+
             })
         } catch (error) {
             console.log(error)
@@ -65,9 +71,9 @@ function facturaCompraCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreM
     }
 
     $scope.initiload = ()=>{
-        _mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response=>{
-            let results = JSON.parse(response.payload) || [];
-            $scope.establecimientos = results[0];
+
+        _commonSvc.getEstabAsign().then(response=>{  
+            $scope.establecimientos = response;
             let codEstab = $scope.establecimientos.length>0?$scope.establecimientos[0].codEstab: 0;            
             $scope.dataSearch.codEstab = codEstab;
             $scope.getFacturas();
@@ -268,158 +274,8 @@ function facturaCompraCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreM
         }       
     }
 
-
-     //--------------------------MODAL CUOTA----------------------------------------------
-     $scope.openModalCuota = async(item)=>{    
-        try {
-            let {MODAL_FILE_CUOTA, MODAL_COMPRA_CUOTA} = _nombreModalConst.pago;
-            let controller = (await import('./../../' + MODAL_FILE_CUOTA))[MODAL_COMPRA_CUOTA['controller']] 
-            let template   = MODAL_COMPRA_CUOTA['template'];
-            
-            let params = {}
-
-            showLoader();
-            await _mS.getData('get', `/CuotaXPagar/GetByDocument?idComprobante=${item.idFacturaCompra}&idTipoDoc=${TIPO_DOC.idTipoDocumento}`).then(response => {
-                if(response.id===null){                  
-                    _form.sweetAlert('warning', 'Ups algo salio mal <i class="fas fa-frown"></i>!', response.titleSms);
-                    throw response                      
-                }
-                if (response.id == "0") {                    
-                    _form.sweetAlert('warning', response.message, response.titleSms);                        
-                    throw response;
-                }
-
-                if(response.id==="1"){
-                    params = {
-                        cuotas: response.data,
-                        data: {
-                            ...item,
-                            id: item.idFacturaCompra,                
-                            numeroIdentificacion: item.nroIdentificacion
-                        },
-                        TIPO_DOC
-                    }                    
-                }
-
-            })
-
-            const modalRef = _modalSvc.openModalCustom({
-                controller,
-                template,
-                size: 'xl',
-                params
-            })         
-            modalRef.result.then(res=>{
-                if(typeof res ==='object'){
-                    $scope.getFacturas();                    
-
-                }
-            })
-
-        } catch (error) {
-            console.log(error)
-        }finally{
-            hideLoader()
-        }
-        
-    }
-
-
-     //---------------------------MODAL PAGO  --------------------------------------------
-     $scope.openModalPago = async function(item){                       
-        try {
-            if(item.estadoFinanciero==="Pagada"){
-                _form.sweetAlert('warning', 'El Documento ya esta pagado','');
-                return                
-            }
-
-            let {MODAL_FILE_CTRL, MODAL_PAGO_DOCUMENTO} = _nombreModalConst.pago;
-            let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_PAGO_DOCUMENTO['controller']];
-            let template   = MODAL_PAGO_DOCUMENTO['template'];
-
-            let params = {
-                data: {
-                    ...item,
-                    id: item.idFacturaCompra,                
-                    numeroIdentificacion: item.nroIdentificacion
-                },
-                TIPO_DOC
-            }     
-            const modalRef = _modalSvc.openModalCustom({
-                controller,
-                template,
-                size: 'xl',
-                params
-            })
-            modalRef.result.then(response=>{
-                if(typeof response!=='object') return
-                $scope.getFacturas();            
-            })
-        } catch (error) {
-           console.log(error) 
-        }                              
-    }
-
-
-
-    //----------------------------------------------------HISTORIAL DE PAGO ----------------------
-    $scope.openModalHistorialPago = async(item)=>{ 
-        try {
-            
-
-            if(item.estadoFinanciero.toUpperCase()==='PENDIENTE'){
-                _form.sweetAlert('warning', 'No tiene movimientos');
-                throw '' 
-            }  
-
-            showLoader();
-            
-            let {MODAL_FILE_HISTORIAL_PAGO, MODAL_HISTORIAL_PAGO} = _nombreModalConst.pago;
-            let controller = (await import('./../../' + MODAL_FILE_HISTORIAL_PAGO))[MODAL_HISTORIAL_PAGO['controller']];
-            let template   = MODAL_HISTORIAL_PAGO['template'];
-
-            let params = { }
-
-
-            await _mS.getData('get', `/ComprobanteEgreso/GetByDocument?idTipoDocumento=${TIPO_DOC.idTipoDocumento}&idComprobante=${item.idFacturaCompra}`).then(response=>{
-                if (response.id == "0") {                    
-                    _form.sweetAlert('warning', response.message);               
-                    throw ''
-                }
-                if (response.id === "1") {  
-                    const pagos = JSON.parse(response.data) || [];                      
-                    params = {
-                        pagos,
-                        data: {
-                            ...item,
-                            id: item.idFacturaCompra,                
-                            numeroIdentificacion: item.nroIdentificacion
-                        },
-                        TIPO_DOC
-                    }                   
-                }
-            })
-
-
-            let $modalRef = _modalSvc.openModalCustom({
-                controller,
-                template,
-                size: 'xl',
-                params
-            })            
-            
-
-        } catch (error) {
-            console.log(error)
-        }finally{
-            hideLoader()
-        }                                                                                                                                                    
-    }
-
-
-
      //Reporte 
-     $scope.getReport = function (item) {                   
+    $scope.getReport = function (item) {                   
         let dataParms = {
             codEstab: item.codEstab,
             idFacturaCompra: item.idFacturaCompra,            

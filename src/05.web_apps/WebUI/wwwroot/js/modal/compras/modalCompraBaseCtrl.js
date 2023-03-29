@@ -672,14 +672,9 @@ class ModalCompraBaseCtrl{
         try {
             
 
-            this.dataArticulo = dataArticulo;
-
-            // if(this.dataArticulo.articulo.llevaInventario && this.gridOptionsDetailDocument.data.some(item=>item.idArticulo===this.dataArticulo.articulo.idArticulo)){
-            //     this.existArticulo();                              
-            // }else{
-                this.addItem();
-            // }
-
+            this.dataArticulo = dataArticulo;           
+            this.addItem();
+            
             this.indexRow = this.gridOptions.data.findIndex(val => val.idArticulo === this.dataArticulo.articulo.idArticulo);           
    
         } catch (error) {
@@ -730,6 +725,9 @@ class ModalCompraBaseCtrl{
        
         //IVA
         entity.idTipoIva     = articulo.idTipoIva;
+        entity.codigoPrincipal = articulo.codigoPrincipal;
+        entity.codigoAuxiliar = articulo.codigoAuxiliar;
+        entity.costoNeto      = articulo.costoNeto;
         entity.codigoPorcentaje = articulo.codigoPorcentaje;
         entity.nombreTipoIva = articulo.nombreTipoIva;
         entity.tarifa        = articulo.tarifa;
@@ -759,6 +757,8 @@ class ModalCompraBaseCtrl{
         
         self.focusColumnCantidad();
         self.uiGridInvoice.countIndex();
+
+        console.log(entity)
     }
 
 
@@ -909,7 +909,7 @@ class ModalCompraBaseCtrl{
         for(let rowEntity of this.gridOptions.data){
             rowEntity.porcentajeDescuento = porcentajeDescuento;   
             
-            let objCalculo = self.uiGridInvoice.calculoColDef(rowEntity, 0);             
+            let objCalculo = self.uiGridInvoice.calculoColDef(rowEntity);             
         
             objCalculo["porcentajeDescuento"]();
             

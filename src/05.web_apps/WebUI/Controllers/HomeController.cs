@@ -56,7 +56,8 @@ namespace AcontPlus.Controllers
 
         public PartialViewResult RenderView(string name)
         {
-            return PartialView($"~/Views/{name}");
+            return PartialView(name);
+            //return PartialView($"~/Views/{name}");
         }
 
 

@@ -10,15 +10,12 @@ namespace WebUI.Controllers.FE
         //private readonly string _urlApi = "";
         //private ResponseFE _responseFE;
         private readonly DocumentoLoteDao _dl;
-        public AuthorizationDto _auth;
         public DocumentoLoteController(IConfiguration configuration)
         {
-            //_responseFE = new ResponseFE();
-            _auth = new AuthorizationDto();
+            //_responseFE = new ResponseFE(); 
             _configuration = configuration;
             _dl = new DocumentoLoteDao(_configuration);
             //_config = config;
-            //_urlApi = _config.GetSection("UrlApis").GetSection("AcontPlusApi").Value;
         }
 
         public IActionResult Index()

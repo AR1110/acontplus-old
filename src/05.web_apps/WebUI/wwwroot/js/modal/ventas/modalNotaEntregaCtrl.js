@@ -1,5 +1,5 @@
 
-import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.16";
+import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.22";
 
 
 class ModalNotaEntregaCtrl extends ModalBaseCtrl{
@@ -86,7 +86,7 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl{
         
             let dataMedida = medidas[0];
 
-            console.log(this.dataArticulo)
+            
                 
             entity.idArticulo           = articulo.idArticulo;
             entity.codigo               = articulo.codigoArticulo;                
@@ -104,8 +104,6 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl{
             entity.idMedida             = dataMedida.idMedida; //Medida por defecto 
             entity.adicional            = datosAdicionales; //
 
-            console.log(JSON.parse(dataMedida.tarifas))
-            console.log(self)
             entity.articuloTarifas      = JSON.parse(dataMedida.tarifas);
             let tarifa                  = entity.articuloTarifas.find(item=>item.idTarifa===self.idTarifa);                                      
             entity.idTarifa             = self.idTarifa;  
@@ -122,7 +120,7 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl{
             self.data = Object.assign(self.data, self.uiGridInvoice.getTotales()); 
 
             this.focusColumnCantidad();
-
+            this.counterGridOptions();
 
             this.indexRow = this.gridOptions.data.findIndex(val => val.idArticulo === this.dataArticulo.articulo.idArticulo);           
 
@@ -131,15 +129,24 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl{
             console.log(error)            
         }
     }
+
+    counterGridOptions(){        
+        angular.forEach(this.gridOptions.data, (item, index)=>{
+            item.n = index + 1;
+        })
+       
+    }
     
 
 
 
     trimDetailDoc(){
         let tempDetails = [];
+        let orderIndex = 1;
         							 						
         for(let item of this.gridOptions.data){
             tempDetails.push({
+                orderIndex: orderIndex++,
                 idNotaEntregaDetalle: item.idNotaEntregaDetalle || 0,
                 idFacturaDetalle: item.idFacturaDetalle || 0,
                 idArticulo: item.idArticulo,
@@ -166,16 +173,58 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl{
         }
         return tempDetails;
     }
+
+    calcularPorcentajeDescuento() {
+        let valor = this.data.porcentajeDescuento || 0;
+        this.data.porcentajeDescuento = Number(valor);
+        if(typeof this.data.porcentajeDescuento !=="number" || this.data.porcentajeDescuento === ""){
+            this._tS.toastr('warning', 'Ingrese un Número Válido');
+            return
+        }
+
+        if( this.data.porcentajeDescuento <=100 ){
+            //redondeo del numero porcentaje 
+            this.data.porcentajeDescuento = this._fS.roundNumber(this.data.porcentajeDescuento, this.decimal.nroTotalSubTotal)            
+            this.setPorcentajeDescuentoAll(this.data.porcentajeDescuento);              
+        }else{
+            this.toast.toastr('warning', 'El Porcentaje de Descuento tiene que ser menor o igual a 100');
+        }
+    }
+
+    //Calcular Porcentaje  Descuento 
+    calcularDescuento() {
+        try {
+            let valor = this.data.totalDescuento || 0;
+            this.data.totalDescuento = Number(valor)
+            
+            if(typeof this.data.totalDescuento!=='number' || this.data.totalDescuento === ""){
+                this._tS.toastr('warning', 'Ingrese un númeto válido', 'Valor Descuento');
+                return
+            }
+    
+            if (this.data.totalDescuento <= this.uiGridInvoice.getSubTotalSinImpuesto()) {
+                let porcentajeDescuento = (this.data.totalDescuento * 100) / this.uiGridInvoice.getSubTotalSinImpuesto() || 0;               
+                this.data.porcentajeDescuento = this._fS.roundNumber(porcentajeDescuento, this.decimal.nroDescuentoDetalle);
+                this.setPorcentajeDescuentoAll(this.data.porcentajeDescuento)            
+            }else{
+                this._tS.toastr('warning', 'El Valor Descuento no puede ser mayor al total');
+            }  
+        } catch (error) {
+            console.log("CALCULO DE TOTAL DESCUENTO", error)
+        }            
+    }
+
 }
 
 
 
 export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params']
+    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'storageService', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params']
 
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params){
+    constructor($scope, $timeout, $uibModalInstance, _storageSvc, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params){
         super({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS})
         const self = this;
+        this._storageSvc = _storageSvc;
 
         let {TIPO_REGISTRO} = _params;        
         this.TIPO_REGISTRO = TIPO_REGISTRO;
@@ -211,7 +260,8 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
                 this.cloneIdBodega = this.idBodega;
 
                 this.actividadTipoIva = resultsDataFormEstab[2][0]
-                console.log(this.actividadTipoIva)
+                
+                this.setDataInfoEstab(this.establecimientos, this.puntosEmisiones);
             }else{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
             }
@@ -256,10 +306,22 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
                 decimal: this.decimal, 
                 actividadTipoIva: this.actividadTipoIva
             })
+
+            this.uiGridInvoice.idTarifa = this.idTarifa;
             
 
-            if(localStorage.getItem('detailNotaEntrega')){
-                this.restoreDetailStorage();
+            if(Object.keys(this._storageSvc.getObject("notaEntregaDetail")).length>0){
+                this._storageSvc.restoreInvoiceDetail("notaEntregaDetail").then(result=>{
+                    if(result.isConfirmed){
+                        this.gridOptions.data = JSON.parse(result.dataInvoiceDetail[result.value]);                           
+                        delete result.dataInvoiceDetail[result.value];
+                                           
+                        this._storageSvc.setObject("notaEntregaDetail", result.dataInvoiceDetail) 
+                                                                                       
+                        this.data = Object.assign(this.data, this.uiGridInvoice.getTotales());  
+                    }
+
+                })
             }
             
             this.$scope.$apply();
@@ -284,7 +346,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
 
             if (this.TIPO_REGISTRO === 'NUEVO') {
                 this.data.placa = '';
-                this.data.idTiempoCredito = this.cliente.idTiempoCredito;                
+                this.data.idTiempoCredito = this.cliente.idTiempoCredito || 0;               
                 this.data.fechaEmision = new Date();
                 this.getFechaVencimiento();
             }
@@ -376,18 +438,20 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
                                 TIPO_DOC: this.TIPO_DOC_NE                                             
                             }
 
-                            if(mainData.data.esContado){
-                                this.openModalRapido(mainData)
-                            }else{
-                                this.openModalCobroDocumento(mainData)
-                            }                                                                                       
+                            console.log(mainData)
+                            this.$uibModalInstance.close(mainData)
+                            // if(mainData.data.esContado){
+                            //     this.openModalRapido(mainData)
+                            // }else{
+                            //     this.openModalCobroDocumento(mainData)
+                            // }                                                                                       
                         }
                     })
                 }
             })       
            
             
-            if(!isConfirmed) return
+           
 
             
                                                 
@@ -536,108 +600,26 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
             }).then(result=>{
 
                 if(result.isConfirmed){
-                    this.saveLocalStorage();
+                    this.askToSaveStorage();
                 }
 
                 if(result.isDenied){
                     this.$uibModalInstance.close();
                 }
-
                 
-
-                if(result.isDismissed){
-                }
-                console.log(result)
             })
             return 
         }
         this.$uibModalInstance.close();        
     }
 
-    async saveLocalStorage(){
-        let {isConfirmed, value} = await Swal.fire({
-            title: '<small>Apartar Documento</small>',
-            input: 'text',
-            inputAttributes: {
-              autocapitalize: 'off'
-            },
-            showCancelButton: true,
-            confirmButtonText: 'Apartar',
-            cancelButtonText: 'No, cancelar',
-            showLoaderOnConfirm: true,
-            inputValidator: (value) => {
-                if (!value) {                    
-                    return 'Ingrese la descripción!'
-                }   
-                if(localStorage.getItem('detailNotaEntrega')){
-                    let getStorageDocDetalle = JSON.parse(localStorage.getItem('detailNotaEntrega'));
-                    if(getStorageDocDetalle[value]){
-                        return 'Ya existe Documento Apartado con esta descripción';
-                    }
-                }                        
-            },           
-        })
-
-        if(isConfirmed){
-            if(!localStorage.getItem('detailNotaEntrega')){
-                let objSave = {}
-                objSave[value] = JSON.stringify(this.gridOptions.data);
-                localStorage.setItem('detailNotaEntrega', JSON.stringify(objSave));  
-                this._tS.toastr('success', 'Documento Apartado Correctamente');                            
-            }
-
-            if(localStorage.getItem('detailNotaEntrega')){
-                let getStorageDocDetalle = JSON.parse(localStorage.getItem('detailNotaEntrega'));
-                getStorageDocDetalle[value] = JSON.stringify(this.gridOptions.data);
-                localStorage.setItem('detailNotaEntrega', JSON.stringify(getStorageDocDetalle)); 
-                this._tS.toastr('success', 'Documento Apartado Correctamente')                
-            }
-            
-            this.$uibModalInstance.close();
-        }
-    }
-
-    async restoreDetailStorage(){
-        let docsDetalle = JSON.parse(localStorage.getItem('detailNotaEntrega'));
-        let inputOptions = {};
-        for(let item of Object.keys(docsDetalle)){
-            inputOptions[item] = item;
-        }
-        const { isConfirmed, value } = await Swal.fire({
-            title: '<small>Recuperar Detalle del Documento</small>',
-            input: 'select',
-            inputOptions,
-            inputPlaceholder: 'Seleccionar la Factura',
-            showCancelButton: true,
-            confirmButtonText: 'Recuperar detalle',
-            cancelButtonText: 'No, cancelar',
-            allowEscapeKey:false,
-            allowOutsideClick:false,
-            inputValidator: (value) => {
-              return new Promise((resolve) => {
-                if (value) {
-                    resolve()
-                } else {
-                    resolve('Seleccione la opción :)')
-                }
-              })
-            }
-        })
-
-        if(isConfirmed){           
-            this.gridOptions.data = JSON.parse(docsDetalle[value]);
-            delete docsDetalle[value];
-            
-            if(Object.entries(docsDetalle).length !== 0){
-
-                localStorage.setItem('detailNotaEntrega', JSON.stringify(docsDetalle));               
-            }else{
-                localStorage.removeItem('detailNotaEntrega')
-            }
-            this.data = Object.assign(this.data, this.uiGridInvoice.getTotales());  
-        }
-
-
+    async askToSaveStorage(){
+        try {
+            await this._storageSvc.askToSaveDetailDoc("notaEntregaDetail", this.gridOptions.data);
+            this.$uibModalInstance.close(); 
+        } catch (error) {
+            console.log(error)
+        }             
     }
 
 
@@ -722,6 +704,8 @@ export class ModalNotaEntregaDetalleCtrl extends ModalNotaEntregaCtrl{
                 actividadTipoIva: this.actividadTipoIva
             })
             
+            this.uiGridInvoice.idTarifa = this.idTarifa; 
+
             //Cargamos los Datos 
             this.data = this.dataDocumento;
             this.nroDocSecuencial = this.data.nroDocSecuencial;
@@ -767,7 +751,7 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl{
         this.detalleDocumento       = detalleDocumento;
         this.infoAdicionalDocumento = infoAdicionalDocumento;
         this.actividadTipoIva       = actividadTipoIva;
-        console.log(this)
+        
     }
 
     async $onInit(){
@@ -820,6 +804,8 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl{
                 decimal: this.decimal, 
                 actividadTipoIva: this.actividadTipoIva
             })
+
+            this.uiGridInvoice.idTarifa = this.idTarifa;
             
             //Cargamos los Datos 
             this.data = this.dataDocumento;
@@ -1008,6 +994,8 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl{
                 decimal: this.decimal, 
                 actividadTipoIva: this.actividadTipoIva
             })
+
+            this.uiGridInvoice.idTarifa = this.idTarifa;
             
             //Cargamos los Datos 
             this.data = this.dataDocumento;
@@ -1017,6 +1005,8 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl{
 
             this.fechaEmisionEscrita = this._fS.getFechaEscrita(this.data.fechaEmision);
             this.fechaVencimientoEscrita = this._fS.getFechaEscrita(this.data.fechaVencimiento);
+            
+            this.setDataInfoEstab(this.establecimientos, this.puntosEmisiones);
             
             this.$scope.$apply();            
 
@@ -1373,7 +1363,7 @@ export class ModalNotaEntregaFiltroCtrl extends ModalBaseCtrl{
                 return
             }
 
-            console.log(moment(this.dataSearch.fechaInicio).isValid())
+            
             if (!moment(this.dataSearch.fechaInicio).isValid()) {
                 console.log('Invalid Date');
             } 

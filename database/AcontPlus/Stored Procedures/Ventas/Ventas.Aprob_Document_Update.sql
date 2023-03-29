@@ -155,6 +155,7 @@ BEGIN
 			LEFT JOIN dbo.TipoIva ti ON ti.idTipoIva = dt.idTipoIva
 			LEFT JOIN dbo.Impuesto i ON i.idImpuesto = ti.idImpuesto
 			LEFT JOIN dbo.Medida   m ON m.idMedida   = dt.idMedida
+			 ORDER BY dt.orderIndex ASC 
 
 		COMMIT TRAN 
 		SELECT '1'code,'Actualizado Correctamente' as 'message'

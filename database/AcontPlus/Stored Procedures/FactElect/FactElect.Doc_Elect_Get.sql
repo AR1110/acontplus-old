@@ -50,7 +50,7 @@ BEGIN
 										 de.idDocumentoElectronico
 										,de.idDocumento
 										,de.codDoc
-										,comprobante = td.descripcion
+										,comprobante = td.descripcion + '' - versión: '' +  de.versionComp
 										,serie = de.numEstab+''-''+de.ptoEmision+''-''+dbo.AFTAutoComplete(de.nroDocumento)
 										,rucReceptor = CASE de.codDoc WHEN ''01'' THEN cl.numeroIdentificacion
 																	  WHEN ''03'' THEN pr.numeroIdentificacion		
@@ -70,7 +70,7 @@ BEGIN
 																 WHEN ''06'' THEN cl.correo
 																 WHEN ''07'' THEN pr.correo
 													   END
-										,de.fechaEmision
+										,fechaEmision =   FORMAT(de.fechaEmision, ''dd/MM/yyyy'') 
 										,claveAcceso
 										,fechaAutorizacion
 										,estado = es.descripcion
@@ -80,12 +80,12 @@ BEGIN
 																   WHEN 6 THEN ''table-danger''
 																   WHEN 0 THEN ''table-warning''
 												 END  
-
+										,de.versionComp
 									 FROM DocumentoElectronico de WITH (NOLOCK)
 									 INNER JOIN FactElect.EstadoServicio es WITH (NOLOCK) ON de.codEstado = es.codigo
 									 INNER JOIN dbo.TipoDocumento td WITH (NOLOCK) ON td.codigoSri = de.codDoc
 									 LEFT JOIN dbo.Cliente cl ON cl.idCliente = de.idContribuyente  
-									 LEFT JOIN dbo.Proveedor pr ON pr.numeroIdentificacion = de.numeroIdentificacion  
+									 LEFT JOIN dbo.Proveedor pr ON pr.idProveedor = de.idContribuyente  
 									 WHERE de.idEntidad = @idEntidad   ';
 
 	SELECT @idEntidad = idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @idRol ;
@@ -138,7 +138,7 @@ BEGIN
 
 
 	EXEC sp_executesql @sql,@params
-				           ,@idEntidad
+				           ,@idEntidad = @idEntidad
 						   ,@codDoc = @codDoc 
 						   ,@codEstado = @codEstado
 						   ,@dateStart = @dateStart

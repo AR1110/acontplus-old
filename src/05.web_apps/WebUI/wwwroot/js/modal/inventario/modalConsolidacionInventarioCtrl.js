@@ -18,7 +18,7 @@ class ModalBaseCtrl{
     }
 
     initiload(){
-        return this._mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response=>{
+        return this._mS.getData('get', '/FacturaCompra/GetDataForm?json=' + JSON.stringify({})).then(response=>{
             if(response.code==='0'){                
                 throw response
             }
@@ -142,18 +142,24 @@ class ModalConsolidacionCtrl extends ModalBaseCtrl{
             })
 
             gridApi.edit.on.afterCellEdit(self.$scope, (rowEntity, colDef, newValue, oldValue) => {
-            
+                
+              
                 //Validar campos                 
                 if (rowEntity[colDef.field] === "" || rowEntity[colDef.field] === undefined || rowEntity[colDef.field] === null) {
                     rowEntity[colDef.field] = oldValue;
                     return
                 }
 
+                if(colDef.field === "precioActual"){
+                    rowEntity.precioCosto = self._fS.roundNumber(rowEntity.precioCosto, self.decimal.nroPrecio)
+                    rowEntity.precioActual = self._fS.roundNumber(rowEntity.precioActual, self.decimal.nroPrecio)
+                }
+
                 if (colDef.field === "idMedida" && rowEntity.idMedida !== oldValue) {                    
                     let dataMedida = rowEntity.medidas.find(val => val.idMedida === rowEntity.idMedida);
                   
-                    rowEntity.precioCosto = dataMedida.precioCosto;
-                    rowEntity.precioActual = dataMedida.precioCosto;                                  
+                    rowEntity.precioCosto = self._fS.roundNumber(dataMedida.precioCosto, self.decimal.nroPrecio)
+                    rowEntity.precioActual = self._fS.roundNumber(dataMedida.precioCosto, self.decimal.nroPrecio)
                 }             
 
                 self.setTotalColumn(rowEntity);
@@ -166,13 +172,13 @@ class ModalConsolidacionCtrl extends ModalBaseCtrl{
 
     setTotalColumn(rowEntity) {                                    
         let total = rowEntity.cantidad * rowEntity.precioActual;
-       rowEntity.total = this._fS.roundNumber(total, 5); //Total Precio Venta
+       rowEntity.total = this._fS.roundNumber(total, this.decimal.nroTotalDetalle); //Total Precio Venta
     }
 
     setTotalDetalle(){
         let total = this.gridOptions.data.map(val=>val.total).reduce((acc, curr)=>acc+curr, 0);
 
-        this.data.total = this._fS.roundNumber(total)        
+        this.data.total = this._fS.roundNumber(total, this.decimal.nroTotalSubTotal)        
     }
 
 
@@ -300,7 +306,7 @@ class ModalConsolidacionCtrl extends ModalBaseCtrl{
                 type: 'number',
                 width: '8%',
                 minWidth:'100',
-                cellFilter: "currency:'$'", aggregationType: self.uiGridConstants.aggregationTypes.sum,customTreeAggregationFinalizerFn: function (aggregation) {
+                aggregationType: self.uiGridConstants.aggregationTypes.sum,customTreeAggregationFinalizerFn: function (aggregation) {
                     aggregation.rendered = self._fS.roundNumber(aggregation.value,2)
                  }, aggregationLabel: "$",  
             },
@@ -313,7 +319,7 @@ class ModalConsolidacionCtrl extends ModalBaseCtrl{
                 enableCellEditOnFocus: true,
                 width: '12%',
                 minWidth:'100',
-                cellFilter: "currency:'$'", aggregationType: self.uiGridConstants.aggregationTypes.sum,customTreeAggregationFinalizerFn: function (aggregation) {
+                aggregationType: self.uiGridConstants.aggregationTypes.sum,customTreeAggregationFinalizerFn: function (aggregation) {
                     aggregation.rendered = self._fS.roundNumber(aggregation.value,2)
                  }, aggregationLabel: "$",  
             },
@@ -532,9 +538,9 @@ class ModalConsolidacionCtrl extends ModalBaseCtrl{
         entity.porcentajeTipoIva = articulo.porcentajeTipoIva;
         entity.nombreTipoIva     = articulo.nombreTipoIva;
         entity.stock             = articulo.stock; 
-        entity.precioCosto       = dataMedida.precioCosto;
-        entity.precioActual      = dataMedida.precioCosto;             
-        entity.total             = dataMedida.precioCosto;
+        entity.precioCosto       = this._fS.roundNumber(dataMedida.precioCosto, this.decimal.nroPrecio)
+        entity.precioActual      = this._fS.roundNumber(dataMedida.precioCosto, this.decimal.nroPrecio) 
+        entity.total             = this._fS.roundNumber(dataMedida.precioCosto, this.decimal.nroPrecio) 
         entity.idBodega          = this.idBodega ? this.idBodega : 0;
         entity.llevaInventario   = articulo.llevaInventario;                        
         entity.medidas           = medidas; //Lista Medida 
@@ -647,10 +653,12 @@ class ModalConsolidacionCtrl extends ModalBaseCtrl{
 
 export class ModalConsolidacionNuevoCtrl extends ModalConsolidacionCtrl{
 
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'uiGridConstants', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario', 'params'];
+    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'storageService', 'uiGridConstants', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario', 'params'];
 
-    constructor($scope, $timeout, $uibModalInstance, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreConst, _tS, _fS, _params){
+    constructor($scope, $timeout, $uibModalInstance, _storageSvc, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreConst, _tS, _fS, _params){
         super({$scope, $timeout, $uibModalInstance, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreConst, _tS, _fS, _params})
+
+        this._storageSvc = _storageSvc;
 
         let {TIPO_REGISTRO} =_params;
 
@@ -666,7 +674,8 @@ export class ModalConsolidacionNuevoCtrl extends ModalConsolidacionCtrl{
 
         try {
             showLoader();
-            let resultsDataForm = await this.initiload();                     
+            let resultsDataForm = await this.initiload();  
+                     
            
             this.establecimientos = resultsDataForm[0];
             
@@ -695,8 +704,24 @@ export class ModalConsolidacionNuevoCtrl extends ModalConsolidacionCtrl{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
             }    
             
+
+            this.decimal = resultsDataForm[1][0];
+     
             
             this.setColumnDefs();
+
+
+            if(Object.keys(this._storageSvc.getObject("consolidacionDetail")).length>0){
+                this._storageSvc.restoreInvoiceDetail("consolidacionDetail").then(result=>{
+                    if(result.isConfirmed){
+                        this.gridOptions.data = JSON.parse(result.dataInvoiceDetail[result.value]);                           
+                        delete result.dataInvoiceDetail[result.value];
+                                        
+                        this._storageSvc.setObject("consolidacionDetail", result.dataInvoiceDetail)                            
+                    }
+
+                })
+            }
            
             this.$scope.$apply();            
 
@@ -767,7 +792,7 @@ export class ModalConsolidacionNuevoCtrl extends ModalConsolidacionCtrl{
                 },
                 buttonsStyling: false
             })
-            console.log(this)  
+            
             let {isConfirmed} = await  swalWithBootstrapButtons.fire({
                 title: '<small>Guardar Documento</small>',
                 html: `<small>Esta seguro de guardar este Consolidación Nro. <b>${this.nroDocumentoSecuencial}</b>?</small>`,
@@ -810,6 +835,59 @@ export class ModalConsolidacionNuevoCtrl extends ModalConsolidacionCtrl{
             hideLoader();
         }
     }
+
+
+
+    async closeModal(){
+
+        if(this.gridOptions.data.length>0){
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                  confirmButton: 'btn btn-success',
+                  denyButton:'btn btn-info ml-2',
+                  cancelButton: 'btn btn-danger ml-2'
+                },
+                buttonsStyling: false
+            })
+            
+            swalWithBootstrapButtons.fire({
+                title: 'Salir ?',
+                html: "<small>Tienes un documento en proceso, desea salir ahora?</small>",
+                icon: 'warning',
+                showCancelButton: true,
+                showConfirmButton:true,
+                showDenyButton:true,
+                confirmButtonText: 'Apartar',
+                denyButtonText: 'Si, salir',
+                cancelButtonText: 'No, cancelar!',
+                focusDeny:true,
+                reverseButtons: false
+            }).then(result=>{
+
+                if(result.isConfirmed){
+                    this.askToSaveStorage();
+                }
+
+                if(result.isDenied){
+                    this.$uibModalInstance.close();
+                }
+                
+            })
+            return 
+        }
+        this.$uibModalInstance.close();        
+    }
+
+
+    async askToSaveStorage(){
+        try {
+            await this._storageSvc.askToSaveDetailDoc("consolidacionDetail", this.gridOptions.data);
+            this.$uibModalInstance.close(); 
+        } catch (error) {
+            console.log(error)
+        }             
+    }
+
 }
 
 
@@ -900,7 +978,7 @@ export class ModalConsolidacionImportacionCtrl extends ModalBaseCtrl{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
             }    
             
-            this.decimal = resultsDataForm[1];            
+            this.decimal = resultsDataForm[1][0]            
             this.tipoIvas = resultsDataForm[3];  
             
             
@@ -1051,7 +1129,8 @@ export class ModalConsolidacionEditarCtrl extends ModalConsolidacionCtrl{
         this.data = dataDocumento;
         this.detalleDocumento = detalleDocumento;
 
-       
+    
+        this.disabledInputFechaEmision = true;
         
     }
 
@@ -1083,7 +1162,7 @@ export class ModalConsolidacionEditarCtrl extends ModalConsolidacionCtrl{
             }    
 
 
-            
+            this.decimal = resultsDataForm[1][0];
             
             this.setColumnDefs();
             
@@ -1215,7 +1294,7 @@ export class ModalConsolidacionDetalleCtrl extends ModalConsolidacionCtrl{
             }    
 
 
-            
+            this.decimal = resultsDataForm[1][0];
             
             this.setColumnDefsView();
             
@@ -1234,4 +1313,24 @@ export class ModalConsolidacionDetalleCtrl extends ModalConsolidacionCtrl{
     }
 }
 
+
+
+
+export class ModalConsolidacionFiltroCtrl extends ModalBaseCtrl {
+    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'toastService', 'formulario', 'params']
+    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc,  _tS, _fS, _params){
+        super({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _tS, _fS, _params})
+        
+    }
+
+
+    $onInit(){
+        console.log(this)
+    }
+
+
+    closeModal(){
+        this.$uibModalInstance.close()
+    }
+}
 

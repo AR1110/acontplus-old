@@ -244,9 +244,10 @@ export class UiGridOptions{
                 if (rowEntity.idMedida === oldValue) return
 
                 let dataMedida = rowEntity.medidas.find(val => val.idMedida === rowEntity.idMedida);
-                let articuloTarifas = JSON.parse(dataMedida.tarifas);
+                let articuloTarifas = JSON.parse(dataMedida.tarifas);                
                 let pvp = articuloTarifas.find(item=>item.idTarifa===this.idTarifa);
-                
+           
+
                 rowEntity.articuloTarifas = articuloTarifas;          
                 rowEntity.idTarifa        = this.idTarifa
                 rowEntity.precioUnitario      = this._fS.roundNumber(pvp.precioVenta, this.decimal.nroPrecio);
@@ -268,12 +269,24 @@ export class UiGridOptions{
                     toastr.error(`CALCULO TIPO IVA: ${error}`)                     
                 }
             },
+            'codigoPorcentaje': ()=>{
+                try {
+                    if(rowEntity.idTipoIva===oldValue) return
+
+                    let tipoIva          =  this.tipoIvas.find(item=>item.codigoPorcentaje===rowEntity.codigoPorcentaje);                   
+                    rowEntity.tarifa     = tipoIva.tarifa;
+                    rowEntity.codigoPorcentaje = tipoIva.codigoPorcentaje;                    
+                    calculoColumnas["precioUnitario"]();                        
+                } catch (error) {
+                    toastr.error(`CALCULO TIPO IVA: ${error}`)                     
+                }
+            },
             'idTarifa':()=>{
                 try {
                     if(rowEntity.idTarifa===oldValue) return
                     let tipoIva                 = this.tipoIvaFindById(rowEntity);
                     let tarifa                  = rowEntity.articuloTarifas.find(item=>item.idTarifa===rowEntity.idTarifa);
-                                           
+                                                             
                     let precioConIva            = CalculoTarifaHelper.calcularPrecioConIva(tarifa.precioVenta, tipoIva.tarifa);
                     let precioConIvaConDesuento = CalculoTarifaHelper.getPrecioIvaConDescuento(precioConIva, rowEntity.porcentajeDescuento);
                     let valorDescuento          = CalculoTarifaHelper.getValorDescuento(tarifa.precioVenta, rowEntity.porcentajeDescuento);
@@ -388,7 +401,7 @@ export class UiGridOptions{
                 }
             },                  
         }
-        console.log(this.decimal)
+        
         return calculoColumnas;
     }
 
@@ -423,10 +436,14 @@ export class UiGridOptions{
 
     //get total porcentaje descuento 
     getTotalPorcentajeDescuento(){
-        let total = 0;
+        let total = 0, totalDetalle = 0;
         
-        if (this.gridOptions.data.length > 0 && this.getTotalDetalle() > 0 && this.getSubTotalSinImpuesto() > 0) {
-            total = ((this.getSubTotalSinImpuesto() - this.getTotalDetalle()) * 100) / this.getSubTotalSinImpuesto();
+        if (this.gridOptions.data.length > 0 && this.getSubTotalSinImpuesto() > 0) {
+
+             //Total Detalle No tiene que ser mayor al total sin impuesto
+            totalDetalle = this.getTotalDetalle() > this.getSubTotalSinImpuesto()? this.getSubTotalSinImpuesto(): this.getTotalDetalle();
+            console.log('calculate total_porcentaje_descuento')
+            total = ((this.getSubTotalSinImpuesto() - totalDetalle ) * 100) / this.getSubTotalSinImpuesto();
         }        
         return this._fS.roundNumber(total, this.decimal.nroTotalSubTotal);
     }
@@ -448,8 +465,8 @@ export class UiGridOptions{
     }
 
 
-    getTotales() {
-        let CODIGO_PORCENTAJE_IVA0 = '0', CODIGO_PORCENTAJE_IVAEXENTO = '7', CODIGO_PORCENTAJE_IVA_NO_OBJETO ='6';
+    getTotales() {        
+        let CODIGO_PORCENTAJE_IVA0 = '0', CODIGO_PORCENTAJE_IVAEXENTO = '7', CODIGO_PORCENTAJE_IVA_NO_OBJETO ='6', CODIGO_PORCENTAJE_IVA8 = '8' ;
         let [subTotalIva, subTotalNetoIva]             = this.getTotalIva(this.actividadTipoIva.codigoPorcentaje);
         let [subTotalIvaCero, subTotalNetoIvaCero]     = this.getTotalIva(CODIGO_PORCENTAJE_IVA0);
         let [subTotalExentoIva, subTotalNetoExentoIva] = this.getTotalIva(CODIGO_PORCENTAJE_IVAEXENTO);
@@ -457,7 +474,7 @@ export class UiGridOptions{
         
         let iva = subTotalNetoIva * this.actividadTipoIva.tarifa / 100;                
         let total = iva + this.getTotalDetalle() +  this.getTotalIce();
-       
+       console.log(this.getTotalPorcentajeDescuento())
         return {
             subTotalSinImpuestos: this.getSubTotalSinImpuesto(),
             subTotalIva,
@@ -524,10 +541,6 @@ export class UiGridOptions{
 
 
 
-
-
-
-
 export class UiGridOptionsCompra{
     constructor({$scope, gridOptions, _fS, _tS, tipoIvas, decimal, actividadTipoIva}){
         this.$scope = $scope;
@@ -587,6 +600,10 @@ export class UiGridOptionsCompra{
 
     calculoColDef(rowEntity, oldValue){                                 
         const calculoColumnas =  {
+            'descripcion': ()=>{
+                let descripcion = rowEntity.descripcion || '';
+                rowEntity.descripcion = descripcion.toUpperCase();
+            },
             'cantidad': ()=>{                     
                 if(rowEntity.cantidad===oldValue) return
                 rowEntity.cantidad = this._fS.roundNumber(rowEntity.cantidad, this.decimal.nroCantidad);
@@ -600,6 +617,7 @@ export class UiGridOptionsCompra{
 
                 let dataMedida = rowEntity.medidas.find(val => val.idMedida === rowEntity.idMedida);
                 rowEntity.precioCosto = this._fS.roundNumber(dataMedida.precioCosto, this.decimal.nroPrecio)
+                rowEntity.precioUnitario = this._fS.roundNumber(dataMedida.precioCosto, this.decimal.nroPrecio)
                 rowEntity.precioCostoNeto = this._fS.roundNumber(dataMedida.precioCosto, this.decimal.nroPrecio)
                 //  this.setTotalRow(rowEntity, index);                                  
                                   
@@ -770,11 +788,19 @@ export class UiGridOptionsCompra{
     }
 
     getTotalPorcentajeDescuento () {
-        let total = 0;
-        if (this.gridOptions.data.length > 0 && this.getTotalDetalle() > 0 && this.getSubTotalSinImpuesto() > 0) {
-            total = ((this.getSubTotalSinImpuesto() - this.getTotalDetalle()) * 100) / this.getSubTotalSinImpuesto();
+        let total = 0, totalDetalle = 0;
+        if (this.gridOptions.data.length > 0 && this.getSubTotalSinImpuesto() > 0) {
+
+            //Total Detalle No tiene que ser mayor al total sin impuesto
+            
+            totalDetalle = this.getTotalDetalle()>this.getSubTotalSinImpuesto()? this.getSubTotalSinImpuesto(): this.getTotalDetalle();
+
+            console.log('calculate total_porcentaje_descuento')
+            total = ((this.getSubTotalSinImpuesto() - totalDetalle ) * 100) / this.getSubTotalSinImpuesto();
+            
         }
-        return this._fS.roundNumber(total, this.decimal.nroDescuento);
+        
+        return this._fS.roundNumber(total, this.decimal.nroPorcentaje);
     }
 
     getTotalDescuento(){
@@ -783,6 +809,7 @@ export class UiGridOptionsCompra{
     }
 
     getTotales(){
+        
         let CODIGO_PORCENTAJE_IVA0 = '0', CODIGO_PORCENTAJE_IVAEXENTO = '7', CODIGO_PORCENTAJE_IVA_NO_OBJETO ='6';
         let [subTotalIva, subTotalNetoIva]             = this.getTotalIva(this.actividadTipoIva.codigoPorcentaje);
         let [subTotalIvaCero, subTotalNetoIvaCero]     = this.getTotalIva(CODIGO_PORCENTAJE_IVA0);

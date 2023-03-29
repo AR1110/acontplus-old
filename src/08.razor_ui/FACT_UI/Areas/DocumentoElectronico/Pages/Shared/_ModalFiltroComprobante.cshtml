@@ -1,0 +1,96 @@
+
+
+<div id="modalFiltroComprobante" class="modal fade in" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Filtro</h5>
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                
+                <div class="row justify-content-between">
+                     <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                        <div class="icheck-info">
+                            <input type="checkbox" ng-model="dataSearch.checkBoxComprobante" id="checkBoxComprobante" >
+                            <label for="checkBoxComprobante">Comprobante</label>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                        <div class="icheck-info">
+                            <input type="checkbox" ng-model="dataSearch.checkBoxDate" id="checkBoxDate" ng-change="onChangeFechaFiltro()">
+                            <label for="checkBoxDate">Fecha</label>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                        <div class="icheck-info">
+                            <input type="checkbox" ng-model="dataSearch.checkBoxEstadoServicio" id="checkBoxEstadoServicio">
+                            <label for="checkBoxEstadoServicio">Estado</label>
+                        </div>                        
+                    </div>
+                </div>
+                <hr>
+                <div class="row">                                        
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12" ng-if="dataSearch.checkBoxComprobante">
+                        <div class="form-group">
+                            <label for="">Tipo Documento</label>
+                            <select class="form-control b-0" ng-model="dataSearch.codDoc" ng-change="onSelectTipoDoc()">                                
+                                <option ng-value="item.codigoSri" ng-repeat="item in tiposDocumento">
+                                    {{item.descripcion}}
+                                </option>                                
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12" ng-show="dataSearch.checkBoxEstadoServicio">
+                        <div class="form-group">
+                            <label for="">Estado</label>
+                            <select name="" id="" class="form-control border-select" ng-model="dataSearch.codEstado">
+                                <option ng-value="item.codigo" ng-repeat="item in estadoServicios">{{item.descripcion}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" ng-if="dataSearch.checkBoxDate">
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label class="control-label">Mes: </label>
+                            <select ng-model="dataSearch.mes " class="form-control" ng-change="getFechaInicioFinFilter()">
+                                <option ng-value="m.numero" ng-repeat="m in meses">
+                                    {{m.nombre}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Fecha Inicio:</label>
+                            <input type="date" class="form-control" ng-model="dataSearch.dateStart"/>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Fecha Fin:</label>
+                            <input type="date" class="form-control" ng-model="dataSearch.dateEnd" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" ng-click="searchComprobante()">
+                    <i class="fa fa-search"></i> Buscar
+                </button>
+
+                <button type="button" class="btn btn-dark" data-dismiss="modal">
+                    &times; Cerrar
+                </button>
+            </div>
+        </div>
+    </div>    
+</div>

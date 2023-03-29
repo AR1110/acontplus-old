@@ -1,5 +1,4 @@
-﻿using WebUI.ApiClient;
-using DataAccess;
+﻿using DataAccess;
 using WebUI.Utils;
 using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -14,11 +13,9 @@ namespace WebUI.Controllers.Admin
         private readonly string _connectionStrings = string.Empty;
         GenericResponse _response = new();
         private FirmaElectronicaDao _fe;
-        private readonly string _urlApi = "";
         public FirmaElectronicaController(IConfiguration config)
         {
             _config = config;
-            _urlApi = _config.GetSection("UrlApis").GetSection("AcontPlusApi").Value;
             _fe = new FirmaElectronicaDao(_config);
         }
        
@@ -50,7 +47,9 @@ namespace WebUI.Controllers.Admin
                     ContentType = file.ContentType,
                     Content = FileData.GetFileByte(file)
                 };
-
+                //X509Certificate2 cert = new X509Certificate2(_dirCertificates + dataRow.Field<string>("certificate"), dataRow.Field<string>("password"), X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
+                //// Get the value.
+                //string expirationDate = cert.GetExpirationDateString();
                 string msg = string.Empty;
 
                 if (new FileUpload(_config).Upload(signFile.FileName, signFile.Content, ref msg))

@@ -1,5 +1,5 @@
 ﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
     ViewData["Title"] = "Reporte";
@@ -25,72 +25,105 @@
     </div>
 
 
-    <div class="row">
-        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-            <div class="card">
-                <div class="card-body">
-                    <md-toolbar class="md-table-toolbar md-default">
-                        <div class="md-toolbar-tools">
-                            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                <button ng-click="getReport(2)" class=" btn btn-danger"> get report test</button>                                                            
-                            </div>
-                            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                <form class="form-material">
-                                    <input type="text" class="form-control" ng-model="textSearch" placeholder="Buscar">
-                                </form>
-                            </div> 
-                        </div>
-                    </md-toolbar>
-                   
-                    <div id="upperScroll" style="overflow-x:scroll; overflow-y: hidden; max-height:20px; width:100%">
-                        <div name="innerScroll" ng-style="duelScroll" style="height:20px;"></div>
+    <div class="card">
+        <div class="card-body">
+            <md-toolbar class="md-table-toolbar md-default">
+                <div class="md-toolbar-tools">
+                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                        <button ng-click="getReport(2)" class=" btn btn-danger"> get report test</button>
                     </div>
-                    <div ng-style="getStyle($index)">
-                        <md-table-container name="wireTable" infinite-scroll="loadMore($index)" infinite-scroll-distance="1" infinite-scroll-parent="true" ng-init="isShow=true" ng-show="isShow" style=" max-height: 400px; overflow-x: hidden">
-                            <table resize master md-table name="innerWireTable">
-                                <thead  md-trim-column-names fix-head md-head>
-                                    <tr md-row>
-                                        <th md-column ng-if="accion.editar || accion.eliminar">Op.</th>
-                                        <th md-column>N°</th>
-                                        <th md-column>codigo</th>
-                                        <th md-column>reportPath</th>
-                                        <th md-column>dataSource</th>
-                                        <th md-column>contentType</th>
-                                        <th md-column>storedProcedure</th>
-                                        <th md-column>estado</th>                                                                              
-                                    </tr>
-                                </thead>
-                                <tbody md-body>
-                                    <tr md-row ng-repeat="item in reports | filter:textSearch">
-                                        <td md-cell ng-if="accion.editar || accion.eliminar">
-                                            <button class="btn btn-outline-warning btn-sm" ng-if="accion.editar" ng-click="openModal(item, 2)">
-                                                <span class="ti-pencil"></span>
-                                            </button>
-                                            <button class="btn btn-outline-danger btn-sm" ng-if="accion.eliminar" ng-click="askToDelete(item)">
-                                                <span class="ti-trash"></span>
-                                            </button>
-                                        </td>
-                                        <td md-cell>{{item.idReporte}}</td>
-                                        <td md-cell>{{item.codigo}}</td>
-                                        <td md-cell>{{item.reportPath}}</td>
-                                        <td md-cell>{{item.dataSource}}</td>
-                                        <td md-cell>{{item.contentType}}</td>
-                                        <td md-cell>{{item.storedProcedure}}</td>
-                                        <td md-cell ng-bind-html="item.estado | estadoPrimario"></td>
-                                    </tr>                                    
-                                </tbody>                               
-                            </table>
-                        </md-table-container>
-                    </div>                
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                        <form class="form-material">
+                            <input type="text" class="form-control" ng-model="textSearch" placeholder="Buscar">
+                        </form>
+                    </div>
                 </div>
+            </md-toolbar>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead class="small">
+                        <tr>
+                            <th ng-if="accion.editar || accion.eliminar">Op.</th>
+                            <th>N°</th>
+                            <th></th>
+                            <th>codigo</th>
+                            <th>reportPath</th>
+                            <th>contentType</th>
+                            <th>storedProcedure</th>
+                            <th>estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat-start="item in reports | filter:textSearch" class="small">
+                            <td ng-if="accion.editar || accion.eliminar">
+                                <button class="btn btn-outline-warning btn-sm" ng-if="accion.editar"
+                                    ng-click="openModal(item, 2)">
+                                    <span class="ti-pencil"></span>
+                                </button>
+                                <button class="btn btn-outline-danger btn-sm" ng-if="accion.eliminar"
+                                    ng-click="askToDelete(item)">
+                                    <span class="ti-trash"></span>
+                                </button>
+                            </td>
+                            <td ng-click="expandDetalle(item)">
+                                <span ng-if="item.expanded"><i class="fa fa-eye-slash"></i></span>
+                                <span ng-if="!item.expanded"><i class="fa fa-eye" title="Ver data sources"></i></span>
+                            </td>
+                            <td>{{item.idReporte}}</td>
+                            <td>{{item.codigo}}</td>
+                            <td>{{item.reportPath}}</td>
+                            <td>{{item.contentType}}</td>
+                            <td>{{item.storedProcedure}}</td>
+                            <td ng-bind-html="item.estado | estadoPrimario"></td>
+                        </tr>
+                        <tr ng-if="item.expanded" ng-repeat-end="">
+                            <td colspan="7">
+                                <div class="ml-5 mr-5">
+                                    <button type="button" class="btn btn-info btn-sm" ng-click="openModalDs(item)">
+                                        <i class="ti-plus"></i> Nuevo
+                                    </button>
+                                    <div class="table-responsive">
+                                        <table class="table table-no-bordered table-sm">
+                                            <thead>
+                                                <tr class="small">
+                                                    <th>Op</th>
+                                                    <th>Data Source</th>
+                                                    <th>Posición</th>
+                                                    <th>Estado</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="ds in item.dataSources" class="small">
+                                                    <td>
+                                                        <button type="button" class="btn btn-warning btn-xs"
+                                                            ng-click="openModalEditDs(item, ds)">
+                                                            <span class="ti-pencil"></span>
+                                                        </button>
+                                                        <button class="btn btn-danger btn-xs"
+                                                            ng-click="askToDeleteDs(item, ds)">
+                                                            <span class="ti-trash"></span>
+                                                        </button>
+                                                    </td>
+                                                    <td>{{ds.dataSource}}</td>
+                                                    <td>{{ds.position}}</td>
+                                                    <td ng-bind-html="ds.estado | estadoPrimario"></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
-    </div>
-    
+    </div> >
+
     <!--Reporte Modal-->
-    <div class="modal fade" id="reporteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog" role="document">
+    <div id="reporteModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <form ng-submit="save()">
                     <div class="modal-header">
@@ -104,38 +137,18 @@
                     </div>
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                 <div class="form-group">
                                     <label for="codigo">Código</label>
                                     <input type="text" class="form-control" id="codigo" ng-model="reporte.codigo"
-                                           placeholder="RR" required>
+                                        placeholder="RR" required>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="col-xl-8 col-lg-6 col-md-8 col-sm-8 col-12">
                                 <div class="form-group">
                                     <label for="reportPath">Report Path</label>
                                     <input type="text" class="form-control" id="reportPath"
-                                           ng-model="reporte.reportPath" placeholder="Example.rdlc" required>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                                <div class="form-group">
-                                    <label for="dataSource">Data Source</label>
-                                    <input type="text" class="form-control" id="dataSource"
-                                           ng-model="reporte.dataSource" placeholder="exampleDs" required>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                                <div class="form-group">
-                                    <label for="contentType">Content Type</label>
-                                    <input type="text" class="form-control" id="contentType"
-                                           ng-model="reporte.contentType" placeholder="application/pdf" required>
+                                        ng-model="reporte.reportPath" placeholder="Example.rdlc" required>
                                 </div>
                             </div>
                         </div>
@@ -144,16 +157,23 @@
                                 <div class="form-group">
                                     <label for="storedProcedure">Stored Procedure</label>
                                     <input type="text" class="form-control" id="storedProcedure"
-                                           ng-model="reporte.storedProcedure" placeholder="ASPExampleReport" required>
+                                        ng-model="reporte.storedProcedure" placeholder="" required>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                                <div class="form-group">
+                                    <label for="contentType">Content Type</label>
+                                    <input type="text" class="form-control" id="contentType"
+                                        ng-model="reporte.contentType" placeholder="application/pdf" required>
+                                </div>
+                            </div>
+                            <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-12">
                                 <div class="form-group">
                                     <label for="nombreReport">Nombre Reporte</label>
                                     <input type="text" class="form-control" id="nombreReport"
-                                           ng-model="reporte.nombreReporte" placeholder="Example" required>
+                                        ng-model="reporte.nombreReporte" placeholder="Example" required>
                                 </div>
                             </div>
                         </div>
@@ -184,205 +204,79 @@
         </div>
     </div>
 
+
+
+    <!--Reporte Modal-->
+    <div class="modal fade" id="dataSourceModal" tabindex="-1" role="dialog" aria-labelledby="dSModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <form ng-submit="saveDs()">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            {{operationDs===1?'Nuevo':'Editar'}} Data Source
+                        </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <label for="dsPosition">Posición</label>
+                                    <input type="text" class="form-control" id="dsPosition"
+                                        ng-model="dataSource.position" valid-number placeholder="0" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <label for="codigo">DataSource</label>
+                                    <input type="text" class="form-control" id="codigo" ng-model="dataSource.dataSource"
+                                        placeholder="mainDs" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row" ng-show="operationDs === 2">
+                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-6">
+                                <div class="icheck-warning">
+                                    <input type="radio" id="estadoDs" ng-model="dataSource.estado" ng-value="true">
+                                    <label for="estadoDs">Activo</label>
+                                </div>
+                            </div>
+                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-6">
+                                <div class="icheck-warning">
+                                    <input type="radio" id="inactivoDs" ng-model="dataSource.estado" ng-value="false">
+                                    <label for="inactivoDs">Inactivo</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-outline-success">
+                            <span class="ti-save"></span>
+                            Guardar
+                        </button>
+                        <button type="button" class="btn btn-outline-dark" data-dismiss="modal">&times; Cerrar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+
     <img id="barcode" src="" alt="" style="display: none;">
 
 </div>
 
 
 
-@section scripts{    
-    <script>
-        (function() {
-            'use strict';
-            angular.module('acontPlusApp')
-                .controller('reporteCtrl', reporteCtrl);
-
-            reporteCtrl.$inject = ['$scope', 'mainService', 'toastService', 'FileSaver', 'Blob'];
-
-            function reporteCtrl($scope, mS, tS, FileSaver, Blob) {
-                let accion = JSON.parse(localStorage.getItem("accion"));
-                if (accion === null) {
-                    location.href = "/Home/Index";
-                } else {
-                    $scope.accion = accion[0];
-                }
-
-                let url = '/Reporte/';
-
-                $scope.reports = [];
-
-                $scope.initialLoad = function() {
-                    mS.getData('Get', url + 'Get?pageIndex=1' + '&pageSize=' + 50).then(function(response) {
-                        if (response.id == 0) {
-                            tS.toastr('warning', response.message);
-                            return;
-                        };
-                        if (response.id == 1) {
-                            $scope.reports = response.data;
-                        };
-                    }, function(error) {
-                        console.log(error);
-                    });
-                };
-                $scope.initialLoad();
-
-
-
-                $scope.operation = 0;
-                $scope.reporte = {};
-                $scope.openModal = function(data = null, type) {
-
-                    if (type == 1 || type == 2) {
-                        $scope.operation = type;
-                        if (type == 1) {
-                            $scope.modalIcon = 'ti-plus';
-                            $scope.modalTitle = 'Nuevo Reporte'
-                        } else {
-                            $scope.modalIcon = 'ti-pencil';
-                            $scope.modalTitle = 'Editar Reporte'
-                        };
-                        $scope.reporte = data;
-                        $('#reporteModal').modal('show');
-                        return;
-                    };
-
-                };
-
-                $scope.save = function() {
-                    var method = '';
-                    var urlMethod = '';
-                    if ($scope.operation == 1) {
-                        method = 'Post';
-                        urlMethod = 'Post';
-                    } else {
-                        method = 'Put';
-                        urlMethod = 'Put?idReporte=' + $scope.reporte.idReporte;
-                    };
-
-                    mS.getData(method, url + urlMethod, $scope.reporte).then(function(response) {
-                        if (response.id == 0) {
-                            tS.toastr('warning', response.message);
-                            return;
-                        };
-                        if (response.id == 1) {
-                            tS.toastr('success', response.message);
-                            $scope.initialLoad();
-                            $('#reporteModal').modal('hide');
-                        };
-                    }, function(error) {
-                        console.log(error);
-                    });
-                };
-
-                $scope.askToDelete = function(item) {
-                    Swal.fire({
-                        title: 'Eliminar',
-                        text: "¿Está seguro de eliminar los parametros del reporte: " + item.reportPath + "?",
-                        icon: 'warning',
-                        showCancelButton: false,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: '¡Sí!',
-                        showDenyButton: true,
-                        denyButtonText: 'No'
-                    }).then((result) => {
-                        if (result.value) {
-                            $scope.delete(item);
-                        }
-                    })
-                };
-
-
-                $scope.delete = function(item) {
-                    mS.getData('Delete', url + 'Delete?idReporte=' + item.idReporte).then(function(response) {
-                        if (response.id == 0) {
-                            tS.toastr('warning', response.message);
-                            return;
-                        };
-                        if (response.id == 1) {
-                            tS.toastr('success', response.message);
-                            $scope.initialLoad();
-                        };
-                    }, function(error) {
-                        console.log(error);
-                    });
-                };
-
-                $scope.getBarcode = function(item) {
-                    JsBarcode("#barcode", item, {
-                        format: "CODE128",
-                        lineColor: "#000",
-                        width: 1,
-                        height: 75,
-                        displayValue: false
-                    });
-                    var barcodeData = $('#barcode').attr('src').replace(/^data:image\/[a-z]+;base64,/, "");
-                    //console.log(strImage);
-                    return barcodeData;
-                };
-
-                $scope.getReport = function(item) {
-                    var format = '', barcode = '';
-                    if (item == 1) {
-                        format = 'pdf'
-                    } else {
-                        format = 'excel'
-                    };
-                    barcode = $scope.getBarcode('0123345');
-
-                    var parameters = {
-                        reportParams: JSON.stringify({
-                            codigo: 'TR', format: format,
-                            aditionalParams: [
-                                { position: 2, paramName: 'testParam', paramValue: 'Hola Emilio' },
-                                { position: 3, paramName: 'thirdParameter', paramValue: 'Hola Ivan' },
-                                { position: 4, paramName: 'mimeTypeBarcode', paramValue: 'image/png' },
-                                { position: 5, paramName: 'barcode', paramValue: barcode }
-                            ]
-                        }),
-                        dataParams: JSON.stringify({ testProp: 'param for get Data' })
-                    };
-                    mS.getFile('Post', '/Reporte/Download', parameters).then(function(response) {
-                        if (item == 1) {
-                            var fileBlob = new Blob([response.data], {
-                                type: response.data.type
-                            });
-                            var objectUrl = window.URL || window.webkitURL;
-                            var urlFile = objectUrl.createObjectURL(fileBlob);
-                            window.open(urlFile, '_blank');
-                            return;
-                        } else {
-                            let serverData = new Blob([response.data], { type: response.headers()['content-type'] });
-                            let fileName = response.headers()['content-disposition'].split(';')[1].split('=')[1];
-                            FileSaver.saveAs(serverData, fileName);
-                            //var blob = new Blob([response.data], {
-                            //    type: response.data.type
-                            //}),
-                            //    fileName = 'Usuario.xls';
-                            //if (window.navigator.msSaveOrOpenBlob) {
-                            //    window.navigator.msSaveOrOpenBlob(blob, fileName);
-                            //} else {
-                            //    var anchor = angular.element('<a/>');
-                            //    anchor.css({
-                            //        display: 'none'
-                            //    });
-                            //    angular.element(document.body).append(anchor);
-                            //    anchor.attr({
-                            //        href: (window.URL || window.webkitURL).createObjectURL(blob),
-                            //        target: '_blank',
-                            //        download: fileName
-                            //    })[0].click();
-                            //    anchor.remove();
-                            //};
-                            return;
-                        };
-                    }, function(error) {
-                        console.log(error);
-                        return;
-                    });
-                };
-
-            };
-        })(window.angular)
-    </script>
+@section scripts{
+    <script src="~/js/controllers/config/reporteCtrl.min.js" asp-append-version="true"></script>
 }

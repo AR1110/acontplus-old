@@ -53,43 +53,46 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="commons-logging-1.1">
-      <HintPath>..\..\..\SignatureLibrary\commons-logging-1.1.dll</HintPath>
+      <HintPath>..\..\..\libraries\XadES_BES\commons-logging-1.1.dll</HintPath>
     </Reference>
     <Reference Include="IKVM.OpenJDK.Core">
-      <HintPath>..\..\..\SignatureLibrary\IKVM.OpenJDK.Core.dll</HintPath>
+      <HintPath>..\..\..\libraries\XadES_BES\IKVM.OpenJDK.Core.dll</HintPath>
     </Reference>
     <Reference Include="IKVM.OpenJDK.Security">
-      <HintPath>..\..\..\SignatureLibrary\IKVM.OpenJDK.Security.dll</HintPath>
+      <HintPath>..\..\..\libraries\XadES_BES\IKVM.OpenJDK.Security.dll</HintPath>
     </Reference>
     <Reference Include="IKVM.OpenJDK.Text">
-      <HintPath>..\..\..\SignatureLibrary\IKVM.OpenJDK.Text.dll</HintPath>
+      <HintPath>..\..\..\libraries\XadES_BES\IKVM.OpenJDK.Text.dll</HintPath>
     </Reference>
     <Reference Include="IKVM.OpenJDK.Util">
-      <HintPath>..\..\..\SignatureLibrary\IKVM.OpenJDK.Util.dll</HintPath>
+      <HintPath>..\..\..\libraries\XadES_BES\IKVM.OpenJDK.Util.dll</HintPath>
     </Reference>
     <Reference Include="IKVM.OpenJDK.XML.API">
-      <HintPath>..\..\..\SignatureLibrary\IKVM.OpenJDK.XML.API.dll</HintPath>
+      <HintPath>..\..\..\libraries\XadES_BES\IKVM.OpenJDK.XML.API.dll</HintPath>
     </Reference>
     <Reference Include="IKVM.OpenJDK.XML.Parse">
-      <HintPath>..\..\..\SignatureLibrary\IKVM.OpenJDK.XML.Parse.dll</HintPath>
+      <HintPath>..\..\..\libraries\XadES_BES\IKVM.OpenJDK.XML.Parse.dll</HintPath>
     </Reference>
     <Reference Include="IKVM.Runtime">
-      <HintPath>..\..\..\SignatureLibrary\IKVM.Runtime.dll</HintPath>
+      <HintPath>..\..\..\libraries\XadES_BES\IKVM.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="MITyCLibAPI-1.0.4">
-      <HintPath>..\..\..\SignatureLibrary\MITyCLibAPI-1.0.4.dll</HintPath>
+      <HintPath>..\..\..\libraries\XadES_BES\MITyCLibAPI-1.0.4.dll</HintPath>
     </Reference>
     <Reference Include="MITyCLibCert-1.0.4">
-      <HintPath>..\..\..\SignatureLibrary\MITyCLibCert-1.0.4.dll</HintPath>
+      <HintPath>..\..\..\libraries\XadES_BES\MITyCLibCert-1.0.4.dll</HintPath>
     </Reference>
     <Reference Include="MITyCLibTrust-1.0.4">
-      <HintPath>..\..\..\SignatureLibrary\MITyCLibTrust-1.0.4.dll</HintPath>
+      <HintPath>..\..\..\libraries\XadES_BES\MITyCLibTrust-1.0.4.dll</HintPath>
     </Reference>
     <Reference Include="MITyCLibTSA-1.0.4">
-      <HintPath>..\..\..\SignatureLibrary\MITyCLibTSA-1.0.4.dll</HintPath>
+      <HintPath>..\..\..\libraries\XadES_BES\MITyCLibTSA-1.0.4.dll</HintPath>
     </Reference>
     <Reference Include="MITyCLibXADES-1.0.4">
-      <HintPath>..\..\..\SignatureLibrary\MITyCLibXADES-1.0.4.dll</HintPath>
+      <HintPath>..\..\..\libraries\XadES_BES\MITyCLibXADES-1.0.4.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -104,11 +107,14 @@
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml" />
     <Reference Include="xmlsec-1.4.2-ADSI-1.0">
-      <HintPath>..\..\..\SignatureLibrary\xmlsec-1.4.2-ADSI-1.0.dll</HintPath>
+      <HintPath>..\..\..\libraries\XadES_BES\xmlsec-1.4.2-ADSI-1.0.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ComprobanteXml.cs" />
     <Compile Include="DataAccess.cs" />
+    <Compile Include="Utils\DataEncrypt.cs" />
+    <Compile Include="Utils\LogWritter.cs" />
     <Compile Include="PassStoreKS.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
@@ -125,9 +131,12 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\DataHelperNS.cs" />
+    <Compile Include="Utils\FileExtensionsNS.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ProjectInstaller.resx">
@@ -148,20 +157,6 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\01.common\FactElect\FactElect.csproj">
-      <Project>{2B80F519-8FF5-4834-8F70-4EBC0E554652}</Project>
-      <Name>FactElect</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\01.common\HelpersNS20\HelpersNS20.csproj">
-      <Project>{5277B7FA-D26B-4E33-BED0-1659A85550F6}</Project>
-      <Name>HelpersNS20</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\01.common\Logs\Logs.csproj">
-      <Project>{E42A1404-1EFB-46A8-9911-A7100FD46985}</Project>
-      <Name>Logs</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

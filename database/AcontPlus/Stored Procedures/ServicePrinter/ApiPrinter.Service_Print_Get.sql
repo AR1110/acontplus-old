@@ -1,3 +1,5 @@
+USE [AcontPlus]
+GO
 -- ================================================
 -- Template generated from Template Explorer using:
 -- Create Procedure (New Menu).SQL
@@ -21,20 +23,42 @@ GO
 IF OBJECT_ID(N'ApiPrinter.Service_Print_Get', N'P') IS NOT NULL
 DROP PROCEDURE ApiPrinter.Service_Print_Get
 GO
-CREATE PROCEDURE ApiPrinter.Service_Print_Get @ruc VARCHAR(20), @estab VARCHAR(20)
+CREATE PROCEDURE ApiPrinter.Service_Print_Get 
+	@ruc VARCHAR(20)
+   ,@estab VARCHAR(50)
+   ,@idUser VARCHAR(200) = NULL
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
+	IF @idUser  IS NULL
+		BEGIN
+			SELECT 
+				token = idService_Printer_Document
+			   ,rdlcProps
+			   ,rdlcParams
+			   ,dataSources
+			FROM ApiPrinter.Service_Printer_Document 
+			WHERE ruc = @ruc 
+			  AND numEstab IN (SELECT value FROM string_split(@estab,';'))
+		END 
 
-	SELECT 
-		token = idService_Printer_Document
-	   ,rdlcProps
-	   ,rdlcParams
-	   ,dataSources
-	FROM ApiPrinter.Service_Printer_Document WHERE ruc = @ruc AND numEstab = @estab
+	ELSE 
+		BEGIN
+			SELECT 
+				token = idService_Printer_Document
+			   ,rdlcProps
+			   ,rdlcParams
+			   ,dataSources
+			FROM ApiPrinter.Service_Printer_Document 
+			WHERE ruc = @ruc 
+			  AND numEstab IN (SELECT value FROM string_split(@estab,';'))
+			  AND idUser IN (SELECT value FROM string_split(@idUser,';'))
+		END 
+
+	
 
 END
 GO

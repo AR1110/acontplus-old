@@ -17,7 +17,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+	  <Content Remove="C:\Users\Ivan\.nuget\packages\select.htmltopdf.netcore\22.2.0\contentFiles\any\any\Select.Html.dep" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	</ItemGroup>
 
 </Project>

@@ -7,7 +7,7 @@
       "projectType": "application",
       "schematics": {
         "@schematics/angular:application": {
-          "strict": false
+          "strict": true
         }
       },
       "root": "",
@@ -17,6 +17,9 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "stylePreprocessorOptions": {
+              "includePaths": ["node_modules/",  "src/assets/styles"]
+            },
             "progress": false,
             "outputPath": "dist",
             "index": "src/index.html",
@@ -27,8 +30,10 @@
               "src/assets"
             ],
             "styles": [
+              "@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.css",
-              "node_modules/sweetalert2/src/sweetalert2.scss"
+              "src/assets/styles/style.scss",
+              "node_modules/ngx-toastr/toastr.css"
             ],
             "scripts": []
           },

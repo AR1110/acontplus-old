@@ -20,11 +20,21 @@
             <div class="card">
                 <md-toolbar class="md-table-toolbar md-default">
                     <div class="md-toolbar-tools">
-                        <div class="col-lg-9 col-md-9 col-sm-1">                           
+                        <div class="col-lg-9 col-md-9 col-sm-1">  
+                            <button type="button" class="btn btn-info" ng-click="openModalFiltro()">
+                                <icon class="fas fa-filter"></icon> Filtro
+                            </button>                         
                         </div>
                         <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
                             <form class="form-material">
-                                <input type="text" class="form-control" ng-keyup="getListaFilter()" ng-model="dataSearch.bySearch" placeholder="Buscar" />
+                                <div class="input-group">
+                                    <input type="text" class="form-control" ng-keyup="getListaFilter()" ng-model="dataSearch.bySearch" placeholder="Buscar" />
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-secondary btn-xs" ng-click="getConsolidaciones()">
+                                            <i class="fas fa-redo fa-xs"></i>
+                                        </button>
+                                    </div>
+                                </div>                                
                             </form>
                         </div>
                     </div>
@@ -57,7 +67,7 @@
                                                 </md-button>
                                             </md-menu-item> 
 
-                                            <md-menu-item ng-if="accion.editar">                                                                                        
+                                            <md-menu-item ng-if="!btnEditDisabled">                                                                                        
                                                 <md-button ng-click="openModalEditar(item)" ng-disabled="item.anulada">
                                                     <span md-menu-align-target><i class="ti-pencil"></i> Editar</span>
                                                 </md-button>
@@ -102,6 +112,7 @@
     </div>
     
 </div>
-@section Scripts{        
+@section Scripts{ 
+    <script src="~/js/services/storageService.js" asp-append-version="true"></script>       
     <script src="~/js/controllers/inventario/consolidacionInvCtrl.min.js" asp-append-version="true"></script>    
 }

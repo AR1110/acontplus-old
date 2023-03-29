@@ -1,7 +1,7 @@
 
 
 
-import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.16";
+import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.21";
 
 
 class ModalProformaCtrl extends ModalBaseCtrl{
@@ -88,7 +88,7 @@ class ModalProformaCtrl extends ModalBaseCtrl{
         
             let dataMedida = medidas[0];
 
-            console.log(this.dataArticulo)
+            
                 
             entity.idArticulo           = articulo.idArticulo;
             entity.codigo               = articulo.codigoArticulo;                
@@ -106,8 +106,7 @@ class ModalProformaCtrl extends ModalBaseCtrl{
             entity.idMedida             = dataMedida.idMedida; //Medida por defecto 
             entity.adicional            = datosAdicionales; //
 
-            console.log(JSON.parse(dataMedida.tarifas))
-            console.log(self)
+
             entity.articuloTarifas      = JSON.parse(dataMedida.tarifas);
             let tarifa                  = entity.articuloTarifas.find(item=>item.idTarifa===self.idTarifa);                                      
             entity.idTarifa             = self.idTarifa;  
@@ -124,7 +123,7 @@ class ModalProformaCtrl extends ModalBaseCtrl{
             self.data = Object.assign(self.data, self.uiGridInvoice.getTotales()); 
 
             this.focusColumnCantidad();
-
+            this.counterGridOptions();
 
             this.indexRow = this.gridOptions.data.findIndex(val => val.idArticulo === this.dataArticulo.articulo.idArticulo);           
 
@@ -133,14 +132,23 @@ class ModalProformaCtrl extends ModalBaseCtrl{
             console.log(error)            
         }
     }
+
+    counterGridOptions(){        
+        angular.forEach(this.gridOptions.data, (item, index)=>{
+            item.n = index + 1;
+        })
+       
+    }
     
 
 
     trimDetailDoc(){
         let tempDetails = [];
+        let orderIndex = 1;
         							 						
         for(let item of this.gridOptions.data){
-            tempDetails.push({             
+            tempDetails.push({  
+                orderIndex: orderIndex++,           
                 idProformaDetalle: item.idProformaDetalle || 0,
                 idArticulo: item.idArticulo,
                 idTarifa: item.idTarifa,
@@ -165,16 +173,58 @@ class ModalProformaCtrl extends ModalBaseCtrl{
         }
         return tempDetails;
     }
+
+    calcularPorcentajeDescuento() {
+        let valor = this.data.porcentajeDescuento || 0;
+        this.data.porcentajeDescuento = Number(valor);
+        if(typeof this.data.porcentajeDescuento !=="number" || this.data.porcentajeDescuento === ""){
+            this._tS.toastr('warning', 'Ingrese un Número Válido');
+            return
+        }
+
+        if( this.data.porcentajeDescuento <=100 ){
+            //redondeo del numero porcentaje 
+            this.data.porcentajeDescuento = this._fS.roundNumber(this.data.porcentajeDescuento, this.decimal.nroTotalSubTotal)            
+            this.setPorcentajeDescuentoAll(this.data.porcentajeDescuento);              
+        }else{
+            this.toast.toastr('warning', 'El Porcentaje de Descuento tiene que ser menor o igual a 100');
+        }
+    }
+
+    //Calcular Porcentaje  Descuento 
+    calcularDescuento() {
+        try {
+            let valor = this.data.totalDescuento || 0;
+            this.data.totalDescuento = Number(valor)
+            
+            if(typeof this.data.totalDescuento!=='number' || this.data.totalDescuento === ""){
+                this._tS.toastr('warning', 'Ingrese un númeto válido', 'Valor Descuento');
+                return
+            }
+    
+            if (this.data.totalDescuento <= this.uiGridInvoice.getSubTotalSinImpuesto()) {
+                let porcentajeDescuento = (this.data.totalDescuento * 100) / this.uiGridInvoice.getSubTotalSinImpuesto() || 0;               
+                this.data.porcentajeDescuento = this._fS.roundNumber(porcentajeDescuento, this.decimal.nroDescuentoDetalle);
+                this.setPorcentajeDescuentoAll(this.data.porcentajeDescuento)            
+            }else{
+                this._tS.toastr('warning', 'El Valor Descuento no puede ser mayor al total');
+            }  
+        } catch (error) {
+            console.log("CALCULO DE TOTAL DESCUENTO", error)
+        }            
+    }
+
 }
 
 
 
 export class ModalProformaNuevoCtrl extends ModalProformaCtrl{
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params']
+    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'storageService', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params']
 
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params){
+    constructor($scope, $timeout, $uibModalInstance, _storageSvc, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params){
         super({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS})
         const self = this;
+        this._storageSvc = _storageSvc;
 
         let {TIPO_REGISTRO} = _params;        
         this.TIPO_REGISTRO = TIPO_REGISTRO;
@@ -206,7 +256,7 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl{
                 this.cloneIdBodega = this.idBodega;
 
                 this.actividadTipoIva = resultsDataFormEstab[2][0]
-                console.log(this.actividadTipoIva)
+                        
             }else{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
             }
@@ -245,10 +295,22 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl{
                 decimal: this.decimal, 
                 actividadTipoIva: this.actividadTipoIva
             })
-            
 
-            if(localStorage.getItem('docsDetalle')){
-                this.restoreDetailStorage();
+            this.uiGridInvoice.idTarifa = this.idTarifa;
+            
+            
+            if(Object.keys(this._storageSvc.getObject("proformaDetail")).length>0){
+                this._storageSvc.restoreInvoiceDetail("proformaDetail").then(result=>{
+                    if(result.isConfirmed){
+                        this.gridOptions.data = JSON.parse(result.dataInvoiceDetail[result.value]);                           
+                        delete result.dataInvoiceDetail[result.value];
+                                        
+                        this._storageSvc.setObject("proformaDetail", result.dataInvoiceDetail) 
+                                                                                       
+                        this.data = Object.assign(this.data, this.uiGridInvoice.getTotales());  
+                    }
+
+                })
             }
             
             this.$scope.$apply();
@@ -281,14 +343,16 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl{
 
     async onSave(){                        
         try {            
-            showLoader();
+            
 
             if(!this.isValidaForm()) return
         
-            if(this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total>50 ){
-                this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')           
-                return
-            }
+            // if(this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total>50 ){
+            //     this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')           
+            //     return
+            // }
+
+            showLoader();
         
             this.nroDocumentoSecuencial = await this._commonSvc.generarNroDocumentoVenta({
                 idPuntoEmision: this.data.idPuntoEmision,
@@ -339,7 +403,7 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl{
                 }
                 if(response.id==="1"){
                     this._fS.sweetAlert('success', response.message, response.titleSms, 1000);                  
-                    console.log(response)
+                    
                     this.$uibModalInstance.close(response)                                       
                 }
             })
@@ -353,6 +417,60 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl{
             hideLoader();
         }     
     }
+
+
+
+    async closeModal(){
+
+        if(this.gridOptions.data.length>0){
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                  confirmButton: 'btn btn-success',
+                  denyButton:'btn btn-info ml-2',
+                  cancelButton: 'btn btn-danger ml-2'
+                },
+                buttonsStyling: false
+            })
+            
+            swalWithBootstrapButtons.fire({
+                title: 'Salir ?',
+                html: "<small>Tienes un documento en proceso, desea salir ahora?</small>",
+                icon: 'warning',
+                showCancelButton: true,
+                showConfirmButton:true,
+                showDenyButton:true,
+                confirmButtonText: 'Apartar',
+                denyButtonText: 'Si, salir',
+                cancelButtonText: 'No, cancelar!',
+                focusDeny:true,
+                reverseButtons: false
+            }).then(result=>{
+
+                if(result.isConfirmed){
+                    this.askToSaveStorage();
+                }
+
+                if(result.isDenied){
+                    this.$uibModalInstance.close();
+                }
+                
+            })
+            return 
+        }
+        this.$uibModalInstance.close();        
+    }
+
+
+    async askToSaveStorage(){
+        try {
+            await this._storageSvc.askToSaveDetailDoc("proformaDetail", this.gridOptions.data);
+            this.$uibModalInstance.close(); 
+        } catch (error) {
+            console.log(error)
+        }             
+    }
+
+
 }
 
 
@@ -433,6 +551,7 @@ export class ModalProformaDetalleCtrl extends ModalProformaCtrl{
                 decimal: this.decimal, 
                 actividadTipoIva: this.actividadTipoIva
             })
+            this.uiGridInvoice.idTarifa = this.idTarifa;
             
             //Cargamos los Datos 
             this.data = this.dataDocumento;
@@ -475,7 +594,7 @@ export class ModalProformaEditarCtrl extends ModalProformaCtrl{
         this.detalleDocumento       = detalleDocumento;
         this.infoAdicionalDocumento = infoAdicionalDocumento;
         this.actividadTipoIva       = actividadTipoIva;
-        console.log(this)
+        
     }
 
     async $onInit(){
@@ -528,6 +647,8 @@ export class ModalProformaEditarCtrl extends ModalProformaCtrl{
                 decimal: this.decimal, 
                 actividadTipoIva: this.actividadTipoIva
             })
+
+            this.uiGridInvoice.idTarifa = this.idTarifa;
             
             //Cargamos los Datos 
             this.data = this.dataDocumento;
@@ -566,10 +687,10 @@ export class ModalProformaEditarCtrl extends ModalProformaCtrl{
         try {                        
             if(!this.isValidaForm()) return
         
-            if(this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total>50 ){
-                this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')           
-                return
-            }               
+            // if(this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total>50 ){
+            //     this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')           
+            //     return
+            // }               
 
             let textAccion = 'Actualizar';   
             const swalWithBootstrapButtons = Swal.mixin({
@@ -707,6 +828,8 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl{
                 decimal: this.decimal, 
                 actividadTipoIva: this.actividadTipoIva
             })
+
+            this.uiGridInvoice.idTarifa = this.idTarifa;
             
             //Cargamos los Datos 
             this.data = this.dataDocumento;
@@ -750,10 +873,10 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl{
 
             if(!this.isValidaForm()) return
         
-            if(this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total>50 ){
-                this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')           
-                return
-            }
+            // if(this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total>50 ){
+            //     this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')           
+            //     return
+            // }
                       
             this.nroDocumentoSecuencial = await this._commonSvc.generarNroDocumentoVenta({
                 idPuntoEmision: this.data.idPuntoEmision,
@@ -804,7 +927,7 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl{
                 }
                 if(response.id==="1"){
                     this._fS.sweetAlert('success', response.message, response.titleSms, 1000);                  
-                    console.log(response)
+                    
                     this.$uibModalInstance.close(response)                                       
                 }
             })
@@ -892,7 +1015,7 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl{
                 if(response.code==="1"){
                     this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
                     let data = JSON.parse(response.payload)[0];
-                    console.log(data)
+                    
                     this.$uibModalInstance.close(data)                                       
                 }
             })
@@ -1030,7 +1153,7 @@ export class ModalProformaFiltroCtrl extends ModalProformaCtrl{
                 return
             }
 
-            console.log(moment(this.dataSearch.fechaInicio).isValid())
+            
             if (!moment(this.dataSearch.fechaInicio).isValid()) {
                 console.log('Invalid Date');
             } 

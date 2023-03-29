@@ -1,7 +1,10 @@
 ﻿using Helpers;
+using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System.Net;
 using System.Net.Http.Headers;
+using System.Text;
 
 namespace WebUI.ApiClient
 {
@@ -12,6 +15,21 @@ namespace WebUI.ApiClient
         private HttpClientHandler _httpClientHandler;
         private readonly string _baseUrl;
         private const string ClientUserAgent = "acontplus-api-client-v3";
+
+        public static string NormalizeBaseUrl(string url)
+        {
+            return url.EndsWith("/") ? url : url + "/";
+        }
+        public static string ConvertJsonString(object content)
+        {
+            if (content == null) { return string.Empty; }
+            return JsonConvert.SerializeObject(content, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+        }
+        public static HttpContent CreateHttpContent(object content)
+        {
+            string json = ConvertJsonString(content);
+            return new StringContent(json, Encoding.UTF8, "application/json");
+        }
         public ApiServer(string baseUrl, TimeSpan? timeout = null)
         {
             _baseUrl = ApiHelper.NormalizeBaseUrl(baseUrl);
@@ -31,10 +49,21 @@ namespace WebUI.ApiClient
 
             response.EnsureSuccessStatusCode();
         }
-        public async Task<T> PostAsync<T>(string url, object content)
+        public async Task<T> PostAsync<T>(string url, object content, HttpRequest request = null)
         {
             EnsureHttpClientCreated();
-            _httpClient.DefaultRequestHeaders.Authorization = null;
+            if (request != null)
+            {
+                request.Headers.TryGetValue("Authorization", out StringValues headerValues);
+                if (!string.IsNullOrEmpty(headerValues.FirstOrDefault().ToString()))
+                {
+                    _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", headerValues.FirstOrDefault().ToString().Replace("Bearer ", ""));
+                }
+            }
+            else
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = null;
+            }
             HttpResponseMessage response = await _httpClient.PostAsync(url, ApiHelper.CreateHttpContent(content));
             var data = JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
             return data;

@@ -1,21 +1,10 @@
-﻿using Domain.Dtos;
-using Domain.Models;
+﻿using Domain.Models;
 using Domain.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
 using DataAccess.Compras;
 using DataAccess.RetencionIvaRenta;
-using WebUI.ApiClient;
-using Microsoft.AspNetCore.StaticFiles;
-using System.Web;
-using System.Text;
-using DataAccess.FE;
-using WebUI.Utils;
-using Domain.Models.FE;
 using Helpers;
-using WebUI.Services;
-using HelpersNS20;
 using DataAccess;
 
 namespace WebUI.Controllers.Ingresos
@@ -28,13 +17,11 @@ namespace WebUI.Controllers.Ingresos
         private DataAccessObject _dao;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private IConfiguration _config;
-        private readonly string _urlApi = "";
         private readonly int _idRol;
 
         public RetencionCompraController(IConfiguration config, IHttpContextAccessor httpContextAccessor)
         {
             _config = config;
-            _urlApi = _config.GetSection("UrlApis").GetSection("AcontPlusApi").Value;
             _httpContextAccessor = httpContextAccessor;
             _dao = new DataAccessObject(_config);
             _gra = new GenerateRetencionDao(_config);

@@ -25,6 +25,8 @@ export  class ArticuloTarifaGridOption{
         this.precioCosto = precioCosto;
     }
 
+
+   
     get getPrecioCosto(){
         return this.precioCosto;
     }

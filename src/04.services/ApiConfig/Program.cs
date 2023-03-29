@@ -1,3 +1,6 @@
+using BL.JwtAuthenticationManger;
+using Helpers;
+
 namespace ApiConfig
 {
     public class Program
@@ -9,9 +12,27 @@ namespace ApiConfig
             // Add services to the container.
 
             builder.Services.AddControllers();
+
+            builder.Services.AddCustomJwtAuthentication();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
+            ConfigHelper.AddJsonFiles(builder.Configuration);
+
+            string[] origins = builder.Configuration.GetSection("SafeOrigins").Value.Split('|');
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                    policy =>
+                    {
+                        policy.AllowAnyHeader();
+                        policy.AllowAnyMethod();
+                        policy.WithOrigins(origins);
+                    });
+            });
 
             var app = builder.Build();
 
@@ -21,11 +42,21 @@ namespace ApiConfig
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            else
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
+
+            app.UseCors();
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
+
             app.UseAuthorization();
 
+            app.UseMiddleware<JWTMiddleware>();
 
             app.MapControllers();
 

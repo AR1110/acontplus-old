@@ -122,6 +122,10 @@ BEGIN
 				   ,@contribuyenteRimpe
 				   ,dbo.ufnGetDateEcuador()
 				   ,@nombreUsuario
+
+
+				INSERT INTO FactElect.Config_Comprob_Elect (codEstab,estab,isAutomatic)
+				SELECT @codEstab,@estab,0
 					
 		COMMIT TRAN 
 		SELECT '1'code,'Registrado Correctamente' AS 'message'

@@ -1,14 +1,14 @@
 ﻿
 
-const swalOffline = ()=>{
+const swalOffline = () => {
     Swal.fire({
-        html:`<small>Esperando la conexión...</small>`,
+        html: `<small>Esperando la conexión...</small>`,
         imageUrl: "/assets/images/offline.webp",
-        imageHeight:'150px',
-        allowOutsideClick:false,
-        allowEscapeKey:true,
-        showConfirmButton:false,
-        didOpen:()=>Swal.showLoading()
+        imageHeight: '150px',
+        allowOutsideClick: false,
+        allowEscapeKey: true,
+        showConfirmButton: false,
+        didOpen: () => Swal.showLoading()
     })
 }
 
@@ -27,7 +27,7 @@ let app = angular.module('acontPlusApp', [
     'ui.grid.autoResize',
     'ui.grid.expandable',
     'ui.grid.saveState',
-    'ngSanitize',   
+    'ngSanitize',
     'ngMaterial',
     'md.data.table',
     'fixed.table.header',
@@ -40,10 +40,55 @@ let app = angular.module('acontPlusApp', [
     'ngCookies',
     'angularUUID2',
     'angularUtils.directives.dirPagination',
-    'daterangepicker'
+    'daterangepicker',
+    'angular-jwt',
+    'matchMedia'
 ]);
 
 
+// Default environment variables
+let __env = {}
+
+// Import variables if present
+if (window) {
+    Object.assign(__env, window.__env)
+}
+
+function disableLogging($logProvider) {
+    $logProvider.debugEnabled(__env.enableDebug)
+}
+
+disableLogging.$inject = ['$logProvider']
+
+app.config(disableLogging)
+
+
+/**************************************************************************
+  * Log bootstrap message
+  *************************************************************************/
+
+function confirmBootstrap($log) {
+    $log.debug('Angular bootstrapped!')
+}
+
+confirmBootstrap.$inject = ['$log']
+
+app.run(confirmBootstrap)
+
+/**************************************************************************
+   * Make environment available in Angular
+   *************************************************************************/
+
+app.constant('__env', __env)
+
+function logEnvironment($log, __env) {
+    $log.debug('Environment variables:')
+    $log.debug(__env)
+}
+
+logEnvironment.$inject = ['$log', '__env']
+
+app.run(logEnvironment)
 
 //Configs
 
@@ -60,59 +105,127 @@ app.run(function (Idle) {
 
 
 //check connection offilne/online
-app.run(function($window, $rootScope) {
+app.run(function ($window, $rootScope) {
     $rootScope.online = navigator.onLine;
-   
+
     $window.addEventListener("offline", function () {
-        $rootScope.$apply(function() {
-            $rootScope.online = false;            
-            swalOffline();               
+        $rootScope.$apply(function () {
+            $rootScope.online = false;
+            swalOffline();
         });
     }, false);
 
     $window.addEventListener("online", function () {
-        $rootScope.$apply(function() {                 
+        $rootScope.$apply(function () {
             $rootScope.online = true;
             Swal.fire({
-                html:`<small>Recuperando la conexión...</small>`,
-                allowOutsideClick:false,
-                allowEscapeKey:true,
-                showConfirmButton:false,
-                timer:999
+                html: `<small>Recuperando la conexión...</small>`,
+                allowOutsideClick: false,
+                allowEscapeKey: true,
+                showConfirmButton: false,
+                timer: 999
             })
         });
     }, false);
 
-    if(!$rootScope.online){
+    if (!$rootScope.online) {
         swalOffline();
     }
 });
 
- app.run(function ($rootScope, $http, $location, $localStorage) {
-     // keep user logged in after page refresh
-     if ($localStorage.currentUser) {
-         $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.currentUser.token
-     }
+// app.run(function ($rootScope, $http, $location, $localStorage, jwtHelper) {
+//     // keep user logged in after page refresh
+//     if ($localStorage.currentUser) {
+//         $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.currentUser.token
+//         let decodedJwt = jwtHelper.decodeToken($localStorage.currentUser.token)
+//         $http.defaults.headers.common['X-IdUsuarioRol'] = decodedJwt.idUsuarioRol
+//         console.log(decodedJwt)
+//         //console.log($http.defaults)
+//     }
 
-     // redirect to login page if not logged in and trying to access a restricted page
-     //$rootScope.$on('$locationChangeStart', function (event, next, current) {
-     //    let publicPages = ['/login'];
-     //    let restrictedPage = publicPages.indexOf($location.path()) === -1;
-     //    if (restrictedPage && !$localStorage.currentUser) {
-     //        toastr.warning('error', 'Ha perdido session')
-     //        //$location.path('/Login');
-     //    }
-     //});
- })
+//     // redirect to login page if not logged in and trying to access a restricted page
+//     //$rootScope.$on('$locationChangeStart', function (event, next, current) {
+//     //    let publicPages = ['/login'];
+//     //    let restrictedPage = publicPages.indexOf($location.path()) === -1;
+//     //    if (restrictedPage && !$localStorage.currentUser) {
+//     //        toastr.warning('error', 'Ha perdido session')
+//     //        //$location.path('/Login');
+//     //    }
+//     //});
+// })
+
+app.factory('authInterceptorService', function ($q, $localStorage, jwtHelper) {
+    let authInterceptorServiceFactory = {}
+
+    let _request = (config) => {
+        config.headers = config.headers || {}
+        let authData = $localStorage.currentUser
+        if (authData) {
+            config.headers.Authorization = 'Bearer ' + authData.token
+            let decodedJwt = jwtHelper.decodeToken(authData.token)
+            //console.log(decodedJwt)
+            // const expiry = Number(decodedJwt?.exp)
+            // let expirationDate = (Date.now() > (expiry * 1000))
+            // console.log(expirationDate)
+            config.headers['X-IdUsuarioRol'] = decodedJwt.idUsuarioRol
+        }
+        return config
+    }
+
+    let _responseError = (rejection) => {
+        if (rejection.status == 401) {
+            let timerInterval = 0
+            Swal.fire({
+                icon: 'warning',
+                title: 'Authenticación',
+                text: 'Ha perdido session, inicie nuevamente',
+                timer: 6000,
+                timerProgressBar: true,
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                    timerInterval = setInterval(() => {
+                        const content = Swal.getHtmlContainer()
+                        if (content) {
+                            const b = content.querySelector('b')
+                            if (b) {
+                                b.textContent = Swal.getTimerLeft()
+                            }
+                        }
+                    }, 100)
+                },
+                willClose: () => {
+                    clearInterval(timerInterval)
+                }
+            }).then((result) => {
+                location.href = '/Login/Index'
+                if (result.dismiss === Swal.DismissReason.timer) {
+                    location.href = '/Login/Index'
+                }
+            })
+        }
+        return $q.reject(rejection)
+    }
+    authInterceptorServiceFactory.request = _request
+    authInterceptorServiceFactory.responseError = _responseError
+    return authInterceptorServiceFactory
+})
+
+app.config(function ($httpProvider) {
+    $httpProvider.interceptors.push('authInterceptorService')
+})
 
 //app.config(function ($httpProvider) {
 //    $httpProvider.useApplyAsync(true);
 //});
+
+
 //Settings for incons in angularjs materialize
-app.config(['$mdThemingProvider','$mdIconProvider', function ($mdThemingProvider, $mdIconProvider) {
+app.config(['$mdThemingProvider', '$mdIconProvider', function ($mdThemingProvider, $mdIconProvider) {
     // $mdThemingProvider.theme('default').primaryPalette('blue');
-    $mdIconProvider.fontSet('md', 'material-icons');
+    $mdIconProvider.fontSet('md', 'material-symbols-outlined');
 }]);
+
 
 /** Trasnlating to spanish buttons pagination ui.boostrap */
 app.config(['uibPaginationConfig', function (uibPaginationConfig) {
@@ -154,72 +267,57 @@ app.constant('sessionDataEntidad', JSON.parse(localStorage.getItem('userData')))
 //     $httpProvider.interceptors.push('interceptorApi');
 // }]);
 
-// app.factory('oauthHttpInterceptor', function ($localStorage) {
-//     return {
-//         request: function (config) {
-//             //if (config.headers.Authorization === 'Bearer') {
-//             //    config.headers.Authorization = 'Bearer ' + $localStorage.currentUser.token
-//             //}
-//              if ($localStorage.currentUser) {
-//                  config.headers.Authorization = 'Bearer ' + $localStorage.currentUser.token
-//      }
-//             return config;
-//         }
-//     };
-// });
+app.factory('decodeToken', function ($localStorage, jwtHelper) {
+    let authData = $localStorage.currentUser;
+    let decodedJwt = {};
+    if (authData) {
+        decodedJwt = jwtHelper.decodeToken(authData.token)
+    }
+    return decodedJwt
+})
 
-// app.config(function ($httpProvider) {
-//     $httpProvider.interceptors.push('oauthHttpInterceptor');
-// });
 
 app.factory('mainService', mainService);
 
-mainService.$inject = ['$http', 'Upload'];
+mainService.$inject = ['$http', 'Upload', '__env'];
 
-function mainService($http, Upload) {
+function mainService($http, Upload, __env) {
     let service = {};
 
-    function getData(method, url, data = null, showLoader=false) {        
+    function _getData(method, url, data = null, forApi = false) {
         return $http({
             method: method,
-            url: url,
-            data: data,
-            headers: {
-                //'Accept': 'application/json',
-                //'Content-Type': 'application/json',
-                'Access-Control-Request-Private-Network': true
-            }
+            url: (forApi) ? __env.apiUrl + url : url,
+            data: data
         }).then(response => {
             return response.data
         })
     }
 
-    function getDataFile(url, file, data = null) {
+    function _getDataFile(url, file, data = null, forApi = false) {
         return Upload.upload({
-            url: url,
+            url: (forApi) ? __env.apiUrl + url : url,
             data: { file: file, data: data },
         }).then(response => {
             return response.data
         })
     }
 
-    function getFile(method, url, data = null) {
+    function _getFile(method, url, data = null, forApi = false) {
         return $http({
             method: method,
-            url: url,
+            url: (forApi) ? __env.apiUrl + url : url,
             data: data,
             responseType: 'blob'
         }).then(response => {
             return response
         })
     }
-
-
-
-    service.getData = getData;
-    service.getDataFile = getDataFile;
-    service.getFile = getFile;
-    return service;
+    
+    service.getData = _getData
+    service.getDataFile = _getDataFile
+    service.getFile = _getFile
+    return service
 }
 
 //Toastr Notifications//
@@ -248,7 +346,7 @@ function modalService($uibModal) {
         openModal: function (controller, template, size, params, animation = true, windowClass = null, props = {}) {
             return $uibModal.open({
                 animation,
-                templateUrl: `/Home/RenderView?name=${template || 'Shared/ModalNotFound.cshtml'}`,
+                templateUrl: `/Home/RenderView?name=~/Views/${template || '~/Views/Shared/ModalNotFound.cshtml'}`,
                 controller: controller,
                 size,
                 windowClass,
@@ -274,10 +372,11 @@ function modalService($uibModal) {
          * @param {object} params {controller, template, size, params, keyboard=false, animation = true, windowClass = null, scope, props = {}}
          * @returns object 
          */
-        openModalCustom: function({controller, template, size, params, keyboard=false, animation = true, windowClass = null, windowTopClass, openedClass , scope, props = {}}){
+        openModalCustom: function ({ controller, template, size, params, keyboard = false, animation = true, windowClass = null, windowTopClass, openedClass, scope, props = {}, isRenderRazorPartial = false }) {
+            
             return $uibModal.open({
                 animation,
-                templateUrl: `/Home/RenderView?name=${template || 'Shared/ModalNotFound.cshtml'}`,
+                templateUrl: isRenderRazorPartial ? `/Home/RenderView?name=${template}` : `/Home/RenderView?name=~/Views/${template || 'Shared/ModalNotFound.cshtml'}`,
                 controller,
                 controllerAs: '$ctrl',
                 scope,
@@ -293,18 +392,18 @@ function modalService($uibModal) {
                 minWidth: props.minWidth,
                 minHeight: props.minHeight,
                 windowTopClass,
-                openedClass ,
+                openedClass,
                 resolve: {
                     params: function () {
                         return params;
                     }
-                }                                
+                }
             })
         },
         openModalSecond: function (controller, template, size, params, animation = true, windowClass = null, $scope, props = {}) {
             return $uibModal.open({
                 animation,
-                templateUrl: `/Home/RenderView?name=${template || 'Shared/ModalNotFound.cshtml'}`,
+                templateUrl: `/Home/RenderView?name=~/Views/${template || '~/Views/Shared/ModalNotFound.cshtml'}`,
                 controller,
                 controllerAs: '$ctrl',
                 scope: $scope,
@@ -406,31 +505,6 @@ app.directive('master', function () { //declaration
 })
 
 
-//Validate Date format
-app.directive('validDate', ['$timeout', 'formulario', function ($timeout, form) {
-    return {
-        scope: {
-            ngModel: '='
-        },
-        link: function (scope, elem, attr, ctrl) {
-            elem.on('blur', function () {
-                $timeout(function () {
-                    scope.ngModel = scope.ngModel || new Date();
-                    scope.$parent.getFechaVencimiento(scope.ngModel)
-                    elem.removeClass('is-invalid');
-                });
-            });
-            elem.on('keyup', function () {
-                if (isNaN(Date.parse(scope.ngModel))) {
-                    elem.addClass('is-invalid');
-                } else {
-                    // elem.removeClass('is-invalid');
-                    // elem.addClass('is-valid');                       
-                }
-            })
-        }
-    }
-}]);
 
 
 app.directive('decimal', function () {
@@ -513,19 +587,23 @@ app.directive('touppercase', function () {
         require: 'ngModel',
         restrict: 'A',
         link: function (scope, element, attrs, modelCtrl) {
-            element.on("keydown", event=>{
+
+
+
+            element.on("keydown", event => {
                 teclaAnterior = teclaAnterior + " " + event.keyCode;
                 var arregloTA = teclaAnterior.split(" ");
                 if (event.keyCode == 32 && arregloTA[arregloTA.length - 2] == 32) {
-                  event.preventDefault();
+                    event.preventDefault();
                 }
             })
 
-            function removeAccents(input){               
-                let inputText = input || "";
+            function removeAccents(input) {
+
+                let inputText = input.replace(/[\n\r]+/g, ' ') || " ";
                 inputText = inputText.normalize('NFD')
-                                    .replace(/([^n\u0300-\u036f]|n(?!\u0303(?![\u0300-\u036f])))[\u0300-\u036f]+/gi,"$1").normalize();
-                inputText = inputText.replace(/[`#$%^*Ç¨_|+\=?'´",<>\{\}\[\]\\]/gi, '').trim()               
+                    .replace(/([^n\u0300-\u036f]|n(?!\u0303(?![\u0300-\u036f])))[\u0300-\u036f]+/gi, "$1").normalize();
+                inputText = inputText.replace(/[`#$^*Ç¨_|+\=?'´",<>\{\}\[\]\\]/gi, '').trim()
                 modelCtrl.$setViewValue(inputText);
                 modelCtrl.$render();
                 return inputText.toUpperCase();
@@ -543,7 +621,7 @@ app.directive('tolowercase', function () {
     return {
         require: 'ngModel',
         link: function (scope, element, attrs, modelCtrl) {
-            modelCtrl.$parsers.push(function (input) {                
+            modelCtrl.$parsers.push(function (input) {
                 return input ? input.toLowerCase() : "";
             });
             element.css("text-transform", "lowercase");
@@ -653,6 +731,7 @@ app.directive('keyboardDisable', function () {
     }
 })
 
+
 //FILTERS GENERAL 
 app.filter('estadoPrimario', function ($sce) {
     return function (text) {
@@ -676,62 +755,71 @@ app.filter('tipo', function ($sce) {
         return text ? $sce.trustAsHtml("<span class='text-success'>PROVEEDOR</span>") : $sce.trustAsHtml("<span class='text-info'>CLIENTE</span>");
     }
 });
-
+app.filter('ambienteSri', function ($sce) {
+    return function (text) {
+        return text ? $sce.trustAsHtml("<span class='text-success'>PRUEBAS</span>") : $sce.trustAsHtml("<span class='text-info'>PRODUCCIÓN</span>");
+    }
+})
+app.filter('tipoEmisionSri', function ($sce) {
+    return function (text) {
+        return text ? $sce.trustAsHtml("<span class='text-success'>NORMAL</span>") : $sce.trustAsHtml("<span class='text-info'></span>");
+    }
+})
 //Filter tipo Iva 
 app.filter('mapTipoIva', () => {
-    return function (idTipoIva, tipoIvas) {          
+    return function (idTipoIva, tipoIvas) {
         let result = tipoIvas.reduce((acc, curr) => ({ ...acc, [curr.idTipoIva]: curr.descripcion }), { 0: 'Tipo Iva' });
         return !idTipoIva ? result[0] : result[idTipoIva];
     }
 });
 
-app.filter('cellFilterTipoIva', ()=>{
-    let result = {
-        '0': 'Seleccione IVA'
-    };
-    return (input, context)=>{
-        
+app.filter('cellFilterTipoIva', () => {
+    let result = { };
+    
+    return (input, context) => {
+
         let fieldLevel = (context.editDropdownOptionsArray == undefined) ? context.col.colDef : context;
         let map = fieldLevel.editDropdownOptionsArray;
         let idField = fieldLevel.editDropdownIdLabel;
         let valueField = fieldLevel.editDropdownValueLabel;
-       
+
         if (typeof map !== "undefined") {
             for (let value of map) {
-                result[value.idTipoIva] = value.descripcion
-            }                   
+               result[value[idField]] = value.descripcion
+             //  result[idField] = value.descripcion
+            }
         }
-        
+     
         if (!input) {
             return result[0];
         } else {
             return result[input];
-        } 
+        }
     }
 })
 
-app.filter('cellFilterBodega', ()=>{
+app.filter('cellFilterBodega', () => {
     let result = {
         '0': 'Seleccione Bodega'
     };
-    return (input, context)=>{
-        
+    return (input, context) => {
+
         let fieldLevel = (context.editDropdownOptionsArray == undefined) ? context.col.colDef : context;
         let map = fieldLevel.editDropdownOptionsArray;
         let idField = fieldLevel.editDropdownIdLabel;
         let valueField = fieldLevel.editDropdownValueLabel;
-       
+
         if (typeof map !== "undefined") {
             for (let value of map) {
                 result[value.idBodega] = value.descripcion
-            }                   
+            }
         }
-        
+
         if (!input) {
             return result[0];
         } else {
             return result[input];
-        } 
+        }
     }
 })
 
@@ -739,7 +827,7 @@ app.directive('inputFocus', function ($timeout) {
     return {
         restrict: 'AC',
         link: function (_scope, _element) {
-            $timeout(function () {                
+            $timeout(function () {
                 _element[0].focus();
             }, 0);
         }
@@ -769,14 +857,14 @@ app.directive('stopEvent', function () {
             });
         }
     };
- });
+});
 
 // app.directive('autoocus')
 
 //Filter bodegas 
 app.filter('mapBodega', () => {
-    return function (idBodega, bodegas) {  
-        if(!bodegas || bodegas.length===0) return { 0: 'Seleccionar bodega' }   
+    return function (idBodega, bodegas) {
+        if (!bodegas || bodegas.length === 0) return { 0: 'Seleccionar bodega' }
 
         let result = bodegas.reduce((acc, curr) => ({ ...acc, [curr.idBodega]: curr.descripcion }), { 0: 'Seleccionar bodega' });
         return !idBodega ? result[0] : result[idBodega];

@@ -1,3 +1,5 @@
+USE [AcontPlus]
+go
 GO
 /****** Object:  StoredProcedure [FactElect].[ASPComprobanteImportacionInsert]    Script Date: 8/4/2022 9:30:34 PM ******/
 SET ANSI_NULLS ON

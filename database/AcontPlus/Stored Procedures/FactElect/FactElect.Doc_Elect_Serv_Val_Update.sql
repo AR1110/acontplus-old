@@ -22,7 +22,7 @@ GO
 IF OBJECT_ID(N'FactElect.Doc_Elect_Serv_Val_Update', N'P') IS NOT NULL
 DROP PROCEDURE FactElect.Doc_Elect_Serv_Val_Update 
 GO
-CREATE PROCEDURE FactElect.Doc_Elect_Serv_Val_Update @id INT ,@codEstado INT
+CREATE PROCEDURE FactElect.Doc_Elect_Serv_Val_Update @id BIGINT ,@codEstado INT
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from

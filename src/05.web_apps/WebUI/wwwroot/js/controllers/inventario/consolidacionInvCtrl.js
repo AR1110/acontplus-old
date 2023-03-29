@@ -15,6 +15,9 @@ function consolidacionInvCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nomb
         $scope.accion = accion[0];
     }
 
+    
+    $scope.btnEditDisabled = false;
+
     const TIPO_DOC = _commonSvc.tipoDoc['CIV'];
 
     $scope.dataSearch = {
@@ -25,13 +28,17 @@ function consolidacionInvCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nomb
     $scope.getConsolidaciones = async()=>{
         try {
             showLoader();
+            $scope.consolidaciones = [];
+
             await _mS.getData('get', '/ConsolidacionInventario/Get?json=' + JSON.stringify($scope.dataSearch)).then(response=>{
                 if(response.code==="0"){
                     console.warn(response)                    
                 }
 
                 $scope.consolidaciones =  JSON.parse(response.payload) || []; 
-                $scope.cloneConsolidaciones = JSON.parse(JSON.stringify($scope.consolidaciones))                
+                $scope.cloneConsolidaciones = JSON.parse(JSON.stringify($scope.consolidaciones)) 
+                let total = $scope.consolidaciones.map(val=>val.total).reduce((acc, curr)=>acc+curr, 0);
+                $scope.total = _form.roundNumber(total, 5);                 
             })
         } catch (error) {
             console.log(error)
@@ -41,20 +48,22 @@ function consolidacionInvCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nomb
     }
 
     $scope.initiload = ()=>{
-        _mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response=>{
-            let results = JSON.parse(response.payload) || [];
-            let establecimientos = results[0];
+        _commonSvc.getEstabAsign().then(response=>{            
+            let establecimientos = response;
             let codEstab = establecimientos.length>0?establecimientos[0].codEstab: 0;            
             $scope.dataSearch.codEstab = codEstab;
             $scope.getConsolidaciones();
-        })
+
+        })                
     }
     $scope.initiload();
 
 
     $scope.getListaFilter= ()=>{
         let consolidaciones = JSON.parse(JSON.stringify($scope.cloneConsolidaciones))
-        $scope.consolidaciones = $filter("filter")(consolidaciones, $scope.dataSearch.bySearch);        
+        $scope.consolidaciones = $filter("filter")(consolidaciones, $scope.dataSearch.bySearch);  
+        let total = $scope.consolidaciones.map(val=>val.total).reduce((acc, curr)=>acc+curr, 0);
+        $scope.total = _form.roundNumber(total, 5);        
     }
 
     
@@ -74,6 +83,22 @@ function consolidacionInvCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nomb
             controller,
             template,
             params
+        })
+    }
+
+
+    $scope.openModalFiltro = async ()=>{
+        let {MODAL_FILE_CTRL, MODAL_FILTRO} = _nombreModalConst.consolidacion_inv;
+        let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_FILTRO['controller']];        
+        let template   = MODAL_FILTRO['template'];
+        
+        let params = {
+           
+        }
+      
+        let modalRef = _modalSvc.openModalCustom({
+            controller,
+            template
         })
     }
 

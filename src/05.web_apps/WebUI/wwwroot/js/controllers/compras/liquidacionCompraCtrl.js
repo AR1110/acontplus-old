@@ -283,27 +283,40 @@ function liquidacionCompraCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nom
 
 
      //Reporte 
-     $scope.getReport = function (item) {                   
-        let dataParms = {
-            codEstab: item.codEstab,
-            idFacturaCompra: item.idFacturaCompra,            
-        }
+     $scope.getReport = function (item) {       
         
-        let parameters = {
-            reportParams: JSON.stringify({
-                codigo: 'RFC', 
-                codEstab: item.codEstab,
-                format: 'pdf',
-                aditionalParams: []
-            }),
-            dataParams: JSON.stringify(dataParms),
-            sendEmail:false
+        let format = 'pdf';
+        let dataParms = {            
+            id: item.idLiquidacionCompra,
+            codEstab: item.codEstab,
+            codigo: 'RLC',
+            format,
         }
+
+        const parameters = {
+            dataParams: JSON.stringify(dataParms)
+        }
+
+        // let dataParms = {
+        //     codEstab: item.codEstab,
+        //     id: item.idLiquidacionCompra,            
+        // }
+        
+        // let parameters = {
+        //     reportParams: JSON.stringify({
+        //         codigo: 'RLC', 
+        //         codEstab: item.codEstab,
+        //         format: 'pdf',
+        //         aditionalParams: []
+        //     }),
+        //     dataParams: JSON.stringify(dataParms),
+        //     sendEmail:false
+        // }
         showLoader();
-        _commonSvc.getReport({
+        _commonSvc.getReportDynamic({
             parameters,
-            formatType:'pdf'
-        })        
+            format
+        })       
     }
 
 

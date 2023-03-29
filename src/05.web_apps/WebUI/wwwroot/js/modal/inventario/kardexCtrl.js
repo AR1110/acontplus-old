@@ -86,6 +86,9 @@ export class KardexCtrl{
                         {
                              title:"Usuario", field:"usuario", hozAlign:"center",  headerSort:false, width:150
                         },
+                        {
+                             title:"Estado", field:"estado", hozAlign:"center",  headerSort:false, width:100
+                        },
 
                     ],
                 },
@@ -96,13 +99,13 @@ export class KardexCtrl{
                             title: "Medida", field: "medidaEntrada", width: 70, headerSort: false, cssClass: "table-entradas",
                         },
                         {
-                            title: "Cant.", field: "cantidadEntrada", bottomCalc: this.sumCantidadEntrada, width: 60, headerSort: false, cssClass: "table-entradas",
+                            title: "Cant.", field: "cantidadEntrada", width: 60, headerSort: false, cssClass: "table-entradas",
                         },
                         {
                             title: "Costo U.", field: "costo", hozAlign: "center", headerSort: false, sorter: "date", width: 75, cssClass: "table-entradas",
                         },
                         {
-                            title: "Total", field: "totalEntrada", bottomCalc: this.sumTotalEntrada, hozAlign: "center", headerSort: false, sorter: "date", width: 75, cssClass: "table-entradas",
+                            title: "Total", field: "totalEntrada",  hozAlign: "center", headerSort: false, sorter: "date", width: 75, cssClass: "table-entradas",
                         },
                     ],
                 },
@@ -113,13 +116,13 @@ export class KardexCtrl{
                             title: "Medida", field: "medidaSalida", width: 70, headerSort: false, cssClass: "table-salidas",
                         },
                         {
-                            title: "Cant.", field: "cantidadSalida", bottomCalc: this.sumCantidadSalida, width: 60, headerSort: false, cssClass: "table-salidas",
+                            title: "Cant.", field: "cantidadSalida", width: 60, headerSort: false, cssClass: "table-salidas",
                         },
                         {
                             title: "P. Venta", field: "venta", hozAlign: "center", headerSort: false, sorter: "date", width: 75, cssClass: "table-salidas",
                         },
                         {
-                            title: "Total", field: "totalSalida", bottomCalc: this.sumTotalSalida, hozAlign: "center", headerSort: false, width: 75, cssClass: "table-salidas",
+                            title: "Total", field: "totalSalida", hozAlign: "center", headerSort: false, width: 75, cssClass: "table-salidas",
                         },
                     ],
                 },
@@ -127,13 +130,13 @@ export class KardexCtrl{
                     title: "Saldos",
                     columns: [
                         {
-                            title: "Cant. ", field: "saldo", width: 60, headerSort: false, bottomCalc: this.sumTotalCantSaldo, cssClass: "table-saldos",
+                            title: "Cant. ", field: "saldo", width: 60, headerSort: false,  cssClass: "table-saldos",
                         },
                         {
-                            title: "Costo U.", field: "precioCosto", width: 70, headerSort: false, bottomCalc: this.sumTotalPrecioCostoSaldo, sorter: "number", cssClass: "table-saldos",
+                            title: "Costo U.", field: "precioCosto", width: 70, headerSort: false,  sorter: "number", cssClass: "table-saldos",
                         },
                         {
-                            title: "Total", field: "totalGeneral", hozAlign: "center", width: 60, headerSort: false, sorter: "number", bottomCalc: this.sumTotalGeneral, bottomCalcParams: { precision: 3 }, cssClass: "table-saldos",
+                            title: "Total", field: "totalGeneral", hozAlign: "center", width: 60, headerSort: false, sorter: "number", cssClass: "table-saldos",
                         },
                     ],
                 },
@@ -170,7 +173,7 @@ export class KardexCtrl{
     }
 
     sumTotalGeneral = ()=>{
-        return this.totalGenetal || 0
+        return this.data.totalGenetal || 0
     }
 
     async openModalSearch(){     
@@ -225,16 +228,15 @@ export class KardexCtrl{
                         this.drawTable();
                         return
                     }
+                                     
+                    this.data.cantTotalEntrada = this.calculoTotales("cantidadEntrada");
+                    this.data.totalEntrada = this.calculoTotales("totalEntrada");
+
+                    this.data.cantTotalSalida = this.calculoTotales("cantidadSalida");
+                    this.data.totalSalida = this.calculoTotales("totalSalida");
                     
-                    let lastObjKardex = this.kardexs.at(-1);
-                    
-                    this.data.cantTotalEntrada = lastObjKardex.entrada;
-                    // this.data.totalEntrada = totalEntrada;
-                    // this.data.cantTotalSalida = cantTotalSalida;
-                    this.data.totalSalida = lastObjKardex.salida;
-                    this.data.stock = lastObjKardex.stock;
-                    this.precioCostoSaldo = lastObjKardex.precioCosto;
-                    this.totalGeneral     = lastObjKardex.totalGeneral;
+                    this.data.stock       = this.calculoTotales("saldo");                    
+                    this.data.totalGenetal     = this.calculoTotales("totalGeneral");                    
                     
                     this.drawTable();
                     hideLoader();  
@@ -244,6 +246,12 @@ export class KardexCtrl{
             hideLoader();
             console.error(error)
         }            
+    }
+
+    calculoTotales(prop){
+        let total =  this.kardexs.map(item=>(item[prop] || 0)).reduce((obj, cur)=> Number(obj) + Number(cur), 0);
+        
+        return this.form.roundNumber(total, 3)
     }
 
     
@@ -308,140 +316,18 @@ export class KardexCtrl{
 
 
     async openModalTipoDocumento(item){ 
-        let data = {}, modal = {}, dataTipoDoc = {};
-
-        switch(item.tipoDoc)   {
-            case 'FC':
-                data = {
-                    idFacturaCompra: item.idComprobante,
-                    nroDocumento: item.nroDocumento
-                }
-                
-                dataTipoDoc = await this._commonSvc.getDataTipoDocCompra({
-                    item: data,
-                    codigoDocumento: item.tipoDoc            
-                })
-
-                if(!dataTipoDoc.isComplete) return
-      
-                const {factura_compra} = this._nombreModal;
-                modal =  await import('./../' + factura_compra.MODAL_CTRL);
-                this._modalSvc.openModalSecond(modal.ModalDetalleCtrl, 'FacturaCompra/'+factura_compra.MODAL_DETALLE_CSHTML, 'xl', dataTipoDoc, true, 'uibModalFullScreen')                
-                
-                break
-            case 'FV':
-
-                data = {
-                    idFactura: item.idComprobante,
-                    nroDocumento: item.nroDocumento
-                }
-                dataTipoDoc = await this._commonSvc.getDataTipoDocVenta({
-                    item: data,
-                    codigoDocumento: item.tipoDoc
-                })
-                
-                if(!dataTipoDoc.isComplete) return
-                
-                const {MODAL_CTRL, MODAL_DETALLE_CSHTML} = this._nombreModal.factura_venta
-                const {ModalDetalleCtrl} =  await import('./../' + MODAL_CTRL);
-                this._modalSvc.openModalSecond(ModalDetalleCtrl, 'FacturaVenta/'+ MODAL_DETALLE_CSHTML, 'xl', dataTipoDoc, true, 'uibModalFullScreen')                
-                break
-            case 'NE':
-                data = {
-                    idNotaEntrega: item.idComprobante,
-                    nroDocumento: item.nroDocumento
-                }
-                dataTipoDoc = await this._commonSvc.getDataTipoDocVenta({
-                    item: data,
-                    codigoDocumento: item.tipoDoc
-                })                
-                
-                if(!dataTipoDoc.isComplete) return
-                
-                const {nota_entrega} = this._nombreModal;
-                modal =  await import('./../' + nota_entrega.MODAL_CTRL);
-                this._modalSvc.openModalSecond(modal.ModalDetalleCtrl, 'NotaEntrega/'+ nota_entrega.MODAL_DETALLE_CSHTML, 'xl', dataTipoDoc, true, 'uibModalFullScreen')                                
-                break
-
-            case 'LC':                
-                data = {
-                    idLiquidacionCompra: item.idComprobante,
-                    nroDocumento: item.nroDocumento
-                }
-                dataTipoDoc = await this._commonSvc.getDataTipoDocCompra({
-                    item: data,
-                    codigoDocumento: item.tipoDoc
-                })                
-                
-                if(!dataTipoDoc.isComplete) return
-                
-                const {liquidacion_compra} = this._nombreModal;
-                modal =  await import('./../' + liquidacion_compra.MODAL_CTRL);
-                this._modalSvc.openModalSecond(modal.ModalDetalleCtrl, 'LiquidacionCompra/'+ liquidacion_compra.MODAL_DETALLE_CSHTML, 'xl', dataTipoDoc, true, 'uibModalFullScreen')                                
-                break
-            case 'IB':                
-                data = {
-                    idIngresoBodega: item.idComprobante,
-                    nroDocumento: item.nroDocumento
-                }
-                dataTipoDoc = await this._commonSvc.getDataTipoDocCompra({
-                    item: data,
-                    codigoDocumento: item.tipoDoc
-                })                
-                
-                if(!dataTipoDoc.isComplete) return
-                
-                const {ingreso_bodega} = this._nombreModal;
-                modal =  await import('./../' + ingreso_bodega.MODAL_CTRL);
-                this._modalSvc.openModalSecond(modal.ModalDetalleCtrl, 'IngresoBodega/'+ ingreso_bodega.MODAL_DETALLE_CSHTML, 'xl', dataTipoDoc, true, 'uibModalFullScreen')                                
-                break
-            case 'CIV':
-                data = {
-                    idConsolidacionInventario: item.idComprobante,
-                    nroDoc: item.nroDocumento
-                }
-
-                dataTipoDoc = await this._commonSvc.getDataConsolidacionInventario({
-                    item: data,
-                    codigoDocumento: item.tipoDoc
-                })
-                if(!dataTipoDoc.isComplete) return
-                const { consolidacion_inv } = this._nombreModal
-                modal = await import('./../../modal/' + consolidacion_inv.MODAL_CTRL);
-                this._modalSvc.openModalSecond(modal.ModalDetalleCtrl, 'ConsolidacionInventario/' + consolidacion_inv.MODAL_DETALLE_CSHTML, 'xl', dataTipoDoc, true, 'uibModalFullScreen')        
-                break
-
-            case 'NCP':
-                data = {
-                    idNotaCreditoProveedor: item.idComprobante,
-                    nroDocumento: item.nroDocumento
-                }
-
-                dataTipoDoc = await this._commonSvc.getDataTipoDocCompra({
-                    item: data,
-                    codigoDocumento: item.tipoDoc
-                })
-                if(!dataTipoDoc.isComplete) return
-                const { nota_credito_prov } = this._nombreModal
-                modal = await import('./../../modal/' + nota_credito_prov.MODAL_CTRL);
-                this._modalSvc.openModalSecond(modal.ModalDetalleCtrl, 'NotaCreditoProveedor/' + nota_credito_prov.MODAL_DETALLE_CSHTML, 'xl', dataTipoDoc, true, 'uibModalFullScreen')        
-                break
-            
-            case 'NC':
-                data = {
-                    idNotaCredito: item.idComprobante,
-                    nroDoc: item.nroDocumento
-                }
-                dataTipoDoc =  await this._commonSvc.getDataTipoDocVenta({
-                    item: data,
-                    codigoDocumento: item.tipoDoc
-                })
-                if(!dataTipoDoc.isComplete) return
-        
-                const {nota_credito_cliente } = this._nombreModal;
-                modal =  await import('./../../modal/' + nota_credito_cliente.MODAL_CTRL);
-                this._modalSvc.openModalSecond(modal.ModalDetalleCtrl, 'NotaCreditoCliente/'+ nota_credito_cliente.MODAL_DETALLE_CSHTML, 'xl', dataTipoDoc, true, 'uibModalFullScreen')       
-        }        
+        try {
+            if (item.hasOwnProperty("idComprobante") && item.hasOwnProperty("tipoDoc")) {
+                this._commonSvc.viewDetailDocument({
+                    id: item.idComprobante,
+                    codigoDocumento: item.tipoDoc,
+                    size: 'xl',
+                    windowClass: 'uibModalFullScreen'
+                })  
+            }                                   
+        } catch (error) {
+            console.log(error)
+        }       
     }
 
 }
@@ -503,24 +389,17 @@ export class ModalFiltroKardex{
             this.dataSearch.mes = this._params.dataSearch.mes;
         }
 
-        this._mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response=>{
-            if(response.code=="0"){
-                toastr.warning(response.message)
+        this._commonSvc.getEstabAsign().then(response=>{
+            this.establecimientos = response;
+            
+            if(this.establecimientos.length>0){                    
+                this.dataSearch.codEstab = this.establecimientos[0].codEstab;
+                this.getBodegas();
+            }else{
+                taostr.warning('warning', 'NO TIENES ASIGNADO NINGÚN ESTABLECIMIENTO');
             }
-            if(response.code==="1"){
-                let dataMain = JSON.parse(response.payload)
-                
-                this.establecimientos = dataMain[0];
-
-                if(this.establecimientos.length>0){                    
-                    this.dataSearch.codEstab = this.establecimientos[0].codEstab;
-                    this.getBodegas();
-                }else{
-                    taostr.warning('warning', 'NO TIENES ASIGNADO NINGÚN ESTABLECIMIENTO');
-                }
-            }            
         })
-
+       
         this._commonSvc.getGestionAlmacen().then(response=>{
             this.estadoMovimientos = response.movimientosStocks;
             

@@ -198,6 +198,28 @@ class ModalBaseCtrl{
 
 
 
+
+    //Editar Transportista 
+    async openModalTransportistaUpdate(){
+        let {MODAL_CTRL, MODAL_EDITAR} = this._nombreModalConst.transportista;
+        let controller = (await import('./../../modal/' + MODAL_CTRL))[MODAL_EDITAR['controller']];
+        let template   = MODAL_EDITAR['template'];
+                        
+        let modalRef = this._modalSvc.openModalCustom({
+            controller,
+            template,
+            size:'md',
+            params: Object.assign({}, this.transportista)
+        })        
+
+        modalRef.result.then(response=>{
+            if(typeof response !=='object') return
+            this.transportista = JSON.parse(response.payload)[0]                     
+        })
+    }
+
+
+
     closeModal(){
         this.$uibModalInstance.close()
     }
@@ -451,6 +473,24 @@ class ModalGuiaRemisionCtrl extends ModalBaseCtrl{
        
     }
 
+    async openModalVehiculoEditar(){
+        let {MODAL_CTRL, MODAL_NUEVO} = this._nombreModalConst.vehiculo;
+        let controller = (await import('./../../modal/' + MODAL_CTRL))[MODAL_NUEVO['controller']];
+        let template   = MODAL_NUEVO['template'];
+        
+        let modalRef = this._modalSvc.openModalCustom({
+            controller,
+            template,
+            size:'md',
+            params: Object.assign({}, this.vehiculo)
+        })
+
+        modalRef.result.then(response=>{
+            if(typeof response !=='object') return
+            this.vehiculo = JSON.parse(response.payload)[0]            
+        })
+    }
+
 
     empleadoSearch(textSearch) {
         return this._mS.getData('get','/Empleado/Search?busqueda=' + textSearch).then(response => {
@@ -676,9 +716,9 @@ export class ModalGuiaRemisionNuevoCtrl extends ModalGuiaRemisionCtrl{
                 guia.idVehiculo      = this.vehiculo.idVehiculo;
                 guia.idEmpleado      = this.empleado.idEmpleado
                 
-                guia.fechaEmision = this._fS.formatDateTimeZone(this.data.fechaEmision, "YYYY-MM-DD HH:mm:ss A" );
-                guia.fechaInicio  = this._fS.formatDateTimeZone(this.data.fechaInicio, "YYYY-MM-DD HH:mm:ss A" );
-                guia.fechaFin     = this._fS.formatDateTimeZone(this.data.fechaFin, "YYYY-MM-DD HH:mm:ss A" );
+                guia.fechaEmision = this._fS.formatDateTimeZone(this.data.fechaEmision );
+                guia.fechaInicio  = this._fS.formatDateTimeZone(this.data.fechaInicio );
+                guia.fechaFin     = this._fS.formatDateTimeZone(this.data.fechaFin );
 
                 let data = {
                     guia,
@@ -821,16 +861,16 @@ export class ModalGuiaRemisionEditarCtrl extends ModalGuiaRemisionCtrl{
                 guia.idVehiculo      = this.vehiculo.idVehiculo;
                 guia.idEmpleado      = this.empleado.idEmpleado
                 
-                guia.fechaEmision = this._fS.formatDateTimeZone(this.data.fechaEmision, "YYYY-MM-DD HH:mm:ss A" );
-                guia.fechaInicio  = this._fS.formatDateTimeZone(this.data.fechaInicio, "YYYY-MM-DD HH:mm:ss A" );
-                guia.fechaFin     = this._fS.formatDateTimeZone(this.data.fechaFin, "YYYY-MM-DD HH:mm:ss A" );
+                guia.fechaEmision = this._fS.formatDateTimeZone(this.data.fechaEmision );
+                guia.fechaInicio  = this._fS.formatDateTimeZone(this.data.fechaInicio );
+                guia.fechaFin     = this._fS.formatDateTimeZone(this.data.fechaFin );
 
                 let data = {
                     guia,
                     detalle: this.gridOptions.data,
                     adicional: this.infoAdicionalDocumento
                 }
-                
+                console.log(guia)
                 await this._mS.getData('put', '/GuiaRemision/Update?id=' + this.data.idGuiaRemision, data).then(response=>{                    
                     if (response.id === "0") {                       
                         this._fS.sweetAlert('warning', response.message, response.titleSms);                        

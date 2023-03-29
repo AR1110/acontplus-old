@@ -34,14 +34,17 @@
         $scope.getCheques = function(){            
             try {
                 showLoader();
+                $scope.cheques = []
                 _mS.getData('get', '/Cheque/Get?json='+ JSON.stringify($scope.dataSearch)).then(response => {
+                    console.log(response)
                     if (response.id == "0") {
                         hideLoader();
-                        toast.toastr('warning', response.message);
+                        $scope.cheques = []; 
+                        console.log(response)
                         return
                     }                           
-                    $scope.cheques = JSON.parse(response.data) || [];
-                   
+                    $scope.cheques = response.data ===''? []: JSON.parse(response.data) || [];
+                   console.log($scope.cheques)
                     $scope.cloneCheques = JSON.parse(JSON.stringify($scope.cheques))                                                    
                     $scope.getSumColumnaValor(); 
                     hideLoader();            
@@ -52,19 +55,21 @@
         }
 
         $scope.initiload = ()=>{
-            _mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response=>{
-                let results = JSON.parse(response.payload) || [];
-                $scope.establecimientos = results[0];
+            commonSvc.getEstabAsign().then(response=>{
+                $scope.establecimientos = response;
                 let codEstab = $scope.establecimientos.length>0?$scope.establecimientos[0].codEstab: 0;            
                 $scope.dataSearch.codEstab = codEstab;
                 $scope.getCheques();
-            })
+
+            })           
         }
         $scope.initiload();
 
 
         $scope.getSumColumnaValor = function(){
+
             const total = $scope.cheques.map(item=>item.valor).reduce((previousValue, currentValue)=>previousValue + currentValue, 0)
+            
             $scope.total = form.roundNumber(total, 5)
         }
         
@@ -97,7 +102,8 @@
             }
         }
 
-        $scope.selectProveedorFiltro = (item)=>{            
+        $scope.selectProveedorFiltro = (item)=>{    
+               
             $scope.dataSearch.byPersona=item.proveedor.numeroIdentificacion           
         }
 
@@ -109,8 +115,9 @@
             if(form.campo($scope.proveedorFiltro.nombreFiscal)) $scope.dataSearch.byPersona = null;            
         }
 
-        $scope.selectedClienteSearchFiltro= (item)=>{            
-            $scope.dataSearch.byPersona=item.cliente.numeroIdentificacion;
+        $scope.selectedClienteSearchFiltro= (item)=>{   
+            
+            $scope.dataSearch.byPersona=item.numeroIdentificacion;
         }
 
         $scope.onChangeFechaFiltro = ()=>{
@@ -224,6 +231,7 @@
 
         $scope.postCheck = (url)=>{                                   
             _mS.getData('post', url).then(response=>{
+                console.log(response)
                 if(response.id==="0"){
                     form.sweetAlert('warning', response.message, response.titleSms);                    
                     return
@@ -248,7 +256,7 @@
                 return
             }
 
-            let {isConfirmed} = await Swal.fire({
+            let {isConfirmed, value} = await Swal.fire({
                 icon:'warning',
                 title:`<small>Anular ${tipoCheque}</small>`,
                 html:`<small>Está seguro/a de anular este <b>${tipoCheque}</b> del Cliente <strong>${item.persona}</strong> ahora?</small>`,
@@ -260,7 +268,7 @@
                         Swal.showValidationMessage('Ingrese la Observación');
                         return
                     }
-                    if(text.length<15){
+                    if(text.length<8){
                         Swal.showValidationMessage('tiene que tener al menos 15 caracteres!');
                         return
                     }
@@ -277,9 +285,9 @@
             if(isConfirmed){
                 let url;                    
                 if(item.gestion===1){
-                    url = `/Cobro/Put?idCobro=${item.id}&observacion=${result.value}&anular=true`
+                    url = `/Cobro/Put?idCobro=${item.id}&observacion=${value}&anular=true`
                 }else{
-                    url = `/Pago/Put?idPago=${item.id}&observacion=${result.value}&anular=true`;
+                    url = `/Pago/Put?idPago=${item.id}&observacion=${value}&anular=true`;
                 }
                 $scope.postCheck(url);
             }                      

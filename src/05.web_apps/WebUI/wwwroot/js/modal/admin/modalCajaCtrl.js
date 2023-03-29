@@ -6,7 +6,7 @@ export class ModalCajaCtrl{
         this._form             = _form;
         this._params           = _params;
         this.tipoRegistro      = 1;
-        this.data              = {};        
+        this.data              = {};  
     }
      
     $onInit(){        
@@ -265,11 +265,15 @@ export class ModalAsignacionUsuarioTurnoCtrl{
  * Class Modal Movimiento Caja
  */
 export class MovimientoCajaCtrl{
-    static $inject=['$filter','mainService', 'commonService', 'modalService', '$uibModalInstance', 'toastService', 'params']
-    constructor($filter, _mS, _commonSvc, _modalSvc, $uibModalInstance, _tS, _params){        
+    static $inject=['$filter', 'mainService', 'commonService', 'decodeToken', 'modalService', '$uibModalInstance', 'toastService', 'params']
+    constructor($filter, _mS, _commonSvc, decodeToken, _modalSvc, $uibModalInstance, _tS, _params){  
+        
+        const self = this
+        
         this.$filter = $filter;
         this._mS = _mS;
         this._commonSvc = _commonSvc;
+        this.decodeToken = decodeToken;
         this._modalSvc = _modalSvc;
         this.$uibModalInstance = $uibModalInstance;
         this._tS = _tS;
@@ -280,6 +284,42 @@ export class MovimientoCajaCtrl{
         this.dataSearch = {};
         this.dataSearch.idCaja = this._params.idCaja;
         this.dataSearch.checkBoxDefault = true;
+
+
+        let thisMoment = moment();
+        let endOfMonth = moment(thisMoment).endOf('month');
+        let startOfMonth = moment(thisMoment).startOf('month');
+        //https://www.daterangepicker.com/
+        this.dateRangePicker = {
+            date: { startDate: startOfMonth, endDate: endOfMonth },
+            picker: null,
+            options: {
+                pickerClasses: 'custom-display', //angular-daterangepicker extra
+                buttonClasses: 'btn',
+                applyButtonClasses: 'btn-success',
+                cancelButtonClasses: 'btn-danger',
+                locale: {
+                    applyLabel: "Aplicar",
+                    cancelLabel: 'Cancelar',
+                    customRangeLabel: 'Rango Personalizado',
+                    separator: ' - ',
+                    format: "YYYY-MM-DD", //will give you 2017-01-06
+                    //format: "D-MMM-YY", //will give you 6-Jan-17
+                    //format: "D-MMMM-YY", //will give you 6-January-17
+                },
+                ranges: {
+                    'Ultimos 15 Días': [moment().subtract(14, 'days'), moment()],
+                    'Ultimos 30 Días': [moment().subtract(29, 'days'), moment()]
+                },
+                eventHandlers: {
+                    'apply.daterangepicker': function (event, picker) {
+                        
+                        self.getMovimientosCaja()
+                        console.log('applied')
+                    }
+                }
+            }
+        }
     }
 
     $onInit(){
@@ -295,6 +335,10 @@ export class MovimientoCajaCtrl{
     getMovimientosCaja(){
         try {
             showLoader();
+     
+            // this.dataSearch.dateStart = this.dateRangePicker.date.startDate
+            // this.dataSearch.dateEnd = this.dateRangePicker.date.endDate
+            this.movimientosCaja = [];
             this._mS.getData('get', '/ControlCaja/Get?json=' + JSON.stringify(this.dataSearch)).then(response => {               
                 if(response.code==="0"){ 
                     hideLoader();
@@ -307,13 +351,14 @@ export class MovimientoCajaCtrl{
                 }
             })
         } catch (error) {
+            this.movimientosCaja = [];
             hideLoader();
             console.error(error)
         }        
     }
 
     theURLTableMovimientoCaja(){
-        return  '/Home/RenderView?name=' + 'Caja/_mdTableMovimientoCaja.cshtml';        
+        return  '/Home/RenderView?name=' + '~/Views/Caja/_mdTableMovimientoCaja.cshtml';        
     }
 
 
@@ -366,16 +411,17 @@ export class MovimientoCajaCtrl{
     
     getReport(idControlCaja) {       
         let dataParms = {
-            idControlCaja,            
+            id: idControlCaja,
+            idUsuarioRol: Number(this.decodeToken.idUsuarioRol),         
         }
         const parameters = {
+            hasService: true, //reporte sin idRol, si es true el idRol(idUsuariol) enviamos en un json
             reportParams: JSON.stringify({
                 codigo: 'RCC', 
                 format: 'pdf',
                 aditionalParams: []
             }),
-            dataParams: JSON.stringify(dataParms),
-            sendEmail:false
+            dataParams: JSON.stringify(dataParms)
         }
 
         this._commonSvc.getReport({
@@ -383,6 +429,16 @@ export class MovimientoCajaCtrl{
             formatType:'pdf'
         })        
     }
+
+
+    openMoneyBox(){
+        try {
+            console.log('open money box')
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
 
     closeModal(){
         this.$uibModalInstance.close(this.isReloadCaja)
@@ -408,15 +464,12 @@ export class ModalFiltroMovimientoCajaCtrl{
         this.dataSearch.mes = new Date().getMonth() + 1;
 
         this.estadoMovimientos = [
-            {id: "0", descripcion: "CERRADO" },
-            {id: "1", descripcion: "ABIERTO" },
+            {statusMovement: 0, descripcion: "CERRADO" },
+            {statusMovement: 1, descripcion: "ABIERTO" },
         ]
     }
 
-    $onInit(){   
-        this._commonSvc.getGestionFinanciera().then(response=>{            
-            this.estadoMovimientos = response[4]            
-        })     
+    $onInit(){          
         if(Object.entries(this._params).length >0){
             this.dataSearch.mes = this._params.mes;
         }
@@ -449,6 +502,7 @@ export class ModalFiltroMovimientoCajaCtrl{
         }
 
         if(this.dataSearch.checkBoxStatus){
+            console.log(this.dataSearch)
             if(this.dataSearch.statusMovement===null || this.dataSearch.statusMovement===undefined || this.dataSearch.statusMovement===""){
                 this._tS.toastr('warning', 'Seleccione el Estado');
                 return
@@ -481,41 +535,56 @@ export class ModalFiltroMovimientoCajaCtrl{
  */
 
 export class ModalCierreCajaCtrl{
-    static $inject = ["$uibModalInstance", "mainService", "params"]
-    constructor($uibModalInstance, _mS, _params){
+    static $inject = ["$uibModalInstance", "mainService", "params", 'decodeToken']
+    constructor($uibModalInstance, _mS, _params, decodeToken){
         this.$uibModalInstance = $uibModalInstance;
         this._mS = _mS;
         this._params = _params;
 
+        this.decodeToken = decodeToken;
+
+        this.totalArqueo = 0;
+
     }
 
     $onInit(){
-
-        let tempArqueos = [{"idMoneda":1,"cantidad":0,"valor":100.00,"descripcionMonedad":"Billetes de $100"},{"idMoneda":2,"cantidad":0,"valor":50.00,"descripcionMonedad":"Billetes de $50"},{"idMoneda":3,"cantidad":0,"valor":20.00,"descripcionMonedad":"Billetes de $20"},{"idMoneda":4,"cantidad":0,"valor":10.00,"descripcionMonedad":"Billetes de $10"},{"idMoneda":5,"cantidad":0,"valor":5.00,"descripcionMonedad":"Billetes de $5"},{"idMoneda":6,"cantidad":0,"valor":1.00,"descripcionMonedad":"Billetes de $1"},{"idMoneda":7,"cantidad":0,"valor":1.00,"descripcionMonedad":"Monedas de $1"},{"idMoneda":8,"cantidad":0,"valor":0.50,"descripcionMonedad":"Monedas de ¢0.50"},{"idMoneda":9,"cantidad":0,"valor":0.25,"descripcionMonedad":"Monedas de ¢0.25"},{"idMoneda":10,"cantidad":0,"valor":0.10,"descripcionMonedad":"Monedas de ¢0.10"},{"idMoneda":11,"cantidad":0,"valor":0.05,"descripcionMonedad":"Monedas de ¢0.05"},{"idMoneda":12,"cantidad":0,"valor":0.01,"descripcionMonedad":"Monedas de ¢0.01"}]
-
-        this.arqueos = tempArqueos.map(item=>{
-            let obj = {
-                detalleArqueoCaja: {
-                    idMoneda: item.idMoneda,
-                    cantidad: item.cantidad
-                },
-                descripcionMoneda: item.descripcionMonedad,
-                valorMoneda: item.valor            
-            }            
-            return obj;
+       
+        this._mS.getData('get', '/ControlCaja/GetArqueoCaja?json=' + JSON.stringify({idUsuarioRol: 0})).then(resopnse=>{
+            console.log(resopnse)
+            if(resopnse.code==="0"){
+                console.log(resopnse)
+            }
+            if(resopnse.code==="1"){
+                this.arqueos = JSON.parse(resopnse.payload) || []
+                console.log(this.arqueos)
+            }
         })
+
+        // let tempArqueos = [{"idMoneda":1,"cantidad":0,"valor":100.00,"descripcionMonedad":"Billetes de $100"},{"idMoneda":2,"cantidad":0,"valor":50.00,"descripcionMonedad":"Billetes de $50"},{"idMoneda":3,"cantidad":0,"valor":20.00,"descripcionMonedad":"Billetes de $20"},{"idMoneda":4,"cantidad":0,"valor":10.00,"descripcionMonedad":"Billetes de $10"},{"idMoneda":5,"cantidad":0,"valor":5.00,"descripcionMonedad":"Billetes de $5"},{"idMoneda":6,"cantidad":0,"valor":1.00,"descripcionMonedad":"Billetes de $1"},{"idMoneda":7,"cantidad":0,"valor":1.00,"descripcionMonedad":"Monedas de $1"},{"idMoneda":8,"cantidad":0,"valor":0.50,"descripcionMonedad":"Monedas de ¢0.50"},{"idMoneda":9,"cantidad":0,"valor":0.25,"descripcionMonedad":"Monedas de ¢0.25"},{"idMoneda":10,"cantidad":0,"valor":0.10,"descripcionMonedad":"Monedas de ¢0.10"},{"idMoneda":11,"cantidad":0,"valor":0.05,"descripcionMonedad":"Monedas de ¢0.05"},{"idMoneda":12,"cantidad":0,"valor":0.01,"descripcionMonedad":"Monedas de ¢0.01"}]
+
+        // this.arqueos = tempArqueos.map(item=>{
+        //     let obj = {
+        //         detalleArqueoCaja: {
+        //             idMoneda: item.idMoneda,
+        //             cantidad: item.cantidad
+        //         },
+        //         descripcionMoneda: item.descripcionMonedad,
+        //         valorMoneda: item.valor            
+        //     }            
+        //     return obj;
+        // })
         
     }
 
     calcularCantidadMoneda() {            
-        this.totalArqueo =  this.arqueos.map(val=>val.valorMoneda * Number(val.detalleArqueoCaja.cantidad))
+        this.totalArqueo =  this.arqueos.map(val=>val.valor * Number(val.cantidad))
                                             .reduce((acc, curr)=>acc + curr, 0);                                                          
     }
 
     
 
     async guardarCierreCaja(){
-        if(this.arqueos.some(val=>isNaN(val.detalleArqueoCaja.cantidad))){
+        if(this.arqueos.some(val=>isNaN(val.cantidad))){
             Swal.fire({
                 icon:'warning',
                 title:'<small>Cierre de Caja</small>',
@@ -535,25 +604,76 @@ export class ModalCierreCajaCtrl{
         
         if(isConfirmed){
             const data ={
-                totalArqueo: JSON.stringify(this.totalArqueo),
-                detalle: JSON.stringify(this.arqueos.map(item=>(item.detalleArqueoCaja))),
-                idControlCaja: this._params.idControlCaja
+                spParams: JSON.stringify({
+                    totalArqueo: JSON.stringify(this.totalArqueo),
+                    detalle: JSON.stringify(this.arqueos),
+                    idUsuarioRol: Number(this.decodeToken.idUsuarioRol),          
+                })
             }                      
 
-            this._mS.getData('put','/ControlCaja/Update?id=' + data.idControlCaja, data).then(response=>{                
+            this._mS.getData('put','/ControlCaja/Update?id=' + this._params.idControlCaja, data).then(response=>{                
                 if(response.code==="0"){
                     toastr.warning(response.message, response.titleSms);
                     return
                 }
                 if(response.code==="1"){
+                    let dataMail = JSON.parse(response.payload) || {};
                     toastr.success(response.message, response.titleSms);
-                    this.$uibModalInstance.close(response);
+                    this.$uibModalInstance.close(response)
+                  
+                    if(dataMail.receptor){
+                        this.sendEmail(dataMail)
+                    }
+
+                   
+                    // this.$uibModalInstance.close(response);
                 }
 
             })
 
         }
     }
+
+
+    sendEmail(dataMail){
+        const data = {
+            subject: 'Movimiento Caja',
+            idUsuarioRol: this.decodeToken.idUsuarioRol,
+            receptor: dataMail.receptor,  
+            params: {                                    
+                hasFile: true, 
+                isReport: "SI", 
+                reportParams: {
+                    hasParams: true,
+                    codEstab: dataMail.codEstab, 
+                    codigo: "RCC", 
+                    format: "pdf"
+                }, 
+                spParams: {
+                    idUsuarioRol: this.decodeToken.idUsuarioRol,
+                    id: this._params.idControlCaja
+                }
+            }
+        }
+        this._mS.getData('post',  '/Notificacion/Post?json='  + JSON.stringify(data)).then(response=>{
+            console.log(response);
+            // if(response.code==="0"){
+            //     this._form.sweetAlert('warning', response.message, response.titleSms);                
+            // }
+            // if(response.code==="1"){
+            //     this._form.sweetAlert('success', response.message, response.titleSms, 1000);
+            //     this.$uibModalInstance.close(response)
+            // }
+        })
+    }
+
+    // sendEmail(){
+    //     try {
+            
+    //     } catch (error) {
+            
+    //     }        
+    // }
 
     closeModal(){
         this.$uibModalInstance.close();

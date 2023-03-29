@@ -54,24 +54,25 @@
     
 </style>
 
+
+
 @* <div ng-submit="$event.preventDefault()">         *@
-    <div class="mb-1">        
-        <md-autocomplete 
+    <div class="mb-1" id="">        
+        <md-autocomplete id="mainContentMdAutocomplete"
         input-focus
         md-input-id="custom-template-md-autocomplete-articulo"
         uib-tooltip="Buscar Artículo por descripción o Código "
         tooltip-placement="top"
         tooltip-trigger="'mouseenter'"
-        
+
         md-no-cache="true"  
         ng-enter="$ctrl.getArticuloByCode();"              
         md-selected-item="$ctrl.selectedItem"
         md-search-text-change="$ctrl.searchTextChange($ctrl.searchText)"
         md-search-text="$ctrl.searchText"
         md-selected-item-change="$ctrl.selectArticleSearch(item)"
-        md-items="item in $ctrl.getDynamicSearchArticles($ctrl.searchText)"
+        md-items="item in $ctrl.getDynamicSearchArticles()"
         md-item-text="item.descripcion"
-        md-min-length="2"
         ng-focus="$ctrl.focusDescripcionArticulo('#custom-template-md-autocomplete-articulo')"
         md-escape-options="clear"
         input-aria-label="Buscador Articulo"
@@ -145,7 +146,13 @@
             @* <md-not-found>
                 No hay estados coincidentes con "{{searchText}}"       
             </md-not-found> *@
-        </md-autocomplete>       
+        </md-autocomplete> 
+
+        
+       
+        <input type="text" class="form-control border-select" ng-model="$ctrl.inputByCorde"  ng-enter="$ctrl.getDataArticuloByEnterCode();"     id="inputBarcode" placeholder="Ingrese el código de barra">
+       
+
         <a href="javascript:void(0)" class="btn btn-success btn-xs mt-1" ng-click="$ctrl.openModalArticulo()">
             <i class="fas fa-plus"></i> Nuevo
         </a>
@@ -153,4 +160,7 @@
             <i class="fas fa-search"></i> Lista
         </a>
     </div>
+
+
+
 @* </div> *@

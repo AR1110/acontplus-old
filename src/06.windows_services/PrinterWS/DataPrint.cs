@@ -1,6 +1,4 @@
-﻿using HelpersNS20;
-using HelpersNS20.Dtos;
-using Logs;
+﻿using Logs;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -24,7 +22,7 @@ namespace PrinterWS
             _conn = ConfigurationManager.AppSettings["ConnectionStringsPrd"].ToString();
 #endif
         }
-        public bool Get(string ruc, string estab, ref ApiPrintRequestDto _response)
+        public bool Get(string ruc, string estab,string idUser, ref ApiReportParamsDto _response)
         {            
             DataTable dt = new DataTable();            
             try
@@ -35,6 +33,7 @@ namespace PrinterWS
                     SqlCommand cmd = new SqlCommand("ApiPrinter.Service_Print_Get", con);
                     cmd.Parameters.AddWithValue("ruc", ruc);
                     cmd.Parameters.AddWithValue("estab", estab);
+                    cmd.Parameters.AddWithValue("idUser", idUser);
                     cmd.CommandType = CommandType.StoredProcedure;
                     using (SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd))
                     {

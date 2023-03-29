@@ -117,8 +117,8 @@
                                         <th md-column><span>Usuario</span></th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr ng-repeat="item in facturas track by $index" ng-class="item.style">
+                                <tbody md-body>
+                                    <tr md-row ng-repeat="item in facturas track by $index" ng-class="item.style">
                                         <td md-cell>
                                             <md-menu>
                                                 <md-button aria-label="Open demo menu" class="md-icon-button"
@@ -180,7 +180,7 @@
                                                         </md-button>
                                                     </md-menu-item>
                                                     <md-menu-item>
-                                                        <md-button ng-click="getReportII(item)">
+                                                        <md-button ng-click="print(item)">
                                                             <span md-menu-align-target> <i class="fa fa-file-pdf fa-xs"></i> Impresion</span>
                                                         </md-button>
                                                     </md-menu-item>                                                
@@ -227,10 +227,7 @@
     </div>
 </div>
 @section Scripts{
-    <script src="~/js/controllers/ventas/facturaVentaCtrl.js" asp-append-version="true"></script>
-
-    <!--Gestión de Cuotas ---------------------Por eliminar-->
-  @*  <script src="~/js/shared/ventas/cuotaVentaService.min.js" asp-append-version="true"></script>
-    <script src="~/js/shared/ventas/cuotaVentaCtrl.min.js" asp-append-version="true"></script>*@
+    <script src="~/js/services/storageService.js" asp-append-version="true"></script>
+    <script src="~/js/controllers/ventas/facturaVentaCtrl.min.js" asp-append-version="true"></script>
 
 }
