@@ -237,8 +237,8 @@ app.constant('nombreModal', {
             template: '~/Areas/CompraNoHabitual/Pages/Shared/_ModalNuevo.cshtml'
         },
         MODAL_DETALLE:{
-            controller: 'ModalNuevoCtrl',
-            template: ''
+            controller: 'ModalDetalleCtrl',
+            template: '~/Areas/CompraNoHabitual/Pages/Shared/_ModalDetalle.cshtml'
         },
         MODAL_FILTRO:{
             controller: 'ModalNuevoCtrl',

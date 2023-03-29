@@ -1,10 +1,13 @@
 
+USE [AcontPlus]
 
 IF OBJECT_ID('ReporteCompras.Detalle') IS NOT NULL
 BEGIN 
 	DROP PROCEDURE ReporteCompras.Detalle
 END  
 GO
+
+
 
 CREATE PROCEDURE ReporteCompras.Detalle @json VARCHAR(MAX)
 AS
@@ -15,6 +18,8 @@ BEGIN
 	DECLARE @idEntidad INT
 	DECLARE @id INT
 	DECLARE @codDoc VARCHAR(10)
+
+	DECLARE @isReportImport BIT 
 
 	--Config. Decimales 
 	DECLARE @nroPrecio INT
@@ -31,10 +36,20 @@ BEGIN
 	DECLARE @rdlcParams VARCHAR(MAX)
 	DECLARE @dataSources VARCHAR(MAX)
 
-	SELECT @id         = id, 
+	SELECT 
+	  
+	       @id         = id, 
 		   @codDoc     = codDoc,
 		   @rdlcParams = rdlcParams
 	FROM OPENJSON(@json) WITH (id INT '$.id', codDoc VARCHAR(10) '$.codDoc', rdlcParams VARCHAR(MAX) '$.rdlcParams')
+
+	IF @codDoc = '01' AND @isReportImport =1
+		BEGIN
+			SELECT @idEntidad = (SELECT e.idEntidad FROM Sri.Establecimiento se 
+													INNER JOIN Entidad e WITH(NOLOCK) ON e.ruc = se.ruc
+													 WHERE se.codEstab = dr.codEstab )
+			FROM Recepcion.DocumentoRecibido dr WHERE idDocumento = @id
+		END 
 
 	IF @codDoc = 'FC'
 	BEGIN 
@@ -68,6 +83,37 @@ BEGIN
 	   ,@nroDescuento = ISNULL(nroDescuento, 2)
 	   ,@nroIce = ISNULL(nroIce, 2)
 	FROM Config.CantidadDecimal WHERE idEntidad = @idEntidad AND codTransaccion = 'C'
+
+	
+	
+	--PRINT @isReportImport
+	IF @codDoc = '01' 
+		BEGIN 
+			SET @detailDs = (SELECT 
+								id              = dd.idDocumentoDetalle
+								,idArticulo     = dd.idArticulo
+								,codigo         = ar.codigo
+								,descripcion    = dd.descripcion
+								,cantidad       = Herramientas.Round_Out(dd.cantidad,@nroCantidad) 
+								,medida         = m.descripcion
+								,tipoIva        = ti.descripcion
+								,precioUnitario = Herramientas.Round_Out(dd.precioUnitario,@nroPrecio) 
+								,valorDescuento = Herramientas.Round_Out(dd.descuento,@nroDescuentoDetalle)
+								,total          = Herramientas.Round_Out(dd.costoNeto,@nroTotalDetalle)		
+								,precioVenta    = arPvp.precioVenta
+								,precioConIva   = arPvp.precioConIva
+								,tarifa         = t.descripcion
+								,nota           = ISNULL(ar.observaciones, '')
+
+							FROM Recepcion.DocumentoDetalle dd
+							INNER JOIN Articulo ar WITH(NOLOCK) ON ar.idArticulo = dd.idArticulo
+							INNER JOIN ArticuloPvP arPvp WITH(NOLOCK) ON arPvp.idArticulo = dd.idArticulo
+							INNER JOIN TipoIva ti WITH(NOLOCK) ON ti.idTipoIva = ar.idTipoIva
+							LEFT JOIN Medida m WITH(NOLOCK) ON m.idMedida = dd.idMedida
+							INNER JOIN Tarifa       t ON t.idTarifa    = arPvp.idTarifa
+							WHERE dd.idDocumento = @id ORDER BY dd.idDocumentoDetalle ASC FOR JSON PATH 
+						 )
+		END 
 
 
 	IF @codDoc='FC'
@@ -157,7 +203,7 @@ BEGIN
 					)
 	END 
 	
-	SET @dataSources = (SELECT detailDs = @detailDs FOR JSON PATH)	
+	SET @dataSources = (SELECT detailDs = ISNULL(@detailDs, '[]') FOR JSON PATH)	
 
 	SELECT rdlcParams  = @rdlcParams,
 	       dataSources = @dataSources
