@@ -77,6 +77,7 @@ BEGIN
 					FROM dbo.Articulo a
 					WHERE a.codigo = (SELECT t.descripcion FROM @tmp t)  COLLATE SQL_Latin1_General_Cp1_CI_AI
 					AND  a.idEntidad = @idEntidad
+					OR (a.codigoAuxiliar = (SELECT t.descripcion FROM @tmp t)  COLLATE SQL_Latin1_General_Cp1_CI_AI)
 					--AND NOT EXISTS (
 					--	SELECT * FROM FacturaCompraDetalle fcd WHERE a.idArticulo = fcd.idArticulo
 					--)
