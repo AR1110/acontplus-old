@@ -44,10 +44,11 @@ BEGIN
 		,codArticulo VARCHAR(100) NULL
 		,idMedida INT
 		,idBodega INT
+		,idDetalle INT
 	)
 
-	INSERT INTO @tmp(todos, idDocumento, idProveedor, idArticulo, codArticulo, idMedida, idBodega)
-	SELECT todos, idDocumento, idProveedor, idArticulo, LTRIM(RTRIM(codArticulo)), idMedida, idBodega
+	INSERT INTO @tmp(todos, idDocumento, idProveedor, idArticulo, codArticulo, idMedida, idBodega, idDetalle)
+	SELECT todos, idDocumento, idProveedor, idArticulo, LTRIM(RTRIM(codArticulo)), idMedida, idBodega, idDetalle
 	FROM OPENJSON(@jsonData) WITH (
 		todos BIT '$.todos'
 		,idDocumento INT '$.idDocumento'
@@ -56,6 +57,7 @@ BEGIN
 		,codArticulo VARCHAR(100) '$.codArticulo'
 		,idMedida INT '$.idMedida'
 		,idBodega INT '$.idBodega'
+		,idDetalle INT '$.idDetalle'
 	)
 
 	IF NOT EXISTS (SELECT 1 FROM @tmp)
@@ -132,9 +134,10 @@ BEGIN
 					,a.idUsuario = @idUsuario
 					,a.fechaRegistro = GETDATE()
 					FROM Recepcion.Doc_Detalle_Temp a WITH (NOLOCK)
-					JOIN (SELECT t.idDocumento, t.idArticulo, t.codArticulo, t.idMedida
+					JOIN (SELECT t.idDocumento, t.idArticulo, t.codArticulo, t.idMedida, t.idDetalle
 					FROM @tmp t) AS atmp ON a.idDocumento = atmp.idDocumento 
-					AND a.codigoPrincipal = LTRIM(RTRIM(atmp.codArticulo))
+					--AND a.codigoPrincipal = LTRIM(RTRIM(atmp.codArticulo))
+					AND a.idDetalle = atmp.idDetalle
 
 					SET @payload = (SELECT d.*
 	,impuesto  = (SELECT TOP 1 si.descripcion FROM Recepcion.Doc_Impuesto_Temp i
@@ -145,10 +148,8 @@ BEGIN
 														WHERE d.idDocumento = i.idDocumento 
 														AND d.codigoPrincipal = i.codArticulo)
 	
-	,ISNULL(dd.idDocumentoDetalle, 0) idDocumentoDetalle
+	,idDocumentoDetalle = ISNULL((SELECT TOP 1 dd.idDocumentoDetalle FROM Recepcion.DocumentoDetalle dd WHERE d.idArticulo = dd.idArticulo AND dd.idDocumento = d.idDocumento), 0) 
 	FROM Recepcion.Doc_Detalle_Temp d
-	LEFT JOIN Recepcion.DocumentoDetalle dd ON d.idArticulo = dd.idArticulo AND dd.idDocumento = (SELECT TOP 1 idDocumento FROM @tmp)
-	
 	WHERE d.idDocumento = (SELECT TOP 1 idDocumento FROM @tmp) FOR JSON AUTO) 
 
 					SELECT '1' AS code, @payload AS payload, 'Articulo Actualizado'  as 'message'

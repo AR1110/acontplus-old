@@ -32,26 +32,30 @@ BEGIN
 	DECLARE @idEntidad INT
 	DECLARE @rucProv VARCHAR(20)
 	DECLARE @idProveedor INT 
+	DECLARE @inventory VARCHAR(5)
 
-	IF NOT EXISTS (SELECT 1 FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = @idDocumento)
-		BEGIN
-			SELECT '0' code, 'No existe datos para registrar'as 'message'
-			RETURN
-		END
-
-	IF NOT EXISTS (SELECT 1 FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = @idDocumento AND idArticulo > 0)
-		BEGIN
-			SELECT '0' code, 'No existe ningun articulo vinculado para guardar'as 'message'
-			RETURN
-		END
-	
-	SELECT @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol
-
-	SELECT @rucProv = rucEmisor  FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento 
-
-	SELECT TOP 1 @idProveedor = idProveedor FROM Proveedor WHERE idEntidad = @idEntidad AND numeroIdentificacion = @rucProv
 
 	BEGIN TRY
+		IF NOT EXISTS (SELECT 1 FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = @idDocumento)
+			BEGIN
+				SELECT '0' code, 'No existe datos para registrar'as 'message'
+				RETURN
+			END
+
+		IF NOT EXISTS (SELECT 1 FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = @idDocumento AND idArticulo > 0)
+			BEGIN
+				SELECT '0' code, 'No existe ningun articulo vinculado para guardar'as 'message'
+				RETURN
+			END
+	
+		SELECT @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
+
+		SELECT TOP 1 @inventory = llevaInventario FROM Config.GestionSistema WITH (NOLOCK) WHERE idEntidad = @idEntidad
+
+		SELECT @rucProv = rucEmisor  FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE idDocumento = @idDocumento 
+
+		SELECT TOP 1 @idProveedor = idProveedor FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND numeroIdentificacion = @rucProv
+
 		BEGIN TRAN
 			
 			IF (@idArticulo > 0)
@@ -83,6 +87,7 @@ BEGIN
 					AND t.idArticulo = @idArticulo
 					WHERE ddi.idDocumento = @idDocumento 
 				END
+
 			ELSE
 				BEGIN 
 					INSERT INTO Recepcion.DocumentoDetalle(idDocumento, idBodega, idArticulo, idMedida, codigoPrincipal, codigoAuxiliar
@@ -109,7 +114,18 @@ BEGIN
 					JOIN (SELECT idDocumento, idDocumentoDetalle FROM Recepcion.DocumentoDetalle) AS t ON ddi.codigoPrincipal = ddi.codigoPrincipal AND ddi.idDocumento = t.idDocumento
 					WHERE ddi.idDocumento = @idDocumento
 				END
+
 			UPDATE Recepcion.DocumentoRecibido SET complete = 1 WHERE idDocumento = @idDocumento
+
+			--==================================================================Inventario===============================================================
+			IF @inventory = 'SI'
+				BEGIN
+					INSERT INTO Inventario.ControlStock(idTipoDocumento,idDocumento,idArticulo,idBodega)
+					SELECT 1,@idDocumento,rd.idArticulo,rd.idBodega 
+					FROM Recepcion.DocumentoDetalle rd 
+					INNER JOIN dbo.Articulo a ON a.idArticulo = rd.idArticulo 
+					WHERE a.llevaInventario = 1 AND rd.idDocumento = @idDocumento
+				END 
 
 			SELECT '1' code, 'Detalle importado exitosamente' as 'message'
 		COMMIT TRAN 

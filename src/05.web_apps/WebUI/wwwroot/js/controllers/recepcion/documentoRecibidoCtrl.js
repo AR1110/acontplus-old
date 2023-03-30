@@ -1057,6 +1057,7 @@
                         response => {
                             if (response.code == "1") {
                                 $scope.tempDetail = JSON.parse(response.payload)
+                                console.log($scope.tempDetail)
                             }
                         }).catch(error => {
                             console.log(error)
@@ -1148,17 +1149,12 @@
                     })
                     modalRef.result.then(response => {
                         if (typeof (response) == "object") {
-                            $scope.idArticulo = response.idArticulo;
-
-                            //Ivan estoy modificando tu Còdigo 
-
-
+                            $scope.idArticulo = response.idArticulo
                             if ($scope.idArticulo > 0) {
                                 let articleToSave = {
                                     idArticulo: $scope.idArticulo,
-                                    //idMedida: $scope.articleSelected.idMedida,
                                     idMedida: response.idMedida,
-                                    codArticulo: $scope.articleSelected.codigoPrincipal,
+                                    codArticulo: (($scope.articleSelected.codigoPrincipal) ? $scope.articleSelected.codigoPrincipal : response.codigoPrincipal),
                                     idProveedor: $scope.idProveedor,
                                     ruc: $scope.infoTributaria.ruc
                                 }
@@ -1328,7 +1324,8 @@
                         idProveedor: $scope.idProveedor,
                         ruc: $scope.infoTributaria.ruc,
                         idArticulo: item.idArticulo,
-                        codArticulo: item.codigoPrincipal
+                        codArticulo: item.codigoPrincipal,
+                        idDetalle: item.idDetalle
                     }
                     $scope.saveArticleTemp(2, data)
                 }
@@ -1366,13 +1363,13 @@
                     showLoader()
                     $scope.idArticulo = 0
                     let data = {
+                        idDetalle: $scope.articleSelected.idDetalle,
                         idDocumento: $scope.selected[0].idDocumento,
-                        // idMedida: $scope.articleSelected.idMedida,
                         idMedida: item.idMedida,
                         idProveedor: $scope.idProveedor,
                         ruc: $scope.infoTributaria.ruc,
                         idArticulo: item.idArticulo,
-                        codArticulo: $scope.articleSelected.codigoPrincipal
+                        codArticulo: (($scope.articleSelected.codigoPrincipal) ? $scope.articleSelected.codigoPrincipal : item.codigoPrincipal)
                     }
                     mS.getData('post', '/CompraHabitual/Post?json=' + JSON.stringify(data)).then(
                         response => {
@@ -1815,26 +1812,26 @@
 
 
 
-            $scope.exportToExcel = () =>{                               
+            $scope.exportToExcel = () => {
                 try {
                     let format = 'excel';
                     let dataParms = {
-                        isReportImport: true,     
+                        isReportImport: true,
                         codEstab: $scope.selected[0].codEstab,
-                        id: $scope.selected[0].idDocumento,                                     
-                        codigo: 'RCD', 
-                        codDoc: $scope.selected[0].codDoc, 
-                        format,            
+                        id: $scope.selected[0].idDocumento,
+                        codigo: 'RCD',
+                        codDoc: $scope.selected[0].codDoc,
+                        format,
                     }
 
-                    
-                
-                    const parameters = {               
+
+
+                    const parameters = {
                         dataParams: JSON.stringify(dataParms)
-                    }   
+                    }
                     console.log(parameters)
-                                  
-                    _commonSvc.getReportDynamic({parameters, format})
+
+                    _commonSvc.getReportDynamic({ parameters, format })
                 } catch (error) {
                     console.log(error)
                 }

@@ -188,11 +188,11 @@ namespace BL.FactElect
                 detail.idDetalle = idDetalle;
                 if (comp.codDoc == "01")
                 {
-                    detail.codigoPrincipal = item.SelectSingleNode("codigoPrincipal").InnerText;
+                    detail.codigoPrincipal = (item.SelectSingleNode("codigoPrincipal") == null) ? "" : item.SelectSingleNode("codigoPrincipal").InnerText;
                 }
                 else
                 {
-                    detail.codigoPrincipal = item.SelectSingleNode("codigoInterno").InnerText;
+                    detail.codigoPrincipal = (item.SelectSingleNode("codigoInterno") == null) ? "" : item.SelectSingleNode("codigoInterno").InnerText;
                 }
                 detail.codigoAuxiliar = (item.SelectSingleNode("codigoAuxiliar") == null) ? "" : item.SelectSingleNode("codigoAuxiliar").InnerText;
                 detail.descripcion = item.SelectSingleNode("descripcion").InnerText;
