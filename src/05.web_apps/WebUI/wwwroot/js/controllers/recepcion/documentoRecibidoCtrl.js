@@ -28,7 +28,6 @@
             'use strict';
             $scope.title = 'documentoRecibidoCtrl';
             $scope.comprobantes = [];
-            $scope.totalRecords = 0;
             $scope.idProveedor = 0;
 
             $scope.tiposDocumento = [];
@@ -130,21 +129,10 @@
                 endDate: ''
             }
 
-            $scope.initialLoad = () => {
-                $scope.query.codDoc = $scope.doc.codigoSri
-                _commonSvc.getEstabAsign().then(response => {
-                    $scope.establecimientos = response
-                    let codEstab = $scope.establecimientos.length > 0 ? $scope.establecimientos[0].codEstab : 0
-                    $scope.query.codEstab = codEstab
-                    $scope.getComprobantes()
-                })
-            }
-            $scope.initialLoad()
-
             $scope.getDocs = function (doc) {
+                $scope.query.codDoc = doc.codigoSri
                 $scope.getComprobantes()
                 debugger;
-                console.log(doc)
             }
             function isDocVenta(codDoc) {
                 switch (codDoc) {
@@ -161,8 +149,8 @@
 
             $scope.getComprobantes = function () {
                 try {
-                    $scope.comprobantes = [];
                     showLoader()
+                    $scope.comprobantes = []
                     $scope.query.startDate = $scope.dateRangePicker.date.startDate
                     $scope.query.endDate = $scope.dateRangePicker.date.endDate
                     //console.log($scope.query)
@@ -172,12 +160,8 @@
                             tS.toastr('warning', response.message)
                         }
                         if (response.code == "1") {
-                            $scope.comprobantes = JSON.parse(response.payload)[0];
-
-                            //console.log($scope.comprobantes)
-
-                            $scope.cloneComprobantes = JSON.parse(JSON.stringify($scope.comprobantes))
-                            //$scope.totalRecords = $scope.comprobantes[0].totalRecords;
+                            $scope.comprobantes = JSON.parse(response.payload)[0]
+                            $scope.cloneComprobantes = JSON.parse(JSON.stringify($scope.comprobantes)) 
                             hideLoader()
                         }
 
@@ -192,7 +176,12 @@
             }
 
             $scope.initialLoad = function () {
-                $scope.getComprobantes()
+                _commonSvc.getEstabAsign().then(response => {
+                    $scope.establecimientos = response
+                    let codEstab = $scope.establecimientos.length > 0 ? $scope.establecimientos[0].codEstab : 0
+                    $scope.query.codEstab = codEstab
+                    $scope.getComprobantes()
+                })
                 try {
                     mS.getData('get', '/TipoDocumento/Get').then(
                         response => {
@@ -210,11 +199,9 @@
                         }
                     )
 
-
                 } catch (error) {
                     console.log(error)
                 }
-
 
                 //Configuracion de Decimal 
                 _commonSvc.getGestionConfig().then(
@@ -224,6 +211,7 @@
                 )
 
             }
+            $scope.initialLoad()
 
             $scope.onKeyupSearchFilter = () => {
                 let comprobantes = JSON.parse(JSON.stringify($scope.cloneComprobantes))
@@ -239,7 +227,6 @@
             }
 
 
-            $scope.initialLoad()
 
             /*
             $scope.setOrder = function (event) {
