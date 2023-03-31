@@ -27,36 +27,8 @@ class MdArticuloCtrl{
         })  
         
         
-        this.$timeout(()=>{
-            let inputBarcode = $("#inputBarcode");
-            let mainContentMdAutocomplete = $("#mainContentMdAutocomplete");
-            let inputMdAutocomplete = $("#custom-template-md-autocomplete-articulo")
-
-          
-            inputMdAutocomplete.on('keyup', e=>{
-                console.log(e.keyCode)
-                if (e.key === '' || e.keyCode === 32) {
-                   // inputMdAutocomplete.hide();
-                    mainContentMdAutocomplete.hide();
-                    inputBarcode.show();
-                    inputBarcode.focus();
-                    inputBarcode.val().trim();
-                    this.tS.toastr('info', 'Búsqueda de Articulo por Código Barra')
-                }
-            })
-
-            inputBarcode.on('keyup', e=>{
-                if (e.key === '' || e.keyCode === 32) {
-                    inputBarcode.hide();
-                    //inputMdAutocomplete.show();
-                    mainContentMdAutocomplete.show();
-                    inputMdAutocomplete.focus();
-                    inputMdAutocomplete.val().trim()
-                    this.tS.toastr('info', 'Búsqueda de Articulo por Descripción o Código')
-                }
-            })
-
-            inputBarcode.hide();
+        this.$timeout(()=>{                                    
+                                 
         })
     }
 

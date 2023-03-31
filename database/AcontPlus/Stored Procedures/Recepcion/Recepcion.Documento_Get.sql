@@ -22,7 +22,7 @@ GO
 -- Create date: 2022-07-31
 -- Description:	SP PARA LISTAR LOS COMPROBANTES ELECTRONICOS DEL SRI IMPORTADOS
 -- =============================================
---Recepcion.Documento_Get 44, '{"orderBy":"","sortBy":"","limit":10,"page":1,"codDoc":"04", "tipo": 3}'
+-- Recepcion.Documento_Get 38, '{"claveAcceso":"0302202307229031499500120010020000145421234567810","codDoc":"07","idDocumento":4222,"tipo":3}'
 IF OBJECT_ID(N'Recepcion.Documento_Get ', N'P') IS NOT NULL
 	DROP PROCEDURE Recepcion.Documento_Get
 GO

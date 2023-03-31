@@ -1,0 +1,49 @@
+@page
+@model Reports_UI.Areas.ResumenVenta.Pages.Index
+@{
+    ViewData["Title"] = "Index";
+    Layout = "_Layout";
+
+}
+
+<div ng-controller="resumenVentaCtrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h5 class="text-themecolor">Resumen Ventas</h5>            
+        </div>
+    </div> 
+
+
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                    <div class="row">
+                        <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                <label>Rango de Fechas: </label>
+                                <input date-range-picker class="form-control date-picker" type="text" ng-model="datePicker.date" picker="datePicker.picker" picker-classes="extra-class-names" min="'2014-02-23'" max="datePicker.maxDate" options="datePicker.options" options="{locale: {separator: ":"}}" />             
+                            </div>
+                        </div>                        
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                    <div class="row">                      
+                        <div class="col-md-12">
+                                                               
+                        </div>                        
+                    </div>
+                </div>
+            </div>
+        </div>       
+        <div class="card-body">
+
+        </div>
+    </div>
+
+</div>
+
+
+@section Scripts{
+    <script src="~/js/controllers/reportes/reporteCtrl.js" asp-append-version="true"></script>
+}

@@ -1,6 +1,6 @@
 
 
-import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.50";
+import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.51";
 
 class ModalFacturaCtrl extends ModalBaseCtrl{
     
@@ -42,7 +42,13 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
             
             gridApi.grid.element.on('keyup', function (ev) {            
                 if(ev.which == 13 || ev.keyCode=='13'){
-                    self.setFocusArticulo();
+
+                    if($("#inputBarcode").is(":visible")){
+                        self.setFocusInputBarcode();
+                    }else{
+                        self.setFocusArticulo();
+                    }
+                                        
                     $scope.gridApi.grid.cellNav.clearFocus();
                 // ev.stopPropagation();   
                 }
@@ -361,7 +367,8 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
             showLoader();
                            
             let resultsDataForm = this._params.dataForm;          
-           
+            
+            console.log(resultsDataForm);
 
             let {UiGridOptions} = await import('./../factElect/uiGridOptions.min.js' + CHANGE_VERSION());
           
@@ -417,6 +424,11 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
             //7 cliente 
             if(resultsDataForm[7].length>0){
                 this.cliente = resultsDataForm[7][0];
+            }
+
+            if(resultsDataForm[0].length>0){
+                console.log(resultsDataForm[0][0])
+                this.searchBarcode = resultsDataForm[0][0].searchCode;
             }
 
             

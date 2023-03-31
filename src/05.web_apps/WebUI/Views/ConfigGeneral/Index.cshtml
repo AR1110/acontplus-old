@@ -22,113 +22,145 @@
 
                         <md-tab label="SISTEMA">
                             <md-content class="md-padding">
-                                <md-table-container>
-                                    <table md-table>                               
-                                        <tbody md-body>
-                                            <tr md-row>
-                                                <td md-cell>
-                                                    <md-switch class="md-primary" md-no-ink aria-label="Tipo IVA" ng-model="gestionSistema.taxesDefault">
-                                                        Tipo IVA
-                                                    </md-switch>
-                                                </td>
-                                                <td md-cell>                                                   
-                                                    <md-input-container ng-if="gestionSistema.taxesDefault">                                                                                                               
-                                                        <md-select ng-model="gestionSistema.idTipoIva" style="min-width: 200px;">                                                            
-                                                            <md-option ng-repeat="item in tipoIvas" ng-value="item.idTipoIva">
-                                                                {{item.descripcion}}
-                                                            </md-option>
-                                                        </md-select>
-                                                    </md-input-container>
-                                                </td>                                           
-                                            </tr>                                   
+                                <div class="row align-items-center">
+                                    <div class="col-8 mx-auto">
+                                        <div class="card shadow border">
+                                            <div class="card-body">
+                                                <div class="row justify-content-between">
+                                                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                                                        <div class="icheck-success">
+                                                            <input type="checkbox" name="tipoIva" id="tipoIva"  ng-model="gestionSistema.taxesDefault">
+                                                            <label for="tipoIva">
+                                                                Tipo IVA
+                                                            </label>
+                                                        </div>  
+                                                    </div>
 
-                                            <tr md-row>
-                                                <td md-cell>
-                                                    <md-switch class="md-primary" md-no-ink aria-label="Control Inventario" ng-model="gestionSistema.llevaInventario">
-                                                        Control Inventario
-                                                    </md-switch>
-                                                </td>
-                                                <td md-cell>
-                                                    <md-input-container ng-if="gestionSistema.llevaInventario">                                                                                                              
-                                                        <md-select ng-model="gestionSistema.idMetodoValoracion" style="min-width: 200px;">                                                            
-                                                            <md-option ng-value="item.idMetodoValoracion" ng-repeat="item in valoracionMetodos">
-                                                                {{item.descripcion}}
-                                                            </md-option>
-                                                        </md-select>
-                                                    </md-input-container>                                               
-                                                </td>
-                                            </tr>
+                                                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                                                        <div class="form-group" ng-if="gestionSistema.taxesDefault">
+                                                            <select name="selectTipoIva" id="selectTipoIva" class="form-control border-select">
+                                                                <option ng-value="item.idTipoIva" ng-repeat="item in tipoIvas">
+                                                                    {{item.descripcion}}
+                                                                </option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>   
 
-                                            <tr md-row>
-                                                <td md-cell>
-                                                    <md-switch class="md-primary" md-no-ink aria-label="Switch No Ink" ng-model="gestionSistema.customerDefault">
-                                                        Cliente
-                                                    </md-switch>
-                                                </td>
-                                                <td md-cell>
-                                                    <div ng-if="gestionSistema.customerDefault">
-                                                        <md-autocomplete 
-                                                            md-input-name="autocompleteField"
-                                                            md-input-minlength="1"
-                                                            md-input-maxlength="2000"
-                                                            md-no-cache="false"
-                                                            md-search-text-change="searchTextChange(searchText)"
-                                                            md-search-text="searchText"
-                                                            md-selected-item-change="selectedItemChangeCliente(item)"
-                                                            md-items="item in searchCustomer(searchText)"
-                                                            md-item-text="item.nombreFiscal"
-                                                            md-escape-options="clear"
-                                                            placeholder="Ej: Jorge Ramirez"
-                                                            md-clear-button="false"
-                                                            input-aria-describedby="Buscar Cliente">
-                                                            <md-item-template>
-                                                                <span md-highlight-text="searchText">{{item.nombreFiscal}}</span>
-                                                            </md-item-template>                                                           
-                                                        </md-autocomplete>
-                                                    </div>                                                                                                
-                                                </td>
-                                            </tr>
+                                                <hr>
 
-                                            <tr md-row>
-                                                <td md-cell>
-                                                    <md-switch class="md-primary" md-no-ink aria-label="Buscador Articulo" ng-model="gestionSistema.articleDefault">
-                                                        Articulo
-                                                    </md-switch>
-                                                </td>
-                                                <td md-cell>
-                                                    <div ng-if="gestionSistema.articleDefault">
-                                                        <md-autocomplete class="md-block mr-10" 
-                                                            md-input-name="autocompleteField"
-                                                            md-min-length="3"
-                                                            md-no-cache="false"
-                                                            md-search-text-change="searchTextChangeArticle(searchTextArticle)"
-                                                            md-search-text="searchTextArticle"
-                                                            md-selected-item-change="selectedItemChangeArticle(item)"
-                                                            md-items="item in searchArticle(searchTextArticle)"
-                                                            md-item-text="item.descripcion"
-                                                            md-escape-options="clear"
-                                                            placeholder="Ej: Mouse..."
-                                                            md-clear-button="false"
-                                                            input-aria-describedby="Buscar Artículo">
-                                                            <md-item-template>
-                                                                <span md-highlight-text="searchTextArticle">{{item.descripcion}}</span>
-                                                            </md-item-template>  
-                                                        </md-autocomplete>                                             
-                                                        <button type="button" class="btn btn-info btn-xs mt-1" ng-click="editArticle()">
-                                                            <i class="ti-pencil"></i> Editar
-                                                        </button>    
-                                                    </div>                                                     
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </md-table-container>                              
-                                <hr>
-                                <div class="float-right">
-                                    <button type="button" class="btn btn-success" ng-click="updateConfigSistema()">
-                                        <icon class="ti-pencil"></icon> Actualizar
-                                    </button>
-                                </div>                          
+                                                <div class="row justify-content-between">
+                                                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                                                        <div class="icheck-success">
+                                                            <input type="checkbox" name="llevaInventario" id="llevaInventario" ng-model="gestionSistema.llevaInventario">
+                                                            <label for="llevaInventario">Control Inventario</label>
+                                                        </div>     
+                                                    </div>
+
+                                                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                                                        <div class="form-group" ng-if="gestionSistema.llevaInventario">
+                                                            <select name="metodoValoracion" id="metodoValoracion" class="form-control border-select">
+                                                                <option ng-repeat="item in valoracionMetodos">{{item.descripcion}}</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div> 
+
+                                                <hr>
+
+                                                <div class="row justify-content-between">
+                                                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                                                        <div class="icheck-success">
+                                                            <input type="checkbox" name="cliente" id="cliente" ng-model="gestionSistema.customerDefault">
+                                                            <label for="cliente">Cliente</label>
+                                                        </div>     
+                                                    </div>
+
+                                                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                                                        <div ng-if="gestionSistema.customerDefault">
+                                                            <md-autocomplete 
+                                                                md-input-name="autocompleteField"
+                                                                md-input-minlength="1"
+                                                                md-input-maxlength="2000"
+                                                                md-no-cache="false"
+                                                                md-search-text-change="searchTextChange(searchText)"
+                                                                md-search-text="searchText"
+                                                                md-selected-item-change="selectedItemChangeCliente(item)"
+                                                                md-items="item in searchCustomer(searchText)"
+                                                                md-item-text="item.nombreFiscal"
+                                                                md-escape-options="clear"
+                                                                placeholder="Ej: Jorge Ramirez"
+                                                                md-clear-button="false"
+                                                                input-aria-describedby="Buscar Cliente">
+                                                                <md-item-template>
+                                                                    <span md-highlight-text="searchText">{{item.nombreFiscal}}</span>
+                                                                </md-item-template>                                                           
+                                                            </md-autocomplete>
+                                                        </div>                  
+                                                    </div>
+                                                </div> 
+
+                                                <hr>
+
+                                                <div class="row justify-content-between">
+                                                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                                                        <div class="icheck-success">
+                                                            <input type="checkbox" name="articuloDefect" id="articuloDefect" ng-model="gestionSistema.articleDefault">
+                                                            <label for="articuloDefect">Artículo</label>
+                                                        </div>     
+                                                    </div>
+
+                                                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                                                        <div ng-if="gestionSistema.articleDefault">
+                                                            <md-autocomplete class="md-block mr-10" 
+                                                                md-input-name="autocompleteField"
+                                                                md-min-length="3"
+                                                                md-no-cache="false"
+                                                                md-search-text-change="searchTextChangeArticle(searchTextArticle)"
+                                                                md-search-text="searchTextArticle"
+                                                                md-selected-item-change="selectedItemChangeArticle(item)"
+                                                                md-items="item in searchArticle(searchTextArticle)"
+                                                                md-item-text="item.descripcion"
+                                                                md-escape-options="clear"
+                                                                placeholder="Ej: Mouse..."
+                                                                md-clear-button="false"
+                                                                input-aria-describedby="Buscar Artículo">
+                                                                <md-item-template>
+                                                                    <span md-highlight-text="searchTextArticle">{{item.descripcion}}</span>
+                                                                </md-item-template>  
+                                                            </md-autocomplete>                                                                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <hr>
+
+                                                <div class="row justify-content-between">
+                                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                        <div class="icheck-success">
+                                                            <input type="checkbox" name="searchBarcode" id="searchBarcode" ng-model="gestionSistema.searchCode">
+                                                            <label for="searchBarcode">Búsqueda de artículo por <code>Código de Barra</code> en venta</label>
+                                                        </div>     
+                                                    </div>
+@* 
+                                                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                                                        <div class="form-group" ng-if="gestionSistema.llevaInventario">
+                                                            <select name="metodoValoracion" id="metodoValoracion" class="form-control border-select">
+                                                                <option ng-repeat="item in valoracionMetodos">{{item.descripcion}}</option>
+                                                            </select>
+                                                        </div>
+                                                    </div> *@
+                                                </div>                                                                                                  
+                                            </div>
+
+                                            <div class="card-footer">
+                                                <button type="button" class="btn btn-success float-right" ng-click="updateConfigSistema()">
+                                                    <i class="ti-save"></i> Guardar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>                         
                             </md-content>
                         </md-tab>
 

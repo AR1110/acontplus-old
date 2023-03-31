@@ -229,7 +229,12 @@ export class ModalArticuloCtrl extends ModalBaseCtrl{
         } catch (error) { 
             console.error(error)           
             hideLoader();
-        }                       
+        }   
+        
+        this.$uibModalInstance.rendered.then(resolve => {
+           
+           
+        })
     }  
 
     getBodegas(){

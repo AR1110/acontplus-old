@@ -14,7 +14,7 @@ function reporteKardexCtrl($scope, _commonSvc, mS, form, toast, FileSaver, Blob)
     //Filters        
     $scope.meses = form.meses();
     $scope.mes = new Date().getMonth() + 1;
-
+ 
     $scope.tipoDocumentos = [
         {idTipoDocumento: 1, descripcion: 'Compras'},
         {idTipoDocumento: 2, descripcion: 'Ventas'},

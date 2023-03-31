@@ -43,7 +43,8 @@
     } 
 
     .rtable .suggestion-column{
-         text-overflow: ellipsis;
+        overflow: hidden;
+        text-overflow: ellipsis;
         white-space: nowrap !important;    
         word-break: break-all !important;
     }
@@ -65,8 +66,7 @@
         tooltip-placement="top"
         tooltip-trigger="'mouseenter'"
 
-        md-no-cache="true"  
-        ng-enter="$ctrl.getArticuloByCode();"              
+        md-no-cache="true"                
         md-selected-item="$ctrl.selectedItem"
         md-search-text-change="$ctrl.searchTextChange($ctrl.searchText)"
         md-search-text="$ctrl.searchText"
@@ -147,11 +147,6 @@
                 No hay estados coincidentes con "{{searchText}}"       
             </md-not-found> *@
         </md-autocomplete> 
-
-        
-       
-        <input type="text" class="form-control border-select" ng-model="$ctrl.inputByCorde"  ng-enter="$ctrl.getDataArticuloByEnterCode();"     id="inputBarcode" placeholder="Ingrese el código de barra">
-       
 
         <a href="javascript:void(0)" class="btn btn-success btn-xs mt-1" ng-click="$ctrl.openModalArticulo()">
             <i class="fas fa-plus"></i> Nuevo

@@ -125,9 +125,9 @@
 
 
         <div class="row">
-            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-xs-12">
                 <div class="row justify-content-between">
-                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-xs-12">
                         <label for="">Buscar Articulo</label>                             
                         <md-autocomplete-articulo-component 
                             tipo-doc="$ctrl.TIPO_DOC_FV"                          
@@ -135,9 +135,19 @@
                             is-default-article="$ctrl.isDefaultArticle">
                         </md-autocomplete-articulo-component>            
                     </div>
+
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label for="searchBarcode">Búsqueda por Código Barra</label>
+                            <input type="text" class="form-control border-select" ng-model="$ctrl.inputByCorde"  ng-enter="$ctrl.getDataArticuloByEnterCode();"     id="inputBarcode"  ng-focus="$ctrl.focusDescripcionArticulo('#inputBarcode')" placeholder="Ingrese el código de barra">                                                 
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+
+
+
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
                 <div class="row justify-content-end">
                     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
                         <div class="form-group">

@@ -795,6 +795,12 @@ export class ModalBaseCtrl{
         }, 100);
     }
 
+    setFocusInputBarcode() {
+        setTimeout(function() {
+          document.querySelector('#inputBarcode').focus();
+        }, 100);
+    }
+
     async setItemArticuloEnDetalle(dataArticulo){        
         try {
             

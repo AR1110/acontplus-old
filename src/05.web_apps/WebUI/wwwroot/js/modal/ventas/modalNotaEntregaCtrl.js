@@ -1,5 +1,5 @@
 
-import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.22";
+import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.23";
 
 
 class ModalNotaEntregaCtrl extends ModalBaseCtrl{
@@ -36,7 +36,13 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl{
             
             gridApi.grid.element.on('keyup', function (ev) {            
                 if(ev.which == 13 || ev.keyCode=='13'){
-                    self.setFocusArticulo();
+                    
+                    if($("#inputBarcode").is(":visible")){
+                        self.setFocusInputBarcode();
+                    }else{
+                        self.setFocusArticulo();
+                    }
+
                     $scope.gridApi.grid.cellNav.clearFocus();
                 // ev.stopPropagation();   
                 }

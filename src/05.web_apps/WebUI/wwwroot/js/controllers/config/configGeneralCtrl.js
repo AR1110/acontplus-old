@@ -36,10 +36,14 @@ function configGeneralCtrl($timeout, $q, _mS, $scope, _commonSvc, _modalSvc, _no
             $scope.gestionSistema = results[2][0];
             $scope.searchText     = $scope.gestionSistema.nombreFiscal; //Buscar Cliente 
             $scope.searchTextArticle = $scope.gestionSistema.descripcion;
+
+            //Busqueda de Articulo por Código de Barra en Ventas
+            $scope.gestionSistema.searchCode = $scope.gestionSistema.searchCode===1?true: false;
             
             $scope.tipoIvas       = results[3];            
             $scope.configDetalle  = JSON.parse(results[4].payload)[0];
 
+            
             
             if(results[5]){
                $scope.entidadNotificaciones = JSON.parse(results[5]);                      
@@ -87,9 +91,7 @@ function configGeneralCtrl($timeout, $q, _mS, $scope, _commonSvc, _modalSvc, _no
         })
        
         let deferred = $q.defer();
-        $timeout(()=> { 
-            deferred.resolve(results); 
-        }, Math.random() * 1000, false);
+        deferred.resolve(results);      
         return deferred.promise; 
     }
 
@@ -150,8 +152,7 @@ function configGeneralCtrl($timeout, $q, _mS, $scope, _commonSvc, _modalSvc, _no
             $scope.gestionSistema.idArticulo = 0;
         }
 
-        
-
+       
     
         let {isConfirmed} = await Swal.fire({
             icon:'warning',
@@ -164,8 +165,9 @@ function configGeneralCtrl($timeout, $q, _mS, $scope, _commonSvc, _modalSvc, _no
         })
         
         if(isConfirmed){      
-            const data = Object.assign({}, $scope.gestionSistema);
-            data.llevaInventario = data.llevaInventario?'SI':'NO'            
+            let data = Object.assign({}, $scope.gestionSistema);
+            data.llevaInventario = data.llevaInventario?'SI':'NO';
+            data.searchCode = data.searchCode? 1: 0;             
             const response = await _mS.getData('put', '/GestionSistema/Put?id=' + $scope.gestionSistema.idGestionSistema, data);            
             
             if(response.code=="0"){

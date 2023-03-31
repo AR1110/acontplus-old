@@ -2490,7 +2490,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=First(Fields!nroIdentificacion.Value, "ProformaDs")</Value>
+                    <Value>=First(Fields!ruc.Value, "ProformaDs")</Value>
                     <Style>
                       <FontSize>8pt</FontSize>
                     </Style>

@@ -65,7 +65,7 @@ app.constant('nombreModal', {
 
         MODAL_SEND_MAIL_CTRL: 'common/modalSendMailCtrl.js' + CHANGE_VERSION(),
         MODAL_SEND_MAIL_CSHTML: 'Common/_ModalSendMail.cshtml',
-        MODAL_STATUS_MAIL_CSHTML: 'DocumentoElectronico/_ModalStatusEmail.cshtml',
+        MODAL_STATUS_MAIL_CSHTML: '~/Areas/DocumentoElectronico/Pages/Shared/_ModalStatusEmail.cshtml',
 
         MODAL_INFO_ADICIONAL_DOC:{
             controller: 'InfoAdicionalTipoDocCtrl',
