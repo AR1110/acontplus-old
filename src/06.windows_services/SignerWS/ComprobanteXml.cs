@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
 
@@ -1499,10 +1500,12 @@ namespace SignerWS
                     NodoReembolsos(wr, item["idRetAtsDocSustento"].ToString(), reembolsos, detalleImpuestos);
                     wr.WriteEndElement();
                 }
-
-                wr.WriteStartElement("pagos");
-                NodoPagosRet(wr, item["idRetAtsDocSustento"].ToString(), pagos);
-                wr.WriteEndElement();
+                if (pagos.Columns.Contains("idRetAtsDocSustento") && pagos.Select(string.Format("idRetAtsDocSustento = {0}", item["idRetAtsDocSustento"].ToString())).Count() > 0)
+                {
+                    wr.WriteStartElement("pagos");
+                    NodoPagosRet(wr, item["idRetAtsDocSustento"].ToString(), pagos);
+                    wr.WriteEndElement();
+                }
 
                 wr.WriteEndElement();
             }
