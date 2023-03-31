@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.FE
 {
-    [Authorize]
+    
     public class CompraHabitualController : Controller
     {
         private readonly IConfiguration _configuration;

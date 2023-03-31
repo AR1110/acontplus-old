@@ -30,12 +30,12 @@ namespace WebUI.Controllers.Admin
             _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
         }
 
-        [Authorize]
+        
         public IActionResult Index() => View();
         public IActionResult Recepcion() => View("~/Views/Reporte/Recepcion/Index.cshtml");
 
         //Reporte Compra
-        [Authorize]
+        
         public IActionResult ReporteCompra()
         {
             ViewData["idRol"] = _idRol;
@@ -43,7 +43,7 @@ namespace WebUI.Controllers.Admin
         }
 
         //Reporte Venta
-        [Authorize]
+        
         public IActionResult ReporteVenta()
         {
             ViewData["idRol"] = _idRol;
@@ -51,7 +51,7 @@ namespace WebUI.Controllers.Admin
         }
 
         //Reporte Inventario 
-        [Authorize]
+        
         public IActionResult ReporteInventario()
         {
             ViewData["idRol"] = _idRol;
@@ -59,14 +59,14 @@ namespace WebUI.Controllers.Admin
         }
 
         //Reporte Consumo Ciente
-        [Authorize]
+        
         public IActionResult ReporteConsumoCliente()
         {
             ViewData["idRol"] = _idRol;
             return View();
         }
 
-        [Authorize]
+        
         public IActionResult ReporteKardex()
         {
             ViewData["idRol"] = _idRol;

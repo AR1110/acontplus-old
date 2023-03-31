@@ -15,7 +15,7 @@ namespace WebUI.Controllers.Config
             _configuration = configuration;
             sm = new SubMenuDao(_configuration);
         }
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

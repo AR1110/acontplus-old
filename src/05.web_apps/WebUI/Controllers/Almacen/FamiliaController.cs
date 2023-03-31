@@ -25,7 +25,7 @@ namespace WebUI.Controllers
             _f = new FamiliaDao(_configuration);
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

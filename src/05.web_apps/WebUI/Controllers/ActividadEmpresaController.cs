@@ -15,7 +15,7 @@ namespace WebUI.Controllers
         }
         // GET: ActividadEmpresa         
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

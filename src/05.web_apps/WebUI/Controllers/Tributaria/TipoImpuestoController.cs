@@ -18,7 +18,7 @@ namespace WebUI.Controllers
             _configuration = configuration;
             _ti = new TipoImpuestoRentaDao(_configuration);
         }
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

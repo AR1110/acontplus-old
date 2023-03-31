@@ -14,7 +14,7 @@ namespace WebUI.Controllers.Admin
             _configuration = configuration;
             _asignE = new AsignacionPuntoEmisionDao(_configuration);
         }
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

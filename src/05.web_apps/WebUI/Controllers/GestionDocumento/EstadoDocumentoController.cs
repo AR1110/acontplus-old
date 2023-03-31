@@ -13,7 +13,7 @@ namespace WebUI.Controllers.GestionDocumento
             _configuration = configuration;
             _eDoc = new EstadoDocumentoDao(_configuration);
         }
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

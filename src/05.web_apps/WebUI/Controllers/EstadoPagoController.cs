@@ -14,7 +14,7 @@ namespace WebUI.Controllers
             _eDoc = new EstadoDocumentoDao(_configuration);
         }
 
-        [Authorize]
+        
         public ActionResult Index()
         {
             return View();

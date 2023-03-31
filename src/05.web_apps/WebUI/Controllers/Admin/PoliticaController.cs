@@ -16,7 +16,7 @@ namespace WebUI.Controllers
             _p = new PoliticaDao(_configuration);
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

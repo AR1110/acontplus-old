@@ -11,7 +11,7 @@
 //        // GET: ComposicionArticuloDetalle
 //        GenericResponse _gr = new();
 //        readonly ComposicionArticuloDetalleDao _cad = new();
-//        [Authorize]
+//        
 //        public IActionResult Index()
 //        {
 //            return View();

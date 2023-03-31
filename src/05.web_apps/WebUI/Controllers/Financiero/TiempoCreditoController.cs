@@ -22,7 +22,7 @@ namespace WebUI.Controllers.Finanzas
             _tc = new TiempoCreditoDao(_config);
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

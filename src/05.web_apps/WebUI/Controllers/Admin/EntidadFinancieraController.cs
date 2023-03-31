@@ -23,7 +23,7 @@ namespace WebUI.Controllers.Admin
             _ef = new EntidadFinancieraDao(_config);
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

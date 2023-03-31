@@ -16,7 +16,7 @@ namespace WebUI.Controllers.Admin
             _configuration = configuration;
             _cpc = new ContraPartidaCajaDao(_configuration);
         }
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

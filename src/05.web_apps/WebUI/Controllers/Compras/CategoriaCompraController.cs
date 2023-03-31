@@ -17,7 +17,7 @@ namespace WebUI.Controllers.Ingresos
             _configuration = configuration;
             _cc = new CategoriaCompraDao(_configuration);
         }
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

@@ -22,7 +22,7 @@ namespace AcontPlus.Controllers
             _config = config;
             _d = new DashboardDao(_config);
         }
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

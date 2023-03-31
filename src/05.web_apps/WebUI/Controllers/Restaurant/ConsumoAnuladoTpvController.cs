@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Restaurant
 {
-    [Authorize]
+    
     public class ConsumoAnuladoTpvController : Controller
     {
         private readonly IConfiguration _config;

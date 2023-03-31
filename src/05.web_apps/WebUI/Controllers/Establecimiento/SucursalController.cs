@@ -25,7 +25,7 @@ namespace WebUI.Controllers.Establecimiento
 
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

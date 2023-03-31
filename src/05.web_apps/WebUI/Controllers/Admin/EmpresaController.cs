@@ -14,7 +14,7 @@ namespace WebUI.Controllers.Admin
             _config = config;
             _e = new EmpresaDao(_config);
         }
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

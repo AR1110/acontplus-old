@@ -13,7 +13,7 @@ namespace WebUI.Controllers.Estadisticas
             _configuration = configuration;
             _ec = new EstadisticaCompraDao(_configuration);
         }
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

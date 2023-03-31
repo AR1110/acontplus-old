@@ -13,7 +13,7 @@ namespace WebUI.Controllers.Asignacion
             _config = config;
             _gAsig = new GestionAsignacionesDao(_config);
         }
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();
