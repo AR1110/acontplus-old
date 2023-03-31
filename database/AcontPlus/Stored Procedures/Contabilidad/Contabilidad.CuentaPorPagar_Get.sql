@@ -280,7 +280,7 @@ BEGIN
 					 d.idDocRelacionado
 					,idTipoDocumento = (SELECT TOP 1 idTipoDocumento FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo = 'NC')
 					,dr.serieComprobante
-					,saldo = d.valorRetenido
+					,saldo = d.baseImponible + valorRetenido
 					,codDoc = 'Nota Crédito Version:'+dr.versionComp
 				FROM factelect.DocRelacionado d
 				INNER JOIN Recepcion.DocumentoRecibido dr ON dr.idDocumento = d.idDocumentoRecibido
