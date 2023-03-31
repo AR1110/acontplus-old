@@ -1943,13 +1943,13 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>5.67305cm</Width>
+                  <Width>4.83541cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.13576cm</Width>
+                  <Width>0.29812cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>5.21035cm</Width>
+                  <Width>4.37271cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -1973,7 +1973,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -2016,7 +2016,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -2059,7 +2059,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -2102,7 +2102,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -2145,7 +2145,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -2188,7 +2188,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -2231,7 +2231,7 @@
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Right</TextAlign>
+                                <TextAlign>Left</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -2315,9 +2315,9 @@
             </TablixRowHierarchy>
             <DataSetName>encabezadoDs</DataSetName>
             <Top>0.06488cm</Top>
-            <Left>0.25361cm</Left>
+            <Left>2.76653cm</Left>
             <Height>2.57937cm</Height>
-            <Width>12.01916cm</Width>
+            <Width>9.50624cm</Width>
             <ZIndex>3</ZIndex>
             <Style>
               <Border>
@@ -2937,15 +2937,15 @@
                   </TextRun>
                 </TextRuns>
                 <Style>
-                  <TextAlign>Center</TextAlign>
+                  <TextAlign>Left</TextAlign>
                 </Style>
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox43</rd:DefaultName>
             <Top>3.13597cm</Top>
-            <Left>0.25361cm</Left>
+            <Left>2.76653cm</Left>
             <Height>0.40101cm</Height>
-            <Width>12.01916cm</Width>
+            <Width>9.50624cm</Width>
             <ZIndex>6</ZIndex>
             <Style>
               <Border>
@@ -2973,15 +2973,15 @@
                   </TextRun>
                 </TextRuns>
                 <Style>
-                  <TextAlign>Center</TextAlign>
+                  <TextAlign>Left</TextAlign>
                 </Style>
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox43</rd:DefaultName>
             <Top>2.6644cm</Top>
-            <Left>0.25361cm</Left>
+            <Left>2.76653cm</Left>
             <Height>0.40101cm</Height>
-            <Width>12.01916cm</Width>
+            <Width>9.50624cm</Width>
             <ZIndex>7</ZIndex>
             <Style>
               <Border>
@@ -2994,6 +2994,22 @@
               <PaddingBottom>2pt</PaddingBottom>
             </Style>
           </Textbox>
+          <Image Name="Image1">
+            <Source>Database</Source>
+            <Value>=Parameters!logo.Value</Value>
+            <MIMEType>=Parameters!mimeType.Value</MIMEType>
+            <Sizing>FitProportional</Sizing>
+            <Top>0.24553cm</Top>
+            <Left>0.25361cm</Left>
+            <Height>2.07024cm</Height>
+            <Width>2.33653cm</Width>
+            <ZIndex>8</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Image>
         </ReportItems>
         <Height>116.60784mm</Height>
         <Style>
@@ -3015,10 +3031,36 @@
       </Page>
     </ReportSection>
   </ReportSections>
+  <ReportParameters>
+    <ReportParameter Name="logo">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>mimeType</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="mimeType">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>mimeType</Prompt>
+    </ReportParameter>
+  </ReportParameters>
   <ReportParametersLayout>
     <GridLayoutDefinition>
       <NumberOfColumns>4</NumberOfColumns>
       <NumberOfRows>2</NumberOfRows>
+      <CellDefinitions>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>logo</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>mimeType</ParameterName>
+        </CellDefinition>
+      </CellDefinitions>
     </GridLayoutDefinition>
   </ReportParametersLayout>
   <rd:ReportUnitType>Cm</rd:ReportUnitType>

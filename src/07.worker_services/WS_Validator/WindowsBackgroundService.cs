@@ -81,9 +81,18 @@ namespace WS_Validator
                         }
                         else
                         {
-                            _valService.InsertError(dataRow.Field<long>("idDocumentoElectronico"), _response);
-                            _valService.Update(dataRow.Field<long>("idDocumentoElectronico"), 5);
-                            _log.LogWarning("Error al validar el xml en el SRI: " + Convert.ToString(dataRow.Field<long>("idDocumentoElectronico")) + " - Xml Sri: " + _response.xmlSri);
+                            int codEstado = 5;
+                            if (_response.identificador == "43")
+                            {
+                                codEstado = 3;
+                                _log.LogInfo("Doc. Validated: " + Convert.ToString(dataRow.Field<long>("idDocumentoElectronico")));
+                            }
+                            else
+                            {
+                                _log.LogWarning("Error al validar el xml en el SRI: " + Convert.ToString(dataRow.Field<long>("idDocumentoElectronico")) + " - Xml Sri: " + _response.xmlSri);
+                                _valService.InsertError(dataRow.Field<long>("idDocumentoElectronico"), _response);
+                            }
+                            _valService.Update(dataRow.Field<long>("idDocumentoElectronico"), codEstado);
                         }
                     }
                     else
