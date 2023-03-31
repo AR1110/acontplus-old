@@ -131,6 +131,7 @@ function reporteKardexCtrl($scope, _commonSvc, mS, form, toast, FileSaver, Blob)
     $scope.getReport = function() {            
         const parameters = {
             reportParams: JSON.stringify({
+                
                 codigo: 'KRG', 
                 format: $scope.dataSearch.byTipoFormato,
                 aditionalParams: []
