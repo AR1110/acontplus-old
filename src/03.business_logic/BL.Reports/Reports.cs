@@ -170,13 +170,18 @@ namespace BL.Reports
 
                     if (parameters.rdlcParams != null)
                     {
-                        int index = 0;
-                        ReportParameter[] rp = new ReportParameter[parameters.rdlcParams.Keys.Count];
                         foreach (var item in parameters.rdlcParams)
                         {
-                            rp[index++] = new ReportParameter(item.Key, item.Value);
+                            if (item.Key == "logo")
+                            {
+                                string dirlogo = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logos", item.Value);
+                                lr.SetParameters(new ReportParameter(item.Key, Convert.ToBase64String(File.ReadAllBytes(dirlogo))));
+                            }
+                            else
+                            {
+                                lr.SetParameters(new ReportParameter(item.Key, item.Value));
+                            }
                         }
-                        lr.SetParameters(rp);
                     }
 
                     lr.Render(format, deviceInfo, (name, fileNameExtension, encoding, mimeType, willSeek) =>
@@ -222,8 +227,6 @@ namespace BL.Reports
                                 streams.Clear();
                             }
                         };
-                        //int milliseconds = 3000;
-                        //Thread.Sleep(milliseconds);
                         printDoc.Print();
                         return true;
                     }

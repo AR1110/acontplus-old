@@ -1,0 +1,4 @@
+USE MASTER
+GO
+CREATE DATABASE AcontplusInventory 
+GO
