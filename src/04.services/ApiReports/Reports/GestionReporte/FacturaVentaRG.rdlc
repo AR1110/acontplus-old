@@ -3018,13 +3018,13 @@
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
-      <Prompt>ReportParameter1</Prompt>
+      <Prompt>logo</Prompt>
     </ReportParameter>
     <ReportParameter Name="mimeType">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
-      <Prompt>ReportParameter1</Prompt>
+      <Prompt>mimeType</Prompt>
     </ReportParameter>
   </ReportParameters>
   <ReportParametersLayout>

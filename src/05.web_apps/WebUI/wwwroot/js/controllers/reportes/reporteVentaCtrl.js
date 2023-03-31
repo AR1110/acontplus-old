@@ -325,12 +325,15 @@
 
             const parameters = {
                 reportParams: JSON.stringify({
+                    codEstab: $scope.dataSearch.codEstab,
+                    hasParams: true,
                     codigo: dataReporte.codigoReporte,
                     format: $scope.dataSearch.byTipoFormato,
                     aditionalParams: []
                 }),
                 dataParams: JSON.stringify($scope.dataSearch)
             }
+
 
             _commonSvc.getReport({
                 parameters,
