@@ -184,7 +184,7 @@ BEGIN
 							 )
 
 							 
-	    SET @rdlcParams = (SELECT logo = nombreImagen FROM Config.Estab_Logo WHERE codEstab = @codEstab FOR JSON PATH)
+	    SET @rdlcParams = (SELECT logo = nombreImagen, mimeType FROM Config.Estab_Logo WHERE codEstab = @codEstab FOR JSON PATH)
 
 		SELECT  @dataSources = dataSources FROM ApiPrinter.Document_Data(@idDocument,@idTipoDocumento,@codDoc)
 
