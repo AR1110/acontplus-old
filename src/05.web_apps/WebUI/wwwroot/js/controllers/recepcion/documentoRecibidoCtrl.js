@@ -1026,9 +1026,15 @@
 
             $scope.openModalNewArticle = async (event) => {
 
-                const { articulo } = nameModalConst;
-                const { ModalArticuloCtrl } = await import('../../modal/' + articulo.MODAL_CTRL)
-                const modalRef = modalService.openModalSecond(ModalArticuloCtrl, 'Articulo/' + articulo.MODAL_NUEVO_CSHTML, 'xl')
+                let {MODAL_CTRL, MODAL_NUEVO_CSHTML } = nameModalConst.articulo;
+                let { ModalArticuloCtrl } = await import('../../modal/' + MODAL_CTRL);
+
+                let modalRef = modalService.openModalCustom({
+                    controller: ModalArticuloCtrl,
+                    template: 'Articulo/' + MODAL_NUEVO_CSHTML,
+                    size:'xl',
+                })
+                
                 modalRef.result.then(response => {
                     if (typeof (response) == "object") {
                         $scope.idArticulo = response.idArticulo
@@ -1036,6 +1042,29 @@
                     }
                 })
             }
+
+
+            $scope.openModalEditArticulo = async(item) =>{                
+                try {
+                                        
+                    let {MODAL_CTRL, MODAL_NUEVO_CSHTML } = nameModalConst.articulo;
+                    let { ModalArticuloCtrl } = await import('../../modal/' + MODAL_CTRL);
+    
+                    modalService.openModalCustom({
+                        controller: ModalArticuloCtrl,
+                        template: 'Articulo/' + MODAL_NUEVO_CSHTML,
+                        size:'xl',
+                        params: {
+                            idArticulo: item.idArticulo,
+                            isUpdateImport: true
+                        }
+                    })                                        
+                } catch (error) {
+                    console.log(error)
+                }
+            }
+
+
 
             $scope.getTempDetails = function () {
                 try {

@@ -33,16 +33,6 @@ class MdArticuloCtrl{
     }
 
 
-    debounce(callback, wait) {      
-        let timerId;
-        return (...args) => {
-            clearTimeout(timerId);
-            timerId = setTimeout(() => {
-            callback(...args);
-            }, wait);
-        };     
-    }
-
     $onInit(){
         
         if(this.isDefaultArticle){
@@ -75,7 +65,7 @@ class MdArticuloCtrl{
     
 
     getDynamicSearchArticles(){  
-        console.log('init')
+        
         let json =  {
             busqueda: this._commonSvc.removeAccents(this.searchText),
             condicion: false,
@@ -85,14 +75,14 @@ class MdArticuloCtrl{
         if(json.busqueda.length<3) return []
 
 
-        return this.$http.get('/Articulo/Search?json=' + JSON.stringify(json)).then(response=>{
+        return this._mS.getData('get', '/Articulo/Search?json=' + JSON.stringify(json)).then(response=>{
             console.log(response)
-            if(response.data.code==='0'){
+            if(response.code==='0'){
                 console.log(response)
                 return []
             }
 
-            let articulos = JSON.parse(response.data.payload) || [];
+            let articulos = JSON.parse(response.payload) || [];
             if(articulos.length>0){
                 articulos.unshift({
                     showHeader: true,
@@ -130,21 +120,15 @@ class MdArticuloCtrl{
 
 
     getDataArticuloByEnterCode(){
-        try {
-
-            this.articulos = [];
-
-            let textSearch = this.inputByCorde;  
-    
-            this.inputByCorde = null;    
-            
-            if(!textSearch) {
+        try {           
+                        
+            if(!this.searchText) {
                 this.searchText  = null;
                 return
             }
 
             
-            this._commonSvc.articuloSearchGeneral({textSearch,code: true}).then(response=>{
+            this._commonSvc.articuloSearchGeneral({textSearch: this.searchText,code: true}).then(response=>{
 
                 if(!response || (Array.isArray(response) && response.length===0)){
                     this.searchText  = null;
@@ -160,40 +144,6 @@ class MdArticuloCtrl{
             console.log(error)
         }
     }
- 
-
-    getArticuloByCode(){
-           
-        try {
-            this.articulos = [];
-
-            let textSearch = this.searchText;  
-    
-            this.textSearch = null;    
-            
-            if(!textSearch) {
-                this.searchText  = null;
-                return
-            }
-
-            
-            this._commonSvc.articuloSearchGeneral({textSearch,code: true}).then(response=>{
-
-                if(!response || (Array.isArray(response) && response.length===0)){
-                    this.searchText  = null;
-                    return
-                }
-
-                //Tomamos  posicion 1 para obtener datos del articulo                  
-                this.selectArticleSearch(response[0])
-                this.searchText = null
-            })                                   
-        } catch (error) {
-            console.error(error)
-        }
-    }
-
-    
 
     selectArticleSearch (item){  
       

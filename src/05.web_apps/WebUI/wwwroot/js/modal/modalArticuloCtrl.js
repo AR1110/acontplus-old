@@ -221,6 +221,8 @@ export class ModalArticuloCtrl extends ModalBaseCtrl{
                 return
             }
 
+            
+
             //Actualizar artículo 
             if(this._params){
                 this.tipoRegistro = 2;
@@ -330,7 +332,12 @@ export class ModalArticuloCtrl extends ModalBaseCtrl{
                     } else {
                         this.data.fechaCreacion = null;
                         this.data.fechaCaducidadLote = null
-                    }                    
+                    }  
+                    
+                    
+                    if(this._params.isUpdateImport){
+                        console.log('is update import', this._params.isUpdateImport)
+                    }
                 }
             )
             

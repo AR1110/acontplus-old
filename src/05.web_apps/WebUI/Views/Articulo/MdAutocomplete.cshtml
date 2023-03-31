@@ -66,7 +66,10 @@
         tooltip-placement="top"
         tooltip-trigger="'mouseenter'"
 
-        md-no-cache="true"                
+        ng-enter="$ctrl.getDataArticuloByEnterCode();"
+
+        md-no-cache="false"                
+        
         md-selected-item="$ctrl.selectedItem"
         md-search-text-change="$ctrl.searchTextChange($ctrl.searchText)"
         md-search-text="$ctrl.searchText"
