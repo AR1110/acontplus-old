@@ -513,7 +513,7 @@
             $scope.medidas = [];
             $scope.getFormData = function () {
                 try {
-                    mS.getData('get', _urlService + 'DocumentoRecibido/Get/' + JSON.stringify({ tipo: '1' })).then(
+                    mS.getData('get', _urlService + 'DocumentoRecibido/Get/' + JSON.stringify({ tipo: '1', codEstab: $scope.query.codEstab })).then(
                         response => {
                             if (response.code == "0") {
                                 tS.toastr('warning', response.message)
