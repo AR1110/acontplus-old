@@ -13,7 +13,7 @@ namespace WebUI.Controllers.RetencionIvaRenta
             _configuration = configuration;
             _gr = new GenerateRetencionDao(_configuration);
         }
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

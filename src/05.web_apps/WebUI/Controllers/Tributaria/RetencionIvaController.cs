@@ -23,7 +23,7 @@ namespace WebUI.Controllers
             _ri = new RetencionIvaDao(_config);
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

@@ -25,7 +25,7 @@ namespace WebUI.Controllers.Sri
 
         }
         
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

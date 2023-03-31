@@ -12,7 +12,7 @@ namespace WebUI.Controllers.Config
     public class ConfigTributariaController : Controller
     {
         //ConfigPorcentajeDao _ct = new();
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

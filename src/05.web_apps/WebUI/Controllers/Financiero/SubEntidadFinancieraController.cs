@@ -15,7 +15,7 @@ namespace WebUI.Controllers.GestionFinanciera
             _sef = new SubEntidadFinancieraDao(_configuration);
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

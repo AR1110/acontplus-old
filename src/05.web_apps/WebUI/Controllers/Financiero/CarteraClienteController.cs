@@ -17,7 +17,7 @@ namespace WebUI.Controllers.GestionFinanciera
             _c = new CarteraDao(_configuration);
         }
 
-        [Authorize]
+        
         public IActionResult Index() => View();
 
         [HttpGet]

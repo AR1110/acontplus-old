@@ -18,7 +18,7 @@ namespace WebUI.Controllers.GestionFinanciera
             _c = new CobroDao(_configuration);
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             ViewData["idRol"] = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);

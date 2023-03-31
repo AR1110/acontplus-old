@@ -14,7 +14,7 @@ namespace WebUI.Controllers.Config
             _configuration = configuration;
             _cc = new ConfiguracionContribuyenteDao(_configuration);
         }
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

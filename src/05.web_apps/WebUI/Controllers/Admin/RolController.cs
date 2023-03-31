@@ -15,7 +15,7 @@ namespace WebUI.Controllers.Admin
     public class RolController : Controller
     {
         GenericResponse _gr = new();
-        [Authorize]
+        
         public IActionResult Index()
         {
             ViewData["idRol"] = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);

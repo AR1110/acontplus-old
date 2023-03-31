@@ -15,7 +15,7 @@ namespace WebUI.Controllers
             _a = new AccesoDao(_configuration);
         }
         // GET: Acceso
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

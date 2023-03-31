@@ -25,7 +25,7 @@ namespace WebUI.Controllers
             _tc = new TipoContribuyenteDao(_config);
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

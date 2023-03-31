@@ -25,7 +25,7 @@ namespace WebUI.Controllers
             _te = new TipoEntidadDao(_config);
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

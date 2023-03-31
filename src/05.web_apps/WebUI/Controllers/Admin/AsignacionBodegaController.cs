@@ -15,7 +15,7 @@ namespace WebUI.Controllers.Admin
             _asignB = new AsignacionBodegaDao(_configuration);
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

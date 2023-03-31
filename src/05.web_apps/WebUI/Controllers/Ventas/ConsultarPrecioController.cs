@@ -9,7 +9,7 @@ namespace WebUI.Controllers.Ventas
 {
     public class ConsultarPrecioController : Controller
     {
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

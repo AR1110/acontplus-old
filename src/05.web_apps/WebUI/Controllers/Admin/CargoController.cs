@@ -15,7 +15,7 @@ namespace WebUI.Controllers
             _config = config;
             _c = new CargoDao(_config);
         }
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

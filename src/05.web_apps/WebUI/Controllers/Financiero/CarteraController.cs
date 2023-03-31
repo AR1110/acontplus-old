@@ -9,7 +9,7 @@ namespace WebUI.Controllers.GestionFinanciera
 {
     public class CarteraController : Controller
     {        
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

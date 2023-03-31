@@ -24,7 +24,7 @@ namespace WebUI.Controllers.Sri
             _tipA = new TipoAmbienteDao(_configuration);
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

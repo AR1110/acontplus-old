@@ -23,7 +23,7 @@ namespace WebUI.Controllers
             ti = new TipoIdentificacionTransaccionDao(_config);
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

@@ -13,7 +13,7 @@ namespace WebUI.Controllers.Auditoria
             _configuration = configuration;
             _cd = new ConvertDocumentDao(_configuration);
         }
-        [Authorize]
+        
         // GET: ConvertDocumentController
         public ActionResult Index()
         {

@@ -10,7 +10,7 @@ namespace WebUI.Controllers.Ventas
 {
     public class VentaController : Controller
     {
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

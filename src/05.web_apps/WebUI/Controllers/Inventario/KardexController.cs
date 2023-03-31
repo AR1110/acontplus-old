@@ -25,7 +25,7 @@ namespace WebUI.Controllers.Inventario
 
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

@@ -23,7 +23,7 @@ namespace WebUI.Controllers
             _td = new TipoDocumentoDao(_config);
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

@@ -25,7 +25,7 @@ namespace WebUI.Controllers.Inventario
             _cinv = new ConsolidacionInventarioDao(_config);
         }
      
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

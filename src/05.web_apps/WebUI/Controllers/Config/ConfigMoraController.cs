@@ -18,7 +18,7 @@ namespace WebUI.Controllers.Config
             _cm = new ConfiguracionMoraDao(_configuration);
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

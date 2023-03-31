@@ -25,7 +25,7 @@ namespace WebUI.Controllers
             _ti = new TipoIceDao(_config);
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

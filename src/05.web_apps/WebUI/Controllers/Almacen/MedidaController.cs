@@ -23,7 +23,7 @@ namespace WebUI.Controllers
             _dao = new DataAccessObject(_configuration);
             _m = new MedidaDao(_configuration);
         }
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

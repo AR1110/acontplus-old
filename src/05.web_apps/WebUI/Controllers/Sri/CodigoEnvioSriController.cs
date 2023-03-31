@@ -14,7 +14,7 @@ namespace WebUI.Controllers.Sri
             _configuration = configuration;
             _ces = new CodigoEnvioSriDao(_configuration);
         }
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

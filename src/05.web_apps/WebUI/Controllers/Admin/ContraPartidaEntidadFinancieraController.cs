@@ -17,7 +17,7 @@ namespace WebUI.Controllers.Admin
             _cpe = new ContraPartidaEfDao(_configuration);
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

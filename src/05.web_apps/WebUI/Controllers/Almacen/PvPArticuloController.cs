@@ -18,7 +18,7 @@ namespace WebUI.Controllers
         }
         // GET: PvPArticulo
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

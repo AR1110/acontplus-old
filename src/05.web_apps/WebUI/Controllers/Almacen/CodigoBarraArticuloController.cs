@@ -22,7 +22,7 @@ namespace WebUI.Controllers
             _cba = new ArticuloCodigoBarraDao(_configuration);
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

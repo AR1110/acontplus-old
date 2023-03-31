@@ -22,7 +22,7 @@ namespace WebUI.Controllers.GestionTributaria
             _configuration = configuration;
             _ats = new AtsDao(_configuration);
         }
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

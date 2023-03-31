@@ -20,7 +20,7 @@ namespace WebUI.Controllers
             ta = new TipoArticuloDao(_config);
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

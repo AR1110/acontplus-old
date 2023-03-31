@@ -17,7 +17,7 @@ namespace WebUI.Controllers
             _configuration = configuration;
             m = new MenuDao(_configuration);
         }
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();
