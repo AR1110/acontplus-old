@@ -50,9 +50,10 @@ BEGIN
 		,obligadoContabilidad
 		,nombreComercial
 		,dirEstablecimiento
+		,telefono
 		,contribuyenteRimpe
 		,estado
-	FROM  Sri.Establecimiento 
+	FROM Sri.Establecimiento 
 	WHERE idEstablecimiento = @id
 
 	IF @typeList = 1
