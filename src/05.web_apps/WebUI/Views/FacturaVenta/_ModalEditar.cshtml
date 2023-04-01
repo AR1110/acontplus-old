@@ -127,7 +127,7 @@
             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <div class="row justify-content-between">
                     <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12 col-xs-12">
-                        <label for="">Buscar Articulo</label>             
+                        <label for="">Buscar por Artículo</label>             
                         <md-autocomplete-articulo-component 
                             tipo-doc="$ctrl.TIPO_DOC_FV"
                             abrir-modal-articulo="$ctrl.abrirModalArticulo(item)"
@@ -139,7 +139,7 @@
 
                     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
                         <div class="form-group">
-                            <label for="searchBarcode">Búsqueda por Código Barra</label>
+                            <label for="searchBarcode">Buscar por Código</label>
                             <articulo-search-barcode 
                                 tipo-doc="$ctrl.TIPO_DOC_FV"                          
                                 set-item-articulo-en-detalle="$ctrl.setItemArticuloEnDetalle(item)"
@@ -401,7 +401,7 @@
             <input type="checkbox" ng-model="$ctrl.showSubtotales" id="showSubTotales" />
             <label for="showSubTotales">Mas datos</label>
         </div>
-        <button type="button" class="btn btn-success" ng-click="$ctrl.onSave()">
+        <button type="button" class="btn btn-success" autofocus ng-click="$ctrl.onSave()">
             <i class="ti-pencil"></i> Actualizar
         </button>
         <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">

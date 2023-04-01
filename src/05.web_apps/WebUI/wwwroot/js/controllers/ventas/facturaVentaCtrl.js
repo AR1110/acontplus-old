@@ -37,6 +37,11 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
     $scope.isPrintDocument = false; //Para impresiones termicas al registra el documento 
     $scope.parametersPrint = {};
 
+    let btnNewInvoice = document.getElementById("btnNewInvoice");
+    btnNewInvoice.addEventListener("click", ()=>{
+        btnNewInvoice.blur();            
+    })
+
     $scope.getTotales = () => {
         let total = 0, totalAbono = 0, totalSaldo = 0;
         for (let val of $scope.facturas) {
@@ -103,6 +108,8 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
 
 
     $scope.openModalInvoiceNew = async()=>{
+      
+        
         let {MODAL_FILE_CTRL, MODAL_NUEVO} = _nombreModalConst.factura_venta;
         let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_NUEVO['controller']];
         let template   = MODAL_NUEVO['template'];
@@ -111,13 +118,15 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
             TIPO_REGISTRO: 'NUEVO'
         }
 
-        _modalSvc.openModalCustom({
+        let modalRef = _modalSvc.openModalCustom({
             controller,
             template,
             size: 'xl',
             params,
             windowClass: 'uibModalFullScreen'
-        }).result.then(result=>{  
+        })
+        
+        modalRef.result.then(result=>{  
             
             if(typeof result !=='object') return                
             
@@ -135,6 +144,11 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
                 $scope.openModalCobroDocumento(result)
             }                                          
         })
+
+        modalRef.rendered.then(result => {
+                        
+        })
+
     }
 
     

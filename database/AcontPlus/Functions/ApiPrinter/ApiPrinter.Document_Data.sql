@@ -72,7 +72,7 @@ BEGIN
 						,razonSocial = e.razonSocial
 						,nombreComercial = s.nombreComercial
 						,ruc = e.ruc
-						,telefonoEntidad = e.telefono 
+						,telefonoEntidad = ISNULL(s.telefono , 'S/N')
 						,emailEntidad = e.email 
 						,dirMatriz = e.direccion 
 						,s.dirEstablecimiento
@@ -148,7 +148,7 @@ BEGIN
 							,ruc = e.ruc
 							,direccion = e.direccion 
 							,email = e.email 
-							,telefonoEntidad = ISNULL(e.telefono, 'SN') 
+							,telefonoEntidad = ISNULL(s.telefono, 'SN') 
 							,fechaEmision = CONVERT(NVARCHAR, FORMAT(ne.fechaEmision, 'dd/MM/yyyy hh:mm')) 
 							,fechaVencimiento = CONVERT(NVARCHAR, FORMAT(ne.fechaVencimiento, 'dd/MM/yyyy hh:mm')) 
 							,s.dirEstablecimiento  
@@ -218,7 +218,7 @@ BEGIN
 								,nombreComercial = s.nombreComercial
 								,ruc = e.ruc
 								,direccionEntidad = e.direccion
-								,telefonoEntidad = e.telefono  
+								,telefonoEntidad = ISNULL(s.telefono, 'S/N')  
 								,emailEntidad = e.email 	
 								,razonSocialCliente = cl.nombreFiscal
 								,nroIdentificacion = cl.numeroIdentificacion 
@@ -229,6 +229,7 @@ BEGIN
 						        ,s.obligadoContabilidad
 								,labelObligadoContabilidad = 'Obligado Contabilidad: ' + s.obligadoContabilidad
 								,labelAgenteRetencion = ISNULL('AGENTE DE RETENCION RESOLUCION NRO: '+s.agenteRetencion,'') 
+								,s.agenteRetencion
 								,regimen = UPPER(s.contribuyenteRimpe)
 								,telefonoCliente = ISNULL(cl.telefono, '')
 								,ciudadCliente = ISNULL(c.descripcion, 'S/N')

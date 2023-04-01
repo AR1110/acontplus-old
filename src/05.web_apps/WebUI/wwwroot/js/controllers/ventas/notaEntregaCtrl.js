@@ -33,6 +33,13 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
     $scope.parametersPrint = {};
 
 
+    let btnNewInvoice = document.getElementById("btnNewNotaEntrega");
+    btnNewInvoice.addEventListener("click", ()=>{
+        btnNewInvoice.blur();            
+    })
+
+
+
 
     $scope.getTotales = function () {
         try {
