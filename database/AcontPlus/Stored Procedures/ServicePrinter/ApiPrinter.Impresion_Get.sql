@@ -184,7 +184,7 @@ BEGIN
 							 )
 
 							 
-	    SET @rdlcParams = (SELECT logo = nombreImagen, mimeType FROM Config.Estab_Logo WHERE codEstab = @codEstab FOR JSON PATH)
+	   -- SET @rdlcParams = (SELECT logo = nombreImagen, mimeType FROM Config.Estab_Logo WHERE codEstab = @codEstab FOR JSON PATH)
 
 		SELECT  @dataSources = dataSources FROM ApiPrinter.Document_Data(@idDocument,@idTipoDocumento,@codDoc)
 
@@ -201,6 +201,6 @@ BEGIN
 		--				  ) 
 
 
-		SELECT '1' code, payload = (SELECT 'http://' + @urlPrinter urlPrinter,  @rdlcProps rdlcProps, @rdlcParams rdlcParams, @dataSources dataSources FOR JSON PATH)
+		SELECT '1' code, payload = (SELECT 'http://' + @urlPrinter urlPrinter,  @rdlcProps rdlcProps, @dataSources dataSources FOR JSON PATH)
 END
 GO

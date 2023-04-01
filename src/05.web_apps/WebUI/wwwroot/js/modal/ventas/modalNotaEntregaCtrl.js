@@ -37,7 +37,8 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl{
             gridApi.grid.element.on('keyup', function (ev) {            
                 if(ev.which == 13 || ev.keyCode=='13'){
                     
-                    if($("#inputBarcode").is(":visible")){
+                      
+                    if(self.isSearchBarcode == 1){
                         self.setFocusInputBarcode();
                     }else{
                         self.setFocusArticulo();
@@ -289,6 +290,18 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
              
             if(resultsDataForm[7].length>0){
                 this.cliente = resultsDataForm[7][0];
+            }
+
+            if(resultsDataForm[0].length>0){                                            
+                this.isSearchBarcode = resultsDataForm[8][0].searchCode || false;
+
+                this.$uibModalInstance.rendered.then(result =>{
+                    if(this.isSearchBarcode==1){
+                        $("#inputBarcode").focus();
+                    }else{
+                        $("#custom-template-md-autocomplete-articulo").focus();
+                    }
+                })
             }
 
            
@@ -792,6 +805,18 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl{
             this.cloneIdTarifa = this.idTarifa;
 
             this.tiempoCreditos = resultsDataForm[5];
+
+            if(resultsDataForm[0].length>0){                                            
+                this.isSearchBarcode = resultsDataForm[8][0].searchCode || false;
+
+                this.$uibModalInstance.rendered.then(result =>{
+                    if(this.isSearchBarcode==1){
+                        $("#inputBarcode").focus();
+                    }else{
+                        $("#custom-template-md-autocomplete-articulo").focus();
+                    }
+                })
+            }
            
             this.setColumnDefs();            
            
@@ -982,6 +1007,19 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl{
             this.cloneIdTarifa = this.idTarifa;
 
             this.tiempoCreditos = resultsDataForm[5];
+
+            if(resultsDataForm[0].length>0){                                            
+                this.isSearchBarcode = resultsDataForm[8][0].searchCode || false;
+
+                this.$uibModalInstance.rendered.then(result =>{
+                    if(this.isSearchBarcode==1){
+                        $("#inputBarcode").focus();
+                    }else{
+                        $("#custom-template-md-autocomplete-articulo").focus();
+                    }
+                })
+            }
+
            
             this.setColumnDefs();            
            

@@ -87,7 +87,7 @@
         <div class="row">
             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <div class="row justify-content-between">
-                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12 col-xs-12">
                         <label for="">Buscar Articulo</label>             
                         <md-autocomplete-articulo-component 
                             tipo-doc="$ctrl.TIPO_DOC_PR"
@@ -97,6 +97,17 @@
                             scope-parent="scopeParent">
                         </md-autocomplete-articulo-component>            
                     </div>
+
+                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label for="searchBarcode">Búsqueda por Código Barra</label>
+                            <articulo-search-barcode 
+                                tipo-doc="$ctrl.TIPO_DOC_PR"                          
+                                set-item-articulo-en-detalle="$ctrl.setItemArticuloEnDetalle(item)"
+                            ></articulo-search-barcode>                                                                           
+                        </div>
+                    </div>
+
                 </div>
             </div>
             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">

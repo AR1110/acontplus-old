@@ -126,8 +126,8 @@
 
         <div class="row">
             <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-xs-12">
-                <div class="row justify-content-between">
-                    <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-xs-12">
+                <div class="row">
+                    <div class="col-xl-5 col-lg-5 col-md-6 col-sm-12 col-xs-12">
                         <label for="">Buscar Articulo</label>                             
                         <md-autocomplete-articulo-component 
                             tipo-doc="$ctrl.TIPO_DOC_FV"                          
@@ -139,7 +139,10 @@
                     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
                         <div class="form-group">
                             <label for="searchBarcode">Búsqueda por Código Barra</label>
-                            <input type="text" class="form-control border-select" ng-model="$ctrl.inputByCorde"  ng-enter="$ctrl.getDataArticuloByEnterCode();"     id="inputBarcode"  ng-focus="$ctrl.focusDescripcionArticulo('#inputBarcode')" placeholder="Ingrese el código de barra">                                                 
+                            <articulo-search-barcode 
+                                tipo-doc="$ctrl.TIPO_DOC_FV"                          
+                                set-item-articulo-en-detalle="$ctrl.setItemArticuloEnDetalle(item)"
+                            ></articulo-search-barcode>                                                                            
                         </div>
                     </div>
                 </div>
@@ -148,8 +151,8 @@
 
 
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                <div class="row justify-content-end">
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                <div class="row">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
                         <div class="form-group">
                             <label for="bodegas">Bodega</label>
                             <select name="bodegas" id="bodegas" class="form-control border-select" ng-model="$ctrl.idBodega" ng-change="$ctrl.onChangeBodega()">
@@ -159,7 +162,7 @@
                             </select>
                         </div>                       
                     </div>
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
                         <div class="form-group">
                             <label for="tarifas">Tarifa: 
                                 <span tooltip-placement="top" uib-tooltip="Asignación Rápida de listas de precios seleccionada a todos los productos del documento.">

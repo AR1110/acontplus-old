@@ -43,7 +43,8 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
             gridApi.grid.element.on('keyup', function (ev) {            
                 if(ev.which == 13 || ev.keyCode=='13'){
 
-                    if($("#inputBarcode").is(":visible")){
+                    
+                    if(self.isSearchBarcode == 1){
                         self.setFocusInputBarcode();
                     }else{
                         self.setFocusArticulo();
@@ -366,9 +367,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
         try { 
             showLoader();
                            
-            let resultsDataForm = this._params.dataForm;          
-            
-            console.log(resultsDataForm);
+            let resultsDataForm = this._params.dataForm;                              
 
             let {UiGridOptions} = await import('./../factElect/uiGridOptions.min.js' + CHANGE_VERSION());
           
@@ -426,9 +425,16 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
                 this.cliente = resultsDataForm[7][0];
             }
 
-            if(resultsDataForm[0].length>0){
-                console.log(resultsDataForm[0][0])
-                this.searchBarcode = resultsDataForm[0][0].searchCode;
+            if(resultsDataForm[0].length>0){                                            
+                this.isSearchBarcode = resultsDataForm[8][0].searchCode || false;
+
+                this.$uibModalInstance.rendered.then(result =>{
+                    if(this.isSearchBarcode==1){
+                        $("#inputBarcode").focus();
+                    }else{
+                        $("#custom-template-md-autocomplete-articulo").focus();
+                    }
+                })
             }
 
             
