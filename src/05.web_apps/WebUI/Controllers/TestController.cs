@@ -26,12 +26,12 @@ namespace WebUI.Controllers
         //    return Ok(response);
         //}
         [HttpPost]
-        public void EncryptText()
+        public IActionResult EncryptText()
         {
             string textToEncrypt = "";
             textToEncrypt = Request.Form["txtToEncrypt"].ToString();
             var encrypted = Encryption.EncryptString(_config.GetSection("keyEncrypt").Value, textToEncrypt);
-            Console.WriteLine(encrypted);
+            return View(encrypted);
         }
         //public IActionResult GetPrinter()
         //{
