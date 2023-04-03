@@ -10,10 +10,11 @@ facturaVentaCtrl.$inject = [
     'modalService', 
     'nombreModal', 
     'toastService', 
-    'formulario'
+    'formulario',
+    'decodeToken'
 ]
 
-function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modalSvc, _nombreModalConst, _tS, _fS){
+function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modalSvc, _nombreModalConst, _tS, _fS, decodeToken){
     let accion = JSON.parse(localStorage.getItem("accion"));
     if (accion === null) {
         location.href = "/Home/Index";
@@ -22,6 +23,7 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
         $scope.accion = accion[0]; 
     }
 
+   
     const TIPO_DOC_FV = _commonSvc.tipoDoc['FV'];
 
     $scope.dataSearch = {
