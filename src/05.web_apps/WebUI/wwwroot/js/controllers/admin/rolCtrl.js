@@ -1,9 +1,9 @@
 ﻿
 app.controller('rolCtrl', rolCtrl);
 
-rolCtrl.$inject = ['$http', '$scope', 'commonService', 'formulario', 'apiUrl'];
+rolCtrl.$inject = ['$http', '$scope', 'commonService', 'formulario', 'apiUrl', 'decodeToken'];
 
-function rolCtrl($http, $scope, _commonSvc, form, apiUrl) {
+function rolCtrl($http, $scope, _commonSvc, form, apiUrl, decodeToken) {
     let accion = JSON.parse(localStorage.getItem("accion"));
     if(accion===null){
         location.href = "/Home/Index";
@@ -17,8 +17,9 @@ function rolCtrl($http, $scope, _commonSvc, form, apiUrl) {
     $scope.pageSize = 10;
     $scope.recordsQuantity = [5, 10, 25, 50]
 
+    let idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
     let jsonParams = {
-        idRol: document.getElementById('idRol').value
+        idRol: idUsuarioRol
     }        
 
     $scope.getRoles = ()=>{

@@ -37,39 +37,34 @@ namespace WebUI.Controllers.Admin
         //Reporte Compra
         
         public IActionResult ReporteCompra()
-        {
-            ViewData["idRol"] = _idRol;
+        {            
             return View();
         }
 
         //Reporte Venta
         
         public IActionResult ReporteVenta()
-        {
-            ViewData["idRol"] = _idRol;
+        {            
             return View();
         }
 
         //Reporte Inventario 
         
         public IActionResult ReporteInventario()
-        {
-            ViewData["idRol"] = _idRol;
+        {            
             return View();
         }
 
         //Reporte Consumo Ciente
         
         public IActionResult ReporteConsumoCliente()
-        {
-            ViewData["idRol"] = _idRol;
+        {            
             return View();
         }
 
         
         public IActionResult ReporteKardex()
-        {
-            ViewData["idRol"] = _idRol;
+        {            
             return View();
         }
 

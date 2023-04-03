@@ -37,6 +37,11 @@ export class ModalBaseCtrl{
 
         this.NUM_CONSUMIDOR_FINAL = "9999999999999";
 
+
+        this.popoverCliente = {
+            templateUrl: 'infoCliente.html'
+        }
+
     }
 
     initiload(){
@@ -157,14 +162,20 @@ export class ModalBaseCtrl{
             controller,
             template,
             size:'xl',
-            params
+            params,
+            keyboard: true,
         })
-        modalRef.result.then(result=>{
+        modalRef.result.then(result=>{       
             
             if(typeof result!=='object') return
             
-            this.onSelectedClienteChange(result)
+            this.onSelectedClienteChange(result);
+        }, ()=>{
+            $("#clienteSearchInvoice").select();
+            console.log('close')
         })        
+
+        
     }
 
 

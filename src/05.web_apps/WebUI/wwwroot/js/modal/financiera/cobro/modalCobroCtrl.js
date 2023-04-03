@@ -986,9 +986,9 @@ export class ModalCobroRapidoCtrl extends ModalCobroCtrl{
         this.$uibModalInstance.rendered.then(()=>{
           
             $("#btnSaveCobroRapido").focus();   
-            setTimeout(()=>{
-                $("#btnSaveCobroRapido").focus();
-            }, 1000)
+            // setTimeout(()=>{
+            //     $("#btnSaveCobroRapido").focus();
+            // }, 1000)
         })
     }
 
@@ -1198,7 +1198,8 @@ export class ModalCobroRapidoCtrl extends ModalCobroCtrl{
             confirmButtonText: 'Si, guardar',
             showCancelButton: true,
             cancelButtonText: 'No, cancelar',
-            allowOutsideClick: false
+            allowOutsideClick: false,
+            focusConfirm: true
         }).then(result => {
             if (result.isConfirmed) {
                 this.postCobroRapido();                

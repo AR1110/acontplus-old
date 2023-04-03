@@ -3,9 +3,9 @@
     angular.module('acontPlusApp')
            .controller('usuarioEntidadCtrl', usuarioEntidadCtrl);
 
-    usuarioEntidadCtrl.$inject=['$scope', '$http', '$filter','mainService', 'toastService', 'formulario', 'apiUrl'];
+    usuarioEntidadCtrl.$inject=['$scope', '$http', '$filter','mainService', 'toastService', 'formulario', 'apiUrl', 'decodeToken'];
 
-    function usuarioEntidadCtrl($scope, $http,  $filter, mS, toast, form, apiUrl){
+    function usuarioEntidadCtrl($scope, $http,  $filter, mS, toast, form, apiUrl, decodeToken){
         let itemUsuario = JSON.parse(localStorage.getItem("itemUsuario")); 
         if(itemUsuario!==null){
             $scope.usuario = itemUsuario;                 
@@ -13,6 +13,8 @@
             location.href= "/Usuario/Index"; 
             return           
         }
+
+        let idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
 
         $scope.getSucursalByEntidad = function(idEntidad, idUsuario){
             let url = '/Rol/GetSucursalByIdEntidad?idEntidad=' + idEntidad + '&idUsuario=' + idUsuario;

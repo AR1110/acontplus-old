@@ -2,9 +2,9 @@
 
 app.controller('notaCreditoProvCtrl', notaCreditoProvCtrl);
 
-notaCreditoProvCtrl.$inject = ['$scope', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService']
+notaCreditoProvCtrl.$inject = ['$scope', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'decodeToken']
 
-function notaCreditoProvCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form, _tS){
+function notaCreditoProvCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form, _tS, decodeToken){
 
     let accion = JSON.parse(localStorage.getItem("accion"));  
     if(accion===null){
@@ -15,6 +15,8 @@ function notaCreditoProvCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalCon
     }
 
     const TIPO_DOC = _commonSvc.tipoDoc['NCP'];
+    let idUsuarioRol= parseInt(decodeToken.idUsuarioRol);
+
     $scope.dataSearch = {
         pageIndex: 1,
         pageSize: 100
@@ -94,7 +96,7 @@ function notaCreditoProvCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalCon
     $scope.dataUsuarioFilter = {}
     $scope.usuarioSearch = (textSearch) => {
         return _commonSvc.usuarioSearch({
-            idRol: document.getElementById('idRol').value,
+            idRol: idUsuarioRol,
             busqueda: textSearch
         })
     }

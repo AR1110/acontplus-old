@@ -2,9 +2,9 @@
 
 app.controller('retencionCompraCtrl', retencionCompraCtrl);
 
-retencionCompraCtrl.$inject = ['$scope', '$filter', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService']
+retencionCompraCtrl.$inject = ['$scope', '$filter', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'decodeToken']
 
-function retencionCompraCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form, _tS){
+function retencionCompraCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form, _tS, decodeToken){
 
     let accion = JSON.parse(localStorage.getItem("accion"));  
     if(accion===null){
@@ -15,7 +15,7 @@ function retencionCompraCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombr
     }
 
     const TIPO_DOC = _commonSvc.tipoDoc['RC'], VERSION_COMPROBANTE = '1.0.0'
-
+    let idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
     $scope.dataSearch = {
         pageIndex: 1,
         pageSize: 100
@@ -127,7 +127,7 @@ function retencionCompraCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombr
     
     $scope.usuarioSearch = (textSearch) => {
         return _commonSvc.usuarioSearch({
-            idRol: document.getElementById('idRol').value,
+            idRol: idUsuarioRol,
             busqueda: textSearch
         })
     }

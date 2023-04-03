@@ -2,9 +2,9 @@
 
 app.controller('ingresoBodegaCtrl', ingresoBodegaCtrl);
 
-ingresoBodegaCtrl.$inject = ['$scope', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario']
+ingresoBodegaCtrl.$inject = ['$scope', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'decodeToken']
 
-function ingresoBodegaCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form){
+function ingresoBodegaCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form, decodeToken){
 
     let accion = JSON.parse(localStorage.getItem("accion"));  
     if(accion===null){
@@ -15,7 +15,7 @@ function ingresoBodegaCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst
     }
 
     const TIPO_DOC = _commonSvc.tipoDoc['IB'];
-
+    let idUsuarioRol= parseInt(decodeToken.idUsuarioRol)
      //Filtro 
      $scope.meses = _form.meses();
      $scope.mes = $scope.meses[new Date().getMonth() + 1].numero;
@@ -93,7 +93,7 @@ function ingresoBodegaCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst
     $scope.dataUsuarioFilter = {}
     $scope.usuarioSearch = (textSearch) => {
         return _commonSvc.usuarioSearch({
-            idRol: document.getElementById('idRol').value,
+            idRol: idUsuarioRol,
             busqueda: textSearch
         })
     }

@@ -1,8 +1,8 @@
 ﻿app.controller('usuarioCtrl', usuarioCtrl);
 
-usuarioCtrl.$inject = ['$scope', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService'];
+usuarioCtrl.$inject = ['$scope', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'decodeToken'];
 
-function usuarioCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, toast) {
+function usuarioCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, toast, decodeToken) {
     let accion = JSON.parse(localStorage.getItem("accion"));
     if(accion===null){
         location.href = "/Home/Index";
@@ -10,8 +10,9 @@ function usuarioCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, toas
         $scope.accion = accion[0];
     }        
     
+    let idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
     $scope.dataSearch = {
-        idRol: document.getElementById('idRol').value,
+        idRol: idUsuarioRol,
         pageIndex: 1,
         pageSize: 100
     }

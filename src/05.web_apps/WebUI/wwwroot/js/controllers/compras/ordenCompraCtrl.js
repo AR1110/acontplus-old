@@ -2,9 +2,9 @@
 
 app.controller('ordenCompraCtrl', ordenCompraCtrl);
 
-ordenCompraCtrl.$inject = ['$scope', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService']
+ordenCompraCtrl.$inject = ['$scope', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'decodeToken']
 
-function ordenCompraCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form, _tS){
+function ordenCompraCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form, _tS, decodeToken){
 
     let accion = JSON.parse(localStorage.getItem("accion"));  
     if(accion===null){
@@ -15,7 +15,7 @@ function ordenCompraCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, 
     }
 
     const TIPO_DOC = _commonSvc.tipoDoc['OC'];
-
+    let idUsuarioRol= parseInt(decodeToken.idUsuarioRol)
     $scope.dataSearch = {
         pageIndex: 1,
         pageSize: 100
@@ -104,7 +104,7 @@ function ordenCompraCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, 
     $scope.dataUsuarioFilter = {}
     $scope.usuarioSearch = (textSearch) => {
         return _commonSvc.usuarioSearch({
-            idRol: document.getElementById('idRol').value,
+            idRol: idUsuarioRol,
             busqueda: textSearch
         })
     }

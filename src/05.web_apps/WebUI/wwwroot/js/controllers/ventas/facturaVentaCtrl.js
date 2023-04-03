@@ -138,6 +138,9 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
         }
 
         $scope.getFacturas();
+        
+        //Focus New Invoice
+        btnNewInvoice.focus();
     }
 
     $scope.openModalInvoiceNew = async()=>{
@@ -502,7 +505,8 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
             controller,
             template,
             size,
-            params
+            params,
+            keyboard: true
         })
 
         $modalRef.result.then(result=>{
@@ -517,9 +521,8 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
                 $scope.isPrintDocument= null;
             }
 
-            
-
-           
+            //Focus New Invoice
+            btnNewInvoice.focus();
 
         })
     }  

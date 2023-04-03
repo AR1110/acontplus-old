@@ -318,3 +318,5 @@
 /src/03.business_logic/BL.Print/obj
 /src/09.desktop_apps/PointOfSales/bin
 /src/09.desktop_apps/PointOfSales/obj
+/src/04.services/ApiInventory/bin/Debug/net6.0
+/src/04.services/ApiInventory/obj/Debug/net6.0/ref

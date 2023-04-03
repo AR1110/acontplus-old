@@ -15,8 +15,7 @@ namespace WebUI.Controllers.GestionFinanciera
         }
         
         public IActionResult Index()
-        {
-            ViewData["idRol"] = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+        {            
             return View();
         }
 

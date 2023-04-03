@@ -489,6 +489,30 @@ function modalService($uibModal) {
 //})(window.angular);
 
 //Directivas 
+
+app.directive('shouldFocus', function () {
+    return {
+        restrict: 'A',
+        link: function (scope, element, attrs) {
+            scope.$watch(attrs.shouldFocus, function (newVal, oldVal) {
+                if (newVal && element.prop("class").indexOf("active")) {
+                    var par = element.parent("ul");
+                    var cellHeight = element.children().innerHeight();
+                    var maxHeight = par.height();
+                    var startIndex = Math.floor(maxHeight / cellHeight);
+
+                    if (scope.$index > startIndex) {
+                        var scroll = (scope.$index - startIndex) * cellHeight;
+                        par.scrollTop(scroll);
+                    }
+                    if (scope.$index === 0) {
+                        par.scrollTop(0);
+                    }
+                }
+            });
+        }
+    }
+})
 //Para Doble scroll en los documentos
 app.directive('master', function () { //declaration
     function link(scope, element, attrs) {
