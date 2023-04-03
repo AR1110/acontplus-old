@@ -37,7 +37,14 @@ class ModalProformaCtrl extends ModalBaseCtrl{
             
             gridApi.grid.element.on('keyup', function (ev) {            
                 if(ev.which == 13 || ev.keyCode=='13'){
-                    self.setFocusArticulo();
+                   
+                      
+                    if(self.isSearchBarcode == 1){
+                        self.setFocusInputBarcode();
+                    }else{
+                        self.setFocusArticulo();
+                    }
+
                     $scope.gridApi.grid.cellNav.clearFocus();
                 // ev.stopPropagation();   
                 }
@@ -275,6 +282,19 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl{
            
             //6 articulo 
             //7 cliente 
+
+            if(resultsDataForm[0].length>0){                                            
+                this.isSearchBarcode = resultsDataForm[8][0].searchCode || false;
+
+                this.$uibModalInstance.rendered.then(result =>{
+                    if(this.isSearchBarcode==1){
+                        $("#inputBarcode").focus();
+                    }else{
+                        $("#custom-template-md-autocomplete-articulo").focus();
+                    }
+                })
+            }
+
            
             this.data.fechaEmision = new Date();            
 
@@ -629,6 +649,19 @@ export class ModalProformaEditarCtrl extends ModalProformaCtrl{
             this.cloneIdTarifa = this.idTarifa;
 
             this.tiempoCreditos = resultsDataForm[5];
+
+            if(resultsDataForm[0].length>0){                                            
+                this.isSearchBarcode = resultsDataForm[8][0].searchCode || false;
+
+                this.$uibModalInstance.rendered.then(result =>{
+                    if(this.isSearchBarcode==1){
+                        $("#inputBarcode").focus();
+                    }else{
+                        $("#custom-template-md-autocomplete-articulo").focus();
+                    }
+                })
+            }
+
            
             this.setColumnDefs();            
            
@@ -810,6 +843,18 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl{
             this.cloneIdTarifa = this.idTarifa;
 
             this.tiempoCreditos = resultsDataForm[5];
+
+            if(resultsDataForm[0].length>0){                                            
+                this.isSearchBarcode = resultsDataForm[8][0].searchCode || false;
+
+                this.$uibModalInstance.rendered.then(result =>{
+                    if(this.isSearchBarcode==1){
+                        $("#inputBarcode").focus();
+                    }else{
+                        $("#custom-template-md-autocomplete-articulo").focus();
+                    }
+                })
+            }
            
             this.setColumnDefs();            
            

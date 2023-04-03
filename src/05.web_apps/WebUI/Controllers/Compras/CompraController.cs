@@ -16,7 +16,7 @@ namespace WebUI.Controllers.Compras
         }
         //FacturaCompraInternal _fc = new();
         
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

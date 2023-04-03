@@ -10,10 +10,11 @@ facturaVentaCtrl.$inject = [
     'modalService', 
     'nombreModal', 
     'toastService', 
-    'formulario'
+    'formulario',
+    'decodeToken'
 ]
 
-function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modalSvc, _nombreModalConst, _tS, _fS){
+function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modalSvc, _nombreModalConst, _tS, _fS, decodeToken){
     let accion = JSON.parse(localStorage.getItem("accion"));
     if (accion === null) {
         location.href = "/Home/Index";
@@ -22,6 +23,7 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
         $scope.accion = accion[0]; 
     }
 
+   
     const TIPO_DOC_FV = _commonSvc.tipoDoc['FV'];
 
     $scope.dataSearch = {
@@ -36,6 +38,15 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
 
     $scope.isPrintDocument = false; //Para impresiones termicas al registra el documento 
     $scope.parametersPrint = {};
+
+
+    //Remove Focus new invoice 
+    let btnNewInvoice = document.getElementById("btnNewInvoice");
+    btnNewInvoice.addEventListener("click", ()=>{
+        btnNewInvoice.blur();            
+    })
+
+
 
     $scope.getTotales = () => {
         let total = 0, totalAbono = 0, totalSaldo = 0;
@@ -102,7 +113,36 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
 
 
 
+    $scope.validateOperationPrintAndPayment = (result) => {
+        //Verificamos 
+        $scope.isPrintDocument = result.printerAutomatic;
+
+        $scope.parametersPrint = {
+            ...result.data,
+            idDocument: result.data.id,
+            codigo: 'RFPT', 
+        }
+        
+
+        if(result.payAutomatic===1){
+            if(result.data.esContado){
+                $scope.openModalRapido(result)
+            }else{
+                $scope.openModalCobroDocumento(result)
+            }
+            return 
+        }
+
+        if(result.printerAutomatic===1){
+            _commonSvc.getPrinter(JSON.stringify($scope.parametersPrint))
+        }
+
+        $scope.getFacturas();
+    }
+
     $scope.openModalInvoiceNew = async()=>{
+      
+        
         let {MODAL_FILE_CTRL, MODAL_NUEVO} = _nombreModalConst.factura_venta;
         let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_NUEVO['controller']];
         let template   = MODAL_NUEVO['template'];
@@ -111,30 +151,22 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
             TIPO_REGISTRO: 'NUEVO'
         }
 
-        _modalSvc.openModalCustom({
+        let modalRef = _modalSvc.openModalCustom({
             controller,
             template,
             size: 'xl',
             params,
             windowClass: 'uibModalFullScreen'
-        }).result.then(result=>{  
+        })
+        
+        modalRef.result.then(result=>{  
             
             if(typeof result !=='object') return                
             
-            // $scope.getFacturas();
-            $scope.isPrintDocument = true;
-            $scope.parametersPrint = {
-                ...result.data,
-                idDocument: result.data.id,
-                codigo: 'RFPT', 
-            }
-
-            if(result.data.esContado){
-                $scope.openModalRapido(result)
-            }else{
-                $scope.openModalCobroDocumento(result)
-            }                                          
+            $scope.validateOperationPrintAndPayment(result)
         })
+
+
     }
 
     
@@ -290,19 +322,7 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
 
                 if(typeof result !=='object') return                
             
-                // $scope.getFacturas();
-                $scope.isPrintDocument = true;
-                $scope.parametersPrint = {
-                    ...result.data,
-                    idDocument: result.data.id,
-                    codigo: 'RFPT', 
-                }
-    
-                if(result.data.esContado){
-                    $scope.openModalRapido(result)
-                }else{
-                    $scope.openModalCobroDocumento(result)
-                }                                                                    
+                $scope.validateOperationPrintAndPayment(result)                                                                    
             })
             
         } catch (error) {
@@ -486,19 +506,18 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
         })
 
         $modalRef.result.then(result=>{
-
-            //Cuando el documento es Nuevo o Duplicado 
-            if($scope.isPrintDocument){
-                $scope.getFacturas();
-                _commonSvc.askToPrint({
-                    parameters: JSON.stringify($scope.parametersPrint)
-                }) 
-                $scope.isPrintDocument= false;
-            }
-
             if(typeof result =='object') {
                 $scope.getFacturas();
             }
+
+            //Cuando el documento es Nuevo o Duplicado 
+            if($scope.isPrintDocument===1){
+                $scope.getFacturas();
+                _commonSvc.getPrinter(JSON.stringify($scope.parametersPrint)) 
+                $scope.isPrintDocument= null;
+            }
+
+            
 
            
 

@@ -29,7 +29,7 @@ namespace WebUI.Controllers.Ventas
             _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
         }
                 
-        [Authorize]
+        
         public IActionResult Index()
         {
             ViewData["idRol"] = _idRol;

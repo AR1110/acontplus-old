@@ -221,6 +221,8 @@ export class ModalArticuloCtrl extends ModalBaseCtrl{
                 return
             }
 
+            
+
             //Actualizar artículo 
             if(this._params){
                 this.tipoRegistro = 2;
@@ -229,7 +231,12 @@ export class ModalArticuloCtrl extends ModalBaseCtrl{
         } catch (error) { 
             console.error(error)           
             hideLoader();
-        }                       
+        }   
+        
+        this.$uibModalInstance.rendered.then(resolve => {
+           
+           
+        })
     }  
 
     getBodegas(){
@@ -325,7 +332,12 @@ export class ModalArticuloCtrl extends ModalBaseCtrl{
                     } else {
                         this.data.fechaCreacion = null;
                         this.data.fechaCaducidadLote = null
-                    }                    
+                    }  
+                    
+                    
+                    if(this._params.isUpdateImport){
+                        console.log('is update import', this._params.isUpdateImport)
+                    }
                 }
             )
             
@@ -562,7 +574,10 @@ export class ModalArticuloCtrl extends ModalBaseCtrl{
                         idArticulo: this.tipoRegistro === 1 ? response.lastId : this._params.idArticulo,
                         idPresentacion: this.tipoRegistro === 1 ? response.data : this._params.idPresentacion,
                         presentacion: this.tipoRegistro === 1 ? response.gestion : this._params.presentacion,
-                        idMedida: this.data.idMedida
+                        idMedida: this.data.idMedida,
+                        codigoPrincipal: this.data.codigo,
+                        codigoAuxiliar: this.data.codigoAuxiliar,
+                        codigoBarra: this.data.codigoBarra
                     }
                     this.$uibModalInstance.close(data)
                     this._toastr.toastr('success', response.message, response.titleSms);                                              

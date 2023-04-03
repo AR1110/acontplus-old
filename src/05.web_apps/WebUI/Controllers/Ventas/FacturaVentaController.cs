@@ -27,7 +27,7 @@ namespace WebUI.Controllers.Ventas
 
         }
 
-        [Authorize]
+        
         public IActionResult Index(int id)
         {
             ViewData["idRol"] = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);

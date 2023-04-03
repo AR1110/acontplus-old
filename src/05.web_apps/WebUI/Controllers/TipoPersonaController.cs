@@ -23,7 +23,7 @@ namespace WebUI.Controllers
             _tp = new TipoPersonaDao(_config);
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

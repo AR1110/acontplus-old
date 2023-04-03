@@ -1,6 +1,6 @@
 
 
-import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.50";
+import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.51";
 
 class ModalFacturaCtrl extends ModalBaseCtrl{
     
@@ -42,7 +42,14 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
             
             gridApi.grid.element.on('keyup', function (ev) {            
                 if(ev.which == 13 || ev.keyCode=='13'){
-                    self.setFocusArticulo();
+
+                    
+                    if(self.isSearchBarcode == 1){
+                        self.setFocusInputBarcode();
+                    }else{
+                        self.setFocusArticulo();
+                    }
+                                        
                     $scope.gridApi.grid.cellNav.clearFocus();
                 // ev.stopPropagation();   
                 }
@@ -360,8 +367,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
         try { 
             showLoader();
                            
-            let resultsDataForm = this._params.dataForm;          
-           
+            let resultsDataForm = this._params.dataForm;                              
 
             let {UiGridOptions} = await import('./../factElect/uiGridOptions.min.js' + CHANGE_VERSION());
           
@@ -417,6 +423,21 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
             //7 cliente 
             if(resultsDataForm[7].length>0){
                 this.cliente = resultsDataForm[7][0];
+            }
+
+            if(resultsDataForm[8].length>0){ 
+                let {searchCode, printerAutomatic, payAutomatic } = resultsDataForm[8][0];                                           
+                this.isSearchBarcode = searchCode;
+                this.printerAutomatic = printerAutomatic;
+                this.payAutomatic  = payAutomatic ;
+
+                this.$uibModalInstance.rendered.then(result =>{
+                    if(this.isSearchBarcode==1){
+                        $("#inputBarcode").focus();
+                    }else{
+                        $("#custom-template-md-autocomplete-articulo").focus();
+                    }
+                })
             }
 
             
@@ -570,8 +591,11 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
                             
                             let data = JSON.parse(response.payload)[0];
                             
+                        
                             let mainData = {
                                 isRegister: true,
+                                printerAutomatic: this.printerAutomatic, 
+                                payAutomatic : this.payAutomatic,
                                 data: {
                                     ...data,
                                     nroDocumento: data.estab + data.ptoEmi + data.secuencial,
@@ -659,6 +683,20 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl{
             this.cloneIdTarifa = this.idTarifa;
 
             this.tiempoCreditos = resultsDataForm[5];
+
+            //Configuracion de Codigo Barra 
+            if(resultsDataForm[8].length>0){ 
+                let {searchCode, printerAutomatic, payAutomatic } = resultsDataForm[8][0];                                           
+                this.isSearchBarcode = searchCode;
+             
+                this.$uibModalInstance.rendered.then(result =>{
+                    if(this.isSearchBarcode==1){
+                        $("#inputBarcode").focus();
+                    }else{
+                        $("#custom-template-md-autocomplete-articulo").focus();
+                    }
+                })
+            }
            
             this.setColumnDefs();            
            
@@ -953,6 +991,21 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl{
             this.cloneIdTarifa = this.idTarifa;
 
             this.tiempoCreditos = resultsDataForm[5];
+
+            if(resultsDataForm[8].length>0){ 
+                let {searchCode, printerAutomatic, payAutomatic } = resultsDataForm[8][0];                                           
+                this.isSearchBarcode = searchCode;
+                this.printerAutomatic = printerAutomatic;
+                this.payAutomatic  = payAutomatic ;
+
+                this.$uibModalInstance.rendered.then(result =>{
+                    if(this.isSearchBarcode==1){
+                        $("#inputBarcode").focus();
+                    }else{
+                        $("#custom-template-md-autocomplete-articulo").focus();
+                    }
+                })
+            }
            
             this.setColumnDefs();            
            
@@ -1076,7 +1129,9 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl{
                     
                     let data = JSON.parse(response.payload)[0];
                     
-                    let mainData = {                        
+                    let mainData = {  
+                        printerAutomatic: this.printerAutomatic,
+                        payAutomatic: this.payAutomatic,                 
                         data: {
                             ...data,
                             nroDocumento: data.estab + data.ptoEmi + data.secuencial,
@@ -1109,14 +1164,16 @@ export class ModalFacturaDividirCtrl{
 
 export class ModalFacturaFiltroCtrl extends ModalBaseCtrl{
 
-    static $inject = ['$scope', '$uibModalInstance', 'mainService', 'commonService', 'formulario', 'toastService', 'params']
+    static $inject = ['$scope', '$uibModalInstance', 'mainService', 'commonService', 'formulario', 'toastService', 'params', 'decodeToken']
 
-    constructor($scope, $uibModalInstance, _mS, _commonSvc, _fS, _tS, _params){
+    constructor($scope, $uibModalInstance, _mS, _commonSvc, _fS, _tS, _params, decodeToken){
         super({_mS, _commonSvc, _tS})
 
         this.$scope = $scope;
         this.$uibModalInstance = $uibModalInstance;
         this._fS = _fS;
+
+        this.idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
 
         let {dataSearch, clienteFiltro, usuarioSearchFiltro, mes} = _params;
 

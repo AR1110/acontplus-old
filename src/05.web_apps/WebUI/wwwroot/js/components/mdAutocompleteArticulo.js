@@ -1,88 +1,16 @@
-class MdArticuloCtrl{
-    
-    static $inject = ['$http', 'mainService', '$scope','$timeout', '$q', 'commonService', 'modalService', 'nombreModal', 'toastService']
-    constructor($http, _mS, $scope, $timeout, $q, _commonSvc, _modalSvc, _nombreModalConst, tS){
-        //this.self = this;
-        this.$http             = $http;
-        this._mS               = _mS;
-        this.$scope            = $scope;   
-        this.$timeout          = $timeout; 
-        this.$q                = $q;
-        this._commonSvc        = _commonSvc;     
-        this._modalSvc         = _modalSvc;  
-        this._nombreModalConst = _nombreModalConst;   
-        
-        this.tS = tS
 
-        this.mdNoCache = false;
-        this.dataSearch = {
-            tipo: 1,
-            bySearch : '',
-            pageIndex: 1,
-            pageSize: 20
-        }
-        
-        this.$scope.$on("editArticulo", (e, itemArticulo)=>{
-            this.openModalArticulo(itemArticulo)
-        })  
-        
-        
-        this.$timeout(()=>{
-            let inputBarcode = $("#inputBarcode");
-            let mainContentMdAutocomplete = $("#mainContentMdAutocomplete");
-            let inputMdAutocomplete = $("#custom-template-md-autocomplete-articulo")
-
-          
-            inputMdAutocomplete.on('keyup', e=>{
-                console.log(e.keyCode)
-                if (e.key === '' || e.keyCode === 32) {
-                   // inputMdAutocomplete.hide();
-                    mainContentMdAutocomplete.hide();
-                    inputBarcode.show();
-                    inputBarcode.focus();
-                    inputBarcode.val().trim();
-                    this.tS.toastr('info', 'Búsqueda de Articulo por Código Barra')
-                }
-            })
-
-            inputBarcode.on('keyup', e=>{
-                if (e.key === '' || e.keyCode === 32) {
-                    inputBarcode.hide();
-                    //inputMdAutocomplete.show();
-                    mainContentMdAutocomplete.show();
-                    inputMdAutocomplete.focus();
-                    inputMdAutocomplete.val().trim()
-                    this.tS.toastr('info', 'Búsqueda de Articulo por Descripción o Código')
-                }
-            })
-
-            inputBarcode.hide();
-        })
+class BaseSearchArticulo {
+    constructor({_mS, $scope, $timeout, $q, _commonSvc, _modalSvc, _nombreModalConst, tS}){
+        this._mS      = _mS;
+        this.$scope   = $scope;
+        this.$timeout = $timeout;
+        this.$q       = $q;
+        this._commonSvc = _commonSvc;
+        this._modalSvc  = _modalSvc;
+        this._nombreModalConst = _nombreModalConst;
+        this.tS = tS;
     }
 
-
-    debounce(callback, wait) {      
-        let timerId;
-        return (...args) => {
-            clearTimeout(timerId);
-            timerId = setTimeout(() => {
-            callback(...args);
-            }, wait);
-        };     
-    }
-
-    $onInit(){
-        
-        if(this.isDefaultArticle){
-            this._mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response=>{
-                let articulo = JSON.parse(response.payload)[6]                
-                if(articulo.length>0){
-                    this.searchTextSimple = articulo[0].descripcion;
-                    this.selectArticleSearch(articulo[0]) 
-                }
-            })
-        }
-    }
 
     // $scope.gridApi.grid.cellNav.clearFocus();
     focusDescripcionArticulo(id) {                
@@ -98,81 +26,18 @@ class MdArticuloCtrl{
         });
 
     }
-    
-
-    
-
-    getDynamicSearchArticles(){  
-        console.log('init')
-        let json =  {
-            busqueda: this._commonSvc.removeAccents(this.searchText),
-            condicion: false,
-            fraccionado: false,
-        }
-
-        if(json.busqueda.length<3) return []
-
-
-        return this.$http.get('/Articulo/Search?json=' + JSON.stringify(json)).then(response=>{
-            console.log(response)
-            if(response.data.code==='0'){
-                console.log(response)
-                return []
-            }
-
-            let articulos = JSON.parse(response.data.payload) || [];
-            if(articulos.length>0){
-                articulos.unshift({
-                    showHeader: true,
-                    priceSale: JSON.parse(articulos[0].priceSale),
-                    warehouses: JSON.parse(articulos[0].warehouses)
-    
-                })
-                articulos = articulos.map(item=>{
-                    if(!item.hasOwnProperty('showHeader')){
-                        item.priceSale = JSON.parse(item.priceSale)
-                        item.warehouses = JSON.parse(item.warehouses)
-                    } 
-                    return item;
-                })
-            }
-            
-            return articulos;
-
-        })                        
-    }
-
-    async getDynamicSearchArticlesSimple(textSearch){  
-        let results = await this._commonSvc.articuloSearchGeneral({
-            textSearch,
-            condicion: false
-        })
-        
-       
-        let deferred = this.$q.defer();
-        deferred.resolve(results); 
-        return deferred.promise;              
-       
-    }
-
 
 
     getDataArticuloByEnterCode(){
-        try {
-
-            this.articulos = [];
-
-            let textSearch = this.inputByCorde;  
-    
-            this.inputByCorde = null;    
-            
-            if(!textSearch) {
+        try {           
+                        
+            if(!this.searchText) {
                 this.searchText  = null;
                 return
             }
 
             
-            this._commonSvc.articuloSearchGeneral({textSearch,code: true}).then(response=>{
+            this._commonSvc.articuloSearchGeneral({textSearch: this.searchText,code: true}).then(response=>{
 
                 if(!response || (Array.isArray(response) && response.length===0)){
                     this.searchText  = null;
@@ -188,40 +53,6 @@ class MdArticuloCtrl{
             console.log(error)
         }
     }
- 
-
-    getArticuloByCode(){
-           
-        try {
-            this.articulos = [];
-
-            let textSearch = this.searchText;  
-    
-            this.textSearch = null;    
-            
-            if(!textSearch) {
-                this.searchText  = null;
-                return
-            }
-
-            
-            this._commonSvc.articuloSearchGeneral({textSearch,code: true}).then(response=>{
-
-                if(!response || (Array.isArray(response) && response.length===0)){
-                    this.searchText  = null;
-                    return
-                }
-
-                //Tomamos  posicion 1 para obtener datos del articulo                  
-                this.selectArticleSearch(response[0])
-                this.searchText = null
-            })                                   
-        } catch (error) {
-            console.error(error)
-        }
-    }
-
-    
 
     selectArticleSearch (item){  
       
@@ -240,52 +71,7 @@ class MdArticuloCtrl{
              
         this.validarGetDataArticulo();
     }
-    
 
-    async openModalArticulo(item){             
-        const { MODAL_CTRL,  MODAL_NUEVO_CSHTML} = this._nombreModalConst.articulo;
-        const { ModalArticuloCtrl } = await import('./../modal/' + MODAL_CTRL);
-        const modalRef = this._modalSvc.openModalCustom({
-            controller: ModalArticuloCtrl,
-            template: 'Articulo/' + MODAL_NUEVO_CSHTML,
-            size:'xl',
-            params: item
-        })
-        
-        modalRef.result.then(response => {
-            if (typeof response !== 'object') return
-            this.dataArticulo = {
-                idArticulo: response.idArticulo,
-                idPresentacion: response.idPresentacion,
-                presentacion: 'A'
-            }  
-            //Funcion pasada como referencia desde el controlador                 
-            this.validarGetDataArticulo();            
-        })
-    }
-
-    async openModalArticuloGeneral(item){      
-        let { MODAL_CTRL,  MODAL_GENERAL_CSHTML} = this._nombreModalConst.articulo;
-        let { ModalArticuloGeneralCtrl } = await import('./../modal/' + MODAL_CTRL);        
-        let modalRef = this._modalSvc.openModalCustom({
-            controller: ModalArticuloGeneralCtrl,
-            template: 'Articulo/' + MODAL_GENERAL_CSHTML,
-            size:'xl',
-            params: item,
-            windowClass: 'uibModalFullScreen'
-        })     
-
-        modalRef.result.then(response => {
-            if (typeof response !== 'object') return
-            this.dataArticulo = {
-                idArticulo: response.idArticulo,
-                idPresentacion: response.idPresentacion,
-                presentacion: 'A'
-            }  
-            //Funcion pasada como referencia desde el controlador                 
-            this.validarGetDataArticulo();            
-        })
-    }
 
     validarGetDataArticulo(){
         if(['FV', 'NE','PR', 'NC'].includes(this.tipoDoc.codigo)){
@@ -371,6 +157,145 @@ class MdArticuloCtrl{
             console.error(error)
         }
     }
+    
+
+
+}
+
+class MdArticuloCtrl extends BaseSearchArticulo{
+    
+    static $inject = ['mainService', '$scope','$timeout', '$q', 'commonService', 'modalService', 'nombreModal', 'toastService']
+    constructor(_mS, $scope, $timeout, $q, _commonSvc, _modalSvc, _nombreModalConst, tS){
+        super({_mS, $scope, $timeout, $q, _commonSvc, _modalSvc, _nombreModalConst, tS})
+        
+        this.mdNoCache = false;
+        this.dataSearch = {
+            tipo: 1,
+            bySearch : '',
+            pageIndex: 1,
+            pageSize: 20
+        }
+        
+        this.$scope.$on("editArticulo", (e, itemArticulo)=>{
+            this.openModalArticulo(itemArticulo)
+        })
+    }
+
+
+    $onInit(){
+        
+        if(this.isDefaultArticle){
+            this._mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response=>{
+                let articulo = JSON.parse(response.payload)[6]                
+                if(articulo.length>0){
+                    this.searchTextSimple = articulo[0].descripcion;
+                    this.selectArticleSearch(articulo[0]) 
+                }
+            })
+        }
+    }
+
+    getDynamicSearchArticles(){  
+        
+        let json =  {
+            busqueda: this._commonSvc.removeAccents(this.searchText),
+            condicion: false,
+            fraccionado: false,
+        }
+
+        if(json.busqueda.length<3) return []
+
+
+        return this._mS.getData('get', '/Articulo/Search?json=' + JSON.stringify(json)).then(response=>{
+            
+            if(response.code==='0'){
+                console.log(response)
+                return []
+            }
+
+            let articulos = JSON.parse(response.payload) || [];
+            if(articulos.length>0){
+                articulos.unshift({
+                    showHeader: true,
+                    priceSale: JSON.parse(articulos[0].priceSale),
+                    warehouses: JSON.parse(articulos[0].warehouses)
+    
+                })
+                articulos = articulos.map(item=>{
+                    if(!item.hasOwnProperty('showHeader')){
+                        item.priceSale = JSON.parse(item.priceSale)
+                        item.warehouses = JSON.parse(item.warehouses)
+                    } 
+                    return item;
+                })
+            }
+            
+            return articulos;
+
+        })                        
+    }
+
+    async getDynamicSearchArticlesSimple(textSearch){  
+        let results = await this._commonSvc.articuloSearchGeneral({
+            textSearch,
+            condicion: false
+        })
+        
+       
+        let deferred = this.$q.defer();
+        deferred.resolve(results); 
+        return deferred.promise;              
+       
+    }
+
+    
+    
+
+    async openModalArticulo(item){             
+        const { MODAL_CTRL,  MODAL_NUEVO_CSHTML} = this._nombreModalConst.articulo;
+        const { ModalArticuloCtrl } = await import('./../modal/' + MODAL_CTRL);
+        const modalRef = this._modalSvc.openModalCustom({
+            controller: ModalArticuloCtrl,
+            template: 'Articulo/' + MODAL_NUEVO_CSHTML,
+            size:'xl',
+            params: item
+        })
+        
+        modalRef.result.then(response => {
+            if (typeof response !== 'object') return
+            this.dataArticulo = {
+                idArticulo: response.idArticulo,
+                idPresentacion: response.idPresentacion,
+                presentacion: 'A'
+            }  
+            //Funcion pasada como referencia desde el controlador                 
+            this.validarGetDataArticulo();            
+        })
+    }
+
+    async openModalArticuloGeneral(item){      
+        let { MODAL_CTRL,  MODAL_GENERAL_CSHTML} = this._nombreModalConst.articulo;
+        let { ModalArticuloGeneralCtrl } = await import('./../modal/' + MODAL_CTRL);        
+        let modalRef = this._modalSvc.openModalCustom({
+            controller: ModalArticuloGeneralCtrl,
+            template: 'Articulo/' + MODAL_GENERAL_CSHTML,
+            size:'xl',
+            params: item,
+            windowClass: 'uibModalFullScreen'
+        })     
+
+        modalRef.result.then(response => {
+            if (typeof response !== 'object') return
+            this.dataArticulo = {
+                idArticulo: response.idArticulo,
+                idPresentacion: response.idPresentacion,
+                presentacion: 'A'
+            }  
+            //Funcion pasada como referencia desde el controlador                 
+            this.validarGetDataArticulo();            
+        })
+    }
+
 
     async showDetailTarifa(item){
         let {MODAL_CTRL, MODAL_DETALLE_CSHTML} = this._nombreModalConst.articulo;
@@ -384,9 +309,24 @@ class MdArticuloCtrl{
             keyboard:true
         })
     }
-
-    
 }
+
+
+//Buscador Articulo 
+class InputSearchBarcodeCtrl extends BaseSearchArticulo{
+    static $inject = ['mainService', '$scope','$timeout', '$q', 'commonService', 'modalService', 'nombreModal', 'toastService']
+    constructor(_mS, $scope, $timeout, $q, _commonSvc, _modalSvc, _nombreModalConst, tS){
+        super({_mS, $scope, $timeout, $q, _commonSvc, _modalSvc, _nombreModalConst, tS})
+
+
+
+
+    }
+
+    $onInit(){
+    }
+}
+
 
 app.component('mdAutocompleteArticuloComponent',{
     templateUrl: '/Articulo/MdAutocomplete',
@@ -399,6 +339,24 @@ app.component('mdAutocompleteArticuloComponent',{
         isDefaultArticle:'=?'
     },
     controller: MdArticuloCtrl
+});
+
+
+app.component("articuloSearchBarcode", {
+    template: `<input  type="text" 
+                       class="form-control border-select" 
+                       ng-model="$ctrl.searchText"  
+                       ng-enter="$ctrl.getDataArticuloByEnterCode()"     
+                       id="inputBarcode" 
+                       ng-focus="$ctrl.focusDescripcionArticulo('#inputBarcode')" 
+                       placeholder="Ej: COMP1">
+                `,
+        bindings: { 
+            tipoDoc: '=',           
+            setItemArticuloEnDetalle:'&',            
+        },
+        controller: InputSearchBarcodeCtrl
+    
 })
 
 

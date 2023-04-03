@@ -17,7 +17,7 @@ namespace WebUI.Controllers.GestionFinanciera
             _config = config;
             _c = new CajaDao(_config);
         }
-        [Authorize]
+        
         public IActionResult Index()
         {
             ViewData["idRol"] = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);

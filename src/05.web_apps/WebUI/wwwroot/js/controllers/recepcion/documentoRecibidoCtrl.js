@@ -28,7 +28,6 @@
             'use strict';
             $scope.title = 'documentoRecibidoCtrl';
             $scope.comprobantes = [];
-            $scope.totalRecords = 0;
             $scope.idProveedor = 0;
 
             $scope.tiposDocumento = [];
@@ -130,21 +129,10 @@
                 endDate: ''
             }
 
-            $scope.initialLoad = () => {
-                $scope.query.codDoc = $scope.doc.codigoSri
-                _commonSvc.getEstabAsign().then(response => {
-                    $scope.establecimientos = response
-                    let codEstab = $scope.establecimientos.length > 0 ? $scope.establecimientos[0].codEstab : 0
-                    $scope.query.codEstab = codEstab
-                    $scope.getComprobantes()
-                })
-            }
-            $scope.initialLoad()
-
             $scope.getDocs = function (doc) {
+                $scope.query.codDoc = doc.codigoSri
                 $scope.getComprobantes()
                 debugger;
-                console.log(doc)
             }
             function isDocVenta(codDoc) {
                 switch (codDoc) {
@@ -161,8 +149,8 @@
 
             $scope.getComprobantes = function () {
                 try {
-                    $scope.comprobantes = [];
                     showLoader()
+                    $scope.comprobantes = []
                     $scope.query.startDate = $scope.dateRangePicker.date.startDate
                     $scope.query.endDate = $scope.dateRangePicker.date.endDate
                     //console.log($scope.query)
@@ -172,12 +160,8 @@
                             tS.toastr('warning', response.message)
                         }
                         if (response.code == "1") {
-                            $scope.comprobantes = JSON.parse(response.payload)[0];
-
-                            //console.log($scope.comprobantes)
-
-                            $scope.cloneComprobantes = JSON.parse(JSON.stringify($scope.comprobantes))
-                            //$scope.totalRecords = $scope.comprobantes[0].totalRecords;
+                            $scope.comprobantes = JSON.parse(response.payload)[0]
+                            $scope.cloneComprobantes = JSON.parse(JSON.stringify($scope.comprobantes)) 
                             hideLoader()
                         }
 
@@ -192,7 +176,12 @@
             }
 
             $scope.initialLoad = function () {
-                $scope.getComprobantes()
+                _commonSvc.getEstabAsign().then(response => {
+                    $scope.establecimientos = response
+                    let codEstab = $scope.establecimientos.length > 0 ? $scope.establecimientos[0].codEstab : 0
+                    $scope.query.codEstab = codEstab
+                    $scope.getComprobantes()
+                })
                 try {
                     mS.getData('get', '/TipoDocumento/Get').then(
                         response => {
@@ -210,11 +199,9 @@
                         }
                     )
 
-
                 } catch (error) {
                     console.log(error)
                 }
-
 
                 //Configuracion de Decimal 
                 _commonSvc.getGestionConfig().then(
@@ -224,6 +211,7 @@
                 )
 
             }
+            $scope.initialLoad()
 
             $scope.onKeyupSearchFilter = () => {
                 let comprobantes = JSON.parse(JSON.stringify($scope.cloneComprobantes))
@@ -239,7 +227,6 @@
             }
 
 
-            $scope.initialLoad()
 
             /*
             $scope.setOrder = function (event) {
@@ -526,7 +513,7 @@
             $scope.medidas = [];
             $scope.getFormData = function () {
                 try {
-                    mS.getData('get', _urlService + 'DocumentoRecibido/Get/' + JSON.stringify({ tipo: '1' })).then(
+                    mS.getData('get', _urlService + 'DocumentoRecibido/Get/' + JSON.stringify({ tipo: '1', codEstab: $scope.query.codEstab })).then(
                         response => {
                             if (response.code == "0") {
                                 tS.toastr('warning', response.message)
@@ -1039,9 +1026,15 @@
 
             $scope.openModalNewArticle = async (event) => {
 
-                const { articulo } = nameModalConst;
-                const { ModalArticuloCtrl } = await import('../../modal/' + articulo.MODAL_CTRL)
-                const modalRef = modalService.openModalSecond(ModalArticuloCtrl, 'Articulo/' + articulo.MODAL_NUEVO_CSHTML, 'xl')
+                let {MODAL_CTRL, MODAL_NUEVO_CSHTML } = nameModalConst.articulo;
+                let { ModalArticuloCtrl } = await import('../../modal/' + MODAL_CTRL);
+
+                let modalRef = modalService.openModalCustom({
+                    controller: ModalArticuloCtrl,
+                    template: 'Articulo/' + MODAL_NUEVO_CSHTML,
+                    size:'xl',
+                })
+                
                 modalRef.result.then(response => {
                     if (typeof (response) == "object") {
                         $scope.idArticulo = response.idArticulo
@@ -1050,6 +1043,29 @@
                 })
             }
 
+
+            $scope.openModalEditArticulo = async(item) =>{                
+                try {
+                                        
+                    let {MODAL_CTRL, MODAL_NUEVO_CSHTML } = nameModalConst.articulo;
+                    let { ModalArticuloCtrl } = await import('../../modal/' + MODAL_CTRL);
+    
+                    modalService.openModalCustom({
+                        controller: ModalArticuloCtrl,
+                        template: 'Articulo/' + MODAL_NUEVO_CSHTML,
+                        size:'xl',
+                        params: {
+                            idArticulo: item.idArticulo,
+                            isUpdateImport: true
+                        }
+                    })                                        
+                } catch (error) {
+                    console.log(error)
+                }
+            }
+
+
+
             $scope.getTempDetails = function () {
                 try {
                     $scope.tempDetail = []
@@ -1057,6 +1073,7 @@
                         response => {
                             if (response.code == "1") {
                                 $scope.tempDetail = JSON.parse(response.payload)
+                                console.log($scope.tempDetail)
                             }
                         }).catch(error => {
                             console.log(error)
@@ -1148,17 +1165,12 @@
                     })
                     modalRef.result.then(response => {
                         if (typeof (response) == "object") {
-                            $scope.idArticulo = response.idArticulo;
-
-                            //Ivan estoy modificando tu Còdigo 
-
-
+                            $scope.idArticulo = response.idArticulo
                             if ($scope.idArticulo > 0) {
                                 let articleToSave = {
                                     idArticulo: $scope.idArticulo,
-                                    //idMedida: $scope.articleSelected.idMedida,
                                     idMedida: response.idMedida,
-                                    codArticulo: $scope.articleSelected.codigoPrincipal,
+                                    codArticulo: (($scope.articleSelected.codigoPrincipal) ? $scope.articleSelected.codigoPrincipal : response.codigoPrincipal),
                                     idProveedor: $scope.idProveedor,
                                     ruc: $scope.infoTributaria.ruc
                                 }
@@ -1328,7 +1340,8 @@
                         idProveedor: $scope.idProveedor,
                         ruc: $scope.infoTributaria.ruc,
                         idArticulo: item.idArticulo,
-                        codArticulo: item.codigoPrincipal
+                        codArticulo: item.codigoPrincipal,
+                        idDetalle: item.idDetalle
                     }
                     $scope.saveArticleTemp(2, data)
                 }
@@ -1366,13 +1379,13 @@
                     showLoader()
                     $scope.idArticulo = 0
                     let data = {
+                        idDetalle: $scope.articleSelected.idDetalle,
                         idDocumento: $scope.selected[0].idDocumento,
-                        // idMedida: $scope.articleSelected.idMedida,
                         idMedida: item.idMedida,
                         idProveedor: $scope.idProveedor,
                         ruc: $scope.infoTributaria.ruc,
                         idArticulo: item.idArticulo,
-                        codArticulo: $scope.articleSelected.codigoPrincipal
+                        codArticulo: (($scope.articleSelected.codigoPrincipal) ? $scope.articleSelected.codigoPrincipal : item.codigoPrincipal)
                     }
                     mS.getData('post', '/CompraHabitual/Post?json=' + JSON.stringify(data)).then(
                         response => {
@@ -1815,26 +1828,26 @@
 
 
 
-            $scope.exportToExcel = () =>{                               
+            $scope.exportToExcel = () => {
                 try {
                     let format = 'excel';
                     let dataParms = {
-                        isReportImport: true,     
+                        isReportImport: true,
                         codEstab: $scope.selected[0].codEstab,
-                        id: $scope.selected[0].idDocumento,                                     
-                        codigo: 'RCD', 
-                        codDoc: $scope.selected[0].codDoc, 
-                        format,            
+                        id: $scope.selected[0].idDocumento,
+                        codigo: 'RCD',
+                        codDoc: $scope.selected[0].codDoc,
+                        format,
                     }
 
-                    
-                
-                    const parameters = {               
+
+
+                    const parameters = {
                         dataParams: JSON.stringify(dataParms)
-                    }   
+                    }
                     console.log(parameters)
-                                  
-                    _commonSvc.getReportDynamic({parameters, format})
+
+                    _commonSvc.getReportDynamic({ parameters, format })
                 } catch (error) {
                     console.log(error)
                 }

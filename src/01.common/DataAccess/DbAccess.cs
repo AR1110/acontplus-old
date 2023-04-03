@@ -161,6 +161,29 @@ namespace DataAccess
             }
             return dt;
         }
+        public GenericResponse GetDataTableAsync()
+        {
+            DataTable dt = new DataTable();
+            var _response = new GenericResponse();
+            if (_command != null)
+            {
+                using (SqlDataAdapter dataAdapter = new SqlDataAdapter(_command))
+                {
+                    dataAdapter.Fill(dt);
+                    if (DataHelper.DataTableIsNull(dt))
+                    {
+                        _response.Create(code: "0", "La transacción no devolvio respuesta");
+                        //DtWarning(ref dt);
+                    }
+                    else
+                    {
+                        _response.Create(code: "1", payload: DataHelper.DataTableToJSON(dt));
+                    }
+                }
+            }
+            return _response;
+        }
+
         //If error exists
         public void Close()
         {
@@ -170,6 +193,11 @@ namespace DataAccess
                 {
                     _connection.Close();
                     _connection.Dispose();
+                }
+                if (_command != null)
+                {
+                    _command.Dispose();
+                    _connection.Close();
                 }
             }
             catch (Exception ex)

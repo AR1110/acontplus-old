@@ -1,5 +1,4 @@
-﻿using DataAccess;
-using Helpers;
+﻿using Helpers;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Data;
@@ -84,19 +83,6 @@ namespace DataAccess
                 _response.Create(code: "1", payload: DataHelper.DataSetToJSON(ds));
             }
             return _response;
-        }
-        public async void OnlyExec(string spName, Dictionary<string, object> parameters = null)
-        {
-            DbAccess dbAccess = new DbAccess(_config);
-            await dbAccess.SPExecute(spName);
-            if (parameters != null)
-            {
-                foreach (var item in parameters)
-                {
-                    dbAccess.AddDynamicParam(item.Key, item.Value);
-                }
-            }
-            dbAccess.OnlyExecute();
         }
     }
 }

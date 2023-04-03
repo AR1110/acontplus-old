@@ -9,7 +9,7 @@
         </div>
         <div class="col-md-7 align-self-center text-right">
             <div class="d-flex justify-content-end align-items-center">
-                <button class="btn btn-info m-l-15" ng-if="accion.crear" ng-click="openModalNew()"><i class="fa fa-plus-circle"></i> Nuevo</button>
+                <button class="btn btn-info m-l-15" ng-if="accion.crear" id="btnNewNotaEntrega" ng-click="openModalNew()"><i class="fa fa-plus-circle"></i> Nuevo</button>
             </div>
         </div>
     </div>
@@ -85,7 +85,7 @@
                                                     </md-menu-item>
 
                                                     <md-menu-item>
-                                                        <md-button ng-click="openModalDuplicate(ne)" ng-disabled="ne.codDoc==='A'">
+                                                        <md-button ng-click="openModalDuplicate(ne)">
                                                             <span md-menu-align-target><i class="ti-files"></i> Duplicar</span>
                                                         </md-button>
                                                     </md-menu-item>

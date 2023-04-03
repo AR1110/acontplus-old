@@ -724,10 +724,10 @@
         },
         {
             "DownstreamHostAndPorts": [
-                {
-                    "Host": "localhost",
-                    "Port": 7097
-                }
+              {
+                "Host": "localhost",
+                "Port": 44320
+              }
             ],
             "DownstreamPathTemplate": "/api/Reporte/DynamicReport",
             "DownstreamScheme": "https",

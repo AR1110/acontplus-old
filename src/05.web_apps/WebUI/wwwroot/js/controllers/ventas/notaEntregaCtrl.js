@@ -33,6 +33,14 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
     $scope.parametersPrint = {};
 
 
+    // removed focus new NE
+    let btnNewInvoice = document.getElementById("btnNewNotaEntrega");
+    btnNewInvoice.addEventListener("click", ()=>{
+        btnNewInvoice.blur();            
+    })
+
+
+
 
     $scope.getTotales = function () {
         try {
@@ -140,6 +148,32 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
     }
 
 
+    $scope.validateOperationPrintAndPayment = (result) => {
+        //Verificamos 
+        $scope.isPrintDocument = result.printerAutomatic;
+
+        $scope.parametersPrint = {
+            ...result.data,
+            idDocument: result.data.id,
+            codigo: result.TIPO_DOC.codigo==="FV"? 'RFPT': 'RNEPT', 
+        }
+       
+        if(result.payAutomatic===1){
+            if(result.data.esContado){
+                $scope.openModalRapido(result)
+            }else{
+                $scope.openModalCobroDocumento(result)
+            }
+            return 
+        }
+
+        if(result.printerAutomatic===1){
+            _commonSvc.getPrinter(JSON.stringify($scope.parametersPrint))
+        }
+
+        $scope.getNotaEntregas();
+    }
+
     $scope.openModalNew = async()=>{
         let {MODAL_FILE_CTRL, MODAL_NUEVO} = _nombreModalConst.nota_entrega;
         let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_NUEVO['controller']];
@@ -158,28 +192,7 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
             
             if(typeof result !=='object') return                
             
-            // $scope.getNotaEntregas();
-
-            $scope.isPrintDocument = true;
-            if(result.TIPO_DOC.codigo==="FV"){
-                $scope.parametersPrint = {
-                    ...result.data,
-                    idDocument: result.data.id,
-                    codigo: 'RFPT',
-                };
-            }else{
-                $scope.parametersPrint = {
-                    ...result.data,
-                    idDocument: result.data.id,
-                    codigo: 'RNEPT',
-                }
-            }
-
-            if(result.data.esContado){
-                $scope.openModalRapido(result)
-            }else{
-                $scope.openModalCobroDocumento(result)
-            }                                                
+            $scope.validateOperationPrintAndPayment(result)                                              
         })
     }
    
@@ -281,27 +294,7 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
                 
                 if(typeof result !=='object') return                
                 
-                $scope.getNotaEntregas();
-    
-                let parameters = {}
-                if(result.TIPO_DOC.codigo==="FV"){
-                    parameters = {
-                        ...result.data,
-                        idDocument: result.data.id,
-                        codigo: 'RFPT',
-                    };
-                }else{
-                    parameters = {
-                        ...result.data,
-                        idDocument: result.data.id,
-                        codigo: 'RNEPT',
-                    }
-                }
-    
-                _commonSvc.askToPrint({
-                    parameters: JSON.stringify(parameters)
-                })   
-    
+                $scope.validateOperationPrintAndPayment(result)
                                                   
             })
 
@@ -461,11 +454,11 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
 
         $modalRef.result.then(result=>{
 
-            if($scope.isPrintDocument){
-                $scope.getNotaEntregas()
-                _commonSvc.askToPrint({
-                    parameters: JSON.stringify($scope.parametersPrint)
-                }) 
+            if($scope.isPrintDocument==1){
+                $scope.getNotaEntregas();
+                _commonSvc.getPrinter(JSON.stringify($scope.parametersPrint))
+                
+                $scope.isPrintDocument = null;
             }
 
             if(typeof result =='object') {

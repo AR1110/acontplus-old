@@ -23,7 +23,7 @@ namespace WebUI.Controllers
             _fp = new FormaPagoSriDao(_config);
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

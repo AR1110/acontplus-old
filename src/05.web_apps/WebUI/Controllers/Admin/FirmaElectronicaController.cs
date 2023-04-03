@@ -19,7 +19,7 @@ namespace WebUI.Controllers.Admin
             _fe = new FirmaElectronicaDao(_config);
         }
        
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

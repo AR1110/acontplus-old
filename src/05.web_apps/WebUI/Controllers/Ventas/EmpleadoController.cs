@@ -23,7 +23,7 @@ namespace WebUI.Controllers.Ventas
             _e = new EmpleadoDao(_config);
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

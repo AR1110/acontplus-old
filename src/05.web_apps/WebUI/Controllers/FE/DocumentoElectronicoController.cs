@@ -6,7 +6,7 @@ using Common.Logs;
 
 namespace WebUI.Controllers.FE
 {
-    [Authorize]
+    
     public class DocumentoElectronicoController : Controller
     {
         private readonly IConfiguration _configuration;

@@ -19,7 +19,7 @@ namespace WebUI.Controllers
             _gNumDoc = new GenerarNroDoc(_config);
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

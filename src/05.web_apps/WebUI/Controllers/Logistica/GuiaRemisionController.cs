@@ -28,7 +28,7 @@ namespace WebUI.Controllers.Logistica
         }
 
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             ViewData["idRol"] = _idRol;

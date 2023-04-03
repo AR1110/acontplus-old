@@ -15,7 +15,7 @@ namespace WebUI.Controllers.Admin
             _ae = new ActividadEtiquetaDao(_config);
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

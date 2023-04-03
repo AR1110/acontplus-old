@@ -14,7 +14,7 @@ namespace WebUI.Controllers.GestionFinanciera
             _configuration = configuration;
             _c = new ChequeDao(_configuration);
         }
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

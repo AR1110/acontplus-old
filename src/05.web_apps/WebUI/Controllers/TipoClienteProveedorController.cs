@@ -24,7 +24,7 @@ namespace WebUI.Controllers
             _tp = new TipoClienteProveedorDao(_config);
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

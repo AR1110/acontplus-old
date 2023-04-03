@@ -14,7 +14,7 @@ namespace WebUI.Controllers.GestionFinanciera
             _configuration = configuration;
             _a = new AnticipoDao(_configuration);
         }
-        [Authorize]
+        
         public IActionResult Index() 
         {
             return View(); 

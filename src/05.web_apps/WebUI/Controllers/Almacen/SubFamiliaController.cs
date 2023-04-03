@@ -28,7 +28,7 @@ namespace WebUI.Controllers
 
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);

@@ -326,6 +326,8 @@ function reporteCompraCtrl($http, $scope, _commonSvc, mS, toast, form, FileSaver
 
         const parameters = {
             reportParams: JSON.stringify({
+                codEstab: $scope.dataSearch.codEstab,
+                hasParams: true,
                 codigo: dataReporte.codigoReporte, 
                 format: $scope.dataSearch.byTipoFormato,
                 aditionalParams: []

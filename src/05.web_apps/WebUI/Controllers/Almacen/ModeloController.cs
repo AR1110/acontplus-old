@@ -29,7 +29,7 @@ namespace WebUI.Controllers
         }
 
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

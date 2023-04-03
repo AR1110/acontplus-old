@@ -1424,7 +1424,7 @@ export class CommonService {
                 if (response.ok) {
                     toastr.success('Impresion correcta!', '', { positionClass: 'toast-bottom-right', progressBar: true })
                 } else {
-                    toastr.warning('Error al imprimir!', '', { positionClass: 'toast-bottom-right', progressBar: true })
+                    toastr.warning('Error!', '', { positionClass: 'toast-bottom-right', progressBar: true })
                 }
             }).catch(function (error) {
                 console.log('Hubo un problema al imprimir:' + error.message);

@@ -45,10 +45,9 @@ BEGIN
 														WHERE d.idDocumento = i.idDocumento 
 														AND d.codigoPrincipal = i.codArticulo)
 	
-	,ISNULL(dd.idDocumentoDetalle, 0) idDocumentoDetalle
+	,idDocumentoDetalle = ISNULL((SELECT TOP 1 dd.idDocumentoDetalle FROM Recepcion.DocumentoDetalle dd WHERE d.idArticulo = dd.idArticulo AND dd.idDocumento = d.idDocumento), 0) 
 	FROM Recepcion.Doc_Detalle_Temp d
-	LEFT JOIN Recepcion.DocumentoDetalle dd ON d.idArticulo = dd.idArticulo AND dd.idDocumento = @idDocumento
-	
+ 	
 	WHERE d.idDocumento = @idDocumento
 END
 GO

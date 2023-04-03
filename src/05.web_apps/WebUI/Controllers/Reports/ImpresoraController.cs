@@ -7,7 +7,7 @@ using WebUI.ApiClient;
 
 namespace WebUI.Controllers.Reports
 {
-    [Authorize]
+    
     public class ImpresoraController : Controller
     {
         private IConfiguration _config;

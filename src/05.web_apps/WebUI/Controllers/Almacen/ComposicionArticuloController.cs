@@ -12,7 +12,7 @@
 //        // GET: ComposicionArticulo
 //        GenericResponse _gr = new();
 //        readonly ComposicionArticuloDao ca = new();
-//        [Authorize]
+//        
 //        public IActionResult Index()
 //        {
 //            return View();

@@ -19,7 +19,7 @@ namespace WebUI.Controllers.Admin
             _cp = new ContraPartidaDao(_configuration);
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

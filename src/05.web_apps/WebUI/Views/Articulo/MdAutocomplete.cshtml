@@ -1,11 +1,11 @@
 <style>
     .custom-template-md-autocomplete-articulo {
-        max-width:900px !important;
-        width:900px !important;
+        max-width:1900px !important;
+        width:1900px !important;
     }
     
     .standard-container {
-        width: 940px;
+        width: 1800px;
     }
     .autocomplete-standard-template li:last-child {
         border-bottom-width: 0;
@@ -43,7 +43,8 @@
     } 
 
     .rtable .suggestion-column{
-         text-overflow: ellipsis;
+        overflow: hidden;
+        text-overflow: ellipsis;
         white-space: nowrap !important;    
         word-break: break-all !important;
     }
@@ -65,8 +66,10 @@
         tooltip-placement="top"
         tooltip-trigger="'mouseenter'"
 
-        md-no-cache="true"  
-        ng-enter="$ctrl.getArticuloByCode();"              
+        ng-enter="$ctrl.getDataArticuloByEnterCode();"
+
+        md-no-cache="false"                
+        
         md-selected-item="$ctrl.selectedItem"
         md-search-text-change="$ctrl.searchTextChange($ctrl.searchText)"
         md-search-text="$ctrl.searchText"
@@ -148,15 +151,10 @@
             </md-not-found> *@
         </md-autocomplete> 
 
-        
-       
-        <input type="text" class="form-control border-select" ng-model="$ctrl.inputByCorde"  ng-enter="$ctrl.getDataArticuloByEnterCode();"     id="inputBarcode" placeholder="Ingrese el código de barra">
-       
-
-        <a href="javascript:void(0)" class="btn btn-success btn-xs mt-1" ng-click="$ctrl.openModalArticulo()">
+        <a href="javascript:void(0)" class="btn btn-success btn-xs mt-1" tabindex="-1" ng-click="$ctrl.openModalArticulo()">
             <i class="fas fa-plus"></i> Nuevo
         </a>
-        <a href="javascript:void(0)" class="btn btn-info btn-xs mt-1" ng-click="$ctrl.openModalArticuloGeneral()">
+        <a href="javascript:void(0)" class="btn btn-info btn-xs mt-1" tabindex="-1" ng-click="$ctrl.openModalArticuloGeneral()">
             <i class="fas fa-search"></i> Lista
         </a>
     </div>

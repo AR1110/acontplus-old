@@ -31,7 +31,7 @@ namespace WebUI.Controllers.Ingresos
 
         //private readonly IWebHostEnvironment _hostingEnviromet; 
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             ViewData["idRol"] = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);

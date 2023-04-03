@@ -292,15 +292,9 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
                 controller: StatusEmail,
                 template: MODAL_STATUS_MAIL_CSHTML,
                 size: 'xl',
-                params: item
-            }).result.then(response => {
-                if (response) {
-                    console.log(response)
-                }
+                params: item,
+                isRenderRazorPartial: true
             })
-            // _mS.getData('get', '/NotificacionTributaria/Get?json=' + JSON.stringify(item)).then(response=>{
-            //     if()
-            // })
         } catch (error) {
 
         }

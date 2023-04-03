@@ -23,7 +23,7 @@ namespace WebUI.Controllers
             _sc = new SubContribuyenteDao(_config);
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

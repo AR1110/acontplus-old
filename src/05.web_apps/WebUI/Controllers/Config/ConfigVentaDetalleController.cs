@@ -22,7 +22,7 @@ namespace WebUI.Controllers.Configuracion
             _httpContextAccessor = httpContextAccessor;
             _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
         }
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

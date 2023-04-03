@@ -442,7 +442,7 @@ export class UiGridOptions{
 
              //Total Detalle No tiene que ser mayor al total sin impuesto
             totalDetalle = this.getTotalDetalle() > this.getSubTotalSinImpuesto()? this.getSubTotalSinImpuesto(): this.getTotalDetalle();
-            console.log('calculate total_porcentaje_descuento')
+            
             total = ((this.getSubTotalSinImpuesto() - totalDetalle ) * 100) / this.getSubTotalSinImpuesto();
         }        
         return this._fS.roundNumber(total, this.decimal.nroTotalSubTotal);
@@ -474,7 +474,7 @@ export class UiGridOptions{
         
         let iva = subTotalNetoIva * this.actividadTipoIva.tarifa / 100;                
         let total = iva + this.getTotalDetalle() +  this.getTotalIce();
-       console.log(this.getTotalPorcentajeDescuento())
+       
         return {
             subTotalSinImpuestos: this.getSubTotalSinImpuesto(),
             subTotalIva,
@@ -795,7 +795,7 @@ export class UiGridOptionsCompra{
             
             totalDetalle = this.getTotalDetalle()>this.getSubTotalSinImpuesto()? this.getSubTotalSinImpuesto(): this.getTotalDetalle();
 
-            console.log('calculate total_porcentaje_descuento')
+            
             total = ((this.getSubTotalSinImpuesto() - totalDetalle ) * 100) / this.getSubTotalSinImpuesto();
             
         }

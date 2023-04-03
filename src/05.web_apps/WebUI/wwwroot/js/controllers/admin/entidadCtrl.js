@@ -5,9 +5,9 @@
  */
 app.controller('entidadCtrl', entidadCtrl);
 
-entidadCtrl.$inject = ['$scope', '$http', 'commonService', 'modalService', 'toastService', 'formulario'];
+entidadCtrl.$inject = ['$scope', '$http', 'commonService', 'modalService', 'toastService', 'decodeToken'];
 
-function entidadCtrl($scope, $http, _commonSvc, _modalSvc, toast) {
+function entidadCtrl($scope, $http, _commonSvc, _modalSvc, toast,  decodeToken) {
     let accion = JSON.parse(localStorage.getItem("accion"));
     if(accion===null){
         location.href = "/Home/Index";
@@ -15,6 +15,9 @@ function entidadCtrl($scope, $http, _commonSvc, _modalSvc, toast) {
         $scope.accion = accion[0];
     }        
     
+    console.log(decodeToken)
+    let idUsuarioRol = parseInt(decodeToken.idUsuarioRol);
+    console.log(idUsuarioRol);
     const json = {
         idRol: document.getElementById('idRol').value
     }  

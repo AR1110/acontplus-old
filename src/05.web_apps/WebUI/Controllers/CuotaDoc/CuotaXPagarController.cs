@@ -17,7 +17,7 @@ namespace WebUI.Controllers.CuotaDoc
             _configuration = configuration;
             _cxp = new CuotaXPagarDao(_configuration);
         }
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

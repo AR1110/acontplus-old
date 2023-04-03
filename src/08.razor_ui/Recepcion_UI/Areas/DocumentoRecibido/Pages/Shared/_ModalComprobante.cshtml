@@ -322,7 +322,7 @@
         <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
             <div class="row justify-content-end">
                 <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
-                    <div class="form-group">
+                    <div class="form-group" ng-if="selected[0].complete">
                         <button type="button" class="btn btn-danger mt-4" ng-click="exportToExcel()">
                             <i class="fas fa-file-excel"></i> Exportar
                         </button>
@@ -375,6 +375,11 @@
                         <md-button ng-if="(item.idDocumentoDetalle > 0 && selected[0].complete)" class="md-icon-button"
                             ng-click="askToDeleteStok(item)" aria-label="Stock" title="Eliminar del stock">
                             <md-icon md-font-set="md" class="text-danger">delete_forever</md-icon>
+                        </md-button>
+
+                        <md-button ng-if="(item.idDocumentoDetalle > 0 && selected[0].complete)" class="md-icon-button md-primary"
+                                   ng-click="openModalEditArticulo(item)" aria-label="Editar Artículo" title="Editar Artículo">
+                            <md-icon md-font-set="md">edit_forever</md-icon>                            
                         </md-button>
                     </td>
                     <td class="text-center">{{item.cantidad}}</td>

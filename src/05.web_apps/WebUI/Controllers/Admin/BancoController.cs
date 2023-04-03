@@ -17,7 +17,7 @@ namespace WebUI.Controllers
 
 
         // GET: Banco        
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

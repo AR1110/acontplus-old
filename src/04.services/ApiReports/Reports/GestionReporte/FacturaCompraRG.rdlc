@@ -4131,7 +4131,7 @@
             <DataSetName>DTDocsReporte</DataSetName>
             <Top>3.27766cm</Top>
             <Height>2.4cm</Height>
-            <Width>58.487cm</Width>
+            <Width>58.48688cm</Width>
             <ZIndex>1</ZIndex>
             <Style>
               <Border>
@@ -4376,13 +4376,13 @@
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
-      <Prompt>ReportParameter1</Prompt>
+      <Prompt>logo</Prompt>
     </ReportParameter>
     <ReportParameter Name="mimeType">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
-      <Prompt>ReportParameter1</Prompt>
+      <Prompt>mimeType</Prompt>
     </ReportParameter>
   </ReportParameters>
   <ReportParametersLayout>

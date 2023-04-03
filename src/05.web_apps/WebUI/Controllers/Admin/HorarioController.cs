@@ -23,7 +23,7 @@ namespace WebUI.Controllers.Admin
             _h = new HorarioDao(_config);
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

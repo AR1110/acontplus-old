@@ -1,3 +1,5 @@
+
+USE [AcontPlus]
 -- ================================================
 -- Template generated from Template Explorer using:
 -- Create Procedure (New Menu).SQL
@@ -105,5 +107,11 @@ BEGIN
 	FROM Config.GestionSistema gs WITH (NOLOCK)
 	INNER JOIN dbo.Cliente cl WITH (NOLOCK) ON cl.idCliente = gs.idCliente
 	WHERE gs.idEntidad = @idEntidad
+
+
+	SELECT 
+	 searchCode
+	FROM Config.GestionSistema WITH(NOLOCK) WHERE idEntidad =  @idEntidad
+
 END
 GO

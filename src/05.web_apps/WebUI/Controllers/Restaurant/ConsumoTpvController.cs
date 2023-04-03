@@ -6,7 +6,7 @@ using Domain.Models;
 
 namespace WebUI.Controllers.Restaurant
 {
-    [Authorize]
+    
     public class ConsumoTpvController : Controller
     {
         private readonly IConfiguration _config;

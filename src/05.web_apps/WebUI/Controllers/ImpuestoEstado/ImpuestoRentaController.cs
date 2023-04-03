@@ -29,7 +29,7 @@ namespace WebUI.Controllers.ImpuestoEstado
 
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

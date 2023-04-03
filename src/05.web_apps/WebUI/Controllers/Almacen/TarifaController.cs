@@ -23,7 +23,7 @@ namespace WebUI.Controllers.Almacen
             _t = new TarifaDao(_config);
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

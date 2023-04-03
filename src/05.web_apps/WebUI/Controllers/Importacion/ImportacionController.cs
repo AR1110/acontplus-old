@@ -24,7 +24,7 @@ namespace WebUI.Controllers.Importacion
 
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

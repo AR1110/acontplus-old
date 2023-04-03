@@ -18,7 +18,7 @@ namespace WebUI.Controllers
             _gr = new GenericResponse();
         }
         // GET: UbicacionArticulo  
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

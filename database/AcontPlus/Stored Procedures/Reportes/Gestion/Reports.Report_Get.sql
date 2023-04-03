@@ -19,7 +19,7 @@ GO
 -- Create date: 09-03-2023
 -- Description:	SP PARA OBTENER LOS DATOS DEL ARCHIVO RDLC
 -- =============================================
---Reports.Report_Get '{"codigo":"RNE","format":"pdf","aditionalParams":[]}'
+--Reporte.Report_Get '{"hasParams":true,"codigo":"FVRG","format":"pdf","aditionalParams":[]}'
 CREATE PROCEDURE Reporte.Report_Get @json NVARCHAR(MAX)
 AS
 BEGIN 
@@ -106,7 +106,7 @@ BEGIN
 
 	UNION ALL 
 
-	SELECT 1 position, 'mimeType' paramName,CAST(0 AS BIT) isByte, @mimeType paramValue,CAST(NEWID() AS VARBINARY(MAX))  paramByte, @totalParams totalParams
+	SELECT 1 position, 'mimeType' paramName,CAST(0 AS BIT) isByte, ISNULL(@mimeType, 'image/png') paramValue,CAST(NEWID() AS VARBINARY(MAX))  paramByte, @totalParams totalParams
 	
 	UNION ALL 
 

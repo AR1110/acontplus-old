@@ -42,27 +42,32 @@ function impresoraCtrl($scope, _commonSvc, mS, tS) {
     $scope.openModalNew = () => {
         $scope.tipoRegistro = 1;
         $scope.data.predeterminada = true;
+        $scope.data.asignar = true
         $('#addUpdatePrinter').modal('show')
     }
 
-    $scope.onChangeIsServer = ()=>{
+    // $scope.onChangeIsServer = ()=>{
      
-        if($scope.data.isServer){
-            $scope.data.ipMaquina = '127.0.0.1:9100';
-            $scope.disabledInputIpMaquina = true;
-        }else{
-            $scope.disabledInputIpMaquina = false;
-            $scope.data.ipMaquina = null;
-        }
-    }
+    //     if($scope.data.isServer){
+    //         $scope.data.ipMaquina = '127.0.0.1:9100';
+    //         $scope.disabledInputIpMaquina = true;
+    //     }else{
+    //         $scope.disabledInputIpMaquina = false;
+    //         $scope.data.ipMaquina = null;
+    //     }
+    // }
       
     $scope.openEdit = (id) => {
         mS.getData("get","/Impresora/GetId?id=" + id).then(response => {
             let data = JSON.parse(response.payload);
-            console.log(data);
+            
             $scope.data = data[0][0];
             $scope.documents = data[1];
             $scope.tipoRegistro = 2;
+
+            $scope.isDisabledAsigEquipo = true;
+            $scope.data.asignar = true
+
 	        $('#addUpdatePrinter').modal('show')
         }) 
     }

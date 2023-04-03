@@ -755,7 +755,7 @@ export class ModalDetalleCtrl extends ModalCompraNoHabitualCtrl{
            
             let format = 'excel';
             let dataParms = {      
-                id: this.data.idIngresoBodega,                     
+                id: this.data.idDocumentoIngreso,                     
                 codEstab: this.data.codEstab,
                 codigo: 'RCD', 
                 codDoc: 'CNH',

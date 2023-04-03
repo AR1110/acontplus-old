@@ -14,7 +14,7 @@ namespace WebUI.Controllers.Admin
             _configuration = configuration;
             _ac = new AsignacionCajaDao(_configuration);
         }
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

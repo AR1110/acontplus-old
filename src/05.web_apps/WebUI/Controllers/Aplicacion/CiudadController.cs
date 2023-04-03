@@ -12,7 +12,7 @@ namespace WebUI.Controllers.Aplicacion
             _configuration = configuration;
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

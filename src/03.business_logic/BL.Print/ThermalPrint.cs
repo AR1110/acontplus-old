@@ -92,7 +92,7 @@ namespace BL.Print
                 //{
                 //    labelLength += 50;
                 //}
-                int labelLength = 65;
+                int labelLength = 40;
                 _graphics.DrawString(label, new Font("Arial", 6, FontStyle.Bold), new SolidBrush(Color.Black), startX, startY + offset);
                 _graphics.DrawString(string.Join("", text.Select((c, i) => i > 0 && i % 80 == 0 ? string.Format(Environment.NewLine + c) : c.ToString())), font, new SolidBrush(Color.Black), new Point(startX + labelLength, startY + offset));
             }
@@ -106,33 +106,33 @@ namespace BL.Print
         {
             int startX = 10;
             int startY = 5;
-            _graphics.DrawString(label, new Font("Arial", 5, FontStyle.Bold), new SolidBrush(Color.Black), startX + 150, startY + offset);
-            _graphics.DrawString(value, new Font("Arial", 5), new SolidBrush(Color.Black), startX + 250, startY + offset);
+            _graphics.DrawString(label, new Font("Arial", 7), new SolidBrush(Color.Black), startX + 135, startY + offset);
+            _graphics.DrawString(value, new Font("Arial", 7), new SolidBrush(Color.Black), startX + 235, startY + offset);
         }
 
         void DrawLine(string text, int offset, int xoffset)
         {
             int startX = 10;
             int startY = 5;
-            _graphics.DrawString(text, new Font("Arial", 10, FontStyle.Bold), new SolidBrush(Color.Black), startX + xoffset, startY + offset);
+            _graphics.DrawString(text, new Font("Arial", 7, FontStyle.Bold), new SolidBrush(Color.Black), startX + xoffset, startY + offset);
         }
         void InsertHeaderStyleItem(string description, string quatity, string valor, string total, int offset)
         {
-            Font minifont = new Font("Arial", 5, FontStyle.Bold);
+            Font minifont = new Font("Arial", 7, FontStyle.Bold);
             int startX = 10;
-            int startY = 7;
+            int startY = 3;
 
             _graphics.DrawString(description, minifont,
-                         new SolidBrush(Color.Black), startX + 5, startY + offset);
+                         new SolidBrush(Color.Black), startX + 0, startY + offset);
 
             _graphics.DrawString(quatity, minifont,
-                     new SolidBrush(Color.Black), startX + 150, startY + offset);
+                     new SolidBrush(Color.Black), startX + 158, startY + offset);
 
             _graphics.DrawString(valor, minifont,
                         new SolidBrush(Color.Black), startX + 200, startY + offset);
 
             _graphics.DrawString(total, minifont,
-                     new SolidBrush(Color.Black), startX + 250, startY + offset);
+                     new SolidBrush(Color.Black), startX + 230, startY + offset);
         }
         public string GetPrintReadyString(string originalString)
         {
@@ -143,9 +143,9 @@ namespace BL.Print
         }
         void InsertItem(string description, string quatity, string valor, string total, int offset)
         {
-            Font minifont = new Font("Arial", 5);
+            Font minifont = new Font("Arial", 7);
             int startX = 10;
-            int startY = 7;
+            int startY = 3;
             //_graphics.DrawString(description, minifont,
             //             new SolidBrush(Color.Black), startX + 5, startY + offset);
 
@@ -163,39 +163,42 @@ namespace BL.Print
             //}
             ////_graphics.DrawString(s, minifont, Brushes.Black, new RectangleF(startX, startY + offset, 500F, 500F), format1);
             int textLength = description.Length;
-            if (textLength >= 37)
+            if (textLength >= 25)
             {
-                description = description.Substring(0, 37);
+                description = description.Substring(0, 25);
             }
-            _graphics.DrawString(string.Join("", description.Select((c, i) => i > 0 && i % 37 == 0 ? string.Format(Environment.NewLine + c) : c.ToString())), minifont,
+            _graphics.DrawString(string.Join("", description.Select((c, i) => i > 0 && i % 25 == 0 ? string.Format(Environment.NewLine + c) : c.ToString())), minifont,
                          new SolidBrush(Color.Black), new Point(startX, startY + offset));
 
             //_graphics.DrawString(GetPrintReadyString(description), minifont,
             //       new SolidBrush(Color.Black), new Point(startX, startY + offset));
 
             _graphics.DrawString(quatity, minifont,
-                     new SolidBrush(Color.Black), startX + 150, startY + offset);
+                     new SolidBrush(Color.Black), startX + 158, startY + offset);
 
             _graphics.DrawString(valor, minifont,
                         new SolidBrush(Color.Black), startX + 200, startY + offset);
 
             _graphics.DrawString(total, minifont,
-                     new SolidBrush(Color.Black), startX + 250, startY + offset);
+                     new SolidBrush(Color.Black), startX + 230, startY + offset);
         }
+
+
+
         private void FormatPage(object sender, PrintPageEventArgs e)
         {
             _graphics = e.Graphics;
-            Font minifont = new Font("Arial", 5);
-            Font itemfont = new Font("Arial", 6);
-            Font smallFont = new Font("Arial", 5);
-            Font mediumFont = new Font("Arial", 6);
+            Font minifont = new Font("Arial", 7);
+            Font itemfont = new Font("Arial", 7);
+            Font smallFont = new Font("Arial", 7);
+            Font mediumFont = new Font("Arial", 7);
             Font largeFont = new Font("Arial", 7);
-            Font drawFontBold = new Font("Arial", 6, FontStyle.Bold);
+            Font drawFontBold = new Font("Arial", 7, FontStyle.Bold);
             Font drawFontBold8 = new Font("Arial", 10, FontStyle.Bold);
 
 
             int offsset = 10;
-            int smallinc = 10, mediuminc = 12, largeinc = 15;
+            int smallinc = 10, mediuminc = 12, largeinc = 12;
 
             //Image image = new Image();
             //e.Graphics.DrawImage(image, 50, 100, 30);
@@ -260,7 +263,7 @@ namespace BL.Print
             data[0].TryGetValue("nroDoc", out nroDoc);
             if (!string.IsNullOrEmpty(nroDoc))
             {
-                DrawTitle(nroDoc, mediumFont, offsset, "Nro. Doc. :");
+                DrawTitle(nroDoc, mediumFont, offsset, "Nro. Doc.:");
                 offsset += mediuminc;
             }
 
@@ -268,7 +271,7 @@ namespace BL.Print
             data[0].TryGetValue("ambiente", out ambiente);
             if (!string.IsNullOrEmpty(ambiente))
             {
-                DrawTitle(ambiente, mediumFont, offsset, "AMBIENTE: ");
+                DrawTitle(ambiente, mediumFont, offsset, "Ambiente: ");
                 offsset += mediuminc;
             }
 
@@ -276,7 +279,7 @@ namespace BL.Print
             data[0].TryGetValue("emision", out emision);
             if (!string.IsNullOrEmpty(emision))
             {
-                DrawTitle(emision, mediumFont, offsset, "EMISIÓN: ");
+                DrawTitle(emision, mediumFont, offsset, "Emisión: ");
                 offsset += mediuminc;
             }
 
@@ -288,10 +291,15 @@ namespace BL.Print
                 offsset = offsset + mediuminc;
             }
 
+
+
             string labelAgenteRetencion = "";
-            data[0].TryGetValue("labelAgenteRetencion", out labelAgenteRetencion);
+            data[0].TryGetValue("agenteRetencion", out labelAgenteRetencion);
             if (!string.IsNullOrEmpty(labelAgenteRetencion))
             {
+
+                DrawTitle("AGENTE DE RETENCION RESOLUCION NRO:", drawFontBold, offsset);
+                offsset = offsset + mediuminc;
                 DrawTitle(labelAgenteRetencion, drawFontBold, offsset);
                 offsset = offsset + mediuminc;
             }
@@ -329,6 +337,10 @@ namespace BL.Print
             data[0].TryGetValue("direccionComprador", out direccionComprador);
             if (!string.IsNullOrEmpty(direccionComprador))
             {
+                if (direccionComprador.Length >= 37)
+                {
+                    direccionComprador = direccionComprador.Substring(0, 37);
+                }
                 DrawTitle(direccionComprador, mediumFont, offsset, "Direcc: ");
                 offsset += mediuminc;
             }
@@ -336,6 +348,10 @@ namespace BL.Print
             data[0].TryGetValue("direccionCliente", out direccionComprador);
             if (!string.IsNullOrEmpty(direccionComprador))
             {
+                if(direccionComprador.Length >= 37)
+                {
+                    direccionComprador = direccionComprador.Substring(0, 37);
+                }
                 DrawTitle(direccionComprador, mediumFont, offsset, "Direcc: ");
                 offsset += mediuminc;
             }
@@ -346,21 +362,25 @@ namespace BL.Print
             DrawLine(underLine, offsset, 0);
             offsset = offsset + largeinc;
 
-            InsertHeaderStyleItem("Descripción ", "Cantidad ", " P.U.", "Total", offsset);
+            InsertHeaderStyleItem("Descripción ", "Cant. ", " P.U.", "Total", offsset);
             offsset = offsset + largeinc;
 
             var details = _data.dataSources.First(x => x.Key == "detalleDs").Value;
+           
 
             foreach (var source in details)
             {
+               
                 InsertItem(source.FirstOrDefault(x => x.Key == "descripcion").Value,
                     source.FirstOrDefault(x => x.Key == "cantidad").Value,
                     source.FirstOrDefault(x => x.Key == "precioUnitario").Value,
                     source.FirstOrDefault(x => x.Key == "precioTotal").Value,
                     offsset);
 
-                offsset = offsset + 8;
+                offsset = offsset + 12;
             }
+
+
 
             offsset = offsset + smallinc;
             string porcentajeIva = "", subtotalIva12 = "";
@@ -475,6 +495,14 @@ namespace BL.Print
                 DrawTitle("Usuario:     " + usuario, drawFontBold, offsset);
                 offsset = offsset + smallinc;
             }
+
+
+            DateTime currentDate = DateTime.Now;
+            string formatDatePrint = currentDate.ToString("dd/MM/yyyy") + currentDate.ToString("t").PadLeft(8);
+            
+            DrawTitle(Environment.NewLine + formatDatePrint, mediumFont, offsset);
+            offsset = offsset + smallinc;
+            
 
         }
     }

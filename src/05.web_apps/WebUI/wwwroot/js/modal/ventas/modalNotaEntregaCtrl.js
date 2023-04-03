@@ -1,5 +1,5 @@
 
-import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.22";
+import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.23";
 
 
 class ModalNotaEntregaCtrl extends ModalBaseCtrl{
@@ -36,7 +36,14 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl{
             
             gridApi.grid.element.on('keyup', function (ev) {            
                 if(ev.which == 13 || ev.keyCode=='13'){
-                    self.setFocusArticulo();
+                    
+                      
+                    if(self.isSearchBarcode == 1){
+                        self.setFocusInputBarcode();
+                    }else{
+                        self.setFocusArticulo();
+                    }
+
                     $scope.gridApi.grid.cellNav.clearFocus();
                 // ev.stopPropagation();   
                 }
@@ -285,6 +292,21 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
                 this.cliente = resultsDataForm[7][0];
             }
 
+            if(resultsDataForm[8].length>0){             
+                let {searchCode, printerAutomatic, payAutomatic } = resultsDataForm[8][0];                                           
+                this.isSearchBarcode = searchCode;
+                this.printerAutomatic = printerAutomatic;
+                this.payAutomatic  = payAutomatic ;
+
+                this.$uibModalInstance.rendered.then(result =>{
+                    if(this.isSearchBarcode==1){
+                        $("#inputBarcode").focus();
+                    }else{
+                        $("#custom-template-md-autocomplete-articulo").focus();
+                    }
+                })
+            }
+
            
             this.data.fechaEmision = new Date();
             this.getFechaVencimiento();
@@ -430,6 +452,8 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
                             
                             let mainData = {
                                 isRegister: true,
+                                printerAutomatic:this.printerAutomatic,
+                                payAutomatic: this.payAutomatic,
                                 data: {
                                     ...data,
                                     nroDocumento: data.estab + data.ptoEmi + data.secuencial,
@@ -543,6 +567,8 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
                             
                             let mainData = {
                                 isRegister: true,
+                                printerAutomatic: this.printerAutomatic,
+                                payAutomatic: this.payAutomatic,
                                 data: {
                                     ...data,
                                     nroDocumento: data.estab + data.ptoEmi + data.secuencial,
@@ -786,6 +812,18 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl{
             this.cloneIdTarifa = this.idTarifa;
 
             this.tiempoCreditos = resultsDataForm[5];
+
+            if(resultsDataForm[8].length>0){                                            
+                this.isSearchBarcode = resultsDataForm[8][0].searchCode || false;
+
+                this.$uibModalInstance.rendered.then(result =>{
+                    if(this.isSearchBarcode==1){
+                        $("#inputBarcode").focus();
+                    }else{
+                        $("#custom-template-md-autocomplete-articulo").focus();
+                    }
+                })
+            }
            
             this.setColumnDefs();            
            
@@ -976,6 +1014,25 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl{
             this.cloneIdTarifa = this.idTarifa;
 
             this.tiempoCreditos = resultsDataForm[5];
+
+            if(resultsDataForm[8].length>0){ 
+
+                let {searchCode, printerAutomatic, payAutomatic } = resultsDataForm[8][0];                                           
+                this.isSearchBarcode = searchCode;
+                this.printerAutomatic = printerAutomatic;
+                this.payAutomatic  = payAutomatic ;
+                                                           
+               
+
+                this.$uibModalInstance.rendered.then(result =>{
+                    if(this.isSearchBarcode==1){
+                        $("#inputBarcode").focus();
+                    }else{
+                        $("#custom-template-md-autocomplete-articulo").focus();
+                    }
+                })
+            }
+
            
             this.setColumnDefs();            
            
@@ -1112,6 +1169,8 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl{
 
                     let mainData = {
                         isRegister: true,
+                        printerAutomatic: this.printerAutomatic,
+                        payAutomatic: this.payAutomatic,
                         data: {
                             ...data,
                             nroDocumento: data.estab + data.ptoEmi + data.secuencial,
@@ -1217,16 +1276,18 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl{
                     let data = JSON.parse(response.payload)[0];
                     let mainData = {
                         isRegister: true,
+                        printerAutomatic: this.printerAutomatic,
+                        payAutomatic: this.payAutomatic,
                         data: {
                             ...data,
                             nroDocumento: data.estab + data.ptoEmi + data.secuencial,
                             esContado: data.gestion, 
                         },
-                        TIPO_DOC: this.TIPO_DOC_NE                                             
+                        TIPO_DOC: this.TIPO_DOC_FV                                          
                     }
 
 
-                    this.$uibModalInstance.close(data)                                       
+                    this.$uibModalInstance.close(mainData)                                       
                 }
             })
                                                 

@@ -25,7 +25,7 @@ namespace WebUI.Controllers.Ventas
 
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             ViewData["idRol"] = _idRol;

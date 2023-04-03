@@ -17,7 +17,7 @@ namespace WebUI.Controllers
         }
         // GET: Acciones
         GenericResponse _gr = new();
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

@@ -316,3 +316,5 @@
 /src/10.setups/AcontplusPrint/Release
 /src/03.business_logic/BL.Print/bin
 /src/03.business_logic/BL.Print/obj
+/src/09.desktop_apps/PointOfSales/bin
+/src/09.desktop_apps/PointOfSales/obj

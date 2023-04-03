@@ -83,17 +83,14 @@ namespace ApiRecepcion.Controllers
                     }
                     else
                     {
-                        Dictionary<string, object> parametersTemp = new Dictionary<string, object>
-                        {
-                            { "idRol", idUsuarioRol },
-                            { "idDocumento", id },
-                            { "jsonData", JsonConvert.SerializeObject(ceXml.detalles) },
-                            { "impuestos", JsonConvert.SerializeObject(ceXml.impuestos) }
-                        };
                         if (ceXml.codDoc == "01" || ceXml.codDoc == "04")
                         {
-                            DAO _dao = new DAO(_configuration);
-                            _dao.OnlyExec("Recepcion.Doc_Detail_Temp_Insert_All", parametersTemp);
+                            await _db.SPExecute("Recepcion.Doc_Detail_Temp_Insert_All");
+                            _db.AddDynamicParam("idRol", idUsuarioRol);
+                            _db.AddDynamicParam("idDocumento", id);
+                            _db.AddDynamicParam("jsonData", JsonConvert.SerializeObject(ceXml.detalles));
+                            _db.AddDynamicParam("impuestos", JsonConvert.SerializeObject(ceXml.impuestos));
+                            _db.OnlyExecute();
                         }
                         _response.payload = ceXml;
                     }

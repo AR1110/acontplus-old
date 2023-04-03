@@ -23,7 +23,7 @@ namespace WebUI.Controllers
             _st = new SustentoTributarioDao(_config);
         }
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

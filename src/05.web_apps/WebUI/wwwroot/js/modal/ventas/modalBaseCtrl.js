@@ -52,7 +52,7 @@ export class ModalBaseCtrl{
     getDataFormEstabAsig(json={}){
         return this._mS.getData('get', '/EstabAsig/GetDataForm?json=' + JSON.stringify(json)).then(response=>{
             if(response.code==='0'){                
-                throw response
+               console.log(response)
             }
             return JSON.parse(response.payload)
         })
@@ -792,6 +792,12 @@ export class ModalBaseCtrl{
     setFocusArticulo() {
         setTimeout(function() {
           document.querySelector('#custom-template-md-autocomplete-articulo').focus();
+        }, 100);
+    }
+
+    setFocusInputBarcode() {
+        setTimeout(function() {
+          document.querySelector('#inputBarcode').focus();
         }, 100);
     }
 

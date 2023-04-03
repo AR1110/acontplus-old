@@ -22,7 +22,7 @@ namespace WebUI.Controllers.Admin
             _config = config;
             _t = new TurnoDao(_config);
         }
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();
