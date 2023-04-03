@@ -425,8 +425,11 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
                 this.cliente = resultsDataForm[7][0];
             }
 
-            if(resultsDataForm[0].length>0){                                            
-                this.isSearchBarcode = resultsDataForm[8][0].searchCode || false;
+            if(resultsDataForm[8].length>0){ 
+                let {searchCode, printerAutomatic, payAutomatic } = resultsDataForm[8][0];                                           
+                this.isSearchBarcode = searchCode;
+                this.printerAutomatic = printerAutomatic;
+                this.payAutomatic  = payAutomatic ;
 
                 this.$uibModalInstance.rendered.then(result =>{
                     if(this.isSearchBarcode==1){
@@ -588,8 +591,11 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
                             
                             let data = JSON.parse(response.payload)[0];
                             
+                        
                             let mainData = {
                                 isRegister: true,
+                                printerAutomatic: this.printerAutomatic, 
+                                payAutomatic : this.payAutomatic,
                                 data: {
                                     ...data,
                                     nroDocumento: data.estab + data.ptoEmi + data.secuencial,
@@ -677,6 +683,20 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl{
             this.cloneIdTarifa = this.idTarifa;
 
             this.tiempoCreditos = resultsDataForm[5];
+
+            //Configuracion de Codigo Barra 
+            if(resultsDataForm[8].length>0){ 
+                let {searchCode, printerAutomatic, payAutomatic } = resultsDataForm[8][0];                                           
+                this.isSearchBarcode = searchCode;
+             
+                this.$uibModalInstance.rendered.then(result =>{
+                    if(this.isSearchBarcode==1){
+                        $("#inputBarcode").focus();
+                    }else{
+                        $("#custom-template-md-autocomplete-articulo").focus();
+                    }
+                })
+            }
            
             this.setColumnDefs();            
            
@@ -971,6 +991,21 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl{
             this.cloneIdTarifa = this.idTarifa;
 
             this.tiempoCreditos = resultsDataForm[5];
+
+            if(resultsDataForm[8].length>0){ 
+                let {searchCode, printerAutomatic, payAutomatic } = resultsDataForm[8][0];                                           
+                this.isSearchBarcode = searchCode;
+                this.printerAutomatic = printerAutomatic;
+                this.payAutomatic  = payAutomatic ;
+
+                this.$uibModalInstance.rendered.then(result =>{
+                    if(this.isSearchBarcode==1){
+                        $("#inputBarcode").focus();
+                    }else{
+                        $("#custom-template-md-autocomplete-articulo").focus();
+                    }
+                })
+            }
            
             this.setColumnDefs();            
            
@@ -1094,7 +1129,9 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl{
                     
                     let data = JSON.parse(response.payload)[0];
                     
-                    let mainData = {                        
+                    let mainData = {  
+                        printerAutomatic: this.printerAutomatic,
+                        payAutomatic: this.payAutomatic,                 
                         data: {
                             ...data,
                             nroDocumento: data.estab + data.ptoEmi + data.secuencial,
@@ -1127,14 +1164,16 @@ export class ModalFacturaDividirCtrl{
 
 export class ModalFacturaFiltroCtrl extends ModalBaseCtrl{
 
-    static $inject = ['$scope', '$uibModalInstance', 'mainService', 'commonService', 'formulario', 'toastService', 'params']
+    static $inject = ['$scope', '$uibModalInstance', 'mainService', 'commonService', 'formulario', 'toastService', 'params', 'decodeToken']
 
-    constructor($scope, $uibModalInstance, _mS, _commonSvc, _fS, _tS, _params){
+    constructor($scope, $uibModalInstance, _mS, _commonSvc, _fS, _tS, _params, decodeToken){
         super({_mS, _commonSvc, _tS})
 
         this.$scope = $scope;
         this.$uibModalInstance = $uibModalInstance;
         this._fS = _fS;
+
+        this.idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
 
         let {dataSearch, clienteFiltro, usuarioSearchFiltro, mes} = _params;
 

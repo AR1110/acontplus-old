@@ -46,6 +46,8 @@ namespace WebUI.Controllers.Config
             parameters.Add("idMetodoValoracion", data.idMetodoValoracion);
             parameters.Add("llevaInventario", data.llevaInventario);
             parameters.Add("searchCode", data.searchCode);
+            parameters.Add("printerAutomatic", data.printerAutomatic);
+            parameters.Add("payAutomatic", data.payAutomatic);
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Config.GestionSistema_Update", parameters)));
         }
     }

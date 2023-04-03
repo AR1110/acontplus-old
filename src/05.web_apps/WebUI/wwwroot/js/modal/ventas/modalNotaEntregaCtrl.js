@@ -292,8 +292,11 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
                 this.cliente = resultsDataForm[7][0];
             }
 
-            if(resultsDataForm[0].length>0){                                            
-                this.isSearchBarcode = resultsDataForm[8][0].searchCode || false;
+            if(resultsDataForm[8].length>0){             
+                let {searchCode, printerAutomatic, payAutomatic } = resultsDataForm[8][0];                                           
+                this.isSearchBarcode = searchCode;
+                this.printerAutomatic = printerAutomatic;
+                this.payAutomatic  = payAutomatic ;
 
                 this.$uibModalInstance.rendered.then(result =>{
                     if(this.isSearchBarcode==1){
@@ -449,6 +452,8 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
                             
                             let mainData = {
                                 isRegister: true,
+                                printerAutomatic:this.printerAutomatic,
+                                payAutomatic: this.payAutomatic,
                                 data: {
                                     ...data,
                                     nroDocumento: data.estab + data.ptoEmi + data.secuencial,
@@ -562,6 +567,8 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
                             
                             let mainData = {
                                 isRegister: true,
+                                printerAutomatic: this.printerAutomatic,
+                                payAutomatic: this.payAutomatic,
                                 data: {
                                     ...data,
                                     nroDocumento: data.estab + data.ptoEmi + data.secuencial,
@@ -806,7 +813,7 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl{
 
             this.tiempoCreditos = resultsDataForm[5];
 
-            if(resultsDataForm[0].length>0){                                            
+            if(resultsDataForm[8].length>0){                                            
                 this.isSearchBarcode = resultsDataForm[8][0].searchCode || false;
 
                 this.$uibModalInstance.rendered.then(result =>{
@@ -1008,8 +1015,14 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl{
 
             this.tiempoCreditos = resultsDataForm[5];
 
-            if(resultsDataForm[0].length>0){                                            
-                this.isSearchBarcode = resultsDataForm[8][0].searchCode || false;
+            if(resultsDataForm[8].length>0){ 
+
+                let {searchCode, printerAutomatic, payAutomatic } = resultsDataForm[8][0];                                           
+                this.isSearchBarcode = searchCode;
+                this.printerAutomatic = printerAutomatic;
+                this.payAutomatic  = payAutomatic ;
+                                                           
+               
 
                 this.$uibModalInstance.rendered.then(result =>{
                     if(this.isSearchBarcode==1){
@@ -1156,6 +1169,8 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl{
 
                     let mainData = {
                         isRegister: true,
+                        printerAutomatic: this.printerAutomatic,
+                        payAutomatic: this.payAutomatic,
                         data: {
                             ...data,
                             nroDocumento: data.estab + data.ptoEmi + data.secuencial,
@@ -1261,16 +1276,18 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl{
                     let data = JSON.parse(response.payload)[0];
                     let mainData = {
                         isRegister: true,
+                        printerAutomatic: this.printerAutomatic,
+                        payAutomatic: this.payAutomatic,
                         data: {
                             ...data,
                             nroDocumento: data.estab + data.ptoEmi + data.secuencial,
                             esContado: data.gestion, 
                         },
-                        TIPO_DOC: this.TIPO_DOC_NE                                             
+                        TIPO_DOC: this.TIPO_DOC_FV                                          
                     }
 
 
-                    this.$uibModalInstance.close(data)                                       
+                    this.$uibModalInstance.close(mainData)                                       
                 }
             })
                                                 

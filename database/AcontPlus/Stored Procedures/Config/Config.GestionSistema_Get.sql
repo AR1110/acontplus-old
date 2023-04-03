@@ -39,6 +39,8 @@ BEGIN
 	   ,gs.idArticulo
 	   ,gs.idMetodoValoracion
 	   ,gs.searchCode
+	   ,gs.printerAutomatic
+	   ,gs.payAutomatic
 	   ,llevaInventario = IIF(gs.llevaInventario = 'SI',CAST(1 AS BIT),CAST(0 AS BIT))
 	   ,customerDefault = IIF(gs.idCliente IS NULL ,CAST(0 AS BIT),CAST(1 AS BIT))
 	   ,taxesDefault =    IIF(gs.idTipoIva IS NULL ,CAST(0 AS BIT),CAST(1 AS BIT))

@@ -950,7 +950,7 @@ export class ModalCobroRapidoCtrl extends ModalCobroCtrl{
         // this.cliente            = this._params.cliente;
         // this.cliente.correos    = this._form.getTagInputAsList(this.cliente.correo);
         // this.dataTipoDocumento  = this._params.dataTipoDocumento;    
-        $("#btnSaveCobroRapido").focus();     
+         
     }
 
     async $onInit(){
@@ -984,8 +984,8 @@ export class ModalCobroRapidoCtrl extends ModalCobroCtrl{
         }   
                 
         this.$uibModalInstance.rendered.then(()=>{
-            $("#btnSaveCobroRapido").focus();
-
+          
+            $("#btnSaveCobroRapido").focus();   
             setTimeout(()=>{
                 $("#btnSaveCobroRapido").focus();
             }, 1000)

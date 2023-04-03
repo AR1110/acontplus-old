@@ -32,6 +32,8 @@ CREATE PROCEDURE Config.GestionSistema_Update
    ,@idMetodoValoracion INT 
    ,@llevaInventario VARCHAR(5)
    ,@searchCode INT 
+   ,@printerAutomatic INT 
+   ,@payAutomatic INT 
 
 AS
 BEGIN
@@ -66,6 +68,8 @@ BEGIN
 			   ,codArticulo = @codArticulo
 			   ,codMetodoValoracion = @codMetodoValoracion
 			   ,searchCode = @searchCode
+			   ,printerAutomatic  = @printerAutomatic 
+			   ,payAutomatic = @payAutomatic 
 			WHERE idGestionSistema = @id
 		COMMIT TRAN 
 		SELECT '1' code,'Actualizado Correctamente' as 'message'
