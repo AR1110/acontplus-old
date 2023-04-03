@@ -283,7 +283,7 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl{
             //6 articulo 
             //7 cliente 
 
-            if(resultsDataForm[0].length>0){                                            
+            if(resultsDataForm[8].length>0){                                            
                 this.isSearchBarcode = resultsDataForm[8][0].searchCode || false;
 
                 this.$uibModalInstance.rendered.then(result =>{
@@ -650,7 +650,7 @@ export class ModalProformaEditarCtrl extends ModalProformaCtrl{
 
             this.tiempoCreditos = resultsDataForm[5];
 
-            if(resultsDataForm[0].length>0){                                            
+            if(resultsDataForm[8].length>0){                                            
                 this.isSearchBarcode = resultsDataForm[8][0].searchCode || false;
 
                 this.$uibModalInstance.rendered.then(result =>{
@@ -844,7 +844,7 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl{
 
             this.tiempoCreditos = resultsDataForm[5];
 
-            if(resultsDataForm[0].length>0){                                            
+            if(resultsDataForm[8].length>0){                                            
                 this.isSearchBarcode = resultsDataForm[8][0].searchCode || false;
 
                 this.$uibModalInstance.rendered.then(result =>{

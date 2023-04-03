@@ -74,7 +74,7 @@ BEGIN
 						,ruc = e.ruc
 						,telefonoEntidad = ISNULL(s.telefono , 'S/N')
 						,emailEntidad = e.email 
-						,dirMatriz = e.direccion 
+						,dirMatriz = ISNULL(s.dirEstablecimiento, 'S/N')
 						,s.dirEstablecimiento
 						,s.contribuyenteEspecial 
 						,s.obligadoContabilidad
@@ -225,6 +225,7 @@ BEGIN
 								,direccionCliente = ISNULL(cl.direccion, '')
 								,correoCliente = ISNULL(cl.correo, '')
 
+								,s.dirEstablecimiento
 								,s.contribuyenteEspecial 
 						        ,s.obligadoContabilidad
 								,labelObligadoContabilidad = 'Obligado Contabilidad: ' + s.obligadoContabilidad

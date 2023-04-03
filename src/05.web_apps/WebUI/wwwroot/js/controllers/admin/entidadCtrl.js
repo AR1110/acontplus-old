@@ -15,11 +15,11 @@ function entidadCtrl($scope, $http, _commonSvc, _modalSvc, toast,  decodeToken) 
         $scope.accion = accion[0];
     }        
     
-    console.log(decodeToken)
+    
     let idUsuarioRol = parseInt(decodeToken.idUsuarioRol);
-    console.log(idUsuarioRol);
+    
     const json = {
-        idRol: document.getElementById('idRol').value
+        idRol: idUsuarioRol
     }  
 
     $scope.maxSize = 5;

@@ -34,10 +34,10 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
 
 
     // removed focus new NE
-    let btnNewInvoice = document.getElementById("btnNewNotaEntrega");
-    btnNewInvoice.addEventListener("click", ()=>{
-        btnNewInvoice.blur();            
-    })
+    // let btnNewInvoice = document.getElementById("btnNewNotaEntrega");
+    // btnNewInvoice.addEventListener("click", ()=>{
+    //     btnNewInvoice.blur();            
+    // })
 
 
 
