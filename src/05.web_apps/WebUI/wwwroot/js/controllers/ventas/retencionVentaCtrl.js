@@ -8,10 +8,11 @@ retencionVentaCtrl.$inject = [
     'modalService',
     'nombreModal',
     'toastService',
-    'formulario'
+    'formulario',
+    'decodeToken'
 ];
 
-function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombreModal, toast, form) {
+function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombreModal, toast, form, decodeToken) {
     let accion = JSON.parse(localStorage.getItem("accion"));
     if (accion === null) {
         location.href = "/Home/Index";
@@ -19,6 +20,7 @@ function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombre
         $scope.accion = accion[0];
     }
 
+    let idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
     const TIPO_DOC = _commonSvc.tipoDoc["RV"];
 
     $scope.data = {};
@@ -163,7 +165,7 @@ function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombre
     $scope.dataUsuarioSearch = {}
     $scope.usuarioSearch = (textSearch)=>{
         return _commonSvc.usuarioSearch({
-            idRol: document.getElementById('idRol').value,
+            idRol: idUsuarioRol,
             busqueda: textSearch
         })
     }

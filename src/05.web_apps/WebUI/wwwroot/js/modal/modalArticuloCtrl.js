@@ -124,10 +124,11 @@ export class ModalArticuloCtrl extends ModalBaseCtrl{
         'nombreModal',
         'toastService',
         'formulario',
-        'params'
+        'params',
+        'decodeToken'
     ]
 
-    constructor($scope, $timeout, $interval, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModal, _toastr, _form, _params) {
+    constructor($scope, $timeout, $interval, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModal, _toastr, _form, _params, decodeToken) {
         super({$scope, _mS, _commonSvc, _form})               
         this.$scope            = $scope;
         this.$timeout          = $timeout;
@@ -152,9 +153,10 @@ export class ModalArticuloCtrl extends ModalBaseCtrl{
 
         this.gridOptions       = this.tarifaInstance.getTarifaGrid($scope, $interval);
 
+        this.idUsuarioRol = parseInt(decodeToken.idUsuarioRol);
         this.json = {
             typeList: 1,
-            idRol: document.getElementById('idRol').value
+            idRol: this.idUsuarioRol
         }
 
     }
