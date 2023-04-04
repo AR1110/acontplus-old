@@ -7,5 +7,6 @@
         public string name {  get; set; }
         public bool isDefault { get; set; }
         public bool isThermal { get; set; }
+        public int copyPrint { get; set; }
     }
 }

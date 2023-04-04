@@ -1,6 +1,7 @@
 ﻿using Domain.Config.Dtos;
 using System.Drawing;
 using System.Drawing.Printing;
+using System.Runtime.InteropServices;
 
 namespace BL.Print
 {
@@ -24,7 +25,8 @@ namespace BL.Print
             {
                 machine = d["computerName"],
                 name = d["printerName"],
-                isThermal = Convert.ToBoolean(d["isThermal"])
+                isThermal = Convert.ToBoolean(d["isThermal"]),
+                copyPrint = Convert.ToInt16(d["copyPrint"])
             }).ToList();
 
             if (incomePrinters.Any(p => p.machine == Environment.MachineName))
@@ -49,7 +51,10 @@ namespace BL.Print
                     {
                         _printDoc.PrinterSettings.PrinterName = obj.name;
                         _printDoc.PrintPage += new PrintPageEventHandler(FormatPage);
+                        _printDoc.PrinterSettings.Copies = (short)obj.copyPrint;
                         _printDoc.Print();
+                       
+
                         response = true;
                     }
                     else
@@ -501,9 +506,13 @@ namespace BL.Print
             string formatDatePrint = currentDate.ToString("dd/MM/yyyy") + currentDate.ToString("t").PadLeft(8);
             
             DrawTitle(Environment.NewLine + formatDatePrint, mediumFont, offsset);
-            offsset = offsset + smallinc;
-            
+            offsset = offsset + smallinc;                       
+
 
         }
+
+
+
+      
     }
 }

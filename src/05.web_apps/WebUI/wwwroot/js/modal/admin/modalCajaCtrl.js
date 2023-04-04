@@ -330,7 +330,7 @@ export class MovimientoCajaCtrl{
         }
        
         this.$uibModalInstance.rendered.then(()=>{            
-            this.someCondition = true
+            this.someCondition = false
         })
     }
 
@@ -435,7 +435,14 @@ export class MovimientoCajaCtrl{
 
     openMoneyBox(){
         try {
-            console.log('open money box')
+            let dataSearch = {
+                typeList: 1
+            }
+
+            this._mS.getData('get', '/ControlCaja/Get?json=' + JSON.stringify(dataSearch)).then(response => {
+                console.log(response)
+                this._commonSvc.print(JSON.parse(response.payload))
+            })
         } catch (error) {
             console.log(error);
         }
