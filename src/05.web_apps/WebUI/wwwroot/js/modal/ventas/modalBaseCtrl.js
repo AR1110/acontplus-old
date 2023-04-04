@@ -171,7 +171,10 @@ export class ModalBaseCtrl{
             
             this.onSelectedClienteChange(result);
         }, ()=>{
-            $("#clienteSearchInvoice").select();
+            setTimeout(()=>{
+                $("#clienteSearchInvoice").select();
+
+            },500)
             console.log('close')
         })        
 
@@ -1153,6 +1156,17 @@ export class ModalBaseCtrl{
 
     }
 
+
+
+
+    //Event Formulario Invoice, Nota Entrega
+    onBlurBtnNewCustomerInvoice(e){
+        var keyCode = e.keyCode || e.which;
+        console.log(keyCode)
+        if(keyCode===0){
+          $("#btnSaveAndUpdateDocument").focus()
+        }
+    }
 
 
 

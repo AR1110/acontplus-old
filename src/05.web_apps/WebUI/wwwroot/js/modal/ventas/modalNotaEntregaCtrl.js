@@ -1,5 +1,5 @@
 
-import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.23";
+import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.24";
 
 
 class ModalNotaEntregaCtrl extends ModalBaseCtrl{
@@ -243,6 +243,11 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
         <a  ng-click="grid.appScope.abrirModalDatoAdicional(row.entity)" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;  
 
         this.TIPO_DOC_FV = this._commonSvc.tipoDoc['FV'];
+
+        $uibModalInstance.rendered.then(()=>{
+
+            $("#btnNewCustomerDocument").on('blur', this.onBlurBtnNewCustomerInvoice)
+        })
     }
     
     async $onInit(){
@@ -778,6 +783,10 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl{
         this.infoAdicionalDocumento = infoAdicionalDocumento;
         this.actividadTipoIva       = actividadTipoIva;
         
+        $uibModalInstance.rendered.then(()=>{
+
+            $("#btnNewCustomerDocument").on('blur', this.onBlurBtnNewCustomerInvoice)
+        })
     }
 
     async $onInit(){
@@ -977,6 +986,11 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl{
         this.cliente                = cliente;
         this.detalleDocumento       = detalleDocumento;
         this.infoAdicionalDocumento = infoAdicionalDocumento;
+
+        $uibModalInstance.rendered.then(()=>{
+
+            $("#btnNewCustomerDocument").on('blur', this.onBlurBtnNewCustomerInvoice)
+        })
     }
 
     async $onInit(){

@@ -82,7 +82,7 @@
 
                     <div class="input-group-append">
                       
-                        <button type="button" class="btn btn-outline-secondary btn-xs border-select" ng-click="$ctrl.openModalClienteNew()"> <i class="fa fa-plus fa-xs"></i>
+                        <button type="button" class="btn btn-outline-secondary btn-xs border-select" id="btnNewCustomerDocument" ng-click="$ctrl.openModalClienteNew()"> <i class="fa fa-plus fa-xs"></i>
                         </button>
 
                         <button type="button" class="btn btn-outline-secondary btn-xs" ng-if="$ctrl.cliente.idCliente>0" ng-click="$ctrl.openModalClienteUpdate()" tabindex="-1"><i class="fa fa-edit fa-xs"></i>
@@ -179,7 +179,7 @@
         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
             <div class="row justify-content-end">
                 <div class="col-lg-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <button type="button" class="btn btn-block btn-lg btn-success mt-4"  ng-click="$ctrl.onSave()">
+                    <button type="button" class="btn btn-block btn-lg btn-success mt-4" id="btnSaveAndUpdateDocument" ng-click="$ctrl.onSave()">
                         <i class="ti-save"></i> Guardar
                     </button>                                
                 </div>
@@ -410,7 +410,7 @@
         <label for="showSubTotales">Mas datos</label>
     </div>
        
-    <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">
+    <button type="button" class="btn btn-dark" id="btnCloseModalDocument" ng-click="$ctrl.closeModal()">
         &times; Cerrar
     </button>
 </div>

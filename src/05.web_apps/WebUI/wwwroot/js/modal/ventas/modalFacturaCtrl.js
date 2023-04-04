@@ -1,6 +1,6 @@
 
 
-import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.58";
+import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.59";
 
 class ModalFacturaCtrl extends ModalBaseCtrl{
     
@@ -361,6 +361,12 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
         <a  ng-click="grid.appScope.$ctrl.openModalDatoAdicionalArticulo(row.entity, false)" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;  
 
         this.isDefaultArticle = true;
+
+        $uibModalInstance.rendered.then(()=>{
+
+            $("#btnNewCustomerDocument").on('blur', this.onBlurBtnNewCustomerInvoice)
+        })
+
     }
     
     async $onInit(){
@@ -646,6 +652,10 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl{
         this.infoAdicionalDocumento = infoAdicionalDocumento;
         this.actividadTipoIva       = actividadTipoIva;
         
+        $uibModalInstance.rendered.then(()=>{
+
+            $("#btnNewCustomerDocument").on('blur', this.onBlurBtnNewCustomerInvoice)
+        })
     }
 
     async $onInit(){
@@ -955,6 +965,11 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl{
         this.cliente                = cliente;
         this.detalleDocumento       = detalleDocumento;
         this.infoAdicionalDocumento = infoAdicionalDocumento;
+
+        $uibModalInstance.rendered.then(()=>{
+
+            $("#btnNewCustomerDocument").on('blur', this.onBlurBtnNewCustomerInvoice)
+        })
     }
 
     async $onInit(){
