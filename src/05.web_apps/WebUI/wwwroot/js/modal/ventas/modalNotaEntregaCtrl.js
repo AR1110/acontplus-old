@@ -593,11 +593,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
                                 TIPO_DOC: this.TIPO_DOC_FV                                             
                             }
 
-                            if(mainData.data.esContado){
-                                this.openModalRapido(mainData)
-                            }else{
-                                this.openModalCobroDocumento(mainData)
-                            }                                                                                         
+                           this.$uibModalInstance.close(mainData)                                                                                        
                         }
                     })
 
@@ -1205,11 +1201,7 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl{
                     }
 
 
-                    if(mainData.data.esContado){
-                        this.openModalRapido(mainData)
-                    }else{
-                        this.openModalCobroDocumento(mainData)
-                    }        
+                    this.$uibModalInstance.close(mainData)        
 
                                                          
                 }

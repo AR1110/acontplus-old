@@ -26,7 +26,20 @@ function configGeneralCtrl($timeout, $q, _mS, $scope, _commonSvc, _modalSvc, _no
                 _mS.getData('get','/NotificacionEntidad/Get?json=' + JSON.stringify({})).then(response=>response.data),
             ])  
             const {valoracionMetodos}  = results[0];
-            $scope.valoracionMetodos =  valoracionMetodos;        
+            $scope.valoracionMetodos =  valoracionMetodos;  
+            
+            var min = 12,
+            max = 100,
+            select = document.getElementById('metodoValoracion');
+
+            for (var i = min; i<=max; i++){
+                var opt = document.createElement('option');
+                opt.value = i;
+                opt.innerHTML = i;
+                select.appendChild(opt);
+            }
+            
+            console.log($scope.valoracionMetodos)
     
             const moduloDecimales = results[1];
             $scope.decimalAlmacen = moduloDecimales[0][0],
@@ -132,7 +145,8 @@ function configGeneralCtrl($timeout, $q, _mS, $scope, _commonSvc, _modalSvc, _no
             return
         }
 
-        if($scope.gestionSistema.llevaInventario && !$scope.gestionSistema.idMetodoValoracion){
+        console.log($scope.gestionSistema.llevaInventario, $scope.gestionSistema.idMetodoValoracion)
+        if($scope.gestionSistema.llevaInventario && !($scope.gestionSistema.idMetodoValoracion>0)){
             toastr.warning('Seleccione el Método de Valoración');
             return
         }else if(!$scope.gestionSistema.llevaInventario){

@@ -1,27 +1,30 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\AleXx\\source\\repos\\AcontPlus\\src\\04.services\\ApiInventory\\ApiInventory.csproj": {}
+    "C:\\Users\\VMC\\Source\\Repos\\AcontPlus\\src\\04.services\\ApiInventory\\ApiInventory.csproj": {}
   },
   "projects": {
-    "C:\\Users\\AleXx\\source\\repos\\AcontPlus\\src\\04.services\\ApiInventory\\ApiInventory.csproj": {
+    "C:\\Users\\VMC\\Source\\Repos\\AcontPlus\\src\\04.services\\ApiInventory\\ApiInventory.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\AleXx\\source\\repos\\AcontPlus\\src\\04.services\\ApiInventory\\ApiInventory.csproj",
+        "projectUniqueName": "C:\\Users\\VMC\\Source\\Repos\\AcontPlus\\src\\04.services\\ApiInventory\\ApiInventory.csproj",
         "projectName": "ApiInventory",
-        "projectPath": "C:\\Users\\AleXx\\source\\repos\\AcontPlus\\src\\04.services\\ApiInventory\\ApiInventory.csproj",
-        "packagesPath": "C:\\Users\\AleXx\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\AleXx\\source\\repos\\AcontPlus\\src\\04.services\\ApiInventory\\obj\\",
+        "projectPath": "C:\\Users\\VMC\\Source\\Repos\\AcontPlus\\src\\04.services\\ApiInventory\\ApiInventory.csproj",
+        "packagesPath": "C:\\Users\\VMC\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\VMC\\Source\\Repos\\AcontPlus\\src\\04.services\\ApiInventory\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\AleXx\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\VMC\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
