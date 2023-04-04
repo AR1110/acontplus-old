@@ -68,51 +68,51 @@ namespace WS_Validator
                             _urlRecepcion = _configuration.GetSection("urlRecepcion").Value;
                             break;
                     }
-                    if (await HttpCLientHelper.HasAccessToEndpoint(_urlRecepcion))
-                    {
-                        _response = await _sriService.Reception(dataRow.Field<string>("xmlAcontPlus"), _urlRecepcion);
+                    //if (await HttpCLientHelper.HasAccessToEndpoint(_urlRecepcion))
+                    //{
+                    _response = await _sriService.Reception(dataRow.Field<string>("xmlAcontPlus"), _urlRecepcion);
 
-                        switch (_response.estado)
-                        {
-                            case "RECIBIDA":
-                                _valService.Update(dataRow.Field<long>("idDocumentoElectronico"), 3);
-                                _log.LogInfo("Doc. Validated: " + Convert.ToString(dataRow.Field<long>("idDocumentoElectronico")));
-                                break;
-                            case "DEVUELTA":
-                                int codEstado = 5;
-                                if (_response.identificador == "43")
-                                {
-                                    codEstado = 3;
-                                    _log.LogInfo("Doc. Validated: " + Convert.ToString(dataRow.Field<long>("idDocumentoElectronico")));
-                                }
-                                else
-                                {
-                                    _log.LogWarning("Error al validar el xml en el SRI: " + Convert.ToString(dataRow.Field<long>("idDocumentoElectronico")) + " - Xml Sri: " + _response.xmlSri);
-                                    _valService.InsertError(dataRow.Field<long>("idDocumentoElectronico"), _response);
-                                }
-                                _valService.Update(dataRow.Field<long>("idDocumentoElectronico"), codEstado);
-                                break;
-                            default:
-                                if (dataRow.Field<int>("codEstado") == 2)
-                                {
-                                    _response.estado = "SRIOFFLINE";
-                                    _response.message = "SRI NO ESTA EN LINEA";
-                                    _valService.InsertError(dataRow.Field<long>("idDocumentoElectronico"), _response);
-                                    _valService.Update(dataRow.Field<long>("idDocumentoElectronico"), 7);
-                                }
-                                break;
-                        }
-                    }
-                    else
+                    switch (_response.estado)
                     {
-                        if (dataRow.Field<int>("codEstado") == 2)
-                        {
-                            _response.estado = "SRIOFFLINE";
-                            _response.message = "SRI NO ESTA EN LINEA";
-                            _valService.InsertError(dataRow.Field<long>("idDocumentoElectronico"), _response);
-                            _valService.Update(dataRow.Field<long>("idDocumentoElectronico"), 7);
-                        }
+                        case "RECIBIDA":
+                            _valService.Update(dataRow.Field<long>("idDocumentoElectronico"), 3);
+                            _log.LogInfo("Doc. Validated: " + Convert.ToString(dataRow.Field<long>("idDocumentoElectronico")));
+                            break;
+                        case "DEVUELTA":
+                            int codEstado = 5;
+                            if (_response.identificador == "43")
+                            {
+                                codEstado = 3;
+                                _log.LogInfo("Doc. Validated: " + Convert.ToString(dataRow.Field<long>("idDocumentoElectronico")));
+                            }
+                            else
+                            {
+                                _log.LogWarning("Error al validar el xml en el SRI: " + Convert.ToString(dataRow.Field<long>("idDocumentoElectronico")) + " - Xml Sri: " + _response.xmlSri);
+                                _valService.InsertError(dataRow.Field<long>("idDocumentoElectronico"), _response);
+                            }
+                            _valService.Update(dataRow.Field<long>("idDocumentoElectronico"), codEstado);
+                            break;
+                        default:
+                            if (dataRow.Field<int>("codEstado") == 2)
+                            {
+                                _response.estado = "SRIOFFLINE";
+                                _response.message = "SRI NO ESTA EN LINEA";
+                                _valService.InsertError(dataRow.Field<long>("idDocumentoElectronico"), _response);
+                                _valService.Update(dataRow.Field<long>("idDocumentoElectronico"), 7);
+                            }
+                            break;
                     }
+                    //}
+                    //else
+                    //{
+                    //    if (dataRow.Field<int>("codEstado") == 2)
+                    //    {
+                    //        _response.estado = "SRIOFFLINE";
+                    //        _response.message = "SRI NO ESTA EN LINEA";
+                    //        _valService.InsertError(dataRow.Field<long>("idDocumentoElectronico"), _response);
+                    //        _valService.Update(dataRow.Field<long>("idDocumentoElectronico"), 7);
+                    //    }
+                    //}
                 }
             }
             catch (Exception ex)
