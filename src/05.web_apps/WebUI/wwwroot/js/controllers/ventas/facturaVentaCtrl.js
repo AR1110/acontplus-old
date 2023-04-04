@@ -115,6 +115,7 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
 
     $scope.validateOperationPrintAndPayment = (result) => {
         //Verificamos 
+        console.log(result);
         $scope.isPrintDocument = result.printerAutomatic;
 
         $scope.parametersPrint = {
@@ -124,7 +125,7 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
         }
         
 
-        if(result.payAutomatic===1){
+        if(result.payAutomatic==1){
             if(result.data.esContado){
                 $scope.openModalRapido(result)
             }else{
@@ -133,7 +134,7 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
             return 
         }
 
-        if(result.printerAutomatic===1){
+        if(result.printerAutomatic==1){
             _commonSvc.getPrinter(JSON.stringify($scope.parametersPrint))
         }
 
@@ -515,7 +516,7 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
             }
 
             //Cuando el documento es Nuevo o Duplicado 
-            if($scope.isPrintDocument===1){
+            if($scope.isPrintDocument==1){
                 $scope.getFacturas();
                 _commonSvc.getPrinter(JSON.stringify($scope.parametersPrint)) 
                 $scope.isPrintDocument= null;

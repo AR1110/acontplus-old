@@ -29,17 +29,10 @@ function configGeneralCtrl($timeout, $q, _mS, $scope, _commonSvc, _modalSvc, _no
             $scope.valoracionMetodos =  valoracionMetodos;  
             
             var min = 12,
-            max = 100,
-            select = document.getElementById('metodoValoracion');
-
-            for (var i = min; i<=max; i++){
-                var opt = document.createElement('option');
-                opt.value = i;
-                opt.innerHTML = i;
-                select.appendChild(opt);
-            }
+            max = 100;            
             
-            console.log($scope.valoracionMetodos)
+           
+            
     
             const moduloDecimales = results[1];
             $scope.decimalAlmacen = moduloDecimales[0][0],
@@ -64,6 +57,13 @@ function configGeneralCtrl($timeout, $q, _mS, $scope, _commonSvc, _modalSvc, _no
                $scope.entidadNotificaciones = JSON.parse(results[5]);                      
             }
 
+
+
+            if($scope.gestionSistema.llevaInventario){
+                $scope.createOptionMetodoValoracion()
+            }
+           
+
             hideLoader();
             $scope.$apply();
 
@@ -74,6 +74,63 @@ function configGeneralCtrl($timeout, $q, _mS, $scope, _commonSvc, _modalSvc, _no
     }
 
     $scope.initiload();
+
+
+    //Js eliminar posteriormente 
+    setTimeout(()=>{
+        $("#llevaInventario").on('change', e=>{
+            $scope.createOptionMetodoValoracion();
+        })
+    }, 500)
+
+    //Create option metodo valoracion 
+    $scope.createOptionMetodoValoracion = ()=>{
+        setTimeout(() => {
+            var select = document.getElementById('metodoValoracion'), option;
+
+            if(select===null) return;
+            
+            for (var i=0; i<select.length; i++) {
+                select.remove(i);
+            }
+
+            
+
+            var opt = document.createElement('option');
+            opt.value = null;
+            opt.innerHTML = 'Seleccione...';
+            opt.selected = false;
+            select.appendChild(opt);
+            
+            for(let item of $scope.valoracionMetodos){
+
+                var opt = document.createElement('option');
+                opt.value = item.idMetodoValoracion;
+                opt.innerHTML = item.descripcion;
+                opt.selected = false;
+                select.appendChild(opt);
+            }               
+
+           
+        }, 500)
+
+        setTimeout(()=>{
+            var select = document.getElementById('metodoValoracion'), option;
+            if(select===null) return 
+            
+            for (var i=0; i<select.options.length; i++) {
+                option = select.options[i];
+                
+                console.log(option.value, $scope.gestionSistema.idMetodoValoracion);
+                if (option.value == $scope.gestionSistema.idMetodoValoracion) {
+                
+                   option.selected = true;
+                   return                       
+                } 
+              }
+
+        }, 500)
+    }
 
 
     //------------------------Cliente-------------------------------------------------
@@ -145,12 +202,19 @@ function configGeneralCtrl($timeout, $q, _mS, $scope, _commonSvc, _modalSvc, _no
             return
         }
 
-        console.log($scope.gestionSistema.llevaInventario, $scope.gestionSistema.idMetodoValoracion)
-        if($scope.gestionSistema.llevaInventario && !($scope.gestionSistema.idMetodoValoracion>0)){
+        console.log()
+       
+        // if($scope.gestionSistema.llevaInventario && !($scope.gestionSistema.idMetodoValoracion>0)){
+        //     toastr.warning('Seleccione el Método de Valoración');
+        //     return
+        // }else if(!$scope.gestionSistema.llevaInventario){
+        //     $scope.gestionSistema.idMetodoValoracion = 0;
+        // }
+        
+
+        if($scope.gestionSistema.llevaInventario &&  $("#metodoValoracion").val()==="null"){
             toastr.warning('Seleccione el Método de Valoración');
             return
-        }else if(!$scope.gestionSistema.llevaInventario){
-            $scope.gestionSistema.idMetodoValoracion = 0;
         }
 
 
@@ -187,7 +251,9 @@ function configGeneralCtrl($timeout, $q, _mS, $scope, _commonSvc, _modalSvc, _no
                 data.searchCode = data.searchCode? 1: 0;       
                 data.printerAutomatic = data.printerAutomatic? 1: 0;  
                 data.payAutomatic  = data.payAutomatic? 1: 0;
-        
+
+                data.idMetodoValoracion = $scope.gestionSistema.llevaInventario? parseInt($("#metodoValoracion").val()): 0
+                
                 _mS.getData('put', '/GestionSistema/Put?id=' + $scope.gestionSistema.idGestionSistema, data).then(response =>{
                     if(response.code=="0"){
                         toastr.warning(response.message, response.titleSms, {positionClass: 'toast-bottom-center'})                    
