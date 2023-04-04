@@ -567,15 +567,17 @@ export class ModalArticuloCtrl extends ModalBaseCtrl{
 
         this._mS.getData(method, URL, senData).then(
             response=>{
-                if (response.id == 0) {
+                if (response.id == 0 || response.code == 0) {
                     this._toastr.toastr('warning', response.message, response.titleSms);  
                     return;
                 };
-                if (response.id == 1) {
+                if (response.id == 1 || response.code == 1) {
+                    let mainData = JSON.parse(response.payload)[0]
+
                     const data = {
-                        idArticulo: this.tipoRegistro === 1 ? response.lastId : this._params.idArticulo,
-                        idPresentacion: this.tipoRegistro === 1 ? response.data : this._params.idPresentacion,
-                        presentacion: this.tipoRegistro === 1 ? response.gestion : this._params.presentacion,
+                        idArticulo: this.tipoRegistro === 1 ? mainData.id : this._params.idArticulo,
+                        idPresentacion: this.tipoRegistro === 1 ? mainData.data : this._params.idPresentacion,
+                        presentacion: this.tipoRegistro === 1 ? mainData.gestion : this._params.presentacion,
                         idMedida: this.data.idMedida,
                         codigoPrincipal: this.data.codigo,
                         codigoAuxiliar: this.data.codigoAuxiliar,
