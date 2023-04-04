@@ -33,16 +33,16 @@ BEGIN
 				BEGIN 
 					UPDATE DocumentoElectronico SET isAutomatic = 1 WHERE idDocumentoElectronico = @id
 					SET @message = 'Enviado a autorizar en el SRI'
-					SELECT '1' code,@message as 'message' 
 				END 
 
 			ELSE IF @codEstado = 5 OR @codEstado = 0
 				BEGIN
 					UPDATE DocumentoElectronico SET codEstado = 1 WHERE idDocumentoElectronico = @id
 					SET @message = 'El Xml se esta Actualizando'
-					SELECT '1' code,@message as 'message' 
 				END
 		COMMIT TRAN 
+		SELECT '1'code, @message 'message'
+		RETURN
 	END TRY
 	
 	BEGIN CATCH

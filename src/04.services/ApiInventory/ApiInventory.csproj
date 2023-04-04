@@ -10,4 +10,11 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\01.common\Common.Logs\Common.Logs.csproj" />
+    <ProjectReference Include="..\..\01.common\DataAccess\DataAccess.csproj" />
+    <ProjectReference Include="..\..\01.common\Helpers\Helpers.csproj" />
+    <ProjectReference Include="..\..\02.domain\Domain.Inventory\Domain.Inventory.csproj" />
+  </ItemGroup>
+
 </Project>
