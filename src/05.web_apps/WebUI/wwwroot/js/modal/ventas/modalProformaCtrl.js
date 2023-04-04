@@ -1078,9 +1078,9 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl{
 
 export class ModalProformaFiltroCtrl extends ModalProformaCtrl{
 
-    static $inject = ['$scope', '$uibModalInstance', 'mainService', 'commonService', 'formulario', 'toastService', 'params']
+    static $inject = ['$scope', '$uibModalInstance', 'mainService', 'commonService', 'formulario', 'toastService', 'params', 'decodeToken']
 
-    constructor($scope, $uibModalInstance, _mS, _commonSvc, _fS, _tS, _params){
+    constructor($scope, $uibModalInstance, _mS, _commonSvc, _fS, _tS, _params, decodeToken){
         super({_mS, _commonSvc, _tS})
 
         this.$scope = $scope;
@@ -1096,6 +1096,8 @@ export class ModalProformaFiltroCtrl extends ModalProformaCtrl{
         this.meses = this._fS.meses();
         this.mes = mes;
 
+
+        this.idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
     }
 
     async $onInit(){
@@ -1144,7 +1146,7 @@ export class ModalProformaFiltroCtrl extends ModalProformaCtrl{
     //---------------Usuario--------------------    
     usuarioSearchDynamic(textSearch){
         return this._commonSvc.usuarioSearch({
-            idRol: document.getElementById('idRol').value,
+            idRol: this.idUsuarioRol,
             busqueda: textSearch
         })
     }

@@ -104,9 +104,9 @@ BEGIN
 						     ruc             = ad.ruc
 							,razonSocial     = e.razonSocial
 							,nombreComercial = e.nombreComercial 
-							,telefonoEntidad = e.telefono
-							,emailEntidad    = e.email
-							,dirMatriz       = e.direccion
+							,telefonoEntidad = es.telefono
+							,emailEntidad    = es.correo
+							,dirMatriz       = es.dirEstablecimiento
 						 	--,dirEstablecimiento = s.direccion
 							,es.contribuyenteEspecial 
 							,es.obligadoContabilidad 

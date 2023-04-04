@@ -760,9 +760,9 @@ export class ModalNotaCreditoDetalleCtrl extends ModalNotaCreditoCtrl{
 
 export class ModalFacturaFiltroCtrl extends ModalBaseCtrl{
 
-    static $inject = ['$scope', '$uibModalInstance', 'mainService', 'commonService', 'formulario', 'toastService', 'params']
+    static $inject = ['$scope', '$uibModalInstance', 'mainService', 'commonService', 'formulario', 'toastService', 'params', 'decodeToken']
 
-    constructor($scope, $uibModalInstance, _mS, _commonSvc, _fS, _tS, _params){
+    constructor($scope, $uibModalInstance, _mS, _commonSvc, _fS, _tS, _params, decodeToken){
         super({_mS, _commonSvc, _tS})
 
         this.$scope = $scope;
@@ -778,6 +778,7 @@ export class ModalFacturaFiltroCtrl extends ModalBaseCtrl{
         this.meses = this._fS.meses();
         this.mes = mes;
 
+        this.idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
     }
 
     async $onInit(){
@@ -826,7 +827,7 @@ export class ModalFacturaFiltroCtrl extends ModalBaseCtrl{
     //---------------Usuario--------------------    
     usuarioSearchDynamic(textSearch){
         return this._commonSvc.usuarioSearch({
-            idRol: document.getElementById('idRol').value,
+            idRol: this.idUsuarioRol,
             busqueda: textSearch
         })
     }

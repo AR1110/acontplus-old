@@ -440,8 +440,12 @@ export class MovimientoCajaCtrl{
             }
 
             this._mS.getData('get', '/ControlCaja/Get?json=' + JSON.stringify(dataSearch)).then(response => {
-                console.log(response)
-                this._commonSvc.print(JSON.parse(response.payload))
+                if(response.code==="0"){
+                    this._tS.toastr('warning', response.message)
+                }
+                if(response.code==="1"){
+                    this._commonSvc.print(JSON.parse(response.payload))
+                }
             })
         } catch (error) {
             console.log(error);

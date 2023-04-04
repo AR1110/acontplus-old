@@ -73,7 +73,7 @@ BEGIN
 						,nombreComercial = s.nombreComercial
 						,ruc = e.ruc
 						,telefonoEntidad = ISNULL(s.telefono , 'S/N')
-						,emailEntidad = e.email 
+						,emailEntidad = s.correo
 						,dirMatriz = ISNULL(s.dirEstablecimiento, 'S/N')
 						,s.dirEstablecimiento
 						,s.contribuyenteEspecial 
@@ -147,7 +147,7 @@ BEGIN
 							,nombreComercial = s.nombreComercial
 							,ruc = e.ruc
 							,direccion = e.direccion 
-							,email = e.email 
+							,email = s.correo 
 							,telefonoEntidad = ISNULL(s.telefono, 'SN') 
 							,fechaEmision = CONVERT(NVARCHAR, FORMAT(ne.fechaEmision, 'dd/MM/yyyy hh:mm')) 
 							,fechaVencimiento = CONVERT(NVARCHAR, FORMAT(ne.fechaVencimiento, 'dd/MM/yyyy hh:mm')) 
@@ -219,7 +219,7 @@ BEGIN
 								,ruc = e.ruc
 								,direccionEntidad = e.direccion
 								,telefonoEntidad = ISNULL(s.telefono, 'S/N')  
-								,emailEntidad = e.email 	
+								,emailEntidad = s.correo 	
 								,razonSocialCliente = cl.nombreFiscal
 								,nroIdentificacion = cl.numeroIdentificacion 
 								,direccionCliente = ISNULL(cl.direccion, '')
