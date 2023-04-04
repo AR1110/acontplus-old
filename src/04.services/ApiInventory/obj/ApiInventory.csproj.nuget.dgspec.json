@@ -1,36 +1,385 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\VMC\\Source\\Repos\\AcontPlus\\src\\04.services\\ApiInventory\\ApiInventory.csproj": {}
+    "C:\\Users\\AleXx\\source\\repos\\AcontPlus\\src\\04.services\\ApiInventory\\ApiInventory.csproj": {}
   },
   "projects": {
-    "C:\\Users\\VMC\\Source\\Repos\\AcontPlus\\src\\04.services\\ApiInventory\\ApiInventory.csproj": {
+    "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\01.common\\Common.Logs\\Common.Logs.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\VMC\\Source\\Repos\\AcontPlus\\src\\04.services\\ApiInventory\\ApiInventory.csproj",
-        "projectName": "ApiInventory",
-        "projectPath": "C:\\Users\\VMC\\Source\\Repos\\AcontPlus\\src\\04.services\\ApiInventory\\ApiInventory.csproj",
-        "packagesPath": "C:\\Users\\VMC\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\VMC\\Source\\Repos\\AcontPlus\\src\\04.services\\ApiInventory\\obj\\",
+        "projectUniqueName": "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\01.common\\Common.Logs\\Common.Logs.csproj",
+        "projectName": "Common.Logs",
+        "projectPath": "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\01.common\\Common.Logs\\Common.Logs.csproj",
+        "packagesPath": "C:\\Users\\AleXx\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\01.common\\Common.Logs\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\VMC\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\AleXx\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "Microsoft.Extensions.Configuration.Abstractions": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            },
+            "System.Diagnostics.EventLog": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.202\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\01.common\\DataAccess\\DataAccess.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\01.common\\DataAccess\\DataAccess.csproj",
+        "projectName": "DataAccess",
+        "projectPath": "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\01.common\\DataAccess\\DataAccess.csproj",
+        "packagesPath": "C:\\Users\\AleXx\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\01.common\\DataAccess\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\AleXx\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {
+              "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\01.common\\Common.Logs\\Common.Logs.csproj": {
+                "projectPath": "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\01.common\\Common.Logs\\Common.Logs.csproj"
+              },
+              "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\01.common\\Helpers\\Helpers.csproj": {
+                "projectPath": "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\01.common\\Helpers\\Helpers.csproj"
+              },
+              "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\02.domain\\Domain\\Domain.csproj": {
+                "projectPath": "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\02.domain\\Domain\\Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "Microsoft.Extensions.Configuration": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            },
+            "Microsoft.Extensions.Configuration.FileExtensions": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            },
+            "Microsoft.Extensions.Configuration.Json": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            },
+            "Microsoft.Extensions.FileProviders.Abstractions": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
+            },
+            "System.Data.SqlClient": {
+              "target": "Package",
+              "version": "[4.8.5, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.202\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\01.common\\Helpers\\Helpers.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\01.common\\Helpers\\Helpers.csproj",
+        "projectName": "Helpers",
+        "projectPath": "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\01.common\\Helpers\\Helpers.csproj",
+        "packagesPath": "C:\\Users\\AleXx\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\01.common\\Helpers\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\AleXx\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "BarcodeLib": {
+              "target": "Package",
+              "version": "[2.4.0, )"
+            },
+            "Microsoft.Extensions.Configuration.Json": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.202\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\AleXx\\source\\repos\\AcontPlus\\src\\02.domain\\Domain.Inventory\\Domain.Inventory.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\AleXx\\source\\repos\\AcontPlus\\src\\02.domain\\Domain.Inventory\\Domain.Inventory.csproj",
+        "projectName": "Domain.Inventory",
+        "projectPath": "C:\\Users\\AleXx\\source\\repos\\AcontPlus\\src\\02.domain\\Domain.Inventory\\Domain.Inventory.csproj",
+        "packagesPath": "C:\\Users\\AleXx\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\AleXx\\source\\repos\\AcontPlus\\src\\02.domain\\Domain.Inventory\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\AleXx\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.202\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\02.domain\\Domain\\Domain.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\02.domain\\Domain\\Domain.csproj",
+        "projectName": "Domain",
+        "projectPath": "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\02.domain\\Domain\\Domain.csproj",
+        "packagesPath": "C:\\Users\\AleXx\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\02.domain\\Domain\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\AleXx\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {
+              "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\01.common\\Helpers\\Helpers.csproj": {
+                "projectPath": "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\01.common\\Helpers\\Helpers.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.202\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\AleXx\\source\\repos\\AcontPlus\\src\\04.services\\ApiInventory\\ApiInventory.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\AleXx\\source\\repos\\AcontPlus\\src\\04.services\\ApiInventory\\ApiInventory.csproj",
+        "projectName": "ApiInventory",
+        "projectPath": "C:\\Users\\AleXx\\source\\repos\\AcontPlus\\src\\04.services\\ApiInventory\\ApiInventory.csproj",
+        "packagesPath": "C:\\Users\\AleXx\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\AleXx\\source\\repos\\AcontPlus\\src\\04.services\\ApiInventory\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\AleXx\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {
+              "C:\\Users\\AleXx\\source\\repos\\AcontPlus\\src\\01.common\\Common.Logs\\Common.Logs.csproj": {
+                "projectPath": "C:\\Users\\AleXx\\source\\repos\\AcontPlus\\src\\01.common\\Common.Logs\\Common.Logs.csproj"
+              },
+              "C:\\Users\\AleXx\\source\\repos\\AcontPlus\\src\\01.common\\DataAccess\\DataAccess.csproj": {
+                "projectPath": "C:\\Users\\AleXx\\source\\repos\\AcontPlus\\src\\01.common\\DataAccess\\DataAccess.csproj"
+              },
+              "C:\\Users\\AleXx\\source\\repos\\AcontPlus\\src\\01.common\\Helpers\\Helpers.csproj": {
+                "projectPath": "C:\\Users\\AleXx\\source\\repos\\AcontPlus\\src\\01.common\\Helpers\\Helpers.csproj"
+              },
+              "C:\\Users\\AleXx\\source\\repos\\AcontPlus\\src\\02.domain\\Domain.Inventory\\Domain.Inventory.csproj": {
+                "projectPath": "C:\\Users\\AleXx\\source\\repos\\AcontPlus\\src\\02.domain\\Domain.Inventory\\Domain.Inventory.csproj"
+              }
+            }
           }
         },
         "warningProperties": {
