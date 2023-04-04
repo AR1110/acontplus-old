@@ -1,8 +1,8 @@
 
 
 export class ModalUserCtrl{
-    static $inject = ['$scope', '$uibModalInstance', 'mainService', 'commonService', 'toastService', 'params']
-    constructor($scope, $uibModalInstance, _mS, _commonSvc, _tS, _params){        
+    static $inject = ['$scope', '$uibModalInstance', 'mainService', 'commonService', 'toastService', 'params', 'decodeToken']
+    constructor($scope, $uibModalInstance, _mS, _commonSvc, _tS, _params, decodeToken){        
         this.$scope = $scope;
         this.$uibModalInstance = $uibModalInstance;
         this._mS = _mS;
@@ -22,6 +22,8 @@ export class ModalUserCtrl{
                 }
             }
         })
+
+        this.idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
     
     }
 
@@ -92,7 +94,7 @@ export class ModalUserCtrl{
         }
 
         this.data.nombreCompleto = `${this.data.nombres} ${this.data.apellidos}`
-        this.data.idRol =  document.getElementById('idRol').value,
+        this.data.idRol =  this.idUsuarioRol,
         this.data.codRol = 'AD'; //REVISAR POSTERIORMENTE
         let data = {
             nroIdentificacion: this.data.nroIdentificacion,
@@ -174,8 +176,8 @@ export class ModalUserCtrl{
 
 
 export class ModalUserCompanyCtrl{
-    static $inject = ['$scope', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'params'];
-    constructor($scope, $uibModalInstance, _mS, _commonSvc,  _modalSvc, _nombreModalConst, _tS, _params){
+    static $inject = ['$scope', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'params', 'decodeToken'];
+    constructor($scope, $uibModalInstance, _mS, _commonSvc,  _modalSvc, _nombreModalConst, _tS, _params, decodeToken){
         this.$scope          = $scope;
         this.$uibModalInstance = $uibModalInstance;
         this._mS             = _mS;
@@ -184,7 +186,9 @@ export class ModalUserCompanyCtrl{
         this._nombreModalConst = _nombreModalConst;
         this._tS             = _tS;
         this._params           = _params;       
-        this.establecimientos = [];        
+        this.establecimientos = [];  
+        
+        this.idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
     }
 
     $onInit(){
@@ -211,7 +215,7 @@ export class ModalUserCompanyCtrl{
             let json = {
                 idUsuarioRol: item.idUsuarioRol,
                 typeList: 1,
-                idRol: document.getElementById('idRol').value
+                idRol: this.idUsuarioRol
             }
             
             await this._mS.getData('get', '/EstabAsig/Get?json=' +JSON.stringify(json)).then(response=>{

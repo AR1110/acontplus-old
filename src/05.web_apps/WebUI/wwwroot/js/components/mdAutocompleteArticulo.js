@@ -179,6 +179,17 @@ class MdArticuloCtrl extends BaseSearchArticulo{
         this.$scope.$on("editArticulo", (e, itemArticulo)=>{
             this.openModalArticulo(itemArticulo)
         })
+
+
+        setTimeout(()=>{
+            $("#custom-template-md-autocomplete-articulo").on('keyup', e=>{
+                let keyCode = e.keyCode || e.which;
+                if(!this.searchText && keyCode===13){
+                    $("#clienteSearchInvoice").focus();
+                }
+            })
+        }, 500)
+
     }
 
 
@@ -324,6 +335,18 @@ class InputSearchBarcodeCtrl extends BaseSearchArticulo{
     }
 
     $onInit(){
+
+        setTimeout(()=>{
+
+            $("#inputBarcode").on('keyup', e=>{
+                var keyCode = e.keyCode || e.which;
+                console.log(this.searchText, keyCode)
+                if(!this.searchText && keyCode===13){
+                    $("#clienteSearchInvoice").focus();
+                }
+            })
+
+        },500)
     }
 }
 

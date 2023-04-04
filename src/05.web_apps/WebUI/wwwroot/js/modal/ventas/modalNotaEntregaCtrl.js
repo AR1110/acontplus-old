@@ -62,6 +62,17 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl{
                 
             })
         }
+
+
+        setTimeout(()=>{
+            $("#clienteSearchInvoice").on('keyup', e=>{
+                let keyCode = e.keyCode || e.which;
+                if(this.cliente.idCliente>0 && keyCode===13){
+                   $("#btnSaveAndUpdateDocument").focus();
+                }
+            })
+        }, 500)
+
     }
 
     /**

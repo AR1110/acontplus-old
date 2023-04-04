@@ -1309,17 +1309,19 @@ export class ArticuloImpuestoRetencion{
  */
 
 export class ModalArticuloDetalleCtrl extends ModalBaseCtrl{
-    static $inject = ['$scope','mainService','commonService','$uibModalInstance', 'formulario', 'params'];
-    constructor($scope, _mS, _commonSvc, $uibModalInstance, _form, _params){
+    static $inject = ['$scope','mainService','commonService','$uibModalInstance', 'formulario', 'params', 'decodeToken'];
+    constructor($scope, _mS, _commonSvc, $uibModalInstance, _form, _params, decodeToken){
         super({$scope, _mS, _commonSvc})       
         this.$uibModalInstance = $uibModalInstance;
         this._form             = _form;
         this._params = _params;
       
 
+        this.idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
+
         this.json = {
             typeList: 1,
-            idRol: document.getElementById('idRol').value
+            idRol: this.idUsuarioRol
         }
         
         this.gridOptions = {

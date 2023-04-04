@@ -962,9 +962,9 @@ export class ModalGuiaRemisionDetalleCtrl extends ModalGuiaRemisionCtrl{
 
 
 export class ModalGuiaRemisionFiltroCtrl extends ModalGuiaRemisionCtrl{
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'toastService', 'formulario', 'params']
+    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'toastService', 'formulario', 'params', 'decodeToken']
 
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _tS, _fS, _params){
+    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _tS, _fS, _params, decodeToken){
         super({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _tS, _fS}) 
         
         let {dataSearch, clienteFiltro, usuarioSearchFiltro, mes} = _params;
@@ -977,6 +977,9 @@ export class ModalGuiaRemisionFiltroCtrl extends ModalGuiaRemisionCtrl{
         this.mes = mes;
 
         this.dataSearch.typeDate = 'FE' //Por Defecto por fecha Emisión de la Factura Venta 
+
+
+        this.idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
 
     }
 
@@ -1049,7 +1052,7 @@ export class ModalGuiaRemisionFiltroCtrl extends ModalGuiaRemisionCtrl{
     //---------------Usuario--------------------    
     usuarioSearchDynamic(textSearch){
         return this._commonSvc.usuarioSearch({
-            idRol: document.getElementById('idRol').value,
+            idRol: this.idUsuarioRol,
             busqueda: textSearch
         })
     }

@@ -129,9 +129,9 @@ export class ModalAperturaCtrl{
  */
 
 export class ModalAsignacionUsuarioTurnoCtrl{
-    static $inject = ['mainService', 'commonService', '$uibModalInstance', 'formulario', 'params'];
+    static $inject = ['mainService', 'commonService', '$uibModalInstance', 'formulario', 'params', 'decodeToken'];
     
-    constructor(_mS, _comonSvc, $uibModalInstance, _form, _params){
+    constructor(_mS, _comonSvc, $uibModalInstance, _form, _params, decodeToken){
         this._mS = _mS;        
         this._comonSvc         = _comonSvc;
         this.$uibModalInstance = $uibModalInstance;
@@ -144,6 +144,8 @@ export class ModalAsignacionUsuarioTurnoCtrl{
         this.data.idCaja       = this._params.caja.idCaja; 
         this.turnos            = [];
         this.horarios          = [];
+
+        this.idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
     }
 
     $onInit(){
@@ -188,7 +190,7 @@ export class ModalAsignacionUsuarioTurnoCtrl{
 
     searchUsuario(busqueda){
         return this._comonSvc.usuarioSearch({
-            idRol: document.getElementById('idRol').value,
+            idRol: this.idUsuarioRol,
             busqueda
         }).then(response=>response)     
     }
