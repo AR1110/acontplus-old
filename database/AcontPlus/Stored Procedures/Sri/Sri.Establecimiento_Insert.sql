@@ -46,6 +46,7 @@ BEGIN
     DECLARE @contribuyenteRimpe VARCHAR(150) 
 	DECLARE @codEstab VARCHAR(50)
 	DECLARE @telefono VARCHAR(100)
+	DECLARE @correo VARCHAR(300)
 	
 	BEGIN TRY
 		SELECT TOP 1 @idEntidad = idEntidad ,@idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
@@ -70,6 +71,7 @@ BEGIN
 				,@dirEstablecimiento    = dirEstablecimiento
 				,@telefono              = telefono
 				,@contribuyenteRimpe    = contribuyenteRimpe
+				,@correo                = correo
 		FROM OPENJSON (@json)
 		WITH (
 				 canton                VARCHAR(10) '$.canton'
@@ -83,6 +85,7 @@ BEGIN
 				,dirEstablecimiento    VARCHAR(300)'$.dirEstablecimiento'
 				,telefono              VARCHAR(150)'$.telefono'
 				,contribuyenteRimpe    VARCHAR(150)'$.contribuyenteRimpe'
+				,correo                VARCHAR(300) '$.correo'
 				)
 
 		IF EXISTS (SELECT 1 FROM Sri.Establecimiento WHERE ruc = @ruc AND estab = @estab)
@@ -105,6 +108,7 @@ BEGIN
 					,nombreComercial
 					,dirEstablecimiento
 					,telefono
+					,correo
 					,contribuyenteRimpe
 					,fechaRegistro
 					,usuario)
@@ -121,6 +125,7 @@ BEGIN
 				    ,@nombreComercial
 				    ,@dirEstablecimiento
 					,@telefono
+					,@correo
 				    ,@contribuyenteRimpe
 				    ,dbo.ufnGetDateEcuador()
 				    ,@nombreUsuario

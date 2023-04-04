@@ -1,4 +1,5 @@
 ﻿using Domain.Config.Dtos;
+using System.Collections;
 using System.Drawing;
 using System.Drawing.Printing;
 using System.Runtime.InteropServices;
@@ -53,8 +54,8 @@ namespace BL.Print
                         _printDoc.PrintPage += new PrintPageEventHandler(FormatPage);
                         _printDoc.PrinterSettings.Copies = (short)obj.copyPrint;
                         _printDoc.Print();
-                       
-
+                        // Cut the paper
+                        
                         response = true;
                     }
                     else
@@ -506,8 +507,9 @@ namespace BL.Print
             string formatDatePrint = currentDate.ToString("dd/MM/yyyy") + currentDate.ToString("t").PadLeft(8);
             
             DrawTitle(Environment.NewLine + formatDatePrint, mediumFont, offsset);
-            offsset = offsset + smallinc;                       
+            offsset = offsset + smallinc;
 
+           
 
         }
 
