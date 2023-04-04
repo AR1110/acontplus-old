@@ -575,7 +575,7 @@ export class ModalArticuloCtrl extends ModalBaseCtrl{
                     let mainData = JSON.parse(response.payload)[0]
 
                     const data = {
-                        idArticulo: this.tipoRegistro === 1 ? mainData.id : this._params.idArticulo,
+                        idArticulo: this.tipoRegistro === 1 ? mainData.idArticulo : this._params.idArticulo,
                         idPresentacion: this.tipoRegistro === 1 ? mainData.data : this._params.idPresentacion,
                         presentacion: this.tipoRegistro === 1 ? mainData.gestion : this._params.presentacion,
                         idMedida: this.data.idMedida,
