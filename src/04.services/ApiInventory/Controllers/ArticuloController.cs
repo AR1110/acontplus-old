@@ -31,7 +31,7 @@ namespace ApiInventory.Controllers
                 _params["idUsuarioRol"] = idUsuarioRol;
                 _params["json"] = SqlValidation.ValidateSqlString(json);
                 DAO _dao = new DAO(_configuration);
-                return Ok(await _dao.GetDataTable("Inventario.Articulo_Get", _params));
+                return Ok(await _dao.GetDataTable("Almacen.Articulo_Get", _params));
             }
             catch (Exception ex)
             {
