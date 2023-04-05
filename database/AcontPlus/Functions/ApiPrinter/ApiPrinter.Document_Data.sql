@@ -53,7 +53,7 @@ BEGIN
 	INNER JOIN dbo.ComprobanteIngreso ci WITH (NOLOCK) ON ci.idComprobanteIngreso = cd.idComprobanteIngreso
 	INNER JOIN dbo.Cobro               c WITH (NOLOCK) ON c.idComprobanteIngreso  = ci.idComprobanteIngreso
 	INNER JOIN dbo.EntidadFinanciera  ef WITH (NOLOCK) ON ef.idEntidadFinanciera  = c.idEntidadFinanciera
-	WHERE cd.idTipoDocumento = @idTipoDocumento AND cd.idComprobante = @idDocument 
+	WHERE cd.idTipoDocumento = @idTipoDocumento AND cd.idComprobante = @idDocument AND ci.estado = 1
 
 	IF @codDoc = 'FV'
 		BEGIN
@@ -106,7 +106,7 @@ BEGIN
 						,usuario = u.nombreUsuario
 						,pago = ISNULL(@pago,0)
 						,cambio = ISNULL(@cambio,0)
-						,formaPago = IIF(@formaPago Is NULL,'Cobro:','Cobro:'+@formaPago)
+						,formaPago = IIF(@formaPago Is NULL,'Cobro:','Cobro:'+ SUBSTRING(@formaPago,0, 9))
 					FROM dbo.Factura f WITH (NOLOCK)
 					INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK)  ON pe.idPuntoEmision = f.idPuntoEmision 
 					INNER JOIN Sri.Establecimiento s  WITH (NOLOCK)  ON s.codEstab        = pe.codEstab
@@ -180,7 +180,7 @@ BEGIN
 							,usuario = u.nombreUsuario
 							,pago = ISNULL(@pago,0)
 							,cambio = ISNULL(@cambio,0)
-							,formaPago = IIF(@formaPago Is NULL,'Cobro:','Cobro:'+@formaPago)
+							,formaPago = IIF(@formaPago Is NULL,'Cobro:','Cobro:'+  SUBSTRING(@formaPago,0, 9))
 						FROM dbo.NotaEntrega ne WITH (NOLOCK)
 						INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision = ne.idPuntoEmision 
 						INNER JOIN Sri.Establecimiento  s WITH (NOLOCK) ON s.codEstab        = pe.codEstab

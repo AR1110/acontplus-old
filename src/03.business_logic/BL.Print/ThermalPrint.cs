@@ -112,8 +112,8 @@ namespace BL.Print
         {
             int startX = 10;
             int startY = 5;
-            _graphics.DrawString(label, new Font("Arial", 7), new SolidBrush(Color.Black), startX + 135, startY + offset);
-            _graphics.DrawString(value, new Font("Arial", 7), new SolidBrush(Color.Black), startX + 235, startY + offset);
+            _graphics.DrawString(label, new Font("Arial", 7), new SolidBrush(Color.Black), startX + 120, startY + offset);
+            _graphics.DrawString(value, new Font("Arial", 7), new SolidBrush(Color.Black), startX + 224, startY + offset);
         }
 
         void DrawLine(string text, int offset, int xoffset)
@@ -132,13 +132,13 @@ namespace BL.Print
                          new SolidBrush(Color.Black), startX + 0, startY + offset);
 
             _graphics.DrawString(quatity, minifont,
-                     new SolidBrush(Color.Black), startX + 158, startY + offset);
+                     new SolidBrush(Color.Black), startX + 140, startY + offset);
 
             _graphics.DrawString(valor, minifont,
-                        new SolidBrush(Color.Black), startX + 200, startY + offset);
+                        new SolidBrush(Color.Black), startX + 185, startY + offset);
 
             _graphics.DrawString(total, minifont,
-                     new SolidBrush(Color.Black), startX + 230, startY + offset);
+                     new SolidBrush(Color.Black), startX + 226, startY + offset);
         }
         public string GetPrintReadyString(string originalString)
         {
@@ -169,24 +169,24 @@ namespace BL.Print
             //}
             ////_graphics.DrawString(s, minifont, Brushes.Black, new RectangleF(startX, startY + offset, 500F, 500F), format1);
             int textLength = description.Length;
-            if (textLength >= 25)
+            if (textLength >= 23)
             {
-                description = description.Substring(0, 25);
+                description = description.Substring(0, 23);
             }
-            _graphics.DrawString(string.Join("", description.Select((c, i) => i > 0 && i % 25 == 0 ? string.Format(Environment.NewLine + c) : c.ToString())), minifont,
+            _graphics.DrawString(string.Join("", description.Select((c, i) => i > 0 && i % 23 == 0 ? string.Format(Environment.NewLine + c) : c.ToString())), minifont,
                          new SolidBrush(Color.Black), new Point(startX, startY + offset));
 
             //_graphics.DrawString(GetPrintReadyString(description), minifont,
             //       new SolidBrush(Color.Black), new Point(startX, startY + offset));
 
             _graphics.DrawString(quatity, minifont,
-                     new SolidBrush(Color.Black), startX + 158, startY + offset);
+                     new SolidBrush(Color.Black), startX + 140, startY + offset);
 
             _graphics.DrawString(valor, minifont,
-                        new SolidBrush(Color.Black), startX + 200, startY + offset);
+                        new SolidBrush(Color.Black), startX + 185, startY + offset);
 
             _graphics.DrawString(total, minifont,
-                     new SolidBrush(Color.Black), startX + 230, startY + offset);
+                     new SolidBrush(Color.Black), startX + 226, startY + offset);
         }
 
 

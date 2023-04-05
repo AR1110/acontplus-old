@@ -322,3 +322,7 @@
 /src/04.services/ApiInventory/obj/Debug/net6.0/ref
 /src/04.services/ApiInventory/obj/Debug/net6.0
 /src/02.domain/Domain.Inventory/obj
+/src/04.services/ApiInventory/obj/Release/net6.0/ApiInventory.assets.cache
+/src/04.services/ApiInventory/obj/Release/net6.0/ApiInventory.csproj.AssemblyReference.cache
+/src/04.services/ApiInventory/obj/Release/net6.0/ApiInventory.GeneratedMSBuildEditorConfig.editorconfig
+/src/04.services/ApiInventory/obj/project.nuget.cache
