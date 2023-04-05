@@ -169,11 +169,11 @@ namespace BL.Print
             //}
             ////_graphics.DrawString(s, minifont, Brushes.Black, new RectangleF(startX, startY + offset, 500F, 500F), format1);
             int textLength = description.Length;
-            if (textLength >= 23)
+            if (textLength >= 21)
             {
-                description = description.Substring(0, 23);
+                description = description.Substring(0, 21);
             }
-            _graphics.DrawString(string.Join("", description.Select((c, i) => i > 0 && i % 23 == 0 ? string.Format(Environment.NewLine + c) : c.ToString())), minifont,
+            _graphics.DrawString(string.Join("", description.Select((c, i) => i > 0 && i % 21 == 0 ? string.Format(Environment.NewLine + c) : c.ToString())), minifont,
                          new SolidBrush(Color.Black), new Point(startX, startY + offset));
 
             //_graphics.DrawString(GetPrintReadyString(description), minifont,

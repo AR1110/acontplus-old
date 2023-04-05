@@ -686,6 +686,10 @@ app.constant('nombreModal', {
         MODAL_ASIGN_PTOEMISION_BODEGA:{
             controller: 'ModalAsignPtoEmisionAndBodegaCtrl',
             template: 'Usuario/_ModalAsignPtoEmisionBodega.cshtml'
+        },
+        MODAL_USER_CONFIG: {
+            controller: 'ModalConfigUserCtrl',
+            template: 'Usuario/_ModalUserConfig.cshtml'
         }
     },
     vehiculo: {
