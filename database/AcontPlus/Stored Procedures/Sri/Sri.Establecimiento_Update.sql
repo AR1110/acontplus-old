@@ -42,6 +42,7 @@ BEGIN
     DECLARE @dirEstablecimiento VARCHAR(300) 
     DECLARE @telefono VARCHAR(300) 
     DECLARE @contribuyenteRimpe VARCHAR(150) 
+	DECLARE @correo VARCHAR(300)
 
 	BEGIN TRY 
 
@@ -60,6 +61,7 @@ BEGIN
 			,@dirEstablecimiento    = dirEstablecimiento
 			,@telefono              = telefono
 			,@contribuyenteRimpe    = contribuyenteRimpe
+			,@correo                = correo
 		FROM OPENJSON (@json)
 		WITH (
 				 canton                VARCHAR(10) '$.canton'
@@ -72,6 +74,7 @@ BEGIN
 				,dirEstablecimiento    VARCHAR(300)'$.dirEstablecimiento'
 				,telefono              VARCHAR(300)'$.telefono'
 				,contribuyenteRimpe    VARCHAR(150)'$.contribuyenteRimpe'
+				,correo                VARCHAR(300) '$.correo'
 			 )
 
 		BEGIN TRAN 
@@ -87,6 +90,7 @@ BEGIN
 			   ,dirEstablecimiento    = @dirEstablecimiento
 			   ,telefono              = @telefono
 			   ,contribuyenteRimpe    = @contribuyenteRimpe
+			   ,correo                = @correo
 			WHERE idEstablecimiento = @id
 		COMMIT TRAN 
 		SELECT '1'code,'Actualizado Correctamente' as 'message'

@@ -227,11 +227,11 @@
                         showLoader();
                         mS.getData('get', `/Articulo/Delete?idArticulo=${item.idArticulo}`).then(
                             response=>{
-                                if(response.id==="0"){
+                                if(response.code==="0" || response.id==="0"){
                                     hideLoader();
                                     form.sweetAlert('warning', response.message, response.titleSms);                    
                                 }
-                                if(response.id==="1"){
+                                if(response.code==="1" || response.id==="1"){
                                     hideLoader();
                                     $scope.getArticulos();
                                     form.sweetAlert('success', response.message, response.titleSms, 1000);                    
@@ -338,10 +338,10 @@
             if(isConfirmed){
                 mS.getData('get','/ControlStock/Update?id=' + item.idArticulo).then(
                     response=>{
-                        if(response.id==='0'){
+                        if(response.id==='0' || response.code==='0'){
                             form.sweetAlert('warning', response.message, response.titleSms);                    
                         }
-                        if(response.id==='1'){
+                        if(response.id==='1' || response.code==='1'){
                             $scope.getArticulos();
                             form.sweetAlert('success', response.message, response.titleSms, 1000);                    
                         }

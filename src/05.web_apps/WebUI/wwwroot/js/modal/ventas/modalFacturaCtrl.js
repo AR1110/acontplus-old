@@ -68,6 +68,18 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
                 
             })
         }
+
+
+
+        setTimeout(()=>{
+            $("#clienteSearchInvoice").on('keyup', e=>{
+                let keyCode = e.keyCode || e.which;
+                if(this.cliente.idCliente>0 && keyCode===13){
+                    $("#btnSaveAndUpdateDocument").focus();
+                }
+            })
+        }, 500)
+
     }
 
     /**
@@ -562,7 +574,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
                 cancelButtonText: 'No, cancelar!',
                 reverseButtons: false,
                 allowOutsideClick:false,
-                allowEscapeKey:false
+                allowEscapeKey:true
             }).then(response=>{
 
                 if(response.isConfirmed){
@@ -1113,7 +1125,7 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl{
                 cancelButtonText: 'No, cancelar!',
                 reverseButtons: false,
                 allowOutsideClick:false,
-                allowEscapeKey:false
+                allowEscapeKey:true
             })       
            
             

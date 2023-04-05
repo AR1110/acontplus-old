@@ -118,9 +118,9 @@ Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "AcontplusPrint", "10.setups
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BL.Print", "03.business_logic\BL.Print\BL.Print.csproj", "{516E3834-0678-46B4-A6CB-5C260AC1AA13}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiInventory", "04.services\ApiInventory\ApiInventory.csproj", "{9D4AC0E8-F79F-4F5A-8975-DC8272540B5C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiInventory", "04.services\ApiInventory\ApiInventory.csproj", "{9D4AC0E8-F79F-4F5A-8975-DC8272540B5C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.Inventory", "02.domain\Domain.Inventory\Domain.Inventory.csproj", "{526B28CE-84D7-4EEE-A1C1-4340CA93A93F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.Inventory", "02.domain\Domain.Inventory\Domain.Inventory.csproj", "{526B28CE-84D7-4EEE-A1C1-4340CA93A93F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

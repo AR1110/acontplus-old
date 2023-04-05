@@ -53,7 +53,7 @@ BEGIN
 	INNER JOIN dbo.ComprobanteIngreso ci WITH (NOLOCK) ON ci.idComprobanteIngreso = cd.idComprobanteIngreso
 	INNER JOIN dbo.Cobro               c WITH (NOLOCK) ON c.idComprobanteIngreso  = ci.idComprobanteIngreso
 	INNER JOIN dbo.EntidadFinanciera  ef WITH (NOLOCK) ON ef.idEntidadFinanciera  = c.idEntidadFinanciera
-	WHERE cd.idTipoDocumento = @idTipoDocumento AND cd.idComprobante = @idDocument 
+	WHERE cd.idTipoDocumento = @idTipoDocumento AND cd.idComprobante = @idDocument AND ci.estado = 1
 
 	IF @codDoc = 'FV'
 		BEGIN
@@ -73,7 +73,7 @@ BEGIN
 						,nombreComercial = s.nombreComercial
 						,ruc = e.ruc
 						,telefonoEntidad = ISNULL(s.telefono , 'S/N')
-						,emailEntidad = e.email 
+						,emailEntidad = s.correo
 						,dirMatriz = ISNULL(s.dirEstablecimiento, 'S/N')
 						,s.dirEstablecimiento
 						,s.contribuyenteEspecial 
@@ -106,7 +106,7 @@ BEGIN
 						,usuario = u.nombreUsuario
 						,pago = ISNULL(@pago,0)
 						,cambio = ISNULL(@cambio,0)
-						,formaPago = IIF(@formaPago Is NULL,'Cobro:','Cobro:'+@formaPago)
+						,formaPago = IIF(@formaPago Is NULL,'Cobro:','Cobro:'+ SUBSTRING(@formaPago,0, 9))
 					FROM dbo.Factura f WITH (NOLOCK)
 					INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK)  ON pe.idPuntoEmision = f.idPuntoEmision 
 					INNER JOIN Sri.Establecimiento s  WITH (NOLOCK)  ON s.codEstab        = pe.codEstab
@@ -147,7 +147,7 @@ BEGIN
 							,nombreComercial = s.nombreComercial
 							,ruc = e.ruc
 							,direccion = e.direccion 
-							,email = e.email 
+							,email = s.correo 
 							,telefonoEntidad = ISNULL(s.telefono, 'SN') 
 							,fechaEmision = CONVERT(NVARCHAR, FORMAT(ne.fechaEmision, 'dd/MM/yyyy hh:mm')) 
 							,fechaVencimiento = CONVERT(NVARCHAR, FORMAT(ne.fechaVencimiento, 'dd/MM/yyyy hh:mm')) 
@@ -180,7 +180,7 @@ BEGIN
 							,usuario = u.nombreUsuario
 							,pago = ISNULL(@pago,0)
 							,cambio = ISNULL(@cambio,0)
-							,formaPago = IIF(@formaPago Is NULL,'Cobro:','Cobro:'+@formaPago)
+							,formaPago = IIF(@formaPago Is NULL,'Cobro:','Cobro:'+  SUBSTRING(@formaPago,0, 9))
 						FROM dbo.NotaEntrega ne WITH (NOLOCK)
 						INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision = ne.idPuntoEmision 
 						INNER JOIN Sri.Establecimiento  s WITH (NOLOCK) ON s.codEstab        = pe.codEstab
@@ -219,7 +219,7 @@ BEGIN
 								,ruc = e.ruc
 								,direccionEntidad = e.direccion
 								,telefonoEntidad = ISNULL(s.telefono, 'S/N')  
-								,emailEntidad = e.email 	
+								,emailEntidad = s.correo 	
 								,razonSocialCliente = cl.nombreFiscal
 								,nroIdentificacion = cl.numeroIdentificacion 
 								,direccionCliente = ISNULL(cl.direccion, '')

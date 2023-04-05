@@ -31,7 +31,7 @@ namespace ApiInventory.Controllers
                 _params["idUsuarioRol"] = idUsuarioRol;
                 _params["json"] = SqlValidation.ValidateSqlString(json);
                 DAO _dao = new DAO(_configuration);
-                return Ok(await _dao.GetDataSet("Inventario.Familia_Get", _params));
+                return Ok(await _dao.GetDataSet("Almacen.Familia_Get", _params));
             }
             catch (Exception ex)
             {
@@ -53,7 +53,7 @@ namespace ApiInventory.Controllers
                 _params["descripcion"] = SqlValidation.ValidateSqlString(data.descripcion);
                 _params["siglas"] = SqlValidation.ValidateSqlString(data.siglas);
                 DAO _dao = new DAO(_configuration);
-                return Ok(await _dao.Default("Inventario.Familia_Insert", _params));
+                return Ok(await _dao.Default("Almacen.Familia_Insert", _params));
             }
             catch (Exception ex)
             {
@@ -76,7 +76,7 @@ namespace ApiInventory.Controllers
                 _params["descripcion"] = SqlValidation.ValidateSqlString(data.descripcion);
                 _params["siglas"] = SqlValidation.ValidateSqlString(data.siglas);
                 DAO _dao = new DAO(_configuration);
-                return Ok(await _dao.GetDataSet("Inventario.Familia_Update", _params));
+                return Ok(await _dao.GetDataSet("Alamcen.Familia_Update", _params));
             }
             catch (Exception ex)
             {
@@ -97,7 +97,7 @@ namespace ApiInventory.Controllers
                 _params["idUsuarioRol"] = idUsuarioRol;
                 _params["idCategoria"] = id;
                 DAO _dao = new DAO(_configuration);
-                return Ok(await _dao.GetDataSet("Inventario.Familia_Update_Cancel", _params));
+                return Ok(await _dao.GetDataSet("Almacen.Familia_Update_Cancel", _params));
             }
             catch (Exception ex)
             {

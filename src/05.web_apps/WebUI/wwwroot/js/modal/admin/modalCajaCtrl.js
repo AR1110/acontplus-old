@@ -129,9 +129,9 @@ export class ModalAperturaCtrl{
  */
 
 export class ModalAsignacionUsuarioTurnoCtrl{
-    static $inject = ['mainService', 'commonService', '$uibModalInstance', 'formulario', 'params'];
+    static $inject = ['mainService', 'commonService', '$uibModalInstance', 'formulario', 'params', 'decodeToken'];
     
-    constructor(_mS, _comonSvc, $uibModalInstance, _form, _params){
+    constructor(_mS, _comonSvc, $uibModalInstance, _form, _params, decodeToken){
         this._mS = _mS;        
         this._comonSvc         = _comonSvc;
         this.$uibModalInstance = $uibModalInstance;
@@ -144,6 +144,8 @@ export class ModalAsignacionUsuarioTurnoCtrl{
         this.data.idCaja       = this._params.caja.idCaja; 
         this.turnos            = [];
         this.horarios          = [];
+
+        this.idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
     }
 
     $onInit(){
@@ -188,7 +190,7 @@ export class ModalAsignacionUsuarioTurnoCtrl{
 
     searchUsuario(busqueda){
         return this._comonSvc.usuarioSearch({
-            idRol: document.getElementById('idRol').value,
+            idRol: this.idUsuarioRol,
             busqueda
         }).then(response=>response)     
     }
@@ -328,7 +330,7 @@ export class MovimientoCajaCtrl{
         }
        
         this.$uibModalInstance.rendered.then(()=>{            
-            this.someCondition = true
+            this.someCondition = false
         })
     }
 
@@ -433,7 +435,18 @@ export class MovimientoCajaCtrl{
 
     openMoneyBox(){
         try {
-            console.log('open money box')
+            let dataSearch = {
+                typeList: 1
+            }
+
+            this._mS.getData('get', '/ControlCaja/Get?json=' + JSON.stringify(dataSearch)).then(response => {
+                if(response.code==="0"){
+                    this._tS.toastr('warning', response.message)
+                }
+                if(response.code==="1"){
+                    this._commonSvc.print(JSON.parse(response.payload))
+                }
+            })
         } catch (error) {
             console.log(error);
         }

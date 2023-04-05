@@ -62,6 +62,17 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl{
                 
             })
         }
+
+
+        setTimeout(()=>{
+            $("#clienteSearchInvoice").on('keyup', e=>{
+                let keyCode = e.keyCode || e.which;
+                if(this.cliente.idCliente>0 && keyCode===13){
+                   $("#btnSaveAndUpdateDocument").focus();
+                }
+            })
+        }, 500)
+
     }
 
     /**
@@ -582,11 +593,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
                                 TIPO_DOC: this.TIPO_DOC_FV                                             
                             }
 
-                            if(mainData.data.esContado){
-                                this.openModalRapido(mainData)
-                            }else{
-                                this.openModalCobroDocumento(mainData)
-                            }                                                                                         
+                           this.$uibModalInstance.close(mainData)                                                                                        
                         }
                     })
 
@@ -1194,11 +1201,7 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl{
                     }
 
 
-                    if(mainData.data.esContado){
-                        this.openModalRapido(mainData)
-                    }else{
-                        this.openModalCobroDocumento(mainData)
-                    }        
+                    this.$uibModalInstance.close(mainData)        
 
                                                          
                 }
@@ -1318,9 +1321,9 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl{
 
 export class ModalNotaEntregaFiltroCtrl extends ModalBaseCtrl{
 
-    static $inject = ['$scope', '$uibModalInstance', 'mainService', 'commonService', 'formulario', 'toastService', 'params']
+    static $inject = ['$scope', '$uibModalInstance', 'mainService', 'commonService', 'formulario', 'toastService', 'params', 'decodeToken']
 
-    constructor($scope, $uibModalInstance, _mS, _commonSvc, _fS, _tS, _params){
+    constructor($scope, $uibModalInstance, _mS, _commonSvc, _fS, _tS, _params, decodeToken){
         super({_mS, _commonSvc, _tS})
 
         this.$scope = $scope;
@@ -1336,6 +1339,7 @@ export class ModalNotaEntregaFiltroCtrl extends ModalBaseCtrl{
         this.meses = this._fS.meses();
         this.mes = mes;
 
+        this.idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
     }
 
     async $onInit(){
@@ -1384,7 +1388,7 @@ export class ModalNotaEntregaFiltroCtrl extends ModalBaseCtrl{
     //---------------Usuario--------------------    
     usuarioSearchDynamic(textSearch){
         return this._commonSvc.usuarioSearch({
-            idRol: document.getElementById('idRol').value,
+            idRol: this.idUsuarioRol,
             busqueda: textSearch
         })
     }

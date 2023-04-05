@@ -32,7 +32,7 @@ namespace ApiInventory.Controllers
                 _params["idUsuarioRol"] = idUsuarioRol;
                 _params["json"] = SqlValidation.ValidateSqlString(json);
                 DAO _dao = new DAO(_configuration);
-                return Ok(await _dao.GetDataSet("Inventario.SubFamilia_Get", _params));
+                return Ok(await _dao.GetDataSet("Almacen.SubFamilia_Get", _params));
             }
             catch (Exception ex)
             {
@@ -54,7 +54,7 @@ namespace ApiInventory.Controllers
                 _params["descripcion"] = SqlValidation.ValidateSqlString(data.descripcion);
                 _params["siglas"] = SqlValidation.ValidateSqlString(data.siglas);
                 DAO _dao = new DAO(_configuration);
-                return Ok(await _dao.GetDataSet("Inventario.SubCategoria_Insert", _params));
+                return Ok(await _dao.GetDataSet("Almacen.SubFamilia_Insert", _params));
             }
             catch (Exception ex)
             {
@@ -77,7 +77,7 @@ namespace ApiInventory.Controllers
                 _params["descripcion"] = SqlValidation.ValidateSqlString(data.descripcion);
                 _params["siglas"] = SqlValidation.ValidateSqlString(data.siglas);
                 DAO _dao = new DAO(_configuration);
-                return Ok(await _dao.GetDataSet("Inventario.SubCategoria_Update", _params));
+                return Ok(await _dao.GetDataSet("Almacen.SubFamilia_Update", _params));
             }
             catch (Exception ex)
             {
@@ -96,9 +96,9 @@ namespace ApiInventory.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 Dictionary<string, object> _params = new Dictionary<string, object>();
                 _params["idUsuarioRol"] = idUsuarioRol;
-                _params["idCategoria"] = id;
+                _params["idSubFamilia"] = id;
                 DAO _dao = new DAO(_configuration);
-                return Ok(await _dao.GetDataSet("Inventario.SubCategoria_Update_Cancel", _params));
+                return Ok(await _dao.GetDataSet("Almacen.SubFamilia_Update_Cancel", _params));
             }
             catch (Exception ex)
             {

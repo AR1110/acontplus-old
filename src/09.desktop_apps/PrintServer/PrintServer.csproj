@@ -15,6 +15,7 @@
 		<None Remove="Logos\descarga.jpg" />
 		<None Remove="Logos\logosal.jpg" />
 		<None Remove="Reports\AperturaCaja.rdl" />
+		<None Remove="Reports\Blank.rdl" />
 		<None Remove="Reports\FacturaInyeccion.rdl" />
 		<None Remove="Reports\FacturaMatricial.rdl" />
 		<None Remove="Reports\FacturaTermica.rdl" />
@@ -37,6 +38,9 @@
 		</Content>
 		<Content Include="Reports\AperturaCaja.rdl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Reports\Blank.rdl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 		<Content Include="Reports\FacturaInyeccion.rdl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
