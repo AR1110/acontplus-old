@@ -318,9 +318,8 @@
 /src/03.business_logic/BL.Print/obj
 /src/09.desktop_apps/PointOfSales/bin
 /src/09.desktop_apps/PointOfSales/obj
-/src/04.services/ApiInventory/bin/Debug/net6.0
-/src/04.services/ApiInventory/obj/Debug/net6.0/ref
-/src/04.services/ApiInventory/obj/Debug/net6.0
+/src/04.services/ApiInventory/bin
+/src/04.services/ApiInventory/obj
 /src/02.domain/Domain.Inventory/obj
 /src/04.services/ApiInventory/obj/Release/net6.0/ApiInventory.assets.cache
 /src/04.services/ApiInventory/obj/Release/net6.0/ApiInventory.csproj.AssemblyReference.cache
