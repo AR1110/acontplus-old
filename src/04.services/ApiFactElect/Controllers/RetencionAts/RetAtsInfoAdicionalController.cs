@@ -12,9 +12,11 @@ namespace ApiFactElect.Controllers.RetencionAts
     public class RetAtsInfoAdicionalController : ControllerBase
     {
         private readonly IConfiguration _configuration;
+        private readonly DbAccess _db;
         public RetAtsInfoAdicionalController(IConfiguration configuration)
         {
             _configuration = configuration;
+            _db = new DbAccess(_configuration);
         }
 
         // GET: api/<RetAtsInfoAdicionalController>
@@ -36,27 +38,28 @@ namespace ApiFactElect.Controllers.RetencionAts
         public async Task<IActionResult> Post(string json)
         {
             LogWriter _logs = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-
-                DAO _dao = new DAO(_configuration);
+                await _db.SPExecute("FactElect.RetAts_InfoAdicional_Insert");
+                
                 Dictionary<string, object> parameters = new Dictionary<string, object>
                 {
                     { "idUsuarioRol", idUsuarioRol },
                     { "json", SqlValidation.ValidateSqlString(json) }
                 };
-                return Ok(await _dao.Default("FactElect.RetAts_InfoAdicional_Insert", parameters));
+                _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
                 _logs.LogError("Error al guardar la InfoAdicional: " + ex.ToString());
-                return new BadRequestObjectResult(new
-                {
-                    code = 0,
-                    message = "Error al guardar la InfoAdicional"
-                });
+                _response.Create(code: "0", message: "Error al guardar la InfoAdicional");
+            }finally
+            {
+                _db.Close();
             }
+            return Ok(_response);
         }
 
         // PUT api/<RetAtsInfoAdicionalController>/5
@@ -64,28 +67,26 @@ namespace ApiFactElect.Controllers.RetencionAts
         public async Task<IActionResult> Put(int id, string json)
         {
             LogWriter _logs = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-
-                DAO _dao = new DAO(_configuration);
-                Dictionary<string, object> parameters = new Dictionary<string, object>
-                {
-                    { "idUsuarioRol", idUsuarioRol },
-                    { "id", id },
-                    { "json", SqlValidation.ValidateSqlString(json) }
-                };
-                return Ok(await _dao.Default("FactElect.RetAts_InfoAdicional_Update", parameters));
+                await _db.SPExecute("FactElect.RetAts_InfoAdicional_Update");
+                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+                _db.AddDynamicParam("id", id);
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
                 _logs.LogError("Error al actualizar la InfoAdicional: " + ex.ToString());
-                return new BadRequestObjectResult(new
-                {
-                    code = 0,
-                    message = "Error al actualizar la InfoAdicional"
-                });
+                _response.Create(code: "0", message: "Error al actualizar la InfoAdicional");
             }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
 
         // DELETE api/<RetAtsInfoAdicionalController>/5
@@ -93,27 +94,25 @@ namespace ApiFactElect.Controllers.RetencionAts
         public async Task<IActionResult> Delete(int id)
         {
             LogWriter _logs = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-
-                DAO _dao = new DAO(_configuration);
-                Dictionary<string, object> parameters = new Dictionary<string, object>
-                {
-                    { "idUsuarioRol", idUsuarioRol },
-                    { "id", id }
-                };
-                return Ok(await _dao.Default("FactElect.RetAts_InfoAdicional_Delete", parameters));
+                await _db.SPExecute("FactElect.RetAts_InfoAdicional_Delete");
+                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+                _db.AddDynamicParam("id", id);
+                _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
                 _logs.LogError("Error al eliminar la InfoAdicional: " + ex.ToString());
-                return new BadRequestObjectResult(new
-                {
-                    code = 0,
-                    message = "Error al eliminar la InfoAdicional"
-                });
+                _response.Create(code: "0", message: "Error al eliminar la InfoAdicional");
             }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
     }
 }
