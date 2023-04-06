@@ -1,5 +1,5 @@
 
-import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.24";
+import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.25";
 
 
 class ModalNotaEntregaCtrl extends ModalBaseCtrl{
@@ -232,6 +232,15 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl{
         }            
     }
 
+    recalculateImpuestoTarifa(){
+        try {
+           this.uiGridInvoice.actividadTipoIva = this.impuestoTarifas.find(item=>item.tarifa===this.data.tarifa);           
+           this.data = Object.assign(this.data, this.uiGridInvoice.getTotales());                        
+        } catch (error) {
+            console.log(error);            
+        }       
+    }
+
 }
 
 
@@ -282,7 +291,11 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
                 this.idBodega      = this.bodegas.length>0?this.bodegas[0].idBodega:0;
                 this.cloneIdBodega = this.idBodega;
 
-                this.actividadTipoIva = resultsDataFormEstab[2][0]
+                // this.actividadTipoIva = resultsDataFormEstab[2][0];
+
+                this.impuestoTarifas = resultsDataFormEstab[2]; //Impuesto tarifas dependiendo el tipo Actividad
+                this.actividadTipoIva = resultsDataFormEstab[2][0];
+                this.data.tarifa = this.actividadTipoIva.tarifa;
                 
                 this.setDataInfoEstab(this.establecimientos, this.puntosEmisiones);
             }else{
@@ -447,7 +460,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
                     notaEntrega.idCliente = this.cliente.idCliente;        
                     
                     //Tarifa Aplicada al Documento
-                    notaEntrega.tarifa = this.actividadTipoIva.tarifa;
+                    // notaEntrega.tarifa = this.actividadTipoIva.tarifa;
                     
                     const sendData = {
                         notaEntrega,
@@ -789,6 +802,8 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl{
         this.detalleDocumento       = detalleDocumento;
         this.infoAdicionalDocumento = infoAdicionalDocumento;
         this.actividadTipoIva       = actividadTipoIva;
+       
+        this.data.tarifa = this.actividadTipoIva.tarifa;
         
         $uibModalInstance.rendered.then(()=>{
 
@@ -813,7 +828,9 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl{
 
                 this.bodegas       = resultsDataFormEstab[1];                
                 this.idBodega      = this.bodegas.length>0?this.bodegas[0].idBodega:0;
-                this.cloneIdBodega = this.idBodega;                
+                this.cloneIdBodega = this.idBodega;   
+                
+                this.impuestoTarifas = resultsDataFormEstab[2]; //Impuesto tarifas dependiendo el tipo Actividad
             }else{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
             }
@@ -1018,8 +1035,10 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl{
                 this.bodegas       = resultsDataFormEstab[1];                
                 this.idBodega      = this.bodegas.length>0?this.bodegas[0].idBodega:0;
                 this.cloneIdBodega = this.idBodega;
-
-                this.actividadTipoIva = resultsDataFormEstab[2][0]
+                
+                this.impuestoTarifas = resultsDataFormEstab[2]; //Impuesto tarifas dependiendo el tipo Actividad
+                this.actividadTipoIva = resultsDataFormEstab[2][0];
+                this.data.tarifa = this.actividadTipoIva.tarifa;
 
             }else{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
@@ -1171,7 +1190,7 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl{
             notaEntrega.idCliente = this.cliente.idCliente;        
             
             //Tarifa Aplicada al Documento
-            notaEntrega.tarifa = this.actividadTipoIva.tarifa;
+           // notaEntrega.tarifa = this.actividadTipoIva.tarifa;
             
             const sendData = {
                 notaEntrega,

@@ -1,5 +1,6 @@
 ﻿using Common.Logs;
 using DataAccess;
+using Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,27 +11,31 @@ namespace ApiConfig.Controllers
     public class EntidadController : ControllerBase
     {
         private readonly IConfiguration _configuration;
+        private readonly DbAccess _db;
         public EntidadController(IConfiguration configuration)
         {
             _configuration = configuration;
+            _db = new DbAccess(_configuration);
         }
 
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
             LogWriter _log = new LogWriter(_configuration);
+            var _response = new GenericResponse();
             try
             {
-                Dictionary<string, object> _params = new Dictionary<string, object>();
-                _params["json"] = json;
-                DAO _dao = new DAO(_configuration);
-                return Ok(await _dao.GetDataTable("App.aspEntidad_Get", _params));
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                await _db.SPExecute("App.aspEntidad_Get");
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDataTableAsync();
             }
             catch (Exception ex)
             {
-                _log.LogError("Error getting data to user: \n" + ex.ToString());
-                return BadRequest(ex.Message);
+                _log.LogError("Error while getting reports: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error getting reports");
             }
+            return Ok(_response);
         }
     }
 }

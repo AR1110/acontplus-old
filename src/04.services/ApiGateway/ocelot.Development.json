@@ -748,12 +748,35 @@
           "Port": 7074
         }
       ],
-      "DownstreamPathTemplate": "/api/Usuario/?json={json}",
+      "DownstreamPathTemplate": "/api/Usuario/{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get",
+        "POST",
+        "PUT",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/api/Usuario/{everything}"
+    },
+
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7074
+        }
+      ],
+      "DownstreamPathTemplate": "/api/UsuarioRol/Get/{id}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "Get"
       ],
-      "UpstreamPathTemplate": "/api/Usuario/?json={json}"
+      "UpstreamPathTemplate": "/api/UsuarioRol/Get/{id}"
     }
   ]
 }

@@ -572,7 +572,10 @@ export class ModalArticuloCtrl extends ModalBaseCtrl{
                     return;
                 };
                 if (response.id == 1 || response.code == 1) {
-                    let mainData = JSON.parse(response.payload)[0]
+                    let mainData = {}
+                    if(this.tipoRegistro===1){
+                        mainData = JSON.parse(response.payload)[0]
+                    }
 
                     const data = {
                         idArticulo: this.tipoRegistro === 1 ? mainData.idArticulo : this._params.idArticulo,
