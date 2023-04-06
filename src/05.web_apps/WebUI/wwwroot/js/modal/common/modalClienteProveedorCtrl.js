@@ -310,7 +310,7 @@ class ModalBaseCliente extends ModalBaseCtrl{
             return
         }
         if (item == '9999999999999') {
-            this._tS.toastr('warning', "No se puede generar código de barrasa para el consumidor final")
+            this._tS.toastr('warning', "No se puede generar código de barra para el consumidor final")
             return
         }
         this.data.barcodeGenerated = true
@@ -387,10 +387,10 @@ class ModalBaseCliente extends ModalBaseCtrl{
             return
         }
 
-        if (this._form.campo(this.data.idSubContribuyente)) {
-            this._tS.toastr('warning', 'Seleccione el Contribuyente', tituloModal)
-            return
-        }
+        // if (this._form.campo(this.data.idSubContribuyente)) {
+        //     this._tS.toastr('warning', 'Seleccione el Contribuyente', tituloModal)
+        //     return
+        // }
         if (this._form.campo(this.data.nombreFiscal)) {
             this._tS.toastr('warning', 'Ingrese el nombre Fiscal', tituloModal)
             return
@@ -413,9 +413,14 @@ class ModalBaseCliente extends ModalBaseCtrl{
         // }
         if (this.correos.length > 0) {
             if (!this.correos.every(item => this.validarEmail(item))) {
-                this._tS.toastr('warning', 'Verifique que los correos del destinatario esten ingresado correctamente', tituloModal);
+                this._tS.toastr('warning', 'Verifique que los correos  esten ingresado correctamente', tituloModal);
                 return
             }
+        }
+
+        if(!(this.data.idTiempoCredito>0)){
+            this._tS.toastr('warning', 'Seleccione el Tiempo Credito', tituloModal);
+            return
         }
 
 
@@ -515,12 +520,23 @@ export class ModalClienteCtrl extends ModalBaseCliente {
                     this.$scope.$apply();
                 })
             }
+
+            this.$uibModalInstance.rendered.then(result => {
+                if(this.tipoRegistro===1){
+                    $("#numeroIdentificacion").focus();
+                }else{
+                    $("#nombreComercial").focus();
+                }
+            })
+
             this.$scope.$apply();
             hideLoader()
         } catch (error) {
             hideLoader();
             console.log(error)
         }
+
+       
     }
 
 
@@ -759,6 +775,8 @@ export class ModalClienteEditarCtrl extends ModalBaseCliente{
 
                     //Cuando el estado este Inactivo se presenta el estado para activar
                     this.showEstado = !this.data.estado;
+                   
+                    $("#nombreComercial").focus();                                           
                     this.$scope.$apply();
                 })
             }

@@ -1,10 +1,12 @@
 app.controller('reporteCompraCtrl', reporteCompraCtrl);
 
-reporteCompraCtrl.$inject = ['$http', '$scope', 'commonService', 'mainService', 'toastService', 'formulario', 'FileSaver', 'Blob'];
+reporteCompraCtrl.$inject = ['$http', '$scope', 'commonService', 'mainService', 'toastService', 'formulario', 'FileSaver', 'Blob', 'decodeToken'];
 
-function reporteCompraCtrl($http, $scope, _commonSvc, mS, toast, form, FileSaver, Blob) {
+function reporteCompraCtrl($http, $scope, _commonSvc, mS, toast, form, FileSaver, Blob, decodeToken) {
+
+    let idUsuarioRol = (decodeToken.idUsuarioRol)
+
     $scope.dataSearch = {};
-
     //Filters        
     $scope.meses = form.meses();
     $scope.mes = new Date().getMonth() + 1;
@@ -203,7 +205,7 @@ function reporteCompraCtrl($http, $scope, _commonSvc, mS, toast, form, FileSaver
     $scope.dataUsuarioFilter = {}
     $scope.usuarioSearch = (textSearch)=>{
         return _commonSvc.usuarioSearch({
-            idRol: document.getElementById('idRol').value,
+            idRol: idUsuarioRol,
             busqueda: textSearch
         })
     }

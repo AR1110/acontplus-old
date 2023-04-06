@@ -1,20 +1,20 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Helpers;
 using DataAccess;
 using Common.Logs;
 
 namespace WebUI.Controllers.FE
 {
-    
+
     public class DocumentoElectronicoController : Controller
     {
         private readonly IConfiguration _configuration;
-
+        private readonly DbAccess _db;
 
         public DocumentoElectronicoController(IConfiguration configuration)
         {
             _configuration = configuration;
+            _db = new DbAccess(configuration);
         }
         public IActionResult Index()
         {
@@ -28,27 +28,28 @@ namespace WebUI.Controllers.FE
         public async Task<IActionResult> Get(string json)
         {
             LogWriter _log = new LogWriter(_configuration);
+            var _response = new GenericResponse();
+
             try
             {
                 //var idUsuarioRol = Convert.ToInt32(HttpContext.Request.Headers["X-IdUsuarioRol"]);
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                Dictionary<string, object> parameters = new Dictionary<string, object>
-                {
-                    { "idRol", idUsuarioRol },
-                    { "json", SqlValidation.ValidateSqlString(json) }
-                };
-                DAO _dao = new DAO(_configuration);
-                return Ok(await _dao.GetDataTable("FactElect.Doc_Elect_Get", parameters));
+                await _db.SPExecute("RecepcFactElection.Doc_Elect_Get");
+                _db.AddDynamicParam("idRol", idUsuarioRol);
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDataTableAsync();
+
             }
             catch (Exception ex)
             {
                 _log.LogError("Error while getting docs: \n" + ex.ToString());
-                return new BadRequestObjectResult(new
-                {
-                    code = "0",
-                    message = "Error al obtener los documentos"
-                });
+                _response.Create(code: "0", message: "Error al obtener los documentos");
             }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
         [HttpGet]
         public async Task<IActionResult> GetDataForm()
@@ -94,7 +95,7 @@ namespace WebUI.Controllers.FE
                     message = "Error al actualizar el documento"
                 });
             }
-           
+
         }
 
 

@@ -53,6 +53,7 @@ BEGIN
 		,dirEstablecimiento
 		,telefono
 		,contribuyenteRimpe
+		,correo
 		,estado
 	FROM Sri.Establecimiento 
 	WHERE idEstablecimiento = @id

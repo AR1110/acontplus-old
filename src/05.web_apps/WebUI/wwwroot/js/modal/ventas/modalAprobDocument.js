@@ -194,7 +194,7 @@ class ModalBaseCtrl{
     //---------------Usuario--------------------    
     usuarioSearchDynamic(textSearch){
         return this._commonSvc.usuarioSearch({
-            idRol: document.getElementById('idRol').value,
+            idRol: this.idUsuarioRol,
             busqueda: textSearch
         })
     }
@@ -388,9 +388,9 @@ class ModalBaseCtrl{
 
 
 export class ModalSelectDocumentoCtrl extends ModalBaseCtrl{
-    static $inject = ['$scope', '$uibModalInstance', 'uiGridConstants', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario', 'params'];
+    static $inject = ['$scope', '$uibModalInstance', 'uiGridConstants', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario', 'params', 'decodeToken'];
 
-    constructor($scope, $uibModalInstance, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS, _params){
+    constructor($scope, $uibModalInstance, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS, _params, decodeToken){
         super(_commonSvc)
         const self = this;
         this.$scope            = $scope;
@@ -477,6 +477,9 @@ export class ModalSelectDocumentoCtrl extends ModalBaseCtrl{
         }
 
         this.infoAdicionalDocumento = [];
+
+
+        this.idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
 
     }
 
@@ -1292,9 +1295,9 @@ export class ModalSelectDocumentoCtrl extends ModalBaseCtrl{
 
 
 export class ModalNotaEntregaFiltroCtrl extends ModalBaseCtrl{
-    static $inject = ['$scope',  'mainService', 'commonService', 'toastService', 'formulario', '$uibModalInstance', 'params']
+    static $inject = ['$scope',  'mainService', 'commonService', 'toastService', 'formulario', '$uibModalInstance', 'params', 'decodeToken']
 
-    constructor($scope,  _mS, _commonSvc, _toastr, _form, $uibModalInstance,  _params){
+    constructor($scope,  _mS, _commonSvc, _toastr, _form, $uibModalInstance,  _params, decodeToken){
         super(_commonSvc) 
         this.$scope            = $scope;                
         this._mS               = _mS;
@@ -1315,6 +1318,8 @@ export class ModalNotaEntregaFiltroCtrl extends ModalBaseCtrl{
 
         this.meses = this._form.meses();
         this.mes = mes;
+
+        this.idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
     }   
 
     async $onInit(){
@@ -1419,9 +1424,9 @@ export class ModalNotaEntregaFiltroCtrl extends ModalBaseCtrl{
 
 
 export class ModalProformaFiltroCtrl extends ModalBaseCtrl{
-    static $inject = ['$scope', 'mainService', 'commonService', 'toastService', 'formulario', '$uibModalInstance', 'params']
+    static $inject = ['$scope', 'mainService', 'commonService', 'toastService', 'formulario', '$uibModalInstance', 'params', 'decodeToken']
 
-    constructor($scope, _mS, _commonSvc, _toastr, _form, $uibModalInstance,  _params){
+    constructor($scope, _mS, _commonSvc, _toastr, _form, $uibModalInstance,  _params, decodeToken){
         super(_commonSvc) 
         this.$scope            = $scope;               
         this._mS               = _mS;
@@ -1441,6 +1446,9 @@ export class ModalProformaFiltroCtrl extends ModalBaseCtrl{
 
         this.meses = this._form.meses();
         this.mes = mes;
+
+
+        this.idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
     }   
 
     async $onInit(){
@@ -1565,9 +1573,9 @@ export class ModalProformaFiltroCtrl extends ModalBaseCtrl{
 
 
 export class ModalApproveDocCtrl extends ModalBaseCtrl{
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'uiGridConstants', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario', 'params'];
+    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'uiGridConstants', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario', 'params', 'decodeToken'];
 
-    constructor($scope, $timeout, $uibModalInstance, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS, _params){
+    constructor($scope, $timeout, $uibModalInstance, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS, _params, decodeToken){
         super(_commonSvc)
         const self = this;
 
@@ -1621,6 +1629,7 @@ export class ModalApproveDocCtrl extends ModalBaseCtrl{
         }
 
        
+        this.idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
     }
 
     async $onInit(){        
@@ -2045,9 +2054,9 @@ export class ModalApproveDocCtrl extends ModalBaseCtrl{
 
 
 export class ModalApproveDocEditCtrl extends ModalBaseCtrl{
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'uiGridConstants', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario', 'params'];
+    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'uiGridConstants', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario', 'params', 'decodeToken'];
 
-    constructor($scope, $timeout, $uibModalInstance, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS, _params){
+    constructor($scope, $timeout, $uibModalInstance, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS, _params, decodeToken){
         super(_commonSvc, 'FV')
         const self = this;
 
@@ -2102,6 +2111,8 @@ export class ModalApproveDocEditCtrl extends ModalBaseCtrl{
                 
             })
         }
+
+        this.idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
     }   
     
     async $onInit(){
@@ -2882,9 +2893,9 @@ export class ModalApproveDocDetalleCtrl extends ModalBaseCtrl{
 
 export class ModalApproveDocFiltroCtrl extends ModalBaseCtrl{
 
-    static $inject = ['$scope', '$uibModalInstance', 'mainService', 'commonService', 'formulario', 'toastService', 'params']
+    static $inject = ['$scope', '$uibModalInstance', 'mainService', 'commonService', 'formulario', 'toastService', 'params', 'decodeToken']
 
-    constructor($scope, $uibModalInstance, _mS, _commonSvc, _fS, _tS, _params){
+    constructor($scope, $uibModalInstance, _mS, _commonSvc, _fS, _tS, _params, decodeToken){
         super(_commonSvc)
         
 
@@ -2903,6 +2914,7 @@ export class ModalApproveDocFiltroCtrl extends ModalBaseCtrl{
         this.meses = this._fS.meses();
         this.mes = mes;
 
+        this.idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
     }
 
     async $onInit(){
@@ -2950,7 +2962,7 @@ export class ModalApproveDocFiltroCtrl extends ModalBaseCtrl{
     //---------------Usuario--------------------    
     usuarioSearchDynamic(textSearch){
         return this._commonSvc.usuarioSearch({
-            idRol: document.getElementById('idRol').value,
+            idRol: this.idUsuarioRol,
             busqueda: textSearch
         })
     }

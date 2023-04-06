@@ -37,6 +37,11 @@ export class ModalBaseCtrl{
 
         this.NUM_CONSUMIDOR_FINAL = "9999999999999";
 
+
+        this.popoverCliente = {
+            templateUrl: 'infoCliente.html'
+        }
+
     }
 
     initiload(){
@@ -157,14 +162,23 @@ export class ModalBaseCtrl{
             controller,
             template,
             size:'xl',
-            params
+            params,
+            keyboard: true,
         })
-        modalRef.result.then(result=>{
+        modalRef.result.then(result=>{       
             
             if(typeof result!=='object') return
             
-            this.onSelectedClienteChange(result)
+            this.onSelectedClienteChange(result);
+        }, ()=>{
+            setTimeout(()=>{
+                $("#clienteSearchInvoice").select();
+
+            },500)
+            console.log('close')
         })        
+
+        
     }
 
 
@@ -1142,6 +1156,17 @@ export class ModalBaseCtrl{
 
     }
 
+
+
+
+    //Event Formulario Invoice, Nota Entrega
+    onBlurBtnNewCustomerInvoice(e){
+        var keyCode = e.keyCode || e.which;
+        console.log(keyCode)
+        if(keyCode===0){
+          $("#btnSaveAndUpdateDocument").focus()
+        }
+    }
 
 
 

@@ -1,6 +1,6 @@
 
 
-import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.51";
+import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.59";
 
 class ModalFacturaCtrl extends ModalBaseCtrl{
     
@@ -68,6 +68,18 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
                 
             })
         }
+
+
+
+        setTimeout(()=>{
+            $("#clienteSearchInvoice").on('keyup', e=>{
+                let keyCode = e.keyCode || e.which;
+                if(this.cliente.idCliente>0 && keyCode===13){
+                    $("#btnSaveAndUpdateDocument").focus();
+                }
+            })
+        }, 500)
+
     }
 
     /**
@@ -361,6 +373,12 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
         <a  ng-click="grid.appScope.$ctrl.openModalDatoAdicionalArticulo(row.entity, false)" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;  
 
         this.isDefaultArticle = true;
+
+        $uibModalInstance.rendered.then(()=>{
+
+            $("#btnNewCustomerDocument").on('blur', this.onBlurBtnNewCustomerInvoice)
+        })
+
     }
     
     async $onInit(){
@@ -556,7 +574,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
                 cancelButtonText: 'No, cancelar!',
                 reverseButtons: false,
                 allowOutsideClick:false,
-                allowEscapeKey:false
+                allowEscapeKey:true
             }).then(response=>{
 
                 if(response.isConfirmed){
@@ -646,6 +664,10 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl{
         this.infoAdicionalDocumento = infoAdicionalDocumento;
         this.actividadTipoIva       = actividadTipoIva;
         
+        $uibModalInstance.rendered.then(()=>{
+
+            $("#btnNewCustomerDocument").on('blur', this.onBlurBtnNewCustomerInvoice)
+        })
     }
 
     async $onInit(){
@@ -955,6 +977,11 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl{
         this.cliente                = cliente;
         this.detalleDocumento       = detalleDocumento;
         this.infoAdicionalDocumento = infoAdicionalDocumento;
+
+        $uibModalInstance.rendered.then(()=>{
+
+            $("#btnNewCustomerDocument").on('blur', this.onBlurBtnNewCustomerInvoice)
+        })
     }
 
     async $onInit(){
@@ -1098,7 +1125,7 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl{
                 cancelButtonText: 'No, cancelar!',
                 reverseButtons: false,
                 allowOutsideClick:false,
-                allowEscapeKey:false
+                allowEscapeKey:true
             })       
            
             
@@ -1232,7 +1259,7 @@ export class ModalFacturaFiltroCtrl extends ModalBaseCtrl{
     //---------------Usuario--------------------    
     usuarioSearchDynamic(textSearch){
         return this._commonSvc.usuarioSearch({
-            idRol: document.getElementById('idRol').value,
+            idRol: this.idUsuarioRol,
             busqueda: textSearch
         })
     }

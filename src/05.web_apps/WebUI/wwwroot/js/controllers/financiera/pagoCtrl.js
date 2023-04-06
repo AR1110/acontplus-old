@@ -10,10 +10,11 @@ pagoCtrl.$inject = [
     'toastService', 
     'modalService',
     'nombreModal',
-    'formulario'
+    'formulario',
+    'decodeToken'
 ];
 
-function pagoCtrl($timeout, $http, $filter, $scope, mS, _commonSvc, toast, _modalSvc, _nombreModal, form) {
+function pagoCtrl($timeout, $http, $filter, $scope, mS, _commonSvc, toast, _modalSvc, _nombreModal, form, decodeToken) {
     'use strict'
     let accion = JSON.parse(localStorage.getItem("accion"));
     if(accion===null){
@@ -21,6 +22,9 @@ function pagoCtrl($timeout, $http, $filter, $scope, mS, _commonSvc, toast, _moda
     }else{
         $scope.accion = accion[0];
     };
+
+    let idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
+
     $scope.data = {};         
     $scope.bancos=[];
     $scope.banco = {};
@@ -223,7 +227,7 @@ function pagoCtrl($timeout, $http, $filter, $scope, mS, _commonSvc, toast, _moda
     $scope.dataUsuarioSearch = {}
     $scope.usuarioSearch = (textSearch) => {
         return _commonSvc.usuarioSearch({
-            idRol: document.getElementById('idRol').value,
+            idRol: idUsuarioRol,
             busqueda: textSearch
         })
     }

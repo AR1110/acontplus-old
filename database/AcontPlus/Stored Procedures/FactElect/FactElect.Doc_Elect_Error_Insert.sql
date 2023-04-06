@@ -21,7 +21,7 @@ CREATE PROCEDURE FactElect.Doc_Elect_Error_Insert
 ,@mensaje VARCHAR(MAX)
 ,@informacionAdicional VARCHAR(MAX)
 ,@tipo VARCHAR(50)
-,@xmlSri XML
+,@xmlSri XML = NULL
 AS
 
 DECLARE @claveAcceso VARCHAR(50)

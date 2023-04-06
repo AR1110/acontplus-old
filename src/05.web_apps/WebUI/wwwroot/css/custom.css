@@ -751,4 +751,9 @@ align-items: center;
 
 
 
+/*Used in invoice*/
+[uib-popover-template-popup].popover {
+    width:600px !important;
+}
+  
 

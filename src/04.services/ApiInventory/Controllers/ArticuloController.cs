@@ -11,10 +11,12 @@ namespace ApiInventory.Controllers
     public class ArticuloController : ControllerBase
     {
         private readonly IConfiguration _configuration;
+        private readonly DbAccess _db;
 
         public ArticuloController(IConfiguration configuration)
         {
             _configuration = configuration;
+            _db = new DbAccess(configuration);
         }
 
 
@@ -27,17 +29,21 @@ namespace ApiInventory.Controllers
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                Dictionary<string, object> _params = new Dictionary<string, object>();
-                _params["idUsuarioRol"] = idUsuarioRol;
-                _params["json"] = SqlValidation.ValidateSqlString(json);
-                DAO _dao = new DAO(_configuration);
-                return Ok(await _dao.GetDataTable("Almacen.Articulo_Get", _params));
+                await _db.SPExecute("Almacen.Articulo_Get");
+                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDataTableAsync();
             }
             catch (Exception ex)
             {
                 _log.LogError("Error on SubFamilia -> Get: \n" + ex.ToString());
-                return BadRequest(ex.Message);
+                _response.Create(code: "0", message: "Error");
             }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
 
         [HttpPost]

@@ -1,6 +1,8 @@
 ﻿using DataAccess;
 using Domain.FactElect;
+using Helpers;
 using System.Data;
+using System.Xml;
 
 namespace WS_Validator
 {
@@ -36,10 +38,21 @@ namespace WS_Validator
             _db.AddDynamicParam("id", id);
             _db.AddDynamicParam("estado", data.estado ?? "");
             _db.AddDynamicParam("identificador", data.identificador ?? "");
-            _db.AddDynamicParam("mensaje",data.message ?? "");
+            _db.AddDynamicParam("mensaje", data.message ?? "");
             _db.AddDynamicParam("informacionAdicional", data.informacionAdicional ?? "");
             _db.AddDynamicParam("tipo", data.tipo ?? "");
-            _db.AddDynamicParam("xmlSri", data.xmlSri ?? "");
+            if (DataHelper.IsXml(data.xmlSri))
+            {
+                _db.AddDynamicParam("xmlSri", data.xmlSri);
+            }
+            else
+            {
+                XmlDocument xmlDoc = new XmlDocument();
+                XmlElement root = xmlDoc.CreateElement("ErrorRequest");
+                root.InnerText = $"{data.xmlSri ?? "No Xml Response"}";
+                xmlDoc.AppendChild(root);
+                _db.AddDynamicParam("xmlSri", xmlDoc.OuterXml);
+            }
             _db.OnlyExecute();
         }
     }

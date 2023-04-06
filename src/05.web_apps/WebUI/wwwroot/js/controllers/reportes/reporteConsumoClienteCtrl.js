@@ -1,9 +1,12 @@
 app.controller('reporteConsumoClienteCtrl', reporteConsumoClienteCtrl);
 
-reporteConsumoClienteCtrl.$inject=['$scope', 'commonService', 'mainService', 'formulario', 'toastService', 'FileSaver', 'Blob'];
+reporteConsumoClienteCtrl.$inject=['$scope', 'commonService', 'mainService', 'formulario', 'toastService', 'FileSaver', 'Blob', 'decodeToken'];
 
 
-function reporteConsumoClienteCtrl($scope, _commonSvc, mS, form, toast, FileSaver, Blob){
+function reporteConsumoClienteCtrl($scope, _commonSvc, mS, form, toast, FileSaver, Blob, decodeToken){
+
+    let idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
+
     $scope.dataSearch = {};
     $scope.dataSearch.byTipoFormato = 'pdf';
     $scope.dataSearch.byOrder = 'ASC';
@@ -247,7 +250,7 @@ function reporteConsumoClienteCtrl($scope, _commonSvc, mS, form, toast, FileSave
     $scope.estadisticas = [];
     $scope.getEstadisticas = function () {
         $scope.estadisticas = [];
-        $scope.dataSearch.idRol = Number($("#idRol").val());   
+        $scope.dataSearch.idRol =  idUsuarioRol,
         $scope.dataSearch.anio = Number($scope.dataSearch.byAnio);
 
         mS.getData('get', `/EstadisticaVenta/GetClienteVenta?json=${JSON.stringify($scope.dataSearch)}`).then(response => {

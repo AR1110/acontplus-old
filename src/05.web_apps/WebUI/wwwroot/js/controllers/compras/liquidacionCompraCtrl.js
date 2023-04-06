@@ -2,9 +2,9 @@
 
 app.controller('liquidacionCompraCtrl', liquidacionCompraCtrl);
 
-liquidacionCompraCtrl.$inject = ['$scope', '$filter', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService']
+liquidacionCompraCtrl.$inject = ['$scope', '$filter', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'decodeToken']
 
-function liquidacionCompraCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form, _tS){
+function liquidacionCompraCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form, _tS, decodeToken){
 
     let accion = JSON.parse(localStorage.getItem("accion"));  
     if(accion===null){
@@ -15,7 +15,7 @@ function liquidacionCompraCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nom
     }
 
     const TIPO_DOC = _commonSvc.tipoDoc['LC'];
-
+    let idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
     $scope.dataSearch = {
         pageIndex: 1,
         pageSize: 1000
@@ -93,7 +93,7 @@ function liquidacionCompraCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nom
     $scope.dataUsuarioFilter = {}
     $scope.usuarioSearch = (textSearch) => {
         return _commonSvc.usuarioSearch({
-            idRol: document.getElementById('idRol').value,
+            idRol: idUsuarioRol,
             busqueda: textSearch
         })
     }

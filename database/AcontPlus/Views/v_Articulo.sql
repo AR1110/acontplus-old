@@ -1,4 +1,4 @@
-use acontplus_soporte
+use acontplus
 
 GO
 IF OBJECT_ID(N'v_Articulo', N'V') IS NOT NULL

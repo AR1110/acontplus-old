@@ -110,7 +110,9 @@ BEGIN
 
 
 	SELECT 
-	 searchCode
+	 searchCode,
+	 printerAutomatic,
+	 payAutomatic
 	FROM Config.GestionSistema WITH(NOLOCK) WHERE idEntidad =  @idEntidad
 
 END

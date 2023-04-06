@@ -1,6 +1,8 @@
 ﻿using Domain.Config.Dtos;
+using System.Collections;
 using System.Drawing;
 using System.Drawing.Printing;
+using System.Runtime.InteropServices;
 
 namespace BL.Print
 {
@@ -24,7 +26,8 @@ namespace BL.Print
             {
                 machine = d["computerName"],
                 name = d["printerName"],
-                isThermal = Convert.ToBoolean(d["isThermal"])
+                isThermal = Convert.ToBoolean(d["isThermal"]),
+                copyPrint = Convert.ToInt16(d["copyPrint"])
             }).ToList();
 
             if (incomePrinters.Any(p => p.machine == Environment.MachineName))
@@ -49,7 +52,10 @@ namespace BL.Print
                     {
                         _printDoc.PrinterSettings.PrinterName = obj.name;
                         _printDoc.PrintPage += new PrintPageEventHandler(FormatPage);
+                        _printDoc.PrinterSettings.Copies = (short)obj.copyPrint;
                         _printDoc.Print();
+                        // Cut the paper
+                        
                         response = true;
                     }
                     else
@@ -106,8 +112,8 @@ namespace BL.Print
         {
             int startX = 10;
             int startY = 5;
-            _graphics.DrawString(label, new Font("Arial", 7), new SolidBrush(Color.Black), startX + 135, startY + offset);
-            _graphics.DrawString(value, new Font("Arial", 7), new SolidBrush(Color.Black), startX + 235, startY + offset);
+            _graphics.DrawString(label, new Font("Arial", 7), new SolidBrush(Color.Black), startX + 120, startY + offset);
+            _graphics.DrawString(value, new Font("Arial", 7), new SolidBrush(Color.Black), startX + 224, startY + offset);
         }
 
         void DrawLine(string text, int offset, int xoffset)
@@ -126,13 +132,13 @@ namespace BL.Print
                          new SolidBrush(Color.Black), startX + 0, startY + offset);
 
             _graphics.DrawString(quatity, minifont,
-                     new SolidBrush(Color.Black), startX + 158, startY + offset);
+                     new SolidBrush(Color.Black), startX + 140, startY + offset);
 
             _graphics.DrawString(valor, minifont,
-                        new SolidBrush(Color.Black), startX + 200, startY + offset);
+                        new SolidBrush(Color.Black), startX + 185, startY + offset);
 
             _graphics.DrawString(total, minifont,
-                     new SolidBrush(Color.Black), startX + 230, startY + offset);
+                     new SolidBrush(Color.Black), startX + 226, startY + offset);
         }
         public string GetPrintReadyString(string originalString)
         {
@@ -163,24 +169,24 @@ namespace BL.Print
             //}
             ////_graphics.DrawString(s, minifont, Brushes.Black, new RectangleF(startX, startY + offset, 500F, 500F), format1);
             int textLength = description.Length;
-            if (textLength >= 25)
+            if (textLength >= 21)
             {
-                description = description.Substring(0, 25);
+                description = description.Substring(0, 21);
             }
-            _graphics.DrawString(string.Join("", description.Select((c, i) => i > 0 && i % 25 == 0 ? string.Format(Environment.NewLine + c) : c.ToString())), minifont,
+            _graphics.DrawString(string.Join("", description.Select((c, i) => i > 0 && i % 21 == 0 ? string.Format(Environment.NewLine + c) : c.ToString())), minifont,
                          new SolidBrush(Color.Black), new Point(startX, startY + offset));
 
             //_graphics.DrawString(GetPrintReadyString(description), minifont,
             //       new SolidBrush(Color.Black), new Point(startX, startY + offset));
 
             _graphics.DrawString(quatity, minifont,
-                     new SolidBrush(Color.Black), startX + 158, startY + offset);
+                     new SolidBrush(Color.Black), startX + 140, startY + offset);
 
             _graphics.DrawString(valor, minifont,
-                        new SolidBrush(Color.Black), startX + 200, startY + offset);
+                        new SolidBrush(Color.Black), startX + 185, startY + offset);
 
             _graphics.DrawString(total, minifont,
-                     new SolidBrush(Color.Black), startX + 230, startY + offset);
+                     new SolidBrush(Color.Black), startX + 226, startY + offset);
         }
 
 
@@ -502,8 +508,13 @@ namespace BL.Print
             
             DrawTitle(Environment.NewLine + formatDatePrint, mediumFont, offsset);
             offsset = offsset + smallinc;
-            
+
+           
 
         }
+
+
+
+      
     }
 }

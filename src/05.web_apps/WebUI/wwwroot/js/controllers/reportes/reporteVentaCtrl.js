@@ -5,9 +5,10 @@
     let app = angular.module('acontPlusApp');
 
     app.controller('reporteVentaCtrl', reporteVentaCtrl);
-    reporteVentaCtrl.$inject = ['$scope', 'commonService', 'mainService', 'toastService', 'formulario', 'FileSaver', 'Blob'];
+    reporteVentaCtrl.$inject = ['$scope', 'commonService', 'mainService', 'toastService', 'formulario', 'FileSaver', 'Blob', 'decodeToken'];
 
-    function reporteVentaCtrl($scope, _commonSvc, mS, toast, form, FileSaver, Blob) {
+    function reporteVentaCtrl($scope, _commonSvc, mS, toast, form, FileSaver, Blob, decodeToken) {
+        let idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
         //Filters        
         $scope.meses = form.meses();
         $scope.mes = new Date().getMonth() + 1;
@@ -202,7 +203,7 @@
         $scope.dataUsuarioFilter = {}
         $scope.usuarioSearch = (textSearch) => {
             return _commonSvc.usuarioSearch({
-                idRol: document.getElementById('idRol').value,
+                idRol: idUsuarioRol,
                 busqueda: textSearch
             })
         }
@@ -386,7 +387,7 @@
         $scope.estadisticas = [];
         $scope.getEstadisticas = function () {
             $scope.estadisticas = [];
-            $scope.dataSearch.idRol = Number($("#idRol").val());
+            $scope.dataSearch.idRol = idUsuarioRol
             $scope.dataSearch.anio = Number($scope.dataSearch.byAnio);
 
             mS.getData('get', `/EstadisticaVenta/Get?json=${JSON.stringify($scope.dataSearch)}`).then(response => {

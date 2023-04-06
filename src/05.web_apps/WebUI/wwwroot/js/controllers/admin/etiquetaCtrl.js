@@ -2,9 +2,9 @@
 
 app.controller('etiquetaCtrl', etiquetaCtrl);
 
-etiquetaCtrl.$inject = ['$scope','$http', 'modalService'];
+etiquetaCtrl.$inject = ['$scope','$http', 'modalService', 'decodeToken'];
 
-function etiquetaCtrl($scope, $http, _modalSvc) {
+function etiquetaCtrl($scope, $http, _modalSvc, decodeToken) {
     let accion = JSON.parse(localStorage.getItem("accion"));
     if(accion===null){
         location.href = "/Home/Index";
@@ -12,8 +12,9 @@ function etiquetaCtrl($scope, $http, _modalSvc) {
         $scope.accion = accion[0];
     }
 
+    let idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
     const json = {
-        idRol: document.getElementById('idRol').value,
+        idRol: idUsuarioRol,
         pageIndex: 1,
         pageSize: 100
     }

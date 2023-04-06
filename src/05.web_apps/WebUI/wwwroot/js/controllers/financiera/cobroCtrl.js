@@ -2,9 +2,9 @@
 
 app.controller('cobroCtrl', cobroCtrl);
 
-cobroCtrl.$inject = ['$scope', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService']
+cobroCtrl.$inject = ['$scope', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'decodeToken']
 
-function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form, _tS){
+function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form, _tS, decodeToken){
 
     let accion = JSON.parse(localStorage.getItem("accion"));  
     if(accion===null){
@@ -15,7 +15,7 @@ function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form,
     }
 
     const TIPO_DOC = _commonSvc.tipoDoc['FC'];
-
+    let idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
 
 
      //Filtro y Pagination 
@@ -135,7 +135,7 @@ function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form,
     $scope.dataUsuarioSearch = {}
     $scope.usuarioSearch = (textSearch) => {
         return _commonSvc.usuarioSearch({
-            idRol: document.getElementById('idRol').value,
+            idRol: idUsuarioRol,
             busqueda: textSearch
         })
     }

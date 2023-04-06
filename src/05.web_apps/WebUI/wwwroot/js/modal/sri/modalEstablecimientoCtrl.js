@@ -8,6 +8,22 @@ class ModalBaseCtrl{
         return [this._mS.getData('get', '/Establecimiento/GetDataForm')]
     }
 
+    onKeyupEmail(item) {
+        let textChip = item.target.value || "";
+        textChip = this._fS.removeAccents(textChip);
+        item.target.value = textChip.toLowerCase();               
+    }
+
+    transformChipEmail(item) {
+        if(!this.validarEmail(item)) {
+            this._tS.toastr('warning', 'La dirección de email es incorrecta.')
+        }
+    }
+
+    validarEmail(valor) {
+        return /^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i.test(valor);
+    }
+
     closeModal(){
         this.$uibModalInstance.close();
     }
@@ -17,13 +33,14 @@ class ModalBaseCtrl{
 
 
 class ModalEstablecimientoCtrl extends ModalBaseCtrl{
-    static $inject = ['$uibModalInstance', '$scope', 'mainService', 'toastService', 'params']
-    constructor($uibModalInstance, $scope, _mS, _tS, _params){
+    static $inject = ['$uibModalInstance', '$scope', 'mainService', 'toastService', 'params', 'formulario']
+    constructor($uibModalInstance, $scope, _mS, _tS, _params, _fS){
         super(_params)
         this.$uibModalInstance = $uibModalInstance;
         this.$scope = $scope;
         this._mS               = _mS;
-        this._tS               = _tS;        
+        this._tS               = _tS;
+        this._fS               = _fS;                
         this.tipoRegistro      = this._params.tipoRegistro;
         this.data              = {};
 
@@ -40,6 +57,9 @@ class ModalEstablecimientoCtrl extends ModalBaseCtrl{
             contribuyenteRimpe: null
         }
         this.isDisabledRetencion = false;
+        
+        this.correos = [];        
+        this.telefonos = [];
     }
 
     async $onInit(){        
@@ -63,7 +83,11 @@ class ModalEstablecimientoCtrl extends ModalBaseCtrl{
             
             if(this.tipoRegistro==='E'){
                 this.data = JSON.parse(responses[1].payload)[0][0];
-                this.canton = this.cantones.find(item=>item.codigo===this.data.canton).descripcion;                                            
+                this.canton = this.cantones.find(item=>item.codigo===this.data.canton).descripcion;     
+                
+                this.correos = this.data.correo ? this.data.correo.split(';') : [];
+                this.telefonos = this.data.telefono ? this.data.telefono.split(';') : []
+                
                 this.$scope.$apply();
             }
             
@@ -140,6 +164,13 @@ class ModalEstablecimientoCtrl extends ModalBaseCtrl{
                 return
             }
 
+            if (this.correos.length > 0) {
+                if (!this.correos.every(item => this.validarEmail(item))) {
+                    this._tS.toastr('warning', 'Verifique que los correos  esten ingresado correctamente', tituloToast);
+                    return
+                }
+            }
+
             if(!this.data.canton){
                 this._tS.toastr('warning', 'Seleccione el Cantón', tituloToast)
                 return
@@ -152,6 +183,9 @@ class ModalEstablecimientoCtrl extends ModalBaseCtrl{
 
             showLoader();
             this.data.contribuyenteRimpe = this.tipoContribuyentes.find(item=>item.codigo===this.data.contribuyente).contribuyenteRimpe;
+
+            this.data.telefono = this.telefonos.length > 0 ? this.telefonos.join(';') : "";
+            this.data.correo = this.correos.length > 0 ? this.correos.join(';') : "";
              
             if(this.tipoRegistro==='N'){
                 url = `/Establecimiento/Insert?json=${JSON.stringify(this.data)}`

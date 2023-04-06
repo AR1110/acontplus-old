@@ -11,7 +11,7 @@
     typeahead-template-url="autocompleteClienteTemplate.html"
     typeahead-min-length="1"
     typeahead-editable="false"
-    typeahead-on-select="$ctrl.onSelectedClienteChange($item)" />
+    typeahead-on-select="$ctrl.onSelectedClienteChange($item)"  onClick="select();" />
 
     <script type="text/ng-template" id="autocompleteClienteTemplate.html">
         <div class="autocomplete-suggestion-uib-typeahead">

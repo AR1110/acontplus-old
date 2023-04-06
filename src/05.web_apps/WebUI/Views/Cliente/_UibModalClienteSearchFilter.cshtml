@@ -13,7 +13,7 @@
     typeahead-no-results="$ctrl.clienteFiltro.noResults"
     typeahead-template-url="clienteSearchFiltro.html"
     typeahead-editable="false"
-    typeahead-on-select="$ctrl.selectedClienteSearchFiltro($item)" />
+    typeahead-on-select="$ctrl.selectedClienteSearchFiltro($item)" onClick="select();" />
 
     <script type="text/ng-template" id="clienteSearchFiltro.html">
         <div class="autocomplete-suggestion-uib-typeahead">

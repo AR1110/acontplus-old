@@ -34,9 +34,9 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
 
 
     // removed focus new NE
-    let btnNewInvoice = document.getElementById("btnNewNotaEntrega");
-    btnNewInvoice.addEventListener("click", ()=>{
-        btnNewInvoice.blur();            
+    let btnNewDocument = document.getElementById("btnNewDocument");
+    btnNewDocument.addEventListener("click", ()=>{
+        btnNewDocument.blur();            
     })
 
 
@@ -172,6 +172,7 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
         }
 
         $scope.getNotaEntregas();
+        btnNewDocument.focus();
     }
 
     $scope.openModalNew = async()=>{
@@ -453,6 +454,7 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
         })
 
         $modalRef.result.then(result=>{
+            btnNewDocument.focus();
 
             if($scope.isPrintDocument==1){
                 $scope.getNotaEntregas();
