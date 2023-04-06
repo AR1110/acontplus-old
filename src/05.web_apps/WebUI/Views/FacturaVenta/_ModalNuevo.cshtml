@@ -371,7 +371,7 @@
 
                         <tr>
                             <td class="left">
-                                <select style="width: 150px;" name="impuestoTarifa" id="impuestoTarifa" ng-model="$ctrl.data.tarifa" class="form-control form-control-sm border-select" ng-change="$ctrl.recalculateImpuestoTarifa()">
+                                <select style="width: 150px;" name="impuestoTarifa" id="impuestoTarifa" ng-model="$ctrl.data.tarifa" class="form-control form-control-sm border-select" ng-change="$ctrl.recalculateImpuestoTarifa()" ng-disabled="$ctrl.disabledImpuestoTarifa">
                                     <option ng-value="item.tarifa" ng-repeat="item in $ctrl.impuestoTarifas">
                                         {{item.descripcion}}
                                     </option>

@@ -340,7 +340,7 @@ class InputSearchBarcodeCtrl extends BaseSearchArticulo{
 
             $("#inputBarcode").on('keyup', e=>{
                 var keyCode = e.keyCode || e.which;
-                console.log(this.searchText, keyCode)
+                
                 if(!this.searchText && keyCode===13){
                     $("#clienteSearchInvoice").focus();
                 }

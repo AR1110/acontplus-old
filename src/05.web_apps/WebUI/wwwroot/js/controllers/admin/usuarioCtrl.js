@@ -112,35 +112,39 @@
         }
     
         $scope.askToDelete = async(item)=>{
-            const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                    confirmButton: 'btn btn-success',
-                    cancelButton: 'btn btn-danger ml-2'
-                },
-                buttonsStyling: false
-            })
-            
-            let {isConfirmed} = await swalWithBootstrapButtons.fire({
-                title: '<small>Eliminar Usuario</small>',
-                html: "<small>Este proceso no puedes revertir!</small>",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Si, eliminar!',
-                cancelButtonText: 'No, cancelar!',
-                reverseButtons: false,
-                allowOutsideClick:false
-            })       
-
-            if(isConfirmed){
-                _mS.getData('post', '/Usuario/Delete?idUsuario=' + item.idUsuario).then(response => {
-                    if (response.id == "0") {
-                        toast.toastr('warning', response.message, response.titleSms);                        
-                    }
-                    if (response.id == "1") {
-                        toast.toastr('success', response.message, response.titleSms);
-                        $scope.getUsuarios();                        
-                    }
+            try {
+                const swalWithBootstrapButtons = Swal.mixin({
+                    customClass: {
+                        confirmButton: 'btn btn-success',
+                        cancelButton: 'btn btn-danger ml-2'
+                    },
+                    buttonsStyling: false
                 })
+                
+                let {isConfirmed} = await swalWithBootstrapButtons.fire({
+                    title: '<small>Eliminar Usuario</small>',
+                    html: "<small>Este proceso no puedes revertir!</small>",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Si, eliminar!',
+                    cancelButtonText: 'No, cancelar!',
+                    reverseButtons: false,
+                    allowOutsideClick:false
+                })       
+    
+                if(isConfirmed){
+                    _mS.getData('post', '/Usuario/Delete?idUsuario=' + item.idUsuario).then(response => {
+                        if (response.id == "0") {
+                            toast.toastr('warning', response.message, response.titleSms);                        
+                        }
+                        if (response.id == "1") {
+                            toast.toastr('success', response.message, response.titleSms);
+                            $scope.getUsuarios();                        
+                        }
+                    })
+                }
+            } catch (error) {
+                console.log(error)
             }
         }
 
@@ -163,7 +167,7 @@
 
 
 
-    //----------------------------------ADD-UPDATE USER----------------------------------------------
+    //----------------------------------START ADD-UPDATE USER----------------------------------------------
     app.controller("modalUserCtrl", modalUserCtrl);
 
     modalUserCtrl.$inject=['$scope', '$uibModalInstance','mainService', 'toastService', 'params'];
@@ -324,11 +328,13 @@
 
     }
 
+    //----------------------------------END ADD-UPDATE USER----------------------------------------------
 
 
 
 
-    //--------------------------------CONFIG USER----------------------------------------------------
+
+    //--------------------------------START CONFIG USER----------------------------------------------------
     app.controller('modalUserConfigCtrl', modalUserConfigCtrl);
 
     modalUserConfigCtrl.$inject = ["$scope", "$uibModalInstance", "mainService", "modalService", "toastService", "params"];
@@ -339,30 +345,103 @@
         $scope.usuarioRoles = [];
         $scope.establecimientos = [];
 
-        $scope.permissions = [
-            {
-              comprobantes: [
-                {
-                  fechaEmision: [ { update: 'true' } ],
-                  tiempoCredito: [ { update: 'true' } ],
-                  tarifa: [ { update: 'true' } ],
-                  porcentajeDescuento: [ { admin: 'true' } ],
-                  descuentoTotal: [ { update: 'true' } ]
+        $scope.disbledTabPermission = true;
+
+        // $scope.permissions = [
+        //     {
+        //       comprobantes: [
+        //         {
+        //           fechaEmision: [ { update: 'true' } ],
+        //           tiempoCredito: [ { update: 'true' } ],
+        //           tarifa: [ { update: 'true' } ],
+        //           porcentajeDescuento: [ { admin: 'true' } ],
+        //           descuentoTotal: [ { update: 'true' } ]
+        //         }
+        //       ],
+        //       detalles: [
+        //         {
+        //           medida: [ { update: 'true' } ],
+        //           tipoIva: [ { update: 'true' } ],
+        //           tarifa: [ { update: 'true', view: 'true' } ],
+        //           precioUnitario: [ { update: 'true' } ],
+        //           precioConImpuesto: [ { update: 'true' } ],
+        //           porcentajeDescuento: [ { update: 'true' } ],
+        //           descuento: [ { update: 'true' } ]
+        //         }
+        //       ]
+        //     }
+        // ]        
+
+        // $scope.articlePermissions = {
+        //     precio: {
+        //         label: "Permitir actualizar el precio costo y venta",
+        //         acctions: {
+        //             update: true, 
+        //             view: true,                                         
+        //         }
+        //     }
+        // }
+
+        $scope.salesPermissions = {
+            comprobante: {
+                descuento: {
+                    label: "Modificar descuento",
+                    update: true
+                },
+                porcentajeDescuento: {
+                    label: "Modificar % descuento",
+                    update: true
+                },
+                tarifa: {
+                    label: "Cambiar tarifa",
+                    update: true
+                },
+                fechaEmision: {
+                    label: "Modificar fecha",
+                    update: true
+                },
+                tiempoCredito: {
+                    label: "Cambiar tiempo crédito",
+                    update: true                    
+                }                              
+            },
+            detail: {
+                medida: {
+                    label: "Cambiar medida",
+                    update: true
+                },
+                tipoIva: {
+                    label: "Cambiar tipo IVA",
+                    update: true                    
+                },
+                precioUnitario: {
+                    label: "Modificar Precio Unitario",
+                    update: true,
+                    view: true
+                },
+                precioConIva: {
+                    label: "Modificar Precio con IVA",
+                    update: true,
+                    view: true
+                },
+                porcentajeDescuento: {
+                    label: "Modificar Porcentaje Descuento",
+                    update: true,
+                    view: true
+                },
+                descuento: {
+                    label: "Modificar Porcentaje Descuento",
+                    update: true,
+                    view: true
                 }
-              ],
-              detalles: [
-                {
-                  medida: [ { update: 'true' } ],
-                  tipoIva: [ { update: 'true' } ],
-                  tarifa: [ { update: 'true', view: 'true' } ],
-                  precioUnitario: [ { update: 'true' } ],
-                  precioConImpuesto: [ { update: 'true' } ],
-                  porcentajeDescuento: [ { update: 'true' } ],
-                  descuento: [ { update: 'true' } ]
-                }
-              ]
             }
-        ]
+        }
+
+        
+        $uibModalInstance.rendered.then(()=>{
+            $scope.tabPermissionsInitiload();
+        })
+        
 
         $scope.initiload = ()=>{
             try {
@@ -375,6 +454,9 @@
                         $scope.usuarioRoles = JSON.parse(response.payload) || []
                     }
                 })
+
+                console.log($scope.params)
+                // mS.getData('get', 'UsuarioPermiso/Get/' + JSON.stringify({id}))
             } catch (error) {
                 console.log(error)
             }
@@ -392,6 +474,7 @@
             try {
                 showLoader();
                 $scope.dataEntidadRol = item;
+                $scope.disbledTabPermission = false;
                 let json = {
                     idUsuarioRol: item.idUsuarioRol,
                     typeList: 1,
@@ -410,6 +493,7 @@
                 })            
             } catch (error) {
                 hideLoader();
+                $scope.disbledTabPermission = true;
                 console.log(error)
             }      
         }    
@@ -486,7 +570,6 @@
         }
         //-----------------------------------------------END ESTAB---------------------------------
 
-
         $scope.openModalAsignPtoEmisionAndBodega = (data) => {
             try {
                 modalSvc.openModalCustom({
@@ -502,15 +585,59 @@
             }
         }
 
+
+
+
+        $scope.tabPermissionsInitiload = function(){
+                 // Get a reference to the parent element   
+            let contentComprobantePermission = document.getElementById("comprobantePermission");
+
+            // for(let item in $scope.salesPermissions){
+            //     if(item==="comprobante"){
+            //         for(let permission in $scope.salesPermissions["comprobante"]){
+            //             createCheckBoxCompPermission({
+            //                 content: contentComprobantePermission,
+            //                 name: permission,
+            //                 value: $scope.salesPermissions[item][permission].update,
+            //                 id: permission,
+            //                 htmlFor: permission,
+            //                 htmlForTextNode: $scope.salesPermissions[item][permission].label
+            //             })                          
+            //         }
+            //     }
+            // }
+            // createCheckBoxCompPermission();
+            
+            function createCheckBoxCompPermission({content, name, value, id, htmlFor, htmlForTextNode}){                
+                let checkbox = document.createElement('input');        
+                // Create a new checkbox element
+                checkbox.type = 'checkbox';
+                checkbox.name = name;
+                checkbox.value = value;
+                checkbox.id = id;
+
+                // Create a new label element
+                let label = document.createElement('label');
+                label.htmlFor = htmlFor;
+                label.appendChild(document.createTextNode(htmlForTextNode));
+
+                // Append the checkbox and label to the parent element
+                content.appendChild(checkbox);
+                content.appendChild(label);
+            }
+
+        }
+
         console.log('modal')
         $scope.closeModal = ()=> {
             $uibModalInstance.close();
         }
     }
 
+    //------------------------------------------START CONFIG USER----------------------------------------------------
 
 
-    //-------------------------------------------ASIGNACIÓN DE PUNTO DE EMISIÓN Y BODEGA------------------------------------------------------
+    //-------------------------------START ASIGNACIÓN DE PUNTO DE EMISIÓN Y BODEGA------------------------------------------------------
     app.controller("modalAsignPtoEmisionAndBodegaCtrl", modalAsignPtoEmisionAndBodegaCtrl)
 
     modalAsignPtoEmisionAndBodegaCtrl.$inject=["$scope","$q", "$uibModalInstance", "mainService", "toastService", "params"];

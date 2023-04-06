@@ -1,5 +1,5 @@
 
-import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.25";
+import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.26";
 
 
 class ModalNotaEntregaCtrl extends ModalBaseCtrl{
@@ -108,10 +108,22 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl{
                 
             entity.idArticulo           = articulo.idArticulo;
             entity.codigo               = articulo.codigoArticulo;                
-            entity.descripcion          = articulo.descripcion;  
-            entity.idTipoIva            = articulo.idTipoIva;                          
-            entity.codigoPorcentaje     = articulo.codigoPorcentaje;
-            entity.tarifa               = articulo.tarifa;
+            entity.descripcion          = articulo.descripcion;
+            
+            //Aplica a establecimiento que llevan actividad de Tipo Alojamiento
+            if(this.actividadTipoIva.codigoPorcentaje==='8' && articulo.codigoPorcentaje==='2'){
+               
+                let dataImpuestoTarifa = this.tipoIvas.find(item=>item.codigoPorcentaje===this.actividadTipoIva.codigoPorcentaje);
+                entity.idTipoIva            = dataImpuestoTarifa.idTipoIva;                       
+                entity.codigoPorcentaje     = dataImpuestoTarifa.codigoPorcentaje;
+                entity.tarifa               = dataImpuestoTarifa.tarifa;
+                
+            }else{
+                entity.idTipoIva            = articulo.idTipoIva;                          
+                entity.codigoPorcentaje     = articulo.codigoPorcentaje;
+                entity.tarifa               = articulo.tarifa;
+            }
+            
             // entity.nombreTipoIva        = articulo.nombreTipoIva;
             entity.ice                  = articulo.valorIce;
             entity.idBodega             = self.idBodega ? self.idBodega : 0;
@@ -296,6 +308,8 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
                 this.impuestoTarifas = resultsDataFormEstab[2]; //Impuesto tarifas dependiendo el tipo Actividad
                 this.actividadTipoIva = resultsDataFormEstab[2][0];
                 this.data.tarifa = this.actividadTipoIva.tarifa;
+
+                this.disabledImpuestoTarifa = this.actividadTipoIva.codigoPorcentaje=='2';
                 
                 this.setDataInfoEstab(this.establecimientos, this.puntosEmisiones);
             }else{
@@ -804,7 +818,8 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl{
         this.actividadTipoIva       = actividadTipoIva;
        
         this.data.tarifa = this.actividadTipoIva.tarifa;
-        
+        this.disabledImpuestoTarifa = this.actividadTipoIva.codigoPorcentaje=='2';
+
         $uibModalInstance.rendered.then(()=>{
 
             $("#btnNewCustomerDocument").on('blur', this.onBlurBtnNewCustomerInvoice)
@@ -1040,6 +1055,7 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl{
                 this.actividadTipoIva = resultsDataFormEstab[2][0];
                 this.data.tarifa = this.actividadTipoIva.tarifa;
 
+                this.disabledImpuestoTarifa = this.actividadTipoIva.codigoPorcentaje=='2';
             }else{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
             }
