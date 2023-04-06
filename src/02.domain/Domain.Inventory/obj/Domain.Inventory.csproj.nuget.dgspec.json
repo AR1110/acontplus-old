@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\AleXx\\source\\repos\\AcontPlus\\src\\02.domain\\Domain.Inventory\\Domain.Inventory.csproj": {}
+    "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\02.domain\\Domain.Inventory\\Domain.Inventory.csproj": {}
   },
   "projects": {
-    "C:\\Users\\AleXx\\source\\repos\\AcontPlus\\src\\02.domain\\Domain.Inventory\\Domain.Inventory.csproj": {
+    "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\02.domain\\Domain.Inventory\\Domain.Inventory.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\AleXx\\source\\repos\\AcontPlus\\src\\02.domain\\Domain.Inventory\\Domain.Inventory.csproj",
+        "projectUniqueName": "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\02.domain\\Domain.Inventory\\Domain.Inventory.csproj",
         "projectName": "Domain.Inventory",
-        "projectPath": "C:\\Users\\AleXx\\source\\repos\\AcontPlus\\src\\02.domain\\Domain.Inventory\\Domain.Inventory.csproj",
+        "projectPath": "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\02.domain\\Domain.Inventory\\Domain.Inventory.csproj",
         "packagesPath": "C:\\Users\\AleXx\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\AleXx\\source\\repos\\AcontPlus\\src\\02.domain\\Domain.Inventory\\obj\\",
+        "outputPath": "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\02.domain\\Domain.Inventory\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\AleXx\\AppData\\Roaming\\NuGet\\NuGet.Config",

@@ -37,11 +37,11 @@ BEGIN
 
 	SELECT @codEstab_Asig = codEstab_Asig FROM OPENJSON(@json) WITH (codEstab_Asig VARCHAR(150) '$.codEstab_Asig')
 
-	SELECT @codEstab = codEstab FROM Config.Estab_Asig WHERE codEstab_Asig = @codEstab_Asig
+	SELECT TOP 1 @codEstab = codEstab FROM Config.Estab_Asig WITH (NOLOCK) WHERE codEstab_Asig = @codEstab_Asig
 
-	SELECT @actividad = actividad FROM Sri.Establecimiento WHERE codEstab = @codEstab
+	SELECT TOP 1 @actividad = actividad FROM Sri.Establecimiento WITH (NOLOCK) WHERE codEstab = @codEstab
 
-	SELECT @idEntidad = idEntidad,  @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idRol;
+	SELECT TOP 1 @idEntidad = idEntidad,  @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol;
 	
 	SELECT 
 		ap.idPuntoEmision
@@ -57,9 +57,15 @@ BEGIN
 	INNER JOIN dbo.Bodega b ON b.idBodega = ab.idBodega
 	WHERE codEstab_Asig = @codEstab_Asig
 
-
-	SELECT codigo = 'IVA', codigoPorcentaje = codTarifaImpuesto,tarifa = porcentaje FROM Sri.ActividadEconomica WHERE codigo = @actividad
-		
+	IF @actividad = '01'
+		BEGIN
+			SELECT descripcion = 'IVA '+descripcion , codigo = 'IVA', codigoPorcentaje = codigo, tarifa = porcentaje FROM Sri.TarifaImpuesto WITH (NOLOCK) WHERE codigo IN ('2','8') AND estado = 1 ORDER BY codigoPorcentaje DESC
+		END 
+	
+	ELSE 
+		BEGIN
+			SELECT descripcion = 'IVA '+descripcion , codigo = 'IVA', codigoPorcentaje = codigo, tarifa = porcentaje FROM Sri.TarifaImpuesto WITH (NOLOCK) WHERE codigo = '2' AND estado = 1 ORDER BY codigoPorcentaje DESC
+		END 
 
 	SELECT 
 	ac.idCaja,
