@@ -1,10 +1,11 @@
 
+USE AcontPlus;
 
 DECLARE @table AS TABLE (
 	 id INT IDENTITY (1,1) NOT NULL UNIQUE
 	,idUsuario INT NOT NULL 
 	,modulo VARCHAR(5) NOT NULL
-	,jsonData VARCHAR(MAX) NOT NULL
+	,jsonData VARCHAR(MAX) NOT NULL	
 )
 
 

@@ -1,10 +1,10 @@
 
 <div class="modal-header">
     <h5 class="modal-title">Asignación de Punto de Emisión y Bodega</h5>
-    <button class="close" ng-click="$ctrl.closeModal()">&times;</button>
+    <button class="close" ng-click="closeModal()">&times;</button>
 </div>
 <div class="modal-body">
-    <h5 class="modal-title">Sucursal: <b>{{$ctrl.sucursal.nombreComercial}}</b></h5><br>
+    <h5 class="modal-title">Establecimiento: <b>{{sucursal.nombreComercial}}</b></h5><br>
      <div class="card border-dark shadow">
         <div class="card-header bg-success">
             <h6 class="m-b-0 text-white"><i class="fas fa-tasks"></i> Punto de Emisión</h6>
@@ -22,25 +22,25 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="item in $ctrl.puntosEmisiones">
+                        <tr ng-repeat="item in puntosEmisiones">
                             <th>{{$index+1}}</th>
                             <td>{{item.ptoEmi}}</td>
                              <td>
                                 {{item.estado?'Asignada':'No Asignada'}}
                             </td>
                             <td>
-                                <md-switch  ng-if="item.estado" ng-model="item.predeterminado" ng-change="$ctrl.onChangePuntoEmisionPredeterminada(item)" aria-label="Punto Emision Predeterminada">                                          
+                                <md-switch  ng-if="item.estado" ng-model="item.predeterminado" ng-change="onChangePuntoEmisionPredeterminada(item)" aria-label="Punto Emision Predeterminada">                                          
                                 </md-switch>                                       
                             </td>
                             <td>                                       
                                 <div class="icheck-info icheck-inline">
-                                    <input type="checkbox" ng-model="item.estado" ng-change="$ctrl.asignarPuntoEmision(item)" id="checkBoxPuntoEmision{{$index}}" name="checkBoxSucursal{{$index}}">
+                                    <input type="checkbox" ng-model="item.estado" ng-change="asignarPuntoEmision(item)" id="checkBoxPuntoEmision{{$index}}" name="checkBoxSucursal{{$index}}">
                                     <label for="checkBoxPuntoEmision{{$index}}"></label>
                                 </div>                                                                       
                             </td>
 
                         </tr>
-                        <tr ng-if="$ctrl.puntosEmisiones.length===0">
+                        <tr ng-if="puntosEmisiones.length===0">
                             <td colspan="5">
                                 <div class="alert alert-warning text-center" role="alert">
                                     No hay Puntos de Emisión Asignadas.                                            
@@ -71,25 +71,25 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="item in $ctrl.bodegas">
+                        <tr ng-repeat="item in bodegas">
                             <th>{{$index+1}}</th>
                             <td>{{item.bodega}}</td>
                              <td>
                                 {{item.estado?'Asignada':'No Asignada'}}
                             </td>
                             <td>
-                                <md-switch  ng-if="item.estado" ng-model="item. predeterminado" ng-change="$ctrl.onChangePredeterminadaBodega(item)" aria-label="Bodega Predeterminada">                                          
+                                <md-switch  ng-if="item.estado" ng-model="item. predeterminado" ng-change="onChangePredeterminadaBodega(item)" aria-label="Bodega Predeterminada">                                          
                                 </md-switch>                                       
                             </td>
                             <td>                                       
                                 <div class="icheck-info icheck-inline">
-                                    <input type="checkbox" ng-model="item.estado" ng-change="$ctrl.asignarBodega(item)" id="checkBoxBodega{{$index}}" name="checkBoxSucursal{{$index}}">
+                                    <input type="checkbox" ng-model="item.estado" ng-change="asignarBodega(item)" id="checkBoxBodega{{$index}}" name="checkBoxSucursal{{$index}}">
                                     <label for="checkBoxBodega{{$index}}"></label>
                                 </div>                                                                       
                             </td>
 
                         </tr>
-                        <tr ng-if="$ctrl.bodegas.length===0">
+                        <tr ng-if="bodegas.length===0">
                             <td colspan="5">
                                 <div class="alert alert-warning text-center" role="alert">
                                     No hay Bodegas Asignadas.                                            
@@ -103,6 +103,6 @@
      </div>   
 </div>
 <div class="modal-footer">    
-    <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">&times; Cerrar</button>
+    <button type="button" class="btn btn-dark" ng-click="closeModal()">&times; Cerrar</button>
 </div>
         

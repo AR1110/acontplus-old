@@ -1,6 +1,6 @@
 
 
-import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.59";
+import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.60";
 
 class ModalFacturaCtrl extends ModalBaseCtrl{
     
@@ -296,6 +296,17 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
     }
 
 
+
+    recalculateImpuestoTarifa(){
+        try {
+           this.uiGridInvoice.actividadTipoIva = this.impuestoTarifas.find(item=>item.tarifa===this.data.tarifa);           
+           this.data = Object.assign(this.data, this.uiGridInvoice.getTotales());                        
+        } catch (error) {
+            console.log(error);            
+        }       
+    }
+
+
     async closeModal(){
 
         if(this.TIPO_REGISTRO==='NUEVO' && this.gridOptions.data.length>0){
@@ -396,7 +407,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
                 
                 let dataEstab = this.establecimientos[0];                    
                 let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
-                
+                                
                 //informacion de establecimiento y ptoEmision en Encabezado                              
 
 
@@ -415,8 +426,12 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
                 this.idBodega      = this.bodegas.length>0?this.bodegas[0].idBodega:0;
                 this.cloneIdBodega = this.idBodega;
 
-                this.actividadTipoIva = resultsDataFormEstab[2][0];
 
+                this.impuestoTarifas = resultsDataFormEstab[2]; //Impuesto tarifas dependiendo el tipo Actividad
+                this.actividadTipoIva = resultsDataFormEstab[2][0];
+                this.data.tarifa = this.actividadTipoIva.tarifa;
+                // this.codigoPorcentaje = this.actividadTipoIva.codigoPorcentaje
+              
                 this.setDataInfoEstab(this.establecimientos, this.puntosEmisiones);
                 
             }else{
@@ -429,6 +444,8 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
             
             this.tipoIvas = resultsDataForm[3];
             this.tarifas  = resultsDataForm[4];
+
+            console.log(this.tipoIvas)
 
             this.idTarifa = this.tarifas.length>0?this.tarifas[0].idTarifa:0;
             this.cloneIdTarifa = this.idTarifa;
@@ -578,7 +595,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
             }).then(response=>{
 
                 if(response.isConfirmed){
-
+                    
                     showLoader();
                     let factura = Object.assign({}, this.data);
                     factura.idCliente      = this.cliente.idCliente;              
@@ -586,7 +603,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
                     factura.fechaVencimiento = this._fS.formatDateTimeZone(this.data.fechaVencimiento);
 
                     //Tarifa Aplicada al Documento
-                    factura.tarifa = this.actividadTipoIva.tarifa;
+                  //  factura.tarifa = this.actividadTipoIva.tarifa;
                 
                     
 
@@ -663,7 +680,10 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl{
         this.detalleDocumento       = detalleDocumento;
         this.infoAdicionalDocumento = infoAdicionalDocumento;
         this.actividadTipoIva       = actividadTipoIva;
+
+        this.data.tarifa = this.actividadTipoIva.tarifa;
         
+
         $uibModalInstance.rendered.then(()=>{
 
             $("#btnNewCustomerDocument").on('blur', this.onBlurBtnNewCustomerInvoice)
@@ -689,6 +709,8 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl{
                 this.idBodega      = this.bodegas.length>0?this.bodegas[0].idBodega:0;
                 this.cloneIdBodega = this.idBodega;
 
+                this.impuestoTarifas = resultsDataFormEstab[2]; //Impuesto tarifas dependiendo el tipo Actividad
+                                
                 // this.actividadTipoIva = resultsDataFormEstab[2][0]
 
             }else{
@@ -1002,8 +1024,11 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl{
                 this.bodegas       = resultsDataFormEstab[1];                
                 this.idBodega      = this.bodegas.length>0?this.bodegas[0].idBodega:0;
                 this.cloneIdBodega = this.idBodega;
+                                
+                this.impuestoTarifas = resultsDataFormEstab[2]; //Impuesto tarifas dependiendo el tipo Actividad
+                this.actividadTipoIva = resultsDataFormEstab[2][0];
+                this.data.tarifa = this.actividadTipoIva.tarifa;
 
-                this.actividadTipoIva = resultsDataFormEstab[2][0]                
             }else{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
             }
@@ -1138,7 +1163,7 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl{
             factura.fechaVencimiento = this._fS.formatDateTimeZone(this.data.fechaVencimiento);
         
             //Tarifa Aplicada al Documento
-            factura.tarifa = this.actividadTipoIva.tarifa;
+           // factura.tarifa = this.actividadTipoIva.tarifa;
 
             const data = {
                 factura: JSON.stringify(factura),
