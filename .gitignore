@@ -320,8 +320,13 @@
 /src/09.desktop_apps/PointOfSales/obj
 /src/04.services/ApiInventory/bin
 /src/04.services/ApiInventory/obj
+/src/02.domain/Domain.Inventory/bin
 /src/02.domain/Domain.Inventory/obj
 /src/04.services/ApiInventory/obj/Release/net6.0/ApiInventory.assets.cache
 /src/04.services/ApiInventory/obj/Release/net6.0/ApiInventory.csproj.AssemblyReference.cache
 /src/04.services/ApiInventory/obj/Release/net6.0/ApiInventory.GeneratedMSBuildEditorConfig.editorconfig
 /src/04.services/ApiInventory/obj/project.nuget.cache
+/src/04.services/ApiInventory/obj/ApiInventory.csproj.nuget.dgspec.json
+/src/04.services/ApiInventory/obj/ApiInventory.csproj.nuget.g.props
+/src/04.services/ApiInventory/obj/project.assets.json
+/src/04.services/ApiInventory/obj/ApiInventory.csproj.nuget.g.targets

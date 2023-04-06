@@ -12,28 +12,31 @@ namespace ApiConfig.Controllers
     public class ReporteController : ControllerBase
     {
         private readonly IConfiguration _configuration;
+        private readonly DbAccess _db;
         public ReporteController(IConfiguration configuration)
         {
             _configuration = configuration;
+            _db = new DbAccess(_configuration);
         }
         [HttpGet("Get/{json}")]
         public async Task<IActionResult> Get(string json)
         {
             LogWriter _log = new LogWriter(_configuration);
+            var _response = new GenericResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                Dictionary<string, object> _params = new Dictionary<string, object>();
-                _params["idUsuarioRol"] = idUsuarioRol;
-                _params["json"] = SqlValidation.ValidateSqlString(json);
-                DAO _dao = new DAO(_configuration); 
-                return Ok(await _dao.GetDataTable("Config.Reporte_Get", _params));
+                await _db.SPExecute("Config.Reporte_Get");
+                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDataTableAsync();
             }
             catch (Exception ex)
             {
                 _log.LogError("Error while getting reports: \n" + ex.ToString());
-                return BadRequest(ex.Message);
+                _response.Create(code: "0", message: "Error getting reports");
             }
+            return Ok(_response);
         }
         [HttpPost("Post")]
         public async Task<IActionResult> Post([FromBody] ReporteDto data)
