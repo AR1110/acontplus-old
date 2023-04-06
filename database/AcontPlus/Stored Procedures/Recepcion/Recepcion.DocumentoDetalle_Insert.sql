@@ -28,6 +28,8 @@ CREATE PROCEDURE Recepcion.DocumentoDetalle_Insert	@idUsuarioRol INT
 AS
 BEGIN
 	SET NOCOUNT ON; 
+	SET LANGUAGE SPANISH;
+
 	DECLARE @idUsuario INT
 	DECLARE @idEntidad INT
 	DECLARE @rucProv VARCHAR(20)
@@ -115,18 +117,55 @@ BEGIN
 					WHERE ddi.idDocumento = @idDocumento
 				END
 
-			UPDATE Recepcion.DocumentoRecibido SET complete = 1 WHERE idDocumento = @idDocumento
+				UPDATE Recepcion.DocumentoRecibido SET complete = 1 WHERE idDocumento = @idDocumento
 
 			--==================================================================Inventario===============================================================
+			--IF @inventory = 'SI'
+			--	BEGIN
+			--		INSERT INTO Inventario.ControlStock(idTipoDocumento,idDocumento,idArticulo,idBodega)
+			--		SELECT 1,@idDocumento,rd.idArticulo,rd.idBodega 
+			--		FROM Recepcion.DocumentoDetalle rd 
+			--		INNER JOIN dbo.Articulo a ON a.idArticulo = rd.idArticulo 
+			--		WHERE a.llevaInventario = 1 AND rd.idDocumento = @idDocumento
+			--	END
 			IF @inventory = 'SI'
-				BEGIN
-					INSERT INTO Inventario.ControlStock(idTipoDocumento,idDocumento,idArticulo,idBodega)
-					SELECT 1,@idDocumento,rd.idArticulo,rd.idBodega 
-					FROM Recepcion.DocumentoDetalle rd 
-					INNER JOIN dbo.Articulo a ON a.idArticulo = rd.idArticulo 
-					WHERE a.llevaInventario = 1 AND rd.idDocumento = @idDocumento
-				END 
+			BEGIN
+				IF EXISTS (SELECT 1 FROM Recepcion.Doc_Detalle_Temp t 
+									INNER JOIN Articulo a WITH(NOLOCK) ON t.idArticulo = a.idArticulo
+									WHERE t.idDocumento = @idDocumento
+									AND NOT EXISTS (SELECT * FROM Recepcion.DocumentoDetalle rddd WHERE rddd.idDocumento = @idDocumento) AND a.llevaInventario = 1)
+					BEGIN
+						DECLARE @idArticuloToInsert INT
+						DECLARE @idBodega INT
+						DECLARE @cantidad NUMERIC(18,2)
+						DECLARE @precioCosto NUMERIC(18,5)
+						DECLARE @precioVenta NUMERIC(18,5)
+						DECLARE @fechaEmision DATETIME
 
+						SET @fechaEmision = (SELECT CAST(fechaEmision AS date) FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento)
+
+						DECLARE cursor_inventory CURSOR LOCAL FOR
+						SELECT t.idArticulo, idBodega, cantidad, a.precioCosto,  t.precioUnitario 
+						FROM Recepcion.Doc_Detalle_Temp t 
+						INNER JOIN Articulo a WITH(NOLOCK) ON t.idArticulo = a.idArticulo
+						WHERE t.idDocumento = @idDocumento
+						AND NOT EXISTS (SELECT * FROM Recepcion.DocumentoDetalle rddd WHERE rddd.idDocumento = @idDocumento) AND a.llevaInventario = 1
+
+						OPEN cursor_inventory
+
+						FETCH NEXT FROM cursor_inventory INTO @idArticuloToInsert, @idBodega , @cantidad, @precioCosto, @precioVenta
+
+						WHILE @@FETCH_STATUS = 0
+						BEGIN
+							--tipo transaccion 2 salidas
+							--tipo documento 1 factura electronica
+							EXEC Inventario.Transaccion_Insert 'E', 'FE', @fechaEmision, @idDocumento,  @idArticulo, @idBodega , @cantidad, @precioCosto, @precioVenta, @idUsuario
+							FETCH NEXT FROM cursor_inventory INTO @idArticuloToInsert, @idBodega , @cantidad, @precioCosto, @precioVenta
+						END
+						CLOSE cursor_inventory
+						DEALLOCATE cursor_inventory  
+					END
+			END
 			SELECT '1' code, 'Detalle importado exitosamente' as 'message'
 		COMMIT TRAN 
 	END TRY

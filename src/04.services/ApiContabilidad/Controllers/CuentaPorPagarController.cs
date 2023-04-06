@@ -13,9 +13,11 @@ namespace ApiContabilidad.Controllers
     public class CuentaPorPagarController : ControllerBase
     {
         private readonly IConfiguration _configuration;
+        private readonly DbAccess _dbAccess;
         public CuentaPorPagarController(IConfiguration configuration)
         {
             _configuration = configuration;
+            _dbAccess = new DbAccess(_configuration);
         }
 
         // GET: api/<CuentaPorPagarController>
@@ -27,17 +29,21 @@ namespace ApiContabilidad.Controllers
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                Dictionary<string, object> _params = new Dictionary<string, object>();
-                _params["idUsuarioRol"] = idUsuarioRol;
-                _params["json"] = SqlValidation.ValidateSqlString(json);
-                DAO _dao = new DAO(_configuration);
-                return Ok(await _dao.GetDataSet("Contabilidad.CuentaPorPagar_Get", _params));
+                await _dbAccess.SPExecute("Contabilidad.CuentaPorPagar_Get");
+                _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+                _dbAccess.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _response = _dbAccess.GetDataSetAsync();
             }
             catch (Exception ex)
             {
                 _log.LogError("Error on Cuenta Por Pagar -> Get: \n" + ex.ToString());
-                return BadRequest(ex.Message);
+                _response.Create(code: "0", message: "Error al traer las cuentas por pagar");
             }
+            finally
+            {
+                _dbAccess.Close();
+            }
+            return Ok(_response);
         }
 
         // POST api/<CuentaPorPagarController>
@@ -85,6 +91,6 @@ namespace ApiContabilidad.Controllers
             }
         }
 
-      
+
     }
 }

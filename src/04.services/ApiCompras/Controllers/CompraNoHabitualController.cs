@@ -16,35 +16,36 @@ namespace ApiCompras.Controllers
     public class CompraNoHabitualController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-
+        private readonly DbAccess _db;
         public CompraNoHabitualController(IConfiguration configuration)
         {
             _configuration = configuration;
+            _db = new DbAccess(_configuration);
         }
         // GET: api/<CompraNoHabitualController>
         [HttpGet("{json}")]
         public async Task<IActionResult> Get(string json)
         {
             LogWriter _logs = new LogWriter(_configuration);
+            var _response = new GenericResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                DAO _dao = new DAO(_configuration);
-                Dictionary<string, object> parameters = new Dictionary<string, object> {
-                    {"idUsuarioRol", idUsuarioRol },
-                    {"json", SqlValidation.ValidateSqlString(json)}
-                };
-                return Ok(await _dao.GetDataSet("Compra.Documento_Ingreso_Get", parameters));
-            } catch (Exception ex)
+                 await _db.SPExecute("Compra.Documento_Ingreso_Get");
+                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDataSetAsync();
+            }
+            catch (Exception ex)
             {
                 _logs.LogError("Error al obtener datos de Compra No Habitual: " + ex.ToString());
-                return new BadRequestObjectResult(new
-                {
-                    code = 0,
-                    message = "Error al obtener datos de Compra No Habitual"
-                });
-
+                _response.Create(code: "0", message: "Error al obtener datos de Compra No Habitual");
             }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
 
         [HttpPost]

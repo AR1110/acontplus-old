@@ -54,18 +54,22 @@ namespace ApiInventory.Controllers
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                Dictionary<string, object> _params = new Dictionary<string, object>();
-                _params["idUsuarioRol"] = idUsuarioRol;
-                _params["descripcion"] = SqlValidation.ValidateSqlString(data.descripcion);
-                _params["siglas"] = SqlValidation.ValidateSqlString(data.siglas);
-                DAO _dao = new DAO(_configuration);
-                return Ok(await _dao.GetDataSet("Inventario.SubCategoria_Insert", _params));
+                await _db.SPExecute("Inventario.SubCategoria_Insert");
+                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+                _db.AddDynamicParam("descripcion", SqlValidation.ValidateSqlString(data.descripcion));
+                _db.AddDynamicParam("siglas", SqlValidation.ValidateSqlString(data.siglas));
+                _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)
             {
                 _log.LogError("Error on SubFamilia -> Insert: \n" + ex.ToString());
-                return BadRequest(ex.Message);
+                _response.Create(code: "0", message: "Error");
             }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
 
         [HttpPut]
@@ -81,14 +85,18 @@ namespace ApiInventory.Controllers
                 _params["idCategoria"] = id;
                 _params["descripcion"] = SqlValidation.ValidateSqlString(data.descripcion);
                 _params["siglas"] = SqlValidation.ValidateSqlString(data.siglas);
-                DAO _dao = new DAO(_configuration);
-                return Ok(await _dao.GetDataSet("Inventario.SubCategoria_Update", _params));
+                //return Ok(await _dao.GetDataSet("Inventario.SubCategoria_Update", _params));
             }
             catch (Exception ex)
             {
                 _log.LogError("Error on SubFamilia -> Update: \n" + ex.ToString());
                 return BadRequest(ex.Message);
             }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
 
         [HttpPut]
@@ -102,14 +110,17 @@ namespace ApiInventory.Controllers
                 Dictionary<string, object> _params = new Dictionary<string, object>();
                 _params["idUsuarioRol"] = idUsuarioRol;
                 _params["idCategoria"] = id;
-                DAO _dao = new DAO(_configuration);
-                return Ok(await _dao.GetDataSet("Inventario.SubCategoria_Update_Cancel", _params));
+                //return Ok(await _dao.GetDataSet("Inventario.SubCategoria_Update_Cancel", _params));
             }
             catch (Exception ex)
             {
                 _log.LogError("Error on SubFamilia -> Update Cancel: \n" + ex.ToString());
-                return BadRequest(ex.Message);
             }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
     }
 }
