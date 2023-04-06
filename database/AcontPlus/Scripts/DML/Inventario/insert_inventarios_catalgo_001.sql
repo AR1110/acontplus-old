@@ -1,4 +1,4 @@
-USE Acontplus_Soporte
+USE AcontPlus
 --GO
 
 --INSERT INTO Inventario.TipoTransaccion(codigo, descripcion) VALUES ('E', 'Entrada')
