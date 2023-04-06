@@ -13,3 +13,5 @@ idTransaccion INT NOT NULL CONSTRAINT pk_inventory_transaction PRIMARY KEY IDENT
 ,fechaRegistro DATETIME NOT NULL DEFAULT GETDATE()
 ,idUsuario INT NULL
 )
+
+ 
