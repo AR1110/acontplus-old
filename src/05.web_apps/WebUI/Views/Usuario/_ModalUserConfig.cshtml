@@ -1,0 +1,31 @@
+
+<div class="modal-header">
+    <h5 class="modal-title"><i class="mdi mdi-settings"></i> Configuración Usuario</h5>
+    <button type="button" class="close" ng-click="$ctrl.closeModal()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div class="modal-body">
+    <uib-tabset active="0">
+        <uib-tab index="0">
+            <uib-tab-heading>
+                <i class="mdi mdi-account-circle"></i> Datos Generales
+            </uib-tab-heading>
+        </uib-tab>
+
+
+        <uib-tab index="0">
+            <uib-tab-heading>
+                <i class="mdi mdi-key"></i> Permisos
+            </uib-tab-heading>
+        </uib-tab>
+    </uib-tabset>
+        
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-dark btn-sm">
+        &times; Cerrar
+    </button>
+</div>
