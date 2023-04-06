@@ -654,6 +654,8 @@ export class ModalBaseCtrl{
             this.impuestoTarifas = resultsDataFormEstab[2]; //Impuesto tarifas dependiendo el tipo Actividad
             this.actividadTipoIva = resultsDataFormEstab[2][0];
             this.data.tarifa = this.actividadTipoIva.tarifa;
+
+            this.disabledImpuestoTarifa = this.actividadTipoIva.codigoPorcentaje=='2'
             
 
             let indexColumn = this.gridOptions.columnDefs.findIndex(item=>item.field==='idBodega');

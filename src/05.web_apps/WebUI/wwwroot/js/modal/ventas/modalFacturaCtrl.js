@@ -1,6 +1,6 @@
 
 
-import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.60";
+import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.61";
 
 class ModalFacturaCtrl extends ModalBaseCtrl{
     
@@ -151,9 +151,24 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
             entity.idArticulo           = articulo.idArticulo;
             entity.codigo               = articulo.codigoArticulo;                
             entity.descripcion          = articulo.descripcion;  
-            entity.idTipoIva            = articulo.idTipoIva;                          
-            entity.codigoPorcentaje     = articulo.codigoPorcentaje;
-            entity.tarifa               = articulo.tarifa;
+
+           
+            //Aplica a establecimiento que llevan actividad de Tipo Alojamiento
+            if(this.actividadTipoIva.codigoPorcentaje==='8' && articulo.codigoPorcentaje==='2'){
+               
+                let dataImpuestoTarifa = this.tipoIvas.find(item=>item.codigoPorcentaje===this.actividadTipoIva.codigoPorcentaje);
+                entity.idTipoIva            = dataImpuestoTarifa.idTipoIva;                       
+                entity.codigoPorcentaje     = dataImpuestoTarifa.codigoPorcentaje;
+                entity.tarifa               = dataImpuestoTarifa.tarifa;
+                
+            }else{
+                entity.idTipoIva            = articulo.idTipoIva;                          
+                entity.codigoPorcentaje     = articulo.codigoPorcentaje;
+                entity.tarifa               = articulo.tarifa;
+
+            }
+           
+
             // entity.nombreTipoIva        = articulo.nombreTipoIva;
             entity.ice                  = articulo.valorIce;
             entity.idBodega             = self.idBodega ? self.idBodega : 0;
@@ -431,6 +446,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
                 this.actividadTipoIva = resultsDataFormEstab[2][0];
                 this.data.tarifa = this.actividadTipoIva.tarifa;
                 // this.codigoPorcentaje = this.actividadTipoIva.codigoPorcentaje
+                this.disabledImpuestoTarifa = this.actividadTipoIva.codigoPorcentaje=='2'
               
                 this.setDataInfoEstab(this.establecimientos, this.puntosEmisiones);
                 
@@ -682,7 +698,7 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl{
         this.actividadTipoIva       = actividadTipoIva;
 
         this.data.tarifa = this.actividadTipoIva.tarifa;
-        
+        this.disabledImpuestoTarifa = this.actividadTipoIva.codigoPorcentaje=='2'
 
         $uibModalInstance.rendered.then(()=>{
 
@@ -1028,7 +1044,7 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl{
                 this.impuestoTarifas = resultsDataFormEstab[2]; //Impuesto tarifas dependiendo el tipo Actividad
                 this.actividadTipoIva = resultsDataFormEstab[2][0];
                 this.data.tarifa = this.actividadTipoIva.tarifa;
-
+                this.disabledImpuestoTarifa = this.actividadTipoIva.codigoPorcentaje=='2';
             }else{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
             }

@@ -1,27 +1,30 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\02.domain\\Domain.Inventory\\Domain.Inventory.csproj": {}
+    "C:\\Users\\VMC\\Source\\Repos\\AcontPlus\\src\\02.domain\\Domain.Inventory\\Domain.Inventory.csproj": {}
   },
   "projects": {
-    "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\02.domain\\Domain.Inventory\\Domain.Inventory.csproj": {
+    "C:\\Users\\VMC\\Source\\Repos\\AcontPlus\\src\\02.domain\\Domain.Inventory\\Domain.Inventory.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\02.domain\\Domain.Inventory\\Domain.Inventory.csproj",
+        "projectUniqueName": "C:\\Users\\VMC\\Source\\Repos\\AcontPlus\\src\\02.domain\\Domain.Inventory\\Domain.Inventory.csproj",
         "projectName": "Domain.Inventory",
-        "projectPath": "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\02.domain\\Domain.Inventory\\Domain.Inventory.csproj",
-        "packagesPath": "C:\\Users\\AleXx\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\02.domain\\Domain.Inventory\\obj\\",
+        "projectPath": "C:\\Users\\VMC\\Source\\Repos\\AcontPlus\\src\\02.domain\\Domain.Inventory\\Domain.Inventory.csproj",
+        "packagesPath": "C:\\Users\\VMC\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\VMC\\Source\\Repos\\AcontPlus\\src\\02.domain\\Domain.Inventory\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\AleXx\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\VMC\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
