@@ -23,28 +23,25 @@ namespace ApiRecepcion.Controllers
         public async Task<IActionResult> Get(string json)
         {
             LogWriter _logs = new LogWriter(_configuration);
-
+            GenericResponse _response = new GenericResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-
-                Dictionary<string, object> parameters = new Dictionary<string, object>
-                {
-                    { "idRol", idUsuarioRol },
-                    { "jsonData", json }
-                };
-                DAO _dao = new DAO(_configuration);
-                return Ok(await _dao.GetDataSet("Recepcion.Proveedor_Get", parameters));
+                await _db.SPExecute("Recepcion.Proveedor_Get");
+                _db.AddDynamicParam("idRol", idUsuarioRol);
+                _db.AddDynamicParam("jsonData", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)
             {
                 _logs.LogError("Error al obtener el proveedor: " + ex.ToString());
-                return new BadRequestObjectResult(new
-                {
-                    code = 0,
-                    message = "Error al obtener el proveedor"
-                });
+                _response.Create(code: "0", message: "Error al obtener el proveedor");
             }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
 
         }
         [HttpPost]

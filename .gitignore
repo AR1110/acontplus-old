@@ -330,3 +330,5 @@
 /src/04.services/ApiInventory/obj/ApiInventory.csproj.nuget.g.props
 /src/04.services/ApiInventory/obj/project.assets.json
 /src/04.services/ApiInventory/obj/ApiInventory.csproj.nuget.g.targets
+/src/02.domain/Domain.Inventory/obj/Domain.Inventory.csproj.nuget.dgspec.json
+/src/02.domain/Domain.Inventory/obj/project.nuget.cache
