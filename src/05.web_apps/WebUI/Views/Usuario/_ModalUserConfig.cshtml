@@ -7,164 +7,157 @@
 </div>
 
 <div class="modal-body">
-    <uib-tabset active="0">
-        <uib-tab index="0">
-            <uib-tab-heading>
-                <i class="mdi mdi-account-circle"></i>  General
-            </uib-tab-heading>
-            <div class="card">
-                <div class="card-body">
-                    <div class="row">        
-                        <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-xs-12">
-                            <div class="card">
-                                <img class="card-img" src="~/assets/images/user/fondo-user.jpg" height="300" alt="Fondo image">
-                                <div class="card-img-overlay card-inverse text-white social-profile d-flex justify-content-center">
-                                    <div class="align-self-center">
-                                        <img src="~/assets/images/user/user.png" class="img-circle" width="100">
-                                        <h4 class="card-title mt-2">{{params.nombreCompleto}}</h4>
-                                        <h6 class="card-subtitle"></h6>
-                                        <p class="text-white">{{params.nroIdentificacion}} </p>
+    <div class="row">
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">            
+            <md-list flex>
+                <div class="card-header bg-info">
+                    <h6 class="m-b-0 text-white"><i class="fas fa-industry"></i> Entidades</h6>
+                </div>
+                <md-list-item class="md-3-line" ng-repeat="item in usuarioRoles" ng-click="getEstablecimientos(item)">          
+                    <div class="md-list-item-text" layout="column">
+                        <h6>{{ item.razonSocial }}</h6>
+                        <span class="text-muted">{{ item.ruc }}</span>                        
+                    </div>    
+                    <hr>
+                </md-list-item>
+            </md-list>   
+        </div>
+
+        <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12">
+            <uib-tabset active="0">
+
+                <!--Tab Establecimietos-->
+                <uib-tab index="0">
+                    <uib-tab-heading>
+                        <i class="mdi mdi-account-circle"></i>  Establecimientos
+                    </uib-tab-heading>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped scroll">
+                                    <thead>
+                                        <tr>
+                                            <th>N°</th>
+                                            <th>Nombre Comercial</th>
+                                            <th>Nro. Estab.</th>
+                                            <th>Estado</th>
+                                            <th>Predeterminado</th>
+                                            <th>Op</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="item in establecimientos">
+                                            <td>{{$index+1}}</td>
+                                            <td>{{item.nombreComercial}}</td>
+                                            <td>{{item.estab}}</td>
+                                            <td>
+                                                {{item.estado?'Asignada':'No Asignada'}}
+                                            </td>
+                                            <td>
+                                                <md-switch  ng-if="item.estado" ng-model="item.predeterminado" ng-change="onChangePredeterminada(item)" aria-label="Sucursal Predeterminada">                                          
+                                                </md-switch>                                       
+                                            </td>
+                                            <td>                                       
+                                                <div class="icheck-info icheck-inline">
+                                                    <input type="checkbox" ng-model="item.estado" ng-change="asignarEstab(item)" id="checkboxEstab{{$index}}" name="checkboxEstab{{$index}}">
+                                                    <label for="checkboxEstab{{$index}}"></label>
+                                                </div>                                        
+                                                <button type="button" ng-if="item.estado" class="btn btn-dark btn-rounded btn-sm" 
+                                                        ng-click="openModalAsignPtoEmisionAndBodega(item)"
+                                                        tooltip-placement="top" uib-tooltip="Asignar Pto de Emisión y Bodegas">
+                                                        <i class="mdi mdi-account-network"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr ng-if="establecimientos.length===0">
+                                            <td colspan="6">
+                                                <div class="alert alert-warning text-center" role="alert">
+                                                    No hay Sucursales Asignadas.                                            
+                                                </div>                                   
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>                           
+                        </div>
+                    </div>
+                </uib-tab>
+
+
+                <!--Tab Permissions-->
+                <uib-tab index="1" disable="disbledTabPermission">
+                    <uib-tab-heading>
+                        <i class="mdi mdi-key"></i> Permisos
+                    </uib-tab-heading>
+                    
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                                    <div class="card">
+                                        <div class="card-header bg-success">
+                                            <h6 class="m-b-0 text-white"><i class="mdi mdi-store"></i> Artículo</h6>     
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="icheck-info">
+                                                <input type="checkbox" name="permissionPrice" id="permissionPrice" ng-model="articlePermissionsLabel.precio.updatej">
+                                                <label for="permissionPrice">{{articlePermissions.precio.label}}</label>
+                                            </div>                                    
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                                    <div class="card">
+                                        <div class="card-header bg-primary">
+                                            <h6 class="m-b-0 text-white"><i class="mdi mdi-shopping"></i> Ventas</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <span class="text-muted">Comprobante</span>
+                                            <div class="icheck-info" id="comprobantePermission" ng-repeat="item in salesPermissions.comprobante">
+                                                <input type="checkbox" name="compPermission{{$index+1}}" id="compPermission{{$index+1}}" ng-model="item.update">
+                                                <label for="compPermission{{$index+1}}">{{item.label}}</label>                                         
+                                            </div>   
+
+                                            @* <div class="icheck-info">
+                                                <input type="checkbox" name="permissionPrice" id="permissionPrice2" ng-model="articlePermissionsLabel.precio.removed">
+                                                <label for="permissionPrice2">Modificar  descuento total</label>
+                                            </div>   
+
+                                            <div class="icheck-info">
+                                                <input type="checkbox" name="permissionPrice" id="permissionPrice3" ng-model="articlePermissionsLabel.precio.create">
+                                                <label for="permissionPrice3">Cambiar tarifa general</label>
+                                            </div>   
+
+                                            <div class="icheck-info">
+                                                <input type="checkbox" name="permissionPrice" id="permissionPrice4" ng-model="articlePermissionsLabel.precio.update3">
+                                                <label for="permissionPrice4">Modificar fecha emision</label>
+                                            </div> 
+
+                                            <div class="icheck-info">
+                                                <input type="checkbox" name="permissionPrice" id="permissionPrice4" ng-model="articlePermissionsLabel.precio.update3">
+                                                <label for="permissionPrice4">Cambiar tiempo crédito</label>
+                                            </div>  *@
+                                        </div>
+
+                                        <div class="card-body">
+                                            <span class="text-muted">Detalle</span>
+                                            <div class="icheck-info" id="detailPermission" ng-repeat="item in salesPermissions.detail">
+                                                <input type="checkbox" name="detailPermission{{$index+1}}" id="detailPermission{{$index+1}}" ng-model="item.update">
+                                                <label for="detailPermission{{$index+1}}">{{item.label}}</label>                                         
+                                            </div>                                     
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="card">
-                                <div class="card-body">
-                                    <small class="text-muted">Correo Electrónico </small>
-                                    <h6>{{params.correo}}</h6>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-xs-12"> 
-                            <div class="card border-dark">
-                                <div class="card-header bg-info">
-                                    <h6 class="m-b-0 text-white"><i class="fas fa-industry"></i> Entidades</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-striped  scroll">
-                                            <thead>
-                                                <tr>
-                                                    <th>N°</th>
-                                                    <th>Ruc</th>
-                                                    <th>Entidad</th>
-                                                    @* <th>Rol</th> *@
-                                                    <th>Op</th>
-                                                </tr>
-                                            </thead>   
-                                            <tbody>
-                                                <tr ng-repeat="item in usuarioRoles track by $index">                           
-                                                    <td>{{$index+1}}</td>
-                                                    <td>{{item.ruc}}</td>
-                                                    <td>{{item.razonSocial | uppercase}}</td>
-                                                    @* <td>{{item.rol|uppercase}}</td>                        *@
-                                                    <td>                                                                              
-                                                        <a href="javascript:void(0)" class="btn btn-info btn-sm" ng-click="getEstablecimientos(item)"  tooltip data-toggle="tooltip" data-placement="top" title="Asignación de Sucursales"> <i class="mdi mdi-folder-account"></i>
-                                                        </a>                               
-                                                    </td>
-                                                </tr>
-                                            </tbody>                         
-                                        </table>
-                                    </div>                      
-                                </div>
-                            </div>                             
-                            <hr>
-
-                            <div class="card border-dark">
-                                <div class="card-header bg-success">
-                                    <h6 class="m-b-0 text-white"><i class="fas fa-tasks"></i> Establecimientos</h6>
-                                </div>
-                                <div class="card-body">
-                                    <h5>{{dataEntidadRol.razonSocial}}</h5>
-                                    <div class="table-responsive">
-                                        <table class="table table-striped scroll">
-                                            <thead>
-                                                <tr>
-                                                    <th>N°</th>
-                                                    <th>Nombre Comercial</th>
-                                                    <th>Nro. Estab.</th>
-                                                    <th>Estado</th>
-                                                    <th>Predeterminado</th>
-                                                    <th>Op</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr ng-repeat="item in establecimientos">
-                                                    <td>{{$index+1}}</td>
-                                                    <td>{{item.nombreComercial}}</td>
-                                                    <td>{{item.estab}}</td>
-                                                    <td>
-                                                        {{item.estado?'Asignada':'No Asignada'}}
-                                                    </td>
-                                                    <td>
-                                                        <md-switch  ng-if="item.estado" ng-model="item.predeterminado" ng-change="onChangePredeterminada(item)" aria-label="Sucursal Predeterminada">                                          
-                                                        </md-switch>                                       
-                                                    </td>
-                                                    <td>                                       
-                                                        <div class="icheck-info icheck-inline">
-                                                            <input type="checkbox" ng-model="item.estado" ng-change="asignarEstab(item)" id="checkboxEstab{{$index}}" name="checkboxEstab{{$index}}">
-                                                            <label for="checkboxEstab{{$index}}"></label>
-                                                        </div>                                        
-                                                        <button type="button" ng-if="item.estado" class="btn btn-dark btn-rounded btn-sm" 
-                                                                ng-click="openModalAsignPtoEmisionAndBodega(item)"
-                                                                tooltip-placement="top" uib-tooltip="Asignar Pto de Emisión y Bodegas">
-                                                                <i class="mdi mdi-account-network"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                                <tr ng-if="establecimientos.length===0">
-                                                    <td colspan="6">
-                                                        <div class="alert alert-warning text-center" role="alert">
-                                                            No hay Sucursales Asignadas.                                            
-                                                        </div>                                   
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>                                        
-                                </div>
-                            </div>               
                         </div>
                     </div>
-                </div>
-            </div>
-        </uib-tab>
+                </uib-tab>
+            </uib-tabset>
+        </div>
+    </div>
 
-
-        <uib-tab index="1">
-            <uib-tab-heading>
-                <i class="mdi mdi-key"></i> Permisos
-            </uib-tab-heading>
-            
-            <div class="card">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
-                            <div class="card">
-                                <div class="card-header bg-success">
-                                    <h6 class="m-b-0 text-white"><i class="mdi mdi-store"></i> Almacen</h6>     
-                                </div>
-                                <div class="card-body">
-
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
-                            <div class="card">
-                                <div class="card-header bg-primary">
-                                    <h6 class="m-b-0 text-white"><i class="mdi mdi-shopping"></i> Ventas</h6>
-                                </div>
-                                <div class="card-body">
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </uib-tab>
-    </uib-tabset>
+   
         
 </div>
 
