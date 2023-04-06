@@ -161,6 +161,27 @@ namespace DataAccess
             }
             return dt;
         }
+        public GenericResponse GetDefault()
+        {
+            DataTable dt = new DataTable();
+            var _response = new GenericResponse();
+            if (_command != null)
+            {
+                using (SqlDataAdapter dataAdapter = new SqlDataAdapter(_command))
+                {
+                    dataAdapter.Fill(dt);
+                    if (DataHelper.DataTableIsNull(dt))
+                    {
+                        _response.Create(code: "0", "La transacción no devolvio respuesta");
+                    }
+                    else
+                    {
+                        _response = DataHelper.BindData<GenericResponse>(dt);
+                    }
+                }
+            }
+            return _response;
+        }
         public GenericResponse GetDataTableAsync()
         {
             DataTable dt = new DataTable();

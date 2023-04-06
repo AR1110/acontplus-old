@@ -34,30 +34,6 @@ namespace DataAccess
             }
             return _response;
         }
-        public async Task<GenericResponse> GetDataTable(string spName, Dictionary<string, object> parameters = null)
-        {
-            GenericResponse _response = new GenericResponse();
-
-            DbAccess dbAccess = new DbAccess(_config);
-            await dbAccess.SPExecute(spName);
-            if (parameters != null)
-            {
-                foreach (var item in parameters)
-                {
-                    dbAccess.AddDynamicParam(item.Key, item.Value);
-                }
-            }
-            DataTable dt = dbAccess.GetDataTable();
-            if (dt.Columns.Contains("code") && dt.Rows[0]["code"].ToString() == "-1")
-            {
-                _response.Create(code: "0", message: dt.Rows[0]["message"].ToString(), payload: dt.Rows[0]["payload"].ToString());
-            }
-            else
-            {
-                _response.Create(code: "1", payload: DataHelper.DataTableToJSON(dt));
-            }
-            return _response;
-        }
         public async Task<GenericResponse> GetDataSet(string spName, Dictionary<string, object> parameters = null)
         {
             GenericResponse _response = new GenericResponse();
