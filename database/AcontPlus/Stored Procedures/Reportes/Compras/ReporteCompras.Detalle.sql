@@ -120,10 +120,11 @@ BEGIN
 							INNER JOIN TipoIva ti WITH(NOLOCK) ON ti.idTipoIva = ar.idTipoIva
 							LEFT JOIN Medida m WITH(NOLOCK) ON m.idMedida = dd.idMedida
 							INNER JOIN Tarifa       t ON t.idTarifa    = arPvp.idTarifa
-							WHERE dd.idDocumento = @id ORDER BY dd.idDocumentoDetalle ASC
+							WHERE dd.idDocumento = @id ORDER BY dd.idDocumentoDetalle ASC 
 							
 							--FOR JSON PATH 
 						 --)
+						 RETURN
 		END 
 
 
