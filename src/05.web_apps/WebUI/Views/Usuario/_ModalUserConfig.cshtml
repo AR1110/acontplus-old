@@ -13,7 +13,7 @@
                 <div class="card-header bg-info">
                     <h6 class="m-b-0 text-white"><i class="fas fa-industry"></i> Entidades</h6>
                 </div>
-                <md-list-item class="md-3-line" ng-repeat="item in usuarioRoles" ng-click="getEstablecimientos(item)">          
+                <md-list-item class="md-3-line" ng-repeat="item in usuarioRoles" ng-click="onClickEntidadRol(item)">          
                     <div class="md-list-item-text" layout="column">
                         <h6>{{ item.razonSocial }}</h6>
                         <span class="text-muted">{{ item.ruc }}</span>                        

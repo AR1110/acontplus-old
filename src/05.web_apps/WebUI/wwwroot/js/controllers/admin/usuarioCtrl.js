@@ -133,7 +133,7 @@
                 })       
     
                 if(isConfirmed){
-                    _mS.getData('post', '/Usuario/Delete?idUsuario=' + item.idUsuario).then(response => {
+                    _mS.getData('delete', 'Usuario/' + item.idUsuario, null, true).then(response => {
                         if (response.id == "0") {
                             toast.toastr('warning', response.message, response.titleSms);                        
                         }
@@ -255,8 +255,7 @@
             }
     
             $scope.data.nombreCompleto = `${$scope.data.nombres} ${$scope.data.apellidos}`
-            $scope.data.idRol =  Id_Usuario_Rol,
-            $scope.data.codRol = 'AD'; //REVISAR POSTERIORMENTE
+           
             let data = {
                 nroIdentificacion: $scope.data.nroIdentificacion,
                 correo: $scope.data.correo,
@@ -264,8 +263,8 @@
                 contrasena: $scope.data.contrasena,
                 nombreCompleto: $scope.data.nombreCompleto,
                 idPolitica: $scope.data.idPolitica,
-                idRol: $scope.data.idRol,
-                codRol: $scope.data.codRol
+                idRol: Id_Usuario_Rol,
+                codRol: 'AD'
             }
 
             mS.getData('post', 'Usuario/'+ JSON.stringify(data), null, true).then(response=>{                      
@@ -306,10 +305,10 @@
     
                 mS.getData('put', `Usuario/${$scope.data.idUsuario}/${JSON.stringify($scope.data)}`, null, true).then(response => {
                     console.log(response)
-                    if (response.code == "0") {
+                    if (response.code == "0" || response.id == "0") {
                         tS.toastr('warning', response.message, response.titleSms);                    
                     }
-                    if (response.code == "1") {
+                    if (response.code == "1" || response.id == "1") {
                         tS.toastr('success', response.message, response.titleSms);
                         $uibModalInstance.close(response)                         
                     }
@@ -456,8 +455,6 @@
                     }
                 })
 
-                console.log($scope.params)
-                // mS.getData('get', 'UsuarioPermiso/Get/' + JSON.stringify({id}))
             } catch (error) {
                 console.log(error)
             }
@@ -465,40 +462,64 @@
 
         $scope.initiload();
 
+        
+        
+        $scope.getEstablecimientos = ()=>{
+            let json = {
+                idUsuarioRol: $scope.dataEntidadRol.idUsuarioRol,
+                typeList: 1,
+                idRol: Id_Usuario_Rol
+            }
+            
+            $scope.establecimientos = [];
+            mS.getData('get', '/EstabAsig/Get?json=' +JSON.stringify(json)).then(response=>{
+                if(response.code==='0'){
+                    console.log(response)
+                }
+                if(response.code==='1'){
+                    $scope.establecimientos = JSON.parse(response.payload) || [];                                         
+                }
+            })  
+        }
+        
+        $scope.getUserPermissions = ()=>{
+            mS.getData('get', 'UsuarioPermiso/Get/' + JSON.stringify({idUsuarioRol: $scope.dataEntidadRol.idUsuarioRol}), null, true).then(response =>{
+                if(response.code==="0"){
+                    console.log(response)
+                }
+                if(response.code==='1'){
+                    $scope.userPermissions = JSON.parse(response.payload)[0];
+
+
+                    console.log(jsonToMap(response.payload))
+                    $scope.comprobantePermissions = JSON.parse($scope.userPermissions.comprobante)
+
+                    console.log($scope.userPermissions)
+                }
+            })
+        } 
+
+
+        $scope.onClickEntidadRol = (item)=>{
+            try{ 
+
+                $scope.dataEntidadRol = item;
+                $scope.disbledTabPermission = true;
+
+                $scope.getEstablecimientos();
+                // $scope.getUserPermissions();
+                
+            }catch(error){
+                $scope.disbledTabPermission = true;
+                console.log(error)
+            }
+        }
 
          /**
          * ----------------------------------------------START ESTAB---------------------------
          * Asignacion de Establecimiento
          * @param {object} item 
          */
-        $scope.getEstablecimientos =(item)=>{
-            try {
-                showLoader();
-                $scope.dataEntidadRol = item;
-                $scope.disbledTabPermission = false;
-                let json = {
-                    idUsuarioRol: item.idUsuarioRol,
-                    typeList: 1,
-                    idRol: Id_Usuario_Rol
-                }
-                $scope.establecimientos = [];
-                mS.getData('get', '/EstabAsig/Get?json=' +JSON.stringify(json)).then(response=>{
-                    if(response.code==='0'){
-                        hideLoader();
-                        console.log(response)
-                    }
-                    if(response.code==='1'){
-                        $scope.establecimientos = JSON.parse(response.payload) || [];  
-                        hideLoader();                                              
-                    }
-                })            
-            } catch (error) {
-                hideLoader();
-                $scope.disbledTabPermission = true;
-                console.log(error)
-            }      
-        }    
-
         $scope.onChangePredeterminada = (item)=>{        
             try {
                 mS.getData('put', '/EstabAsig/Update?id=' + item.idEstab_Asig).then(response=>{
@@ -663,9 +684,17 @@
                     mS.getData('get', URL_BODEGA),                                        
                 ]).then(results=>{
                     console.log(results);
-                    $scope.puntosEmisiones = JSON.parse(results[0].payload) || [];
-                    $scope.bodegas = JSON.parse(results[1].payload) || [];
+                    
+                    if(results[0].code=="1"){
+                        $scope.puntosEmisiones = JSON.parse(results[0].payload) || [];
+                    }
+                    if(results[1].code==="1"){
+                        $scope.bodegas = JSON.parse(results[1].payload) || [];
+                    }
                     hideLoader();
+                }).catch(error=>{
+                    hideLoader();
+                    console.log(error);
                 })
     
             } catch (error) {
