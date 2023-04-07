@@ -1843,11 +1843,13 @@
 
 
                     const parameters = {
+                        reportParams: JSON.stringify(dataParms),
                         dataParams: JSON.stringify(dataParms)
                     }
                     console.log(parameters)
 
-                    _commonSvc.getReportDynamic({ parameters, format })
+                    // _commonSvc.getReportDynamic({ parameters, format })
+                    _commonSvc.exportExcel({ parameters })
                 } catch (error) {
                     console.log(error)
                 }

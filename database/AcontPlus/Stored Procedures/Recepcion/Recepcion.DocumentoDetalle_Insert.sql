@@ -108,15 +108,16 @@ BEGIN
 							,@cantidadSingle = cantidad
 							,@precioCostoSingle = CAST((CAST(precioTotalSinImpuesto AS decimal(15,5)) / CAST(cantidad AS decimal(18,5))) AS numeric(18,5))
 							,@precioVentaSingle = CAST(t.precioUnitario AS NUMERIC(15,5))
-							FROM Recepcion.Doc_Detalle_Temp t
+							FROM Recepcion.DocumentoDetalle t
 							WHERE t.idDocumento = @idDocumento
 							AND t.idArticulo = @idArticulo
-							AND NOT EXISTS (SELECT * FROM Recepcion.DocumentoDetalle rddd WHERE rddd.idDocumento = @idDocumento)
-							print cast(@idbodegasingle as varchar(10))
+ 							print cast(@cantidadSingle as varchar(10))
+														print @codTran
+																												print @codDocInv
 
 
 
-							EXEC Inventario.Transaccion_Insert @codTran, @codDocInv, @fechaEmision, @idDocumento,  @idArticulo, @idBodegaSingle , @cantidadSingle, @precioCostoSingle, @precioVentaSingle, @idUsuario
+							EXEC Inventario.Transaccion_Insert @codTran, @codDocInv, @fechaEmision, @idDocumento,  @idArticulo, @idBodegaSingle, @cantidadSingle, @precioCostoSingle, @precioVentaSingle, @idUsuario
 						END
 
 				END

@@ -74,7 +74,7 @@ namespace ApiReports.Controllers
                 return Ok(_response);
             }
         }
-
+        [HttpPost("ExportExcel")]
         public async Task<IActionResult> ExportExcel(ApiReportParamsDto data)
         {
             LogWriter _log = new LogWriter(_configuration);
@@ -93,31 +93,26 @@ namespace ApiReports.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
 
                 await _db.SPExecute(dsParams.Tables[0].Rows[0]["storedProcedure"].ToString());
-                if (!data.hasService)
-                {
-                    _db.AddDynamicParam("idRol", idUsuarioRol);
-                }
                 _db.AddDynamicParam("json", data.dataParams);
                 DataSet ds = _db.GetDataSet();
                 fileName = dsParams.Tables[0].Rows[0].Field<string>("fileName");
                 string trimmed = fileName.Split(".").First();
-                var excelFile = ExcelReports.Export(ds.Tables[0], trimmed);
+                var excelFile = ExcelReports.Export(ds, trimmed);
                 if (excelFile == null || excelFile.Length == 0)
                 {
                     ReportError.ReportNotFound(_response);
                 }
                 else
                 {
-                    _response.Create(excelFile, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                    _response.Create(excelFile, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName + "x");
                 }
-                return Ok(_response);
-            }
+             }
             catch (Exception ex)
             {
                 _log.LogError("Error in Download: \n" + ex.ToString());
-                ReportError.ReportNotFound(_response);
-                return Ok(_response);
+                ReportError.ReportNotFound(_response); 
             }
+            return File(_response.Content, _response.ContentType, _response.FileName);
         }
 
         //Dynamic Report --> From Client
