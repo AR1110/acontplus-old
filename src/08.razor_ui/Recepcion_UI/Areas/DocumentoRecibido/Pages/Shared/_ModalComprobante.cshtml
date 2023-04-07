@@ -321,10 +321,10 @@
         </div>
         <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
             <div class="row justify-content-end">
-                <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
-                    <div class="form-group" ng-if="selected[0].complete">
-                        <button type="button" class="btn btn-danger mt-4" ng-click="exportToExcel()">
-                            <i class="fas fa-file-excel"></i> Exportar
+                <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                    <div class="form-group" >
+                        <button type="button" ng-if="selected[0].complete" class="btn btn-success btn-lg mt-4" ng-click="exportToExcel()">
+                            <i class="fas fa-file-excel"></i> Exportar Articulos
                         </button>
                     </div>
                 </div>

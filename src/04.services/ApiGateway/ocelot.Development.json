@@ -723,6 +723,25 @@
       "UpstreamPathTemplate": "/api/Reporte/Download"
     },
     {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 44320
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Reporte/ExportExcel",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Post"
+      ],
+      "UpstreamPathTemplate": "/api/Reporte/ExportExcel"
+    },
+    {
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
