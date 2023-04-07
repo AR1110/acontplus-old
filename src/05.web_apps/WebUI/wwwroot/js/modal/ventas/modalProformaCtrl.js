@@ -628,6 +628,7 @@ export class ModalProformaEditarCtrl extends ModalProformaCtrl{
         this.actividadTipoIva       = actividadTipoIva;
        
         this.data.tarifa = this.actividadTipoIva.tarifa;
+       
     }
 
     async $onInit(){

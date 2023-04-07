@@ -175,11 +175,17 @@ export class ModalArticuloCtrl extends ModalBaseCtrl{
                 valoracionMetodos,
                 tipoArticulos,
                 tarifas,
-                etiquetaActividades
+                etiquetaActividades,
+                jsonPersmission
             } = results[0];
 
-            const moduloDecimales = results[1];
-            const estadoImpuestos = results[2]
+            let moduloDecimales = results[1];
+            let estadoImpuestos = results[2];
+
+            //Permisos Especiales asignados por el usuario 
+            
+            
+
             
             this.subFamilias = subFamilias;
 
@@ -226,9 +232,19 @@ export class ModalArticuloCtrl extends ModalBaseCtrl{
             
 
             //Actualizar artículo 
-            if(this._params){
+            if(this._params){                
                 this.tipoRegistro = 2;
-                this.getDataArticulo();                    
+                this.jsonArticlePermission = JSON.parse(jsonPersmission[0].jsonPermission);
+                this.gridOptions.jsonArticlePermission = this.jsonArticlePermission;
+                this.getDataArticulo(); 
+                
+                //Disabled Column 
+                for(let item of this.gridOptions.columnDefs){
+                    if(["precioVenta", "precioConIva", "porcentajeUtilidad", "ganancia"].includes(item.field)){
+                        item.visible = this.jsonArticlePermission.precio.update;
+                    }
+                    console.log(item);
+                }
             }             
         } catch (error) { 
             console.error(error)           
@@ -336,7 +352,7 @@ export class ModalArticuloCtrl extends ModalBaseCtrl{
                         this.data.fechaCaducidadLote = null
                     }  
                     
-                    
+                    //Cuando es editar el articulo desde Importación
                     if(this._params.isUpdateImport){
                         console.log('is update import', this._params.isUpdateImport)
                     }

@@ -432,7 +432,7 @@ export class CommonService {
             .then(
                 response => {
                     const results = JSON.parse(response.payload);
-
+                    
                     return {
                         subFamilias: results[0],
                         familias: results[1],
@@ -443,7 +443,8 @@ export class CommonService {
                         tipoArticulos: results[6],
                         tarifas: results[7],
                         etiquetaActividades: results[8],
-                        movimientosStocks: results[9]
+                        movimientosStocks: results[9],
+                        jsonPersmission: results[10]
                     }
                 }
             ).catch(

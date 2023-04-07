@@ -728,7 +728,7 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl{
                 this.impuestoTarifas = resultsDataFormEstab[2]; //Impuesto tarifas dependiendo el tipo Actividad
                                 
                 // this.actividadTipoIva = resultsDataFormEstab[2][0]
-
+              
             }else{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
             }
@@ -786,6 +786,8 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl{
             this.fechaEmisionEscrita = this._fS.getFechaEscrita(this.data.fechaEmision);
             this.fechaVencimientoEscrita = this._fS.getFechaEscrita(this.data.fechaVencimiento);
             
+            this.setDataInfoEstab(this.establecimientos, this.puntosEmisiones);
+
             this.$scope.$apply();            
 
         } catch (error) {
@@ -1045,6 +1047,7 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl{
                 this.actividadTipoIva = resultsDataFormEstab[2][0];
                 this.data.tarifa = this.actividadTipoIva.tarifa;
                 this.disabledImpuestoTarifa = this.actividadTipoIva.codigoPorcentaje=='2';
+                
             }else{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
             }

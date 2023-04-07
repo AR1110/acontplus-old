@@ -794,12 +794,30 @@
       "DownstreamPathTemplate": "/api/UsuarioPermiso/{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
-        "Get",
-        "POST",
-        "PUT",
+        "Get",   
+        "Put",
         "Delete"
       ],
       "UpstreamPathTemplate": "/api/UsuarioPermiso/{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7074
+        }
+      ],
+      "DownstreamPathTemplate": "/api/UsuarioPermiso",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [       
+        "Put"
+      ],
+      "UpstreamPathTemplate": "/api/UsuarioPermiso"
     }
   ]
 }
