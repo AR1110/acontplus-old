@@ -332,3 +332,8 @@
 /src/04.services/ApiInventory/obj/ApiInventory.csproj.nuget.g.targets
 /src/02.domain/Domain.Inventory/obj/Domain.Inventory.csproj.nuget.dgspec.json
 /src/02.domain/Domain.Inventory/obj/project.nuget.cache
+/src/02.domain/Domain.Inventory/obj/Release/net6.0/Domain.Inventory.assets.cache
+/src/02.domain/Domain.Inventory/obj/Release/net6.0/Domain.Inventory.GeneratedMSBuildEditorConfig.editorconfig
+/src/04.services/ApiInventory/obj/Release/net6.0/ApiInventory.assets.cache
+/src/04.services/ApiInventory/obj/Release/net6.0/ApiInventory.csproj.AssemblyReference.cache
+/src/04.services/ApiInventory/obj/Release/net6.0/ApiInventory.GeneratedMSBuildEditorConfig.editorconfig

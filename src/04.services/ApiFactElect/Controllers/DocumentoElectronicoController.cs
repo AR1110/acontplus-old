@@ -68,25 +68,25 @@ namespace ApiFactElect.Controllers
         public async Task<IActionResult> Put(int id)
         {
             LogWriter _logs = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                DAO _dao = new DAO(_configuration);
-                Dictionary<string, object> parameters = new Dictionary<string, object>();
-                parameters.Add("idRol", idUsuarioRol);
-                parameters.Add("id", id);
-                return Ok(await _dao.Default("FactElect.Doc_Elect_Update", parameters));
+                await _db.SPExecute("FactElect.Doc_Elect_Update");
+                _db.AddDynamicParam("idRol", idUsuarioRol);
+                _db.AddDynamicParam("id", id);
+                _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
                 _logs.LogError("Error while updating doc: \n " + ex.ToString());
-                return new BadRequestObjectResult(new
-                {
-                    code = 0,
-                    message = "Error al actualizar el documento"
-                });
+                _response.Create(code: "0", message: "Error al actualizar el documento");
             }
-
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
 
     }
