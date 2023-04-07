@@ -4,7 +4,6 @@ using Domain.Dtos.Compras;
 using Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -27,11 +26,11 @@ namespace ApiCompras.Controllers
         public async Task<IActionResult> Get(string json)
         {
             LogWriter _logs = new LogWriter(_configuration);
-            var _response = new GenericResponse();
+            GenericResponse _response = new GenericResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                 await _db.SPExecute("Compra.Documento_Ingreso_Get");
+                await _db.SPExecute("Compra.Documento_Ingreso_Get");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
                 _response = _db.GetDataSetAsync();
@@ -52,83 +51,80 @@ namespace ApiCompras.Controllers
         public async Task<IActionResult> Post([FromBody] ComprobanteDto data)
         {
             LogWriter _logs = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                DAO _dao = new DAO(_configuration);
-                Dictionary<string, object> parameters = new Dictionary<string, object> {
-                    {"idUsuarioRol", idUsuarioRol },
-                    {"comprobante", SqlValidation.ValidateSqlString(data.comprobante)},
-                    {"detalles", SqlValidation.ValidateSqlString(data.detalles)},
-                    {"impuestos", SqlValidation.ValidateSqlString(data.impuestos)}
-                };
-                return Ok(await _dao.Default("Compra.Documento_Ingreso_Insert", parameters));
+                 await _db.SPExecute("Compra.Documento_Ingreso_Insert");
+                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+                _db.AddDynamicParam("comprobante", SqlValidation.ValidateSqlString(data.comprobante));
+                _db.AddDynamicParam("detalles", SqlValidation.ValidateSqlString(data.detalles));
+                _db.AddDynamicParam("impuestos", SqlValidation.ValidateSqlString(data.impuestos));
+                _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
                 _logs.LogError("Error al guardar datos de Compra No Habitual: " + ex.ToString());
-                return new BadRequestObjectResult(new
-                {
-                    code = 0,
-                    message = "Error al guardar los datos de Compra No Habitual"
-                });
-
+                _response.Create(code: "0", message: "Error al guardar los datos de Compra No Habitual");
             }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] ComprobanteDto data)
         {
             LogWriter _logs = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                DAO _dao = new DAO(_configuration);
-                Dictionary<string, object> parameters = new Dictionary<string, object> {
-                    {"idUsuarioRol", idUsuarioRol },
-                    {"idDocumentoIngreso", id},
-                    {"Comprobante", SqlValidation.ValidateSqlString(data.comprobante)},
-                    {"detalles", SqlValidation.ValidateSqlString(data.detalles)},
-                    {"impuestos", SqlValidation.ValidateSqlString(data.impuestos)}
-                };
-                return Ok(await _dao.Default("Compra.Documento_Ingreso_Update", parameters));
+                await _db.SPExecute("Compra.Documento_Ingreso_Update");
+                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+                _db.AddDynamicParam("idDocumentoIngreso", id);
+                _db.AddDynamicParam("Comprobante", SqlValidation.ValidateSqlString(data.comprobante));
+                _db.AddDynamicParam("detalles", SqlValidation.ValidateSqlString(data.detalles));
+                _db.AddDynamicParam("impuestos", SqlValidation.ValidateSqlString(data.impuestos));
+                _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
                 _logs.LogError("Error al editar datos de Compra No Habitual: " + ex.ToString());
-                return new BadRequestObjectResult(new
-                {
-                    code = 0,
-                    message = "Error al editar los datos de Compra No Habitual"
-                });
-
+                _response.Create(code: "0", message: "Error al editar los datos de Compra No Habitual");
             }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
 
         [HttpPut("Cancel/{id}")]
         public async Task<IActionResult> Cancel(int id)
         {
             LogWriter _logs = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                DAO _dao = new DAO(_configuration);
-                Dictionary<string, object> parameters = new Dictionary<string, object> {
-                    {"idUsuarioRol", idUsuarioRol },
-                    {"idDocumentoIngreso", id},
-                };
-                return Ok(await _dao.Default("Compra.Documento_Ingreso_Update_Cancel", parameters));
+                await _db.SPExecute("Compra.Documento_Ingreso_Update_Cancel");
+                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+                _db.AddDynamicParam("idDocumentoIngreso", id);
+                _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
                 _logs.LogError("Error al anular datos de Compra No Habitual: " + ex.ToString());
-                return new BadRequestObjectResult(new
-                {
-                    code = 0,
-                    message = "Error al anular los datos de Compra No Habitual"
-                });
-
+                _response.Create(code: "0", message: "Error al anular los datos de Compra No Habitual");
             }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
     }
 }
