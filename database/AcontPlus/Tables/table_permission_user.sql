@@ -30,12 +30,13 @@ SELECT idUsuario,'V'modulo, jsonData = (SELECT comprobantes = (SELECT
 															for json path)
 FROM dbo.Usuario where idUsuario = 1 
 union all
-SELECT idUsuario,'AR'modulo, jsonData = (SELECT 'precio' = (SELECT 'admin'= 'true' for json path) for json path)
+SELECT idUsuario,'AR'modulo, jsonData = (SELECT 'precio' = (SELECT 'view'= 'true', 'update' = 'true'  for json path) for json path)
 FROM dbo.Usuario where idUsuario = 1 
 
 SELECT 
-	 jsonData
-FROM @table WHERE modulo = 'V'
+	 *
+FROM @table WHERE modulo IN('V', 'AR')
 
 
 
+SELECT * FROM App.UsuarioRol

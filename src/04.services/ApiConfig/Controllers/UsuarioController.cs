@@ -70,7 +70,7 @@ namespace ApiConfig.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("App.Usuario_Insert");
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
-                _response = _db.GetDataTableAsync();
+                _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
@@ -88,10 +88,10 @@ namespace ApiConfig.Controllers
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("App.Usuario_Get");
+                await _db.SPExecute("App.Usuario_Update");
                 _db.AddDynamicParam("id", id);
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
-                _response = _db.GetDataTableAsync();
+                _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
@@ -110,7 +110,7 @@ namespace ApiConfig.Controllers
             {
                 await _db.SPExecute("App.Usuario_Delete");
                 _db.AddDynamicParam("id", id);
-                _response = _db.GetDataTableAsync();
+                _response = _db.GetDefault();
             }
             catch (Exception ex)
             {

@@ -268,7 +268,7 @@
                 codRol: $scope.data.codRol
             }
 
-            mS.getData('post', 'Usuario/Post/'+ JSON.stringify(data), null, true).then(response=>{                      
+            mS.getData('post', 'Usuario/'+ JSON.stringify(data), null, true).then(response=>{                      
                 if (response.code == "0") {
                     tS.toastr('warning', response.message, response.titleSms);                    
                 }
@@ -304,7 +304,8 @@
                     return
                 } 
     
-                mS.getData('put', `Usuario/Put/${$scope.data.idUsuario}/${JSON.stringify($scope.data)}`, null, true).then(response => {
+                mS.getData('put', `Usuario/${$scope.data.idUsuario}/${JSON.stringify($scope.data)}`, null, true).then(response => {
+                    console.log(response)
                     if (response.code == "0") {
                         tS.toastr('warning', response.message, response.titleSms);                    
                     }
