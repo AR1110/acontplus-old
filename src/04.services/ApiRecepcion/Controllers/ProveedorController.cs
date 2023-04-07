@@ -72,29 +72,26 @@ namespace ApiRecepcion.Controllers
         public async Task<IActionResult> Put(string json)
         {
             LogWriter _logs = new LogWriter(_configuration);
-
+            GenericResponse _response = new GenericResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-
-                Dictionary<string, object> parameters = new Dictionary<string, object>
-                {
-                    { "idRol", idUsuarioRol },
-                    { "jsonData", json }
-                };
-                DAO _dao = new DAO(_configuration);
-                return Ok(await _dao.Default("Recepcion.Proveedor_Update", parameters));
+                await _db.SPExecute("Recepcion.Proveedor_Update");
+                _db.AddDynamicParam("idRol", idUsuarioRol);
+                _db.AddDynamicParam("jsonData", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
                 _logs.LogError("Error al actualizar el proveedor: " + ex.ToString());
-                return new BadRequestObjectResult(new
-                {
-                    code = 0,
-                    message = "Error al actualizar el proveedor"
-                });
+                _response.Create(code: "0", message: "Error al actualizar el proveedor");
+            }
+            finally
+            {
+                _db.Close();
             }
 
+            return Ok(_response);
         }
     }
 }

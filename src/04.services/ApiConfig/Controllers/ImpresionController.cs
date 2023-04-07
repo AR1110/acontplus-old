@@ -1,5 +1,6 @@
 ﻿using Common.Logs;
 using DataAccess;
+using Helpers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiConfig.Controllers
@@ -9,27 +10,34 @@ namespace ApiConfig.Controllers
     public class ImpresionController : ControllerBase
     {
         private readonly IConfiguration _configuration;
+        private readonly DbAccess _db;
         public ImpresionController(IConfiguration configuration)
         {
             _configuration = configuration;
+            _db = new DbAccess(_configuration);
         }
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
             LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
             try
             {
-                Dictionary<string, object> _params = new Dictionary<string, object>();
-                _params["idUsuarioRol"] = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                _params["json"] = json;
-                DAO _dao = new DAO(_configuration);
-                return Ok(await _dao.Default("ApiPrinter.Impresion_Get", _params));
+                await _db.SPExecute("ApiPrinter.Impresion_Get");
+                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("json", json);
+                _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
                 _log.LogError("Error getting data to print: \n" + ex.ToString());
-                return BadRequest(ex.Message);
+                _response.Create(code: "0", message: "Error al obtener los datos para imprimir");
             }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
     }
 }
