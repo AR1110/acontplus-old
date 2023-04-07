@@ -35,6 +35,10 @@ BEGIN
 	DECLARE @rucProv VARCHAR(20)
 	DECLARE @idProveedor INT 
 	DECLARE @inventory VARCHAR(5)
+	DECLARE @fechaEmision DATETIME
+	DECLARE @codDoc VARCHAR(2)
+	DECLARE @codDocInv VARCHAR(2)
+	DECLARE @codTran VARCHAR(2)
 
 
 	BEGIN TRY
@@ -54,7 +58,10 @@ BEGIN
 
 		SELECT TOP 1 @inventory = llevaInventario FROM Config.GestionSistema WITH (NOLOCK) WHERE idEntidad = @idEntidad
 
-		SELECT @rucProv = rucEmisor  FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE idDocumento = @idDocumento 
+		SELECT @rucProv = rucEmisor, @fechaEmision = CAST(fechaEmision AS date), @codDoc = codDoc FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE idDocumento = @idDocumento 
+		
+		SET @codDocInv = (SELECT CASE WHEN @codDoc = '01' THEN 'FE' WHEN @codDoc = '04' THEN 'NC' END)
+		SET @codTran = (SELECT CASE WHEN @codDoc = '01' THEN 'E' WHEN @codDoc = '04' THEN 'S' END)
 
 		SELECT TOP 1 @idProveedor = idProveedor FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND numeroIdentificacion = @rucProv
 
@@ -88,6 +95,31 @@ BEGIN
 					AND ddi.idDocumento = t.idDocumento
 					AND t.idArticulo = @idArticulo
 					WHERE ddi.idDocumento = @idDocumento 
+					print @inventory
+					IF @inventory = 'SI'
+						BEGIN 
+							DECLARE @idBodegaSingle INT
+							,@cantidadSingle NUMERIC(18,2)
+							,@precioCostoSingle NUMERIC(18,5)
+							,@precioVentaSingle NUMERIC(18,5)
+												print 'yes'
+
+							SELECT @idBodegaSingle = t.idBodega
+							,@cantidadSingle = cantidad
+							,@precioCostoSingle = CAST((CAST(precioTotalSinImpuesto AS decimal(15,5)) / CAST(cantidad AS decimal(18,5))) AS numeric(18,5))
+							,@precioVentaSingle = CAST(t.precioUnitario AS NUMERIC(15,5))
+							FROM Recepcion.DocumentoDetalle t
+							WHERE t.idDocumento = @idDocumento
+							AND t.idArticulo = @idArticulo
+ 							print cast(@cantidadSingle as varchar(10))
+														print @codTran
+																												print @codDocInv
+
+
+
+							EXEC Inventario.Transaccion_Insert @codTran, @codDocInv, @fechaEmision, @idDocumento,  @idArticulo, @idBodegaSingle, @cantidadSingle, @precioCostoSingle, @precioVentaSingle, @idUsuario
+						END
+
 				END
 
 			ELSE
@@ -140,9 +172,8 @@ BEGIN
 						DECLARE @cantidad NUMERIC(18,2)
 						DECLARE @precioCosto NUMERIC(18,5)
 						DECLARE @precioVenta NUMERIC(18,5)
-						DECLARE @fechaEmision DATETIME
 
-						SET @fechaEmision = (SELECT CAST(fechaEmision AS date) FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento)
+						--SET @fechaEmision = (SELECT CAST(fechaEmision AS date) FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento)
 
 						DECLARE cursor_inventory CURSOR LOCAL FOR
 						SELECT t.idArticulo, idBodega, cantidad, a.precioCosto,  t.precioUnitario 
@@ -159,7 +190,7 @@ BEGIN
 						BEGIN
 							--tipo transaccion 2 salidas
 							--tipo documento 1 factura electronica
-							EXEC Inventario.Transaccion_Insert 'E', 'FE', @fechaEmision, @idDocumento,  @idArticulo, @idBodega , @cantidad, @precioCosto, @precioVenta, @idUsuario
+							EXEC Inventario.Transaccion_Insert @codTran, @codDocInv, @fechaEmision, @idDocumento,  @idArticulo, @idBodega , @cantidad, @precioCosto, @precioVenta, @idUsuario
 							FETCH NEXT FROM cursor_inventory INTO @idArticuloToInsert, @idBodega , @cantidad, @precioCosto, @precioVenta
 						END
 						CLOSE cursor_inventory
