@@ -24,9 +24,14 @@ BEGIN
 		idUsuarioRol INT '$.idUsuarioRol'
 	)
 
+	BEGIN 
+		
+
 	IF EXISTS(SELECT 1 FROM Config.UserPermission WHERE idUsuarioRol = @idUsuarioRol)
 		BEGIN 
 			SELECT 
+				idUserPermission,
+				codModule,
 				jsonPermission
 			FROM Config.UserPermission WHERE idUsuarioRol = @idUsuarioRol
 		END 
