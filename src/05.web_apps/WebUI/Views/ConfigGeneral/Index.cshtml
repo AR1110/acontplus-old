@@ -59,8 +59,8 @@
 
                                                     <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                                                         <div class="form-group" ng-if="gestionSistema.llevaInventario">
-                                                            <select name="metodoValoracion" id="metodoValoracion" class="form-control border-select">
-                                                                <option ng-repeat="item in valoracionMetodos">{{item.descripcion}}</option>
+                                                            <select name="metodoValoracion" id="metodoValoracion" class="form-control border-select" ng-model="gestionSistema.idMetodoValoracion">
+                                                                <option ng-value="item.idMetodoValoracion" ng-repeat="item in valoracionMetodos">{{item.descripcion}}</option>
                                                             </select>
                                                         </div>
                                                     </div>

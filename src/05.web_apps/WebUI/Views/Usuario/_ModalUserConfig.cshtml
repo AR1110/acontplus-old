@@ -10,10 +10,10 @@
     <div class="row">
         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">            
             <md-list flex>
-                <div class="card-header bg-info">
-                    <h6 class="m-b-0 text-white"><i class="fas fa-industry"></i> Entidades</h6>
+                <div class="card-header bg-transparent">
+                    <h6 class="m-b-0"><i class="fas fa-industry"></i> Entidades</h6>
                 </div>
-                <md-list-item class="md-3-line" ng-repeat="item in usuarioRoles" ng-click="getEstablecimientos(item)">          
+                <md-list-item class="md-3-line" ng-repeat="item in usuarioRoles" ng-click="onClickEntidadRol(item)">          
                     <div class="md-list-item-text" layout="column">
                         <h6>{{ item.razonSocial }}</h6>
                         <span class="text-muted">{{ item.ruc }}</span>                        
@@ -72,7 +72,7 @@
                                         <tr ng-if="establecimientos.length===0">
                                             <td colspan="6">
                                                 <div class="alert alert-warning text-center" role="alert">
-                                                    No hay Sucursales Asignadas.                                            
+                                                    No hay Establecimientos Asignadas.                                            
                                                 </div>                                   
                                             </td>
                                         </tr>
@@ -90,8 +90,16 @@
                         <i class="mdi mdi-key"></i> Permisos
                     </uib-tab-heading>
                     
-                    <div class="card">
-                        <div class="card-body">
+                    <div class="card">                      
+                        <div class="card-header bg-transparent">
+                            <div class="float-right">
+                                <button class="btn btn-success" ng-click="savePermission()">
+                                    <i class="mdi mdi-account-key"></i> Guardar permiso
+                                </button>
+                            </div>
+                        </div>
+                        <md-divider></md-divider>
+                        <div class="card-body">                            
                             <div class="row">
                                 <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
                                     <div class="card">
@@ -99,9 +107,9 @@
                                             <h6 class="m-b-0 text-white"><i class="mdi mdi-store"></i> Artículo</h6>     
                                         </div>
                                         <div class="card-body">
-                                            <div class="icheck-info">
-                                                <input type="checkbox" name="permissionPrice" id="permissionPrice" ng-model="articlePermissionsLabel.precio.updatej">
-                                                <label for="permissionPrice">{{articlePermissions.precio.label}}</label>
+                                            <div class="icheck-info" ng-repeat="item in articlePermissions">
+                                                <input type="checkbox" name="articlePermission{{$index+1}}" id="articlePermission{{$index+1}}" ng-model="item.update">
+                                                <label for="articlePermission{{$index+1}}">{{item.label}}</label>
                                             </div>                                    
                                         </div>
                                     </div>
@@ -114,38 +122,32 @@
                                         </div>
                                         <div class="card-body">
                                             <span class="text-muted">Comprobante</span>
-                                            <div class="icheck-info" id="comprobantePermission" ng-repeat="item in salesPermissions.comprobante">
+                                            <div class="icheck-info" id="comprobantePermission" ng-repeat="item in salePermissions.comprobante">
                                                 <input type="checkbox" name="compPermission{{$index+1}}" id="compPermission{{$index+1}}" ng-model="item.update">
                                                 <label for="compPermission{{$index+1}}">{{item.label}}</label>                                         
-                                            </div>   
-
-                                            @* <div class="icheck-info">
-                                                <input type="checkbox" name="permissionPrice" id="permissionPrice2" ng-model="articlePermissionsLabel.precio.removed">
-                                                <label for="permissionPrice2">Modificar  descuento total</label>
-                                            </div>   
-
-                                            <div class="icheck-info">
-                                                <input type="checkbox" name="permissionPrice" id="permissionPrice3" ng-model="articlePermissionsLabel.precio.create">
-                                                <label for="permissionPrice3">Cambiar tarifa general</label>
-                                            </div>   
-
-                                            <div class="icheck-info">
-                                                <input type="checkbox" name="permissionPrice" id="permissionPrice4" ng-model="articlePermissionsLabel.precio.update3">
-                                                <label for="permissionPrice4">Modificar fecha emision</label>
-                                            </div> 
-
-                                            <div class="icheck-info">
-                                                <input type="checkbox" name="permissionPrice" id="permissionPrice4" ng-model="articlePermissionsLabel.precio.update3">
-                                                <label for="permissionPrice4">Cambiar tiempo crédito</label>
-                                            </div>  *@
+                                            </div>                                              
                                         </div>
 
                                         <div class="card-body">
                                             <span class="text-muted">Detalle</span>
-                                            <div class="icheck-info" id="detailPermission" ng-repeat="item in salesPermissions.detail">
+                                            <div class="icheck-info" id="detailPermission" ng-repeat="item in salePermissions.detail">
                                                 <input type="checkbox" name="detailPermission{{$index+1}}" id="detailPermission{{$index+1}}" ng-model="item.update">
                                                 <label for="detailPermission{{$index+1}}">{{item.label}}</label>                                         
                                             </div>                                     
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                                    <div class="card">
+                                        <div class="card-header bg-warning">
+                                            <h6 class="m-b-0 text-white"><i class="mdi mdi-bulletin-board"></i> Caja</h6>     
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="icheck-info">
+                                                <input type="checkbox" name="articlePermission" id="articlePermission" ng-model="item.update">
+                                                <label for="articlePermission">Ver otras cajas</label>
+                                            </div>                                    
                                         </div>
                                     </div>
                                 </div>
@@ -161,7 +163,7 @@
         
 </div>
 
-<div class="modal-footer">
+<div class="modal-footer">    
     <button class="btn btn-dark btn-sm" ng-click="closeModal()">
         &times; Cerrar
     </button>

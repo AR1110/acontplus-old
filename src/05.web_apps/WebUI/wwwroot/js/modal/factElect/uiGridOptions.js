@@ -472,7 +472,8 @@ export class UiGridOptions{
         let [subTotalExentoIva, subTotalNetoExentoIva] = this.getTotalIva(CODIGO_PORCENTAJE_IVAEXENTO);
         let [subTotalNoObjetoIva, subTotalNetoNoObjetoIva] = this.getTotalIva(CODIGO_PORCENTAJE_IVA_NO_OBJETO);
         
-        let iva = subTotalNetoIva * this.actividadTipoIva.tarifa / 100;                
+        let iva = subTotalNetoIva * this.actividadTipoIva.tarifa / 100;  
+       
         let total = iva + this.getTotalDetalle() +  this.getTotalIce();
        
         return {

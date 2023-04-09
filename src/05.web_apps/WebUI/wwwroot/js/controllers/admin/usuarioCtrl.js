@@ -133,7 +133,7 @@
                 })       
     
                 if(isConfirmed){
-                    _mS.getData('post', '/Usuario/Delete?idUsuario=' + item.idUsuario).then(response => {
+                    _mS.getData('delete', 'Usuario/' + item.idUsuario, null, true).then(response => {
                         if (response.id == "0") {
                             toast.toastr('warning', response.message, response.titleSms);                        
                         }
@@ -255,8 +255,7 @@
             }
     
             $scope.data.nombreCompleto = `${$scope.data.nombres} ${$scope.data.apellidos}`
-            $scope.data.idRol =  Id_Usuario_Rol,
-            $scope.data.codRol = 'AD'; //REVISAR POSTERIORMENTE
+           
             let data = {
                 nroIdentificacion: $scope.data.nroIdentificacion,
                 correo: $scope.data.correo,
@@ -264,11 +263,11 @@
                 contrasena: $scope.data.contrasena,
                 nombreCompleto: $scope.data.nombreCompleto,
                 idPolitica: $scope.data.idPolitica,
-                idRol: $scope.data.idRol,
-                codRol: $scope.data.codRol
+                idRol: Id_Usuario_Rol,
+                codRol: 'AD'
             }
 
-            mS.getData('post', 'Usuario/Post/'+ JSON.stringify(data), null, true).then(response=>{                      
+            mS.getData('post', 'Usuario/'+ JSON.stringify(data), null, true).then(response=>{                      
                 if (response.code == "0") {
                     tS.toastr('warning', response.message, response.titleSms);                    
                 }
@@ -304,11 +303,12 @@
                     return
                 } 
     
-                mS.getData('put', `Usuario/Put/${$scope.data.idUsuario}/${JSON.stringify($scope.data)}`, null, true).then(response => {
-                    if (response.code == "0") {
+                mS.getData('put', `Usuario/${$scope.data.idUsuario}/${JSON.stringify($scope.data)}`, null, true).then(response => {
+                    console.log(response)
+                    if (response.code == "0" || response.id == "0") {
                         tS.toastr('warning', response.message, response.titleSms);                    
                     }
-                    if (response.code == "1") {
+                    if (response.code == "1" || response.id == "1") {
                         tS.toastr('success', response.message, response.titleSms);
                         $uibModalInstance.close(response)                         
                     }
@@ -347,102 +347,6 @@
 
         $scope.disbledTabPermission = true;
 
-        // $scope.permissions = [
-        //     {
-        //       comprobantes: [
-        //         {
-        //           fechaEmision: [ { update: 'true' } ],
-        //           tiempoCredito: [ { update: 'true' } ],
-        //           tarifa: [ { update: 'true' } ],
-        //           porcentajeDescuento: [ { admin: 'true' } ],
-        //           descuentoTotal: [ { update: 'true' } ]
-        //         }
-        //       ],
-        //       detalles: [
-        //         {
-        //           medida: [ { update: 'true' } ],
-        //           tipoIva: [ { update: 'true' } ],
-        //           tarifa: [ { update: 'true', view: 'true' } ],
-        //           precioUnitario: [ { update: 'true' } ],
-        //           precioConImpuesto: [ { update: 'true' } ],
-        //           porcentajeDescuento: [ { update: 'true' } ],
-        //           descuento: [ { update: 'true' } ]
-        //         }
-        //       ]
-        //     }
-        // ]        
-
-        // $scope.articlePermissions = {
-        //     precio: {
-        //         label: "Permitir actualizar el precio costo y venta",
-        //         acctions: {
-        //             update: true, 
-        //             view: true,                                         
-        //         }
-        //     }
-        // }
-
-        $scope.salesPermissions = {
-            comprobante: {
-                descuento: {
-                    label: "Modificar descuento",
-                    update: true
-                },
-                porcentajeDescuento: {
-                    label: "Modificar % descuento",
-                    update: true
-                },
-                tarifa: {
-                    label: "Cambiar tarifa",
-                    update: true
-                },
-                fechaEmision: {
-                    label: "Modificar fecha",
-                    update: true
-                },
-                tiempoCredito: {
-                    label: "Cambiar tiempo crédito",
-                    update: true                    
-                }                              
-            },
-            detail: {
-                medida: {
-                    label: "Cambiar medida",
-                    update: true
-                },
-                tipoIva: {
-                    label: "Cambiar tipo IVA",
-                    update: true                    
-                },
-                precioUnitario: {
-                    label: "Modificar Precio Unitario",
-                    update: true,
-                    view: true
-                },
-                precioConIva: {
-                    label: "Modificar Precio con IVA",
-                    update: true,
-                    view: true
-                },
-                porcentajeDescuento: {
-                    label: "Modificar Porcentaje Descuento",
-                    update: true,
-                    view: true
-                },
-                descuento: {
-                    label: "Modificar Porcentaje Descuento",
-                    update: true,
-                    view: true
-                }
-            }
-        }
-
-        
-        $uibModalInstance.rendered.then(()=>{
-            $scope.tabPermissionsInitiload();
-        })
-        
-
         $scope.initiload = ()=>{
             try {
                 mS.getData('get', 'UsuarioRol/Get/' + params.idUsuario, null, true).then(response=>{
@@ -455,8 +359,6 @@
                     }
                 })
 
-                console.log($scope.params)
-                // mS.getData('get', 'UsuarioPermiso/Get/' + JSON.stringify({id}))
             } catch (error) {
                 console.log(error)
             }
@@ -464,40 +366,69 @@
 
         $scope.initiload();
 
+        
+        
+        $scope.getEstablecimientos = ()=>{
+            let json = {
+                idUsuarioRol: $scope.dataEntidadRol.idUsuarioRol,
+                typeList: 1,
+                idRol: Id_Usuario_Rol
+            }
+            
+            $scope.establecimientos = [];
+            mS.getData('get', '/EstabAsig/Get?json=' +JSON.stringify(json)).then(response=>{
+                if(response.code==='0'){
+                    console.log(response)
+                }
+                if(response.code==='1'){
+                    $scope.establecimientos = JSON.parse(response.payload) || [];                                         
+                }
+            })  
+        }
+        
+        $scope.getUserPermissions = ()=>{
+            mS.getData('get', 'UsuarioPermiso/Get/' + JSON.stringify({idUsuarioRol: $scope.dataEntidadRol.idUsuarioRol}), null, true).then(response =>{
+                if(response.code==="0"){
+                    console.log(response)
+                }
+                if(response.code==='1'){
+                    let [dataSalePermissions, dataArticlePermissions] = JSON.parse(response.payload);
+                    $scope.dataSalePermissions = dataSalePermissions;
+                    $scope.dataArticlePermissions = dataArticlePermissions;
+                    
+                    // const jsonStringWithoutBrackets = JSON.parse(jsonString.replaceAll('[', '').replaceAll(']', ''));
+                    // const obj = JSON.parse(jsonStringWithoutBrackets.jsonPermission);                    
+                   
+                    $scope.salePermissions = JSON.parse($scope.dataSalePermissions.jsonPermission);
+                    $scope.articlePermissions = JSON.parse($scope.dataArticlePermissions.jsonPermission)                                
+
+                    console.log($scope.salePermissions)
+                    console.log($scope.articlePermissions)
+                }
+            })
+        } 
+
+
+        $scope.onClickEntidadRol = (item)=>{
+            try{ 
+
+                $scope.dataEntidadRol = item;
+                $scope.disbledTabPermission = false;
+
+                $scope.getEstablecimientos();
+                $scope.getUserPermissions();
+                
+            }catch(error){
+                $scope.disbledTabPermission = true;
+                console.log(error)
+            }
+        }
 
          /**
          * ----------------------------------------------START ESTAB---------------------------
          * Asignacion de Establecimiento
          * @param {object} item 
          */
-        $scope.getEstablecimientos =(item)=>{
-            try {
-                showLoader();
-                $scope.dataEntidadRol = item;
-                $scope.disbledTabPermission = false;
-                let json = {
-                    idUsuarioRol: item.idUsuarioRol,
-                    typeList: 1,
-                    idRol: Id_Usuario_Rol
-                }
-                $scope.establecimientos = [];
-                mS.getData('get', '/EstabAsig/Get?json=' +JSON.stringify(json)).then(response=>{
-                    if(response.code==='0'){
-                        hideLoader();
-                        console.log(response)
-                    }
-                    if(response.code==='1'){
-                        $scope.establecimientos = JSON.parse(response.payload) || [];  
-                        hideLoader();                                              
-                    }
-                })            
-            } catch (error) {
-                hideLoader();
-                $scope.disbledTabPermission = true;
-                console.log(error)
-            }      
-        }    
-
         $scope.onChangePredeterminada = (item)=>{        
             try {
                 mS.getData('put', '/EstabAsig/Update?id=' + item.idEstab_Asig).then(response=>{
@@ -584,51 +515,53 @@
                 console.log(error)
             }
         }
+        
+        
 
+        $scope.savePermission = ()=>{
+            try {
+                showLoader();
+                let jsonPermission =JSON.stringify([
+                    {
+                        idUserPermission: $scope.dataSalePermissions.idUserPermission,
+                        jsonPermission: $scope.salePermissions
+                    },
+                    {
+                        idUserPermission: $scope.dataArticlePermissions.idUserPermission,
+                        jsonPermission: $scope.articlePermissions
+                    }
+                ]);
 
-
-
-        $scope.tabPermissionsInitiload = function(){
-                 // Get a reference to the parent element   
-            let contentComprobantePermission = document.getElementById("comprobantePermission");
-
-            // for(let item in $scope.salesPermissions){
-            //     if(item==="comprobante"){
-            //         for(let permission in $scope.salesPermissions["comprobante"]){
-            //             createCheckBoxCompPermission({
-            //                 content: contentComprobantePermission,
-            //                 name: permission,
-            //                 value: $scope.salesPermissions[item][permission].update,
-            //                 id: permission,
-            //                 htmlFor: permission,
-            //                 htmlForTextNode: $scope.salesPermissions[item][permission].label
-            //             })                          
-            //         }
-            //     }
-            // }
-            // createCheckBoxCompPermission();
-            
-            function createCheckBoxCompPermission({content, name, value, id, htmlFor, htmlForTextNode}){                
-                let checkbox = document.createElement('input');        
-                // Create a new checkbox element
-                checkbox.type = 'checkbox';
-                checkbox.name = name;
-                checkbox.value = value;
-                checkbox.id = id;
-
-                // Create a new label element
-                let label = document.createElement('label');
-                label.htmlFor = htmlFor;
-                label.appendChild(document.createTextNode(htmlForTextNode));
-
-                // Append the checkbox and label to the parent element
-                content.appendChild(checkbox);
-                content.appendChild(label);
+                let data = {
+                    jsonPermission
+                }
+                // console.log($scope.salePermissions)
+                // console.log($scope.articlePermissions)                           
+                mS.getData('put', 'UsuarioPermiso' ,data, true).then(response=>{
+                    console.log(response)
+                    if(response.code==="0"){
+                        hideLoader();
+                        console.log(response)
+                    }
+                    if(response.code==="1"){
+                        hideLoader();
+                        tS.toastr('success', response.message);
+                        $scope.getUserPermissions()
+                        
+                    }
+                }).catch(error=>{
+                    console.log(error)
+                    hideLoader();
+                })
+                
+            } catch (error) {
+                hideLoader();
+                console.log(error)    
             }
-
         }
 
-        console.log('modal')
+
+
         $scope.closeModal = ()=> {
             $uibModalInstance.close();
         }
@@ -661,10 +594,17 @@
                     mS.getData('get', URL_PTO_EMISION),        
                     mS.getData('get', URL_BODEGA),                                        
                 ]).then(results=>{
-                    console.log(results);
-                    $scope.puntosEmisiones = JSON.parse(results[0].payload) || [];
-                    $scope.bodegas = JSON.parse(results[1].payload) || [];
+                    
+                    if(results[0].code=="1"){
+                        $scope.puntosEmisiones = JSON.parse(results[0].payload) || [];
+                    }
+                    if(results[1].code==="1"){
+                        $scope.bodegas = JSON.parse(results[1].payload) || [];
+                    }
                     hideLoader();
+                }).catch(error=>{
+                    hideLoader();
+                    console.log(error);
                 })
     
             } catch (error) {

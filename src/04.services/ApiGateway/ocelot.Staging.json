@@ -756,6 +756,29 @@
         "Get"
       ],
       "UpstreamPathTemplate": "/api/UsuarioRol/Get/{id}"
+    },
+
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 8098
+        }
+      ],
+      "DownstreamPathTemplate": "/api/UsuarioPermiso/{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get",
+        "POST",
+        "PUT",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/api/UsuarioPermiso/{everything}"
     }
   ]
 }

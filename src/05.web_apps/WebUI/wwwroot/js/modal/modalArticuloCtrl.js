@@ -1,5 +1,5 @@
  
-import { ArticuloTarifaGridOption } from './../helpers/articuloTarifaGridOption.min.js?v=0.2';
+import { ArticuloTarifaGridOption } from './../helpers/articuloTarifaGridOption.min.js?v=0.11';
 
 class ModalBaseCtrl {
     constructor({$scope, _mS, _commonSvc, _form}){
@@ -175,11 +175,17 @@ export class ModalArticuloCtrl extends ModalBaseCtrl{
                 valoracionMetodos,
                 tipoArticulos,
                 tarifas,
-                etiquetaActividades
+                etiquetaActividades,
+                jsonPersmission
             } = results[0];
 
-            const moduloDecimales = results[1];
-            const estadoImpuestos = results[2]
+            let moduloDecimales = results[1];
+            let estadoImpuestos = results[2];
+
+            //Permisos Especiales asignados por el usuario 
+            
+            
+
             
             this.subFamilias = subFamilias;
 
@@ -192,7 +198,11 @@ export class ModalArticuloCtrl extends ModalBaseCtrl{
             this.data.idMedida = this.medidas.length>0? this.medidas[0].idMedida: 0;
 
             //Etiqueta Actividades 
-            this.etiquetaActividades = etiquetaActividades;        
+            this.etiquetaActividades = etiquetaActividades; 
+            //Aplicacion de Permisos
+            this.articlePermission = JSON.parse(jsonPersmission[0].jsonPermission);
+            this.gridOptions.articlePermission = this.articlePermission;
+            
             this.tarifas = tarifas;
             
             this.marcas  = marcas
@@ -226,9 +236,23 @@ export class ModalArticuloCtrl extends ModalBaseCtrl{
             
 
             //Actualizar artículo 
-            if(this._params){
+            if(this._params){                
                 this.tipoRegistro = 2;
-                this.getDataArticulo();                    
+                this.getDataArticulo(); 
+
+                
+                //Disabled Column 
+                for(let item of this.gridOptions.columnDefs){
+                    if(["precioConIva", "porcentajeUtilidad", "ganancia"].includes(item.field)){
+                        item.visible = this.articlePermission.precio.update;
+                        // item.enableCellEdit = this.jsonArticlePermission.precio.update;
+                        // item.enableCellEditOnFocus = this.jsonArticlePermission.precio.update;
+                    }
+                    if(item.field==="precioVenta"){
+                        item.enableCellEdit = this.articlePermission.precio.update;
+                        item.enableCellEditOnFocus = this.articlePermission.precio.update;                    
+                    }
+                }
             }             
         } catch (error) { 
             console.error(error)           
@@ -336,7 +360,7 @@ export class ModalArticuloCtrl extends ModalBaseCtrl{
                         this.data.fechaCaducidadLote = null
                     }  
                     
-                    
+                    //Cuando es editar el articulo desde Importación
                     if(this._params.isUpdateImport){
                         console.log('is update import', this._params.isUpdateImport)
                     }
@@ -416,6 +440,11 @@ export class ModalArticuloCtrl extends ModalBaseCtrl{
 
     //Calcular Tarifa al momento de agregar el articulo 
     recalculateTarifaAdd() {
+        if(this.tipoRegistro ===2 && !this.articlePermission.precio.update){
+            this._toastr.toastr('warning', 'No tienes permiso para realizar esta acción')
+            return
+        }
+
         if ([null, undefined, "", 0].includes(this.data.precioCosto) || isNaN(this.data.precioCosto)) return
 
         this.data.precioCosto = this._form.roundNumber(this.data.precioCosto, this.config.nroPrecio)
@@ -691,23 +720,23 @@ export class ModalArticuloGeneralCtrl {
     querySearchArticulo(){            
         this.dataSearch.numeroPagina = 1;            
         
-        this.$timeout(()=>{            
-            this._mS.getData('get','/Articulo/List?json=' + JSON.stringify(this.dataSearch)).then(response=>{
-                console.log("procesando.................")
-                if(response.code==="0"){
-                    this.listaArticulos = []; //Vaciar el array (Lista de Articulos);  
-                    this._tS.toastr('warning', response.message, response.titleSms);
-                    return
-                } 
+              
+        this._mS.getData('get','/Articulo/List?json=' + JSON.stringify(this.dataSearch)).then(response=>{
+            
+            if(response.code==="0"){
+                this.listaArticulos = []; //Vaciar el array (Lista de Articulos);  
+                this._tS.toastr('warning', response.message, response.titleSms);
+                return
+            } 
 
-                let parseArticulos = JSON.parse(response.payload)                                                        
-                this.listaArticulos = parseArticulos.map(item=>{
-                    item.tarifa = JSON.parse(item.tarifa);
-                    return item;
-                })  
-                this.tarifas = this.listaArticulos.length>0?this.listaArticulos[0].tarifa: [];                    
-            })
-        }, 500)            
+            let parseArticulos = JSON.parse(response.payload)                                                        
+            this.listaArticulos = parseArticulos.map(item=>{
+                item.tarifa = JSON.parse(item.tarifa);
+                return item;
+            })  
+            this.tarifas = this.listaArticulos.length>0?this.listaArticulos[0].tarifa: [];                    
+        })
+                  
     }
 
     consultarPrecioEnter($event){
@@ -1773,7 +1802,7 @@ export class ModalArticuloImpuestoCtrl{
     
             const dataArticulo = JSON.parse(results[1].payload)
             this.data = dataArticulo[0][0];
-            console.log(this.data)            
+                
             this.tarifas = dataArticulo[1].map(val => {
                 val.precioConIva = val.precioConIva;
                 return val;
