@@ -8,7 +8,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Areas\DocumentoRecibido\Pages\Shared\_CompFounded.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Areas\DocumentoRecibido\Pages\Shared\_CompFounded.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Areas\DocumentoRecibido\Pages\Shared\_CompFounded.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Areas\DocumentoRecibido\Pages\Shared\_CompFounded.cshtml" />
   </ItemGroup>
 
 

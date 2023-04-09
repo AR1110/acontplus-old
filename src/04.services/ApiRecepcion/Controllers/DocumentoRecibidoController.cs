@@ -207,8 +207,8 @@ namespace ApiRecepcion.Controllers
 
         //    }
         //}
-        [HttpPost("{jsonData}")]
-        public async Task<IActionResult> Post(string jsonData, IFormFile file)
+        [HttpPost("Read")]
+        public async Task<IActionResult> Post(IFormFile file)
         {
             LogWriter _logs = new LogWriter(_configuration);
             GenericResponse _response = new GenericResponse();
@@ -220,25 +220,45 @@ namespace ApiRecepcion.Controllers
             }
             try
             {
-                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-
                 string path = _configuration.GetSection("ImportacionTxt").Value;
                 FileData.SaveFile(path, file);
                 FileTxt txtComp = new FileTxt();
                 DataTable dt = new DataTable("Comprobantes");
-                if (txtComp.GetDocs(FileData.GetFileByte(file), ref dt))
+                dt = await txtComp.GetDocs(FileData.GetFileByte(file));
+                if (!DataHelper.DataTableIsNull(dt))
                 {
-
-                    await _db.SPExecute("Recepcion.Documento_Insert");
-                    _db.AddDynamicParam("idRol", idUsuarioRol);
-                    _db.AddDynamicParam("jsonData", jsonData);
-                    _db.AddDynamicParam("json", DataHelper.DataTableToJSON(dt));
-                    _response = _db.GetDefault();
+                    _response.Create(code: "1", payload: DataHelper.DataTableToJSON(dt));
                 }
                 else
                 {
                     _response.Create("0", "No se encontraron registros para importar");
                 }
+            }
+            catch (Exception ex)
+            {
+                _logs.LogError("Error al importar el archivo: " + ex.ToString());
+                _response.Create(code: "0", message: "Error al importar el archivo");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
+        }
+
+        [HttpPost("{json}")]
+        public async Task<IActionResult> Post(string json)
+        {
+            LogWriter _logs = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+
+                await _db.SPExecute("Recepcion.Documento_Insert");
+                _db.AddDynamicParam("idRol", idUsuarioRol); 
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDefault();
             }
             catch (Exception ex)
             {

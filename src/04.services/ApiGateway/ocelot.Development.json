@@ -45,6 +45,25 @@
           "Port": 12786
         }
       ],
+      "DownstreamPathTemplate": "/api/DocumentoRecibido/Read",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Post"
+      ],
+      "UpstreamPathTemplate": "/api/DocumentoRecibido/Read"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 12786
+        }
+      ],
       "DownstreamPathTemplate": "/api/DocumentoRecibido/{jsonData}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [

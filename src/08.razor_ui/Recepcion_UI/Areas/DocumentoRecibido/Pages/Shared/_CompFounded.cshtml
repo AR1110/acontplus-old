@@ -1,0 +1,56 @@
+﻿<div id="compFounded" class="modal fade" tabindex="-1" role="dia">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <form ng-submit="askToSave()">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Comprobantes Encontrados</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table md-table md-row-select multiple ng-model="compToImport" md-progress="promise">
+                            <caption>Lista de Importaciones</caption>
+                            <thead md-head md-order="query.sortBy" fix-head>
+                                <tr md-row>
+                                    <th md-column>Doc.</th>
+                                    <th md-column md-order-by="serieComprobante">Serie</th>
+                                    <th md-column>Ruc Emisor</th>
+                                    <th md-column md-order-by="razonSocialEmisior">
+                                        <span>Razón Social Emisor</span>
+                                    </th>
+                                    <th md-column>Fecha Emisión</th>
+                                    <th md-column>F. Aut.</th>
+                                    <th md-column md-order-by="importeTotal">Total</th>
+                                    <th md-column>No. Aut.</th>
+                                </tr>
+                            </thead>
+                            <tbody md-body>
+                                <tr md-row md-select="item" md-select-id="index" md-on-select="showOptions"
+                                    md-auto-select ng-repeat="item in compFoundedTemp">
+                                    <td md-cell>{{item.comprobante}}</td>
+                                    <td md-cell>{{item.serieComprobante}}</td>
+                                    <td md-cell>{{item.rucEmisor}}</td>
+                                    <td class="text-left" md-cell>
+                                        {{item.razonSocialEmisior}}
+                                    </td>
+                                    <td md-cell>{{item.fechaEmision}}</td>
+                                    <td md-cell>{{item.fechaAutorizacion}}</td>
+                                    <td md-cell class="text-right">
+                                        {{item.importeTotal |
+                                        currency }}
+                                    </td>
+                                    <td class="text-left" md-cell>
+                                        {{item.numeroAutorizacion}}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success"><i class="ti-save"></i> Guardar</button>
+                    <button type="button" class="btn btn-dark" data-dismiss="modal">&times; Cancelar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

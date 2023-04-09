@@ -11,7 +11,7 @@ namespace BL.Reports
             var workbook = new XLWorkbook();
 
             // Add the DataTable to a new worksheet in the workbook
-            var i = 1;  
+            var i = 1;
             foreach (DataTable dt in ds.Tables)
             {
                 if (dt.Rows.Count > 0)
@@ -26,7 +26,6 @@ namespace BL.Reports
             {
                 workbook.SaveAs(stream);
                 report = stream.ToArray();
-
             }
             return report;
         }

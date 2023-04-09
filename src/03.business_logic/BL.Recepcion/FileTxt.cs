@@ -5,8 +5,9 @@ namespace BL.Recepcion
 {
     public class FileTxt
     {
-        public bool GetDocs(byte[] fileTxt, ref DataTable dt)
+        public async Task<DataTable> GetDocs(byte[] fileTxt)
         {
+            DataTable dt = new DataTable();
             dt.Columns.Add("id", typeof(int));
             dt.Columns.Add("uniqueId", typeof(string));
             dt.Columns.Add("comprobante", typeof(string));
@@ -26,7 +27,7 @@ namespace BL.Recepcion
             StreamReader reader = new StreamReader(new MemoryStream(fileTxt), Encoding.GetEncoding("iso-8859-1"), true);
             DataRow row;
             int positionDr = 0;
-            while ((line = reader.ReadLine()) != null)
+            while ((line = await reader.ReadLineAsync()) != null)
             {
                 string[] items = line.Split('\t');
                 if (items.Length > 10)
@@ -56,11 +57,11 @@ namespace BL.Recepcion
             reader.Dispose();
             if (dt.Rows.Count > 0)
             {
-                return true;
+                return dt;
             }
             else
             {
-                return false;
+                return null;
             }
         }
     }
