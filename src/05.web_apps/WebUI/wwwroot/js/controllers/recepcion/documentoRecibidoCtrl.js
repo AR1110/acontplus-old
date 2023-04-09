@@ -27,6 +27,11 @@
 
             'use strict';
             $scope.title = 'documentoRecibidoCtrl';
+
+            $scope.compFounded = [];
+            $scope.compToImport = [];
+
+
             $scope.comprobantes = [];
             $scope.idProveedor = 0;
 
@@ -286,6 +291,96 @@
                 $('#newImportModal').modal('show')
             }
 
+            //Read File tXT 
+            $scope.readFileTxt = function () {
+                try {
+                    if([null, undefined, ""].includes($scope.fileTxt)){
+                        tS.toastr('warning', 'No has seleccionado ningún archivo');
+                        return
+                    }
+                    
+                    showLoader();
+                    mS.getDataFile(_urlService + 'DocumentoRecibido/', $scope.fileTxt).then(response => {
+                        if (response.code == 0) {
+                            hideLoader()
+                            tS.toastr('warning', response.message)
+                            return;
+                        }
+                        if (response.code == 1) {
+                            console.log(response);
+                            tS.toastr('success', response.message);
+                            $scope.compFounded = JSON.parse(response.payload) || [];
+                            $scope.fileTxt = null;
+                            $('#newImportModal').modal('hide');
+                            $("#compFounded").modal('show');
+                            hideLoader();
+                        }
+                    }).catch(error => {
+                        hideLoader();
+                        console.log(error)
+                    })
+                } catch (error) {
+                    hideLoader();
+                    console.log(error)
+                }
+            }
+
+            $scope.askToSave = function(){
+                try {
+
+                    if($scope.compFounded.length===0){
+                        tS.toastr('warning', 'Seleecione al menos un comprobante');
+                        return
+                    }
+
+                    Swal.fire({
+                        //title: 'Are you sure?',
+                        text: "Esta seguro de guardar los comprobantes seleccionados?",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Si, guardar!',
+                        cancelButtonText: 'No, cancelar'
+                    }).then(result => {
+                        if (result.isConfirmed) {
+                            $scope.post();
+                        }
+                    })
+
+                } catch (error) {
+                    console.log(error);
+                }
+
+            }
+
+            //Guardar Documentos importados
+            $scope.post = function () {
+            
+                let data = {
+                    codEstab: $scope.query.codEstab,
+                    compToImport: JSON.stringify($scope.compToImport)
+                }
+                showLoader();
+                mS.getData('post', _urlService + 'DocumentoRecibido/', data).then(
+                    response => {
+                        if (response.code == 0) {
+                            hideLoader()
+                            tS.toastr('warning', response.message);
+                        }
+                        if (response.code == 1) {
+                            $scope.getComprobantes();
+                            tS.toastr('success', response.message)
+                            hideLoader();
+                        }
+                    }
+                ).catch(error => {
+                    hideLoader();
+                    console.log(error);
+                })
+              
+            }
+
             $scope.mergedDocs = []
             $scope.showOptionsMergeDoc = false;
             $scope.getMergedDocs = (item) => {
@@ -327,39 +422,7 @@
             })
 
 
-            $scope.post = function () {
-                try {
-                    showLoader()
-                    let file = $scope.fileTxt;
-                    if (file === null || file === undefined) {
-                        hideLoader()
-                        alert('No ha seleccionado ningun archivo')
-                        return;
-                    }
-                    mS.getDataFile(_urlService + 'DocumentoRecibido/' + JSON.stringify({ codEstab: $scope.query.codEstab }), file).then(
-                        response => {
-                            if (response.code == 0) {
-                                hideLoader()
-                                tS.toastr('warning', response.message)
-                                return;
-                            }
-                            if (response.code == 1) {
-                                $scope.getComprobantes()
-                                $('#newImportModal').modal('hide')
-                                tS.toastr('success', response.message)
-                                $scope.fileTxt = '';
-                            }
-                        }, error => {
-                            hideLoader()
-                            console.log(error)
-                        }
-                    )
-                    hideLoader()
-                } catch (error) {
-                    hideLoader()
-                    console.log(error)
-                }
-            }
+           
 
             $scope.putXml = function () {
                 try {

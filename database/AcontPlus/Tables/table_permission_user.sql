@@ -52,11 +52,6 @@ DECLARE @newjson VARCHAR(100);
 		--UPDATE Config.UserPermission 
 		--SET jsonPermission = JSON_MODIFY(jsonPermission, '$."precioConIva"', NULL)			
 		--WHERE codModule='AR'	
-		
-		select * from Config.UserPermission
-
-		SELECT * FROM Config.UserPermission up
-		INNER JOIN App.UsuarioRol ur ON ur.idEntidad = 
 
 	--Remove properties of detail 
 -----------------------------------------END SALE PERMISSIONS------------------------------------------
@@ -70,3 +65,13 @@ DECLARE @newjson VARCHAR(100);
 
 	--Remove properties of article 	
 -----------------------------------------END ARTICLE PERMISSIONS------------------------------------------
+
+
+-- Insertando permisos de usuarios de la entidad SEA CORP
+-- SELECT * FROM App.UsuarioRol WHERE idEntidad = 4
+		
+--INSERT INTO Config.UserPermission(idUsuarioRol, codModule, jsonPermission)SELECT idUsuarioRol, 'V', @jsonSalePermission FROM App.UsuarioRol where idEntidad = 4
+--INSERT INTO Config.UserPermission(idUsuarioRol, codModule, jsonPermission)SELECT idUsuarioRol, 'AR', @jsonArticle FROM App.UsuarioRol where idEntidad = 4
+
+SELECT * FROM Config.UserPermission
+
