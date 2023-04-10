@@ -62,15 +62,14 @@ BEGIN
 				BEGIN
 					DECLARE @salidas AS NUMERIC(18,5)
 					DECLARE @entradas AS NUMERIC(18,5)
-					DECLARE @saldoSalidas AS NUMERIC(18,5)
-					DECLARE @saldoEntradas AS NUMERIC(18,5)
+					DECLARE @saldo AS NUMERIC(18,5)
 
 					SELECT @entradas = ISNULL(SUM(tr.cantidad),0) 
 					FROM Inventario.Transaccion tr WITH (NOLOCK)
 					INNER JOIN Inventario.TipoTransaccion tt WITH (NOLOCK) ON tt.idTipoTransaccion = tr.idTipoTransaccion
 					WHERE tt.codigo = 'E' 
-					   AND tr.estado = 1
-					  AND tr.fechaRegistro < @fechaEmision 
+					  AND tr.estado = 1
+					  AND tr.fechaRegistro <= @fechaEmision 
 					  AND tr.idArticulo = @idArticulo 
 					  AND tr.idBodega = @idBodega
 					 
@@ -80,15 +79,13 @@ BEGIN
 					INNER JOIN Inventario.TipoTransaccion tt WITH (NOLOCK) ON tt.idTipoTransaccion = tr.idTipoTransaccion
 					WHERE tt.codigo = 'S' 
 					  AND tr.estado = 1
-					  AND tr.fechaRegistro < @fechaEmision 
+					  AND tr.fechaRegistro <= @fechaEmision 
 					  AND tr.idArticulo = @idArticulo 
 					  AND tr.idBodega = @idBodega
 					   
-					SET @saldoEntradas = @cantidad + @entradas
+					SET @saldo =  @entradas - @salidas
 
-					SET @saldoSalidas  = @cantidad - @salidas
-
-					SET @cantidadActual = @saldoEntradas - @saldoSalidas
+					SET @cantidadActual = @saldo - @cantidad
 
 					UPDATE Inventario.Stock SET cantidad = @cantidadActual WHERE idArticulo = @idArticulo AND idBodega = @idBodega
 
