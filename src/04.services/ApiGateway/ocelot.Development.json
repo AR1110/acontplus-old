@@ -64,12 +64,12 @@
           "Port": 12786
         }
       ],
-      "DownstreamPathTemplate": "/api/DocumentoRecibido/{jsonData}",
+      "DownstreamPathTemplate": "/api/DocumentoRecibido/Post",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Post"
       ],
-      "UpstreamPathTemplate": "/api/DocumentoRecibido/{jsonData}"
+      "UpstreamPathTemplate": "/api/DocumentoRecibido/Post"
     },
     {
       "AuthenticationOptions": {

@@ -1,6 +1,6 @@
-﻿<div id="compFounded" class="modal fade" tabindex="-1" role="dia">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
-        <form ng-submit="askToSave()">
+﻿<div id="compFounded" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-xl">
+        <form ng-submit="askToSaveFounded()">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Comprobantes Encontrados</h5>
@@ -24,8 +24,8 @@
                                 </tr>
                             </thead>
                             <tbody md-body>
-                                <tr md-row md-select="item" md-select-id="index" md-on-select="showOptions"
-                                    md-auto-select ng-repeat="item in compFoundedTemp">
+                                <tr md-row md-select="item" md-select-id="index"
+                                    md-auto-select ng-repeat="item in compFounded">
                                     <td md-cell>{{item.comprobante}}</td>
                                     <td md-cell>{{item.serieComprobante}}</td>
                                     <td md-cell>{{item.rucEmisor}}</td>

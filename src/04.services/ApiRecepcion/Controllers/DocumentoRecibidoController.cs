@@ -11,6 +11,7 @@ using BL.FactElect;
 using Domain.FactElect;
 using Newtonsoft.Json;
 using System.Text;
+using Domain.Dtos;
 
 namespace ApiRecepcion.Controllers
 {
@@ -246,8 +247,8 @@ namespace ApiRecepcion.Controllers
             return Ok(_response);
         }
 
-        [HttpPost("{json}")]
-        public async Task<IActionResult> Post(string json)
+        [HttpPost("Post")]
+        public async Task<IActionResult> Post(RecepcionDto data)
         {
             LogWriter _logs = new LogWriter(_configuration);
             GenericResponse _response = new GenericResponse();
@@ -256,8 +257,9 @@ namespace ApiRecepcion.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
 
                 await _db.SPExecute("Recepcion.Documento_Insert");
-                _db.AddDynamicParam("idRol", idUsuarioRol); 
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("idRol", idUsuarioRol);
+                _db.AddDynamicParam("jsonData", SqlValidation.ValidateSqlString(data.jsonData));
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(data.json));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
