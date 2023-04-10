@@ -26,14 +26,14 @@ namespace WebUI.Controllers.GestionFinanciera
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Caja data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _c.InsertAsync(idRol, data);
             return Ok(_gr);
         }
 
         public async Task<IActionResult> Get(int pageIndex, int pageSize)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _c.GetAsync(idRol, pageIndex, pageSize);
             return Ok(_gr);
         }
@@ -41,7 +41,7 @@ namespace WebUI.Controllers.GestionFinanciera
         [HttpPut]
         public async Task<IActionResult> Put(int idCaja, [FromBody] Caja data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _c.UpdateAsync(idRol, idCaja, data);
             return Ok(_gr);
         }
@@ -49,7 +49,7 @@ namespace WebUI.Controllers.GestionFinanciera
         [HttpDelete]
         public async Task<IActionResult> Delete(int idCaja)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _c.DeleteAsync(idRol, idCaja);
             return Ok(_gr);
         }
@@ -57,14 +57,14 @@ namespace WebUI.Controllers.GestionFinanciera
         //Listar Caja  para Chackbox Contrapartida--
         public async Task<IActionResult> ListCaja()
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _c.ListAsync(idRol);
             return Ok(_gr);
         }
 
         public async Task<IActionResult> GetAsigCajaUsuario()
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _c.GetAsigAsync(idRol);
             return Ok(_gr);
         }

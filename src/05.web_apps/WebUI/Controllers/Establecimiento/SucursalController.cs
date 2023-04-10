@@ -11,17 +11,17 @@ namespace WebUI.Controllers.Establecimiento
         // GET: Sucursal
         // private readonly IConfiguration _configuration;
         private readonly IConfiguration _configuration;
-        private readonly IHttpContextAccessor _httpContextAccessor; ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
+         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
-        private readonly int _idRol;
+        
         GenericResponse _gr = new();
         
-        public SucursalController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public SucursalController(IConfiguration configuration)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
-            _httpContextAccessor = httpContextAccessor;
-            _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            
+            
 
         }
 
@@ -35,7 +35,7 @@ namespace WebUI.Controllers.Establecimiento
         public async Task<IActionResult> Get(string json)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", SqlValidation.ValidateSqlString(json));
             return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Establecimientos.Sucursal_Get", parameters)));
         }
@@ -44,7 +44,7 @@ namespace WebUI.Controllers.Establecimiento
         public async Task<IActionResult> GetId(int id)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("id", id);
             return Ok(DbResponse.SPDataSet(await _dao.GetDataSetAsync("Establecimientos.Sucursal_Get_Id", parameters)));
         }
@@ -54,7 +54,7 @@ namespace WebUI.Controllers.Establecimiento
         public async Task<IActionResult> Post([FromBody] Sucursal data)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("nombreComercial", data.nombreComercial);
             parameters.Add("serie", data.serie );
             parameters.Add("direccion", data.direccion ?? "");
@@ -67,7 +67,7 @@ namespace WebUI.Controllers.Establecimiento
         public async Task<IActionResult> Put(int id, [FromBody] Sucursal data)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("id", id);
             parameters.Add("nombreComercial", data.nombreComercial);
             parameters.Add("serie", data.serie);
@@ -81,7 +81,7 @@ namespace WebUI.Controllers.Establecimiento
         public async Task<IActionResult> Delete(int id)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("id", id);
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Establecimientos.Sucursal_Delete", parameters)));
         }

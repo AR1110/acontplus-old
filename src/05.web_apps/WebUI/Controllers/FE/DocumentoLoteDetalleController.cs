@@ -15,12 +15,12 @@ namespace WebUI.Controllers.FE
         }
         public async Task<IActionResult> Get(int idDocumentoLote)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             return Ok(await _dld.GetAsync(idRol, idDocumentoLote));
         }
         public async Task<IActionResult> Delete(long id)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             return Ok(await _dld.DeleteAsync(idRol, id));
         }
     }

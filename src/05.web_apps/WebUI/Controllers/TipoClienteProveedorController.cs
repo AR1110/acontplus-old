@@ -40,7 +40,7 @@ namespace WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Get(int pageIndex, int pageSize, [FromBody] HelpersResponse data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _tp.ReadTipoClienteProveedor(idRol, pageIndex, pageSize, data);
             return Ok(_gr);
         }

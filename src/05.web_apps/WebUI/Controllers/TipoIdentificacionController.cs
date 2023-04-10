@@ -32,7 +32,7 @@ namespace WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> ReadTipoIdentificacion([FromBody] HelpersResponse data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await ti.ReadTipoIdentificacionAsycn(idRol, data);
             return Ok(_gr);
         }
@@ -40,7 +40,7 @@ namespace WebUI.Controllers
 
         public IActionResult GetByType(string tipo)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
 
             var res = ti.GetByType(idRol, tipo);
             return Ok(res);

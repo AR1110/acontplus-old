@@ -10,15 +10,15 @@ namespace WebUI.Controllers
     public class ClienteController : Controller
     {
         private readonly IConfiguration _configuration;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        
         private DataAccessObject _dao;
-        private readonly int _idRol;
-        public ClienteController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        
+        public ClienteController(IConfiguration configuration)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
-            _httpContextAccessor = httpContextAccessor;
-            _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            
+            
         }
 
         
@@ -36,7 +36,7 @@ namespace WebUI.Controllers
         public async Task<IActionResult> Get(string json)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", SqlValidation.ValidateSqlString(json));
             return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Ventas.Cliente_Get", parameters)));
         }
@@ -52,7 +52,7 @@ namespace WebUI.Controllers
         public async Task<IActionResult> Search(string json)
         {
             Dictionary<string, object> parameters = new();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", SqlValidation.ValidateSqlString(json));
             return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Ventas.Cliente_Get_Search", parameters)));
         }
@@ -61,7 +61,7 @@ namespace WebUI.Controllers
         public async Task<IActionResult> Post([FromBody] Cliente data)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", JsonConvert.SerializeObject(data));
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Ventas.Cliente_Insert", parameters)));
         }
@@ -70,7 +70,7 @@ namespace WebUI.Controllers
         public async Task<IActionResult> Put(int idCliente, [FromBody] Cliente data)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("id", idCliente);
             parameters.Add("json", JsonConvert.SerializeObject(data));
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Ventas.Cliente_Update", parameters)));
@@ -80,7 +80,7 @@ namespace WebUI.Controllers
         public async Task<IActionResult> Delete(int idCliente)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("id", idCliente);
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Ventas.Cliente_Delete", parameters)));
         }

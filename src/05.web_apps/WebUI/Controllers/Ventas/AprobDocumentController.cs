@@ -11,17 +11,17 @@ namespace WebUI.Controllers.Ventas
     public class AprobDocumentController : Controller
     {
         private readonly IConfiguration _configuration;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        
         private DataAccessObject _dao;
-        private readonly int _idRol;
+        
 
-        public AprobDocumentController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public AprobDocumentController(IConfiguration configuration)
         {
             _configuration = configuration;
 
             _dao = new DataAccessObject(_configuration);
-            _httpContextAccessor = httpContextAccessor;
-            _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            
+            
 
         }
 
@@ -35,7 +35,7 @@ namespace WebUI.Controllers.Ventas
         public async Task<IActionResult> Get(string json)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", SqlValidation.ValidateSqlString(json));
             return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Ventas.Aprob_Document_Get", parameters)));
         }
@@ -52,7 +52,7 @@ namespace WebUI.Controllers.Ventas
         public async Task<IActionResult> Insert([FromBody] AprobDocument data)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("jsonHeader", data.jsonHeader);
             parameters.Add("jsonDetail", data.jsonDetail);
             parameters.Add("jsonHistory", data.jsonHistory);
@@ -63,7 +63,7 @@ namespace WebUI.Controllers.Ventas
         public async Task<IActionResult> Update(int id,[FromBody] AprobDocument data)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("id", id);
             parameters.Add("jsonHeader", data.jsonHeader);
             parameters.Add("jsonDetail", data.jsonDetail);
@@ -74,7 +74,7 @@ namespace WebUI.Controllers.Ventas
         public async Task<IActionResult> Delete(int id)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("id", id);
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Ventas.Aprob_Document_Delete", parameters)));
         }

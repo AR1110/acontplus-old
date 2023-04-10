@@ -32,7 +32,7 @@ namespace WebUI.Controllers
         }
         public async Task<IActionResult> Get(int pageIndex, int pageSize)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _ti.GetAsync(idRol, pageIndex, pageSize);
             return Ok(_gr);
         }
@@ -52,7 +52,7 @@ namespace WebUI.Controllers
 
         public async Task<IActionResult> OptionTipoImpuesto(int idConfiguracionContribuyente)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _ti.OptionAsync(idRol, idConfiguracionContribuyente);
             return Ok(_gr);
         }

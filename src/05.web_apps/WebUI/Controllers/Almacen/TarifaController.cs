@@ -33,14 +33,14 @@ namespace WebUI.Controllers.Almacen
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Tarifa data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _t.CreateTarifaAsync(idRol, data);
             return Ok(_gr);
         }
 
         public async Task<IActionResult> Get(int pageIndex, int pageSize)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _t.ReadTarifaAsync(idRol, pageIndex, pageSize);
             return Ok(_gr);
         }
@@ -49,7 +49,7 @@ namespace WebUI.Controllers.Almacen
         [HttpPost]
         public async Task<IActionResult> Put([FromBody] Tarifa data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _t.UpdateTarifaAsync(idRol, data);
             return Ok(_gr);
         }
@@ -57,7 +57,7 @@ namespace WebUI.Controllers.Almacen
 
         public async Task<IActionResult> Delete(int idTarifa)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _t.DeleteTarifaAsync(idRol, idTarifa);
             return Ok(_gr);
         }
@@ -66,14 +66,14 @@ namespace WebUI.Controllers.Almacen
        //get list tarifa para select en el Modulo de VENTA
         public async Task<IActionResult> Select()
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _t.SelectAync(idRol);
             return Ok(_gr);
         }
 
         public async Task<IActionResult> GetAll()
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _t.SelectAync(idRol);
             return Ok(_gr);
         }

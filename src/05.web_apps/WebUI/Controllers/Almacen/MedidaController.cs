@@ -32,7 +32,7 @@ namespace WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("idRol", idRol);
             parameters.Add("json", SqlValidation.ValidateSqlString(json));
@@ -42,7 +42,7 @@ namespace WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Medida data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("idRol", idRol);
             parameters.Add("descripcion", data.descripcion);
@@ -52,7 +52,7 @@ namespace WebUI.Controllers
         [HttpPut]
         public async Task<IActionResult> Put(int id, [FromBody] Medida data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("idRol", idRol);
             parameters.Add("id", id);
@@ -64,7 +64,7 @@ namespace WebUI.Controllers
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("idRol", idRol);
             parameters.Add("id", id);
@@ -74,7 +74,7 @@ namespace WebUI.Controllers
         //Get By Medida
         public async Task<IActionResult> GetByMedida()
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _m.GetByMedida(idRol);
             return Ok(res);
         }

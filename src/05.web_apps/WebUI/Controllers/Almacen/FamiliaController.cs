@@ -34,7 +34,7 @@ namespace WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);             
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);             
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("idRol", idRol);
             parameters.Add("json", SqlValidation.ValidateSqlString(json));
@@ -44,7 +44,7 @@ namespace WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Familia data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("idRol", idRol);
             parameters.Add("descripcion", data.descripcion);
@@ -56,7 +56,7 @@ namespace WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Put(int idFamilia, [FromBody] Familia data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("idRol", idRol);
             parameters.Add("idFamilia", idFamilia);
@@ -68,7 +68,7 @@ namespace WebUI.Controllers
 
         public async Task<IActionResult> Delete(int idFamilia)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("idRol", idRol);
             parameters.Add("idFamilia", idFamilia);
@@ -78,7 +78,7 @@ namespace WebUI.Controllers
         //Operaciones Especiales 
         public async Task<IActionResult> GetBy()
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _f.OptionAsync(idRol);
             return Ok(_gr);
         }
@@ -86,7 +86,7 @@ namespace WebUI.Controllers
         //Creo uno nuevo metodo "GetAll" q se esta usando en uibModal SubFamilia,  
         public async Task<IActionResult> GetAll()
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _f.OptionAsync(idRol);
             return Ok(_gr);
         }

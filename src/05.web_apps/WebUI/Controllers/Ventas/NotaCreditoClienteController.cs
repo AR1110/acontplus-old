@@ -14,17 +14,17 @@ namespace WebUI.Controllers.Ventas
         private NotaCreditoDao _nc;
         private GenericResponse _gr = new(); 
         private IConfiguration _config;
-        private readonly IHttpContextAccessor _httpContextAccessor; ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
+         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao; 
-        private readonly int _idRol;
+        
 
-        public NotaCreditoClienteController(IConfiguration config, IHttpContextAccessor httpContextAccessor)
+        public NotaCreditoClienteController(IConfiguration config)
         {
             _config = config;
             _dao = new DataAccessObject(_config);
             _nc = new NotaCreditoDao(_config);
-            _httpContextAccessor = httpContextAccessor;
-            _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);           
+            
+                       
         }
 
         
@@ -36,14 +36,14 @@ namespace WebUI.Controllers.Ventas
         [HttpPost]
         public async Task<IActionResult> Insert([FromBody] NotaCreditoViewModel data)
         {            
-            _gr = await _nc.InsertAsync(_idRol, data);
+            _gr = await _nc.InsertAsync(Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value), data);
             return Ok(_gr);
         }
 
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {            
-            var res = await _nc.GetAsync(_idRol, json);
+            var res = await _nc.GetAsync(Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value), json);
             return Ok(res);
         }
 
@@ -51,7 +51,7 @@ namespace WebUI.Controllers.Ventas
         public async Task<IActionResult> GetId(int id)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("id", id);
             return Ok(DbResponse.SPDataSet(await _dao.GetDataSetAsync("Ventas.NotaCredito_Get_Id", parameters)));                        
 
@@ -60,11 +60,11 @@ namespace WebUI.Controllers.Ventas
         [HttpPut]
         public async Task<IActionResult> Update(long id, [FromBody] NotaCreditoViewModel data)
         {            
-            _gr = await _nc.UpdateAsync(_idRol, id, data);
+            _gr = await _nc.UpdateAsync(Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value), id, data);
             return Ok(_gr);
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Delete(int id) => Ok(await _nc.DeleteAsync(_idRol, id));
+        public async Task<IActionResult> Delete(int id) => Ok(await _nc.DeleteAsync(Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value), id));
     }
 }

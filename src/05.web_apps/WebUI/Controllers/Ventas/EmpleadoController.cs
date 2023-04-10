@@ -32,14 +32,14 @@ namespace WebUI.Controllers.Ventas
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Empleado data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _e.InsertAsync(idRol, data);
             return Ok(res);
         }
 
         public async Task<IActionResult> Get(int pageIndex, int pageSize)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _e.GetAsync(idRol, pageIndex, pageSize);
             return Ok(res);
         }
@@ -47,7 +47,7 @@ namespace WebUI.Controllers.Ventas
         [HttpPost]
         public async Task<IActionResult> Put(int idEmpleado, [FromBody] Empleado data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _e.UpdateAsync(idRol, idEmpleado, data);
             return Ok(res);
         }
@@ -55,7 +55,7 @@ namespace WebUI.Controllers.Ventas
 
         public async Task<IActionResult> Delete(int idEmpleado)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _e.DeleteAsync(idRol, idEmpleado);
             return Ok(res);
         }
@@ -64,7 +64,7 @@ namespace WebUI.Controllers.Ventas
 
         public async Task<IActionResult> Search(string busqueda)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _e.SearchAsync(idRol, busqueda);
             return Ok(res);
         }
