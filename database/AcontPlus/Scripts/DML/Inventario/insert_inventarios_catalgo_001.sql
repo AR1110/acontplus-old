@@ -4,6 +4,7 @@ USE AcontPlus
 --INSERT INTO Inventario.TipoTransaccion(codigo, descripcion) VALUES ('E', 'Entrada')
 --INSERT INTO Inventario.TipoTransaccion(codigo, descripcion) VALUES ('S', 'Salida')
 --INSERT INTO Inventario.TipoTransaccion(codigo, descripcion) VALUES ('T', 'Transferencia')
+--INSERT INTO Inventario.TipoTransaccion(codigo, descripcion) VALUES ('A', 'Ajustes')
 
 --GO
 
