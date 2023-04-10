@@ -121,7 +121,10 @@ class ModalBaseCtrl{
             this.idBodega        = this.bodegas.length>0 ? this.bodegas[0].idBodega: 0;
             this.cloneIdBodega   = this.idBodega;
 
-            this.actividadTipoIva = resultsDataFormEstab[2][0]
+            //Impuesto Tarifas            
+            this.impuestoTarifas = resultsDataFormEstab[2]; //Impuesto tarifas dependiendo el tipo Actividad
+            this.actividadTipoIva = resultsDataFormEstab[2][0];
+            this.data.tarifa = this.actividadTipoIva.tarifa;
 
             let indexColumn = this.gridOptionsDetailDocument.columnDefs.findIndex(item=>item.field==='idBodega');
             
@@ -503,10 +506,11 @@ export class ModalSelectDocumentoCtrl extends ModalBaseCtrl{
                
                 this.bodegas       = resultsDataFormEstab[1];                
                 this.idBodega      = this.bodegas.length>0?this.bodegas[0].idBodega:0;
-                this.cloneIdBodega = this.idBodega;
-
-                this.actividadTipoIva = resultsDataFormEstab[2][0]
-                console.log(this.actividadTipoIva)
+                this.cloneIdBodega = this.idBodega;                
+                
+                this.impuestoTarifas = resultsDataFormEstab[2]; //Impuesto tarifas dependiendo el tipo Actividad
+                this.actividadTipoIva = resultsDataFormEstab[2][0];
+                this.data.tarifa = this.actividadTipoIva.tarifa;
             }else{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
             }
@@ -1089,13 +1093,14 @@ export class ModalSelectDocumentoCtrl extends ModalBaseCtrl{
 
     stepDos(){ 
         try {
-            this.selectedDocuments = this.$scope.gridApi.selection.getSelectedRows();
+
             
             if(!this.cliente.idCliente>0){            
                 this._tS.toastr('warning', 'Seleccione el Cliente');
                 return
             }
             
+            this.selectedDocuments = this.$scope.gridApi.selection.getSelectedRows() || []
             if(this.selectedDocuments.length===0){
                 this._tS.toastr('warning', 'Seleccione al menos un Documento', 'Siguiente','toast-bottom-center');
                 return
@@ -1194,7 +1199,7 @@ export class ModalSelectDocumentoCtrl extends ModalBaseCtrl{
 
     async askToSaveInvoice(){
         try {
-            console.log(this.selectedDocuments)
+            
             if(!this.data.codEstab){
                 this._tS.toastr('warning', 'El Establecimiento es obligatorio');
                 return
@@ -1234,7 +1239,7 @@ export class ModalSelectDocumentoCtrl extends ModalBaseCtrl{
                 }
 
                 //Tarifa Aplicada al Documento
-                jsonHeader.tarifa = this.actividadTipoIva.tarifa;
+                //jsonHeader.tarifa = this.actividadTipoIva.tarifa;
 
                 let tempDetail = [];
                 for(let item of this.gridOptionsDetailDocument.data){
@@ -1457,7 +1462,7 @@ export class ModalProformaFiltroCtrl extends ModalBaseCtrl{
             showLoader();
             let resultsDataForm   = await this.initiload();
             this.estadoDocumentos = await this._commonSvc.getEstadoDocByCodDoc(this.TIPO_DOC.codigo);                              
-            console.log(this)
+            
             this.establecimientos = resultsDataForm[0];
 
             if(this.establecimientos.length>0){
@@ -1521,7 +1526,7 @@ export class ModalProformaFiltroCtrl extends ModalBaseCtrl{
                 return
             }
 
-            console.log(moment(this.dataSearch.fechaInicio).isValid())
+            
             if (!moment(this.dataSearch.fechaInicio).isValid()) {
                 console.log('Invalid Date');
             } 
@@ -1653,7 +1658,7 @@ export class ModalApproveDocCtrl extends ModalBaseCtrl{
                 this.cloneIdBodega = this.idBodega;
 
               
-                console.log(this.actividadTipoIva)
+                this.impuestoTarifas = resultsDataFormEstab[2]; //Impuesto tarifas dependiendo el tipo Actividad                                              
             }else{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
             }
@@ -1669,7 +1674,7 @@ export class ModalApproveDocCtrl extends ModalBaseCtrl{
             this.tiempoCreditos = resultsDataForm[5];
 
             this.actividadTipoIva = this.tipoIvas.find(ti=>ti.codigoPorcentaje===this.data.codigoPorcentaje)
-            
+            this.data.tarifa = this.actividadTipoIva.tarifa;
 
             //Cargamos Nombres de las Columnas del Detalle Documento  
             this.setColumnDefs();          
@@ -1913,8 +1918,7 @@ export class ModalApproveDocCtrl extends ModalBaseCtrl{
             })
 
             this.gridOptionsDetailDocument.data.push(item);
-        }
-        console.log(this.gridOptionsDetailDocument.data)
+        }        
     }
 
 
@@ -2018,8 +2022,8 @@ export class ModalApproveDocCtrl extends ModalBaseCtrl{
                 }
 
                 //Tarifa Aplicada al Documento
-                factura.tarifa = this.actividadTipoIva.tarifa;
-                factura.codigoPorcentaje = this.actividadTipoIva.codigoPorcentaje;
+                factura.tarifa = this.uiGridInvoice.actividadTipoIva.tarifa;
+                factura.codigoPorcentaje = this.uiGridInvoice.actividadTipoIva.codigoPorcentaje;
 
                 const data = {
                     factura: JSON.stringify(factura),
@@ -2134,9 +2138,8 @@ export class ModalApproveDocEditCtrl extends ModalBaseCtrl{
                 this.bodegas       = resultsDataFormEstab[1];                
                 this.idBodega      = this.bodegas.length>0?this.bodegas[0].idBodega:0;
                 this.cloneIdBodega = this.idBodega;
-
-              
-                console.log(this.actividadTipoIva)
+                
+                this.impuestoTarifas = resultsDataFormEstab[2];
             }else{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
             }
@@ -2150,7 +2153,7 @@ export class ModalApproveDocEditCtrl extends ModalBaseCtrl{
             this.cloneIdTarifa = this.idTarifa;
 
             this.actividadTipoIva = this.tipoIvas.find(ti=>ti.codigoPorcentaje===this.data.codigoPorcentaje)
-            console.log(this.actividadTipoIva)
+            this.data.tarifa = this.actividadTipoIva.tarifa
             //Cargamos Nombres de las Columnas del Detalle Documento  
             this.setColumnDefs();          
             this.convertDetail();            
@@ -2387,7 +2390,7 @@ export class ModalApproveDocEditCtrl extends ModalBaseCtrl{
             this._commonSvc.getDataArticuloParaVenta({ json: item }).then(response => {
               
                 const results = JSON.parse(response.data);
-                console.log(results[1], item)
+                
                 const responseMsg = results[0][0];
                 if (responseMsg.code === '1' || responseMsg.code === '2') {
                     item.medidas   = results[1];
@@ -2490,8 +2493,8 @@ export class ModalApproveDocEditCtrl extends ModalBaseCtrl{
                 }
 
                 //Tarifa Aplicada al Documento
-                jsonHeader.tarifa = this.actividadTipoIva.tarifa;
-                jsonHeader.codigoPorcentaje = this.actividadTipoIva.codigoPorcentaje;
+                jsonHeader.tarifa = this.uiGridInvoice.actividadTipoIva.tarifa;
+                jsonHeader.codigoPorcentaje = this.uiGridInvoice.actividadTipoIva.codigoPorcentaje;
                 
                 let tempDetail = [];
                 for(let item of this.gridOptionsDetailDocument.data){                    

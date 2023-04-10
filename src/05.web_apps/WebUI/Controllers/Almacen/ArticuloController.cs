@@ -82,28 +82,28 @@ namespace WebUI.Controllers
         }
 
         [HttpGet]
-        //public async Task<IActionResult> Search(string json)
-        //{
-        //    var _response = new GenericResponse();
-        //    try
-        //    {
-        //        await _db.SPExecute("Almacen.Articulo_Get_Search");
-        //        _db.AddDynamicParam("idRol", _idRol);
-        //        _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
-        //        _response = _db.GetDataTableAsync();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _log.LogError("Error while search articles: \n" + ex.ToString());
-        //        _response.Create(code: "0", "Error al buscar articulo");
-        //    }
-        //    finally
-        //    {
-        //        _db.Close();
-        //    }
+        public async Task<IActionResult> Search(string json)
+        {
+            var _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Almacen.Articulo_Get_Search");
+                _db.AddDynamicParam("idRol", _idRol);
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDataTableAsync();
+            }
+            catch (Exception ex)
+            {
+              //  _log.LogError("Error while search articles: \n" + ex.ToString());
+                _response.Create(code: "0", "Error al buscar articulo");
+            }
+            finally
+            {
+                _db.Close();
+            }
 
-        //    return Ok(_response);
-        //}
+            return Ok(_response);
+        }
 
         [HttpGet]
         //Listar articulo de manera General: bodegas, tarifas, sucursales

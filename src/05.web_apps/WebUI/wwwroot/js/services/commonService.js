@@ -432,7 +432,7 @@ export class CommonService {
             .then(
                 response => {
                     const results = JSON.parse(response.payload);
-
+                    console.log(results);
                     return {
                         subFamilias: results[0],
                         familias: results[1],
@@ -443,7 +443,8 @@ export class CommonService {
                         tipoArticulos: results[6],
                         tarifas: results[7],
                         etiquetaActividades: results[8],
-                        movimientosStocks: results[9]
+                        movimientosStocks: results[9],
+                        jsonPersmission: results[10]
                     }
                 }
             ).catch(
@@ -1302,6 +1303,26 @@ export class CommonService {
                         .split("=")[1];
                     this.FileSaver.saveAs(serverData, fileName);
                 }
+            })
+        } catch (error) {
+            console.log(error)
+        } finally {
+            hideLoader();
+        }
+    }
+
+    //--------------------------------------------------EXCEL----------------------------------
+    async exportExcel({ method = "post", url = 'Reporte/ExportExcel', parameters }) {
+        try {
+            showLoader();
+            await this.mS.getFile(method, url, parameters, true).then(response => {
+                let serverData = new Blob([response.data], {
+                    type: response.headers()["content-type"],
+                });
+                let fileName = response
+                    .headers()["content-disposition"].split(";")[1]
+                    .split("=")[1];
+                this.FileSaver.saveAs(serverData, fileName);
             })
         } catch (error) {
             console.log(error)

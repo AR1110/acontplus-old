@@ -70,20 +70,20 @@ BEGIN
 						,fechaVencimiento = CONVERT(NVARCHAR,FORMAT(f.fechaVencimiento, 'dd/MM/yyyy'))   
 						,tipoDoc = 'FACTURA DE VENTA'
 						,razonSocial = e.razonSocial
-						,nombreComercial = s.nombreComercial
+						,nombreComercial = REPLACE(s.nombreComercial   , '&', '%26')   
 						,ruc = e.ruc
 						,telefonoEntidad = ISNULL(s.telefono , 'S/N')
 						,emailEntidad = s.correo
-						,dirMatriz = ISNULL(s.dirEstablecimiento, 'S/N')
+						,dirMatriz = REPLACE(ISNULL(s.dirEstablecimiento, 'S/N'), '&', '%26') 
 						,s.dirEstablecimiento
 						,s.contribuyenteEspecial 
 						,s.obligadoContabilidad
 						,labelObligadoContabilidad = 'Obligado Contabilidad: ' + s.obligadoContabilidad
 						,labelAgenteRetencion = ISNULL('AGENTE DE RETENCION RESOLUCION NRO: '+s.agenteRetencion,'') 
 						,s.agenteRetencion 
-						,razonSocialComprador = cl.nombreFiscal  
+						,razonSocialComprador = REPLACE(cl.nombreFiscal  , '&', '%26')  
 						,nroIdentificacion = cl.numeroIdentificacion
-						,direccionComprador = cl.direccion 
+						,direccionComprador = REPLACE(cl.direccion  , '&', '%26')   
 						,subTotalNetoIva = CAST(f.subTotalNetoIva as numeric(15,2))
 						,subTotalIva12 = CAST(f.subTotalIva as numeric(15,2))
 						,subTotalNoObjetoIva = CAST(f.subTotalNoObjetoIva as numeric(15,2))
@@ -144,7 +144,7 @@ BEGIN
 							,labelNroDoc = 'NOTA DE ENTREGA Nro. '  
 							,tipoDoc = 'NOTA DE ENTREGA'
 							,razonSocial = e.razonSocial
-							,nombreComercial = s.nombreComercial
+							,nombreComercial = REPLACE(s.nombreComercial   , '&', '%26')   
 							,ruc = e.ruc
 							,direccion = e.direccion 
 							,email = s.correo 
@@ -155,9 +155,9 @@ BEGIN
 							,s.contribuyenteEspecial
 						    ,s.obligadoContabilidad
 
-							,cliente = cl.nombreFiscal 
+							,cliente = REPLACE(cl.nombreFiscal   , '&', '%26')  
 							,nroIdentificacion = cl.numeroIdentificacion
-							,direccionCliente = cl.direccion
+							,direccionCliente = REPLACE(cl.direccion   , '&', '%26')  
 							,correoCliente = REPLACE(ISNULL(cl.correo , 'S/N'),';',',')
 							,telefonoCliente = REPLACE(ISNULL(cl.telefono, 'S/N'),';',',')
 							,ciudad = c.descripcion 
@@ -193,7 +193,7 @@ BEGIN
 			SET @detail = (SELECT 
 							 codigo = a.codigo
 							,cantidad = CAST(ned.cantidad AS numeric(15,2))
-							,descripcion = ned.descripcion 
+							,descripcion = REPLACE(ned.descripcion, '#', '%23')
 							,precioUnitario = CAST(ned.precioVenta AS numeric(15,2))
 							,valorDescuento = CAST(ned.valorDescuento AS numeric(15,2))
 							,precioTotal = CAST(ned.total AS numeric(15,2)) 
@@ -215,14 +215,14 @@ BEGIN
 								,tipoDoc = UPPER(td.descripcion)+':'
 								,fechaEmision = dbo.AFTConvertDate(pr.fechaEmision)+dbo.AFTConvertHora(pr.fechaEmision)
 								,razonSocial = LTRIM(RTRIM(e.razonSocial)) 
-								,nombreComercial = s.nombreComercial
+								,nombreComercial = REPLACE(s.nombreComercial   , '&', '%26')   
 								,ruc = e.ruc
 								,direccionEntidad = e.direccion
 								,telefonoEntidad = ISNULL(s.telefono, 'S/N')  
 								,emailEntidad = s.correo 	
-								,razonSocialCliente = cl.nombreFiscal
+								,razonSocialCliente = REPLACE(cl.nombreFiscal   , '&', '%26')   
 								,nroIdentificacion = cl.numeroIdentificacion 
-								,direccionCliente = ISNULL(cl.direccion, '')
+								,direccionCliente = REPLACE(ISNULL(cl.direccion, ''), '&', '%26')   
 								,correoCliente = ISNULL(cl.correo, '')
 
 								,s.dirEstablecimiento
@@ -266,7 +266,7 @@ BEGIN
 			 SET @detail = (SELECT 
 								 codigo = a.codigo
 								,cantidad = CAST(prd.cantidad as numeric(15,2)) 
-								,descripcion = prd.descripcion 
+								,descripcion = REPLACE(prd.descripcion, '#', '%23')
 								,precioUnitario = CAST(prd.precioUnitario as numeric(15,2))
 								,precioTotal = CAST(prd.total as numeric(15,2))
 								,valorDescuento =  CAST(prd.valorDescuento as numeric(15,2)) 

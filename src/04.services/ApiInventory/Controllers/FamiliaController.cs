@@ -30,14 +30,14 @@ namespace ApiInventory.Controllers
                 Dictionary<string, object> _params = new Dictionary<string, object>();
                 _params["idUsuarioRol"] = idUsuarioRol;
                 _params["json"] = SqlValidation.ValidateSqlString(json);
-                DAO _dao = new DAO(_configuration);
-                return Ok(await _dao.GetDataSet("Almacen.Familia_Get", _params));
+                //return Ok(await _dao.GetDataSet("Almacen.Familia_Get", _params));
             }
             catch (Exception ex)
             {
                 _log.LogError("Error on Categoria -> Get: \n" + ex.ToString());
                 return BadRequest(ex.Message);
             }
+            return Ok(_response);
         }
 
         [HttpPost]
@@ -52,14 +52,14 @@ namespace ApiInventory.Controllers
                 _params["idUsuarioRol"] = idUsuarioRol;
                 _params["descripcion"] = SqlValidation.ValidateSqlString(data.descripcion);
                 _params["siglas"] = SqlValidation.ValidateSqlString(data.siglas);
-                DAO _dao = new DAO(_configuration);
-                return Ok(await _dao.Default("Almacen.Familia_Insert", _params));
+                //return Ok(await _dao.Default("Almacen.Familia_Insert", _params));
             }
             catch (Exception ex)
             {
                 _log.LogError("Error on Familia -> Insert: \n" + ex.ToString());
                 return BadRequest(ex.Message);
             }
+            return Ok(_response);
         }
 
         [HttpPut]
@@ -75,14 +75,14 @@ namespace ApiInventory.Controllers
                 _params["idCategoria"] = id;
                 _params["descripcion"] = SqlValidation.ValidateSqlString(data.descripcion);
                 _params["siglas"] = SqlValidation.ValidateSqlString(data.siglas);
-                DAO _dao = new DAO(_configuration);
-                return Ok(await _dao.GetDataSet("Alamcen.Familia_Update", _params));
+                //return Ok(await _dao.GetDataSet("Alamcen.Familia_Update", _params));
             }
             catch (Exception ex)
             {
                 _log.LogError("Error on Familia -> Update: \n" + ex.ToString());
                 return BadRequest(ex.Message);
             }
+            return Ok(_response);
         }
 
         [HttpPut]
@@ -95,15 +95,15 @@ namespace ApiInventory.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 Dictionary<string, object> _params = new Dictionary<string, object>();
                 _params["idUsuarioRol"] = idUsuarioRol;
-                _params["idCategoria"] = id;
-                DAO _dao = new DAO(_configuration);
-                return Ok(await _dao.GetDataSet("Almacen.Familia_Update_Cancel", _params));
+                _params["idCategoria"] = id; 
+                //return Ok(await _dao.GetDataSet("Almacen.Familia_Update_Cancel", _params));
             }
             catch (Exception ex)
             {
                 _log.LogError("Error on Familia -> Update Cancel: \n" + ex.ToString());
                 return BadRequest(ex.Message);
             }
+            return Ok(_response);
         }
 
     }

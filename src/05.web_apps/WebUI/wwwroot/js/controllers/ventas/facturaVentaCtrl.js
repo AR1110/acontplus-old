@@ -115,7 +115,7 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
 
     $scope.validateOperationPrintAndPayment = (result) => {
         //Verificamos 
-        console.log(result);
+        $scope.isRegister = result.isRegister;
         $scope.isPrintDocument = result.printerAutomatic;
 
         $scope.parametersPrint = {
@@ -511,20 +511,21 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
         })
 
         $modalRef.result.then(result=>{
-            if(typeof result =='object') {
+           
+            if(typeof result =='object' || $scope.isRegister) {
                 $scope.getFacturas();
             }
 
             //Cuando el documento es Nuevo o Duplicado 
             if($scope.isPrintDocument==1){
-                $scope.getFacturas();
+            //    $scope.getFacturas();
                 _commonSvc.getPrinter(JSON.stringify($scope.parametersPrint)) 
                 $scope.isPrintDocument= null;
             }
 
             //Focus New Invoice
             btnNewInvoice.focus();
-
+            $scope.isRegister = false;
         })
     }  
 

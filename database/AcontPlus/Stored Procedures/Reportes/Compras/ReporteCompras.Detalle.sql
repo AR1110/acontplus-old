@@ -97,7 +97,8 @@ BEGIN
 	--PRINT @isReportImport
 	IF @codDoc = '01' 
 		BEGIN 
-			SET @detailDs = (SELECT 
+			--SET @detailDs = (
+			SELECT 
 								id              = dd.idDocumentoDetalle
 								,idArticulo     = dd.idArticulo
 								,codigo         = ar.codigo
@@ -119,8 +120,11 @@ BEGIN
 							INNER JOIN TipoIva ti WITH(NOLOCK) ON ti.idTipoIva = ar.idTipoIva
 							LEFT JOIN Medida m WITH(NOLOCK) ON m.idMedida = dd.idMedida
 							INNER JOIN Tarifa       t ON t.idTarifa    = arPvp.idTarifa
-							WHERE dd.idDocumento = @id ORDER BY dd.idDocumentoDetalle ASC FOR JSON PATH 
-						 )
+							WHERE dd.idDocumento = @id ORDER BY dd.idDocumentoDetalle ASC 
+							
+							--FOR JSON PATH 
+						 --)
+						 RETURN
 		END 
 
 

@@ -2,7 +2,6 @@
 using DataAccess;
 using Helpers;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiFactElect.Controllers
@@ -12,81 +11,82 @@ namespace ApiFactElect.Controllers
     [ApiController]
     public class DocumentoElectronicoController : ControllerBase
     {
-        private readonly IConfiguration _configuration;    
-        
+        private readonly IConfiguration _configuration;
+        private readonly DbAccess _db;
         public DocumentoElectronicoController(IConfiguration configuration)
         {
-            _configuration = configuration;           
+            _configuration = configuration;
+            _db = new DbAccess(_configuration);
         }
 
         [HttpGet("{json}")]
         public async Task<IActionResult> Get(string json)
         {
             LogWriter _logs = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                DAO _dao = new DAO(_configuration);
-                Dictionary<string, object> parameters = new Dictionary<string, object>();
-                parameters.Add("idRol", idUsuarioRol);
-                parameters.Add("json", SqlValidation.ValidateSqlString(json));
-                return Ok(await _dao.GetDataSet("FactElect.Doc_Elect_Get", parameters));
-            }catch(Exception ex)
+                await _db.SPExecute("FactElect.Doc_Elect_Get");
+                _db.AddDynamicParam("idRol", idUsuarioRol);
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDataSetAsync();
+            }
+            catch (Exception ex)
             {
                 _logs.LogError("Error al obtener la solicitud: " + ex.ToString());
-                return new BadRequestObjectResult(new
-                {
-                    code = 0,
-                    message = "Error al obtener la solicitud"
-                });
-            }                                                    
-            
+                _response.Create(code: "0", message: "Error al obtener la solicitud");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
 
         [HttpGet("GetDataForm")]
         public async Task<IActionResult> GetDataForm()
         {
             LogWriter _logs = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                DAO _dao = new DAO(_configuration);                             
-                return Ok(await _dao.GetDataSet("FactElect.Doc_Elect_Get_Data_Form"));
+                await _db.SPExecute("FactElect.Doc_Elect_Get_Data_Form");
+                _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)
             {
                 _logs.LogError("Error while getting data form: " + ex.ToString());
-                return new BadRequestObjectResult(new
-                {
-                    code = 0,
-                    message = "Error while getting data form"
-                });
+                _response.Create(code: "0", message: "Error while getting data form");
             }
+            finally { _db.Close(); }
+            return Ok(_response);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id)
         {
             LogWriter _logs = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                DAO _dao = new DAO(_configuration);
-                Dictionary<string, object> parameters = new Dictionary<string, object>();
-                parameters.Add("idRol", idUsuarioRol);
-                parameters.Add("id", id);
-                return Ok(await _dao.Default("FactElect.Doc_Elect_Update", parameters));
+                await _db.SPExecute("FactElect.Doc_Elect_Update");
+                _db.AddDynamicParam("idRol", idUsuarioRol);
+                _db.AddDynamicParam("id", id);
+                _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
                 _logs.LogError("Error while updating doc: \n " + ex.ToString());
-                return new BadRequestObjectResult(new
-                {
-                    code = 0,
-                    message = "Error al actualizar el documento"
-                });
+                _response.Create(code: "0", message: "Error al actualizar el documento");
             }
-
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
 
     }

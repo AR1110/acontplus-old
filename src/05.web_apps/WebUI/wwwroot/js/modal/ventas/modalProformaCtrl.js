@@ -1,7 +1,7 @@
 
 
 
-import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.21";
+import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.22";
 
 
 class ModalProformaCtrl extends ModalBaseCtrl{
@@ -221,6 +221,15 @@ class ModalProformaCtrl extends ModalBaseCtrl{
         }            
     }
 
+    recalculateImpuestoTarifa(){
+        try {
+           this.uiGridInvoice.actividadTipoIva = this.impuestoTarifas.find(item=>item.tarifa===this.data.tarifa);           
+           this.data = Object.assign(this.data, this.uiGridInvoice.getTotales());                        
+        } catch (error) {
+            console.log(error);            
+        }       
+    }
+
 }
 
 
@@ -262,7 +271,10 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl{
                 this.idBodega      = this.bodegas.length>0?this.bodegas[0].idBodega:0;
                 this.cloneIdBodega = this.idBodega;
 
-                this.actividadTipoIva = resultsDataFormEstab[2][0]
+                // this.actividadTipoIva = resultsDataFormEstab[2][0];
+                this.impuestoTarifas = resultsDataFormEstab[2]; //Impuesto tarifas dependiendo el tipo Actividad
+                this.actividadTipoIva = resultsDataFormEstab[2][0];
+                this.data.tarifa = this.actividadTipoIva.tarifa;
                         
             }else{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
@@ -410,7 +422,7 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl{
             
             //Tarifa Aplicada al Documento
             this.data.idCliente = this.cliente.idCliente
-            this.data.tarifa = this.actividadTipoIva.tarifa;            
+            // this.data.tarifa = this.actividadTipoIva.tarifa;            
             
             let data = {
                 proforma: this.data,
@@ -614,7 +626,9 @@ export class ModalProformaEditarCtrl extends ModalProformaCtrl{
         this.detalleDocumento       = detalleDocumento;
         this.infoAdicionalDocumento = infoAdicionalDocumento;
         this.actividadTipoIva       = actividadTipoIva;
-        
+       
+        this.data.tarifa = this.actividadTipoIva.tarifa;
+       
     }
 
     async $onInit(){
@@ -634,7 +648,9 @@ export class ModalProformaEditarCtrl extends ModalProformaCtrl{
 
                 this.bodegas       = resultsDataFormEstab[1];                
                 this.idBodega      = this.bodegas.length>0?this.bodegas[0].idBodega:0;
-                this.cloneIdBodega = this.idBodega;                
+                this.cloneIdBodega = this.idBodega;     
+                
+                this.impuestoTarifas = resultsDataFormEstab[2]; //Impuesto tarifas dependiendo el tipo Actividad             
             }else{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
             }
@@ -753,7 +769,7 @@ export class ModalProformaEditarCtrl extends ModalProformaCtrl{
             
             //Tarifa Aplicada al Documento
             this.data.idCliente = this.cliente.idCliente
-            this.data.tarifa = this.actividadTipoIva.tarifa;            
+           // this.data.tarifa = this.actividadTipoIva.tarifa;            
             
             let data = {
                 proforma: this.data,
@@ -826,8 +842,10 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl{
                 this.bodegas       = resultsDataFormEstab[1];                
                 this.idBodega      = this.bodegas.length>0?this.bodegas[0].idBodega:0;
                 this.cloneIdBodega = this.idBodega;
-
-                this.actividadTipoIva = resultsDataFormEstab[2][0]
+                
+                this.impuestoTarifas = resultsDataFormEstab[2]; //Impuesto tarifas dependiendo el tipo Actividad
+                this.actividadTipoIva = resultsDataFormEstab[2][0];
+                this.data.tarifa = this.actividadTipoIva.tarifa;
 
             }else{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
@@ -959,7 +977,7 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl{
             
             //Tarifa Aplicada al Documento
             this.data.idCliente = this.cliente.idCliente
-            this.data.tarifa = this.actividadTipoIva.tarifa;            
+            //this.data.tarifa = this.actividadTipoIva.tarifa;            
             
             let data = {
                 proforma: this.data,

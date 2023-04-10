@@ -225,11 +225,11 @@
                         <div class="row">
                             <div class="form-group col-lg-2 col-md-2 col-sm-6 col-xs-6">
                                 <label for="">Tipo Iva: </label>
-                                <select class="form-control border-select tipoIva" ng-model="$ctrl.tipoIva" ng-change="$ctrl.recalculateTarifaAdd()" ng-focus="delayFocus('.tipoIva')"
+                                <select class="form-control border-select tipoIva" ng-model="$ctrl.tipoIva" ng-change="$ctrl.recalculateTarifaAdd()" ng-focus="delayFocus('.tipoIva')" ng-disabled="!$ctrl.articlePermission.precio.update"
                                         ng-options="ti as ti.descripcion for ti in $ctrl.tipoIvas track by ti.idTipoIva">
                                 </select>
                             </div>
-                            <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-6">
+                            <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-6" ng-if="$ctrl.articlePermission.precio.update">
                                 <label for="">Precio Costo: <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control precioCostoUp" 
                                     ng-disabled="$ctrl.opcionCalculate==undefined"
@@ -238,7 +238,7 @@
                                     ng-model="$ctrl.data.precioCosto" step="any" placeholder="0.00">
                             </div>
                             <!--Opcion para calcular pvp-tarifas-->
-                            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 mt-4">
+                            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 mt-4" ng-if="$ctrl.articlePermission.precio.update">
                                 <md-radio-group layout="row" ng-model="$ctrl.opcionCalculate">
                                     <md-radio-button value="optionPvp" class="md-primary">PVP</md-radio-button>
                                     <md-radio-button value="optionPorcentaje"> % Util </md-radio-button>

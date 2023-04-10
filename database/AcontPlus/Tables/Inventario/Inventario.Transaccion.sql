@@ -1,5 +1,8 @@
 USE AcontPlus
 GO
+IF OBJECT_ID('Inventario.Transaccion') IS NOT NULL
+DROP TABLE Inventario.Transaccion
+GO
 CREATE TABLE Inventario.Transaccion(
 idTransaccion INT NOT NULL CONSTRAINT pk_inventory_transaction PRIMARY KEY IDENTITY(1,1)
 ,idTipoTransaccion INT NOT NULL CONSTRAINT fk_inv_type_trans FOREIGN KEY (idTipoTransaccion) REFERENCES Inventario.TipoTransaccion(idTipoTransaccion)
@@ -11,7 +14,6 @@ idTransaccion INT NOT NULL CONSTRAINT pk_inventory_transaction PRIMARY KEY IDENT
 ,precioCosto NUMERIC(18,2) NULL
 ,precioVenta NUMERIC(18,2) NULL 
 ,fechaRegistro DATETIME NOT NULL DEFAULT GETDATE()
+,estado BIT NOT NULL DEFAULT 1
 ,idUsuario INT NULL
 )
-
- 

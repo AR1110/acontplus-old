@@ -13,6 +13,8 @@ export class ModalSubFamiliaCtrl {
         this.tipoRegistro = 1;
         this.familia = {};
         this.data = {};
+
+        this.data.montoObjetivo = 0;
     }
 
     $onInit() {

@@ -12,9 +12,11 @@ namespace ApiFactElect.Controllers.RetencionAts
     public class DocSustPagoController : ControllerBase
     {
         private readonly IConfiguration _configuration;
+        private readonly DbAccess _db;
         public DocSustPagoController(IConfiguration configuration)
         {
             _configuration = configuration;
+            _db = new DbAccess(_configuration);
         }
 
         // GET: api/<DocPagoController>
@@ -36,28 +38,26 @@ namespace ApiFactElect.Controllers.RetencionAts
         public async Task<IActionResult> Post(int idDocSust, string json)
         {
             LogWriter _logs = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-
-                DAO _dao = new DAO(_configuration);
-                Dictionary<string, object> parameters = new Dictionary<string, object>
-                {
-                    { "idUsuarioRol", idUsuarioRol },
-                    { "idDocSust", idDocSust },
-                    { "json", SqlValidation.ValidateSqlString(json) }
-                };
-                return Ok(await _dao.Default("FactElect.RetAts_Doc_Sust_Pago_Insert", parameters));
-            }
+                await _db.SPExecute("FactElect.RetAts_Doc_Sust_Pago_Insert");
+                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+                _db.AddDynamicParam("idDocSust", idDocSust);
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDefault();
+             }
             catch (Exception ex)
             {
                 _logs.LogError("Error al guardar el pago: " + ex.ToString());
-                return new BadRequestObjectResult(new
-                {
-                    code = 0,
-                    message = "Error al guardar el pago"
-                });
+                _response.Create(code: "0", message: "Error al guardar el pago");
             }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
 
         // PUT api/<DocPagoController>/5
@@ -65,28 +65,26 @@ namespace ApiFactElect.Controllers.RetencionAts
         public async Task<IActionResult> Put(int id, string json)
         {
             LogWriter _logs = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-
-                DAO _dao = new DAO(_configuration);
-                Dictionary<string, object> parameters = new Dictionary<string, object>
-                {
-                    { "idUsuarioRol", idUsuarioRol },
-                    { "id", id },
-                    { "json", SqlValidation.ValidateSqlString(json) }
-                };
-                return Ok(await _dao.Default("FactElect.RetAts_Doc_Sust_Pago_Update", parameters));
+                await _db.SPExecute("FactElect.RetAts_Doc_Sust_Pago_Update");
+                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+                _db.AddDynamicParam("id", id);
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
                 _logs.LogError("Error al actualizar el pago: " + ex.ToString());
-                return new BadRequestObjectResult(new
-                {
-                    code = 0,
-                    message = "Error al actualizar el pago"
-                });
+                _response.Create(code: "0", message: "Error al actualizar el pago");
             }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
 
         // DELETE api/<DocPagoController>/5
@@ -94,27 +92,25 @@ namespace ApiFactElect.Controllers.RetencionAts
         public async Task<IActionResult> Delete(int id)
         {
             LogWriter _logs = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-
-                DAO _dao = new DAO(_configuration);
-                Dictionary<string, object> parameters = new Dictionary<string, object>
-                {
-                    { "idUsuarioRol", idUsuarioRol },
-                    { "id", id }
-                };
-                return Ok(await _dao.Default("FactElect.RetAts_Doc_Sust_Pago_Delete", parameters));
+                await _db.SPExecute("FactElect.RetAts_Doc_Sust_Pago_Delete");
+                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+                _db.AddDynamicParam("id", id);
+                _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
                 _logs.LogError("Error al eliminar el pago: " + ex.ToString());
-                return new BadRequestObjectResult(new
-                {
-                    code = 0,
-                    message = "Error al eliminar el pago"
-                });
+                _response.Create(code: "0", message: "Error al eliminar el pago");
             }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
     }
 }

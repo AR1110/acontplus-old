@@ -177,12 +177,31 @@ export  class ArticuloTarifaGridOption{
         let porcentajeUtilidad = 0;
         let ganancia = 0;
 
+        
+        if( ["precioVenta", "precioConIva"].includes(rowEntity[colDef.field]) && rowEntity[colDef.field] < 0){
+            toastr.warning('El valor ingresado no tiene que ser menor a 0', '<h5>Hola</h5>');           
+            toastr.options.preventDuplicates = true;
+            toastr.options.progressBar = true;
+            rowEntity[colDef.field] = oldValue;
+            return
+        }
+
+        
+        if(["precioVenta", "precioConIva"].includes(colDef.field) && rowEntity[colDef.field] < _self.precioCosto){
+            toastr.warning('El valor no tiene que ser menor a Precio Costo');
+            toastr.options.preventDuplicates = true;
+            toastr.options.progressBar = true;
+            rowEntity[colDef.field] = oldValue;
+            return
+        }
+
+
         //Validacion de Campos 
         if ([null, undefined, "", 0].includes(_self.getPrecioCosto) || isNaN(_self.precioCosto)){
             toastr.warning('Ingrese el Precio de Costo');
             return
         }
-                      
+                       
         if (colDef.field === "precioVenta" && newValue === undefined || newValue === null) {
             rowEntity.precioVenta = oldValue;
         }

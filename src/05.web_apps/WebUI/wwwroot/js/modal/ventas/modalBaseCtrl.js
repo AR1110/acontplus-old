@@ -650,8 +650,13 @@ export class ModalBaseCtrl{
             this.bodegas         = resultsDataFormEstab[1];
             this.idBodega        = this.bodegas.length>0 ? this.bodegas[0].idBodega: 0;
             this.cloneIdBodega   = this.idBodega;
+            
+            this.impuestoTarifas = resultsDataFormEstab[2]; //Impuesto tarifas dependiendo el tipo Actividad
+            this.actividadTipoIva = resultsDataFormEstab[2][0];
+            this.data.tarifa = this.actividadTipoIva.tarifa;
 
-            this.actividadTipoIva = resultsDataFormEstab[2][0]
+            this.disabledImpuestoTarifa = this.actividadTipoIva.codigoPorcentaje=='2'
+            
 
             let indexColumn = this.gridOptions.columnDefs.findIndex(item=>item.field==='idBodega');
             

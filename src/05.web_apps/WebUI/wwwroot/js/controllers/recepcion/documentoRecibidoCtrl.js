@@ -27,6 +27,11 @@
 
             'use strict';
             $scope.title = 'documentoRecibidoCtrl';
+
+            $scope.compFounded = [];
+            $scope.compToImport = [];
+
+
             $scope.comprobantes = [];
             $scope.idProveedor = 0;
 
@@ -161,7 +166,7 @@
                         }
                         if (response.code == "1") {
                             $scope.comprobantes = JSON.parse(response.payload)[0]
-                            $scope.cloneComprobantes = JSON.parse(JSON.stringify($scope.comprobantes)) 
+                            $scope.cloneComprobantes = JSON.parse(JSON.stringify($scope.comprobantes))
                             hideLoader()
                         }
 
@@ -286,6 +291,97 @@
                 $('#newImportModal').modal('show')
             }
 
+            //Read File tXT 
+            $scope.readFileTxt = function () {
+                try {
+                    if ([null, undefined, ""].includes($scope.fileTxt)) {
+                        tS.toastr('warning', 'No has seleccionado ningún archivo');
+                        return
+                    }
+
+                    showLoader();
+                    mS.getDataFile(_urlService + 'DocumentoRecibido/Read', $scope.fileTxt).then(response => {
+                        if (response.code == 0) {
+                            hideLoader()
+                            tS.toastr('warning', response.message)
+                            return;
+                        }
+                        if (response.code == 1) {
+                            console.log(response);
+                            tS.toastr('success', response.message);
+                            $scope.compFounded = JSON.parse(response.payload) || [];
+                            $scope.fileTxt = null;
+                            $('#newImportModal').modal('hide');
+                            $("#compFounded").modal('show');
+                            hideLoader();
+                        }
+                    }).catch(error => {
+                        hideLoader();
+                        console.log(error)
+                    })
+                } catch (error) {
+                    hideLoader();
+                    console.log(error)
+                }
+            }
+
+            $scope.askToSaveFounded = function () {
+                try {
+
+                    if ($scope.compToImport.length === 0) {
+                        tS.toastr('warning', 'Seleecione al menos un comprobante');
+                        return
+                    }
+
+                    Swal.fire({
+                        //title: 'Are you sure?',
+                        text: "Esta seguro de guardar los comprobantes seleccionados?",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Si, guardar!',
+                        cancelButtonText: 'No, cancelar'
+                    }).then(result => {
+                        if (result.isConfirmed) {
+                            $scope.post();
+                        }
+                    })
+
+                } catch (error) {
+                    console.log(error);
+                }
+
+            }
+
+            //Guardar Documentos importados
+            $scope.post = function () {
+
+                let data = {
+                    jsonData: JSON.stringify({ codEstab: $scope.query.codEstab }),
+                    json: JSON.stringify($scope.compToImport)
+                }
+                showLoader();
+                mS.getData('post', _urlService + 'DocumentoRecibido/Post', data).then(
+                    response => {
+                        if (response.code == 0) {
+                            hideLoader()
+                            tS.toastr('warning', response.message);
+                        }
+                        if (response.code == 1) {
+                            $scope.getComprobantes()
+                            $("#compFounded").modal('hide');
+                            tS.toastr('success', response.message)
+                            hideLoader();
+                        }
+                    }
+                ).catch(error => {
+                    hideLoader();
+                    console.log(error);
+                })
+
+            }
+
             $scope.mergedDocs = []
             $scope.showOptionsMergeDoc = false;
             $scope.getMergedDocs = (item) => {
@@ -327,39 +423,7 @@
             })
 
 
-            $scope.post = function () {
-                try {
-                    showLoader()
-                    let file = $scope.fileTxt;
-                    if (file === null || file === undefined) {
-                        hideLoader()
-                        alert('No ha seleccionado ningun archivo')
-                        return;
-                    }
-                    mS.getDataFile(_urlService + 'DocumentoRecibido/' + JSON.stringify({ codEstab: $scope.query.codEstab }), file).then(
-                        response => {
-                            if (response.code == 0) {
-                                hideLoader()
-                                tS.toastr('warning', response.message)
-                                return;
-                            }
-                            if (response.code == 1) {
-                                $scope.getComprobantes()
-                                $('#newImportModal').modal('hide')
-                                tS.toastr('success', response.message)
-                                $scope.fileTxt = '';
-                            }
-                        }, error => {
-                            hideLoader()
-                            console.log(error)
-                        }
-                    )
-                    hideLoader()
-                } catch (error) {
-                    hideLoader()
-                    console.log(error)
-                }
-            }
+
 
             $scope.putXml = function () {
                 try {
@@ -1026,15 +1090,15 @@
 
             $scope.openModalNewArticle = async (event) => {
 
-                let {MODAL_CTRL, MODAL_NUEVO_CSHTML } = nameModalConst.articulo;
+                let { MODAL_CTRL, MODAL_NUEVO_CSHTML } = nameModalConst.articulo;
                 let { ModalArticuloCtrl } = await import('../../modal/' + MODAL_CTRL);
 
                 let modalRef = modalService.openModalCustom({
                     controller: ModalArticuloCtrl,
                     template: 'Articulo/' + MODAL_NUEVO_CSHTML,
-                    size:'xl',
+                    size: 'xl',
                 })
-                
+
                 modalRef.result.then(response => {
                     if (typeof (response) == "object") {
                         $scope.idArticulo = response.idArticulo
@@ -1044,21 +1108,21 @@
             }
 
 
-            $scope.openModalEditArticulo = async(item) =>{                
+            $scope.openModalEditArticulo = async (item) => {
                 try {
-                                        
-                    let {MODAL_CTRL, MODAL_NUEVO_CSHTML } = nameModalConst.articulo;
+
+                    let { MODAL_CTRL, MODAL_NUEVO_CSHTML } = nameModalConst.articulo;
                     let { ModalArticuloCtrl } = await import('../../modal/' + MODAL_CTRL);
-    
+
                     modalService.openModalCustom({
                         controller: ModalArticuloCtrl,
                         template: 'Articulo/' + MODAL_NUEVO_CSHTML,
-                        size:'xl',
+                        size: 'xl',
                         params: {
                             idArticulo: item.idArticulo,
                             isUpdateImport: true
                         }
-                    })                                        
+                    })
                 } catch (error) {
                     console.log(error)
                 }
@@ -1843,17 +1907,23 @@
 
 
                     const parameters = {
+                        reportParams: JSON.stringify(dataParms),
                         dataParams: JSON.stringify(dataParms)
                     }
                     console.log(parameters)
 
-                    _commonSvc.getReportDynamic({ parameters, format })
+                    // _commonSvc.getReportDynamic({ parameters, format })
+                    _commonSvc.exportExcel({ parameters })
                 } catch (error) {
                     console.log(error)
                 }
             }
 
         }
+        $('#compFounded').on('hidden.bs.modal', () => {
+            $scope.compToImport = []
+            $scope.compFounded = []
+        })
     }
 
 )(window.angular)

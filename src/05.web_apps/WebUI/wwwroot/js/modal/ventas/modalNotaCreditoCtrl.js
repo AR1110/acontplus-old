@@ -1,7 +1,7 @@
 
 
 
-import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.35";
+import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.37";
 
 class ModalNotaCreditoCtrl extends ModalBaseCtrl{
     constructor({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS}){
@@ -231,6 +231,15 @@ class ModalNotaCreditoCtrl extends ModalBaseCtrl{
         }            
     }
 
+    recalculateImpuestoTarifa(){
+        try {
+           this.uiGridInvoice.actividadTipoIva = this.impuestoTarifas.find(item=>item.tarifa===this.data.tarifa);           
+           this.data = Object.assign(this.data, this.uiGridInvoice.getTotales());                        
+        } catch (error) {
+            console.log(error);            
+        }       
+    }
+
 }
 
 
@@ -272,10 +281,10 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl{
                 this.bodegas       = resultsDataFormEstab[1];                
                 this.idBodega      = this.bodegas.length>0?this.bodegas[0].idBodega:0;
                 this.cloneIdBodega = this.idBodega;
-
-                this.actividadTipoIva = resultsDataFormEstab[2][0]
                 
-              
+                this.impuestoTarifas = resultsDataFormEstab[2]; //Impuesto tarifas dependiendo el tipo Actividad
+                this.actividadTipoIva = resultsDataFormEstab[2][0];
+                this.data.tarifa = this.actividadTipoIva.tarifa;              
             }else{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
             }
@@ -477,7 +486,7 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl{
             notaCredito.idCliente = this.cliente.idCliente;                            
 
             //Tarifa Aplicada al Documento
-            notaCredito.tarifa = this.actividadTipoIva.tarifa;
+            //notaCredito.tarifa = this.actividadTipoIva.tarifa;
         
             
 
@@ -533,6 +542,7 @@ export class ModalNotaCreditoEditarCtrl extends ModalNotaCreditoCtrl{
         this.infoAdicionalDocumento = infoAdicionalDocumento;
         this.actividadTipoIva       = actividadTipoIva;
        
+        this.data.tarifa = this.actividadTipoIva.tarifa;
     }
 
     async $onInit(){
@@ -555,7 +565,7 @@ export class ModalNotaCreditoEditarCtrl extends ModalNotaCreditoCtrl{
                 this.cloneIdBodega = this.idBodega;
 
                 // this.actividadTipoIva = resultsDataFormEstab[2][0]
-
+                this.impuestoTarifas = resultsDataFormEstab[2]; //Impuesto tarifas dependiendo el tipo Actividad               
             }else{
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
             }

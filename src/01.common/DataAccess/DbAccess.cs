@@ -205,6 +205,34 @@ namespace DataAccess
             return _response;
         }
 
+
+        public GenericResponse GetDataSetAsync()
+        {
+            DataSet ds = new DataSet();
+            var _response = new GenericResponse();
+            if (_command != null)
+            {
+                using (SqlDataAdapter dataAdapter = new SqlDataAdapter(_command))
+                {
+                    dataAdapter.Fill(ds);
+                    if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
+                    {
+                        if (ds.Tables.Count > 0)
+                        {
+                            ds = new DataSet();
+                        }
+                        _response.Create(code: "0", "La transacción no devolvio respuesta");
+                    }
+                    else
+                    {
+                        _response.Create(code: "1", payload: DataHelper.DataSetToJSON(ds));
+                    }
+                }
+            }
+            return _response;
+        }
+
+
         //If error exists
         public void Close()
         {

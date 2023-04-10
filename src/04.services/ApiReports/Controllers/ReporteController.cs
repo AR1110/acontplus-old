@@ -29,7 +29,6 @@ namespace ApiReports.Controllers
             Request.Headers.TryGetValue("Authorization", out StringValues headerValues);
             string jsonWebToken = headerValues.FirstOrDefault();
             FileModelDto _response = new FileModelDto();
-            //ReporteDao _r = new ReporteDao();
             string mimeType = string.Empty;
             string fileName = string.Empty;
             try
@@ -75,7 +74,46 @@ namespace ApiReports.Controllers
                 return Ok(_response);
             }
         }
+        [HttpPost("ExportExcel")]
+        public async Task<IActionResult> ExportExcel(ApiReportParamsDto data)
+        {
+            LogWriter _log = new LogWriter(_configuration);
+            Request.Headers.TryGetValue("Authorization", out StringValues headerValues);
+            string jsonWebToken = headerValues.FirstOrDefault();
+            FileModelDto _response = new FileModelDto();
+            string mimeType = string.Empty;
+            string fileName = string.Empty;
+            try
+            {
+                DbAccess _db = new DbAccess(_configuration);
+                await _db.SPExecute("Reporte.Report_Get");
+                _db.AddDynamicParam("json", data.reportParams);
+                DataSet dsParams = _db.GetDataSet();
 
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+
+                await _db.SPExecute(dsParams.Tables[0].Rows[0]["storedProcedure"].ToString());
+                _db.AddDynamicParam("json", data.dataParams);
+                DataSet ds = _db.GetDataSet();
+                fileName = dsParams.Tables[0].Rows[0].Field<string>("fileName");
+                string trimmed = fileName.Split(".").First();
+                var excelFile = ExcelReports.Export(ds, trimmed);
+                if (excelFile == null || excelFile.Length == 0)
+                {
+                    ReportError.ReportNotFound(_response);
+                }
+                else
+                {
+                    _response.Create(excelFile, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName + "x");
+                }
+             }
+            catch (Exception ex)
+            {
+                _log.LogError("Error in Download: \n" + ex.ToString());
+                ReportError.ReportNotFound(_response); 
+            }
+            return File(_response.Content, _response.ContentType, _response.FileName);
+        }
 
         //Dynamic Report --> From Client
         [HttpPost("DynamicReport")]

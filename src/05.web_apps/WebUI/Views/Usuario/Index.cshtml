@@ -30,7 +30,7 @@
                             <form class="form-material">
                                 <div class="input-group">
                                     <input type="text" class="form-control" ng-model="txtFilter" placeholder="Buscar Usuario">
-                                    <button class="btn btn-secondary btn-sm">
+                                    <button class="btn btn-secondary btn-sm" ng-click="getUsuarios()">
                                         <i class="ti-search"></i>
                                     </button>
                                 </div>
@@ -60,11 +60,8 @@
                                         <button class="btn btn-danger btn-sm" ng-if="accion.eliminar" ng-click="askToDelete(item)">
                                             <i class="mdi mdi-delete"></i>
                                         </button>
-                                        <button class="btn btn-default btn-sm" ng-if="accion.acceso" tooltip-placement='top' uib-tooltip='Entidades' ng-click="openModalUserCompany(item)">
-                                            <i class="fas fa-id-card-alt"></i>
-                                        </button>  
-                                        <button class="btn btn-warning btn-sm" tooltip-placement='top' uib-tooltip='Permisos' ng-click="openModalPermission(item)">
-                                            <i class="mdi mdi-key-variant"></i>
+                                        <button class="btn btn-warning btn-sm" ng-if="accion.acceso" tooltip-placement='top' uib-tooltip='Asig. de Establecimientos, Puntos de Emisión, Bodegas y Permisos' ng-click="openModalUserConfig(item)">
+                                            <i class="mdi mdi-account-settings-variant"></i>
                                         </button>                                  
                                     </td>
                                     <td md-cell>{{item.nroIdentificacion}}</td>
