@@ -477,9 +477,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
 
             this.ventaComrobantePermission = Object.freeze(this.ventaPermission.comprobante);
             this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
-            console.log(this.ventaPermission)
-            console.log(this.ventaComrobantePermission)
-            console.log(this.ventaDetailPermission)
+           
 
             if(resultsDataForm[8].length>0){ 
                 let {searchCode, printerAutomatic, payAutomatic } = resultsDataForm[8][0];                                           
@@ -762,6 +760,14 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl{
                     }
                 })
             }
+
+             //Permisos             
+            let userPermission = resultsDataForm[9];
+            this.ventaPermission = JSON.parse(userPermission[0].jsonPermission);
+ 
+            this.ventaComrobantePermission = Object.freeze(this.ventaPermission.comprobante);
+            this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
+            
            
             this.setColumnDefs();            
            
@@ -1082,6 +1088,14 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl{
                     }
                 })
             }
+
+             //Permisos             
+             let userPermission = resultsDataForm[9];
+             this.ventaPermission = JSON.parse(userPermission[0].jsonPermission);
+ 
+             this.ventaComrobantePermission = Object.freeze(this.ventaPermission.comprobante);
+             this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
+            
            
             this.setColumnDefs();            
            

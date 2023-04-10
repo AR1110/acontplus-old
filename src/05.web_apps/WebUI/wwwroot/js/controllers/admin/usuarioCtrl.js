@@ -9,8 +9,8 @@
     }
 
     let Id_Usuario_Rol = 0;
+    let role   = null;
 
-    
 
     app.controller('usuarioCtrl', usuarioCtrl);
 
@@ -23,9 +23,10 @@
         }else{
             $scope.accion = accion[0];
         }        
-        
+        console.log(decodeToken)
         Id_Usuario_Rol = parseInt(decodeToken.idUsuarioRol);
-
+        role = decodeToken.role;
+        
         $scope.dataSearch = {
             idRol: Id_Usuario_Rol,
             pageIndex: 1,
@@ -337,15 +338,30 @@
     //--------------------------------START CONFIG USER----------------------------------------------------
     app.controller('modalUserConfigCtrl', modalUserConfigCtrl);
 
-    modalUserConfigCtrl.$inject = ["$scope", "$uibModalInstance", "mainService", "modalService", "toastService", "params"];
+    modalUserConfigCtrl.$inject = ["$scope", "$uibModalInstance", "$filter", "mainService", "modalService", "toastService", "params"];
 
-    function modalUserConfigCtrl($scope, $uibModalInstance, mS, modalSvc, tS, params) {
+    function modalUserConfigCtrl($scope, $uibModalInstance, $filter, mS, modalSvc, tS, params) {
 
         $scope.params = params;
+
+        $scope.options = {
+            rowSelection: true,
+            multiSelect: false,
+            autoSelect: false,
+            decapitate: false,                                   
+        };
+
+        $scope.selectedUsuarioRol = [];
         $scope.usuarioRoles = [];
         $scope.establecimientos = [];
 
-        $scope.disbledTabPermission = true;
+
+    
+        $scope.role = role;
+
+        
+        $scope.disbledTabPermission = true;        
+
 
         $scope.initiload = ()=>{
             try {
@@ -370,6 +386,11 @@
         }
 
         $scope.initiload();
+
+
+        $scope.isRoleAdmin = function(){
+            return ['RT'].includes($scope.role)
+        }
 
         
         
@@ -576,6 +597,9 @@
 
 
 
+        
+
+
         $scope.closeModal = ()=> {
             $uibModalInstance.close();
         }
@@ -583,7 +607,7 @@
 
     //------------------------------------------START CONFIG USER----------------------------------------------------
 
-    
+
 
     //-------------------------------START ASIGNACIÓN DE PUNTO DE EMISIÓN Y BODEGA------------------------------------------------------
     app.controller("modalAsignPtoEmisionAndBodegaCtrl", modalAsignPtoEmisionAndBodegaCtrl)
