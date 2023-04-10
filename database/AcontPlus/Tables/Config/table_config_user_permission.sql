@@ -22,7 +22,7 @@ DECLARE @jsonArticle VARCHAR(MAX) = '{"precio":{"label":"Permitir actualizar el 
 DECLARE @newjson VARCHAR(100);
 
 -----------------------------------------START SALE PERMISSIONS------------------------------------------
-	--Insert properties of voucher
+	--Insert properties in voucher property comprobante
 		--SET @newjson = N'{"label":"Punto Emision", "update":true}';		
 		--UPDATE Config.UserPermission SET jsonPermission = REPLACE(REPLACE(JSON_MODIFY(jsonPermission, 'append $.comprobante.puntoEmision', JSON_QUERY(@newjson)),'[', ''), ']', '') 
 		--WHERE codModule='V'

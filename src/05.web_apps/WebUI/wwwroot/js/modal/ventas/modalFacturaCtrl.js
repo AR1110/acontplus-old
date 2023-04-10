@@ -1,6 +1,6 @@
 
 
-import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.61";
+import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.70";
 
 class ModalFacturaCtrl extends ModalBaseCtrl{
     
@@ -424,9 +424,6 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
                 let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
                                 
                 //informacion de establecimiento y ptoEmision en Encabezado                              
-
-
-
                 this.data.codEstab = dataEstab.codEstab;
                 this.cloneCodEstab = dataEstab.codEstab;
 
@@ -459,10 +456,8 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
             this.configDetalle = resultsDataForm[2][0]
             
             this.tipoIvas = resultsDataForm[3];
+
             this.tarifas  = resultsDataForm[4];
-
-            console.log(this.tipoIvas)
-
             this.idTarifa = this.tarifas.length>0?this.tarifas[0].idTarifa:0;
             this.cloneIdTarifa = this.idTarifa;
 
@@ -475,6 +470,16 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
             if(resultsDataForm[7].length>0){
                 this.cliente = resultsDataForm[7][0];
             }
+
+            //Permisos             
+            let userPermission = resultsDataForm[9];
+            this.ventaPermission = JSON.parse(userPermission[0].jsonPermission);
+
+            this.ventaComrobantePermission = Object.freeze(this.ventaPermission.comprobante);
+            this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
+            console.log(this.ventaPermission)
+            console.log(this.ventaComrobantePermission)
+            console.log(this.ventaDetailPermission)
 
             if(resultsDataForm[8].length>0){ 
                 let {searchCode, printerAutomatic, payAutomatic } = resultsDataForm[8][0];                                           

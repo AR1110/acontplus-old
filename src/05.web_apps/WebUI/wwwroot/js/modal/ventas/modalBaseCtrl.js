@@ -200,6 +200,8 @@ export class ModalBaseCtrl{
 
 
     setColumnDefs(){
+        const ventaDetailPermission = this.ventaDetailPermission || { medida: { update: true}, tipoIva: { update: true}}
+
         this.gridOptions.columnDefs = [                
             {
                 name: 'Op.',
@@ -253,8 +255,9 @@ export class ModalBaseCtrl{
                 field: 'idMedida',                           
                 cellFilter: 'mapMedida:row.entity.medidas',
                 editableCellTemplate: 'ui-grid/dropdownEditor',
-                enableCellEdit: true,
-                enableCellEditOnFocus: true,
+                enableCellEdit: ventaDetailPermission.medida.update, 
+                enableCellEditOnFocus: ventaDetailPermission.medida.update,
+                allowCellFocus: ventaDetailPermission.medida.update,                
                 editDropdownOptionsFunction: function(rowEntity, colDef) {
                     return rowEntity.medidas.map(function(val) {                     
                         return { id: val.idMedida, value: val.descripcion }
@@ -282,9 +285,9 @@ export class ModalBaseCtrl{
                 cellFilter: 'cellFilterTipoIva:this',
                 editDropdownValueLabel: 'descripcion',
                 editDropdownIdLabel: 'idTipoIva',
-                enableCellEdit: true,
-                allowCellFocus: true,
-                enableCellEditOnFocus: true,
+                enableCellEdit: ventaDetailPermission.tipoIva.update,
+                allowCellFocus:  ventaDetailPermission.tipoIva.update,
+                enableCellEditOnFocus: ventaDetailPermission.tipoIva.update,
             //    visible: config.porcentajeIva
             },
             { name: 'tarifas', field: 'articuloTarifas', visible: false },
@@ -295,8 +298,9 @@ export class ModalBaseCtrl{
                 minWidth:'100',
                 cellFilter: 'mapTarifa:row.entity.articuloTarifas',
                 editableCellTemplate: 'ui-grid/dropdownEditor',
-                enableCellEdit: true,
-                enableCellEditOnFocus: true,
+                enableCellEdit: ventaDetailPermission.tarifa.update,
+                enableCellEditOnFocus: ventaDetailPermission.tarifa.update,
+                allowCellFocus: ventaDetailPermission.tarifa.update,
                 editDropdownOptionsFunction: (rowEntity, colDef)=>{
                     return rowEntity.articuloTarifas.map(val=>({ id: val.idTarifa, value: val.tarifa + ' - $' + val.precioConIva }))    
                 }, 
@@ -306,9 +310,13 @@ export class ModalBaseCtrl{
                 field: 'precioUnitario', 
                 enableCellEditOnFocus: true,
                 enableColumnMenu: false,
+                allowCellFocus: true,
                 type: 'number',
                 width: '8%',
                 minWidth:'100',
+                cellEditableCondition: function(scope) {
+                    return scope.row.entity.llevaInventario? ventaDetailPermission.precioUnitario.update : true;
+                },
                 // cellFilter: "currency:'$'",
             },
             {
@@ -321,14 +329,17 @@ export class ModalBaseCtrl{
                 enableCellEditOnFocus: true,
                 width: '7%',
                 minWidth:'100',
+                cellEditableCondition: function(scope) {
+                    return scope.row.entity.llevaInventario? ventaDetailPermission.precioConIva.update : true;
+                },
                 // cellFilter: "currency:'$'",
             },
             {
                 name: '%',
                 field: 'porcentajeDescuento',
-                enableCellEdit:true,
-                allowCellFocus:true,
-                enableCellEditOnFocus: true,
+                enableCellEdit: ventaDetailPermission.porcentajeDescuento.update ,
+                allowCellFocus: ventaDetailPermission.porcentajeDescuento.update,
+                enableCellEditOnFocus: ventaDetailPermission.porcentajeDescuento.update,
                 min: 0,
                 width: '6%',
                 minWidth:'100',
@@ -340,8 +351,9 @@ export class ModalBaseCtrl{
             {
                 name: 'dsto.',
                 field: 'valorDescuento',
-                enableCellEdit: true,
-                enableCellEditOnFocus: true,
+                enableCellEdit: ventaDetailPermission.descuento.update,
+                enableCellEditOnFocus: ventaDetailPermission.descuento.update,
+                allowCellFocus: ventaDetailPermission.descuento.update,
                 min: 0,
                 type: 'number',
                 width: '6%',
