@@ -19,39 +19,38 @@ namespace WebUI.Controllers.Compras
         
         public IActionResult Index()
         {
-            ViewData["idRol"] = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
             return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] NotaVentaViewModel data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _nv.InsertAsync(idRol, data);
             return Ok(res);
         }
         public async Task<IActionResult> Get(int pageIndex, int pageSize)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _nv.GetAsync(idRol,pageIndex, pageSize);
             return Ok(res);
         }
         public async Task<IActionResult> GetId(int idNotaVenta)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _nv.GetIdAsync(idRol, idNotaVenta);
             return Ok(res);
         }
         [HttpPost]
         public async Task<IActionResult> Put(int idNotaVenta, [FromBody] NotaVentaViewModel data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _nv.UpdateAsync(idRol,idNotaVenta, data);
             return Ok(res);
         }
         public async Task<IActionResult> Delete(int idNotaVenta)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _nv.DeleteAsync(idRol, idNotaVenta);
             return Ok(res);
         }

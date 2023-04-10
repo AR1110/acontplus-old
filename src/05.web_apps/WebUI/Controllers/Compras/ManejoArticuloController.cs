@@ -15,7 +15,7 @@ namespace WebUI.Controllers.Compras
         }
         public async Task<IActionResult> GetTagByDocument(int idArticulo, int idTipoDoc, int idComprobante)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _ma.GetByDocumentPayAsycn(idRol, idArticulo, idTipoDoc, idComprobante);
             return Ok(res);
         }

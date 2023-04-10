@@ -23,14 +23,14 @@ namespace WebUI.Controllers.GestionFinanciera
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] SubEntidadFinanciera data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _sef.InsertAsync(idRol, data);
             return Ok(res);
         }
 
         public async Task<IActionResult> Get(int pageIndex, int pageSize)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _sef.GetAsync(idRol, pageIndex, pageSize);
             return Ok(res);
         }
@@ -38,14 +38,14 @@ namespace WebUI.Controllers.GestionFinanciera
         [HttpPost]
         public async Task<IActionResult> Put(int idSubEntidadFinanciera, [FromBody] SubEntidadFinanciera data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _sef.UpdateAsync(idRol, idSubEntidadFinanciera, data);
             return Ok(res);
         }
 
         public async Task<IActionResult> Delete(int idSubEntidadFinanciera)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _sef.DeleteAsync(idRol, idSubEntidadFinanciera);
             return Ok(res);
         }
@@ -54,7 +54,7 @@ namespace WebUI.Controllers.GestionFinanciera
         //Get by idEntidadFinanciera 
         public async Task<IActionResult> GetByIdEntidadFinanciera(int idEntidadFinanciera)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _sef.GetByEnFinacieraAsync(idRol, idEntidadFinanciera);
             return Ok(res);
         }

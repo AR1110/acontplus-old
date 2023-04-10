@@ -13,21 +13,21 @@ namespace WebUI.Controllers.Admin
     public class ReporteController : Controller
     {
         private readonly IWebHostEnvironment _hostingEnviroment;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        
         private IConfiguration _config;
         private readonly string _apiGateway = "";
         private DataAccessObject _dao;
-        private readonly int _idRol;
+        
         private LogWriter _logs;
-        public ReporteController(IConfiguration config, IHttpContextAccessor httpContextAccessor, IWebHostEnvironment hostEnvironment)
+        public ReporteController(IConfiguration config, IWebHostEnvironment hostEnvironment)
         {
             _config = config;
             _dao = new DataAccessObject(_config);
             _logs = new LogWriter(_config);
             _hostingEnviroment = hostEnvironment;
             _apiGateway = _config.GetSection("UrlApis").GetSection("ApiGateway").Value;
-            _httpContextAccessor = httpContextAccessor;
-            _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            
+            
         }
 
         
@@ -80,7 +80,7 @@ namespace WebUI.Controllers.Admin
                 // string idUsuarioRol = headerUsuarioRol.FirstOrDefault();
                 // Console.WriteLine(jsonWebToken);
                 // Console.WriteLine(idUsuarioRol);
-                parameters.idRol = _idRol;
+                parameters.idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 reportFile = await new ApiServer(_apiGateway).PostAsync<FileModel>("api/Reporte/Download", parameters, Request);
                 if (reportFile.Content == null || reportFile.Content.Length == 0)
                 {

@@ -40,13 +40,13 @@ namespace WebUI.Controllers
 
         public async Task<IActionResult> GetConfiguration(int idPuntoEmision)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _td.GetConfigurationAsync(idRol, idPuntoEmision);
             return Ok(_gr);
         }
         public async Task<IActionResult> SaveConfig([FromBody] ConfiguracionDocumento data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _td.SaveConfigAsync(idRol, data);
             return Ok(_gr);
         }

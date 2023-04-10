@@ -21,7 +21,7 @@ namespace WebUI.Controllers.GestionFinanciera
 
         public async Task<IActionResult> GetByDocument(int idPago, int idTipoDocumento, int idComprobante)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _pagoD.GetByDocumentAsync(idRol, idPago, idTipoDocumento, idComprobante);
             return Ok(res);
         }

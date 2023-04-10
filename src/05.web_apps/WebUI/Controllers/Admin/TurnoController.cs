@@ -31,14 +31,14 @@ namespace WebUI.Controllers.Admin
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Turno data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _t.CreateTurnoAsync(idRol, data);
             return Ok(res);
         }
 
         public async Task<IActionResult> Get(int pageIndex, int pageSize)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _t.ReadTurnoAsync(idRol, pageIndex, pageSize);
             return Ok(res);
         }
@@ -46,7 +46,7 @@ namespace WebUI.Controllers.Admin
         [HttpPost]
         public async Task<IActionResult> Put([FromBody] Turno data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _t.UpdateTurnoAsync(idRol, data);
             return Ok(res);
         }
@@ -54,14 +54,14 @@ namespace WebUI.Controllers.Admin
 
         public async Task<IActionResult> Delete(int idTurno)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _t.DeleteTurnoAsync(idRol, idTurno);
             return Ok(res);
         }
 
         public async Task<IActionResult> ListTurno()
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _t.ListTurnoAsync(idRol);
             return Ok(res);
         }

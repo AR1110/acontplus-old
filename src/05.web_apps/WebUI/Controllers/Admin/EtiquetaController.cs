@@ -34,7 +34,7 @@ namespace WebUI.Controllers.Admin
         [HttpPost]
         public async Task<IActionResult> Post(int idActividad, [FromBody] List<Etiqueta> data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _e.InsertAsync(idRol, idActividad, data);
             return Ok(res);
         }
@@ -45,7 +45,7 @@ namespace WebUI.Controllers.Admin
         //[HttpPost]
         //public async Task<IActionResult> Put(int idEtiqueta, [FromBody] EtiquetaViewModel data)
         //{
-        //    int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+        //    int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
         //    var res = await _e.UpdateAsync(idRol, idEtiqueta, data);
         //    return Ok(res);
         //}
@@ -53,7 +53,7 @@ namespace WebUI.Controllers.Admin
 
         //public async Task<IActionResult> Delete(int idEtiqueta)
         //{
-        //    int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+        //    int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
         //    var res = await _e.DeleteAsync(idRol, idEtiqueta);
         //    return Ok(res);
         //}
@@ -63,7 +63,7 @@ namespace WebUI.Controllers.Admin
         ////datos adicionales del Articulo 
         //public async Task<IActionResult> GetId(int idActividadEmpresa)
         //{
-        //    int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+        //    int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
         //    var res = await _e.GetIdAsync(idRol, idActividadEmpresa);
         //    return Ok(res);
         //}

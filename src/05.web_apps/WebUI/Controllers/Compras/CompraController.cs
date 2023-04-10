@@ -27,7 +27,7 @@ namespace WebUI.Controllers.Compras
         //[HttpPost]
         //public async Task<IActionResult> CrudOrdenCompra(int tipo, int idFacturaCompra, [FromBody] FacturaCompraViewModel data)
         //{
-        //    int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+        //    int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
         //    var res = await _fc.CrudFacturaCompra(tipo, idRol, idFacturaCompra, data);
         //    return Ok(res);
         //}
@@ -36,7 +36,7 @@ namespace WebUI.Controllers.Compras
         [HttpPost]
         public async Task<IActionResult> PostIngresoBodega(int tipo, int idIngresoBodega, [FromBody] IngresoBodegaViewModel data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _ib.PostIngresoBoega(tipo, idRol, idIngresoBodega, data);
             return Ok(res);
         }

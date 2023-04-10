@@ -23,7 +23,7 @@ namespace WebUI.Controllers
 
         public async Task<IActionResult> OptionEntidad()
         {
-           int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+           int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
            var res = await _e.OptionAsync(idRol);
            return Ok(res);
         }
@@ -32,7 +32,7 @@ namespace WebUI.Controllers
         //OTHER METHODS
         public async Task<IActionResult> GetAll()
         {
-           int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+           int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var response = await _e.OptionAsync(idRol);
            return Ok(response);
         }

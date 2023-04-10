@@ -22,7 +22,7 @@ namespace WebUI.Controllers.RetencionIvaRenta
         //Generar Retencion Compra Automatica 
         public async Task<IActionResult> GetGenerateRetencionCompra(int idFacturaCompra)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _gr.GetPurchaseAsync(idRol, idFacturaCompra);
             return Ok(res);
         }
@@ -30,7 +30,7 @@ namespace WebUI.Controllers.RetencionIvaRenta
         //Generar Retencion Venta Automatica 
         public async Task<IActionResult> GetGenerateRetencionVenta(int idTipoDoc, int idComprobante)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _gr.GetSaleAsync(idRol, idTipoDoc, idComprobante);
             return Ok(res);
 
@@ -41,7 +41,7 @@ namespace WebUI.Controllers.RetencionIvaRenta
         //Generar Retencion Compra Manual 
         public async Task<IActionResult> GetTipoImpuesto(string busqueda)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _gr.GetTipoImpuestoAsync(idRol, busqueda);
             return Ok(res);
         }

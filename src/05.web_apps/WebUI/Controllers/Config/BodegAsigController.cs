@@ -10,16 +10,16 @@ namespace WebUI.Controllers.Config
     {
         // GET: Establecimiento
         private readonly IConfiguration _configuration;
-        private readonly IHttpContextAccessor _httpContextAccessor; ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
+         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
-        private readonly int _idRol;
+        
 
-        public BodegAsigController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public BodegAsigController(IConfiguration configuration)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
-            _httpContextAccessor = httpContextAccessor;
-            _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            
+            
 
         }
 
@@ -27,7 +27,7 @@ namespace WebUI.Controllers.Config
         public async Task<IActionResult> Get(string json)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", SqlValidation.ValidateSqlString(json));
             return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Config.Bodeg_Asig_Get", parameters)));
         }
@@ -36,7 +36,7 @@ namespace WebUI.Controllers.Config
         public async Task<IActionResult> Insert([FromBody] BodegAsig data)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("id", data.idBodeg_Asig);
             parameters.Add("codEstab_Asig", data.codEstab_Asig);
             parameters.Add("idBodega", data.idBodega);
@@ -47,7 +47,7 @@ namespace WebUI.Controllers.Config
         public async Task<IActionResult> Update(int id)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("id", id);
             parameters.Add("predeterminado", true);
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Config.Bodeg_Asig_Update", parameters)));

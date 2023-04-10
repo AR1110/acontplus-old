@@ -26,7 +26,7 @@ namespace WebUI.Controllers.Admin
         }
         public async Task<IActionResult> Get()
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var response = await _fe.GetAsync(idRol);
             return Ok(response);
         }
@@ -35,7 +35,7 @@ namespace WebUI.Controllers.Admin
         {
             try
             {
-                int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+                int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 if (file.ContentType != "application/x-pkcs12")
                 {
                     _response.Create("0", "Formato de archivo no soportado");
@@ -71,13 +71,13 @@ namespace WebUI.Controllers.Admin
 
         public async Task<IActionResult> Put([FromBody] FirmaElectronica data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var response = await _fe.UpdateAsync(idRol, data);
             return Ok(response);
         }
         public async Task<IActionResult> Delete(int idFirmaElectronica)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var response = await _fe.DeleteAsync(idRol, idFirmaElectronica);
             //ADD METHOD FOR DELETE FILE IN API
             return Ok(response);

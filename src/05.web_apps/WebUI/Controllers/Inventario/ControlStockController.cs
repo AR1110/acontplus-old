@@ -19,7 +19,7 @@ namespace WebUI.Controllers.Inventario
 
         public async Task<IActionResult> VerificarStock(int idArticulo, decimal cantidad, string presentacion, int idPresentacion)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _cs.GetAsync(idRol, idArticulo, cantidad, presentacion, idPresentacion);
             return Ok(res);
 
@@ -27,7 +27,7 @@ namespace WebUI.Controllers.Inventario
 
         public async Task<IActionResult> Update(int id)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _cs.UpdateAsync(idRol, id);
             return Ok(res);
 

@@ -23,7 +23,7 @@ namespace WebUI.Controllers
 
         //public IActionResult Get()
         //{
-        //    int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+        //    int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
         //    var res = _ae.GetAllAsync(idRol);
         //    return Ok(res);
         //}
@@ -31,7 +31,7 @@ namespace WebUI.Controllers
         //Listamos en modulo sucursal 
         public IActionResult GetAll()
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = _ae.GetAllAsync(idRol);
             return Ok(res);
         }
@@ -39,7 +39,7 @@ namespace WebUI.Controllers
         //Listamos para agregar etiquetas  y para articulos 
         public IActionResult GetBySucursal()
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = _ae.GetBySucursalAsync(idRol);
             return Ok(res);
         }

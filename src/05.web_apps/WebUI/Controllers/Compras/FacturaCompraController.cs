@@ -17,19 +17,19 @@ namespace WebUI.Controllers.Compras
     public class FacturaCompraController : Controller
     {
         private readonly IConfiguration _configuration;
-        private readonly IHttpContextAccessor _httpContextAccessor; ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
+         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
-        private readonly int _idRol;
+        
         GenericResponse _gr = new();
         private ArticuloDao _a;
         private FacturaCompraDao _fc;        
 
-        public FacturaCompraController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public FacturaCompraController(IConfiguration configuration)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
-            _httpContextAccessor = httpContextAccessor;
-            _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            
+            
             _a = new ArticuloDao(_configuration);
             _fc = new FacturaCompraDao(_configuration);
         }
@@ -37,7 +37,6 @@ namespace WebUI.Controllers.Compras
         
         public IActionResult Index()
         {
-            ViewData["idRol"] = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
             return View();
         }
 
@@ -45,7 +44,7 @@ namespace WebUI.Controllers.Compras
         public async Task<IActionResult> Get(string json)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", SqlValidation.ValidateSqlString(json));
             return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Compra.Factura_Get", parameters)));
         }
@@ -54,7 +53,7 @@ namespace WebUI.Controllers.Compras
         public async Task<IActionResult> GetId(int id)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("id", id);
             return Ok(DbResponse.SPDataSet(await _dao.GetDataSetAsync("Compra.Factura_Get_Id", parameters)));
         }
@@ -63,7 +62,7 @@ namespace WebUI.Controllers.Compras
         public async Task<IActionResult> GetDataForm(string json)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", SqlValidation.ValidateSqlString(json));
             return Ok(DbResponse.SPDataSet(await _dao.GetDataSetAsync("Compra.Factura_Get_Data_Form", parameters)));
         }
@@ -72,7 +71,7 @@ namespace WebUI.Controllers.Compras
         public async Task<IActionResult> Post([FromBody] FacturaCompraViewModel data)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("jsonFactura", JsonConvert.SerializeObject(data.factura));
             parameters.Add("jsonDetalle", JsonConvert.SerializeObject(data.detalle));
             parameters.Add("jsonManejoArticuloDetalle", JsonConvert.SerializeObject(data.manejoArticuloDetalle));
@@ -83,7 +82,7 @@ namespace WebUI.Controllers.Compras
         public async Task<IActionResult> Put(int id, [FromBody] FacturaCompraViewModel data)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("id", id);
             parameters.Add("jsonFactura", JsonConvert.SerializeObject(data.factura));
             parameters.Add("jsonDetalle", JsonConvert.SerializeObject(data.detalle));
@@ -97,7 +96,7 @@ namespace WebUI.Controllers.Compras
         public async Task<IActionResult> Delete(int id)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("id", id);
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Compra.Factura_Delete", parameters)));
         }
@@ -106,14 +105,14 @@ namespace WebUI.Controllers.Compras
         //Get Factura By Proveedor for module Retention Purchase
         public async Task<IActionResult> GetByProveedor(int idProveedor)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _fc.GetForProveedorAsync(idRol, idProveedor);
             return Ok(res);
         }
 
         public async Task<IActionResult> GetDetailByInvoice(int idFactura, int idSubContribuyente, int idConfigContribuyente)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _fc.GetDetailAsync(idRol, idFactura, idSubContribuyente, idConfigContribuyente);
             return Ok(res);
         }
