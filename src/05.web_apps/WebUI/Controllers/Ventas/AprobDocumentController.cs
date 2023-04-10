@@ -28,7 +28,6 @@ namespace WebUI.Controllers.Ventas
         
         public IActionResult Index()
         {
-            ViewData["idRol"] = _idRol;
             return View();
         }
 

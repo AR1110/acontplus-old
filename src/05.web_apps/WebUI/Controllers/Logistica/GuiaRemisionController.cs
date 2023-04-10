@@ -31,7 +31,6 @@ namespace WebUI.Controllers.Logistica
         
         public IActionResult Index()
         {
-            ViewData["idRol"] = _idRol;
             return View();
         }
 
