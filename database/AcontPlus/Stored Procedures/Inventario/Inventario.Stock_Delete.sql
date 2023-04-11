@@ -10,10 +10,10 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-IF OBJECT_ID(N'Inventario.Stock_Update', N'P') IS NOT NULL
-DROP PROCEDURE Inventario.Stock_Update
+IF OBJECT_ID(N'Inventario.Stock_Delete', N'P') IS NOT NULL
+DROP PROCEDURE Inventario.Stock_Delete
 GO
-CREATE PROCEDURE Inventario.Stock_Update @idRol INT ,@json VARCHAR(MAX)
+CREATE PROCEDURE Inventario.Stock_Delete @idUsuarioRol INT ,@json VARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -25,8 +25,8 @@ BEGIN
 	DECLARE @idBodega AS INT
 	DECLARE @idBodega_Destino AS INT
 	DECLARE @fechaEmision AS DATETIME
+	DECLARE @stock AS NUMERIC(18,2)
 	DECLARE @cantidadActual AS NUMERIC(18,5)
-	DECLARE @cantidadDestino AS NUMERIC(18,5)
 	DECLARE @cantidad AS NUMERIC(18,5)
 	DECLARE @table AS TABLE(
 		 codMovement VARCHAR(5) NOT NULL 
@@ -62,11 +62,11 @@ BEGIN
 		BEGIN TRAN 
 			
 			--==================================================SALIDAS===================================================================
-			IF @codMovement = 'S'
+		   IF @codMovement = 'S'
 				BEGIN
 					SELECT TOP 1 @cantidadActual = cantidad FROM Inventario.Stock WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idBodega = @idBodega
 
-					SET @cantidadActual =  @cantidadActual - @cantidad
+					SET @cantidadActual =  @cantidadActual + @cantidad
 
 					UPDATE Inventario.Stock SET cantidad = @cantidadActual WHERE idArticulo = @idArticulo AND idBodega = @idBodega
 					
@@ -78,7 +78,7 @@ BEGIN
 					
 					SELECT TOP 1 @cantidadActual = cantidad FROM Inventario.Stock WHERE idArticulo = @idArticulo AND idBodega = @idBodega 
 
-					SET	@cantidadActual = @cantidadActual + @cantidad
+					SET	@cantidadActual = @cantidadActual - @cantidad
 					
 					UPDATE Inventario.Stock SET cantidad = @cantidadActual WHERE idArticulo = @idArticulo AND idBodega = @idBodega
 
@@ -87,11 +87,13 @@ BEGIN
 		   --===================================================TRANSFERENCIAS============================================================
 		   IF @codMovement = 'T'
 				BEGIN
+					DECLARE @cantidadDestino AS NUMERIC(18,5)
+
 					------------------------------Bodega Origen se restar la cantidad transferida----------------------------------------
 
 					SELECT TOP 1 @cantidadActual = cantidad FROM Inventario.Stock WHERE idArticulo = @idArticulo AND idBodega = @idBodega
 
-					SET @cantidadActual = @cantidadActual - @cantidad
+					SET @cantidadActual = @cantidadActual + @cantidad
 
 					UPDATE Inventario.Stock SET cantidad = @cantidadActual WHERE idArticulo = @idArticulo AND idBodega = @idBodega
 					
@@ -99,15 +101,19 @@ BEGIN
 
 					SELECT TOP 1 @cantidadDestino = cantidad FROM Inventario.Stock WHERE idArticulo = @idArticulo AND idBodega = @idBodega_Destino
 
-					SET @cantidadDestino = @cantidadDestino + @cantidad
+					SET @cantidadDestino = @cantidadDestino - @cantidad
 
 					UPDATE Inventario.Stock SET cantidad = @cantidadDestino WHERE idArticulo = @idArticulo AND idBodega = @idBodega_Destino
 
 				END 
 
 
+		   SELECT @stock = SUM(cantidad) FROM Inventario.Stock WITH (NOLOCK) WHERE idArticulo = @idArticulo
+
+		   UPDATE dbo.Articulo SET stock =  ISNULL(@stock,0) WHERE idArticulo = @idArticulo
+
 		COMMIT TRAN
-		SELECT '1'code,'Stock Actualizado Correctamente' as 'message'
+		SELECT '1'code,'Stock Actualizado Correctamente' as 'message', '' as payload
 		RETURN
 	END TRY 
 
