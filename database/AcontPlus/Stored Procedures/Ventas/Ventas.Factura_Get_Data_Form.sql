@@ -115,5 +115,9 @@ BEGIN
 	 payAutomatic
 	FROM Config.GestionSistema WITH(NOLOCK) WHERE idEntidad =  @idEntidad
 
+	SELECT 
+	 jsonPermission
+	FROM Config.UserPermission WHERE idUsuarioRol = @idRol AND codModule='V'
+
 END
 GO

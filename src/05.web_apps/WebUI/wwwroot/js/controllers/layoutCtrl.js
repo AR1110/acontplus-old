@@ -73,17 +73,6 @@ function layoutCtrl($scope, Idle, mS, _modalSvc, toast, form) {
     $scope.entidad = dataUser.entidad;
     $scope.nombreComercial = dataUser.nombreComercial;
 
-    $scope.load = function () {
-        mS.getData('get', '/Home/ReadGestionCantidad').then(function (response) {
-            if (response.id == 0) {
-                toast.toastr('warning', response.message, response.titleSms);
-                return
-            }            
-            $scope.cantidad = response.data;
-        })
-    }
-
-    $scope.load();
 
 
     $scope.drawMenus = function () {

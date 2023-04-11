@@ -1,7 +1,7 @@
 
 
 
-import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.37";
+import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.38";
 
 class ModalNotaCreditoCtrl extends ModalBaseCtrl{
     constructor({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS}){
