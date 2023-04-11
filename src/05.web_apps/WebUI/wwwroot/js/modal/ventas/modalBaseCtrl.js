@@ -225,7 +225,7 @@ export class ModalBaseCtrl{
             precioUnitario: {update: true},
             precioConIva: {update: true},
         })
-        console.log(this.ventaDetailPermission)
+        
         const ventaDetailPermission = this.ventaDetailPermission || defaultPermission;
 
         this.gridOptions.columnDefs = [                

@@ -269,10 +269,10 @@
             }
 
             mS.getData('post', 'Usuario/'+ JSON.stringify(data), null, true).then(response=>{                      
-                if (response.code == "0") {
+                if (response.code == "0" || response.id == "0") {
                     tS.toastr('warning', response.message, response.titleSms);                    
                 }
-                if (response.code == "1") {
+                if (response.code == "1" || response.id == "0") {
                     tS.toastr('success', response.message, response.titleSms);                                 
                     $uibModalInstance.close(response)
                 }
@@ -440,6 +440,18 @@
             })
         } 
 
+        $scope.getAuthorizationKeyRequests = ()=>{
+            let jsonParams = JSON.stringify({
+                typeList: 1,
+                idUsuarioRol: $scope.dataEntidadRol.idUsuarioRol
+            })
+            $scope.authorizationKeyRequests = [];
+            mS.getData('get', 'Solicitud/Get/' + jsonParams, null, true).then(response => {
+                $scope.authorizationKeyRequests = JSON.parse(response.payload);
+                console.log($scope.authorizationKeyRequests)
+            })
+        }
+
 
         $scope.onClickEntidadRol = (item)=>{
             try{ 
@@ -449,7 +461,7 @@
 
                 $scope.getEstablecimientos();
                 $scope.getUserPermissions();
-                
+                $scope.getAuthorizationKeyRequests();
             }catch(error){
                 $scope.disbledTabPermission = true;
                 console.log(error)
@@ -596,6 +608,31 @@
         }
 
 
+
+        $scope.approveAuthorizationKeyRequest = (item) => {
+            try {
+                Swal.fire({
+                    title: 'Aprobar Solicitud de Clave de Autorización',
+                    text: "Se está dando permiso al usuario para modificar o anular el documento de venta!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Aprobar!',
+                    cancelButtonText: 'Cancelar!'
+                  }).then((result) => {
+                    if (result.isConfirmed) {
+                      Swal.fire(
+                        'Deleted!',
+                        'Your file has been deleted.',
+                        'success'
+                      )
+                    }
+                })
+            } catch (error) {
+                
+            }
+        }
 
         
 
