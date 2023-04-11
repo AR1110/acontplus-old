@@ -1,7 +1,7 @@
 
 
 
-import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.22";
+import { ModalBaseCtrl } from "./modalBaseCtrl.min.js?v=0.72";
 
 
 class ModalProformaCtrl extends ModalBaseCtrl{
@@ -182,6 +182,12 @@ class ModalProformaCtrl extends ModalBaseCtrl{
     }
 
     calcularPorcentajeDescuento() {
+        if(!this.ventaComprobantePermission.porcentajeDescuento.update){
+            this.data.porcentajeDescuento = 0;
+            this._tS.toastr('warning', 'No tienes permiso para realizar esta acción');
+            return
+        }
+
         let valor = this.data.porcentajeDescuento || 0;
         this.data.porcentajeDescuento = Number(valor);
         if(typeof this.data.porcentajeDescuento !=="number" || this.data.porcentajeDescuento === ""){
@@ -201,6 +207,12 @@ class ModalProformaCtrl extends ModalBaseCtrl{
     //Calcular Porcentaje  Descuento 
     calcularDescuento() {
         try {
+            if(!this.ventaComprobantePermission.descuento.update){
+                this.data.descuento = 0;
+                this._tS.toastr('warning', 'No tienes permiso para realizar esta acción');
+                return
+            }
+
             let valor = this.data.totalDescuento || 0;
             this.data.totalDescuento = Number(valor)
             
@@ -306,6 +318,13 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl{
                     }
                 })
             }
+
+            //Permisos             
+            let userPermission = resultsDataForm[9];
+            this.ventaPermission = JSON.parse(userPermission[0].jsonPermission);
+
+            this.ventaComprobantePermission = Object.freeze(this.ventaPermission.comprobante);
+            this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
 
            
             this.data.fechaEmision = new Date();            
@@ -678,6 +697,13 @@ export class ModalProformaEditarCtrl extends ModalProformaCtrl{
                 })
             }
 
+            //Permisos             
+            let userPermission = resultsDataForm[9];
+            this.ventaPermission = JSON.parse(userPermission[0].jsonPermission);
+
+            this.ventaComprobantePermission = Object.freeze(this.ventaPermission.comprobante);
+            this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
+
            
             this.setColumnDefs();            
            
@@ -873,6 +899,13 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl{
                     }
                 })
             }
+
+            //Permisos             
+            let userPermission = resultsDataForm[9];
+            this.ventaPermission = JSON.parse(userPermission[0].jsonPermission);
+
+            this.ventaComprobantePermission = Object.freeze(this.ventaPermission.comprobante);
+            this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
            
             this.setColumnDefs();            
            

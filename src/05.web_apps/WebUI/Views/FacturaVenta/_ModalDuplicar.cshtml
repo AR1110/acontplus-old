@@ -42,7 +42,7 @@
                     <label for="tiempoCredito">Tiempo Crédito: <span class="text-danger">*</span></label>
                     <div class="input-group">
                         <select name="tiempoCredito" id="tiempoCedito" class="form-control border-select" ng-model="$ctrl.data.idTiempoCredito" 
-                            ng-change="$ctrl.getFechaVencimiento()">
+                             ng-change="$ctrl.onChangeTiempoCredito()" ng-disabled="!$ctrl.ventaComprobantePermission.tiempoCedito.update">
                             <option ng-value="item.idTiempoCredito" ng-repeat="item in $ctrl.tiempoCreditos">{{item.descripcion}}</option>
                         </select>
                         <div class="input-group-append">
@@ -119,7 +119,7 @@
             <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="fechaEmision">Fecha Emisión: <span class="text-danger">*</span></label>
-                    <input type="date" name="fechaEmision" id="fechaEmision" class="form-control border-select" ng-model="$ctrl.data.fechaEmision" ng-change="$ctrl.getFechaVencimiento()" ng-keyup="$ctrl.getFechaVencimiento()" tabindex="-1" />
+                    <input type="date" name="fechaEmision" id="fechaEmision" class="form-control border-select" ng-model="$ctrl.data.fechaEmision"ng-change="$ctrl.onChangeFechaEmision()" ng-keyup="$ctrl.onChangeFechaEmision()" tabindex="-1" ng-disabled="!$ctrl.ventaComprobantePermission.fechaEmision.update" tabindex="-1" />
                     <small class="text-info">{{$ctrl.fechaEmisionEscrita}}</small>
                 </div>
             </div>
@@ -142,7 +142,7 @@
                             <i class="fas fa-info-circle fa-xs"></i>
                         </span>                                                                
                     </label>
-                    <select id="tarifas" class="form-control border-select" ng-model="$ctrl.idTarifa" ng-change="$ctrl.askToChangeTariga()" tabindex="-1">
+                    <select id="tarifas" class="form-control border-select" ng-model="$ctrl.idTarifa" ng-change="$ctrl.askToChangeTariga()" tabindex="-1" ng-disabled="!$ctrl.ventaComprobantePermission.tarifa.update">
                         <option ng-value="item.idTarifa" ng-repeat="item in $ctrl.tarifas">
                             {{item.descripcion}}
                         </option>
@@ -307,7 +307,7 @@
                         <div class="form-group">
                             <label>% Descuento</label>
                             <div class="input-group">
-                                <input ng-model="$ctrl.data.porcentajeDescuento" ng-disabled="$ctrl.gridOptions.data.length==0" 
+                                <input ng-model="$ctrl.data.porcentajeDescuento" ng-disabled="!$ctrl.ventaComprobantePermission.porcentajeDescuento.update || $ctrl.gridOptions.data.length==0" 
                                 decimal class="form-control" />
                                 <div class="input-group-append">
                                     <button type="button" class="btn btn-secondary btn-sm" ng-click="$ctrl.calcularPorcentajeDescuento()">
@@ -322,7 +322,7 @@
                         <div class="form-group">
                             <label>Descuento</label>
                             <div class="input-group">
-                                <input ng-model="$ctrl.data.totalDescuento" id="totalDescuento" ng-disabled="$ctrl.gridOptions.data.length==0" decimal placeholder="0.00" class="form-control" />
+                                <input ng-model="$ctrl.data.totalDescuento" id="totalDescuento" ng-disabled="!$ctrl.ventaComprobantePermission.descuento.update || $ctrl.gridOptions.data.length==0" decimal placeholder="0.00" class="form-control" />
                                 <div class="input-group-append">
                                     <button type="button" class="btn btn-secondary btn-sm" ng-click="$ctrl.calcularDescuento()">
                                         <i class="fa fa-calculator fa-xs"></i>

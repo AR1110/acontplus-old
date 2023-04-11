@@ -182,6 +182,22 @@ export class ModalBaseCtrl{
     }
 
 
+
+    onChangeTiempoCredito(){
+        if(!this.ventaComprobantePermission.tiempoCedito.update){
+            this._tS.toastr('warning', 'No tienes permiso para realizar esta acción');
+            return
+        }
+        this.getFechaVencimiento();
+    }
+
+    onChangeFechaEmision(){
+        if(!this.ventaComprobantePermission.fechaEmision.update){
+            this._tS.toastr('warning', 'No tienes permiso para realizar esta acción');
+            return
+        }
+        this.getFechaVencimiento();
+    }
     /**
      * 
      * @param {date} fechaEmision 
@@ -200,7 +216,17 @@ export class ModalBaseCtrl{
 
 
     setColumnDefs(){
-        const ventaDetailPermission = this.ventaDetailPermission || { medida: { update: true}, tipoIva: { update: true}}
+        let defaultPermission = Object.freeze({ 
+            tarifa: {update: true},
+            medida: {update: true}, 
+            tipoIva: { update: true},
+            porcentajeDescuento: {update: true},
+            descuento: {update: true},
+            precioUnitario: {update: true},
+            precioConIva: {update: true},
+        })
+        console.log(this.ventaDetailPermission)
+        const ventaDetailPermission = this.ventaDetailPermission || defaultPermission;
 
         this.gridOptions.columnDefs = [                
             {
@@ -734,6 +760,12 @@ export class ModalBaseCtrl{
 
 
     async askToChangeTariga(){
+        if(!this.ventaComprobantePermission.tarifa.update){
+            this.idTarifa = this.cloneIdTarifa;
+            this._tS.toastr('warning', 'No tienes permiso para realizar esta acción');
+            return
+        }
+
         let tarifa = this.tarifas.find(item=>item.idTarifa===this.idTarifa);
         let { isConfirmed } = await Swal.fire({
             html: `<small>¿Esta seguro de aplicar este tarifa: <b>${tarifa.descripcion}</b> en los precios de venta en todo el Documento?</small>`,

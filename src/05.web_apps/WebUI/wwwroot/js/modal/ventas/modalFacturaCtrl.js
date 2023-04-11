@@ -1,6 +1,6 @@
 
 
-import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.70";
+import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.76";
 
 class ModalFacturaCtrl extends ModalBaseCtrl{
     
@@ -268,7 +268,12 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
 
 
     calcularPorcentajeDescuento() {
-        let porcentajeDescuento = this.data.porcentajeDescuento;
+        
+        if(!this.ventaComprobantePermission.porcentajeDescuento.update){
+            this.data.porcentajeDescuento = 0;
+            this._tS.toastr('warning', 'No tienes permiso para realizar esta acción');
+            return
+        }
 
         if(typeof this.data.porcentajeDescuento !=="number" || this.data.porcentajeDescuento === ""){
             this._tS.toastr('warning', 'Ingrese un Número Válido');
@@ -280,7 +285,7 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
             // this.data.porcentajeDescuento = this._fS.roundNumber(this.data.porcentajeDescuento, this.decimal.nroTotalSubTotal)            
             this.setPorcentajeDescuentoAll(this.data.porcentajeDescuento); 
             
-            console.log(porcentajeDescuento)
+       
             
         }else{
             this.toast.toastr('warning', 'El Porcentaje de Descuento tiene que ser menor o igual a 100');
@@ -290,6 +295,12 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
     //Calcular Porcentaje  Descuento 
     calcularDescuento() {
         try {
+            if(!this.ventaComprobantePermission.descuento.update){
+                this.data.descuento = 0;
+                this._tS.toastr('warning', 'No tienes permiso para realizar esta acción');
+                return
+            }
+
             let valor = this.data.totalDescuento || 0;
             this.data.totalDescuento = Number(valor)
             
@@ -475,7 +486,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
             let userPermission = resultsDataForm[9];
             this.ventaPermission = JSON.parse(userPermission[0].jsonPermission);
 
-            this.ventaComrobantePermission = Object.freeze(this.ventaPermission.comprobante);
+            this.ventaComprobantePermission = Object.freeze(this.ventaPermission.comprobante);
             this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
            
 
@@ -765,7 +776,7 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl{
             let userPermission = resultsDataForm[9];
             this.ventaPermission = JSON.parse(userPermission[0].jsonPermission);
  
-            this.ventaComrobantePermission = Object.freeze(this.ventaPermission.comprobante);
+            this.ventaComprobantePermission = Object.freeze(this.ventaPermission.comprobante);
             this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
             
            
@@ -1093,7 +1104,7 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl{
              let userPermission = resultsDataForm[9];
              this.ventaPermission = JSON.parse(userPermission[0].jsonPermission);
  
-             this.ventaComrobantePermission = Object.freeze(this.ventaPermission.comprobante);
+             this.ventaComprobantePermission = Object.freeze(this.ventaPermission.comprobante);
              this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
             
            
