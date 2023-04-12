@@ -675,6 +675,7 @@
       ],
       "UpstreamPathTemplate": "/api/CompraNoHabitual"
     },
+
     {
       "AuthenticationOptions": {
         "AllowedScopes": [
@@ -694,6 +695,7 @@
       ],
       "UpstreamPathTemplate": "/api/CompraNoHabitual/Cancel/{id}"
     },
+
     {
       "AuthenticationOptions": {
         "AllowedScopes": [

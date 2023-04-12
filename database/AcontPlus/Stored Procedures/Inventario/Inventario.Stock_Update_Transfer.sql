@@ -10,11 +10,11 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
--- Test : exec Inventario.Stock_Update_Entrada 38, '[{"cantidad":5,"idArticulo":1,"fechaEmision":"2022-05-05T13:52:17.833","idBodega":1}]'
-IF OBJECT_ID(N'Inventario.Stock_Update_Transferencia', N'P') IS NOT NULL
-DROP PROCEDURE Inventario.Stock_Update_Transferencia
+-- Test : exec Inventario.Stock_Update_Transfer 38, '[{"cantidad":5,"idArticulo":1,"fechaEmision":"2022-05-05T13:52:17.833","idBodega":1}]'
+IF OBJECT_ID(N'Inventario.Stock_Update_Transfer', N'P') IS NOT NULL
+DROP PROCEDURE Inventario.Stock_Update_Transfer
 GO
-CREATE PROCEDURE Inventario.Stock_Update_Transferencia @idUsuarioRol INT ,@json VARCHAR(MAX)
+CREATE PROCEDURE Inventario.Stock_Update_Transfer @idUsuarioRol INT ,@json VARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
