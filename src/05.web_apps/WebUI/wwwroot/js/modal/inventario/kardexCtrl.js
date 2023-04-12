@@ -1,93 +1,93 @@
 
 
-export class KardexCtrl{
-    static $inject =  ['mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario'];
-    constructor(_mS, _commonSvc, _modalSvc, _nombreModal, _toast, _form){
-        this._mS = _mS;       
-        this._commonSvc        = _commonSvc;
-        this._modalSvc         = _modalSvc;
-        this._nombreModal      = _nombreModal;
-        this.toast             = _toast;
-        
-        this.form              = _form;
-    
-        this.data              = {};
-        this.kardexs           = []     
-        
+export class KardexCtrl {
+    static $inject = ['mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario'];
+    constructor(_mS, _commonSvc, _modalSvc, _nombreModal, _toast, _form) {
+        this._mS = _mS;
+        this._commonSvc = _commonSvc;
+        this._modalSvc = _modalSvc;
+        this._nombreModal = _nombreModal;
+        this.toast = _toast;
+
+        this.form = _form;
+
+        this.data = {};
+        this.kardexs = []
+
         this.articulo = {};
         this.dataSearch = {};
         this.articuloFiltro = {};
 
-        $(window).resize(()=> {
-            let heightBrowser =$(window).height();
-            let widthBrowser =$(window).width();
+        $(window).resize(() => {
+            let heightBrowser = $(window).height();
+            let widthBrowser = $(window).width();
 
-            if(this.kardexs.length>0){
-                if(widthBrowser < 1280 || widthBrowser < 1024){                    
+            if (this.kardexs.length > 0) {
+                if (widthBrowser < 1280 || widthBrowser < 1024) {
                     this.tableTabulatorKardex.options.columns[0].frozen = false;
-                    this.tableTabulatorKardex.options.columns[0].widthGrow = 0;                    
-                }else{
+                    this.tableTabulatorKardex.options.columns[0].widthGrow = 0;
+                } else {
                     this.tableTabulatorKardex.options.columns[0].frozen = true;
                     this.tableTabulatorKardex.options.columns[0].widthGrow = 2
                 }
-            }           
-         })
+            }
+        })
     }
-    
-    drawTable(){
-        this.tableTabulatorKardex = new Tabulator('#tabla-kardex', {            
+
+    drawTable() {
+        this.tableTabulatorKardex = new Tabulator('#tabla-kardex', {
             height: "400px",
             width: "100%",
             // layout:"fitDataFill",
             // layout: "fitDataStretch",
             // layout:"fitColumns", 
-            layout:"fitDataFill",
-            
+            layout: "fitDataFill",
+
             //layout:"fitDataTable",           
             //renderHorizontal:"virtual",
             // autoColumns:true,
             columnHeaderVertAlign: "bottom",
             // movableRows:true,
             tooltipGenerationMode: "hover",
-            rowFormatter: function (row) {                
-                 if (row.getData().tipoDoc === 'CIV') {                    
+            rowFormatter: function (row) {
+                if (row.getData().tipoDoc === 'CIV') {
                     // row.getElement().classList().add(row.getData().style);                                        
                     row.getElement().style.backgroundColor = "#fedf7e";
                 }
-                if(row.getData().style === 'table-danger'){
+                if (row.getData().style === 'table-danger') {
                     row.getElement().style.backgroundColor = "#F5BCB0";
                 }
             },
-           
+
             columnDefaults: {
                 tooltip: true,
             },
-            data:this.kardexs,
+            data: this.kardexs,
             columns: [
                 {
                     //create column group ---frozen:true,
-                    title: "Descripcion", widthGrow:2, frozen:true,
+                    title: "Descripcion", widthGrow: 2, frozen: true,
                     columns: [
                         {
-                            title: "F. Emision", field: "fechaEmision", hozAlign: "center",    headerSort: false, sorter: "date", width: 120
+                            title: "F. Emision", field: "fechaEmision", hozAlign: "center", headerSort: false, sorter: "date", width: 120
                         },
                         {
-                            title: "T. Doc", field: "tipoDoc", hozAlign: "center",  headerSort: false, width: 60
+                            title: "T. Doc", field: "tipoDoc", hozAlign: "center", headerSort: false, width: 60
                         },
                         {
-                            title: "Nro. Doc", field: "nroDocumento", hozAlign: "left",  headerSort: false, width: 130
+                            title: "Nro. Doc", field: "nroDocumento", hozAlign: "left", headerSort: false, width: 130
                         },
                         {
-                            title: "Cliente/Proveedor", field: "clienteProveedor", headerSort: false, hozAlign: "left",  width: 150, tooltip: true
+                            title: "Cliente/Proveedor", field: "clienteProveedor", headerSort: false, hozAlign: "left", width: 150, tooltip: true
                         },
                         {
-                            title: "Bodega", field: "bodega", hozAlign: "center",  headerSort: false, width: 150
+                            title: "Bodega", field: "bodega", hozAlign: "center", headerSort: false, width: 150
                         },
                         {
-                             title:"Usuario", field:"usuario", hozAlign:"center",  headerSort:false, width:150
+                            title: "Usuario", field: "usuario", hozAlign: "center", headerSort: false, width: 150
                         },
                         {
-                             title:"Estado", field:"estado", hozAlign:"center",  headerSort:false, width:100
+                            title: "Estado", field: "estado", hozAlign: "center", headerSort: false, width: 100
                         },
 
                     ],
@@ -105,7 +105,7 @@ export class KardexCtrl{
                             title: "Costo U.", field: "costo", hozAlign: "center", headerSort: false, sorter: "date", width: 75, cssClass: "table-entradas",
                         },
                         {
-                            title: "Total", field: "totalEntrada",  hozAlign: "center", headerSort: false, sorter: "date", width: 75, cssClass: "table-entradas",
+                            title: "Total", field: "totalEntrada", hozAlign: "center", headerSort: false, sorter: "date", width: 75, cssClass: "table-entradas",
                         },
                     ],
                 },
@@ -130,10 +130,10 @@ export class KardexCtrl{
                     title: "Saldos",
                     columns: [
                         {
-                            title: "Cant. ", field: "saldo", width: 60, headerSort: false,  cssClass: "table-saldos",
+                            title: "Cant. ", field: "saldo", width: 60, headerSort: false, cssClass: "table-saldos",
                         },
                         {
-                            title: "Costo U.", field: "precioCosto", width: 70, headerSort: false,  sorter: "number", cssClass: "table-saldos",
+                            title: "Costo U.", field: "precioCosto", width: 70, headerSort: false, sorter: "number", cssClass: "table-saldos",
                         },
                         {
                             title: "Total", field: "totalGeneral", hozAlign: "center", width: 60, headerSort: false, sorter: "number", cssClass: "table-saldos",
@@ -141,181 +141,185 @@ export class KardexCtrl{
                     ],
                 },
             ],
-        });                      
+        });
 
-        this.tableTabulatorKardex.on("rowClick", (e, row)=> {            
-            this.openModalTipoDocumento(row.getData())                          
+        this.tableTabulatorKardex.on("rowClick", (e, row) => {
+            this.openModalTipoDocumento(row.getData())
         });
     }
 
-    sumCantidadEntrada = (values, data, calcParams)=> {                               
-        return this.data.cantTotalEntrada || 0           
+    sumCantidadEntrada = (values, data, calcParams) => {
+        return this.data.cantTotalEntrada || 0
     }
 
-    sumTotalEntrada = (values, data, calcParams)=> {          
-        return this.data.totalEntrada || 0                   
+    sumTotalEntrada = (values, data, calcParams) => {
+        return this.data.totalEntrada || 0
     }
 
-    sumCantidadSalida = (values, data, calcParams)=> {           
+    sumCantidadSalida = (values, data, calcParams) => {
         return this.data.cantTotalSalida || 0
     }
 
-    sumTotalSalida = (values, data, calcParams)=> {            
+    sumTotalSalida = (values, data, calcParams) => {
         return this.data.totalSalida || 0
     }
 
-    sumTotalCantSaldo = (values, data, calcParams)=> {
+    sumTotalCantSaldo = (values, data, calcParams) => {
         return this.data.stock || 0
     }
 
-    sumTotalPrecioCostoSaldo = ()=>{
+    sumTotalPrecioCostoSaldo = () => {
         return this.precioCostoSaldo || 0
     }
 
-    sumTotalGeneral = ()=>{
+    sumTotalGeneral = () => {
         return this.data.totalGenetal || 0
     }
 
-    async openModalSearch(){     
-        const {MODAL_FILTRO_CSHTML} = this._nombreModal.kardex;
+    async openModalSearch() {
+        const { MODAL_FILTRO_CSHTML } = this._nombreModal.kardex;
         const modalRef = this._modalSvc.openModalCustom({
             controller: ModalFiltroKardex,
             template: MODAL_FILTRO_CSHTML,
+            isRenderRazorPartial: true,
             size: 'lg',
             params: {
                 articulo: this.articulo,
                 dataSearch: this.dataSearch,
                 articuloFiltro: this.articuloFiltro
-            },            
+            },
         })
-        modalRef.result.then(response=>{
+        modalRef.result.then(response => {
             this.articulo = response.articulo;
             this.dataSearch = response.dataSearch;
             this.articuloFiltro = response.articuloFiltro;
-            if(typeof response==='object' && this.dataSearch.isSearch){
+            if (typeof response === 'object' && this.dataSearch.isSearch) {
                 this.getKardex();
             }
-        })              
+        })
     }
 
-   
+
     getKardex() {
         try {
-            showLoader();   
-            if(this.dataSearch.checkBoxBodega || this.dataSearch.checkBoxFecha 
-                || this.dataSearch.checkBoxUltimaConsolidacion 
+            showLoader();
+            if (this.dataSearch.checkBoxBodega || this.dataSearch.checkBoxFecha
+                || this.dataSearch.checkBoxUltimaConsolidacion
                 || this.dataSearch.checkBoxConsolidacion
-                || this.dataSearch.checkBoxMovement){
-                this.dataSearch.checkBoxDefault = false;            
-            }else{
+                || this.dataSearch.checkBoxMovement) {
+                this.dataSearch.checkBoxDefault = false;
+            } else {
                 this.dataSearch.checkBoxDefault = true;
             }
 
-            this._mS.getData('get','/Kardex/Get?json=' + JSON.stringify(this.dataSearch)).then(response=>{               
-                if(response.code==="0"){
+            this._mS.getData('get', 'Kardex?json=' + JSON.stringify(this.dataSearch), null, true).then(response => {
+                if (response.code === "0") {
                     hideLoader();
                     Swal.fire({
-                        icon:'warning',
-                        html:`<small>${response.message}</small>`
+                        icon: 'warning',
+                        html: `<small>${response.message}</small>`
                     })
-                    return                
+                    return
                 }
-                if(response.code==="1"){
+                if (response.code === "1") {
                     this.kardexs = JSON.parse(response.payload) || [];
-                    if(this.kardexs.length===0){
+                    if (this.kardexs.length === 0) {
                         hideLoader();
-                        this.toast.toastr('info','No se encontraron los resultados');
+                        this.toast.toastr('info', 'No se encontraron los resultados');
                         this.drawTable();
                         return
                     }
-                                     
+
                     this.data.cantTotalEntrada = this.calculoTotales("cantidadEntrada");
                     this.data.totalEntrada = this.calculoTotales("totalEntrada");
 
                     this.data.cantTotalSalida = this.calculoTotales("cantidadSalida");
                     this.data.totalSalida = this.calculoTotales("totalSalida");
-                    
-                    this.data.stock       = this.calculoTotales("saldo");                    
-                    this.data.totalGenetal     = this.calculoTotales("totalGeneral");                    
-                    
+
+                    this.data.stock = this.calculoTotales("saldo");
+                    this.data.totalGenetal = this.calculoTotales("totalGeneral");
+
                     this.drawTable();
-                    hideLoader();  
+                    hideLoader();
                 }
+            }).catch(error => {
+                hideLoader()
+                console.log(error)
             })
         } catch (error) {
             hideLoader();
             console.error(error)
-        }            
+        }
     }
 
-    calculoTotales(prop){
-        let total =  this.kardexs.map(item=>(item[prop] || 0)).reduce((obj, cur)=> Number(obj) + Number(cur), 0);
-        
+    calculoTotales(prop) {
+        let total = this.kardexs.map(item => (item[prop] || 0)).reduce((obj, cur) => Number(obj) + Number(cur), 0);
+
         return this.form.roundNumber(total, 3)
     }
 
-    
+
     // getTotalesSaldo() {            
     //     if(this.form.campo(this.kardexs) || this.kardexs.length===0) return
-        
+
     //     let obj = this.kardexs[this.kardexs.length - 1];        
     //     this.precioCostoSaldo = this.form.roundNumber(obj.precioCosto, 5);
     //     this.totalGeneral     = this.form.roundNumber(obj.totalGeneral, 5);       
     // }
 
-    async getReport(){
-        if(this.kardexs.length===0){
-            toastr.warning('No hay registros para el reporte', 'Reporte', { 
-                progressBar: 1, 
-                closeButton: true, 
-                preventDuplicates:2, 
-                timeOut:1000
+    async getReport() {
+        if (this.kardexs.length === 0) {
+            toastr.warning('No hay registros para el reporte', 'Reporte', {
+                progressBar: 1,
+                closeButton: true,
+                preventDuplicates: 2,
+                timeOut: 1000
             })
-           return
+            return
         }
-        
+
         const { value: formatType } = await Swal.fire({
-            icon:'warning',
+            icon: 'warning',
             title: 'Tipo Formato',
             input: 'radio',
             inputOptions: {
-                pdf:'PDF',
-                excel:'EXCEL'
+                pdf: 'PDF',
+                excel: 'EXCEL'
             },
             inputValidator: (value) => {
                 if (!value) {
                     return 'Seleccione el Tipo de Formato!'
                 }
             },
-            confirmButtonText:'<i class="mdi mdi-download"></i> Descargar',
-            showDenyButton:true,
-            denyButtonText:'No, cancelar',
-            allowOutsideClick:false,
-            showLoaderOnDeny:true,    
-            allowEscapeKey:false   
+            confirmButtonText: '<i class="mdi mdi-download"></i> Descargar',
+            showDenyButton: true,
+            denyButtonText: 'No, cancelar',
+            allowOutsideClick: false,
+            showLoaderOnDeny: true,
+            allowEscapeKey: false
         })
-        
-        if(!formatType) return            
-                 
+
+        if (!formatType) return
+
         let parameters = {
             reportParams: JSON.stringify({
-                codigo: "RK", 
+                codigo: "RK",
                 format: formatType,
                 codEstab: this.dataSearch.codEstab,
                 aditionalParams: []
             }),
-            
+
             dataParams: JSON.stringify(this.dataSearch)
         }
-            
+
         this._commonSvc.getReport({
             parameters,
             formatType
-        })     
+        })
     }
 
 
-    async openModalTipoDocumento(item){ 
+    async openModalTipoDocumento(item) {
         try {
             if (item.hasOwnProperty("idComprobante") && item.hasOwnProperty("tipoDoc")) {
                 this._commonSvc.viewDetailDocument({
@@ -323,47 +327,47 @@ export class KardexCtrl{
                     codigoDocumento: item.tipoDoc,
                     size: 'xl',
                     windowClass: 'uibModalFullScreen'
-                })  
-            }                                   
+                })
+            }
         } catch (error) {
             console.log(error)
-        }       
+        }
     }
 
 }
 
 
 
-export class ModalKardexCtrl extends KardexCtrl{
-    static $inject =  ['mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario', '$uibModalInstance', 'params'];
-    constructor(_mS, _commonSvc, _modalSvc, _nombreModal, _toast, _form, $uibModalInstance, _params){      
-      super(_mS, _commonSvc, _modalSvc, _nombreModal, _toast, _form)      
-      this.$uibModalInstance = $uibModalInstance;
-      this._params           = _params;     
+export class ModalKardexCtrl extends KardexCtrl {
+    static $inject = ['mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario', '$uibModalInstance', 'params'];
+    constructor(_mS, _commonSvc, _modalSvc, _nombreModal, _toast, _form, $uibModalInstance, _params) {
+        super(_mS, _commonSvc, _modalSvc, _nombreModal, _toast, _form)
+        this.$uibModalInstance = $uibModalInstance;
+        this._params = _params;
     }
 
-    $onInit(){ 
+    $onInit() {
         let { fechaInicio, fechaFin } = this.form.getFechaInicioFinFilter(0);
         this.dataSearch.fechaInicio = fechaInicio;
         this.dataSearch.fechaFin = fechaFin;
 
         this.articulo = this._params;
         this.articuloFiltro = this.articulo;
-        this.dataSearch.byArticulo =this.articulo.idArticulo;
-        
-        this.getKardex();       
+        this.dataSearch.byArticulo = this.articulo.idArticulo;
+
+        this.getKardex();
     }
-   
-    closeModal(){
+
+    closeModal() {
         this.$uibModalInstance.close()
     }
 }
 
 
 
-export class ModalFiltroKardex{
+export class ModalFiltroKardex {
     static $inject = ["$uibModalInstance", "mainService", "commonService", "formulario", "toastService", "params"]
-    constructor($uibModalInstance, _mS, _commonSvc, _form, _tS, _params){
+    constructor($uibModalInstance, _mS, _commonSvc, _form, _tS, _params) {
         this.$uibModalInstance = $uibModalInstance;
         this._mS = _mS;
         this._commonSvc = _commonSvc;
@@ -371,58 +375,58 @@ export class ModalFiltroKardex{
         this._tS = _tS;
         this._params = _params;
 
-        
-        this.sucursales        = [];
-        this.bodegas           = [];
 
-        this.articulo          = _params.articulo;
-        this.dataSearch        = _params.dataSearch;
-        this.articuloFiltro    = _params.articuloFiltro;        
+        this.sucursales = [];
+        this.bodegas = [];
+
+        this.articulo = _params.articulo;
+        this.dataSearch = _params.dataSearch;
+        this.articuloFiltro = _params.articuloFiltro;
         this.dataSearch.consolidacion = 0;
 
-        this.meses             = this.form.meses();
-        this.dataSearch.mes    = new Date().getMonth() + 1;
+        this.meses = this.form.meses();
+        this.dataSearch.mes = new Date().getMonth() + 1;
     }
 
-    $onInit(){
-        if(Object.entries(this._params.dataSearch).length >0){
+    $onInit() {
+        if (Object.entries(this._params.dataSearch).length > 0) {
             this.dataSearch.mes = this._params.dataSearch.mes;
         }
 
-        this._commonSvc.getEstabAsign().then(response=>{
+        this._commonSvc.getEstabAsign().then(response => {
             this.establecimientos = response;
-            
-            if(this.establecimientos.length>0){                    
+
+            if (this.establecimientos.length > 0) {
                 this.dataSearch.codEstab = this.establecimientos[0].codEstab;
                 this.getBodegas();
-            }else{
+            } else {
                 taostr.warning('warning', 'NO TIENES ASIGNADO NINGÚN ESTABLECIMIENTO');
             }
         })
-       
-        this._commonSvc.getGestionAlmacen().then(response=>{
+
+        this._commonSvc.getGestionAlmacen().then(response => {
             this.estadoMovimientos = response.movimientosStocks;
-            
-        })    
+
+        })
     }
 
-    getBodegas(){
-        let dataEstab = this.establecimientos.find(item=>item.codEstab===this.dataSearch.codEstab);
-        this._commonSvc.getDataFormEstabAsig(dataEstab).then(response=>{
+    getBodegas() {
+        let dataEstab = this.establecimientos.find(item => item.codEstab === this.dataSearch.codEstab);
+        this._commonSvc.getDataFormEstabAsig(dataEstab).then(response => {
             this.bodegas = response[1];
 
         })
     }
 
 
-    articuloSearch(textSearch){      
-        return this._commonSvc.articuloSearchGeneral({textSearch});
+    articuloSearch(textSearch) {
+        return this._commonSvc.articuloSearchGeneral({ textSearch });
     }
 
-    onKeyupArticuloSearchFiltro(){
-        if(this.form.campo(this.articuloFiltro.descripcion)){
-            this.data           = {};
-            this.articulo       = {};
+    onKeyupArticuloSearchFiltro() {
+        if (this.form.campo(this.articuloFiltro.descripcion)) {
+            this.data = {};
+            this.articulo = {};
             this.articuloFiltro = {};
 
             // if(this.kardexs.length>0){
@@ -433,23 +437,23 @@ export class ModalFiltroKardex{
         }
     }
 
-    selectedArticuloSearchFiltro(item){
-        this.articulo = item;        
+    selectedArticuloSearchFiltro(item) {
+        this.articulo = item;
         this.dataSearch.byArticulo = item.idArticulo;
         this.articuloFiltro.descripcion = item.descripcion;
     }
-    
 
-    onChangeFechaFiltro(){
-        this.dataSearch.mes = new Date().getMonth() + 1;        
+
+    onChangeFechaFiltro() {
+        this.dataSearch.mes = new Date().getMonth() + 1;
         this.getFechaInicioFinFiltro()
     }
 
     //Fecha Inicial y Final dependiendo el Mes que seleccione el usuario en el Filtro AVanzado
-    getFechaInicioFinFiltro(){
+    getFechaInicioFinFiltro() {
         let { fechaInicio, fechaFin } = this.form.getFechaInicioFinFilter(this.dataSearch.mes);
         this.dataSearch.fechaInicio = fechaInicio;
-        this.dataSearch.fechaFin = fechaFin;            
+        this.dataSearch.fechaFin = fechaFin;
     }
 
     onChangeUltimaConsolidacion() {
@@ -458,7 +462,7 @@ export class ModalFiltroKardex{
             this.dataSearch.consolidacion = 1;
             this.dataSearch.checkBoxConsolidacion = false;
 
-            this.dataSearch.checkBoxFecha = false;                   
+            this.dataSearch.checkBoxFecha = false;
         }
     }
 
@@ -466,7 +470,7 @@ export class ModalFiltroKardex{
         this.dataSearch.consolidacion = 0
         if (this.dataSearch.checkBoxConsolidacion) {
             this.dataSearch.consolidacion = 2;
-            this.dataSearch.checkBoxUltimaConsolidacion = false;            
+            this.dataSearch.checkBoxUltimaConsolidacion = false;
         }
 
     }
@@ -495,28 +499,28 @@ export class ModalFiltroKardex{
                 this._tS.toastr('warning', 'Ingrese la Fecha Fin', tituloToast);
                 return
             }
-        } 
+        }
 
-        if(this.dataSearch.checkBoxMovement){            
-            if(this.dataSearch.movement === null || this.dataSearch.movement===undefined || this.dataSearch.movement ===""){
+        if (this.dataSearch.checkBoxMovement) {
+            if (this.dataSearch.movement === null || this.dataSearch.movement === undefined || this.dataSearch.movement === "") {
                 this._tS.toastr('warning', 'Seleccione el Movimiento', tituloToast);
-                return                
+                return
             }
         }
         this.dataSearch.isSearch = true;
-        
+
         let data = {
             articulo: this.articulo,
             dataSearch: this.dataSearch,
             articuloFiltro: this.articuloFiltro
         }
-        
+
         this.$uibModalInstance.close(data);
 
     }
 
-    closeModal(){
-        this.dataSearch.isSearch = false;        
+    closeModal() {
+        this.dataSearch.isSearch = false;
         const data = {
             articulo: this.articulo,
             dataSearch: this.dataSearch,

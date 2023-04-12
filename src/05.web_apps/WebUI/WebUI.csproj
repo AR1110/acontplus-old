@@ -641,8 +641,6 @@
 		<None Include="wwwroot\js\controllers\ingresos\tipoEntidadCtrl.min.js" />
 		<None Include="wwwroot\js\controllers\inventario\consolidacionInvCtrl.js" />
 		<None Include="wwwroot\js\controllers\inventario\consolidacionInvCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\inventario\kardexCtrl.js" />
-		<None Include="wwwroot\js\controllers\inventario\kardexCtrl.min.js" />
 		<None Include="wwwroot\js\controllers\layoutCtrl.js" />
 		<None Include="wwwroot\js\controllers\loginCtrl.js" />
 		<None Include="wwwroot\js\controllers\logistica\guiaRemisionCtrl.js" />
@@ -2428,14 +2426,6 @@
 			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 		</Content>
 		<Content Update="wwwroot\js\modal\modalEntidadCtrl.min.js">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
-		<Content Update="wwwroot\js\modal\modalKardexCtrl.js">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
-		<Content Update="wwwroot\js\modal\modalKardexCtrl.min.js">
 			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 		</Content>
@@ -4229,6 +4219,7 @@
 		<ProjectReference Include="..\..\08.razor_ui\FACT_UI\FACT_UI.csproj">
 		  <TreatAsUsed>true</TreatAsUsed>
 		</ProjectReference>
+		<ProjectReference Include="..\..\08.razor_ui\Inventario_UI\Inventario_UI.csproj" />
 		<ProjectReference Include="..\..\08.razor_ui\Recepcion_UI\Recepcion_UI.csproj">
 		  <TreatAsUsed>true</TreatAsUsed>
 		</ProjectReference>
