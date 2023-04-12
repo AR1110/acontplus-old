@@ -46,46 +46,27 @@ BEGIN
 									 @dateStart DATETIME,
 									 @dateEnd DATETIME';
 
-	DECLARE @sql NVARCHAR(MAX) = 'SELECT 
-										 de.idDocumentoElectronico
+	DECLARE @sql NVARCHAR(MAX) = 'SELECT de.idDocumentoElectronico
 										,de.idDocumento
 										,de.codDoc
-										,comprobante = td.descripcion + '' - versión: '' +  de.versionComp
-										,serie = de.numEstab+''-''+de.ptoEmision+''-''+dbo.AFTAutoComplete(de.nroDocumento)
-										,rucReceptor = CASE de.codDoc WHEN ''01'' THEN cl.numeroIdentificacion
-																	  WHEN ''03'' THEN pr.numeroIdentificacion		
-																	  WHEN ''04'' THEN cl.numeroIdentificacion
-																	  WHEN ''06'' THEN cl.numeroIdentificacion
-																	  WHEN ''07'' THEN pr.numeroIdentificacion
-													   END
-										,razonSocial = CASE de.codDoc WHEN ''01'' THEN cl.nombreFiscal 
-																	  WHEN ''03'' THEN pr.nombreFiscal		
-																	  WHEN ''04'' THEN cl.nombreFiscal
-																	  WHEN ''06'' THEN cl.nombreFiscal
-																	  WHEN ''07'' THEN pr.nombreFiscal
-													   END
-										,correo = CASE de.codDoc WHEN ''01'' THEN cl.correo
-															     WHEN ''03'' THEN pr.correo	
-															     WHEN ''04'' THEN cl.correo
-																 WHEN ''06'' THEN cl.correo
-																 WHEN ''07'' THEN pr.correo
-													   END
+										,comprobante = de.comprobante + '' - '' + de.versionComp
+										,de.serieComprobante
+										,de.rucReceptor 
+										,de.razonSocial
+										,de.correo
 										,fechaEmision =   FORMAT(de.fechaEmision, ''dd/MM/yyyy'') 
 										,claveAcceso
-										,fechaAutorizacion
-										,estado = es.descripcion
+										,de.fechaAutorizacion
+										,de.estado
 										,de.codEstado
 										,style = CASE de.codEstado WHEN 4 THEN ''table-success'' 
 										                           WHEN 5 THEN ''table-warning''
 																   WHEN 6 THEN ''table-danger''
 																   WHEN 0 THEN ''table-warning''
-												 END  
+												 END
 										,de.versionComp
-									 FROM DocumentoElectronico de WITH (NOLOCK)
-									 INNER JOIN FactElect.EstadoServicio es WITH (NOLOCK) ON de.codEstado = es.codigo
-									 INNER JOIN dbo.TipoDocumento td WITH (NOLOCK) ON td.codigoSri = de.codDoc
-									 LEFT JOIN dbo.Cliente cl ON cl.idCliente = de.idContribuyente  
-									 LEFT JOIN dbo.Proveedor pr ON pr.idProveedor = de.idContribuyente  
+										,de.ambiente
+									 FROM v_DocElectronico de WITH (NOLOCK)
 									 WHERE de.idEntidad = @idEntidad   ';
 
 	SELECT @idEntidad = idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @idRol ;
@@ -129,10 +110,19 @@ BEGIN
 			SET @sql = @sql +'AND de.codDoc = @codDoc '
 		END 
 
-	IF @checkBoxEstadoServicio = 1
-		BEGIN	
-			SET @sql = @sql + 'AND de.codEstado = @codEstado '
-		END 
+	
+
+	IF (@tipo = '3')
+		BEGIN
+			SET @sql = @sql +  'AND codEstado IN (0,5) '
+		END
+	ELSE 
+		BEGIN
+			IF @checkBoxEstadoServicio = 1
+				BEGIN	
+					SET @sql = @sql + 'AND de.codEstado = @codEstado '
+				END 
+		END
 
 	SET @sql = @sql + 'ORDER BY de.idDocumentoElectronico DESC';
 

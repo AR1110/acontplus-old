@@ -2,9 +2,17 @@
 
 app.controller('documentoElectronicoCtrl', documentoElectronicoCtrl)
 
-documentoElectronicoCtrl.$inject = ['$scope', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService'];
+documentoElectronicoCtrl.$inject = ['$scope',
+                                    'mainService',
+                                    'commonService',
+                                    'modalService',
+                                    'nombreModal',
+                                    'formulario',
+                                    'toastService',
+                                    '$window'
+                                ]
 
-function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS) {
+function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, $window) {
     $scope.comprobantes = [];
     $scope.selectedComprobantes = [];
     $scope.isMobile = true;
@@ -29,6 +37,11 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
         }
     }
     $scope.detectMobilDevice()
+
+
+    const tipo = document.getElementById("tipo").value
+
+
     //Filtro 
     $scope.dataSearch = {};
     $scope.meses = _fS.meses();
@@ -39,6 +52,7 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
             showLoader();
             $scope.comprobantes = [];
 
+            let data = {}
 
             if ($scope.dataSearch.checkBoxDate || $scope.checkBoxEstadoServicio || $scope.dataSearch.checkBoxComprobante) {
                 $scope.dataSearch.isCurrentDate = false;
@@ -46,10 +60,16 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
                 $scope.dataSearch.isCurrentDate = true;
             }
 
+            if (tipo > 0) {
+                data = { tipo }
+            } else {
+                data = $scope.dataSearch
+            }
+
             $scope.comprobantes = [];
-            _mS.getData('get', 'DocumentoElectronico/' + JSON.stringify($scope.dataSearch), null, true).then(
+            _mS.getData('get', 'DocumentoElectronico/' + JSON.stringify(data), null, true).then(
                 response => {
-                    
+
                     if (response.code === "0") {
                         hideLoader()
                         $scope.comprobantes = [];
@@ -87,7 +107,7 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
             }
         )
 
-        _mS.getData('get', 'DocumentoElectronico/GetDataForm', null, true).then(response => {            
+        _mS.getData('get', 'DocumentoElectronico/GetDataForm', null, true).then(response => {
             const results = JSON.parse(response.payload) || [];
             console.log(results);
             $scope.estadoServicios = results[0]
@@ -172,7 +192,7 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
     $scope.getReport = (item) => {
         try {
 
-            if(!(Object.keys(REPORT_CODES).includes(item.codDoc))){
+            if (!(Object.keys(REPORT_CODES).includes(item.codDoc))) {
                 _tS.toastr('warning', 'No Disponible')
                 return
             }
@@ -412,5 +432,9 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
         } catch (error) {
             console.log(error)
         }
+    }
+
+    $scope.refresh = () => {
+        $window.location.href = '/DocumentoElectronico/Index';
     }
 }
