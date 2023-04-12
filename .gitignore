@@ -342,3 +342,6 @@
 /src/08.razor_ui/Inventario_UI/obj
 /src/02.domain/Domain.Inventory/obj/Release/net6.0/Domain.Inventory.csproj.AssemblyReference.cache
 /src/02.domain/Domain.Inventory/obj/Release/net6.0/Domain.Inventory.assets.cache
+/src/08.razor_ui/Inventario_UI/bin/Debug/net6.0
+/src/08.razor_ui/Inventario_UI/bin/Release/net6.0/Inventario_UI.dll
+/src/08.razor_ui/Inventario_UI/bin/Release/net6.0/Inventario_UI.pdb
