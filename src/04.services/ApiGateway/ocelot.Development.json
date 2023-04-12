@@ -872,6 +872,25 @@
         "Get"
       ],
       "UpstreamPathTemplate": "/api/Consultas/{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 44331
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Kardex?json={json}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "UpstreamPathTemplate": "/api/Kardex?json={json}"
     }
   ]
 }

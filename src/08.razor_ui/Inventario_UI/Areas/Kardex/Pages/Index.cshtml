@@ -2,6 +2,7 @@
 @model Inventario_UI.Areas.Kardex.Pages.IndexModel
 @{
     ViewData["Title"] = "Index";
+    Layout = "_Layout";
 }
 
 <div ng-controller="kardexCtrl as $ctrl">
@@ -56,6 +57,5 @@
 </div>
 
 @section Scripts{
-    <script type="module" src="~/js/modal/inventario/kardexCtrl.js" asp-append-version="true"></script>
-
+    <script type="module" src="~/js/modal/inventario/kardexCtrl.min.js" asp-append-version="true"></script>
 }
