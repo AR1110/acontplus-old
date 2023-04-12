@@ -10,10 +10,10 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-IF OBJECT_ID(N'Inventario.Stock_Update_Ajuste', N'P') IS NOT NULL
-DROP PROCEDURE Inventario.Stock_Update_Ajuste
+IF OBJECT_ID(N'Inventario.Stock_Update_Adjustment', N'P') IS NOT NULL
+DROP PROCEDURE Inventario.Stock_Update_Adjustment
 GO
-CREATE PROCEDURE Inventario.Stock_Update_Ajuste @idUsuarioRol INT ,@json VARCHAR(MAX)
+CREATE PROCEDURE Inventario.Stock_Update_Adjustment @idUsuarioRol INT ,@json VARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from

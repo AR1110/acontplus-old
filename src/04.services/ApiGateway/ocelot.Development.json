@@ -604,6 +604,7 @@
       ],
       "UpstreamPathTemplate": "/api/CompraNoHabitual"
     },
+
     {
       "AuthenticationOptions": {
         "AllowedScopes": [
@@ -623,6 +624,7 @@
       ],
       "UpstreamPathTemplate": "/api/CompraNoHabitual/Cancel/{id}"
     },
+
     {
       "AuthenticationOptions": {
         "AllowedScopes": [
@@ -856,29 +858,6 @@
         "Put"
       ],
       "UpstreamPathTemplate": "/api/UsuarioPermiso"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7074
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Solicitud/{everything}",
-      "DownstreamScheme": "https",
-      "UpstreamHttpMethod": [
-        "Get",
-        "Post",
-        "Put",
-        "Delete",
-        "Options"
-      ],
-      "UpstreamPathTemplate": "/api/Solicitud/{everything}"
     }
   ]
 }
