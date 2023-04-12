@@ -1242,6 +1242,7 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -3958,14 +3959,9 @@
                     <TablixMember>
                       <Group Name="nroDoc">
                         <GroupExpressions>
-                          <GroupExpression>=Fields!nroDoc.Value</GroupExpression>
+                          <GroupExpression>=Fields!nroAutorizacion.Value</GroupExpression>
                         </GroupExpressions>
                       </Group>
-                      <SortExpressions>
-                        <SortExpression>
-                          <Value>=Fields!nroDoc.Value</Value>
-                        </SortExpression>
-                      </SortExpressions>
                       <TablixHeader>
                         <Size>2.50938cm</Size>
                         <CellContents>
@@ -4003,7 +3999,11 @@
                       </TablixHeader>
                       <TablixMembers>
                         <TablixMember>
-                          <Group Name="Details1" />
+                          <Group Name="Details1">
+                            <GroupExpressions>
+                              <GroupExpression>=Fields!nroAutorizacion.Value</GroupExpression>
+                            </GroupExpressions>
+                          </Group>
                         </TablixMember>
                       </TablixMembers>
                     </TablixMember>

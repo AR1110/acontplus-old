@@ -269,10 +269,10 @@
             }
 
             mS.getData('post', 'Usuario/'+ JSON.stringify(data), null, true).then(response=>{                      
-                if (response.code == "0") {
+                if (response.code == "0" || response.id == "0") {
                     tS.toastr('warning', response.message, response.titleSms);                    
                 }
-                if (response.code == "1") {
+                if (response.code == "1" || response.id == "0") {
                     tS.toastr('success', response.message, response.titleSms);                                 
                     $uibModalInstance.close(response)
                 }
@@ -388,7 +388,7 @@
         $scope.initiload();
 
 
-        $scope.isRoleAdmin = function(){
+        $scope.isRoleMain = function(){
             return ['RT'].includes($scope.role)
         }
 
@@ -440,6 +440,25 @@
             })
         } 
 
+        $scope.getAuthorizationKeyRequests = ()=>{
+            if(!$scope.isRoleMain())return;
+            
+            let jsonParams = JSON.stringify({
+                typeList: 1,
+                idUsuarioRol: $scope.dataEntidadRol.idUsuarioRol
+            })
+            $scope.authorizationKeyRequests = [];
+            mS.getData('get', 'Solicitud/Get/' + jsonParams, null, true).then(response => {
+                if(response.code==="0"){
+                    tS.toastr('warning', response.message)
+                }
+                if(response.code==="1"){
+                    $scope.authorizationKeyRequests = JSON.parse(response.payload);
+                    console.log($scope.authorizationKeyRequests)
+                }
+            })
+        }
+
 
         $scope.onClickEntidadRol = (item)=>{
             try{ 
@@ -449,7 +468,7 @@
 
                 $scope.getEstablecimientos();
                 $scope.getUserPermissions();
-                
+                $scope.getAuthorizationKeyRequests();
             }catch(error){
                 $scope.disbledTabPermission = true;
                 console.log(error)
@@ -557,6 +576,8 @@
         $scope.savePermission = ()=>{
             try {
                 showLoader();
+
+              
                 let jsonPermission =JSON.stringify([
                     {
                         idUserPermission: $scope.dataSalePermissions.idUserPermission,
@@ -596,6 +617,63 @@
         }
 
 
+        $scope.searchUserAdmin = (searchText)=>{
+            try {
+                let jsonParams = JSON.stringify({
+                    typeList: 3,
+                    searchText 
+                })
+                return mS.getData('get', 'Solicitud/Get/' + jsonParams, null, true).then(response=>{
+                    return JSON.parse(response.payload) || []
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        $scope.onSelectUser = (data, item) =>{
+         
+            item.usuarioAprobante = data.nombreCompleto;
+            item.idUsuarioRolAprobante = data.idUsuarioRol;
+        }
+
+
+
+        $scope.approveAuthorizationKeyRequest = (item) => {
+            try {
+                Swal.fire({
+                    title: 'Aprobar Solicitud de Clave de Autorización',
+                    text: `Se está dando permiso al usuario para ${item.codigoAccion==='E'?'editar':'anular'} el documento de venta!`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Aprobar!',
+                    cancelButtonText: 'Cancelar!'
+                  }).then((result) => {
+                    if (result.isConfirmed) {
+                        mS.getData('put', 'Solicitud/Put/' + JSON.stringify({typeOperation: 1, id: item.idSolicitud}), null, true).then(response=>{
+                            if(response.code==="0"){
+                                Swal.fire({
+                                    icon:'warning',
+                                    text: response.message
+                                })
+                            }
+                            if(response.code==="1"){
+                                $scope.getAuthorizationKeyRequests();
+                                Swal.fire({
+                                    icon:'success',
+                                    text: response.message,
+                                    timer: 1000
+                                })
+                            }                            
+                        })                                             
+                    }
+                })
+            } catch (error) {
+                
+            }
+        }
 
         
 

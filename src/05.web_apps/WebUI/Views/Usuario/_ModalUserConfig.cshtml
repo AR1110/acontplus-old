@@ -166,7 +166,34 @@
                                         <input type="checkbox" name="detailPermission{{$index+1}}" id="detailPermission{{$index+1}}" ng-model="item.update">
                                         <label for="detailPermission{{$index+1}}">{{item.label}}</label>                                         
                                     </div>                                     
-                                </div>
+                                </div>                                
+
+                                <div class="card-body">
+                                    <span class="text-muted">Adicionales</span>
+                                    <div ng-repeat="item in salePermissions.additional">
+                                        <div class="icheck-info" id="salePermissionAdditional">
+                                            <input type="checkbox" name="salePermissionAdditional{{$index+1}}" id="salePermissionAdditional{{$index+1}}" ng-model="item.requestKey">
+                                            <label for="salePermissionAdditional{{$index+1}}">{{item.label}}</label>                                         
+                                        </div> 
+
+                                        <div ng-switch="item.requestKey">
+                                            <div ng-switch-when="true">
+                                                <div class="form-group">
+                                                    <label for="salePermissionAdditional">Usuario</label>
+                                                    <input type="text" 
+                                                           ng-model="item.usuarioAprobante" class="form-control border-select"
+                                                           uib-typeahead="item as item.nombreCompleto for item in searchUserAdmin($viewValue)"
+                                                           typeahead-editable="false"
+                                                            placeholder="1450152325001"
+                                                            uib-tooltip="Receptor de la solicitud de aprobación"
+                                                            tooltip-placement="top"
+                                                            typeahead-on-select="onSelectUser($item, item)"  
+                                                            onClick="select();" />
+                                                </div> 
+                                            </div>
+                                        </div>  
+                                    </div>                                 
+                                </div>  
                             </div>
                         </div>
 
@@ -186,7 +213,65 @@
                     </div>
                 </div>
             </div>
-        </uib-tab>               
+        </uib-tab>     
+
+        <uib-tab ng-if="isRoleMain();">
+            <uib-tab-heading>
+                <i class="mdi mdi-clipboard-check"></i> Aprobar solicitud de Autorización
+            </uib-tab-heading>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table md-table>
+                            <thead md-head>
+                                <tr md-row>
+                                    <th md-column>N°</th>
+                                    <th md-column>Usuario Solicitante</th>
+                                    <th md-column>Acción</th>
+                                    <th md-column>Motivo</th>
+                                    <th md-column>Estado</th>
+                                    <th md-column>Fecha Registro</th>
+                                    <th md-column>Fecha Aprobación</th>
+                                    <th md-column>Op</th>
+                                </tr>
+                            </thead>
+                            <tbody md-body>
+                                <tr md-row ng-repeat="item in authorizationKeyRequests">
+                                    <td md-cell>{{$index+1}}</td>
+                                    <td md-cell>{{item.usuarioSolicitante}}</td>
+                                    <td md-cell>{{item.accionDescripcion}}</td>
+                                    <td md-cell>{{item.observacion}}</td>
+                                    <td md-cell>{{item.estadoDescripcion}}</td>
+                                    <td md-cell>{{item.fechaRegistro}}</td>
+                                    <td md-cell>{{item.fechaAprobacion}}</td>
+                                    <td md-cell>
+                                        <div ng-switch="item.codEstado">
+                                            <div ng-switch-when="A">
+                                                <h4 class="text-success"><i class="mdi mdi-check-all"></i></h4>
+                                            </div>
+                                            <div ng-switch-when="F">
+                                               
+                                            </div>                                           
+                                            <div ng-switch-default>
+                                                <button class="btn waves-effect waves-light btn-outline-success btn-sm" uib-tooltip="Aprobar Solicitud de Clave de Autorización para editar o anular el documento de venta" tooltip-placement="top" ng-click="approveAuthorizationKeyRequest(item)">
+                                                    <i class="ti ti-check-box "></i>                                          
+                                                </button>                                               
+                                            </div>
+                                        </div>
+                                    </td>                                   
+                                </tr>
+                                <tr md-row ng-if="authorizationKeyRequests.length===0">
+                                    <td colspan="8" class="text-center">                                       
+                                            No hay Establecimientos Asignadas.                                                                                                     
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>                           
+                </div>
+            </div>
+        </uib-tab>          
     </uib-tabset>    
 </div>
 
