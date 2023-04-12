@@ -227,9 +227,19 @@
                                     <td md-cell>{{item.fechaRegistro}}</td>
                                     <td md-cell>{{item.fechaAprobacion}}</td>
                                     <td md-cell>
-                                        <button class="btn waves-effect waves-light btn-outline-success btn-sm" uib-tooltip="Aprobar Solicitud de Clave de Autorización para editar o anular el documento de venta" tooltip-placement="top" ng-click="approveAuthorizationKeyRequest(item)">
-                                            <i class="ti ti-check-box "></i>                                          
-                                        </button>                                                                                                  
+                                        <div ng-switch="item.codEstado">
+                                            <div ng-switch-when="A">
+                                                <h4 class="text-success"><i class="mdi mdi-check-all"></i></h4>
+                                            </div>
+                                            <div ng-switch-when="F">
+                                               
+                                            </div>                                           
+                                            <div ng-switch-default>
+                                                <button class="btn waves-effect waves-light btn-outline-success btn-sm" uib-tooltip="Aprobar Solicitud de Clave de Autorización para editar o anular el documento de venta" tooltip-placement="top" ng-click="approveAuthorizationKeyRequest(item)">
+                                                    <i class="ti ti-check-box "></i>                                          
+                                                </button>                                               
+                                            </div>
+                                        </div>
                                     </td>                                   
                                 </tr>
                                 <tr md-row ng-if="authorizationKeyRequests.length===0">

@@ -447,8 +447,13 @@
             })
             $scope.authorizationKeyRequests = [];
             mS.getData('get', 'Solicitud/Get/' + jsonParams, null, true).then(response => {
-                $scope.authorizationKeyRequests = JSON.parse(response.payload);
-                console.log($scope.authorizationKeyRequests)
+                if(response.code==="0"){
+                    tS.toastr('warning', response.message)
+                }
+                if(response.code==="1"){
+                    $scope.authorizationKeyRequests = JSON.parse(response.payload);
+                    console.log($scope.authorizationKeyRequests)
+                }
             })
         }
 
@@ -613,7 +618,7 @@
             try {
                 Swal.fire({
                     title: 'Aprobar Solicitud de Clave de Autorización',
-                    text: "Se está dando permiso al usuario para modificar o anular el documento de venta!",
+                    text: `Se está dando permiso al usuario para ${item.codigoAccion==='E'?'editar':'anular'} el documento de venta!`,
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
@@ -622,11 +627,22 @@
                     cancelButtonText: 'Cancelar!'
                   }).then((result) => {
                     if (result.isConfirmed) {
-                      Swal.fire(
-                        'Deleted!',
-                        'Your file has been deleted.',
-                        'success'
-                      )
+                        mS.getData('put', 'Solicitud/Put/' + JSON.stringify({typeOperation: 1, id: item.idSolicitud}), null, true).then(response=>{
+                            if(response.code==="0"){
+                                Swal.fire({
+                                    icon:'warning',
+                                    text: response.message
+                                })
+                            }
+                            if(response.code==="1"){
+                                $scope.getAuthorizationKeyRequests();
+                                Swal.fire({
+                                    icon:'success',
+                                    text: response.message,
+                                    timer: 1000
+                                })
+                            }                            
+                        })                                             
                     }
                 })
             } catch (error) {

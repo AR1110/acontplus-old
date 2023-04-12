@@ -28,25 +28,13 @@ BEGIN
 	IF @typeList = 1
 		BEGIN 
 			SELECT 
-				u_aprob.nombreCompleto as usuarioAprobante
-				,u_soli.nombreCompleto  as usuarioSolicitante
-				,s.codigoAccion
-				,accionDescripcion = CASE s.codigoAccion WHEN 'E' THEN 'EDITAR'
-														 WHEN 'A' THEN 'ANULAR' 
-														 END
-				,s.codEstado
-				,estadoDescripcion = CASE s.codEstado WHEN 'P' THEN 'PENDIENTE'
-													  WHEN 'A' THEN 'APROBADA'
-													  WHEN 'F' THEN 'FINALIZADO'
-													  END
-				,s.observacion
-				,s.fechaRegistro
-				,urs.codRol
+			
+			 *
 			FROM Config.Solicitud s
-			INNER JOIN App.UsuarioRol ura WITH(NOLOCK) ON ura.idUsuarioRol = s.idUsuarioRolAprobante
-			INNER JOIN Usuario u_aprob WITH(NOLOCK) ON u_aprob.idUsuario   = ura.idUsuario
-			INNER JOIN App.UsuarioRol urs WITH(NOLOCK) ON urs.idUsuarioRol = s.idUsuarioRolSolictante
-			INNER JOIN Usuario u_soli WITH(NOLOCK) ON u_soli.idUsuario     = urs.idUsuario
+			--INNER JOIN App.UsuarioRol ura WITH(NOLOCK) ON ura.idUsuarioRol = s.idUsuarioRolAprobante
+			--INNER JOIN Usuario u_aprob WITH(NOLOCK) ON u_aprob.idUsuario   = ura.idUsuario
+			--INNER JOIN App.UsuarioRol urs WITH(NOLOCK) ON urs.idUsuarioRol = s.idUsuarioRolSolictante
+			--INNER JOIN Usuario u_soli WITH(NOLOCK) ON u_soli.idUsuario     = urs.idUsuario
 			WHERE s.idUsuarioRolAprobante = @idUsuarioRol
 		END 
 

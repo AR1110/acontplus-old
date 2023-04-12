@@ -873,6 +873,7 @@
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "Get",
+        "Post",
         "Put",
         "Delete",
         "Options"

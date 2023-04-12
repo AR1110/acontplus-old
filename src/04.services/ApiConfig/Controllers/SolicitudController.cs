@@ -50,7 +50,7 @@ namespace ApiConfig.Controllers
                 await _db.SPExecute("Config.Solicitud_Insert");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
-                _response = _db.GetDataTableAsync();
+                _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
@@ -71,7 +71,7 @@ namespace ApiConfig.Controllers
                 await _db.SPExecute("Config.Solicitud_Update");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
-                _response = _db.GetDataTableAsync();
+                _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
@@ -92,7 +92,7 @@ namespace ApiConfig.Controllers
                 await _db.SPExecute("Config.Solicitud_Update");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
-                _response = _db.GetDataTableAsync();
+                _response = _db.GetDefault();
             }
             catch (Exception ex)
             {

@@ -269,8 +269,8 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
     }
 
 
-    $scope.requestAuthorizationKey = async (codEstado)=>{
-        let textMotivo = codEstado==='E'?'Editar': 'Anular';
+    $scope.requestAuthorizationKey = async (codigoAccion)=>{
+        let textMotivo = codigoAccion==='E'?'Editar': 'Anular';
         Swal.fire({
             title: "Solicitud de Clave de Autorización",
             text: `Por favor, proporcione una explicación del motivo por el cual desea ${textMotivo} el documento!`,
@@ -293,12 +293,17 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
             }                   
         }).then(result => {
             if(result.isConfirmed){
-                _mS.getData('get', 'Solicitud/Check/' + JSON.stringify(jsonParams), null, true).then(response => {
+                let jsonParams = JSON.stringify({
+                    motivo: result.value,
+                    codigoAccion
+                });
+                _mS.getData('post', 'Solicitud/Post/' + jsonParams, null, true).then(response => {
+                    console.log(response)
                     if(response.code==="0"){
                         _fS.sweetAlert('warning', response.message)
                     }
                     if(response.code==="1"){
-                        _fS.sweetAlert('success', response.message, response.titleSms);
+                        _fS.sweetAlert('success', response.message, response.titleSms, 1000);
                     }
                 })
             }
@@ -344,12 +349,7 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
 
     $scope.openModalInvoiceEdit = async(item)=>{
         try {
-            
-            if(typeof $scope.jsonPermission ==='object' && $scope.jsonPermission.additional.requestAuthorizationKey.requestKey){
-                let result = requestAuthorizationKey('editar');
-                return
-            }
-
+                       
             showLoader();
             let {MODAL_FILE_CTRL, MODAL_EDITAR} = _nombreModalConst.factura_venta;
             let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_EDITAR['controller']];
@@ -372,6 +372,15 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
             }).result.then(result=>{
                 if(typeof result==='object' && result.isUpdate){
                     $scope.getFacturas();
+
+
+                    let {additional} = $scope.jsonPermission;
+                    if(typeof $scope.jsonPermission ==='object' && additional.requestAuthorizationKey.requestKey) {                        
+                        _mS.getData('put', 'Solicitud/Put/' + JSON.stringify({codigoAccion: 'E', typeOperation: 2}), null, true).then(response =>{
+                            console.log(response)
+                        })
+                    }
+        
                 }
             })
         } catch (error) {
