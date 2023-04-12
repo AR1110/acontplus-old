@@ -9,8 +9,8 @@
     }
 
     let Id_Usuario_Rol = 0;
+    let role   = null;
 
-    
 
     app.controller('usuarioCtrl', usuarioCtrl);
 
@@ -23,9 +23,10 @@
         }else{
             $scope.accion = accion[0];
         }        
-        
+        console.log(decodeToken)
         Id_Usuario_Rol = parseInt(decodeToken.idUsuarioRol);
-
+        role = decodeToken.role;
+        
         $scope.dataSearch = {
             idRol: Id_Usuario_Rol,
             pageIndex: 1,
@@ -263,15 +264,15 @@
                 contrasena: $scope.data.contrasena,
                 nombreCompleto: $scope.data.nombreCompleto,
                 idPolitica: $scope.data.idPolitica,
-                idRol: Id_Usuario_Rol,
+                idRol: Id_Usuario_Rol, //Id Usuario Rol del Usuario Iniciado Session 
                 codRol: 'AD'
             }
 
             mS.getData('post', 'Usuario/'+ JSON.stringify(data), null, true).then(response=>{                      
-                if (response.code == "0") {
+                if (response.code == "0" || response.id == "0") {
                     tS.toastr('warning', response.message, response.titleSms);                    
                 }
-                if (response.code == "1") {
+                if (response.code == "1" || response.id == "0") {
                     tS.toastr('success', response.message, response.titleSms);                                 
                     $uibModalInstance.close(response)
                 }
@@ -337,34 +338,59 @@
     //--------------------------------START CONFIG USER----------------------------------------------------
     app.controller('modalUserConfigCtrl', modalUserConfigCtrl);
 
-    modalUserConfigCtrl.$inject = ["$scope", "$uibModalInstance", "mainService", "modalService", "toastService", "params"];
+    modalUserConfigCtrl.$inject = ["$scope", "$uibModalInstance", "$filter", "mainService", "modalService", "toastService", "params"];
 
-    function modalUserConfigCtrl($scope, $uibModalInstance, mS, modalSvc, tS, params) {
+    function modalUserConfigCtrl($scope, $uibModalInstance, $filter, mS, modalSvc, tS, params) {
 
         $scope.params = params;
+
+        $scope.options = {
+            rowSelection: true,
+            multiSelect: false,
+            autoSelect: false,
+            decapitate: false,                                   
+        };
+
+        $scope.selectedUsuarioRol = [];
         $scope.usuarioRoles = [];
         $scope.establecimientos = [];
 
-        $scope.disbledTabPermission = true;
+
+    
+        $scope.role = role;
+
+        
+        $scope.disbledTabPermission = true;        
+
 
         $scope.initiload = ()=>{
             try {
+                showLoader();
+                $scope.usuarioRoles = [];
                 mS.getData('get', 'UsuarioRol/Get/' + params.idUsuario, null, true).then(response=>{
                     if(response.code==="0"){
+                        hideLoader();
                         tS.toastr('warning', response.message)
                     }
                     if(response.code==="1"){
                         console.log(response)
-                        $scope.usuarioRoles = JSON.parse(response.payload) || []
+                        $scope.usuarioRoles = JSON.parse(response.payload) || [];
+                        hideLoader();
                     }
                 })
 
             } catch (error) {
+                hideLoader();
                 console.log(error)
             }
         }
 
         $scope.initiload();
+
+
+        $scope.isRoleAdmin = function(){
+            return ['RT'].includes($scope.role)
+        }
 
         
         
@@ -387,8 +413,13 @@
         }
         
         $scope.getUserPermissions = ()=>{
-            mS.getData('get', 'UsuarioPermiso/Get/' + JSON.stringify({idUsuarioRol: $scope.dataEntidadRol.idUsuarioRol}), null, true).then(response =>{
+            let jsonParams = JSON.stringify({
+                idUsuarioRol: $scope.dataEntidadRol.idUsuarioRol
+            })
+            showLoader();
+            mS.getData('get', 'UsuarioPermiso/Get/' + jsonParams, null, true).then(response =>{
                 if(response.code==="0"){
+                    hideLoader();
                     console.log(response)
                 }
                 if(response.code==='1'){
@@ -404,9 +435,27 @@
 
                     console.log($scope.salePermissions)
                     console.log($scope.articlePermissions)
+                    hideLoader();
                 }
             })
         } 
+
+        $scope.getAuthorizationKeyRequests = ()=>{
+            let jsonParams = JSON.stringify({
+                typeList: 1,
+                idUsuarioRol: $scope.dataEntidadRol.idUsuarioRol
+            })
+            $scope.authorizationKeyRequests = [];
+            mS.getData('get', 'Solicitud/Get/' + jsonParams, null, true).then(response => {
+                if(response.code==="0"){
+                    tS.toastr('warning', response.message)
+                }
+                if(response.code==="1"){
+                    $scope.authorizationKeyRequests = JSON.parse(response.payload);
+                    console.log($scope.authorizationKeyRequests)
+                }
+            })
+        }
 
 
         $scope.onClickEntidadRol = (item)=>{
@@ -417,18 +466,20 @@
 
                 $scope.getEstablecimientos();
                 $scope.getUserPermissions();
-                
+                $scope.getAuthorizationKeyRequests();
             }catch(error){
                 $scope.disbledTabPermission = true;
                 console.log(error)
             }
         }
 
-         /**
+        
+        /**
          * ----------------------------------------------START ESTAB---------------------------
          * Asignacion de Establecimiento
          * @param {object} item 
-         */
+        */
+        
         $scope.onChangePredeterminada = (item)=>{        
             try {
                 mS.getData('put', '/EstabAsig/Update?id=' + item.idEstab_Asig).then(response=>{
@@ -501,6 +552,7 @@
         }
         //-----------------------------------------------END ESTAB---------------------------------
 
+
         $scope.openModalAsignPtoEmisionAndBodega = (data) => {
             try {
                 modalSvc.openModalCustom({
@@ -517,6 +569,7 @@
         }
         
         
+
 
         $scope.savePermission = ()=>{
             try {
@@ -535,9 +588,8 @@
                 let data = {
                     jsonPermission
                 }
-                // console.log($scope.salePermissions)
-                // console.log($scope.articlePermissions)                           
-                mS.getData('put', 'UsuarioPermiso' ,data, true).then(response=>{
+                                        
+                mS.getData('put', 'UsuarioPermiso',data, true).then(response=>{
                     console.log(response)
                     if(response.code==="0"){
                         hideLoader();
@@ -562,12 +614,52 @@
 
 
 
+        $scope.approveAuthorizationKeyRequest = (item) => {
+            try {
+                Swal.fire({
+                    title: 'Aprobar Solicitud de Clave de Autorización',
+                    text: `Se está dando permiso al usuario para ${item.codigoAccion==='E'?'editar':'anular'} el documento de venta!`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Aprobar!',
+                    cancelButtonText: 'Cancelar!'
+                  }).then((result) => {
+                    if (result.isConfirmed) {
+                        mS.getData('put', 'Solicitud/Put/' + JSON.stringify({typeOperation: 1, id: item.idSolicitud}), null, true).then(response=>{
+                            if(response.code==="0"){
+                                Swal.fire({
+                                    icon:'warning',
+                                    text: response.message
+                                })
+                            }
+                            if(response.code==="1"){
+                                $scope.getAuthorizationKeyRequests();
+                                Swal.fire({
+                                    icon:'success',
+                                    text: response.message,
+                                    timer: 1000
+                                })
+                            }                            
+                        })                                             
+                    }
+                })
+            } catch (error) {
+                
+            }
+        }
+
+        
+
+
         $scope.closeModal = ()=> {
             $uibModalInstance.close();
         }
     }
 
     //------------------------------------------START CONFIG USER----------------------------------------------------
+
 
 
     //-------------------------------START ASIGNACIÓN DE PUNTO DE EMISIÓN Y BODEGA------------------------------------------------------

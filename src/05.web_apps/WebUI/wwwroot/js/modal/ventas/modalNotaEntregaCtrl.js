@@ -1,5 +1,5 @@
 
-import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.26";
+import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.27";
 
 
 class ModalNotaEntregaCtrl extends ModalBaseCtrl{
@@ -205,6 +205,13 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl{
     }
 
     calcularPorcentajeDescuento() {
+
+        if(!this.ventaComprobantePermission.porcentajeDescuento.update){
+            this.data.porcentajeDescuento = 0;
+            this._tS.toastr('warning', 'No tienes permiso para realizar esta acción');
+            return
+        }
+
         let valor = this.data.porcentajeDescuento || 0;
         this.data.porcentajeDescuento = Number(valor);
         if(typeof this.data.porcentajeDescuento !=="number" || this.data.porcentajeDescuento === ""){
@@ -217,13 +224,20 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl{
             this.data.porcentajeDescuento = this._fS.roundNumber(this.data.porcentajeDescuento, this.decimal.nroTotalSubTotal)            
             this.setPorcentajeDescuentoAll(this.data.porcentajeDescuento);              
         }else{
-            this.toast.toastr('warning', 'El Porcentaje de Descuento tiene que ser menor o igual a 100');
+            this._tS.toastr('warning', 'El Porcentaje de Descuento tiene que ser menor o igual a 100');
         }
     }
 
     //Calcular Porcentaje  Descuento 
     calcularDescuento() {
         try {
+
+            if(!this.ventaComprobantePermission.descuento.update){
+                this.data.descuento = 0;
+                this._tS.toastr('warning', 'No tienes permiso para realizar esta acción');
+                return
+            }
+            
             let valor = this.data.totalDescuento || 0;
             this.data.totalDescuento = Number(valor)
             
@@ -334,6 +348,13 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
             if(resultsDataForm[7].length>0){
                 this.cliente = resultsDataForm[7][0];
             }
+
+            //Permisos             
+            let userPermission = resultsDataForm[9];
+            this.ventaPermission = JSON.parse(userPermission[0].jsonPermission);
+
+            this.ventaComprobantePermission = Object.freeze(this.ventaPermission.comprobante);
+            this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
 
             if(resultsDataForm[8].length>0){             
                 let {searchCode, printerAutomatic, payAutomatic } = resultsDataForm[8][0];                                           
@@ -873,6 +894,13 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl{
                 })
             }
            
+            //Permisos             
+            let userPermission = resultsDataForm[9];
+            this.ventaPermission = JSON.parse(userPermission[0].jsonPermission);
+
+            this.ventaComprobantePermission = Object.freeze(this.ventaPermission.comprobante);
+            this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
+
             this.setColumnDefs();            
            
             this.uiGridInvoice =  new UiGridOptions({
@@ -1088,6 +1116,13 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl{
                     }
                 })
             }
+
+            //Permisos             
+            let userPermission = resultsDataForm[9];
+            this.ventaPermission = JSON.parse(userPermission[0].jsonPermission);
+
+            this.ventaComprobantePermission = Object.freeze(this.ventaPermission.comprobante);
+            this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
 
            
             this.setColumnDefs();            

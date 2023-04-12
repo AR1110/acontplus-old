@@ -430,7 +430,7 @@ export class UiGridOptions{
     }
 
     getTotalDescuento(){
-        let total = this.gridOptions.data.map(val => val.totalDescuento).reduce((acc, curr) => acc + curr, 0);
+        let total = this.gridOptions.data.map(val => val.totalDescuento).reduce((acc, curr) => acc + curr, 0);      
         return this._fS.roundNumber(total, this.decimal.nroTotalSubTotal);
     }
 

@@ -621,9 +621,14 @@ export class CommonService {
 
     //--------------------------------------METODOS RELACIONADOS AL TIPO DOCUMENTO---------------------------
 
-
-    getDataFormVenta() {
-
+    
+    getDataFormVenta(){
+        return this.mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response=>{
+            if(response.code==='0'){                
+                throw response
+            }
+            return JSON.parse(response.payload)
+        })
     }
 
     async generarNroDocumento({ puntoEmision, idPuntoEmision, nroDocumento, codigoDocumento, tipoDoc = 'C' }) {
