@@ -56,7 +56,7 @@ function reporteCompraCtrl($http, $scope, _commonSvc, mS, toast, form, FileSaver
     }
 
     $scope.getAsignacionByRol = async()=>{
-        console.log($scope.sucursales)
+        
         let dataEstab = $scope.sucursales.find(item=>item.codEstab===$scope.dataSearch.codEstab)        
         _commonSvc.getDataFormEstabAsig(dataEstab).then(response=>{
             $scope.puntosEmisiones = response[0];
@@ -336,7 +336,7 @@ function reporteCompraCtrl($http, $scope, _commonSvc, mS, toast, form, FileSaver
             }),
             dataParams: JSON.stringify($scope.dataSearch)
         }
-       
+       console.log(parameters.dataParams)
         mS.getFile('post', '/Reporte/Download', parameters).then(response=>{
             Swal.close();
             

@@ -64,7 +64,14 @@ export class ModalBaseCtrl {
 
         this._mS.getData('get', `/${this.dataSearchValidacion.url}/Get?json=` + JSON.stringify(this.dataSearchValidacion)).then(response => {
             if (response.code === "0") {
-               console.log(response)
+                console.log(response)
+
+                if(this.dataSearchValidacion.codigoIdentificacion==='R'){
+                    this.getRucSRI();
+                }
+                if(this.dataSearchValidacion.codigoIdentificacion==='C'){
+                    this.getCedulaSRI();
+                }
             }
             if (response.code === "1") {
                 const data = JSON.parse(response.payload)[0];
@@ -84,7 +91,7 @@ export class ModalBaseCtrl {
                     allowOutsideClick: false,
                     allowEnterKey: false,
                     icon: 'info',                                        
-                  })
+                })
 
                 // const Toast = Swal.mixin({
                 //     toast: true,
@@ -113,6 +120,66 @@ export class ModalBaseCtrl {
         })
     }
 
+
+    getRucSRI() {
+        try {
+            Swal.fire({
+                title: 'Obteniendo Datos del Cliente',
+                html: '<small>Espere por favor...</small>',
+                timer: 5000,
+                timerProgressBar: true,
+                didOpen: () => {
+
+                    Swal.showLoading();
+
+                    this._mS.getData('get', 'Consultas/GetRucSRI?Ruc=' + this.data.numeroIdentificacion, null, true).then(result => {
+                        Swal.close();
+                       
+                        if(result) {
+                            let {razonSocial, establecimientos} = result;
+                            this.data.nombreComercial = razonSocial;
+                            this.data.nombreFiscal = razonSocial;
+                            this.data.direccion = establecimientos[0].direccionCompleta
+                           
+                        }
+                    })
+                }
+            })
+           
+            
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    getCedulaSRI() {
+        try {
+            Swal.fire({
+                title: 'Obteniendo Datos del Cliente',
+                html: '<small>Espere por favor...</small>',
+                timer: 5000,
+                timerProgressBar: true,
+                didOpen: () => {
+
+                    Swal.showLoading();
+
+                    this._mS.getData('get', 'Consultas/GetCedulaSri?Ruc=' + this.data.numeroIdentificacion, null, true).then(result => {
+                        Swal.close();
+                       
+                        if(result) {
+                            let {razonSocial, establecimientos} = result;
+                            this.data.nombreComercial = razonSocial;
+                            this.data.nombreFiscal = razonSocial;
+                            this.data.direccion = establecimientos[0].direccionCompleta
+                           
+                        }
+                    })
+                }
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     closeModal() {
         this.$uibModalInstance.close();
@@ -153,10 +220,7 @@ class ModalBaseCliente extends ModalBaseCtrl{
         return results
     }
 
-    onTab(opcion) {
-        this.tabContent = opcion;
-    }
-
+    
     onChangeTipoIdentificacion() {
         this.data.codigoIdentificacion = this.tipoIdentificaciones.find(item => item.idTipoIdentificacion === this.data.idTipoIdentificacion).codigoIdentificacion;
         this.typeNotify = '';
@@ -173,69 +237,57 @@ class ModalBaseCliente extends ModalBaseCtrl{
     }
 
     validarNumeroIdentificacion() {
+        
+        let codigoIdentificacion = this.tipoIdentificaciones.find(item => item.idTipoIdentificacion === this.data.idTipoIdentificacion).codigoIdentificacion;
+
+        let inputTextNumeroIdentificacion =  $("#numeroIdentificacion");
+
         this.dataSearchValidacion = {
             url: 'Cliente',
             dataExists: 1,
             bySearch: this.data.numeroIdentificacion,
-            titulo: 'Cliente Registrado.'
+            titulo: 'Cliente Registrado.',
+            codigoIdentificacion
         }
        
-        let codigoIdentificacion = this.tipoIdentificaciones.find(item => item.idTipoIdentificacion === this.data.idTipoIdentificacion).codigoIdentificacion;
         
         if (this._form.campo(this.data.numeroIdentificacion)) return
 
 
-        //Validamos Número de Cedula
-        if (codigoIdentificacion === 'C') {
-            $("#numeroIdentificacion").attr('maxlength', 10);
-            if (this.data.numeroIdentificacion.toString().length < 10) {
-                this.typeNotify = 'is-invalid';
-                this.message = 'Número de Cédula debe tener 10 dígitos';
-            } else {
-                this.validarNumIdentificacion();
-            }
+        switch(codigoIdentificacion){
+            case "C":
+                    inputTextNumeroIdentificacion.attr("maxlength", 10);
+
+                    if(this.data.numeroIdentificacion.toString().length<10){
+                        this.typeNotify = 'is-invalid';
+                        this.message = 'Número de Cédula debe tener 10 dígitos';
+                        return
+                    }
+
+                break
+            
+            case "R":
+                    inputTextNumeroIdentificacion.attr('maxlength', 13);
+                    if (this.data.numeroIdentificacion.toString().length < 13) {
+                        this.typeNotify = 'is-invalid';
+                        this.message = 'Número de RUC debe tener 13 dígitos';
+                        return
+                    } 
+                    
+                    if(this.data.numeroIdentificacion.slice(this.data.numeroIdentificacion.length - 3) !=='001'){
+                        this.typeNotify = 'is-invalid';
+                        this.message = 'Número de RUC tiene que contener (001) en últimos dígitos';
+                        return
+                    }
+                break
         }
 
-        //Validamos Número
-        if (codigoIdentificacion === 'R') {
-            $("#numeroIdentificacion").attr('maxlength', 13);
-            if (this.data.numeroIdentificacion.toString().length < 13) {
-                this.typeNotify = 'is-invalid';
-                this.message = 'Número de RUC debe tener 13 dígitos';
-                return
-            } 
-            
-            if(this.data.numeroIdentificacion.slice(this.data.numeroIdentificacion.length - 3) !=='001'){
-                this.typeNotify = 'is-invalid';
-                this.message = 'Número de RUC tiene que contener (001) en últimos dígitos';
-                return
-            }
-            
-      
-            this.typeNotify = 'is-valid';
-            this.message = '';
-            this.verificarSiExisteNumIdentificacion();                       
-        }
-
-
+        this.verificarSiExisteNumIdentificacion();
     }
 
-    //Validar Numero de Identificacion
-    validarNumIdentificacion() {
-        const data = {
-            tipoValidacion: 'IDENTI',
-            numeroIdentificacion: this.data.numeroIdentificacion
-        }
-        this._mS.getData('post', '/ValidarDatos/VerificarDatos', data).then(response => {
-            this.typeNotify = response.typeNotify;
-            this.message = response.message;
-            if (response.id == 1) {
-                this.verificarSiExisteNumIdentificacion();
-            }
-        })
+    onChangeValidateIdentificacionSRI(){
+        this.getRucSRI();
     }
-
-
 
     copiarNombreComercial() {
         if (this.tipoRegistro === 1) {
@@ -1045,12 +1097,16 @@ export class ModalProveedorCtrl extends ModalBaseCtrl {
     onKeyupNumeroIndentificacion() {
         if (this._form.campo(this.data.numeroIdentificacion)) return
 
+        let codigoIdentificacion = this.tipoIdentificaciones.find(item => item.idTipoIdentificacion === this.data.idTipoIdentificacion).codigoIdentificacion;
+
         this.dataSearchValidacion = {
             url: 'Proveedor',
             bySearch: this.data.numeroIdentificacion,
             dataExists: 1,
-            titulo: 'Proveedor Registrado.'
+            titulo: 'Proveedor Registrado.',
+            codigoIdentificacion
         }
+        
         switch (this.tipoIdentificacion.codigoIdentificacion) {
             case 'C':
                 $("#numeroIdentificacion").attr('maxlength', 10);

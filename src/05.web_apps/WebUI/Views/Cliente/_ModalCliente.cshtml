@@ -14,9 +14,9 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                <div class="d-flex">
-                                    <div class="form-group">
-                                        <label for="">Tipo Identificación: <span class="text-danger">*</span> </label>
+                                <label for="">Tipo Identificación: <span class="text-danger">*</span> </label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
                                         <select class="form-control border-select"
                                             ng-model="$ctrl.data.idTipoIdentificacion"
                                             ng-change="$ctrl.onChangeTipoIdentificacion()" name="tipoDocumento"
@@ -26,23 +26,27 @@
                                                 ng-repeat="ti in $ctrl.tipoIdentificaciones">{{ti.identificacion}}</option>
                                         </select>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="">Identificación: <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control border-select" name="numeroIdentificacion"
-                                            id="numeroIdentificacion" ng-if="$ctrl.data.codigoIdentificacion!=='P'"
-                                            ng-class="$ctrl.typeNotify" ng-model="$ctrl.data.numeroIdentificacion"
-                                            ng-keyup="$ctrl.validarNumeroIdentificacion()"
-                                            ng-disabled="$ctrl.isDisableInputIdentificacion" valid-number
-                                            placeholder="Ej: 2105234568">
+                                    <input type="text" class="form-control border-select" name="numeroIdentificacion"
+                                                id="numeroIdentificacion" ng-if="$ctrl.data.codigoIdentificacion!=='P'"
+                                                ng-class="$ctrl.typeNotify" ng-model="$ctrl.data.numeroIdentificacion"
+                                                ng-keyup="$ctrl.validarNumeroIdentificacion()"
+                                                ng-disabled="$ctrl.isDisableInputIdentificacion" valid-number
+                                                placeholder="Ej: 2105234568">
 
-
-                                        <input type="text" class="form-control" ng-if="$ctrl.data.codigoIdentificacion=='P'"
+                                    <input type="text" class="form-control border-select" ng-if="$ctrl.data.codigoIdentificacion=='P'"
                                             name="pasaporte" ng-model="$ctrl.data.numeroIdentificacion"
                                             ng-disabled="$ctrl.isDisableInputIdentificacion" placeholder="Ej: EH123457">
-                                        <small class="invalid-feedback text-right">{{$ctrl.message}} </small>
-                                        <small class="valid-feedback text-right">{{$ctrl.message}} </small>
+                    
+                                    <div class="input-group-append">
+                                        <div ng-if="$ctrl.data.codigoIdentificacion!=='P'" class="input-group-text" uib-tooltip="Validar Nro. Identificación" tooltip-placement="top">
+                                            <input type="checkbox" aria-label="validationRucSRI" ng-change="$ctrl.onChangeValidateIdentificacionSRI()" ng-model="$ctrl.validationIdentificacionSri">
+                                        </div>
                                     </div>
+                                    
+                                    <small class="invalid-feedback text-right">{{$ctrl.message}} </small>
+                                    <small class="valid-feedback text-right">{{$ctrl.message}} </small>
                                 </div>
+                                
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                 <div class="form-group">
