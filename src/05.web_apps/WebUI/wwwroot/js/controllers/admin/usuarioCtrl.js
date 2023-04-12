@@ -388,7 +388,7 @@
         $scope.initiload();
 
 
-        $scope.isRoleAdmin = function(){
+        $scope.isRoleMain = function(){
             return ['RT'].includes($scope.role)
         }
 
@@ -441,6 +441,8 @@
         } 
 
         $scope.getAuthorizationKeyRequests = ()=>{
+            if(!$scope.isRoleMain())return;
+            
             let jsonParams = JSON.stringify({
                 typeList: 1,
                 idUsuarioRol: $scope.dataEntidadRol.idUsuarioRol
@@ -574,6 +576,8 @@
         $scope.savePermission = ()=>{
             try {
                 showLoader();
+
+              
                 let jsonPermission =JSON.stringify([
                     {
                         idUserPermission: $scope.dataSalePermissions.idUserPermission,
@@ -610,6 +614,27 @@
                 hideLoader();
                 console.log(error)    
             }
+        }
+
+
+        $scope.searchUserAdmin = (searchText)=>{
+            try {
+                let jsonParams = JSON.stringify({
+                    typeList: 3,
+                    searchText 
+                })
+                return mS.getData('get', 'Solicitud/Get/' + jsonParams, null, true).then(response=>{
+                    return JSON.parse(response.payload) || []
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        $scope.onSelectUser = (data, item) =>{
+         
+            item.usuarioAprobante = data.nombreCompleto;
+            item.idUsuarioRolAprobante = data.idUsuarioRol;
         }
 
 

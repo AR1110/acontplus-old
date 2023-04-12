@@ -40,11 +40,12 @@ export class ModalFamiliaCtrl{
 
         const url = this.tipoRegistro === 1 ? '/Familia/Post' : '/Familia/Put?idFamilia=' + this.data.idFamilia;
         this.$http.post(url, this.data).then(({data:response}) => {
-            if (response.id === "0") {
+            console.log(response)
+            if (response.id === "0" || response.code==='0') {
                 toastr.warning(response.message, response.titleSms);
                 return
             }
-            if (response.id === "1") {
+            if (response.id === "1" || response.code==='1') {
                 this.$uibModalInstance.close(response)
                 toastr.success(response.message, response.titleSms);                
                 return

@@ -81,7 +81,7 @@ app.constant('nombreModal', {
 
     },
     familia: {
-        MODAL_FAMILIA_CTRL: 'almacen/modalFamiliaCtrl.min.js' + CHANGE_VERSION(),
+        MODAL_FAMILIA_CTRL: 'almacen/modalFamiliaCtrl.js' + CHANGE_VERSION(),
         MODAL_FAMILIA_CSHTML: '_ModalFamilia.cshtml'
     },
     financiera: {

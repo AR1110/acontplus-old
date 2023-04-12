@@ -27,13 +27,7 @@ function configGeneralCtrl($timeout, $q, _mS, $scope, _commonSvc, _modalSvc, _no
             ])  
             const {valoracionMetodos}  = results[0];
             $scope.valoracionMetodos =  valoracionMetodos;  
-            
-            var min = 12,
-            max = 100;            
-            
-           
-            
-    
+      
             const moduloDecimales = results[1];
             $scope.decimalAlmacen = moduloDecimales[0][0],
             $scope.decimalCompra  = moduloDecimales[1][0],
