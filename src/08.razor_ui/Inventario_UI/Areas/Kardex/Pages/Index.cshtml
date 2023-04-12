@@ -1,0 +1,61 @@
+﻿@page
+@model Inventario_UI.Areas.Kardex.Pages.IndexModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div ng-controller="kardexCtrl as $ctrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Gestión Kardex</h4>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+                <button class="btn btn-info" ng-click="$ctrl.openModalSearch()"><i class="fa fa-search"></i> Buscar</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row d-block">
+        <div class="col-lg-12">
+            <div class="card">
+                @* <div class="card-header">
+                        <div class="card-actions">
+                            <a class="" data-action="collapse"><i class="ti-minus"></i></a>
+                            <a class="btn-minimize" data-action="expand"><i class="mdi mdi-arrow-expand"></i></a>
+                            <a class="btn-close" data-action="close"><i class="ti-close"></i></a>
+                        </div>
+                    </div> *@
+                <div class="card-body">
+                    <div class="row justify-content-between">
+                        <div class="col-xl-10 col-lg-10 col-md-10 col-sm-6 col-xs-12">
+                            <span><strong>Codigo: </strong> {{$ctrl.articulo.codigo}}</span><br>
+                            <span><strong>Articulo: </strong> {{$ctrl.articulo.descripcion}}</span>
+                        </div>
+                        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-xs-12">
+                            <button type="button" ng-click="$ctrl.getReport()" class="btn btn-secondary">
+                                <i class="fas fa-print"></i>
+                                Reporte
+                            </button>
+                        </div>
+                    </div>
+                    <md-divider></md-divider>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div id="tabla-kardex"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+
+
+</div>
+
+@section Scripts{
+    <script type="module" src="~/js/modal/inventario/kardexCtrl.js" asp-append-version="true"></script>
+
+}
