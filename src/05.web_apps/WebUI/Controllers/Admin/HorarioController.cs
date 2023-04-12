@@ -31,7 +31,7 @@ namespace WebUI.Controllers.Admin
 
         public async Task<IActionResult> GetByIdTurno(int idTurno)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _h.ReadHorarioAsync(idRol, idTurno);
             return Ok(res);
         }

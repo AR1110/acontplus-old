@@ -21,7 +21,7 @@ namespace WebUI.Controllers.Config
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("idRol", idRol);
             parameters.Add("jsonParams", json);
@@ -31,7 +31,7 @@ namespace WebUI.Controllers.Config
         [HttpPut]
         public async Task<IActionResult> Update(string json)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("idRol", idRol);
             parameters.Add("jsonParams", json);

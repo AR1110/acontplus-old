@@ -23,14 +23,14 @@ namespace WebUI.Controllers.GestionFinanciera
 
         public async Task<IActionResult> Get(string json)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _c.GetAsync(idRol, json);
             return Ok(res);
         }
 
         //public async Task<IActionResult> PutAsync(int idCobro, string observacion, bool cobro, bool anular)
         //{
-        //    int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+        //    int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
         //    var res = await _cp.UpdateAsync(idRol, idCobro, observacion, cobro, anular);
         //    return Ok(res);
         //}

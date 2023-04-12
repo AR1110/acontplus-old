@@ -13,19 +13,19 @@ namespace WebUI.Controllers.ImpuestoEstado
         // GET: Impuesto
         private readonly IConfiguration _configuration;
 
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        
         private DataAccessObject _dao;
-        private readonly int _idRol;
+        
         GenericResponse _gr = new();
         private RetencionRentaDao _i;
 
-        public ImpuestoRentaController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public ImpuestoRentaController(IConfiguration configuration)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
             _i = new RetencionRentaDao(_configuration);
-            _httpContextAccessor = httpContextAccessor;
-            _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            
+            
 
         }
 
@@ -38,7 +38,7 @@ namespace WebUI.Controllers.ImpuestoEstado
         [HttpGet]
         public async Task<IActionResult> Get(int pageIndex, int pageSize)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _i.GetAsync(idRol, pageIndex, pageSize);
             return Ok(_gr);
         }
@@ -51,7 +51,7 @@ namespace WebUI.Controllers.ImpuestoEstado
         public async Task<IActionResult> Post([FromBody] RetencionRenta data)
         {
             Dictionary<string, object> parameters = new();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("idTipoImpuestoRenta", data.idTipoImpuestoRenta);
             parameters.Add("codigoAnexo", data.codigoAnexo);
             parameters.Add("descripcion", data.descripcion);
@@ -64,7 +64,7 @@ namespace WebUI.Controllers.ImpuestoEstado
         public async Task<IActionResult> Put(int id, [FromBody] RetencionRenta data)
         {
             Dictionary<string, object> parameters = new();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("id", id);
             parameters.Add("idTipoImpuestoRenta", data.idTipoImpuestoRenta);
             parameters.Add("codigoAnexo", data.codigoAnexo);
@@ -79,7 +79,7 @@ namespace WebUI.Controllers.ImpuestoEstado
         public async Task<IActionResult> Delete(int id)
         {
             Dictionary<string, object> parameters = new();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("id", id);
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("ImpuestoEstado.RetencionRenta_Delete", parameters)));
         }

@@ -44,7 +44,7 @@ namespace AcontPlus.Controllers
 
         public async Task<IActionResult> ReadGestionCantidad()
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _d.GetAsync(idRol);
             return Ok(_gr);
         }

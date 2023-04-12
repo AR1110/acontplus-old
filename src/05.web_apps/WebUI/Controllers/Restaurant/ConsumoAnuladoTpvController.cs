@@ -10,16 +10,15 @@ namespace WebUI.Controllers.Restaurant
     public class ConsumoAnuladoTpvController : Controller
     {
         private readonly IConfiguration _config;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly int _idRol;
+        
+        
         private readonly DbAccess _db;
         private readonly LogWriter _log;
-        public ConsumoAnuladoTpvController(IConfiguration config,
-                                    IHttpContextAccessor httpContextAccessor)
+        public ConsumoAnuladoTpvController(IConfiguration config)
         {
             _config = config;
-            _httpContextAccessor = httpContextAccessor;
-            _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            
+            
             _db = new DbAccess(_config);
             _log = new LogWriter(_config);
         }
@@ -32,7 +31,7 @@ namespace WebUI.Controllers.Restaurant
         {
             DataAccessObject _dao = new DataAccessObject(_config);
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", SqlValidation.ValidateSqlString(json));
             return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Restaurant.ConsumoAnuladoTpv_Get", parameters)));
         }
@@ -43,7 +42,7 @@ namespace WebUI.Controllers.Restaurant
             try
             {
                 await _db.SPExecute("Restaurant.ConsumoAnuladoTpv_Insert");
-                _db.AddDynamicParam("idRol", _idRol);
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
                 _response = _db.GetDefault();
             }
@@ -65,7 +64,7 @@ namespace WebUI.Controllers.Restaurant
             try
             {
                 await _db.SPExecute("Restaurant.ConsumoAnuladoTpv_Update");
-                _db.AddDynamicParam("idRol", _idRol);
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
                 _response = _db.GetDefault();
             }
@@ -87,7 +86,7 @@ namespace WebUI.Controllers.Restaurant
             try
             {
                 await _db.SPExecute("Restaurant.ConsumoAnuladoTpv_Delete");
-                _db.AddDynamicParam("idRol", _idRol);
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
                 _response = _db.GetDefault();
             }

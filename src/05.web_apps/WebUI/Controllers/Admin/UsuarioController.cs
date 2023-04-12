@@ -13,13 +13,8 @@ namespace WebUI.Controllers
 {
     public class UsuarioController : Controller
     {
-       
-        // GET: Usuario
-
-        
         public IActionResult Index()
         {
-            ViewData["idRol"] = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
             return View();
         }
 

@@ -24,17 +24,17 @@ namespace WebUI.Controllers.FE
         }
         public async Task<IActionResult> Get(string json)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             return Ok(await _dl.GetAsync(idRol, json));
         }
         public async Task<IActionResult> Post(string codDoc)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             return Ok(await _dl.InsertAsync(idRol, codDoc));
         }
         //public async Task<IActionResult> Authorize(int idDocumentoLote)
         //{
-        //    int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+        //    int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
         //    //_responseFE.estado = "EN CONSTRUCCIÓN";
         //    //_responseFE.message = "Gracias por la paciencia";
         //    DataSet ds = new DataSet();
@@ -54,7 +54,7 @@ namespace WebUI.Controllers.FE
         //}
         public async Task<IActionResult> Delete(int idDocumentoLote)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             return Ok(await _dl.DeleteAsync(idRol, idDocumentoLote));
         }
     }

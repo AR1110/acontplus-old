@@ -9,17 +9,16 @@ namespace WebUI.Controllers.Restaurant
     public class ConfigPrinterController : Controller
     {
         private readonly IConfiguration _config;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly int _idRol;
+        
+        
         private readonly LogWriter _log;
         private readonly DbAccess _db;
 
-        public ConfigPrinterController(IConfiguration config,
-                                    IHttpContextAccessor httpContextAccessor)
+        public ConfigPrinterController(IConfiguration config)
         {
             _config = config;
-            _httpContextAccessor = httpContextAccessor;
-            _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            
+            
             _log = new LogWriter(_config);
             _db = new DbAccess(_config);
         }
@@ -32,7 +31,7 @@ namespace WebUI.Controllers.Restaurant
         {
             DataAccessObject _dao = new DataAccessObject(_config);
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Restaurant.ConfigPrinter_Get", parameters)));
         }
         [HttpPost]
@@ -42,7 +41,7 @@ namespace WebUI.Controllers.Restaurant
             try
             {
                 await _db.SPExecute("Restaurant.ConfigPrinter_Insert");
-                _db.AddDynamicParam("idRol", _idRol);
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("estado", estado);
                 _response = _db.GetDefault();
             }

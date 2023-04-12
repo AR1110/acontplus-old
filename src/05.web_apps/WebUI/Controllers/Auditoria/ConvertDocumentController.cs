@@ -22,7 +22,7 @@ namespace WebUI.Controllers.Auditoria
 
         public async Task<IActionResult> GetInformacionDoc(int idTipoDoc, int idDoc)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _cd.GetByDocumentAsync(idRol, idTipoDoc, idDoc);
             return Ok(res);
         }

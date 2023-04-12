@@ -25,7 +25,7 @@ namespace WebUI.Controllers.CuotaDoc
 
         public async Task<IActionResult> Post([FromBody] CuotaXPagarViewModel data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _cxp.InsertAsync(idRol, data);
             return Ok(res);
         }
@@ -33,14 +33,14 @@ namespace WebUI.Controllers.CuotaDoc
         [HttpPost]
         public async Task<IActionResult> Put(int idComprobante, int idTipDoc, [FromBody] List<CuotaXPagar> data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _cxp.UpdateAsync(idRol, idComprobante, idTipDoc, data);
             return Ok(res);
         }
 
         public async Task<IActionResult> GetByDocument(int idComprobante, int idTipoDoc)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _cxp.GetByDocumentAsync(idRol, idComprobante, idTipoDoc);
             return Ok(res);
         }
@@ -48,7 +48,7 @@ namespace WebUI.Controllers.CuotaDoc
 
         public async Task<IActionResult> GetForPay(int idComprobante, int idTipoDocumento)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _cxp.GetByPagoAsync(idRol, idComprobante, idTipoDocumento);
             return Ok(res);
         }

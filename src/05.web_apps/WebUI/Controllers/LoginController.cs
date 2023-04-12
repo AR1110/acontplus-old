@@ -100,10 +100,10 @@ namespace WebUI.Controllers
                         // The full path or absolute URI to be used as an http 
                         // redirect response value.
                     };
-                    await HttpContext.SignInAsync(
-                                CookieAuthenticationDefaults.AuthenticationScheme,
-                                new ClaimsPrincipal(claimsIdentity),
-                                authProperties);
+                    //await HttpContext.SignInAsync(
+                    //            CookieAuthenticationDefaults.AuthenticationScheme,
+                    //            new ClaimsPrincipal(claimsIdentity),
+                    //            authProperties);
                     //saveLoginLocation(u.idRol);
 
                 }
@@ -119,17 +119,22 @@ namespace WebUI.Controllers
                 });
             }
         }
-        public async Task<IActionResult> Logout()
+        //public async Task<IActionResult> Logout()
+        //{
+        //    await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        //    HttpContext.User = null;
+        //    return Redirect("/");
+        //}
+
+        public IActionResult Logout()
         {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            HttpContext.User = null;
-            return Redirect("/");
+            return Redirect("/Login/Index");
         }
 
         //Gestiones Especiales
         //public async Task<IActionResult> ListSucursalAccesso()
         //{
-        //    int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+        //    int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
         //    _gr = await _l.ListSucursalAccessAsync(idRol);
         //    return Ok(_gr);
         //}

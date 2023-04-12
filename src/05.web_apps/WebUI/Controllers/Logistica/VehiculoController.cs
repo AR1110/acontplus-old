@@ -10,20 +10,20 @@ namespace WebUI.Controllers.Logistica
     public class VehiculoController : Controller
     {
         private readonly IConfiguration _configuration;
-        private readonly IHttpContextAccessor _httpContextAccessor; ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
+         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
-        private readonly int _idRol;
+        
         GenericResponse _gr = new();
         
         private VehiculoDao _v;
-        public VehiculoController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public VehiculoController(IConfiguration configuration)
         {
             _configuration = configuration;
             _v = new VehiculoDao(_configuration);
             
             _dao = new DataAccessObject(_configuration);
-            _httpContextAccessor = httpContextAccessor;
-            _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            
+            
 
         }
         public IActionResult Index()
@@ -33,13 +33,13 @@ namespace WebUI.Controllers.Logistica
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Vehiculo data)
         {
-            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _v.InsertAsync(idRol, data);
             return Ok(res);
         }
         public async Task<IActionResult> Get()
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _v.GetAsync(idRol);
             return Ok(res);
         }
@@ -48,7 +48,7 @@ namespace WebUI.Controllers.Logistica
         public async Task<IActionResult> Put(int id, [FromBody] Vehiculo data){
             
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("idVehiculo", id);
             parameters.Add("placa", data.placa);
             parameters.Add("marca", data.marca);
@@ -59,7 +59,7 @@ namespace WebUI.Controllers.Logistica
 
         public async Task<IActionResult> Delete(int id)
         {
-            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _v.DeleteAsync(idRol, id);
             return Ok(res);
         }
@@ -67,7 +67,7 @@ namespace WebUI.Controllers.Logistica
         //Search 
         public async Task<IActionResult> Search(string text)
         {
-            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _v.SearchAsync(idRol, text);
             return Ok(res);
         }

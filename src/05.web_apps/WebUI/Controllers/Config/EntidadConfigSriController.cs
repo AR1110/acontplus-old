@@ -14,16 +14,16 @@ namespace WebUI.Controllers.Config
     public class EntidadConfigSriController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        
         
         private DataAccessObject _dao;
         private readonly ILogger<EntidadConfigSriController> _logger;
-        public EntidadConfigSriController(ILogger<EntidadConfigSriController> logger, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public EntidadConfigSriController(ILogger<EntidadConfigSriController> logger, IConfiguration configuration)
         {
             _logger = logger;
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
-            _httpContextAccessor = httpContextAccessor;
+            
         }
 
 

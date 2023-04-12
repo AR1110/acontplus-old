@@ -34,14 +34,14 @@ namespace WebUI.Controllers.Inventario
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ConsolidacionInventarioViewModel data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _cinv.InsertAsync(idRol, data);
             return Ok(res);
         }
 
         public async Task<IActionResult> Get(string json)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _cinv.GetAsync(idRol, json);
             return Ok(res);
         }
@@ -50,7 +50,7 @@ namespace WebUI.Controllers.Inventario
         [HttpPut]
         public async Task<IActionResult> Put(int id, [FromBody] ConsolidacionInventarioViewModel data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _cinv.UpdateAsync(idRol, id, data);
             return Ok(res);
         }
@@ -58,7 +58,7 @@ namespace WebUI.Controllers.Inventario
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _cinv.DeleteAsync(idRol, id);
             return Ok(res);
         }

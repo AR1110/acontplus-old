@@ -12,20 +12,20 @@ namespace WebUI.Controllers
     {
         // GET: Articulo
         private readonly IConfiguration _configuration;
-        private readonly IHttpContextAccessor _httpContextAccessor; ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
+         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
-        private readonly int _idRol;
+        
         GenericResponse _gr = new();
         private ArticuloDao _a;
         //private readonly LogWriter _log;
         private readonly DbAccess _db;
 
-        public ArticuloController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public ArticuloController(IConfiguration configuration)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
-            _httpContextAccessor = httpContextAccessor;
-            _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            
+            
             _a = new ArticuloDao(_configuration);
             //_log = new LogWriter(_configuration);
             _db = new DbAccess(_configuration);
@@ -34,7 +34,6 @@ namespace WebUI.Controllers
 
         public IActionResult Index()
         {
-            ViewData["idRol"] = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
             return View();
         }
 
@@ -47,7 +46,7 @@ namespace WebUI.Controllers
         public async Task<IActionResult> Get(string json)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", SqlValidation.ValidateSqlString(json));
             return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Almacen.Articulo_Get", parameters)));
         }
@@ -65,7 +64,7 @@ namespace WebUI.Controllers
         public async Task<IActionResult> GetIdBySale(string json)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", SqlValidation.ValidateSqlString(json));
             return Ok(DbResponse.SPDataSet(await _dao.GetDataSetAsync("Almacen.Articulo_Get_Id_By_Sale", parameters)));
         }
@@ -76,7 +75,7 @@ namespace WebUI.Controllers
         public async Task<IActionResult> GetIdByPurchase(string json)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", SqlValidation.ValidateSqlString(json));
             return Ok(DbResponse.SPDataSet(await _dao.GetDataSetAsync("Almacen.Articulo_Get_Id_By_Purchase", parameters)));
         }
@@ -88,7 +87,7 @@ namespace WebUI.Controllers
             try
             {
                 await _db.SPExecute("Almacen.Articulo_Get_Search");
-                _db.AddDynamicParam("idRol", _idRol);
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
                 _response = _db.GetDataTableAsync();
             }
@@ -110,7 +109,7 @@ namespace WebUI.Controllers
         public async Task<IActionResult> List(string json)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", SqlValidation.ValidateSqlString(json));
             return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Almacen.Articulo_Get_List_Info", parameters)));
         }
@@ -120,7 +119,7 @@ namespace WebUI.Controllers
         public async Task<IActionResult> GetFormData(string json)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", SqlValidation.ValidateSqlString(json));
             return Ok(DbResponse.SPDataSet(await _dao.GetDataSetAsync("Almacen.Articulo_Get_Data_Form", parameters)));
         }
@@ -129,7 +128,7 @@ namespace WebUI.Controllers
         public async Task<IActionResult> Post([FromBody] ArticuloParams data)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("jsonArticulo", data.jsonArticulo);
             parameters.Add("json", data.jsonpvp);
             parameters.Add("idBodega", data.idBodega);
@@ -141,7 +140,7 @@ namespace WebUI.Controllers
         public async Task<IActionResult> Put(int idArticulo, [FromBody] ArticuloParams data)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("id", idArticulo);
             parameters.Add("jsonArticulo", data.jsonArticulo);
             parameters.Add("json", data.jsonpvp);
@@ -152,7 +151,7 @@ namespace WebUI.Controllers
         public async Task<IActionResult> Delete(int idArticulo)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("id", idArticulo);
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Almacen.Articulo_Delete", parameters)));
         }
@@ -161,7 +160,7 @@ namespace WebUI.Controllers
         //Buscar Articulo por descripcion o por còdigo
         public async Task<IActionResult> SearchArticuloFilter(string busqueda, bool condicion)
         {
-            _gr = await _a.SearchFilterAsync(_idRol, busqueda, condicion);
+            _gr = await _a.SearchFilterAsync(Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value), busqueda, condicion);
             return Ok(_gr);
         }
 
@@ -171,13 +170,13 @@ namespace WebUI.Controllers
         //Historial de Compras o Ventas del articulo.
         public async Task<IActionResult> HistoryEntradaArticulo(int idArticulo)
         {
-            _gr = await _a.HistoryEntradaAsync(_idRol, idArticulo);
+            _gr = await _a.HistoryEntradaAsync(Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value), idArticulo);
             return Ok(_gr);
         }
 
         public async Task<IActionResult> SearchFilterFracc(string busqueda)
         {
-            var res = await _a.SearchFilterFraccAsync(_idRol, busqueda);
+            var res = await _a.SearchFilterFraccAsync(Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value), busqueda);
             return Ok(res);
         }
 

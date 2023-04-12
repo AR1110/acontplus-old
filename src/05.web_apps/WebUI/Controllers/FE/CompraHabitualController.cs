@@ -10,17 +10,17 @@ namespace WebUI.Controllers.FE
     public class CompraHabitualController : Controller
     {
         private readonly IConfiguration _configuration;
-        private readonly IHttpContextAccessor _httpContextAccessor; ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
+         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
-        private readonly int _idRol;
+        
         private readonly DbAccess _db;
         private readonly LogWriter _log;
-        public CompraHabitualController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public CompraHabitualController(IConfiguration configuration)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
-            _httpContextAccessor = httpContextAccessor;
-            _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            
+            
             _db = new DbAccess(_configuration);
             _log = new LogWriter(_configuration);
         }
@@ -32,7 +32,7 @@ namespace WebUI.Controllers.FE
         public async Task<IActionResult> Get(string json)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", SqlValidation.ValidateSqlString(json));
             return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("FactElect.CompraHabitual_Get", parameters)));
         }
@@ -43,7 +43,7 @@ namespace WebUI.Controllers.FE
             try
             {
                 await _db.SPExecute("FactElect.CompraHabitual_Insert");
-                _db.AddDynamicParam("idRol", _idRol);
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
                 _response = _db.GetDefault();
             }
@@ -65,7 +65,7 @@ namespace WebUI.Controllers.FE
             try
             {
                 await _db.SPExecute("FactElect.CompraHabitual_Update");
-                _db.AddDynamicParam("idRol", _idRol);
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
                 _response = _db.GetDefault();
             }
@@ -87,7 +87,7 @@ namespace WebUI.Controllers.FE
             try
             {
                 await _db.SPExecute("FactElect.CompraHabitual_Delete");
-                _db.AddDynamicParam("idRol", _idRol);
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
                 _response = _db.GetDefault();
             }

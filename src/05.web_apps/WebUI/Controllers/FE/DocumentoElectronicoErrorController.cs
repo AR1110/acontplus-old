@@ -11,17 +11,17 @@ namespace WebUI.Controllers.FE
     {
 
         private readonly IConfiguration _configuration;
-        private readonly IHttpContextAccessor _httpContextAccessor; ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
+         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
-        private readonly int _idRol;
+        
         GenericResponse _gr = new();        
 
-        public DocumentoElectronicoErrorController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public DocumentoElectronicoErrorController(IConfiguration configuration)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
-            _httpContextAccessor = httpContextAccessor;
-            _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            
+            
 
         }
 
