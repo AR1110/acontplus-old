@@ -778,7 +778,6 @@
       ],
       "UpstreamPathTemplate": "/api/UsuarioRol/Get/{id}"
     },
-
     {
       "AuthenticationOptions": {
         "AllowedScopes": [
@@ -800,6 +799,20 @@
         "Delete"
       ],
       "UpstreamPathTemplate": "/api/UsuarioPermiso/{everything}"
+    },
+    {
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 8002
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Consultas/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "UpstreamPathTemplate": "/api/Consultas/{everything}"
     }
   ]
 }

@@ -3,6 +3,7 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
+    @RouteData.Values["tipo"]
     Layout = "_Layout";
 }
 
@@ -166,7 +167,7 @@
                                 @* <td md-cell>{{$index+1}}</td> *@
                                 <td md-cell>{{item.comprobante}}</td>
                                 <td md-cell>{{item.fechaEmision}}</td>
-                                <td md-cell>{{item.serie}}</td>
+                                <td md-cell>{{item.serieComprobante}}</td>
                                 <td md-cell>{{item.rucReceptor}}</td>
                                 <td md-cell>{{item.razonSocial}}</td>
                                 <td md-cell>{{item.claveAcceso}}</td>
@@ -188,6 +189,12 @@
         </div>
     </div>
 
+
+    <button class="btn btn-warning btn-lg" ng-if="@ViewData["tipo"] > 0" ng-click="refresh()">
+        <i class="fa fa-close"></i> Cancelar
+    </button>
+
+    <input type="text" name="tipo" id="tipo" value="@ViewData["tipo"]" hidden />
 
 </div>
 @section Scripts{
