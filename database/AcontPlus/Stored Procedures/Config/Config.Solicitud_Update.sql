@@ -12,7 +12,7 @@ GO
 -- Description:	<Description,,>
 -- =============================================
 
- --Config.Solicitud_Update  41, '{"codigoAccion":"E","typeOperation":2}'
+ --Config.Solicitud_Update  41, '{"codigoAccion":"A","typeOperation":2}'
 
 CREATE PROCEDURE Config.Solicitud_Update  @idUsuarioRol INT, @json VARCHAR(300)
 AS
@@ -55,7 +55,7 @@ BEGIN
 					SELECT '1' code,'Concedido la autorización Correctamente' as 'message'	    					
 				END 
 				
-			IF @typeOperation = 2 AND @codigoAccion = 'E'
+			IF @typeOperation = 2 AND @codigoAccion = @codigoAccion
 				BEGIN 
 					IF EXISTS(SELECT 1 FROM Config.Solicitud WHERE idUsuarioRolSolictante = @idUsuarioRol AND codigoAccion=@codigoAccion AND codEstado='A')
 						BEGIN

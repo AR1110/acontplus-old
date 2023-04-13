@@ -41,7 +41,8 @@ BEGIN
 													  WHEN 'F' THEN 'FINALIZADO'
 													  END
 				,s.observacion
-				,s.fechaRegistro
+				,fechaRegistro = FORMAT(s.fechaRegistro, 'dd-MM-yyyy hh:mm')
+				,fechaAprobacion = FORMAT(s.fechaAprobacion, 'dd-MM-yyyy hh:mm')
 				,urs.codRol
 			FROM Config.Solicitud s
 			--Datos Aprobante
@@ -50,29 +51,42 @@ BEGIN
 			--Datos Solicitante
 			INNER JOIN App.UsuarioRol urs WITH(NOLOCK) ON urs.idUsuarioRol = s.idUsuarioRolSolictante
 			INNER JOIN Usuario u_soli WITH(NOLOCK) ON u_soli.idUsuario     = urs.idUsuario
-			WHERE s.idUsuarioRolAprobante = @idUsuarioRol
+			WHERE s.idUsuarioRolAprobante = @idUsuarioRol ORDER BY s.idSolicitud DESC 
 		END 
 
 	IF @typeList = 2
 		BEGIN 
+			DECLARE @requestKey BIT 
+			SELECT 
+				@requestKey = JSON_VALUE(jsonPermission, '$.additional.requestAuthorizationKey.requestKey')
+			FROM Config.UserPermission 
+			WHERE idUsuarioRol = @idUsuarioRol 
+			AND codModule = 'V'
 			
-			IF EXISTS(SELECT 1 FROM Config.Solicitud WHERE idUsuarioRolSolictante = @idUsuarioRol AND codigoAccion=@codigoAccion AND codEstado='P')
+			IF @requestKey = 1
 				BEGIN
-					SELECT '0'code, 'Por el momento, tu solicitud no ha sido aprobada!'as 'message', 'Solicitud de Clave de Autorización' as titleSms
-					RETURN 
-				END 
+					IF EXISTS(SELECT 1 FROM Config.Solicitud WHERE idUsuarioRolSolictante = @idUsuarioRol AND codigoAccion=@codigoAccion AND codEstado='P')
+						BEGIN
+							SELECT '0'code, 'Por el momento, tu solicitud no ha sido aprobada!'as 'message', 'Solicitud de Clave de Autorización' as titleSms
+							RETURN 
+						END 
 
-			IF EXISTS(SELECT 1 FROM Config.Solicitud WHERE idUsuarioRolSolictante = @idUsuarioRol AND codigoAccion=@codigoAccion AND codEstado='A')
-				BEGIN 
-					SELECT '1'code, 'Tu soliciud ya ha sido Aprobada' as 'message'
-					RETURN 
-				END 
+					IF EXISTS(SELECT 1 FROM Config.Solicitud WHERE idUsuarioRolSolictante = @idUsuarioRol AND codigoAccion=@codigoAccion AND codEstado='A')
+						BEGIN 
+							SELECT '1'code, 'Tu soliciud ya ha sido Aprobada' as 'message'
+							RETURN 
+						END 
 
-			IF NOT EXISTS(SELECT 1 FROM Config.Solicitud WHERE idUsuarioRolSolictante = @idUsuarioRol AND codigoAccion=@codigoAccion AND codEstado='P')
-				BEGIN 
-					SELECT '2'code, 'register solictud 'as 'message', 'Solicitud de Clave de Autorización' as titleSms
-					RETURN	
-				END 
+					IF NOT EXISTS(SELECT 1 FROM Config.Solicitud WHERE idUsuarioRolSolictante = @idUsuarioRol AND codigoAccion=@codigoAccion AND codEstado='P')
+						BEGIN 
+							SELECT '2'code, 'Registrar solictud 'as 'message', 'Solicitud de Clave de Autorización' as titleSms
+							RETURN	
+						END 					
+				END
+			ELSE
+				SELECT '1'code, 'Puede Editar o Anular'
+				RETURN
+			
 		END 
 
 	IF @typeList = 3
@@ -98,6 +112,6 @@ BEGIN
 
 		END 
 	--INSERT INTO Config.Solicitud (idUsuarioRolAprobante, idUsuarioRolSolictante, observacion, codigoAccion, codEstado)VALUES(38, 39, 'EDITAR FACTURA N°. 23545454', 'E', 'P')
-
+	SELECT * FROM Config.Solicitud
 	
 END 

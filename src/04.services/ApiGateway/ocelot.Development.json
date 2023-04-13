@@ -207,7 +207,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 12786
+          "Port": 54948
         }
       ],
       "DownstreamPathTemplate": "/api/Factura/{everything}",
@@ -891,6 +891,47 @@
         "Get"
       ],
       "UpstreamPathTemplate": "/api/Kardex?json={json}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7074
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Solicitud/{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/api/Solicitud/{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7074
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Solicitud/Check/{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get"        
+      ],
+      "UpstreamPathTemplate": "/api/everything/Check/{everything}"
     }
   ]
 }
