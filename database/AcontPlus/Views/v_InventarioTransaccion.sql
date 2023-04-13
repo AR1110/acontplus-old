@@ -1,0 +1,83 @@
+USE AcontPlus
+GO
+IF OBJECT_ID(N'v_InventarioTransaccion', N'V') IS NOT NULL
+DROP VIEW v_InventarioTransaccion
+GO
+CREATE VIEW v_InventarioTransaccion AS (
+SELECT t.*
+	,tt.codigo codTransaccion
+	,tt.descripcion transaccion
+	,td.codigo codDoc
+	,td.codigoSri
+	,td.descripcion comprobante
+	,b.descripcion bodega
+	,a.idEntidad
+	,a.codigo codArticulo
+	,a.codigoAuxiliar
+	,a.codigoBarra
+	,a.descripcion articulo
+	,u.nombreUsuario usuario
+	,nroDocumento = (
+		CASE 
+			WHEN tt.codigo = 'E' AND td.codigo = 'FE'
+				THEN (
+						SELECT TOP 1 serieComprobante
+						FROM Recepcion.DocumentoRecibido dr  WITH (NOLOCK)
+						WHERE dr.idDocumento = t.idDocumento
+						)
+			WHEN tt.codigo = 'E' AND td.codigo = 'FF'
+				THEN (
+						SELECT TOP 1  puntoEmision + '-' + CONVERT(VARCHAR(10), nroDocumento)
+						FROM FacturaCompra fc  WITH (NOLOCK)
+						WHERE fc.idFacturaCompra = t.idDocumento
+						)
+			WHEN tt.codigo = 'E' AND td.codigo = 'NC'
+				THEN (
+						SELECT TOP 1 estab + '-' + ptoEmi + '-' + CONVERT(VARCHAR(10), nroDocumento)
+						FROM NotaCredito nc  WITH (NOLOCK)
+						INNER JOIN PuntoEmision pe  WITH (NOLOCK) ON nc.idPuntoEmision = pe.idPuntoEmision
+						INNER JOIN Sri.Establecimiento e  WITH (NOLOCK) ON pe.codEstab = e.codEstab
+						WHERE nc.idNotaCredito = t.idDocumento
+						)
+			WHEN tt.codigo = 'E' AND td.codigo = 'IV'
+				THEN (
+						SELECT TOP 1 estab + '-' + ptoEmi + '-' + CONVERT(VARCHAR(10), secuencial)
+						FROM Compra.Documento_Ingreso di  WITH (NOLOCK)
+						WHERE di.idDocumentoIngreso = t.idDocumento
+						)
+			WHEN tt.codigo = 'S' AND td.codigo = 'FE'
+				THEN (
+						SELECT TOP 1 e.estab + '-' + pe.ptoEmi + '-' + CONVERT(VARCHAR(10), f.nroFactura)
+						FROM Factura f
+						INNER JOIN PuntoEmision pe  WITH (NOLOCK) ON f.idPuntoEmision = pe.idPuntoEmision
+						INNER JOIN Sri.Establecimiento e  WITH (NOLOCK) ON pe.codEstab = e.codEstab
+						WHERE f.idFactura = t.idDocumento
+						)
+			WHEN tt.codigo = 'S' AND td.codigo = 'NE'
+				THEN (
+						SELECT TOP 1 e.estab + '-' + pe.ptoEmi + '-' + CONVERT(VARCHAR(10), ne.nroDocumento)
+						FROM NotaEntrega ne  WITH (NOLOCK)
+						INNER JOIN PuntoEmision pe  WITH (NOLOCK) ON ne.idPuntoEmision = pe.idPuntoEmision
+						INNER JOIN Sri.Establecimiento e  WITH (NOLOCK) ON pe.codEstab = e.codEstab
+						WHERE ne.idNotaEntrega = t.idDocumento
+						)
+			WHEN tt.codigo = 'S' AND td.codigo = 'NC'
+				THEN (
+						SELECT TOP 1 dr.serieComprobante
+						FROM Recepcion.DocumentoRecibido dr  WITH (NOLOCK)
+						WHERE dr.idDocumento = t.idDocumento
+						)
+			END
+		)
+FROM Inventario.Transaccion t WITH (NOLOCK)
+INNER JOIN Inventario.TipoTransaccion tt WITH (NOLOCK) ON t.idTipoTransaccion = tt.idTipoTransaccion
+INNER JOIN Inventario.TipoDocumento td WITH (NOLOCK) ON t.idTipoDocumento = td.idTipoDocumento
+INNER JOIN Bodega b WITH (NOLOCK) ON t.idBodega = b.idBodega
+INNER JOIN Articulo a WITH (NOLOCK) ON t.idArticulo = a.idArticulo
+LEFT JOIN Usuario u WITH (NOLOCK) ON t.idUsuario = u.idUsuario
+
+)
+
+--select * from FacturaCompra where idFacturaCompra = 175
+
+--select * from FacturaCompra where estab is null
