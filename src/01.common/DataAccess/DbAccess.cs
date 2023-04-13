@@ -20,6 +20,15 @@ namespace DataAccess
             _connection = new SqlConnection(Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus")));
             _log = new LogWriter(_config);
         }
+        public async Task QueryExecute(string query)
+        {
+            if (_connection != null)
+            {
+                await _connection.OpenAsync();
+                _command = new SqlCommand(query, _connection);
+                _command.CommandType = CommandType.Text;
+            }
+        }
         public async Task SPExecute(string spName)
         {
             try
