@@ -120,9 +120,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BL.Print", "03.business_log
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.Inventory", "02.domain\Domain.Inventory\Domain.Inventory.csproj", "{526B28CE-84D7-4EEE-A1C1-4340CA93A93F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiInventory", "04.services\ApiInventory\ApiInventory.csproj", "{CB1A3FC4-033C-433A-AB71-C66E3768D5FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiInventory", "04.services\ApiInventory\ApiInventory.csproj", "{CB1A3FC4-033C-433A-AB71-C66E3768D5FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inventario_UI", "08.razor_ui\Inventario_UI\Inventario_UI.csproj", "{3E3A0DCD-6B3E-4FF4-A367-D04917140D4F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inventario_UI", "08.razor_ui\Inventario_UI\Inventario_UI.csproj", "{3E3A0DCD-6B3E-4FF4-A367-D04917140D4F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,0 +1,25 @@
+﻿@page
+@model FACT_UI.Areas.Factura.Pages.IndexModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "_Layout";
+}
+
+<div ng-controller="facturaCtrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h5 class="text-themecolor">Factura Refactorización</h5>
+        </div>
+    </div>
+   
+    
+</div>
+
+@section Scripts {
+
+    <script src="~/js/controllers/factElect/handlers/api-error.handler.js" asp-append-version="true"></script>
+    <script src="~/js/controllers/factElect/mappers/factura.mapper.js" asp-append-version="true"></script>
+    <script src="~/js/controllers/factElect/repositories/factura.repository.js" asp-append-version="true"></script>
+    <script src="~/js/controllers/factElect/services/factura.service.js" asp-append-version="true"></script>
+    <script src="~/js/controllers/factElect/facturaCtrl.js" asp-append-version="true"></script>
+}
