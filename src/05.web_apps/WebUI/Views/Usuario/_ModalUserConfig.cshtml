@@ -184,7 +184,7 @@
                                                            ng-model="item.usuarioAprobante" class="form-control border-select"
                                                            uib-typeahead="item as item.nombreCompleto for item in searchUserAdmin($viewValue)"
                                                            typeahead-editable="false"
-                                                            placeholder="1450152325001"
+                                                            placeholder="Ej: 1450152325001"
                                                             uib-tooltip="Receptor de la solicitud de aprobación"
                                                             tooltip-placement="top"
                                                             typeahead-on-select="onSelectUser($item, item)"  
@@ -203,10 +203,25 @@
                                     <h6 class="m-b-0 text-white"><i class="mdi mdi-bulletin-board"></i> Caja</h6>     
                                 </div>
                                 <div class="card-body">
-                                    <div class="icheck-info">
-                                        <input type="checkbox" name="articlePermission" id="articlePermission" ng-model="item.update">
-                                        <label for="articlePermission">Ver otras cajas</label>
-                                    </div>                                    
+                                    <div ng-repeat="item in cajaPermissions">
+                                        <div ng-repeat="(key, prop) in item">
+                                            <div ng-if="key==='view'">
+                                                
+                                                <div class="icheck-info" id="cajaPermissionView">
+                                                    <input type="checkbox" name="cajaPermissionView{{$index+1}}" id="cajaPermissionView{{$index+1}}" ng-model="item.view">
+                                                    <label for="cajaPermissionView{{$index+1}}">{{item.label}}</label>                                         
+                                                </div>        
+                                            </div>
+
+                                            <div ng-if="key==='cerrar'">
+                                                <div class="icheck-info" id="cajaPermissionCerrar">
+                                                    <input type="checkbox" name="cajaPermissionCerrar{{$index+1}}" id="cajaPermissionCerrar{{$index+1}}" ng-model="item.cerrar">
+                                                    <label for="cajaPermissionCerrar{{$index+1}}">{{item.label}}</label>                                         
+                                                </div>  
+                                            </div>
+                                        </div>                                      
+                                                                                                                                                                                
+                                    </div>                                                               
                                 </div>
                             </div>
                         </div>
