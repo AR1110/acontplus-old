@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v6.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v6.0": {
+      "Inventario_UI/1.0.0": {
+        "runtime": {
+          "Inventario_UI.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Inventario_UI/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

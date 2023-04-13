@@ -81,7 +81,7 @@ app.constant('nombreModal', {
 
     },
     familia: {
-        MODAL_FAMILIA_CTRL: 'almacen/modalFamiliaCtrl.min.js' + CHANGE_VERSION(),
+        MODAL_FAMILIA_CTRL: 'almacen/modalFamiliaCtrl.js' + CHANGE_VERSION(),
         MODAL_FAMILIA_CSHTML: '_ModalFamilia.cshtml'
     },
     financiera: {
@@ -417,7 +417,7 @@ app.constant('nombreModal', {
     kardex: {
         MODAL_CTRL: 'inventario/KardexCtrl.js' + CHANGE_VERSION(),
         MODAL_CSHTML: '_ModalKardex.cshtml',
-        MODAL_FILTRO_CSHTML: 'Kardex/_ModalFiltroKardex.cshtml'
+        MODAL_FILTRO_CSHTML: '~/Areas/Kardex/Pages/Shared/_ModalFiltroKardex.cshtml'
     },
     liquidacion_compra: {
         MODAL_FILE_CTRL: 'modal/compras/modalLiquidacionCompraCtrl.min.js' + CHANGE_VERSION(),

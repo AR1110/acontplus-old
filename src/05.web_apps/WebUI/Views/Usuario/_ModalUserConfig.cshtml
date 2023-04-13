@@ -170,10 +170,29 @@
 
                                 <div class="card-body">
                                     <span class="text-muted">Adicionales</span>
-                                    <div class="icheck-info" id="salePermissionAdditional" ng-repeat="item in salePermissions.additional">
-                                        <input type="checkbox" name="salePermissionAdditional{{$index+1}}" id="salePermissionAdditional{{$index+1}}" ng-model="item.requestKey">
-                                        <label for="salePermissionAdditional{{$index+1}}">{{item.label}}</label>                                         
-                                    </div>                                     
+                                    <div ng-repeat="item in salePermissions.additional">
+                                        <div class="icheck-info" id="salePermissionAdditional">
+                                            <input type="checkbox" name="salePermissionAdditional{{$index+1}}" id="salePermissionAdditional{{$index+1}}" ng-model="item.requestKey">
+                                            <label for="salePermissionAdditional{{$index+1}}">{{item.label}}</label>                                         
+                                        </div> 
+
+                                        <div ng-switch="item.requestKey">
+                                            <div ng-switch-when="true">
+                                                <div class="form-group">
+                                                    <label for="salePermissionAdditional">Usuario</label>
+                                                    <input type="text" 
+                                                           ng-model="item.usuarioAprobante" class="form-control border-select"
+                                                           uib-typeahead="item as item.nombreCompleto for item in searchUserAdmin($viewValue)"
+                                                           typeahead-editable="false"
+                                                            placeholder="1450152325001"
+                                                            uib-tooltip="Receptor de la solicitud de aprobación"
+                                                            tooltip-placement="top"
+                                                            typeahead-on-select="onSelectUser($item, item)"  
+                                                            onClick="select();" />
+                                                </div> 
+                                            </div>
+                                        </div>  
+                                    </div>                                 
                                 </div>  
                             </div>
                         </div>
@@ -196,7 +215,7 @@
             </div>
         </uib-tab>     
 
-        <uib-tab ng-if="isRoleAdmin();">
+        <uib-tab ng-if="isRoleMain();">
             <uib-tab-heading>
                 <i class="mdi mdi-clipboard-check"></i> Aprobar solicitud de Autorización
             </uib-tab-heading>

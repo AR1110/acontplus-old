@@ -25,6 +25,10 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
 
    
     const TIPO_DOC_FV = _commonSvc.tipoDoc['FV'];
+    const PERMISSION_KEY_ACTIONS = {
+        E: 'E',
+        A: 'A',
+    }
 
     $scope.dataSearch = {
         pageIndex: 1,
@@ -314,7 +318,7 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
     $scope.checkHasPermissionToEdit= (item)=>{
         try {
             let {additional} = $scope.jsonPermission;
-
+             
             if(typeof $scope.jsonPermission ==='object' && !additional.requestAuthorizationKey.requestKey) {
                 $scope.openModalInvoiceEdit(item);
                 return
@@ -451,6 +455,42 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
 
     $scope.askToDelete = async(item)=>{
         try {
+            let isDelete = true;
+            
+            if(item.anulada){
+                _fS.sweetAlert('warning', 'El documento ya se encuentra anulada');
+                return
+            }
+           
+            let {additional} = $scope.jsonPermission;
+             
+            if(typeof $scope.jsonPermission ==='object' && additional.requestAuthorizationKey.requestKey) {
+                let jsonParams = {
+                    typeList: 2,
+                    codigoAccion: PERMISSION_KEY_ACTIONS.A
+                }
+                
+                showLoader();
+                await _mS.getData('get', 'Solicitud/Check/' + JSON.stringify(jsonParams), null, true).then(response=>{
+                    if(response.code==="0"){                   
+                        hideLoader();
+                        _fS.sweetAlert('warning', response.message, response.titleSms);
+                        isDelete = false;
+                    }
+                    if(response.code==="1"){
+                        hideLoader();
+                        isDelete = true;
+                    }
+                    if(response.code==="2"){
+                        hideLoader();
+                        $scope.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.A);
+                        isDelete = false;
+                    }
+                })
+            }
+
+            if(!isDelete) return 
+
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
                   confirmButton: 'btn btn-success',
@@ -470,31 +510,25 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
             })
     
             if(isConfirmed){
-                Swal.fire({
-                    title: `<small>Espere</small>`,
-                    html: 'Anulando...',
-                    allowOutsideClick: false,
-                    showConfirmButton: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                        _mS.getData('delete', '/FacturaVenta/Delete?id=' + item.idFactura).then(response=> {
-                            
-                            if (response.code === "0") {
-                                _fS.sweetAlert('warning', response.message, response.titleSms);
-                            }
-                            if (response.code === "1") {
-                                _fS.sweetAlert('success', response.message, response.titleSms, 1000);
-                                $scope.getFacturas();
-                            }
-                        })
+                showLoader();
+                _mS.getData('delete', '/FacturaVenta/Delete?id=' + item.idFactura).then(response=> {
+                    if (response.code === "0") {
+                        hideLoader();
+                        _fS.sweetAlert('warning', response.message, response.titleSms);
                     }
+                    if (response.code === "1") {
+                        hideLoader();
+                        _fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                        $scope.getFacturas();
+                    }
+                }).catch(error => {
+                    hideLoader();
+                    console.log(error);
                 })
+                   
             }
         } catch (error) {
-            Swal.close();
             console.log(error)
-        }finally{
-
         }
 
     }
