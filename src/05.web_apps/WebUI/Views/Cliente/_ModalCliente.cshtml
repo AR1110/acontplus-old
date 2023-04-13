@@ -14,46 +14,47 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                <label for="">Tipo Identificación: <span class="text-danger">*</span> </label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <select class="form-control border-select"
-                                            ng-model="$ctrl.data.idTipoIdentificacion"
-                                            ng-change="$ctrl.onChangeTipoIdentificacion()" name="tipoDocumento"
-                                            ng-model="$ctrl.data.idTipoIdentificacion"
-                                            ng-disabled="$ctrl.isDisableSelectIdentificacion">
-                                            <option ng-value="ti.idTipoIdentificacion"
-                                                ng-repeat="ti in $ctrl.tipoIdentificaciones">{{ti.identificacion}}</option>
-                                        </select>
-                                    </div>
-                                    <input type="text" class="form-control border-select" name="numeroIdentificacion"
-                                                id="numeroIdentificacion" ng-if="$ctrl.data.codigoIdentificacion!=='P'"
-                                                ng-class="$ctrl.typeNotify" ng-model="$ctrl.data.numeroIdentificacion"
-                                                ng-keyup="$ctrl.validarNumeroIdentificacion()"
-                                                ng-disabled="$ctrl.isDisableInputIdentificacion" valid-number
-                                                placeholder="Ej: 2105234568">
-
-                                    <input type="text" class="form-control border-select" ng-if="$ctrl.data.codigoIdentificacion=='P'"
-                                            name="pasaporte" ng-model="$ctrl.data.numeroIdentificacion"
-                                            ng-disabled="$ctrl.isDisableInputIdentificacion" placeholder="Ej: EH123457">
-                    
-                                    <div class="input-group-append">
-                                        <div ng-if="$ctrl.data.codigoIdentificacion!=='P'" class="input-group-text" uib-tooltip="Validar Nro. Identificación" tooltip-placement="top">
-                                            <input type="checkbox" aria-label="validationRucSRI" ng-change="$ctrl.onChangeValidateIdentificacionSRI()" ng-model="$ctrl.validationIdentificacionSri">
+                                <div class="form-group">
+                                    <label for="">Tipo Identificación: <span class="text-danger">*</span> </label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <select class="form-control border-select"
+                                                ng-model="$ctrl.data.idTipoIdentificacion"
+                                                ng-change="$ctrl.onChangeTipoIdentificacion()" name="tipoDocumento"
+                                                ng-model="$ctrl.data.idTipoIdentificacion"
+                                                ng-disabled="$ctrl.isDisableSelectIdentificacion">
+                                                <option ng-value="ti.idTipoIdentificacion"
+                                                    ng-repeat="ti in $ctrl.tipoIdentificaciones">{{ti.identificacion}}</option>
+                                            </select>
                                         </div>
+                                        <input type="text" class="form-control border-select" name="numeroIdentificacion"
+                                                    id="numeroIdentificacion" ng-if="$ctrl.data.codigoIdentificacion!=='P'"
+                                                    ng-class="$ctrl.typeNotify" ng-model="$ctrl.data.numeroIdentificacion"
+                                                    ng-keyup="$ctrl.validarNumeroIdentificacion()"
+                                                    ng-disabled="$ctrl.isDisableInputIdentificacion" valid-number
+                                                    placeholder="Ej: 2105234568">
+
+                                        <input type="text" class="form-control border-select" ng-if="$ctrl.data.codigoIdentificacion=='P'"
+                                                name="pasaporte" ng-model="$ctrl.data.numeroIdentificacion"
+                                                ng-disabled="$ctrl.isDisableInputIdentificacion" placeholder="Ej: EH123457">
+                        
+                                        @* <div class="input-group-append">
+                                            <div ng-if="$ctrl.data.codigoIdentificacion!=='P'" class="input-group-text" uib-tooltip="Validar Nro. Identificación" tooltip-placement="top">
+                                                <input type="checkbox" aria-label="validationRucSRI" ng-change="$ctrl.onChangeValidateIdentificacionSRI()" ng-model="$ctrl.validationIdentificacionSri">
+                                            </div>
+                                        </div> *@
+                                        
+                                        <small class="invalid-feedback text-right">{{$ctrl.message}} </small>
+                                        <small class="valid-feedback text-right">{{$ctrl.message}} </small>
                                     </div>
-                                    
-                                    <small class="invalid-feedback text-right">{{$ctrl.message}} </small>
-                                    <small class="valid-feedback text-right">{{$ctrl.message}} </small>
-                                </div>
-                                
+                                </div>                                
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                 <div class="form-group">
                                     <label>Nombre Fiscal: <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control border-select" name="nombreFiscal"
                                         id="nombreComercial" ng-keyup="$ctrl.copiarNombreComercial()" touppercase
-                                        autocomplete="off" ng-model="$ctrl.data.nombreFiscal" required
+                                        autocomplete="off" ng-model="$ctrl.data.nombreFiscal" ng-disabled="$ctrl.data.validationSri"
                                         placeholder="Ej: TECNOMEGA" />
                                 </div>                               
                             </div>
@@ -98,7 +99,7 @@
                                     <label>Dirección</label>
                                     @* <textarea class="form-control border-select" touppercase ng-model="$ctrl.data.direccion"
                                         rows="0" placeholder="Av. 09 de Octubre..."></textarea> *@
-                                        <input type="text" class="form-control border-select" ng-model="$ctrl.data.direccion" touppercase placeholder="AV. 09 DE OCTUBRE...">
+                                        <input type="text" class="form-control border-select" ng-model="$ctrl.data.direccion" touppercase placeholder="AV. 09 DE OCTUBRE..." ng-disabled="$ctrl.data.validationSri">
                                 </div>
                             </div>
                         </div>
