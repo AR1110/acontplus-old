@@ -1,4 +1,5 @@
-USE AcontPlus
+USE [AcontPlus] 
+go
 -- ================================================
 -- Template generated from Template Explorer using:
 -- Create Procedure (New Menu).SQL
@@ -35,29 +36,24 @@ CREATE PROCEDURE Inventario.Transaccion_Insert @codTran VARCHAR(2)
 AS
 BEGIN
 	SET NOCOUNT ON; 
-	DECLARE @idTipoTransaccion INT
-	,@idTipoDocumento INT
+	DECLARE @idTipoTransaccion INT 
+	DECLARE @idTipoDocumento INT
+	DECLARE @stock AS NUMERIC(15,5)
 
 	SET @idTipoTransaccion = (SELECT idTipoTransaccion FROM Inventario.TipoTransaccion WHERE codigo = @codTran)
 	SET @idTipoDocumento = (SELECT idTipoDocumento FROM Inventario.TipoDocumento WHERE codigo = @codDoc)
+	
+	INSERT INTO Inventario.Transaccion(idTipoTransaccion, idArticulo, idBodega, idTipoDocumento, idDocumento, cantidad, precioCosto, precioVenta, fechaRegistro, idUsuario)
+	SELECT @idTipoTransaccion, @idArticulo, @idBodega, @idTipoDocumento, @idDocumento, @cantidad, @precioCosto, @precioVenta, @fechaRegistro, @idUsuario
+		
+	IF @codTran = 'S'
+		BEGIN
+			EXEC Inventario.Stock_Update_Sales @cantidad,@idArticulo,@idBodega,@fechaRegistro
+		END
 
-	--BEGIN TRY
-	--	BEGIN TRAN
-			INSERT INTO Inventario.Transaccion(idTipoTransaccion, idArticulo, idBodega, idTipoDocumento, idDocumento, cantidad, precioCosto, precioVenta, fechaRegistro, idUsuario)
-			SELECT @idTipoTransaccion, @idArticulo, @idBodega, @idTipoDocumento, @idDocumento, @cantidad, @precioCosto, @precioVenta, @fechaRegistro, @idUsuario
-			--FROM OPENJSON(@json) WITH (
-			--idArticulo INT '$.idArticulo'
-			--,idBodega INT '$.idBodega'  
-			--,cantidad NUMERIC(18,2) '$.cantidad' 
-			--,precioCosto NUMERIC(18,5) '$.precioCosto'
-			--,precioVenta NUMERIC(18,5) '$.precioVenta')
-	--	COMMIT TRAN
-	--END TRY
-	--BEGIN CATCH
-	--	IF(@@TRANCOUNT > 0)
-	--		BEGIN
-	--			ROLLBACK TRAN
-	--		END
-	--END CATCH
+	IF @codTran = 'E'
+		BEGIN
+			EXEC Inventario.Stock_Update_Purchases @cantidad,@idArticulo,@idBodega,@fechaRegistro
+		END 
 END
 GO

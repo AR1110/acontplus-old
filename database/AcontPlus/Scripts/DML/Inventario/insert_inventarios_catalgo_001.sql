@@ -13,6 +13,7 @@ USE AcontPlus
 --INSERT INTO Inventario.TipoDocumento(codigo, descripcion, orden) VALUES ('IV', 'Ingresos Varios', 3)
 --INSERT INTO Inventario.TipoDocumento(codigo, descripcion, orden) VALUES ('NE', 'Nota de Entrega', 4)
 --INSERT INTO Inventario.TipoDocumento(codigo, codigoSri, descripcion, orden) VALUES ('NC', '04', 'Nota de Crédito', 5)
+--INSERT INTO Inventario.TipoDocumento(codigo, codigoSri, descripcion, orden) VALUES ('LC', '03', 'Liquidación de Compra', 6)
 
 --GO
 
