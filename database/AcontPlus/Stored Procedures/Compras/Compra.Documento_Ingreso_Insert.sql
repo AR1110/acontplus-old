@@ -50,6 +50,7 @@ BEGIN
 	--==============Parametros para el Area de Inventario==============
 	DECLARE @inventory AS VARCHAR(5)
 	DECLARE @serieComprobante AS VARCHAR(20)
+	DECLARE @fechaEmision AS DATETIME
 
 	--==============Parametros para el area de contabilidad============
 	DECLARE @idEstadoPago AS INT
@@ -146,7 +147,7 @@ BEGIN
 		----======================================Recuperar datos de las Tablas===========================================================
 		SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
-		SELECT @idPuntoEmision = idPuntoEmision,@inventory = inventory FROM @document
+		SELECT @idPuntoEmision = idPuntoEmision,@inventory = inventory, @fechaEmision = fechaEmision FROM @document
 		
 		SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PE'
 
@@ -208,15 +209,36 @@ BEGIN
 			
 			--==============================================================Inventario============================================================================================
 			IF @inventory = 'SI'
-				BEGIN 
-					
-					INSERT INTO Inventario.ControlStock
-						  (idTipoDocumento,idDocumento,idArticulo,idBodega)
-					SELECT idTipoDocumento = 1,d.idDocumentoIngreso,d.idArticulo,d.idBodega 
-					FROM Compra.Documento_Ingreso_Detail d WITH (NOLOCK)
-					INNER JOIN dbo.Articulo a WITH (NOLOCK) ON a.idArticulo = d.idArticulo
-					WHERE d.idDocumentoIngreso = @idDocumentoIngreso AND a.llevaInventario = 1
-				END 
+				BEGIN
+					IF EXISTS (SELECT 1 FROM @detail td INNER JOIN Articulo a WITH (NOLOCK) ON td.idArticulo = a.idArticulo WHERE a.llevaInventario = 1)
+						BEGIN 
+							DECLARE @idArticulo INT
+							DECLARE @idBodega INT
+							DECLARE @cantidad NUMERIC(18,2)
+							DECLARE @precioCosto NUMERIC(18,5)
+							DECLARE @precioVenta NUMERIC(18,5) 
+
+							DECLARE cursor_inventory CURSOR LOCAL FOR
+							SELECT td.idArticulo, idBodega, cantidad, a.precioCosto, precioUnitario 
+							FROM @detail td 
+							INNER JOIN Articulo a WITH (NOLOCK) ON td.idArticulo = a.idArticulo 
+							WHERE a.llevaInventario = 1
+
+							OPEN cursor_inventory
+
+							FETCH NEXT FROM cursor_inventory INTO @idArticulo, @idBodega , @cantidad, @precioCosto, @precioVenta
+
+							WHILE @@FETCH_STATUS = 0
+							BEGIN
+								--tipo transaccion 2 salidas
+								--tipo documento 1 factura electronica
+								EXEC Inventario.Transaccion_Insert 'E', 'IV', @fechaEmision, @idDocumentoIngreso,  @idArticulo, @idBodega , @cantidad, @precioCosto, @precioVenta, @idUsuario
+								FETCH NEXT FROM cursor_inventory INTO @idArticulo, @idBodega , @cantidad, @precioCosto, @precioVenta
+							END
+							CLOSE cursor_inventory
+							DEALLOCATE cursor_inventory  
+						END
+				END
 
 			--===========================================================Contabilidad=================================================================================================
 			
