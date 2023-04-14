@@ -16,11 +16,11 @@ namespace ApiInventory.Controllers
             _configuration = configuration;
         }
         [Authorize]
-        [HttpGet] 
+        [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
             LogWriter _log = new LogWriter(_configuration);
-            GenericResponse _response =new GenericResponse();
+            GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
@@ -33,7 +33,8 @@ namespace ApiInventory.Controllers
             {
                 _log.LogError("Error on getting kardex" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener el kardex");
-            }finally
+            }
+            finally
             {
                 _db.Close();
             }

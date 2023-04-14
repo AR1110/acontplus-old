@@ -4,7 +4,18 @@ IF OBJECT_ID(N'v_InventarioTransaccion', N'V') IS NOT NULL
 DROP VIEW v_InventarioTransaccion
 GO
 CREATE VIEW v_InventarioTransaccion AS (
-SELECT t.*
+SELECT t.idTransaccion
+	,t.idTipoTransaccion
+	,t.idArticulo
+	,t.idBodega
+	,t.idTipoDocumento
+	,t.idDocumento
+	,t.cantidad
+	,t.precioUnitario
+	,t.precioCosto
+	,t.fechaRegistro
+	,t.estado
+	,t.idUsuario
 	,tt.codigo codTransaccion
 	,tt.descripcion transaccion
 	,td.codigo codDoc
@@ -122,11 +133,13 @@ SELECT t.*
 						)
 			END
 		)
+,m.descripcion medida
 FROM Inventario.Transaccion t WITH (NOLOCK)
 INNER JOIN Inventario.TipoTransaccion tt WITH (NOLOCK) ON t.idTipoTransaccion = tt.idTipoTransaccion
 INNER JOIN Inventario.TipoDocumento td WITH (NOLOCK) ON t.idTipoDocumento = td.idTipoDocumento
 INNER JOIN Bodega b WITH (NOLOCK) ON t.idBodega = b.idBodega
 INNER JOIN Articulo a WITH (NOLOCK) ON t.idArticulo = a.idArticulo
+LEFT JOIN Medida m  WITH (NOLOCK) ON a.idMedida = m.idMedida
 LEFT JOIN Usuario u WITH (NOLOCK) ON t.idUsuario = u.idUsuario
 
 )
