@@ -25,10 +25,6 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
 
    
     const TIPO_DOC_FV = _commonSvc.tipoDoc['FV'];
-    const PERMISSION_KEY_ACTIONS = {
-        E: 'E',
-        A: 'A',
-    }
 
     $scope.dataSearch = {
         pageIndex: 1,
@@ -111,10 +107,6 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
             let codEstab = $scope.establecimientos.length>0? $scope.establecimientos[0].codEstab: 0;            
             $scope.dataSearch.codEstab = codEstab;            
             $scope.getFacturas();            
-        })
-
-        _commonSvc.getDataFormVenta().then(result => {            
-            $scope.jsonPermission = JSON.parse(result[9][0].jsonPermission)            
         })
     }
     $scope.initiload();
@@ -271,20 +263,10 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
             params
         })
     }
-   
 
     $scope.openModalInvoiceEdit = async(item)=>{
         try {
-            
-            let result = await _commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.E);
-            console.log(result)
-            if(result.code==="2"){
-                _commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.E);
-                return
-            }
-            
             showLoader();
-
             let {MODAL_FILE_CTRL, MODAL_EDITAR} = _nombreModalConst.factura_venta;
             let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_EDITAR['controller']];
             let template   = MODAL_EDITAR['template'];
@@ -306,14 +288,6 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
             }).result.then(result=>{
                 if(typeof result==='object' && result.isUpdate){
                     $scope.getFacturas();
-
-
-                    //Una vez actualizado el documento 
-                    let {additional} = $scope.jsonPermission;
-                    if(typeof $scope.jsonPermission ==='object' && additional.requestAuthorizationKey.requestKey) {                        
-                        _commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.E);
-                    }
-        
                 }
             })
         } catch (error) {
@@ -384,19 +358,6 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
 
     $scope.askToDelete = async(item)=>{
         try {
-        
-            if(item.anulada){
-                _fS.sweetAlert('warning', 'El documento ya se encuentra anulada');
-                return
-            }
-                                            
-           
-            let result = await _commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.A);
-            if(result.code==="2"){
-                _commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.A);
-                return
-            }
-            
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
                   confirmButton: 'btn btn-success',
@@ -416,31 +377,31 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
             })
     
             if(isConfirmed){
-                showLoader();
-                _mS.getData('delete', '/FacturaVenta/Delete?id=' + item.idFactura).then(response=> {
-                    if (response.code === "0") {
-                        hideLoader();
-                        _fS.sweetAlert('warning', response.message, response.titleSms);
+                Swal.fire({
+                    title: `<small>Espere</small>`,
+                    html: 'Anulando...',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                        _mS.getData('delete', '/FacturaVenta/Delete?id=' + item.idFactura).then(response=> {
+                            
+                            if (response.code === "0") {
+                                _fS.sweetAlert('warning', response.message, response.titleSms);
+                            }
+                            if (response.code === "1") {
+                                _fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                                $scope.getFacturas();
+                            }
+                        })
                     }
-                    if (response.code === "1") {
-                        hideLoader();
-                        _fS.sweetAlert('success', response.message, response.titleSms, 1000);
-                    
-                        //Una vez actualizado el documento 
-                        let {additional} = $scope.jsonPermission;
-                        if(typeof $scope.jsonPermission ==='object' && additional.requestAuthorizationKey.requestKey) {                        
-                            _commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.A);
-                        }
-                        $scope.getFacturas();
-                    }
-                }).catch(error => {
-                    hideLoader();
-                    console.log(error);
                 })
-                   
             }
         } catch (error) {
+            Swal.close();
             console.log(error)
+        }finally{
+
         }
 
     }
@@ -564,7 +525,8 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
 
             //Focus New Invoice
             btnNewInvoice.focus();
-            $scope.isRegister = false;
+            $scope.isRegister = false;            
+            $scope.isPrintDocument = false;
         })
     }  
 

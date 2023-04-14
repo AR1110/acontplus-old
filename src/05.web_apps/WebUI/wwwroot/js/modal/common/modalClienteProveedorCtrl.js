@@ -88,9 +88,28 @@ export class ModalBaseCtrl {
                         <small><strong>Nombre Comercial</strong></small> <br>
                         <p class="text-muted small">${data.nombreComercial}</p>
                     `,
-                    allowOutsideClick: false,
-                    allowEnterKey: false,
-                    icon: 'info',                                        
+                  
+                    icon: 'info',                                                                             
+                    showCloseButton: true,
+                    showCancelButton: true,
+                    focusConfirm: true,
+                    confirmButtonText:
+                      '<i class="fa fa-thumbs-up"></i> Validar datos!',
+                    confirmButtonAriaLabel: 'Validar datos!',
+                    cancelButtonText:
+                      '<i class="fa fa-thumbs-down"></i> Cancelar',
+                    cancelButtonAriaLabel: 'Cancelar'                                     
+                }).then(result=>{
+                    if (result.isConfirmed) {
+                        let codigoIdentificacion = this.dataFindByIdTipoIdentificacion().codigoIdentificacion;
+                        if(codigoIdentificacion==='R'){
+                            this.getRucSRI();
+                        }
+                        
+                        if(codigoIdentificacion==='C'){
+                            this.getCedulaSRI();
+                        }
+                    }
                 })               
             }
         })
@@ -127,12 +146,13 @@ export class ModalBaseCtrl {
     }
 
     getCedulaSRI() {
-        try {            
+        try {   
+            showLoader();         
             this._mS.getData('get', 'Consultas/GetCedulaSri?Ruc=' + this.data.numeroIdentificacion, null, true).then(result => {
                 Swal.close();
                 
                 if(result) {
-                    console.log(result);
+                    hideLoader();
                     let {nombreCompleto, establecimientos} = result;
                     this.data.nombreComercial = nombreCompleto;
                     this.data.nombreFiscal = nombreCompleto;
@@ -142,6 +162,7 @@ export class ModalBaseCtrl {
                     this.message = 'Número de Cédula correcta';
                 }
             }).catch(error => {
+                hideLoader();
                 Swal.close();
                 this.typeNotify = 'is-invalid';
                 this.message = 'No se encontró los datos';
@@ -149,13 +170,13 @@ export class ModalBaseCtrl {
             })
                 
         } catch (error) {
-            Swal.close();
+            hideLoader()
             console.log(error);
         }
     }
 
 
-    dataFindByIdTipoIdentificacion(){
+    dataFindByIdTipoIdentificacion(){      
         return this.tipoIdentificaciones.find(item => item.idTipoIdentificacion === this.data.idTipoIdentificacion);
     }
 
@@ -232,8 +253,7 @@ class ModalBaseCliente extends ModalBaseCtrl{
         }
         
         this.data.validationSri = false;
-        this.data.nombreComercial = null;
-        this.data.nombreFiscal = null;
+        
         
         if (this._form.campo(this.data.numeroIdentificacion)) return
         
@@ -261,7 +281,8 @@ class ModalBaseCliente extends ModalBaseCtrl{
                 return
             }
         }
-       
+        this.typeNotify = '';
+        this.message = '';
         this.verificarSiExisteNumIdentificacion();
     }
 
@@ -1083,6 +1104,8 @@ export class ModalProveedorCtrl extends ModalBaseCtrl {
     onKeyupNumeroIndentificacion() {
         if (this._form.campo(this.data.numeroIdentificacion)) return
 
+        this.data.idTipoIdentificacion = this.tipoIdentificacion.idTipoIdentificacion;
+        console.log(this.dataFindByIdTipoIdentificacion())
         let codigoIdentificacion = this.dataFindByIdTipoIdentificacion().codigoIdentificacion;
 
         this.dataSearchValidacion = {

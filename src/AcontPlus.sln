@@ -124,8 +124,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiInventory", "04.services
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inventario_UI", "08.razor_ui\Inventario_UI\Inventario_UI.csproj", "{3E3A0DCD-6B3E-4FF4-A367-D04917140D4F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WS_Cliente_Ident_Val_Sri", "07.worker_services\WS_Cliente_Ident_Val_Sri\WS_Cliente_Ident_Val_Sri.csproj", "{CC0735FB-A22F-4DBC-BF98-7F3697F4C297}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -306,10 +304,6 @@ Global
 		{3E3A0DCD-6B3E-4FF4-A367-D04917140D4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E3A0DCD-6B3E-4FF4-A367-D04917140D4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3E3A0DCD-6B3E-4FF4-A367-D04917140D4F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CC0735FB-A22F-4DBC-BF98-7F3697F4C297}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CC0735FB-A22F-4DBC-BF98-7F3697F4C297}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CC0735FB-A22F-4DBC-BF98-7F3697F4C297}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CC0735FB-A22F-4DBC-BF98-7F3697F4C297}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -359,7 +353,6 @@ Global
 		{526B28CE-84D7-4EEE-A1C1-4340CA93A93F} = {7FF4B39E-DC60-48EE-822A-A17F3EF8CD3B}
 		{CB1A3FC4-033C-433A-AB71-C66E3768D5FB} = {E643720B-EDD4-43FF-80CF-2040B07B6D3C}
 		{3E3A0DCD-6B3E-4FF4-A367-D04917140D4F} = {79F40397-A77A-42D3-9A26-12016AC04CB9}
-		{CC0735FB-A22F-4DBC-BF98-7F3697F4C297} = {92E9DECD-35CF-45AB-9EB4-715AC1FA0941}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BA9DF437-2C4E-4B51-A33F-8A6B93E9A018}

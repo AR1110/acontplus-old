@@ -11,6 +11,11 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Areas\ReporteCompra\Pages\Shared\" />
+    <Folder Include="Areas\ReporteVenta\Pages\" />
+  </ItemGroup>
+
 
 
 </Project>
