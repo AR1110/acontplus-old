@@ -154,6 +154,38 @@ app.run(function ($window, $rootScope) {
 //     //});
 // })
 
+function alertEndSession() {
+    let timerInterval = 0
+    Swal.fire({
+        icon: 'warning',
+        title: 'Authenticación',
+        text: 'Ha perdido session, inicie nuevamente',
+        timer: 5000,
+        timerProgressBar: true,
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading()
+            timerInterval = setInterval(() => {
+                const content = Swal.getHtmlContainer()
+                if (content) {
+                    const b = content.querySelector('b')
+                    if (b) {
+                        b.textContent = Swal.getTimerLeft()
+                    }
+                }
+            }, 100)
+        },
+        willClose: () => {
+            clearInterval(timerInterval)
+        }
+    }).then((result) => {
+        location.href = '/Login/Index'
+        if (result.dismiss === Swal.DismissReason.timer) {
+            location.href = '/Login/Index'
+        }
+    })
+}
+
 app.factory('authInterceptorService', function ($q, $localStorage, jwtHelper) {
     let authInterceptorServiceFactory = {}
 
@@ -164,9 +196,11 @@ app.factory('authInterceptorService', function ($q, $localStorage, jwtHelper) {
             config.headers.Authorization = 'Bearer ' + authData.token
             let decodedJwt = jwtHelper.decodeToken(authData.token)
             //console.log(decodedJwt)
-            // const expiry = Number(decodedJwt?.exp)
-            // let expirationDate = (Date.now() > (expiry * 1000))
-            // console.log(expirationDate)
+            const expiration = Number(decodedJwt?.exp)
+            const currentTime = Math.floor(Date.now() / 1000); // convert to seconds
+            if (expiration < currentTime) {
+                alertEndSession()
+            }
             config.headers['X-IdUsuarioRol'] = decodedJwt.idUsuarioRol
         }
         return config
@@ -174,35 +208,7 @@ app.factory('authInterceptorService', function ($q, $localStorage, jwtHelper) {
 
     let _responseError = (rejection) => {
         if (rejection.status == 401) {
-            let timerInterval = 0
-            Swal.fire({
-                icon: 'warning',
-                title: 'Authenticación',
-                text: 'Ha perdido session, inicie nuevamente',
-                timer: 6000,
-                timerProgressBar: true,
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading()
-                    timerInterval = setInterval(() => {
-                        const content = Swal.getHtmlContainer()
-                        if (content) {
-                            const b = content.querySelector('b')
-                            if (b) {
-                                b.textContent = Swal.getTimerLeft()
-                            }
-                        }
-                    }, 100)
-                },
-                willClose: () => {
-                    clearInterval(timerInterval)
-                }
-            }).then((result) => {
-                location.href = '/Login/Index'
-                if (result.dismiss === Swal.DismissReason.timer) {
-                    location.href = '/Login/Index'
-                }
-            })
+            alertEndSession()
         }
         return $q.reject(rejection)
     }
@@ -313,7 +319,7 @@ function mainService($http, Upload, __env) {
             return response
         })
     }
-    
+
     service.getData = _getData
     service.getDataFile = _getDataFile
     service.getFile = _getFile
@@ -373,7 +379,7 @@ function modalService($uibModal) {
          * @returns object 
          */
         openModalCustom: function ({ controller, template, size, params, keyboard = false, animation = true, windowClass = null, windowTopClass, openedClass, scope, props = {}, isRenderRazorPartial = false }) {
-            
+
             return $uibModal.open({
                 animation,
                 templateUrl: isRenderRazorPartial ? `/Home/RenderView?name=${template}` : `/Home/RenderView?name=~/Views/${template || 'Shared/ModalNotFound.cshtml'}`,
@@ -798,8 +804,8 @@ app.filter('mapTipoIva', () => {
 });
 
 app.filter('cellFilterTipoIva', () => {
-    let result = { };
-    
+    let result = {};
+
     return (input, context) => {
 
         let fieldLevel = (context.editDropdownOptionsArray == undefined) ? context.col.colDef : context;
@@ -809,11 +815,11 @@ app.filter('cellFilterTipoIva', () => {
 
         if (typeof map !== "undefined") {
             for (let value of map) {
-               result[value[idField]] = value.descripcion
-             //  result[idField] = value.descripcion
+                result[value[idField]] = value.descripcion
+                //  result[idField] = value.descripcion
             }
         }
-     
+
         if (!input) {
             return result[0];
         } else {

@@ -1,4 +1,5 @@
 using BL.FactElect;
+using BL.JwtAuthenticationManger;
 
 namespace ApiSri
 {
@@ -11,6 +12,8 @@ namespace ApiSri
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddCustomJwtAuthentication();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -34,8 +37,11 @@ namespace ApiSri
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
+
             app.UseAuthorization();
 
+            app.UseMiddleware<JWTMiddleware>();
 
             app.MapControllers();
 

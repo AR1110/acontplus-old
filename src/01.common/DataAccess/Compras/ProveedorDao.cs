@@ -162,6 +162,7 @@ namespace DataAccess.Compras
                     cmd.Parameters.AddWithValue("idCiudad", data.idCiudad);
                     cmd.Parameters.AddWithValue("idSubContribuyente", data.idSubContribuyente);
                     cmd.Parameters.AddWithValue("idTiempoCredito", data.idTiempoCredito);
+                    cmd.Parameters.AddWithValue("validationSri", data.validationSri);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
                     SqlDataReader reader = await cmd.ExecuteReaderAsync();
@@ -210,6 +211,7 @@ namespace DataAccess.Compras
                     cmd.Parameters.AddWithValue("idSubContribuyente", data.idSubContribuyente);
                     cmd.Parameters.AddWithValue("idTiempoCredito", data.idTiempoCredito);
                     cmd.Parameters.AddWithValue("estado", data.estado);
+                    cmd.Parameters.AddWithValue("validationSri", data.validationSri);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
                     SqlDataReader reader = await cmd.ExecuteReaderAsync();
