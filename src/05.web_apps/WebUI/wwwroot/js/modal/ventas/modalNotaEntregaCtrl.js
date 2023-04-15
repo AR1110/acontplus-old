@@ -267,6 +267,27 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl{
         }       
     }
 
+
+    swalDataInvalidCustomer(item) {
+       
+        Swal.fire({
+            icon: 'warning',
+            title: 'Datos Incorrectos',
+            html: 'Número de identificación inválido, desea editar?',
+            showConfirmButton: true,
+            showCancelButton: true,
+            confirmButtonText: 'Editar',
+            cancelButtonText: 'Cancelar'
+        }).then(async result => {
+            if(result.isConfirmed){
+                this.cliente = item;
+                await this.openModalClienteUpdate();
+                this.cliente = {}
+            }
+        })
+    
+    }
+
 }
 
 
@@ -426,6 +447,12 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl{
 
     async onSelectedClienteChange(item){
         try {
+
+            if(!item.validationSri && ['R', 'C'].includes(item.tipoIdentificacion)){
+                this.swalDataInvalidCustomer(item);
+                return
+            }
+
 
             let dataCliente = await this.getClienteById(item);
             this.cliente = dataCliente;
@@ -944,6 +971,12 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl{
     async onSelectedClienteChange(item){
         try {
 
+            if(!item.validationSri && ['R', 'C'].includes(item.tipoIdentificacion)){
+                this.swalDataInvalidCustomer(item);
+                return
+            }
+
+
             let dataCliente = await this.getClienteById(item);
             this.cliente = dataCliente;           
             this.$scope.$apply();
@@ -1170,6 +1203,12 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl{
 
     async onSelectedClienteChange(item){
         try {
+
+            if(!item.validationSri && ['R', 'C'].includes(item.tipoIdentificacion)){
+                this.swalDataInvalidCustomer(item);
+                return
+            }
+
 
             let dataCliente = await this.getClienteById(item);
             this.cliente = dataCliente;

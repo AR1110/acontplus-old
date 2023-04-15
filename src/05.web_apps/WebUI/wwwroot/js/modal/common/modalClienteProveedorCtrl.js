@@ -122,16 +122,27 @@ export class ModalBaseCtrl {
             this._mS.getData('get', 'Consultas/GetRucSRI?Ruc=' + this.data.numeroIdentificacion, null, true).then(result => {
                 Swal.close();
                 
-                if(result) {
+                if(result.numeroRuc) {
                     console.log(result);
-                    let {razonSocial, establecimientos} = result;
+                    let {razonSocial, establecimientos, tipoContribuyente} = result;
                     this.data.nombreComercial = razonSocial;
                     this.data.nombreFiscal = razonSocial;
-                    this.data.direccion = establecimientos[0].direccionCompleta
+                    this.data.direccion = establecimientos.find(item=>item.matriz==='SI').direccionCompleta
                     
                     this.data.validationSri = true;
+
                     this.typeNotify = 'is-valid';
                     this.message = 'Número de RUC correcta';
+
+                    let contribuyente = this.subContribuyentes.find(item=>item.descripcion===tipoContribuyente);
+                    console.log(contribuyente);
+                    if(contribuyente){
+                        this.data.idTipoIdentificacion = contribuyente.idTipoIdentificacion;
+                        this.data.codigoIdentificacion = contribuyente.codigoIdentificacion;
+                    }
+                }else{
+                    this.typeNotify = 'is-invalid';
+                    this.message = 'No se encontró los datos';
                 }
             }).catch(error=>{
                 Swal.close();
@@ -147,12 +158,12 @@ export class ModalBaseCtrl {
 
     getCedulaSRI() {
         try {   
-            showLoader();         
+          
             this._mS.getData('get', 'Consultas/GetCedulaSri?Ruc=' + this.data.numeroIdentificacion, null, true).then(result => {
                 Swal.close();
                 
-                if(result) {
-                    hideLoader();
+                if(result.numeroRuc || result.nombreCompleto) {
+                   
                     let {nombreCompleto, establecimientos} = result;
                     this.data.nombreComercial = nombreCompleto;
                     this.data.nombreFiscal = nombreCompleto;
@@ -160,6 +171,9 @@ export class ModalBaseCtrl {
                     // this.data.direccion = establecimientos[0].direccionCompleta
                     this.typeNotify = 'is-valid';
                     this.message = 'Número de Cédula correcta';
+                }else{
+                    this.typeNotify = 'is-invalid';
+                    this.message = 'No se encontró los datos';
                 }
             }).catch(error => {
                 hideLoader();
@@ -1010,6 +1024,21 @@ export class ModalClienteListaCtrl {
 
 
     seleccionarCliente = (item) => {
+        if(!item.validationSri && ['R', 'C'].includes(item.tipoIdentificacion)){
+            Swal.fire({
+                icon: 'warning',
+                title: 'Datos Incorrectos',
+                html: 'Número de identificación inválido, desea editar?',
+                showConfirmButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Editar',
+                cancelButtonText: 'Cancelar'
+            }).then(async result => {
+                if(result.isConfirmed){
+                    this.openModalEditar(item)
+                }
+            })
+        }
         this.$uibModalInstance.close(item)
     }
 

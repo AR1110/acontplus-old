@@ -33,7 +33,7 @@
             <div class="form-group">
                 <label for="puntoEmision">Punto Emisión: <span class="text-danger">*</span></label>
                 <select name="puntoEmision" id="puntoEmision" class="form-control border-select" ng-model="data.idPuntoEmision">
-                    <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmisiones">{{item.ptoEmi}}</option>
+                    <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">{{item.ptoEmi}}</option>
                 </select>
             </div>
         </div>
@@ -78,7 +78,28 @@
                 <label>Cliente: <span class="text-danger">*</span></label>
                 <div class="input-group">
 
-                    @await Html.PartialAsync("~/Views/Cliente/_UibModalSearchInvoice.cshtml")
+                    <input type="text" id="clienteSearchInvoice" 
+                        autocomplete="off"                            
+                        name="clienteSearchInvoice"
+                        class="form-control border-select"
+                        placeholder="Ingrese C.I o Nombre Fiscal"
+                        ng-model="cliente.nombreFiscal"            
+                        ng-keyup="onKeyupSearchCliente()"
+                        uib-typeahead="item as item.nombreFiscal for item in clienteSearchDynamic($viewValue)"
+                        typeahead-loading="clienteSearch.loading"
+                        typeahead-no-results="clienteSearch.noResults"
+                        typeahead-template-url="autocompleteClienteTemplate.html"
+                        typeahead-min-length="1"
+                        typeahead-editable="false"
+                        typeahead-on-select="onSelectedClienteChange($item)"  onClick="select();" />
+
+                        <script type="text/ng-template" id="autocompleteClienteTemplate.html">
+                            <div class="autocomplete-suggestion-uib-typeahead">
+                                <span class="item-title">
+                                    <b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}
+                                </span>
+                            </div>
+                        </script>
 
                     <div class="input-group-append">
 
@@ -307,7 +328,7 @@
                     </div>
                 </div>
             </div>
-            <md-divider></md-divider>
+            <md-divider ng-if="showSubtotales"></md-divider>
             <div class="row mt-2" ng-if="showSubtotales">
                 <div class="col-lg-2 col-md-6 col-sm-12 col-xs-12">
                     <div class="form-group">
