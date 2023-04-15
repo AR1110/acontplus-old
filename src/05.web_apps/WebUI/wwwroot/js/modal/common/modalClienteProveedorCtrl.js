@@ -118,10 +118,9 @@ export class ModalBaseCtrl {
 
     getRucSRI() {
         try {
-            
-            this._mS.getData('get', 'Consultas/GetRucSRI?Ruc=' + this.data.numeroIdentificacion, null, true).then(result => {
-                Swal.close();
-                
+            showLoader();
+            this._mS.getData('get', 'Consultas/GetRucSRI?Ruc=' + this.data.numeroIdentificacion, null, true).then(result => {                
+                hideLoader();                
                 if(result.numeroRuc) {
                     console.log(result);
                     let {razonSocial, establecimientos, tipoContribuyente} = result;
@@ -135,7 +134,7 @@ export class ModalBaseCtrl {
                     this.message = 'Número de RUC correcta';
 
                     let contribuyente = this.subContribuyentes.find(item=>item.descripcion===tipoContribuyente);
-                    console.log(contribuyente);
+                    
                     if(contribuyente){
                         this.data.idTipoIdentificacion = contribuyente.idTipoIdentificacion;
                         this.data.codigoIdentificacion = contribuyente.codigoIdentificacion;
@@ -145,22 +144,22 @@ export class ModalBaseCtrl {
                     this.message = 'No se encontró los datos';
                 }
             }).catch(error=>{
-                Swal.close();
+                hideLoader();
                 this.typeNotify = 'is-invalid';
                 this.message = 'No se encontró los datos';
                 console.log(error);
             })                            
         } catch (error) {
-            Swal.close();
+            hideLoader();
             console.log(error);
         }
     }
 
     getCedulaSRI() {
         try {   
-          
+            showLoader();          
             this._mS.getData('get', 'Consultas/GetCedulaSri?Ruc=' + this.data.numeroIdentificacion, null, true).then(result => {
-                Swal.close();
+                hideLoader();
                 
                 if(result.numeroRuc || result.nombreCompleto) {
                    

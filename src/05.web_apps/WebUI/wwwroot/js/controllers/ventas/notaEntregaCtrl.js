@@ -164,6 +164,8 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
 
     $scope.validateOperationPrintAndPayment = (result) => {
         //Verificamos 
+        $scope.isRegister = result.isRegister;
+
         $scope.isPrintDocument = result.printerAutomatic;
 
         $scope.parametersPrint = {
@@ -514,14 +516,14 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
 
             if($scope.isPrintDocument==1){
                 $scope.getNotaEntregas();
-                _commonSvc.getPrinter(JSON.stringify($scope.parametersPrint))
-                
-                $scope.isPrintDocument = null;
+                _commonSvc.getPrinter(JSON.stringify($scope.parametersPrint))                                
             }
 
-            if(typeof result =='object') {
+            if(typeof result =='object' || $scope.isRegister) {
                 $scope.getNotaEntregas();
             }
+            $scope.isPrintDocument = null;
+            $scope.isRegister = false;
         })
     }  
 
