@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Domain.Models
+﻿namespace Domain.Models
 {
     public class Proveedor
     {
@@ -22,5 +16,6 @@ namespace Domain.Models
         public string telefono { get; set; }
         public string correo { get; set; }
         public bool estado { get; set; }
+        public bool validationSri { get; set; }
     }
 }

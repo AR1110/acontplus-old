@@ -4,18 +4,31 @@ IF OBJECT_ID(N'v_InventarioTransaccion', N'V') IS NOT NULL
 DROP VIEW v_InventarioTransaccion
 GO
 CREATE VIEW v_InventarioTransaccion AS (
-SELECT t.*
+SELECT t.idTransaccion
+	,t.idTipoTransaccion
+	,t.idArticulo
+	,t.idBodega
+	,t.idTipoDocumento
+	,t.idDocumento
+	,t.cantidad
+	,t.precioUnitario
+	,t.precioCosto
+	,t.fechaRegistro
+	,t.estado
+	,t.idUsuario
 	,tt.codigo codTransaccion
 	,tt.descripcion transaccion
 	,td.codigo codDoc
 	,td.codigoSri
-	,td.descripcion comprobante
+	,td.descripcion documento
 	,b.descripcion bodega
 	,a.idEntidad
 	,a.codigo codArticulo
 	,a.codigoAuxiliar
 	,a.codigoBarra
 	,a.descripcion articulo
+	,ISNULL(CASE WHEN tt.codigo = 'E' THEN t.cantidad END, 0) cantidadEntrada
+	,ISNULL(CASE WHEN tt.codigo = 'S' THEN t.cantidad END, 0) cantidadSalida
 	,u.nombreUsuario usuario
 	,nroDocumento = (
 		CASE 
@@ -69,11 +82,64 @@ SELECT t.*
 						)
 			END
 		)
+	,clienteProveedor = (
+		CASE 
+			WHEN tt.codigo = 'E' AND td.codigo = 'FE'
+				THEN (
+						SELECT TOP 1 dr.razonSocialEmisior
+						FROM Recepcion.DocumentoRecibido dr  WITH (NOLOCK)
+						WHERE dr.idDocumento = t.idDocumento
+						)
+			WHEN tt.codigo = 'E' AND td.codigo = 'FF'
+				THEN (
+						SELECT TOP 1  p.nombreFiscal
+						FROM FacturaCompra fc  WITH (NOLOCK)
+						INNER JOIN Proveedor p  WITH (NOLOCK) ON fc.idProveedor = p.idProveedor
+						WHERE fc.idFacturaCompra = t.idDocumento
+						)
+			WHEN tt.codigo = 'E' AND td.codigo = 'NC'
+				THEN (
+						SELECT TOP 1 c.nombreFiscal
+						FROM NotaCredito nc  WITH (NOLOCK)
+						INNER JOIN Cliente c On nc.idCliente = c.idCliente
+						WHERE nc.idNotaCredito = t.idDocumento
+						)
+			WHEN tt.codigo = 'E' AND td.codigo = 'IV'
+				THEN (
+						SELECT TOP 1 p.nombreFiscal
+						FROM Compra.Documento_Ingreso di  WITH (NOLOCK)
+						INNER JOIN Proveedor p  WITH (NOLOCK) ON di.idProveedor = p.idProveedor
+						WHERE di.idDocumentoIngreso = t.idDocumento
+						)
+			WHEN tt.codigo = 'S' AND td.codigo = 'FE'
+				THEN (
+						SELECT TOP 1 c.nombreFiscal
+						FROM Factura f
+						INNER JOIN Cliente c On f.idCliente = c.idCliente 
+						WHERE f.idFactura = t.idDocumento
+						)
+			WHEN tt.codigo = 'S' AND td.codigo = 'NE'
+				THEN (
+						SELECT TOP 1 c.nombreFiscal
+						FROM NotaEntrega ne  WITH (NOLOCK)
+						INNER JOIN Cliente c On ne.idCliente = c.idCliente
+						WHERE ne.idNotaEntrega = t.idDocumento
+						)
+			WHEN tt.codigo = 'S' AND td.codigo = 'NC'
+				THEN (
+						SELECT TOP 1 dr.razonSocialEmisior
+						FROM Recepcion.DocumentoRecibido dr  WITH (NOLOCK)
+						WHERE dr.idDocumento = t.idDocumento
+						)
+			END
+		)
+,m.descripcion medida
 FROM Inventario.Transaccion t WITH (NOLOCK)
 INNER JOIN Inventario.TipoTransaccion tt WITH (NOLOCK) ON t.idTipoTransaccion = tt.idTipoTransaccion
 INNER JOIN Inventario.TipoDocumento td WITH (NOLOCK) ON t.idTipoDocumento = td.idTipoDocumento
 INNER JOIN Bodega b WITH (NOLOCK) ON t.idBodega = b.idBodega
 INNER JOIN Articulo a WITH (NOLOCK) ON t.idArticulo = a.idArticulo
+LEFT JOIN Medida m  WITH (NOLOCK) ON a.idMedida = m.idMedida
 LEFT JOIN Usuario u WITH (NOLOCK) ON t.idUsuario = u.idUsuario
 
 )
