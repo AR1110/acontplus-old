@@ -42,18 +42,12 @@ BEGIN
 
 	SET @idTipoTransaccion = (SELECT idTipoTransaccion FROM Inventario.TipoTransaccion WHERE codigo = @codTran)
 	SET @idTipoDocumento = (SELECT idTipoDocumento FROM Inventario.TipoDocumento WHERE codigo = @codDoc)
-	
+
+
 	INSERT INTO Inventario.Transaccion(idTipoTransaccion, idArticulo, idBodega, idTipoDocumento, idDocumento, cantidad, precioCosto, precioVenta, fechaRegistro, idUsuario)
 	SELECT @idTipoTransaccion, @idArticulo, @idBodega, @idTipoDocumento, @idDocumento, @cantidad, @precioCosto, @precioVenta, @fechaRegistro, @idUsuario
 		
-	IF @codTran = 'S'
-		BEGIN
-			EXEC Inventario.Stock_Update_Sales @cantidad,@idArticulo,@idBodega,@fechaRegistro
-		END
-
-	IF @codTran = 'E'
-		BEGIN
-			EXEC Inventario.Stock_Update_Purchases @cantidad,@idArticulo,@idBodega,@fechaRegistro
-		END 
+	EXEC Inventario.Stock_Update @idArticulo,@idBodega
+	
 END
 GO

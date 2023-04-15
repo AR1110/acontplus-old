@@ -45,6 +45,11 @@ BEGIN
 
 	--==============Parametros para el Area de Inventario==============
 	DECLARE @inventory AS VARCHAR(5)
+	DECLARE @tblDetails AS TABLE (
+			 idArticulo INT NOT NULL
+			,idBodega   INT NOT NULL
+	)
+
 
 	BEGIN TRY 
 		
@@ -88,12 +93,45 @@ BEGIN
 			IF @inventory = 'SI'
 				BEGIN 
 					
-					INSERT INTO Inventario.ControlStock
-						  (idTipoDocumento,idDocumento,idArticulo,idBodega)
-					SELECT idTipoDocumento = 1,d.idDocumentoIngreso,d.idArticulo,d.idBodega 
-					FROM Compra.Documento_Ingreso_Detail d WITH (NOLOCK)
-					INNER JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = d.idArticulo
-					WHERE d.idDocumentoIngreso = @idDocumentoIngreso AND ar.llevaInventario = 1
+					DECLARE @idTipoDocumento INT
+
+					SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = 'IV'
+
+					UPDATE Inventario.Transaccion SET estado = 0 WHERE idDocumento = @idDocumentoIngreso AND idTipoDocumento = @idTipoDocumento
+
+					INSERT INTO @tblDetails(idArticulo,idBodega)
+					SELECT fd.idArticulo,fd.idBodega 
+					FROM dbo.FacturaDetalle fd WITH (NOLOCK) 
+					INNER JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = fd.idArticulo
+					WHERE idFactura = @idDocumentoIngreso AND ar.llevaInventario = 1
+
+					IF EXISTS (SELECT 1 FROM @tblDetails td INNER JOIN Articulo a WITH (NOLOCK) ON td.idArticulo = a.idArticulo WHERE a.llevaInventario = 1)
+						BEGIN 
+							DECLARE @idArticulo INT
+							DECLARE @idBodega INT
+							DECLARE @cantidad NUMERIC(18,2)
+							DECLARE @precioCosto NUMERIC(18,5)
+							DECLARE @precioVenta NUMERIC(18,5) 
+
+							DECLARE cursor_inventory CURSOR LOCAL FOR
+							SELECT td.idArticulo, idBodega
+							FROM @tblDetails td 
+
+							OPEN cursor_inventory
+
+							FETCH NEXT FROM cursor_inventory INTO @idArticulo, @idBodega
+
+							WHILE @@FETCH_STATUS = 0
+							BEGIN
+								--tipo transaccion 2 salidas
+								--tipo documento 1 factura electronica
+								EXEC Inventario.Stock_Update @idArticulo, @idBodega
+								FETCH NEXT FROM cursor_inventory INTO @idArticulo, @idBodega
+							END
+							CLOSE cursor_inventory
+							DEALLOCATE cursor_inventory  
+						END
+
 				END 
 
 			 --===========================================================Contabilidad=================================================================================================
