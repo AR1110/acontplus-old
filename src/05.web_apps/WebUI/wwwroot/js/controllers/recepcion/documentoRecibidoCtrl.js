@@ -1903,17 +1903,12 @@
                         codDoc: $scope.selected[0].codDoc,
                         format,
                     }
-
-
-
                     const parameters = {
-                        reportParams: JSON.stringify(dataParms),
                         dataParams: JSON.stringify(dataParms)
                     }
                     console.log(parameters)
 
-                    // _commonSvc.getReportDynamic({ parameters, format })
-                    _commonSvc.exportExcel({ parameters })
+                    _commonSvc.getReportDynamic({ parameters, format })
                 } catch (error) {
                     console.log(error)
                 }
