@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using DataAccess;
 using Helpers;
+using Common.Logs;
 
 namespace WebUI.Controllers.Compras
 {
@@ -51,10 +52,26 @@ namespace WebUI.Controllers.Compras
         [HttpGet]
         public async Task<IActionResult> GetId(int id)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("id", id);
-            return Ok(DbResponse.SPDataSet(await _dao.GetDataSetAsync("Compra.Orden_Get_Id", parameters)));
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Compra.Orden_Get_Id");
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("id", id);
+                _response = _db.GetDataSetAsync();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error in GetId: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al Obtener los datos");
+            }
+            finally
+            {
+                _db.Close();
+            } 
+            return Ok(_response);
         }
 
         [HttpPut]

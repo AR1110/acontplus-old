@@ -36,27 +36,5 @@ namespace DataAccess
             }
             return dt;
         }
-        public async Task<DataSet> GetDataSetAsync(string spName, Dictionary<string, object> parameters = null)
-        {
-            DataSet ds = null;
-            try
-            {
-                DbAccess db = new DbAccess(_config);
-                await db.SPExecute(spName);
-                if (parameters != null)
-                {
-                    foreach (var item in parameters)
-                    {
-                        db.AddDynamicParam(item.Key, item.Value);
-                    }
-                }
-                ds = db.GetDataSet();
-            }
-            catch (Exception ex)
-            {
-                _ = ex.Message;
-            }
-            return ds;
-        }
     }
 }

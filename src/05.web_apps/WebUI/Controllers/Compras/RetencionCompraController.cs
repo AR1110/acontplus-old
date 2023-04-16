@@ -6,6 +6,8 @@ using DataAccess.Compras;
 using DataAccess.RetencionIvaRenta;
 using Helpers;
 using DataAccess;
+using Common.Logs;
+using Microsoft.Extensions.Configuration;
 
 namespace WebUI.Controllers.Ingresos
 {
@@ -16,17 +18,16 @@ namespace WebUI.Controllers.Ingresos
         private GenerateRetencionDao _gra;
         private DataAccessObject _dao;
         
-        private IConfiguration _config;
+        private IConfiguration _configuration;
         
 
         public RetencionCompraController(IConfiguration config)
         {
-            _config = config;
+            _configuration = config;
             
-            _dao = new DataAccessObject(_config);
-            _gra = new GenerateRetencionDao(_config);
-            _rc = new RetencionCompraDao(_config);
-            
+            _dao = new DataAccessObject(_configuration);
+            _gra = new GenerateRetencionDao(_configuration);
+            _rc = new RetencionCompraDao(_configuration);
         }
 
         //private readonly IWebHostEnvironment _hostingEnviromet; 
@@ -56,10 +57,22 @@ namespace WebUI.Controllers.Ingresos
         [HttpGet]
         public async Task<IActionResult> GetId(int id)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("id", id);
-            return Ok(DbResponse.SPDataSet(await _dao.GetDataSetAsync("Compra.Retencion_Get_Id", parameters)));
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Compra.Retencion_Get_Id");
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("id", id);
+                _response = _db.GetDataSetAsync();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error in GetId: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al Obtener los datos");
+            }
+            return Ok(_response);
 
         }
 

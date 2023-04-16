@@ -4,6 +4,7 @@ using Domain.Models.Inventario;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Domain.Models;
+using Common.Logs;
 
 namespace WebUI.Controllers.Inventario
 {
@@ -41,9 +42,25 @@ namespace WebUI.Controllers.Inventario
         [HttpGet]
         public async Task<IActionResult> GetId(int id)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("id", id);
-            return Ok(DbResponse.SPDataSet(await _dao.GetDataSetAsync("Inventario.TransferenciaBodega_Get_Id", parameters)));
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Inventario.TransferenciaBodega_Get_Id");
+                _db.AddDynamicParam("id", id);
+                _response = _db.GetDataSetAsync();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error in GetId: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al Obtener los datos");
+            }
+            finally
+            {
+                _db.Close();
+            } 
+            return Ok(_response);
         }
 
         [HttpPost]

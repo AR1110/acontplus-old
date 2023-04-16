@@ -1,10 +1,8 @@
-﻿using DataAccess;
+﻿using Common.Logs;
+using DataAccess;
 using Domain.Models;
-using Domain.Models.Sri;
 using Helpers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace WebUI.Controllers.Sri
 {
@@ -12,20 +10,15 @@ namespace WebUI.Controllers.Sri
     {
         // GET: Establecimiento
         private readonly IConfiguration _configuration;
-         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
+        ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
-        
+
 
         public EstablecimientoController(IConfiguration configuration)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
-            
-            
-
         }
-        
-        
         public IActionResult Index()
         {
             return View();
@@ -43,15 +36,48 @@ namespace WebUI.Controllers.Sri
         [HttpGet]
         public async Task<IActionResult> GetId(string json)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();            
-            parameters.Add("json", json);
-            return Ok(DbResponse.SPDataSet(await _dao.GetDataSetAsync("Sri.Establecimiento_Get_Id", parameters)));
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Sri.Establecimiento_Get_Id");
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDataSetAsync();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error in GetId: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al Obtener los datos");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetDataForm()
         {
-            return Ok(DbResponse.SPDataSet(await _dao.GetDataSetAsync("Sri.Establecimiento_Get_Data_Form")));
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Sri.Establecimiento_Get_Data_Form");
+                _response = _db.GetDataSetAsync();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error in GetDataForm: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al Obtener los datos");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
 
         [HttpPost]
@@ -59,12 +85,12 @@ namespace WebUI.Controllers.Sri
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("json", json);            
+            parameters.Add("json", json);
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Sri.Establecimiento_Insert", parameters)));
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update(int id,string json)
+        public async Task<IActionResult> Update(int id, string json)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
