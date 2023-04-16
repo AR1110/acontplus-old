@@ -12,14 +12,14 @@ namespace WebUI.Controllers.Ventas
         private NotaCreditoDao _nc;
         private GenericResponse _gr = new();
         private IConfiguration _configuration;
-        ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
-        private DataAccessObject _dao;
+       
+        
 
 
         public NotaCreditoClienteController(IConfiguration config)
         {
             _configuration = config;
-            _dao = new DataAccessObject(_configuration);
+            
             _nc = new NotaCreditoDao(_configuration);
         }
 

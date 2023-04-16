@@ -1,5 +1,4 @@
 ﻿using DataAccess.Ventas;
-using Domain.Models;
 using Domain.ViewModels.Ventas;
 using Microsoft.AspNetCore.Mvc;
 using Helpers;
@@ -11,15 +10,15 @@ namespace WebUI.Controllers.Ventas
     public class ProformaController : Controller
     {
         private readonly IConfiguration _configuration;
-        ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
-        private DataAccessObject _dao;
+
+
 
         private ProformaDao _prof;
 
         public ProformaController(IConfiguration configuration)
         {
             _configuration = configuration;
-            _dao = new DataAccessObject(_configuration);
+
             _prof = new ProformaDao(_configuration);
         }
         public IActionResult Index()
@@ -30,10 +29,26 @@ namespace WebUI.Controllers.Ventas
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("json", SqlValidation.ValidateSqlString(json));
-            return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Ventas.Proforma_Get", parameters)));
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Ventas.Proforma_Get");
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDataTableAsync();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error in Get: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al Obtener los datos");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
 
         [HttpGet]
@@ -59,7 +74,6 @@ namespace WebUI.Controllers.Ventas
                 _db.Close();
             }
             return Ok(_response);
-
         }
 
         [HttpPost]
@@ -81,10 +95,26 @@ namespace WebUI.Controllers.Ventas
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("id", id);
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Ventas.Proforma_Delete", parameters)));
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Ventas.Proforma_Delete");
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("id", id);
+                _response = _db.GetDefault();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error in Delete: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al eliminar");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
 
         }
     }

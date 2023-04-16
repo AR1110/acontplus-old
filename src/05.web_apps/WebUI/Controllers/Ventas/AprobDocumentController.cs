@@ -1,6 +1,5 @@
 ﻿using Common.Logs;
 using DataAccess;
-using Domain.Models;
 using Domain.Models.Ventas;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
@@ -10,15 +9,10 @@ namespace WebUI.Controllers.Ventas
     public class AprobDocumentController : Controller
     {
         private readonly IConfiguration _configuration;
-
-        private DataAccessObject _dao;
         public AprobDocumentController(IConfiguration configuration)
         {
-            _configuration = configuration; 
-            _dao = new DataAccessObject(_configuration);
+            _configuration = configuration;
         }
-
-
         public IActionResult Index()
         {
             return View();
@@ -27,10 +21,26 @@ namespace WebUI.Controllers.Ventas
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("json", SqlValidation.ValidateSqlString(json));
-            return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Ventas.Aprob_Document_Get", parameters)));
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Ventas.Aprob_Document_Get");
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDataTableAsync();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error in Get: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al Obtener los datos");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
 
         [HttpGet]
@@ -60,32 +70,81 @@ namespace WebUI.Controllers.Ventas
         [HttpPost]
         public async Task<IActionResult> Insert([FromBody] AprobDocument data)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("jsonHeader", data.jsonHeader);
-            parameters.Add("jsonDetail", data.jsonDetail);
-            parameters.Add("jsonHistory", data.jsonHistory);
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Ventas.Aprob_Document_Insert", parameters)));
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Ventas.Aprob_Document_Insert");
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("jsonHeader", SqlValidation.ValidateSqlString(data.jsonHeader));
+                _db.AddDynamicParam("jsonDetail", SqlValidation.ValidateSqlString(data.jsonDetail));
+                _db.AddDynamicParam("jsonHistory", SqlValidation.ValidateSqlString(data.jsonHistory));
+                _response = _db.GetDefault();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error in Insert: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al guardar");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
 
         [HttpPut]
         public async Task<IActionResult> Update(int id, [FromBody] AprobDocument data)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("id", id);
-            parameters.Add("jsonHeader", data.jsonHeader);
-            parameters.Add("jsonDetail", data.jsonDetail);
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Ventas.Aprob_Document_Update", parameters)));
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Ventas.Aprob_Document_Update");
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("id", id);
+                _db.AddDynamicParam("jsonHeader", SqlValidation.ValidateSqlString(data.jsonHeader));
+                _db.AddDynamicParam("jsonDetail", SqlValidation.ValidateSqlString(data.jsonDetail));
+                _db.AddDynamicParam("jsonHistory", SqlValidation.ValidateSqlString(data.jsonHistory));
+                _response = _db.GetDefault();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error in update: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al actualizar");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
 
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("id", id);
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Ventas.Aprob_Document_Delete", parameters)));
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Ventas.Aprob_Document_Delete");
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("id", id);
+                _response = _db.GetDefault();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error in delete: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al eliminar");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
     }
 }

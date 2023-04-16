@@ -10,7 +10,7 @@ namespace WebUI.Controllers.Compras
     public class NotaCreditoProveedorController : Controller
     {
         private readonly IConfiguration _configuration;
-        ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
+       
 
         private NotaCreditoProveedorDao _ncprov;
         public NotaCreditoProveedorController(IConfiguration configuration)
@@ -67,7 +67,6 @@ namespace WebUI.Controllers.Compras
                 _db.Close();
             }
             return Ok(_response);
-
         }
 
         [HttpPut]

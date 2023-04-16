@@ -10,7 +10,7 @@ namespace WebUI.Controllers.Ventas
     public class RetencionVentaController : Controller
     {
         private readonly IConfiguration _configuration;
-        ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
+       
         private RetencionVentaDao _rv;
         public RetencionVentaController(IConfiguration configuration)
         {
