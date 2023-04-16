@@ -97,7 +97,7 @@ BEGIN
 	--PRINT @isReportImport
 	IF @codDoc = '01' 
 		BEGIN 
-			--SET @detailDs = (
+			SET @detailDs = (
 			SELECT 
 								id              = dd.idDocumentoDetalle
 								,idArticulo     = dd.idArticulo
@@ -122,9 +122,8 @@ BEGIN
 							INNER JOIN Tarifa       t ON t.idTarifa    = arPvp.idTarifa
 							WHERE dd.idDocumento = @id ORDER BY dd.idDocumentoDetalle ASC 
 							
-							--FOR JSON PATH 
-						 --)
-						 RETURN
+							FOR JSON PATH 
+						 )
 		END 
 
 
