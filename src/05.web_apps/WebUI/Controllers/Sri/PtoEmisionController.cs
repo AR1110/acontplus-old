@@ -1,7 +1,7 @@
 ﻿using DataAccess;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using Domain.Models;
+using Common.Logs;
 using Helpers;
 
 namespace WebUI.Controllers.Sri
@@ -10,21 +10,15 @@ namespace WebUI.Controllers.Sri
     {
         // GET: Establecimiento
         private readonly IConfiguration _configuration;
-         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
-        private DataAccessObject _dao;
-        
-        private  TipoAmbienteDao _tipA;
+        private TipoAmbienteDao _tipA;
 
         public PtoEmisionController(IConfiguration configuration)
         {
             _configuration = configuration;
-            _dao = new DataAccessObject(_configuration);
-            
-            
             _tipA = new TipoAmbienteDao(_configuration);
         }
 
-        
+
         public IActionResult Index()
         {
             return View();
@@ -33,33 +27,81 @@ namespace WebUI.Controllers.Sri
         [HttpPost]
         public async Task<IActionResult> Insert([FromBody] PtoEmision data)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("codEstab", data.codEstab);
-            parameters.Add("ambiente", data.ambiente);
-            parameters.Add("ptoEmi", data.ptoEmi);
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Sri.PtoEmision_Insert", parameters)));
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Sri.PtoEmision_Insert");
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("codEstab", data.codEstab);
+                _db.AddDynamicParam("ambiente", data.ambiente);
+                _db.AddDynamicParam("ptoEmi", data.ptoEmi);
+                _response = _db.GetDefault();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error in Insert: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al guardar");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
 
         [HttpPut]
         public async Task<IActionResult> Update(int id, [FromBody] PtoEmision data)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("id", id);
-            parameters.Add("ambiente", data.ambiente);
-            parameters.Add("ptoEmi", data.ptoEmi);
-            parameters.Add("estado", data.estado);
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Sri.PtoEmision_Update", parameters)));
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Sri.PtoEmision_Update");
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("id", id);
+                _db.AddDynamicParam("ambiente", data.ambiente);
+                _db.AddDynamicParam("ptoEmi", data.ptoEmi);
+                _db.AddDynamicParam("estado", data.estado);
+                _response = _db.GetDefault();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error in Update: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al actualizar");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
 
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("id", id);
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Sri.PtoEmision_Delete", parameters)));
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Sri.PtoEmision_Delete");
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("id", id);
+                _response = _db.GetDefault();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error in Delete: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al Eliminar");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
 
         //Get Tipo Ambiente 

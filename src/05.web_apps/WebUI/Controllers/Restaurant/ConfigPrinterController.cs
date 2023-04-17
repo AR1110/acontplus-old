@@ -1,6 +1,5 @@
 ﻿using Common.Logs;
 using DataAccess;
-using Domain.Models;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,10 +28,23 @@ namespace WebUI.Controllers.Restaurant
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            DataAccessObject _dao = new DataAccessObject(_config);
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Restaurant.ConfigPrinter_Get", parameters)));
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Restaurant.ConfigPrinter_Get");
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _response = _db.GetDataTableAsync();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error in Get: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al obtener los datos");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
         [HttpPost]
         public async Task<IActionResult> Post(bool estado)

@@ -1,7 +1,6 @@
 ﻿using Helpers;
 using DataAccess;
 using Microsoft.AspNetCore.Mvc;
-using Domain.Models;
 using Common.Logs;
 
 namespace WebUI.Controllers.Restaurant
@@ -9,21 +8,13 @@ namespace WebUI.Controllers.Restaurant
 
     public class ConsumoTpvController : Controller
     {
-        private readonly IConfiguration _config;
+        private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _environment;
-        
-        
-        private readonly DbAccess _db;
-        private readonly LogWriter _log;
         public ConsumoTpvController(IConfiguration config,
             IWebHostEnvironment environment)
         {
-            _config = config;
-            
+            _configuration = config;
             _environment = environment;
-            
-            _db = new DbAccess(_config);
-            _log = new LogWriter(_config);
         }
         public IActionResult Index()
         {
@@ -37,16 +28,33 @@ namespace WebUI.Controllers.Restaurant
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            DataAccessObject _dao = new DataAccessObject(_config);
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("json", SqlValidation.ValidateSqlString(json));
-            return Ok(DbResponse.SPDataSet(await _dao.GetDataSetAsync("Restaurant.ConsumoTpv_Get", parameters)));
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Restaurant.ConsumoTpv_Get");
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDataSetAsync();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error in Get: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al Obtener los datos");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
         [HttpPost]
         public async Task<IActionResult> Post(string json)
         {
-            var _response = new GenericResponse();
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
             try
             {
                 await _db.SPExecute("Restaurant.ConsumoTpv_Insert");
@@ -68,7 +76,9 @@ namespace WebUI.Controllers.Restaurant
         [HttpPut]
         public async Task<IActionResult> Put(string json)
         {
-            var _response = new GenericResponse();
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
             try
             {
                 await _db.SPExecute("Restaurant.ConsumoTpv_Update");
@@ -90,7 +100,9 @@ namespace WebUI.Controllers.Restaurant
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            var _response = new GenericResponse();
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
             try
             {
                 await _db.SPExecute("Restaurant.ConsumoTpv_Delete");
@@ -112,7 +124,9 @@ namespace WebUI.Controllers.Restaurant
         [HttpPost]
         public async Task<IActionResult> Print(int id)
         {
-            var _response = new GenericResponse();
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
             try
             {
                 await _db.SPExecute("Restaurant.ConsumoTpv_Print");

@@ -6,7 +6,7 @@ namespace BL.Reports
     {
         public static FileModelDto ReportNotFound(FileModelDto file)
         {
-            string errorFilePath = "C:\\Acontplus\\ApiReports\\Reports\\NotFound.pdf";
+            string errorFilePath = "C:\\Acontplus\\Services\\ApiReports\\Reports\\NotFound.pdf";
             byte[] bytes = File.ReadAllBytes(errorFilePath);
             file.Create(bytes, "application/pdf", "NotFound.pdf");
             return file;

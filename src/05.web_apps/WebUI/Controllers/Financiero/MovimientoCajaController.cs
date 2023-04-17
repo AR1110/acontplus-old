@@ -1,9 +1,8 @@
-﻿using DataAccess;
+﻿using Common.Logs;
+using DataAccess;
 using DataAccess.GestionFinanciera;
-using Domain.Models;
 using Domain.Models.GestionFinanciera;
 using Helpers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.GestionFinanciera
@@ -11,22 +10,17 @@ namespace WebUI.Controllers.GestionFinanciera
     public class MovimientoCajaController : Controller
     {
         private readonly IConfiguration _configuration;
-        
-        private DataAccessObject _dao;
-        
 
         private MovimientoCajaDao _movc;
 
         public MovimientoCajaController(IConfiguration configuration)
         {
-            _configuration = configuration;
-            _dao = new DataAccessObject(_configuration);
-            
-            _movc = new MovimientoCajaDao(_configuration); 
-            
+            _configuration = configuration; 
+            _movc = new MovimientoCajaDao(_configuration);
+
         }
 
-        
+
         public IActionResult Index()
         {
             return View();
@@ -40,9 +34,9 @@ namespace WebUI.Controllers.GestionFinanciera
             return Ok(res);
         }
 
-      
 
-        public async Task<IActionResult> Get(string json) 
+
+        public async Task<IActionResult> Get(string json)
         {
             int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _movc.GetAsync(idRol, json);
@@ -53,20 +47,50 @@ namespace WebUI.Controllers.GestionFinanciera
 
         public async Task<IActionResult> GetMoneda(string json)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("json", SqlValidation.ValidateSqlString(json));
-            return Ok(DbResponse.SPDataSet(await _dao.GetDataSetAsync("ReporteIngresos.Ingreso_Egreso_Caja", parameters)));
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("ReporteIngresos.Ingreso_Egreso_Caja");
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDataSetAsync();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error in GetMoneda: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al Obtener los datos");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
 
         public async Task<IActionResult> Report(string json)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("json", SqlValidation.ValidateSqlString(json));
-            return Ok(DbResponse.SPDataSet(await _dao.GetDataSetAsync("ReporteIngresos.Ingreso_Egreso_Caja", parameters)));            
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("ReporteIngresos.Ingreso_Egreso_Caja");
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDataSetAsync();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error in Report: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al Obtener los datos");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
-        
-
     }
 }
