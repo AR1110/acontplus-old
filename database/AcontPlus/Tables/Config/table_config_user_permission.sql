@@ -29,7 +29,7 @@ USE AcontPlus;
 --	,codEstado VARCHAR(2) -- P(PENDIENTE), A(APROBADA), F(FINALIZADO)
 --)
 
-DECLARE @jsonSalePermission VARCHAR(MAX) = '{"comprobante":{"fechaEmision":{"label":"Modificar descuento","update":true},"tiempoCredito":{"label":"Cambiar tiempo Credito","update":true},"tarifa":{"label":"Modifcar tarifa general","update":true},"porcentajeDescuento":{"label":"Cambiar Porcentaje Descuento ","update":true},"descuento":{"label":"Cambiar Descuento","update":true}},"detail":{"medida":{"label":"Cambiar Medida","update":true},"tipoIva":{"label":"Cambiar Tipo IVA","update":true},"tarifa":{"label":"Cambiar tarifa","update":true},"precioUnitario":{"label":"Modificar Precio Unitario","update":true},"precioConIva":{"label":"Modificar Precio con IVA","update":true},"porcentajeDescuento":{"label":"Modificar Porcentaje Descuento","update":true},"descuento":{"label":"Modificar Descuento","update":true}}}';
+DECLARE @jsonSalePermission VARCHAR(MAX) = '{"comprobante":{"fechaEmision":{"label":"Modificar Fecha Emisión","update":true},"tiempoCredito":{"label":"Cambiar tiempo Credito","update":true},"tarifa":{"label":"Modifcar tarifa general","update":true},"porcentajeDescuento":{"label":"Cambiar Porcentaje Descuento ","update":true},"descuento":{"label":"Cambiar Descuento","update":true}},"detail":{"medida":{"label":"Cambiar Medida","update":true},"tipoIva":{"label":"Cambiar Tipo IVA","update":true},"tarifa":{"label":"Cambiar tarifa","update":true},"precioUnitario":{"label":"Modificar Precio Unitario","update":true},"precioConIva":{"label":"Modificar Precio con IVA","update":true},"porcentajeDescuento":{"label":"Modificar Porcentaje Descuento","update":true},"descuento":{"label":"Modificar Descuento","update":true}},"additional":{"requestAuthorizationKey":{"label":"Solicitar Clave Autorización para Editar o Anular el Doc. Venta","requestKey":true}}}';
 
 DECLARE @jsonArticlePermission VARCHAR(MAX) = '{"precio":{"label":"Permitir actualizar el precio costo y venta","update":true}}';
 
@@ -93,10 +93,9 @@ DECLARE @newjson VARCHAR(MAX);
 -- Insertando permisos de usuarios de la entidad SEA CORP
 -- SELECT * FROM App.UsuarioRol WHERE idEntidad = 4
 		
---INSERT INTO Config.UserPermission(idUsuarioRol, codModule, jsonPermission)SELECT idUsuarioRol, 'V', @jsonSalePermission FROM App.UsuarioRol where idEntidad = 4
---INSERT INTO Config.UserPermission(idUsuarioRol, codModule, jsonPermission)SELECT idUsuarioRol, 'AR', @jsonArticle FROM App.UsuarioRol where idEntidad = 4
-
-INSERT INTO Config.UserPermission(idUsuarioRol, codModule, jsonPermission)SELECT idUsuarioRol, 'C', @jsonCajaPermission FROM App.UsuarioRol
+--INSERT INTO Config.UserPermission(idUsuarioRol, codModule, jsonPermission)SELECT idUsuarioRol, 'V', @jsonSalePermission FROM App.UsuarioRol 
+--INSERT INTO Config.UserPermission(idUsuarioRol, codModule, jsonPermission)SELECT idUsuarioRol, 'AR', @jsonArticlePermission FROM App.UsuarioRol 
+--INSERT INTO Config.UserPermission(idUsuarioRol, codModule, jsonPermission)SELECT idUsuarioRol, 'C', @jsonCajaPermission FROM App.UsuarioRol
 
 SELECT * FROM Config.UserPermission
 
