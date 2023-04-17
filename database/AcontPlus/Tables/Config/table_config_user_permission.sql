@@ -13,27 +13,27 @@ USE AcontPlus;
 --	,estado BIT NOT NULL DEFAULT 1	
 --)
 
-IF OBJECT_ID('Config.Solicitud')IS NOT NULL
-	DROP TABLE Config.Solicitud
-GO 
+--IF OBJECT_ID('Config.Solicitud')IS NOT NULL
+--	DROP TABLE Config.Solicitud
+--GO 
 
 ----tabla solicitud para modificar, anular el documento de venta 
-CREATE TABLE Config.Solicitud(
-	idSolicitud INT NOT NULL PRIMARY KEY IDENTITY(1,1)
-	,idUsuarioRolAprobante  INT NOT NULL CONSTRAINT FK_Solicitud_UsuarioRol1 FOREIGN KEY (idUsuarioRolAprobante) REFERENCES App.UsuarioRol(idUsuarioRol)	
-	,idUsuarioRolSolictante INT NOT NULL CONSTRAINT FK_Solicitud_UsuarioRol2 FOREIGN KEY (idUsuarioRolSolictante) REFERENCES App.UsuarioRol(idUsuarioRol)	
-	,observacion VARCHAR(200) NOT NULL
-	,codigoAccion VARCHAR(2) -- E(EDITAR), A(ANULAR)
-	,fechaRegistro DATETIME NOT NULL DEFAULT GETDATE()
-	,fechaAprobacion DATETIME  NULL 
-	,codEstado VARCHAR(2) -- P(PENDIENTE), A(APROBADA), F(FINALIZADO)
-)
+--CREATE TABLE Config.Solicitud(
+--	idSolicitud INT NOT NULL PRIMARY KEY IDENTITY(1,1)
+--	,idUsuarioRolAprobante  INT NOT NULL CONSTRAINT FK_Solicitud_UsuarioRol1 FOREIGN KEY (idUsuarioRolAprobante) REFERENCES App.UsuarioRol(idUsuarioRol)	
+--	,idUsuarioRolSolictante INT NOT NULL CONSTRAINT FK_Solicitud_UsuarioRol2 FOREIGN KEY (idUsuarioRolSolictante) REFERENCES App.UsuarioRol(idUsuarioRol)	
+--	,observacion VARCHAR(200) NOT NULL
+--	,codigoAccion VARCHAR(2) -- E(EDITAR), A(ANULAR)
+--	,fechaRegistro DATETIME NOT NULL DEFAULT GETDATE()
+--	,fechaAprobacion DATETIME  NULL 
+--	,codEstado VARCHAR(2) -- P(PENDIENTE), A(APROBADA), F(FINALIZADO)
+--)
 
 DECLARE @jsonSalePermission VARCHAR(MAX) = '{"comprobante":{"fechaEmision":{"label":"Modificar descuento","update":true},"tiempoCredito":{"label":"Cambiar tiempo Credito","update":true},"tarifa":{"label":"Modifcar tarifa general","update":true},"porcentajeDescuento":{"label":"Cambiar Porcentaje Descuento ","update":true},"descuento":{"label":"Cambiar Descuento","update":true}},"detail":{"medida":{"label":"Cambiar Medida","update":true},"tipoIva":{"label":"Cambiar Tipo IVA","update":true},"tarifa":{"label":"Cambiar tarifa","update":true},"precioUnitario":{"label":"Modificar Precio Unitario","update":true},"precioConIva":{"label":"Modificar Precio con IVA","update":true},"porcentajeDescuento":{"label":"Modificar Porcentaje Descuento","update":true},"descuento":{"label":"Modificar Descuento","update":true}}}';
 
 DECLARE @jsonArticlePermission VARCHAR(MAX) = '{"precio":{"label":"Permitir actualizar el precio costo y venta","update":true}}';
 
---DECLARE @jsonCajaPermission VARCHAR(MAX) = '{}'
+DECLARE @jsonCajaPermission VARCHAR(MAX) = '{"verOtrasCajas": {"label": "Ver otras cajas", "view": true}, "reporteMovimientoCaja": {"label": "Ver Reporte", "view": true}, "cerrarCaja": {"label": "Cerrar Caja", "cerrar": true}}'
 
 
 DECLARE @newjson VARCHAR(MAX);
@@ -96,11 +96,8 @@ DECLARE @newjson VARCHAR(MAX);
 --INSERT INTO Config.UserPermission(idUsuarioRol, codModule, jsonPermission)SELECT idUsuarioRol, 'V', @jsonSalePermission FROM App.UsuarioRol where idEntidad = 4
 --INSERT INTO Config.UserPermission(idUsuarioRol, codModule, jsonPermission)SELECT idUsuarioRol, 'AR', @jsonArticle FROM App.UsuarioRol where idEntidad = 4
 
+INSERT INTO Config.UserPermission(idUsuarioRol, codModule, jsonPermission)SELECT idUsuarioRol, 'C', @jsonCajaPermission FROM App.UsuarioRol
 
-
-
-
-SELECT * FROM Config.Solicitud
-UPDATE Config.Solicitud SET codEstado ='P'
+SELECT * FROM Config.UserPermission
 
 

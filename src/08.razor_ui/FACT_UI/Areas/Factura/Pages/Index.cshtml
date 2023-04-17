@@ -10,16 +10,25 @@
         <div class="col-md-5 align-self-center">
             <h5 class="text-themecolor">Factura Refactorización</h5>
         </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+
+                <button type="button" ng-click="openModalInvoiceNew()" class="btn btn-info d-block d-lg-inline-block m-l-15">
+                    <i class="fa fa-plus-circle"></i> Nuevo 
+                </button>
+            </div>
+        </div>
     </div>
-   
     
 </div>
 
 @section Scripts {
 
-    <script src="~/js/controllers/factElect/handlers/api-error.handler.js" asp-append-version="true"></script>
-    <script src="~/js/controllers/factElect/mappers/factura.mapper.js" asp-append-version="true"></script>
-    <script src="~/js/controllers/factElect/repositories/factura.repository.js" asp-append-version="true"></script>
-    <script src="~/js/controllers/factElect/services/factura.service.js" asp-append-version="true"></script>
-    <script src="~/js/controllers/factElect/facturaCtrl.js" asp-append-version="true"></script>
+    <script src="~/js/common/services/apiErrorHandler.js" asp-append-version="true"></script>
+    <script src="~/js/factElect/mappers/factElectMapper.js" asp-append-version="true"></script>
+    <script src="~/js/factElect/repositories/factElectRepository.js" asp-append-version="true"></script>
+    
+    <script src="~/js/factElect/shared/factElectService.js" asp-append-version="true"></script>
+    <script src="~/js/factElect/services/facturaService.js" asp-append-version="true"></script>
+    <script src="~/js/factElect/controllers/facturaCtrl.js" asp-append-version="true"></script>
 }

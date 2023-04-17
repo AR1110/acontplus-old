@@ -27,11 +27,11 @@
                     <td md-cell>{{item.totalArqueo}}</td>
                     <td md-cell>{{item.estado ? "ABIERTO": "CERRADO"}}</td>      
                     <td md-cell>
-                        <button ng-if="item.estado" type="button" ng-click="$ctrl.openModalCierreCaja(item)" tooltip data-tooltip="toggle" title="Cerrar Caja" class="btn btn-danger btn-sm">
+                        <button ng-if="$ctrl.cerrarCaja(item)" type="button" ng-click="$ctrl.openModalCierreCaja(item)" tooltip data-tooltip="toggle" title="Cerrar Caja" class="btn btn-danger btn-sm">
                             <i class="icons-Box-Full"></i>
                         </button>
 
-                        <button type="button" ng-click="$ctrl.getReport(item.idControlCaja)" tooltip data-tooltip="toggle" title="Reporte Caja" class="btn btn-secondary btn-sm"><i class="fas fa-file-pdf"></i></button>
+                        <button type="button" ng-if="$ctrl.verReporteMovimientoCaja(item)" ng-click="$ctrl.getReport(item.idControlCaja)" tooltip data-tooltip="toggle" title="Reporte Caja" class="btn btn-secondary btn-sm"><i class="fas fa-file-pdf"></i></button>
 
                         <button type="button" ng-if="item.estado" class="btn btn-info btn-sm" tooltip data-tooltip="toggle" title="Abrir caja de dinero" ng-click="$ctrl.openMoneyBox()">
                             <i class="mdi mdi-window-open"></i>  

@@ -325,9 +325,21 @@ export class MovimientoCajaCtrl{
     }
 
     $onInit(){
+        let jsonParams = JSON.stringify({
+            idUsuarioRol: parseInt(this.decodeToken.idUsuarioRol)
+        })
+       
+        this._mS.getData('get', 'UsuarioPermiso/Get/' + jsonParams, null, true).then(response =>{            
+            let mainData = JSON.parse(response.payload)[2].jsonPermission
+
+            this.dataPermissions = JSON.parse(mainData);
+            console.log(this.dataPermissions)
+        })
+
         if(this._params){
             this.getMovimientosCaja();
         }
+
        
         this.$uibModalInstance.rendered.then(()=>{            
             this.someCondition = false
@@ -348,6 +360,7 @@ export class MovimientoCajaCtrl{
                 }
                 if(response.code==="1"){
                     this.movimientosCaja = JSON.parse(response.payload) || []; 
+                    console.log(this.movimientosCaja)
                     this.cloneMovimientosCaja = JSON.parse(JSON.stringify(this.movimientosCaja));
                     hideLoader();
                 }
@@ -361,6 +374,18 @@ export class MovimientoCajaCtrl{
 
     theURLTableMovimientoCaja(){
         return  '/Home/RenderView?name=' + '~/Views/Caja/_mdTableMovimientoCaja.cshtml';        
+    }
+
+    verReporteMovimientoCaja(item){
+        if(this.dataPermissions.verOtrasCajas.view){
+            return true;
+        }
+
+        return (!item.estado && this.dataPermissions.reporteMovimientoCaja.view);    
+    }
+
+    cerrarCaja(item){
+        return (item.estado && this.dataPermissions.cerrarCaja.cerrar); 
     }
 
 

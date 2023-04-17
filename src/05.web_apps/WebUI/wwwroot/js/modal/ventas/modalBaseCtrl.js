@@ -1218,6 +1218,27 @@ export class ModalBaseCtrl{
     }
 
 
+    swalDataInvalidCustomer(item) {
+         
+        Swal.fire({
+            icon: 'warning',
+            title: 'Datos Incorrectos',
+            html: 'Número de identificación inválido, desea editar?',
+            showConfirmButton: true,
+            showCancelButton: true,
+            confirmButtonText: 'Editar',
+            cancelButtonText: 'Cancelar'
+        }).then(async result => {
+            if(result.isConfirmed){
+                this.cliente = item;
+                await this.openModalClienteUpdate();
+                this.cliente = {}
+            }
+        })
+       
+    }
+
+
 
 
 

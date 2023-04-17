@@ -28,9 +28,9 @@ export class ModalBaseCtrl {
     }
 
     async openModalTiempoCredito() {
-        const { MODAL_CTRL, MODAL_CSHTML } = this._nombreModal.tiempo_credito;
-        const { ModalTiempoCreditoCtrl } = await import('./../../modal/' + MODAL_CTRL);
-        const modalRef = this._modalSvc.openModalCustom({
+        let { MODAL_CTRL, MODAL_CSHTML } = this._nombreModal.tiempo_credito;
+        let { ModalTiempoCreditoCtrl } = await import('./../../modal/' + MODAL_CTRL);
+        let modalRef = this._modalSvc.openModalCustom({
             controller: ModalTiempoCreditoCtrl,
             template: `TiempoCredito/${MODAL_CSHTML}`,
             size: 'md'
@@ -38,7 +38,7 @@ export class ModalBaseCtrl {
 
         modalRef.result.then(async response => {
             if (typeof response === 'object') {
-                const results = await this.initiload(this.initiloadParams);
+                let results = await this.initiload(this.initiloadParams);
                 this.tiempoCreditos = results[5];
             }
         })
@@ -74,7 +74,7 @@ export class ModalBaseCtrl {
                 }
             }
             if (response.code === "1") {
-                const data = JSON.parse(response.payload)[0];
+                let data = JSON.parse(response.payload)[0];
                 
                 Swal.fire({
                     title: `${this.dataSearchValidacion.titulo}`,
@@ -88,34 +88,29 @@ export class ModalBaseCtrl {
                         <small><strong>Nombre Comercial</strong></small> <br>
                         <p class="text-muted small">${data.nombreComercial}</p>
                     `,
-                    allowOutsideClick: false,
-                    allowEnterKey: false,
-                    icon: 'info',                                        
-                })
-
-                // const Toast = Swal.mixin({
-                //     toast: true,
-                //     position: 'top-end',
-                //     showConfirmButton: false,
-                //     timer: 3000,
-                //     timerProgressBar: true,
-                //     didOpen: (toast) => {
-                //         toast.addEventListener('mouseenter', Swal.stopTimer)
-                //         toast.addEventListener('mouseleave', Swal.resumeTimer)
-                //     }
-                // })
-
-                // Toast.fire({
-                //     icon: 'info',
-                //     title: `${this.dataSearchValidacion.titulo}`,
-                //     html: `
-                //         <small><strong>Nro. Identificación</strong></small>
-                //         <br>
-                //         <p class="text-muted small">${data.numeroIdentificacion}</p>
-                //         <small><strong>Nombre Fiscal</strong></small> <br>
-                //         <p class="text-muted small">${data.nombreFiscal}</p>
-                //     `
-                // })
+                  
+                    icon: 'info',                                                                             
+                    showCloseButton: true,
+                    showCancelButton: true,
+                    focusConfirm: true,
+                    confirmButtonText:
+                      '<i class="fa fa-thumbs-up"></i> Validar datos!',
+                    confirmButtonAriaLabel: 'Validar datos!',
+                    cancelButtonText:
+                      '<i class="fa fa-thumbs-down"></i> Cancelar',
+                    cancelButtonAriaLabel: 'Cancelar'                                     
+                }).then(result=>{
+                    if (result.isConfirmed) {
+                        let codigoIdentificacion = this.dataFindByIdTipoIdentificacion().codigoIdentificacion;
+                        if(codigoIdentificacion==='R'){
+                            this.getRucSRI();
+                        }
+                        
+                        if(codigoIdentificacion==='C'){
+                            this.getCedulaSRI();
+                        }
+                    }
+                })               
             }
         })
     }
@@ -123,62 +118,79 @@ export class ModalBaseCtrl {
 
     getRucSRI() {
         try {
-            Swal.fire({
-                title: 'Obteniendo Datos del Cliente',
-                html: '<small>Espere por favor...</small>',
-                timer: 5000,
-                timerProgressBar: true,
-                didOpen: () => {
+            showLoader();
+            this._mS.getData('get', 'Consultas/GetRucSRI?Ruc=' + this.data.numeroIdentificacion, null, true).then(result => {                
+                hideLoader();                
+                if(result.numeroRuc) {
+                    console.log(result);
+                    let {razonSocial, establecimientos, tipoContribuyente} = result;
+                    this.data.nombreComercial = razonSocial;
+                    this.data.nombreFiscal = razonSocial;
+                    this.data.direccion = establecimientos.find(item=>item.matriz==='SI').direccionCompleta
+                    
+                    this.data.validationSri = true;
 
-                    Swal.showLoading();
+                    this.typeNotify = 'is-valid';
+                    this.message = 'Número de RUC correcta';
 
-                    this._mS.getData('get', 'Consultas/GetRucSRI?Ruc=' + this.data.numeroIdentificacion, null, true).then(result => {
-                        Swal.close();
-                       
-                        if(result) {
-                            let {razonSocial, establecimientos} = result;
-                            this.data.nombreComercial = razonSocial;
-                            this.data.nombreFiscal = razonSocial;
-                            this.data.direccion = establecimientos[0].direccionCompleta
-                           
-                        }
-                    })
+                    let contribuyente = this.subContribuyentes.find(item=>item.descripcion===tipoContribuyente);
+                    
+                    if(contribuyente){
+                        this.data.idTipoIdentificacion = contribuyente.idTipoIdentificacion;
+                        this.data.codigoIdentificacion = contribuyente.codigoIdentificacion;
+                    }
+                }else{
+                    this.typeNotify = 'is-invalid';
+                    this.message = 'No se encontró los datos';
                 }
-            })
-           
-            
+            }).catch(error=>{
+                hideLoader();
+                this.typeNotify = 'is-invalid';
+                this.message = 'No se encontró los datos';
+                console.log(error);
+            })                            
         } catch (error) {
+            hideLoader();
             console.log(error);
         }
     }
 
     getCedulaSRI() {
-        try {
-            Swal.fire({
-                title: 'Obteniendo Datos del Cliente',
-                html: '<small>Espere por favor...</small>',
-                timer: 5000,
-                timerProgressBar: true,
-                didOpen: () => {
-
-                    Swal.showLoading();
-
-                    this._mS.getData('get', 'Consultas/GetCedulaSri?Ruc=' + this.data.numeroIdentificacion, null, true).then(result => {
-                        Swal.close();
-                       
-                        if(result) {
-                            let {razonSocial, establecimientos} = result;
-                            this.data.nombreComercial = razonSocial;
-                            this.data.nombreFiscal = razonSocial;
-                            this.data.direccion = establecimientos[0].direccionCompleta
-                           
-                        }
-                    })
+        try {   
+            showLoader();          
+            this._mS.getData('get', 'Consultas/GetCedulaSri?Ruc=' + this.data.numeroIdentificacion, null, true).then(result => {
+                hideLoader();
+                
+                if(result.numeroRuc || result.nombreCompleto) {
+                   
+                    let {nombreCompleto, establecimientos} = result;
+                    this.data.nombreComercial = nombreCompleto;
+                    this.data.nombreFiscal = nombreCompleto;
+                    this.data.validationSri = true;
+                    // this.data.direccion = establecimientos[0].direccionCompleta
+                    this.typeNotify = 'is-valid';
+                    this.message = 'Número de Cédula correcta';
+                }else{
+                    this.typeNotify = 'is-invalid';
+                    this.message = 'No se encontró los datos';
                 }
+            }).catch(error => {
+                hideLoader();
+                Swal.close();
+                this.typeNotify = 'is-invalid';
+                this.message = 'No se encontró los datos';
+                console.log(error);
             })
+                
         } catch (error) {
+            hideLoader()
             console.log(error);
         }
+    }
+
+
+    dataFindByIdTipoIdentificacion(){      
+        return this.tipoIdentificaciones.find(item => item.idTipoIdentificacion === this.data.idTipoIdentificacion);
     }
 
     closeModal() {
@@ -207,6 +219,7 @@ class ModalBaseCliente extends ModalBaseCtrl{
     searchEmpleadoFilter(textSearch) {
         return this._commonSvc.querySearchEmpleado(textSearch)
     }
+
     searchCity(txtSearch) {
         let results = [];
         let search = txtSearch.toLowerCase()
@@ -216,18 +229,20 @@ class ModalBaseCliente extends ModalBaseCtrl{
                 ciudades: this.ciudades.filter(ciudad => ciudad.codigo === item.codigo)
             })
         }
-        console.log(results);
+        
         return results
     }
 
     
     onChangeTipoIdentificacion() {
-        this.data.codigoIdentificacion = this.tipoIdentificaciones.find(item => item.idTipoIdentificacion === this.data.idTipoIdentificacion).codigoIdentificacion;
+        this.data.codigoIdentificacion = this.dataFindByIdTipoIdentificacion().codigoIdentificacion;
+      
         this.typeNotify = '';
         this.message = ''
         this.data.numeroIdentificacion = '';
 
         this.isDisableInputIdentificacion = false;
+        this.data.validationSri = false;
 
         //Tipo Identificacion Consumir Final
         if (this.data.codigoIdentificacion === 'CF') {
@@ -238,7 +253,7 @@ class ModalBaseCliente extends ModalBaseCtrl{
 
     validarNumeroIdentificacion() {
         
-        let codigoIdentificacion = this.tipoIdentificaciones.find(item => item.idTipoIdentificacion === this.data.idTipoIdentificacion).codigoIdentificacion;
+        let codigoIdentificacion = this.dataFindByIdTipoIdentificacion().codigoIdentificacion;
 
         let inputTextNumeroIdentificacion =  $("#numeroIdentificacion");
 
@@ -249,44 +264,49 @@ class ModalBaseCliente extends ModalBaseCtrl{
             titulo: 'Cliente Registrado.',
             codigoIdentificacion
         }
-       
+        
+        this.data.validationSri = false;
+        
         
         if (this._form.campo(this.data.numeroIdentificacion)) return
-
-
-        switch(codigoIdentificacion){
-            case "C":
-                    inputTextNumeroIdentificacion.attr("maxlength", 10);
-
-                    if(this.data.numeroIdentificacion.toString().length<10){
-                        this.typeNotify = 'is-invalid';
-                        this.message = 'Número de Cédula debe tener 10 dígitos';
-                        return
-                    }
-
-                break
-            
-            case "R":
-                    inputTextNumeroIdentificacion.attr('maxlength', 13);
-                    if (this.data.numeroIdentificacion.toString().length < 13) {
-                        this.typeNotify = 'is-invalid';
-                        this.message = 'Número de RUC debe tener 13 dígitos';
-                        return
-                    } 
-                    
-                    if(this.data.numeroIdentificacion.slice(this.data.numeroIdentificacion.length - 3) !=='001'){
-                        this.typeNotify = 'is-invalid';
-                        this.message = 'Número de RUC tiene que contener (001) en últimos dígitos';
-                        return
-                    }
-                break
+        
+        if(codigoIdentificacion==='C'){
+            inputTextNumeroIdentificacion.attr("maxlength", 10);
+    
+            if(this.data.numeroIdentificacion.toString().length<10){
+                this.typeNotify = 'is-invalid';
+                this.message = 'Número de Cédula debe tener 10 dígitos';
+                return
+            }
         }
 
+        if(codigoIdentificacion==='R'){
+            inputTextNumeroIdentificacion.attr('maxlength', 13);
+            if (this.data.numeroIdentificacion.toString().length < 13) {
+                this.typeNotify = 'is-invalid';
+                this.message = 'Número de RUC debe tener 13 dígitos';
+                return
+            } 
+            
+            if(this.data.numeroIdentificacion.slice(this.data.numeroIdentificacion.length - 3) !=='001'){
+                this.typeNotify = 'is-invalid';
+                this.message = 'Número de RUC tiene que contener (001) en últimos dígitos';
+                return
+            }
+        }
+        this.typeNotify = '';
+        this.message = '';
         this.verificarSiExisteNumIdentificacion();
     }
 
     onChangeValidateIdentificacionSRI(){
-        this.getRucSRI();
+        if(this.dataFindByIdTipoIdentificacion().codigoIdentificacion==='R'){
+            this.getRucSRI();
+        }
+        if(this.dataFindByIdTipoIdentificacion().codigoIdentificacion==='C'){
+            this.getCedulaSRI();
+        }
+
     }
 
     copiarNombreComercial() {
@@ -324,11 +344,11 @@ class ModalBaseCliente extends ModalBaseCtrl{
 
 
     async openModalEmpleado() {
-        const { empleado } = this._nombreModal;
-        const { ModalEmpleadoCtrl } = await import('./../../modal/' + empleado.MODAL_CTRL)
-        const modalRef = this._modalSvc.openModalCustom({
+        let { MODAL_CTRL, MODAL_CSHTML } = this._nombreModal.empleado;
+        let { ModalEmpleadoCtrl } = await import('./../../modal/' + MODAL_CTRL)
+        this._modalSvc.openModalCustom({
             controller: ModalEmpleadoCtrl,
-            template: 'Empleado/' + empleado.MODAL_CSHTML,
+            template: 'Empleado/' + MODAL_CSHTML,
             size: 'md'
         })
 
@@ -336,11 +356,11 @@ class ModalBaseCliente extends ModalBaseCtrl{
     }
 
     async openModalCargo() {
-        const { cargo } = this._nombreModal;
-        const { ModalCargoCtrl } = await import('./../../modal/' + cargo.MODAL_CTRL)
+        const { MODAL_CTRL, MODAL_CSHTML } = this._nombreModal.cargo;
+        const { ModalCargoCtrl } = await import('./../../modal/' + MODAL_CTRL)
         const modalRef = this._modalSvc.openModalCustom({
             controller: ModalCargoCtrl,
-            template: 'Cargo/' + cargo.MODAL_CSHTML,
+            template: 'Cargo/' + MODAL_CSHTML,
             size: 'md'
         })
         modalRef.result.then(async res => {
@@ -1003,6 +1023,21 @@ export class ModalClienteListaCtrl {
 
 
     seleccionarCliente = (item) => {
+        if(!item.validationSri && ['R', 'C'].includes(item.tipoIdentificacion)){
+            Swal.fire({
+                icon: 'warning',
+                title: 'Datos Incorrectos',
+                html: 'Número de identificación inválido, desea editar?',
+                showConfirmButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Editar',
+                cancelButtonText: 'Cancelar'
+            }).then(async result => {
+                if(result.isConfirmed){
+                    this.openModalEditar(item)
+                }
+            })
+        }
         this.$uibModalInstance.close(item)
     }
 
@@ -1097,7 +1132,9 @@ export class ModalProveedorCtrl extends ModalBaseCtrl {
     onKeyupNumeroIndentificacion() {
         if (this._form.campo(this.data.numeroIdentificacion)) return
 
-        let codigoIdentificacion = this.tipoIdentificaciones.find(item => item.idTipoIdentificacion === this.data.idTipoIdentificacion).codigoIdentificacion;
+        this.data.idTipoIdentificacion = this.tipoIdentificacion.idTipoIdentificacion;
+        console.log(this.dataFindByIdTipoIdentificacion())
+        let codigoIdentificacion = this.dataFindByIdTipoIdentificacion().codigoIdentificacion;
 
         this.dataSearchValidacion = {
             url: 'Proveedor',
@@ -1107,7 +1144,7 @@ export class ModalProveedorCtrl extends ModalBaseCtrl {
             codigoIdentificacion
         }
         
-        switch (this.tipoIdentificacion.codigoIdentificacion) {
+        switch (codigoIdentificacion) {
             case 'C':
                 $("#numeroIdentificacion").attr('maxlength', 10);
                 if (this.data.numeroIdentificacion.toString().length < 10) {
@@ -1144,21 +1181,6 @@ export class ModalProveedorCtrl extends ModalBaseCtrl {
         }
     }
 
-    //Validar Numero de Identificacion
-    validarNumIdentificacion() {
-        const data = {
-            tipoValidacion: 'IDENTI',
-            numeroIdentificacion: this.data.numeroIdentificacion
-        }
-        this._mS.getData('post', '/ValidarDatos/VerificarDatos', data).then(response => {
-            this.typeNotify = response.typeNotify;
-            this.message = response.message;
-
-            if (response.id == 1) {
-                this.verificarSiExisteNumIdentificacion();
-            }
-        })
-    }
 
     tranformMdChipsEmail(mdChip) {
         if (mdChip === null || mdChip == undefined) return

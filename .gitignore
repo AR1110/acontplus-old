@@ -345,3 +345,7 @@
 /src/08.razor_ui/Inventario_UI/bin/Debug/net6.0
 /src/08.razor_ui/Inventario_UI/bin/Release/net6.0/Inventario_UI.dll
 /src/08.razor_ui/Inventario_UI/bin/Release/net6.0/Inventario_UI.pdb
+/src/07.worker_services/WS_Cliente_Ident_Val_Sri/bin
+/src/07.worker_services/WS_Cliente_Ident_Val_Sri/obj
+/src/04.services/ApiSri/bin
+/src/04.services/ApiSri/obj

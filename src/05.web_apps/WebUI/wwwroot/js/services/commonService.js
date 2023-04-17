@@ -1668,6 +1668,81 @@ export class CommonService {
 
 
 
+    //Permiso para editar o anular Doc. Venta 
+    async checkHasPermissionToEditOrDelete(codigoAccion){ 
+        let jsonParams = {
+            typeList: 2,
+            codigoAccion,
+        }
+        let result = {};
+        
+        showLoader();
+        await this.mS.getData('get', 'Solicitud/Check/' + JSON.stringify(jsonParams), null, true).then(response => {
+            if(response.code==="0"){                   
+                hideLoader();
+                this.form.sweetAlert('warning', response.message, response.titleSms);
+                throw response;              
+            }
+            hideLoader();
+            result = response;
+            
+        }).catch(error => {
+            hideLoader();
+            throw error;
+        })           
+        return result;
+    }
+
+
+    async requestAuthorizationKey(codigoAccion){
+        let textMotivo = codigoAccion==='E'?'Editar': 'Anular';
+        Swal.fire({
+            title: "Solicitud de Clave de Autorización",
+            text: `Por favor, proporcione una explicación del motivo por el cual desea ${textMotivo} el documento!`,
+            input: 'text',
+            inputAttributes: {
+              autocapitalize: 'off'
+            },
+            showCancelButton: true,                                                 
+            inputPlaceholder: "Explicación del motivo",
+            confirmButtonText: "Confirmar",
+            cancelButtonText: "Cancelar",
+            allowOutsideClick: false,
+            inputValidator: (value) => {
+                if(!value){
+                    return ('Por favor ingrese la descripción del motivo');
+                }
+                if(value.length<15){
+                    return ('La descripción del motivo tiene que terner al menos de 15 caracteres');
+                }              
+            }                   
+        }).then(result => {
+            if(result.isConfirmed){
+                let jsonParams = JSON.stringify({
+                    motivo: result.value,
+                    codigoAccion
+                });
+                this.mS.getData('post', 'Solicitud/Post/' + jsonParams, null, true).then(response => {
+                    console.log(response)
+                    if(response.code==="0"){
+                        this.form.sweetAlert('warning', response.message)
+                    }
+                    if(response.code==="1"){
+                        this.form.sweetAlert('success', response.message, response.titleSms, 1000);
+                    }
+                }).catch(error => {
+                    throw error
+                })
+            }
+        })
+    }
+
+
+    updateRequestKey(codigoAccion){
+        this.mS.getData('put', 'Solicitud/Put/' + JSON.stringify({codigoAccion, typeOperation: 2}), null, true).then(response =>{
+            console.log(response)
+        })
+    }
 }
 
 

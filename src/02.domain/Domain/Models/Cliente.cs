@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Domain.Models
+﻿namespace Domain.Models
 {
     public class Cliente
     {
@@ -29,6 +23,7 @@ namespace Domain.Models
         public bool estado { get; set; }
         public bool consumidorFinal { get; set; }
         public string nota { get; set; }
+        public bool validationSri { get; set; }
 
     }
 }

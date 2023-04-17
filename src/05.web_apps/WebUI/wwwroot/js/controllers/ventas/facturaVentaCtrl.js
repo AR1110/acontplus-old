@@ -25,10 +25,6 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
 
    
     const TIPO_DOC_FV = _commonSvc.tipoDoc['FV'];
-    const PERMISSION_KEY_ACTIONS = {
-        E: 'E',
-        A: 'A',
-    }
 
     $scope.dataSearch = {
         pageIndex: 1,
@@ -111,10 +107,6 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
             let codEstab = $scope.establecimientos.length>0? $scope.establecimientos[0].codEstab: 0;            
             $scope.dataSearch.codEstab = codEstab;            
             $scope.getFacturas();            
-        })
-
-        _commonSvc.getDataFormVenta().then(result => {            
-            $scope.jsonPermission = JSON.parse(result[9][0].jsonPermission)            
         })
     }
     $scope.initiload();
@@ -272,88 +264,8 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
         })
     }
 
-
-    $scope.requestAuthorizationKey = async (codigoAccion)=>{
-        let textMotivo = codigoAccion==='E'?'Editar': 'Anular';
-        Swal.fire({
-            title: "Solicitud de Clave de Autorización",
-            text: `Por favor, proporcione una explicación del motivo por el cual desea ${textMotivo} el documento!`,
-            input: 'text',
-            inputAttributes: {
-              autocapitalize: 'off'
-            },
-            showCancelButton: true,                                                 
-            inputPlaceholder: "Explicación del motivo",
-            confirmButtonText: "Confirmar",
-            cancelButtonText: "Cancelar",
-            allowOutsideClick: false,
-            inputValidator: (value) => {
-                if(!value){
-                    return ('Por favor ingrese la descripción del motivo');
-                }
-                if(value.length<15){
-                    return ('La descripción del motivo tiene que terner al menos de 15 caracteres');
-                }              
-            }                   
-        }).then(result => {
-            if(result.isConfirmed){
-                let jsonParams = JSON.stringify({
-                    motivo: result.value,
-                    codigoAccion
-                });
-                _mS.getData('post', 'Solicitud/Post/' + jsonParams, null, true).then(response => {
-                    console.log(response)
-                    if(response.code==="0"){
-                        _fS.sweetAlert('warning', response.message)
-                    }
-                    if(response.code==="1"){
-                        _fS.sweetAlert('success', response.message, response.titleSms, 1000);
-                    }
-                })
-            }
-        })
-    }
-
-
-    $scope.checkHasPermissionToEdit= (item)=>{
-        try {
-            let {additional} = $scope.jsonPermission;
-             
-            if(typeof $scope.jsonPermission ==='object' && !additional.requestAuthorizationKey.requestKey) {
-                $scope.openModalInvoiceEdit(item);
-                return
-            }
-
-            let jsonParams = {
-                typeList: 2,
-                codigoAccion: 'E'
-            }
-            
-            showLoader();
-            _mS.getData('get', 'Solicitud/Check/' + JSON.stringify(jsonParams), null, true).then(response => {
-                if(response.code==="0"){                   
-                    hideLoader();
-                    _fS.sweetAlert('warning', response.message, response.titleSms)
-                }
-                if(response.code==="1"){
-                    hideLoader();
-                    $scope.openModalInvoiceEdit(item);
-                }
-                if(response.code==="2"){
-                    hideLoader();
-                    $scope.requestAuthorizationKey('E');
-                }
-            })   
-            
-        } catch (error) {
-            hideLoader();
-            console.log(error)            
-        }      
-    }
-
     $scope.openModalInvoiceEdit = async(item)=>{
         try {
-                       
             showLoader();
             let {MODAL_FILE_CTRL, MODAL_EDITAR} = _nombreModalConst.factura_venta;
             let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_EDITAR['controller']];
@@ -376,15 +288,6 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
             }).result.then(result=>{
                 if(typeof result==='object' && result.isUpdate){
                     $scope.getFacturas();
-
-
-                    let {additional} = $scope.jsonPermission;
-                    if(typeof $scope.jsonPermission ==='object' && additional.requestAuthorizationKey.requestKey) {                        
-                        _mS.getData('put', 'Solicitud/Put/' + JSON.stringify({codigoAccion: 'E', typeOperation: 2}), null, true).then(response =>{
-                            console.log(response)
-                        })
-                    }
-        
                 }
             })
         } catch (error) {
@@ -455,42 +358,6 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
 
     $scope.askToDelete = async(item)=>{
         try {
-            let isDelete = true;
-            
-            if(item.anulada){
-                _fS.sweetAlert('warning', 'El documento ya se encuentra anulada');
-                return
-            }
-           
-            let {additional} = $scope.jsonPermission;
-             
-            if(typeof $scope.jsonPermission ==='object' && additional.requestAuthorizationKey.requestKey) {
-                let jsonParams = {
-                    typeList: 2,
-                    codigoAccion: PERMISSION_KEY_ACTIONS.A
-                }
-                
-                showLoader();
-                await _mS.getData('get', 'Solicitud/Check/' + JSON.stringify(jsonParams), null, true).then(response=>{
-                    if(response.code==="0"){                   
-                        hideLoader();
-                        _fS.sweetAlert('warning', response.message, response.titleSms);
-                        isDelete = false;
-                    }
-                    if(response.code==="1"){
-                        hideLoader();
-                        isDelete = true;
-                    }
-                    if(response.code==="2"){
-                        hideLoader();
-                        $scope.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.A);
-                        isDelete = false;
-                    }
-                })
-            }
-
-            if(!isDelete) return 
-
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
                   confirmButton: 'btn btn-success',
@@ -510,25 +377,31 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
             })
     
             if(isConfirmed){
-                showLoader();
-                _mS.getData('delete', '/FacturaVenta/Delete?id=' + item.idFactura).then(response=> {
-                    if (response.code === "0") {
-                        hideLoader();
-                        _fS.sweetAlert('warning', response.message, response.titleSms);
+                Swal.fire({
+                    title: `<small>Espere</small>`,
+                    html: 'Anulando...',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                        _mS.getData('delete', '/FacturaVenta/Delete?id=' + item.idFactura).then(response=> {
+                            
+                            if (response.code === "0") {
+                                _fS.sweetAlert('warning', response.message, response.titleSms);
+                            }
+                            if (response.code === "1") {
+                                _fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                                $scope.getFacturas();
+                            }
+                        })
                     }
-                    if (response.code === "1") {
-                        hideLoader();
-                        _fS.sweetAlert('success', response.message, response.titleSms, 1000);
-                        $scope.getFacturas();
-                    }
-                }).catch(error => {
-                    hideLoader();
-                    console.log(error);
                 })
-                   
             }
         } catch (error) {
+            Swal.close();
             console.log(error)
+        }finally{
+
         }
 
     }
@@ -652,7 +525,8 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
 
             //Focus New Invoice
             btnNewInvoice.focus();
-            $scope.isRegister = false;
+            $scope.isRegister = false;            
+            $scope.isPrintDocument = false;
         })
     }  
 

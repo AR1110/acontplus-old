@@ -389,7 +389,7 @@
 
 
         $scope.isRoleMain = function(){
-            return ['RT'].includes($scope.role)
+            return ['RT', 'ADM', 'BS', 'ALT', 'ADMFREE', 'SU'].includes($scope.role)
         }
 
         
@@ -413,6 +413,7 @@
         }
         
         $scope.getUserPermissions = ()=>{
+           
             let jsonParams = JSON.stringify({
                 idUsuarioRol: $scope.dataEntidadRol.idUsuarioRol
             })
@@ -423,18 +424,21 @@
                     console.log(response)
                 }
                 if(response.code==='1'){
-                    let [dataSalePermissions, dataArticlePermissions] = JSON.parse(response.payload);
+                    let [dataSalePermissions, dataArticlePermissions, dataCajaPermissions] = JSON.parse(response.payload);
+                   
                     $scope.dataSalePermissions = dataSalePermissions;
                     $scope.dataArticlePermissions = dataArticlePermissions;
+                    $scope.dataCajaPermissions = dataCajaPermissions;
                     
                     // const jsonStringWithoutBrackets = JSON.parse(jsonString.replaceAll('[', '').replaceAll(']', ''));
                     // const obj = JSON.parse(jsonStringWithoutBrackets.jsonPermission);                    
                    
                     $scope.salePermissions = JSON.parse($scope.dataSalePermissions.jsonPermission);
                     $scope.articlePermissions = JSON.parse($scope.dataArticlePermissions.jsonPermission)                                
-
+                    $scope.cajaPermissions = JSON.parse($scope.dataCajaPermissions.jsonPermission)
                     console.log($scope.salePermissions)
                     console.log($scope.articlePermissions)
+                    console.log($scope.cajaPermissions)
                     hideLoader();
                 }
             })
@@ -453,8 +457,7 @@
                     tS.toastr('warning', response.message)
                 }
                 if(response.code==="1"){
-                    $scope.authorizationKeyRequests = JSON.parse(response.payload);
-                    console.log($scope.authorizationKeyRequests)
+                    $scope.authorizationKeyRequests = JSON.parse(response.payload);                    
                 }
             })
         }
@@ -586,6 +589,10 @@
                     {
                         idUserPermission: $scope.dataArticlePermissions.idUserPermission,
                         jsonPermission: $scope.articlePermissions
+                    },
+                    {
+                        idUserPermission: $scope.dataCajaPermissions.idUserPermission,
+                        jsonPermission: $scope.cajaPermissions
                     }
                 ]);
 
