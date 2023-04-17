@@ -77,42 +77,27 @@
             <div class="form-group">
                 <label>Cliente: <span class="text-danger">*</span></label>
                 <div class="input-group">
+                    <input type="text" class="form-control border-select" ng-model="cliente.nombreCliente" customer-search-custom on-select="selectedCustomer(item)" placeholder="Ingrese C.I o Nombre Comercial">
 
-                    <input type="text" id="clienteSearchInvoice" 
-                        autocomplete="off"                            
-                        name="clienteSearchInvoice"
-                        class="form-control border-select"
-                        placeholder="Ingrese C.I o Nombre Fiscal"
-                        ng-model="cliente.nombreFiscal"            
-                        ng-keyup="onKeyupSearchCliente()"
-                        uib-typeahead="item as item.nombreFiscal for item in clienteSearchDynamic($viewValue)"
-                        typeahead-loading="clienteSearch.loading"
-                        typeahead-no-results="clienteSearch.noResults"
-                        typeahead-template-url="autocompleteClienteTemplate.html"
-                        typeahead-min-length="1"
-                        typeahead-editable="false"
-                        typeahead-on-select="onSelectedClienteChange($item)"  onClick="select();" />
-
-                        <script type="text/ng-template" id="autocompleteClienteTemplate.html">
-                            <div class="autocomplete-suggestion-uib-typeahead">
-                                <span class="item-title">
-                                    <b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}
-                                </span>
-                            </div>
-                        </script>
+                    <script type="text/ng-template" id="autocompleteClienteTemplate.html">
+                        <div class="autocomplete-suggestion-uib-typeahead">
+                            <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
+                        </div>
+                    </script>
 
                     <div class="input-group-append">
 
-                        <button type="button" class="btn btn-outline-secondary btn-xs border-select" id="btnNewCustomerDocument" ng-click="openModalClienteNew()">
+                        <button type="button" class="btn btn-outline-secondary btn-xs border-select" id="btnNewCustomerDocument" customer-modal-new get-data-customer="selectedCustomer(result)">
                             <i class="fa fa-plus fa-xs"></i>
                         </button>
 
-                        <button type="button" class="btn btn-outline-secondary btn-xs" ng-if="cliente.idCliente>0" ng-click="openModalClienteUpdate()" tabindex="-1">
+                        @* <button type="button" class="btn btn-outline-secondary btn-xs border-select" id="btnNewCustomerDocument" ng-click="openModalClienteNew()">
+                        </button> *@
+
+                        <button type="button" class="btn btn-outline-secondary btn-xs" ng-if="cliente.idCliente>0" customer-modal-edit params ="cliente" tabindex="-1">
                             <i class="fa fa-edit fa-xs"></i>
                         </button>
-                        <button type="button" class="btn btn-outline-secondary btn-xs"
-                                ng-click="openModalClienteLista()"
-                                tabindex="-1">
+                        <button type="button" class="btn btn-outline-secondary btn-xs" customer-modal-list get-data-customer="selectedCustomer(result)" tabindex="-1" >
                             <i class="fa fa-search fa-xs"></i>
                         </button>
 
@@ -154,7 +139,7 @@
         <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
             <div class="form-group">
                 <label for="bodegas">Bodega</label>
-                <select name="bodegas" id="bodegas" class="form-control border-select" ng-model="idBodega" ng-change="onChangeBodega()" tabindex="-1">
+                <select name="bodegas" id="bodegas" class="form-control border-select" ng-model="data.idBodega" ng-change="onChangeBodega()" tabindex="-1">
                     <option ng-value="item.idBodega" ng-repeat="item in bodegas">
                         {{item.descripcion}}
                     </option>
@@ -170,7 +155,7 @@
                         <i class="fas fa-info-circle fa-xs"></i>
                     </span>
                 </label>
-                <select id="tarifas" class="form-control border-select" ng-model="idTarifa" ng-change="askToChangeTariga()" tabindex="-1" ng-disabled="!ventaComprobantePermission.tarifa.update">
+                <select id="tarifas" class="form-control border-select" ng-model="data.idTarifa" ng-change="askToChangeTariga()" tabindex="-1" ng-disabled="!ventaComprobantePermission.tarifa.update">
                     <option ng-value="item.idTarifa" ng-repeat="item in tarifas">
                         {{item.descripcion}}
                     </option>
