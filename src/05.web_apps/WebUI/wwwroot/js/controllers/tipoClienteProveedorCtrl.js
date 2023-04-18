@@ -4,12 +4,12 @@ tipoClienteProveedorCtrl.$inject = ['$http', '$scope', 'formulario'];
 
 function tipoClienteProveedorCtrl($http, $scope, form) {
     'use strict';
-    let accion = JSON.parse(localStorage.getItem("accion"));
-    if(accion===null){
-        location.href = "/Home/Index";
-    }else{
-        $scope.accion = accion[0];
-    }
+    // let accion = JSON.parse(localStorage.getItem("accion"));
+    // if(accion===null){
+    //     location.href = "/Home/Index";
+    // }else{
+    //     $scope.accion = accion[0];
+    // }
     
     $scope.data = {};
     $scope.tipoPersona = {};

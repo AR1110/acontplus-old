@@ -13,12 +13,12 @@ retencionVentaCtrl.$inject = [
 ];
 
 function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombreModal, toast, form, decodeToken) {
-    let accion = JSON.parse(localStorage.getItem("accion"));
-    if (accion === null) {
-        location.href = "/Home/Index";
-    } else {
-        $scope.accion = accion[0];
-    }
+    // let accion = JSON.parse(localStorage.getItem("accion"));
+    // if (accion === null) {
+    //     location.href = "/Home/Index";
+    // } else {
+    //     $scope.accion = accion[0];
+    // }
 
     let idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
     const TIPO_DOC = _commonSvc.tipoDoc["RV"];

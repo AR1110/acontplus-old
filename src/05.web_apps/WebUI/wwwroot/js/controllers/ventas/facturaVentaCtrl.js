@@ -15,13 +15,13 @@ facturaVentaCtrl.$inject = [
 ]
 
 function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modalSvc, _nombreModalConst, _tS, _fS, decodeToken){
-    let accion = JSON.parse(localStorage.getItem("accion"));
-    if (accion === null) {
-        location.href = "/Home/Index";
-        return
-    } else {
-        $scope.accion = accion[0]; 
-    }
+    // let accion = JSON.parse(localStorage.getItem("accion"));
+    // if (accion === null) {
+    //     location.href = "/Home/Index";
+    //     return
+    // } else {
+    //     $scope.accion = accion[0]; 
+    // }
 
    
     const TIPO_DOC_FV = _commonSvc.tipoDoc['FV'];

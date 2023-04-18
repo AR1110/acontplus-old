@@ -6,13 +6,13 @@ retencionCompraCtrl.$inject = ['$scope', '$filter', 'mainService', 'commonServic
 
 function retencionCompraCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form, _tS, decodeToken){
 
-    let accion = JSON.parse(localStorage.getItem("accion"));  
-    if(accion===null){
-        location.href ="/Home/Index";
-        return
-    }else{
-        $scope.accion = accion[0];
-    }
+    // let accion = JSON.parse(localStorage.getItem("accion"));  
+    // if(accion===null){
+    //     location.href ="/Home/Index";
+    //     return
+    // }else{
+    //     $scope.accion = accion[0];
+    // }
 
     const TIPO_DOC = _commonSvc.tipoDoc['RC'], VERSION_COMPROBANTE = '1.0.0'
     let idUsuarioRol = parseInt(decodeToken.idUsuarioRol)

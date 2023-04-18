@@ -6,13 +6,13 @@ proformaCtrl.$inject = ['$scope', '$filter',  'mainService', 'commonService', 'm
 
 function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS){
 
-    let accion = JSON.parse(localStorage.getItem("accion"));
-    if (accion === null) {
-        location.href = "/Home/Index";
-        return
-    } else { 
-        $scope.accion = accion[0];
-    }
+    // let accion = JSON.parse(localStorage.getItem("accion"));
+    // if (accion === null) {
+    //     location.href = "/Home/Index";
+    //     return
+    // } else { 
+    //     $scope.accion = accion[0];
+    // }
 
     const TIPO_DOC_PR = _commonSvc.tipoDoc['PR'];
     const PERMISSION_KEY_ACTIONS = {

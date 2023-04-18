@@ -1,6 +1,4 @@
-﻿
-
-const swalOffline = () => {
+﻿const swalOffline = () => {
     Swal.fire({
         html: `<small>Esperando la conexión...</small>`,
         imageUrl: "/assets/images/offline.webp",
@@ -74,6 +72,8 @@ function confirmBootstrap($log) {
 confirmBootstrap.$inject = ['$log']
 
 app.run(confirmBootstrap)
+
+
 
 /**************************************************************************
    * Make environment available in Angular
@@ -200,7 +200,7 @@ app.factory('authInterceptorService', function ($q, $localStorage, jwtHelper) {
             config.headers.Authorization = 'Bearer ' + authData.token
             let decodedJwt = jwtHelper.decodeToken(authData.token)
             //console.log(decodedJwt)
-            const expiration = Number(decodedJwt?.exp)
+            const expiration = Number(decodedJwt.exp)
             let newDate = moment.tz(new Date(), "America/Guayaquil")
             //console.log(newDate)
             const currentTime = Math.floor(new Date(newDate) / 1000); // convert to seconds

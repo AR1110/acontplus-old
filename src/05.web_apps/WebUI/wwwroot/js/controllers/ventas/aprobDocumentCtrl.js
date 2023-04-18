@@ -5,14 +5,14 @@ aprobComprobanteCtrl.$inject = ['$scope', 'mainService', 'commonService', 'modal
 
 function aprobComprobanteCtrl($scope, mS, commonSvc, _modalSvc, _nombreModalConst, _form, _tS){
     
-    let accion = JSON.parse(localStorage.getItem("accion")); 
+    // let accion = JSON.parse(localStorage.getItem("accion")); 
     
-    if (accion === null) {
-        location.href = "/Home/Index";
-        return
-    } else {
-        $scope.accion = accion[0];
-    }
+    // if (accion === null) {
+    //     location.href = "/Home/Index";
+    //     return
+    // } else {
+    //     $scope.accion = accion[0];
+    // }
     
     $scope.dataSearch = {
         pageIndex: 1,

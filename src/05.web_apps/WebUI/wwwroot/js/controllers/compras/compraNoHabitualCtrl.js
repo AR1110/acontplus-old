@@ -6,7 +6,7 @@ compraNoHabitualCtrl.$inject = ['$scope', 'commonService', 'mainService', 'toast
 
 
 function compraNoHabitualCtrl($scope, commonSvc, mS, tS, modalSvc, nombreModal, _fS, _tS){
-    
+   
     //Variables Generales
     const {MODAL_FILE_PATH} = nombreModal.compra_no_habitual; 
     const {MODAL_NUEVO, MODAL_EDITAR, MODAL_DETALLE} =nombreModal.compra_no_habitual;
@@ -75,7 +75,7 @@ function compraNoHabitualCtrl($scope, commonSvc, mS, tS, modalSvc, nombreModal, 
             };
         }
 
-        console.log($scope.dataSearch.byEstado)
+        
         if ($scope.dataSearch.checkBoxEstado) {
             if ($scope.dataSearch.byEstado===null || $scope.dataSearch.byEstado===undefined) {
                 _tS.toastr('warning', 'Por favor seleccione el Estado');
@@ -107,7 +107,7 @@ function compraNoHabitualCtrl($scope, commonSvc, mS, tS, modalSvc, nombreModal, 
 
     //Formulario Nuevo
     $scope.openModalNew = async ()=>{
-        console.log(MODAL_FILE_PATH)
+        
         let modalParms = {
             controller: (await import('./../../' + MODAL_FILE_PATH))[MODAL_NUEVO['controller']],
             template:  MODAL_NUEVO['template'],
@@ -182,6 +182,9 @@ function compraNoHabitualCtrl($scope, commonSvc, mS, tS, modalSvc, nombreModal, 
                     $scope.documentoIngreso = JSON.parse(response.payload)[0] || []; //
                     hideLoader();
                 }
+            }).catch(error=>{
+                hideLoader();
+                console.log(error)
             })
 
         } catch (error) {

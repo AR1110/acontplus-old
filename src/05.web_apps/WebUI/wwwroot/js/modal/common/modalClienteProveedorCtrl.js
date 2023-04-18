@@ -127,7 +127,7 @@ export class ModalBaseCtrl {
             this._mS.getData('get', 'Consultas/GetRucSRI?Ruc=' + this.data.numeroIdentificacion, null, true).then(result => {                
                 hideLoader();                
                 if(result.numeroRuc) {
-                    console.log(result);
+                    
                     let {razonSocial, establecimientos, tipoContribuyente} = result;
                     this.data.nombreComercial = razonSocial;
                     this.data.nombreFiscal = razonSocial;
@@ -725,8 +725,7 @@ export class ModalClienteNuevoCtrl extends ModalBaseCliente{
         
             if(this._params.typeModule==='M_CLIENTE_LISTA'){
 
-                let text = await navigator.clipboard.readText();
-                console.log(text);
+                let text = await navigator.clipboard.readText();                
                 
             }
             

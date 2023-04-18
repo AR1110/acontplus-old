@@ -6,13 +6,13 @@ facturaCompraCtrl.$inject = ['$scope', '$filter', 'mainService', 'commonService'
 
 function facturaCompraCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form){
 
-    let accion = JSON.parse(localStorage.getItem("accion"));  
-    if(accion===null){
-        location.href ="/Home/Index";
-        return
-    }else{
-        $scope.accion = accion[0];
-    }
+    // let accion = JSON.parse(localStorage.getItem("accion"));  
+    // if(accion===null){
+    //     location.href ="/Home/Index";
+    //     return
+    // }else{
+    //     $scope.accion = accion[0];
+    // }
 
     const TIPO_DOC = _commonSvc.tipoDoc['FC'];
 

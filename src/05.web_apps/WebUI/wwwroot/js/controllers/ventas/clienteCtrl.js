@@ -4,12 +4,12 @@ clienteCtrl.$inject=['$scope','mainService', 'modalService', 'nombreModal', 'toa
 
 function clienteCtrl($scope, _mS, _modalSvc, _nombreModal, toast){
     'use strict';
-    let accion = JSON.parse(localStorage.getItem("accion"));
-    if(accion===null){
-        location.href = "/Home/Index";
-    }else{
-        $scope.accion = accion[0];
-    }   
+    // let accion = JSON.parse(localStorage.getItem("accion"));
+    // if(accion===null){
+    //     location.href = "/Home/Index";
+    // }else{
+    //     $scope.accion = accion[0];
+    // }   
 
 
     const appUrl="/Cliente/";  

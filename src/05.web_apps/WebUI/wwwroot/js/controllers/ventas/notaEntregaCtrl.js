@@ -7,14 +7,14 @@ notaEntregaCtrl.$inject =['$scope', '$filter', 'mainService', 'commonService', '
 function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS){
     'use strict';
 
-    let accion = JSON.parse(localStorage.getItem("accion"));
+    // let accion = JSON.parse(localStorage.getItem("accion"));
 
-    if (accion === null) {
-        location.href = "/Home/Index";
-        return
-    } else {
-        $scope.accion = accion[0];
-    }
+    // if (accion === null) {
+    //     location.href = "/Home/Index";
+    //     return
+    // } else {
+    //     $scope.accion = accion[0];
+    // }
 
     const TIPO_DOC_NE = _commonSvc.tipoDoc['NE'];
     const PERMISSION_KEY_ACTIONS = {
