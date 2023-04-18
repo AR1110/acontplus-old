@@ -525,8 +525,8 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
 
             //Focus New Invoice
             btnNewInvoice.focus();
-            $scope.isRegister = false;            
-            $scope.isPrintDocument = false;
+            $scope.isRegister = null;            
+            $scope.isPrintDocument = null;
         })
     }  
 

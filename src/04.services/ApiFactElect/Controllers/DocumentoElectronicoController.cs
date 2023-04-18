@@ -52,7 +52,9 @@ namespace ApiFactElect.Controllers
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+
                 await _db.SPExecute("FactElect.Doc_Elect_Get_Data_Form");
+                _db.AddDynamicParam("idUsuarioRol ", idUsuarioRol);
                 _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)

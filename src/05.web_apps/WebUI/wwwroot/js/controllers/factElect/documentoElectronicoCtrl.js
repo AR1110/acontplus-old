@@ -17,6 +17,12 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
     $scope.selectedComprobantes = [];
     $scope.isMobile = true;
 
+
+    $scope.establecimientos = [];
+    $scope.puntosEmision = [];
+    $scope.tempPuntosEmision = [];
+    $scope.codEstab_Asig = null;
+
     //DETECT MOBILE DEVICE
     $scope.detectMobilDevice = function () {
         if (navigator.userAgent.match(/Android/i)
@@ -44,8 +50,50 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
 
     //Filtro 
     $scope.dataSearch = {};
-    $scope.meses = _fS.meses();
-    $scope.dataSearch.mes = new Date().getMonth() + 1;
+    $scope.dataSearch.isCurrentDate = false;
+    $scope.dataSearch.checkBoxDate = true;
+    // $scope.meses = _fS.meses();
+    // $scope.dataSearch.mes = new Date().getMonth() + 1;
+
+    let thisMoment = moment()
+    // let endOfMonth = moment(thisMoment).endOf('month')
+    // let startOfMonth = moment(thisMoment).startOf('month')
+    
+    //https://www.daterangepicker.com/
+    $scope.dateRangePicker = {
+        date: { startDate: thisMoment, endDate: thisMoment },
+        picker: null,
+        options: {
+            pickerClasses: 'custom-display', //angular-daterangepicker extra
+            buttonClasses: 'btn',
+            applyButtonClasses: 'btn-success',
+            cancelButtonClasses: 'btn-danger',
+            locale: {
+                applyLabel: "Aplicar",
+                cancelLabel: 'Cancelar',
+                customRangeLabel: 'Rango Personalizado',
+                separator: ' - ',
+                format: "YYYY-MM-DD", //will give you 2017-01-06
+                //format: "D-MMM-YY", //will give you 6-Jan-17
+                //format: "D-MMMM-YY", //will give you 6-January-17
+            },
+            ranges:  {
+                'Hoy': [moment(), moment()],
+                'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
+                'Ultimos 15 Días': [moment().subtract(14, 'days'), moment()],
+                'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
+                'Este Mes': [moment().startOf('month'), moment().endOf('month')],              
+            },
+            eventHandlers: {
+                'apply.daterangepicker': function (event, picker) {
+                    $scope.getComprobantes()
+                    console.log('applied')
+                }
+            }
+        }
+    };
+
 
     $scope.getComprobantes = () => {
         try {
@@ -54,17 +102,23 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
 
             let data = {}
 
-            if ($scope.dataSearch.checkBoxDate || $scope.checkBoxEstadoServicio || $scope.dataSearch.checkBoxComprobante) {
-                $scope.dataSearch.isCurrentDate = false;
-            } else {
-                $scope.dataSearch.isCurrentDate = true;
-            }
+
+            // if ($scope.dataSearch.checkBoxDate || $scope.checkBoxEstadoServicio || $scope.dataSearch.checkBoxComprobante) {
+            //     $scope.dataSearch.isCurrentDate = false;
+            // } else {
+            //     $scope.dataSearch.isCurrentDate = true;
+            // }
 
             if (tipo > 0) {
                 data = { tipo }
             } else {
-                data = $scope.dataSearch
+                data = $scope.dataSearch;
+                
+                data.dateStart = $scope.dateRangePicker.date.startDate
+                data.dateEnd = $scope.dateRangePicker.date.endDate
             }
+
+            console.log(data)
 
             $scope.comprobantes = [];
             _mS.getData('get', 'DocumentoElectronico/' + JSON.stringify(data), null, true).then(
@@ -109,8 +163,10 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
 
         _mS.getData('get', 'DocumentoElectronico/GetDataForm', null, true).then(response => {
             const results = JSON.parse(response.payload) || [];
-            console.log(results);
-            $scope.estadoServicios = results[0]
+            console.log(results);            
+            $scope.estadoServicios = results[0];
+            $scope.establecimientos = results[1];
+            $scope.tempPuntosEmision = results[2];            
         })
     }
     $scope.initiload()
@@ -119,59 +175,108 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
         $("#modalFiltroComprobante").modal('show');
     }
 
-    $scope.onChangeFechaFiltro = () => {
-        $scope.dataSearch.mes = new Date().getMonth() + 1;
-        $scope.getFechaInicioFinFilter()
+    $scope.onchangeEstablecimiento = () => {
+        try {
+            $scope.comprobantes = []
+            $scope.dataSearch.checKboxPuntoEmision = false;
+            $scope.dataSearch.ptoEmi = null;
+            
+            if($scope.codEstab_Asig){
+                $scope.dataSearch.checkBoxEstab = true;
+
+                let dataEstab = $scope.establecimientos.find(item=>item.codEstab_Asig===$scope.codEstab_Asig);            
+                $scope.dataSearch.estab = dataEstab.estab;            
+                $scope.puntosEmision = $scope.tempPuntosEmision.filter(item=>item.codEstab_Asig===$scope.codEstab_Asig);
+                
+            }else{
+                $scope.dataSearch.checkBoxEstab = false;
+            }
+            $scope.getComprobantes();        
+        } catch (error) {
+            console.log(error);
+        }
     }
+
+
+    $scope.onchangePuntoEmision = ()=>{
+        if($scope.dataSearch.ptoEmi){
+            
+            $scope.dataSearch.checKboxPuntoEmision = true;
+        }else{
+            $scope.dataSearch.checKboxPuntoEmision = false;
+        }
+        $scope.getComprobantes();
+    }
+
+    $scope.onSelectTipoDoc = ()=>{
+        $scope.comprobantes = []
+        if($scope.dataSearch.codDoc){
+            $scope.dataSearch.checkBoxComprobante = true;
+        }else{
+            $scope.dataSearch.checkBoxComprobante = false;
+        }
+        $scope.getComprobantes();
+    }
+
+    $scope.onChangeEstado = ()=>{
+        if([null, undefined, ""].includes($scope.dataSearch.codEstado)){
+            $scope.dataSearch.checkBoxEstadoServicio = false;
+        }else{
+            $scope.dataSearch.checkBoxEstadoServicio = true;
+        }
+        $scope.getComprobantes();
+    }
+
+    // $scope.onChangeFechaFiltro = () => {
+    //     $scope.dataSearch.mes = new Date().getMonth() + 1;
+    //     $scope.getFechaInicioFinFilter()
+    // }
 
     //Fecha Inicial y Final dependiendo el Mes que seleccione el usuario en el Filtro AVanzado
-    $scope.getFechaInicioFinFilter = () => {
-        let { fechaInicio, fechaFin } = _fS.getFechaInicioFinFilter($scope.dataSearch.mes);
-        $scope.dataSearch.dateStart = fechaInicio;
-        $scope.dataSearch.dateEnd = fechaFin;
-    }
-
-    $scope.onSelectTipoDoc = () => {
-        $scope.comprobantes = []
-    }
-
-    $scope.searchComprobante = () => {
-
-        if ($scope.dataSearch.checkBoxComprobante) {
-            if (!$scope.dataSearch.codDoc) {
-                _tS.toastr('warning', 'Seleccione el Tipo Documento');
-                return
-            }
-        }
-
-        if ($scope.checkBoxEstadoServicio) {
-            if (!dataSearch.codEstado) {
-                _tS.toastr('warning', 'Seleccione el Estado Servicio');
-                return
-            }
-        }
-
-        if ($scope.dataSearch.checkBoxDate) {
-            if (!$scope.dataSearch.dateStart) {
-                _tS.toastr('warning', 'Seleccione Fecha Inicio');
-                return
-            }
-
-            if (!$scope.dataSearch.dateEnd) {
-                _tS.toastr('warning', 'Seleccione Fecha Fin');
-                return
-            }
-
-            if ($scope.dataSearch.dateEnd < $scope.dataSearch.dateStart) {
-                _tS.toastr('warning', 'Fecha Fin no puede se menor a Fecha Inicio');
-                return
-            }
-        }
+    // $scope.getFechaInicioFinFilter = () => {
+    //     let { fechaInicio, fechaFin } = _fS.getFechaInicioFinFilter($scope.dataSearch.mes);
+    //     $scope.dataSearch.dateStart = fechaInicio;
+    //     $scope.dataSearch.dateEnd = fechaFin;
+    // }
 
 
-        $scope.getComprobantes();
-        $("#modalFiltroComprobante").modal('hide');
-    }
+    // $scope.searchComprobante = () => {
+
+    //     if ($scope.dataSearch.checkBoxComprobante) {
+    //         if (!$scope.dataSearch.codDoc) {
+    //             _tS.toastr('warning', 'Seleccione el Tipo Documento');
+    //             return
+    //         }
+    //     }
+
+    //     if ($scope.checkBoxEstadoServicio) {
+    //         if (!dataSearch.codEstado) {
+    //             _tS.toastr('warning', 'Seleccione el Estado Servicio');
+    //             return
+    //         }
+    //     }
+
+    //     if ($scope.dataSearch.checkBoxDate) {
+    //         if (!$scope.dataSearch.dateStart) {
+    //             _tS.toastr('warning', 'Seleccione Fecha Inicio');
+    //             return
+    //         }
+
+    //         if (!$scope.dataSearch.dateEnd) {
+    //             _tS.toastr('warning', 'Seleccione Fecha Fin');
+    //             return
+    //         }
+
+    //         if ($scope.dataSearch.dateEnd < $scope.dataSearch.dateStart) {
+    //             _tS.toastr('warning', 'Fecha Fin no puede se menor a Fecha Inicio');
+    //             return
+    //         }
+    //     }
+
+
+    //     $scope.getComprobantes();
+    //     $("#modalFiltroComprobante").modal('hide');
+    // }
 
 
     $scope.onSelectComprobante = (item) => {

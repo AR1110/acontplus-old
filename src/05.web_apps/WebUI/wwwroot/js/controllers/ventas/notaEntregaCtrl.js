@@ -512,18 +512,21 @@ function notaEntregaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreMod
         })
 
         $modalRef.result.then(result=>{
-            btnNewDocument.focus();
-
-            if($scope.isPrintDocument==1){
-                $scope.getNotaEntregas();
-                _commonSvc.getPrinter(JSON.stringify($scope.parametersPrint))                                
-            }
-
             if(typeof result =='object' || $scope.isRegister) {
                 $scope.getNotaEntregas();
             }
+
+            //Cuando el documento es Nuevo o Duplicado 
+            if($scope.isPrintDocument==1){
+                $scope.getNotaEntregas();            
+                _commonSvc.getPrinter(JSON.stringify($scope.parametersPrint)) 
+                $scope.isPrintDocument= null;
+            }
+
+            btnNewDocument.focus();
             $scope.isPrintDocument = null;
-            $scope.isRegister = false;
+            $scope.isRegister = null;
+            $scope.parametersPrint = {}
         })
     }  
 
