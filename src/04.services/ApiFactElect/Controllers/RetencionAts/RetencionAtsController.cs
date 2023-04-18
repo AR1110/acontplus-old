@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ApiFactElect.Controllers.RetencionAts
 {
-    [Authorize]
+    
     [Route("api/[controller]")]
     [ApiController]
     public class RetencionAtsController : ControllerBase

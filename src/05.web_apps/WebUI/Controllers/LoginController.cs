@@ -19,7 +19,6 @@ namespace WebUI.Controllers
     {
 
         private readonly IConfiguration _config;
-        private readonly string _connectionStrings = string.Empty;
         GenericResponse _gr = new();
         private LoginDao _l;
 
@@ -61,8 +60,14 @@ namespace WebUI.Controllers
 
                     var urlService = _config.GetSection("UrlApis").GetSection("ApiGateway").Value;
                     var _authService = await new ApiServer(urlService).PostAsync<AuthResponse>("api/account", loginDataDto);
-                    loginData.jwtToken = _authService.jwtToken;
+                   
 
+                    if (_authService.jwtToken == null)
+                    {
+                        _gr.Create(code: "0", message: "Error al iniciar session");
+                        return Ok(_gr);
+                    }
+                    loginData.jwtToken = _authService.jwtToken;
                     //for more information review https://docs.microsoft.com/en-us/aspnet/core/security/authentication/cookie?view=aspnetcore-6.0
 
                     var claims = new List<Claim>

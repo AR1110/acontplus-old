@@ -52,7 +52,7 @@ namespace ApiRecepcion
 
             app.UseMiddleware<JWTMiddleware>();
 
-            app.MapControllers();
+            app.MapControllers().RequireAuthorization();
 
             app.Run();
         }

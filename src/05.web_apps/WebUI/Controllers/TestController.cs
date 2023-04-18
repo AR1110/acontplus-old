@@ -1,9 +1,7 @@
-﻿using DataAccess;
-using Helpers;
+﻿using Helpers;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using System.Net.Http.Headers;
-using WebUI.ApiClient;
+using System.Security.Cryptography;
 
 namespace WebUI.Controllers
 {
@@ -55,6 +53,16 @@ namespace WebUI.Controllers
 
             Console.WriteLine(await response.Content.ReadAsStringAsync());
             return Ok(encrypted);
+        }
+        [HttpPost]
+        public IActionResult GenerateRandomKey()
+        {
+            var key = new byte[32];
+            using (var generator = RandomNumberGenerator.Create())
+            {
+                generator.GetBytes(key);
+            }
+            return Ok(Convert.ToBase64String(key));
         }
         //public IActionResult GetPrinter()
         //{

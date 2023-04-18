@@ -15,7 +15,7 @@ namespace ApiInventory.Controllers
         {
             _configuration = configuration;
         }
-        [Authorize]
+        
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {

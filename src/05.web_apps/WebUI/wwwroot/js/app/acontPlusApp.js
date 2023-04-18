@@ -193,12 +193,22 @@ app.factory('authInterceptorService', function ($q, $localStorage, jwtHelper) {
         config.headers = config.headers || {}
         let authData = $localStorage.currentUser
         if (authData) {
+            if (!authData.token) {
+                alertEndSession()
+                return
+            }
             config.headers.Authorization = 'Bearer ' + authData.token
             let decodedJwt = jwtHelper.decodeToken(authData.token)
             //console.log(decodedJwt)
             const expiration = Number(decodedJwt?.exp)
-            const currentTime = Math.floor(Date.now() / 1000); // convert to seconds
+            let newDate = moment.tz(new Date(), "America/Guayaquil")
+            //console.log(newDate)
+            const currentTime = Math.floor(new Date(newDate) / 1000); // convert to seconds
+            // console.log(currentTime)
+            // console.log(expiration)
+
             if (expiration < currentTime) {
+                //console.log('yes')
                 alertEndSession()
             }
             config.headers['X-IdUsuarioRol'] = decodedJwt.idUsuarioRol

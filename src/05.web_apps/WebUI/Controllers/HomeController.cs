@@ -1,13 +1,6 @@
 ﻿using DataAccess;
-using Domain.Models;
 using Helpers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace AcontPlus.Controllers
 {
@@ -41,7 +34,7 @@ namespace AcontPlus.Controllers
 
             return View();
         }
-
+        
         public async Task<IActionResult> ReadGestionCantidad()
         {
             int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
