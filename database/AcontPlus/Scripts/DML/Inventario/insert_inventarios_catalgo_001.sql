@@ -51,7 +51,10 @@ USE AcontPlus
 --	  ,nd.precioCosto
 --	  ,ne.fechaEmision
 --	  ,ne.idUsuario
---	  ,estado = IIF(ep.codigo = 'A',0,1)
+--	  ,estado = CASE ep.codigo WHEN 'A' THEN 0 
+--				      WHEN 'TRA' THEN 2
+--					  ELSE 1
+--			    END  
 --FROM dbo.NotaEntregaDetalle nd WITH (NOLOCK)
 --INNER JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = nd.idArticulo
 --INNER JOIN dbo.NotaEntrega ne WITH (NOLOCK) ON ne.idNotaEntrega = nd.idNotaEntrega
@@ -173,23 +176,24 @@ USE AcontPlus
 --INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = lq.idEstadoPago
 --WHERE ar.llevaInventario = 1
 
+--union all
 
-SELECT idTipoTransaccion = 7
-	  ,cd.idArticulo
-	  ,cd.idBodega
-	  ,idTipoDocumento = 7
-	  ,cd.idConsolidacionInventario
-	  ,cantidad = CAST(cd.cantidad * dbo.AFTConverFracc(cd.idArticulo,cd.idMedida) AS decimal(15,5))
-	  ,cd.precioActual
-	  ,cd.precioCosto
-	  ,ci.fechaEmision
-	  ,ci.idUsuario
-	  ,estado = IIF(ep.codigo = 'A',0,1)
-FROM dbo.ConsolidacionInventarioDetalle cd WITH (NOLOCK)
-INNER JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = cd.idArticulo
-INNER JOIN dbo.ConsolidacionInventario ci WITH (NOLOCK) ON ci.idConsolidacionInventario = cd.idConsolidacionInventario
-INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = ci.idEstadoDocumento
-WHERE ar.llevaInventario = 1
+--SELECT idTipoTransaccion = 7
+--	  ,cd.idArticulo
+--	  ,cd.idBodega
+--	  ,idTipoDocumento = 7
+--	  ,cd.idConsolidacionInventario
+--	  ,cantidad = CAST(cd.cantidad * dbo.AFTConverFracc(cd.idArticulo,cd.idMedida) AS decimal(15,5))
+--	  ,cd.precioActual
+--	  ,cd.precioCosto
+--	  ,ci.fechaEmision
+--	  ,ci.idUsuario
+--	  ,estado = IIF(ep.codigo = 'A',0,1)
+--FROM dbo.ConsolidacionInventarioDetalle cd WITH (NOLOCK)
+--INNER JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = cd.idArticulo
+--INNER JOIN dbo.ConsolidacionInventario ci WITH (NOLOCK) ON ci.idConsolidacionInventario = cd.idConsolidacionInventario
+--INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = ci.idEstadoDocumento
+--WHERE ar.llevaInventario = 1
 
 
 --SELECT * FROM Inventario.Transaccion WITH (NOLOCK)

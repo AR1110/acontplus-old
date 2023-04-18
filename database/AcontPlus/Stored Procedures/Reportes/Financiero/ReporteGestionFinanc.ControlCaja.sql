@@ -50,9 +50,9 @@ BEGIN
 
 	SELECT @efectivoArqueo = totalArqueo FROM  dbo.ControlCaja WITH (NOLOCK) WHERE idControlCaja = @idControlCaja 
 
-	SELECT @totalSistema = @efectivoSistema + @otros
+	SELECT @totalSistema = ISNULL(@efectivoSistema,0) + ISNULL(@otros,0)
 	
-	SELECT @totalArqueo  = @efectivoArqueo  + @otros
+	SELECT @totalArqueo  = ISNULL(@efectivoArqueo,0)  + ISNULL(@otros,0)
 
 	SELECT @direfencia = @totalArqueo - @totalSistema 
 
