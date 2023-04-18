@@ -15,7 +15,7 @@ using Domain.Dtos;
 
 namespace ApiRecepcion.Controllers
 {
-    [Authorize]
+    
     [Route("api/[controller]")]
     [ApiController]
     public class DocumentoRecibidoController : ControllerBase

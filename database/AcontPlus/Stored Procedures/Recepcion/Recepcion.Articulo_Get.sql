@@ -8,7 +8,7 @@ GO
 -- Create date: 2022-09-19
 -- Description:	SP PARA OBTENER LOS ARTICULOS SIMILARES A LOS IMPORTADOS
 -- =============================================
---Recepcion.Articulo_Get 38, '{"codigoPrincipal":"","codigoAuxiliar":"","descripcion":"MOUSE", "tipo":"C"}'
+--Recepcion.Articulo_Get 28, '{"id":74327,"tipo":"H"}'
 IF OBJECT_ID(N'Recepcion.Articulo_Get ', N'P') IS NOT NULL
 DROP PROCEDURE Recepcion.Articulo_Get
 GO
@@ -20,9 +20,9 @@ BEGIN
 	SET NOCOUNT ON;
 	DECLARE @idEntidad INT
 	DECLARE @tmp AS TABLE(
-	codigoPrincipal VARCHAR(100) NOT NULL
+	codigoPrincipal VARCHAR(100) NULL
 	,codigoAuxiliar VARCHAR(100) NULL
-	,descripcion VARCHAR(300) NOT NULL
+	,descripcion VARCHAR(300) NULL
 	,tipo VARCHAR(1)
 	,id INT
 	)
@@ -100,22 +100,19 @@ BEGIN
 				END
 			IF (SELECT tipo FROM @tmp) = 'H'
 				BEGIN 
-					SELECT p.nombreFiscal proveedor
+					SELECT fc.razonSocialEmisior proveedor
 					--,ISNULL(fc.estab,'') + ' - ' + 
-					,fc.puntoEmision + ' - ' + CONVERT(VARCHAR, fc.nroDocumento) nroDocumento
+					,fc.serieComprobante nroDocumento
 					,fc.fechaEmision
 					,fcd.cantidad
-					,fcd.precioCosto precioUnitario
+					,fcd.precioUnitario
 					INTO #TempH
 					FROM dbo.Articulo a WITH (NOLOCK) 
-					INNER JOIN FacturaCompraDetalle fcd ON a.idArticulo = fcd.idArticulo
-					INNER JOIN FacturaCompra fc ON fcd.idFacturaCompra = fc.idFacturaCompra 
-					AND fc.idEntidad = @idEntidad
-					INNER JOIN Proveedor p ON fc.idProveedor = p.idProveedor 
-					AND p.idEntidad = @idEntidad
+					INNER JOIN Recepcion.DocumentoDetalle fcd ON a.idArticulo = fcd.idArticulo
+					INNER JOIN Recepcion.DocumentoRecibido fc ON fcd.idDocumento = fc.idDocumento
 					WHERE  a.idArticulo = (SELECT TOP 1 id FROM @tmp)
-					ORDER BY fc.fechaEmision DESC
-	
+					ORDER BY fc.fechaEmision DESC 
+
 					SELECT TOP 10 * 
 					FROM #TempH fc 
 					GROUP BY fc.proveedor
@@ -124,7 +121,7 @@ BEGIN
 					,fc.cantidad
 					,fc.precioUnitario
 					ORDER BY fechaEmision DESC
-					DROP TABLE #Temp
+					DROP TABLE #TempH
 					RETURN
 				END
 

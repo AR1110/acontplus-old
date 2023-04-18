@@ -140,6 +140,8 @@ namespace testWebApi
 
             app.UseAuthorization();
 
+            //app.MapControllers().RequireAuthorization(); ONLY FOR API
+
             app.UseMiddleware<JWTMiddleware>();
 
             //app.UseCookiePolicy(cookiePolicyOptions);
