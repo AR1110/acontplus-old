@@ -52,7 +52,12 @@ export class ModalBaseCtrl {
 
     transformChipEmail(item) {
         console.log(item)
+        let textChip = item || "";
+        textChip = this._form.removeAccents(textChip);
+        item = textChip.toLowerCase();
     }
+
+
 
     validarEmail(valor) {
         return /^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i.test(valor);
