@@ -435,6 +435,7 @@
                     $scope.salePermissions = JSON.parse($scope.dataSalePermissions.jsonPermission);
                     $scope.articlePermissions = JSON.parse($scope.dataArticlePermissions.jsonPermission)                                
                     $scope.cajaPermissions = JSON.parse($scope.dataCajaPermissions.jsonPermission)
+                   
                     console.log($scope.salePermissions)
                     console.log($scope.articlePermissions)
                     console.log($scope.cajaPermissions)

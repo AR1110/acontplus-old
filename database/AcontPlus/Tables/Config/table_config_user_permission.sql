@@ -59,7 +59,13 @@ DECLARE @newjson VARCHAR(MAX);
 		--SET @newjson = N'{"label":"Punto Emision UPDATE", "update":true}';		
 		--UPDATE Config.UserPermission SET jsonPermission = REPLACE(REPLACE(JSON_MODIFY(jsonPermission, '$.comprobante.puntoEmision', JSON_QUERY(@newjson)),'[', ''), ']', '') 
 		--WHERE codModule='V'
-	--Update properties (label, update) of detail 
+
+
+		UPDATE Config.UserPermission SET jsonPermission = JSON_MODIFY(jsonPermission, '$.additional.requestAuthorizationKey.label', 'Solicitar Autorización para Editar o Anular el Doc. Venta')
+		WHERE codModule ='V'
+
+
+	--Update properties (label, update) of detail
 
 	----Rename Key property of voucher 		
 		--UPDATE Config.UserPermission 
