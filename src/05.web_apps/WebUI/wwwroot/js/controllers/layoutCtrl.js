@@ -124,11 +124,11 @@ function layoutCtrl($scope, $window, Idle, mS, _modalSvc, toast, form) {
     
     
     if(pathname){ 
-        console.log(pathname.indexOf('/'))   
+        
         if(pathname==='/'){
           location.href='/Home/Index';
         }
-        console.log(pathname)    
+       
         //Verificamos si url es /Home/Index
         if(pathname.indexOf('/Home')==-1){
             let lengthPath = pathname.split('/').splice(1).length;
@@ -137,17 +137,19 @@ function layoutCtrl($scope, $window, Idle, mS, _modalSvc, toast, form) {
                 let path = pathname.indexOf('/Index') == -1 ? pathname + '/Index' : pathname;
                 
                 let dataMenu = $scope.subMenus.find(item=>item.url===path);
-                if(!dataMenu) return;
+                if(dataMenu) {
 
-                mS.getData('get', '/Acceso/GetAccesoBySubMenu?idSubMenu=' + dataMenu.idSubMenu).then(response => {
-                    if(response.id==="0"){
-                        console.log(response)
-                    }
-                    if(response.id==="1"){
-                        $scope.accion = JSON.parse(response.data)[0]
-                        console.log($scope.accion)
-                    }
-                })
+                    mS.getData('get', '/Acceso/GetAccesoBySubMenu?idSubMenu=' + dataMenu.idSubMenu).then(response => {
+                        if(response.id==="0"){
+                            console.log(response)
+                        }
+                        if(response.id==="1"){
+                            $scope.accion = JSON.parse(response.data)[0]
+                            console.log($scope.accion)
+                        }
+                    })
+                }
+
             }            
         }
         // if (url.indexOf('/Index') === -1) {
@@ -164,7 +166,8 @@ function layoutCtrl($scope, $window, Idle, mS, _modalSvc, toast, form) {
     // console.log(pathname)
     $scope.onChangeSubMenu = function (item) {       
         try {
-            console.log(item)
+            console.log(item);
+            // console.log(item)
             location.href = item.url;
             // mS.getData('get', '/Acceso/GetAccesoBySubMenu?idSubMenu=' + item.idSubMenu).then(response => {            
             //     if (response.id === null) {
