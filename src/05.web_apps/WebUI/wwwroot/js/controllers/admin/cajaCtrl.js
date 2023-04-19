@@ -3,12 +3,12 @@
 cajaCtrl.$inject = ['$scope', 'modalService', 'nombreModal', 'mainService', 'modalService', 'toastService'];
 
 function cajaCtrl($scope, _modalSvc, _nombreModal, mS, _modalSvc, toast) {
-    let accion = JSON.parse(localStorage.getItem("accion"));
-    if(accion===null){
-        location.href = "/Home/Index";
-    }else{
-        $scope.accion = accion[0];
-    }
+    // let accion = JSON.parse(localStorage.getItem("accion"));
+    // if(accion===null){
+    //     location.href = "/Home/Index";
+    // }else{
+    //     $scope.accion = accion[0];
+    // }
 
     const GESTION_CAJA_CTRL = './gestionCajaCtrl.min.js';
     

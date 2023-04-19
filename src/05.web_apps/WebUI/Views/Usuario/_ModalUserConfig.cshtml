@@ -203,25 +203,21 @@
                                     <h6 class="m-b-0 text-white"><i class="mdi mdi-bulletin-board"></i> Caja</h6>     
                                 </div>
                                 <div class="card-body">
-                                    <div ng-repeat="item in cajaPermissions">
-                                        <div ng-repeat="(key, prop) in item">
-                                            <div ng-if="key==='view'">
-                                                
-                                                <div class="icheck-info" id="cajaPermissionView">
-                                                    <input type="checkbox" name="cajaPermissionView{{$index+1}}" id="cajaPermissionView{{$index+1}}" ng-model="item.view">
-                                                    <label for="cajaPermissionView{{$index+1}}">{{item.label}}</label>                                         
-                                                </div>        
-                                            </div>
 
-                                            <div ng-if="key==='cerrar'">
-                                                <div class="icheck-info" id="cajaPermissionCerrar">
-                                                    <input type="checkbox" name="cajaPermissionCerrar{{$index+1}}" id="cajaPermissionCerrar{{$index+1}}" ng-model="item.cerrar">
-                                                    <label for="cajaPermissionCerrar{{$index+1}}">{{item.label}}</label>                                         
-                                                </div>  
-                                            </div>
-                                        </div>                                      
-                                                                                                                                                                                
-                                    </div>                                                               
+                                    <div class="icheck-info" >
+                                        <input type="checkbox" name="cajaPermissionView1" id="cajaPermissionView1" ng-model="cajaPermissions.verOtrasCajas.view">
+                                        <label for="cajaPermissionView1">{{cajaPermissions.verOtrasCajas.label}}</label>                                         
+                                    </div>  
+
+                                    <div class="icheck-info" >
+                                        <input type="checkbox" name="cajaPermissionView2" id="cajaPermissionView2" ng-model="cajaPermissions.reporteMovimientoCaja.view">
+                                        <label for="cajaPermissionView2">{{cajaPermissions.reporteMovimientoCaja.label}}</label>                                         
+                                    </div>   
+
+                                    <div class="icheck-info">
+                                        <input type="checkbox" name="cajaPermissionCerrar" id="cajaPermissionCerrar" ng-model="cajaPermissions.cerrarCaja.cerrar">
+                                        <label for="cajaPermissionCerrar">{{cajaPermissions.cerrarCaja.label}}</label>                                         
+                                    </div>                                                              
                                 </div>
                             </div>
                         </div>
