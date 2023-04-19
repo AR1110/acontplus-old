@@ -9,12 +9,12 @@ function impuestoCtrl($http, $scope, mS, toast, form) {
     }
     
 
-    let accion = JSON.parse(localStorage.getItem("accion"));
-    if (accion === null) {
-        location.href = "/Home/Index";
-    } else {
-        $scope.accion = accion[0];
-    }
+    // let accion = JSON.parse(localStorage.getItem("accion"));
+    // if (accion === null) {
+    //     location.href = "/Home/Index";
+    // } else {
+    //     $scope.accion = accion[0];
+    // }
 
 
     $scope.data = {};
