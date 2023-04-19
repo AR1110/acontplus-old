@@ -123,22 +123,28 @@ function layoutCtrl($scope, $window, Idle, mS, _modalSvc, toast, form) {
     const pathname = $window.location.pathname;
     
     
-    if(pathname){        
+    if(pathname){ 
+        console.log(pathname.indexOf('/'))   
+        if(pathname==='/'){
+          location.href='/Home/Index';
+        }
+        console.log(pathname)    
         //Verificamos si url es /Home/Index
         if(pathname.indexOf('/Home')==-1){
             let lengthPath = pathname.split('/').splice(1).length;
 
             if([1, 2].includes(lengthPath)){
                 let path = pathname.indexOf('/Index') == -1 ? pathname + '/Index' : pathname;
-
+                console.log(path);
                 let dataMenu = $scope.subMenus.find(item=>item.url===path);
-                
+                console.log(dataMenu);
                 mS.getData('get', '/Acceso/GetAccesoBySubMenu?idSubMenu=' + dataMenu.idSubMenu).then(response => {
                     if(response.id==="0"){
                         console.log(response)
                     }
                     if(response.id==="1"){
-                        $scope.accion = JSON.parse(response.data)
+                        $scope.accion = JSON.parse(response.data)[0]
+                        console.log($scope.accion)
                     }
                 })
             }            

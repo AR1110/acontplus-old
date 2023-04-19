@@ -17,13 +17,12 @@
     usuarioCtrl.$inject = ['$scope', 'mainService', 'commonService', 'modalService', 'toastService', 'decodeToken'];
 
     function usuarioCtrl($scope, _mS, _commonSvc, _modalSvc, toast, decodeToken) {
-        let accion = JSON.parse(localStorage.getItem("accion"));
-        if(accion===null){
-            location.href = "/Home/Index";
-        }else{
-            $scope.accion = accion[0];
-        }        
-        console.log(decodeToken)
+        // let accion = JSON.parse(localStorage.getItem("accion"));
+        // if(accion===null){
+        //     location.href = "/Home/Index";
+        // }else{
+        //     $scope.accion = accion[0];
+        // }        
         Id_Usuario_Rol = parseInt(decodeToken.idUsuarioRol);
         role = decodeToken.role;
         
