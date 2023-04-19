@@ -5,7 +5,7 @@ DROP PROCEDURE FactElect.Doc_Elect_Get
 GO
 
 
--- FactElect.Doc_Elect_Get 63, '{"isCurrentDate": true,"checkBoxDate": true,"fechaInicio": "2021-04-01T05:00:00.000Z","fechaFin": "2023-05-01T04:59:59.999Z"}'
+-- FactElect.Doc_Elect_Get 25, '{"isCurrentDate": false,"checkBoxDate": true,"isSearchCustomerProvider": true,"dateStart": "2023-03-21T05:00:00.000Z","dateEnd": "2023-04-20T04:59:59.999Z","codDoc": "01","checkBoxComprobante": true,"identificacionReceptor": "9999999999999"}'
 
 CREATE PROCEDURE FactElect.Doc_Elect_Get @idRol INT,@json NVARCHAR(max)
 AS
@@ -31,6 +31,9 @@ BEGIN
 	DECLARE @checkboxPuntoEmision BIT
 	DECLARE @ptoEmi VARCHAR(10)
 
+	DECLARE @isSearchCustomerProvider BIT 
+	DECLARE @identificacionReceptor VARCHAR(20)
+
 	DECLARE @tblMain AS TABLE(
 		idDocumentoElectronico BIGINT NOT NULL
 		,idDocumento BIGINT NOT NULL
@@ -53,6 +56,7 @@ BEGIN
 									 @estab VARCHAR(5),
 									 @ptoEmi VARCHAR(5),
 	                                 @codDoc VARCHAR(10),
+									 @identificacionReceptor VARCHAR(20),
 									 @codEstado VARCHAR(5),
 									 @dateStart DATETIME,
 									 @dateEnd DATETIME';
@@ -99,6 +103,9 @@ BEGIN
 		,@estab = estab
 		,@checkboxPuntoEmision = checkboxPuntoEmision
 		,@ptoEmi = ptoEmi
+
+		,@isSearchCustomerProvider = isSearchCustomerProvider
+		,@identificacionReceptor = identificacionReceptor
 	FROM OPENJSON(@json)
 	WITH(codDoc VARCHAR(10) '$.codDoc'
 		 ,checkBoxEstadoServicio BIT '$.checkBoxEstadoServicio'
@@ -114,6 +121,9 @@ BEGIN
 		 ,estab VARCHAR(10) '$.estab'
 		 ,checKboxPuntoEmision BIT '$.checKboxPuntoEmision'
 		 ,ptoEmi VARCHAR(10) '$.ptoEmi'
+
+		 ,isSearchCustomerProvider BIT '$.isSearchCustomerProvider'
+		 ,identificacionReceptor VARCHAR(20) '$.identificacionReceptor'
 		)
 
 	IF @checkboxEstablecimiento = 1
@@ -141,7 +151,10 @@ BEGIN
 			SET @sql = @sql +' AND de.codDoc = @codDoc '
 		END 
 
-	
+	IF @isSearchCustomerProvider = 1
+		BEGIN 
+			SET @sql = @sql + ' AND de.rucReceptor = @identificacionReceptor'
+		END 
 
 	IF (@tipo = '3')
 		BEGIN
@@ -157,11 +170,13 @@ BEGIN
 
 	SET @sql = @sql + ' ORDER BY de.idDocumentoElectronico DESC';
 	
+	print @sql 
 	EXEC sp_executesql @sql,@params
 				           ,@idEntidad = @idEntidad
 						   ,@estab = @estab
 						   ,@ptoEmi = @ptoEmi
 						   ,@codDoc = @codDoc 
+						   ,@identificacionReceptor = @identificacionReceptor
 						   ,@codEstado = @codEstado
 						   ,@dateStart = @dateStart
 						   ,@dateEnd = @dateEnd

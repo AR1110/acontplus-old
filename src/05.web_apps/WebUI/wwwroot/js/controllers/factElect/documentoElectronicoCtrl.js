@@ -52,6 +52,8 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
     $scope.dataSearch = {};
     $scope.dataSearch.isCurrentDate = false;
     $scope.dataSearch.checkBoxDate = true;
+
+    $scope.dataSearch.isSearchCustomerProvider= false;
     // $scope.meses = _fS.meses();
     // $scope.dataSearch.mes = new Date().getMonth() + 1;
 
@@ -181,15 +183,15 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
             $scope.dataSearch.checKboxPuntoEmision = false;
             $scope.dataSearch.ptoEmi = null;
             
-            if($scope.codEstab_Asig){
+            if([null, undefined, ""].includes($scope.codEstab_Asig)){
+                $scope.dataSearch.checkBoxEstab = false;
+                
+            }else{
                 $scope.dataSearch.checkBoxEstab = true;
 
                 let dataEstab = $scope.establecimientos.find(item=>item.codEstab_Asig===$scope.codEstab_Asig);            
                 $scope.dataSearch.estab = dataEstab.estab;            
                 $scope.puntosEmision = $scope.tempPuntosEmision.filter(item=>item.codEstab_Asig===$scope.codEstab_Asig);
-                
-            }else{
-                $scope.dataSearch.checkBoxEstab = false;
             }
             $scope.getComprobantes();        
         } catch (error) {
@@ -199,21 +201,23 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
 
 
     $scope.onchangePuntoEmision = ()=>{
-        if($scope.dataSearch.ptoEmi){
-            
-            $scope.dataSearch.checKboxPuntoEmision = true;
-        }else{
+        if([null, undefined, ""].includes($scope.dataSearch.ptoEmi)) {            
             $scope.dataSearch.checKboxPuntoEmision = false;
+        }else{
+            $scope.dataSearch.checKboxPuntoEmision = true;
         }
         $scope.getComprobantes();
     }
 
     $scope.onSelectTipoDoc = ()=>{
-        $scope.comprobantes = []
-        if($scope.dataSearch.codDoc){
-            $scope.dataSearch.checkBoxComprobante = true;
-        }else{
+        $scope.comprobantes = [];   
+        $scope.modelCustomerProvider = null;     
+        $scope.dataSearch.isSearchCustomerProvider= false;
+    
+        if($scope.dataSearch.codDoc == null || $scope.dataSearch.codDoc==undefined || $scope.dataSearch.codDoc ===''){                     
             $scope.dataSearch.checkBoxComprobante = false;
+        }else{            
+            $scope.dataSearch.checkBoxComprobante = true;
         }
         $scope.getComprobantes();
     }
@@ -224,6 +228,48 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
         }else{
             $scope.dataSearch.checkBoxEstadoServicio = true;
         }
+        $scope.getComprobantes();
+    }
+
+    $scope.searchCustomerProvider = function(textSearch){
+        try {
+            $scope.dataSearch.identificacionReceptor = null;
+            $scope.dataSearch.isSearchCustomerProvider = false
+
+            if(['01', '06', '04'].includes($scope.dataSearch.codDoc)){
+                return _commonSvc.clienteSearch(textSearch).then(response =>{
+                    return response.map(item => ({
+                        idClienteProveedor: item.idCliente,
+                        nameCustomerProvider: item.nombreFiscal,
+                        identificacionReceptor: item.numeroIdentificacion
+                    }))
+                })
+            }else{
+                return  _commonSvc.proveedorSearch(textSearch).then(response => {                    
+                    return response.map(item => ({
+                        idClienteProveedor: item.proveedor.idProveedor,
+                        nameCustomerProvider: item.proveedor.nombreFiscal,
+                        identificacionReceptor: item.proveedor.numeroIdentificacion
+                    }))
+                })
+            }
+            
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    $scope.onSelectedCustomerProvider = function(item) {
+        $scope.dataSearch.isSearchCustomerProvider = true;
+        $scope.dataSearch.identificacionReceptor = item.identificacionReceptor;
+        $scope.getComprobantes();
+    }
+
+    $scope.clearSearchCustomer = function () {
+        $scope.modelCustomerProvider = null;
+        $scope.dataSearch.isSearchCustomerProvider = false;
+        $scope.dataSearch.identificacionReceptor = null;
         $scope.getComprobantes();
     }
 

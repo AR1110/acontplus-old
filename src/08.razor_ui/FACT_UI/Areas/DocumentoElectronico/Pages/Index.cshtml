@@ -77,6 +77,42 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="row" ng-show="dataSearch.codDoc">
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                            <div class="form-group">
+                                <label for="customer-provider">Cliente/Proveedor</label>
+                                <div class="input-group">                                    
+                                    <input  type="text" id="customer-provider-search" 
+                                        autocomplete="off"                            
+                                        name="customer-provider-search"
+                                        class="form-control border-select"
+                                        placeholder="Ingrese C.I o Nombre Fiscal"
+                                        ng-model="modelCustomerProvider"            
+                                        ng-keyup="onKeyupCustomerProvider()"
+                                        uib-typeahead="item as item.nameCustomerProvider for item in searchCustomerProvider($viewValue)"                                       
+                                        typeahead-template-url="customerProviderTemplate.html"
+                                        typeahead-min-length="1"
+                                        typeahead-editable="false"
+                                        typeahead-on-select="onSelectedCustomerProvider($item)"  onClick="select();" />
+
+                                        <script type="text/ng-template" id="customerProviderTemplate.html">
+                                            <div class="autocomplete-suggestion-uib-typeahead">
+                                                <span class="item-title">
+                                                    <b> {{match.model.identificacionReceptor}}</b> - {{match.model.nameCustomerProvider}}
+                                                </span>
+                                            </div>
+                                        </script>
+                                    <div class="input-group-append">
+                                        <button type="button" class=" btn btn-secondary btn-xs" ng-click="clearSearchCustomer()">
+                                            &times;
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
                     <hr>
                     <div class="row justify-content-between">
                         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">                          

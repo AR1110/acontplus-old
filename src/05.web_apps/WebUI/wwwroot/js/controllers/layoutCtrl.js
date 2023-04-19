@@ -135,9 +135,10 @@ function layoutCtrl($scope, $window, Idle, mS, _modalSvc, toast, form) {
 
             if([1, 2].includes(lengthPath)){
                 let path = pathname.indexOf('/Index') == -1 ? pathname + '/Index' : pathname;
-                console.log(path);
+                
                 let dataMenu = $scope.subMenus.find(item=>item.url===path);
-                console.log(dataMenu);
+                if(!dataMenu) return;
+
                 mS.getData('get', '/Acceso/GetAccesoBySubMenu?idSubMenu=' + dataMenu.idSubMenu).then(response => {
                     if(response.id==="0"){
                         console.log(response)
@@ -163,6 +164,7 @@ function layoutCtrl($scope, $window, Idle, mS, _modalSvc, toast, form) {
     // console.log(pathname)
     $scope.onChangeSubMenu = function (item) {       
         try {
+            console.log(item)
             location.href = item.url;
             // mS.getData('get', '/Acceso/GetAccesoBySubMenu?idSubMenu=' + item.idSubMenu).then(response => {            
             //     if (response.id === null) {
