@@ -133,7 +133,10 @@ SELECT t.idTransaccion
 						)
 			END
 		)
-,m.descripcion medida
+,ISNULL(CASE WHEN tt.codigo = 'E' THEN m.descripcion END, '') medidaEntrada
+,ISNULL(CASE WHEN tt.codigo = 'S' THEN m.descripcion END, '') medidaSalida
+,ISNULL(CASE WHEN tt.codigo = 'E' THEN t.total END, 0) totalEntrada
+,ISNULL(CASE WHEN tt.codigo = 'S' THEN t.total END, 0) totalSalida 
 FROM Inventario.Transaccion t WITH (NOLOCK)
 INNER JOIN Inventario.TipoTransaccion tt WITH (NOLOCK) ON t.idTipoTransaccion = tt.idTipoTransaccion
 INNER JOIN Inventario.TipoDocumento td WITH (NOLOCK) ON t.idTipoDocumento = td.idTipoDocumento

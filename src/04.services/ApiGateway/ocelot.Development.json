@@ -901,6 +901,25 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
+          "Port": 44331
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Kardex/Filters",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "UpstreamPathTemplate": "/api/Kardex/Filters"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
           "Port": 7074
         }
       ],

@@ -149,6 +149,10 @@
     {
       "library": "angular-media-queries@0.6.1",
       "destination": "wwwroot/lib/angular-media-queries/"
+    },
+    {
+      "library": "tabulator@5.4.4",
+      "destination": "wwwroot/lib/tabulator/"
     }
   ]
 }
