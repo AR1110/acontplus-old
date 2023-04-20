@@ -1,5 +1,3 @@
-
-
 export class KardexCtrl {
     static $inject = ['mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario'];
     constructor(_mS, _commonSvc, _modalSvc, _nombreModal, _toast, _form) {
@@ -38,6 +36,24 @@ export class KardexCtrl {
         this.tableTabulatorKardex = new Tabulator('#tabla-kardex', {
             height: "400px",
             width: "100%",
+            pagination: "local",
+            langs: {
+                "es-es": { 
+                    "pagination": {
+                        "first": "Primera", //text for the first page button
+                        "first_title": "Primer Pagina", //tooltip text for the first page button
+                        "last": "Last",
+                        "last_title": "Last Page",
+                        "prev": "Prev",
+                        "prev_title": "Prev Page",
+                        "next": "Next",
+                        "next_title": "Next Page",
+                        "all": "All",
+                    },
+                }
+            },
+            paginationSize: 50,
+            paginationSizeSelector: [50, 100],
             // layout:"fitDataFill",
             // layout: "fitDataStretch",
             // layout:"fitColumns", 
@@ -140,13 +156,12 @@ export class KardexCtrl {
                         },
                     ],
                 },
-            ],
+            ]
         });
-
         this.tableTabulatorKardex.on("rowClick", (e, row) => {
             this.openModalTipoDocumento(row.getData())
         });
-    }
+    } 
 
     sumCantidadEntrada = (values, data, calcParams) => {
         return this.data.cantTotalEntrada || 0
@@ -404,9 +419,18 @@ export class ModalFiltroKardex {
             }
         })
 
-        this._commonSvc.getGestionAlmacen().then(response => {
-            this.estadoMovimientos = response.movimientosStocks;
-
+        this._mS.getData('GET', 'Kardex/Filters', null, true).then(
+            response => {
+                if (response.code == '0') {
+                    this._tS.toastr('warning', response.message)
+                }
+                if (response.code == '1') {
+                    let tempArray = JSON.parse(response.payload)
+                    this.estadoMovimientos = tempArray[0]
+                }
+            }
+        ).catch(error => {
+            console.log(error)
         })
     }
 

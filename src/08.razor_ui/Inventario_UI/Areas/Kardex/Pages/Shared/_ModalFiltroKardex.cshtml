@@ -122,7 +122,7 @@
             <div class="form-group">
                 <label for="bodega">Movimiento</label>
                 <select class="form-control border-select" ng-model="$ctrl.dataSearch.movement">
-                    <option ng-value="item.movement" ng-repeat="item in $ctrl.estadoMovimientos">{{item.descripcion}}</option>
+                    <option ng-value="item.codigo" ng-repeat="item in $ctrl.estadoMovimientos">{{item.descripcion}}</option>
                 </select>
             </div>
         </div>   

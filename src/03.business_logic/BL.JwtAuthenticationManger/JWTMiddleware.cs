@@ -21,7 +21,6 @@ namespace BL.JwtAuthenticationManger
         public async Task Invoke(HttpContext context)
         {
             var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-            Console.WriteLine(token);
             if (token != null)
                 attachAccountToContext(context, token);
 
@@ -56,7 +55,9 @@ namespace BL.JwtAuthenticationManger
             {
                 // do nothing if jwt validation fails
                 // account is not attached to context so request won't have access to secure routes
-                throw new Exception(ex.Message);
+                //context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                //throw new Exception(ex.Message); 
+                _ = ex.Message;
             }
         }
     }

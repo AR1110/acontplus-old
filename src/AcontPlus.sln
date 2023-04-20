@@ -126,7 +126,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inventario_UI", "08.razor_u
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WS_Cliente_Ident_Val_Sri", "07.worker_services\WS_Cliente_Ident_Val_Sri\WS_Cliente_Ident_Val_Sri.csproj", "{CC0735FB-A22F-4DBC-BF98-7F3697F4C297}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiSri", "04.services\ApiSri\ApiSri.csproj", "{12C132D4-3295-46E1-B46D-E988EC8AF80B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiSri", "04.services\ApiSri\ApiSri.csproj", "{12C132D4-3295-46E1-B46D-E988EC8AF80B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
