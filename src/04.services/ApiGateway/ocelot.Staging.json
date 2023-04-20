@@ -794,11 +794,29 @@
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "Get",
-        "POST",
         "PUT",
         "Delete"
       ],
       "UpstreamPathTemplate": "/api/UsuarioPermiso/{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 8098
+        }
+      ],
+      "DownstreamPathTemplate": "/api/UsuarioPermiso",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Put"
+      ],
+      "UpstreamPathTemplate": "/api/UsuarioPermiso"
     },
     {
       "DownstreamHostAndPorts": [
@@ -813,6 +831,48 @@
         "Get"
       ],
       "UpstreamPathTemplate": "/api/Consultas/{everything}"
+    },
+
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 8002
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Solicitud/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/api/Solicitud/{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 8002
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Solicitud/Check/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "UpstreamPathTemplate": "/api/Solicitud/Check/{everything}"
     }
   ]
 }

@@ -5,12 +5,12 @@ marcaCtrl.$inject = ['mainService', '$filter', '$scope', 'commonService', 'modal
 
 function marcaCtrl(_mS, $filter, $scope, _commonSvc, _modalSvc, _nombreModal, toast) {
     'use strict'
-    let accion = JSON.parse(localStorage.getItem("accion"));
-    if (accion === null) {
-        location.href = "/Home/Index";
-    } else {
-        $scope.accion = accion[0];
-    }
+    // let accion = JSON.parse(localStorage.getItem("accion"));
+    // if (accion === null) {
+    //     location.href = "/Home/Index";
+    // } else {
+    //     $scope.accion = accion[0];
+    // }
 
     $scope.marcas = [];
 

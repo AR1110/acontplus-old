@@ -7,7 +7,8 @@ GO
 
 CREATE VIEW v_Factura AS (
 	SELECT 	
-		e.codEstab 
+	    f.idEntidad
+		,e.codEstab 
 		,f.idCliente
 		,f.idPuntoEmision
 		,f.idEstadoPago
