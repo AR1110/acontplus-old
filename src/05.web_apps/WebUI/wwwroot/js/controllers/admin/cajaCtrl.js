@@ -35,7 +35,9 @@ function cajaCtrl($scope, _modalSvc, _nombreModal, mS, _modalSvc, toast) {
                 }
                 $scope.cajas = response.data;                              
                 hideLoader();
-            }, error => console.log(error));            
+            }).catch(error=>{
+                console.log(error);
+            })         
         } catch (error) {
             hideLoader();
             console.error(error)            

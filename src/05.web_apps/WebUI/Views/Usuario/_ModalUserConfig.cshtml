@@ -217,7 +217,21 @@
                                     <div class="icheck-info">
                                         <input type="checkbox" name="cajaPermissionCerrar" id="cajaPermissionCerrar" ng-model="cajaPermissions.cerrarCaja.cerrar">
                                         <label for="cajaPermissionCerrar">{{cajaPermissions.cerrarCaja.label}}</label>                                         
-                                    </div>                                                              
+                                    </div> 
+
+                                    <div class="icheck-info">
+                                        <input type="checkbox" name="cajaPermissionEnterKey" id="cajaPermissionEnterKey" ng-model="cajaPermissions.enterKey.isRequerid">
+                                        <label for="cajaPermissionEnterKey">{{cajaPermissions.enterKey.label}}</label>                                         
+                                    </div> 
+
+                                    <div ng-if="cajaPermissions.enterKey.isRequerid">
+                                        <form autocomplete="off">
+                                            <div class="form-group">
+                                                <label>Clave</label>
+                                                <input type="password" name="clave" id="clave" class="form-control border-select" placeholder="Ingrese el Clave">
+                                            </div>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
