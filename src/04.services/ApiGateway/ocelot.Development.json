@@ -948,9 +948,9 @@
       "DownstreamPathTemplate": "/api/Solicitud/Check/{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
-        "Get"        
+        "Get"
       ],
-      "UpstreamPathTemplate": "/api/everything/Check/{everything}"
+      "UpstreamPathTemplate": "/api/Solicitud/Check/{everything}"
     }
   ]
 }

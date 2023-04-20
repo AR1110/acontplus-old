@@ -8,12 +8,12 @@
     modeloCtrl.$inject = ['$scope', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService'];
 
     function modeloCtrl($scope, mS, _commonSvc, _modalSvc, _nombreModal, toast) {
-        let accion = JSON.parse(localStorage.getItem("accion"));
-        if(accion===null){
-            location.href = "/Home/Index";
-        }else{
-            $scope.accion = accion[0];
-        };
+        // let accion = JSON.parse(localStorage.getItem("accion"));
+        // if(accion===null){
+        //     location.href = "/Home/Index";
+        // }else{
+        //     $scope.accion = accion[0];
+        // };
         $scope.data = {};
         $scope.modelo = {};
         $scope.marca = {};

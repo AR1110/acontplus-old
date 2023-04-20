@@ -6,12 +6,12 @@
     subFamiliaCtrl.$inject = ['$scope', 'modalService', 'commonService', 'nombreModal', 'mainService', 'toastService', 'formulario'];
 
     function subFamiliaCtrl($scope, _modalSvc, _commonSvc, _nombreModal, mS, toast, form) {
-        let accion = JSON.parse(localStorage.getItem("accion"));
-        if(accion===null){
-            location.href = "/Home/Index";
-        }else{
-            $scope.accion = accion[0];            
-        }   
+        // let accion = JSON.parse(localStorage.getItem("accion"));
+        // if(accion===null){
+        //     location.href = "/Home/Index";
+        // }else{
+        //     $scope.accion = accion[0];            
+        // }   
         
         $scope.dataSearch = {
             pageIndex: 1,
