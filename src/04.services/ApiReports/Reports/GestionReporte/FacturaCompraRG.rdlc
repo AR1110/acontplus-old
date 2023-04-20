@@ -146,8 +146,8 @@
           <DataField>totalRenta</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="sucursal">
-          <DataField>sucursal</DataField>
+        <Field Name="establecimiento">
+          <DataField>establecimiento</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="puntoEmision">
@@ -2953,14 +2953,14 @@
                   <KeepWithGroup>After</KeepWithGroup>
                 </TablixMember>
                 <TablixMember>
-                  <Group Name="sucursal2">
+                  <Group Name="establecimiento">
                     <GroupExpressions>
-                      <GroupExpression>=Fields!sucursal.Value</GroupExpression>
+                      <GroupExpression>=Fields!establecimiento.Value</GroupExpression>
                     </GroupExpressions>
                   </Group>
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=Fields!sucursal.Value</Value>
+                      <Value>=Fields!establecimiento.Value</Value>
                     </SortExpression>
                   </SortExpressions>
                   <TablixHeader>
@@ -2973,7 +2973,7 @@
                           <Paragraph>
                             <TextRuns>
                               <TextRun>
-                                <Value>=Fields!sucursal.Value</Value>
+                                <Value>=Fields!establecimiento.Value</Value>
                                 <Style>
                                   <FontSize>8pt</FontSize>
                                 </Style>
@@ -2996,6 +2996,7 @@
                           <PaddingBottom>2pt</PaddingBottom>
                         </Style>
                       </Textbox>
+                      <rd:Selected>true</rd:Selected>
                     </CellContents>
                   </TablixHeader>
                   <TablixMembers>

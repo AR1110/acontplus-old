@@ -3,12 +3,12 @@ app.controller("configGeneralCtrl", configGeneralCtrl);
 configGeneralCtrl.$inject=['$timeout', '$q', 'mainService', '$scope', 'commonService','modalService', 'nombreModal'];
 
 function configGeneralCtrl($timeout, $q, _mS, $scope, _commonSvc, _modalSvc, _nombreModal){
-    let accion = JSON.parse(localStorage.getItem("accion"));
-    if(accion===null){
-        location.href = "/Home/Index";
-    }else{
-        $scope.accion = accion[0];
-    }
+    // let accion = JSON.parse(localStorage.getItem("accion"));
+    // if(accion===null){
+    //     location.href = "/Home/Index";
+    // }else{
+    //     $scope.accion = accion[0];
+    // }
             
     $scope.data = {};
     $scope.decimales = [2,3,4,5];

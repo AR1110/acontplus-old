@@ -3,12 +3,12 @@ app.controller('configDocCtrl', configDocCtrl);
 configDocCtrl.$inject = ['$timeout', '$scope', 'commonService', 'mainService', 'toastService'];
 
 function configDocCtrl($timeout, $scope, _commonSvc, mS, toast) {
-    let accion = JSON.parse(localStorage.getItem("accion"));
-    if(accion===null){
-        location.href = "/Home/Index";
-    }else{
-        $scope.accion = accion[0];
-    }
+    // let accion = JSON.parse(localStorage.getItem("accion"));
+    // if(accion===null){
+    //     location.href = "/Home/Index";
+    // }else{
+    //     $scope.accion = accion[0];
+    // }
 
     $scope.configurationDocs = [];
 

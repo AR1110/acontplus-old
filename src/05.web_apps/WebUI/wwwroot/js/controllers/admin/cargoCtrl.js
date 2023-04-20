@@ -12,12 +12,12 @@ class CargoCtrl{
     }
 
     $onInit(){
-        this.accion = JSON.parse(localStorage.getItem("accion"));
-        if(this.accion===null){
-            location.href = "/Home/Index";
-        }else{
-            this.accion = this.accion[0];
-        }   
+        // this.accion = JSON.parse(localStorage.getItem("accion"));
+        // if(this.accion===null){
+        //     location.href = "/Home/Index";
+        // }else{
+        //     this.accion = this.accion[0];
+        // }   
         this.initiload();
     }
 

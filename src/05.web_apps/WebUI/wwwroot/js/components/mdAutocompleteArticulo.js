@@ -366,7 +366,7 @@ app.component('mdAutocompleteArticuloComponent',{
 
 
 app.component("articuloSearchBarcode", {
-    template: `<input  type="text" 
+    template: `<input  type="text" autocomplete="off"
                        class="form-control border-select" 
                        ng-model="$ctrl.searchText"  
                        ng-enter="$ctrl.getDataArticuloByEnterCode()"     

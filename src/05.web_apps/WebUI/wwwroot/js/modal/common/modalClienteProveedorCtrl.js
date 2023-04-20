@@ -69,7 +69,7 @@ export class ModalBaseCtrl {
 
         this._mS.getData('get', `/${this.dataSearchValidacion.url}/Get?json=` + JSON.stringify(this.dataSearchValidacion)).then(response => {
             if (response.code === "0") {
-                console.log(response)
+              
 
                 if(this.dataSearchValidacion.codigoIdentificacion==='R'){
                     this.getRucSRI();
@@ -127,10 +127,10 @@ export class ModalBaseCtrl {
             this._mS.getData('get', 'Consultas/GetRucSRI?Ruc=' + this.data.numeroIdentificacion, null, true).then(result => {                
                 hideLoader();                
                 if(result.numeroRuc) {
-                    console.log(result);
+                    
                     let {razonSocial, establecimientos, tipoContribuyente} = result;
-                    this.data.nombreComercial = razonSocial;
-                    this.data.nombreFiscal = razonSocial;
+                    this.data.nombreComercial = razonSocial.replaceAll('"', '');
+                    this.data.nombreFiscal = razonSocial.replaceAll('"', '');
                     this.data.direccion = establecimientos.find(item=>item.matriz==='SI').direccionCompleta
                     
                     this.data.validationSri = true;
@@ -169,8 +169,8 @@ export class ModalBaseCtrl {
                 if(result.numeroRuc || result.nombreCompleto) {
                    
                     let {nombreCompleto, establecimientos} = result;
-                    this.data.nombreComercial = nombreCompleto;
-                    this.data.nombreFiscal = nombreCompleto;
+                    this.data.nombreComercial = nombreCompleto.replaceAll('"', '');
+                    this.data.nombreFiscal = nombreCompleto.replaceAll('"', '');
                     this.data.validationSri = true;
                     // this.data.direccion = establecimientos[0].direccionCompleta
                     this.typeNotify = 'is-valid';
@@ -725,8 +725,7 @@ export class ModalClienteNuevoCtrl extends ModalBaseCliente{
         
             if(this._params.typeModule==='M_CLIENTE_LISTA'){
 
-                let text = await navigator.clipboard.readText();
-                console.log(text);
+                let text = await navigator.clipboard.readText();                
                 
             }
             

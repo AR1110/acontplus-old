@@ -3,12 +3,12 @@ app.controller('proveedorCtrl', proveedorCtrl);
 proveedorCtrl.$inject=['$scope', 'mainService', 'modalService', 'nombreModal', 'toastService'];
 
 function proveedorCtrl($scope, _mS, _modalSvc, _nombreModal, toast){    
-    let accion = JSON.parse(localStorage.getItem("accion"));
-    if(accion===null){
-        location.href = "/Home/Index";
-    }else{
-        $scope.accion = accion[0];
-    }
+    // let accion = JSON.parse(localStorage.getItem("accion"));
+    // if(accion===null){
+    //     location.href = "/Home/Index";
+    // }else{
+    //     $scope.accion = accion[0];
+    // }
 
     $scope.openModalNew = async(item)=>{                    
         const {MODAL_CTRL, MODAL_NUEVO_CSHTML} = _nombreModal.proveedor;

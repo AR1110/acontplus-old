@@ -77,14 +77,14 @@ class ConsultarPrecioCtrl{
         // })
     }
 
-    $onOnit(){
-        let accion = JSON.parse(localStorage.getItem("accion"));
-        if(accion===null){
-            location.href = "/Home/Index";
-        }else{
-            this.accion = accion[0];
-        }
-    }
+    // $onOnit(){
+    //     let accion = JSON.parse(localStorage.getItem("accion"));
+    //     if(accion===null){
+    //         location.href = "/Home/Index";
+    //     }else{
+    //         this.accion = accion[0];
+    //     }
+    // }
 
 
     validarCampoText(text){

@@ -7,13 +7,13 @@ consolidacionInvCtrl.$inject = ['$scope', '$filter', 'mainService', 'commonServi
 
 function consolidacionInvCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form){
 
-    let accion = JSON.parse(localStorage.getItem("accion"));  
-    if(accion===null){
-        location.href ="/Home/Index";
-        return
-    }else{
-        $scope.accion = accion[0];
-    }
+    // let accion = JSON.parse(localStorage.getItem("accion"));  
+    // if(accion===null){
+    //     location.href ="/Home/Index";
+    //     return
+    // }else{
+    //     $scope.accion = accion[0];
+    // }
 
     
     $scope.btnEditDisabled = false;

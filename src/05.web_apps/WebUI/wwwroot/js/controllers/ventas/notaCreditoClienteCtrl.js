@@ -7,14 +7,14 @@ function notaCreditoClienteCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModal
 
     'use strict';
 
-    let accion = JSON.parse(localStorage.getItem("accion"));
+    // let accion = JSON.parse(localStorage.getItem("accion"));
 
-    if (accion === null) {
-        location.href = "/Home/Index";
-        return
-    } else {
-        $scope.accion = accion[0];
-    }
+    // if (accion === null) {
+    //     location.href = "/Home/Index";
+    //     return
+    // } else {
+    //     $scope.accion = accion[0];
+    // }
 
     const TIPO_DOC = _commonSvc.tipoDoc['NC'];
 

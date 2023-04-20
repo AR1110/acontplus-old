@@ -3,6 +3,10 @@ USE AcontPlus
 IF OBJECT_ID('FactElect.Doc_Elect_Get') IS NOT NULL
 DROP PROCEDURE FactElect.Doc_Elect_Get
 GO
+
+
+-- FactElect.Doc_Elect_Get 25, '{"isCurrentDate": false,"checkBoxDate": true,"isSearchCustomerProvider": true,"dateStart": "2023-03-21T05:00:00.000Z","dateEnd": "2023-04-20T04:59:59.999Z","codDoc": "01","checkBoxComprobante": true,"identificacionReceptor": "9999999999999"}'
+
 CREATE PROCEDURE FactElect.Doc_Elect_Get @idRol INT,@json NVARCHAR(max)
 AS
 BEGIN 
@@ -21,6 +25,14 @@ BEGIN
 	DECLARE @dateEnd DATETIME;
 	DECLARE @tipo VARCHAR(2)
 	DECLARE @textSearch VARCHAR(15)
+
+	DECLARE @checkboxEstablecimiento BIT 
+	DECLARE @estab VARCHAR(10)
+	DECLARE @checkboxPuntoEmision BIT
+	DECLARE @ptoEmi VARCHAR(10)
+
+	DECLARE @isSearchCustomerProvider BIT 
+	DECLARE @identificacionReceptor VARCHAR(20)
 
 	DECLARE @tblMain AS TABLE(
 		idDocumentoElectronico BIGINT NOT NULL
@@ -41,7 +53,10 @@ BEGIN
 
 	
 	DECLARE @params NVARCHAR(MAX) = '@idEntidad INT,
+									 @estab VARCHAR(5),
+									 @ptoEmi VARCHAR(5),
 	                                 @codDoc VARCHAR(10),
+									 @identificacionReceptor VARCHAR(20),
 									 @codEstado VARCHAR(5),
 									 @dateStart DATETIME,
 									 @dateEnd DATETIME';
@@ -83,58 +98,86 @@ BEGIN
 		@dateEnd       = dateEnd
 		,@tipo = tipo
 		,@textSearch = textSearch
+
+		,@checkboxEstablecimiento = checkboxEstablecimiento
+		,@estab = estab
+		,@checkboxPuntoEmision = checkboxPuntoEmision
+		,@ptoEmi = ptoEmi
+
+		,@isSearchCustomerProvider = isSearchCustomerProvider
+		,@identificacionReceptor = identificacionReceptor
 	FROM OPENJSON(@json)
-	WITH(codDoc VARCHAR(10) '$.codDoc',
-		 checkBoxEstadoServicio BIT '$.checkBoxEstadoServicio',
-		 checkBoxComprobante BIT '$.checkBoxComprobante',
-		 codEstado INT '$.codEstado',
-		 isCurrentDate BIT  '$.isCurrentDate',
-		 checkBoxDate BIT   '$.checkBoxDate',
-		 dateStart DATETIME '$.dateStart',
-		 dateEnd   DATETIME '$.dateEnd'
+	WITH(codDoc VARCHAR(10) '$.codDoc'
+		 ,checkBoxEstadoServicio BIT '$.checkBoxEstadoServicio'
+		 ,checkBoxComprobante BIT '$.checkBoxComprobante'
+		 ,codEstado INT '$.codEstado'
+		 ,isCurrentDate BIT  '$.isCurrentDate'
+		 ,checkBoxDate BIT   '$.checkBoxDate'
+		 ,dateStart DATETIME '$.dateStart'
+		 ,dateEnd   DATETIME '$.dateEnd'
 		 ,tipo VARCHAR(2) '$.tipo'
 		 ,textSearch VARCHAR(15) '$.textSearch'
+		 ,checkboxEstablecimiento BIT '$.checkBoxEstab'
+		 ,estab VARCHAR(10) '$.estab'
+		 ,checKboxPuntoEmision BIT '$.checKboxPuntoEmision'
+		 ,ptoEmi VARCHAR(10) '$.ptoEmi'
+
+		 ,isSearchCustomerProvider BIT '$.isSearchCustomerProvider'
+		 ,identificacionReceptor VARCHAR(20) '$.identificacionReceptor'
 		)
-	IF @checkBoxDate = 1
+
+	IF @checkboxEstablecimiento = 1
 		BEGIN 
-			SET @sql = @sql + 'AND CAST(de.fechaEmision AS date) BETWEEN CAST(@dateStart AS date) AND CAST(@dateEnd AS date) '
+			SET @sql = @sql + ' AND de.estab = @estab'
 		END 
 
-	IF @isCurrentDate = 1
-		BEGIN
-			SET @sql = @sql + 'AND CAST(de.fechaRegistro AS DATE) = CAST(dbo.ufnGetDateEcuador() AS DATE) '
-		END
+	IF @checkboxPuntoEmision = 1
+		BEGIN 
+			SET @sql = @sql + ' AND de.ptoEmi = @ptoEmi'
+		END 
+
+	IF @checkBoxDate = 1
+		BEGIN 
+			SET @sql = @sql + ' AND CAST(de.fechaEmision AS date) BETWEEN CAST(@dateStart AS date) AND CAST(@dateEnd AS date) '
+		END 
+
+	--IF @isCurrentDate = 1
+	--	BEGIN
+	--		SET @sql = @sql + ' AND CAST(de.fechaRegistro AS DATE) = CAST(dbo.ufnGetDateEcuador() AS DATE) '
+	--	END
 
 	IF @checkBoxComprobante = 1
 		BEGIN
-			SET @sql = @sql +'AND de.codDoc = @codDoc '
+			SET @sql = @sql +' AND de.codDoc = @codDoc '
 		END 
 
-	
+	IF @isSearchCustomerProvider = 1
+		BEGIN 
+			SET @sql = @sql + ' AND de.rucReceptor = @identificacionReceptor'
+		END 
 
 	IF (@tipo = '3')
 		BEGIN
-			SET @sql = @sql +  'AND codEstado IN (0,5) '
+			SET @sql = @sql +  ' AND codEstado IN (0,5) '
 		END
 	ELSE 
 		BEGIN
 			IF @checkBoxEstadoServicio = 1
 				BEGIN	
-					SET @sql = @sql + 'AND de.codEstado = @codEstado '
+					SET @sql = @sql + ' AND de.codEstado = @codEstado '
 				END 
 		END
 
-	SET @sql = @sql + 'ORDER BY de.idDocumentoElectronico DESC';
-
-
+	SET @sql = @sql + ' ORDER BY de.idDocumentoElectronico DESC';
+	
+	print @sql 
 	EXEC sp_executesql @sql,@params
 				           ,@idEntidad = @idEntidad
+						   ,@estab = @estab
+						   ,@ptoEmi = @ptoEmi
 						   ,@codDoc = @codDoc 
+						   ,@identificacionReceptor = @identificacionReceptor
 						   ,@codEstado = @codEstado
 						   ,@dateStart = @dateStart
 						   ,@dateEnd = @dateEnd
-
-
-
-
 END 
