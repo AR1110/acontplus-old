@@ -35,12 +35,12 @@ class ArticuloFraccionadoCtrl{
     }
 
     $onInit(){
-        let accion = JSON.parse(localStorage.getItem("accion"));
-        if(accion===null){
-            location.href = "/Home/Index";
-        }else{
-            this.accion = accion[0];
-        }
+        // let accion = JSON.parse(localStorage.getItem("accion"));
+        // if(accion===null){
+        //     location.href = "/Home/Index";
+        // }else{
+        //     this.accion = accion[0];
+        // }
 
         this.getAllArticuloFraccionado();
 
