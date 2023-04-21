@@ -84,8 +84,7 @@ function carteraProveedorCtrl(_mS, $scope, $filter, commonSvc, _modalSvc, _nombr
             dataParams: JSON.stringify($scope.dataSearch)
         }
 
-        commonSvc.getReport({
-            url: '/Reporte/Download',
+        commonSvc.getReport({            
             parameters,
             formatType
         });                      
@@ -193,8 +192,7 @@ function carteraProveedorCtrl(_mS, $scope, $filter, commonSvc, _modalSvc, _nombr
     }
 
     $scope.openModalDocumento = async(item)=>{    
-        try {
-            console.log(item)
+        try {            
             commonSvc.viewDetailDocument({
                 id: item.idDocumento,
                 codigoDocumento: item.codigo,

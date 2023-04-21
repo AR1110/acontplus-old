@@ -309,8 +309,7 @@
                 })
             }
 
-            commonSvc.getReport({
-                url: '/Reporte/Download',
+            commonSvc.getReport({                
                 parameters,
                 formatType
             })    

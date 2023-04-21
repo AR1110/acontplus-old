@@ -459,8 +459,7 @@ function pagoCtrl($timeout, $http, $filter, $scope, mS, _commonSvc, toast, _moda
             })
         }
 
-        _commonSvc.getReport({
-            url: '/Reporte/Download',
+        _commonSvc.getReport({         
             parameters,
             formatType
         })    
