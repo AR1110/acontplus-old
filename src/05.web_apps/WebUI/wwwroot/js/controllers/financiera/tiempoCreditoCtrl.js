@@ -8,12 +8,12 @@
     tiempoCreditoCtrl.$inject = ['$scope', 'mainService', 'modalService', 'nombreModal', 'formulario', 'toastService'];
 
     function tiempoCreditoCtrl($scope, mS, _modalSvc, _nombreModal, form, toast) {
-        let accion = JSON.parse(localStorage.getItem("accion"));
-        if(accion===null){
-            location.href = "/Home/Index";
-        }else{
-            $scope.accion = accion[0];
-        }
+        // let accion = JSON.parse(localStorage.getItem("accion"));
+        // if(accion===null){
+        //     location.href = "/Home/Index";
+        // }else{
+        //     $scope.accion = accion[0];
+        // }
         
         $scope.data = {};
         $scope.tiempoCredito = {};

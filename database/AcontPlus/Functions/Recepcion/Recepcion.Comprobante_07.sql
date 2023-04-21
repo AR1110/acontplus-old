@@ -1,4 +1,4 @@
---SELECT * FROM Recepcion.Comprobante_07(9)
+
 USE [AcontPlus]
 GO 
 -- ================================================
@@ -28,7 +28,7 @@ ALTER FUNCTION Recepcion.Comprobante_07
 RETURNS 
 @table  TABLE
 (
-	 idDocumento INT UNIQUE NOT NULL
+	 idDocumento INT  NOT NULL
 	 ,idEstablecimiento INT NOT NULL
 	 ,serieComprobante VARCHAR(50) NOT NULL
 	 ,rucEmisor VARCHAR(13)
@@ -40,7 +40,7 @@ RETURNS
 	 ,claveAcceso VARCHAR(50) NOT NULL
 	 ,numeroAutorizacion VARCHAR(50) NOT NULL
 	 ,idUsuario INT 	
-	 ,docSustento VARCHAR(40) NOT NULL
+	 ,docSustento VARCHAR(40)  NULL
 	 ,impuesto VARCHAR(20) NOT NULL
 	 
 	 ,codigo VARCHAR(5) NOT NULL
@@ -52,6 +52,8 @@ RETURNS
 	 ,totalRenta NUMERIC(18,2) NULL 
 	 ,totalIva NUMERIC(18,2)  NULL
 	 ,total NUMERIC(18,2) NOT NULL
+
+	 ,versionComp VARCHAR(10)
 )
 AS
 BEGIN
@@ -104,7 +106,7 @@ BEGIN
 		 idDocumento
 		,versionComp
 		,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX),dr.xmlDoc.query('//autorizacion/comprobante')))
-	FROM Recepcion.DocumentoRecibido dr WHERE dr.codDoc = '07' AND dr.identificacionReceptor = @identificacionReceptor AND dr.xmlDoc IS NOT NULL
+	FROM Recepcion.DocumentoRecibido dr WHERE dr.codDoc = '07'	AND dr.identificacionReceptor = @identificacionReceptor AND dr.xmlDoc IS NOT NULL
 
 	--INSERT INTO @docsSustento (idDocumento,codDocSustento,numDocSustento,fechaEmisionDocSustento)
 	--SELECT 
@@ -197,9 +199,10 @@ BEGIN
 							,r.baseImponible
 							,r.porcentajeRetener
 							,r.valorRetenido
-							,0
-							,0
-							,0
+							,totalRenta = ISNULL((SELECT SUM(rt.valorRetenido) FROM @retencion rt WHERE rt.idDocumento = dr.idDocumento AND rt.codigo = '1'),0)
+							,totalIva   = ISNULL((SELECT SUM(rt.valorRetenido) FROM @retencion rt WHERE rt.idDocumento = dr.idDocumento AND rt.codigo = '2'),0)
+							,total      = ISNULL((SELECT SUM(rt.valorRetenido) FROM @retencion rt WHERE rt.idDocumento = dr.idDocumento), 0)
+							,dr.versionComp
 						FROM Recepcion.DocumentoRecibido dr WITH(NOLOCK) 
 						INNER JOIN @retencion r ON r.idDocumento                              = dr.idDocumento
 						INNER JOIN Sri.ImpuestoRetencion ir WITH (NOLOCK) ON ir.codigo        = r.codigo

@@ -9,13 +9,13 @@
 
     function articuloCtrl($scope, mS, modalSvc, nombreModalConst, tS, form){        
        
-        let accion = JSON.parse(localStorage.getItem("accion"));
+        // let accion = JSON.parse(localStorage.getItem("accion"));
 
-        if (accion === null) {
-            location.href = "/Home/Index";
-        } else {
-            $scope.accion = accion[0];
-        }
+        // if (accion === null) {
+        //     location.href = "/Home/Index";
+        // } else {
+        //     $scope.accion = accion[0];
+        // }
 
         const {
             MODAL_CTRL, 
