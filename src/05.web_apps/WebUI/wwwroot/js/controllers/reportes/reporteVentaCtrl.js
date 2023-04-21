@@ -390,8 +390,7 @@
             $scope.dataSearch.idRol = idUsuarioRol
             $scope.dataSearch.anio = Number($scope.dataSearch.byAnio);
 
-            mS.getData('get', `/EstadisticaVenta/Get?json=${JSON.stringify($scope.dataSearch)}`).then(response => {
-                console.log(response)
+            mS.getData('get', `/EstadisticaVenta/Get?json=${JSON.stringify($scope.dataSearch)}`).then(response => {                
                 $scope.estadisticas = response;
                 if ($scope.estadisticas.length > 0) {
                     $scope.drawChartAnual();
