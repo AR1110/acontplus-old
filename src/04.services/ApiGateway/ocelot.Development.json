@@ -763,6 +763,11 @@
       "UpstreamPathTemplate": "/api/Reporte/ExportExcel"
     },
     {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",

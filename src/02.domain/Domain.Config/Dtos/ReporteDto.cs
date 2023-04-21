@@ -7,5 +7,6 @@
         public string reportPath { get; set; }
         public string storedProcedure { get; set; } 
         public string nombreReporte { get;set; }
+        public bool estado { get; set; }
     }
 }
