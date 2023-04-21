@@ -31,7 +31,7 @@ namespace BL.Reports
                     if (fromService)
                     {
                         //lr.ReportPath = _configuration.GetSection("dirReports").Value + dsParams.Tables[0].Rows[0]["reportPath"].ToString();
-                        lr.LoadReportDefinition(RdlcLoad.LoadReportDefinition(_configuration.GetSection("dirReports").Value + dsParams.Tables[0].Rows[0]["reportPath"].ToString()));
+                        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(_configuration.GetSection("dirReports").Value + dsParams.Tables[0].Rows[0]["reportPath"].ToString()));
                     }
                     else
                     {
@@ -42,13 +42,13 @@ namespace BL.Reports
                         switch (paths.Length)
                         {
                             case 1:
-                                lr.LoadReportDefinition(RdlcLoad.LoadReportDefinition(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", paths[0])));
+                                lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", paths[0])));
                                 break; 
                                 case 2:
-                                lr.LoadReportDefinition(RdlcLoad.LoadReportDefinition(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", paths[0], paths[1])));
+                                lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", paths[0], paths[1])));
                                 break;
                             default:
-                                lr.LoadReportDefinition(RdlcLoad.LoadReportDefinition(_configuration.GetSection("dirReports").Value + dsParams.Tables[0].Rows[0].Field<string>("reportPath")));
+                                lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(_configuration.GetSection("dirReports").Value + dsParams.Tables[0].Rows[0].Field<string>("reportPath")));
                                 break;
                         } 
                     }
@@ -99,10 +99,10 @@ namespace BL.Reports
             }
         }
 
-        public byte[] ByteReportDynamic(ApiReportParamsDto parameters, ref string mimeType, ref string fileName)
+        public byte[] ByteReportDynamic(dynamic data, ref string mimeType, ref string fileName)
         {
-            string format = "";
-            string mimeTypeImg = "";
+            ApiReportParamsDto parameters = RdlcHelpers.ConverToModelReportParams(data);
+            string format = "", mimeTypeImg = "";
             using (LocalReport lr = new LocalReport())
             {
                 foreach (var item in parameters.rdlcParams)
@@ -116,13 +116,13 @@ namespace BL.Reports
                         switch (paths.Length)
                         {
                             case 1:
-                                lr.LoadReportDefinition(RdlcLoad.LoadReportDefinition(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", paths[0])));
+                                lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", paths[0])));
                                 break;
                             case 2:
-                                lr.LoadReportDefinition(RdlcLoad.LoadReportDefinition(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", paths[0], paths[1])));
+                                lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", paths[0], paths[1])));
                                 break;
                             default:
-                                lr.LoadReportDefinition(RdlcLoad.LoadReportDefinition(_configuration.GetSection("dirReports").Value + item.Value.ToString()));
+                                lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(_configuration.GetSection("dirReports").Value + item.Value.ToString()));
                                 break;
                         }
                     }
@@ -186,7 +186,7 @@ namespace BL.Reports
                             if (item.Key == "rdlcName")
                             {
                                 //lr.ReportPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", item.Value);
-                                lr.LoadReportDefinition(RdlcLoad.LoadReportDefinition(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", item.Value)));
+                                lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", item.Value)));
                             }
                             if (item.Key == "formato")
                             {

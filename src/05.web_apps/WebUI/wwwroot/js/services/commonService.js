@@ -1291,18 +1291,24 @@ export class CommonService {
                     screenY=${y}
                     screenX=${x}`
                     )
-                    
+
                 } else {
                     let serverData = new Blob([response.data], {
                         type: response.headers()["content-type"],
                     });
-                    let fileName = response
-                        .headers()["content-disposition"].split(";")[1]
-                        .split("=")[1];
+                    // let fileName = response
+                    //     .headers()["content-disposition"].split(";")[1]
+                    //     .split("=")[1];
+                    let fileName = response.headers()['content-disposition'].split(';')[1].split('=')[1].replace('"', "")
+                    fileName = fileName.replace('"', "")
                     this.FileSaver.saveAs(serverData, fileName);
                 }
+            }).catch(error => {
+                hideLoader();
+                console.log(error)
             })
         } catch (error) {
+            hideLoader();
             console.log(error)
         } finally {
             hideLoader();
@@ -1323,6 +1329,7 @@ export class CommonService {
                 this.FileSaver.saveAs(serverData, fileName);
             })
         } catch (error) {
+            hideLoader()
             console.log(error)
         } finally {
             hideLoader();
@@ -1338,7 +1345,7 @@ export class CommonService {
         try {
             showLoader();
 
-            this.mS.getFile('post', '/Reporte/DownloadDynamic', JSON.stringify(parameters)).then(response => {
+            this.mS.getFile('post', 'Reporte/DynamicReport', JSON.stringify(parameters), true).then(response => {
                 hideLoader();
 
                 if (format === "pdf") {
@@ -1371,6 +1378,9 @@ export class CommonService {
                     let fileName = response.headers()["content-disposition"].split(";")[1].split("=")[1];
                     this.FileSaver.saveAs(serverData, fileName);
                 }
+            }).catch(error => {
+                hideLoader();
+                console.log(error)
             })
         } catch (error) {
             hideLoader();
