@@ -85,7 +85,7 @@ namespace BL.Reports
                         {
                             if (Convert.ToBoolean(item["isByte"]))
                             {
-                                lr.SetParameters(new[] { new ReportParameter(item["paramName"].ToString(), Helpers.FileExtensions.GetBase64FromByte((byte[])item["paramByte"])) });
+                                lr.SetParameters(new[] { new ReportParameter(item["paramName"].ToString(), FileExtensions.GetBase64FromByte((byte[])item["paramByte"])) });
                             }
                             else
                             {
