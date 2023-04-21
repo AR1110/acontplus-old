@@ -118,8 +118,8 @@
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
-        <Field Name="sucursal">
-          <DataField>sucursal</DataField>
+        <Field Name="establecimiento">
+          <DataField>establecimiento</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="bodega">
@@ -1744,6 +1744,7 @@
                                   <Value>=Fields!cantidadEntrada.Value</Value>
                                   <Style>
                                     <FontSize>7pt</FontSize>
+                                    <Format>#,0.00;(#,0.00)</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1880,6 +1881,7 @@
                                   <Value>=Fields!cantidadSalida.Value</Value>
                                   <Style>
                                     <FontSize>7pt</FontSize>
+                                    <Format>#,0.00;(#,0.00)</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1914,6 +1916,7 @@
                                   <Value>=Fields!cantidadEntrada.Value</Value>
                                   <Style>
                                     <FontSize>7pt</FontSize>
+                                    <Format>#,0.00;(#,0.00)</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1982,6 +1985,7 @@
                                   <Value>=Fields!saldo.Value</Value>
                                   <Style>
                                     <FontSize>7pt</FontSize>
+                                    <Format>#,0.00;(#,0.00)</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -2047,9 +2051,10 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!totalGeneral.Value</Value>
+                                  <Value>=Fields!costo.Value*Fields!saldo.Value</Value>
                                   <Style>
                                     <FontSize>7pt</FontSize>
+                                    <Format>#,0.00;(#,0.00)</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -2186,25 +2191,25 @@
                 <TablixMember>
                   <Group Name="sucursal">
                     <GroupExpressions>
-                      <GroupExpression>=Fields!sucursal.Value</GroupExpression>
+                      <GroupExpression>=Fields!establecimiento.Value</GroupExpression>
                     </GroupExpressions>
                   </Group>
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=Fields!sucursal.Value</Value>
+                      <Value>=Fields!establecimiento.Value</Value>
                     </SortExpression>
                   </SortExpressions>
                   <TablixHeader>
                     <Size>2.10312cm</Size>
                     <CellContents>
-                      <Textbox Name="sucursal">
+                      <Textbox Name="establecimiento">
                         <CanGrow>true</CanGrow>
                         <KeepTogether>true</KeepTogether>
                         <Paragraphs>
                           <Paragraph>
                             <TextRuns>
                               <TextRun>
-                                <Value>=Fields!sucursal.Value</Value>
+                                <Value>=Fields!establecimiento.Value</Value>
                                 <Style>
                                   <FontSize>7pt</FontSize>
                                 </Style>
@@ -2215,7 +2220,7 @@
                             </Style>
                           </Paragraph>
                         </Paragraphs>
-                        <rd:DefaultName>sucursal</rd:DefaultName>
+                        <rd:DefaultName>establecimiento</rd:DefaultName>
                         <Style>
                           <Border>
                             <Style>Solid</Style>

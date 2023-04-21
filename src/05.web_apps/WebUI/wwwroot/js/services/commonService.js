@@ -621,10 +621,10 @@ export class CommonService {
 
     //--------------------------------------METODOS RELACIONADOS AL TIPO DOCUMENTO---------------------------
 
-    
-    getDataFormVenta(){
-        return this.mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response=>{
-            if(response.code==='0'){                
+
+    getDataFormVenta() {
+        return this.mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response => {
+            if (response.code === '0') {
                 throw response
             }
             return JSON.parse(response.payload)
@@ -1266,39 +1266,32 @@ export class CommonService {
         }
     }
 
-
-
-
-
-
     //--------------------------------------------------REPORTE----------------------------------
-    async getReport({ method = "post", url = '/Reporte/Download', parameters, formatType = "pdf" }) {
+    async getReport({ method = "post", url = 'Reporte/Download', parameters, formatType = "pdf" }) {
         try {
             showLoader();
-            await this.mS.getFile(method, url, parameters).then(response => {
+            await this.mS.getFile(method, url, parameters, true).then(response => {
 
                 if (formatType === "pdf") {
                     let fileBlob = new Blob([response.data], {
                         type: response.data.type,
                     })
-
                     let objectUrl = window.URL || window.webkitURL;
                     let urlFile = objectUrl.createObjectURL(fileBlob);
-
                     // Ajuste horizontal
                     let x = parseInt((screen.width - 1200) / 2);
                     // Ajustae vertical
                     let y = parseInt((screen.height - 650) / 4);
-
                     window.open(
                         urlFile,
                         "_blank",
                         `resizable=yes
-                width=1200
-                height=650
-                screenY=${y}
-                screenX=${x}`
+                    width=1200
+                    height=650
+                    screenY=${y}
+                    screenX=${x}`
                     )
+                    
                 } else {
                     let serverData = new Blob([response.data], {
                         type: response.headers()["content-type"],
@@ -1431,7 +1424,7 @@ export class CommonService {
     async print(params) {
         try {
 
-              
+
             // console.log('init get name computer')           
             // console.log('end get name computer')
 
@@ -1442,9 +1435,9 @@ export class CommonService {
             // const data = await response.json();
             // console.log(data);
 
-            
 
-            let urlPrinter = (params[0].urlPrinter) ? params[0].urlPrinter + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + params[0].dataSources + '&rdlcParams=' + params[0].rdlcParams: __env.urlPrint + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + params[0].dataSources + '&rdlcParams=' + params[0].rdlcParams + '&getMachine=' + false;
+
+            let urlPrinter = (params[0].urlPrinter) ? params[0].urlPrinter + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + params[0].dataSources + '&rdlcParams=' + params[0].rdlcParams : __env.urlPrint + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + params[0].dataSources + '&rdlcParams=' + params[0].rdlcParams + '&getMachine=' + false;
 
             fetch(urlPrinter).then(function (response) {
                 if (response.ok) {
@@ -1485,7 +1478,7 @@ export class CommonService {
         // let urlApi = await this.$http.get('/ConnectionApiAdmin/GetUrl?typeUrl=' + typeUrl).then(({data:response})=>response)    
 
         //IP Local 
-       // urlApi = typeUrl == 1 ? "http://localhost:7166/" : "https://localhost:7166/";
+        // urlApi = typeUrl == 1 ? "http://localhost:7166/" : "https://localhost:7166/";
 
         //IP Producción de Desarrollo 
         //urlApi = typeUrl == 1 ? "http://205.209.99.71:8090/" : "http://206.72.196.229:83/";
@@ -1669,65 +1662,65 @@ export class CommonService {
 
 
     //Permiso para editar o anular Doc. Venta 
-    async checkHasPermissionToEditOrDelete(codigoAccion){ 
+    async checkHasPermissionToEditOrDelete(codigoAccion) {
         let jsonParams = {
             typeList: 2,
             codigoAccion,
         }
         let result = {};
-        
+
         showLoader();
         await this.mS.getData('get', 'Solicitud/Check/' + JSON.stringify(jsonParams), null, true).then(response => {
-            if(response.code==="0"){                   
+            if (response.code === "0") {
                 hideLoader();
                 this.form.sweetAlert('warning', response.message, response.titleSms);
-                throw response;              
+                throw response;
             }
             hideLoader();
             result = response;
-            
+
         }).catch(error => {
             hideLoader();
             throw error;
-        })           
+        })
         return result;
     }
 
 
-    async requestAuthorizationKey(codigoAccion){
-        let textMotivo = codigoAccion==='E'?'Editar': 'Anular';
+    async requestAuthorizationKey(codigoAccion) {
+        let textMotivo = codigoAccion === 'E' ? 'Editar' : 'Anular';
         Swal.fire({
             title: "Solicitud de Clave de Autorización",
             text: `Por favor, proporcione una explicación del motivo por el cual desea ${textMotivo} el documento!`,
             input: 'text',
             inputAttributes: {
-              autocapitalize: 'off'
+                autocapitalize: 'off'
             },
-            showCancelButton: true,                                                 
+            showCancelButton: true,
             inputPlaceholder: "Explicación del motivo",
             confirmButtonText: "Confirmar",
             cancelButtonText: "Cancelar",
             allowOutsideClick: false,
             inputValidator: (value) => {
-                if(!value){
+                if (!value) {
                     return ('Por favor ingrese la descripción del motivo');
                 }
-                if(value.length<15){
+                if (value.length < 15) {
                     return ('La descripción del motivo tiene que terner al menos de 15 caracteres');
-                }              
-            }                   
+                }
+            }
         }).then(result => {
-            if(result.isConfirmed){
+            if (result.isConfirmed) {
                 let jsonParams = JSON.stringify({
                     motivo: result.value,
                     codigoAccion
                 });
                 this.mS.getData('post', 'Solicitud/Post/' + jsonParams, null, true).then(response => {
                     console.log(response)
-                    if(response.code==="0"){
+                    if (response.code === "0") {
                         this.form.sweetAlert('warning', response.message)
                     }
-                    if(response.code==="1"){
+                    if (response.code === "1") {
                         this.form.sweetAlert('success', response.message, response.titleSms, 1000);
                     }
                 }).catch(error => {
@@ -1738,8 +1731,8 @@ export class CommonService {
     }
 
 
-    updateRequestKey(codigoAccion){
-        this.mS.getData('put', 'Solicitud/Put/' + JSON.stringify({codigoAccion, typeOperation: 2}), null, true).then(response =>{
+    updateRequestKey(codigoAccion) {
+        this.mS.getData('put', 'Solicitud/Put/' + JSON.stringify({ codigoAccion, typeOperation: 2 }), null, true).then(response => {
             console.log(response)
         })
     }

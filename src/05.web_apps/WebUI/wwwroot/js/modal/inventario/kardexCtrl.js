@@ -38,7 +38,7 @@ export class KardexCtrl {
             width: "100%",
             pagination: "local",
             langs: {
-                "es-es": { 
+                "es-es": {
                     "pagination": {
                         "first": "Primera", //text for the first page button
                         "first_title": "Primer Pagina", //tooltip text for the first page button
@@ -161,7 +161,7 @@ export class KardexCtrl {
         this.tableTabulatorKardex.on("rowClick", (e, row) => {
             this.openModalTipoDocumento(row.getData())
         });
-    } 
+    }
 
     sumCantidadEntrada = (values, data, calcParams) => {
         return this.data.cantTotalEntrada || 0
@@ -237,7 +237,8 @@ export class KardexCtrl {
                     return
                 }
                 if (response.code === "1") {
-                    this.kardexs = JSON.parse(response.payload) || [];
+                    let tempArray = JSON.parse(response.payload) || []
+                    this.kardexs = tempArray[2];
                     if (this.kardexs.length === 0) {
                         hideLoader();
                         this.toast.toastr('info', 'No se encontraron los resultados');
@@ -254,6 +255,10 @@ export class KardexCtrl {
                     this.data.stock = this.calculoTotales("saldo");
                     this.data.totalGenetal = this.calculoTotales("totalGeneral");
 
+                    angular.forEach(this.kardexs, (value, key) => {
+                        value.totalGeneral = (value.costo * value.saldo).toFixed(2)
+                    })
+                   
                     this.drawTable();
                     hideLoader();
                 }
@@ -317,8 +322,9 @@ export class KardexCtrl {
         if (!formatType) return
 
         let parameters = {
+            hasIdUsuarioRol: true,
             reportParams: JSON.stringify({
-                codigo: "RK",
+                codigo: "KRG",
                 format: formatType,
                 codEstab: this.dataSearch.codEstab,
                 aditionalParams: []

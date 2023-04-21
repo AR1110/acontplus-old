@@ -43,7 +43,14 @@ namespace ApiReports.Controllers
                 await _db.SPExecute(dsParams.Tables[0].Rows[0]["storedProcedure"].ToString());
                 if (!data.hasService)
                 {
-                    _db.AddDynamicParam("idRol", idUsuarioRol);
+                    if (data.hasIdUsuarioRol)
+                    {
+                        _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+                    }
+                    else
+                    {
+                        _db.AddDynamicParam("idRol", idUsuarioRol);
+                    }
                 }
                 _db.AddDynamicParam("json", data.dataParams);
                 DataSet ds = _db.GetDataSet();
@@ -65,14 +72,14 @@ namespace ApiReports.Controllers
                     }
                     _response.Create(bytes, mimeType, fileName);
                 }
-                return Ok(_response);
-            }
+                //return Ok(_response);
+             }
             catch (Exception ex)
             {
                 _log.LogError("Error in Download: \n" + ex.ToString());
                 ReportError.ReportNotFound(_response);
-                return Ok(_response);
             }
+            return File(_response.Content, _response.ContentType, _response.FileName);
         }
         [HttpPost("ExportExcel")]
         public async Task<IActionResult> ExportExcel(ApiReportParamsDto data)

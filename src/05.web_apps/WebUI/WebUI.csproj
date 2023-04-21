@@ -14,7 +14,7 @@
 	</PropertyGroup>
 
 	<ItemGroup Label="Global-Tool Watch">
-		<Watch Include="..\RazorClassLibRazorComponent\**\*.razor" />
+		<Watch Include="..\..\08.razor_ui\Recepcion_UI\**\*.cshtml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -4110,7 +4110,9 @@
 		<ProjectReference Include="..\..\08.razor_ui\FACT_UI\FACT_UI.csproj">
 		  <TreatAsUsed>true</TreatAsUsed>
 		</ProjectReference>
-		<ProjectReference Include="..\..\08.razor_ui\Inventario_UI\Inventario_UI.csproj" />
+		<ProjectReference Include="..\..\08.razor_ui\Inventario_UI\Inventario_UI.csproj">
+			<TreatAsUsed>true</TreatAsUsed>
+		</ProjectReference>
 		<ProjectReference Include="..\..\08.razor_ui\Recepcion_UI\Recepcion_UI.csproj">
 		  <TreatAsUsed>true</TreatAsUsed>
 		</ProjectReference>

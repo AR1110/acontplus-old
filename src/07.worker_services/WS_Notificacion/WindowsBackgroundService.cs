@@ -117,7 +117,7 @@ namespace WS_Notificacion
                             _db.AddDynamicParam("json", spParams);
                             DataSet ds = _db.GetDataSet();
 
-                            bytesPdf = _reports.ByteReport(dsParams, ds);
+                            bytesPdf = _reports.ByteReport(dsParams, ds, true);
 
                             if (bytesPdf == null || bytesPdf.Length == 0)
                             {

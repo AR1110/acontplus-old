@@ -21,6 +21,7 @@ SELECT t.idTransaccion
 	,td.codigo codDoc
 	,td.codigoSri
 	,td.descripcion documento
+	,b.codEstab
 	,b.descripcion bodega
 	,a.idEntidad
 	,a.codigo codArticulo
@@ -137,10 +138,21 @@ SELECT t.idTransaccion
 ,ISNULL(CASE WHEN tt.codigo = 'S' THEN m.descripcion END, '') medidaSalida
 ,ISNULL(CASE WHEN tt.codigo = 'E' THEN t.total END, 0) totalEntrada
 ,ISNULL(CASE WHEN tt.codigo = 'S' THEN t.total END, 0) totalSalida 
+--,IIF(td.codigo = 'CI', t.idDocumento, dbo.AFTMovimientoKardex(t.fechaRegistro, t.idArticulo, t.idBodega)) particion
+,CASE WHEN td.codigo = 'CI' THEN t.idDocumento ELSE
+(SELECT max(ci.idConsolidacionInventario) 
+								    FROM ConsolidacionInventario ci 
+									INNER JOIN ConsolidacionInventarioDetalle cid ON cid.idConsolidacionInventario = ci.idConsolidacionInventario
+									INNER JOIN EstadoPago ep ON ep.idEstadoPago  = ci.idEstadoDocumento
+									WHERE  ci.fechaEmision < t.fechaRegistro AND cid.idArticulo = t.idArticulo AND ep.codigo = 'AC' AND cid.idBodega = t.idBodega)
+END particion
+--,SUM(IIF(tt.codigo = 'S', -1, 1) * IIF(t.estado = 0, 0, t.cantidad)) OVER (PARTITION BY IIF(td.codigo = 'CI', t.idDocumento, dbo.AFTMovimientoKardex(t.fechaRegistro, t.idArticulo, t.idBodega)) ORDER BY t.fechaRegistro, t.idTransaccion ASC) saldo
+,e.nombreComercial establecimiento
 FROM Inventario.Transaccion t WITH (NOLOCK)
 INNER JOIN Inventario.TipoTransaccion tt WITH (NOLOCK) ON t.idTipoTransaccion = tt.idTipoTransaccion
 INNER JOIN Inventario.TipoDocumento td WITH (NOLOCK) ON t.idTipoDocumento = td.idTipoDocumento
 INNER JOIN Bodega b WITH (NOLOCK) ON t.idBodega = b.idBodega
+INNER JOIN Sri.Establecimiento e ON b.codEstab = e.codEstab
 INNER JOIN Articulo a WITH (NOLOCK) ON t.idArticulo = a.idArticulo
 LEFT JOIN Medida m  WITH (NOLOCK) ON a.idMedida = m.idMedida
 LEFT JOIN Usuario u WITH (NOLOCK) ON t.idUsuario = u.idUsuario

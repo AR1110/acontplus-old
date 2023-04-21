@@ -69,7 +69,7 @@ namespace WebUI.Controllers.Admin
         }
 
         //REPORTS FROM API SERVER FILES BY URL AND FILE NAME
-        public async Task<IActionResult> Download([FromBody] ApiReportParams parameters)
+        public async Task<IActionResult> Download([FromBody] ApiReportParamsDto parameters)
         {
             FileModel reportFile = new FileModel();
             try
@@ -80,7 +80,7 @@ namespace WebUI.Controllers.Admin
                 // string idUsuarioRol = headerUsuarioRol.FirstOrDefault();
                 // Console.WriteLine(jsonWebToken);
                 // Console.WriteLine(idUsuarioRol);
-                parameters.idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                //parameters.idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 reportFile = await new ApiServer(_apiGateway).PostAsync<FileModel>("api/Reporte/Download", parameters, Request);
                 if (reportFile.Content == null || reportFile.Content.Length == 0)
                 {
@@ -106,7 +106,7 @@ namespace WebUI.Controllers.Admin
             FileModel reportFile = new FileModel();
             try
             {
-                reportFile = await new ApiServer(_apiGateway).PostAsync<FileModel>("api/Reporte/DynamicReport", data);
+                reportFile = await new ApiServer(_apiGateway).PostAsync<FileModel>("api/Reporte/DynamicReport", data, Request);
                 if (reportFile.Content == null || reportFile.Content.Length == 0)
                 {
                     ErrorFile(reportFile);
