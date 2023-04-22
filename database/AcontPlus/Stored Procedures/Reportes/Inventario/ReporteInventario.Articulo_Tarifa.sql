@@ -34,21 +34,38 @@ BEGIN
 									@byOrder      VARCHAR(10),									
 									@byOrderCampo VARCHAR(50)'			
 
-		DECLARE @sql NVARCHAR(MAX) =  'SELECT 
-											idArticulo       = ar.idArticulo,																			
-											tarifa           = t.descripcion, 
-											descripcion      = ar.descripcion, 
-											codigo  		 = ar.codigo,
-											subFamilia		 = sf.descripcion ,
-											precioCosto      = CAST(ar.precioCosto as numeric(15, 2)),
-											precioIva      = CAST(apvp.precioConIva as numeric(15,2)),
-											totalStock       = CAST(ar.stock  as numeric(15, 2))                											
-										FROM ArticuloPvP apvp WITH (NOLOCK) 		
-										INNER JOIN Tarifa t WITH (NOLOCK) ON t.idTarifa            = apvp.idTarifa										
-										INNER JOIN Articulo ar WITH (NOLOCK) ON ar.idArticulo      = apvp.idArticulo										
-										INNER JOIN SubFamilia  sf WITH (NOLOCK) ON sf.idSubFamilia = ar.idSubFamilia									
-										WHERE ar.estado = 1 AND ar.idEntidad = @byEntidad AND ar.llevaInventario = 1 '
+		--DECLARE @sql NVARCHAR(MAX) =  'SELECT 
+		--									idArticulo       = ar.idArticulo,																			
+		--									tarifa           = t.descripcion, 
+		--									descripcion      = ar.descripcion, 
+		--									codigo  		 = ar.codigo,
+		--									subFamilia		 = sf.descripcion ,
+		--									precioCosto      = CAST(ar.precioCosto as numeric(15, 2)),
+		--									precioIva      = CAST(apvp.precioConIva as numeric(15,2)),
+		--									totalStock       = CAST(ar.stock  as numeric(15, 2))                											
+		--								FROM ArticuloPvP apvp WITH (NOLOCK) 		
+		--								INNER JOIN Tarifa t WITH (NOLOCK) ON t.idTarifa            = apvp.idTarifa										
+		--								INNER JOIN Articulo ar WITH (NOLOCK) ON ar.idArticulo      = apvp.idArticulo										
+		--								INNER JOIN SubFamilia  sf WITH (NOLOCK) ON sf.idSubFamilia = ar.idSubFamilia									
+		--								WHERE ar.estado = 1 AND ar.idEntidad = @byEntidad AND ar.llevaInventario = 1 '
 	
+		
+			DECLARE @sql NVARCHAR(MAX) = 'SELECT ar.idArticulo
+						,ar.descripcion
+						 ,ar.codigo
+						,ar.subfamilia
+						,t.descripcion as tarifa
+						,ISNULL(au.bodega, ''No asignada'') bodega
+						,precioCosto = CAST(ar.precioCosto as numeric(15, 2)),
+						precioIva = CAST(apvp.precioConIva as numeric(15,2)),
+						totalStock = CAST(ar.stock  as numeric(15, 2))
+						,ISNULL(s.cantidad,0) stock
+					FROM v_Articulo ar  WITH (NOLOCK) 		
+					INNER JOIN  ArticuloPvP apvp WITH (NOLOCK) ON ar.idArticulo = apvp.idArticulo
+					INNER JOIN Tarifa t WITH (NOLOCK) ON t.idTarifa = apvp.idTarifa		
+					LEFT JOIN v_Articulo_Ubicacion au ON ar.idArticulo = au.idArticulo
+					LEFT JOIN Inventario.Stock s WITH (NOLOCK) ON s.idArticulo = ar.idArticulo AND s.idBodega = au.idBodega
+					WHERE ar.estado = 1 AND ar.idEntidad = @byEntidad AND ar.llevaInventario = 1 '
 
 			
 			SELECT 	
@@ -107,7 +124,7 @@ BEGIN
 			,ISNULL(e.telefono, '')telefonoEntidad
 			,ISNULL(e.direccion, '')direccionEntidad
 			,@filtroFecha as filtroFecha			
-			FROM dbo.Entidad e		
+			FROM dbo.Entidad e	WITH(NOLOCK)	
 			WHERE e.idEntidad = @byEntidad
 
 
