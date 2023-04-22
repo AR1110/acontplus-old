@@ -1,18 +1,17 @@
-
-
 app.controller('documentoElectronicoCtrl', documentoElectronicoCtrl)
 
 documentoElectronicoCtrl.$inject = ['$scope',
-                                    'mainService',
-                                    'commonService',
-                                    'modalService',
-                                    'nombreModal',
-                                    'formulario',
-                                    'toastService',
-                                    '$window'
-                                ]
+    'mainService',
+    'commonService',
+    'modalService',
+    'nombreModal',
+    'formulario',
+    'toastService',
+    '$window',
+    'decodeToken'
+]
 
-function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, $window) {
+function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, $window, decodeToken) {
     $scope.comprobantes = [];
     $scope.selectedComprobantes = [];
     $scope.isMobile = true;
@@ -25,13 +24,13 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
 
     //DETECT MOBILE DEVICE
     $scope.detectMobilDevice = function () {
-        if (navigator.userAgent.match(/Android/i)
-            || navigator.userAgent.match(/webOS/i)
-            || navigator.userAgent.match(/iPhone/i)
-            || navigator.userAgent.match(/iPad/i)
-            || navigator.userAgent.match(/iPod/i)
-            || navigator.userAgent.match(/BlackBerry/i)
-            || navigator.userAgent.match(/Windows Phone/i)
+        if (navigator.userAgent.match(/Android/i) ||
+            navigator.userAgent.match(/webOS/i) ||
+            navigator.userAgent.match(/iPhone/i) ||
+            navigator.userAgent.match(/iPad/i) ||
+            navigator.userAgent.match(/iPod/i) ||
+            navigator.userAgent.match(/BlackBerry/i) ||
+            navigator.userAgent.match(/Windows Phone/i)
         ) {
             Swal.fire(
                 'Dispositivo Movil Detectado!',
@@ -53,17 +52,20 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
     $scope.dataSearch.isCurrentDate = false;
     $scope.dataSearch.checkBoxDate = true;
 
-    $scope.dataSearch.isSearchCustomerProvider= false;
+    $scope.dataSearch.isSearchCustomerProvider = false;
     // $scope.meses = _fS.meses();
     // $scope.dataSearch.mes = new Date().getMonth() + 1;
 
     let thisMoment = moment()
     // let endOfMonth = moment(thisMoment).endOf('month')
     // let startOfMonth = moment(thisMoment).startOf('month')
-    
+
     //https://www.daterangepicker.com/
     $scope.dateRangePicker = {
-        date: { startDate: thisMoment, endDate: thisMoment },
+        date: {
+            startDate: thisMoment,
+            endDate: thisMoment
+        },
         picker: null,
         options: {
             pickerClasses: 'custom-display', //angular-daterangepicker extra
@@ -79,13 +81,13 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
                 //format: "D-MMM-YY", //will give you 6-Jan-17
                 //format: "D-MMMM-YY", //will give you 6-January-17
             },
-            ranges:  {
+            ranges: {
                 'Hoy': [moment(), moment()],
                 'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
                 'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
                 'Ultimos 15 Días': [moment().subtract(14, 'days'), moment()],
                 'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
-                'Este Mes': [moment().startOf('month'), moment().endOf('month')],              
+                'Este Mes': [moment().startOf('month'), moment().endOf('month')],
             },
             eventHandlers: {
                 'apply.daterangepicker': function (event, picker) {
@@ -112,18 +114,19 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
             // }
 
             if (tipo > 0) {
-                data = { tipo }
+                data = {
+                    tipo
+                }
             } else {
                 data = $scope.dataSearch;
-                
+
                 data.dateStart = $scope.dateRangePicker.date.startDate
                 data.dateEnd = $scope.dateRangePicker.date.endDate
             }
 
-            console.log(data)
 
             $scope.comprobantes = [];
-            _mS.getData('get', 'DocumentoElectronico/' + JSON.stringify(data), null, true).then(
+            _mS.getData('get', 'DocumentoElectronico?json=' + JSON.stringify(data), null, true).then(
                 response => {
 
                     if (response.code === "0") {
@@ -165,87 +168,86 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
 
         _mS.getData('get', 'DocumentoElectronico/GetDataForm', null, true).then(response => {
             const results = JSON.parse(response.payload) || [];
-            console.log(results);            
+
             $scope.estadoServicios = results[0];
             $scope.establecimientos = results[1];
-            $scope.tempPuntosEmision = results[2];            
+            $scope.tempPuntosEmision = results[2];
         })
     }
     $scope.initiload()
 
-    $scope.openModalFiltro = () => {
-        $("#modalFiltroComprobante").modal('show');
-    }
+
 
     $scope.onchangeEstablecimiento = () => {
         try {
             $scope.comprobantes = []
             $scope.dataSearch.checKboxPuntoEmision = false;
             $scope.dataSearch.ptoEmi = null;
-            
-            if([null, undefined, ""].includes($scope.codEstab_Asig)){
+
+            if ([null, undefined, ""].includes($scope.codEstab_Asig)) {
                 $scope.dataSearch.checkBoxEstab = false;
-                
-            }else{
+
+            } else {
                 $scope.dataSearch.checkBoxEstab = true;
 
-                let dataEstab = $scope.establecimientos.find(item=>item.codEstab_Asig===$scope.codEstab_Asig);            
-                $scope.dataSearch.estab = dataEstab.estab;            
-                $scope.puntosEmision = $scope.tempPuntosEmision.filter(item=>item.codEstab_Asig===$scope.codEstab_Asig);
+                let dataEstab = $scope.establecimientos.find(item => item.codEstab_Asig === $scope.codEstab_Asig);
+                $scope.dataSearch.estab = dataEstab.estab;
+                $scope.puntosEmision = $scope.tempPuntosEmision.filter(item => item.codEstab_Asig === $scope.codEstab_Asig);
             }
-            $scope.getComprobantes();        
+            $scope.getComprobantes();
         } catch (error) {
             console.log(error);
         }
     }
 
 
-    $scope.onchangePuntoEmision = ()=>{
-        if([null, undefined, ""].includes($scope.dataSearch.ptoEmi)) {            
+    $scope.onchangePuntoEmision = () => {
+        if ([null, undefined, ""].includes($scope.dataSearch.ptoEmi)) {
             $scope.dataSearch.checKboxPuntoEmision = false;
-        }else{
+        } else {
             $scope.dataSearch.checKboxPuntoEmision = true;
         }
         $scope.getComprobantes();
     }
 
-    $scope.onSelectTipoDoc = ()=>{
-        $scope.comprobantes = [];   
-        $scope.modelCustomerProvider = null;     
-        $scope.dataSearch.isSearchCustomerProvider= false;
-    
-        if($scope.dataSearch.codDoc == null || $scope.dataSearch.codDoc==undefined || $scope.dataSearch.codDoc ===''){                     
+    $scope.onSelectTipoDoc = () => {
+        $scope.comprobantes = [];
+        $scope.modelCustomerProvider = null;
+        $scope.dataSearch.isSearchCustomerProvider = false;
+
+        if ([null, undefined, ""].includes($scope.dataSearch.codDoc)) {
             $scope.dataSearch.checkBoxComprobante = false;
-        }else{            
+        } else {
             $scope.dataSearch.checkBoxComprobante = true;
         }
         $scope.getComprobantes();
     }
 
-    $scope.onChangeEstado = ()=>{
-        if([null, undefined, ""].includes($scope.dataSearch.codEstado)){
+    $scope.onChangeEstado = () => {
+        if ([null, undefined, ""].includes($scope.dataSearch.codEstado)) {
             $scope.dataSearch.checkBoxEstadoServicio = false;
-        }else{
+        } else {
             $scope.dataSearch.checkBoxEstadoServicio = true;
         }
         $scope.getComprobantes();
     }
 
-    $scope.searchCustomerProvider = function(textSearch){
+
+    $scope.searchCustomerProvider = function (textSearch) {
         try {
             $scope.dataSearch.identificacionReceptor = null;
             $scope.dataSearch.isSearchCustomerProvider = false
 
-            if(['01', '06', '04'].includes($scope.dataSearch.codDoc)){
-                return _commonSvc.clienteSearch(textSearch).then(response =>{
+            if (['01', '06', '04'].includes($scope.dataSearch.codDoc)) {
+                return _commonSvc.clienteSearch(textSearch).then(response => {
                     return response.map(item => ({
                         idClienteProveedor: item.idCliente,
                         nameCustomerProvider: item.nombreFiscal,
                         identificacionReceptor: item.numeroIdentificacion
                     }))
                 })
-            }else{
-                return  _commonSvc.proveedorSearch(textSearch).then(response => {                    
+            } else {
+                return _commonSvc.proveedorSearch(textSearch).then(response => {
                     return response.map(item => ({
                         idClienteProveedor: item.proveedor.idProveedor,
                         nameCustomerProvider: item.proveedor.nombreFiscal,
@@ -253,14 +255,14 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
                     }))
                 })
             }
-            
+
 
         } catch (error) {
             console.log(error);
         }
     }
 
-    $scope.onSelectedCustomerProvider = function(item) {
+    $scope.onSelectedCustomerProvider = function (item) {
         $scope.dataSearch.isSearchCustomerProvider = true;
         $scope.dataSearch.identificacionReceptor = item.identificacionReceptor;
         $scope.getComprobantes();
@@ -270,6 +272,34 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
         $scope.modelCustomerProvider = null;
         $scope.dataSearch.isSearchCustomerProvider = false;
         $scope.dataSearch.identificacionReceptor = null;
+        $scope.getComprobantes();
+    }
+
+    $scope.searchUser = function (textSearch) {
+        try {
+            $scope.dataSearch.isSearchUser = false;
+
+            let query = {
+                busqueda: textSearch,
+                idRol: decodeToken.idUsuarioRol
+            }
+            return _commonSvc.usuarioSearch(query)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    $scope.onSelectedUser = function (user) {
+        $scope.dataSearch.isSearchUser = true;
+        $scope.modelUser = user.nombreCompleto;
+        $scope.dataSearch.idUsuario = user.idUsuario;
+        $scope.getComprobantes();
+    }
+
+    $scope.clearUserSearch = function () {
+        $scope.modelUser = null;
+        $scope.dataSearch.isSearchUser = false;
+        $scope.dataSearch.idUsuario = null;
         $scope.getComprobantes();
     }
 
@@ -396,7 +426,9 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
                 _tS.toastr('warning', 'Seleccione al menos un comprobante');
                 return
             }
-            let { isConfirmed } = await Swal.fire({
+            let {
+                isConfirmed
+            } = await Swal.fire({
                 title: '<small>Autorizar</small>',
                 icon: 'warning',
                 html: `<small>Estás seguro/a de Autorizar <h4><b>${$scope.selectedComprobantes.length}</b></h4> comprobantes?</small>`,
@@ -429,8 +461,13 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
 
     $scope.getError = async (params) => {
         try {
-            const { MODAL_COMPROBANTE_ERROR_CTRL, MODAL_COMPROBANTE_ERROR_CSHTML } = _nombreModalConst.common;
-            const { ComprobanteErrorCtrl } = await import('./../../modal/' + MODAL_COMPROBANTE_ERROR_CTRL);
+            const {
+                MODAL_COMPROBANTE_ERROR_CTRL,
+                MODAL_COMPROBANTE_ERROR_CSHTML
+            } = _nombreModalConst.common;
+            const {
+                ComprobanteErrorCtrl
+            } = await import('./../../modal/' + MODAL_COMPROBANTE_ERROR_CTRL);
 
             _modalSvc.openModalCustom({
                 controller: ComprobanteErrorCtrl,
@@ -457,8 +494,13 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
 
     $scope.getStatusSendMail = async (item) => {
         try {
-            const { MODAL_SEND_MAIL_CTRL, MODAL_STATUS_MAIL_CSHTML } = _nombreModalConst.common;
-            const { StatusEmail } = await import('./../../modal/' + MODAL_SEND_MAIL_CTRL);
+            const {
+                MODAL_SEND_MAIL_CTRL,
+                MODAL_STATUS_MAIL_CSHTML
+            } = _nombreModalConst.common;
+            const {
+                StatusEmail
+            } = await import('./../../modal/' + MODAL_SEND_MAIL_CTRL);
             _modalSvc.openModalCustom({
                 controller: StatusEmail,
                 template: MODAL_STATUS_MAIL_CSHTML,
@@ -475,8 +517,13 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
     $scope.openModalSendMail = async (item) => {
         try {
             item.typeSendMail = 'SRI';
-            const { MODAL_SEND_MAIL_CTRL, MODAL_SEND_MAIL_CSHTML } = _nombreModalConst.common;
-            const { SendMailCtrl } = await import('./../../modal/' + MODAL_SEND_MAIL_CTRL);
+            const {
+                MODAL_SEND_MAIL_CTRL,
+                MODAL_SEND_MAIL_CSHTML
+            } = _nombreModalConst.common;
+            const {
+                SendMailCtrl
+            } = await import('./../../modal/' + MODAL_SEND_MAIL_CTRL);
             _modalSvc.openModalCustom({
                 controller: SendMailCtrl,
                 template: 'Shared/' + MODAL_SEND_MAIL_CSHTML,
@@ -494,7 +541,9 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
     }
 
     $scope.updateXml = async (item) => {
-        const { isConfirmed } = await Swal.fire({
+        const {
+            isConfirmed
+        } = await Swal.fire({
             title: '<small>Actualizar XML</small>',
             icon: 'warning',
             html: `<small>Esta seguro de actualizar el Xml de este Comprobante <b>Nro. ${item.serie}</b></small>`,
@@ -550,7 +599,9 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
     }
     $scope.cancel = (item) => {
         try {
-            let url = '', data = {}, forApi = false
+            let url = '',
+                data = {},
+                forApi = false
             switch (item.codDoc) {
                 case '01':
 

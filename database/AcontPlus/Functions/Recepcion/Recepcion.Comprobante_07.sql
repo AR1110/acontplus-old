@@ -136,17 +136,17 @@ BEGIN
 
 	INSERT INTO @retencion SELECT 
 		cm.idDocumento
-	   ,codigo            = x.y.value('(//retenciones/retencion/codigo)[1]','VARCHAR(5)')
-	   ,codigoRetencion   = x.y.value('(//retenciones/retencion/codigoRetencion)[1]','VARCHAR(50)')
-	   ,baseImponible     = x.y.value('(//retenciones/retencion/baseImponible)[1]','NUMERIC(18,2)')
-	   ,porcentajeRetener = x.y.value('(//retenciones/retencion/porcentajeRetener)[1]','NUMERIC(18,2)')
-	   ,valorRetenido     = x.y.value('(//retenciones/retencion/valorRetenido)[1]','NUMERIC(18,2)')
+	   ,codigo            = x.y.value('(codigo)[1]','VARCHAR(5)')
+	   ,codigoRetencion   = x.y.value('(codigoRetencion)[1]','VARCHAR(50)')
+	   ,baseImponible     = x.y.value('(baseImponible)[1]','NUMERIC(18,2)')
+	   ,porcentajeRetener = x.y.value('(porcentajeRetener)[1]','NUMERIC(18,2)')
+	   ,valorRetenido     = x.y.value('(valorRetenido)[1]','NUMERIC(18,2)')
 
-	   ,codDocSustento =  x.y.value('(codDocSustento)[1]','VARCHAR(10)')
-       ,numDocSustento =  x.y.value('(numDocSustento)[1]','VARCHAR(40)')
-       ,fechaEmisionDocSustento =  x.y.value('(fechaEmisionDocSustento)[1]','VARCHAR(50)')
+	   ,codDocSustento =  x.y.value('(//docSustento/codDocSustento)[1]','VARCHAR(10)')
+       ,numDocSustento =  x.y.value('(//docSustento/numDocSustento)[1]','VARCHAR(40)')
+       ,fechaEmisionDocSustento =  x.y.value('(//docSustento/fechaEmisionDocSustento)[1]','VARCHAR(50)')
 	FROM @comprobantes cm
-	CROSS APPLY cm.xmlComp.nodes('//docsSustento/docSustento') x(y)
+	CROSS APPLY cm.xmlComp.nodes('//docSustento/retenciones/retencion') x(y)
 	WHERE cm.versionComp = '2.0.0'
 
 	INSERT INTO @retencion SELECT 

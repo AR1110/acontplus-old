@@ -2996,7 +2996,6 @@
                           <PaddingBottom>2pt</PaddingBottom>
                         </Style>
                       </Textbox>
-                      <rd:Selected>true</rd:Selected>
                     </CellContents>
                   </TablixHeader>
                   <TablixMembers>
@@ -3007,11 +3006,6 @@
                           <GroupExpression>=Fields!nroAutorizacion.Value</GroupExpression>
                         </GroupExpressions>
                       </Group>
-                      <SortExpressions>
-                        <SortExpression>
-                          <Value>=Fields!nroDoc.Value</Value>
-                        </SortExpression>
-                      </SortExpressions>
                       <TablixHeader>
                         <Size>3.00271cm</Size>
                         <CellContents>
@@ -3978,6 +3972,7 @@
                                                                                               <PaddingBottom>2pt</PaddingBottom>
                                                                                             </Style>
                                                                                           </Textbox>
+                                                                                          <rd:Selected>true</rd:Selected>
                                                                                         </CellContents>
                                                                                       </TablixHeader>
                                                                                       <TablixMembers>
@@ -4166,9 +4161,6 @@
                                                                                                       <Group Name="CodigoRetencion">
                                                                                                         <GroupExpressions>
                                                                                                           <GroupExpression>=Fields!codigoRetencion.Value</GroupExpression>
-                                                                                                          <GroupExpression>=Fields!valorRetenido.Value</GroupExpression>
-                                                                                                          <GroupExpression>=Fields!porcentajeRetener.Value</GroupExpression>
-                                                                                                          <GroupExpression>=Fields!valorRetenido.Value</GroupExpression>
                                                                                                         </GroupExpressions>
                                                                                                       </Group>
                                                                                                     </TablixMember>
