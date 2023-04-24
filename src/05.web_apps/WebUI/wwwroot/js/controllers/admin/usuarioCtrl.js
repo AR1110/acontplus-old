@@ -487,6 +487,7 @@
         }
 
 
+
         /**
          * ----------------------------------------------START ESTAB---------------------------
          * Asignacion de Establecimiento
@@ -540,8 +541,10 @@
 
 
                 if (isConfirmed) {
+
                     showLoader();
                     item.idUsuarioRol = $scope.dataEntidadRol.idUsuarioRol;
+
                     mS.getData('post', '/EstabAsig/Insert', item).then(response => {
                         if (response.code === '0') {
                             tS.toastr('warning', response.message, response.titleSms);
