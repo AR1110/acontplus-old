@@ -336,7 +336,7 @@ class ModalConsolidacionCtrl extends ModalBaseCtrl{
                 enableFiltering: false,
                 enableColumnMenu: false,
                 editableCellTemplate: 'ui-grid/dropdownEditor',
-                cellFilter: 'mapBodega:grid.appScope.$ctrl.bodegas',
+                cellFilter: 'cellFilterBodega:this',
                 editDropdownValueLabel: 'descripcion',
                 editDropdownIdLabel: 'idBodega',
                 enableCellEdit: true,
@@ -346,6 +346,8 @@ class ModalConsolidacionCtrl extends ModalBaseCtrl{
                 minWidth:'100'
             }
         ];
+        let indexBodega = this.gridOptions.columnDefs.findIndex(item=>item.field==='idBodega');                    
+        this.gridOptions.columnDefs[indexBodega].editDropdownOptionsArray = this.bodegas;
     }
 
     setColumnDefsView(){

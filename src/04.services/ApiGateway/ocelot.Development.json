@@ -834,7 +834,7 @@
       "DownstreamPathTemplate": "/api/Usuario/Search/{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
-        "Get"      
+        "Get"
       ],
       "UpstreamPathTemplate": "/api/Usuario/Search/{everything}"
     },
@@ -989,6 +989,47 @@
         "Get"
       ],
       "UpstreamPathTemplate": "/api/Solicitud/Check/{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 54948
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Cliente/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Put",
+        "Delete",
+        "Options"
+      ],
+      "UpstreamPathTemplate": "/api/Cliente/{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 54948
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Cliente/GetDataForm/{json}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "UpstreamPathTemplate": "/api/Cliente/GetDataForm/{json}"
     }
   ]
 }

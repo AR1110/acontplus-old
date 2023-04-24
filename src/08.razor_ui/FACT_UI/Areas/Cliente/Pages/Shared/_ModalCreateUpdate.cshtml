@@ -1,0 +1,332 @@
+<form autocomplete="off">
+    <div class="modal-header">
+        <h5 class="modal-title">{{tipoRegistro=='NUEVO'?'Nuevo': 'Editar'}} Cliente</h5>
+        <button type="button" class="close" ng-click="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+        <uib-tabset active="0">
+            <uib-tab index="0">
+                <uib-tab-heading>
+                    <i class="mdi mdi-account-circle"></i> Datos Generales
+                </uib-tab-heading>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label for="">Tipo Identificación: <span class="text-danger">*</span> </label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <select class="form-control border-select"
+                                                ng-model="data.idTipoIdentificacion"
+                                                ng-change="onChangeTipoIdentificacion()" name="tipoDocumento"
+                                                ng-model="data.idTipoIdentificacion"
+                                                ng-disabled="isDisableSelectIdentificacion">
+                                                <option ng-value="ti.idTipoIdentificacion"
+                                                    ng-repeat="ti in tiposIdentificacion">{{ti.descripcion}}</option>
+                                            </select>
+                                        </div>
+                                        <input type="text" class="form-control border-select"
+                                            name="numeroIdentificacion" id="numeroIdentificacion"
+                                            ng-if="data.codigoIdentificacion!=='P'" ng-class="typeNotify"
+                                            ng-model="data.numeroIdentificacion"
+                                            ng-keyup="validarNumeroIdentificacion()"
+                                            ng-disabled="isDisableInputIdentificacion" valid-number
+                                            placeholder="Ej: 2105234568">
+
+                                        <input type="text" class="form-control border-select"
+                                            ng-if="data.codigoIdentificacion=='P'" name="pasaporte"
+                                            ng-model="data.numeroIdentificacion"
+                                            ng-disabled="isDisableInputIdentificacion" placeholder="Ej: EH123457">
+
+                                        @* <div class="input-group-append">
+                                        <div ng-if="data.codigoIdentificacion!=='P'" class="input-group-text"
+                                        uib-tooltip="Validar Nro. Identificación" tooltip-placement="top">
+                                        <input type="checkbox" aria-label="validationRucSRI"
+                                        ng-change="onChangeValidateIdentificacionSRI()"
+                                        ng-model="validationIdentificacionSri">
+                                        </div>
+                                        </div> *@
+                                        <small class="invalid-feedback text-right">{{message}} </small>
+                                        <small class="valid-feedback text-right">{{message}} </small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label>Nombre Fiscal: <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control border-select" name="nombreFiscal"
+                                        id="nombreComercial" ng-keyup="copiarNombreComercial()" touppercase
+                                        autocomplete="off" ng-model="data.nombreFiscal" ng-disabled="data.validationSri"
+                                        placeholder="Ej: TECNOMEGA" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label>Dirección</label>
+                                    @* <textarea class="form-control border-select" touppercase
+                                    ng-model="data.direccion"
+                                    rows="0" placeholder="Av. 09 de Octubre..."></textarea> *@
+                                    <input type="text" class="form-control border-select" ng-model="data.direccion"
+                                        touppercase placeholder="AV. 09 DE OCTUBRE..." ng-disabled="data.validationSri">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xl-6 col-md-6 col-sm-6 col-xs-12">
+                                <div class="form-group">
+                                    <label>Email:
+                                        <span tooltip-placement="top"
+                                            uib-tooltip="Haz doble 'Click' sobre el correo para editar">
+                                            <i class="fas fa-info-circle"></i>
+                                        </span>
+                                    </label>
+                                    <md-chips ng-model="correos" md-add-on-blur="true" ng-keyup="onKeyupEmail($event)"
+                                        md-transform-chip="transformChipEmail($chip)" md-removable="true"
+                                        md-enable-chip-edit="true" placeholder="Ej: maxi@gmail.com"
+                                        input-aria-label="Correos" tabindex="-1"></md-chips>
+                                    <small></small>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-md-6 col-sm-6 col-xs-12">
+                                <div class="form-group">
+                                    <label>Telefono:
+                                        <span tooltip-placement="top"
+                                            uib-tooltip="Haz doble 'Click' sobre el número de telefono para editar">
+                                            <i class="fas fa-info-circle"></i>
+                                        </span>
+                                    </label>
+                                    <md-chips ng-model="telefonos" md-add-on-blur="true"
+                                        md-transform-chip="transformChipTelefono($chip)" md-removable="true"
+                                        md-enable-chip-edit="true" placeholder="Ej: 0959889744"
+                                        input-aria-label="Número de teléfonos" tabindex="-1"></md-chips>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="row" ng-if="showEstado">
+                            <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label for="">Estado</label>
+                                    <md-radio-group ng-model="data.estado" tabindex="-1">
+                                        <md-radio-button ng-value="true">Activo</md-radio-button>
+                                        <md-radio-button ng-value="false">Inactivo</md-radio-button>
+                                    </md-radio-group>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </uib-tab>
+
+            <uib-tab index="1">
+                <uib-tab-heading>
+                    <i class="mdi mdi-note-plus-outline"></i> Adicionales
+                </uib-tab-heading>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label>Nombre Comercial <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control border-select" autocomplete="off"
+                                        ng-model="data.nombreComercial" touppercase placeholder="Ej: TECNOMEGA" />
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label>Contribuyente <span class="text-danger">*</span></label>
+                                    <select class="form-control border-select" ng-model="data.idSubContribuyente">
+                                        <option ng-value="item.idSubContribuyente"
+                                            ng-repeat="item in tipoContribuyentes">{{item.descripcion}}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label>Tiempo de Credito </label>
+                                    <div class="input-group">
+                                        <select class="form-control border-select" ng-model="data.idTiempoCredito">
+                                            <option ng-value="item.idTiempoCredito" ng-repeat="item in tiempoCreditos">
+                                                {{item.descripcion}}</option>
+                                        </select>
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-outline-secondary btn-sm"
+                                                ng-click="getTiempoCredito()"><i class="fa fa-sync fa-xs"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-12">
+                                <div class="form-group">
+                                    <label>Ciudad: </label>
+                                    <select class="form-control border-select" ng-model="data.idCiudad"
+                                        ng-options="cp.idCiudad as cp.descripcion group by cp.provincia.descripcion for cp in ciudadPronvincias">
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-12">
+                                <div class="form-group">
+                                    <label>Tipo Cliente: </label>
+                                    <select class="form-control border-select" ng-model="data.idTipoClienteProveedor">
+                                        <option ng-value="item.idTipoClienteProveedor" ng-repeat="item in tipoClientes">
+                                            {{item.descripcion}}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-12">
+                                <div class="form-group">
+                                    <label for="">Empresa</label>
+                                    <div class="input-group">
+                                        <select ng-model="data.idEmpresa" class="form-control border-select">
+                                            <option ng-value=""></option>
+                                            <option ng-value="item.idEmpresa" ng-repeat="item in empresas">
+                                                {{item.razonSocial}}</option>
+                                        </select>
+                                        <div class="input-group-append">
+                                            <button type="button" tabindex="-1" class="btn btn-outline-secondary btn-sm"
+                                                open-modal-empresa-new get-data-empresa="getDataEmpresa(result)"><i
+                                                    class="fa fa-plus fa-xs"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-12">
+                                <div class="form-group">
+                                    <label for="empleado">Empleado</label>
+                                    <div class="input-group">
+                                        <input type="text" id="clienteAutocomplete" autocomplete="off"
+                                            name="empleadoAutocomplete" class="form-control border-select"
+                                            placeholder="Buscar Empleado" ng-model="selectedEmpleado"
+                                            ng-keyup="onKeyupSearchEmpleado(selectedEmpleado)"
+                                            uib-typeahead="a as a.nombreCompleto for a in searchEmpleadoFilter($viewValue)"
+                                            typeahead-loading="loadingLocations" typeahead-no-results="data.noResults"
+                                            typeahead-template-url="autocompleteEmpleado.html"
+                                            typeahead-editable="false"
+                                            typeahead-on-select="selectedEmpleadoChange($item)" onClick="select();" />
+
+                                        <script type="text/ng-template" id="autocompleteEmpleado.html">
+                                                    <div class="autocomplete-suggestion-cliente">
+                                                        <span class="item-title">
+                                                            {{match.model.nombreCompleto}}
+                                                        </span>
+                                                    </div>
+                                                </script>
+                                        <div class="input-group-append">
+                                            <button type="button" tabindex="-1" class="btn btn-outline-secondary btn-sm"
+                                                open-modal-empleado-new get-data-empleado="getDataEmpleado(result)"><i
+                                                    class="fa fa-plus fa-xs"></i></button>
+                                        </div>
+                                    </div>
+                                    <small class="text-danger" ng-show="data.noResults">No se encontraron los
+                                        resultados</small>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-12">
+                                <div class="form-group">
+                                    <label for="">Cargo</label>
+                                    <div class="input-group">
+                                        <select ng-model="data.idCargo" class="form-control border-select">
+                                            <option ng-value=""></option>
+                                            <option ng-value="item.idCargo" ng-repeat="item in cargos">
+                                                {{item.descripcion}}</option>
+                                        </select>
+                                        <div class="input-group-append">
+                                            <button type="button" tabindex="-1" class="btn btn-outline-secondary btn-sm"
+                                                open-modal-cargo-new get-data-cargo="getDataCargo(result)"><i
+                                                    class="fa fa-plus fa-xs"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-12">
+                                <div class="form-group">
+                                    <label for="">Observación</label>
+                                    <textarea class="form-control border-select" touppercase ng-model="data.nota"
+                                        placeholder="...">
+
+                                    </textarea>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row justify-content-between">
+                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label for="Placa">Placa <span tooltip-placement="top"
+                                            uib-tooltip="Haz doble 'Click' sobre el placa para editar">
+                                            <i class="fas fa-info-circle"></i>
+                                        </span></label>
+                                    <md-chips ng-model="placas" md-removable="true" md-enable-chip-edit="true"
+                                        md-add-on-blur="true" placeholder="Ej: AAC-0123 "
+                                        input-aria-label="Placas"></md-chips>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label for="barcode"> Código de Barras:</label>
+                                    <button type="button" class="btn btn-info btn-sm"
+                                        ng-click="getBarcode(data.numeroIdentificacion)"><i class="fa fa-barcode"></i>
+                                        Generar</button>
+                                    <img id="barcode" src="" alt="" style="display: none;">
+                                </div>
+                                <div class="card border border-success" id="cardBusiness" style="max-width: 18rem;">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-center">{{data.nombreFiscal}}</h5>
+                                        <div class="row">
+                                            <div class="col-md-12 ">
+                                                @* <label for="identificacion">N° Identificación:</label> *@
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12 text-center">
+                                                <h5 style="align-content: center;">{{data.numeroIdentificacion}}
+                                                </h5>
+                                                <img id="barcode" src="{{data.barcodeCard}}" alt="">
+                                                <br>
+                                                <h6> <small>&copy; Acontplus</small></h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-success btn-sm" ng-if="data.barcodeGenerated"
+                                    ng-click="exportTpvCard(data.numeroIdentificacion)"><i class="ti-share"></i>
+                                    Compartir Tarjeta</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </uib-tab>
+        </uib-tabset>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success" ng-click="save()">
+            <i class="ti-{{tipoRegistro===1?'save':'pencil'}}"></i> {{tipoRegistro===1?'Guardar':'Actualizar'}}
+        </button>
+        <button type="button" class="btn btn-dark" ng-click="closeModal()">
+            &times; Cerrar
+        </button>
+    </div>
+</form>
