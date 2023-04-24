@@ -11,7 +11,7 @@ facturaVentaCtrl.$inject = [
     'nombreModal', 
     'toastService', 
     'formulario',
-    'decodeToken'
+    'decodeToken' 
 ]
 
 function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modalSvc, _nombreModalConst, _tS, _fS, decodeToken){

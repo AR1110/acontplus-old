@@ -30,9 +30,9 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	DECLARE @idEntidad INT
+	DECLARE @idPolitica INT 	
 
-	SELECT @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
-
+	SELECT @idEntidad = idEntidad, @idPolitica = idRol FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol	
 
 	SELECT 
 		es.codEstab_Asig
@@ -115,9 +115,14 @@ BEGIN
 	 payAutomatic
 	FROM Config.GestionSistema WITH(NOLOCK) WHERE idEntidad =  @idEntidad
 
+	--Permisos 
 	SELECT 
 	 jsonPermission
 	FROM Config.UserPermission WHERE idUsuarioRol = @idRol AND codModule='V'
+
+	SELECT a.leer, a.crear, a.editar FROM Acceso a
+	INNER JOIN SubMenu sm WITH(NOLOCK) ON sm.idSubMenu = a.idSubMenu
+	WHERE sm.codTemp ='ART' AND a.idPolitica = @idPolitica
 
 END
 GO

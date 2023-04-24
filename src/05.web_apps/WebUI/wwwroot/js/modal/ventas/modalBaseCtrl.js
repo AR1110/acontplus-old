@@ -1,10 +1,18 @@
-import { CalculoTarifaHelper } from "../../helpers/calculoTarifaHelper.min.js";
-export class ModalBaseCtrl{
+import {
+    CalculoTarifaHelper
+} from "../../helpers/calculoTarifaHelper.min.js";
+export class ModalBaseCtrl {
     /**
      * 
      * @param {object} {_mS, _commonSvc, _tS, _modalSvc, _nombreModalConst}
      */
-    constructor({_mS, _commonSvc, _tS, _modalSvc, _nombreModalConst}){
+    constructor({
+        _mS,
+        _commonSvc,
+        _tS,
+        _modalSvc,
+        _nombreModalConst
+    }) {
         this._mS = _mS;
         this._commonSvc = _commonSvc;
         this._tS = _tS;
@@ -44,9 +52,9 @@ export class ModalBaseCtrl{
 
     }
 
-    initiload(){
-        return this._mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response=>{
-            if(response.code==='0'){                
+    initiload() {
+        return this._mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response => {
+            if (response.code === '0') {
                 throw response
             }
             return JSON.parse(response.payload)
@@ -54,10 +62,10 @@ export class ModalBaseCtrl{
     }
 
 
-    getDataFormEstabAsig(json={}){
-        return this._mS.getData('get', '/EstabAsig/GetDataForm?json=' + JSON.stringify(json)).then(response=>{
-            if(response.code==='0'){                
-               console.log(response)
+    getDataFormEstabAsig(json = {}) {
+        return this._mS.getData('get', '/EstabAsig/GetDataForm?json=' + JSON.stringify(json)).then(response => {
+            if (response.code === '0') {
+                console.log(response)
             }
             return JSON.parse(response.payload)
         })
@@ -65,16 +73,16 @@ export class ModalBaseCtrl{
 
 
 
-    setDataInfoEstab(establecimientos, ptosEmision){
+    setDataInfoEstab(establecimientos, ptosEmision) {
         this.infoEstabPtoEmi = {}
-        if(establecimientos.length>0){
-            this.infoEstabPtoEmi.nombreComercial = establecimientos.find(item=>item.codEstab===this.data.codEstab).nombreComercial;
+        if (establecimientos.length > 0) {
+            this.infoEstabPtoEmi.nombreComercial = establecimientos.find(item => item.codEstab === this.data.codEstab).nombreComercial;
         }
 
-        if(ptosEmision.length>0){
-            this.infoEstabPtoEmi.ptoEmi = ptosEmision.find(item=>item.idPuntoEmision===this.data.idPuntoEmision).ptoEmi; 
+        if (ptosEmision.length > 0) {
+            this.infoEstabPtoEmi.ptoEmi = ptosEmision.find(item => item.idPuntoEmision === this.data.idPuntoEmision).ptoEmi;
         }
-        
+
     }
 
 
@@ -83,18 +91,18 @@ export class ModalBaseCtrl{
      * @param {string} textSearch 
      * @returns 
      */
-    clienteSearchDynamic(textSearch){
-        try {            
-            return this._commonSvc.clienteSearch(textSearch);   
-            
+    clienteSearchDynamic(textSearch) {
+        try {
+            return this._commonSvc.clienteSearch(textSearch);
+
         } catch (error) {
             console.log(error)
         }
     }
 
 
-    onKeyupSearchCliente(){
-        if(!this.cliente.nombreFiscal){
+    onKeyupSearchCliente() {
+        if (!this.cliente.nombreFiscal) {
             this.cliente = {};
         }
     }
@@ -104,18 +112,21 @@ export class ModalBaseCtrl{
      * @param {object} item 
      * @returns object data cliente
      */
-    
-    async getClienteById(item){
+
+    async getClienteById(item) {
         return this._commonSvc.getDataCliente(item.idCliente);
     }
 
 
-    async openModalClienteNew(){
+    async openModalClienteNew() {
 
-        let {MODAL_CTRL, MODAL_NUEVO} = this._nombreModalConst.cliente;
+        let {
+            MODAL_CTRL,
+            MODAL_NUEVO
+        } = this._nombreModalConst.cliente;
         let controller = (await import('./../../modal/' + MODAL_CTRL))[MODAL_NUEVO['controller']];
-        let template   = MODAL_NUEVO['template'];
-        
+        let template = MODAL_NUEVO['template'];
+
         this.openModalCliente({
             controller,
             template
@@ -123,31 +134,37 @@ export class ModalBaseCtrl{
     }
 
 
-    async openModalClienteUpdate(){
-        let {MODAL_CTRL, MODAL_EDITAR} = this._nombreModalConst.cliente;
+    async openModalClienteUpdate() {
+        let {
+            MODAL_CTRL,
+            MODAL_EDITAR
+        } = this._nombreModalConst.cliente;
         let controller = (await import('./../../modal/' + MODAL_CTRL))[MODAL_EDITAR['controller']];
-        let template   = MODAL_EDITAR['template'];
+        let template = MODAL_EDITAR['template'];
         let params = this.cliente;
 
         this.openModalCliente({
             controller,
             template,
             params
-        })        
+        })
     }
 
 
-    async openModalClienteLista(){
-        let {MODAL_CTRL, MODAL_LISTA} = this._nombreModalConst.cliente;
+    async openModalClienteLista() {
+        let {
+            MODAL_CTRL,
+            MODAL_LISTA
+        } = this._nombreModalConst.cliente;
         let controller = (await import('./../../modal/' + MODAL_CTRL))[MODAL_LISTA['controller']];
-        let template   = MODAL_LISTA['template'];
+        let template = MODAL_LISTA['template'];
         let params = this.cliente;
 
         this.openModalCliente({
             controller,
             template,
             params
-        })  
+        })
     }
 
 
@@ -157,42 +174,46 @@ export class ModalBaseCtrl{
      * @param {*} template 
      * @param {*} params 
      */
-    openModalCliente({controller, template, params}){
+    openModalCliente({
+        controller,
+        template,
+        params
+    }) {
         let modalRef = this._modalSvc.openModalCustom({
             controller,
             template,
-            size:'xl',
+            size: 'xl',
             params,
             keyboard: true,
         })
-        modalRef.result.then(result=>{       
-            
-            if(typeof result!=='object') return
-            
+        modalRef.result.then(result => {
+
+            if (typeof result !== 'object') return
+
             this.onSelectedClienteChange(result);
-        }, ()=>{
-            setTimeout(()=>{
+        }, () => {
+            setTimeout(() => {
                 $("#clienteSearchInvoice").select();
 
-            },500)
+            }, 500)
             console.log('close')
-        })        
+        })
 
-        
+
     }
 
 
 
-    onChangeTiempoCredito(){
-        if(!this.ventaComprobantePermission.tiempoCedito.update){
+    onChangeTiempoCredito() {
+        if (!this.ventaComprobantePermission.tiempoCedito.update) {
             this._tS.toastr('warning', 'No tienes permiso para realizar esta acción');
             return
         }
         this.getFechaVencimiento();
     }
 
-    onChangeFechaEmision(){
-        if(!this.ventaComprobantePermission.fechaEmision.update){
+    onChangeFechaEmision() {
+        if (!this.ventaComprobantePermission.fechaEmision.update) {
             this._tS.toastr('warning', 'No tienes permiso para realizar esta acción');
             return
         }
@@ -202,47 +223,60 @@ export class ModalBaseCtrl{
      * 
      * @param {date} fechaEmision 
      */
-    getFechaVencimiento(){        
+    getFechaVencimiento() {
         if (this.data.fechaEmision && this.tiempoCreditos.length > 0) {
-            let tiempoCredito = this.tiempoCreditos.find(item=>item.idTiempoCredito===this.data.idTiempoCredito);  
-            let diasCredito = typeof tiempoCredito==='object'? tiempoCredito.diasCredito : 0;          
-            
+            let tiempoCredito = this.tiempoCreditos.find(item => item.idTiempoCredito === this.data.idTiempoCredito);
+            let diasCredito = typeof tiempoCredito === 'object' ? tiempoCredito.diasCredito : 0;
+
             this.data.fechaVencimiento = this._fS.getFechaVencimiento(this.data.fechaEmision, diasCredito);
             this.fechaEmisionEscrita = this._fS.getFechaEscrita(this.data.fechaEmision);
             this.fechaVencimientoEscrita = this._fS.getFechaEscrita(this.data.fechaVencimiento);
-            
+
         }
     }
 
 
-    setColumnDefs(){
-        let defaultPermission = Object.freeze({ 
-            tarifa: {update: true},
-            medida: {update: true}, 
-            tipoIva: { update: true},
-            porcentajeDescuento: {update: true},
-            descuento: {update: true},
-            precioUnitario: {update: true},
-            precioConIva: {update: true},
+    setColumnDefs() {
+        let defaultPermission = Object.freeze({
+            tarifa: {
+                update: true
+            },
+            medida: {
+                update: true
+            },
+            tipoIva: {
+                update: true
+            },
+            porcentajeDescuento: {
+                update: true
+            },
+            descuento: {
+                update: true
+            },
+            precioUnitario: {
+                update: true
+            },
+            precioConIva: {
+                update: true
+            },
         })
-        
+
         const ventaDetailPermission = this.ventaDetailPermission || defaultPermission;
 
-        this.gridOptions.columnDefs = [                
-            {
+        this.gridOptions.columnDefs = [{
                 name: 'Op.',
                 enableCellEdit: false,
                 width: '5%',
-                minWidth:'100',
+                minWidth: '100',
                 cellTemplate: this.CELL_TEMPLATE_OPTION,
-            },                        
+            },
             {
                 name: 'N°',
                 field: 'n',
                 enableCellEdit: false,
                 allowCellFocus: false,
                 width: '5%',
-                minWidth:'50'
+                minWidth: '50'
             },
             {
                 name: 'cód.',
@@ -250,22 +284,26 @@ export class ModalBaseCtrl{
                 enableCellEdit: false,
                 allowCellFocus: false,
                 width: '8%',
-                minWidth:'100'
+                minWidth: '100'
             },
-            { name: 'idArticulo', field: 'idArticulo', visible: false },
+            {
+                name: 'idArticulo',
+                field: 'idArticulo',
+                visible: false
+            },
             {
                 name: "Descripción",
                 field: "descripcion",
                 enableCellEdit: true,
                 enableCellEditOnFocus: true,
-                cellEditableCondition: function(scope) {
+                cellEditableCondition: function (scope) {
                     return scope.row.entity.llevaInventario !== true;
                 },
-                cellTooltip: function(row) {
+                cellTooltip: function (row) {
                     return row.entity.descripcion;
                 },
                 width: '25%',
-                minWidth:'100'
+                minWidth: '100'
             },
             {
                 name: 'Cant.',
@@ -274,74 +312,84 @@ export class ModalBaseCtrl{
                 min: 1,
                 type: 'number',
                 width: '6%',
-                minWidth:'50'
+                minWidth: '50'
             },
             {
                 name: 'Medida',
-                field: 'idMedida',                           
+                field: 'idMedida',
                 cellFilter: 'mapMedida:row.entity.medidas',
                 editableCellTemplate: 'ui-grid/dropdownEditor',
-                enableCellEdit: ventaDetailPermission.medida.update, 
+                enableCellEdit: ventaDetailPermission.medida.update,
                 enableCellEditOnFocus: ventaDetailPermission.medida.update,
-                allowCellFocus: ventaDetailPermission.medida.update,                
-                editDropdownOptionsFunction: function(rowEntity, colDef) {
-                    return rowEntity.medidas.map(function(val) {                     
-                        return { id: val.idMedida, value: val.descripcion }
+                allowCellFocus: ventaDetailPermission.medida.update,
+                editDropdownOptionsFunction: function (rowEntity, colDef) {
+                    return rowEntity.medidas.map(function (val) {
+                        return {
+                            id: val.idMedida,
+                            value: val.descripcion
+                        }
                     })
 
                 },
-                type: 'number',       
-                width: '8%',      
-                minWidth:'100'             
+                type: 'number',
+                width: '8%',
+                minWidth: '100'
             },
             {
                 name: 'codigoTipoIva',
                 field: 'codigoTipoIva',
                 enableCellEdit: false,
-                width: '8%',                            
+                width: '8%',
                 visible: false
             },
             {
                 name: 'I.V.A',
-                field: 'idTipoIva',                    
+                field: 'idTipoIva',
                 width: '8%',
-                minWidth:'100',
+                minWidth: '100',
                 type: 'number',
                 editableCellTemplate: 'ui-grid/dropdownEditor',
                 cellFilter: 'cellFilterTipoIva:this',
                 editDropdownValueLabel: 'descripcion',
                 editDropdownIdLabel: 'idTipoIva',
                 enableCellEdit: ventaDetailPermission.tipoIva.update,
-                allowCellFocus:  ventaDetailPermission.tipoIva.update,
+                allowCellFocus: ventaDetailPermission.tipoIva.update,
                 enableCellEditOnFocus: ventaDetailPermission.tipoIva.update,
-            //    visible: config.porcentajeIva
+                //    visible: config.porcentajeIva
             },
-            { name: 'tarifas', field: 'articuloTarifas', visible: false },
+            {
+                name: 'tarifas',
+                field: 'articuloTarifas',
+                visible: false
+            },
             {
                 name: 'Tarifa',
                 field: 'idTarifa',
                 width: '12%',
-                minWidth:'100',
+                minWidth: '100',
                 cellFilter: 'mapTarifa:row.entity.articuloTarifas',
                 editableCellTemplate: 'ui-grid/dropdownEditor',
                 enableCellEdit: ventaDetailPermission.tarifa.update,
                 enableCellEditOnFocus: ventaDetailPermission.tarifa.update,
                 allowCellFocus: ventaDetailPermission.tarifa.update,
-                editDropdownOptionsFunction: (rowEntity, colDef)=>{
-                    return rowEntity.articuloTarifas.map(val=>({ id: val.idTarifa, value: val.tarifa + ' - $' + val.precioConIva }))    
-                }, 
+                editDropdownOptionsFunction: (rowEntity, colDef) => {
+                    return rowEntity.articuloTarifas.map(val => ({
+                        id: val.idTarifa,
+                        value: val.tarifa + ' - $' + val.precioConIva
+                    }))
+                },
             },
             {
                 name: 'Precio U.',
-                field: 'precioUnitario', 
+                field: 'precioUnitario',
                 enableCellEditOnFocus: true,
                 enableColumnMenu: false,
                 allowCellFocus: true,
                 type: 'number',
                 width: '8%',
-                minWidth:'100',
-                cellEditableCondition: function(scope) {
-                    return scope.row.entity.llevaInventario? ventaDetailPermission.precioUnitario.update : true;
+                minWidth: '100',
+                cellEditableCondition: function (scope) {
+                    return scope.row.entity.llevaInventario ? ventaDetailPermission.precioUnitario.update : true;
                 },
                 // cellFilter: "currency:'$'",
             },
@@ -350,25 +398,25 @@ export class ModalBaseCtrl{
                 field: 'precioConIva',
                 min: 0,
                 type: 'number',
-                enableCellEdit: true,                    
-                allowCellFocus:true,
+                enableCellEdit: true,
+                allowCellFocus: true,
                 enableCellEditOnFocus: true,
                 width: '7%',
-                minWidth:'100',
-                cellEditableCondition: function(scope) {
-                    return scope.row.entity.llevaInventario? ventaDetailPermission.precioConIva.update : true;
+                minWidth: '100',
+                cellEditableCondition: function (scope) {
+                    return scope.row.entity.llevaInventario ? ventaDetailPermission.precioConIva.update : true;
                 },
                 // cellFilter: "currency:'$'",
             },
             {
                 name: '%',
                 field: 'porcentajeDescuento',
-                enableCellEdit: ventaDetailPermission.porcentajeDescuento.update ,
+                enableCellEdit: ventaDetailPermission.porcentajeDescuento.update,
                 allowCellFocus: ventaDetailPermission.porcentajeDescuento.update,
                 enableCellEditOnFocus: ventaDetailPermission.porcentajeDescuento.update,
                 min: 0,
                 width: '6%',
-                minWidth:'100',
+                minWidth: '100',
                 // cellFilter: "currency:'%'",
                 visible: this.configDetalle.porcentajeDescuento || false,
                 type: 'number',
@@ -383,7 +431,7 @@ export class ModalBaseCtrl{
                 min: 0,
                 type: 'number',
                 width: '6%',
-                minWidth:'100',
+                minWidth: '100',
                 // cellFilter: "currency:'$'",
                 visible: this.configDetalle.descuento || false
             },
@@ -395,7 +443,7 @@ export class ModalBaseCtrl{
                 min: 0,
                 type: 'number',
                 width: '7%',
-                minWidth:'100',
+                minWidth: '100',
                 // cellFilter: "currency:'$'",
                 visible: this.configDetalle.totalDescuento || false
             },
@@ -405,10 +453,10 @@ export class ModalBaseCtrl{
                 enableCellEdit: false,
                 type: 'number',
                 width: '7%',
-                minWidth:'100',
+                minWidth: '100',
                 visible: false,
                 // cellFilter: "currency:'$'",
-            },  
+            },
             {
                 name: 'Total',
                 field: 'total',
@@ -416,7 +464,7 @@ export class ModalBaseCtrl{
                 allowCellFocus: false,
                 type: 'number',
                 width: '5%',
-                minWidth:'100',
+                minWidth: '100',
                 visible: true,
             },
             {
@@ -426,7 +474,7 @@ export class ModalBaseCtrl{
                 allowCellFocus: false,
                 type: 'number',
                 width: '6%',
-                minWidth:'100',
+                minWidth: '100',
                 // cellFilter: "currency:'$'",
                 visible: this.configDetalle.ice || false
             },
@@ -437,11 +485,11 @@ export class ModalBaseCtrl{
                 enableCellEditOnFocus: true,
                 type: 'string',
                 width: '15%',
-                minWidth:'100'
+                minWidth: '100'
             },
             {
                 name: 'bodega',
-                field: 'idBodega',                    
+                field: 'idBodega',
                 editableCellTemplate: 'ui-grid/dropdownEditor',
                 cellFilter: 'cellFilterBodega:this',
                 editDropdownValueLabel: 'descripcion',
@@ -450,8 +498,8 @@ export class ModalBaseCtrl{
                 enableCellEditOnFocus: true,
                 type: 'number',
                 width: '11%',
-                minWidth:'100'
-            },                                              
+                minWidth: '100'
+            },
             {
                 name: 'llevaInventario',
                 field: 'llevaInventario',
@@ -461,103 +509,108 @@ export class ModalBaseCtrl{
                 name: 'datosAdicionales',
                 field: 'datosAdicionales',
                 visible: false
-            },            
+            },
         ]
 
-        let indexTipoIva = this.gridOptions.columnDefs.findIndex(item=>item.field==='idTipoIva');
-        let indexBodega  = this.gridOptions.columnDefs.findIndex(item=>item.field==='idBodega');
+        let indexTipoIva = this.gridOptions.columnDefs.findIndex(item => item.field === 'idTipoIva');
+        let indexBodega = this.gridOptions.columnDefs.findIndex(item => item.field === 'idBodega');
         this.gridOptions.columnDefs[indexTipoIva].editDropdownOptionsArray = this.tipoIvas;
-        this.gridOptions.columnDefs[indexBodega].editDropdownOptionsArray = this.bodegas;         
+        this.gridOptions.columnDefs[indexBodega].editDropdownOptionsArray = this.bodegas;
     }
 
-    setColumnDefsVista(){
-        this.gridOptions.columnDefs = [                
-            {
+    setColumnDefsVista() {
+        this.gridOptions.columnDefs = [{
                 name: 'Op',
                 enableCellEdit: false,
                 width: '3%',
-                minWidth:'50',
+                minWidth: '50',
                 cellTemplate: this.CELL_TEMPLATE_OPTION,
-            },                        
+            },
             {
                 name: 'N°',
                 field: 'n',
                 width: '5%',
-                minWidth:'50'
+                minWidth: '50'
             },
             {
                 name: 'cód.',
                 field: 'codigo',
                 width: '8%',
-                minWidth:'100'
-            },            
+                minWidth: '100'
+            },
             {
                 name: "Descripción",
-                field: "descripcion",                                
-                cellTooltip: function(row) {
+                field: "descripcion",
+                cellTooltip: function (row) {
                     return row.entity.descripcion;
                 },
                 width: '25%',
-                minWidth:'100'
+                minWidth: '100'
             },
             {
                 name: 'Cant.',
-                field: 'cantidad',                
+                field: 'cantidad',
                 min: 1,
                 type: 'number',
                 width: '6%',
-                minWidth:'50'
+                minWidth: '50'
             },
             {
                 name: 'Medida',
-                field: 'idMedida',                           
+                field: 'idMedida',
                 cellFilter: 'mapMedida:row.entity.medidas',
-                editableCellTemplate: 'ui-grid/dropdownEditor',     
-                editDropdownOptionsFunction: function(rowEntity, colDef) {
-                    return rowEntity.medidas.map(function(val) {                     
-                        return { id: val.idMedida, value: val.descripcion }
+                editableCellTemplate: 'ui-grid/dropdownEditor',
+                editDropdownOptionsFunction: function (rowEntity, colDef) {
+                    return rowEntity.medidas.map(function (val) {
+                        return {
+                            id: val.idMedida,
+                            value: val.descripcion
+                        }
                     })
 
                 },
-                type: 'number',       
-                width: '8%',      
-                minWidth:'100'             
+                type: 'number',
+                width: '8%',
+                minWidth: '100'
             },
             {
                 name: 'codigoTipoIva',
                 field: 'codigoTipoIva',
                 enableCellEdit: false,
-                width: '8%',                            
+                width: '8%',
                 visible: false
             },
             {
                 name: 'I.V.A',
-                field: 'idTipoIva',                    
+                field: 'idTipoIva',
                 width: '8%',
-                minWidth:'100',
+                minWidth: '100',
                 type: 'number',
                 editableCellTemplate: 'ui-grid/dropdownEditor',
                 cellFilter: 'cellFilterTipoIva:this',
                 editDropdownValueLabel: 'descripcion',
-                editDropdownIdLabel: 'idTipoIva'    
-            },            
+                editDropdownIdLabel: 'idTipoIva'
+            },
             {
                 name: 'Tarifa',
                 field: 'idTarifa',
                 width: '12%',
-                minWidth:'100',
+                minWidth: '100',
                 cellFilter: 'mapTarifa:row.entity.articuloTarifas',
                 editableCellTemplate: 'ui-grid/dropdownEditor',
-                editDropdownOptionsFunction: (rowEntity, colDef)=>{
-                    return rowEntity.articuloTarifas.map(val=>({ id: val.idTarifa, value: val.tarifa + ' - $' + val.precioConIva }))    
-                }, 
+                editDropdownOptionsFunction: (rowEntity, colDef) => {
+                    return rowEntity.articuloTarifas.map(val => ({
+                        id: val.idTarifa,
+                        value: val.tarifa + ' - $' + val.precioConIva
+                    }))
+                },
             },
             {
                 name: 'Precio U.',
-                field: 'precioUnitario', 
+                field: 'precioUnitario',
                 type: 'number',
                 width: '8%',
-                minWidth:'100',                
+                minWidth: '100',
             },
             {
                 name: 'P. Iva',
@@ -565,16 +618,16 @@ export class ModalBaseCtrl{
                 min: 0,
                 type: 'number',
                 width: '7%',
-                minWidth:'100',                
+                minWidth: '100',
             },
             {
                 name: '%',
-                field: 'porcentajeDescuento',          
+                field: 'porcentajeDescuento',
                 min: 0,
                 width: '6%',
-                minWidth:'100',                
+                minWidth: '100',
                 visible: this.configDetalle.porcentajeDescuento || false,
-                type: 'number',                
+                type: 'number',
             },
             {
                 name: 'dsto.',
@@ -582,7 +635,7 @@ export class ModalBaseCtrl{
                 min: 0,
                 type: 'number',
                 width: '6%',
-                minWidth:'100',                
+                minWidth: '100',
                 visible: this.configDetalle.descuento || false
             },
             {
@@ -591,24 +644,24 @@ export class ModalBaseCtrl{
                 min: 0,
                 type: 'number',
                 width: '7%',
-                minWidth:'100',                
+                minWidth: '100',
                 visible: this.configDetalle.totalDescuento || false
             },
             {
                 name: 'sub Total',
-                field: 'subTotal',                
+                field: 'subTotal',
                 type: 'number',
                 width: '7%',
-                minWidth:'100',
+                minWidth: '100',
                 visible: false,
                 // cellFilter: "currency:'$'",
-            },  
+            },
             {
                 name: 'Total',
                 field: 'total',
                 type: 'number',
                 width: '5%',
-                minWidth:'100',
+                minWidth: '100',
                 visible: true,
             },
             {
@@ -616,7 +669,7 @@ export class ModalBaseCtrl{
                 field: 'ice',
                 type: 'number',
                 width: '6%',
-                minWidth:'100',                
+                minWidth: '100',
                 visible: this.configDetalle.ice || false
             },
             {
@@ -624,40 +677,42 @@ export class ModalBaseCtrl{
                 field: 'nota',
                 type: 'string',
                 width: '15%',
-                minWidth:'100'
+                minWidth: '100'
             },
             {
                 name: 'bodega',
-                field: 'idBodega',                    
+                field: 'idBodega',
                 editableCellTemplate: 'ui-grid/dropdownEditor',
                 cellFilter: 'cellFilterBodega:this',
                 editDropdownValueLabel: 'descripcion',
                 editDropdownIdLabel: 'idBodega',
                 type: 'number',
                 width: '11%',
-                minWidth:'100'
-            }           
+                minWidth: '100'
+            }
         ]
 
-        let indexTipoIva = this.gridOptions.columnDefs.findIndex(item=>item.field==='idTipoIva');
-        let indexBodega  = this.gridOptions.columnDefs.findIndex(item=>item.field==='idBodega');
+        let indexTipoIva = this.gridOptions.columnDefs.findIndex(item => item.field === 'idTipoIva');
+        let indexBodega = this.gridOptions.columnDefs.findIndex(item => item.field === 'idBodega');
         this.gridOptions.columnDefs[indexTipoIva].editDropdownOptionsArray = this.tipoIvas;
-        this.gridOptions.columnDefs[indexBodega].editDropdownOptionsArray = this.bodegas;         
+        this.gridOptions.columnDefs[indexBodega].editDropdownOptionsArray = this.bodegas;
     }
 
 
-    async onChangeEstablecimiento(){
+    async onChangeEstablecimiento() {
         try {
 
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
-                  confirmButton: 'btn btn-success',
-                  cancelButton: 'btn btn-danger ml-2'
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger ml-2'
                 },
                 buttonsStyling: false
-              })
-              
-              let {isConfirmed} = await  swalWithBootstrapButtons.fire({
+            })
+
+            let {
+                isConfirmed
+            } = await swalWithBootstrapButtons.fire({
                 title: '<small>Cambiar Establecimiento?</small>',
                 html: "<small>Esta seguro de cambiar <b>Punto de Emisión</b> y la <b>Bodega</b>?</small>",
                 icon: 'warning',
@@ -665,11 +720,11 @@ export class ModalBaseCtrl{
                 confirmButtonText: 'Si, cambiar!',
                 cancelButtonText: 'No, cancelar!',
                 reverseButtons: false,
-                allowOutsideClick:false,
-                allowEscapeKey:false
+                allowOutsideClick: false,
+                allowEscapeKey: false
             })
 
-            if(!isConfirmed){
+            if (!isConfirmed) {
                 this.data.codEstab = this.cloneCodEstab;
                 this.$scope.$apply();
                 return
@@ -677,33 +732,33 @@ export class ModalBaseCtrl{
 
             this.cloneCodEstab = this.data.codEstab;
 
-            const dataEstab = this.establecimientos.find(item=>item.codEstab===this.data.codEstab);   
-            
+            const dataEstab = this.establecimientos.find(item => item.codEstab === this.data.codEstab);
+
             //Obtenemos Puntos de Emision y Bodegas 
             let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
-           
+
             this.puntosEmisiones = resultsDataFormEstab[0];
-            this.data.idPuntoEmision = this.puntosEmisiones.length>0 ? this.puntosEmisiones[0].idPuntoEmision: 0;
-            
-            this.bodegas         = resultsDataFormEstab[1];
-            this.idBodega        = this.bodegas.length>0 ? this.bodegas[0].idBodega: 0;
-            this.cloneIdBodega   = this.idBodega;
-            
+            this.data.idPuntoEmision = this.puntosEmisiones.length > 0 ? this.puntosEmisiones[0].idPuntoEmision : 0;
+
+            this.bodegas = resultsDataFormEstab[1];
+            this.idBodega = this.bodegas.length > 0 ? this.bodegas[0].idBodega : 0;
+            this.cloneIdBodega = this.idBodega;
+
             this.impuestoTarifas = resultsDataFormEstab[2]; //Impuesto tarifas dependiendo el tipo Actividad
             this.actividadTipoIva = resultsDataFormEstab[2][0];
             this.data.tarifa = this.actividadTipoIva.tarifa;
 
-            this.disabledImpuestoTarifa = this.actividadTipoIva.codigoPorcentaje=='2'
-            
+            this.disabledImpuestoTarifa = this.actividadTipoIva.codigoPorcentaje == '2'
 
-            let indexColumn = this.gridOptions.columnDefs.findIndex(item=>item.field==='idBodega');
-            
+
+            let indexColumn = this.gridOptions.columnDefs.findIndex(item => item.field === 'idBodega');
+
             this.gridOptions.columnDefs[indexColumn].editDropdownOptionsArray = this.bodegas;
-                
-            for(let item of this.gridOptions.data){
+
+            for (let item of this.gridOptions.data) {
                 item.idBodega = this.idBodega;
-            }  
-            
+            }
+
             //Recalculamos los valos de subtotales 
 
             this.uiGridInvoice.actividadTipoIva = this.actividadTipoIva;
@@ -714,21 +769,23 @@ export class ModalBaseCtrl{
             this.$scope.$apply();
         } catch (error) {
             console.trace(error)
-        }       
+        }
     }
 
-    async onChangeBodega(){
+    async onChangeBodega() {
         try {
-            let bodega = this.bodegas.find(item=>item.idBodega===this.idBodega);
+            let bodega = this.bodegas.find(item => item.idBodega === this.idBodega);
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
-                  confirmButton: 'btn btn-success',
-                  cancelButton: 'btn btn-danger ml-2'
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger ml-2'
                 },
                 buttonsStyling: false
             })
-              
-            let {isConfirmed} = await swalWithBootstrapButtons.fire({
+
+            let {
+                isConfirmed
+            } = await swalWithBootstrapButtons.fire({
                 title: '<small>Cambiar Bodega</small>',
                 html: `<small>¿Esta seguro de cambiar la Bodega: <b>${bodega.descripcion}</b>  en el detalle del Documento?</small>`,
                 icon: 'warning',
@@ -740,50 +797,52 @@ export class ModalBaseCtrl{
                 allowEscapeKey: false
             })
 
-            if(isConfirmed){
-                this.cloneIdBodega = this.idBodega;           
-            
+            if (isConfirmed) {
+                this.cloneIdBodega = this.idBodega;
+
                 if (this.gridOptions.data.length === 0) return
-    
-                for(let item of this.gridOptions.data){
+
+                for (let item of this.gridOptions.data) {
                     item.idBodega = this.idBodega;
-                }   
+                }
                 this.$scope.$apply();
-            }else{
+            } else {
                 this.idBodega = this.cloneIdBodega;
                 this.$scope.$apply();
             }
         } catch (error) {
             console.log(error)
-        }        
+        }
     }
 
 
-    async askToChangeTariga(){
-        if(!this.ventaComprobantePermission.tarifa.update){
+    async askToChangeTariga() {
+        if (!this.ventaComprobantePermission.tarifa.update) {
             this.idTarifa = this.cloneIdTarifa;
             this._tS.toastr('warning', 'No tienes permiso para realizar esta acción');
             return
         }
 
-        let tarifa = this.tarifas.find(item=>item.idTarifa===this.idTarifa);
-        let { isConfirmed } = await Swal.fire({
+        let tarifa = this.tarifas.find(item => item.idTarifa === this.idTarifa);
+        let {
+            isConfirmed
+        } = await Swal.fire({
             html: `<small>¿Esta seguro de aplicar este tarifa: <b>${tarifa.descripcion}</b> en los precios de venta en todo el Documento?</small>`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             confirmButtonText: `Sí, cambiar!`,
             cancelButtonText: 'No, cancelar!',
-            allowOutsideClick: false,           
+            allowOutsideClick: false,
         })
 
         if (isConfirmed) {
-           
-            this.cloneIdTarifa = this.idTarifa;           
-            
+
+            this.cloneIdTarifa = this.idTarifa;
+
             if (this.gridOptions.data.length === 0) return
 
-            this.setTarifaInDetail();             
+            this.setTarifaInDetail();
         } else {
             this.idTarifa = this.cloneIdTarifa;
             this.$scope.$apply();
@@ -791,42 +850,44 @@ export class ModalBaseCtrl{
     }
 
 
-    setTarifaInDetail(){
+    setTarifaInDetail() {
         const self = this;
-        try {            
-            for(let rowEntity of this.gridOptions.data){
-               
-                let tarifa = rowEntity.articuloTarifas.find(item=>item.idTarifa===this.idTarifa);     
+        try {
+            for (let rowEntity of this.gridOptions.data) {
 
-                let precioConIva             = CalculoTarifaHelper.calcularPrecioConIva(tarifa.precioVenta, rowEntity.tarifa);
+                let tarifa = rowEntity.articuloTarifas.find(item => item.idTarifa === this.idTarifa);
+
+                let precioConIva = CalculoTarifaHelper.calcularPrecioConIva(tarifa.precioVenta, rowEntity.tarifa);
                 let precioConIvaConDescuento = CalculoTarifaHelper.getPrecioIvaConDescuento(precioConIva, rowEntity.porcentajeDescuento);
-                let valorDescuento           = CalculoTarifaHelper.getValorDescuento(tarifa.precioVenta, rowEntity.porcentajeDescuento);
-                
-                rowEntity.idTarifa       = this.idTarifa;
-                rowEntity.precioUnitario    = this._fS.roundNumber(tarifa.precioVenta, this.decimal.nroPrecio);
-                rowEntity.precioConIva   = this._fS.roundNumber(precioConIvaConDescuento, this.decimal.nroPrecio);
+                let valorDescuento = CalculoTarifaHelper.getValorDescuento(tarifa.precioVenta, rowEntity.porcentajeDescuento);
+
+                rowEntity.idTarifa = this.idTarifa;
+                rowEntity.precioUnitario = this._fS.roundNumber(tarifa.precioVenta, this.decimal.nroPrecio);
+                rowEntity.precioConIva = this._fS.roundNumber(precioConIvaConDescuento, this.decimal.nroPrecio);
                 rowEntity.valorDescuento = this._fS.roundNumber(valorDescuento, this.decimal.nroDescuentoDetalle);
-    
+
                 // this.calculoColumnas["calculoTotalDetalle"](); 
-                let objCalculo = self.uiGridInvoice.calculoColDef(rowEntity) 
-                objCalculo["calculoTotalDetalle"]();               
+                let objCalculo = self.uiGridInvoice.calculoColDef(rowEntity)
+                objCalculo["calculoTotalDetalle"]();
             }
 
-            
-            self.data = Object.assign(self.data, self.uiGridInvoice.getTotales()); 
-            this.$scope.$apply();           
+
+            self.data = Object.assign(self.data, self.uiGridInvoice.getTotales());
+            this.$scope.$apply();
         } catch (error) {
             toastr.error(`APLICACIÓN DE TARIFA EN TODO EL DOCUMENTO: ${error}`)
-        }                      
+        }
     }
 
 
     //------------------------------------------------Articulo----------------------------------
-    openModalArticle(item){
+    openModalArticle(item) {
         this.$scope.gridApi.cellNav.scrollToFocus(
             this.gridOptions.data[0],
             this.gridOptions.columnDefs[2]
         )
+
+        this.indexRow = this.gridOptions.data.indexOf(item);
         this.$scope.$broadcast("editArticulo", item)
     }
 
@@ -835,59 +896,64 @@ export class ModalBaseCtrl{
      *      
      * @param {object} params  {rowEntity, isView, tipoDoc, idComprobante, articuloManejos}
      */
-    async openModalDatoAdicionalArticuloParam(params){       
-               
-        let {MODAL_DATO_ADICIONAL_VENTA_ARTICULO_CTRL, MODAL_DATO_ADICIONAL_VENTA_ARTICULO_CSHTML} = this._nombreModalConst.common;
-        let {ModalDatoAdicionalVentaArticuloCtrl} = await import(`./../../modal/${MODAL_DATO_ADICIONAL_VENTA_ARTICULO_CTRL}`);
+    async openModalDatoAdicionalArticuloParam(params) {
+
+        let {
+            MODAL_DATO_ADICIONAL_VENTA_ARTICULO_CTRL,
+            MODAL_DATO_ADICIONAL_VENTA_ARTICULO_CSHTML
+        } = this._nombreModalConst.common;
+        let {
+            ModalDatoAdicionalVentaArticuloCtrl
+        } = await import(`./../../modal/${MODAL_DATO_ADICIONAL_VENTA_ARTICULO_CTRL}`);
 
         let modalRef = this._modalSvc.openModalCustom({
             controller: ModalDatoAdicionalVentaArticuloCtrl,
             template: `Shared/${MODAL_DATO_ADICIONAL_VENTA_ARTICULO_CSHTML}`,
-            size:'lg',
+            size: 'lg',
             params
         })
-             
-        modalRef.result.then(response=>{
+
+        modalRef.result.then(response => {
             this.datosAdicionalesArticulo = response;
-        })       
+        })
     }
 
     setFocusArticulo() {
-        setTimeout(function() {
-          document.querySelector('#custom-template-md-autocomplete-articulo').focus();
+        setTimeout(function () {
+            document.querySelector('#custom-template-md-autocomplete-articulo').focus();
         }, 100);
     }
 
     setFocusInputBarcode() {
-        setTimeout(function() {
-          document.querySelector('#inputBarcode').focus();
+        setTimeout(function () {
+            document.querySelector('#inputBarcode').focus();
         }, 100);
     }
 
-    async setItemArticuloEnDetalle(dataArticulo){        
+    async setItemArticuloEnDetalle(dataArticulo) {
         try {
-            
+
             this.dataArticulo = dataArticulo;
 
             // if(this.dataArticulo.articulo.llevaInventario && this.gridOptionsDetailDocument.data.some(item=>item.idArticulo===this.dataArticulo.articulo.idArticulo)){
             //     this.existArticulo();                              
             // }else{
-                this.addItem();
+            this.addItem();
             // }
-            
 
-            this.indexRow = this.gridOptions.data.findIndex(val => val.idArticulo === this.dataArticulo.articulo.idArticulo);           
 
-            
+            this.indexRow = this.gridOptions.data.findIndex(val => val.idArticulo === this.dataArticulo.articulo.idArticulo);
+
+
         } catch (error) {
-            console.log(error)            
+            console.log(error)
         }
     }
 
 
-    addRow(){
-        const obj =  {
-            idFacturaDetalle:0,
+    addRow() {
+        const obj = {
+            idFacturaDetalle: 0,
             n: 1,
             codigo: "",
             idArticulo: 0,
@@ -895,7 +961,7 @@ export class ModalBaseCtrl{
             cantidad: 1,
             nombreMedida: "",
             codigoPorcentaje: "",
-            tarifa: 0,            
+            tarifa: 0,
             nombreTipoIva: "",
             articuloTarifas: [],
             idTarifa: 0,
@@ -912,64 +978,69 @@ export class ModalBaseCtrl{
             llevaInventario: false,
             datosAdicionales: false
         }
-        this.gridOptions.data.push(obj)                
+        this.gridOptions.data.push(obj)
     }
 
-    addItem(){
+    addItem() {
         const self = this;
-        self.addRow();        
-        
-        const {articulo, medidas, datosAdicionales} = self.dataArticulo;        
-        let index  = self.gridOptions.data.findIndex(value => value.idArticulo === 0); 
-        let entity = self.gridOptions.data[index]; 
-    
+        self.addRow();
+
+        const {
+            articulo,
+            medidas,
+            datosAdicionales
+        } = self.dataArticulo;
+        let index = self.gridOptions.data.findIndex(value => value.idArticulo === 0);
+        let entity = self.gridOptions.data[index];
+
         let dataMedida = medidas[0];
 
-        
-            
-        entity.idArticulo           = articulo.idArticulo;
-        entity.codigo               = articulo.codigoArticulo;                
-        entity.descripcion          = articulo.descripcion;  
-        entity.idTipoIva            = articulo.idTipoIva;                          
-        entity.codigoPorcentaje     = articulo.codigoPorcentaje;
-        entity.tarifa               = articulo.tarifa;
-        // entity.nombreTipoIva        = articulo.nombreTipoIva;
-        entity.ice                  = articulo.valorIce;
-        entity.idBodega             = self.idBodega ? self.idBodega : 0;
-        entity.llevaInventario      = articulo.llevaInventario;
-        entity.datosAdicionales     = articulo.datosAdicionales;
-        entity.productoFraccionable = articulo.productoFraccionable;
-        entity.medidas              = medidas; //Lista Medida 
-        entity.idMedida             = dataMedida.idMedida; //Medida por defecto 
-        entity.adicional            = datosAdicionales; //
 
-        entity.articuloTarifas      = JSON.parse(dataMedida.tarifas);
-        let tarifa                  = entity.articuloTarifas.find(item=>item.idTarifa===self.idTarifa);                                      
-        entity.idTarifa             = self.idTarifa;  
-        entity.precioUnitario       = self._fS.roundNumber(tarifa.precioVenta, self.decimal.nroPrecio);                
-        entity.precioConIva         = self._fS.roundNumber(tarifa.precioConIva, self.decimal.nroPrecio);
-        
-        
-        const objCalculo            = self.uiGridInvoice.calculoColDef(entity, 0);             
-        
+
+        entity.idArticulo = articulo.idArticulo;
+        entity.codigo = articulo.codigoArticulo;
+        entity.descripcion = articulo.descripcion;
+        entity.idTipoIva = articulo.idTipoIva;
+        entity.codigoPorcentaje = articulo.codigoPorcentaje;
+        entity.tarifa = articulo.tarifa;
+        // entity.nombreTipoIva        = articulo.nombreTipoIva;
+        entity.ice = articulo.valorIce;
+        entity.idBodega = self.idBodega ? self.idBodega : 0;
+        entity.llevaInventario = articulo.llevaInventario;
+        entity.datosAdicionales = articulo.datosAdicionales;
+        entity.productoFraccionable = articulo.productoFraccionable;
+        entity.medidas = medidas; //Lista Medida 
+        entity.idMedida = dataMedida.idMedida; //Medida por defecto 
+        entity.adicional = datosAdicionales; //
+
+        entity.articuloTarifas = JSON.parse(dataMedida.tarifas);
+        let tarifa = entity.articuloTarifas.find(item => item.idTarifa === self.idTarifa);
+        entity.idTarifa = self.idTarifa;
+        entity.precioUnitario = self._fS.roundNumber(tarifa.precioVenta, self.decimal.nroPrecio);
+        entity.precioConIva = self._fS.roundNumber(tarifa.precioConIva, self.decimal.nroPrecio);
+
+
+        const objCalculo = self.uiGridInvoice.calculoColDef(entity, 0);
+
         objCalculo["precioUnitario"] && objCalculo["precioUnitario"]();
-        
+
         objCalculo["calculoTotalDetalle"]();
-        
-        self.data = Object.assign(self.data, self.uiGridInvoice.getTotales()); 
+
+        self.data = Object.assign(self.data, self.uiGridInvoice.getTotales());
 
         this.focusColumnCantidad(entity);
-        
-        
+
+
     }
 
-    focusColumnCantidad(entity={}) {
-        let self = this, index = 0;
+    focusColumnCantidad(entity = {}) {
+        let self = this,
+            index = 0;
 
-        if(self.dataArticulo.articulo.llevaInventario){
-            index = self.gridOptions.columnDefs.findIndex(item=>item.field==='cantidad')
-        }else{
-            index = self.gridOptions.columnDefs.findIndex(item=>item.field==='descripcion')
+        if (self.dataArticulo.articulo.llevaInventario) {
+            index = self.gridOptions.columnDefs.findIndex(item => item.field === 'cantidad')
+        } else {
+            index = self.gridOptions.columnDefs.findIndex(item => item.field === 'descripcion')
         }
         self.$scope.gridApi.cellNav.scrollToFocus(
             self.gridOptions.data[0],
@@ -981,52 +1052,64 @@ export class ModalBaseCtrl{
                 self.gridOptions.data[self.indexRow],
                 self.gridOptions.columnDefs[index]
             );
+            this.indexRow = null;
         }, 30)
+
+
+        this.counterGridOptions()
+
     }
 
-   
+    counterGridOptions() {
+        angular.forEach(this.gridOptions.data, (item, index) => {
+            item.n = index + 1;
+        })
+
+    }
 
 
-    validateForm(){        
+
+
+    validateForm() {
         return {
             "idSucursal": {
-                valor: this.data.codEstab ,
+                valor: this.data.codEstab,
                 message: 'Seleccione la Sucursal'
             },
             "idCliente": {
-                valor: this.cliente.idCliente >0,
+                valor: this.cliente.idCliente > 0,
                 message: 'Seleccione el Cliente'
             },
-            "idPuntoEmision":{
-                valor: this.data.idPuntoEmision >0,
-                message: 'Seleccione el Punto de Emisión'                
+            "idPuntoEmision": {
+                valor: this.data.idPuntoEmision > 0,
+                message: 'Seleccione el Punto de Emisión'
             },
-            "idFactura":{
+            "idFactura": {
                 valor: this.data.idFactura > 0,
                 message: 'Seleccione la Factura'
             },
-            "idTiempoCredito":{
+            "idTiempoCredito": {
                 valor: this.data.idTiempoCredito > 0,
                 message: 'Seleccione el Forma de Pago'
             },
             "fechaEmision": {
-                valor:  this.data.fechaEmision instanceof Date && !isNaN(this.data.fechaEmision),
-                message:  'Ingrese la Fecha de Emisión'
+                valor: this.data.fechaEmision instanceof Date && !isNaN(this.data.fechaEmision),
+                message: 'Ingrese la Fecha de Emisión'
             },
-            "fechaVencimiento":{
+            "fechaVencimiento": {
                 valor: this.data.fechaVencimiento instanceof Date && !isNaN(this.data.fechaVencimiento),
-                message: 'Ingrese la Fecha de Vencimiento',                
+                message: 'Ingrese la Fecha de Vencimiento',
             },
-            "validFechaVcto":{
+            "validFechaVcto": {
                 valor: (Date.parse(this.data.fechaEmision) <= Date.parse(this.data.fechaVencimiento)),
                 message: 'Fecha de Vencimiento no puede ser menor a  Fecha de Emisión'
             },
-            "gridOptions":{
+            "gridOptions": {
                 valor: this.gridOptions.data.length,
                 message: 'Ingrese al menos un Articulo en el Detalle',
             },
             "gridOptionsBodega": {
-                valor: this.gridOptions.data.some(item=>(item.idBodega>0)),
+                valor: this.gridOptions.data.some(item => (item.idBodega > 0)),
                 message: 'Agregue  bodega a los artículos'
             }
         }
@@ -1037,22 +1120,22 @@ export class ModalBaseCtrl{
      * @param {string} tituloModal Guardar || Actualizar
      * @returns 
      */
-    isValidaForm(tituloModal){
-        let toastMessageForm = this.validateForm();   
+    isValidaForm(tituloModal) {
+        let toastMessageForm = this.validateForm();
 
-        for(let item of this.CAMPOS){                 
-            if(item in  toastMessageForm){
-                let campo =  toastMessageForm[item];                                  
-                if(!campo.valor){                
+        for (let item of this.CAMPOS) {
+            if (item in toastMessageForm) {
+                let campo = toastMessageForm[item];
+                if (!campo.valor) {
                     this._tS.toastr('warning', campo.message, tituloModal);
-                    return                
-                }                                
-            }else{
+                    return
+                }
+            } else {
                 throw `CAMPO ${item} NO DEFINIDO CORRECTAMENTE EN ESTE DOCUMENTO ${this.TIPO_DOC.descripcion}`
-            }      
+            }
         }
 
-        if(this.data.total<=0){
+        if (this.data.total <= 0) {
             this._tS.toastr('warning', 'El importe total tiene que ser distinto a 0');
             return
         }
@@ -1066,75 +1149,80 @@ export class ModalBaseCtrl{
             let datosAdicionales = this.datosAdicionalesArticulo.filter(val => val.idArticulo === item.idArticulo);
             if (!item[id] > 0 && item.datosAdicionales && datosAdicionales.length !== item.cantidad) {
                 this._tS.toastr('warning', `La cantidad de etiquetas no coincide con el numero de cantidad del artículo: ${item.descripcion}`, '', 'toast-bottom-right');
-                isValid = false                
+                isValid = false
                 break
             }
-        }       
+        }
         return true
     }
 
-    getImporteTotal(){
-        if(!this.decimal) return
+    getImporteTotal() {
+        if (!this.decimal) return
         let total = Number(this.data.total);
-        let transporte   = Number(this.data.transporte);
-        let recargo      = Number(this.data.recargo);
+        let transporte = Number(this.data.transporte);
+        let recargo = Number(this.data.recargo);
         let importeTotal = total + transporte + recargo;
-        this.data.total  = importeTotal;
+        this.data.total = importeTotal;
         return this._fS.roundNumber(importeTotal, this.decimal.nroTotalSubTotal);
     }
 
-    async closeModal(){
-        if(this.TIPO_REGISTRO==='NUEVO' && this.gridOptions.data.length>0){
+    async closeModal() {
+        if (this.TIPO_REGISTRO === 'NUEVO' && this.gridOptions.data.length > 0) {
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
-                  confirmButton: 'btn btn-success',
-                //   denyButton:'btn btn-info ml-2',
-                  cancelButton: 'btn btn-danger ml-2'
+                    confirmButton: 'btn btn-success',
+                    //   denyButton:'btn btn-info ml-2',
+                    cancelButton: 'btn btn-danger ml-2'
                 },
                 buttonsStyling: false
             })
-            
+
             swalWithBootstrapButtons.fire({
                 title: 'Salir ?',
                 html: "<small>Tienes un documento en proceso, desea salir ahora?</small>",
                 icon: 'warning',
                 showCancelButton: true,
-                showConfirmButton:true,                
-                confirmButtonText: 'Si, salir!',                
-                cancelButtonText: 'No, cancelar!',                
+                showConfirmButton: true,
+                confirmButtonText: 'Si, salir!',
+                cancelButtonText: 'No, cancelar!',
                 reverseButtons: false
-            }).then(result=>{
+            }).then(result => {
 
-                if(result.isConfirmed){
-                   this.$uibModalInstance.close()
-                }                
-            })      
-            return      
+                if (result.isConfirmed) {
+                    this.$uibModalInstance.close()
+                }
+            })
+            return
         }
-        this.$uibModalInstance.close();        
+        this.$uibModalInstance.close();
     }
 
-    
+
 
 
     //Información Adicional del Documento 
-    async openModalInfoAdicional(isView){
+    async openModalInfoAdicional(isView) {
         let params = {
             isView,
             infoAdicionalDocumento: this.infoAdicionalDocumento
         }
-        
-        let {MODAL_INFO_ADICIONAL_TIPO_DOC_CTRL, MODAL_INFO_ADICIONAL_TIPO_DOC_CSHTML} = this._nombreModalConst.common;
-        let {InfoAdicionalTipoDocCtrl} = await import('./../../modal/' + MODAL_INFO_ADICIONAL_TIPO_DOC_CTRL);
+
+        let {
+            MODAL_INFO_ADICIONAL_TIPO_DOC_CTRL,
+            MODAL_INFO_ADICIONAL_TIPO_DOC_CSHTML
+        } = this._nombreModalConst.common;
+        let {
+            InfoAdicionalTipoDocCtrl
+        } = await import('./../../modal/' + MODAL_INFO_ADICIONAL_TIPO_DOC_CTRL);
 
         let modalRef = this._modalSvc.openModalCustom({
             controller: InfoAdicionalTipoDocCtrl,
-            template: 'Shared/Common/'+MODAL_INFO_ADICIONAL_TIPO_DOC_CSHTML,
-            size:'md',
+            template: 'Shared/Common/' + MODAL_INFO_ADICIONAL_TIPO_DOC_CSHTML,
+            size: 'md',
             params
         })
 
-        modalRef.result.then(infoAdicionalDocumento=>{
+        modalRef.result.then(infoAdicionalDocumento => {
             this.infoAdicionalDocumento = infoAdicionalDocumento
         })
     }
@@ -1143,19 +1231,22 @@ export class ModalBaseCtrl{
 
     setPorcentajeDescuentoAll(porcentajeDescuento) {
         const self = this;
-        for(let rowEntity of this.gridOptions.data){
-            rowEntity.porcentajeDescuento = porcentajeDescuento;   
-            
-            let objCalculo = self.uiGridInvoice.calculoColDef(rowEntity);             
-        
+        for (let rowEntity of this.gridOptions.data) {
+            rowEntity.porcentajeDescuento = porcentajeDescuento;
+
+            let objCalculo = self.uiGridInvoice.calculoColDef(rowEntity);
+
             objCalculo["porcentajeDescuento"]();
-            
+
             objCalculo["calculoTotalDetalle"]();
-            
-        }       
-        
-        self.data = {...self.data, ...self.uiGridInvoice.getTotales()}
-      
+
+        }
+
+        self.data = {
+            ...self.data,
+            ...self.uiGridInvoice.getTotales()
+        }
+
     }
 
 
@@ -1167,39 +1258,45 @@ export class ModalBaseCtrl{
 
 
 
-    async openModalCobroDocumento (params){
-        let {MODAL_FILE_CTRL, MODAL_COBRO_DOCUMENTO} = this._nombreModalConst.cobro;
+    async openModalCobroDocumento(params) {
+        let {
+            MODAL_FILE_CTRL,
+            MODAL_COBRO_DOCUMENTO
+        } = this._nombreModalConst.cobro;
         let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_COBRO_DOCUMENTO['controller']];
-        let template   = MODAL_COBRO_DOCUMENTO['template'];
+        let template = MODAL_COBRO_DOCUMENTO['template'];
 
         let $modalRef = this._modalSvc.openModalCustom({
             controller,
             template,
-            size:'xl',
+            size: 'xl',
             params
         })
 
-        $modalRef.result.then(result=>{
+        $modalRef.result.then(result => {
             this.$uibModalInstance.close(params)
         })
 
     }
 
 
-    async openModalRapido(params){
-        
-        let {MODAL_FILE_CTRL, MODAL_COBRO_RAPIDO} = this._nombreModalConst.cobro;
+    async openModalRapido(params) {
+
+        let {
+            MODAL_FILE_CTRL,
+            MODAL_COBRO_RAPIDO
+        } = this._nombreModalConst.cobro;
         let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_COBRO_RAPIDO['controller']];
-        let template   = MODAL_COBRO_RAPIDO['template'];
+        let template = MODAL_COBRO_RAPIDO['template'];
 
         let $modalRef = this._modalSvc.openModalCustom({
             controller,
             template,
-            size:'lg',
+            size: 'lg',
             params
         })
 
-        $modalRef.result.then(result=>{
+        $modalRef.result.then(result => {
             this.$uibModalInstance.close(params)
         })
 
@@ -1209,17 +1306,17 @@ export class ModalBaseCtrl{
 
 
     //Event Formulario Invoice, Nota Entrega
-    onBlurBtnNewCustomerInvoice(e){
+    onBlurBtnNewCustomerInvoice(e) {
         var keyCode = e.keyCode || e.which;
-        console.log(keyCode)
-        if(keyCode===0){
-          $("#btnSaveAndUpdateDocument").focus()
+
+        if (keyCode === 0) {
+            $("#btnSaveAndUpdateDocument").focus()
         }
     }
 
 
     swalDataInvalidCustomer(item) {
-         
+
         Swal.fire({
             icon: 'warning',
             title: 'Datos Incorrectos',
@@ -1229,22 +1326,22 @@ export class ModalBaseCtrl{
             confirmButtonText: 'Editar',
             cancelButtonText: 'Cancelar'
         }).then(async result => {
-            if(result.isConfirmed){
+            if (result.isConfirmed) {
                 this.cliente = item;
                 await this.openModalClienteUpdate();
                 this.cliente = {}
             }
         })
-       
+
     }
 
 
 
 
 
-    
 
 
 
-   
+
+
 }

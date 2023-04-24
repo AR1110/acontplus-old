@@ -5,7 +5,7 @@ DROP PROCEDURE FactElect.Doc_Elect_Get
 GO
 
 
--- FactElect.Doc_Elect_Get 25, '{"isCurrentDate": false,"checkBoxDate": true,"isSearchCustomerProvider": true,"dateStart": "2023-03-21T05:00:00.000Z","dateEnd": "2023-04-20T04:59:59.999Z","codDoc": "01","checkBoxComprobante": true,"identificacionReceptor": "9999999999999"}'
+-- FactElect.Doc_Elect_Get 28, '{"isCurrentDate":false,"checkBoxDate":true,"isSearchCustomerProvider":false,"dateStart":"2023-04-01T05:00:00.000Z","dateEnd":"2023-05-01T04:59:59.999Z"}'
 
 CREATE PROCEDURE FactElect.Doc_Elect_Get @idRol INT,@json NVARCHAR(max)
 AS
@@ -14,6 +14,10 @@ BEGIN
 	SET LANGUAGE SPANISH;
 
 	DECLARE @idEntidad INT;
+
+	DECLARE @isViewOtherDocs BIT = (SELECT JSON_VALUE(jsonPermission, '$.additional.viewOthersDocs.view') FROM Config.UserPermission WHERE codModule='V' AND idUsuarioRol = @idRol)
+	
+	DECLARE @idUsuario INT;
 	DECLARE @isCurrentDate BIT;
 
 	DECLARE @codDoc VARCHAR(10);
@@ -33,6 +37,9 @@ BEGIN
 
 	DECLARE @isSearchCustomerProvider BIT 
 	DECLARE @identificacionReceptor VARCHAR(20)
+
+	DECLARE @isSearchUser BIT
+	DECLARE @idUsuarioSearch INT;
 
 	DECLARE @tblMain AS TABLE(
 		idDocumentoElectronico BIGINT NOT NULL
@@ -59,7 +66,9 @@ BEGIN
 									 @identificacionReceptor VARCHAR(20),
 									 @codEstado VARCHAR(5),
 									 @dateStart DATETIME,
-									 @dateEnd DATETIME';
+									 @dateEnd DATETIME,
+									 @idUsuario INT,
+									 @idUsuarioSearch INT';
 
 	DECLARE @sql NVARCHAR(MAX) = 'SELECT de.idDocumentoElectronico
 										,de.idDocumento
@@ -81,10 +90,12 @@ BEGIN
 												 END
 										,de.versionComp
 										,de.ambiente
+										,usuario = u.nombreUsuario
 									 FROM v_DocElectronico de WITH (NOLOCK)
+									 INNER JOIN Usuario u WITH(NOLOCK) ON u.idUsuario = de.idUsuario
 									 WHERE de.idEntidad = @idEntidad   ';
 
-	SELECT @idEntidad = idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @idRol ;
+	SELECT @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idRol ;
 	
 	--Filtros 
 	SELECT 
@@ -106,6 +117,8 @@ BEGIN
 
 		,@isSearchCustomerProvider = isSearchCustomerProvider
 		,@identificacionReceptor = identificacionReceptor
+		,@isSearchUser = isSearchUser
+		,@idUsuarioSearch  = idUsuarioSearch
 	FROM OPENJSON(@json)
 	WITH(codDoc VARCHAR(10) '$.codDoc'
 		 ,checkBoxEstadoServicio BIT '$.checkBoxEstadoServicio'
@@ -124,7 +137,11 @@ BEGIN
 
 		 ,isSearchCustomerProvider BIT '$.isSearchCustomerProvider'
 		 ,identificacionReceptor VARCHAR(20) '$.identificacionReceptor'
+		 ,isSearchUser BIT '$.isSearchUser'
+		 ,idUsuarioSearch INT '$.idUsuario'
 		)
+
+	
 
 	IF @checkboxEstablecimiento = 1
 		BEGIN 
@@ -168,6 +185,19 @@ BEGIN
 				END 
 		END
 
+	--Verificamos si tiene permiso a ver otros documentos
+	IF @isViewOtherDocs = 0
+		BEGIN
+			SET @sql = @sql + ' AND de.idUsuario = @idUsuario'
+		END 
+	 ELSE
+		BEGIN 
+			IF @isSearchUser = 1
+				BEGIN 
+					SET @sql = @sql + ' AND de.idUsuario = @idUsuarioSearch'
+				END 
+		END 
+
 	SET @sql = @sql + ' ORDER BY de.idDocumentoElectronico DESC';
 	
 	print @sql 
@@ -180,4 +210,6 @@ BEGIN
 						   ,@codEstado = @codEstado
 						   ,@dateStart = @dateStart
 						   ,@dateEnd = @dateEnd
+						   ,@idUsuario =  @idUsuario
+						   ,@idUsuarioSearch = @idUsuarioSearch
 END 

@@ -1,42 +1,44 @@
-export class ModalEmpleadoCtrl{
+export class ModalEmpleadoCtrl {
     static $inject = ['mainService', '$uibModalInstance', 'toastService', 'formulario', 'params'];
-    
-    constructor(_mS, $uibModalInstance, _toast, _form, _params){
-        this._mS             = _mS;
-        this.$uibModalInstance = $uibModalInstance;
-        this._toast            = _toast;
-        this._form             = _form;
-        this._params           = _params;
 
-        this.tipoRegistro      = 1;
-        this.data              = {};
+    constructor(_mS, $uibModalInstance, _toast, _form, _params) {
+        this._mS = _mS;
+        this.$uibModalInstance = $uibModalInstance;
+        this._toast = _toast;
+        this._form = _form;
+        this._params = _params;
+
+        this.tipoRegistro = 1;
+        this.data = {};
 
     }
 
-    $onInit(){
-        this._mS.getData('post','/TipoIdentificacion/ReadTipoIdentificacion', { tipoValidacion: 'V' }).then(response => {
+    $onInit() {
+        this._mS.getData('post', '/TipoIdentificacion/ReadTipoIdentificacion', {
+            tipoValidacion: 'V'
+        }).then(response => {
             this.tipoIdentificaciones = response.data;
             this.data.idTipoIdentificacion = this.tipoIdentificaciones[0].idTipoIdentificacion;
-            this.data.identificacion       = this.tipoIdentificaciones[0].identificacion; 
+            this.data.identificacion = this.tipoIdentificaciones[0].identificacion;
 
         });
 
-        if(this._params){
+        if (typeof this._params == 'object' && this._params.idEmpleado > 0) {
             this.tipoRegistro = 2;
             this.data = this._params;
         }
     }
 
-    onChangeTipoIdentificacion(){
-        this.data.identificacion = this.tipoIdentificaciones.find(item=>item.idTipoIdentificacion===this.data.idTipoIdentificacion).identificacion;
+    onChangeTipoIdentificacion() {
+        this.data.identificacion = this.tipoIdentificaciones.find(item => item.idTipoIdentificacion === this.data.idTipoIdentificacion).identificacion;
     }
 
-    saveAndUpdate(){
+    saveAndUpdate() {
         try {
 
-            const titulo = this.tipoRegistro ===1?'Guardar':'Actualizar';
+            const titulo = this.tipoRegistro === 1 ? 'Guardar' : 'Actualizar';
 
-            if(this._form.campo(this.data.idTipoIdentificacion)){
+            if (this._form.campo(this.data.idTipoIdentificacion)) {
                 this._toast.toastr('warning', 'Seleccione el Tipo Identificación', titulo);
                 return
             }
@@ -46,26 +48,26 @@ export class ModalEmpleadoCtrl{
                 return
             }
 
-            if(this.tipoRegistro===1){
+            if (this.tipoRegistro === 1) {
                 if (this._form.campo(this.data.nombre)) {
                     this._toast.toastr('warning', 'Ingrese el Nombre', titulo);
                     return
                 }
                 if (this._form.campo(this.data.apellido)) {
-                    this._toast.toastr('warning', 'Ingrese el Apellido', titulo)   ;
+                    this._toast.toastr('warning', 'Ingrese el Apellido', titulo);
                     return
                 }
-                this.data.nombreCompleto = this.data.nombre +" " + this.data.apellido
+                this.data.nombreCompleto = this.data.nombre + " " + this.data.apellido
             }
 
-            if(this.tipoRegistro===2){
+            if (this.tipoRegistro === 2) {
                 if (this._form.campo(this.data.nombreCompleto)) {
-                    this._toast.toastr('warning', 'Ingrese el Nombre Completo', titulo)   ;
+                    this._toast.toastr('warning', 'Ingrese el Nombre Completo', titulo);
                     return
                 }
             }
-            
-            const url = this.tipoRegistro===1?'/Empleado/Post':'/Empleado/Put?idEmpleado=' + this.data.idEmpleado;
+
+            const url = this.tipoRegistro === 1 ? '/Empleado/Post' : '/Empleado/Put?idEmpleado=' + this.data.idEmpleado;
             showLoader();
             this._mS.getData('post', url, this.data).then(response => {
                 if (response.id == "0") {
@@ -76,10 +78,10 @@ export class ModalEmpleadoCtrl{
                 if (response.id == "1") {
                     hideLoader();
                     this._toast.toastr('success', response.message, response.titleSms);
-                    this.$uibModalInstance.close(response)                ;
+                    this.$uibModalInstance.close(response);
                 }
             })
-            
+
         } catch (error) {
             hideLoader();
             toastr.error(error)
@@ -88,7 +90,7 @@ export class ModalEmpleadoCtrl{
 
     }
 
-    closeModal(){
+    closeModal() {
         this.$uibModalInstance.close();
     }
 

@@ -41,11 +41,14 @@ RETURNS
 	 ,numeroAutorizacion VARCHAR(50) NOT NULL
 	 ,idUsuario INT 	
 	 ,docSustento VARCHAR(40)  NULL
+	 ,numDocSustento VARCHAR(50) NULL
+	 ,fechaEmisionDocSustento VARCHAR(50) NULL
 	 ,impuesto VARCHAR(20) NOT NULL
 	 
 	 ,codigo VARCHAR(5) NOT NULL
 	 ,codigoRetencion VARCHAR(5) NOT NULL
 	 ,baseImponible NUMERIC(18,2) NOT NULL
+	 ,porcentajeRetIva NUMERIC(18,2) NULL
 	 ,porcentajeRetener NUMERIC(18,2) NOT NULL
 	 ,valorRetenido NUMERIC(18,2) NOT NULL
 	
@@ -136,17 +139,17 @@ BEGIN
 
 	INSERT INTO @retencion SELECT 
 		cm.idDocumento
-	   ,codigo            = x.y.value('(//retenciones/retencion/codigo)[1]','VARCHAR(5)')
-	   ,codigoRetencion   = x.y.value('(//retenciones/retencion/codigoRetencion)[1]','VARCHAR(50)')
-	   ,baseImponible     = x.y.value('(//retenciones/retencion/baseImponible)[1]','NUMERIC(18,2)')
-	   ,porcentajeRetener = x.y.value('(//retenciones/retencion/porcentajeRetener)[1]','NUMERIC(18,2)')
-	   ,valorRetenido     = x.y.value('(//retenciones/retencion/valorRetenido)[1]','NUMERIC(18,2)')
+	   ,codigo            = x.y.value('(codigo)[1]','VARCHAR(5)')
+	   ,codigoRetencion   = x.y.value('(codigoRetencion)[1]','VARCHAR(50)')
+	   ,baseImponible     = x.y.value('(baseImponible)[1]','NUMERIC(18,2)')
+	   ,porcentajeRetener = x.y.value('(porcentajeRetener)[1]','NUMERIC(18,2)')
+	   ,valorRetenido     = x.y.value('(valorRetenido)[1]','NUMERIC(18,2)')
 
-	   ,codDocSustento =  x.y.value('(codDocSustento)[1]','VARCHAR(10)')
-       ,numDocSustento =  x.y.value('(numDocSustento)[1]','VARCHAR(40)')
-       ,fechaEmisionDocSustento =  x.y.value('(fechaEmisionDocSustento)[1]','VARCHAR(50)')
+	   ,codDocSustento =  x.y.value('(//docSustento/codDocSustento)[1]','VARCHAR(10)')
+       ,numDocSustento =  x.y.value('(//docSustento/numDocSustento)[1]','VARCHAR(40)')
+       ,fechaEmisionDocSustento =  x.y.value('(//docSustento/fechaEmisionDocSustento)[1]','VARCHAR(50)')
 	FROM @comprobantes cm
-	CROSS APPLY cm.xmlComp.nodes('//docsSustento/docSustento') x(y)
+	CROSS APPLY cm.xmlComp.nodes('//docSustento/retenciones/retencion') x(y)
 	WHERE cm.versionComp = '2.0.0'
 
 	INSERT INTO @retencion SELECT 
@@ -191,12 +194,15 @@ BEGIN
 							,dr.numeroAutorizacion
 							,dr.idUsuario	
 
-							,ds.descripcion
-							,ir.descripcion
+							,ds.descripcion -- docSustento
+							,r.numDocSustento  
+							,r.fechaEmisionDocSustento
+							,ir.descripcion -- Impuesto 
 	 
 							,r.codigo
 							,r.codigoRetencion
 							,r.baseImponible
+							,pri.porcentaje
 							,r.porcentajeRetener
 							,r.valorRetenido
 							,totalRenta = ISNULL((SELECT SUM(rt.valorRetenido) FROM @retencion rt WHERE rt.idDocumento = dr.idDocumento AND rt.codigo = '1'),0)
@@ -206,8 +212,8 @@ BEGIN
 						FROM Recepcion.DocumentoRecibido dr WITH(NOLOCK) 
 						INNER JOIN @retencion r ON r.idDocumento                              = dr.idDocumento
 						INNER JOIN Sri.ImpuestoRetencion ir WITH (NOLOCK) ON ir.codigo        = r.codigo
-						LEFT JOIN Sri.DocumentoSustento ds WITH (NOLOCK) ON ds.codDocSustento = r.codDocSustento
-	
+						LEFT JOIN Sri.DocumentoSustento ds  WITH (NOLOCK) ON ds.codDocSustento = r.codDocSustento
+						LEFT JOIN Sri.PorcentajeRetIva pri  WITH (NOLOCK) ON pri.codigo = r.codigo
 	--INSERT INTO @table(idDocumento,numDocSustento,totalRenta,totalIva,total)
 	--SELECT 
 	--	 dc.idDocumento

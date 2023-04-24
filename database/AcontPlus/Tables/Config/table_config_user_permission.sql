@@ -57,6 +57,10 @@ DECLARE @newjson VARCHAR(MAX);
 		--SET @newjson = N'{"label":"Precio Con Iva", "update":true}';		
 		--UPDATE Config.UserPermission SET jsonPermission = REPLACE(REPLACE(JSON_MODIFY(jsonPermission, 'append $.precioConIva', JSON_QUERY(@newjson)),'[', ''), ']', '') 
 		--WHERE codModule='AR'
+
+		SET @newjson = N'{"label":"Consultar documentos electronicos de otros usuarios", "view":true}';		
+		UPDATE Config.UserPermission SET jsonPermission = REPLACE(REPLACE(JSON_MODIFY(jsonPermission, 'append $.additional.viewOthersDocs', JSON_QUERY(@newjson)),'[', ''), ']', '') 
+		WHERE codModule='V'
 	
 	--Update properties (label, update) of voucher 
 		--SET @newjson = N'{"label":"Punto Emision UPDATE", "update":true}';		
@@ -106,6 +110,6 @@ DECLARE @newjson VARCHAR(MAX);
 --INSERT INTO Config.UserPermission(idUsuarioRol, codModule, jsonPermission)SELECT idUsuarioRol, 'AR', @jsonArticlePermission FROM App.UsuarioRol 
 --INSERT INTO Config.UserPermission(idUsuarioRol, codModule, jsonPermission)SELECT idUsuarioRol, 'C', @jsonCajaPermission FROM App.UsuarioRol
 
-SELECT * FROM Config.UserPermission WHERE codModule='C'
+SELECT * FROM Config.UserPermission --WHERE codModule='C'
 
 

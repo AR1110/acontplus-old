@@ -19,7 +19,7 @@ namespace ApiFactElect.Controllers
             _db = new DbAccess(_configuration);
         }
 
-        [HttpGet("{json}")]
+        [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
             LogWriter _logs = new LogWriter(_configuration);
