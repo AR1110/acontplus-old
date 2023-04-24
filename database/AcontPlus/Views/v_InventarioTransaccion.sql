@@ -134,6 +134,57 @@ SELECT t.idTransaccion
 						)
 			END
 		)
+,rucClienteProveedor = (
+		CASE 
+			WHEN tt.codigo = 'E' AND td.codigo = 'FE'
+				THEN (
+						SELECT TOP 1 dr.rucEmisor
+						FROM Recepcion.DocumentoRecibido dr  WITH (NOLOCK)
+						WHERE dr.idDocumento = t.idDocumento
+						)
+			WHEN tt.codigo = 'E' AND td.codigo = 'FF'
+				THEN (
+						SELECT TOP 1  p.numeroIdentificacion
+						FROM FacturaCompra fc  WITH (NOLOCK)
+						INNER JOIN Proveedor p  WITH (NOLOCK) ON fc.idProveedor = p.idProveedor
+						WHERE fc.idFacturaCompra = t.idDocumento
+						)
+			WHEN tt.codigo = 'E' AND td.codigo = 'NC'
+				THEN (
+						SELECT TOP 1 c.numeroIdentificacion
+						FROM NotaCredito nc  WITH (NOLOCK)
+						INNER JOIN Cliente c On nc.idCliente = c.idCliente
+						WHERE nc.idNotaCredito = t.idDocumento
+						)
+			WHEN tt.codigo = 'E' AND td.codigo = 'IV'
+				THEN (
+						SELECT TOP 1 p.numeroIdentificacion
+						FROM Compra.Documento_Ingreso di  WITH (NOLOCK)
+						INNER JOIN Proveedor p  WITH (NOLOCK) ON di.idProveedor = p.idProveedor
+						WHERE di.idDocumentoIngreso = t.idDocumento
+						)
+			WHEN tt.codigo = 'S' AND td.codigo = 'FE'
+				THEN (
+						SELECT TOP 1 c.numeroIdentificacion
+						FROM Factura f
+						INNER JOIN Cliente c On f.idCliente = c.idCliente 
+						WHERE f.idFactura = t.idDocumento
+						)
+			WHEN tt.codigo = 'S' AND td.codigo = 'NE'
+				THEN (
+						SELECT TOP 1 c.numeroIdentificacion
+						FROM NotaEntrega ne  WITH (NOLOCK)
+						INNER JOIN Cliente c On ne.idCliente = c.idCliente
+						WHERE ne.idNotaEntrega = t.idDocumento
+						)
+			WHEN tt.codigo = 'S' AND td.codigo = 'NC'
+				THEN (
+						SELECT TOP 1 dr.rucEmisor
+						FROM Recepcion.DocumentoRecibido dr  WITH (NOLOCK)
+						WHERE dr.idDocumento = t.idDocumento
+						)
+			END
+		)
 ,ISNULL(CASE WHEN tt.codigo = 'E' THEN m.descripcion END, '') medidaEntrada
 ,ISNULL(CASE WHEN tt.codigo = 'S' THEN m.descripcion END, '') medidaSalida
 ,ISNULL(CASE WHEN tt.codigo = 'E' THEN t.total END, 0) totalEntrada

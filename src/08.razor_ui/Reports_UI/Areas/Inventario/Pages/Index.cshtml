@@ -1,7 +1,9 @@
+﻿@page
+@model Reports_UI.Areas.Inventario.Pages.IndexModel
 @{
     ViewBag.title = "Reporte Inventario";
+    Layout = "_Layout";
 }
-
 <div ng-controller="reporteInventarioCtrl">
     <div class="row page-titles">
         <div class="col-md-5 align-self-center">
@@ -9,12 +11,11 @@
         </div>
         <div class="col-md-7 align-self-center text-right">
             <div class="d-flex justify-content-end align-items-center">
-                
+
             </div>
         </div>
     </div>
 
-    <partial name="_ModalFiltroInventario"/>
 
     <div class="row">
         <div class="col-lg-12">
@@ -22,9 +23,6 @@
                 <div class="card-body">
                     <button class="btn btn-info" ng-click="openModalReporte()">
                         <i class="mdi mdi-file-find fa-lg"></i> Nuevo Reporte
-                    </button>
-                    <button class="btn btn-danger">
-                        <i class=" fas fa-file-pdf"></i> PDF
                     </button>
                 </div>
                 <md-divider></md-divider>
@@ -39,11 +37,10 @@
         </div>
     </div>
 
-
-
+    @await Html.PartialAsync("_ModalFiltroInventario")
 
 </div>
 
 @section Scripts{
-    <script src="~/js/controllers/reportes/reporteInventarioCtrl.min.js" asp-append-version="true"></script>
+    <script src="~/js/controllers/reportes/reporteInventarioCtrl.js" asp-append-version="true"></script>
 }

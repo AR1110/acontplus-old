@@ -16,10 +16,10 @@ namespace WebUI.Controllers.Admin
 
         //Reporte Inventario 
 
-        public IActionResult ReporteInventario()
-        {
-            return View();
-        }
+        //public IActionResult ReporteInventario()
+        //{
+        //    return View();
+        //}
 
         //Reporte Consumo Ciente
 

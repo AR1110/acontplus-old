@@ -729,10 +729,10 @@
                 "AuthenticationProviderKey": "Bearer"
             },
             "DownstreamHostAndPorts": [
-                {
-                    "Host": "localhost",
-                    "Port": 44320
-                }
+              {
+                "Host": "localhost",
+                "Port": 7097
+              }
             ],
             "DownstreamPathTemplate": "/api/Reporte/Download",
             "DownstreamScheme": "https",
@@ -748,10 +748,10 @@
                 "AuthenticationProviderKey": "Bearer"
             },
             "DownstreamHostAndPorts": [
-                {
-                    "Host": "localhost",
-                    "Port": 44320
-                }
+              {
+                "Host": "localhost",
+                "Port": 7097
+              }
             ],
             "DownstreamPathTemplate": "/api/Reporte/ExportExcel",
             "DownstreamScheme": "https",
@@ -767,10 +767,10 @@
                 "AuthenticationProviderKey": "Bearer"
             },
             "DownstreamHostAndPorts": [
-                {
-                    "Host": "localhost",
-                    "Port": 44320
-                }
+              {
+                "Host": "localhost",
+                "Port": 7097
+              }
             ],
             "DownstreamPathTemplate": "/api/Reporte/DynamicReport",
             "DownstreamScheme": "https",
