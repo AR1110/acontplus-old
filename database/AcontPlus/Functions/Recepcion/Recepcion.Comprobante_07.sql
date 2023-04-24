@@ -41,11 +41,14 @@ RETURNS
 	 ,numeroAutorizacion VARCHAR(50) NOT NULL
 	 ,idUsuario INT 	
 	 ,docSustento VARCHAR(40)  NULL
+	 ,numDocSustento VARCHAR(50) NULL
+	 ,fechaEmisionDocSustento VARCHAR(50) NULL
 	 ,impuesto VARCHAR(20) NOT NULL
 	 
 	 ,codigo VARCHAR(5) NOT NULL
 	 ,codigoRetencion VARCHAR(5) NOT NULL
 	 ,baseImponible NUMERIC(18,2) NOT NULL
+	 ,porcentajeRetIva NUMERIC(18,2) NULL
 	 ,porcentajeRetener NUMERIC(18,2) NOT NULL
 	 ,valorRetenido NUMERIC(18,2) NOT NULL
 	
@@ -191,12 +194,15 @@ BEGIN
 							,dr.numeroAutorizacion
 							,dr.idUsuario	
 
-							,ds.descripcion
-							,ir.descripcion
+							,ds.descripcion -- docSustento
+							,r.numDocSustento  
+							,r.fechaEmisionDocSustento
+							,ir.descripcion -- Impuesto 
 	 
 							,r.codigo
 							,r.codigoRetencion
 							,r.baseImponible
+							,pri.porcentaje
 							,r.porcentajeRetener
 							,r.valorRetenido
 							,totalRenta = ISNULL((SELECT SUM(rt.valorRetenido) FROM @retencion rt WHERE rt.idDocumento = dr.idDocumento AND rt.codigo = '1'),0)
@@ -206,8 +212,8 @@ BEGIN
 						FROM Recepcion.DocumentoRecibido dr WITH(NOLOCK) 
 						INNER JOIN @retencion r ON r.idDocumento                              = dr.idDocumento
 						INNER JOIN Sri.ImpuestoRetencion ir WITH (NOLOCK) ON ir.codigo        = r.codigo
-						LEFT JOIN Sri.DocumentoSustento ds WITH (NOLOCK) ON ds.codDocSustento = r.codDocSustento
-	
+						LEFT JOIN Sri.DocumentoSustento ds  WITH (NOLOCK) ON ds.codDocSustento = r.codDocSustento
+						LEFT JOIN Sri.PorcentajeRetIva pri  WITH (NOLOCK) ON pri.codigo = r.codigo
 	--INSERT INTO @table(idDocumento,numDocSustento,totalRenta,totalIva,total)
 	--SELECT 
 	--	 dc.idDocumento

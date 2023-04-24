@@ -27,8 +27,8 @@ ALTER FUNCTION FactElect.F_Comprobante_07
 )
 RETURNS 
 @table TABLE 
-(	 
-	idPuntoEmision INT NOT NULL	
+(	idDocumento INT 
+	,idPuntoEmision INT NOT NULL	
 	,codEstado INT NOT NULL
 	,idUsuario INT NOT NULL
 	,serieComprobante VARCHAR(20) NOT NULL
@@ -38,7 +38,9 @@ RETURNS
 	,identificacionSujetoRetenido VARCHAR(20) NULL
 	,razonSocialSujetoRetenido VARCHAR(150) NULL
 
+	,porcentajeRetIva NUMERIC(18, 2) NULL
 	,codigo VARCHAR(5)  NULL	
+	,codigoRetencion VARCHAR(10) NULL
 	,codDocSustento VARCHAR(5)  NULL
 	,numDocSustento VARCHAR(25)  NULL
 	,fechaEmisionDocSustento VARCHAR(100)  NULL
@@ -82,6 +84,7 @@ BEGIN
 		    ,numDocSustento VARCHAR(25)  NULL
 		    ,fechaEmisionDocSustento VARCHAR(100)  NULL
 		    ,codigo VARCHAR(5)  NULL
+			,codigoRetencion VARCHAR(10)  NULL
 		    ,baseImponible NUMERIC(18,2)  NULL
 		    ,porcentajeRetener NUMERIC(18,2)  NULL
 		    ,valorRetenido NUMERIC(18,2)  NULL
@@ -113,6 +116,7 @@ BEGIN
 		,identificacionSujetoRetenido
 		,razonSocialSujetoRetenido
 		,codigo
+		,codigoRetencion
 		,codDocSustento
 		,numDocSustento
 		,fechaEmisionDocSustento
@@ -132,6 +136,7 @@ BEGIN
 		,identificacionSujetoRetenido  = X.Y.value('(//infoCompRetencion/identificacionSujetoRetenido)[1]','VARCHAR(150)') 
 		,razonSocialSujetoRetenido     = X.Y.value('(//infoCompRetencion/razonSocialSujetoRetenido)[1]','VARCHAR(20)') 
 		,codigo                        = X.Y.value('(codigo)[1]','VARCHAR(2)') 
+		,codigoRetencion               = X.Y.value('(codigoRetencion)[1]','VARCHAR(10)') 
 		,codDocSustento                = X.Y.value('(codDocSustento)[1]','VARCHAR(2)') 
 		,numDocSustento                = X.Y.value('(numDocSustento)[1]','VARCHAR(15)')
 		,fechaEmisionDocSustento       = X.Y.value('(fechaEmisionDocSustento)[1]','VARCHAR(50)')
@@ -159,6 +164,7 @@ BEGIN
 		,numDocSustento
 		,fechaEmisionDocSustento
 		,codigo
+		,codigoRetencion
 		,baseImponible
 		,porcentajeRetener
 		,valorRetenido)
@@ -173,22 +179,24 @@ BEGIN
 
 		 ,identificacionSujetoRetenido  = X.Y.value('(//infoCompRetencion/identificacionSujetoRetenido)[1]','VARCHAR(150)') 
 		 ,razonSocialSujetoRetenido     = X.Y.value('(//infoCompRetencion/razonSocialSujetoRetenido)[1]','VARCHAR(20)') 
-		 ,codDocSustento                = X.Y.value('(docSustento/codDocSustento)[1]','VARCHAR(2)') 
-		 ,numDocSustento                = X.Y.value('(docSustento/numDocSustento)[1]','VARCHAR(15)')
-		 ,fechaEmisionDocSustento       = X.Y.value('(docSustento/fechaEmisionDocSustento)[1]','VARCHAR(50)')
+		 ,codDocSustento                = X.Y.value('(//docSustento/codDocSustento)[1]','VARCHAR(2)') 
+		 ,numDocSustento                = X.Y.value('(//docSustento/numDocSustento)[1]','VARCHAR(15)')
+		 ,fechaEmisionDocSustento       = X.Y.value('(//docSustento/fechaEmisionDocSustento)[1]','VARCHAR(50)')
 		
-		 ,codigo            = X.Y.value('(docSustento/retenciones/retencion/codigo)[1]','VARCHAR(5)')
-		 ,baseImponible     = X.Y.value('(docSustento/retenciones/retencion/baseImponible)[1]','NUMERIC(18,2)')
-		 ,porcentajeRetener = X.Y.value('(docSustento/retenciones/retencion/porcentajeRetener)[1]','NUMERIC(18,2)')
-		 ,valorRetenido     = X.Y.value('(docSustento/retenciones/retencion/valorRetenido)[1]','NUMERIC(18,2)')
+		 ,codigo            = X.Y.value('(codigo)[1]','VARCHAR(5)')
+		 ,codigoRetencion   = X.Y.value('(codigoRetencion)[1]','VARCHAR(10)') 
+		 ,baseImponible     = X.Y.value('(baseImponible)[1]','NUMERIC(18,2)')
+		 ,porcentajeRetener = X.Y.value('(porcentajeRetener)[1]','NUMERIC(18,2)')
+		 ,valorRetenido     = X.Y.value('(valorRetenido)[1]','NUMERIC(18,2)')
 	FROM @mainRet rt 
-	CROSS APPLY  rt.retenciones.nodes('//docsSustento') x(y) 
+	CROSS APPLY  rt.retenciones.nodes('//docSustento/retenciones/retencion') x(y) 
 	INNER JOIN dbo.DocumentoElectronico de WITH (NOLOCK) ON de.idDocumentoElectronico = rt.idDocumentoElectronico
 	WHERE rt.versionComp = '2.0.0'
 	
 
 	INSERT INTO @table SELECT
-		 comp_r.idPuntoEmision
+		comp_r.idDocumentoElectronico
+		,comp_r.idPuntoEmision
 
 		,comp_r.codEstado
 		,comp_r.idUsuario
@@ -197,7 +205,9 @@ BEGIN
 		,comp_r.nroAutorizacion 		
 		,comp_r.identificacionSujetoRetenido
 		,comp_r.razonSocialSujetoRetenido
-		,comp_r.codigo
+		,pri.porcentaje
+		,comp_r.codigo	
+		,comp_r.codigoRetencion
 		,comp_r.codDocSustento
 		,comp_r.numDocSustento
 		,comp_r.fechaEmisionDocSustento
@@ -211,7 +221,8 @@ BEGIN
 		,total      = (SELECT SUM(cr.valorRetenido) FROM @comprobanteRetencion cr WHERE cr.idDocumentoElectronico = comp_r.idDocumentoElectronico)
 	FROM @comprobanteRetencion comp_r
 	LEFT JOIN Sri.ImpuestoRetencion imp_r WITH(NOLOCK) ON imp_r.codigo = comp_r.codigo
-	LEFT JOIN Sri.DocumentoSustento doc_s WITH(NOLOCK) ON doc_s.codDocSustento = comp_r.codDocSustento
+	LEFT JOIN Sri.DocumentoSustento doc_s WITH(NOLOCK) ON doc_s.codDocSustento = comp_r.codDocSustento	
+	LEFT JOIN Sri.PorcentajeRetIva pri WITH(NOLOCK) ON pri.codigo = comp_r.codigo
 
 	RETURN 
 END

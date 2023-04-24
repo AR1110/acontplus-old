@@ -166,6 +166,18 @@
           <DataField>orderIndex</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
+        <Field Name="numDocSustento">
+          <DataField>numDocSustento</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="fechaEmisionDocSustento">
+          <DataField>fechaEmisionDocSustento</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="porcentajeRetIva">
+          <DataField>porcentajeRetIva</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>GestionReporte</rd:DataSetName>
@@ -1201,7 +1213,7 @@
                   <TablixMembers>
                     <TablixMember>
                       <TablixHeader>
-                        <Size>5.74084cm</Size>
+                        <Size>10.40692cm</Size>
                         <CellContents>
                           <Textbox Name="Textbox112">
                             <CanGrow>true</CanGrow>
@@ -1937,16 +1949,16 @@
                                                               <TablixMembers>
                                                                 <TablixMember>
                                                                   <TablixHeader>
-                                                                    <Size>1.70625cm</Size>
+                                                                    <Size>2.5cm</Size>
                                                                     <CellContents>
-                                                                      <Textbox Name="Textbox103">
+                                                                      <Textbox Name="Textbox11">
                                                                         <CanGrow>true</CanGrow>
                                                                         <KeepTogether>true</KeepTogether>
                                                                         <Paragraphs>
                                                                           <Paragraph>
                                                                             <TextRuns>
                                                                               <TextRun>
-                                                                                <Value>Impuesto</Value>
+                                                                                <Value>Num. Doc Sustento</Value>
                                                                                 <Style>
                                                                                   <FontSize>8pt</FontSize>
                                                                                   <FontWeight>Bold</FontWeight>
@@ -1958,7 +1970,7 @@
                                                                             </Style>
                                                                           </Paragraph>
                                                                         </Paragraphs>
-                                                                        <rd:DefaultName>Textbox103</rd:DefaultName>
+                                                                        <rd:DefaultName>Textbox11</rd:DefaultName>
                                                                         <Style>
                                                                           <Border>
                                                                             <Style>Solid</Style>
@@ -1995,16 +2007,16 @@
                                                                   <TablixMembers>
                                                                     <TablixMember>
                                                                       <TablixHeader>
-                                                                        <Size>1.53459cm</Size>
+                                                                        <Size>2.16608cm</Size>
                                                                         <CellContents>
-                                                                          <Textbox Name="Textbox110">
+                                                                          <Textbox Name="Textbox14">
                                                                             <CanGrow>true</CanGrow>
                                                                             <KeepTogether>true</KeepTogether>
                                                                             <Paragraphs>
                                                                               <Paragraph>
                                                                                 <TextRuns>
                                                                                   <TextRun>
-                                                                                    <Value>Código </Value>
+                                                                                    <Value>Fecha Emision Doc. Sustento</Value>
                                                                                     <Style>
                                                                                       <FontSize>8pt</FontSize>
                                                                                       <FontWeight>Bold</FontWeight>
@@ -2016,7 +2028,7 @@
                                                                                 </Style>
                                                                               </Paragraph>
                                                                             </Paragraphs>
-                                                                            <rd:DefaultName>Textbox110</rd:DefaultName>
+                                                                            <rd:DefaultName>Textbox14</rd:DefaultName>
                                                                             <Style>
                                                                               <Border>
                                                                                 <Style>Solid</Style>
@@ -2051,7 +2063,127 @@
                                                                         </CellContents>
                                                                       </TablixHeader>
                                                                       <TablixMembers>
-                                                                        <TablixMember />
+                                                                        <TablixMember>
+                                                                          <TablixHeader>
+                                                                            <Size>1.70625cm</Size>
+                                                                            <CellContents>
+                                                                              <Textbox Name="Textbox103">
+                                                                                <CanGrow>true</CanGrow>
+                                                                                <KeepTogether>true</KeepTogether>
+                                                                                <Paragraphs>
+                                                                                  <Paragraph>
+                                                                                    <TextRuns>
+                                                                                      <TextRun>
+                                                                                        <Value>Impuesto</Value>
+                                                                                        <Style>
+                                                                                          <FontSize>8pt</FontSize>
+                                                                                          <FontWeight>Bold</FontWeight>
+                                                                                        </Style>
+                                                                                      </TextRun>
+                                                                                    </TextRuns>
+                                                                                    <Style>
+                                                                                      <TextAlign>Center</TextAlign>
+                                                                                    </Style>
+                                                                                  </Paragraph>
+                                                                                </Paragraphs>
+                                                                                <rd:DefaultName>Textbox103</rd:DefaultName>
+                                                                                <Style>
+                                                                                  <Border>
+                                                                                    <Style>Solid</Style>
+                                                                                  </Border>
+                                                                                  <TopBorder>
+                                                                                    <Color>Black</Color>
+                                                                                    <Style>Solid</Style>
+                                                                                    <Width>1pt</Width>
+                                                                                  </TopBorder>
+                                                                                  <BottomBorder>
+                                                                                    <Color>Black</Color>
+                                                                                    <Style>Solid</Style>
+                                                                                    <Width>1pt</Width>
+                                                                                  </BottomBorder>
+                                                                                  <LeftBorder>
+                                                                                    <Color>Black</Color>
+                                                                                    <Style>Solid</Style>
+                                                                                    <Width>1pt</Width>
+                                                                                  </LeftBorder>
+                                                                                  <RightBorder>
+                                                                                    <Color>Black</Color>
+                                                                                    <Style>Solid</Style>
+                                                                                    <Width>1pt</Width>
+                                                                                  </RightBorder>
+                                                                                  <VerticalAlign>Middle</VerticalAlign>
+                                                                                  <PaddingLeft>2pt</PaddingLeft>
+                                                                                  <PaddingRight>2pt</PaddingRight>
+                                                                                  <PaddingTop>2pt</PaddingTop>
+                                                                                  <PaddingBottom>2pt</PaddingBottom>
+                                                                                </Style>
+                                                                              </Textbox>
+                                                                            </CellContents>
+                                                                          </TablixHeader>
+                                                                          <TablixMembers>
+                                                                            <TablixMember>
+                                                                              <TablixHeader>
+                                                                                <Size>1.53459cm</Size>
+                                                                                <CellContents>
+                                                                                  <Textbox Name="Textbox110">
+                                                                                    <CanGrow>true</CanGrow>
+                                                                                    <KeepTogether>true</KeepTogether>
+                                                                                    <Paragraphs>
+                                                                                      <Paragraph>
+                                                                                        <TextRuns>
+                                                                                          <TextRun>
+                                                                                            <Value>Código </Value>
+                                                                                            <Style>
+                                                                                              <FontSize>8pt</FontSize>
+                                                                                              <FontWeight>Bold</FontWeight>
+                                                                                            </Style>
+                                                                                          </TextRun>
+                                                                                        </TextRuns>
+                                                                                        <Style>
+                                                                                          <TextAlign>Center</TextAlign>
+                                                                                        </Style>
+                                                                                      </Paragraph>
+                                                                                    </Paragraphs>
+                                                                                    <rd:DefaultName>Textbox110</rd:DefaultName>
+                                                                                    <Style>
+                                                                                      <Border>
+                                                                                        <Style>Solid</Style>
+                                                                                      </Border>
+                                                                                      <TopBorder>
+                                                                                        <Color>Black</Color>
+                                                                                        <Style>Solid</Style>
+                                                                                        <Width>1pt</Width>
+                                                                                      </TopBorder>
+                                                                                      <BottomBorder>
+                                                                                        <Color>Black</Color>
+                                                                                        <Style>Solid</Style>
+                                                                                        <Width>1pt</Width>
+                                                                                      </BottomBorder>
+                                                                                      <LeftBorder>
+                                                                                        <Color>Black</Color>
+                                                                                        <Style>Solid</Style>
+                                                                                        <Width>1pt</Width>
+                                                                                      </LeftBorder>
+                                                                                      <RightBorder>
+                                                                                        <Color>Black</Color>
+                                                                                        <Style>Solid</Style>
+                                                                                        <Width>1pt</Width>
+                                                                                      </RightBorder>
+                                                                                      <VerticalAlign>Middle</VerticalAlign>
+                                                                                      <PaddingLeft>2pt</PaddingLeft>
+                                                                                      <PaddingRight>2pt</PaddingRight>
+                                                                                      <PaddingTop>2pt</PaddingTop>
+                                                                                      <PaddingBottom>2pt</PaddingBottom>
+                                                                                    </Style>
+                                                                                  </Textbox>
+                                                                                </CellContents>
+                                                                              </TablixHeader>
+                                                                              <TablixMembers>
+                                                                                <TablixMember />
+                                                                              </TablixMembers>
+                                                                            </TablixMember>
+                                                                          </TablixMembers>
+                                                                        </TablixMember>
                                                                       </TablixMembers>
                                                                     </TablixMember>
                                                                   </TablixMembers>
@@ -2171,7 +2303,7 @@
                                   <Paragraph>
                                     <TextRuns>
                                       <TextRun>
-                                        <Value>=RunningValue( Fields!orderIndex.Value,CountDistinct, Nothing)</Value>
+                                        <Value>=Code.nroFila(RowNumber(Nothing))</Value>
                                         <Style>
                                           <FontSize>8pt</FontSize>
                                         </Style>
@@ -2799,16 +2931,16 @@
                                                                   <TablixMembers>
                                                                     <TablixMember>
                                                                       <TablixHeader>
-                                                                        <Size>1.70625cm</Size>
+                                                                        <Size>2.5cm</Size>
                                                                         <CellContents>
-                                                                          <Textbox Name="impuesto1">
+                                                                          <Textbox Name="numDocSustento">
                                                                             <CanGrow>true</CanGrow>
                                                                             <KeepTogether>true</KeepTogether>
                                                                             <Paragraphs>
                                                                               <Paragraph>
                                                                                 <TextRuns>
                                                                                   <TextRun>
-                                                                                    <Value>=Fields!impuesto.Value</Value>
+                                                                                    <Value>=Fields!numDocSustento.Value</Value>
                                                                                     <Style>
                                                                                       <FontSize>8pt</FontSize>
                                                                                     </Style>
@@ -2819,7 +2951,7 @@
                                                                                 </Style>
                                                                               </Paragraph>
                                                                             </Paragraphs>
-                                                                            <rd:DefaultName>impuesto1</rd:DefaultName>
+                                                                            <rd:DefaultName>numDocSustento</rd:DefaultName>
                                                                             <Style>
                                                                               <Border>
                                                                                 <Style>Solid</Style>
@@ -2856,16 +2988,16 @@
                                                                       <TablixMembers>
                                                                         <TablixMember>
                                                                           <TablixHeader>
-                                                                            <Size>1.53459cm</Size>
+                                                                            <Size>2.16608cm</Size>
                                                                             <CellContents>
-                                                                              <Textbox Name="codigoRetencion">
+                                                                              <Textbox Name="fechaEmisionDocSustento">
                                                                                 <CanGrow>true</CanGrow>
                                                                                 <KeepTogether>true</KeepTogether>
                                                                                 <Paragraphs>
                                                                                   <Paragraph>
                                                                                     <TextRuns>
                                                                                       <TextRun>
-                                                                                        <Value>=Fields!codigoRetencion.Value</Value>
+                                                                                        <Value>=Fields!fechaEmisionDocSustento.Value</Value>
                                                                                         <Style>
                                                                                           <FontSize>8pt</FontSize>
                                                                                         </Style>
@@ -2876,7 +3008,7 @@
                                                                                     </Style>
                                                                                   </Paragraph>
                                                                                 </Paragraphs>
-                                                                                <rd:DefaultName>codigoRetencion</rd:DefaultName>
+                                                                                <rd:DefaultName>fechaEmisionDocSustento</rd:DefaultName>
                                                                                 <Style>
                                                                                   <Border>
                                                                                     <Style>Solid</Style>
@@ -2912,11 +3044,129 @@
                                                                           </TablixHeader>
                                                                           <TablixMembers>
                                                                             <TablixMember>
-                                                                              <Group Name="codigoRetencion">
-                                                                                <GroupExpressions>
-                                                                                  <GroupExpression>=Fields!codigoRetencion.Value</GroupExpression>
-                                                                                </GroupExpressions>
-                                                                              </Group>
+                                                                              <TablixHeader>
+                                                                                <Size>1.70625cm</Size>
+                                                                                <CellContents>
+                                                                                  <Textbox Name="impuesto1">
+                                                                                    <CanGrow>true</CanGrow>
+                                                                                    <KeepTogether>true</KeepTogether>
+                                                                                    <Paragraphs>
+                                                                                      <Paragraph>
+                                                                                        <TextRuns>
+                                                                                          <TextRun>
+                                                                                            <Value>=Fields!impuesto.Value</Value>
+                                                                                            <Style>
+                                                                                              <FontSize>8pt</FontSize>
+                                                                                            </Style>
+                                                                                          </TextRun>
+                                                                                        </TextRuns>
+                                                                                        <Style>
+                                                                                          <TextAlign>Center</TextAlign>
+                                                                                        </Style>
+                                                                                      </Paragraph>
+                                                                                    </Paragraphs>
+                                                                                    <rd:DefaultName>impuesto1</rd:DefaultName>
+                                                                                    <Style>
+                                                                                      <Border>
+                                                                                        <Style>Solid</Style>
+                                                                                      </Border>
+                                                                                      <TopBorder>
+                                                                                        <Color>Black</Color>
+                                                                                        <Style>Solid</Style>
+                                                                                        <Width>1pt</Width>
+                                                                                      </TopBorder>
+                                                                                      <BottomBorder>
+                                                                                        <Color>Black</Color>
+                                                                                        <Style>Solid</Style>
+                                                                                        <Width>1pt</Width>
+                                                                                      </BottomBorder>
+                                                                                      <LeftBorder>
+                                                                                        <Color>Black</Color>
+                                                                                        <Style>Solid</Style>
+                                                                                        <Width>1pt</Width>
+                                                                                      </LeftBorder>
+                                                                                      <RightBorder>
+                                                                                        <Color>Black</Color>
+                                                                                        <Style>Solid</Style>
+                                                                                        <Width>1pt</Width>
+                                                                                      </RightBorder>
+                                                                                      <VerticalAlign>Middle</VerticalAlign>
+                                                                                      <PaddingLeft>2pt</PaddingLeft>
+                                                                                      <PaddingRight>2pt</PaddingRight>
+                                                                                      <PaddingTop>2pt</PaddingTop>
+                                                                                      <PaddingBottom>2pt</PaddingBottom>
+                                                                                    </Style>
+                                                                                  </Textbox>
+                                                                                </CellContents>
+                                                                              </TablixHeader>
+                                                                              <TablixMembers>
+                                                                                <TablixMember>
+                                                                                  <TablixHeader>
+                                                                                    <Size>1.53459cm</Size>
+                                                                                    <CellContents>
+                                                                                      <Textbox Name="codigoRetencion">
+                                                                                        <CanGrow>true</CanGrow>
+                                                                                        <KeepTogether>true</KeepTogether>
+                                                                                        <Paragraphs>
+                                                                                          <Paragraph>
+                                                                                            <TextRuns>
+                                                                                              <TextRun>
+                                                                                                <Value>=Fields!codigoRetencion.Value</Value>
+                                                                                                <Style>
+                                                                                                  <FontSize>8pt</FontSize>
+                                                                                                </Style>
+                                                                                              </TextRun>
+                                                                                            </TextRuns>
+                                                                                            <Style>
+                                                                                              <TextAlign>Center</TextAlign>
+                                                                                            </Style>
+                                                                                          </Paragraph>
+                                                                                        </Paragraphs>
+                                                                                        <rd:DefaultName>codigoRetencion</rd:DefaultName>
+                                                                                        <Style>
+                                                                                          <Border>
+                                                                                            <Style>Solid</Style>
+                                                                                          </Border>
+                                                                                          <TopBorder>
+                                                                                            <Color>Black</Color>
+                                                                                            <Style>Solid</Style>
+                                                                                            <Width>1pt</Width>
+                                                                                          </TopBorder>
+                                                                                          <BottomBorder>
+                                                                                            <Color>Black</Color>
+                                                                                            <Style>Solid</Style>
+                                                                                            <Width>1pt</Width>
+                                                                                          </BottomBorder>
+                                                                                          <LeftBorder>
+                                                                                            <Color>Black</Color>
+                                                                                            <Style>Solid</Style>
+                                                                                            <Width>1pt</Width>
+                                                                                          </LeftBorder>
+                                                                                          <RightBorder>
+                                                                                            <Color>Black</Color>
+                                                                                            <Style>Solid</Style>
+                                                                                            <Width>1pt</Width>
+                                                                                          </RightBorder>
+                                                                                          <VerticalAlign>Middle</VerticalAlign>
+                                                                                          <PaddingLeft>2pt</PaddingLeft>
+                                                                                          <PaddingRight>2pt</PaddingRight>
+                                                                                          <PaddingTop>2pt</PaddingTop>
+                                                                                          <PaddingBottom>2pt</PaddingBottom>
+                                                                                        </Style>
+                                                                                      </Textbox>
+                                                                                    </CellContents>
+                                                                                  </TablixHeader>
+                                                                                  <TablixMembers>
+                                                                                    <TablixMember>
+                                                                                      <Group Name="codigoRetencion">
+                                                                                        <GroupExpressions>
+                                                                                          <GroupExpression>=Fields!codigoRetencion.Value</GroupExpression>
+                                                                                        </GroupExpressions>
+                                                                                      </Group>
+                                                                                    </TablixMember>
+                                                                                  </TablixMembers>
+                                                                                </TablixMember>
+                                                                              </TablixMembers>
                                                                             </TablixMember>
                                                                           </TablixMembers>
                                                                         </TablixMember>
@@ -3308,9 +3558,9 @@
                                           <TablixMembers>
                                             <TablixMember>
                                               <TablixHeader>
-                                                <Size>1.70625cm</Size>
+                                                <Size>2.5cm</Size>
                                                 <CellContents>
-                                                  <Textbox Name="Textbox39">
+                                                  <Textbox Name="Textbox13">
                                                     <CanGrow>true</CanGrow>
                                                     <KeepTogether>true</KeepTogether>
                                                     <Paragraphs>
@@ -3328,7 +3578,7 @@
                                                         </Style>
                                                       </Paragraph>
                                                     </Paragraphs>
-                                                    <rd:DefaultName>Textbox39</rd:DefaultName>
+                                                    <rd:DefaultName>Textbox13</rd:DefaultName>
                                                     <Style>
                                                       <Border>
                                                         <Style>Solid</Style>
@@ -3365,9 +3615,9 @@
                                               <TablixMembers>
                                                 <TablixMember>
                                                   <TablixHeader>
-                                                    <Size>1.53459cm</Size>
+                                                    <Size>2.16608cm</Size>
                                                     <CellContents>
-                                                      <Textbox Name="Textbox40">
+                                                      <Textbox Name="Textbox16">
                                                         <CanGrow>true</CanGrow>
                                                         <KeepTogether>true</KeepTogether>
                                                         <Paragraphs>
@@ -3385,7 +3635,7 @@
                                                             </Style>
                                                           </Paragraph>
                                                         </Paragraphs>
-                                                        <rd:DefaultName>Textbox40</rd:DefaultName>
+                                                        <rd:DefaultName>Textbox16</rd:DefaultName>
                                                         <Style>
                                                           <Border>
                                                             <Style>Solid</Style>
@@ -3419,6 +3669,124 @@
                                                       </Textbox>
                                                     </CellContents>
                                                   </TablixHeader>
+                                                  <TablixMembers>
+                                                    <TablixMember>
+                                                      <TablixHeader>
+                                                        <Size>1.70625cm</Size>
+                                                        <CellContents>
+                                                          <Textbox Name="Textbox39">
+                                                            <CanGrow>true</CanGrow>
+                                                            <KeepTogether>true</KeepTogether>
+                                                            <Paragraphs>
+                                                              <Paragraph>
+                                                                <TextRuns>
+                                                                  <TextRun>
+                                                                    <Value />
+                                                                    <Style>
+                                                                      <FontSize>8pt</FontSize>
+                                                                    </Style>
+                                                                  </TextRun>
+                                                                </TextRuns>
+                                                                <Style>
+                                                                  <TextAlign>Center</TextAlign>
+                                                                </Style>
+                                                              </Paragraph>
+                                                            </Paragraphs>
+                                                            <rd:DefaultName>Textbox39</rd:DefaultName>
+                                                            <Style>
+                                                              <Border>
+                                                                <Style>Solid</Style>
+                                                              </Border>
+                                                              <TopBorder>
+                                                                <Color>Black</Color>
+                                                                <Style>Solid</Style>
+                                                                <Width>1pt</Width>
+                                                              </TopBorder>
+                                                              <BottomBorder>
+                                                                <Color>Black</Color>
+                                                                <Style>Solid</Style>
+                                                                <Width>1pt</Width>
+                                                              </BottomBorder>
+                                                              <LeftBorder>
+                                                                <Color>Black</Color>
+                                                                <Style>Solid</Style>
+                                                                <Width>1pt</Width>
+                                                              </LeftBorder>
+                                                              <RightBorder>
+                                                                <Color>Black</Color>
+                                                                <Style>Solid</Style>
+                                                                <Width>1pt</Width>
+                                                              </RightBorder>
+                                                              <VerticalAlign>Middle</VerticalAlign>
+                                                              <PaddingLeft>2pt</PaddingLeft>
+                                                              <PaddingRight>2pt</PaddingRight>
+                                                              <PaddingTop>2pt</PaddingTop>
+                                                              <PaddingBottom>2pt</PaddingBottom>
+                                                            </Style>
+                                                          </Textbox>
+                                                        </CellContents>
+                                                      </TablixHeader>
+                                                      <TablixMembers>
+                                                        <TablixMember>
+                                                          <TablixHeader>
+                                                            <Size>1.53459cm</Size>
+                                                            <CellContents>
+                                                              <Textbox Name="Textbox40">
+                                                                <CanGrow>true</CanGrow>
+                                                                <KeepTogether>true</KeepTogether>
+                                                                <Paragraphs>
+                                                                  <Paragraph>
+                                                                    <TextRuns>
+                                                                      <TextRun>
+                                                                        <Value />
+                                                                        <Style>
+                                                                          <FontSize>8pt</FontSize>
+                                                                        </Style>
+                                                                      </TextRun>
+                                                                    </TextRuns>
+                                                                    <Style>
+                                                                      <TextAlign>Center</TextAlign>
+                                                                    </Style>
+                                                                  </Paragraph>
+                                                                </Paragraphs>
+                                                                <rd:DefaultName>Textbox40</rd:DefaultName>
+                                                                <Style>
+                                                                  <Border>
+                                                                    <Style>Solid</Style>
+                                                                  </Border>
+                                                                  <TopBorder>
+                                                                    <Color>Black</Color>
+                                                                    <Style>Solid</Style>
+                                                                    <Width>1pt</Width>
+                                                                  </TopBorder>
+                                                                  <BottomBorder>
+                                                                    <Color>Black</Color>
+                                                                    <Style>Solid</Style>
+                                                                    <Width>1pt</Width>
+                                                                  </BottomBorder>
+                                                                  <LeftBorder>
+                                                                    <Color>Black</Color>
+                                                                    <Style>Solid</Style>
+                                                                    <Width>1pt</Width>
+                                                                  </LeftBorder>
+                                                                  <RightBorder>
+                                                                    <Color>Black</Color>
+                                                                    <Style>Solid</Style>
+                                                                    <Width>1pt</Width>
+                                                                  </RightBorder>
+                                                                  <VerticalAlign>Middle</VerticalAlign>
+                                                                  <PaddingLeft>2pt</PaddingLeft>
+                                                                  <PaddingRight>2pt</PaddingRight>
+                                                                  <PaddingTop>2pt</PaddingTop>
+                                                                  <PaddingBottom>2pt</PaddingBottom>
+                                                                </Style>
+                                                              </Textbox>
+                                                            </CellContents>
+                                                          </TablixHeader>
+                                                        </TablixMember>
+                                                      </TablixMembers>
+                                                    </TablixMember>
+                                                  </TablixMembers>
                                                 </TablixMember>
                                               </TablixMembers>
                                             </TablixMember>
@@ -3727,7 +4095,7 @@
                                   <TablixMembers>
                                     <TablixMember>
                                       <TablixHeader>
-                                        <Size>5.74084cm</Size>
+                                        <Size>10.40692cm</Size>
                                         <CellContents>
                                           <Textbox Name="Textbox26">
                                             <CanGrow>true</CanGrow>
@@ -3798,7 +4166,7 @@
             <Top>3.48933cm</Top>
             <Left>0.37238cm</Left>
             <Height>3cm</Height>
-            <Width>40.71792cm</Width>
+            <Width>45.384cm</Width>
             <ZIndex>7</ZIndex>
             <Style>
               <Border>
@@ -4106,7 +4474,7 @@
               <TablixMembers>
                 <TablixMember>
                   <TablixHeader>
-                    <Size>3.39959cm</Size>
+                    <Size>5cm</Size>
                     <CellContents>
                       <Textbox Name="Textbox137">
                         <CanGrow>true</CanGrow>
@@ -4210,16 +4578,16 @@
                   <TablixMembers>
                     <TablixMember>
                       <TablixHeader>
-                        <Size>1.79917cm</Size>
+                        <Size>1.60041cm</Size>
                         <CellContents>
-                          <Textbox Name="Textbox129">
+                          <Textbox Name="Textbox17">
                             <CanGrow>true</CanGrow>
                             <KeepTogether>true</KeepTogether>
                             <Paragraphs>
                               <Paragraph>
                                 <TextRuns>
                                   <TextRun>
-                                    <Value>Código</Value>
+                                    <Value>Porcentaje</Value>
                                     <Style>
                                       <FontSize>7pt</FontSize>
                                       <FontWeight>Bold</FontWeight>
@@ -4231,7 +4599,7 @@
                                 </Style>
                               </Paragraph>
                             </Paragraphs>
-                            <rd:DefaultName>Textbox129</rd:DefaultName>
+                            <rd:DefaultName>Textbox17</rd:DefaultName>
                             <Style>
                               <Border>
                                 <Style>Solid</Style>
@@ -4266,7 +4634,67 @@
                         </CellContents>
                       </TablixHeader>
                       <TablixMembers>
-                        <TablixMember />
+                        <TablixMember>
+                          <TablixHeader>
+                            <Size>1.79917cm</Size>
+                            <CellContents>
+                              <Textbox Name="Textbox129">
+                                <CanGrow>true</CanGrow>
+                                <KeepTogether>true</KeepTogether>
+                                <Paragraphs>
+                                  <Paragraph>
+                                    <TextRuns>
+                                      <TextRun>
+                                        <Value>Código</Value>
+                                        <Style>
+                                          <FontSize>7pt</FontSize>
+                                          <FontWeight>Bold</FontWeight>
+                                        </Style>
+                                      </TextRun>
+                                    </TextRuns>
+                                    <Style>
+                                      <TextAlign>Center</TextAlign>
+                                    </Style>
+                                  </Paragraph>
+                                </Paragraphs>
+                                <rd:DefaultName>Textbox129</rd:DefaultName>
+                                <Style>
+                                  <Border>
+                                    <Style>Solid</Style>
+                                  </Border>
+                                  <TopBorder>
+                                    <Color>Black</Color>
+                                    <Style>Solid</Style>
+                                    <Width>1pt</Width>
+                                  </TopBorder>
+                                  <BottomBorder>
+                                    <Color>Black</Color>
+                                    <Style>Solid</Style>
+                                    <Width>1pt</Width>
+                                  </BottomBorder>
+                                  <LeftBorder>
+                                    <Color>Black</Color>
+                                    <Style>Solid</Style>
+                                    <Width>1pt</Width>
+                                  </LeftBorder>
+                                  <RightBorder>
+                                    <Color>Black</Color>
+                                    <Style>Solid</Style>
+                                    <Width>1pt</Width>
+                                  </RightBorder>
+                                  <VerticalAlign>Middle</VerticalAlign>
+                                  <PaddingLeft>2pt</PaddingLeft>
+                                  <PaddingRight>2pt</PaddingRight>
+                                  <PaddingTop>2pt</PaddingTop>
+                                  <PaddingBottom>2pt</PaddingBottom>
+                                </Style>
+                              </Textbox>
+                            </CellContents>
+                          </TablixHeader>
+                          <TablixMembers>
+                            <TablixMember />
+                          </TablixMembers>
+                        </TablixMember>
                       </TablixMembers>
                     </TablixMember>
                   </TablixMembers>
@@ -4340,27 +4768,17 @@
                   </TablixHeader>
                   <TablixMembers>
                     <TablixMember>
-                      <Group Name="codigoRetencion1">
-                        <GroupExpressions>
-                          <GroupExpression>=Fields!codigoRetencion.Value</GroupExpression>
-                        </GroupExpressions>
-                      </Group>
-                      <SortExpressions>
-                        <SortExpression>
-                          <Value>=Fields!codigoRetencion.Value</Value>
-                        </SortExpression>
-                      </SortExpressions>
                       <TablixHeader>
-                        <Size>1.79917cm</Size>
+                        <Size>1.60041cm</Size>
                         <CellContents>
-                          <Textbox Name="codigoRetencion1">
+                          <Textbox Name="porcentajeRetIva">
                             <CanGrow>true</CanGrow>
                             <KeepTogether>true</KeepTogether>
                             <Paragraphs>
                               <Paragraph>
                                 <TextRuns>
                                   <TextRun>
-                                    <Value>=Fields!codigoRetencion.Value</Value>
+                                    <Value>=Fields!porcentajeRetIva.Value</Value>
                                     <Style>
                                       <FontSize>7pt</FontSize>
                                     </Style>
@@ -4371,7 +4789,7 @@
                                 </Style>
                               </Paragraph>
                             </Paragraphs>
-                            <rd:DefaultName>codigoRetencion1</rd:DefaultName>
+                            <rd:DefaultName>porcentajeRetIva</rd:DefaultName>
                             <Style>
                               <Border>
                                 <Style>Solid</Style>
@@ -4407,11 +4825,80 @@
                       </TablixHeader>
                       <TablixMembers>
                         <TablixMember>
-                          <Group Name="Details">
+                          <Group Name="codigoRetencion1">
                             <GroupExpressions>
                               <GroupExpression>=Fields!codigoRetencion.Value</GroupExpression>
                             </GroupExpressions>
                           </Group>
+                          <SortExpressions>
+                            <SortExpression>
+                              <Value>=Fields!codigoRetencion.Value</Value>
+                            </SortExpression>
+                          </SortExpressions>
+                          <TablixHeader>
+                            <Size>1.79917cm</Size>
+                            <CellContents>
+                              <Textbox Name="codigoRetencion1">
+                                <CanGrow>true</CanGrow>
+                                <KeepTogether>true</KeepTogether>
+                                <Paragraphs>
+                                  <Paragraph>
+                                    <TextRuns>
+                                      <TextRun>
+                                        <Value>=Fields!codigoRetencion.Value</Value>
+                                        <Style>
+                                          <FontSize>7pt</FontSize>
+                                        </Style>
+                                      </TextRun>
+                                    </TextRuns>
+                                    <Style>
+                                      <TextAlign>Center</TextAlign>
+                                    </Style>
+                                  </Paragraph>
+                                </Paragraphs>
+                                <rd:DefaultName>codigoRetencion1</rd:DefaultName>
+                                <Style>
+                                  <Border>
+                                    <Style>Solid</Style>
+                                  </Border>
+                                  <TopBorder>
+                                    <Color>Black</Color>
+                                    <Style>Solid</Style>
+                                    <Width>1pt</Width>
+                                  </TopBorder>
+                                  <BottomBorder>
+                                    <Color>Black</Color>
+                                    <Style>Solid</Style>
+                                    <Width>1pt</Width>
+                                  </BottomBorder>
+                                  <LeftBorder>
+                                    <Color>Black</Color>
+                                    <Style>Solid</Style>
+                                    <Width>1pt</Width>
+                                  </LeftBorder>
+                                  <RightBorder>
+                                    <Color>Black</Color>
+                                    <Style>Solid</Style>
+                                    <Width>1pt</Width>
+                                  </RightBorder>
+                                  <VerticalAlign>Middle</VerticalAlign>
+                                  <PaddingLeft>2pt</PaddingLeft>
+                                  <PaddingRight>2pt</PaddingRight>
+                                  <PaddingTop>2pt</PaddingTop>
+                                  <PaddingBottom>2pt</PaddingBottom>
+                                </Style>
+                              </Textbox>
+                            </CellContents>
+                          </TablixHeader>
+                          <TablixMembers>
+                            <TablixMember>
+                              <Group Name="Details">
+                                <GroupExpressions>
+                                  <GroupExpression>=Fields!codigoRetencion.Value</GroupExpression>
+                                </GroupExpressions>
+                              </Group>
+                            </TablixMember>
+                          </TablixMembers>
                         </TablixMember>
                       </TablixMembers>
                     </TablixMember>
@@ -4423,7 +4910,7 @@
             <Top>6.66572cm</Top>
             <Left>0.37238cm</Left>
             <Height>1.8cm</Height>
-            <Width>7.75986cm</Width>
+            <Width>9.36027cm</Width>
             <ZIndex>8</ZIndex>
             <Style>
               <Border>
@@ -4432,13 +4919,13 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>3.64188in</Height>
+        <Height>3.42313in</Height>
         <Style />
       </Body>
-      <Width>16.17728in</Width>
+      <Width>18.14579in</Width>
       <Page>
         <PageFooter>
-          <Height>0.74993cm</Height>
+          <Height>0.85576cm</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
@@ -4491,7 +4978,7 @@
               <Top>0.07056cm</Top>
               <Left>38.2252cm</Left>
               <Height>0.6cm</Height>
-              <Width>2.5cm</Width>
+              <Width>5.25167cm</Width>
               <ZIndex>1</ZIndex>
               <Style>
                 <Border>
@@ -4544,7 +5031,7 @@
           </Style>
         </PageFooter>
         <PageHeight>21cm</PageHeight>
-        <PageWidth>42cm</PageWidth>
+        <PageWidth>47cm</PageWidth>
         <LeftMargin>0.25cm</LeftMargin>
         <RightMargin>0.25cm</RightMargin>
         <TopMargin>0.25cm</TopMargin>
@@ -4586,197 +5073,28 @@
       </CellDefinitions>
     </GridLayoutDefinition>
   </ReportParametersLayout>
-  <Code>Dim sUnidades() As String =
-    {"", "un", "dos", "tres", "cuatro", "cinco",
-    "seis", "siete", "ocho", "nueve", "diez",
-    "once", "doce", "trece", "catorce",
-    "quince", "dieciseis",
-    "diecisiete", "dieciocho", "diecinueve", "veinte",
-    "veintiún", "veintidos", "veintitres", "veinticuatro",
-    "veinticinco", "veintiseis", "veintisiete",
-    "veintiocho", "veintinueve"}
+  <Code>Dim GroupCounter as Integer=0
 
-    Dim sDecenas() As String =
-    {"", "diez", "veinte", "treinta", "cuarenta", "cincuenta",
-    "sesenta", "setenta", "ochenta", "noventa"}
+Function GetGroupCounter() as String
+	GroupCounter=GroupCounter+1
+	return "" + GroupCounter.ToString()
+End Function
 
-    Dim sCentenas() As String =
-    {"", "ciento", "doscientos", "trescientos",
-    "cuatrocientos",
-    "quinientos", "seiscientos", "setecientos",
-    "ochocientos", "novecientos"}
-    Dim sResultado As String = ""
+Dim private count as integer = 0
+Dim private iniRow as integer = 0
+Public function nroFila(Byval rowNum as integer) as integer
+    if iniRow = 0 then
+        iniRow = rowNum
+    end if
 
+    if rowNum = iniRow then
+        count = 0
+    end if
 
-    Public Function ConvertirCadena(ByVal sNumero As String) As String
-        Dim dNumero As Double
-        Dim dNumAux As Double = 0
-        Dim x As Char
-        Dim sAux As String
-
-        sResultado = " "
-        Try
-            dNumero = Convert.ToDouble(sNumero)
-
-        Catch
-            Return ""
-        End Try
-
-        If (dNumero &gt; 999999999999) Then
-            Return ""
-        End If
-        If (dNumero &gt; 999999999) Then
-            dNumAux = dNumero Mod 1000000000000
-            sResultado += Numeros(dNumAux, 1000000000) + " mil "
-        End If
-
-        If (dNumero &gt; 999999) Then
-            dNumAux = dNumero Mod 1000000000
-            sResultado += Numeros(dNumAux, 1000000) + " millones "
-        End If
-
-        If (dNumero &gt; 999) Then
-            dNumAux = dNumero Mod 1000000
-            sResultado += Numeros(dNumAux, 1000) + " mil "
-        End If
-
-        dNumAux = dNumero Mod 1000
-        sResultado += Numeros(dNumAux, 1)
-
-        ''Enseguida verificamos si contiene punto, 
-        ''si es así, los convertimos a texto.
-        sAux = dNumero.ToString()
-
-        If (sAux.IndexOf(".") &gt;= 0) Then
-            sResultado += ObtenerDecimales(sAux)
-        End If
-        ''Las siguientes líneas convierten 
-        ''el primer caracter a mayúscula.
-        sAux = sResultado
-        x = Char.ToUpper(sResultado(1))
-        sResultado = x.ToString()
-
-        For i As Integer = 2 To sAux.Length - 1 Step 1
-            sResultado += sAux(i).ToString()
-        Next
-
-        Return sResultado
-    End Function
-
-
-    Public Function ConvertirNumero(ByVal dNumero As Double) As String
-        Dim dNumAux As Double = 0
-        Dim x As Char
-        Dim sAux As String
-
-        sResultado = " "
-
-        If (dNumero &gt; 999999999999) Then
-            Return ""
-        End If
-        If (dNumero &gt; 999999999) Then
-            dNumAux = dNumero Mod 1000000000000
-            sResultado += Numeros(dNumAux, 1000000000) + " mil "
-        End If
-
-        If (dNumero &gt; 999999) Then
-            dNumAux = dNumero Mod 1000000000
-            sResultado += Numeros(dNumAux, 1000000) + " millones "
-        End If
-
-        If (dNumero &gt; 999) Then
-            dNumAux = dNumero Mod 1000000
-            sResultado += Numeros(dNumAux, 1000) + " mil "
-        End If
-
-        dNumAux = dNumero Mod 1000
-        sResultado += Numeros(dNumAux, 1)
-
-
-        ''Enseguida verificamos si contiene punto, 
-        ''si es así, los convertimos a texto.
-        sAux = dNumero.ToString()
-        Dim varDecimales As String = ""
-        If (sAux.IndexOf(".") &gt;= 0) Then
-            varDecimales = ObtenerDecimales(sAux)
-
-        Else
-            varDecimales = ""
-        End If
-        sResultado += varDecimales
-        ''Las siguientes líneas convierten 
-        ''el primer caracter a mayúscula.
-        sAux = sResultado
-        x = Char.ToUpper(sResultado(1))
-        sResultado = x.ToString()
-        For i As Integer = 2 To sAux.Length - 1 Step 1
-            sResultado += sAux(i).ToString()
-        Next
-
-        Return sResultado
-    End Function
-
-
-    Private Function Numeros(ByVal dNumAux As Double, _
-                             ByVal dFactor As Double) As String
-        Dim dCociente As Double = dNumAux / dFactor
-        Dim dNumero As Double = 0
-        Dim iNumero As Integer = 0
-        Dim sNumero As String = ""
-        Dim sTexto As String = ""
-
-        If (dCociente &gt;= 100) Then
-            dNumero = dCociente / 100
-            sNumero = dNumero.ToString()
-            iNumero = Integer.Parse(sNumero(0).ToString())
-            sTexto += Me.sCentenas(iNumero) + " "
-        End If
-
-        dCociente = dCociente Mod 100
-        If (dCociente &gt;= 30) Then
-            dNumero = dCociente / 10
-            sNumero = dNumero.ToString()
-            iNumero = Integer.Parse(sNumero(0).ToString())
-            If (iNumero &gt; 0) Then
-                sTexto += Me.sDecenas(iNumero) + " "
-            End If
-
-            dNumero = dCociente Mod 10
-            sNumero = dNumero.ToString()
-            iNumero = Integer.Parse(sNumero(0).ToString())
-            If (iNumero &gt; 0) Then
-                sTexto += "y " + Me.sUnidades(iNumero) + " "
-            End If
-
-        Else
-            dNumero = dCociente
-            sNumero = dNumero.ToString()
-            If (sNumero.Length &gt; 1) Then
-                If (sNumero(1) &lt;&gt; ".") Then
-                    iNumero = Integer.Parse(sNumero(0).ToString() +
-                        sNumero(1).ToString())
-                Else
-                    iNumero = Integer.Parse(sNumero(0).ToString())
-                End If
-            Else
-                iNumero = Integer.Parse(sNumero(0).ToString())
-                sTexto += Me.sUnidades(iNumero) + " "
-            End If
-        End If
-
-        Return sTexto
-    End Function
-
-
-    Private Function ObtenerDecimales(ByVal sNumero As String) As String
-        Dim sNumPuntos() As String
-        Dim sTexto As String = ""
-        Dim dNumero As Double = 0
-        sNumPuntos = sNumero.Split(".")
-        dNumero = Convert.ToDouble(sNumPuntos(1))
-        sTexto = "punto " + Numeros(dNumero, 1)
-        Return sTexto
-    End Function</Code>
+    count = count + 1
+    Return count
+End function
+</Code>
   <rd:ReportUnitType>Cm</rd:ReportUnitType>
   <rd:ReportID>a382fcc4-4ed4-4c01-afd4-9a874dfee5c8</rd:ReportID>
 </Report>
