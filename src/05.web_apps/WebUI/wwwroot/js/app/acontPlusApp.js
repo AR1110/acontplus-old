@@ -62,8 +62,8 @@ app.config(disableLogging)
 
 
 /**************************************************************************
-  * Log bootstrap message
-  *************************************************************************/
+ * Log bootstrap message
+ *************************************************************************/
 
 function confirmBootstrap($log) {
     $log.debug('Angular bootstrapped!')
@@ -76,8 +76,8 @@ app.run(confirmBootstrap)
 
 
 /**************************************************************************
-   * Make environment available in Angular
-   *************************************************************************/
+ * Make environment available in Angular
+ *************************************************************************/
 
 app.constant('__env', __env)
 
@@ -313,7 +313,10 @@ function mainService($http, Upload, __env) {
     function _getDataFile(url, file, data = null, forApi = false) {
         return Upload.upload({
             url: (forApi) ? __env.apiUrl + url : url,
-            data: { file: file, data: data },
+            data: {
+                file: file,
+                data: data
+            },
         }).then(response => {
             return response.data
         })
@@ -388,7 +391,20 @@ function modalService($uibModal) {
          * @param {object} params {controller, template, size, params, keyboard=false, animation = true, windowClass = null, scope, props = {}}
          * @returns object 
          */
-        openModalCustom: function ({ controller, template, size, params, keyboard = false, animation = true, windowClass = null, windowTopClass, openedClass, scope, props = {}, isRenderRazorPartial = false }) {
+        openModalCustom: function ({
+            controller,
+            template,
+            size,
+            params,
+            keyboard = false,
+            animation = true,
+            windowClass = null,
+            windowTopClass,
+            openedClass,
+            scope,
+            props = {},
+            isRenderRazorPartial = false
+        }) {
 
             return $uibModal.open({
                 animation,
@@ -808,7 +824,12 @@ app.filter('tipoEmisionSri', function ($sce) {
 //Filter tipo Iva 
 app.filter('mapTipoIva', () => {
     return function (idTipoIva, tipoIvas) {
-        let result = tipoIvas.reduce((acc, curr) => ({ ...acc, [curr.idTipoIva]: curr.descripcion }), { 0: 'Tipo Iva' });
+        let result = tipoIvas.reduce((acc, curr) => ({
+            ...acc,
+            [curr.idTipoIva]: curr.descripcion
+        }), {
+            0: 'Tipo Iva'
+        });
         return !idTipoIva ? result[0] : result[idTipoIva];
     }
 });
@@ -899,14 +920,42 @@ app.directive('stopEvent', function () {
     };
 });
 
+
+app.directive('updateArticle', function ($rootScope) {
+    return {
+
+        link: function (scope, element, attrs) {
+            setTimeout(() => {
+                if (!$rootScope.articlePermission.leer) {
+                    element[0].style.display = 'none';
+                }
+
+                if ($rootScope.articlePermission.editar) return
+
+                if (!$rootScope.articlePermission.editar) {
+                    element[0].style.display = 'none';
+                }
+
+            }, 100)
+        },
+    }
+})
+
 // app.directive('autoocus')
 
 //Filter bodegas 
 app.filter('mapBodega', () => {
     return function (idBodega, bodegas) {
-        if (!bodegas || bodegas.length === 0) return { 0: 'Seleccionar bodega' }
+        if (!bodegas || bodegas.length === 0) return {
+            0: 'Seleccionar bodega'
+        }
 
-        let result = bodegas.reduce((acc, curr) => ({ ...acc, [curr.idBodega]: curr.descripcion }), { 0: 'Seleccionar bodega' });
+        let result = bodegas.reduce((acc, curr) => ({
+            ...acc,
+            [curr.idBodega]: curr.descripcion
+        }), {
+            0: 'Seleccionar bodega'
+        });
         console.log(result)
         console.log(idBodega, bodegas)
         return !idBodega ? result[0] : result[idBodega];
@@ -925,13 +974,23 @@ app.filter('estadoPago', () => {
 
 app.filter('mapTipoImpuesto', () => {
     return (idTipoImpuesto, tipoImpuestos) => {
-        let result = tipoImpuestos.reduce((acc, curr) => ({ ...acc, [curr.idTipoImpuestoRenta]: curr.descripcion.toUpperCase() }), { 0: 'Seleccione el Tipo Impuesto' })
+        let result = tipoImpuestos.reduce((acc, curr) => ({
+            ...acc,
+            [curr.idTipoImpuestoRenta]: curr.descripcion.toUpperCase()
+        }), {
+            0: 'Seleccione el Tipo Impuesto'
+        })
         return !idTipoImpuesto ? result[0] : result[idTipoImpuesto];
     }
 });
 app.filter('mapRetencionIva', () => {
     return (idRetencionIva, retencionesIvas) => {
-        let result = retencionesIvas.reduce((acc, curr) => ({ ...acc, [curr.idRetencionIva]: curr.descripcion.toUpperCase() }), { 0: 'Seleccione Retención de IVA' })
+        let result = retencionesIvas.reduce((acc, curr) => ({
+            ...acc,
+            [curr.idRetencionIva]: curr.descripcion.toUpperCase()
+        }), {
+            0: 'Seleccione Retención de IVA'
+        })
         return !idRetencionIva ? result[0] : result[idRetencionIva];
     }
 });
@@ -987,5 +1046,3 @@ app.filter('mapTipoIce', () => {
         return result[input]
     }
 })
-
-

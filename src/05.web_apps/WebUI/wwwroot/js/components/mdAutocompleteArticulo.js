@@ -225,8 +225,9 @@ class MdArticuloCtrl extends BaseSearchArticulo {
 
             let mainData = JSON.parse(response.payload);
             let articulo = mainData[6];
+
             this.$rootScope.articlePermission = mainData[10][0];
-            console.log(this.$rootScope.articlePermission)
+
             if (this.isDefaultArticle && articulo.length > 0) {
                 this.searchTextSimple = articulo[0].descripcion;
                 this.selectArticleSearch(articulo[0])

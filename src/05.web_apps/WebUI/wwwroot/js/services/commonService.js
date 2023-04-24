@@ -461,7 +461,7 @@ export class CommonService {
             .then(
                 response => {
                     const results = JSON.parse(response.payload);
-                    console.log(results);
+
                     return {
                         subFamilias: results[0],
                         familias: results[1],
@@ -1119,7 +1119,7 @@ export class CommonService {
 
             case "RV":
                 await this.mS.getData('get', '/RetencionVenta/GetId?id=' + id).then(response => {
-                    console.log(response)
+
                     if (response.code == "0") {
                         this.form.sweetAlert('warning', response.message)
                         throw response.message

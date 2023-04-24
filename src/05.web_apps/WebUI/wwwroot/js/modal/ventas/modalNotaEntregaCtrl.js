@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.js?v=0.27";
+} from "./modalBaseCtrl.js?v=0.29";
 
 
 class ModalNotaEntregaCtrl extends ModalBaseCtrl {
@@ -72,6 +72,16 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl {
                     rowEntity[colDef.field] = oldValue;
                 }
 
+                //Validacion de numeros negativos
+                if (['cantidad', 'precioUnitario', 'precioConIva', 'valorDescuento', 'porcentajeDescuento'].includes(colDef.field) && newValue < 0) {
+
+                    rowEntity[colDef.field] = oldValue;
+                }
+
+                if (colDef.field === 'cantidad' && rowEntity[colDef.field] === 0) {
+                    rowEntity[colDef.field] = 1;
+                }
+
                 const objCalculo = self.uiGridInvoice.calculoColDef(rowEntity, oldValue)
                 objCalculo[colDef.field] && objCalculo[colDef.field]();
                 objCalculo["calculoTotalDetalle"]();
@@ -104,6 +114,7 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl {
         }
 
         this.data = Object.assign(this.data, this.uiGridInvoice.getTotales());
+        this.counterGridOptions();
         this.$scope.$apply();
     }
 
@@ -113,14 +124,21 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl {
 
             this.dataArticulo = dataArticulo;
 
-            self.addRow();
-
             const {
                 articulo,
                 medidas,
                 datosAdicionales
             } = self.dataArticulo;
-            let index = self.gridOptions.data.findIndex(value => value.idArticulo === 0);
+
+            let index = 0;
+
+            if ([null, undefined].includes(this.indexRow)) {
+                self.addRow();
+                index = this.gridOptions.data.findIndex(value => value.idArticulo === 0);
+            } else {
+                index = this.indexRow;
+            }
+
             let entity = self.gridOptions.data[index];
 
             let dataMedida = medidas[0];
@@ -170,25 +188,14 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl {
 
             self.data = Object.assign(self.data, self.uiGridInvoice.getTotales());
 
+            this.indexRow = index;
             this.focusColumnCantidad();
             this.counterGridOptions();
-
-            this.indexRow = this.gridOptions.data.findIndex(val => val.idArticulo === this.dataArticulo.articulo.idArticulo);
-
 
         } catch (error) {
             console.log(error)
         }
     }
-
-    counterGridOptions() {
-        angular.forEach(this.gridOptions.data, (item, index) => {
-            item.n = index + 1;
-        })
-
-    }
-
-
 
 
     trimDetailDoc() {
@@ -338,7 +345,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
 
         this.CELL_TEMPLATE_OPTION = `<a  ng-click="grid.appScope.$ctrl.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
 
-        <a ng-if="articlePermission.editar" ng-click="grid.appScope.$ctrl.openModalArticle(row.entity)" id="btnEditArticuloDetalle" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >
+        <a update-article ng-click="grid.appScope.$ctrl.openModalArticle(row.entity)" id="btnEditArticuloDetalle" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >
 
         <a  ng-click="grid.appScope.abrirModalDatoAdicional(row.entity)" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
 
@@ -924,7 +931,7 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
         this.TIPO_REGISTRO = TIPO_REGISTRO;
         this.CELL_TEMPLATE_OPTION = `<a  ng-click="grid.appScope.$ctrl.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
 
-        <a ng-if="articlePermission.editar"  ng-click="grid.appScope.$ctrl.openModalArticle(row.entity)" id="btnEditArticuloDetalle" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >
+        <a update-article  ng-click="grid.appScope.$ctrl.openModalArticle(row.entity)" id="btnEditArticuloDetalle" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >
 
         <a  ng-click="grid.appScope.$ctrl.openModalDatoAdicionalArticulo(row.entity, false)" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
 
@@ -1170,7 +1177,7 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
         this.TIPO_DOC_FV = this._commonSvc.tipoDoc['FV'];
         this.CELL_TEMPLATE_OPTION = `<a  ng-click="grid.appScope.$ctrl.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
 
-        <a ng-if="articlePermission.editar" ng-click="grid.appScope.$ctrl.openModalArticle(row.entity)" id="btnEditArticuloDetalle" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >
+        <a update-article ng-click="grid.appScope.$ctrl.openModalArticle(row.entity)" id="btnEditArticuloDetalle" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >
 
         <a  ng-click="grid.appScope.$ctrl.openModalDatoAdicionalArticulo(row.entity, false)" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
 

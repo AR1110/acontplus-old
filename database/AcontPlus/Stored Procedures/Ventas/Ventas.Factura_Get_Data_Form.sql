@@ -120,7 +120,7 @@ BEGIN
 	 jsonPermission
 	FROM Config.UserPermission WHERE idUsuarioRol = @idRol AND codModule='V'
 
-	SELECT a.crear, a.editar FROM Acceso a
+	SELECT a.leer, a.crear, a.editar FROM Acceso a
 	INNER JOIN SubMenu sm WITH(NOLOCK) ON sm.idSubMenu = a.idSubMenu
 	WHERE sm.codTemp ='ART' AND a.idPolitica = @idPolitica
 
