@@ -1030,6 +1030,25 @@
         "Get"
       ],
       "UpstreamPathTemplate": "/api/Cliente/GetDataForm/{json}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 54948
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Ats{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "UpstreamPathTemplate": "/api/Ats{everything}"
     }
   ]
 }
