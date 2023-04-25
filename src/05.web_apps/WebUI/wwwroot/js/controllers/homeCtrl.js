@@ -24,7 +24,7 @@ function homeCtrl($scope, mS, $interval) {
     $scope.docs = []
     function getDocs() {
         try {
-            mS.getData('GET', 'DocumentoElectronico/' + JSON.stringify({ tipo: 3 }), null, true).then(
+            mS.getData('GET', 'DocumentoElectronico?json=' + JSON.stringify({ tipo: 3 }), null, true).then(
                 response => {
                     if (response.code == '1') {
                         $scope.docs = JSON.parse(response.payload)[0]
