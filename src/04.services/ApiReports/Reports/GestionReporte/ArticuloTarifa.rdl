@@ -103,15 +103,15 @@
                   </TextRun>
                 </TextRuns>
                 <Style>
-                  <TextAlign>Center</TextAlign>
+                  <TextAlign>Left</TextAlign>
                 </Style>
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox1</rd:DefaultName>
             <Top>0.01827cm</Top>
-            <Left>11.14843cm</Left>
+            <Left>0.03593cm</Left>
             <Height>0.6cm</Height>
-            <Width>7.13021cm</Width>
+            <Width>15.61804cm</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -137,15 +137,15 @@
                   </TextRun>
                 </TextRuns>
                 <Style>
-                  <TextAlign>Center</TextAlign>
+                  <TextAlign>Left</TextAlign>
                 </Style>
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox2</rd:DefaultName>
             <Top>0.65354cm</Top>
-            <Left>11.14843cm</Left>
+            <Left>0.03593cm</Left>
             <Height>0.46771cm</Height>
-            <Width>7.13021cm</Width>
+            <Width>15.61804cm</Width>
             <ZIndex>1</ZIndex>
             <Style>
               <Border>
@@ -172,15 +172,15 @@
                   </TextRun>
                 </TextRuns>
                 <Style>
-                  <TextAlign>Center</TextAlign>
+                  <TextAlign>Left</TextAlign>
                 </Style>
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox2</rd:DefaultName>
             <Top>1.15653cm</Top>
-            <Left>11.14843cm</Left>
+            <Left>0.03593cm</Left>
             <Height>0.46771cm</Height>
-            <Width>7.13021cm</Width>
+            <Width>15.61804cm</Width>
             <ZIndex>2</ZIndex>
             <Style>
               <Border>
@@ -208,15 +208,15 @@
                   </TextRun>
                 </TextRuns>
                 <Style>
-                  <TextAlign>Center</TextAlign>
+                  <TextAlign>Left</TextAlign>
                 </Style>
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox4</rd:DefaultName>
             <Top>1.6948cm</Top>
-            <Left>11.14843cm</Left>
+            <Left>0.03593cm</Left>
             <Height>0.6cm</Height>
-            <Width>7.13021cm</Width>
+            <Width>15.61804cm</Width>
             <ZIndex>3</ZIndex>
             <Style>
               <Border>
@@ -248,8 +248,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox8</rd:DefaultName>
-            <Top>2.36536cm</Top>
-            <Left>13.29156cm</Left>
+            <Top>2.33008cm</Top>
+            <Left>0.03593cm</Left>
             <Height>0.41479cm</Height>
             <Width>1.41521cm</Width>
             <ZIndex>4</ZIndex>
@@ -281,8 +281,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox8</rd:DefaultName>
-            <Top>2.36536cm</Top>
-            <Left>14.74204cm</Left>
+            <Top>2.33008cm</Top>
+            <Left>1.48641cm</Left>
             <Height>0.41479cm</Height>
             <Width>2.47826cm</Width>
             <ZIndex>5</ZIndex>
@@ -710,7 +710,6 @@
                                   <PaddingBottom>2pt</PaddingBottom>
                                 </Style>
                               </Textbox>
-                              <rd:Selected>true</rd:Selected>
                             </CellContents>
                           </TablixHeader>
                           <TablixMembers>
@@ -724,7 +723,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>detalleDs</DataSetName>
-            <Top>3.478cm</Top>
+            <Top>3.1605cm</Top>
             <Left>0cm</Left>
             <Height>1.8cm</Height>
             <Width>19.78563cm</Width>
@@ -736,7 +735,7 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>2.07795in</Height>
+        <Height>1.95295in</Height>
         <Style />
       </Body>
       <Width>7.78962in</Width>

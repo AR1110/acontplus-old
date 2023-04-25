@@ -94,7 +94,7 @@ function reporteInventarioCtrl($scope, _commonSvc, mS, form, toast, FileSaver, B
         //     }
         // }
 
-        if ($scope.dataSearch.checkboxSubFamiliaFiltro) {
+        if (!$scope.dataSearch.chkProveedor) {
             if (form.campo($scope.dataSearch.bySubFamilia)) {
                 toast.toastr('warning', 'Seleccione la SubFamilia', 'Reporte');
                 return
