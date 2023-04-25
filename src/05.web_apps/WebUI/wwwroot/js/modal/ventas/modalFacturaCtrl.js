@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.js?v=0.80";
+} from "./modalBaseCtrl.js?v=0.81";
 
 class ModalFacturaCtrl extends ModalBaseCtrl {
 
@@ -448,6 +448,24 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
 
     }
 
+
+
+    createInvoice(params) {
+        return this._mS.getData('post', `Factura`, params, true)
+            .catch(errorResponse => {
+                console.error('Error al crear una factura -> fact_service:');
+                throw new Error(errorResponse);
+            });
+    }
+
+    updateInvoice(id, params) {
+        return this._mS.getData('put', 'Factura/Put?id=' + id, params, null, true)
+            .catch(errorResponse => {
+                console.error('Error al crear una factura -> fact_service:');
+                throw new Error(errorResponse);
+            });
+    }
+
 }
 
 
@@ -737,8 +755,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
                         manejoArticulo: JSON.stringify(this.datosAdicionalesArticulo)
                     }
 
-
-                    this._mS.getData('post', '/FacturaVenta/Insert', data).then(response => {
+                    this.createInvoice(data).then(response => {
                         if (response.code === '0') {
                             hideLoader();
                             this._fS.sweetAlert('warning', response.message, response.titleSms);
@@ -765,6 +782,9 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
                             this.$uibModalInstance.close(mainData)
 
                         }
+                    }).catch(error => {
+                        hideLoader();
+                        console.log(error)
                     })
                 }
 
@@ -772,9 +792,8 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
 
 
         } catch (error) {
+            hideLoader();
             console.log(error)
-        } finally {
-
         }
     }
 }
@@ -807,7 +826,7 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
         this.CELL_TEMPLATE_OPTION = `<a  ng-click="grid.appScope.$ctrl.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
 
         <a  update-article ng-click="grid.appScope.$ctrl.openModalArticle(row.entity)" id="btnEditArticuloDetalle" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >
-
+        <view-kardex params="row.entity"></view-kardex>
         <a  ng-click="grid.appScope.$ctrl.openModalDatoAdicionalArticulo(row.entity, false)" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
 
         let {
@@ -898,7 +917,7 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
             this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
 
 
-            this.setColumnDefs();
+            this.setColumnDefs('8%');
 
             this.uiGridInvoice = new UiGridOptions({
                 $scope: this.$scope,
@@ -1189,6 +1208,8 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
 
         <a  update-article  ng-click="grid.appScope.$ctrl.openModalArticle(row.entity)" id="btnEditArticuloDetalle" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >
 
+        <view-kardex params="row.entity"></view-kardex>
+
         <a  ng-click="grid.appScope.$ctrl.openModalDatoAdicionalArticulo(row.entity, false)" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
 
         let {
@@ -1276,7 +1297,7 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
             this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
 
 
-            this.setColumnDefs();
+            this.setColumnDefs('8%');
 
             this.uiGridInvoice = new UiGridOptions({
                 $scope: this.$scope,

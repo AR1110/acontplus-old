@@ -1,8 +1,11 @@
 ﻿using Common.Logs;
 using DataAccess;
+using Domain.ViewModels;
+using Domain.ViewModels.Compras;
 using Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace ApiFactElect.Controllers
 {
@@ -38,5 +41,30 @@ namespace ApiFactElect.Controllers
             }
             return Ok(_response);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] FacturaParams data)
+        {
+            LogWriter _log = new LogWriter(_configuration);
+            var _response = new GenericResponse();
+            try
+            {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);                
+                await _db.SPExecute("Ventas.Factura_Insert");
+                _db.AddDynamicParam("idRol", idUsuarioRol);                
+                _db.AddDynamicParam("jsonFactura", JsonConvert.SerializeObject(data.factura));
+                _db.AddDynamicParam("jsonDetalle", JsonConvert.SerializeObject(data.detalle));
+                _db.AddDynamicParam("jsonInfoAdicional", JsonConvert.SerializeObject(data.adicional));
+                _db.AddDynamicParam("jsonManejoArticulo", JsonConvert.SerializeObject(data.manejoArticulo) ?? "");                
+                _response = _db.GetDefault();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error al crear la factura: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al crear la factura");
+            }
+            return Ok(_response);
+        }
+
     }
 }
