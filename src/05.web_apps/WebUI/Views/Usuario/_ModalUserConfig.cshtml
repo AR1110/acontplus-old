@@ -7,7 +7,7 @@
 
 <div class="modal-body">
     <div class="row">
-        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+        <div class="col-xl-5 col-lg-5 col-md-6 col-sm-12 col-12">
             <div class="card">
                 <div class="card-body shadow border-1">
                     <div class="d-flex flex-row">
@@ -24,7 +24,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
+        <div class="col-xl-7 col-lg-7 col-md-6 col-sm-12 col-12">
             <div class="card">
                 <div class="card-header bg-info">
                     <h6 class="m-b-0 text-white"><i class="mdi mdi-domain"></i> Entidad</h6>
@@ -217,6 +217,15 @@
                                                     ng-model="key.viewOthersDocs.view">
                                                 <label
                                                     for="permissionAddtional{{$index+1}}">{{key.viewOthersDocs.label}}</label>
+                                            </div>
+                                        </div>
+
+                                        <div ng-if="key.kardex">
+                                            <div class="icheck-info">
+                                                <input type="checkbox" name="permissionAddtional{{$index+2}}"
+                                                    id="permissionAddtional{{$index+2}}" ng-model="key.kardex.view">
+                                                <label
+                                                    for="permissionAddtional{{$index+2}}">{{key.kardex.label}}</label>
                                             </div>
                                         </div>
                                     </div>

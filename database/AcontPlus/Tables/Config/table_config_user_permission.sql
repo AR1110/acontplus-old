@@ -58,9 +58,7 @@ DECLARE @newjson VARCHAR(MAX);
 		--UPDATE Config.UserPermission SET jsonPermission = REPLACE(REPLACE(JSON_MODIFY(jsonPermission, 'append $.precioConIva', JSON_QUERY(@newjson)),'[', ''), ']', '') 
 		--WHERE codModule='AR'
 
-		SET @newjson = N'{"label":"Consultar documentos electronicos de otros usuarios", "view":true}';		
-		UPDATE Config.UserPermission SET jsonPermission = REPLACE(REPLACE(JSON_MODIFY(jsonPermission, 'append $.additional.viewOthersDocs', JSON_QUERY(@newjson)),'[', ''), ']', '') 
-		WHERE codModule='V'
+		
 	
 	--Update properties (label, update) of voucher 
 		--SET @newjson = N'{"label":"Punto Emision UPDATE", "update":true}';		
@@ -71,6 +69,13 @@ DECLARE @newjson VARCHAR(MAX);
 		--UPDATE Config.UserPermission SET jsonPermission = JSON_MODIFY(jsonPermission, '$.additional.requestAuthorizationKey.label', 'Solicitar Autorización para Editar o Anular el Doc. Venta')
 		--WHERE codModule ='V'
 
+		--SET @newjson = N'{"label":"Consultar documentos electronicos de otros usuarios", "view":true}';		
+		--UPDATE Config.UserPermission SET jsonPermission = REPLACE(REPLACE(JSON_MODIFY(jsonPermission, 'append $.additional.viewOthersDocs', JSON_QUERY(@newjson)),'[', ''), ']', '') 
+		--WHERE codModule='V'
+
+		SET @newjson = N'{"label":"Ver Kardex", "view":true}';		
+		UPDATE Config.UserPermission SET jsonPermission = REPLACE(REPLACE(JSON_MODIFY(jsonPermission, 'append $.additional.kardex', JSON_QUERY(@newjson)),'[', ''), ']', '') 
+		WHERE codModule='V'
 
 	--Update properties (label, update) of detail
 
@@ -80,7 +85,7 @@ DECLARE @newjson VARCHAR(MAX);
 		--WHERE codModule='V'
 
 		--UPDATE Config.UserPermission 
-		--SET jsonPermission = JSON_MODIFY(jsonPermission, '$."additional"', NULL)			
+		--SET jsonPermission = JSON_MODIFY(jsonPermission, '$.detail."kardex"', NULL)			
 		--WHERE codModule='V'		  	
 
 	--Remove properties of voucher 
@@ -110,6 +115,6 @@ DECLARE @newjson VARCHAR(MAX);
 --INSERT INTO Config.UserPermission(idUsuarioRol, codModule, jsonPermission)SELECT idUsuarioRol, 'AR', @jsonArticlePermission FROM App.UsuarioRol 
 --INSERT INTO Config.UserPermission(idUsuarioRol, codModule, jsonPermission)SELECT idUsuarioRol, 'C', @jsonCajaPermission FROM App.UsuarioRol
 
-SELECT * FROM Config.UserPermission --WHERE codModule='C'
+SELECT * FROM Config.UserPermission WHERE codModule='V'
 
 

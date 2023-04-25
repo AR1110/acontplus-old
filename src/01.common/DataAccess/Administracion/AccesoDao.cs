@@ -57,7 +57,7 @@ namespace DataAccess.Administracion
         }
         public async Task<GenericResponse> GetByAccessAsync(int idRol, int idSubMenu)
         {
-            DataTable dt = new DataTable();
+            DataSet dt = new DataSet();
             try
             {
                 using (SqlConnection con = new SqlConnection(_connectionStrings))
@@ -69,10 +69,10 @@ namespace DataAccess.Administracion
                     await con.OpenAsync();
                     SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
                     dataAdapter.Fill(dt);
-                    if (dt.Rows.Count > 0)
+                    if (dt.Tables.Count > 0)
                     {
                         _gr.id = "1";
-                        _gr.data = DataHelper.DataTableToJSON(dt);
+                        _gr.data = DataHelper.DataSetToJSON(dt);
                     }
                 }
             }

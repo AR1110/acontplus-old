@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.js?v=0.79";
+} from "./modalBaseCtrl.js?v=0.80";
 
 class ModalFacturaCtrl extends ModalBaseCtrl {
 
@@ -483,7 +483,9 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
 
         <a  update-article  ng-click="grid.appScope.$ctrl.openModalArticle(row.entity, 2)" id="btnEditArticuloDetalle" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >
 
-        <a  ng-click="grid.appScope.$ctrl.openModalDatoAdicionalArticulo(row.entity, false)" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
+        <a  view-kardex params="row.entity" style="cursor:pointer;"  class= "btn btn-info btn-xs text-white" title="Ver Kardex de Artículo"> <i class="mdi mdi-timetable"></i></a >
+
+        <a  ng-click="grid.appScope.$ctrl.openModalDatoAdicionalArticulo(row.entity, false)" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-warning btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
 
         this.isDefaultArticle = true;
 
@@ -596,7 +598,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
             this.data.fechaEmision = new Date();
             this.getFechaVencimiento();
 
-            this.setColumnDefs();
+            this.setColumnDefs('9%');
 
             this.uiGridInvoice = new UiGridOptions({
                 $scope: this.$scope,

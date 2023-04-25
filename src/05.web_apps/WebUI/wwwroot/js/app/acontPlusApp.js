@@ -921,24 +921,59 @@ app.directive('stopEvent', function () {
 });
 
 
+//Permiso Update Artcicle
 app.directive('updateArticle', function ($rootScope) {
     return {
 
         link: function (scope, element, attrs) {
-            setTimeout(() => {
-                if (!$rootScope.articlePermission.leer) {
-                    element[0].style.display = 'none';
-                }
 
-                if ($rootScope.articlePermission.editar) return
+            if (!$rootScope.articlePermission.leer) {
+                element[0].style.display = 'none';
+            }
 
-                if (!$rootScope.articlePermission.editar) {
-                    element[0].style.display = 'none';
-                }
-
-            }, 100)
+            if (!$rootScope.articlePermission.editar) {
+                element[0].style.display = 'none';
+            }
         },
     }
+})
+
+//permiso para ver kardex 
+app.directive('viewKardex', function ($rootScope, $compile) {
+    return {
+        transclude: true,
+        scope: {},
+        template: '<ng-transclude ng-if="isShown"></ng-transclude>',
+        link: function (scope, element, attr) {
+            scope.isShown = false
+        }
+    };
+    // return {
+    //     restrict: 'A',
+    //     replace: true,
+    //     scope: {
+    //         params: '='
+    //     },
+    //     link: function (scope, element, attr) {
+    //         console.log(scope.params);
+    //         console.log(element);
+    //     },
+    //     template: function (element, attr) {
+    //         let {
+    //             ventaPermiso
+    //         } = $rootScope.usuarioPermiso;
+    //         let inner = element.get(0);
+    //         // var ngIf = attr.ngIf;
+    //         // var value = attr.ngIf;
+    //         console.log(this)
+    //         // console.log(inner);           
+    //         attr.$set('ng-if', ventaPermiso.additional.kardex.view);
+    //         attr.$set('ng-click', () => {
+    //             console.log(this)
+    //         })
+    //         return inner.outerHTML;
+    //     }
+    // }
 })
 
 // app.directive('autoocus')

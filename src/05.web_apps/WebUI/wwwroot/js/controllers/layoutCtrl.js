@@ -1,11 +1,9 @@
-﻿
-
-angular.module('acontPlusApp')
+﻿angular.module('acontPlusApp')
     .controller('layoutCtrl', layoutCtrl);
 
-layoutCtrl.$inject = ['$scope', '$window', 'Idle', 'mainService', 'modalService', 'toastService', 'formulario'];
+layoutCtrl.$inject = ['$scope', '$rootScope', '$window', 'Idle', 'mainService', 'modalService', 'toastService', 'formulario'];
 
-function layoutCtrl($scope, $window, Idle, mS, _modalSvc, toast, form) {
+function layoutCtrl($scope, $rootScope, $window, Idle, mS, _modalSvc, toast, form) {
     'use strict';
 
     // $scope.IsVisible = false;
@@ -13,7 +11,7 @@ function layoutCtrl($scope, $window, Idle, mS, _modalSvc, toast, form) {
     // $scope.timeout = 15;
 
     // $scope.$on('IdleStart', function () {
-	// 	// the user appears to have gone idle
+    // 	// the user appears to have gone idle
     //     //tS.toastr('warning', 'Su sesión expirará en ' + $scope.idle + ' segundos.');
     // });
 
@@ -61,7 +59,7 @@ function layoutCtrl($scope, $window, Idle, mS, _modalSvc, toast, form) {
     //     }
     // });
 
-    if(JSON.parse(localStorage.getItem('userData'))===null){        
+    if (JSON.parse(localStorage.getItem('userData')) === null) {
         location.href = '/Login/Logout';
         return
     }
@@ -121,50 +119,61 @@ function layoutCtrl($scope, $window, Idle, mS, _modalSvc, toast, form) {
     //  };
 
     const pathname = $window.location.pathname;
-    
-    
-    if(pathname){ 
-        
-        if(pathname==='/'){
-          location.href='/Home/Index';
+
+
+    if (pathname) {
+
+        if (pathname === '/') {
+            location.href = '/Home/Index';
         }
-       
+
         //Verificamos si url es /Home/Index
-        if(pathname.indexOf('/Home')==-1){
+        if (pathname.indexOf('/Home') == -1) {
             let lengthPath = pathname.split('/').splice(1).length;
 
-            if([1, 2].includes(lengthPath)){
+            if ([1, 2].includes(lengthPath)) {
                 let path = pathname.indexOf('/Index') == -1 ? pathname + '/Index' : pathname;
-                
-                let dataMenu = $scope.subMenus.find(item=>item.url===path);
-                if(dataMenu) {
+
+                let dataMenu = $scope.subMenus.find(item => item.url === path);
+                if (dataMenu) {
 
                     mS.getData('get', '/Acceso/GetAccesoBySubMenu?idSubMenu=' + dataMenu.idSubMenu).then(response => {
-                        if(response.id==="0"){
+                        if (response.id === "0") {
                             console.log(response)
                         }
-                        if(response.id==="1"){
-                            $scope.accion = JSON.parse(response.data)[0]
-                            console.log($scope.accion)
+                        if (response.id === "1") {
+                            let [permisoModulo, almacenPermiso, ventaPermiso, cajaPermiso, articlePermission] = JSON.parse(response.data);
+
+                            $rootScope.usuarioPermiso = {
+                                almacenPermiso: JSON.parse(almacenPermiso[0].jsonPermission),
+                                ventaPermiso: JSON.parse(ventaPermiso[0].jsonPermission),
+                                cajaPermiso: JSON.parse(cajaPermiso[0].jsonPermission),
+
+
+                            }
+                            $scope.accion = permisoModulo[0]
+                            $rootScope.articlePermission = articlePermission[0];
+                            console.log($rootScope.usuarioPermiso)
+                            console.log($rootScope.articlePermission)
                         }
                     })
                 }
 
-            }            
+            }
         }
         // if (url.indexOf('/Index') === -1) {
-        
+
         // var script = document.createElement('script');
         // script.src = 'path/to/your/script.js';
         // document.head.appendChild(script);
         // }
-        
+
     }
-   
+
 
     // $scope.accion = 'test'
     // console.log(pathname)
-    $scope.onChangeSubMenu = function (item) {       
+    $scope.onChangeSubMenu = function (item) {
         try {
             console.log(item);
             // console.log(item)
@@ -181,20 +190,20 @@ function layoutCtrl($scope, $window, Idle, mS, _modalSvc, toast, form) {
             //     if (response.id === "1") {
             //         localStorage.removeItem("accion");
             //         localStorage.setItem("accion", JSON.stringify(JSON.parse(response.data)));
-            
+
             //         return
             //     }
-    
+
             //     location.href = '/Login/Logout';
-    
+
             // });
-            
+
         } catch (error) {
-            location.href = '/Login/Logout';           
+            location.href = '/Login/Logout';
         }
-        
+
     }
-   
+
     // let dataMenu = $scope.subMenus.find(item=>item.url===pathname);
     // if(dataMenu && dataMenu.idSubMenu){
     //     mS.getData('get', '/Acceso/GetAccesoBySubMenu?idSubMenu=' + dataMenu.idSubMenu).then(response => {            
@@ -213,11 +222,11 @@ function layoutCtrl($scope, $window, Idle, mS, _modalSvc, toast, form) {
     //     });        
     // }
 
-    
+
     $scope.logout = function () {
         Object.keys(localStorage).forEach(function (key) {
             localStorage.removeItem(key);
-        })       
+        })
         location.href = '/Login/Logout';
     }
 }
