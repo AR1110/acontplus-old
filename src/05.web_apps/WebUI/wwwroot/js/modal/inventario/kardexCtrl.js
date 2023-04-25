@@ -79,80 +79,161 @@ export class KardexCtrl {
                 tooltip: true,
             },
             data: this.kardexs,
-            columns: [
-                {
+            columns: [{
                     //create column group ---frozen:true,
-                    title: "Descripcion", widthGrow: 2, frozen: true,
-                    columns: [
-                        {
-                            title: "F. Emision", field: "fechaEmision", hozAlign: "center", headerSort: false, sorter: "date", width: 120
+                    title: "Descripcion",
+                    widthGrow: 2,
+                    frozen: true,
+                    columns: [{
+                            title: "F. Emision",
+                            field: "fechaEmision",
+                            hozAlign: "center",
+                            headerSort: false,
+                            sorter: "date",
+                            width: 120
                         },
                         {
-                            title: "T. Doc", field: "tipoDoc", hozAlign: "center", headerSort: false, width: 60
+                            title: "T. Doc",
+                            field: "tipoDoc",
+                            hozAlign: "center",
+                            headerSort: false,
+                            width: 60
                         },
                         {
-                            title: "Nro. Doc", field: "nroDocumento", hozAlign: "left", headerSort: false, width: 130
+                            title: "Nro. Doc",
+                            field: "nroDocumento",
+                            hozAlign: "left",
+                            headerSort: false,
+                            width: 130
                         },
                         {
-                            title: "Cliente/Proveedor", field: "clienteProveedor", headerSort: false, hozAlign: "left", width: 150, tooltip: true
+                            title: "Cliente/Proveedor",
+                            field: "clienteProveedor",
+                            headerSort: false,
+                            hozAlign: "left",
+                            width: 150,
+                            tooltip: true
                         },
                         {
-                            title: "Bodega", field: "bodega", hozAlign: "center", headerSort: false, width: 150
+                            title: "Bodega",
+                            field: "bodega",
+                            hozAlign: "center",
+                            headerSort: false,
+                            width: 150
                         },
                         {
-                            title: "Usuario", field: "usuario", hozAlign: "center", headerSort: false, width: 150
+                            title: "Usuario",
+                            field: "usuario",
+                            hozAlign: "center",
+                            headerSort: false,
+                            width: 150
                         },
                         {
-                            title: "Estado", field: "estado", hozAlign: "center", headerSort: false, width: 100
+                            title: "Estado",
+                            field: "estado",
+                            hozAlign: "center",
+                            headerSort: false,
+                            width: 100
                         },
 
                     ],
                 },
-                {//create column group
+                { //create column group
                     title: "Entradas",
-                    columns: [
-                        {
-                            title: "Medida", field: "medidaEntrada", width: 70, headerSort: false, cssClass: "table-entradas",
+                    columns: [{
+                            title: "Medida",
+                            field: "medidaEntrada",
+                            width: 70,
+                            headerSort: false,
+                            cssClass: "table-entradas",
                         },
                         {
-                            title: "Cant.", field: "cantidadEntrada", width: 60, headerSort: false, cssClass: "table-entradas",
+                            title: "Cant.",
+                            field: "cantidadEntrada",
+                            width: 60,
+                            headerSort: false,
+                            cssClass: "table-entradas",
                         },
                         {
-                            title: "Costo U.", field: "costo", hozAlign: "center", headerSort: false, sorter: "date", width: 75, cssClass: "table-entradas",
+                            title: "Costo U.",
+                            field: "costo",
+                            hozAlign: "center",
+                            headerSort: false,
+                            sorter: "date",
+                            width: 75,
+                            cssClass: "table-entradas",
                         },
                         {
-                            title: "Total", field: "totalEntrada", hozAlign: "center", headerSort: false, sorter: "date", width: 75, cssClass: "table-entradas",
+                            title: "Total",
+                            field: "totalEntrada",
+                            hozAlign: "center",
+                            headerSort: false,
+                            sorter: "date",
+                            width: 75,
+                            cssClass: "table-entradas",
                         },
                     ],
                 },
-                {//create column group
+                { //create column group
                     title: "Salidas",
-                    columns: [
-                        {
-                            title: "Medida", field: "medidaSalida", width: 70, headerSort: false, cssClass: "table-salidas",
+                    columns: [{
+                            title: "Medida",
+                            field: "medidaSalida",
+                            width: 70,
+                            headerSort: false,
+                            cssClass: "table-salidas",
                         },
                         {
-                            title: "Cant.", field: "cantidadSalida", width: 60, headerSort: false, cssClass: "table-salidas",
+                            title: "Cant.",
+                            field: "cantidadSalida",
+                            width: 60,
+                            headerSort: false,
+                            cssClass: "table-salidas",
                         },
                         {
-                            title: "P. Venta", field: "venta", hozAlign: "center", headerSort: false, sorter: "date", width: 75, cssClass: "table-salidas",
+                            title: "P. Venta",
+                            field: "venta",
+                            hozAlign: "center",
+                            headerSort: false,
+                            sorter: "date",
+                            width: 75,
+                            cssClass: "table-salidas",
                         },
                         {
-                            title: "Total", field: "totalSalida", hozAlign: "center", headerSort: false, width: 75, cssClass: "table-salidas",
+                            title: "Total",
+                            field: "totalSalida",
+                            hozAlign: "center",
+                            headerSort: false,
+                            width: 75,
+                            cssClass: "table-salidas",
                         },
                     ],
                 },
-                {//create column group
+                { //create column group
                     title: "Saldos",
-                    columns: [
-                        {
-                            title: "Cant. ", field: "saldo", width: 60, headerSort: false, cssClass: "table-saldos",
+                    columns: [{
+                            title: "Cant. ",
+                            field: "saldo",
+                            width: 60,
+                            headerSort: false,
+                            cssClass: "table-saldos",
                         },
                         {
-                            title: "Costo U.", field: "precioCosto", width: 70, headerSort: false, sorter: "number", cssClass: "table-saldos",
+                            title: "Costo U.",
+                            field: "precioCosto",
+                            width: 70,
+                            headerSort: false,
+                            sorter: "number",
+                            cssClass: "table-saldos",
                         },
                         {
-                            title: "Total", field: "totalGeneral", hozAlign: "center", width: 60, headerSort: false, sorter: "number", cssClass: "table-saldos",
+                            title: "Total",
+                            field: "totalGeneral",
+                            hozAlign: "center",
+                            width: 60,
+                            headerSort: false,
+                            sorter: "number",
+                            cssClass: "table-saldos",
                         },
                     ],
                 },
@@ -192,7 +273,9 @@ export class KardexCtrl {
     }
 
     async openModalSearch() {
-        const { MODAL_FILTRO_CSHTML } = this._nombreModal.kardex;
+        const {
+            MODAL_FILTRO_CSHTML
+        } = this._nombreModal.kardex;
         const modalRef = this._modalSvc.openModalCustom({
             controller: ModalFiltroKardex,
             template: MODAL_FILTRO_CSHTML,
@@ -218,10 +301,10 @@ export class KardexCtrl {
     getKardex() {
         try {
             showLoader();
-            if (this.dataSearch.checkBoxBodega || this.dataSearch.checkBoxFecha
-                || this.dataSearch.checkBoxUltimaConsolidacion
-                || this.dataSearch.checkBoxConsolidacion
-                || this.dataSearch.checkBoxMovement) {
+            if (this.dataSearch.checkBoxBodega || this.dataSearch.checkBoxFecha ||
+                this.dataSearch.checkBoxUltimaConsolidacion ||
+                this.dataSearch.checkBoxConsolidacion ||
+                this.dataSearch.checkBoxMovement) {
                 this.dataSearch.checkBoxDefault = false;
             } else {
                 this.dataSearch.checkBoxDefault = true;
@@ -258,7 +341,7 @@ export class KardexCtrl {
                     angular.forEach(this.kardexs, (value, key) => {
                         value.totalGeneral = (value.costo * value.saldo).toFixed(2)
                     })
-                   
+
                     this.drawTable();
                     hideLoader();
                 }
@@ -298,7 +381,9 @@ export class KardexCtrl {
             return
         }
 
-        const { value: formatType } = await Swal.fire({
+        const {
+            value: formatType
+        } = await Swal.fire({
             icon: 'warning',
             title: 'Tipo Formato',
             input: 'radio',
@@ -342,10 +427,10 @@ export class KardexCtrl {
 
     async openModalTipoDocumento(item) {
         try {
-            if (item.hasOwnProperty("idComprobante") && item.hasOwnProperty("tipoDoc")) {
+            if (item.hasOwnProperty("idDocumento") && item.hasOwnProperty("tipoDoc")) {
                 this._commonSvc.viewDetailDocument({
-                    id: item.idComprobante,
-                    codigoDocumento: item.tipoDoc,
+                    id: item.idDocumento,
+                    codigoDocumento: item.tipoDoc == 'FE' ? 'FV' : item.tipoDoc,
                     size: 'xl',
                     windowClass: 'uibModalFullScreen'
                 })
@@ -368,7 +453,10 @@ export class ModalKardexCtrl extends KardexCtrl {
     }
 
     $onInit() {
-        let { fechaInicio, fechaFin } = this.form.getFechaInicioFinFilter(0);
+        let {
+            fechaInicio,
+            fechaFin
+        } = this.form.getFechaInicioFinFilter(0);
         this.dataSearch.fechaInicio = fechaInicio;
         this.dataSearch.fechaFin = fechaFin;
 
@@ -450,7 +538,9 @@ export class ModalFiltroKardex {
 
 
     articuloSearch(textSearch) {
-        return this._commonSvc.articuloSearchGeneral({ textSearch });
+        return this._commonSvc.articuloSearchGeneral({
+            textSearch
+        });
     }
 
     onKeyupArticuloSearchFiltro() {
@@ -481,7 +571,10 @@ export class ModalFiltroKardex {
 
     //Fecha Inicial y Final dependiendo el Mes que seleccione el usuario en el Filtro AVanzado
     getFechaInicioFinFiltro() {
-        let { fechaInicio, fechaFin } = this.form.getFechaInicioFinFilter(this.dataSearch.mes);
+        let {
+            fechaInicio,
+            fechaFin
+        } = this.form.getFechaInicioFinFilter(this.dataSearch.mes);
         this.dataSearch.fechaInicio = fechaInicio;
         this.dataSearch.fechaFin = fechaFin;
     }
@@ -562,4 +655,3 @@ export class ModalFiltroKardex {
 }
 
 app.controller('kardexCtrl', KardexCtrl)
-

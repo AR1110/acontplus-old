@@ -365,7 +365,7 @@ function modalService($uibModal) {
         openModal: function (controller, template, size, params, animation = true, windowClass = null, props = {}) {
             return $uibModal.open({
                 animation,
-                templateUrl: `/Home/RenderView?name=~/Views/${template || '~/Views/Shared/ModalNotFound.cshtml'}`,
+                templateUrl: `/Home/RenderView?name=~/Views/${template}`,
                 controller: controller,
                 size,
                 windowClass,
@@ -408,7 +408,7 @@ function modalService($uibModal) {
 
             return $uibModal.open({
                 animation,
-                templateUrl: isRenderRazorPartial ? `/Home/RenderView?name=${template}` : `/Home/RenderView?name=~/Views/${template || 'Shared/ModalNotFound.cshtml'}`,
+                templateUrl: isRenderRazorPartial ? `/Home/RenderView?name=${template}` : `/Home/RenderView?name=~/Views/${template}`,
                 controller,
                 controllerAs: '$ctrl',
                 scope,
@@ -435,7 +435,7 @@ function modalService($uibModal) {
         openModalSecond: function (controller, template, size, params, animation = true, windowClass = null, $scope, props = {}) {
             return $uibModal.open({
                 animation,
-                templateUrl: `/Home/RenderView?name=~/Views/${template || '~/Views/Shared/ModalNotFound.cshtml'}`,
+                templateUrl: `/Home/RenderView?name=~/Views/${template}`,
                 controller,
                 controllerAs: '$ctrl',
                 scope: $scope,
@@ -939,13 +939,48 @@ app.directive('updateArticle', function ($rootScope) {
 })
 
 //permiso para ver kardex 
-app.directive('viewKardex', function ($rootScope, $compile) {
+app.directive('viewKardex', function ($rootScope, modalService, nombreModal) {
     return {
-        transclude: true,
-        scope: {},
-        template: '<ng-transclude ng-if="isShown"></ng-transclude>',
+        scope: {
+            params: "=",
+            btnTitle: "=",
+            sizeBtn: "="
+        },
+        template: ' <a style="cursor:pointer;" ng-if="kardex.view" class= "btn btn-info btn-xs text-white" title="Ver Kardex de Artículo"> <i class="mdi mdi-timetable"></i></a >',
         link: function (scope, element, attr) {
-            scope.isShown = false
+            let {
+                ventaPermiso
+            } = $rootScope.usuarioPermiso;
+
+            scope.kardex = ventaPermiso.additional.kardex;
+
+            element.on('click', async function (e) {
+
+                let {
+                    MODAL_CTRL,
+                    MODAL_CSHTML
+                } = nombreModal.kardex;
+
+                const articulo = {
+                    idArticulo: scope.params.idArticulo,
+                    codigo: scope.params.codigo,
+                    descripcion: scope.params.descripcion,
+                }
+
+                const {
+                    ModalKardexCtrl
+                } = await import('./../modal/' + MODAL_CTRL);
+
+                modalService.openModalCustom({
+                    controller: ModalKardexCtrl,
+                    template: MODAL_CSHTML,
+                    size: 'xl',
+                    params: articulo,
+                    windowClass: 'uibModalFullScreen',
+                    isRenderRazorPartial: true
+                })
+
+            })
         }
     };
     // return {
@@ -967,7 +1002,7 @@ app.directive('viewKardex', function ($rootScope, $compile) {
     //         // var value = attr.ngIf;
     //         console.log(this)
     //         // console.log(inner);           
-    //         attr.$set('ng-if', ventaPermiso.additional.kardex.view);
+    //        
     //         attr.$set('ng-click', () => {
     //             console.log(this)
     //         })
