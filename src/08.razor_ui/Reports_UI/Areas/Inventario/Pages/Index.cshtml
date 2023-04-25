@@ -1,5 +1,6 @@
 ﻿@page
 @model Reports_UI.Areas.Inventario.Pages.IndexModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     ViewBag.title = "Reporte Inventario";
     Layout = "_Layout";
@@ -42,5 +43,5 @@
 </div>
 
 @section Scripts{
-    <script src="~/js/controllers/reportes/reporteInventarioCtrl.js" asp-append-version="true"></script>
+    <script src="~/js/controllers/reportes/reporteInventarioCtrl.min.js" asp-append-version="true"></script>
 }

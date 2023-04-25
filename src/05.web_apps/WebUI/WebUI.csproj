@@ -15,6 +15,7 @@
 
 	<ItemGroup Label="Global-Tool Watch">
 		<Watch Include="..\..\08.razor_ui\Recepcion_UI\**\*.cshtml" />
+		<Watch Include="..\..\08.razor_ui\Reports_UI\**\*.cshtml" />
 	</ItemGroup>
 
 	<ItemGroup>
