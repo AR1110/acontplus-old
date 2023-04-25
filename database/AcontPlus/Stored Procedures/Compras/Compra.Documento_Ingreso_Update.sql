@@ -41,6 +41,7 @@ BEGIN
 
 	--===========Datos para la validacion de informacion===============
 	DECLARE @uniqueId AS VARCHAR(20)
+	DECLARE @fechaEmision AS DATETIME
 
 	--==============Parametros para el area de contabilidad============
 	DECLARE @idEstadoPago AS INT
@@ -74,6 +75,7 @@ BEGIN
         ,descuento NUMERIC (18,5)  NOT NULL
         ,precioTotalSinImpuesto NUMERIC (18,5)  NOT NULL
         ,codigoPorcentaje VARCHAR(5) NOT NULL
+		,estado BIT NULL
 	)
 
 	DECLARE @taxes AS TABLE(
@@ -132,6 +134,8 @@ BEGIN
 			 ) as dt
 
 		----======================================Recuperar datos de las Tablas===========================================================
+		SELECT @fechaEmision = fechaEmision FROM @document
+
 		SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
 		SELECT TOP 1 @uniqueId =  uniqueId FROM Compra.Documento_Ingreso WITH (NOLOCK) WHERE idDocumentoIngreso = @idDocumentoIngreso 
@@ -212,13 +216,57 @@ BEGIN
 			--==============================================================Inventario============================================================================================
 			IF @inventory = 'SI'
 				BEGIN 
-					
-					INSERT INTO Inventario.ControlStock
-						  (idTipoDocumento,idDocumento,idArticulo,idBodega)
-					SELECT idTipoDocumento = 1,d.idDocumentoIngreso,d.idArticulo,d.idBodega 
-					FROM Compra.Documento_Ingreso_Detail d WITH (NOLOCK)
-					INNER JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = d.idArticulo
-					WHERE d.idDocumentoIngreso = @idDocumentoIngreso AND ar.llevaInventario = 1
+					DECLARE @tblDetails AS TABLE (
+						 idArticulo  INT NOT NULL
+						,idTarifa  INT  NULL
+						,idBodega   INT NOT NULL
+						,idMedida  INT NULL
+						,cantidad NUMERIC (18,5)
+						,precioUnitario NUMERIC (18,5)
+						,total NUMERIC (18,5)
+						,estado BIT NOT NULL
+					)
+
+					EXEC Inventario.Transaccion_Delete 'E','IV',@idDocumentoIngreso
+
+					INSERT INTO @tblDetails(idArticulo,idBodega,idMedida,cantidad,precioUnitario,total,estado)
+							  	 SELECT idArticulo,idBodega,idMedida,cantidad,precioUnitario,precioTotalSinImpuesto,estado
+								 FROM Compra.Documento_Ingreso_Detail dd
+								 WHERE dd.idDocumentoIngreso = @idDocumentoIngreso 
+
+					IF EXISTS (SELECT 1 FROM @tblDetails td INNER JOIN Articulo a WITH (NOLOCK) ON td.idArticulo = a.idArticulo WHERE a.llevaInventario = 1)
+						BEGIN 
+							DECLARE @idArticulo INT
+							DECLARE @idBodega INT
+							DECLARE @idMedida INT
+							DECLARE @idTarifa INT
+							DECLARE @cantidad NUMERIC(18,2)
+							DECLARE @precioUnitario NUMERIC(18,5)
+							DECLARE @precioCosto NUMERIC(18,5) 
+							DECLARE @total AS NUMERIC(18,5)
+							DECLARE @estado BIT 
+
+							DECLARE cursor_inventory CURSOR LOCAL FOR
+							SELECT td.idArticulo, idBodega,td.idMedida,NULL, cantidad, td.precioUnitario,a.precioCosto,td.total,td.estado
+							FROM @tblDetails td 
+							INNER JOIN Articulo a WITH (NOLOCK) ON td.idArticulo = a.idArticulo 
+							WHERE a.llevaInventario = 1
+
+							OPEN cursor_inventory
+
+							FETCH NEXT FROM cursor_inventory INTO @idArticulo,@idBodega,@idMedida,@idTarifa,@cantidad,@precioUnitario,@precioCosto,@total,@estado
+
+							WHILE @@FETCH_STATUS = 0
+								BEGIN
+									--tipo transaccion 2 salidas
+									--tipo documento 1 factura electronica
+									EXEC Inventario.Transaccion_Insert 'E','IV', @fechaEmision, @idDocumentoIngreso,  @idArticulo, @idBodega ,@idMedida,@idTarifa,@cantidad, @precioCosto,@total, @precioUnitario, @idUsuario,@estado
+									FETCH NEXT FROM cursor_inventory INTO @idArticulo,@idBodega,@idMedida,@idTarifa,@cantidad,@precioUnitario,@precioCosto,@total,@estado
+									
+								END
+							CLOSE cursor_inventory
+							DEALLOCATE cursor_inventory  
+						END
 				END 
 
 			 DELETE FROM Compra.Documento_Ingreso_Detail WHERE estado = 0 AND idDocumentoIngreso = @idDocumentoIngreso

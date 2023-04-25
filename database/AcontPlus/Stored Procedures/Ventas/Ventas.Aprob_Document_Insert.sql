@@ -205,13 +205,33 @@ BEGIN
 
 			IF @docOrigen = 'NE'
 				BEGIN
+
+					DECLARE @idDocumento AS INT
+
+					DECLARE cursor_inventory CURSOR LOCAL FOR
+					SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt
+				    WHERE dt.uniqueId = @uniqueId
+
 					SELECT TOP 1 @idEstadoDocumento = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'TRA'
 
-					UPDATE ne SET	
-						ne.idEstadoPago = @idEstadoDocumento
-					FROM dbo.NotaEntrega ne WITH(NOLOCK)
-				    JOIN (SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt
-					       WHERE dt.uniqueId = @uniqueId) dt ON dt.idDocumento = ne.idNotaEntrega
+
+					UPDATE ne SET ne.idEstadoPago = @idEstadoDocumento FROM dbo.NotaEntrega ne WITH(NOLOCK)
+				    JOIN (SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt WHERE dt.uniqueId = @uniqueId) dt ON dt.idDocumento = ne.idNotaEntrega
+
+					OPEN cursor_inventory
+
+						FETCH NEXT FROM cursor_inventory INTO @idDocumento
+
+						WHILE @@FETCH_STATUS = 0
+							BEGIN
+								--tipo transaccion  salidas
+								--tipo documento  NotaEntrega
+								EXEC Inventario.Transaccion_Update 'S','NE',@idDocumento,2
+								FETCH NEXT FROM cursor_inventory INTO @idDocumento
+							END
+					CLOSE cursor_inventory
+					DEALLOCATE cursor_inventory 
+
 				END 
 
 			IF @docOrigen = 'PR'

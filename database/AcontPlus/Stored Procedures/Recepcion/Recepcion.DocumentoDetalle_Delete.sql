@@ -22,27 +22,52 @@ GO
 IF OBJECT_ID(N'Recepcion.DocumentoDetalle_Delete', N'P') IS NOT NULL
 DROP PROCEDURE Recepcion.DocumentoDetalle_Delete 
 GO
-CREATE PROCEDURE Recepcion.DocumentoDetalle_Delete	@idUsuarioRol INT
-,@id INT 
+CREATE PROCEDURE Recepcion.DocumentoDetalle_Delete	@idUsuarioRol INT,@id INT 
 AS
 BEGIN
 	SET NOCOUNT ON; 
-	DECLARE @idUsuario INT
-	,@idDocumento INT 
+	DECLARE @idEntidad AS INT
+	DECLARE @idUsuario AS INT
+	DECLARE @idDocumento AS INT 
+	DECLARE @inventory AS VARCHAR(5)
 
-	SET @idDocumento = (SELECT idDocumento FROM Recepcion.DocumentoDetalle WHERE idDocumentoDetalle = @id)
 	BEGIN TRY
+		
+		SELECT TOP 1 @idDocumento = idDocumento FROM Recepcion.DocumentoDetalle WITH (NOLOCK) WHERE idDocumentoDetalle = @id
+
+		SELECT TOP 1 @idUsuario = idUsuario, @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
+
+		SELECT TOP 1 @inventory = llevaInventario FROM Config.GestionSistema WITH (NOLOCK) WHERE idEntidad = @idEntidad
+
 		BEGIN TRAN
 			DELETE FROM Recepcion.Doc_Detalle_Impuesto WHERE idDocumentoDetalle = @id
+			
 			DELETE FROM Recepcion.DocumentoDetalle WHERE idDocumentoDetalle = @id
 			
 			IF NOT EXISTS(SELECT 1 FROM Recepcion.DocumentoDetalle WHERE idDocumento = @idDocumento)
 				BEGIN
 					UPDATE Recepcion.DocumentoRecibido SET complete = 0 WHERE idDocumento = @idDocumento
 				END
-			SELECT '1' code, 'Articulo eliminado exitosamente del stock' as 'message'
-		COMMIT TRAN 
+
+			IF @inventory = 'SI'
+				BEGIN
+					DECLARE @codDoc AS VARCHAR(2)
+					DECLARE @codDocInv VARCHAR(2)
+					DECLARE @codTran VARCHAR(2)
+
+					SELECT TOP 1 @codDoc = codDoc FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE idDocumento = @idDocumento
+
+					SET @codDocInv = (SELECT CASE WHEN @codDoc = '01' THEN 'FE' WHEN @codDoc = '04' THEN 'NC' END)
+		
+					SET @codTran   = (SELECT CASE WHEN @codDoc = '01' THEN 'E'  WHEN @codDoc = '04' THEN 'S'  END)
+
+					EXEC Inventario.Transaccion_Delete  @codTran,@codDocInv,@idDocumento
+				END 
+
+		COMMIT TRAN
+		SELECT '1' code, 'Articulo eliminado exitosamente del stock' as 'message'
 	END TRY
+
 	BEGIN CATCH
 		SELECT '0' code, 'Error en base de datos: ' + ERROR_MESSAGE() as 'message'
 		IF (@@TRANCOUNT > 0)

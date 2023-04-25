@@ -45,10 +45,6 @@ BEGIN
 
 	--==============Parametros para el Area de Inventario==============
 	DECLARE @inventory AS VARCHAR(5)
-	DECLARE @tblDetails AS TABLE (
-			 idArticulo INT NOT NULL
-			,idBodega   INT NOT NULL
-	)
 
 
 	BEGIN TRY 
@@ -93,17 +89,18 @@ BEGIN
 			IF @inventory = 'SI'
 				BEGIN 
 					
-					DECLARE @idTipoDocumento INT
+					DECLARE @tblDetails AS TABLE (
+							 idArticulo INT NOT NULL
+							,idBodega   INT NOT NULL
+					)
 
-					SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = 'IV'
-
-					UPDATE Inventario.Transaccion SET estado = 0 WHERE idDocumento = @idDocumentoIngreso AND idTipoDocumento = @idTipoDocumento
+					EXEC Inventario.Transaccion_Update 'E','IV',@idDocumentoIngreso,0
 
 					INSERT INTO @tblDetails(idArticulo,idBodega)
-					SELECT fd.idArticulo,fd.idBodega 
-					FROM dbo.FacturaDetalle fd WITH (NOLOCK) 
-					INNER JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = fd.idArticulo
-					WHERE idFactura = @idDocumentoIngreso AND ar.llevaInventario = 1
+					SELECT dd.idArticulo,dd.idBodega 
+					FROM Compra.Documento_Ingreso_Detail dd WITH (NOLOCK) 
+					INNER JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = dd.idArticulo
+					WHERE dd.idDocumentoIngreso = @idDocumentoIngreso AND ar.llevaInventario = 1
 
 					IF EXISTS (SELECT 1 FROM @tblDetails td INNER JOIN Articulo a WITH (NOLOCK) ON td.idArticulo = a.idArticulo WHERE a.llevaInventario = 1)
 						BEGIN 

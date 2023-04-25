@@ -11,7 +11,7 @@ idTransaccion BIGINT NOT NULL CONSTRAINT pk_inventory_transaction PRIMARY KEY ID
 ,idTipoDocumento INT NOT NULL CONSTRAINT fk_inv_tipo_doc FOREIGN KEY (idTipoDocumento) REFERENCES Inventario.TipoDocumento(idTipoDocumento)
 ,idDocumento INT NOT NULL
 ,idMedida INT NOT NULL CONSTRAINT fk_inv_t_medida FOREIGN KEY (idMedida) REFERENCES Medida(idMedida)
-,idTarifa INT NOT NULL CONSTRAINT fk_inv_t_tarifa FOREIGN KEY (idTarifa) REFERENCES Tarifa(idTarifa)
+,idTarifa INT NULL CONSTRAINT fk_inv_t_tarifa FOREIGN KEY (idTarifa) REFERENCES Tarifa(idTarifa)
 ,cantidad NUMERIC(18,5) NOT NULL
 ,precioUnitario NUMERIC(18,2) NOT NULL
 ,precioCosto NUMERIC(18,2) NOT NULL
