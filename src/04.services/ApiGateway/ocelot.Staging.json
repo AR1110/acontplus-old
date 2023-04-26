@@ -250,10 +250,30 @@
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Get",
+        "Put",
         "Delete",
         "Options"
       ],
       "UpstreamPathTemplate": "/api/Factura/{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 8096
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Factura",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Post"
+      ],
+      "UpstreamPathTemplate": "/api/Factura"
     },
     {
       "AuthenticationOptions": {
@@ -893,6 +913,47 @@
         "Get"
       ],
       "UpstreamPathTemplate": "/api/Solicitud/Check/{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 8096
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Cliente/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Put",
+        "Delete",
+        "Options"
+      ],
+      "UpstreamPathTemplate": "/api/Cliente/{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 8096
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Cliente/GetDataForm/{json}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "UpstreamPathTemplate": "/api/Cliente/GetDataForm/{json}"
     },
     {
       "AuthenticationOptions": {
