@@ -14,13 +14,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\..\01.common\Common.Logs\Common.Logs.csproj" />
 		<ProjectReference Include="..\..\01.common\DataAccess\DataAccess.csproj" />
 		<ProjectReference Include="..\..\01.common\Helpers\Helpers.csproj" />
+		<ProjectReference Include="..\..\03.business_logic\BL.FactElect\BL.FactElect.csproj" />
 		<ProjectReference Include="..\..\03.business_logic\BL.JwtAuthenticationManger\BL.JwtAuthenticationManger.csproj" />
 	</ItemGroup>
 

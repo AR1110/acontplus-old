@@ -1536,6 +1536,7 @@
                             if (response.code == '1') {
                                 let index = $scope.historyComprasArticle.indexOf(item)
                                 $scope.historyComprasArticle.splice(index, 1)
+                                $scope.getTempDetails()
                                 tS.toastr('success', response.message)
                             }
                         }, error => {

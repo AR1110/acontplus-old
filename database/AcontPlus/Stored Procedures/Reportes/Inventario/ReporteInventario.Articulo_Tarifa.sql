@@ -6,7 +6,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
--- exec ReporteInventario.Articulo_Valoracion 38, '[{"byOrderCampo":"ar.descripcion","byOrder":"ASC","byTipoReporte":1,"byTipoFormato":"pdf","codEstab":"ESTAB-000000002","checkboxSubFamiliaFiltro":false,"filtroFecha":"16-2-2023 12:52"}]'
+-- exec ReporteInventario.Articulo_Tarifa 164, '{"byOrderCampo":"ar.descripcion","byOrder":"ASC","byTipoReporte":2,"byTipoFormato":"pdf","codEstab":"ESTAB-000000145","chkProveedor":true,"numeroIdentificacion":"1891723756001","checkboxDetalleBodegaFiltro":false,"filtroFecha":"24-4-2023 18:22"}'
 IF OBJECT_ID(N'ReporteInventario.Articulo_Tarifa', N'P') IS NOT NULL
 DROP PROCEDURE ReporteInventario.Articulo_Tarifa
 GO
@@ -28,11 +28,14 @@ BEGIN
 	DECLARE @checkboxDetalleBodegaFiltro BIT 
 	DECLARE @byOrder NVARCHAR(10)			
 	DECLARE @byOrderCampo NVARCHAR(50)	
-	
+	DECLARE @chkProveedor BIT = 0
+	DECLARE @rucProveedor VARCHAR(25)
+
 	DECLARE @params NVARCHAR(MAX)='@byEntidad    INT,									
 									@bySubFamilia INT,
 									@byOrder      VARCHAR(10),									
-									@byOrderCampo VARCHAR(50)'			
+									@byOrderCampo VARCHAR(50),
+									@rucProveedor VARCHAR(25) '			
 
 		--DECLARE @sql NVARCHAR(MAX) =  'SELECT 
 		--									idArticulo       = ar.idArticulo,																			
@@ -51,21 +54,15 @@ BEGIN
 	
 		
 			DECLARE @sql NVARCHAR(MAX) = 'SELECT ar.idArticulo
-						,ar.descripcion
-						 ,ar.codigo
-						,ar.subfamilia
-						,t.descripcion as tarifa
-						,ISNULL(au.bodega, ''No asignada'') bodega
-						,precioCosto = CAST(ar.precioCosto as numeric(15, 2)),
-						precioIva = CAST(apvp.precioConIva as numeric(15,2)),
-						totalStock = CAST(ar.stock  as numeric(15, 2))
-						,ISNULL(s.cantidad,0) stock
-					FROM v_Articulo ar  WITH (NOLOCK) 		
-					INNER JOIN  ArticuloPvP apvp WITH (NOLOCK) ON ar.idArticulo = apvp.idArticulo
-					INNER JOIN Tarifa t WITH (NOLOCK) ON t.idTarifa = apvp.idTarifa		
-					LEFT JOIN v_Articulo_Ubicacion au ON ar.idArticulo = au.idArticulo
-					LEFT JOIN Inventario.Stock s WITH (NOLOCK) ON s.idArticulo = ar.idArticulo AND s.idBodega = au.idBodega
-					WHERE ar.estado = 1 AND ar.idEntidad = @byEntidad AND ar.llevaInventario = 1 '
+											,ar.descripcion
+											,ar.codigo
+											,ar.subfamilia
+											,t.descripcion as tarifa
+											,precioIva = CAST(apvp.precioConIva as numeric(15,2))
+										FROM v_Articulo ar  WITH (NOLOCK) 		
+										INNER JOIN  ArticuloPvP apvp WITH (NOLOCK) ON ar.idArticulo = apvp.idArticulo
+										INNER JOIN Tarifa t WITH (NOLOCK) ON t.idTarifa = apvp.idTarifa
+										WHERE ar.estado = 1 AND ar.idEntidad = @byEntidad AND ar.llevaInventario = 1 '
 
 			
 			SELECT 	
@@ -79,7 +76,8 @@ BEGIN
 
 			   ,@byOrder                  = byOrder			 
 			   ,@byOrderCampo             = byOrderCampo			   
-			
+				,@chkProveedor = chkProveedor
+				,@rucProveedor = numeroIdentificacion
 			FROM OPENJSON(@json)
 			WITH (
 			      filtroFecha  VARCHAR(50)     '$.filtroFecha',						
@@ -91,14 +89,19 @@ BEGIN
 				  byStock INT                  '$.byStock',				 			  				  
 
 				  byOrder NVARCHAR(10)         '$.byOrder',
-				  byOrderCampo NVARCHAR(50)    '$.byOrderCampo'			  				      
+				  byOrderCampo NVARCHAR(50)    '$.byOrderCampo'		
+				  ,chkProveedor BIT '$.chkProveedor'
+				  ,numeroIdentificacion VARCHAR(25) '$.numeroIdentificacion'
 			) AS jsonValues	
 			
 		
 		
 
-		--Filtro con SubFamilia
-		IF @checkboxSubFamiliaFiltro = 1
+		IF @chkProveedor = 1
+		BEGIN
+			SET @sql = @sql + ' AND ar.idArticulo IN (SELECT it.idArticulo FROM v_InventarioTransaccion it WHERE it.rucClienteProveedor = @rucProveedor) '
+		END
+		ELSE
 		BEGIN 
 			SET @sql = @sql + ' AND ar.idSubFamilia = @bySubFamilia '
 		END
@@ -133,7 +136,8 @@ BEGIN
 					@byEntidad    = @byEntidad,
 					@bySubFamilia = @bySubFamilia,
 					@byOrder      = @byOrder,
-					@byOrderCampo = @byOrderCampo
+					@byOrderCampo = @byOrderCampo,
+					@rucProveedor =  @rucProveedor
 
 	
 		

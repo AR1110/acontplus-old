@@ -236,7 +236,7 @@ export class ModalBaseCtrl {
     }
 
 
-    setColumnDefs() {
+    setColumnDefs(width = '5%') {
         let defaultPermission = Object.freeze({
             tarifa: {
                 update: true
@@ -266,7 +266,7 @@ export class ModalBaseCtrl {
         this.gridOptions.columnDefs = [{
                 name: 'Op.',
                 enableCellEdit: false,
-                width: '5%',
+                width,
                 minWidth: '100',
                 cellTemplate: this.CELL_TEMPLATE_OPTION,
             },

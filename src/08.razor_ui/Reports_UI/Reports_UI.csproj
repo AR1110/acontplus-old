@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Areas\Reporte\**" />
+    <Content Remove="Areas\Reporte\**" />
+    <EmbeddedResource Remove="Areas\Reporte\**" />
+    <None Remove="Areas\Reporte\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 

@@ -1,32 +1,26 @@
-﻿using System.Data;
-using DataAccess.GestionTributaria;
-using Domain.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+using System.Data;
 using System.Text;
-using Domain.Enums; 
-using Helpers;
 using BL.FactElect;
+using Common.Logs;
+using DataAccess;
+using Domain.Enums;
+using Domain.Models;
+using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
-namespace WebUI.Controllers.GestionTributaria
+namespace ApiFactElect.Controllers.Sri
 {
-    public class AtsController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    public class AtsController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-
-        private AtsDao _ats;
-        private AtsXml _atsXml = new AtsXml();
-        private GenericResponse _response = new GenericResponse();
         public AtsController(IConfiguration configuration)
         {
             _configuration = configuration;
-            _ats = new AtsDao(_configuration);
         }
-        
-        public IActionResult Index()
-        {
-            return View();
-        }
+        private AtsXml _atsXml = new AtsXml();
+        [HttpGet("Get")]
         public IActionResult GetPeriods()
         {
             object[] periods = null;
@@ -57,32 +51,36 @@ namespace WebUI.Controllers.GestionTributaria
             }
             return Ok(periods);
         }
-        public async Task<IActionResult> Get(string json)
+        [HttpGet("Download")]
+        public async Task<IActionResult> Download(string json)
         {
             int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-            DataSet ds = new DataSet();
-            string msgError = "";
+            DbAccess _db = new DbAccess(_configuration);
+            GenericResponse _response = new GenericResponse();
             try
             {
-                if (_ats.Get(idRol, json, ref ds, ref _response))
+                await _db.SPExecute("ASPAtsGetData");
+                _db.AddDynamicParam("idRol", idRol);
+                _db.AddDynamicParam("json", json);
+                var ds = _db.GetDataSet();
+                byte[] xmlAts = null;
+                if (_atsXml.Create(ref ds, ref xmlAts))
                 {
-                    byte[] xmlAts = null;
-                    if (_atsXml.Create(ref ds, ref xmlAts, ref msgError))
-                    {
-                        string fileName = "ATS_" + ds.Tables[0].Rows[0]["IdInformante"].ToString()
-                        + "_" + ds.Tables[0].Rows[0]["numEstabRuc"].ToString()
-                        + "_" + ds.Tables[0].Rows[0]["anio"].ToString() + "_"
-                        + ds.Tables[0].Rows[0]["mes"].ToString();
-                        return File(xmlAts, "text/xml", fileName + ".xml");
-                    }
-                    else
-                    {
-                        _response.Create("0", msgError);
-                    }
+                    string fileName = "ATS_" + ds.Tables[0].Rows[0]["IdInformante"].ToString()
+                    + "_" + ds.Tables[0].Rows[0]["numEstabRuc"].ToString()
+                    + "_" + ds.Tables[0].Rows[0]["anio"].ToString() + "_"
+                    + ds.Tables[0].Rows[0]["mes"].ToString();
+                    return File(xmlAts, "text/xml", fileName + ".xml");
+                }
+                else
+                {
+                    _response.Create("0", "No se pudo generar el ats");
                 }
             }
             catch (Exception ex)
             {
+                LogWriter _log = new LogWriter(_configuration);
+                _log.LogError("Error while download ats: \n" + ex.ToString());
                 _response.Create("0", ex.Message);
             }
 

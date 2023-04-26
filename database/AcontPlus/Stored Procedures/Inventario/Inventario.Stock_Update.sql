@@ -53,7 +53,7 @@ BEGIN
 			INNER JOIN Inventario.TipoTransaccion tt WITH (NOLOCK) ON tt.idTipoTransaccion = tr.idTipoTransaccion
 			WHERE tt.codigo = 'E' 
 				AND tr.estado = 1
-				AND tr.fechaRegistro <= @fechaEmision 
+				AND tr.fechaRegistro >= @fechaEmision 
 				AND tr.idArticulo = @idArticulo 
 				AND tr.idBodega = @idBodega
 
@@ -62,15 +62,14 @@ BEGIN
 			INNER JOIN Inventario.TipoTransaccion tt WITH (NOLOCK) ON tt.idTipoTransaccion = tr.idTipoTransaccion
 			WHERE tt.codigo = 'S' 
 				AND tr.estado = 1
-				AND tr.fechaRegistro <= @fechaEmision 
+				AND tr.fechaRegistro >= @fechaEmision 
 				AND tr.idArticulo = @idArticulo 
 				AND tr.idBodega = @idBodega
 
 			SET @cantidadActual = @cantidadActual + @entradas
 
-			
-
 			SET @cantidadActual = @cantidadActual - @salidas
+			
 		END 
 
 	IF (SELECT COUNT(*) FROM @ajustes) = 0  
@@ -79,7 +78,7 @@ BEGIN
 		SELECT @entradas = ISNULL(SUM(tr.cantidad),0) 
 		FROM Inventario.Transaccion tr WITH (NOLOCK)
 		INNER JOIN Inventario.TipoTransaccion tt WITH (NOLOCK) ON tt.idTipoTransaccion = tr.idTipoTransaccion
-		WHERE tt.codigo = 'E' 
+		WHERE   tt.codigo = 'E' 
 			AND tr.estado = 1
 			AND tr.idArticulo = @idArticulo 
 			AND tr.idBodega = @idBodega
@@ -87,7 +86,7 @@ BEGIN
 		SELECT @salidas = ISNULL(SUM(tr.cantidad),0) 
 		FROM Inventario.Transaccion tr WITH (NOLOCK)
 		INNER JOIN Inventario.TipoTransaccion tt WITH (NOLOCK) ON tt.idTipoTransaccion = tr.idTipoTransaccion
-		WHERE tt.codigo = 'S' 
+		WHERE   tt.codigo = 'S' 
 			AND tr.estado = 1 
 			AND tr.idArticulo = @idArticulo 
 			AND tr.idBodega = @idBodega
@@ -97,7 +96,7 @@ BEGIN
 		END
 
 
-	UPDATE Inventario.Stock SET cantidad = @cantidadActual WHERE idArticulo = @idArticulo AND idBodega = @idBodega
+	UPDATE Inventario.Stock SET cantidad = ISNULL(@cantidadActual,0) WHERE idArticulo = @idArticulo AND idBodega = @idBodega
 
 	SELECT @stock = SUM(cantidad) FROM Inventario.Stock WITH (NOLOCK) WHERE idArticulo = @idArticulo 
 

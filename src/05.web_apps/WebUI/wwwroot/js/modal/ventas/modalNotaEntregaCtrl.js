@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.js?v=0.29";
+} from "./modalBaseCtrl.js?v=0.30";
 
 
 class ModalNotaEntregaCtrl extends ModalBaseCtrl {
@@ -346,7 +346,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
         this.CELL_TEMPLATE_OPTION = `<a  ng-click="grid.appScope.$ctrl.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
 
         <a update-article ng-click="grid.appScope.$ctrl.openModalArticle(row.entity)" id="btnEditArticuloDetalle" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >
-
+        <view-kardex params="row.entity"></view-kardex>
         <a  ng-click="grid.appScope.abrirModalDatoAdicional(row.entity)" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
 
         this.TIPO_DOC_FV = this._commonSvc.tipoDoc['FV'];
@@ -442,7 +442,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
             this.data.fechaEmision = new Date();
             this.getFechaVencimiento();
 
-            this.setColumnDefs();
+            this.setColumnDefs('8%');
 
             this.uiGridInvoice = new UiGridOptions({
                 $scope: this.$scope,
@@ -933,6 +933,8 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
 
         <a update-article  ng-click="grid.appScope.$ctrl.openModalArticle(row.entity)" id="btnEditArticuloDetalle" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >
 
+        <view-kardex params="row.entity"></view-kardex>
+
         <a  ng-click="grid.appScope.$ctrl.openModalDatoAdicionalArticulo(row.entity, false)" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
 
         let {
@@ -1013,7 +1015,7 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
             this.ventaComprobantePermission = Object.freeze(this.ventaPermission.comprobante);
             this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
 
-            this.setColumnDefs();
+            this.setColumnDefs('8%');
 
             this.uiGridInvoice = new UiGridOptions({
                 $scope: this.$scope,
@@ -1179,6 +1181,8 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
 
         <a update-article ng-click="grid.appScope.$ctrl.openModalArticle(row.entity)" id="btnEditArticuloDetalle" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >
 
+        <view-kardex params="row.entity"></view-kardex>
+
         <a  ng-click="grid.appScope.$ctrl.openModalDatoAdicionalArticulo(row.entity, false)" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
 
         let {
@@ -1269,7 +1273,7 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
             this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
 
 
-            this.setColumnDefs();
+            this.setColumnDefs('8%');
 
             this.uiGridInvoice = new UiGridOptions({
                 $scope: this.$scope,

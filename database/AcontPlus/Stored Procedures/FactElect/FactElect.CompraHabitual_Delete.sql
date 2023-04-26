@@ -22,8 +22,17 @@ BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
 	DECLARE @idUsuario INT 
+	,@idArticulo INT
 
-	SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idRol) 
+	SET @idArticulo = (SELECT idArticulo FROM FactElect.CompraHabitual WITH (NOLOCK) WHERE idCompraHabitual = @id)
+	
+	IF EXISTS(SELECT 1 FROM Recepcion.DocumentoDetalle WHERE idArticulo = @idArticulo)
+		BEGIN
+			DECLARE @articleInDocs AS VARCHAR(MAX) = (SELECT dr.serieComprobante FROM Recepcion.DocumentoRecibido dr INNER JOIN Recepcion.DocumentoDetalle dd ON dr.idDocumento = dd.idDocumento WHERE dd.idArticulo	 = @idArticulo for json path)
+			SELECT '0' code, 'Imposible desvincular, el articulo esta contabilizado en el stock, primero debe eliminarlo del stock de los siguientes comprobantes --> ' + @articleInDocs as 'message'
+			RETURN
+		END
+	SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol)
 	BEGIN TRY
 		BEGIN TRAN
 			 DELETE FROM FactElect.CompraHabitual WHERE idCompraHabitual = @id

@@ -365,7 +365,7 @@ function modalService($uibModal) {
         openModal: function (controller, template, size, params, animation = true, windowClass = null, props = {}) {
             return $uibModal.open({
                 animation,
-                templateUrl: `/Home/RenderView?name=~/Views/${template || '~/Views/Shared/ModalNotFound.cshtml'}`,
+                templateUrl: `/Home/RenderView?name=~/Views/${template}`,
                 controller: controller,
                 size,
                 windowClass,
@@ -408,7 +408,7 @@ function modalService($uibModal) {
 
             return $uibModal.open({
                 animation,
-                templateUrl: isRenderRazorPartial ? `/Home/RenderView?name=${template}` : `/Home/RenderView?name=~/Views/${template || 'Shared/ModalNotFound.cshtml'}`,
+                templateUrl: isRenderRazorPartial ? `/Home/RenderView?name=${template}` : `/Home/RenderView?name=~/Views/${template}`,
                 controller,
                 controllerAs: '$ctrl',
                 scope,
@@ -435,7 +435,7 @@ function modalService($uibModal) {
         openModalSecond: function (controller, template, size, params, animation = true, windowClass = null, $scope, props = {}) {
             return $uibModal.open({
                 animation,
-                templateUrl: `/Home/RenderView?name=~/Views/${template || '~/Views/Shared/ModalNotFound.cshtml'}`,
+                templateUrl: `/Home/RenderView?name=~/Views/${template}`,
                 controller,
                 controllerAs: '$ctrl',
                 scope: $scope,
@@ -921,24 +921,94 @@ app.directive('stopEvent', function () {
 });
 
 
+//Permiso Update Artcicle
 app.directive('updateArticle', function ($rootScope) {
     return {
 
         link: function (scope, element, attrs) {
-            setTimeout(() => {
-                if (!$rootScope.articlePermission.leer) {
-                    element[0].style.display = 'none';
-                }
 
-                if ($rootScope.articlePermission.editar) return
+            if (!$rootScope.articlePermission.leer) {
+                element[0].style.display = 'none';
+            }
 
-                if (!$rootScope.articlePermission.editar) {
-                    element[0].style.display = 'none';
-                }
-
-            }, 100)
+            if (!$rootScope.articlePermission.editar) {
+                element[0].style.display = 'none';
+            }
         },
     }
+})
+
+//permiso para ver kardex 
+app.directive('viewKardex', function ($rootScope, modalService, nombreModal) {
+    return {
+        scope: {
+            params: "=",
+            btnTitle: "=",
+            sizeBtn: "="
+        },
+        template: ' <a style="cursor:pointer;" ng-if="kardex.view" class= "btn btn-info btn-xs text-white" title="Ver Kardex de Artículo"> <i class="mdi mdi-timetable"></i></a >',
+        link: function (scope, element, attr) {
+            let {
+                ventaPermiso
+            } = $rootScope.usuarioPermiso;
+
+            scope.kardex = ventaPermiso.additional.kardex;
+
+            element.on('click', async function (e) {
+
+                let {
+                    MODAL_CTRL,
+                    MODAL_CSHTML
+                } = nombreModal.kardex;
+
+                const articulo = {
+                    idArticulo: scope.params.idArticulo,
+                    codigo: scope.params.codigo,
+                    descripcion: scope.params.descripcion,
+                }
+
+                const {
+                    ModalKardexCtrl
+                } = await import('./../modal/' + MODAL_CTRL);
+
+                modalService.openModalCustom({
+                    controller: ModalKardexCtrl,
+                    template: MODAL_CSHTML,
+                    size: 'xl',
+                    params: articulo,
+                    windowClass: 'uibModalFullScreen',
+                    isRenderRazorPartial: true
+                })
+
+            })
+        }
+    };
+    // return {
+    //     restrict: 'A',
+    //     replace: true,
+    //     scope: {
+    //         params: '='
+    //     },
+    //     link: function (scope, element, attr) {
+    //         console.log(scope.params);
+    //         console.log(element);
+    //     },
+    //     template: function (element, attr) {
+    //         let {
+    //             ventaPermiso
+    //         } = $rootScope.usuarioPermiso;
+    //         let inner = element.get(0);
+    //         // var ngIf = attr.ngIf;
+    //         // var value = attr.ngIf;
+    //         console.log(this)
+    //         // console.log(inner);           
+    //        
+    //         attr.$set('ng-click', () => {
+    //             console.log(this)
+    //         })
+    //         return inner.outerHTML;
+    //     }
+    // }
 })
 
 // app.directive('autoocus')

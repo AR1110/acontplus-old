@@ -23,29 +23,38 @@ GO
 IF OBJECT_ID(N'Inventario.Transaccion_Insert', N'P') IS NOT NULL
 DROP PROCEDURE Inventario.Transaccion_Insert
 GO
-CREATE PROCEDURE Inventario.Transaccion_Insert @codTran VARCHAR(2)
-,@codDoc VARCHAR(2)
-,@fechaRegistro DATETIME
-,@idDocumento INT
-,@idArticulo INT
-,@idBodega INT
-,@cantidad INT
-,@precioCosto NUMERIC(18,5)
-,@precioVenta  NUMERIC(18,5)
-,@idUsuario INT = NULL
+CREATE PROCEDURE Inventario.Transaccion_Insert 
+	 @codTran AS VARCHAR(2)
+	,@codDoc AS VARCHAR(2)
+	,@fechaRegistro AS DATETIME
+	,@idDocumento AS INT
+	,@idArticulo AS INT
+	,@idBodega AS INT
+	,@idMedida AS INT 
+	,@idTarifa AS INT = NULL
+	,@cantidad AS NUMERIC(15,5)
+	,@precioUnitario AS NUMERIC(18,5)
+	,@precioCosto AS NUMERIC(18,5)
+	,@total AS NUMERIC(18,5)
+	,@idUsuario AS INT = NULL
+	,@estado AS BIT = 1 
 AS
 BEGIN
 	SET NOCOUNT ON; 
 	DECLARE @idTipoTransaccion INT 
 	DECLARE @idTipoDocumento INT
-	DECLARE @stock AS NUMERIC(15,5)
 
-	SET @idTipoTransaccion = (SELECT idTipoTransaccion FROM Inventario.TipoTransaccion WHERE codigo = @codTran)
-	SET @idTipoDocumento = (SELECT idTipoDocumento FROM Inventario.TipoDocumento WHERE codigo = @codDoc)
+	SET @idTipoTransaccion = (SELECT TOP 1 idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = @codTran)
+	
+	SET @idTipoDocumento = (SELECT TOP 1 idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = @codDoc)
 
-	INSERT INTO Inventario.Transaccion(idTipoTransaccion, idArticulo, idBodega, idTipoDocumento, idDocumento, cantidad, precioCosto, precioUnitario, fechaRegistro, idUsuario)
-	SELECT @idTipoTransaccion, @idArticulo, @idBodega, @idTipoDocumento, @idDocumento, @cantidad, @precioCosto, @precioVenta, @fechaRegistro, @idUsuario
-		
+	IF @estado = 1 
+		BEGIN 
+			INSERT INTO Inventario.Transaccion
+				   (idTipoTransaccion, idArticulo, idBodega, idTipoDocumento, idDocumento, idMedida, idTarifa, cantidad, precioCosto, precioUnitario, total,fechaRegistro, idUsuario)
+			SELECT @idTipoTransaccion,@idArticulo,@idBodega,@idTipoDocumento,@idDocumento,@idMedida,@idTarifa,@cantidad,@precioCosto,@precioUnitario,@total,@fechaRegistro,@idUsuario
+		END
+
 	EXEC Inventario.Stock_Update @idArticulo,@idBodega
 	
 END

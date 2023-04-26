@@ -228,6 +228,25 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
+          "Port": 54948
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Factura",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Post"
+      ],
+      "UpstreamPathTemplate": "/api/Factura"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
           "Port": 12786
         }
       ],
@@ -749,7 +768,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44320
+          "Port": 7097
         }
       ],
       "DownstreamPathTemplate": "/api/Reporte/Download",
@@ -768,7 +787,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44320
+          "Port": 7097
         }
       ],
       "DownstreamPathTemplate": "/api/Reporte/ExportExcel",
@@ -787,7 +806,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44320
+          "Port": 7097
         }
       ],
       "DownstreamPathTemplate": "/api/Reporte/DynamicReport",
@@ -920,7 +939,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44331
+          "Port": 7210
         }
       ],
       "DownstreamPathTemplate": "/api/Kardex?json={json}",
@@ -939,7 +958,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44331
+          "Port": 7210
         }
       ],
       "DownstreamPathTemplate": "/api/Kardex/Filters",
@@ -1030,6 +1049,25 @@
         "Get"
       ],
       "UpstreamPathTemplate": "/api/Cliente/GetDataForm/{json}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 54948
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Ats{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "UpstreamPathTemplate": "/api/Ats{everything}"
     }
   ]
 }

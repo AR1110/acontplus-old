@@ -25,7 +25,7 @@ BEGIN
 		BEGIN TRAN 
 			
 			UPDATE FactElect.RetencionAts SET anuladaSri = 1 WHERE idRetencionAts = @idRetencionAts
-			
+			UPDATE FactElect.RetAtsDocSustento SET estado = 0 WHERE idRetencionAts = @idRetencionAts
 			--ANULA EN FACTURA
 			UPDATE fc SET fc.retencion = 0
 			FROM FacturaCompra fc

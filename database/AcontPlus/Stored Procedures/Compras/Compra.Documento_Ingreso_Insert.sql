@@ -214,29 +214,32 @@ BEGIN
 						BEGIN 
 							DECLARE @idArticulo INT
 							DECLARE @idBodega INT
+							DECLARE @idMedida INT
+							DECLARE @idTarifa INT = NULL
 							DECLARE @cantidad NUMERIC(18,2)
-							DECLARE @precioCosto NUMERIC(18,5)
-							DECLARE @precioVenta NUMERIC(18,5) 
+							DECLARE @precioUnitario NUMERIC(18,5)
+							DECLARE @precioCosto NUMERIC(18,5) 
+							DECLARE @total AS NUMERIC(18,5)
 
 							DECLARE cursor_inventory CURSOR LOCAL FOR
-							SELECT td.idArticulo, idBodega, cantidad, a.precioCosto, precioUnitario 
+							SELECT td.idArticulo, idBodega,td.idMedida,NULL,cantidad,td.precioUnitario,a.precioCosto,td.precioTotalSinImpuesto
 							FROM @detail td 
 							INNER JOIN Articulo a WITH (NOLOCK) ON td.idArticulo = a.idArticulo 
 							WHERE a.llevaInventario = 1
 
 							OPEN cursor_inventory
 
-							FETCH NEXT FROM cursor_inventory INTO @idArticulo, @idBodega , @cantidad, @precioCosto, @precioVenta
-
+							FETCH NEXT FROM cursor_inventory INTO @idArticulo,@idBodega,@idMedida,@idTarifa,@cantidad,@precioUnitario,@precioCosto,@total
+							
 							WHILE @@FETCH_STATUS = 0
 							BEGIN
-								--tipo transaccion 2 salidas
-								--tipo documento 1 factura electronica
-								EXEC Inventario.Transaccion_Insert 'E', 'IV', @fechaEmision, @idDocumentoIngreso,  @idArticulo, @idBodega , @cantidad, @precioCosto, @precioVenta, @idUsuario
-								FETCH NEXT FROM cursor_inventory INTO @idArticulo, @idBodega , @cantidad, @precioCosto, @precioVenta
+								--tipo transaccion Entradas
+								--tipo documento Liquidacion Compra
+								EXEC Inventario.Transaccion_Insert 'E', 'IV', @fechaEmision, @idDocumentoIngreso,  @idArticulo, @idBodega ,@idMedida,@idTarifa,@cantidad,@precioUnitario,@precioCosto,@total, @idUsuario
+								FETCH NEXT FROM cursor_inventory INTO @idArticulo,@idBodega,@idMedida, @idTarifa,@cantidad,@precioUnitario,@precioCosto,@total
 							END
 							CLOSE cursor_inventory
-							DEALLOCATE cursor_inventory  
+							DEALLOCATE cursor_inventory     
 						END
 				END
 

@@ -1,0 +1,152 @@
+<div id="modalFiltroInventario" class="modal fade in" tabindex="-1" role="dialog" data-backdrop="static">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fa-solid fa-shelves"></i> Reporte Inventario</h5>
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+
+                <div class="row justify-content-between">
+                    @* <div class="col-xl-2 col-lg-2 col-md-3 col-sm-6 col-xs-12">
+                    <div class="icheck-info">
+                    <input type="checkbox" ng-model="dataSearch.checkboxSucursalFiltro"
+                    ng-change="onChangeCheckboxSucursal()" name="checkboxSucursalFiltro" id="checkboxSucursalFiltro"
+                    class="form-control">
+                    <label for="checkboxSucursalFiltro">Establecimiento</label>
+                    </div>
+                    </div>
+
+                    <div class="col-xl-2 col-lg-2 col-md-3 col-sm-6 col-xs-12"
+                    ng-if="dataSearch.checkboxSucursalFiltro">
+                    <div class="icheck-info">
+                    <input type="checkbox" ng-model="dataSearch.checkboxBodegaFiltro"
+                    ng-change="onChangeCheckboxBodega()" name="checkboxBodegaFiltro" id="checkboxBodegaFiltro"
+                    class="form-control">
+                    <label for="checkboxBodegaFiltro">Bodega</label>
+                    </div>
+                    </div> *@
+
+                    <div class="col-xl-2 col-lg-2 col-md-3 col-sm-6 col-xs-12">
+                        <div class="icheck-info">
+                            <input type="checkbox" ng-model="dataSearch.chkProveedor" class="form-control"
+                                name="chkProveedor" id="chkProveedor">
+                            <label for="chkProveedor">Proveedor</label>
+                        </div>
+                    </div>
+                    <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-12">
+                        <div class="form-group">
+                            <select class="form-control" ng-model="dataSearch.byTipoReporte"
+                                ng-change="onChangeTipoReporte()">
+                                <option ng-value="1">Con Valoración</option>
+                                <option ng-value="2">Con Lista de Precios</option>
+                            </select>
+                        </div>
+                    </div>
+                    @*<div class="col-xl-2 col-lg-2 col-md-3 col-sm-6 col-xs-12">
+                    <div class="icheck-info">
+                    <input type="checkbox" ng-model="dataSearch.checkboxSubFamiliaFiltro" class="form-control"
+                    name="checkboxSubFamiliaFiltro" id="checkboxSubFamiliaFiltro">
+                    <label for="checkboxSubFamiliaFiltro">SubFamilia</label>
+                    </div>
+                    </div>
+                    <div class="col-xl-2 col-lg-2 col-md-3 col-sm-6 col-xs-12">
+                    <div class="icheck-info">
+                    <input type="checkbox" ng-model="dataSearch.checkboxStockFiltro" class="form-control"
+                    name="checkboxStockFiltro" id="checkboxStockFiltro">
+                    <label for="checkboxStockFiltro">Stock</label>
+                    </div>
+                    </div>*@
+                </div>
+                @* <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12" ng-if="dataSearch.checkboxSucursalFiltro">
+                <div class="form-group">
+                <label>Establecimiento:</label>
+                <select ng-model="dataSearch.codEstab" ng-change="getAsignaciones()" class="form-control">
+                <option ng-value="item.codEstab" ng-repeat="item in sucursales">{{item.nombreComercial}}</option>
+                </select>
+                </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12" ng-if="dataSearch.checkboxBodegaFiltro">
+                <div class="form-group">
+                <label>Bodega:</label>
+                <select ng-model="dataSearch.byBodega" class="form-control">
+                <option ng-value="item.idBodega" ng-repeat="item in bodegas">{{item.descripcion}}</option>
+                </select>
+                </div>
+                </div>
+                </div> *@
+
+                <div class="row">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12" ng-if="!dataSearch.chkProveedor">
+                        <div class="form-group">
+                            <label for="">SubFamilia</label>
+                            <select class="form-control border-select" ng-model="dataSearch.bySubFamilia"
+                                ng-options="sf.subFamilia.idSubFamilia as sf.subFamilia.descripcion group by sf.nombreFamilia  for sf in subFamilias">
+                            </select>
+                        </div>
+                    </div>
+                    @*<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12" ng-if="dataSearch.checkboxStockFiltro">
+                    <div class="form-group">
+                    <label for="stock">Stock</label>
+                    <select class="form-control" ng-model="dataSearch.byStock">
+                    <option ng-value="1">Con Stock</option>
+                    <option ng-value="2">Sin Stock</option>
+                    </select>
+                    </div>2
+                    </div>*@
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" ng-if="dataSearch.chkProveedor">
+                        @await Html.PartialAsync("~/Views/Proveedor/_ProveedorAutocompleteFiltro.cshtml")
+                    </div>
+                </div>
+
+                <div class="row justify-content-between">
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label for="ordenar">Ordenar por:</label>
+                            <select class="form-control" ng-model="dataSearch.byOrderCampo">
+                                <option value="ar.codigo">Codigo</option>
+                                <option value="ar.descripcion">Descripción</option>
+                                <option value="ar.idSubFamilia">SubFamilia</option>
+                                <option value="ar.stock">Stock</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                        <div class="icheck-info mt-3">
+                            <input type="radio" ng-model="dataSearch.byOrder" value='ASC' name="radioByOrder"
+                                id="byOrderAsc">
+                            <label for="byOrderAsc">Ascendente</label>
+                        </div>
+                        <div class="icheck-info">
+                            <input type="radio" ng-model="dataSearch.byOrder" value="DESC" name="radioByOrder"
+                                id="byOrderDesc">
+                            <label for="byOrderDesc">Descendente</label>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-4 col-xs-12">
+                        <div class="form-group">
+                            <label for="tipoFormato">Tipo Formato</label>
+                            <div class="icheck-info">
+                                <input type="radio" ng-model="dataSearch.byTipoFormato" value="pdf" name="tipoFormato"
+                                    id="pdf">
+                                <label for="pdf">PDF</label>
+                            </div>
+                            <div class="icheck-info">
+                                <input type="radio" ng-model="dataSearch.byTipoFormato" value="excel" name="tipoFormato"
+                                    id="excel">
+                                <label for="excel">EXCEL</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary-1" ng-click="filtrar()"> <i class="fa fa-search"></i> Buscar</button>
+                <button class="btn btn-dark" data-dismiss="modal">&times; Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
