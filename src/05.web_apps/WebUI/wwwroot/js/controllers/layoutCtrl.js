@@ -157,6 +157,8 @@ function layoutCtrl($scope, $rootScope, $window, Idle, mS, _modalSvc, toast, for
                             console.log($rootScope.articlePermission)
                         }
                     })
+                } else {
+                     location.href = '/Home/Index'
                 }
 
             }

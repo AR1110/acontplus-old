@@ -52,16 +52,45 @@ namespace ApiFactElect.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);                
                 await _db.SPExecute("Ventas.Factura_Insert");
                 _db.AddDynamicParam("idRol", idUsuarioRol);                
-                _db.AddDynamicParam("jsonFactura", JsonConvert.SerializeObject(data.factura));
-                _db.AddDynamicParam("jsonDetalle", JsonConvert.SerializeObject(data.detalle));
-                _db.AddDynamicParam("jsonInfoAdicional", JsonConvert.SerializeObject(data.adicional));
-                _db.AddDynamicParam("jsonManejoArticulo", JsonConvert.SerializeObject(data.manejoArticulo) ?? "");                
+                _db.AddDynamicParam("jsonFactura", SqlValidation.ValidateSqlString(data.factura));
+                _db.AddDynamicParam("jsonDetalle", SqlValidation.ValidateSqlString(data.detalle));
+                _db.AddDynamicParam("jsonInfoAdicional", SqlValidation.ValidateSqlString(data.adicional));
+                _db.AddDynamicParam("jsonManejoArticulo", SqlValidation.ValidateSqlString(data.manejoArticulo) ?? "");                
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
                 _log.LogError("Error al crear la factura: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al crear la factura");
+            }
+            return Ok(_response);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Update(int id, [FromBody] FacturaParams data)
+        {
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Ventas.Factura_Update");
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("id", id);
+                _db.AddDynamicParam("jsonFactura", SqlValidation.ValidateSqlString(data.factura));
+                _db.AddDynamicParam("jsonDetalle", SqlValidation.ValidateSqlString(data.detalle));
+                _db.AddDynamicParam("jsonInfoAdicional", SqlValidation.ValidateSqlString(data.adicional));
+                _db.AddDynamicParam("jsonManejoArticulo", SqlValidation.ValidateSqlString(data.manejoArticulo) ?? "");
+                _response = _db.GetDefault();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error in Update: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al actualizar");
+            }
+            finally
+            {
+                _db.Close();
             }
             return Ok(_response);
         }

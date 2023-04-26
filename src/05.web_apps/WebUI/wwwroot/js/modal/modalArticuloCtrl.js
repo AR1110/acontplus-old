@@ -710,11 +710,6 @@
          this.listaArticulos = [];
          this.selectedArticulos = [];
 
-         let {
-             ventaPermiso
-         } = $rootScope.usuarioPermiso;
-
-         this.viewKardex = ventaPermiso.additional.kardex.view;
 
          this.tipoBusquedas = [{
                  codigo: 'DESC',

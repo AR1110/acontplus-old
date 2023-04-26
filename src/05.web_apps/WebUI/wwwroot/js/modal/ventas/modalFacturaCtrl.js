@@ -459,9 +459,9 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
     }
 
     updateInvoice(id, params) {
-        return this._mS.getData('put', 'Factura/Put?id=' + id, params, null, true)
+        return this._mS.getData('put', 'Factura/' + id, params, null, true)
             .catch(errorResponse => {
-                console.error('Error al crear una factura -> fact_service:');
+                console.error('Error al actualizar una factura -> fact_service:');
                 throw new Error(errorResponse);
             });
     }
@@ -1029,22 +1029,26 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
                 manejoArticulo: JSON.stringify(this.datosAdicionalesArticulo)
             }
 
-            await this._mS.getData('put', '/FacturaVenta/Update?id=' + this.data.idFactura, data).then(response => {
+            this.updateInvoice(this.data.idFactura, data).then(response => {
                 if (response.code === '0') {
+                    hideLoader();
                     this._fS.sweetAlert('warning', response.message, response.titleSms);
                 }
                 if (response.code === "1") {
+                    hideLoader();
                     this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
                     // let data = JSON.parse(response.payload)[0];                   
                     // this.$uibModalInstance.close(data) 
                     this.isUpdate = true;
                 }
+            }).catch(error => {
+                hideLoader();
+                console.log(error);
             })
 
         } catch (error) {
-            console.log(error)
-        } finally {
             hideLoader();
+            console.log(error)
         }
     }
 
@@ -1418,11 +1422,13 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
                 manejoArticulo: JSON.stringify(this.datosAdicionalesArticulo)
             }
 
-            await this._mS.getData('post', '/FacturaVenta/Insert', data).then(response => {
+            this.createInvoice(data).then(response => {
                 if (response.code === '0') {
+                    hideLoader();
                     this._fS.sweetAlert('warning', response.message, response.titleSms);
                 }
                 if (response.code === "1") {
+                    hideLoader();
                     this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
 
                     let data = JSON.parse(response.payload)[0];
@@ -1441,13 +1447,15 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
                     this.$uibModalInstance.close(mainData)
 
                 }
+            }).catch(error => {
+                hideLoader();
+                console.log(error);
             })
 
         } catch (error) {
-            console.log(error)
-        } finally {
             hideLoader();
-        }
+            console.log(error)
+        } finally {}
     }
 
 }
