@@ -420,7 +420,7 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl {
                 codEstab: this.data.codEstab
             }
 
-            console.log(json)
+
             this._mS.getData('get', '/FacturaVenta/Get?json=' + JSON.stringify(json)).then(response => {
                 if (response.code === "0") {
                     console.warn(response)

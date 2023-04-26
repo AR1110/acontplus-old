@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.js?v=0.30";
+} from "./modalBaseCtrl.js?v=0.31";
 
 
 class ModalNotaEntregaCtrl extends ModalBaseCtrl {
@@ -691,7 +691,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
                         manejoArticulo: JSON.stringify(this.datosAdicionalesArticulo)
                     }
 
-                    this._mS.getData('post', '/FacturaVenta/Insert', data).then(response => {
+                    this.createInvoice(data).then(response => {
                         if (response.code === '0') {
                             hideLoader();
                             this._fS.sweetAlert('warning', response.message, response.titleSms);
@@ -1511,11 +1511,13 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
                 manejoArticulo: JSON.stringify(this.datosAdicionalesArticulo)
             }
 
-            await this._mS.getData('post', '/FacturaVenta/Insert', sendData).then(response => {
+            this.createInvoice(sendData).then(response => {
                 if (response.code === '0') {
+                    hideLoader();
                     this._fS.sweetAlert('warning', response.message, response.titleSms);
                 }
                 if (response.code === "1") {
+                    hideLoader();
                     this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
 
                     let data = JSON.parse(response.payload)[0];
@@ -1534,13 +1536,15 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
 
                     this.$uibModalInstance.close(mainData)
                 }
+            }).catch(error => {
+                hideLoader();
+                console.log(error)
             })
 
         } catch (error) {
-            console.log(error)
-        } finally {
             hideLoader();
-        }
+            console.log(error)
+        } finally {}
     }
 
 }
