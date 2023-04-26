@@ -99,6 +99,9 @@ class BaseSearchArticulo {
 
     async getDataArticuloParaVenta() {
         try {
+            console.log(this.idBodega)
+
+            this.dataArticulo.idBodega = this.idBodega;
 
             let results = await this._commonSvc.getDataArticuloParaVenta({
                 json: this.dataArticulo
@@ -151,6 +154,9 @@ class BaseSearchArticulo {
 
     async getDataArticuloParaCompra() {
         try {
+
+            this.dataArticulo.idBodega = this.idBodega;
+
             let results = await this._commonSvc.getDataArticuloParaCompra({
                 json: this.dataArticulo
             }).then(response => JSON.parse(response.payload));
@@ -226,7 +232,7 @@ class MdArticuloCtrl extends BaseSearchArticulo {
             let mainData = JSON.parse(response.payload);
             let articulo = mainData[6];
 
-            console.log(mainData);
+
             this.$rootScope.articlePermission = mainData[10][0];
 
             if (this.isDefaultArticle && articulo.length > 0) {
@@ -414,7 +420,8 @@ app.component('mdAutocompleteArticuloComponent', {
         // abrirModalArticulo: '&',
         // getDataArticulo:'&',
         setItemArticuloEnDetalle: '&',
-        isDefaultArticle: '=?'
+        isDefaultArticle: '=?',
+        idBodega: '='
     },
     controller: MdArticuloCtrl
 });
