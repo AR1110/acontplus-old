@@ -1,7 +1,4 @@
-﻿using Domain.ViewModels;
-using System.Collections.Generic;
-
-namespace Domain.Models
+﻿namespace Domain.Models
 {
     public class ControlCaja
     {

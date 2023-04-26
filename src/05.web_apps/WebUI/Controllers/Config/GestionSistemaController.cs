@@ -1,8 +1,8 @@
-﻿using DataAccess.Almacen;
-using DataAccess;
+﻿using DataAccess;
+using DataAccess.Almacen;
 using Domain.Models;
-using Microsoft.AspNetCore.Mvc;
 using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Config
 {
@@ -10,9 +10,9 @@ namespace WebUI.Controllers.Config
     {
         // GET: Articulo
         private readonly IConfiguration _configuration;
-         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
+        ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
-        
+
         GenericResponse _gr = new();
         private ArticuloDao _a;
 
@@ -21,8 +21,8 @@ namespace WebUI.Controllers.Config
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
             _a = new ArticuloDao(_configuration);
-            
-            
+
+
         }
 
         [HttpGet]

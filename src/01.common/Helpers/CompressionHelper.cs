@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.IO.Compression;
+﻿using System.IO.Compression;
 
 namespace Helpers
 {
@@ -32,7 +30,7 @@ namespace Helpers
             byte[] decompressedArray = null;
             try
             {
-               MemoryStream decompressedStream = new MemoryStream();
+                MemoryStream decompressedStream = new MemoryStream();
                 using (MemoryStream compressStream = new MemoryStream(data))
                 {
                     DeflateStream deflateStream = new DeflateStream(compressStream, CompressionMode.Decompress);

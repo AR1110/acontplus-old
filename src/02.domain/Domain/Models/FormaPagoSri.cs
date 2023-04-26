@@ -6,6 +6,6 @@
         public string descripcion { get; set; }
         public string codigo { get; set; }
         public bool estado { get; set; }
-    } 
-   
+    }
+
 }

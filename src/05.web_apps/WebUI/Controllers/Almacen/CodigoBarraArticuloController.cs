@@ -1,16 +1,15 @@
-﻿using Domain.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using Domain.Models.Almacen;
+﻿using DataAccess;
 using DataAccess.Almacen;
-using DataAccess;
+using Domain.Models;
+using Domain.Models.Almacen;
 using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers
 {
     public class CodigoBarraArticuloController : Controller
     {
-        private readonly IConfiguration _configuration; 
+        private readonly IConfiguration _configuration;
         // GET: CodigoBarraArticulo 
         private DataAccessObject _dao;
         private ArticuloCodigoBarraDao _cba;
@@ -22,7 +21,7 @@ namespace WebUI.Controllers
             _cba = new ArticuloCodigoBarraDao(_configuration);
         }
 
-        
+
         public IActionResult Index()
         {
             return View();
@@ -65,7 +64,7 @@ namespace WebUI.Controllers
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Almacen.CodigoBarra_Update", parameters)));
         }
 
-        
+
         public async Task<IActionResult> Delete(int idArticuloCodigoBarra)
         {
             int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);

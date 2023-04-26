@@ -13,7 +13,7 @@ namespace AdminUI.Controllers
         private RolService _pS;
         public RolController(ILogger<RolController> logger, IConfiguration config)
         {
-            _config= config;
+            _config = config;
             _pS = new RolService(_config);
             _logger = logger;
         }
@@ -55,9 +55,9 @@ namespace AdminUI.Controllers
 
         [HttpPost]
         [Route("Duplicate")]
-        public async Task<IActionResult> Duplicate(string id,[FromBody] Rol data)
+        public async Task<IActionResult> Duplicate(string id, [FromBody] Rol data)
         {
-            return Ok(await _pS.DuplicateAsync(id,data));
+            return Ok(await _pS.DuplicateAsync(id, data));
         }
     }
 }

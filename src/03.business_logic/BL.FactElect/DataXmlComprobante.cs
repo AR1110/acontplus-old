@@ -184,7 +184,7 @@ namespace BL.FactElect
             int idDetalle = 0;
             foreach (XmlNode item in details)
             {
-                Detalle detail = new Detalle(); 
+                Detalle detail = new Detalle();
                 detail.idDetalle = idDetalle;
                 if (comp.codDoc == "01")
                 {

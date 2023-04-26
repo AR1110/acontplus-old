@@ -1,9 +1,5 @@
 ﻿using DataAccess.Tesoreria;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers.GestionFinanciera
 {
@@ -18,9 +14,9 @@ namespace WebUI.Controllers.GestionFinanciera
             _c = new CobroDao(_configuration);
         }
 
-        
+
         public IActionResult Index()
-        {            
+        {
             return View();
         }
 
@@ -32,7 +28,7 @@ namespace WebUI.Controllers.GestionFinanciera
             return Ok(res);
 
         }
-         
+
         public async Task<IActionResult> Put(int idCobro, string observacion, bool cobro, bool anular)
         {
             int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);

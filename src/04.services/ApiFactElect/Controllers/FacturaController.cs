@@ -1,11 +1,8 @@
 ﻿using Common.Logs;
 using DataAccess;
 using Domain.ViewModels;
-using Domain.ViewModels.Compras;
 using Helpers;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace ApiFactElect.Controllers
 {
@@ -49,13 +46,13 @@ namespace ApiFactElect.Controllers
             var _response = new GenericResponse();
             try
             {
-                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);                
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Ventas.Factura_Insert");
-                _db.AddDynamicParam("idRol", idUsuarioRol);                
+                _db.AddDynamicParam("idRol", idUsuarioRol);
                 _db.AddDynamicParam("jsonFactura", SqlValidation.ValidateSqlString(data.factura));
                 _db.AddDynamicParam("jsonDetalle", SqlValidation.ValidateSqlString(data.detalle));
                 _db.AddDynamicParam("jsonInfoAdicional", SqlValidation.ValidateSqlString(data.adicional));
-                _db.AddDynamicParam("jsonManejoArticulo", SqlValidation.ValidateSqlString(data.manejoArticulo) ?? "");                
+                _db.AddDynamicParam("jsonManejoArticulo", SqlValidation.ValidateSqlString(data.manejoArticulo) ?? "");
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

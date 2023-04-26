@@ -1,13 +1,8 @@
 ﻿using DataAccess;
-using WebUI.Utils;
 using Domain.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using Helpers;
+using Microsoft.AspNetCore.Mvc;
+using WebUI.Utils;
 
 namespace WebUI.Controllers.Configuracion
 {

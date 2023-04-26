@@ -1,20 +1,20 @@
 ﻿using Common.Logs;
+using Domain.Models;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Scriban;
+using System.Dynamic;
 using System.Net;
 using System.Net.Mail;
 using System.Net.Mime;
 using System.Text;
-using Microsoft.Extensions.Configuration;
-using Domain.Models;
-using System.Dynamic;
-using Scriban;
 
 namespace BL.Notificacion
 {
     public class SendEmail
     {
         private readonly IConfiguration _configuration;
-         public SendEmail(IConfiguration configuration)
+        public SendEmail(IConfiguration configuration)
         {
             _configuration = configuration;
         }
@@ -50,7 +50,7 @@ namespace BL.Notificacion
                 //var dataMail = JsonConvert.DeserializeObject<Dictionary<string, string>>(email.dataMail);
                 var dataMail = JsonConvert.DeserializeObject<IEnumerable<IDictionary<string, object>>>(email.dataMail).FirstOrDefault();
 
-             
+
                 //Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
                 //Dictionary<string, string> dataEmail = new Dictionary<string, string>();
                 //foreach (var paramRdlc in dataMail.FirstOrDefault())
@@ -66,7 +66,7 @@ namespace BL.Notificacion
 
                 //string pathLogo = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logos", email.logo);
 
-               string pathLogo = Path.Combine(_configuration.GetSection("Media").GetSection("Images").Value, "Logos", email.logo);
+                string pathLogo = Path.Combine(_configuration.GetSection("Media").GetSection("Images").Value, "Logos", email.logo);
 
                 LinkedResource linkedResource = new LinkedResource(pathLogo, "image/jpg");
                 linkedResource.ContentId = "Pic1";

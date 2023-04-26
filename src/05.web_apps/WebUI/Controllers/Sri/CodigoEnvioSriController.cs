@@ -1,5 +1,4 @@
 ﻿using DataAccess;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Sri
@@ -14,7 +13,7 @@ namespace WebUI.Controllers.Sri
             _configuration = configuration;
             _ces = new CodigoEnvioSriDao(_configuration);
         }
-        
+
         public IActionResult Index()
         {
             return View();

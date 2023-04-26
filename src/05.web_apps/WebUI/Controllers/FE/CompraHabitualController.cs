@@ -10,17 +10,17 @@ namespace WebUI.Controllers.FE
     public class CompraHabitualController : Controller
     {
         private readonly IConfiguration _configuration;
-         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
+        ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
-        
+
         private readonly DbAccess _db;
         private readonly LogWriter _log;
         public CompraHabitualController(IConfiguration configuration)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
-            
-            
+
+
             _db = new DbAccess(_configuration);
             _log = new LogWriter(_configuration);
         }

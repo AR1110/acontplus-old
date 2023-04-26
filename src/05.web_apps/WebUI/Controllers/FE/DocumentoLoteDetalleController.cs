@@ -11,7 +11,7 @@ namespace WebUI.Controllers.FE
         public DocumentoLoteDetalleController(IConfiguration configuration)
         {
             _configuration = configuration;
-            _dld = new DocumentoLoteDetalleDao(_configuration); 
+            _dld = new DocumentoLoteDetalleDao(_configuration);
         }
         public async Task<IActionResult> Get(int idDocumentoLote)
         {

@@ -2,7 +2,7 @@ using DataAccess;
 using Domain.Admin.Models;
 using Helpers;
 using Microsoft.Extensions.Configuration;
-using System.Data; 
+using System.Data;
 namespace BL.Admin.Data
 {
     public class AplicacionMenuService

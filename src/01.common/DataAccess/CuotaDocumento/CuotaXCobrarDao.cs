@@ -1,15 +1,10 @@
-﻿using Domain.Models;
-using Domain.Models.CuotaDocumento;
-using Domain.Models.Tesoreria;
+﻿using Domain.Models.CuotaDocumento;
 using Domain.ViewModels.CuotaDocumento;
 using Helpers;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Threading.Tasks;
 
 namespace DataAccess.CuotasXCobrar
 {
@@ -220,7 +215,7 @@ namespace DataAccess.CuotasXCobrar
             }
             return _gr;
         }
-      
+
     }
 
 }

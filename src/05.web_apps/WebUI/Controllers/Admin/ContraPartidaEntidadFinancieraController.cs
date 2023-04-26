@@ -1,6 +1,5 @@
 ﻿using DataAccess;
 using Helpers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Admin
@@ -17,7 +16,7 @@ namespace WebUI.Controllers.Admin
             _cpe = new ContraPartidaEfDao(_configuration);
         }
 
-        
+
         public IActionResult Index()
         {
             return View();

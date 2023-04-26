@@ -8,13 +8,13 @@ namespace WebUI.Controllers.Config
     public class NotificacionEntidadController : Controller
     {
         private readonly IConfiguration _configuration;
-        
+
         private DataAccessObject _dao;
 
         public NotificacionEntidadController(IConfiguration configuration)
         {
             _configuration = configuration;
-            
+
             _dao = new DataAccessObject(_configuration);
         }
 

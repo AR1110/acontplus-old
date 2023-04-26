@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using DataAccess.GestionTributaria;
+﻿using DataAccess.GestionTributaria;
 using Domain.Models.GestionTributaria;
 using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers
 {
@@ -18,7 +17,7 @@ namespace WebUI.Controllers
             _configuration = configuration;
             _ti = new TipoImpuestoRentaDao(_configuration);
         }
-        
+
         public IActionResult Index()
         {
             return View();

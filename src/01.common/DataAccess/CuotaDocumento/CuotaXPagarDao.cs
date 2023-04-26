@@ -1,14 +1,10 @@
-﻿using Domain.Models;
-using Domain.Models.CuotaDocumento;
+﻿using Domain.Models.CuotaDocumento;
 using Domain.ViewModels.CuotaDocumento;
 using Helpers;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Threading.Tasks;
 
 namespace DataAccess.CuotaDocumento
 {
@@ -145,7 +141,7 @@ namespace DataAccess.CuotaDocumento
             }
             return _gr;
         }
-       
+
         public async Task<GenericResponse> InsertAsync(int idRol, CuotaXPagarViewModel data)
         {
             try

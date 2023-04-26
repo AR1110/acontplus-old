@@ -1,6 +1,5 @@
 ﻿using DataAccess.Administracion;
 using Domain.Models.Administracion;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Admin
@@ -15,7 +14,7 @@ namespace WebUI.Controllers.Admin
             _ae = new ActividadEtiquetaDao(_config);
         }
 
-        
+
         public IActionResult Index()
         {
             return View();

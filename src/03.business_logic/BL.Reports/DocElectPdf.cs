@@ -117,7 +117,7 @@ namespace BL.Reports
 
 
             RoundRectangle rr = new RoundRectangle();
-            
+
             PdfPCell pdfCell2 = new PdfPCell();
             pdfCell2.CellEvent = rr;
             pdfCell2.Border = Rectangle.NO_BORDER;
@@ -176,14 +176,14 @@ namespace BL.Reports
             tmpTable2.AddCell(new Paragraph("FECHA Y HORA DE AUTORIZACIÓN: " + data.fechaAutorizacion));
 
             Chunk ck_ambiente = new Chunk("AMBIENTE: ", boldStyle);
-            Chunk ck_ambienteDetails = new Chunk((data.infoTributaria.ambiente == "1"? "PRUEBAS" : "PRODUCCIÓN"), arial12);
+            Chunk ck_ambienteDetails = new Chunk((data.infoTributaria.ambiente == "1" ? "PRUEBAS" : "PRODUCCIÓN"), arial12);
             Phrase ph_Ambiente = new Phrase
             {
                 ck_ambiente,
                 ck_ambienteDetails
             };
 
-            Paragraph p_ambiente = new Paragraph(ph_Ambiente); 
+            Paragraph p_ambiente = new Paragraph(ph_Ambiente);
 
             tmpTable2.AddCell(p_ambiente);
 
@@ -207,7 +207,7 @@ namespace BL.Reports
 
 
             // }
-           
+
 
 
 

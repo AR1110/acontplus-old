@@ -1,5 +1,4 @@
 ﻿using Domain.Models.Almacen;
-using System.Collections.Generic;
 
 namespace Domain.ViewModels
 {

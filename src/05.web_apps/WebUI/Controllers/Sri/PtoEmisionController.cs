@@ -1,8 +1,8 @@
-﻿using DataAccess;
-using Microsoft.AspNetCore.Mvc;
+﻿using Common.Logs;
+using DataAccess;
 using Domain.Models;
-using Common.Logs;
 using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Sri
 {

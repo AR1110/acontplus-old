@@ -1,10 +1,9 @@
 ﻿using DataAccess;
-using Domain.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using DataAccess.Almacen;
+using Domain.Models;
 using Domain.Models.Almacen;
 using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers
 {
@@ -12,9 +11,9 @@ namespace WebUI.Controllers
     {
         //// GET: SubFamilia
         private readonly IConfiguration _configuration;
-         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
+        ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
-        
+
         GenericResponse _gr = new();
         private SubFamiliaDao _sf;
 
@@ -23,12 +22,12 @@ namespace WebUI.Controllers
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
             _sf = new SubFamiliaDao(_configuration);
-            
-            
+
+
 
         }
 
-        
+
         public IActionResult Index()
         {
             int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -56,7 +55,7 @@ namespace WebUI.Controllers
             parameters.Add("montoObjetivo", data.montoObjetivo);
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Almacen.SubFamilia_Insert", parameters)));
         }
-       
+
         [HttpPut]
         public async Task<IActionResult> Put(int id, [FromBody] SubFamilia data)
         {

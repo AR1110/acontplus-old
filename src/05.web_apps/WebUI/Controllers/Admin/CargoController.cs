@@ -1,6 +1,5 @@
 ﻿using DataAccess;
 using Domain.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers
@@ -15,7 +14,7 @@ namespace WebUI.Controllers
             _config = config;
             _c = new CargoDao(_config);
         }
-        
+
         public IActionResult Index()
         {
             return View();

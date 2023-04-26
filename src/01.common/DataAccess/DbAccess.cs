@@ -1,10 +1,8 @@
-﻿using System.Data;
-using System;
-using System.Data.SqlClient;
-using System.Threading.Tasks;
+﻿using Common.Logs;
 using Helpers;
 using Microsoft.Extensions.Configuration;
-using Common.Logs;
+using System.Data;
+using System.Data.SqlClient;
 
 namespace DataAccess
 {

@@ -1,5 +1,6 @@
 ﻿using Logs;
 using Newtonsoft.Json;
+using Nustache.Core;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -9,7 +10,6 @@ using System.Net;
 using System.Net.Mail;
 using System.Net.Mime;
 using System.Text;
-using Nustache.Core;
 
 namespace NotifierWS
 {

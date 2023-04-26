@@ -1,17 +1,16 @@
 ﻿using DataAccess;
 using Domain.Models;
 using Helpers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Admin
 {
     public class ContraPartidaController : Controller
-    {    
+    {
         private readonly IConfiguration _configuration;
 
         GenericResponse _gr = new();
-       private ContraPartidaDao _cp;
+        private ContraPartidaDao _cp;
 
         public ContraPartidaController(IConfiguration configuration)
         {
@@ -19,7 +18,7 @@ namespace WebUI.Controllers.Admin
             _cp = new ContraPartidaDao(_configuration);
         }
 
-        
+
         public IActionResult Index()
         {
             return View();
@@ -39,7 +38,7 @@ namespace WebUI.Controllers.Admin
             _gr = await _cp.ReadContraPartidaAsync(idRol);
             return Ok(_gr);
         }
-      
+
         [HttpPost]
         public async Task<IActionResult> Put([FromBody] ContraPartida data)
         {

@@ -1,15 +1,15 @@
-﻿using Domain.ViewModels;
-using Microsoft.AspNetCore.Mvc;
-using Helpers;
+﻿using Common.Logs;
 using DataAccess;
+using Domain.ViewModels;
+using Helpers;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Common.Logs;
 
 namespace WebUI.Controllers.Ventas
 {
     public class NotaEntregaController : Controller
     {
-        private IConfiguration _configuration; 
+        private IConfiguration _configuration;
         public NotaEntregaController(IConfiguration configuration)
         {
             _configuration = configuration;

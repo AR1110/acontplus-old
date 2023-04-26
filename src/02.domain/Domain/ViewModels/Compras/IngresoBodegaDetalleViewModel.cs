@@ -12,6 +12,6 @@ namespace Domain.ViewModels.Compras
         public string nombreTipoIva { get; set; }
         public string codigoTipoIva { get; set; }
         public decimal ice { get; set; }
-        
+
     }
 }

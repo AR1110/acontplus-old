@@ -1,10 +1,10 @@
-﻿using DataAccess;
+﻿using Common.Logs;
+using DataAccess;
 using DataAccess.Compras;
 using Domain.Models;
 using Domain.ViewModels.Compras;
-using Microsoft.AspNetCore.Mvc;
 using Helpers;
-using Common.Logs;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Compras
 {
@@ -23,7 +23,7 @@ namespace WebUI.Controllers.Compras
             _dao = new DataAccessObject(_configuration);
             _lc = new LiquidacionCompraDao(_configuration);
 
-        } 
+        }
         public IActionResult Index()
         {
             return View();

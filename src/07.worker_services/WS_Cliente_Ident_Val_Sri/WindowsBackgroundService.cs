@@ -1,5 +1,4 @@
 using Common.Logs;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Data;
 using System.Net;
@@ -61,7 +60,7 @@ namespace WS_Cliente_Ident_Val_Sri
                 HttpResponseMessage response = await cliente.GetAsync(_configuration.GetSection("urlSriRucValidation").Value + drow.Field<string>("numeroIdentificacion"));
                 var exists = response.Content.ReadAsStringAsync();
                 Dictionary<string, object> deserialized = JsonConvert.DeserializeObject<Dictionary<string, object>>(exists.Result);
-    
+
                 deserialized.TryGetValue("error", out object error);
                 if (error != null)
                 {
@@ -71,13 +70,13 @@ namespace WS_Cliente_Ident_Val_Sri
                 else
                 {
                     var razonSocial = deserialized.FirstOrDefault(x => x.Key == "razonSocial").Value.ToString();
- 
-                    var establecimientos = JsonConvert.DeserializeObject <List<Dictionary<string, string>>>(deserialized.FirstOrDefault(x => x.Key == "establecimientos").Value.ToString());
+
+                    var establecimientos = JsonConvert.DeserializeObject<List<Dictionary<string, string>>>(deserialized.FirstOrDefault(x => x.Key == "establecimientos").Value.ToString());
 
                     string nombreComer = string.Empty;
                     foreach (var item in establecimientos)
                     {
-                        if (item.FirstOrDefault(x=>x.Key == "matriz").Value == "SI")
+                        if (item.FirstOrDefault(x => x.Key == "matriz").Value == "SI")
                         {
                             nombreComer = item.FirstOrDefault(x => x.Key == "nombreFantasiaComercial").Value;
                         }
@@ -104,7 +103,7 @@ namespace WS_Cliente_Ident_Val_Sri
                 if (error != null)
                 {
                     _log.LogWarning(drow.Field<string>("numeroIdentificacion") + "  " + drow.Field<string>("razonSocial"));
-                     await _identificacionValidacionService.Insert(_configuration.GetSection("tipo").Value == "1" ? drow.Field<int>("idCliente") : drow.Field<int>("idProveedor"), drow.Field<string>("numeroIdentificacion"), drow.Field<string>("razonSocial"));
+                    await _identificacionValidacionService.Insert(_configuration.GetSection("tipo").Value == "1" ? drow.Field<int>("idCliente") : drow.Field<int>("idProveedor"), drow.Field<string>("numeroIdentificacion"), drow.Field<string>("razonSocial"));
                 }
                 else
                 {

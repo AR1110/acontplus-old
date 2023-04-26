@@ -1,6 +1,5 @@
 ﻿using DataAccess;
 using Domain.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers
@@ -17,37 +16,37 @@ namespace WebUI.Controllers
 
 
         // GET: Banco        
-        
+
         public IActionResult Index()
         {
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Banco data)        
+        public async Task<IActionResult> Post([FromBody] Banco data)
         {
-             int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-            var res = await _b.CreateBancoAsync(idRol,data);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var res = await _b.CreateBancoAsync(idRol, data);
             return Ok(res);
         }
 
-        public async Task<IActionResult> Get(int pageIndex,int pageSize)
+        public async Task<IActionResult> Get(int pageIndex, int pageSize)
         {
-             int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-            var res = await _b.ReadBanco(idRol,pageIndex,pageSize);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var res = await _b.ReadBanco(idRol, pageIndex, pageSize);
             return Ok(res);
         }
         [HttpPost]
         public async Task<IActionResult> Put([FromBody] Banco data)
         {
-             int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-            var res = await _b.UpdateBancoAsync(idRol,data);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var res = await _b.UpdateBancoAsync(idRol, data);
             return Ok(res);
         }
-        
-        public async Task<IActionResult> Delete(int idBanco) 
+
+        public async Task<IActionResult> Delete(int idBanco)
         {
-             int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-            var res = await _b.DeleteBancoAsync(idRol,idBanco);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var res = await _b.DeleteBancoAsync(idRol, idBanco);
             return Ok(res);
         }
 

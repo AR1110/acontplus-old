@@ -135,7 +135,7 @@
       "destination": "wwwroot/lib/angular-filter/"
     },
     {
-      "library": "microsoft-signalr@7.0.3",
+      "library": "microsoft-signalr@7.0.5",
       "destination": "wwwroot/lib/microsoft-signalr/"
     },
     {

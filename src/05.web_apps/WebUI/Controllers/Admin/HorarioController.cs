@@ -1,12 +1,6 @@
 ﻿using DataAccess;
-using Domain.Models;
 using Helpers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers.Admin
 {
@@ -23,7 +17,7 @@ namespace WebUI.Controllers.Admin
             _h = new HorarioDao(_config);
         }
 
-        
+
         public IActionResult Index()
         {
             return View();

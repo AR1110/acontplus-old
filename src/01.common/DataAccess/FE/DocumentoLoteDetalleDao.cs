@@ -1,13 +1,7 @@
 ﻿using Helpers;
-using Domain.Models;
-using System;
-using System.Collections.Generic;
+using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.FE
 {
@@ -76,7 +70,7 @@ namespace DataAccess.FE
             }
             finally
             {
-                
+
             }
             return deleted;
         }

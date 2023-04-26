@@ -1,11 +1,7 @@
 ﻿using DataAccess;
 using Domain.Models;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using System;
-using System.Linq;
 using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers
 {
@@ -23,7 +19,7 @@ namespace WebUI.Controllers
             _ri = new RetencionIvaDao(_config);
         }
 
-        
+
         public IActionResult Index()
         {
             return View();

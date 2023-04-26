@@ -1,15 +1,12 @@
 ﻿
-using Helpers;
 using Domain.Models;
 using Domain.Models.Administracion;
 using Domain.ViewModels;
 using Domain.ViewModels.Administracion;
-using System;
-using System.Collections.Generic;
+using Helpers;
+using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 
 namespace DataAccess
 {

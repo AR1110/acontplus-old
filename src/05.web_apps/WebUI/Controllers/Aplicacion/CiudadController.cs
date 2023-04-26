@@ -1,5 +1,4 @@
 ﻿using DataAccess;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Aplicacion
@@ -12,7 +11,7 @@ namespace WebUI.Controllers.Aplicacion
             _configuration = configuration;
         }
 
-        
+
         public IActionResult Index()
         {
             return View();

@@ -1,9 +1,9 @@
-﻿using DataAccess.Ventas;
-using Domain.ViewModels.Ventas;
-using Microsoft.AspNetCore.Mvc;
-using Helpers;
+﻿using Common.Logs;
 using DataAccess;
-using Common.Logs;
+using DataAccess.Ventas;
+using Domain.ViewModels.Ventas;
+using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Ventas
 {

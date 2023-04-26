@@ -1,13 +1,8 @@
-﻿using Helpers;
-using Domain.Models;
-using Domain.Models.GestionFinanciera;
-using Domain.ViewModels.GestionFinanciera;
-using System;
-using System.Collections.Generic;
+﻿using Domain.Models.GestionFinanciera;
+using Helpers;
+using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.GestionFinanciera
 {
@@ -26,7 +21,7 @@ namespace DataAccess.GestionFinanciera
 
         public async Task<GenericResponse> GetAsycn(int idRol, string json)
         {
-            DataTable dt = new DataTable ();
+            DataTable dt = new DataTable();
             try
             {
                 using (SqlConnection con = new SqlConnection(_connectionStrings))
@@ -53,7 +48,7 @@ namespace DataAccess.GestionFinanciera
             }
             finally
             {
-                
+
             }
             return _gr;
         }
@@ -89,7 +84,7 @@ namespace DataAccess.GestionFinanciera
             }
             finally
             {
-                
+
             }
             return _gr;
         }

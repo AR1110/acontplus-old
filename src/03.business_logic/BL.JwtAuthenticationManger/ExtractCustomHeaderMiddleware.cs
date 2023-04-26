@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Primitives;
-
-namespace BL.JwtAuthenticationManger
+﻿namespace BL.JwtAuthenticationManger
 {
     //public class ExtractCustomHeaderMiddleware
     //{

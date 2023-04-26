@@ -1,6 +1,5 @@
 ﻿using DataAccess.Asignaciones;
 using Domain.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Admin
@@ -14,7 +13,7 @@ namespace WebUI.Controllers.Admin
             _configuration = configuration;
             _asignE = new AsignacionPuntoEmisionDao(_configuration);
         }
-        
+
         public IActionResult Index()
         {
             return View();
@@ -23,7 +22,7 @@ namespace WebUI.Controllers.Admin
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            int idRolSession = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);            
+            int idRolSession = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             return Ok(await _asignE.GetAsync(json));
         }
 

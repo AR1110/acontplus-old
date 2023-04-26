@@ -1,10 +1,9 @@
-﻿using Domain.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using DataAccess;
 using DataAccess.Almacen;
+using Domain.Models;
 using Domain.Models.Almacen;
-using DataAccess;
-using Microsoft.AspNetCore.Authorization;
 using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers
 {
@@ -12,7 +11,7 @@ namespace WebUI.Controllers
     {
         // GET: Medida
         private readonly IConfiguration _configuration;
-        
+
         private DataAccessObject _dao;
         GenericResponse _gr = new();
         private MedidaDao _m;
@@ -23,7 +22,7 @@ namespace WebUI.Controllers
             _dao = new DataAccessObject(_configuration);
             _m = new MedidaDao(_configuration);
         }
-        
+
         public IActionResult Index()
         {
             return View();
@@ -70,7 +69,7 @@ namespace WebUI.Controllers
             parameters.Add("id", id);
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Almacen.Medida_Delete", parameters)));
         }
-        
+
         //Get By Medida
         public async Task<IActionResult> GetByMedida()
         {

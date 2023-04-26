@@ -1,5 +1,4 @@
 ﻿using DataAccess;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers
@@ -7,14 +6,14 @@ namespace WebUI.Controllers
     public class EstadoPagoController : Controller
     {
         private readonly IConfiguration _configuration;
-        private EstadoDocumentoDao _eDoc;   
+        private EstadoDocumentoDao _eDoc;
         public EstadoPagoController(IConfiguration configuration)
         {
             _configuration = configuration;
             _eDoc = new EstadoDocumentoDao(_configuration);
         }
 
-        
+
         public ActionResult Index()
         {
             return View();

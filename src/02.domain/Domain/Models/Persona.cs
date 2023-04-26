@@ -1,10 +1,4 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Domain.Models
+﻿namespace Domain.Models
 {
     public class Persona
     {
@@ -21,7 +15,7 @@ namespace Domain.Models
         public int idRol { get; set; }
         public int totalRecords { get; set; }
     }
-    
+
     public class PersonaOperaciones
     {
         public Persona persona { get; set; }

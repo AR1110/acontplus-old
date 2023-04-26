@@ -8,16 +8,16 @@ namespace WebUI.Controllers.Restaurant
     public class ConfigPrinterController : Controller
     {
         private readonly IConfiguration _config;
-        
-        
+
+
         private readonly LogWriter _log;
         private readonly DbAccess _db;
 
         public ConfigPrinterController(IConfiguration config)
         {
             _config = config;
-            
-            
+
+
             _log = new LogWriter(_config);
             _db = new DbAccess(_config);
         }

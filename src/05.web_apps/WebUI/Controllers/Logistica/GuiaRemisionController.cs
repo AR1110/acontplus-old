@@ -1,10 +1,10 @@
-﻿using DataAccess.Logistica;
+﻿using Common.Logs;
+using DataAccess;
+using DataAccess.Logistica;
 using Domain.Models;
 using Domain.ViewModels.Logistica;
-using Microsoft.AspNetCore.Mvc;
-using DataAccess;
 using Helpers;
-using Common.Logs;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Logistica
 {

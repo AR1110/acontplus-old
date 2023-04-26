@@ -1,7 +1,6 @@
-﻿using Helpers;
-using DataAccess;
+﻿using DataAccess;
 using Domain.Models;
-using Microsoft.AspNetCore.Authorization;
+using Helpers;
 using Microsoft.AspNetCore.Mvc;
 using WebUI.Utils;
 
@@ -10,20 +9,20 @@ namespace WebUI.Controllers
     public class LogoSucursalController : Controller
     {
         private readonly IConfiguration _configuration;
-         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
+        ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
-        
+
 
         public LogoSucursalController(IConfiguration configuration)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
-            
-            
+
+
 
         }
 
-        
+
         public IActionResult Index()
         {
             return View();

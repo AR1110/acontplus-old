@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Domain.Models.GestionTributaria
+﻿namespace Domain.Models.GestionTributaria
 {
     public class ConfiguracionContribuyente
     {

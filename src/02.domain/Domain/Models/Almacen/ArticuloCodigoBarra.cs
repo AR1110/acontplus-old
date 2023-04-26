@@ -1,11 +1,9 @@
-﻿using Domain.Models.Almacen;
-
-namespace Domain.Models.Almacen
+﻿namespace Domain.Models.Almacen
 {
     public class ArticuloCodigoBarra
     {
         public int idArticuloCodigoBarra { get; set; }
-        public int idArticulo { get; set; } 
+        public int idArticulo { get; set; }
         public int idMedida { get; set; }
         public string codigoBarra { get; set; }
         public string descripcion { get; set; }

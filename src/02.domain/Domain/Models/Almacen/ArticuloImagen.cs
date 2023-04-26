@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Domain.Models.Almacen
+﻿namespace Domain.Models.Almacen
 {
     public class ArticuloImagen
     {

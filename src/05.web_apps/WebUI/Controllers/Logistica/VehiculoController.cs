@@ -10,20 +10,20 @@ namespace WebUI.Controllers.Logistica
     public class VehiculoController : Controller
     {
         private readonly IConfiguration _configuration;
-         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
+        ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
-        
+
         GenericResponse _gr = new();
-        
+
         private VehiculoDao _v;
         public VehiculoController(IConfiguration configuration)
         {
             _configuration = configuration;
             _v = new VehiculoDao(_configuration);
-            
+
             _dao = new DataAccessObject(_configuration);
-            
-            
+
+
 
         }
         public IActionResult Index()
@@ -45,8 +45,9 @@ namespace WebUI.Controllers.Logistica
         }
 
         [HttpPost]
-        public async Task<IActionResult> Put(int id, [FromBody] Vehiculo data){
-            
+        public async Task<IActionResult> Put(int id, [FromBody] Vehiculo data)
+        {
+
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("idVehiculo", id);

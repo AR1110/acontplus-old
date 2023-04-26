@@ -15,7 +15,7 @@ namespace AcontPlus.Controllers
             _config = config;
             _d = new DashboardDao(_config);
         }
-        
+
         public IActionResult Index()
         {
             return View();
@@ -34,7 +34,7 @@ namespace AcontPlus.Controllers
 
             return View();
         }
-        
+
         public async Task<IActionResult> ReadGestionCantidad()
         {
             int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);

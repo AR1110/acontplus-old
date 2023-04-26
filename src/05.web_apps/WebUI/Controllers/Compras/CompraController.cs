@@ -1,7 +1,6 @@
-﻿using WebUI.Internal.Compras;
-using Domain.ViewModels.Compras;
-using Microsoft.AspNetCore.Authorization;
+﻿using Domain.ViewModels.Compras;
 using Microsoft.AspNetCore.Mvc;
+using WebUI.Internal.Compras;
 
 namespace WebUI.Controllers.Compras
 {
@@ -15,12 +14,12 @@ namespace WebUI.Controllers.Compras
             _ib = new IngresoBodegaInternal(_configuration);
         }
         //FacturaCompraInternal _fc = new();
-        
-        
+
+
         public IActionResult Index()
         {
             return View();
-        }             
+        }
 
 
         //Orden de Compra 
@@ -41,6 +40,6 @@ namespace WebUI.Controllers.Compras
             return Ok(res);
         }
 
-       
+
     }
 }

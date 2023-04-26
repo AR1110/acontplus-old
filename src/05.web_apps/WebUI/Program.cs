@@ -1,7 +1,6 @@
-using WebUI.Hubs;
-using Helpers;
 using BL.JwtAuthenticationManger;
-using System.Net;
+using Helpers;
+using WebUI.Hubs;
 
 namespace testWebApi
 {
@@ -129,7 +128,7 @@ namespace testWebApi
             //app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            app.UseRouting(); 
+            app.UseRouting();
 
             app.UseCors();
 
@@ -142,8 +141,8 @@ namespace testWebApi
             app.UseMiddleware<JWTMiddleware>();
 
             //app.UseCookiePolicy(cookiePolicyOptions);
-            
-            
+
+
 
             app.MapControllerRoute(
                 name: "default",

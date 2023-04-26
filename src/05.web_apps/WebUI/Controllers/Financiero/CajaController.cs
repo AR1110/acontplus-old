@@ -1,8 +1,6 @@
 ﻿using DataAccess;
-using Domain.Models;
 using Domain.Models.Administracion;
 using Helpers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.GestionFinanciera
@@ -17,7 +15,7 @@ namespace WebUI.Controllers.GestionFinanciera
             _config = config;
             _c = new CajaDao(_config);
         }
-        
+
         public IActionResult Index()
         {
             return View();

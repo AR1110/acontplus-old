@@ -1,8 +1,6 @@
 ﻿using Domain.Config.Dtos;
-using System.Collections;
 using System.Drawing;
 using System.Drawing.Printing;
-using System.Runtime.InteropServices;
 
 namespace BL.Print
 {
@@ -55,7 +53,7 @@ namespace BL.Print
                         _printDoc.PrinterSettings.Copies = (short)obj.copyPrint;
                         _printDoc.Print();
                         // Cut the paper
-                        
+
                         response = true;
                     }
                     else
@@ -354,7 +352,7 @@ namespace BL.Print
             data[0].TryGetValue("direccionCliente", out direccionComprador);
             if (!string.IsNullOrEmpty(direccionComprador))
             {
-                if(direccionComprador.Length >= 37)
+                if (direccionComprador.Length >= 37)
                 {
                     direccionComprador = direccionComprador.Substring(0, 37);
                 }
@@ -372,11 +370,11 @@ namespace BL.Print
             offsset = offsset + largeinc;
 
             var details = _data.dataSources.First(x => x.Key == "detalleDs").Value;
-           
+
 
             foreach (var source in details)
             {
-               
+
                 InsertItem(source.FirstOrDefault(x => x.Key == "descripcion").Value,
                     source.FirstOrDefault(x => x.Key == "cantidad").Value,
                     source.FirstOrDefault(x => x.Key == "precioUnitario").Value,
@@ -505,16 +503,16 @@ namespace BL.Print
 
             DateTime currentDate = DateTime.Now;
             string formatDatePrint = currentDate.ToString("dd/MM/yyyy") + currentDate.ToString("t").PadLeft(8);
-            
+
             DrawTitle(Environment.NewLine + formatDatePrint, mediumFont, offsset);
             offsset = offsset + smallinc;
 
-           
+
 
         }
 
 
 
-      
+
     }
 }

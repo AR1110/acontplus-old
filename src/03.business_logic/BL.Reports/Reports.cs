@@ -43,14 +43,14 @@ namespace BL.Reports
                         {
                             case 1:
                                 lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", paths[0])));
-                                break; 
-                                case 2:
+                                break;
+                            case 2:
                                 lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", paths[0], paths[1])));
                                 break;
                             default:
                                 lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(_configuration.GetSection("dirReports").Value + dsParams.Tables[0].Rows[0].Field<string>("reportPath")));
                                 break;
-                        } 
+                        }
                     }
                 }
                 else

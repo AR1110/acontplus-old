@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Domain.Models.Inventario
+﻿namespace Domain.Models.Inventario
 {
     public class TransferenciaBodega
     {
@@ -23,7 +17,7 @@ namespace Domain.Models.Inventario
 
     public class TransferenciaBodegaParams
     {
-        public string header { get; set; }  
+        public string header { get; set; }
         public string detail { get; set; }
     }
 }

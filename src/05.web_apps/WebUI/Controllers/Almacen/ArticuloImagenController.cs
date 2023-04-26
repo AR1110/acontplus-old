@@ -44,7 +44,7 @@ namespace WebUI.Controllers.Almacen
 
         [HttpPost]
         public async Task<IActionResult> UploadImagen(int idArticulo, [FromBody] List<ArticuloImagen> list)
-        {           
+        {
             int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _ai.UploadImagen(idRol, list, idArticulo);
             return Ok(res);
