@@ -8,10 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Areas\Reporte\**" />
-    <Content Remove="Areas\Reporte\**" />
-    <EmbeddedResource Remove="Areas\Reporte\**" />
-    <None Remove="Areas\Reporte\**" />
+    <Compile Remove="Areas\ReporteVenta\**" />
+    <Content Remove="Areas\ReporteVenta\**" />
+    <EmbeddedResource Remove="Areas\ReporteVenta\**" />
+    <None Remove="Areas\ReporteVenta\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,7 +20,6 @@
 
   <ItemGroup>
     <Folder Include="Areas\ReporteCompra\Pages\Shared\" />
-    <Folder Include="Areas\ReporteVenta\Pages\" />
   </ItemGroup>
 
 

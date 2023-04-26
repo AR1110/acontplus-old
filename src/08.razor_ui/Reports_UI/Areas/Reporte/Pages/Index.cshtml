@@ -1,10 +1,10 @@
-﻿@*
-For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@page
+@model Reports_UI.Areas.Reporte.Pages.IndexModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
-    ViewData["Title"] = "Reporte";
+    ViewData["Title"] = "Index";
+    Layout = "_Layout";
 }
-
 <div ng-controller="reporteCtrl">
 
     <div class="row page-titles">
@@ -57,11 +57,11 @@ For more information on enabling MVC for empty projects, visit https://go.micros
                         <tr ng-repeat-start="item in reports | filter:textSearch" class="small">
                             <td ng-if="accion.editar || accion.eliminar">
                                 <button class="btn btn-outline-warning btn-sm" ng-if="accion.editar"
-                                    ng-click="openModal(item, 2)">
+                                        ng-click="openModal(item, 2)">
                                     <span class="ti-pencil"></span>
                                 </button>
                                 <button class="btn btn-outline-danger btn-sm" ng-if="accion.eliminar"
-                                    ng-click="askToDelete(item)">
+                                        ng-click="askToDelete(item)">
                                     <span class="ti-trash"></span>
                                 </button>
                             </td>
@@ -96,11 +96,11 @@ For more information on enabling MVC for empty projects, visit https://go.micros
                                                 <tr ng-repeat="ds in item.dataSources" class="small">
                                                     <td>
                                                         <button type="button" class="btn btn-warning btn-xs"
-                                                            ng-click="openModalEditDs(item, ds)">
+                                                                ng-click="openModalEditDs(item, ds)">
                                                             <span class="ti-pencil"></span>
                                                         </button>
                                                         <button class="btn btn-danger btn-xs"
-                                                            ng-click="askToDeleteDs(item, ds)">
+                                                                ng-click="askToDeleteDs(item, ds)">
                                                             <span class="ti-trash"></span>
                                                         </button>
                                                     </td>
@@ -122,7 +122,7 @@ For more information on enabling MVC for empty projects, visit https://go.micros
 
     <!--Reporte Modal-->
     <div id="reporteModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
+         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <form ng-submit="save()">
@@ -141,14 +141,14 @@ For more information on enabling MVC for empty projects, visit https://go.micros
                                 <div class="form-group">
                                     <label for="codigo">Código</label>
                                     <input type="text" class="form-control" id="codigo" ng-model="reporte.codigo"
-                                        placeholder="RR" required>
+                                           placeholder="RR" required>
                                 </div>
                             </div>
                             <div class="col-xl-8 col-lg-6 col-md-8 col-sm-8 col-12">
                                 <div class="form-group">
                                     <label for="reportPath">Report Path</label>
                                     <input type="text" class="form-control" id="reportPath"
-                                        ng-model="reporte.reportPath" placeholder="Example.rdlc" required>
+                                           ng-model="reporte.reportPath" placeholder="Example.rdlc" required>
                                 </div>
                             </div>
                         </div>
@@ -157,7 +157,7 @@ For more information on enabling MVC for empty projects, visit https://go.micros
                                 <div class="form-group">
                                     <label for="storedProcedure">Stored Procedure</label>
                                     <input type="text" class="form-control" id="storedProcedure"
-                                        ng-model="reporte.storedProcedure" placeholder="" required>
+                                           ng-model="reporte.storedProcedure" placeholder="" required>
                                 </div>
                             </div>
                         </div>
@@ -166,14 +166,14 @@ For more information on enabling MVC for empty projects, visit https://go.micros
                                 <div class="form-group">
                                     <label for="contentType">Content Type</label>
                                     <input type="text" class="form-control" id="contentType"
-                                        ng-model="reporte.contentType" placeholder="application/pdf" required>
+                                           ng-model="reporte.contentType" placeholder="application/pdf" required>
                                 </div>
                             </div>
                             <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-12">
                                 <div class="form-group">
                                     <label for="nombreReport">Nombre Reporte</label>
                                     <input type="text" class="form-control" id="nombreReport"
-                                        ng-model="reporte.nombreReporte" placeholder="Example" required>
+                                           ng-model="reporte.nombreReporte" placeholder="Example" required>
                                 </div>
                             </div>
                         </div>
@@ -208,7 +208,7 @@ For more information on enabling MVC for empty projects, visit https://go.micros
 
     <!--Reporte Modal-->
     <div class="modal fade" id="dataSourceModal" tabindex="-1" role="dialog" aria-labelledby="dSModalLabel"
-        aria-hidden="true">
+         aria-hidden="true">
         <div class="modal-dialog modal-sm" role="document">
             <div class="modal-content">
                 <form ng-submit="saveDs()">
@@ -226,7 +226,7 @@ For more information on enabling MVC for empty projects, visit https://go.micros
                                 <div class="form-group">
                                     <label for="dsPosition">Posición</label>
                                     <input type="text" class="form-control" id="dsPosition"
-                                        ng-model="dataSource.position" valid-number placeholder="0" required>
+                                           ng-model="dataSource.position" valid-number placeholder="0" required>
                                 </div>
                             </div>
                         </div>
@@ -236,11 +236,11 @@ For more information on enabling MVC for empty projects, visit https://go.micros
                                 <div class="form-group">
                                     <label for="codigo">DataSource</label>
                                     <input type="text" class="form-control" id="codigo" ng-model="dataSource.dataSource"
-                                        placeholder="mainDs" required>
+                                           placeholder="mainDs" required>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="row" ng-show="operationDs === 2">
                             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-6">
                                 <div class="icheck-warning">

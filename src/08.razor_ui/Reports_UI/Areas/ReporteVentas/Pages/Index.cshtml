@@ -1,7 +1,10 @@
+﻿@page
+@model Reports_UI.Areas.ReporteVentas.Pages.IndexModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
-    ViewBag.title = "Reporte Venta";
+    ViewBag.title = "Reporte Ventas";
+    Layout = "_Layout";
 }
-
 <div ng-controller="reporteVentaCtrl">
     <div class="row page-titles">
         <div class="col-md-5 align-self-center">
@@ -15,8 +18,9 @@
     </div>
 
     <!--Modal para reportar-->
-    <partial name="_ModalFiltroReporteVenta" />
-    <partial name="_ModalReporteGraficoVenta" />
+    @await Html.PartialAsync("_ModalFiltroReporteVenta")
+    @await Html.PartialAsync("_ModalReporteGraficoVenta")
+
 
     <div class="row">
         <div class="col-lg-12">
@@ -27,23 +31,23 @@
                     </button>
                     <button class="btn btn-warning-1" ng-click="openModalReporteGraficoVenta()">
                         <i class="text-white mdi mdi-chart-bar fa-lg"></i> Reporte Gráfico
-                    </button> 
-                                 
-                </div>                          
+                    </button>
+
+                </div>
             </div>
         </div>
 
         <div class="col-lg-12">
-            <div class="card">               
+            <div class="card">
                 <div class="card-body">
-                    <canvas id="chartBarAnualVentas" width="400" style="display: inline; width: 1239px; height: 150px;"></canvas>                    
+                    <canvas id="chartBarAnualVentas" width="400" style="display: inline; width: 1239px; height: 150px;"></canvas>
                 </div>
             </div>
         </div>
     </div>
 
     @section Scripts{
-    <script src="~/js/controllers/reportes/reporteVentaCtrl.js" asp-append-version="true"></script>
+        <script src="~/js/controllers/reportes/reporteVentaCtrl.js" asp-append-version="true"></script>
     }
 
 
