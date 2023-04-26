@@ -22,7 +22,7 @@ GO
 -- Create date: 2022-07-31
 -- Description:	SP PARA LISTAR LOS COMPROBANTES ELECTRONICOS DEL SRI IMPORTADOS
 -- =============================================
--- Recepcion.Documento_Get 38, '{"claveAcceso":"0302202307229031499500120010020000145421234567810","codDoc":"07","idDocumento":4222,"tipo":3}'
+-- Recepcion.Documento_Get 63, '{"orderBy":"","sortBy":"","limit":50,"page":1,"codDoc":"","codEstab":"ESTAB-000000006","startDate":"2023-04-01T05:00:00.000Z","endDate":"2023-05-01T04:59:59.999Z","rucProveedor":"0990017514001"}'
 IF OBJECT_ID(N'Recepcion.Documento_Get ', N'P') IS NOT NULL
 	DROP PROCEDURE Recepcion.Documento_Get
 GO
@@ -48,6 +48,18 @@ BEGIN
 	DECLARE @tipo VARCHAR(1)
 	DECLARE @claveAcceso VARCHAR(50)
 	DECLARE @idDocumento INT
+	,@rucProveedor VARCHAR(25)
+
+	DECLARE @params NVARCHAR(max) = '@codEstab VARCHAR(50)
+									,@codDoc VARCHAR(2)
+									,@startDate DATETIME
+									,@endDate DATETIME
+									,@rucProveedor VARCHAR(25) '
+	DECLARE @sql NVARCHAR(MAX)
+
+
+
+
 
 	--SET @@pageNumber=2
 	--SET @@pageNumber=4 
@@ -58,6 +70,7 @@ BEGIN
 		,@claveAcceso = claveAcceso
 		,@idDocumento = idDocumento
 		,@codEstab = codEstab
+		,@rucProveedor = rucProveedor 
 	FROM OPENJSON(@JSON) WITH (
 			limit INT '$.limit'
 			,pageNumber INT '$.page'
@@ -70,6 +83,7 @@ BEGIN
 			,idDocumento INT '$.idDocumento'
 			,claveAcceso VARCHAR(50) '$.claveAcceso'
 			,codEstab VARCHAR(50) '$.codEstab'
+			,rucProveedor VARCHAR(25) '$.rucProveedor'
 			)
 
 	SELECT @idUsuario = idUsuario
@@ -123,6 +137,7 @@ BEGIN
 			FROM FactElect.RetAtsDocSustento retDoc
 			INNER JOIN FactElect.RetencionAts rAts ON rAts.idRetencionAts = retDoc.idRetencionAts
 			WHERE retDoc.numAutDocSustento = @claveAcceso
+			RETURN
 		END
 
 		IF @codDoc = '04'
@@ -151,66 +166,11 @@ BEGIN
 					WHERE codDocSustento = '01'
 						AND idDocumentoRecibido = @idDocumento
 					)
+			RETURN
 		END
 	END
 
-	IF LEN(@codDoc) > 1
-	BEGIN 
-
-		SELECT [idDocumento]
-			,[codEstab]
-			,[comprobante]
-			,[codDoc]
-			,[serieComprobante]
-			,[rucEmisor]
-			,[razonSocialEmisior]
-			,[fechaEmision]
-			,[fechaAutorizacion]
-			,[tipoEmision]
-			,[identificacionReceptor]
-			,[claveAcceso]
-			,[numeroAutorizacion]
-			,[importeTotal]
-			,CASE 
-				WHEN xmlDoc IS NOT NULL
-					THEN 1
-				ELSE 0
-				END hasXml
-			,ISNULL(complete, 0) complete
-			,CASE 
-				WHEN xmlDoc IS NOT NULL
-					AND complete = 0
-					THEN 'background-color: #FFF5BD;'
-				WHEN complete = 1
-					THEN 'background-color: #03a9f3;'
-				ELSE ''
-				END colorRow
-			,CASE 
-				WHEN complete = 1
-					THEN 'background-color: #03a9f3;'
-				ELSE ''
-				END colorCol
-			,CASE 
-				WHEN complete = 1
-					THEN 'Documento Importado'
-				ELSE ''
-				END hoverText 
-		FROM Recepcion.DocumentoRecibido
-		WHERE codEstab = @codEstab
-			AND codDoc = @codDoc
-			AND CAST(fechaEmision AS DATE) BETWEEN CAST(@startDate AS DATE)
-				AND CAST(@endDate AS DATE)
-
-		--AND downloaded = 'DE'
-		--ORDER BY fechaEmision DESC
-		--CASE WHEN @sortBy = 'razonSocialEmisior' AND @orderBy = 'ASC' THEN razonSocialEmisior END ASC, 
-		--CASE WHEN @sortBy = 'razonSocialEmisior' AND @orderBy = 'DESC' THEN razonSocialEmisior END DESC 
-		--OFFSET (@pageNumber-1)*@rowsOfPage ROWS
-		--FETCH NEXT @rowsOfPage ROWS ONLY
-		RETURN
-	END
-
-	SELECT [idDocumento]
+	SET @sql = 'SELECT [idDocumento]
 		,[codEstab]
 		,[comprobante]
 		,[codDoc]
@@ -233,31 +193,48 @@ BEGIN
 		,CASE 
 			WHEN xmlDoc IS NOT NULL
 				AND complete = 0
-				THEN 'background-color: #FFF5BD;'
+				THEN ''background-color: #FFF5BD;''
 			WHEN complete = 1
-				THEN 'background-color: #03a9f3; cursor: pointer;'
-			ELSE ''
+				THEN ''background-color: #03a9f3; cursor: pointer;''
+			ELSE ''''
 			END colorRow
 		,CASE 
 			WHEN complete = 1
-				THEN 'background-color: #03a9f3;'
-			ELSE ''
+				THEN ''background-color: #03a9f3;''
+			ELSE ''''
 			END colorCol
 		,CASE 
 			WHEN complete = 1
-				THEN 'Documento Importado'
-			ELSE ''
+				THEN ''Documento Importado''
+			ELSE ''''
 			END hoverText
-	FROM Recepcion.DocumentoRecibido
+	FROM Recepcion.DocumentoRecibido WITH (NOLOCK)
 	WHERE codEstab = @codEstab
 		AND CAST(fechaEmision AS DATE) BETWEEN CAST(@startDate AS DATE)
-			AND CAST(@endDate AS DATE)
-				--AND downloaded = 'DE'
-				--ORDER BY fechaEmision DESC
-				--CASE WHEN @sortBy = 'razonSocialEmisior' AND @orderBy = 'ASC' THEN razonSocialEmisior END ASC, 
-				--CASE WHEN @sortBy = 'razonSocialEmisior' AND @orderBy = 'DESC' THEN razonSocialEmisior END DESC 
-				--OFFSET (@pageNumber-1)*@rowsOfPage ROWS
-				--FETCH NEXT @rowsOfPage ROWS ONLY
+			AND CAST(@endDate AS DATE) '
+
+	IF LEN(@codDoc) > 1
+	BEGIN
+		SET @sql = @sql + 'AND codDoc = @codDoc '
+
+		IF LEN(LTRIM(RTRIM(@rucProveedor))) > 0
+		BEGIN
+			SET @sql = @sql + 'AND rucEmisor = @rucProveedor '
+		END
+	END
+
+	IF LEN(LTRIM(RTRIM(@rucProveedor))) > 0
+	BEGIN
+		SET @sql = @sql + 'AND rucEmisor = @rucProveedor '
+	END
+
+	EXEC sp_executesql @sql
+		,@params
+		,@codEstab = @codEstab
+		,@codDoc = @codDoc
+		,@startDate = @startDate
+		,@endDate = @endDate
+		,@rucProveedor = @rucProveedor
 END
 GO
 

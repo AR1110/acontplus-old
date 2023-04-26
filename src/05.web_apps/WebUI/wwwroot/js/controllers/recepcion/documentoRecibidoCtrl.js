@@ -131,7 +131,8 @@
                 codDoc: '',
                 codEstab: '',
                 startDate: '',
-                endDate: ''
+                endDate: '',
+                rucProveedor: ''
             }
 
             $scope.getDocs = function (doc) {
@@ -1888,6 +1889,8 @@
             }
 
             $scope.refresh = () => {
+                $scope.proveedorFiltro = null
+                $scope.query.rucProveedor = ''
                 $scope.getComprobantes()
             }
 
@@ -1914,7 +1917,11 @@
                     console.log(error)
                 }
             }
-
+            $scope.proveedorSearch = (textSearch) => _commonSvc.proveedorSearch(textSearch);
+            $scope.selectProveedorFiltro = (item) => {
+                $scope.query.rucProveedor = item.proveedor.numeroIdentificacion
+                $scope.getComprobantes()
+            }
         }
         $('#compFounded').on('hidden.bs.modal', () => {
             $scope.compToImport = []
