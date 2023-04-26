@@ -108,7 +108,7 @@ BEGIN
 					FROM Recepcion.Doc_Detalle_Temp t 
 					WHERE t.idDocumento = @idDocumento
 					  AND t.idArticulo > 0
-					  AND NOT EXISTS (SELECT * FROM Recepcion.DocumentoDetalle rddd WHERE rddd.idDocumento = @idDocumento)
+					  --AND NOT EXISTS (SELECT * FROM Recepcion.DocumentoDetalle rddd WHERE rddd.idDocumento = @idDocumento)
 
 					INSERT INTO Recepcion.Doc_Detalle_Impuesto(idDocumento, codigoPrincipal, codigo, codigoPorcentaje, tarifa, baseImponible, valor)
 					SELECT @idDocumento, codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor 
@@ -116,7 +116,7 @@ BEGIN
 					INNER JOIN Recepcion.Doc_Detalle_Temp ddt ON tt.idDocumento = ddt.idDocumento AND tt.idDetalle = ddt.idDetalle
 					WHERE tt.idDocumento = @idDocumento
 					  AND ddt.idArticulo > 0
-					  AND NOT EXISTS (SELECT * FROM Recepcion.Doc_Detalle_Impuesto rddd WHERE rddd.idDocumento = @idDocumento)
+					  --AND NOT EXISTS (SELECT * FROM Recepcion.Doc_Detalle_Impuesto rddd WHERE rddd.idDocumento = @idDocumento)
 
 
 					UPDATE ddi SET ddi.idDocumentoDetalle = t.idDocumentoDetalle
