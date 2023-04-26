@@ -586,6 +586,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
                             this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
 
                             let data = JSON.parse(response.payload)[0];
+                            let ptoEmi = this.puntosEmisiones.find(item => item.idPuntoEmision == this.data.idPuntoEmision).ptoEmi;
 
                             let mainData = {
                                 isRegister: true,
@@ -593,19 +594,13 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
                                 payAutomatic: this.payAutomatic,
                                 data: {
                                     ...data,
-                                    nroDocumento: data.estab + data.ptoEmi + data.secuencial,
+                                    nroDocumento: ptoEmi + '-' + data.secuencial,
                                     esContado: data.gestion,
                                 },
                                 TIPO_DOC: this.TIPO_DOC_NE
                             }
 
-                            console.log(mainData)
                             this.$uibModalInstance.close(mainData)
-                            // if(mainData.data.esContado){
-                            //     this.openModalRapido(mainData)
-                            // }else{
-                            //     this.openModalCobroDocumento(mainData)
-                            // }                                                                                       
                         }
                     })
                 }
@@ -1413,6 +1408,7 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
                     this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
 
                     let data = JSON.parse(response.payload)[0];
+                    let ptoEmi = this.puntosEmisiones.find(item => item.idPuntoEmision == this.data.idPuntoEmision).ptoEmi;
 
                     let mainData = {
                         isRegister: true,
@@ -1420,7 +1416,7 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
                         payAutomatic: this.payAutomatic,
                         data: {
                             ...data,
-                            nroDocumento: data.estab + data.ptoEmi + data.secuencial,
+                            nroDocumento: ptoEmi + '-' + data.secuencial,
                             esContado: data.gestion,
                         },
                         TIPO_DOC: this.TIPO_DOC_NE
