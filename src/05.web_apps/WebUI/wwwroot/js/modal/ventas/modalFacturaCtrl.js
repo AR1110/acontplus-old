@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.js?v=0.81";
+} from "./modalBaseCtrl.js?v=0.82";
 
 class ModalFacturaCtrl extends ModalBaseCtrl {
 
@@ -449,22 +449,6 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
     }
 
 
-
-    createInvoice(params) {
-        return this._mS.getData('post', `Factura`, params, true)
-            .catch(errorResponse => {
-                console.error('Error al crear una factura -> fact_service:');
-                throw new Error(errorResponse);
-            });
-    }
-
-    updateInvoice(id, params) {
-        return this._mS.getData('put', 'Factura/' + id, params, null, true)
-            .catch(errorResponse => {
-                console.error('Error al actualizar una factura -> fact_service:');
-                throw new Error(errorResponse);
-            });
-    }
 
 }
 

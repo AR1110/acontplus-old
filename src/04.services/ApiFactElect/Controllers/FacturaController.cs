@@ -66,8 +66,8 @@ namespace ApiFactElect.Controllers
             return Ok(_response);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Update(int id, [FromBody] FacturaParams data)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, [FromBody] FacturaParams data)
         {
             DbAccess _db = new DbAccess(_configuration);
             LogWriter _log = new LogWriter(_configuration);
@@ -87,6 +87,32 @@ namespace ApiFactElect.Controllers
             {
                 _log.LogError("Error in Update: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
+        }
+
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Ventas.Factura_Delete");
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("id", id);
+                _response = _db.GetDefault();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error al eliminar la factura: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al eliminar la fcatura");
             }
             finally
             {

@@ -1338,6 +1338,27 @@ export class ModalBaseCtrl {
 
 
 
+    //------------------------------------CRUD INVOICE----------------------------------
+
+    createInvoice(params) {
+        return this._mS.getData('post', `Factura`, params, true)
+            .catch(errorResponse => {
+                console.error('Error al crear una factura -> fact_service:');
+                throw new Error(errorResponse);
+            });
+    }
+
+    updateInvoice(id, params) {
+        return this._mS.getData('put', 'Factura/' + id, params, true)
+            .catch(errorResponse => {
+                console.error('Error al actualizar una factura -> fact_service:');
+                throw new Error(errorResponse);
+            });
+    }
+    //------------------------------------END INVOICE------------------------------
+
+
+
 
 
 

@@ -214,6 +214,7 @@
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Get",
+        "Put",
         "Delete",
         "Options"
       ],
