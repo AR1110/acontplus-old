@@ -4,10 +4,10 @@ using System.Net;
 using System.Net.Mail;
 using System.Net.Mime;
 using System.Text;
-using Nustache.Core;
 using Microsoft.Extensions.Configuration;
 using Domain.Models;
-using System.Data;
+using System.Dynamic;
+using Scriban;
 
 namespace BL.Notificacion
 {
@@ -120,12 +120,31 @@ namespace BL.Notificacion
             }
             return true;
         }
+        //private static string ProcessTemplate(string template, IDictionary<string, object> data)
+        //{
+        //    //return Regex.Replace(template, "\\{\\{(.*?)\\}\\}", m =>
+        //    //    m.Groups.Count > 1 && data.ContainsKey(m.Groups[1].Value) ? 
+        //    //        data[m.Groups[1].Value] : m.Value);
+        //    return Render.StringToString(template, data);
+        //}
         private static string ProcessTemplate(string template, IDictionary<string, object> data)
         {
-            //return Regex.Replace(template, "\\{\\{(.*?)\\}\\}", m =>
-            //    m.Groups.Count > 1 && data.ContainsKey(m.Groups[1].Value) ? 
-            //        data[m.Groups[1].Value] : m.Value);
-            return Render.StringToString(template, data);
+            ExpandoObject reportData = JsonConvert.DeserializeObject<ExpandoObject>(JsonConvert.SerializeObject(data));
+
+            var scriptObject = new Scriban.Runtime.ScriptObject();
+            foreach (var prop in reportData)
+            {
+                scriptObject.Add(prop.Key, prop.Value);
+            }
+            var templateTo = Template.Parse(template);
+            return templateTo.Render(scriptObject, member => LowerFirstCharacter(member.Name));
+        }
+
+        private static string LowerFirstCharacter(string value)
+        {
+            if (value.Length > 1)
+                return char.ToLower(value[0]) + value.Substring(1);
+            return value;
         }
     }
 }
