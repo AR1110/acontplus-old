@@ -11,12 +11,10 @@ namespace DataAccess
         private IConfiguration _config;
         private readonly SqlConnection _connection;
         private SqlCommand _command;
-        private LogWriter _log;
         public DbAccess(IConfiguration config)
         {
             _config = config;
             _connection = new SqlConnection(Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus")));
-            _log = new LogWriter(_config);
         }
         public async Task QueryExecute(string query)
         {
@@ -41,6 +39,7 @@ namespace DataAccess
             catch (Exception ex)
             {
                 Close();
+                LogWriter _log = new LogWriter(_config);
                 _log.LogError("Error in SPExecute: " + ex.ToString());
             }
         }
@@ -61,6 +60,7 @@ namespace DataAccess
             catch (Exception ex)
             {
                 Close();
+                LogWriter _log = new LogWriter(_config);
                 _log.LogError("Error in AddParameter: " + ex.ToString());
             }
         }
@@ -80,6 +80,7 @@ namespace DataAccess
             catch (Exception ex)
             {
                 Close();
+                LogWriter _log = new LogWriter(_config);
                 _log.LogError("Error in AddDynamicParam: " + ex.ToString());
             }
         }
@@ -91,6 +92,7 @@ namespace DataAccess
             }
             catch (Exception ex)
             {
+                LogWriter _log = new LogWriter(_config);
                 _log.LogError("Error in OnlyExecute: " + ex.ToString());
             }
             finally
@@ -124,6 +126,8 @@ namespace DataAccess
             }
             catch (Exception ex)
             {
+                LogWriter _log = new LogWriter(_config);
+
                 _log.LogError("Error in GetDataSet: " + ex.ToString());
                 if (ds.Tables.Count > 0)
                 {
@@ -158,6 +162,8 @@ namespace DataAccess
             }
             catch (Exception ex)
             {
+                LogWriter _log = new LogWriter(_config);
+
                 _log.LogError("Error in GetDataTable: " + ex.ToString());
                 DtError(ref dt, ex.ToString());
             }
@@ -258,6 +264,7 @@ namespace DataAccess
             }
             catch (Exception ex)
             {
+                LogWriter _log = new LogWriter(_config);
                 _log.LogError("Error in Close: " + ex.ToString());
             }
         }
