@@ -1,13 +1,11 @@
-﻿using Domain.Models;
-using Domain.ViewModels;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Common.Logs;
+using DataAccess;
 using DataAccess.Compras;
 using DataAccess.RetencionIvaRenta;
+using Domain.Models;
+using Domain.ViewModels;
 using Helpers;
-using DataAccess;
-using Common.Logs;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Ingresos
 {
@@ -17,14 +15,14 @@ namespace WebUI.Controllers.Ingresos
         private RetencionCompraDao _rc;
         private GenerateRetencionDao _gra;
         private DataAccessObject _dao;
-        
+
         private IConfiguration _configuration;
-        
+
 
         public RetencionCompraController(IConfiguration config)
         {
             _configuration = config;
-            
+
             _dao = new DataAccessObject(_configuration);
             _gra = new GenerateRetencionDao(_configuration);
             _rc = new RetencionCompraDao(_configuration);
@@ -32,7 +30,7 @@ namespace WebUI.Controllers.Ingresos
 
         //private readonly IWebHostEnvironment _hostingEnviromet; 
 
-        
+
         public IActionResult Index()
         {
             return View();

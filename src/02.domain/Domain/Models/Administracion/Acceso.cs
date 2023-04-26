@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace Domain.Models
+﻿namespace Domain.Models
 {
     public class Acceso
     {
@@ -24,7 +19,7 @@ namespace Domain.Models
         public bool impuesto { get; set; }
         public bool kardex { get; set; }
         public bool imagen { get; set; }
-        public bool acceso { get; set;   }
+        public bool acceso { get; set; }
     }
 
 

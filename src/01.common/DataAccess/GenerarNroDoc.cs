@@ -1,18 +1,11 @@
 ﻿using Helpers;
-using Domain.Models;
-using Domain.ViewModels;
-using System;
-using System.Collections.Generic;
+using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 
 namespace DataAccess
 {
-    public class GenerarNroDoc 
+    public class GenerarNroDoc
     {
 
         private readonly IConfiguration _config;

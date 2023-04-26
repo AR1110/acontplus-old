@@ -1,12 +1,6 @@
 ﻿using DataAccess;
 using Domain.Models;
-using Domain.ViewModels;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers.Admin
 {
@@ -20,13 +14,13 @@ namespace WebUI.Controllers.Admin
             _e = new EtiquetaDao(_config);
         }
 
-        
+
         public IActionResult Index()
-        {            
+        {
             return View();
         }
         public async Task<IActionResult> Get(string json)
-        {            
+        {
             var res = await _e.GetAsync(json);
             return Ok(res);
         }

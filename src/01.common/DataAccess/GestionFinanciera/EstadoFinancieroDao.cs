@@ -1,7 +1,6 @@
 ﻿using Domain.Models;
-using Newtonsoft.Json;
-using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 
 namespace DataAccess
 {

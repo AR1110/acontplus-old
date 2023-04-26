@@ -1,6 +1,6 @@
-﻿using Domain.Models;
+﻿using DataAccess;
+using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
-using DataAccess;
 
 namespace WebUI.Controllers
 {
@@ -14,15 +14,15 @@ namespace WebUI.Controllers
             _af = new AnioFiscalDao(_configuration);
         }
         // GET: AnioFiscal
-         public IActionResult Index()
+        public IActionResult Index()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]AnioFiscal data)
+        public async Task<IActionResult> Post([FromBody] AnioFiscal data)
         {
-            var res  = await _af.CreateAnioFiscalAsync(data);
+            var res = await _af.CreateAnioFiscalAsync(data);
             return Ok(res);
         }
         public async Task<IActionResult> Get(int pageIndex, int pageSize)
@@ -32,7 +32,7 @@ namespace WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Put([FromBody]AnioFiscal data)
+        public async Task<IActionResult> Put([FromBody] AnioFiscal data)
         {
             var res = await _af.UpdateAnioFiscalAsync(data);
             return Ok(res);

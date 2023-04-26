@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Common.Logs;
 using DataAccess;
 using Helpers;
@@ -102,7 +98,7 @@ namespace ApiFactElect.Controllers
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Ventas.Cliente_Insert");
-                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);                
+                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
                 _response = _db.GetDefault();
             }
@@ -154,7 +150,7 @@ namespace ApiFactElect.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Ventas.Cliente_Update");
                 _db.AddDynamicParam("idRol", idUsuarioRol);
-                _db.AddDynamicParam("id", id);                
+                _db.AddDynamicParam("id", id);
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

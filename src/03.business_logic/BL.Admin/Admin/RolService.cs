@@ -22,7 +22,7 @@ namespace BL.Admin.Data
                 DbAccess adb = new DbAccess(_config);
                 await adb.SPExecute("App.Rol_Get");
                 adb.AddParameter("@json", SqlDbType.NVarChar, json);
-                dt = adb.GetDataTable();                
+                dt = adb.GetDataTable();
                 _response.Create(code: "0", message: "OK", payload: DataHelper.DataTableToJSON(dt));
             }
             catch (Exception ex)

@@ -1,17 +1,13 @@
 ﻿using Domain.Dtos;
-using Domain.Models;
 using Domain.ViewModels;
 using Helpers;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Threading.Tasks;
 
 namespace DataAccess
 {
-    public class LoginDao 
+    public class LoginDao
     {
         private readonly IConfiguration _config;
         protected GenericResponse _gr;

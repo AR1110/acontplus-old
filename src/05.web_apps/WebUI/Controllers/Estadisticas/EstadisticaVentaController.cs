@@ -4,12 +4,12 @@ namespace WebUI.Controllers.Estadisticas
 {
     public class EstadisticaVentaController : Controller
     {
-        private readonly IConfiguration _configuration; 
+        private readonly IConfiguration _configuration;
         private EstadisticaVentaDao _ev;
         public EstadisticaVentaController(IConfiguration configuration)
         {
             _configuration = configuration;
-            _ev = new EstadisticaVentaDao(_configuration);  
+            _ev = new EstadisticaVentaDao(_configuration);
         }
         public IActionResult Index()
         {
@@ -20,9 +20,10 @@ namespace WebUI.Controllers.Estadisticas
             return Ok(await _ev.GetAsync(json));
         }
 
-        public async Task<IActionResult> GetClienteVenta(string json){
-           return Ok(await _ev.GetClienteVentaAsync(json));
-       }
-        
+        public async Task<IActionResult> GetClienteVenta(string json)
+        {
+            return Ok(await _ev.GetClienteVentaAsync(json));
+        }
+
     }
 }

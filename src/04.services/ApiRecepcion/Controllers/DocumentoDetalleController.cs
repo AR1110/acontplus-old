@@ -35,7 +35,7 @@ namespace ApiRecepcion.Controllers
         // POST api/<DocumentoDetalleController>
         [HttpPost("{idDocumento}/{idArticulo}")]
         public async Task<IActionResult> Post(int idDocumento, int idArticulo)
-        {   
+        {
             LogWriter _log = new LogWriter(_config);
             GenericResponse _response = new GenericResponse();
             try
@@ -55,7 +55,7 @@ namespace ApiRecepcion.Controllers
             {
                 _db.Close();
             }
-            return Ok(_response); 
+            return Ok(_response);
         }
 
         // PUT api/<DocumentoDetalleController>/5

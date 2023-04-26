@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace Domain.Models
+﻿namespace Domain.Models
 {
     public class Menu
     {
@@ -14,8 +9,8 @@ namespace Domain.Models
         public string orden { get; set; }
         public string fechaRegistro { get; set; }
         public bool estado { get; set; }
-        public string grupo { get; set; } 
-        public int idTipoMenu { get; set; } 
+        public string grupo { get; set; }
+        public int idTipoMenu { get; set; }
         public bool subMenu { get; set; }
     }
 }

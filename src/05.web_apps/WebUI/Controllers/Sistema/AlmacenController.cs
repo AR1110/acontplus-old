@@ -30,7 +30,8 @@ namespace WebUI.Controllers
             {
                 _log.LogError("Error in Get: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
-            }finally
+            }
+            finally
             {
                 _db.Close();
             }

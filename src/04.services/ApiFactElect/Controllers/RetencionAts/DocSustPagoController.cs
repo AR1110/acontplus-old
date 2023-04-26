@@ -47,7 +47,7 @@ namespace ApiFactElect.Controllers.RetencionAts
                 _db.AddDynamicParam("idDocSust", idDocSust);
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
                 _response = _db.GetDefault();
-             }
+            }
             catch (Exception ex)
             {
                 _logs.LogError("Error al guardar el pago: " + ex.ToString());

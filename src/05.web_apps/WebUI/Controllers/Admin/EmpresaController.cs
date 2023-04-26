@@ -1,6 +1,5 @@
 ﻿using DataAccess.Administracion;
 using Domain.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Admin
@@ -14,11 +13,11 @@ namespace WebUI.Controllers.Admin
             _config = config;
             _e = new EmpresaDao(_config);
         }
-        
+
         public IActionResult Index()
         {
             return View();
-        } 
+        }
 
         public async Task<IActionResult> Get(string json)
         {

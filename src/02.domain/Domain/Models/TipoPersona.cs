@@ -9,5 +9,5 @@
         public string fechaRegistro { get; set; }
         public int idUsuario { get; set; }
 
-    } 
+    }
 }

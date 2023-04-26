@@ -1,12 +1,7 @@
 ﻿using DataAccess;
 using Domain.Models;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using System;
-using System.Linq;
-using DataAccess.Inventario;
 using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Inventario
 {
@@ -15,21 +10,21 @@ namespace WebUI.Controllers.Inventario
         // GET: Bodega
         // // GET: Articulo
         private readonly IConfiguration _configuration;
-         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
+        ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
-        
+
         GenericResponse _gr = new();
 
         public BodegaController(IConfiguration configuration)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
-            
-            
+
+
 
         }
 
-        
+
         public IActionResult Index()
         {
             return View();

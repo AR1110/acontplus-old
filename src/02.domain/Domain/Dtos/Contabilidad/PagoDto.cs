@@ -1,8 +1,4 @@
-﻿
-using System.Drawing;
-using System.Runtime.CompilerServices;
-
-namespace Domain.Dtos.Contabilidad
+﻿namespace Domain.Dtos.Contabilidad
 {
     public class PagoDto
     {

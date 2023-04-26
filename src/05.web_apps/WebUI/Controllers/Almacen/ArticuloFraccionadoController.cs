@@ -1,9 +1,8 @@
-﻿using Domain.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
+﻿using DataAccess;
 using DataAccess.Almacen;
+using Domain.Models;
 using Domain.ViewModels;
-using DataAccess;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace WebUI.Controllers
@@ -11,9 +10,9 @@ namespace WebUI.Controllers
     public class ArticuloFraccionadoController : Controller
     {
         private readonly IConfiguration _configuration;
-         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
+        ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
-        
+
         readonly ArticuloFraccionadoDao _af;
 
         public ArticuloFraccionadoController(IConfiguration configuration)
@@ -21,11 +20,11 @@ namespace WebUI.Controllers
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
             _af = new ArticuloFraccionadoDao(_configuration);
-            
-            
+
+
         }
 
-        
+
         public IActionResult Index()
         {
             return View();

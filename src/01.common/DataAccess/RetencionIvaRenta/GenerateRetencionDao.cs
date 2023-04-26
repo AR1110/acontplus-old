@@ -4,11 +4,8 @@ using Domain.ViewModels;
 using Domain.ViewModels.Ventas;
 using Helpers;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Threading.Tasks;
 
 namespace DataAccess.RetencionIvaRenta
 {
@@ -80,7 +77,7 @@ namespace DataAccess.RetencionIvaRenta
             }
             finally
             {
-                
+
             }
 
             return _gr;
@@ -141,7 +138,7 @@ namespace DataAccess.RetencionIvaRenta
             }
             finally
             {
-                
+
             }
 
             return _gr;
@@ -193,7 +190,7 @@ namespace DataAccess.RetencionIvaRenta
             }
             finally
             {
-                
+
             }
 
             return _gr;

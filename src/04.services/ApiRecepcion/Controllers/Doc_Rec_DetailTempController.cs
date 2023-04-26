@@ -1,12 +1,11 @@
 ﻿using Common.Logs;
 using DataAccess;
 using Helpers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiRecepcion.Controllers
 {
-    
+
     [Route("api/[controller]")]
     [ApiController]
     public class Doc_Rec_DetailTempController : ControllerBase
@@ -80,7 +79,7 @@ namespace ApiRecepcion.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Recepcion.Doc_Detail_Temp_Update");
                 _db.AddDynamicParam("idRol", idUsuarioRol);
-                _db.AddDynamicParam("jsonData", SqlValidation.ValidateSqlString(json)); 
+                _db.AddDynamicParam("jsonData", SqlValidation.ValidateSqlString(json));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

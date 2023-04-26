@@ -15,7 +15,7 @@ namespace WS_DocumentoRecibido
             IHost host = Host.CreateDefaultBuilder(args)
                 .UseWindowsService(options =>
                 {
-                    options.ServiceName= "WS_Doc_Recibido_Service";
+                    options.ServiceName = "WS_Doc_Recibido_Service";
                 })
                 .ConfigureServices(services =>
                 {

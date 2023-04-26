@@ -2,7 +2,6 @@
 using DataAccess;
 using Domain.Dtos;
 using Helpers;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiConfig.Controllers

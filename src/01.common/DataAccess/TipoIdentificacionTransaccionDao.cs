@@ -1,16 +1,12 @@
 ﻿using Domain.Models;
 using Helpers;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DataAccess
 {
-    public class TipoIdentificacionTransaccionDao 
+    public class TipoIdentificacionTransaccionDao
     {
         private readonly IConfiguration _config;
         protected GenericResponse _gr;
@@ -24,7 +20,7 @@ namespace DataAccess
 
         }
 
-        public async Task<GenericResponse> ReadTipoIdentificacionAsycn( int idRol, HelpersResponse data)
+        public async Task<GenericResponse> ReadTipoIdentificacionAsycn(int idRol, HelpersResponse data)
         {
             var listar = new List<TipoIdentificacionTransaccion>();
             try
@@ -106,7 +102,8 @@ namespace DataAccess
                 }
                 _gr.data = list;
 
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 _gr.id = "0";
                 _gr.typeNotify = "warning";

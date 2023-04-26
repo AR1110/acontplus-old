@@ -2,14 +2,13 @@
 using DataAccess;
 using Domain.Dtos.Compras;
 using Helpers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ApiCompras.Controllers
 {
-    
+
     [Route("api/[controller]")]
     [ApiController]
     public class CompraNoHabitualController : ControllerBase
@@ -55,7 +54,7 @@ namespace ApiCompras.Controllers
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                 await _db.SPExecute("Compra.Documento_Ingreso_Insert");
+                await _db.SPExecute("Compra.Documento_Ingreso_Insert");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _db.AddDynamicParam("comprobante", SqlValidation.ValidateSqlString(data.comprobante));
                 _db.AddDynamicParam("detalles", SqlValidation.ValidateSqlString(data.detalles));

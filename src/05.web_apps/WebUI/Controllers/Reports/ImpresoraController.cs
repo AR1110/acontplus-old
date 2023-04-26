@@ -1,8 +1,8 @@
-﻿using DataAccess;
+﻿using Common.Logs;
+using DataAccess;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
 using WebUI.ApiClient;
-using Common.Logs;
 
 namespace WebUI.Controllers.Reports
 {

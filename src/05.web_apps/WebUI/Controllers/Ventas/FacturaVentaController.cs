@@ -1,9 +1,7 @@
-﻿using Domain.ViewModels;
-using Microsoft.AspNetCore.Mvc;
+﻿using Common.Logs;
 using DataAccess;
 using Helpers;
-using Common.Logs;
-using Newtonsoft.Json;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Ventas
 {
@@ -101,6 +99,6 @@ namespace WebUI.Controllers.Ventas
                 _db.Close();
             }
             return Ok(_response);
-        }              
+        }
     }
 }

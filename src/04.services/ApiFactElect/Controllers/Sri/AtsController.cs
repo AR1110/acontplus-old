@@ -1,5 +1,3 @@
-using System.Data;
-using System.Text;
 using BL.FactElect;
 using Common.Logs;
 using DataAccess;
@@ -7,6 +5,8 @@ using Domain.Enums;
 using Domain.Models;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
+using System.Text;
 
 namespace ApiFactElect.Controllers.Sri
 {

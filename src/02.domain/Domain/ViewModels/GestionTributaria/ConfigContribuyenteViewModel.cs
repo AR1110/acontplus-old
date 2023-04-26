@@ -1,5 +1,4 @@
 ﻿using Domain.Models.GestionTributaria;
-using System.Collections.Generic;
 
 namespace Domain.ViewModels.GestionTributaria
 {

@@ -13,7 +13,7 @@ namespace AdminUI.Controllers
         public LicenciaPlanController(ILogger<LicenciaPlanController> logger, IConfiguration config)
         {
             _logger = logger;
-            _config= config;
+            _config = config;
             _lpS = new LicenciaPlanService(_config);
         }
 

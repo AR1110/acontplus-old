@@ -1,6 +1,5 @@
 ﻿using DataAccess;
 using Helpers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Admin
@@ -16,7 +15,7 @@ namespace WebUI.Controllers.Admin
             _configuration = configuration;
             _cpc = new ContraPartidaCajaDao(_configuration);
         }
-        
+
         public IActionResult Index()
         {
             return View();

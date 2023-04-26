@@ -1,12 +1,8 @@
-﻿using Domain.Models;
-using Domain.Models.Administracion;
+﻿using Domain.Models.Administracion;
 using Helpers;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Threading.Tasks;
 
 namespace DataAccess
 {

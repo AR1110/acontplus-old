@@ -80,7 +80,7 @@ namespace ApiContabilidad.Controllers
             GenericResponse _response = new GenericResponse();
             try
             {
-                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);               await _dbAccess.SPExecute("Contabilidad.CuentaPorPagar_Update");
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value); await _dbAccess.SPExecute("Contabilidad.CuentaPorPagar_Update");
                 _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _dbAccess.AddDynamicParam("idCuentaPorPagar", id);
                 _dbAccess.AddDynamicParam("json", SqlValidation.ValidateSqlString(data.cuotas));

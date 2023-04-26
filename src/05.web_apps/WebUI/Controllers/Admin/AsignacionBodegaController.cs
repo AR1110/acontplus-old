@@ -1,6 +1,5 @@
 ﻿using DataAccess.Asignaciones;
 using Domain.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Admin
@@ -15,7 +14,7 @@ namespace WebUI.Controllers.Admin
             _asignB = new AsignacionBodegaDao(_configuration);
         }
 
-        
+
         public IActionResult Index()
         {
             return View();
@@ -29,7 +28,7 @@ namespace WebUI.Controllers.Admin
         }
         */
         public async Task<IActionResult> Get(string json)
-        {            
+        {
             return Ok(await _asignB.GetAsync(json));
         }
 

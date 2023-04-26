@@ -1,6 +1,5 @@
 ﻿using DataAccess.GestionFinanciera;
 using Helpers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.GestionFinanciera
@@ -15,7 +14,7 @@ namespace WebUI.Controllers.GestionFinanciera
             _configuration = configuration;
             _c = new CarteraDao(_configuration);
         }
-        
+
         public IActionResult Index() => View();
 
         [HttpGet]
@@ -24,6 +23,6 @@ namespace WebUI.Controllers.GestionFinanciera
             int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _c.GetEgresosAsync(idRol, json);
             return Ok(res);
-        } 
+        }
     }
 }

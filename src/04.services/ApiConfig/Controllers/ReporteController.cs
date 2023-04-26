@@ -3,7 +3,6 @@ using DataAccess;
 using Domain.Config.Dtos;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace ApiConfig.Controllers
 {

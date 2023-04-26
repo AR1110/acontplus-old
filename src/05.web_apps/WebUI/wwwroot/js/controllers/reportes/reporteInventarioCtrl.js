@@ -135,27 +135,5 @@ function reporteInventarioCtrl($scope, _commonSvc, mS, form, toast, FileSaver, B
             formatType: $scope.dataSearch.byTipoFormato
         })
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
 

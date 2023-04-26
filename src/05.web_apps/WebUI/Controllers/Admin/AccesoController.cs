@@ -1,7 +1,6 @@
-﻿using Domain.Models;
+﻿using DataAccess.Administracion;
+using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using DataAccess.Administracion;
 
 namespace WebUI.Controllers
 {
@@ -15,7 +14,7 @@ namespace WebUI.Controllers
             _a = new AccesoDao(_configuration);
         }
         // GET: Acceso
-        
+
         public IActionResult Index()
         {
             return View();

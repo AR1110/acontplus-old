@@ -1,9 +1,9 @@
-﻿using DataAccess;
-using Helpers;
+﻿using Common.Logs;
+using DataAccess;
 using Domain.Models;
+using Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Common.Logs;
 
 namespace WebUI.Controllers
 {
@@ -14,7 +14,7 @@ namespace WebUI.Controllers
         {
             _configuration = configuration;
         }
-        
+
         public IActionResult Index()
         {
             return View();
@@ -159,7 +159,7 @@ namespace WebUI.Controllers
             {
                 await _db.SPExecute("Ventas.Cliente_Delete");
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("id", idCliente); 
+                _db.AddDynamicParam("id", idCliente);
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Domain.Models
+﻿namespace Domain.Models
 {
     public class Email
     {
@@ -14,7 +12,7 @@ namespace Domain.Models
         public string cc { get; set; }
         public string password { get; set; }
         public string subject { get; set; }
-        public string message { get; set; }        
+        public string message { get; set; }
         public string dataMail { get; set; }
         public List<FileModel> files { get; set; }
         public Email() { }

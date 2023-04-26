@@ -1,16 +1,16 @@
-﻿using DataAccess.Compras;
-using Domain.ViewModels.Compras;
-using Microsoft.AspNetCore.Mvc;
+﻿using Common.Logs;
 using DataAccess;
+using DataAccess.Compras;
+using Domain.ViewModels.Compras;
 using Helpers;
-using Common.Logs;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Compras
 {
     public class NotaCreditoProveedorController : Controller
     {
         private readonly IConfiguration _configuration;
-       
+
 
         private NotaCreditoProveedorDao _ncprov;
         public NotaCreditoProveedorController(IConfiguration configuration)

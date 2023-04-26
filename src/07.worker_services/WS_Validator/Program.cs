@@ -3,7 +3,7 @@ using WS_Validator;
 
 string _env = string.Empty;
 #if DEBUG
-            _env = "Development";
+_env = "Development";
 #else
 _env = "Production";
 #endif

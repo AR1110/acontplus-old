@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace NotifierWS
 {
@@ -12,8 +8,8 @@ namespace NotifierWS
         public int port { get; set; }
         public bool enableSsl { get; set; }
         public string logo { get; set; }
-        public string from { get; set; }    
-        public string to { get; set; }  
+        public string from { get; set; }
+        public string to { get; set; }
         public string cc { get; set; }
         public string pwd { get; set; }
         public string subject { get; set; }

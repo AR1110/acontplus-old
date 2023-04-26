@@ -1,7 +1,6 @@
 ﻿using BL.Print;
 using Common.Logs;
 using Domain.Config.Dtos;
-using Helpers;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Net;
@@ -87,7 +86,7 @@ namespace PrintServer
                         key = key.Replace("?", "");
                         value = HttpUtility.UrlDecode(kvPair[1]);
                         _dparams.Add(key, value);
-                    } 
+                    }
                     var dataReport = new ApiPrintRequestDto();
                     dataReport.Create(_dparams);
 
@@ -148,10 +147,10 @@ namespace PrintServer
             }
         }
 
-        
+
         public static void Main(string[] args)
         {
-           NetAclChecker.RunProcessAsAdmin();
+            NetAclChecker.RunProcessAsAdmin();
             //        string executablePath = Assembly.GetEntryAssembly().Location;
 
             //        RegistryKey rk = Registry.CurrentUser.OpenSubKey
@@ -183,7 +182,7 @@ namespace PrintServer
                 appLog.WriteEntry($"Listening for connections on {myIP}", EventLogEntryType.Information);
                 appLog.WriteEntry($"Listening for connections on {url}", EventLogEntryType.Information);
                 Console.WriteLine("Listening for connections on {0}", myIP);
-                Console.WriteLine("Listening for connections on {0}", url); 
+                Console.WriteLine("Listening for connections on {0}", url);
             }
             else
             {

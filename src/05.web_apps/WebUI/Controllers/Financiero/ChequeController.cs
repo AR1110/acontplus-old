@@ -1,5 +1,4 @@
 ﻿using DataAccess.GestionFinanciera;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.GestionFinanciera
@@ -14,7 +13,7 @@ namespace WebUI.Controllers.GestionFinanciera
             _configuration = configuration;
             _c = new ChequeDao(_configuration);
         }
-        
+
         public IActionResult Index()
         {
             return View();

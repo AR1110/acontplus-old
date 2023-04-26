@@ -12,14 +12,14 @@ namespace AdminUI.Controllers
         private AplicacionMenuService _amS;
         public AplicacionMenuController(ILogger<AplicacionMenuController> logger, IConfiguration config)
         {
-            _config= config;
+            _config = config;
             _amS = new AplicacionMenuService(_config);
             _logger = logger;
         }
 
         [HttpGet]
         [Route("Get/{json}")]
-        public async Task<IActionResult> Get( string json)
+        public async Task<IActionResult> Get(string json)
         {
             return Ok(await _amS.GetAsync(json));
         }
@@ -35,7 +35,7 @@ namespace AdminUI.Controllers
         [Route("Put")]
         public async Task<IActionResult> Put(string id, [FromBody] AplicacionMenu data)
         {
-            return Ok(await _amS.PutAsync(id,data));
+            return Ok(await _amS.PutAsync(id, data));
         }
 
         [HttpDelete]

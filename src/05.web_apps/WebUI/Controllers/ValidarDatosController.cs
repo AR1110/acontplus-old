@@ -1,18 +1,13 @@
-﻿using WebUI.Utils;
-using Domain.Models;
+﻿using Helpers;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Helpers;
+using WebUI.Utils;
 
 namespace WebUI.Controllers
 {
     public class ValidarDatosController : Controller
     {
         GenericResponse _gr = new();
-        
+
         ValidacionesExternas ve = new();
         public IActionResult Index()
         {

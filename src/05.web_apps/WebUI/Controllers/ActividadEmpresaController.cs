@@ -1,6 +1,5 @@
 ﻿using DataAccess;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 
 namespace WebUI.Controllers
 {
@@ -15,7 +14,7 @@ namespace WebUI.Controllers
         }
         // GET: ActividadEmpresa         
 
-        
+
         public IActionResult Index()
         {
             return View();

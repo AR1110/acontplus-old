@@ -37,7 +37,7 @@ namespace WebUI.Controllers
             {
 
                 AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip,
-                Credentials= CredentialCache.DefaultCredentials,
+                Credentials = CredentialCache.DefaultCredentials,
                 UseDefaultCredentials = true
 
             })
@@ -48,7 +48,7 @@ namespace WebUI.Controllers
             client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:19.0) Gecko/20100101 Firefox/19.0");
             client.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Charset", "ISO-8859-1");
             var response = await client.SendAsync(request);
-            response.EnsureSuccessStatusCode(); 
+            response.EnsureSuccessStatusCode();
             client.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "text/html,application/xhtml+xml,application/xml");
 
             Console.WriteLine(await response.Content.ReadAsStringAsync());

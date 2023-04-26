@@ -49,7 +49,7 @@ namespace ApiFactElect.Controllers.RetencionAts
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al guardar la retencion: " + ex.ToString()); 
+                _logs.LogError("Error al guardar la retencion: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al guardar la retencion");
             }
             finally

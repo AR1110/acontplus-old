@@ -13,7 +13,7 @@ namespace BL.FactElect
                             <div class=""card border border-dark rounded"">
                                 <div class=""card-body"">
 <div class=""text-center"">
-                                    <img src="+ $"data:image/png;base64,{Convert.ToBase64String(File.ReadAllBytes("C:\\AcontPlus\\Images\\Logos\\NoLogo.png"))}" + @" alt=""NO LOGO"" align=""center"" height=""100"">
+                                    <img src=" + $"data:image/png;base64,{Convert.ToBase64String(File.ReadAllBytes("C:\\AcontPlus\\Images\\Logos\\NoLogo.png"))}" + @" alt=""NO LOGO"" align=""center"" height=""100"">
 </div>
                                     <h6>" + data.infoTributaria.razonSocial + @"</h6>
                                     
@@ -48,11 +48,11 @@ namespace BL.FactElect
                                     </h5>
                                     <h5>
                                         <label>EMISIÓN:</label>
-                                        "+ (data.infoTributaria.tipoEmision == "1" ? "NORMAL": "") + @"
+                                        " + (data.infoTributaria.tipoEmision == "1" ? "NORMAL" : "") + @"
                                     </h5>
                                     <label>CLAVE DE ACCESSO</label><br />
 <div class=""text-center"">
-                                    <img id=""barcodeImg"" src="+ $"data:image/png;base64,{Convert.ToBase64String(BarcodeGen.Create(data.infoTributaria.claveAcceso), 0 , BarcodeGen.Create(data.infoTributaria.claveAcceso).Length)}" + @" alt="""" align=""center"" height=""60"" width=""500"">
+                                    <img id=""barcodeImg"" src=" + $"data:image/png;base64,{Convert.ToBase64String(BarcodeGen.Create(data.infoTributaria.claveAcceso), 0, BarcodeGen.Create(data.infoTributaria.claveAcceso).Length)}" + @" alt="""" align=""center"" height=""60"" width=""500"">
                                     <br><small> " + data.infoTributaria.claveAcceso + @"</small></div>
                                 </div>
 

@@ -1,5 +1,4 @@
 ﻿using Domain.Models.Ventas;
-using System.Collections.Generic;
 
 namespace Domain.ViewModels.Ventas
 {

@@ -15,7 +15,7 @@ namespace WebUI.Controllers.GestionFinanciera
 
         public MovimientoCajaController(IConfiguration configuration)
         {
-            _configuration = configuration; 
+            _configuration = configuration;
             _movc = new MovimientoCajaDao(_configuration);
 
         }

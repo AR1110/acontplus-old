@@ -1,13 +1,9 @@
-﻿using Domain.Models;
-using Domain.Models.Tesoreria;
+﻿using Domain.Models.Tesoreria;
 using Domain.ViewModels.Tesoreria;
 using Helpers;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Threading.Tasks;
 
 namespace DataAccess.Tesoreria
 {
@@ -74,7 +70,7 @@ namespace DataAccess.Tesoreria
             }
             finally
             {
-                
+
             }
             return _gr;
         }
@@ -128,7 +124,7 @@ namespace DataAccess.Tesoreria
             }
             finally
             {
-                
+
             }
             return _gr;
         }

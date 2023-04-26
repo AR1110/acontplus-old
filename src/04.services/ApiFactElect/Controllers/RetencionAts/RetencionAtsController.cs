@@ -2,12 +2,11 @@
 using DataAccess;
 using Domain.Dtos;
 using Helpers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiFactElect.Controllers.RetencionAts
 {
-    
+
     [Route("api/[controller]")]
     [ApiController]
     public class RetencionAtsController : ControllerBase

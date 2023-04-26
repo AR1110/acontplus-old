@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Domain.ViewModels
+﻿namespace Domain.ViewModels
 {
     public class LoginData
     {

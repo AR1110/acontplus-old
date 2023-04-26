@@ -1,10 +1,9 @@
 ﻿using DataAccess;
-using Domain.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using DataAccess.GestionTributaria;
+using Domain.Models;
 using Domain.Models.GestionTributaria;
 using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.ImpuestoEstado
 {
@@ -13,9 +12,9 @@ namespace WebUI.Controllers.ImpuestoEstado
         // GET: Impuesto
         private readonly IConfiguration _configuration;
 
-        
+
         private DataAccessObject _dao;
-        
+
         GenericResponse _gr = new();
         private RetencionRentaDao _i;
 
@@ -24,12 +23,12 @@ namespace WebUI.Controllers.ImpuestoEstado
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
             _i = new RetencionRentaDao(_configuration);
-            
-            
+
+
 
         }
 
-        
+
         public IActionResult Index()
         {
             return View();
@@ -44,7 +43,7 @@ namespace WebUI.Controllers.ImpuestoEstado
         }
 
 
-        
+
 
         //Gestion de Informacion 
         [HttpPost]

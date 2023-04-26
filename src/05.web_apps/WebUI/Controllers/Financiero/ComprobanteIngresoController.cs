@@ -1,9 +1,8 @@
-﻿using Helpers;
-using DataAccess;
+﻿using DataAccess;
 using DataAccess.Tesoreria;
 using Domain.Models;
 using Domain.ViewModels.Tesoreria;
-using Microsoft.AspNetCore.Authorization;
+using Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -13,9 +12,9 @@ namespace WebUI.Controllers.GestionFinanciera
     {
         private ComprobanteIngresoDao _ci;
         private readonly IConfiguration _configuration;
-        
+
         private DataAccessObject _dao;
-        
+
         private EstadoFinancieroDao _ef;
 
         public ComprobanteIngresoController(IConfiguration configuration)
@@ -24,11 +23,11 @@ namespace WebUI.Controllers.GestionFinanciera
             _dao = new DataAccessObject(_configuration);
             _ef = new EstadoFinancieroDao(_configuration);
             _ci = new ComprobanteIngresoDao(_configuration);
-            
-            
+
+
         }
 
-        
+
         public IActionResult Index()
         {
             return View();

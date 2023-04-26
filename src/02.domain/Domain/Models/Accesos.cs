@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace Domain.Models
+﻿namespace Domain.Models
 {
     public class Accesos
     {
@@ -16,6 +11,6 @@ namespace Domain.Models
         public Accesos accesos { get; set; }
         public Politica politica { get; set; }
         public Menu menu { get; set; }
-        public Acciones acciones { get; set;  }
+        public Acciones acciones { get; set; }
     }
 }

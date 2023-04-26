@@ -1,5 +1,4 @@
 ﻿using DataAccess.GestionFinanciera;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.GestionFinanciera
@@ -13,9 +12,9 @@ namespace WebUI.Controllers.GestionFinanciera
             _configuration = configuration;
             _p = new PagoDao(_configuration);
         }
-        
+
         public IActionResult Index()
-        {            
+        {
             return View();
         }
 
