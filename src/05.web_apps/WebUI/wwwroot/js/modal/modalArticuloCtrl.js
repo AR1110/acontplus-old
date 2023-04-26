@@ -236,7 +236,7 @@
 
              this.setCodigoSecuencialArticulo();
              this.setGridTarifa();
-             this.getBodegas();
+             this.getEstablecimientos();
 
              hideLoader();
 
@@ -283,26 +283,38 @@
          })
      }
 
-     getBodegas() {
-         this._mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response => {
+
+     getEstablecimientos() {
+         this._commonSvc.getEstabAsign({}).then(establecimientos => {
+             this.establecimientos = establecimientos;
+
+             let dataEstab = this.establecimientos[0];
+             this.data.codEstab = dataEstab.codEstab;
+
+             this.getBodegas(dataEstab);
+         })
+     }
+
+     onChangeEstablecimiento() {
+         let dataEstab = this.establecimientos.find(item => item.codEstab === this.data.codEstab);
+         this.getBodegas(dataEstab);
+     }
+
+     getBodegas(dataEstab) {
+
+         this._mS.getData('get', '/EstabAsig/GetDataForm?json=' + JSON.stringify(dataEstab)).then(response => {
+             if (response.code === '0') {
+                 throw response
+             }
              let results = JSON.parse(response.payload) || [];
-             let establecimientos = results[0];
-             let dataEstab = establecimientos.length > 0 ? establecimientos[0] : []
+             this.bodegas = results[1];
 
-             this._mS.getData('get', '/EstabAsig/GetDataForm?json=' + JSON.stringify(dataEstab)).then(response => {
-                 if (response.code === '0') {
-                     throw response
-                 }
-                 let results = JSON.parse(response.payload) || [];
-                 this.bodegas = results[1];
+             if (this.bodegas.length > 0) {
+                 this.data.idBodega = this.bodegas[0].idBodega;
+             } else {
+                 this._toastr.toastr('info', 'No tienes asignado ninguna Bodega')
+             }
 
-                 if (this.bodegas.length > 0) {
-                     this.data.idBodega = this.bodegas[0].idBodega;
-                 } else {
-                     this._toastr.toastr('info', 'No tienes asignado ninguna Bodega')
-                 }
-
-             })
          })
      }
 
@@ -1019,7 +1031,7 @@
          this.data = {};
          this.tipoRegistro = 1;
          this.getUbicacionArticulo();
-         this.getBodegas();
+         this.getEstablecimientos();
      }
 
      getUbicacionArticulo() {
@@ -1031,26 +1043,37 @@
          })
      }
 
-     getBodegas() {
-         this._mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response => {
+     getEstablecimientos() {
+         this._commonSvc.getEstabAsign({}).then(establecimientos => {
+             this.establecimientos = establecimientos;
+
+             let dataEstab = this.establecimientos[0];
+             this.data.codEstab = dataEstab.codEstab;
+
+             this.getBodegas(dataEstab);
+         })
+     }
+
+     onChangeEstablecimiento() {
+         let dataEstab = this.establecimientos.find(item => item.codEstab === this.data.codEstab);
+         this.getBodegas(dataEstab);
+     }
+
+     getBodegas(dataEstab) {
+
+         this._mS.getData('get', '/EstabAsig/GetDataForm?json=' + JSON.stringify(dataEstab)).then(response => {
+             if (response.code === '0') {
+                 throw response
+             }
              let results = JSON.parse(response.payload) || [];
-             let establecimientos = results[0];
-             let dataEstab = establecimientos.length > 0 ? establecimientos[0] : []
+             this.bodegas = results[1];
 
-             this._mS.getData('get', '/EstabAsig/GetDataForm?json=' + JSON.stringify(dataEstab)).then(response => {
-                 if (response.code === '0') {
-                     throw response
-                 }
-                 let results = JSON.parse(response.payload) || [];
-                 this.bodegas = results[1];
+             if (this.bodegas.length > 0) {
+                 this.data.idBodega = this.bodegas[0].idBodega;
+             } else {
+                 toastr.info('No tienes asignado ninguna Bodega')
+             }
 
-                 if (this.bodegas.length > 0) {
-                     this.data.idBodega = this.bodegas[0].idBodega;
-                 } else {
-                     this._toastr.toastr('info', 'No tienes asignado ninguna Bodega')
-                 }
-
-             })
          })
      }
 
