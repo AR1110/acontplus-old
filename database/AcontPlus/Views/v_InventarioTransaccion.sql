@@ -28,7 +28,7 @@ SELECT t.idTransaccion
 	,a.codigoAuxiliar
 	,a.codigoBarra
 	,a.descripcion articulo
-	,ISNULL(CASE WHEN tt.codigo = 'E' THEN t.cantidad END, 0) cantidadEntrada
+	,ISNULL(CASE WHEN tt.codigo = 'E' OR tt.codigo = 'A' THEN t.cantidad END, 0) cantidadEntrada
 	,ISNULL(CASE WHEN tt.codigo = 'S' THEN t.cantidad END, 0) cantidadSalida
 	,u.nombreUsuario usuario
 	,nroDocumento = (
@@ -81,6 +81,15 @@ SELECT t.idTransaccion
 						FROM Recepcion.DocumentoRecibido dr  WITH (NOLOCK)
 						WHERE dr.idDocumento = t.idDocumento
 						)
+			WHEN tt.codigo = 'A' AND td.codigo = 'CI'
+				THEN 
+				(
+					SELECT TOP 1 e.estab + '-' + pe.ptoEmi + '-' + CAST(dr.nroDoc AS varchar(9))
+					FROM ConsolidacionInventario dr  WITH (NOLOCK)
+					INNER JOIN PuntoEmision pe ON dr.idPuntoEmision = pe.idPuntoEmision
+					INNER JOIN Sri.Establecimiento e ON pe.codEstab = e.codEstab
+					WHERE dr.idConsolidacionInventario = t.idDocumento
+				)
 			END
 		)
 	,clienteProveedor = (
@@ -185,9 +194,9 @@ SELECT t.idTransaccion
 						)
 			END
 		)
-,ISNULL(CASE WHEN tt.codigo = 'E' THEN m.descripcion END, '') medidaEntrada
+,ISNULL(CASE WHEN tt.codigo = 'E' OR tt.codigo = 'A' THEN m.descripcion END, '') medidaEntrada
 ,ISNULL(CASE WHEN tt.codigo = 'S' THEN m.descripcion END, '') medidaSalida
-,ISNULL(CASE WHEN tt.codigo = 'E' THEN t.total END, 0) totalEntrada
+,ISNULL(CASE WHEN tt.codigo = 'E' OR tt.codigo = 'A' THEN t.total END, 0) totalEntrada
 ,ISNULL(CASE WHEN tt.codigo = 'S' THEN t.total END, 0) totalSalida 
 --,IIF(td.codigo = 'CI', t.idDocumento, dbo.AFTMovimientoKardex(t.fechaRegistro, t.idArticulo, t.idBodega)) particion
 ,CASE WHEN td.codigo = 'CI' THEN t.idDocumento ELSE
