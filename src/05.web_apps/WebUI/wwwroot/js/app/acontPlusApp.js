@@ -938,7 +938,8 @@ app.directive('updateArticle', function ($rootScope) {
     }
 })
 
-//permiso para ver kardex 
+
+//permiso para ver kardex en documentos de ventas 
 app.directive('viewKardex', function ($rootScope, modalService, nombreModal) {
     return {
         scope: {
@@ -983,32 +984,47 @@ app.directive('viewKardex', function ($rootScope, modalService, nombreModal) {
             })
         }
     };
-    // return {
-    //     restrict: 'A',
-    //     replace: true,
-    //     scope: {
-    //         params: '='
-    //     },
-    //     link: function (scope, element, attr) {
-    //         console.log(scope.params);
-    //         console.log(element);
-    //     },
-    //     template: function (element, attr) {
-    //         let {
-    //             ventaPermiso
-    //         } = $rootScope.usuarioPermiso;
-    //         let inner = element.get(0);
-    //         // var ngIf = attr.ngIf;
-    //         // var value = attr.ngIf;
-    //         console.log(this)
-    //         // console.log(inner);           
-    //        
-    //         attr.$set('ng-click', () => {
-    //             console.log(this)
-    //         })
-    //         return inner.outerHTML;
-    //     }
-    // }
+})
+
+
+app.directive('viewKardexBtn', function (modalService, nombreModal) {
+    return {
+        scope: {
+            params: "=",
+            btnTitle: "=",
+            sizeBtn: "="
+        },
+        link: function (scope, element, attr) {
+
+            element.on('click', async function (e) {
+
+                let {
+                    MODAL_CTRL,
+                    MODAL_CSHTML
+                } = nombreModal.kardex;
+
+                const articulo = {
+                    idArticulo: scope.params.idArticulo,
+                    codigo: scope.params.codigo,
+                    descripcion: scope.params.descripcion,
+                }
+
+                const {
+                    ModalKardexCtrl
+                } = await import('./../modal/' + MODAL_CTRL);
+
+                modalService.openModalCustom({
+                    controller: ModalKardexCtrl,
+                    template: MODAL_CSHTML,
+                    size: 'xl',
+                    params: articulo,
+                    windowClass: 'uibModalFullScreen',
+                    isRenderRazorPartial: true
+                })
+
+            })
+        }
+    };
 })
 
 // app.directive('autoocus')
