@@ -1,10 +1,8 @@
-
-
 app.controller('proformaCtrl', proformaCtrl);
 
-proformaCtrl.$inject = ['$scope', '$filter',  'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario' ]
+proformaCtrl.$inject = ['$scope', '$filter', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario']
 
-function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS){
+function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS) {
 
     // let accion = JSON.parse(localStorage.getItem("accion"));
     // if (accion === null) {
@@ -33,72 +31,75 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
     $scope.proformas = [];
 
 
-    $scope.sumarColumnaTotal = function(){
-        let total = $scope.proformas.map(val=>val.total).reduce((acc, curr)=>acc + curr, 0);
+    $scope.sumarColumnaTotal = function () {
+        let total = $scope.proformas.map(val => val.total).reduce((acc, curr) => acc + curr, 0);
         return _fS.roundNumber(total, 5);
     }
 
 
 
-    $scope.getProformas = async()=>{
-    
+    $scope.getProformas = async () => {
+
         try {
-            showLoader();   
-            if($scope.dataSearch.checkBoxCliente ||
-                $scope.dataSearch.checkBoxFecha || 
-                $scope.dataSearch.checkBoxUsuario){              
-                    $scope.dataSearch.checkBoxDefault = false
-                }else{                                
-                    $scope.dataSearch.checkBoxDefault = true;
-                } 
-                
-            await _mS.getData('get', '/Proforma/Get?json=' + JSON.stringify($scope.dataSearch)).then(response=>{                              
-                if(response.id==='0'){
+            showLoader();
+            if ($scope.dataSearch.checkBoxCliente ||
+                $scope.dataSearch.checkBoxFecha ||
+                $scope.dataSearch.checkBoxUsuario) {
+                $scope.dataSearch.checkBoxDefault = false
+            } else {
+                $scope.dataSearch.checkBoxDefault = true;
+            }
+
+            await _mS.getData('get', '/Proforma/Get?json=' + JSON.stringify($scope.dataSearch)).then(response => {
+                if (response.id === '0') {
                     $scope.proformas = []
                     console.warn(response)
                     return
 
                 }
-                $scope.proformas = JSON.parse(response.data) || [];      
+                $scope.proformas = JSON.parse(response.data) || [];
                 $scope.cloneProformas = JSON.parse(JSON.stringify($scope.proformas));
-                $scope.total = $scope.sumarColumnaTotal();           
+                $scope.total = $scope.sumarColumnaTotal();
             })
 
-            _commonSvc.getDataFormVenta().then(result => {            
-                $scope.jsonPermission = JSON.parse(result[9][0].jsonPermission)            
+            _commonSvc.getDataFormVenta().then(result => {
+                $scope.jsonPermission = JSON.parse(result[9][0].jsonPermission)
             })
-    
-            
+
+
         } catch (error) {
 
             console.log(error)
 
-        }finally{
+        } finally {
             hideLoader();
         }
-    }   
-    
-    
+    }
 
-    $scope.initiload = ()=>{
-        _commonSvc.getEstabAsign().then(response=>{            
+
+
+    $scope.initiload = () => {
+        _commonSvc.getEstabAsign().then(response => {
             $scope.establecimientos = response;
-            let codEstab = $scope.establecimientos.length>0? $scope.establecimientos[0].codEstab: 0;            
+            let codEstab = $scope.establecimientos.length > 0 ? $scope.establecimientos[0].codEstab : 0;
             $scope.dataSearch.codEstab = codEstab;
             $scope.getProformas();
-            
-        })       
+
+        })
     }
     $scope.initiload();
 
 
 
-    $scope.openModalNew = async()=>{
+    $scope.openModalNew = async () => {
 
-        let {MODAL_FILE_CTRL, MODAL_NUEVO} = _nombreModalConst.proforma;
+        let {
+            MODAL_FILE_CTRL,
+            MODAL_NUEVO
+        } = _nombreModalConst.proforma;
         let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_NUEVO['controller']];
-        let template   = MODAL_NUEVO['template'];
-        
+        let template = MODAL_NUEVO['template'];
+
         let params = {
             TIPO_REGISTRO: 'NUEVO'
         }
@@ -109,64 +110,76 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
         })
     }
 
-    
-    $scope.openModalFiltro = async()=>{
 
-        let {MODAL_FILE_CTRL, MODAL_FILTRO} = _nombreModalConst.proforma;
+    $scope.openModalFiltro = async () => {
+
+        let {
+            MODAL_FILE_CTRL,
+            MODAL_FILTRO
+        } = _nombreModalConst.proforma;
         let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_FILTRO['controller']];
-        let template   = MODAL_FILTRO['template'];
+        let template = MODAL_FILTRO['template'];
         let params = {
             dataSearch: $scope.dataSearch,
             clienteFiltro: $scope.clienteFiltro,
             usuarioSearchFiltro: $scope.usuarioSearchFiltro,
             mes: $scope.mes
         }
-        
+
         let modalRef = _modalSvc.openModalCustom({
             controller,
             template,
             params,
-            size:'lg'
+            size: 'lg'
         })
-        
-        modalRef.result.then(result=>{
-            let {dataSearch, clienteFiltro, usuarioSearchFiltro, mes, isSearch} = result;
+
+        modalRef.result.then(result => {
+            let {
+                dataSearch,
+                clienteFiltro,
+                usuarioSearchFiltro,
+                mes,
+                isSearch
+            } = result;
             $scope.dataSearch = dataSearch;
             $scope.clienteFiltro = clienteFiltro;
-            $scope.usuarioSearchFiltro =  usuarioSearchFiltro;
+            $scope.usuarioSearchFiltro = usuarioSearchFiltro;
             $scope.mes = mes;
-            if(isSearch){
+            if (isSearch) {
                 $scope.getProformas();
             }
         })
     }
 
 
-    
-    $scope.searchLocalProforma = function(){
-        let proformas = JSON.parse(JSON.stringify($scope.cloneProformas));                          
+
+    $scope.searchLocalProforma = function () {
+        let proformas = JSON.parse(JSON.stringify($scope.cloneProformas));
         $scope.proformas = $filter('filter')(proformas, $scope.dataSearch.bySearch);
-        $scope.total = $scope.sumarColumnaTotal();            
+        $scope.total = $scope.sumarColumnaTotal();
     }
-    
 
-    $scope.openModalDetalle = async(item)=>{
 
-        let {MODAL_FILE_CTRL, MODAL_DETALLE} = _nombreModalConst.proforma;
+    $scope.openModalDetalle = async (item) => {
+
+        let {
+            MODAL_FILE_CTRL,
+            MODAL_DETALLE
+        } = _nombreModalConst.proforma;
         let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_DETALLE['controller']];
-        let template   = MODAL_DETALLE['template'];
+        let template = MODAL_DETALLE['template'];
         let response = await _commonSvc.getDataTipoDocVenta({
             id: item.idProforma,
             codigoDocumento: TIPO_DOC_PR.codigo
         })
 
-        if(!response.isComplete) return
+        if (!response.isComplete) return
 
         let params = {
             TIPO_REGISTRO: 'DETALLE',
             data: response
         }
-        
+
         $scope.openModalParam({
             controller,
             template,
@@ -174,27 +187,30 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
         })
     }
 
-    $scope.openModalEdit = async(item)=>{
+    $scope.openModalEdit = async (item) => {
         try {
-            
+
             let result = await _commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.E);
-            if(result.code==="2"){
+            if (result.code === "2") {
                 _commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.E);
                 return
             }
 
             showLoader();
-            let {MODAL_FILE_CTRL, MODAL_EDITAR} = _nombreModalConst.proforma;
+            let {
+                MODAL_FILE_CTRL,
+                MODAL_EDITAR
+            } = _nombreModalConst.proforma;
             let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_EDITAR['controller']];
-            let template   = MODAL_EDITAR['template'];
+            let template = MODAL_EDITAR['template'];
 
             let response = await _commonSvc.getDataTipoDocVenta({
                 id: item.idProforma,
                 codigoDocumento: TIPO_DOC_PR.codigo
             })
 
-            if(!response.isComplete) return
-            
+            if (!response.isComplete) return
+
             let params = {
                 TIPO_REGISTRO: 'EDITAR',
                 data: response
@@ -206,40 +222,45 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
                 size: 'xl',
                 params,
                 windowClass: 'uibModalFullScreen'
-            }).result.then(result=>{
-                if(typeof result==='object'){
-                
+            }).result.then(result => {
+                if (typeof result === 'object') {
+
                     //Una vez actualizado el documento 
-                    let {additional} = $scope.jsonPermission;
-                    if(typeof $scope.jsonPermission ==='object' && additional.requestAuthorizationKey.requestKey) {                        
+                    let {
+                        additional
+                    } = $scope.jsonPermission;
+                    if (typeof $scope.jsonPermission === 'object' && additional.requestAuthorizationKey.requestKey) {
                         _commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.E);
                     }
-        
+
                     $scope.getProformas();
                 }
             })
-           
-        } catch (error) {         
+
+        } catch (error) {
             console.log(error)
-        }finally{
+        } finally {
             hideLoader();
-        }        
+        }
     }
 
-    $scope.openModalDuplicate = async(item)=>{
+    $scope.openModalDuplicate = async (item) => {
         try {
             showLoader();
-            let {MODAL_FILE_CTRL, MODAL_DUPLICAR} = _nombreModalConst.proforma;
+            let {
+                MODAL_FILE_CTRL,
+                MODAL_DUPLICAR
+            } = _nombreModalConst.proforma;
             let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_DUPLICAR['controller']];
-            let template   = MODAL_DUPLICAR['template'];
+            let template = MODAL_DUPLICAR['template'];
 
             let response = await _commonSvc.getDataTipoDocVenta({
                 id: item.idProforma,
                 codigoDocumento: TIPO_DOC_PR.codigo
             })
 
-            if(!response.isComplete) return
-            
+            if (!response.isComplete) return
+
             let params = {
                 TIPO_REGISTRO: 'DUPLICAR',
                 data: response
@@ -250,16 +271,21 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
                 params
             })
         } catch (error) {
-         
+
             console.log(error)
-            
-        }finally{
+
+        } finally {
             hideLoader();
-        }        
+        }
 
     }
 
-    $scope.openModalParam = ({controller, template, size='xl', params})=>{
+    $scope.openModalParam = ({
+        controller,
+        template,
+        size = 'xl',
+        params
+    }) => {
 
         _modalSvc.openModalCustom({
             controller,
@@ -267,9 +293,9 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
             size,
             params,
             windowClass: 'uibModalFullScreen'
-        }).result.then(result=>{  
-            console.log(result)          
-            if(typeof result==='object'){
+        }).result.then(result => {
+            console.log(result)
+            if (typeof result === 'object') {
                 $scope.getProformas();
             }
         })
@@ -277,29 +303,31 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
     }
 
 
-    $scope.askToDelete = async(item)=>{
+    $scope.askToDelete = async (item) => {
         try {
-            if(item.anulada){
+            if (item.anulada) {
                 _fS.sweetAlert('warning', 'El documento ya se encuentra anulada');
                 return
             }
-                                            
-           
+
+
             let result = await _commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.A);
-            if(result.code==="2"){
+            if (result.code === "2") {
                 _commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.A);
                 return
             }
 
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
-                  confirmButton: 'btn btn-success',
-                  cancelButton: 'btn btn-danger ml-2'
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger ml-2'
                 },
                 buttonsStyling: false
             })
-              
-            let {isConfirmed} = await  swalWithBootstrapButtons.fire({
+
+            let {
+                isConfirmed
+            } = await swalWithBootstrapButtons.fire({
                 title: '<small>Anular Proforma?</small>',
                 html: `<small>Esta Ud. seguro/a de anular este Documento <b>N° ${item.nroDocumento}</b></small>?`,
                 icon: 'warning',
@@ -308,10 +336,10 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
                 cancelButtonText: 'No, cancelar!',
                 reverseButtons: false
             })
-    
-            if(isConfirmed){
+
+            if (isConfirmed) {
                 showLoader();
-                _mS.getData('delete', '/Proforma/Delete?id=' + item.idProforma).then(response=> {
+                _mS.getData('delete', '/Proforma/Delete?id=' + item.idProforma).then(response => {
                     Swal.close()
                     if (response.code === "0") {
                         hideLoader();
@@ -320,25 +348,27 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
                     if (response.code === "1") {
                         hideLoader();
                         _fS.sweetAlert('success', response.message, response.titleSms, 1000);
-                       
+
 
                         //Una vez actualizado el documento 
-                        let {additional} = $scope.jsonPermission;
-                        if(typeof $scope.jsonPermission ==='object' && additional.requestAuthorizationKey.requestKey) {                        
+                        let {
+                            additional
+                        } = $scope.jsonPermission;
+                        if (typeof $scope.jsonPermission === 'object' && additional.requestAuthorizationKey.requestKey) {
                             _commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.A);
                         }
 
                         $scope.getProformas();
                     }
-                }).catch(error =>{
+                }).catch(error => {
                     console.log(error);
                     hideLoader();
                 })
-                   
+
             }
-        } catch (error) {            
+        } catch (error) {
             console.log(error)
-        }finally{
+        } finally {
 
         }
 
@@ -346,31 +376,36 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
 
 
 
-    $scope.askToSendEmail = async (item) =>{ 
-        try { 
+    $scope.askToSendEmail = async (item) => {
+        try {
             let params = {
                 TYPE_NOTIFICATION: 'N',
                 serie: item.nroDocumento,
-                correo: item.correo, 
+                correo: item.correo,
                 subject: 'Documento Proforma - Acontplus N°: ' + item.nroDocumento,
-                json: {                                      
-                    hasFile: true, 
-                    isReport: "SI", 
+                json: {
+                    hasFile: true,
+                    isReport: "SI",
                     reportParams: {
                         hasParams: true,
-                        codEstab: item.codEstab, 
-                        codigo: "PR", 
+                        codEstab: item.codEstab,
+                        codigo: "PR",
                         format: "pdf"
-                    }, 
+                    },
                     spParams: {
                         id: item.idProforma
                     }
                 }
-            }                    
-            
-           
-            const { MODAL_SEND_MAIL_CTRL, MODAL_SEND_MAIL_CSHTML } = _nombreModalConst.common;
-            const { SendMailCtrl } = await import('./../../modal/' + MODAL_SEND_MAIL_CTRL);
+            }
+
+
+            const {
+                MODAL_SEND_MAIL_CTRL,
+                MODAL_SEND_MAIL_CSHTML
+            } = _nombreModalConst.common;
+            const {
+                SendMailCtrl
+            } = await import('./../../modal/' + MODAL_SEND_MAIL_CTRL);
             _modalSvc.openModalCustom({
                 controller: SendMailCtrl,
                 template: 'Shared/' + MODAL_SEND_MAIL_CSHTML,
@@ -379,50 +414,49 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
             })
         } catch (error) {
             console.error(error)
-        } 
+        }
     }
 
 
 
     //Impresión 
 
-    $scope.print = function (item) {                   
-        let parameters = {            
-            idDocument: item.idProforma,           
-            idTipoDocumento : item.idTipoDocumento,
+    $scope.print = function (item) {
+        let parameters = {
+            idDocument: item.idProforma,
+            idTipoDocumento: item.idTipoDocumento,
             codEstab: item.codEstab,
             codDoc: TIPO_DOC_PR.codigo,
-            nroIdentificacion : item.nroIdentificacion,
+            nroIdentificacion: item.nroIdentificacion,
             codigo: 'RNEPT'
         }
-        
+
         _commonSvc.askToPrint({
             parameters: JSON.stringify(parameters)
         })
-        
+
     }
 
 
     //Reporte 
     $scope.getReport = function (item) {
-        
+
         let format = 'pdf';
 
         let dataParms = {
-            id: item.idProforma ,        
+            id: item.idProforma,
         }
 
 
-       
+
         const parameters = {
             hasService: true,
             reportParams: JSON.stringify({
                 hasParams: true,
-                codigo: 'PR', 
+                codigo: 'PR',
                 format,
                 codEstab: item.codEstab,
-                aditionalParams: [                    
-                ]
+                aditionalParams: []
             }),
             dataParams: JSON.stringify(dataParms)
         }
@@ -430,7 +464,7 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
         _commonSvc.getReport({
             parameters,
             formatType: format
-        })                                                
+        })
     }
 
 }

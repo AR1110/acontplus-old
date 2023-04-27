@@ -23,6 +23,7 @@
         //     $scope.accion = accion[0];
         // }        
         Id_Usuario_Rol = parseInt(decodeToken.idUsuarioRol);
+        console.log(Id_Usuario_Rol)
         role = decodeToken.role;
 
         $scope.dataSearch = {
@@ -278,7 +279,7 @@
                 if (response.code == "0" || response.id == "0") {
                     tS.toastr('warning', response.message, response.titleSms);
                 }
-                if (response.code == "1" || response.id == "0") {
+                if (response.code == "1" || response.id == "1") {
                     tS.toastr('success', response.message, response.titleSms);
                     $uibModalInstance.close(response)
                 }
@@ -311,7 +312,6 @@
                 }
 
                 mS.getData('put', `Usuario/${$scope.data.idUsuario}/${JSON.stringify($scope.data)}`, null, true).then(response => {
-                    console.log(response)
                     if (response.code == "0" || response.id == "0") {
                         tS.toastr('warning', response.message, response.titleSms);
                     }
@@ -651,7 +651,8 @@
         }
 
         $scope.onSelectUser = (data, item) => {
-
+            console.log(data)
+            console.log(item)
             item.usuarioAprobante = data.nombreCompleto;
             item.idUsuarioRolAprobante = data.idUsuarioRol;
         }
