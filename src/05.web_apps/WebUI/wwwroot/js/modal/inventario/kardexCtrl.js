@@ -339,7 +339,7 @@ export class KardexCtrl {
                     this.data.totalGenetal = this.calculoTotales("totalGeneral");
 
                     angular.forEach(this.kardexs, (value, key) => {
-                        value.totalGeneral = (value.costo * value.saldo).toFixed(2)
+                        value.totalGeneral = (value.precioCosto * value.saldo).toFixed(2)
                     })
 
                     this.drawTable();

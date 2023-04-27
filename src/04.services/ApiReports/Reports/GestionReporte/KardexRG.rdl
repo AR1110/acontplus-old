@@ -231,7 +231,7 @@
             <MIMEType>=Parameters!mimeType.Value</MIMEType>
             <Sizing>FitProportional</Sizing>
             <Top>0.32122cm</Top>
-            <Left>0.44097cm</Left>
+            <Left>0cm</Left>
             <Height>1.8532cm</Height>
             <Width>7.67191cm</Width>
             <Style>
@@ -260,7 +260,7 @@
             </Paragraphs>
             <rd:DefaultName>Textbox1</rd:DefaultName>
             <Top>0.32122cm</Top>
-            <Left>17.51607cm</Left>
+            <Left>16.88107cm</Left>
             <Height>0.6cm</Height>
             <Width>7.13021cm</Width>
             <ZIndex>1</ZIndex>
@@ -295,7 +295,7 @@
             </Paragraphs>
             <rd:DefaultName>Textbox2</rd:DefaultName>
             <Top>0.95649cm</Top>
-            <Left>17.51607cm</Left>
+            <Left>16.88107cm</Left>
             <Height>0.46771cm</Height>
             <Width>7.13021cm</Width>
             <ZIndex>2</ZIndex>
@@ -330,7 +330,7 @@
             </Paragraphs>
             <rd:DefaultName>Textbox2</rd:DefaultName>
             <Top>1.45947cm</Top>
-            <Left>17.51607cm</Left>
+            <Left>16.88107cm</Left>
             <Height>0.46771cm</Height>
             <Width>7.13021cm</Width>
             <ZIndex>3</ZIndex>
@@ -366,7 +366,7 @@
             </Paragraphs>
             <rd:DefaultName>Textbox4</rd:DefaultName>
             <Top>1.99775cm</Top>
-            <Left>17.51607cm</Left>
+            <Left>16.88107cm</Left>
             <Height>0.6cm</Height>
             <Width>7.13021cm</Width>
             <ZIndex>4</ZIndex>
@@ -401,7 +401,7 @@
             </Paragraphs>
             <rd:DefaultName>Textbox8</rd:DefaultName>
             <Top>2.59774cm</Top>
-            <Left>17.95704cm</Left>
+            <Left>17.32204cm</Left>
             <Height>0.41479cm</Height>
             <Width>3.16146cm</Width>
             <ZIndex>5</ZIndex>
@@ -434,7 +434,7 @@
             </Paragraphs>
             <rd:DefaultName>Textbox8</rd:DefaultName>
             <Top>2.59774cm</Top>
-            <Left>21.18906cm</Left>
+            <Left>20.55406cm</Left>
             <Height>0.41479cm</Height>
             <Width>3.45722cm</Width>
             <ZIndex>6</ZIndex>
@@ -449,7 +449,7 @@
           </Textbox>
           <Line Name="Line1">
             <Top>4.40683cm</Top>
-            <Left>0.44097cm</Left>
+            <Left>0cm</Left>
             <Height>0cm</Height>
             <Width>38.73506cm</Width>
             <ZIndex>7</ZIndex>
@@ -649,7 +649,7 @@
             </TablixRowHierarchy>
             <DataSetName>articuloDs</DataSetName>
             <Top>3.0839cm</Top>
-            <Left>0.44097cm</Left>
+            <Left>0cm</Left>
             <Height>1.14654cm</Height>
             <Width>38.73506cm</Width>
             <ZIndex>8</ZIndex>
@@ -2049,7 +2049,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!costo.Value*Fields!saldo.Value</Value>
+                                  <Value>=Fields!precioCosto.Value*Fields!saldo.Value</Value>
                                   <Style>
                                     <FontSize>7pt</FontSize>
                                     <Format>#,0.00;(#,0.00)</Format>
@@ -2242,7 +2242,7 @@
             </TablixRowHierarchy>
             <DataSetName>detalleDs</DataSetName>
             <Top>4.58321cm</Top>
-            <Left>0.44097cm</Left>
+            <Left>0cm</Left>
             <Height>1.8cm</Height>
             <Width>38.73509cm</Width>
             <ZIndex>9</ZIndex>
@@ -2253,10 +2253,10 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>3.5625in</Height>
+        <Height>2.51307in</Height>
         <Style />
       </Body>
-      <Width>15.42365in</Width>
+      <Width>15.25004in</Width>
       <Page>
         <PageHeight>21cm</PageHeight>
         <PageWidth>40cm</PageWidth>
@@ -2300,6 +2300,7 @@
       </CellDefinitions>
     </GridLayoutDefinition>
   </ReportParametersLayout>
+  <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
   <rd:ReportUnitType>Cm</rd:ReportUnitType>
   <rd:ReportID>179d1594-a86d-4ccd-a141-374ed1442894</rd:ReportID>
 </Report>
