@@ -313,7 +313,7 @@ class ModalCompraNoHabitualCtrl extends window.modalCompraBaseCtrl {
                             idProveedor: this.data.idProveedor,
                             estab,
                             ptoEmi,
-                            fechaEmision: this._fS.formatDateMoment(this.data.fechaEmision),
+                            fechaEmision: moment.tz(this.data.fechaEmision, "America/Guayaquil").format("YYYY-MM-DD"),
                             totalSinImpuestos: this.data.subTotalSinImpuestos,
                             importeTotal: this.data.total,
                             inventory: this.data.inventory
