@@ -80,6 +80,32 @@
                     "Port": 8096
                 }
             ],
+            "DownstreamPathTemplate": "/api/CompraHabitual{everything}",
+            "DownstreamScheme": "http",
+            "HttpHandlerOptions": {
+                "UseTracing": true
+            },
+            "UpstreamHttpMethod": [
+                "Get",
+                "Post",
+                "Put",
+                "Delete",
+                "Options"
+            ],
+            "UpstreamPathTemplate": "/api/CompraHabitual{everything}"
+        },
+        {
+            "AuthenticationOptions": {
+                "AllowedScopes": [
+                ],
+                "AuthenticationProviderKey": "Bearer"
+            },
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "205.209.99.71",
+                    "Port": 8096
+                }
+            ],
             "DownstreamPathTemplate": "/api/DocumentoRecibido/Read",
             "DownstreamScheme": "http",
             "UpstreamHttpMethod": [
@@ -809,7 +835,7 @@
                 }
             ],
             "DownstreamPathTemplate": "/api/Usuario/{everything}",
-            "DownstreamScheme": "https",
+            "DownstreamScheme": "http",
             "UpstreamHttpMethod": [
                 "Get",
                 "POST",
@@ -831,7 +857,7 @@
                 }
             ],
             "DownstreamPathTemplate": "/api/UsuarioRol/Get/{id}",
-            "DownstreamScheme": "https",
+            "DownstreamScheme": "http",
             "UpstreamHttpMethod": [
                 "Get"
             ],
@@ -850,7 +876,7 @@
                 }
             ],
             "DownstreamPathTemplate": "/api/UsuarioPermiso/{everything}",
-            "DownstreamScheme": "https",
+            "DownstreamScheme": "http",
             "UpstreamHttpMethod": [
                 "Get",
                 "PUT",

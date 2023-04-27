@@ -19,10 +19,10 @@ GO
 -- Create date: 2022-10-30
 -- Description:	SP FOR GET HISTORY OF MERGES
 -- =============================================
-IF OBJECT_ID(N'FactElect.CompraHabitual_Get ', N'P') IS NOT NULL
-DROP PROCEDURE FactElect.CompraHabitual_Get
+IF OBJECT_ID(N'Recepcion.CompraHabitual_Get', N'P') IS NOT NULL
+DROP PROCEDURE Recepcion.CompraHabitual_Get
 GO
-CREATE PROCEDURE FactElect.CompraHabitual_Get @idRol INT
+CREATE PROCEDURE Recepcion.CompraHabitual_Get @idUsuarioRol INT
 ,@json VARCHAR(MAX)
 AS
 BEGIN 
@@ -38,7 +38,7 @@ BEGIN
 
 	IF EXISTS (SELECT 1 FROM #tmp WHERE tipo = 3)
 		BEGIN
-			IF NOT EXISTS (SELECT  1 FROM FactElect.CompraHabitual ch 
+			IF NOT EXISTS (SELECT  1 FROM Recepcion.CompraHabitual ch 
 									WHERE ch.idArticulo = (SELECT idArticulo FROM #tmp))
 				BEGIN
 					RETURN
@@ -47,9 +47,9 @@ BEGIN
 			,p.nombreFiscal proveedor
 			,a.codigo codArticuloAcontplus
 			,'(' + a.codigo + ') -> ' + a.descripcion articulo
-			FROM FactElect.CompraHabitual ch
-			INNER JOIN Proveedor p ON ch.idProveedor = p.idProveedor
-			INNER JOIN Articulo a ON ch.idArticulo = a.idArticulo
+			FROM Recepcion.CompraHabitual ch WITH (NOLOCK)
+			INNER JOIN Proveedor p WITH (NOLOCK) ON ch.idProveedor = p.idProveedor
+			INNER JOIN Articulo a WITH (NOLOCK) ON ch.idArticulo = a.idArticulo
 			WHERE ch.idArticulo = (SELECT idArticulo FROM #tmp)
 		END
 	DROP TABLE #tmp

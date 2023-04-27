@@ -21,7 +21,7 @@ namespace ApiRecepcion.Controllers
             GenericResponse _response = new GenericResponse();
             try
             {
-                await _db.SPExecute("Recepcion.CompraHabitual_Insert");
+                await _db.SPExecute("Recepcion.CompraHabitual_Get");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("json", json);
                 _response = _db.GetDataTableAsync();

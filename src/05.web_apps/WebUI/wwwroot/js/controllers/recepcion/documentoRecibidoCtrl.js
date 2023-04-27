@@ -1452,7 +1452,7 @@
                         idArticulo: item.idArticulo,
                         codArticulo: (($scope.articleSelected.codigoPrincipal) ? $scope.articleSelected.codigoPrincipal : item.codigoPrincipal)
                     }
-                    mS.getData('post', '/CompraHabitual/Post?json=' + JSON.stringify(data)).then(
+                    mS.getData('post', 'CompraHabitual/Post?json=' + JSON.stringify(data), null, true).then(
                         response => {
                             if (response.code == '0') {
                                 hideLoader()
@@ -1528,7 +1528,7 @@
             }
             $scope.deleteCH = (item) => {
                 try {
-                    mS.getData('delete', '/CompraHabitual/Delete?id=' + item.idCompraHabitual).then(
+                    mS.getData('delete', 'CompraHabitual/Delete?id=' + item.idCompraHabitual, null, true).then(
                         response => {
                             if (response.code == '0') {
                                 tS.toastr('warning', response.message)
