@@ -1,6 +1,7 @@
 ﻿app.controller('facturaVentaCtrl', facturaVentaCtrl)
 
 facturaVentaCtrl.$inject = [
+    '$rootScope',
     '$scope',
     '$filter',
     'mainService',
@@ -13,7 +14,7 @@ facturaVentaCtrl.$inject = [
     'decodeToken'
 ]
 
-function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modalSvc, _nombreModalConst, _tS, _fS, decodeToken) {
+function facturaVentaCtrl($rootScope, $scope, $filter, _mS, _commonSvc, _docVentaSvc, _modalSvc, _nombreModalConst, _tS, _fS, decodeToken) {
     // let accion = JSON.parse(localStorage.getItem("accion"));
     // if (accion === null) {
     //     location.href = "/Home/Index";
@@ -21,9 +22,15 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
     // } else {
     //     $scope.accion = accion[0]; 
     // }
+    console.log($rootScope.ventaPermiso)
 
 
     const TIPO_DOC_FV = _commonSvc.tipoDoc['FV'];
+    const PERMISSION_KEY_ACTIONS = {
+        E: 'E',
+        A: 'A',
+    }
+
 
     $scope.dataSearch = {
         pageIndex: 1,
@@ -44,6 +51,8 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
     btnNewInvoice.addEventListener("click", () => {
         btnNewInvoice.blur();
     })
+
+
 
 
 
@@ -282,6 +291,12 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
 
     $scope.openModalInvoiceEdit = async (item) => {
         try {
+            let result = await _commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.E);
+            if (result.code === "2") {
+                _commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.E);
+                return
+            }
+
             showLoader();
             let {
                 MODAL_FILE_CTRL,
@@ -306,6 +321,16 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
                 windowClass: 'uibModalFullScreen'
             }).result.then(result => {
                 if (typeof result === 'object' && result.isUpdate) {
+
+                    //Una vez actualizado el documento 
+                    console.log(_commonSvc.getPermisos())
+                    let {
+                        additional
+                    } = $scope.jsonPermission;
+                    if (typeof $scope.jsonPermission === 'object' && additional.requestAuthorizationKey.requestKey) {
+                        _commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.E);
+                    }
+
                     $scope.getFacturas();
                 }
             })

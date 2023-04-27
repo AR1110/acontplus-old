@@ -986,7 +986,7 @@
                 }
             ],
             "DownstreamPathTemplate": "/api/Kardex?json={json}",
-            "DownstreamScheme": "https",
+            "DownstreamScheme": "http",
             "UpstreamHttpMethod": [
                 "Get"
             ],
@@ -1005,7 +1005,7 @@
                 }
             ],
             "DownstreamPathTemplate": "/api/Kardex/Filters",
-            "DownstreamScheme": "https",
+            "DownstreamScheme": "http",
             "UpstreamHttpMethod": [
                 "Get"
             ],
@@ -1020,7 +1020,7 @@
             "DownstreamHostAndPorts": [
                 {
                     "Host": "205.209.99.71",
-                    "Port": 8003
+                    "Port": 8097
                 }
             ],
             "DownstreamPathTemplate": "/api/Ats{everything}",

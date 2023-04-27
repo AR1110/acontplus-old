@@ -43,12 +43,12 @@ BEGIN
 			DECLARE @sql AS NVARCHAR(MAX) = 'SELECT TOP (100)
 												 di.idDocumentoIngreso
 												,serieComprobante = es.estab+''-''+pt.ptoEmi+''-''+Helper.F_Auto_Sequential(di.secuencial)
-												,fechaEmision     = FORMAT(di.fechaEmision,''yyyy-MM-dd'')
+												,fechaEmision     = FORMAT(di.fechaEmision, ''dd/MM/yyyy HH:mm tt'')
 												,nombreFiscal     = pr.nombreFiscal
 												,importeTotal     = di.importeTotal
 												,estado           = IIF(di.estado = 0, ''Anulado'',''Activo'')
 												,usuario          = us.nombreUsuario
-												,colorRow         = IIF(di.estado = 0, ''rojo'','''')
+												,colorRow         = IIF(di.estado = 0, ''table-danger'','''')
 											 FROM Compra.Documento_Ingreso  di WITH (NOLOCK)
 											 INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = di.idEstablecimiento
 											 INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision    = di.idPuntoEmision

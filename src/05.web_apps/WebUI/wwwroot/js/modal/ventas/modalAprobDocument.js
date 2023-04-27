@@ -466,7 +466,6 @@ export class ModalSelectDocumentoCtrl extends ModalBaseCtrl {
             },
             expandableRowHeight: 150,
             isRowSelectable: function (row) {
-                console.log(row)
                 if (["AC", "PE"].includes(row.entity.codDoc)) {
                     return true;
                 } else {
@@ -1060,7 +1059,7 @@ export class ModalSelectDocumentoCtrl extends ModalBaseCtrl {
         }
 
         this.gridOptions.data = this.documentos;
-        console.log(this.gridOptions)
+
         if (this.documentos.length === 0) {
             this._tS.toastr('info', 'No se encontraron los Documentos');
         }
@@ -2188,7 +2187,7 @@ export class ModalApproveDocCtrl extends ModalBaseCtrl {
                     manejoArticulo: JSON.stringify([])
                 }
 
-                this._mS.getData('post', '/FacturaVenta/Insert', data).then(response => {
+                this._mS.getData('post', 'Factura', data, true).then(response => {
                     if (response.code === "0") {
                         hideLoader();
                         this._fS.sweetAlert('warning', response.message);
@@ -2198,6 +2197,9 @@ export class ModalApproveDocCtrl extends ModalBaseCtrl {
                         this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
                         this.$uibModalInstance.close(response);
                     }
+                }).catch(error => {
+                    hideLoader();
+                    console.error(error)
                 })
             }
         } catch (error) {
@@ -2564,7 +2566,7 @@ export class ModalApproveDocEditCtrl extends ModalBaseCtrl {
 
             this.gridOptionsDetailDocument.data.push(item);
         }
-        console.log(this.gridOptionsDetailDocument.data)
+
     }
 
 
@@ -2794,7 +2796,7 @@ export class ModalApproveDocDetalleCtrl extends ModalBaseCtrl {
                 this.cloneIdBodega = this.idBodega;
 
 
-                console.log(this.actividadTipoIva)
+
             } else {
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');
             }

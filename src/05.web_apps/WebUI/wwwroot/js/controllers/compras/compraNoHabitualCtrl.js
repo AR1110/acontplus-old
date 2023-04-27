@@ -182,7 +182,6 @@ function compraNoHabitualCtrl($scope, commonSvc, mS, tS, modalSvc, nombreModal, 
     $scope.sumImporteTotal = function () {
         let importeTotal = 0;
         for (let item of $scope.documentoIngreso) {
-            console.log(item)
             importeTotal += item.importeTotal;
         }
         $scope.importeTotal = _fS.roundNumber(importeTotal, 2);
