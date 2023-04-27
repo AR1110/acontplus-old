@@ -505,6 +505,8 @@ export class ModalFiltroKardex {
 
         this.articulo = _params.articulo;
         this.dataSearch = _params.dataSearch;
+        this.dataSearch.checkBoxBodega = true
+        this.dataSearch.checkBoxUltimaConsolidacion = true
         this.articuloFiltro = _params.articuloFiltro;
         this.dataSearch.consolidacion = 0;
 
@@ -547,6 +549,7 @@ export class ModalFiltroKardex {
         let dataEstab = this.establecimientos.find(item => item.codEstab === this.dataSearch.codEstab);
         this._commonSvc.getDataFormEstabAsig(dataEstab).then(response => {
             this.bodegas = response[1];
+            this.dataSearch.byBodega = this.bodegas[0].idBodega
 
         })
     }

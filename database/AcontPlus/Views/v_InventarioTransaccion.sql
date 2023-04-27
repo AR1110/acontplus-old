@@ -62,7 +62,7 @@ SELECT t.idTransaccion
 			WHEN tt.codigo = 'S' AND td.codigo = 'FE'
 				THEN (
 						SELECT TOP 1 e.estab + '-' + pe.ptoEmi + '-' + CONVERT(VARCHAR(10), f.nroFactura)
-						FROM Factura f
+						FROM Factura f  WITH (NOLOCK)
 						INNER JOIN PuntoEmision pe  WITH (NOLOCK) ON f.idPuntoEmision = pe.idPuntoEmision
 						INNER JOIN Sri.Establecimiento e  WITH (NOLOCK) ON pe.codEstab = e.codEstab
 						WHERE f.idFactura = t.idDocumento
@@ -86,8 +86,8 @@ SELECT t.idTransaccion
 				(
 					SELECT TOP 1 e.estab + '-' + pe.ptoEmi + '-' + CAST(dr.nroDoc AS varchar(9))
 					FROM ConsolidacionInventario dr  WITH (NOLOCK)
-					INNER JOIN PuntoEmision pe ON dr.idPuntoEmision = pe.idPuntoEmision
-					INNER JOIN Sri.Establecimiento e ON pe.codEstab = e.codEstab
+					INNER JOIN PuntoEmision pe  WITH (NOLOCK) ON dr.idPuntoEmision = pe.idPuntoEmision
+					INNER JOIN Sri.Establecimiento e  WITH (NOLOCK) ON pe.codEstab = e.codEstab
 					WHERE dr.idConsolidacionInventario = t.idDocumento
 				)
 			END
@@ -110,8 +110,8 @@ SELECT t.idTransaccion
 			WHEN tt.codigo = 'E' AND td.codigo = 'NC'
 				THEN (
 						SELECT TOP 1 c.nombreFiscal
-						FROM NotaCredito nc  WITH (NOLOCK)
-						INNER JOIN Cliente c On nc.idCliente = c.idCliente
+						FROM NotaCredito nc  WITH (NOLOCK)  
+						INNER JOIN Cliente c  WITH (NOLOCK) On nc.idCliente = c.idCliente
 						WHERE nc.idNotaCredito = t.idDocumento
 						)
 			WHEN tt.codigo = 'E' AND td.codigo = 'IV'
@@ -124,15 +124,15 @@ SELECT t.idTransaccion
 			WHEN tt.codigo = 'S' AND td.codigo = 'FE'
 				THEN (
 						SELECT TOP 1 c.nombreFiscal
-						FROM Factura f
-						INNER JOIN Cliente c On f.idCliente = c.idCliente 
+						FROM Factura f  WITH (NOLOCK)
+						INNER JOIN Cliente c  WITH (NOLOCK) On f.idCliente = c.idCliente 
 						WHERE f.idFactura = t.idDocumento
 						)
 			WHEN tt.codigo = 'S' AND td.codigo = 'NE'
 				THEN (
 						SELECT TOP 1 c.nombreFiscal
 						FROM NotaEntrega ne  WITH (NOLOCK)
-						INNER JOIN Cliente c On ne.idCliente = c.idCliente
+						INNER JOIN Cliente c  WITH (NOLOCK) On ne.idCliente = c.idCliente
 						WHERE ne.idNotaEntrega = t.idDocumento
 						)
 			WHEN tt.codigo = 'S' AND td.codigo = 'NC'
@@ -162,7 +162,7 @@ SELECT t.idTransaccion
 				THEN (
 						SELECT TOP 1 c.numeroIdentificacion
 						FROM NotaCredito nc  WITH (NOLOCK)
-						INNER JOIN Cliente c On nc.idCliente = c.idCliente
+						INNER JOIN Cliente c  WITH (NOLOCK) On nc.idCliente = c.idCliente
 						WHERE nc.idNotaCredito = t.idDocumento
 						)
 			WHEN tt.codigo = 'E' AND td.codigo = 'IV'
@@ -175,8 +175,8 @@ SELECT t.idTransaccion
 			WHEN tt.codigo = 'S' AND td.codigo = 'FE'
 				THEN (
 						SELECT TOP 1 c.numeroIdentificacion
-						FROM Factura f
-						INNER JOIN Cliente c On f.idCliente = c.idCliente 
+						FROM Factura f  WITH (NOLOCK)
+						INNER JOIN Cliente c  WITH (NOLOCK) On f.idCliente = c.idCliente 
 						WHERE f.idFactura = t.idDocumento
 						)
 			WHEN tt.codigo = 'S' AND td.codigo = 'NE'
@@ -201,9 +201,9 @@ SELECT t.idTransaccion
 --,IIF(td.codigo = 'CI', t.idDocumento, dbo.AFTMovimientoKardex(t.fechaRegistro, t.idArticulo, t.idBodega)) particion
 ,CASE WHEN td.codigo = 'CI' THEN t.idDocumento ELSE
 (SELECT max(ci.idConsolidacionInventario) 
-								    FROM ConsolidacionInventario ci 
-									INNER JOIN ConsolidacionInventarioDetalle cid ON cid.idConsolidacionInventario = ci.idConsolidacionInventario
-									INNER JOIN EstadoPago ep ON ep.idEstadoPago  = ci.idEstadoDocumento
+								    FROM ConsolidacionInventario ci  WITH (NOLOCK)
+									INNER JOIN ConsolidacionInventarioDetalle cid  WITH (NOLOCK) ON cid.idConsolidacionInventario = ci.idConsolidacionInventario
+									INNER JOIN EstadoPago ep  WITH (NOLOCK) ON ep.idEstadoPago  = ci.idEstadoDocumento
 									WHERE  ci.fechaEmision < t.fechaRegistro AND cid.idArticulo = t.idArticulo AND ep.codigo = 'AC' AND cid.idBodega = t.idBodega)
 END particion
 --,SUM(IIF(tt.codigo = 'S', -1, 1) * IIF(t.estado = 0, 0, t.cantidad)) OVER (PARTITION BY IIF(td.codigo = 'CI', t.idDocumento, dbo.AFTMovimientoKardex(t.fechaRegistro, t.idArticulo, t.idBodega)) ORDER BY t.fechaRegistro, t.idTransaccion ASC) saldo

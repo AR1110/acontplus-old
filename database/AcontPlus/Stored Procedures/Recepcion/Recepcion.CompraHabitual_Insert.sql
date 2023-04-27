@@ -20,11 +20,11 @@ GO
 -- Create date: 2022-09-01
 -- Description:	SP FOR INSERT COMPRA HABITUAL
 -- =============================================
-IF OBJECT_ID(N'FactElect.CompraHabitual_Insert ', N'P') IS NOT NULL
-DROP PROCEDURE FactElect.CompraHabitual_Insert 
+IF OBJECT_ID(N'Recepcion.CompraHabitual_Insert', N'P') IS NOT NULL
+DROP PROCEDURE Recepcion.CompraHabitual_Insert 
 GO
-CREATE PROCEDURE FactElect.CompraHabitual_Insert
- @idRol INT
+CREATE PROCEDURE Recepcion.CompraHabitual_Insert
+ @idUsuarioRol INT
 ,@json NVARCHAR(MAX)
 ,@method VARCHAR(200) = NULL
 AS
@@ -42,7 +42,7 @@ BEGIN
 		,codArticulo VARCHAR(100) NULL
 	)
 
-	--IF EXISTS(SELECT 1 FROM FactElect.CompraHabitual ch
+	--IF EXISTS(SELECT 1 FROM Recepcion.CompraHabitual ch
 	--					INNER JOIN @tmp t ON ch.idProveedor = t.idProveedor 
 	--					AND ch.idArticulo = t.idArticulo
 	--					AND ch.codArticulo = t.codArticulo
@@ -51,7 +51,7 @@ BEGIN
 	--		SELECT '0' code, 'Este articulo ya existe como compra habitual' as 'message'
 	--		RETURN
 	--	END
-	SET @idEntidad = (SELECT idEntidad FROM AFTDataRol(@idRol))
+	SET @idEntidad = (SELECT idEntidad FROM AFTDataRol(@idUsuarioRol))
 
 	BEGIN TRY
 		INSERT INTO @tmp(idProveedor, ruc, idArticulo, codArticulo)
@@ -71,14 +71,14 @@ BEGIN
 				SELECT '0' code, 'No existe codigo de articulo' as 'message'
 			END
 
-		IF EXISTS(SELECT 1 FROM FactElect.CompraHabitual ch WITH (NOLOCK) 
+		IF EXISTS(SELECT 1 FROM Recepcion.CompraHabitual ch WITH (NOLOCK) 
 							INNER JOIN Proveedor p ON ch.idProveedor = p.idProveedor AND p.idEntidad = @idEntidad
 							INNER JOIN @tmp t ON ch.codArticulo = t.codArticulo AND ch.ruc = t.ruc)
 			BEGIN
 				DECLARE @idArticleFounded INT 
 				,@articleFounded VARCHAR(600)
 				
-				SET @idArticleFounded = (SELECT TOP 1 ch.idArticulo FROM FactElect.CompraHabitual ch WITH (NOLOCK) 
+				SET @idArticleFounded = (SELECT TOP 1 ch.idArticulo FROM Recepcion.CompraHabitual ch WITH (NOLOCK) 
 																	INNER JOIN Proveedor p ON ch.idProveedor = p.idProveedor AND p.idEntidad = @idEntidad
 																	INNER JOIN @tmp t ON ch.codArticulo = t.codArticulo 
 																	AND ch.ruc = t.ruc)
@@ -89,16 +89,16 @@ BEGIN
 				RETURN
 			END
 
-		SELECT @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
+		SELECT @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
-		SELECT @codEstab = codEstab FROM Config.Estab_Asig WITH (NOLOCK) WHERE idUsuarioRol = @idRol AND predeterminado = 1
+		SELECT @codEstab = codEstab FROM Config.Estab_Asig WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol AND predeterminado = 1
 
 		BEGIN TRAN
-			INSERT INTO FactElect.CompraHabitual(codEstab,idProveedor, ruc, idArticulo, codArticulo, idUsuario)
+			INSERT INTO Recepcion.CompraHabitual(codEstab,idProveedor, ruc, idArticulo, codArticulo, idUsuario)
 			SELECT @codEstab, idProveedor, ruc, idArticulo, codArticulo, @idUsuario 
 			FROM @tmp t
 			WHERE NOT EXISTS (
-			SELECT * FROM FactElect.CompraHabitual ch
+			SELECT * FROM Recepcion.CompraHabitual ch
 					 INNER JOIN @tmp t ON ch.idProveedor = t.idProveedor 
 					 AND ch.idArticulo = t.idArticulo
 					 AND ch.codArticulo = t.codArticulo

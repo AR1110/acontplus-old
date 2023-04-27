@@ -31,10 +31,10 @@ export class ModalHistoryComprasCtrl{
         try {
            
             //$scope.articleName = item.descripcion
-            this._mS.getData('get', '/CompraHabitual/Get?json=' + JSON.stringify({ 
+            this._mS.getData('get', 'CompraHabitual/Get?json=' + JSON.stringify({ 
                 tipo: 3, 
                 idArticulo: this._params.idArticulo 
-            })).then(
+            }), null, true).then(
                 response => {
                     if (!response.payload) {
                         this._tS.toastr('warning', 'Este articulo aun no tiene registros de compra habitual')
@@ -72,7 +72,7 @@ export class ModalHistoryComprasCtrl{
     
     deleteCH = (item) => {
         try {
-            this._mS.getData('delete', '/CompraHabitual/Delete?id=' + item.idCompraHabitual).then(
+            this._mS.getData('delete', 'CompraHabitual/Delete?id=' + item.idCompraHabitual, null, true).then(
                 response => {
                     if (response.code == '0') {
                         this._tS.toastr('warning', response.message)
