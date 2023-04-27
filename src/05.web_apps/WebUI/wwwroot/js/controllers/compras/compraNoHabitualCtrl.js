@@ -1,16 +1,21 @@
-
 app.controller('compraNoHabitualCtrl', compraNoHabitualCtrl);
 
 
 compraNoHabitualCtrl.$inject = ['$scope', 'commonService', 'mainService', 'toastService', 'modalService', 'nombreModal', 'formulario', 'toastService']
 
 
-function compraNoHabitualCtrl($scope, commonSvc, mS, tS, modalSvc, nombreModal, _fS, _tS){
-   
+function compraNoHabitualCtrl($scope, commonSvc, mS, tS, modalSvc, nombreModal, _fS, _tS) {
+
     //Variables Generales
-    const {MODAL_FILE_PATH} = nombreModal.compra_no_habitual; 
-    const {MODAL_NUEVO, MODAL_EDITAR, MODAL_DETALLE} =nombreModal.compra_no_habitual;
-    
+    const {
+        MODAL_FILE_PATH
+    } = nombreModal.compra_no_habitual;
+    const {
+        MODAL_NUEVO,
+        MODAL_EDITAR,
+        MODAL_DETALLE
+    } = nombreModal.compra_no_habitual;
+
     //Filtro 
     $scope.dataSearch = {
         checkBoxFecha: true,
@@ -18,45 +23,52 @@ function compraNoHabitualCtrl($scope, commonSvc, mS, tS, modalSvc, nombreModal, 
     $scope.meses = _fS.meses();
     $scope.mes = new Date().getMonth() + 1;
     $scope.proveedorFilter = {};
-    
-    $scope.estadoDocs = [
-        {estado: 'AC', descripcion: 'Activo'} ,{estado: 'A', descripcion: 'Anulado', }
-    ]
-    $scope.openModalFiltro = ()=>{        
-        $("#modalFiltro").modal('show');        
+
+    $scope.estadoDocs = [{
+        estado: 'AC',
+        descripcion: 'Activo'
+    }, {
+        estado: 'A',
+        descripcion: 'Anulado',
+    }]
+    $scope.openModalFiltro = () => {
+        $("#modalFiltro").modal('show');
     }
 
-    $scope.onChangeFechaFiltro =()=>{
+    $scope.onChangeFechaFiltro = () => {
         $scope.dataSearch.tipoFecha = 'FE';
-        $scope.mes = new Date().getMonth() +1;
+        $scope.mes = new Date().getMonth() + 1;
         $scope.getFechaInicioFinFilter($scope.mes)
     }
 
     //Fecha Inicial y Final dependiendo el Mes que seleccione el usuario en el Buscador AVanzado
-    $scope.getFechaInicioFinFilter = function(mes) {
-        if(!mes){
+    $scope.getFechaInicioFinFilter = function (mes) {
+        if (!mes) {
             $scope.dataSearch.fechaInicio = new Date();
-            $scope.dataSearch.fechaFin = new Date()       
-        }else{
-            let { fechaInicio, fechaFin } = _fS.getFechaInicioFinFilter(mes);
+            $scope.dataSearch.fechaFin = new Date()
+        } else {
+            let {
+                fechaInicio,
+                fechaFin
+            } = _fS.getFechaInicioFinFilter(mes);
             $scope.dataSearch.fechaInicio = fechaInicio;
             $scope.dataSearch.fechaFin = fechaFin;
         }
     }
     $scope.getFechaInicioFinFilter()
-        
+
     //-------------------------------------------Proveedor filter------------------------------
-    $scope.searchProveedorFilter = (textSearch)=> {
+    $scope.searchProveedorFilter = (textSearch) => {
         return commonSvc.proveedorSearch(textSearch);
     }
 
-    $scope.proveedorFilte={};
-    $scope.searchProveedorFilterChange = function(item) {                  
-        $scope.dataSearch.byProveedor = item.proveedor.idProveedor        
+    $scope.proveedorFilte = {};
+    $scope.searchProveedorFilterChange = function (item) {
+        $scope.dataSearch.byProveedor = item.proveedor.idProveedor
     }
 
     //Busqueda Avanzada 
-    $scope.busquedaAvanzada =()=> {     
+    $scope.busquedaAvanzada = () => {
         if ($scope.dataSearch.checkBoxProveedor) {
             if (_fS.campo($scope.dataSearch.byProveedor)) {
                 _tS.toastr('warning', 'Por favor seleccione el Proveedor');
@@ -75,30 +87,42 @@ function compraNoHabitualCtrl($scope, commonSvc, mS, tS, modalSvc, nombreModal, 
             };
         }
 
-        
+
         if ($scope.dataSearch.checkBoxEstado) {
-            if ($scope.dataSearch.byEstado===null || $scope.dataSearch.byEstado===undefined) {
+            if ($scope.dataSearch.byEstado === null || $scope.dataSearch.byEstado === undefined) {
                 _tS.toastr('warning', 'Por favor seleccione el Estado');
                 return
             }
         }
-                
+
         $scope.getComprasNoHabitual();
-        $("#modalFiltro").modal('hide');                     
+        $("#modalFiltro").modal('hide');
     }
-    
-    
-    
-    
+
+
+
+
     /**
      * 
      * @param {object} {controller, template, params}
      */
-    $scope.openModal = ({controller, template, params, isRenderRazorPartial})=>{
-        let modalRef = modalSvc.openModalCustom({controller, template, params, size:'xl', windowClass:'uibModalFullScreen', isRenderRazorPartial})
+    $scope.openModal = ({
+        controller,
+        template,
+        params,
+        isRenderRazorPartial
+    }) => {
+        let modalRef = modalSvc.openModalCustom({
+            controller,
+            template,
+            params,
+            size: 'xl',
+            windowClass: 'uibModalFullScreen',
+            isRenderRazorPartial
+        })
 
-        modalRef.result.then(result=>{
-            if(typeof result === 'object'){
+        modalRef.result.then(result => {
+            if (typeof result === 'object') {
                 $scope.getComprasNoHabitual();
             }
         })
@@ -106,40 +130,43 @@ function compraNoHabitualCtrl($scope, commonSvc, mS, tS, modalSvc, nombreModal, 
 
 
     //Formulario Nuevo
-    $scope.openModalNew = async ()=>{
-        
+    $scope.openModalNew = async () => {
+
         let modalParms = {
             controller: (await import('./../../' + MODAL_FILE_PATH))[MODAL_NUEVO['controller']],
-            template:  MODAL_NUEVO['template'],
+            template: MODAL_NUEVO['template'],
             params: {
                 data: {}
             },
             isRenderRazorPartial: true
-        }      
-       
-        $scope.openModal(modalParms)                
+        }
+
+        $scope.openModal(modalParms)
     }
 
     //Formulario Nuevo
-    $scope.openModalEditar = async (item)=>{
+    $scope.openModalEditar = async (item) => {
         try {
 
             let modalParams = {
                 controller: (await import('./../../' + MODAL_FILE_PATH))[MODAL_EDITAR['controller']],
-                template:  MODAL_EDITAR['template'],
+                template: MODAL_EDITAR['template'],
                 isRenderRazorPartial: true
             }
-            
-            mS.getData('get', 'CompraNoHabitual/' + JSON.stringify({ idDocumentoIngreso : item.idDocumentoIngreso ,typeList : 4 }), null, true).then(response=>{
-                if(response.code==="0"){
+
+            mS.getData('get', 'CompraNoHabitual/' + JSON.stringify({
+                idDocumentoIngreso: item.idDocumentoIngreso,
+                typeList: 4
+            }), null, true).then(response => {
+                if (response.code === "0") {
                     console.log(response)
                     hideLoader();
                 }
-    
-                if(response.code==="1"){
-                    
+
+                if (response.code === "1") {
+
                     modalParams.params = JSON.parse(response.payload);
-                    $scope.openModal(modalParams) 
+                    $scope.openModal(modalParams)
 
                     hideLoader();
                 }
@@ -147,42 +174,51 @@ function compraNoHabitualCtrl($scope, commonSvc, mS, tS, modalSvc, nombreModal, 
         } catch (error) {
             console.log(error)
         }
-       
-       
-                       
+
+
+
     }
 
+    $scope.sumImporteTotal = function () {
+        let importeTotal = 0;
+        for (let item of $scope.documentoIngreso) {
+            console.log(item)
+            importeTotal += item.importeTotal;
+        }
+        $scope.importeTotal = _fS.roundNumber(importeTotal, 2);
+    }
 
     //Obtenemos Datos 
-    $scope.getComprasNoHabitual = ()=>{
+    $scope.getComprasNoHabitual = () => {
         try {
             showLoader();
 
-            let json =JSON.stringify ({
-                typeList : 1,
+            let json = JSON.stringify({
+                typeList: 1,
                 checkBoxFecha: true,
-                checkBoxEstab : $scope.dataSearch.checkBoxEstab,
-                checkBoxProveedor : $scope.dataSearch.checkBoxProveedor,
-                checkBoxEstado : $scope.dataSearch.checkBoxEstado,
-                dateStart : $scope.dataSearch.fechaInicio,
-                dateEnd : $scope.dataSearch.fechaFin,
-                codEstab : $scope.dataSearch.codEstab,
-                idProveedor : $scope.dataSearch.byProveedor,
-                estado : $scope.dataSearch.byEstado,
+                checkBoxEstab: $scope.dataSearch.checkBoxEstab,
+                checkBoxProveedor: $scope.dataSearch.checkBoxProveedor,
+                checkBoxEstado: $scope.dataSearch.checkBoxEstado,
+                dateStart: $scope.dataSearch.fechaInicio,
+                dateEnd: $scope.dataSearch.fechaFin,
+                codEstab: $scope.dataSearch.codEstab,
+                idProveedor: $scope.dataSearch.byProveedor,
+                estado: $scope.dataSearch.byEstado,
             });
 
             $scope.documentoIngreso = [];
-            mS.getData('get', 'CompraNoHabitual/' + json, null, true).then(response=>{
-                if(response.code==="0"){
+            mS.getData('get', 'CompraNoHabitual/' + json, null, true).then(response => {
+                if (response.code === "0") {
                     console.log(response)
                     hideLoader();
                 }
 
-                if(response.code==="1"){
+                if (response.code === "1") {
                     $scope.documentoIngreso = JSON.parse(response.payload)[0] || []; //
+                    $scope.sumImporteTotal();
                     hideLoader();
                 }
-            }).catch(error=>{
+            }).catch(error => {
                 hideLoader();
                 console.log(error)
             })
@@ -195,18 +231,20 @@ function compraNoHabitualCtrl($scope, commonSvc, mS, tS, modalSvc, nombreModal, 
 
 
     //Cancelar un Documento
-    $scope.askToDelete = async(item)=>{
+    $scope.askToDelete = async (item) => {
         console.log('delet')
         try {
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
-                  confirmButton: 'btn btn-success',
-                  cancelButton: 'btn btn-danger ml-2'
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger ml-2'
                 },
                 buttonsStyling: false
             })
-              
-            let {isConfirmed} = await  swalWithBootstrapButtons.fire({
+
+            let {
+                isConfirmed
+            } = await swalWithBootstrapButtons.fire({
                 title: '<small>Anular Compra no Habitual?</small>',
                 html: `<small>Esta Ud. seguro/a de anular esta Compra No Habitual <b>N° ${item.serieComprobante}</b></small>?`,
                 icon: 'warning',
@@ -215,10 +253,10 @@ function compraNoHabitualCtrl($scope, commonSvc, mS, tS, modalSvc, nombreModal, 
                 cancelButtonText: 'No, cancelar!',
                 reverseButtons: false
             })
-    
-            if(isConfirmed){              
-                mS.getData('put', 'CompraNoHabitual/Cancel/' + item.idDocumentoIngreso,null,true).then(response=> {
-               
+
+            if (isConfirmed) {
+                mS.getData('put', 'CompraNoHabitual/Cancel/' + item.idDocumentoIngreso, null, true).then(response => {
+
                     if (response.code === "0") {
                         _fS.sweetAlert('warning', response.message, response.titleSms);
                     }
@@ -231,17 +269,17 @@ function compraNoHabitualCtrl($scope, commonSvc, mS, tS, modalSvc, nombreModal, 
         } catch (error) {
             Swal.close();
             console.log(error)
-        }finally{
+        } finally {
 
         }
 
     }
 
-    $scope.initiload = ()=>{
+    $scope.initiload = () => {
         try {
-            commonSvc.getEstabAsign().then(response=>{  
+            commonSvc.getEstabAsign().then(response => {
                 $scope.establecimientos = response;
-                let codEstab = $scope.establecimientos.length>0 ? $scope.establecimientos[0].codEstab: 0;            
+                let codEstab = $scope.establecimientos.length > 0 ? $scope.establecimientos[0].codEstab : 0;
                 $scope.dataSearch.codEstab = codEstab;
                 $scope.getComprasNoHabitual();
             })
@@ -254,28 +292,31 @@ function compraNoHabitualCtrl($scope, commonSvc, mS, tS, modalSvc, nombreModal, 
 
 
 
-    $scope.openModalDetalle = async(item) => {
+    $scope.openModalDetalle = async (item) => {
         try {
 
             try {
 
                 let modalParams = {
                     controller: (await import('./../../' + MODAL_FILE_PATH))[MODAL_DETALLE['controller']],
-                    template:  MODAL_DETALLE['template'],
+                    template: MODAL_DETALLE['template'],
                     isRenderRazorPartial: true
                 }
-                
-                mS.getData('get', 'CompraNoHabitual/' + JSON.stringify({ idDocumentoIngreso : item.idDocumentoIngreso ,typeList : 4 }), null, true).then(response=>{
-                    if(response.code==="0"){
+
+                mS.getData('get', 'CompraNoHabitual/' + JSON.stringify({
+                    idDocumentoIngreso: item.idDocumentoIngreso,
+                    typeList: 4
+                }), null, true).then(response => {
+                    if (response.code === "0") {
                         console.log(response)
                         hideLoader();
                     }
-        
-                    if(response.code==="1"){
-                        
+
+                    if (response.code === "1") {
+
                         modalParams.params = JSON.parse(response.payload);
-                       $scope.openModal(modalParams)
-    
+                        $scope.openModal(modalParams)
+
                         hideLoader();
                     }
                 })
@@ -284,10 +325,10 @@ function compraNoHabitualCtrl($scope, commonSvc, mS, tS, modalSvc, nombreModal, 
             }
 
         } catch (error) {
-            console.log(error);   
+            console.log(error);
         }
     }
 
-   
+
 
 }

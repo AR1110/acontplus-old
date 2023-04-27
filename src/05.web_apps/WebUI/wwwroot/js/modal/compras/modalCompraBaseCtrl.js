@@ -1,17 +1,17 @@
-
-
-
-class ModalCompraBaseCtrl{
+class ModalCompraBaseCtrl {
 
     /**
      * 
      * @param {object} {_mS, _fS}
      */
 
-    constructor({_mS, _fS}){
-        this._mS = _mS; 
-        this._fS = _fS;  
-        
+    constructor({
+        _mS,
+        _fS
+    }) {
+        this._mS = _mS;
+        this._fS = _fS;
+
         this.data = {};
 
 
@@ -44,18 +44,18 @@ class ModalCompraBaseCtrl{
      * @returns  array
      */
 
-    initiload(json){
-        return this._mS.getData('get', '/FacturaCompra/GetDataForm?json=' + JSON.stringify(json)).then(response=>{            
-            if(response.code==="0"){
+    initiload(json) {
+        return this._mS.getData('get', '/FacturaCompra/GetDataForm?json=' + JSON.stringify(json)).then(response => {
+            if (response.code === "0") {
                 throw response
             }
             return JSON.parse(response.payload)
         })
     }
 
-    getDataFormEstabAsig(json={}){
-        return this._mS.getData('get', '/EstabAsig/GetDataForm?json=' + JSON.stringify(json)).then(response=>{
-            if(response.code==='0'){                
+    getDataFormEstabAsig(json = {}) {
+        return this._mS.getData('get', '/EstabAsig/GetDataForm?json=' + JSON.stringify(json)).then(response => {
+            if (response.code === '0') {
                 throw response
             }
             return JSON.parse(response.payload)
@@ -63,18 +63,20 @@ class ModalCompraBaseCtrl{
     }
 
 
-    async onChangeEstablecimiento(){
+    async onChangeEstablecimiento() {
         try {
 
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
-                  confirmButton: 'btn btn-success',
-                  cancelButton: 'btn btn-danger ml-2'
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger ml-2'
                 },
                 buttonsStyling: false
-              })
-              
-              let {isConfirmed} = await  swalWithBootstrapButtons.fire({
+            })
+
+            let {
+                isConfirmed
+            } = await swalWithBootstrapButtons.fire({
                 title: '<small>Cambiar Establecimiento?</small>',
                 html: "<small>Esta seguro de cambiar el <b>Establecimiento</b> y <b>Bodega</b>?</small>",
                 icon: 'warning',
@@ -82,11 +84,11 @@ class ModalCompraBaseCtrl{
                 confirmButtonText: 'Si, cambiar!',
                 cancelButtonText: 'No, cancelar!',
                 reverseButtons: false,
-                allowOutsideClick:false,
-                allowEscapeKey:false
+                allowOutsideClick: false,
+                allowEscapeKey: false
             })
 
-            if(!isConfirmed){
+            if (!isConfirmed) {
                 this.data.codEstab = this.cloneCodEstab;
                 this.$scope.$apply();
                 return
@@ -94,33 +96,33 @@ class ModalCompraBaseCtrl{
 
             this.cloneCodEstab = this.data.codEstab;
 
-            const dataEstab = this.establecimientos.find(item=>item.codEstab===this.data.codEstab);   
-            
+            const dataEstab = this.establecimientos.find(item => item.codEstab === this.data.codEstab);
+
             //Obtenemos Puntos de Emision y Bodegas 
             let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
 
-            if(this.TIPO_DOC !=='FC'){
+            if (this.TIPO_DOC !== 'FC') {
                 this.puntosEmision = resultsDataFormEstab[0];
                 this.data.idPuntoEmision = this.puntosEmision[0].idPuntoEmision;
-            }else{
+            } else {
                 this.data.idPuntoEmision = 0;
                 this._tS.toastr('info', 'No tienes asignado ningún Punto de Emisión')
             }
-                                   
-            this.bodegas         = resultsDataFormEstab[1];
-            this.idBodega        = this.bodegas.length>0 ? this.bodegas[0].idBodega: 0;
-            this.cloneIdBodega   = this.idBodega;
+
+            this.bodegas = resultsDataFormEstab[1];
+            this.idBodega = this.bodegas.length > 0 ? this.bodegas[0].idBodega : 0;
+            this.cloneIdBodega = this.idBodega;
 
             this.actividadTipoIva = resultsDataFormEstab[2][0]
 
-            let indexColumn = this.gridOptions.columnDefs.findIndex(item=>item.field==='idBodega');
-            
+            let indexColumn = this.gridOptions.columnDefs.findIndex(item => item.field === 'idBodega');
+
             this.gridOptions.columnDefs[indexColumn].editDropdownOptionsArray = this.bodegas;
-                
-            for(let item of this.gridOptions.data){
+
+            for (let item of this.gridOptions.data) {
                 item.idBodega = this.idBodega;
-            }  
-            
+            }
+
             //Recalculamos los valos de subtotales 
 
             this.uiGridInvoice.actividadTipoIva = this.actividadTipoIva;
@@ -128,22 +130,22 @@ class ModalCompraBaseCtrl{
             this.$scope.$apply();
         } catch (error) {
             console.trace(error)
-        }       
+        }
     }
 
 
 
 
-    getFechaVencimiento() {   
+    getFechaVencimiento() {
 
         try {
-            if(!this.data.fechaEmision){
+            if (!this.data.fechaEmision) {
                 this.data.fechaEmision = new Date();
             }
             if (this.data.fechaEmision) {
-                let dataTiempoCredito = this.tiempoCreditos.find(item=>item.idTiempoCredito===this.data.idTiempoCredito);
-                let diasCredito = dataTiempoCredito?dataTiempoCredito.diasCredito: 0;
-              
+                let dataTiempoCredito = this.tiempoCreditos.find(item => item.idTiempoCredito === this.data.idTiempoCredito);
+                let diasCredito = dataTiempoCredito ? dataTiempoCredito.diasCredito : 0;
+
                 this.data.fechaVencimiento = this._fS.getFechaVencimiento(this.data.fechaEmision, diasCredito);
                 this.fechaEmisionEscrita = this._fS.getFechaEscrita(this.data.fechaEmision);
                 this.fechaVencimientoEscrita = this._fS.getFechaEscrita(this.data.fechaVencimiento);
@@ -154,18 +156,20 @@ class ModalCompraBaseCtrl{
     }
 
 
-    async askToChangeBodega(){
+    async askToChangeBodega() {
         try {
-            let bodega = this.bodegas.find(item=>item.idBodega===this.idBodega);
+            let bodega = this.bodegas.find(item => item.idBodega === this.idBodega);
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
-                  confirmButton: 'btn btn-success',
-                  cancelButton: 'btn btn-danger ml-2'
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger ml-2'
                 },
                 buttonsStyling: false
             })
-              
-            let {isConfirmed} = await swalWithBootstrapButtons.fire({
+
+            let {
+                isConfirmed
+            } = await swalWithBootstrapButtons.fire({
                 title: '<small>Cambiar Bodega</small>',
                 html: `<small>¿Esta seguro de cambiar la Bodega: <b>${bodega.descripcion}</b>  en el detalle del Documento?</small>`,
                 icon: 'warning',
@@ -177,29 +181,28 @@ class ModalCompraBaseCtrl{
                 allowEscapeKey: false
             })
 
-            if(isConfirmed){
-                this.cloneIdBodega = this.idBodega;           
-            
+            if (isConfirmed) {
+                this.cloneIdBodega = this.idBodega;
+
                 if (this.gridOptions.data.length === 0) return
-    
-                for(let item of this.gridOptions.data){
+
+                for (let item of this.gridOptions.data) {
                     item.idBodega = this.idBodega;
-                }   
+                }
                 this.$scope.$apply();
-            }else{
+            } else {
                 this.idBodega = this.cloneIdBodega;
                 this.$scope.$apply();
             }
         } catch (error) {
             console.log(error)
-        }        
+        }
     }
 
 
-    setColumnDefs(){
+    setColumnDefs() {
         const self = this;
-        this.gridOptions.columnDefs = [
-            {
+        this.gridOptions.columnDefs = [{
                 name: 'Op.',
                 enableCellEdit: false,
                 width: '5%',
@@ -207,12 +210,20 @@ class ModalCompraBaseCtrl{
                 cellTemplate: self.CELL_TEMPLATE_OPTION
             },
             {
-                name: 'N°', field: 'n', enableCellEdit: false, allowCellFocus: false,
-                width: '2%', minWidth: '50'
-            },          
+                name: 'N°',
+                field: 'n',
+                enableCellEdit: false,
+                allowCellFocus: false,
+                width: '2%',
+                minWidth: '50'
+            },
             {
-                name: 'código', field: 'codigo', allowCellFocus: false,
-                enableCellEdit: false, width: '8%', minWidth: '100'
+                name: 'código',
+                field: 'codigo',
+                allowCellFocus: false,
+                enableCellEdit: false,
+                width: '8%',
+                minWidth: '100'
             },
             {
                 name: "descripción",
@@ -252,7 +263,10 @@ class ModalCompraBaseCtrl{
                         //if (val.articuloPvP.idTarifa == rowEntity.idTarifa && rowEntity.precioVenta !== val.articuloPvP.precioVenta) {
                         //    val.articuloPvP.precioVenta = rowEntity.precioVenta
                         //}
-                        return { id: val.idMedida, value: val.descripcion }
+                        return {
+                            id: val.idMedida,
+                            value: val.descripcion
+                        }
                     })
 
                 },
@@ -261,22 +275,27 @@ class ModalCompraBaseCtrl{
                 minWidth: '100'
             },
             {
-                name: 'codigoTipoIva', field: 'codigoTipoIva', allowCellFocus: false,
-                enableCellEdit: false, width: '8%', minWidth: '100', visible: false
-            },         
+                name: 'codigoTipoIva',
+                field: 'codigoTipoIva',
+                allowCellFocus: false,
+                enableCellEdit: false,
+                width: '8%',
+                minWidth: '100',
+                visible: false
+            },
             {
                 name: 'I.V.A',
-                field: 'idTipoIva',                    
+                field: 'idTipoIva',
                 width: '8%',
-                minWidth:'100',
+                minWidth: '100',
                 type: 'number',
                 editableCellTemplate: 'ui-grid/dropdownEditor',
                 cellFilter: 'cellFilterTipoIva:this',
                 editDropdownValueLabel: 'descripcion',
                 editDropdownIdLabel: 'idTipoIva',
                 enableCellEdit: true,
-                enableCellEditOnFocus:true,
-            //    visible: config.porcentajeIva
+                enableCellEditOnFocus: true,
+                //    visible: config.porcentajeIva
             },
             {
                 name: 'Precio U.',
@@ -294,7 +313,7 @@ class ModalCompraBaseCtrl{
                 min: 0,
                 allowCellFocus: false,
                 enableCellEdit: false,
-                
+
                 type: 'number',
                 width: '10%',
                 minWidth: '100',
@@ -319,7 +338,7 @@ class ModalCompraBaseCtrl{
                 type: 'number',
                 width: '6%',
                 minWidth: '100',
-                
+
             },
             {
                 name: 'T. Dsto.',
@@ -331,7 +350,7 @@ class ModalCompraBaseCtrl{
                 type: 'number',
                 width: '6%',
                 minWidth: '100',
-                
+
             },
             {
                 name: 'Total',
@@ -343,7 +362,7 @@ class ModalCompraBaseCtrl{
                 minWidth: '100',
                 // cellFilter: "currency:'$'",
                 visible: true,
-            },              
+            },
             {
                 name: 'Ice',
                 field: 'ice',
@@ -359,7 +378,7 @@ class ModalCompraBaseCtrl{
                 //         row.entity.ice = 0;                            
                 //     }
                 //     row.entity.totalIce = row.entity.cantidad * row.entity.ice;
-                    
+
                 //     let factor = Math.pow(10, row.grid.appScope.config.nroIce);
                 //     let tempNumber = row.entity.ice * factor;
                 //     let roundedTempNumber = Math.round(tempNumber);
@@ -391,7 +410,7 @@ class ModalCompraBaseCtrl{
                 minWidth: '100',
                 visible: false
             },
-            
+
             {
                 name: 'Nota',
                 field: 'nota',
@@ -418,17 +437,16 @@ class ModalCompraBaseCtrl{
             }
         ];
 
-        let indexTipoIva = this.gridOptions.columnDefs.findIndex(item=>item.field==='idTipoIva');
-        let indexBodega  = this.gridOptions.columnDefs.findIndex(item=>item.field==='idBodega');
+        let indexTipoIva = this.gridOptions.columnDefs.findIndex(item => item.field === 'idTipoIva');
+        let indexBodega = this.gridOptions.columnDefs.findIndex(item => item.field === 'idBodega');
         this.gridOptions.columnDefs[indexTipoIva].editDropdownOptionsArray = this.tipoIvas;
-        this.gridOptions.columnDefs[indexBodega].editDropdownOptionsArray = this.bodegas;   
+        this.gridOptions.columnDefs[indexBodega].editDropdownOptionsArray = this.bodegas;
     }
 
 
-    setColumnDefsView(){
-        
-        this.gridOptions.columnDefs =  [
-            {
+    setColumnDefsView() {
+
+        this.gridOptions.columnDefs = [{
                 name: 'Op.',
                 enableCellEdit: false,
                 width: '5%',
@@ -446,12 +464,20 @@ class ModalCompraBaseCtrl{
                 `
             },
             {
-                name: 'N°', field: 'n', enableCellEdit: false, allowCellFocus: false,
-                width: '2%', minWidth: '50'
-            },          
+                name: 'N°',
+                field: 'n',
+                enableCellEdit: false,
+                allowCellFocus: false,
+                width: '2%',
+                minWidth: '50'
+            },
             {
-                name: 'código', field: 'codigo', allowCellFocus: false,
-                enableCellEdit: false, width: '8%', minWidth: '100'
+                name: 'código',
+                field: 'codigo',
+                allowCellFocus: false,
+                enableCellEdit: false,
+                width: '8%',
+                minWidth: '100'
             },
             {
                 name: "descripción",
@@ -470,7 +496,7 @@ class ModalCompraBaseCtrl{
             {
                 name: 'Cant.',
                 field: 'cantidad',
-                enableCellEdit:false,
+                enableCellEdit: false,
                 enableCellEditOnFocus: false,
                 validators: {
                     required: true
@@ -487,12 +513,15 @@ class ModalCompraBaseCtrl{
                 editableCellTemplate: 'ui-grid/dropdownEditor',
                 enableCellEdit: false,
                 enableCellEditOnFocus: false,
-                editDropdownOptionsFunction: function (rowEntity, colDef) {                    
+                editDropdownOptionsFunction: function (rowEntity, colDef) {
                     return rowEntity.medidas.map(function (val) {
                         //if (val.articuloPvP.idTarifa == rowEntity.idTarifa && rowEntity.precioVenta !== val.articuloPvP.precioVenta) {
                         //    val.articuloPvP.precioVenta = rowEntity.precioVenta
                         //}
-                        return { id: val.medida.idMedida, value: val.medida.descripcion }
+                        return {
+                            id: val.medida.idMedida,
+                            value: val.medida.descripcion
+                        }
                     })
 
                 },
@@ -501,28 +530,33 @@ class ModalCompraBaseCtrl{
                 minWidth: '100'
             },
             {
-                name: 'codigoTipoIva', field: 'codigoTipoIva', allowCellFocus: false,
-                enableCellEdit: false, width: '8%', minWidth: '100', visible: false
-            },           
+                name: 'codigoTipoIva',
+                field: 'codigoTipoIva',
+                allowCellFocus: false,
+                enableCellEdit: false,
+                width: '8%',
+                minWidth: '100',
+                visible: false
+            },
             {
                 name: 'I.V.A',
-                field: 'idTipoIva',                    
+                field: 'idTipoIva',
                 width: '8%',
-                minWidth:'100',
+                minWidth: '100',
                 type: 'number',
                 editableCellTemplate: 'ui-grid/dropdownEditor',
                 cellFilter: 'cellFilterTipoIva:this',
                 editDropdownValueLabel: 'descripcion',
                 editDropdownIdLabel: 'idTipoIva',
                 enableCellEdit: false,
-                enableCellEditOnFocus:false,
-            //    visible: config.porcentajeIva
+                enableCellEditOnFocus: false,
+                //    visible: config.porcentajeIva
             },
             {
                 name: 'Precio U.',
                 field: 'precioUnitario',
                 min: 0,
-                enableCellEdit:false,
+                enableCellEdit: false,
                 enableCellEditOnFocus: false,
                 cellFilter: "currency:'$'",
                 type: 'number',
@@ -544,7 +578,7 @@ class ModalCompraBaseCtrl{
             {
                 name: '%',
                 field: 'porcentajeDescuento',
-                enableCellEdit:false,
+                enableCellEdit: false,
                 enableCellEditOnFocus: false,
                 min: 0,
                 type: 'number',
@@ -556,13 +590,13 @@ class ModalCompraBaseCtrl{
             {
                 name: 'dsto.',
                 field: 'valorDescuento',
-                enableCellEdit:false,
+                enableCellEdit: false,
                 enableCellEditOnFocus: false,
                 min: 0,
                 type: 'number',
                 width: '6%',
                 minWidth: '100',
-        
+
             },
             {
                 name: 'T. Dsto.',
@@ -574,7 +608,7 @@ class ModalCompraBaseCtrl{
                 type: 'number',
                 width: '6%',
                 minWidth: '100',
-        
+
             },
             {
                 name: 'Ice',
@@ -584,7 +618,7 @@ class ModalCompraBaseCtrl{
                 type: 'number',
                 width: '6%',
                 minWidth: '100',
-        
+
             },
             {
                 name: 'bodega',
@@ -605,7 +639,7 @@ class ModalCompraBaseCtrl{
                 field: 'subTotal',
                 allowCellFocus: false,
                 enableCellEdit: false,
-        
+
                 type: 'number',
                 width: '7%',
                 minWidth: '100',
@@ -619,7 +653,7 @@ class ModalCompraBaseCtrl{
                 type: 'number',
                 width: '8%',
                 minWidth: '100',
-        
+
                 visible: true,
             },
             {
@@ -643,21 +677,21 @@ class ModalCompraBaseCtrl{
             }
         ]
 
-        let indexTipoIva = this.gridOptions.columnDefs.findIndex(item=>item.field==='idTipoIva');
-        let indexBodega  = this.gridOptions.columnDefs.findIndex(item=>item.field==='idBodega');
+        let indexTipoIva = this.gridOptions.columnDefs.findIndex(item => item.field === 'idTipoIva');
+        let indexBodega = this.gridOptions.columnDefs.findIndex(item => item.field === 'idBodega');
         this.gridOptions.columnDefs[indexTipoIva].editDropdownOptionsArray = this.tipoIvas;
-        this.gridOptions.columnDefs[indexBodega].editDropdownOptionsArray = this.bodegas;   
+        this.gridOptions.columnDefs[indexBodega].editDropdownOptionsArray = this.bodegas;
     }
 
     setFocusArticulo() {
-        setTimeout(function() {
-          document.querySelector('#custom-template-md-autocomplete-articulo').focus();
+        setTimeout(function () {
+            document.querySelector('#custom-template-md-autocomplete-articulo').focus();
         }, 100);
     }
 
 
     //------------------------------------------------Articulo----------------------------------
-    openModalArticleEdit(item){
+    openModalArticleEdit(item) {
         this.$scope.gridApi.cellNav.scrollToFocus(
             this.gridOptions.data[0],
             this.gridOptions.columnDefs[2]
@@ -668,29 +702,29 @@ class ModalCompraBaseCtrl{
 
 
 
-    async setItemArticuloEnDetalle(dataArticulo){        
+    async setItemArticuloEnDetalle(dataArticulo) {
         try {
-            
 
-            this.dataArticulo = dataArticulo;           
+
+            this.dataArticulo = dataArticulo;
             this.addItem();
-            
-            this.indexRow = this.gridOptions.data.findIndex(val => val.idArticulo === this.dataArticulo.articulo.idArticulo);           
-   
+
+            this.indexRow = this.gridOptions.data.findIndex(val => val.idArticulo === this.dataArticulo.articulo.idArticulo);
+
         } catch (error) {
-            console.log(error)            
+            console.log(error)
         }
     }
 
-    addRow(){
+    addRow() {
         const obj = {
             n: 1,
             idArticulo: 0,
             codigo: "",
             descripcion: "",
-            cantidad: 1,                        
+            cantidad: 1,
             codigoTipoIva: "",
-            nombreTipoIva: "",                        
+            nombreTipoIva: "",
             precioUnitario: 0,
             precioCostoNeto: 0,
             porcentajeDescuento: 0,
@@ -698,73 +732,77 @@ class ModalCompraBaseCtrl{
             totalDescuento: 0,
             codIce: 0,
             ice: 0,
-            totalIce:0,
+            totalIce: 0,
             idBodega: 0,
             subTotal: 0,
             total: 0,
             nota: null
         }
-        this.gridOptions.data.push(obj)                
+        this.gridOptions.data.push(obj)
     }
 
-    addItem(){
+    addItem() {
         const self = this;
-        self.addRow();        
-                
-        const {articulo, medidas, etiquetas} = self.dataArticulo;   
-        
-        let index  = self.gridOptions.data.findIndex(value => value.idArticulo === 0); 
-        let entity = self.gridOptions.data[index]; 
-        
-        let dataMedida       = medidas[0];  
-        let precioCosto      =  dataMedida.precioCosto;  
+        self.addRow();
 
-        entity.idArticulo    = articulo.idArticulo;      
-        entity.codigo        = articulo.codigoArticulo;
-        entity.descripcion   = articulo.descripcion;            
-       
+        const {
+            articulo,
+            medidas,
+            etiquetas
+        } = self.dataArticulo;
+
+        let index = self.gridOptions.data.findIndex(value => value.idArticulo === 0);
+        let entity = self.gridOptions.data[index];
+
+        let dataMedida = medidas[0];
+        let precioCosto = dataMedida.precioCosto;
+
+        entity.idArticulo = articulo.idArticulo;
+        entity.codigo = articulo.codigoArticulo;
+        entity.descripcion = articulo.descripcion;
+
         //IVA
-        entity.idTipoIva     = articulo.idTipoIva;
+        entity.idTipoIva = articulo.idTipoIva;
         entity.codigoPrincipal = articulo.codigoPrincipal;
         entity.codigoAuxiliar = articulo.codigoAuxiliar;
-        entity.costoNeto      = articulo.costoNeto;
+        entity.costoNeto = articulo.costoNeto;
         entity.codigoPorcentaje = articulo.codigoPorcentaje;
         entity.nombreTipoIva = articulo.nombreTipoIva;
-        entity.tarifa        = articulo.tarifa;
-       
-        entity.cantidad      = 1;                   
+        entity.tarifa = articulo.tarifa;
+
+        entity.cantidad = 1;
         entity.precioUnitario = this._fS.roundNumber(precioCosto, this.decimal.nroPrecio)
-        entity.precioCostoNeto       = this._fS.roundNumber(precioCosto, this.decimal.nroPrecio);                   
-        entity.porcentajeDescuento   = 0;
-        entity.valorDescuento        = 0;
+        entity.precioCostoNeto = this._fS.roundNumber(precioCosto, this.decimal.nroPrecio);
+        entity.porcentajeDescuento = 0;
+        entity.valorDescuento = 0;
         // entity.codIce                = item.codIce;
-        entity.ice                   = articulo.valorIce;            
-        entity.idBodega              = this.idBodega 
-        entity.llevaInventario       = articulo.llevaInventario;
-        entity.datosAdicionales      = articulo.datosAdicionales;            
-        entity.medidas               = medidas; //Lista Medida 
-        entity.idMedida              = dataMedida.idMedida; //Medida por defecto 
-        entity.etiquetas             = etiquetas;   //seteamos la etiqueta     
-        
-        
-        const objCalculo            = self.uiGridInvoice.calculoColDef(entity, 0);             
-        
+        entity.ice = articulo.valorIce;
+        entity.idBodega = this.idBodega
+        entity.llevaInventario = articulo.llevaInventario;
+        entity.datosAdicionales = articulo.datosAdicionales;
+        entity.medidas = medidas; //Lista Medida 
+        entity.idMedida = dataMedida.idMedida; //Medida por defecto 
+        entity.etiquetas = etiquetas; //seteamos la etiqueta     
+
+
+        const objCalculo = self.uiGridInvoice.calculoColDef(entity, 0);
+
         objCalculo["precioUnitario"] && objCalculo["precioUnitario"]();
-        
+
         objCalculo["calculoTotalDetalle"]();
-        
-        self.data = Object.assign(self.data, self.uiGridInvoice.getTotales()); 
-        
+
+        self.data = Object.assign(self.data, self.uiGridInvoice.getTotales());
+
         self.focusColumnCantidad();
         self.uiGridInvoice.countIndex();
 
-        console.log(entity)
+
     }
 
 
     focusColumnCantidad() {
         const self = this;
-        let index = self.gridOptions.columnDefs.findIndex(item=>item.field==='cantidad')
+        let index = self.gridOptions.columnDefs.findIndex(item => item.field === 'cantidad')
         self.$scope.gridApi.cellNav.scrollToFocus(
             self.gridOptions.data[0],
             self.gridOptions.columnDefs[2]
@@ -778,94 +816,94 @@ class ModalCompraBaseCtrl{
         }, 30)
     }
 
-    sumaTransporteRecargo(){
-        this.data = Object.assign(this.data, this.uiGridInvoice.getTotales()); 
+    sumaTransporteRecargo() {
+        this.data = Object.assign(this.data, this.uiGridInvoice.getTotales());
         let total = Number(this.data.total);
-        let transporte   = Number(this.data.transporte);
-        let recargo      = Number(this.data.recargo);
+        let transporte = Number(this.data.transporte);
+        let recargo = Number(this.data.recargo);
         let importeTotal = total + transporte + recargo;
-        this.data.total  = this._fS.roundNumber(importeTotal, this.decimal.nroTotalSubTotal);
-                
+        this.data.total = this._fS.roundNumber(importeTotal, this.decimal.nroTotalSubTotal);
+
     }
 
- 
-
-    
 
 
-    validateForm(){        
+
+
+
+    validateForm() {
         return {
             "codEstab": {
-                valor: this.data.codEstab ,
+                valor: this.data.codEstab,
                 message: 'Seleccione el Establecimiento'
             },
-                   
-            "idSustentoTributario":{
+
+            "idSustentoTributario": {
                 valor: this.data.idSustentoTributario > 0,
                 message: 'Seleccione el SustentoTributario'
-            }, 
-            "idCategoriaCompra":{
+            },
+            "idCategoriaCompra": {
                 valor: this.data.idCategoriaCompra > 0,
                 message: 'Seleccione la Categoria'
-            },     
+            },
             "idProveedor": {
-                valor: this.proveedor.idProveedor >0,
+                valor: this.proveedor.idProveedor > 0,
                 message: 'Seleccione el Proveedor'
-            },   
-            "puntoEmision":{
+            },
+            "puntoEmision": {
                 valor: this.data.puntoEmision,
                 message: 'Ingrese el Punto de Emisión'
-            }, 
-            "ptoEmision":{
+            },
+            "ptoEmision": {
                 valor: this.data.ptoEmision,
                 message: 'Ingrese el Punto de Emisión'
             },
-            "nroDocumento":{
+            "nroDocumento": {
                 valor: this.data.nroDoc,
                 message: 'Ingrese el Nro. Documento'
             },
-            "nroAutho":{
+            "nroAutho": {
                 valor: this.data.nroAutho,
                 message: 'Ingrese el Nro. de Autorización'
             },
-            "idPuntoEmision":{
-                valor: this.data.idPuntoEmision>0,
+            "idPuntoEmision": {
+                valor: this.data.idPuntoEmision > 0,
                 message: 'Seleccione el Punto de Emisión'
-            },  
-            "nroDoc":{
+            },
+            "nroDoc": {
                 valor: this.data.nroDocumento,
                 message: 'Ingrese el Número de Documento'
             },
-            "nroAutorizacion":{
+            "nroAutorizacion": {
                 valor: this.data.nroAutorizacion,
                 message: 'Ingrese el Número de Autorizacion'
             },
-            "idTiempoCredito":{
+            "idTiempoCredito": {
                 valor: this.data.idTiempoCredito > 0,
                 message: 'Seleccione el Tiempo de Crédito'
             },
             "fechaEmision": {
-                valor:  this.data.fechaEmision instanceof Date && !isNaN(this.data.fechaEmision),
-                message:  'Ingrese la Fecha de Emisión'
+                valor: this.data.fechaEmision instanceof Date && !isNaN(this.data.fechaEmision),
+                message: 'Ingrese la Fecha de Emisión'
             },
-            "fechaVencimiento":{
+            "fechaVencimiento": {
                 valor: this.data.fechaVencimiento instanceof Date && !isNaN(this.data.fechaVencimiento),
-                message: 'Ingrese la Fecha de Vencimiento',                
+                message: 'Ingrese la Fecha de Vencimiento',
             },
-            "validFechaVcto":{
+            "validFechaVcto": {
                 valor: (Date.parse(this.data.fechaEmision) <= Date.parse(this.data.fechaVencimiento)),
                 message: 'Fecha de Vencimiento no puede ser menor a  Fecha de Emisión'
             },
-            "idFactura":{
+            "idFactura": {
                 valor: this.factura && this.factura.idFactura > 0,
                 message: 'Seleccione la Factura'
             },
-            "gridOptions":{
-                valor: "data" in this.gridOptions? this.gridOptions.data.length: null,
+            "gridOptions": {
+                valor: "data" in this.gridOptions ? this.gridOptions.data.length : null,
                 message: 'Ingrese al menos un Articulo en el Detalle',
             },
             "gridOptionsBodega": {
-                valor: "data" in this.gridOptions ? this.gridOptions.data.some(item=>(item.idBodega>0)): null,
+                valor: "data" in this.gridOptions ? this.gridOptions.data.some(item => (item.idBodega > 0)) : null,
                 message: 'Agregue  bodega a los artículos'
             }
         }
@@ -877,46 +915,46 @@ class ModalCompraBaseCtrl{
      * @param {string} tituloModal Guardar || Actualizar
      * @returns 
      */
-    isValidaForm(tituloModal){
-                     
-        let toastMessageForm = this.validateForm(); 
-        console.log(toastMessageForm)       
+    isValidaForm(tituloModal) {
 
-        for(let item of this.CAMPOS){                 
-            if(item in  toastMessageForm){
-                let campo =  toastMessageForm[item];                                  
-                if(!campo.valor){                
+        let toastMessageForm = this.validateForm();
+
+
+        for (let item of this.CAMPOS) {
+            if (item in toastMessageForm) {
+                let campo = toastMessageForm[item];
+                if (!campo.valor) {
                     this._tS.toastr('warning', campo.message, tituloModal);
-                    return                
-                }                                
-            }else{
+                    return
+                }
+            } else {
                 throw `CAMPO ${item} NO DEFINIDO CORRECTAMENTE EN ESTE DOCUMENTO ${this.TIPO_DOC.descripcion}`
-            }      
+            }
         }
 
-        if(this.data.total<=0){
+        if (this.data.total <= 0) {
             this._tS.toastr('warning', 'El importe total tiene que ser distinto a 0');
             return
         }
 
         return true;
-       
+
     }
 
 
     setPorcentajeDescuentoAll(porcentajeDescuento) {
         const self = this;
-        for(let rowEntity of this.gridOptions.data){
-            rowEntity.porcentajeDescuento = porcentajeDescuento;   
-            
-            let objCalculo = self.uiGridInvoice.calculoColDef(rowEntity);             
-        
+        for (let rowEntity of this.gridOptions.data) {
+            rowEntity.porcentajeDescuento = porcentajeDescuento;
+
+            let objCalculo = self.uiGridInvoice.calculoColDef(rowEntity);
+
             objCalculo["porcentajeDescuento"]();
-            
+
             objCalculo["calculoTotalDetalle"]();
-            
-        }                     
-        self.data = Object.assign(self.data, self.uiGridInvoice.getTotales());         
+
+        }
+        self.data = Object.assign(self.data, self.uiGridInvoice.getTotales());
     }
 
 
@@ -925,4 +963,3 @@ class ModalCompraBaseCtrl{
 
 
 window.modalCompraBaseCtrl = ModalCompraBaseCtrl
-

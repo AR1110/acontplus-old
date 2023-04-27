@@ -1,7 +1,8 @@
 export class CommonService {
-    static $inject = ["$http", "mainService", "FileSaver", "formulario", "modalService", "nombreModal", "__env"];
+    static $inject = ["$rootScope", "$http", "mainService", "FileSaver", "formulario", "modalService", "nombreModal", "__env"];
 
-    constructor($http, mS, FileSaver, form, _modalSvc, _nombreModalConst, __env) {
+    constructor($rootScope, $http, mS, FileSaver, form, _modalSvc, _nombreModalConst, __env) {
+        this.$rootScope = $rootScope;
         this.$http = $http;
         this.mS = mS;
         this.FileSaver = FileSaver;
@@ -221,8 +222,8 @@ export class CommonService {
 
     getEstadoDocByCodDoc(codDoc) {
         return this.$http.get("/EstadoDocumento/Get?json=" + JSON.stringify({
-            codDoc
-        }))
+                codDoc
+            }))
             .then(({
                 data: response
             }) => response.data || []);
@@ -1695,7 +1696,7 @@ export class CommonService {
                 isComplete = false;
             switch (codigoDocumento) {
                 case "FE":
-                  
+
                     if (codTransaccion == 'E') {
                         response = await this.getDataTipoDocVenta({
                             id,
@@ -1713,7 +1714,7 @@ export class CommonService {
                             codigoDocumento
                         })
                     }
-                  
+
 
                     params = {
                         TIPO_REGISTRO: 'DETALLE',
@@ -2069,8 +2070,11 @@ export class CommonService {
 
 
 
-    //----------------------------CRUD Invoice----------------------------
 
+    //----------------------------PERMISOS Invoice----------------------------
+    getPermisos() {
+        console.log(this.$rootScope)
+    }
 
 }
 
