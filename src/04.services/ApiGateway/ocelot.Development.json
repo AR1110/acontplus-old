@@ -1,20 +1,20 @@
 {
-    "GlobalConfiguration": {
-        "BaseUrl": "https://localhost:7261/",
-        "RateLimitOptions": {
-            "ClientIdHeader": "Test",
-            "ClientWhitelist": [
-            ],
-            "DisableRateLimitHeaders": false,
-            "EnableRateLimiting": true,
-            "HttpStatusCode": 999,
-            "Limit": 1,
-            "Period": "60s",
-            "PeriodTimespan": 1,
-            "QuotaExceededMessage": "Request not allowed"
-        },
-        "RequestIdKey": "OcRequestId"
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost:7261/",
+    "RateLimitOptions": {
+      "ClientIdHeader": "Test",
+      "ClientWhitelist": [
+      ],
+      "DisableRateLimitHeaders": false,
+      "EnableRateLimiting": true,
+      "HttpStatusCode": 999,
+      "Limit": 1,
+      "Period": "60s",
+      "PeriodTimespan": 1,
+      "QuotaExceededMessage": "Request not allowed"
     },
+    "RequestIdKey": "OcRequestId"
+  },
   "Routes": [
     {
       "DownstreamHostAndPorts": [
@@ -401,6 +401,25 @@
         "Get"
       ],
       "UpstreamPathTemplate": "/api/DocumentoElectronico/GetDataForm"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 54948
+        }
+      ],
+      "DownstreamPathTemplate": "/api/DocumentoElectronicoError/{id}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "UpstreamPathTemplate": "/api/DocumentoElectronicoError/{id}"
     },
     {
       "AuthenticationOptions": {
