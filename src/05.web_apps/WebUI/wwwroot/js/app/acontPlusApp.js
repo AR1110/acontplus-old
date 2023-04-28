@@ -942,7 +942,8 @@ app.directive('estabStock', function (mainService, $compile, $timeout) {
     return {
         restrict: 'A',
         scope: {
-            article: "="
+            article: "=",
+            placement: "@"
         },
         link: function (scope, element) {
             var popoverOptions = {
@@ -987,7 +988,7 @@ app.directive('estabStock', function (mainService, $compile, $timeout) {
                     return compiledContent;
 
                 },
-                placement: 'bottom',
+                placement: scope.placement || 'bottom',
                 trigger: 'outsideClick',
                 html: true,
                 customClass: 'zindex'
