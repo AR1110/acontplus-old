@@ -1,6 +1,6 @@
  import {
      ArticuloTarifaGridOption
- } from './../helpers/articuloTarifaGridOption.min.js?v=0.13';
+ } from './../helpers/articuloTarifaGridOption.min.js?v=0.20';
 
  class ModalBaseCtrl {
      constructor({
