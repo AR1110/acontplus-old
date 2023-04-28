@@ -110,21 +110,22 @@ namespace BL.Reports
                     if (item.Key == "reportPath")
                     {
                         //lr.ReportPath = _configuration.GetSection("dirReports").Value + item.Value.ToString();
-                        var paths = item.Value.ToString().Split("/");
-                        paths = paths.Where(s => !string.IsNullOrEmpty(s)).ToArray();
+                        //var paths = item.Value.ToString().Split("/");
+                        //paths = paths.Where(s => !string.IsNullOrEmpty(s)).ToArray();
 
-                        switch (paths.Length)
-                        {
-                            case 1:
-                                lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", paths[0])));
-                                break;
-                            case 2:
-                                lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", paths[0], paths[1])));
-                                break;
-                            default:
-                                lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(_configuration.GetSection("dirReports").Value + item.Value.ToString()));
-                                break;
-                        }
+                        //switch (paths.Length)
+                        //{
+                        //    case 1:
+                        //        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", paths[0])));
+                        //        break;
+                        //    case 2:
+                        //        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", paths[0], paths[1])));
+                        //        break;
+                        //    default:
+                        //        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(_configuration.GetSection("dirReports").Value + item.Value.ToString()));
+                        //        break;
+                        //}
+                        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(_configuration.GetSection("dirReports").Value + item.Value.ToString()));
                     }
                     if (item.Key == "format")
                     {

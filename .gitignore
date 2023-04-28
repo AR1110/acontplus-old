@@ -349,3 +349,6 @@
 /src/07.worker_services/WS_Cliente_Ident_Val_Sri/obj
 /src/04.services/ApiSri/bin
 /src/04.services/ApiSri/obj
+/src/07.worker_services/WS_Notificacion_Tributaria/bin/Debug/net6.0
+/src/07.worker_services/WS_Notificacion_Tributaria/obj
+/src/07.worker_services/WS_Notificacion_Tributaria/bin/Release/net6.0

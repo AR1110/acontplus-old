@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>disable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>dotnet-WS_Notificacion_Tributaria-c8d327bb-5385-426f-8148-5fab49c261bd</UserSecretsId>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="7.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\01.common\DataAccess\DataAccess.csproj" />
+	  <ProjectReference Include="..\..\03.business_logic\BL.Notificacion\BL.Notificacion.csproj" />
+	  <ProjectReference Include="..\..\03.business_logic\BL.Reports\BL.Reports.csproj" />
+	</ItemGroup>
+</Project>
