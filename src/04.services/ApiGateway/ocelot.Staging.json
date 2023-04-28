@@ -450,6 +450,26 @@
           "Port": 8097
         }
       ],
+      "DownstreamPathTemplate": "/api/NotificacionTributaria{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post"
+      ],
+      "UpstreamPathTemplate": "/api/NotificacionTributaria{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 8097
+        }
+      ],
       "DownstreamPathTemplate": "/api/RetencionAts/{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [

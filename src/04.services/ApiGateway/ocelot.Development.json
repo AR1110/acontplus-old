@@ -433,6 +433,26 @@
           "Port": 54948
         }
       ],
+      "DownstreamPathTemplate": "/api/NotificacionTributaria{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post"
+      ],
+      "UpstreamPathTemplate": "/api/NotificacionTributaria{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 54948
+        }
+      ],
       "DownstreamPathTemplate": "/api/RetencionAts/{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
