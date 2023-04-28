@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Collections;
 using System.Data;
+using System.Text.Json;
 using System.Xml;
 
 namespace Helpers
@@ -178,6 +179,14 @@ namespace Helpers
             {
                 return false;
             }
+        }
+        public static string SerializeDictionary(Dictionary<string, object> data)
+        {
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true // Optional: makes the output formatted for readability
+            };
+            return System.Text.Json.JsonSerializer.Serialize(data, options);
         }
     }
 }
