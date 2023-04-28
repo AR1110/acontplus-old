@@ -8,7 +8,9 @@ namespace WS_Notificacion_Tributaria
         {
             string _env = string.Empty;
 #if DEBUG
-            _env = ".Development";
+            _env = "Development";
+#else
+            _env = "Production";
 #endif
             IHost host = Host.CreateDefaultBuilder(args)
                .UseWindowsService(options =>
@@ -20,7 +22,7 @@ namespace WS_Notificacion_Tributaria
                     services.AddTransient<IConfiguration>(config =>
                     {
                         IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-                        configurationBuilder.AddJsonFile($"appsettings{_env}.json", optional: false, reloadOnChange: true);
+                        configurationBuilder.AddJsonFile($"appsettings.{_env}.json", optional: false, reloadOnChange: true);
                         return configurationBuilder.Build();
 
                     });
