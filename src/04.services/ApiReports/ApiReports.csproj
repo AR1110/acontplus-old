@@ -37,7 +37,7 @@
 	  <None Remove="Reports\GestionReporte\FacturaCompraRG.rdlc" />
 	  <None Remove="Reports\GestionReporte\FacturaVentaRG.rdlc" />
 	  <None Remove="Reports\GestionReporte\IngresoBodegaRG.rdlc" />
-	  <None Remove="Reports\GestionReporte\KardexRG.rdlc" />
+	  <None Remove="Reports\GestionReporte\KardexRG.rdl" />
 	  <None Remove="Reports\GestionReporte\LiquidacionCompraRG.rdlc" />
 	  <None Remove="Reports\GestionReporte\NotaCreditoProveedorRG.rdlc" />
 	  <None Remove="Reports\GestionReporte\NotaCreditoRG.rdlc" />
@@ -116,7 +116,7 @@
 	  <Content Include="Reports\GestionReporte\IngresoBodegaRG.rdlc">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
-	  <Content Include="Reports\GestionReporte\KardexRG.rdlc">
+	  <Content Include="Reports\GestionReporte\KardexRG.rdl">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
 	  <Content Include="Reports\GestionReporte\LiquidacionCompraRG.rdlc">

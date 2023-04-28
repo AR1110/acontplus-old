@@ -63,7 +63,8 @@ BEGIN
 		END
 	IF @format = 'excel'
 		BEGIN
-			SET @fileName = (SELECT nombreReporte + '.xls' FROM Config.Reporte WHERE codigo = @codigo)
+			SET @format = 'EXCELOPENXML'
+			SET @fileName = (SELECT nombreReporte + '.xlsx' FROM Config.Reporte WHERE codigo = @codigo)
 			--SET @contentType = 'application/vnd.ms-excel';
 		END
 	IF @format = 'word'
