@@ -22,7 +22,7 @@ function facturaVentaCtrl($rootScope, $scope, $filter, _mS, _commonSvc, _docVent
     // } else {
     //     $scope.accion = accion[0]; 
     // }
-    console.log($rootScope.ventaPermiso)
+
 
 
     const TIPO_DOC_FV = _commonSvc.tipoDoc['FV'];
@@ -88,9 +88,10 @@ function facturaVentaCtrl($rootScope, $scope, $filter, _mS, _commonSvc, _docVent
                 $scope.dataSearch.checkBoxDefault = true;
             }
 
-            await _mS.getData('get', '/FacturaVenta/Get?json=' + JSON.stringify($scope.dataSearch)).then(response => {
+            _mS.getData('get', '/FacturaVenta/Get?json=' + JSON.stringify($scope.dataSearch)).then(response => {
                 $scope.facturas = []
                 if (response.code === '0') {
+                    hideLoader();
                     console.warn(response)
                     return
 
@@ -98,15 +99,18 @@ function facturaVentaCtrl($rootScope, $scope, $filter, _mS, _commonSvc, _docVent
                 $scope.facturas = JSON.parse(response.payload) || [];
                 $scope.cloneFacturas = JSON.parse(JSON.stringify($scope.facturas));
                 $scope.getTotales();
+                hideLoader();
+            })
+
+            _commonSvc.getDataFormVenta().then(result => {
+                $scope.jsonPermission = JSON.parse(result[9][0].jsonPermission)
             })
 
         } catch (error) {
-
+            hideLoader();
             console.log(error)
 
-        } finally {
-            hideLoader();
-        }
+        } finally {}
     }
 
 
@@ -291,6 +295,11 @@ function facturaVentaCtrl($rootScope, $scope, $filter, _mS, _commonSvc, _docVent
 
     $scope.openModalInvoiceEdit = async (item) => {
         try {
+            if (item.anulada) {
+                _fS.sweetAlert('warning', 'Este documento ya se cuentra anulada');
+                return
+            }
+
             let result = await _commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.E);
             if (result.code === "2") {
                 _commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.E);
@@ -322,8 +331,7 @@ function facturaVentaCtrl($rootScope, $scope, $filter, _mS, _commonSvc, _docVent
             }).result.then(result => {
                 if (typeof result === 'object' && result.isUpdate) {
 
-                    //Una vez actualizado el documento 
-                    console.log(_commonSvc.getPermisos())
+                    //Actualizar el estado de solicitud en caso de tener 
                     let {
                         additional
                     } = $scope.jsonPermission;
@@ -410,6 +418,18 @@ function facturaVentaCtrl($rootScope, $scope, $filter, _mS, _commonSvc, _docVent
 
     $scope.askToDelete = async (item) => {
         try {
+
+            if (item.anulada) {
+                _fS.sweetAlert('warning', 'Este documento ya se cuentra anulada');
+                return
+            }
+
+            let result = await _commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.A);
+            if (result.code === "2") {
+                _commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.A);
+                return
+            }
+
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
                     confirmButton: 'btn btn-success',
@@ -441,6 +461,16 @@ function facturaVentaCtrl($rootScope, $scope, $filter, _mS, _commonSvc, _docVent
                     if (response.code === "1") {
                         hideLoader();
                         _fS.sweetAlert('success', response.message, response.titleSms, 1000);
+
+                        //Una vez actualizado el documento 
+                        let {
+                            additional
+                        } = $scope.jsonPermission;
+                        if (typeof $scope.jsonPermission === 'object' && additional.requestAuthorizationKey.requestKey) {
+                            _commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.A);
+                        }
+
+
                         $scope.getFacturas();
                     }
                 }).catch(error => {

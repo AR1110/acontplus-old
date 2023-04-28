@@ -37,8 +37,16 @@
                             <div class="col-lg-6 col"></div>
                             <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
                                 <form class="form-material">
-                                    <input type="text" class="form-control" ng-keyup="filterLocalLCompras()"
-                                        ng-model="txtFilter" placeholder="Buscar">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" ng-keyup="filterLocalLCompras()"
+                                            ng-model="txtFilter" placeholder="Buscar">
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-outline-secondary btn-xs"
+                                                ng-click="getComprasNoHabitual()">
+                                                <i class="fas fa-redo fa-xs"></i>
+                                            </button>
+                                        </div>
+                                    </div>
                                 </form>
                             </div>
                         </div>

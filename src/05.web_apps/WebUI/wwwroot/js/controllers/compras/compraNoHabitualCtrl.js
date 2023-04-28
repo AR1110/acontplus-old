@@ -19,7 +19,10 @@ function compraNoHabitualCtrl($scope, commonSvc, mS, tS, modalSvc, nombreModal, 
     //Filtro 
     $scope.dataSearch = {
         checkBoxFecha: true,
+        fechaInicio: new Date(),
+        fechaFin: new Date()
     };
+
     $scope.meses = _fS.meses();
     $scope.mes = new Date().getMonth() + 1;
     $scope.proveedorFilter = {};
@@ -43,19 +46,15 @@ function compraNoHabitualCtrl($scope, commonSvc, mS, tS, modalSvc, nombreModal, 
 
     //Fecha Inicial y Final dependiendo el Mes que seleccione el usuario en el Buscador AVanzado
     $scope.getFechaInicioFinFilter = function (mes) {
-        if (!mes) {
-            $scope.dataSearch.fechaInicio = new Date();
-            $scope.dataSearch.fechaFin = new Date()
-        } else {
-            let {
-                fechaInicio,
-                fechaFin
-            } = _fS.getFechaInicioFinFilter(mes);
-            $scope.dataSearch.fechaInicio = fechaInicio;
-            $scope.dataSearch.fechaFin = fechaFin;
-        }
+        let {
+            fechaInicio,
+            fechaFin
+        } = _fS.getFechaInicioFinFilter(mes);
+        $scope.dataSearch.fechaInicio = fechaInicio;
+        $scope.dataSearch.fechaFin = fechaFin;
+
     }
-    $scope.getFechaInicioFinFilter()
+    // $scope.getFechaInicioFinFilter()
 
     //-------------------------------------------Proveedor filter------------------------------
     $scope.searchProveedorFilter = (textSearch) => {
