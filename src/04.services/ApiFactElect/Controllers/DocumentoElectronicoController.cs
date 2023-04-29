@@ -1,12 +1,11 @@
 ﻿using Common.Logs;
 using DataAccess;
 using Helpers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiFactElect.Controllers
 {
-    [Authorize]
+
     [Route("api/[controller]")]
     [ApiController]
     public class DocumentoElectronicoController : ControllerBase
@@ -19,7 +18,7 @@ namespace ApiFactElect.Controllers
             _db = new DbAccess(_configuration);
         }
 
-        [HttpGet("{json}")]
+        [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
             LogWriter _logs = new LogWriter(_configuration);
@@ -52,7 +51,9 @@ namespace ApiFactElect.Controllers
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+
                 await _db.SPExecute("FactElect.Doc_Elect_Get_Data_Form");
+                _db.AddDynamicParam("idUsuarioRol ", idUsuarioRol);
                 _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)

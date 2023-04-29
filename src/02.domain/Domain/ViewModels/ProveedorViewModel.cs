@@ -9,7 +9,7 @@ namespace Domain.ViewModels
         public string tipoEntidad { get; set; }
         public string subContribuyente { get; set; }
         public string tiempoCredito { get; set; }
-        public string tipoIdentificacion{ get; set; }
+        public string tipoIdentificacion { get; set; }
         public string ciudad { get; set; }
         public string provincia { get; set; }
         public int diasCredito { get; set; }

@@ -1,7 +1,7 @@
-﻿using Domain.Models;
-using Microsoft.AspNetCore.Mvc;
-using DataAccess;
+﻿using DataAccess;
+using Domain.Models;
 using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Admin
 {
@@ -9,20 +9,20 @@ namespace WebUI.Controllers.Admin
     {
         // GET: Articulo
         private readonly IConfiguration _configuration;
-         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
+        ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
-        
+
         GenericResponse _gr = new();
 
         public ControlCajaController(IConfiguration configuration)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
-            
-            
+
+
         }
 
-        
+
         public IActionResult Index()
         {
             return View();
@@ -50,7 +50,7 @@ namespace WebUI.Controllers.Admin
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update(int id,[FromBody] ControlCaja data)
+        public async Task<IActionResult> Update(int id, [FromBody] ControlCaja data)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("id", id);

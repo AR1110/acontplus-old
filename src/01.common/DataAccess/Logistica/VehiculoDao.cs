@@ -1,14 +1,8 @@
-﻿using Helpers;
-using Domain.Models;
-using Domain.Models.Logistica;
-using System;
-using System.Collections.Generic;
+﻿using Domain.Models.Logistica;
+using Helpers;
+using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Logistica
 {
@@ -201,7 +195,7 @@ namespace DataAccess.Logistica
                                 placa = reader.GetString(3),
                                 marca = reader.GetString(4),
                                 modelo = reader.GetString(5),
-                                observacion = reader.GetString(6),  
+                                observacion = reader.GetString(6),
                             };
                             search.Add(item);
                         }

@@ -1,6 +1,5 @@
 ﻿using DataAccess.GestionFinanciera;
 using Helpers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.GestionFinanciera
@@ -13,11 +12,11 @@ namespace WebUI.Controllers.GestionFinanciera
         private CarteraDao _c;
         public CarteraClienteController(IConfiguration configuration)
         {
-            _configuration = configuration; 
+            _configuration = configuration;
             _c = new CarteraDao(_configuration);
         }
 
-        
+
         public IActionResult Index() => View();
 
         [HttpGet]

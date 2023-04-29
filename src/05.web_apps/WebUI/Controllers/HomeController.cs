@@ -1,13 +1,6 @@
 ﻿using DataAccess;
-using Domain.Models;
 using Helpers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace AcontPlus.Controllers
 {
@@ -22,7 +15,7 @@ namespace AcontPlus.Controllers
             _config = config;
             _d = new DashboardDao(_config);
         }
-        
+
         public IActionResult Index()
         {
             return View();

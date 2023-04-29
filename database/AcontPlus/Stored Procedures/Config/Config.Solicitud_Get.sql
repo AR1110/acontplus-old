@@ -111,7 +111,5 @@ BEGIN
 
 
 		END 
-	--INSERT INTO Config.Solicitud (idUsuarioRolAprobante, idUsuarioRolSolictante, observacion, codigoAccion, codEstado)VALUES(38, 39, 'EDITAR FACTURA N°. 23545454', 'E', 'P')
-	SELECT * FROM Config.Solicitud
 	
 END 

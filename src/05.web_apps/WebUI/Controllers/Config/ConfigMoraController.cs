@@ -1,7 +1,6 @@
 ﻿using DataAccess;
 using Domain.Models;
 using Helpers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Config
@@ -14,11 +13,11 @@ namespace WebUI.Controllers.Config
         private ConfiguracionMoraDao _cm;
         public ConfigMoraController(IConfiguration configuration)
         {
-            _configuration = configuration; 
+            _configuration = configuration;
             _cm = new ConfiguracionMoraDao(_configuration);
         }
 
-        
+
         public IActionResult Index()
         {
             return View();

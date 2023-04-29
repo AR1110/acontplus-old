@@ -3,12 +3,12 @@ app.controller('empleadoCtrl', empleadoCtrl);
 empleadoCtrl.$inject = ['$scope', 'mainService', 'modalService', 'nombreModal', 'toastService','formulario'];
 
 function empleadoCtrl($scope, mS, _modalSvc, _nombreModal, toast, form) {
-    let accion = JSON.parse(localStorage.getItem("accion"));
-    if(accion===null){
-        location.href = "/Home/Index";
-    }else{
-        $scope.accion = accion[0];
-    }
+    // let accion = JSON.parse(localStorage.getItem("accion"));
+    // if(accion===null){
+    //     location.href = "/Home/Index";
+    // }else{
+    //     $scope.accion = accion[0];
+    // }
     
     $scope.empleados = [];
 

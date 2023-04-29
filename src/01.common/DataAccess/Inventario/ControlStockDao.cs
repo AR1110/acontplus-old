@@ -1,11 +1,9 @@
 ﻿
-using Helpers;
 using Domain.Models;
-using System;
+using Helpers;
+using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Inventario
 {

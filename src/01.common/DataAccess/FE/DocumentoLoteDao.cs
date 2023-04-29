@@ -1,11 +1,9 @@
-﻿using Helpers;
-using Domain.Models;
-using System;
+﻿using Domain.Models;
+using Helpers;
+using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.FE
 {
@@ -46,7 +44,7 @@ namespace DataAccess.FE
             }
             finally
             {
-                
+
             }
             return _response;
         }
@@ -78,7 +76,7 @@ namespace DataAccess.FE
             }
             finally
             {
-                
+
             }
             return _response;
         }
@@ -105,7 +103,7 @@ namespace DataAccess.FE
             }
             finally
             {
-                
+
             }
         }
         public bool AuthorizeAsync(int idRol, int idDocumentoLote, ref DataSet ds)
@@ -134,7 +132,7 @@ namespace DataAccess.FE
             }
             finally
             {
-                
+
             }
             return _response;
         }
@@ -161,7 +159,7 @@ namespace DataAccess.FE
             }
             finally
             {
-                
+
             }
             return _response;
         }

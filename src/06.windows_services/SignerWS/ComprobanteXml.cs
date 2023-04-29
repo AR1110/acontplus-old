@@ -48,7 +48,7 @@ namespace SignerWS
                 case "07":
                     if (ds.Tables[0].Rows[0]["versionComp"].ToString() == "1.0.0")
                     {
-                       xml = XmlRetencionV1(ds);
+                        xml = XmlRetencionV1(ds);
                     }
                     else
                     {
@@ -1059,7 +1059,7 @@ namespace SignerWS
             wr.WriteEndElement();
 
             //------Normativa del sri------\\
-           
+
 
             wr.WriteEndElement();
 
@@ -1842,7 +1842,7 @@ namespace SignerWS
         }
         public void NodoInfoAdicional(XmlTextWriter wr, DataTable infoAdicional)
         {
-            
+
             foreach (DataRow item in infoAdicional.Rows)
             {
                 wr.WriteStartElement("campoAdicional");
@@ -1852,7 +1852,7 @@ namespace SignerWS
                 wr.WriteString(item["valor"].ToString());
                 wr.WriteEndElement();
             }
-            
+
         }
         public void XmlLote(DataSet ds, ref bool _response)
         {
@@ -1910,7 +1910,7 @@ namespace SignerWS
 
                 wr.WriteEndDocument();
 
-                wr.Close(); 
+                wr.Close();
             }
             catch (System.Exception ex)
             {

@@ -1,16 +1,7 @@
-﻿using WebUI.ApiClient;
-using DataAccess.Inventario;
-using WebUI.Utils;
-using Domain.Models;
+﻿using DataAccess.Inventario;
 using Domain.ViewModels.Inventario;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.StaticFiles;
-using System;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Inventario
 {
@@ -24,8 +15,8 @@ namespace WebUI.Controllers.Inventario
             _config = config;
             _cinv = new ConsolidacionInventarioDao(_config);
         }
-     
-        
+
+
         public IActionResult Index()
         {
             return View();
@@ -64,7 +55,7 @@ namespace WebUI.Controllers.Inventario
         }
 
         public async Task<IActionResult> GetId(int id)
-        {            
+        {
             var res = await _cinv.GetIdAsync(id);
             return Ok(res);
         }

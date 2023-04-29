@@ -1,7 +1,6 @@
 using BL.FactElect;
 using Common.Logs;
 using Domain.FactElect;
-using Helpers;
 using System.Data;
 
 namespace WS_Validator

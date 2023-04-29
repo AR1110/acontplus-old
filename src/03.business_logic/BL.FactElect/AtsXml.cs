@@ -4,7 +4,7 @@ namespace BL.FactElect
 {
     public class AtsXml
     {
-        public bool Create(ref DataSet ds, ref byte[] xmlSales, ref string msgError)
+        public bool Create(ref DataSet ds, ref byte[] xmlSales)
         {
             DataTable dtHeader = ds.Tables[0];
             DataTable dtShopping = ds.Tables[1];

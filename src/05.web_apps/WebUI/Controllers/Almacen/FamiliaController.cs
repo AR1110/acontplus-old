@@ -1,10 +1,9 @@
 ﻿using DataAccess;
-using Domain.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using DataAccess.Almacen;
+using Domain.Models;
 using Domain.Models.Almacen;
 using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers
 {
@@ -12,7 +11,7 @@ namespace WebUI.Controllers
     {
         // GET: Familia
         private readonly IConfiguration _configuration;
-        
+
         private DataAccessObject _dao;
         GenericResponse _gr = new();
         private FamiliaDao _f;
@@ -20,12 +19,12 @@ namespace WebUI.Controllers
         public FamiliaController(IConfiguration configuration)
         {
             _configuration = configuration;
-            
+
             _dao = new DataAccessObject(_configuration);
             _f = new FamiliaDao(_configuration);
         }
 
-        
+
         public IActionResult Index()
         {
             return View();
@@ -34,7 +33,7 @@ namespace WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);             
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("idRol", idRol);
             parameters.Add("json", SqlValidation.ValidateSqlString(json));

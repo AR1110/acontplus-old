@@ -563,14 +563,8 @@ function reporteCompraCtrl($scope, _commonSvc, mS, modalSvc, toast, form, FileSa
                 toast.toastr('warning', 'Seleccion la Devolución', tituloToast);
                 return
             }
-        };
-
-        
-        let loaderGif = $scope.dataSearch.byTipoFormato === "pdf" ? 'document-office.gif' : 'transfer-file.gif'
-        form.showLoaderForm('Descargando...', 'Espere', `/assets/images/gif/${loaderGif}`)
-        $scope.getReport();
-        return
-        
+        };        
+        $scope.getReport();                
     };    
 
     $scope.getReport = function() {  
@@ -586,25 +580,29 @@ function reporteCompraCtrl($scope, _commonSvc, mS, modalSvc, toast, form, FileSa
             }),
             dataParams: JSON.stringify($scope.dataSearch)
         }
-       console.log(parameters.dataParams)
-        mS.getFile('post', '/Reporte/Download', parameters).then(response=>{
-            Swal.close();
+       
+        _commonSvc.getReport({
+            formatType: $scope.dataSearch.byReportType,
+            parameters
+        })
+        // mS.getFile('post', '/Reporte/Download', parameters).then(response=>{
+        //     Swal.close();
             
-            if ($scope.dataSearch.byTipoFormato == 'pdf' || $scope.dataSearch.byTipoFormato == 'excel') {
-                let fileBlob = new Blob([response.data], {
-                    type: response.data.type
-                });
-                let objectUrl = window.URL || window.webkitURL;
-                let urlFile = objectUrl.createObjectURL(fileBlob);
-                window.open(urlFile, '_blank');
-                return;
-            } else {
-                let serverData = new Blob([response.data], { type: response.headers()['content-type'] });
-                let fileName = response.headers()['content-disposition'].split(';')[1].split('=')[1];
-                FileSaver.saveAs(serverData, fileName);                    
-                return;
-            };
-        }, error=>console.log(error));
+        //     if ($scope.dataSearch.byTipoFormato == 'pdf' || $scope.dataSearch.byTipoFormato == 'excel') {
+        //         let fileBlob = new Blob([response.data], {
+        //             type: response.data.type
+        //         });
+        //         let objectUrl = window.URL || window.webkitURL;
+        //         let urlFile = objectUrl.createObjectURL(fileBlob);
+        //         window.open(urlFile, '_blank');
+        //         return;
+        //     } else {
+        //         let serverData = new Blob([response.data], { type: response.headers()['content-type'] });
+        //         let fileName = response.headers()['content-disposition'].split(';')[1].split('=')[1];
+        //         FileSaver.saveAs(serverData, fileName);                    
+        //         return;
+        //     };
+        // }, error=>console.log(error));
     };
 }
 

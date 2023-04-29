@@ -1,12 +1,8 @@
 ﻿
-using Helpers;
 using Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Text;
-using System.Threading.Tasks;
+using Helpers;
 using Microsoft.Extensions.Configuration;
+using System.Data;
 
 namespace DataAccess.Asignaciones
 {

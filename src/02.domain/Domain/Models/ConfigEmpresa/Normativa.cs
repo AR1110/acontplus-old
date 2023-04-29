@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Domain.Models.ConfigEmpresa
+﻿namespace Domain.Models.ConfigEmpresa
 {
     public class Normativa
     {

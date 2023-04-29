@@ -1,6 +1,4 @@
 ﻿using Domain.Models.Compras;
-using Domain.ViewModels.Ventas;
-using System.Collections.Generic;
 
 namespace Domain.ViewModels.Compras
 {

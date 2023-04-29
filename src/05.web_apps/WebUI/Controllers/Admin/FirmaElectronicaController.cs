@@ -1,9 +1,8 @@
 ﻿using DataAccess;
-using WebUI.Utils;
 using Domain.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Helpers;
+using Microsoft.AspNetCore.Mvc;
+using WebUI.Utils;
 
 namespace WebUI.Controllers.Admin
 {
@@ -18,8 +17,8 @@ namespace WebUI.Controllers.Admin
             _config = config;
             _fe = new FirmaElectronicaDao(_config);
         }
-       
-        
+
+
         public IActionResult Index()
         {
             return View();
@@ -59,7 +58,7 @@ namespace WebUI.Controllers.Admin
                 }
                 else
                 {
-                    _response.Create("0",msg);
+                    _response.Create("0", msg);
                 }
             }
             catch (Exception ex)

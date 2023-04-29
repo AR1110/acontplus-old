@@ -1,21 +1,19 @@
-﻿using WebUI.ApiClient;
+﻿using Common.Logs;
+using DataAccess;
 using DataAccess.Compras;
 using Domain.Models;
 using Domain.ViewModels.Compras;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using DataAccess;
 using Helpers;
-using Common.Logs;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Compras
 {
     public class OrdenCompraController : Controller
     {
         private readonly IConfiguration _configuration;
-         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
+        ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
-        
+
         GenericResponse _gr = new();
         private OrdenCompraDao _oc;
 
@@ -25,13 +23,13 @@ namespace WebUI.Controllers.Compras
             _dao = new DataAccessObject(_configuration);
             _oc = new OrdenCompraDao(_configuration);
             _oc = new OrdenCompraDao(_configuration);
-            
-            
+
+
         }
 
-        
+
         public IActionResult Index()
-        {            
+        {
             return View();
         }
 
@@ -70,7 +68,7 @@ namespace WebUI.Controllers.Compras
             finally
             {
                 _db.Close();
-            } 
+            }
             return Ok(_response);
         }
 

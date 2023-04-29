@@ -1,9 +1,9 @@
-﻿using Helpers;
+﻿using Common.Logs;
 using DataAccess;
 using Domain.Models;
+using Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Common.Logs;
 
 namespace WebUI.Controllers.Config
 {

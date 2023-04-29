@@ -1,9 +1,7 @@
-﻿using DataAccess;
-using Helpers;
+﻿using Helpers;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using System.Net.Http.Headers;
-using WebUI.ApiClient;
+using System.Security.Cryptography;
 
 namespace WebUI.Controllers
 {
@@ -39,7 +37,7 @@ namespace WebUI.Controllers
             {
 
                 AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip,
-                Credentials= CredentialCache.DefaultCredentials,
+                Credentials = CredentialCache.DefaultCredentials,
                 UseDefaultCredentials = true
 
             })
@@ -50,11 +48,21 @@ namespace WebUI.Controllers
             client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:19.0) Gecko/20100101 Firefox/19.0");
             client.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Charset", "ISO-8859-1");
             var response = await client.SendAsync(request);
-            response.EnsureSuccessStatusCode(); 
+            response.EnsureSuccessStatusCode();
             client.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "text/html,application/xhtml+xml,application/xml");
 
             Console.WriteLine(await response.Content.ReadAsStringAsync());
             return Ok(encrypted);
+        }
+        [HttpPost]
+        public IActionResult GenerateRandomKey()
+        {
+            var key = new byte[32];
+            using (var generator = RandomNumberGenerator.Create())
+            {
+                generator.GetBytes(key);
+            }
+            return Ok(Convert.ToBase64String(key));
         }
         //public IActionResult GetPrinter()
         //{

@@ -43,7 +43,7 @@ namespace ApiFactElect.Controllers.RetencionAts
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("FactElect.RetAts_InfoAdicional_Insert");
-                
+
                 Dictionary<string, object> parameters = new Dictionary<string, object>
                 {
                     { "idUsuarioRol", idUsuarioRol },
@@ -55,7 +55,8 @@ namespace ApiFactElect.Controllers.RetencionAts
             {
                 _logs.LogError("Error al guardar la InfoAdicional: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al guardar la InfoAdicional");
-            }finally
+            }
+            finally
             {
                 _db.Close();
             }

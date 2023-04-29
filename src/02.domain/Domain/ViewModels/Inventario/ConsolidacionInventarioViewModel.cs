@@ -1,5 +1,4 @@
 ﻿using Domain.Models.Inventario;
-using System.Collections.Generic;
 
 namespace Domain.ViewModels.Inventario
 {

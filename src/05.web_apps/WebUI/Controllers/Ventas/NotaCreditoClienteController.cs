@@ -12,14 +12,14 @@ namespace WebUI.Controllers.Ventas
         private NotaCreditoDao _nc;
         private GenericResponse _gr = new();
         private IConfiguration _configuration;
-       
-        
+
+
 
 
         public NotaCreditoClienteController(IConfiguration config)
         {
             _configuration = config;
-            
+
             _nc = new NotaCreditoDao(_configuration);
         }
 

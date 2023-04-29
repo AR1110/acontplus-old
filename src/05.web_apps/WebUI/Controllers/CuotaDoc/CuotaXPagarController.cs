@@ -1,7 +1,6 @@
 ﻿using DataAccess.CuotaDocumento;
 using Domain.Models.CuotaDocumento;
 using Domain.ViewModels.CuotaDocumento;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -17,7 +16,7 @@ namespace WebUI.Controllers.CuotaDoc
             _configuration = configuration;
             _cxp = new CuotaXPagarDao(_configuration);
         }
-        
+
         public IActionResult Index()
         {
             return View();
@@ -53,6 +52,6 @@ namespace WebUI.Controllers.CuotaDoc
             return Ok(res);
         }
 
-       
+
     }
 }

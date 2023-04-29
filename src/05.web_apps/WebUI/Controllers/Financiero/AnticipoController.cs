@@ -1,11 +1,10 @@
 ﻿using DataAccess.GestionFinanciera;
 using Domain.Models.GestionFinanciera;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.GestionFinanciera
 {
-    public class AnticipoController : Controller 
+    public class AnticipoController : Controller
     {
         private AnticipoDao _a;
         private readonly IConfiguration _configuration;
@@ -14,10 +13,10 @@ namespace WebUI.Controllers.GestionFinanciera
             _configuration = configuration;
             _a = new AnticipoDao(_configuration);
         }
-        
-        public IActionResult Index() 
+
+        public IActionResult Index()
         {
-            return View(); 
+            return View();
         }
 
         [HttpPost]

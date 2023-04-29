@@ -1,8 +1,16 @@
-
-
-
-class ModalBaseCtrl{
-    constructor({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreConst, _tS, _fS, _params}){
+class ModalBaseCtrl {
+    constructor({
+        $scope,
+        $timeout,
+        $uibModalInstance,
+        _mS,
+        _commonSvc,
+        _modalSvc,
+        _nombreConst,
+        _tS,
+        _fS,
+        _params
+    }) {
         this.$scope = $scope;
         this.$timeout = $timeout;
         this.$uibModalInstance = $uibModalInstance;
@@ -17,9 +25,9 @@ class ModalBaseCtrl{
 
     }
 
-    initiload(){
-        return this._mS.getData('get', '/FacturaCompra/GetDataForm?json=' + JSON.stringify({})).then(response=>{
-            if(response.code==='0'){                
+    initiload() {
+        return this._mS.getData('get', '/FacturaCompra/GetDataForm?json=' + JSON.stringify({})).then(response => {
+            if (response.code === '0') {
                 throw response
             }
             return JSON.parse(response.payload)
@@ -27,9 +35,9 @@ class ModalBaseCtrl{
     }
 
 
-    getDataFormEstabAsig(json={}){
-        return this._mS.getData('get', '/EstabAsig/GetDataForm?json=' + JSON.stringify(json)).then(response=>{
-            if(response.code==='0'){                
+    getDataFormEstabAsig(json = {}) {
+        return this._mS.getData('get', '/EstabAsig/GetDataForm?json=' + JSON.stringify(json)).then(response => {
+            if (response.code === '0') {
                 throw response
             }
             return JSON.parse(response.payload)
@@ -37,18 +45,20 @@ class ModalBaseCtrl{
     }
 
 
-    async onChangeEstablecimiento(){
+    async onChangeEstablecimiento() {
         try {
 
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
-                  confirmButton: 'btn btn-success',
-                  cancelButton: 'btn btn-danger ml-2'
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger ml-2'
                 },
                 buttonsStyling: false
-              })
-              
-              let {isConfirmed} = await  swalWithBootstrapButtons.fire({
+            })
+
+            let {
+                isConfirmed
+            } = await swalWithBootstrapButtons.fire({
                 title: '<small>Cambiar Establecimiento?</small>',
                 html: "<small>Esta seguro de cambiar <b>Punto de Emisión</b> y la <b>Bodega</b>?</small>",
                 icon: 'warning',
@@ -56,11 +66,11 @@ class ModalBaseCtrl{
                 confirmButtonText: 'Si, cambiar!',
                 cancelButtonText: 'No, cancelar!',
                 reverseButtons: false,
-                allowOutsideClick:false,
-                allowEscapeKey:false
+                allowOutsideClick: false,
+                allowEscapeKey: false
             })
 
-            if(!isConfirmed){
+            if (!isConfirmed) {
                 this.data.codEstab = this.cloneCodEstab;
                 this.$scope.$apply();
                 return
@@ -68,44 +78,74 @@ class ModalBaseCtrl{
 
             this.cloneCodEstab = this.data.codEstab;
 
-            const dataEstab = this.establecimientos.find(item=>item.codEstab===this.data.codEstab);   
-            
+            const dataEstab = this.establecimientos.find(item => item.codEstab === this.data.codEstab);
+
             //Obtenemos Puntos de Emision y Bodegas 
             let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
-           
-            this.puntosEmision = resultsDataFormEstab[0];
-            this.data.idPuntoEmision = this.puntosEmision.length>0 ? this.puntosEmision[0].idPuntoEmision: 0;
-            
-            this.bodegas         = resultsDataFormEstab[1];
-            this.idBodega        = this.bodegas.length>0 ? this.bodegas[0].idBodega: 0;
-            this.cloneIdBodega   = this.idBodega;
 
-            let indexColumn = this.gridOptions.columnDefs.findIndex(item=>item.field==='idBodega');
-            
+            this.puntosEmision = resultsDataFormEstab[0];
+            this.data.idPuntoEmision = this.puntosEmision.length > 0 ? this.puntosEmision[0].idPuntoEmision : 0;
+
+            this.bodegas = resultsDataFormEstab[1];
+            this.idBodega = this.bodegas.length > 0 ? this.bodegas[0].idBodega : 0;
+            this.cloneIdBodega = this.idBodega;
+
+            let indexColumn = this.gridOptions.columnDefs.findIndex(item => item.field === 'idBodega');
+
             this.gridOptions.columnDefs[indexColumn].editDropdownOptionsArray = this.bodegas;
-                
-            for(let item of this.gridOptions.data){
+
+            for (let item of this.gridOptions.data) {
                 item.idBodega = this.idBodega;
-            }  
-            
+            }
+
             this.$scope.$apply();
         } catch (error) {
             console.trace(error)
-        }       
+        }
+    }
+
+    setFocusArticulo() {
+        setTimeout(function () {
+            document.querySelector('#custom-template-md-autocomplete-articulo').focus();
+        }, 100);
     }
 
 
 
 
-    closeModal(){
+    closeModal() {
         this.$uibModalInstance.close();
     }
 }
 
 
-class ModalConsolidacionCtrl extends ModalBaseCtrl{
-    constructor({$scope, $timeout, $uibModalInstance, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreConst, _tS, _fS, _params}) {
-        super({$scope, $timeout, $uibModalInstance, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreConst, _tS, _fS, _params})
+class ModalConsolidacionCtrl extends ModalBaseCtrl {
+    constructor({
+        $scope,
+        $timeout,
+        $uibModalInstance,
+        uiGridConstants,
+        _mS,
+        _commonSvc,
+        _modalSvc,
+        _nombreConst,
+        _tS,
+        _fS,
+        _params
+    }) {
+        super({
+            $scope,
+            $timeout,
+            $uibModalInstance,
+            uiGridConstants,
+            _mS,
+            _commonSvc,
+            _modalSvc,
+            _nombreConst,
+            _tS,
+            _fS,
+            _params
+        })
 
         const self = this;
 
@@ -115,75 +155,77 @@ class ModalConsolidacionCtrl extends ModalBaseCtrl{
 
         this.gridOptions = {
             enableColumnMenus: false,
-            showColumnFooter: false,            
+            showColumnFooter: false,
             //enableGridMenu: true,
             // enableFiltering: false,
             // enableRowHashing: false,
             showGridFooter: true,
-            enableCellEdit: false,                     
+            enableCellEdit: false,
         }
 
-        this.gridOptions.onRegisterApi = function (gridApi) {  
-            self.$scope.gridApi = gridApi;  
+        this.gridOptions.onRegisterApi = function (gridApi) {
+            self.$scope.gridApi = gridApi;
             if (self.$scope.gridApi) {
                 self.$timeout(() => {
                     self.$scope.gridApi.core.handleWindowResize();
                     self.$scope.gridApi.grid.refresh();
                 }, 5);
-            }   
-            
-            
-            gridApi.grid.element.on('keyup', function (ev) {            
-                if(ev.which == 13 || ev.keyCode=='13'){
+            }
+
+
+            gridApi.grid.element.on('keyup', function (ev) {
+                if (ev.which == 13 || ev.keyCode == '13') {
                     self.setFocusArticulo();
                     $scope.gridApi.grid.cellNav.clearFocus();
-                // ev.stopPropagation();   
+                    // ev.stopPropagation();   
                 }
             })
 
             gridApi.edit.on.afterCellEdit(self.$scope, (rowEntity, colDef, newValue, oldValue) => {
-                
-              
+
+
                 //Validar campos                 
                 if (rowEntity[colDef.field] === "" || rowEntity[colDef.field] === undefined || rowEntity[colDef.field] === null) {
                     rowEntity[colDef.field] = oldValue;
                     return
                 }
 
-                if(colDef.field === "precioActual"){
+                if (colDef.field === "precioActual") {
                     rowEntity.precioCosto = self._fS.roundNumber(rowEntity.precioCosto, self.decimal.nroPrecio)
                     rowEntity.precioActual = self._fS.roundNumber(rowEntity.precioActual, self.decimal.nroPrecio)
                 }
 
-                if (colDef.field === "idMedida" && rowEntity.idMedida !== oldValue) {                    
+                if (colDef.field === "idMedida" && rowEntity.idMedida !== oldValue) {
                     let dataMedida = rowEntity.medidas.find(val => val.idMedida === rowEntity.idMedida);
-                  
+
                     rowEntity.precioCosto = self._fS.roundNumber(dataMedida.precioCosto, self.decimal.nroPrecio)
                     rowEntity.precioActual = self._fS.roundNumber(dataMedida.precioCosto, self.decimal.nroPrecio)
-                }             
+                }
 
                 self.setTotalColumn(rowEntity);
-                self.setTotalDetalle();     
-                
+                self.setTotalDetalle();
+
             })
         }
     }
 
 
-    setTotalColumn(rowEntity) {                                    
+    setTotalColumn(rowEntity) {
         let total = rowEntity.cantidad * rowEntity.precioActual;
-       rowEntity.total = this._fS.roundNumber(total, this.decimal.nroTotalDetalle); //Total Precio Venta
+        rowEntity.total = this._fS.roundNumber(total, this.decimal.nroTotalDetalle); //Total Precio Venta
     }
 
-    setTotalDetalle(){
-        let total = this.gridOptions.data.map(val=>val.total).reduce((acc, curr)=>acc+curr, 0);
+    setTotalDetalle() {
+        let total = this.gridOptions.data.map(val => val.total).reduce((acc, curr) => acc + curr, 0);
 
-        this.data.total = this._fS.roundNumber(total, this.decimal.nroTotalSubTotal)        
+        this.data.total = this._fS.roundNumber(total, this.decimal.nroTotalSubTotal)
     }
 
 
-    async askToChangeBodega(){
-        let {isConfirmed} = await Swal.fire({
+    async askToChangeBodega() {
+        let {
+            isConfirmed
+        } = await Swal.fire({
             html: `<small>Esta seguro de cambiar la bodega en todo el Documento?</small>`,
             icon: 'warning',
             showCancelButton: true,
@@ -191,66 +233,68 @@ class ModalConsolidacionCtrl extends ModalBaseCtrl{
             confirmButtonText: `Sí, cambiar!`,
             cancelButtonText: 'No, cancelar!',
             allowOutsideClick: false,
-            reverseButtons: false,           
+            reverseButtons: false,
         })
 
-        if(isConfirmed){
+        if (isConfirmed) {
             this.cloneIdBodega = this.idBodega;
-            for(let item of  this.gridOptions.data){
+            for (let item of this.gridOptions.data) {
                 item.idBodega = this.idBodega;
             }
             this.$scope.$apply()
-        }else{
+        } else {
             this.idBodega = this.cloneIdBodega;
             this.$scope.$apply()
-        }        
+        }
     }
 
 
-    setColumnDefs(){
+    setColumnDefs() {
         const self = this;
 
-        this.gridOptions.columnDefs = [
-            {
+        this.gridOptions.columnDefs = [{
                 name: 'Op.',
                 enableCellEdit: false,
                 width: '7%',
-                minWidth:'100',
+                minWidth: '100',
                 cellTemplate: `
                         <a  ng-click="grid.appScope.$ctrl.deleteRow(row)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
                         <a  ng-click="grid.appScope.$ctrl.openModalArticuloEditar(row.entity)" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >
                         `,
-            }, 
-            { 
-                name: 'N°', field: 'num', visible: true,
-                enableCellEdit: false, 
-                allowCellFocus:false,
-                width: '2%', minWidth: '50', 
-            }, 
+            },
+            {
+                name: 'N°',
+                field: 'num',
+                visible: true,
+                enableCellEdit: false,
+                allowCellFocus: false,
+                width: '2%',
+                minWidth: '50',
+            },
             {
                 name: 'Código',
-                field: 'codigo',                    
+                field: 'codigo',
                 type: 'string',
                 width: '10%',
                 minWidth: '100',
                 enableCellEdit: false,
-                allowCellFocus:false,
+                allowCellFocus: false,
                 headerCellClass: 'header-text-retencion',
                 cellClass: 'body-text-retencion',
-            },                                   
+            },
             {
                 name: "Descripción",
                 field: "descripcion",
                 enableCellEdit: true,
                 enableCellEditOnFocus: true,
-                cellEditableCondition: function(scope) {
+                cellEditableCondition: function (scope) {
                     return scope.row.entity.llevaInventario !== true;
                 },
-                cellTooltip: function(row) {
+                cellTooltip: function (row) {
                     return row.entity.descripcion;
-                },                                                                                             
+                },
                 width: '40%',
-                minWidth:'100'
+                minWidth: '100'
             },
             {
                 name: 'Cant.',
@@ -260,43 +304,68 @@ class ModalConsolidacionCtrl extends ModalBaseCtrl{
                 min: 1,
                 type: 'number',
                 width: '7%',
-                minWidth:'100'
+                minWidth: '100'
             },
             {
                 name: 'Medida',
-                field: 'idMedida',                           
+                field: 'idMedida',
                 cellFilter: 'mapMedida:row.entity.medidas',
                 editableCellTemplate: 'ui-grid/dropdownEditor',
                 enableCellEdit: true,
                 enableCellEditOnFocus: true,
-                editDropdownOptionsFunction: function(rowEntity, colDef) {
-                    return rowEntity.medidas.map(function(val) {
+                editDropdownOptionsFunction: function (rowEntity, colDef) {
+                    return rowEntity.medidas.map(function (val) {
                         //if (val.articuloPvP.idTarifa == rowEntity.idTarifa && rowEntity.precioVenta !== val.articuloPvP.precioVenta) {
                         //    val.articuloPvP.precioVenta = rowEntity.precioVenta
                         //}
-                        return { id: val.idMedida, value: val.descripcion }
+                        return {
+                            id: val.idMedida,
+                            value: val.descripcion
+                        }
                     })
 
                 },
-                type: 'number',       
-                width: '8%',      
-                minWidth:'100'             
+                type: 'number',
+                width: '8%',
+                minWidth: '100'
             },
-            { 
-                name: 'codigoTipoIva', field: 'codigoTipoIva', allowCellFocus: false, type:'string',
-                enableCellEdit: false, width: '8%', minWidth:'100', enableColumnMenu: false, visible: false
+            {
+                name: 'codigoTipoIva',
+                field: 'codigoTipoIva',
+                allowCellFocus: false,
+                type: 'string',
+                enableCellEdit: false,
+                width: '8%',
+                minWidth: '100',
+                enableColumnMenu: false,
+                visible: false
             },
-            { 
-                name: 'Iva', field: 'nombreTipoIva', allowCellFocus: false, 
-                enableCellEdit: false, width: '8%', minWidth:'100', type:'string',
-                enableColumnMenu: false, visible: true 
+            {
+                name: 'Iva',
+                field: 'nombreTipoIva',
+                allowCellFocus: false,
+                enableCellEdit: false,
+                width: '8%',
+                minWidth: '100',
+                type: 'string',
+                enableColumnMenu: false,
+                visible: true
             },
-            { 
-                name: 'Stock', field: 'stock', allowCellFocus: false, 
-                enableCellEdit: false, width: '5%', minWidth:'65', type:'number',
-                enableColumnMenu: false, visible: true,  aggregationType: self.uiGridConstants.aggregationTypes.sum,customTreeAggregationFinalizerFn: function (aggregation) {
-                    aggregation.rendered = self._fS.roundNumber(aggregation.value,2)
-                 }, aggregationLabel: "$",  
+            {
+                name: 'Stock',
+                field: 'stock',
+                allowCellFocus: false,
+                enableCellEdit: false,
+                width: '5%',
+                minWidth: '65',
+                type: 'number',
+                enableColumnMenu: false,
+                visible: true,
+                aggregationType: self.uiGridConstants.aggregationTypes.sum,
+                customTreeAggregationFinalizerFn: function (aggregation) {
+                    aggregation.rendered = self._fS.roundNumber(aggregation.value, 2)
+                },
+                aggregationLabel: "$",
             },
             {
                 name: 'P. Costo',
@@ -305,10 +374,12 @@ class ModalConsolidacionCtrl extends ModalBaseCtrl{
                 enableColumnMenu: false,
                 type: 'number',
                 width: '8%',
-                minWidth:'100',
-                aggregationType: self.uiGridConstants.aggregationTypes.sum,customTreeAggregationFinalizerFn: function (aggregation) {
-                    aggregation.rendered = self._fS.roundNumber(aggregation.value,2)
-                 }, aggregationLabel: "$",  
+                minWidth: '100',
+                aggregationType: self.uiGridConstants.aggregationTypes.sum,
+                customTreeAggregationFinalizerFn: function (aggregation) {
+                    aggregation.rendered = self._fS.roundNumber(aggregation.value, 2)
+                },
+                aggregationLabel: "$",
             },
             {
                 name: 'P. Costo Actual',
@@ -318,17 +389,26 @@ class ModalConsolidacionCtrl extends ModalBaseCtrl{
                 enableCellEdit: true,
                 enableCellEditOnFocus: true,
                 width: '12%',
-                minWidth:'100',
-                aggregationType: self.uiGridConstants.aggregationTypes.sum,customTreeAggregationFinalizerFn: function (aggregation) {
-                    aggregation.rendered = self._fS.roundNumber(aggregation.value,2)
-                 }, aggregationLabel: "$",  
+                minWidth: '100',
+                aggregationType: self.uiGridConstants.aggregationTypes.sum,
+                customTreeAggregationFinalizerFn: function (aggregation) {
+                    aggregation.rendered = self._fS.roundNumber(aggregation.value, 2)
+                },
+                aggregationLabel: "$",
             },
             {
-                name: 'Total', field: 'total', allowCellFocus: false,
-                enableCellEdit: false, width: '8%', minWidth:'100', type:'number',
-                aggregationType: self._fS.roundNumber(self.uiGridConstants.aggregationTypes.sum, 2),customTreeAggregationFinalizerFn: function (aggregation) {
-                    aggregation.rendered = self._fS.roundNumber(aggregation.value,2)
-                 }, aggregationLabel: "$",  
+                name: 'Total',
+                field: 'total',
+                allowCellFocus: false,
+                enableCellEdit: false,
+                width: '8%',
+                minWidth: '100',
+                type: 'number',
+                aggregationType: self._fS.roundNumber(self.uiGridConstants.aggregationTypes.sum, 2),
+                customTreeAggregationFinalizerFn: function (aggregation) {
+                    aggregation.rendered = self._fS.roundNumber(aggregation.value, 2)
+                },
+                aggregationLabel: "$",
             },
             {
                 name: 'bodega',
@@ -336,59 +416,63 @@ class ModalConsolidacionCtrl extends ModalBaseCtrl{
                 enableFiltering: false,
                 enableColumnMenu: false,
                 editableCellTemplate: 'ui-grid/dropdownEditor',
-                cellFilter: 'mapBodega:grid.appScope.$ctrl.bodegas',
+                cellFilter: 'cellFilterBodega:this',
                 editDropdownValueLabel: 'descripcion',
                 editDropdownIdLabel: 'idBodega',
                 enableCellEdit: true,
                 enableCellEditOnFocus: true,
                 type: 'number',
                 width: '11%',
-                minWidth:'100'
+                minWidth: '100'
             }
         ];
+        let indexBodega = this.gridOptions.columnDefs.findIndex(item => item.field === 'idBodega');
+        this.gridOptions.columnDefs[indexBodega].editDropdownOptionsArray = this.bodegas;
     }
 
-    setColumnDefsView(){
+    setColumnDefsView() {
         const self = this;
 
-        this.gridOptions.columnDefs = [
-            {
+        this.gridOptions.columnDefs = [{
                 name: 'Op.',
                 enableCellEdit: false,
                 width: '7%',
-                minWidth:'100',
+                minWidth: '100',
                 cellTemplate: `
                         <a  style="cursor:pointer;" class="btn btn-danger btn-xs text-white disabled" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
                         <a style="cursor:pointer;" class= "btn btn-success btn-xs text-white disabled" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >
                         `,
-            }, 
-            { 
-                name: 'N°', field: 'num', visible: true,
-                enableCellEdit: false, 
-                allowCellFocus:false,
-                width: '2%', minWidth: '50', 
-            }, 
+            },
+            {
+                name: 'N°',
+                field: 'num',
+                visible: true,
+                enableCellEdit: false,
+                allowCellFocus: false,
+                width: '2%',
+                minWidth: '50',
+            },
             {
                 name: 'Código',
-                field: 'codigo',                    
+                field: 'codigo',
                 type: 'string',
                 width: '10%',
                 minWidth: '100',
                 enableCellEdit: false,
-                allowCellFocus:false,
+                allowCellFocus: false,
                 headerCellClass: 'header-text-retencion',
                 cellClass: 'body-text-retencion',
-            },                                   
+            },
             {
                 name: "Descripción",
                 field: "descripcion",
                 enableCellEdit: false,
                 enableCellEditOnFocus: false,
-                cellTooltip: function(row) {
+                cellTooltip: function (row) {
                     return row.entity.descripcion;
-                },                                                                                             
+                },
                 width: '40%',
-                minWidth:'100'
+                minWidth: '100'
             },
             {
                 name: 'Cant.',
@@ -398,39 +482,57 @@ class ModalConsolidacionCtrl extends ModalBaseCtrl{
                 min: 1,
                 type: 'number',
                 width: '7%',
-                minWidth:'100'
+                minWidth: '100'
             },
             {
                 name: 'Medida',
-                field: 'idMedida',                           
+                field: 'idMedida',
                 cellFilter: 'mapMedida:row.entity.medidas',
                 editableCellTemplate: 'ui-grid/dropdownEditor',
                 enableCellEdit: false,
                 enableCellEditOnFocus: false,
-                editDropdownOptionsFunction: function(rowEntity, colDef) {
-                    return rowEntity.medidas.map(function(val) {
+                editDropdownOptionsFunction: function (rowEntity, colDef) {
+                    return rowEntity.medidas.map(function (val) {
                         //if (val.articuloPvP.idTarifa == rowEntity.idTarifa && rowEntity.precioVenta !== val.articuloPvP.precioVenta) {
                         //    val.articuloPvP.precioVenta = rowEntity.precioVenta
                         //}
-                        return { id: val.idMedida, value: val.descripcion }
+                        return {
+                            id: val.idMedida,
+                            value: val.descripcion
+                        }
                     })
 
                 },
-                type: 'number',       
-                width: '8%',      
-                minWidth:'100'             
-            },          
-            { 
-                name: 'Iva', field: 'nombreTipoIva', allowCellFocus: false, 
-                enableCellEdit: false, width: '8%', minWidth:'100', type:'string',
-                enableColumnMenu: false, visible: true 
+                type: 'number',
+                width: '8%',
+                minWidth: '100'
             },
-            { 
-                name: 'Stock', field: 'stock', allowCellFocus: false, 
-                enableCellEdit: false, width: '5%', minWidth:'65', type:'number',
-                enableColumnMenu: false, visible: true,  aggregationType: self.uiGridConstants.aggregationTypes.sum,customTreeAggregationFinalizerFn: function (aggregation) {
-                    aggregation.rendered = self._fS.roundNumber(aggregation.value,2)
-                 }, aggregationLabel: "$",  
+            {
+                name: 'Iva',
+                field: 'nombreTipoIva',
+                allowCellFocus: false,
+                enableCellEdit: false,
+                width: '8%',
+                minWidth: '100',
+                type: 'string',
+                enableColumnMenu: false,
+                visible: true
+            },
+            {
+                name: 'Stock',
+                field: 'stock',
+                allowCellFocus: false,
+                enableCellEdit: false,
+                width: '5%',
+                minWidth: '65',
+                type: 'number',
+                enableColumnMenu: false,
+                visible: true,
+                aggregationType: self.uiGridConstants.aggregationTypes.sum,
+                customTreeAggregationFinalizerFn: function (aggregation) {
+                    aggregation.rendered = self._fS.roundNumber(aggregation.value, 2)
+                },
+                aggregationLabel: "$",
             },
             {
                 name: 'P. Costo',
@@ -439,10 +541,13 @@ class ModalConsolidacionCtrl extends ModalBaseCtrl{
                 enableColumnMenu: false,
                 type: 'number',
                 width: '8%',
-                minWidth:'100',
-                cellFilter: "currency:'$'", aggregationType: self.uiGridConstants.aggregationTypes.sum,customTreeAggregationFinalizerFn: function (aggregation) {
-                    aggregation.rendered = self._fS.roundNumber(aggregation.value,2)
-                 }, aggregationLabel: "$",  
+                minWidth: '100',
+                cellFilter: "currency:'$'",
+                aggregationType: self.uiGridConstants.aggregationTypes.sum,
+                customTreeAggregationFinalizerFn: function (aggregation) {
+                    aggregation.rendered = self._fS.roundNumber(aggregation.value, 2)
+                },
+                aggregationLabel: "$",
             },
             {
                 name: 'P. Costo Actual',
@@ -452,17 +557,27 @@ class ModalConsolidacionCtrl extends ModalBaseCtrl{
                 enableCellEdit: false,
                 enableCellEditOnFocus: false,
                 width: '12%',
-                minWidth:'100',
-                cellFilter: "currency:'$'", aggregationType: self.uiGridConstants.aggregationTypes.sum,customTreeAggregationFinalizerFn: function (aggregation) {
-                    aggregation.rendered = self._fS.roundNumber(aggregation.value,2)
-                 }, aggregationLabel: "$",  
+                minWidth: '100',
+                cellFilter: "currency:'$'",
+                aggregationType: self.uiGridConstants.aggregationTypes.sum,
+                customTreeAggregationFinalizerFn: function (aggregation) {
+                    aggregation.rendered = self._fS.roundNumber(aggregation.value, 2)
+                },
+                aggregationLabel: "$",
             },
             {
-                name: 'Total', field: 'total', allowCellFocus: false,
-                enableCellEdit: false, width: '8%', minWidth:'100', type:'number',
-                aggregationType: self._fS.roundNumber(self.uiGridConstants.aggregationTypes.sum, 2),customTreeAggregationFinalizerFn: function (aggregation) {
-                    aggregation.rendered = self._fS.roundNumber(aggregation.value,2)
-                 }, aggregationLabel: "$",  
+                name: 'Total',
+                field: 'total',
+                allowCellFocus: false,
+                enableCellEdit: false,
+                width: '8%',
+                minWidth: '100',
+                type: 'number',
+                aggregationType: self._fS.roundNumber(self.uiGridConstants.aggregationTypes.sum, 2),
+                customTreeAggregationFinalizerFn: function (aggregation) {
+                    aggregation.rendered = self._fS.roundNumber(aggregation.value, 2)
+                },
+                aggregationLabel: "$",
             },
             {
                 name: 'bodega',
@@ -477,87 +592,92 @@ class ModalConsolidacionCtrl extends ModalBaseCtrl{
                 enableCellEditOnFocus: false,
                 type: 'number',
                 width: '11%',
-                minWidth:'100'
+                minWidth: '100'
             }
         ];
     }
 
 
-    setItemArticuloEnDetalle(item){
+    setItemArticuloEnDetalle(item) {
         try {
-            let {articulo} = item;
-          
+            let {
+                articulo
+            } = item;
+
             let entity = {}
-            this.indexRow =  this.gridOptions.data.findIndex(value => value.idArticulo === articulo.idArticulo);                            
+            this.indexRow = this.gridOptions.data.findIndex(value => value.idArticulo === articulo.idArticulo);
             if (this.indexRow !== -1) {
-          
+
                 entity = this.gridOptions.data[this.indexRow];
                 entity.cantidad = entity.cantidad + 1;
-                
+
             } else {
                 this.addRow();
-                this.indexRow = this.gridOptions.data.findIndex(value => value.idArticulo === 0);              
+                this.indexRow = this.gridOptions.data.findIndex(value => value.idArticulo === 0);
                 entity = this.gridOptions.data[this.indexRow];
                 this.addItem(entity, item); // item row
             }
-            this.countEnum();                        
+            this.countEnum();
             this.setTotalColumn(entity);
-            this.setTotalDetalle();  
+            this.setTotalDetalle();
 
             this.focusColumnaCantidad();
         } catch (error) {
             console.error(error)
         }
-    } 
+    }
 
-    addRow(){
+    addRow() {
 
         this.gridOptions.data.push({
             num: 1,
             idArticulo: 0,
             codigo: "",
             descripcion: "",
-            cantidad: 1 ,
+            cantidad: 1,
             nombreMedida: "",
             codigoTipoIva: "",
-            nombreTipoIva: "",                    
-            stock:0,
-            precioCosto: 0,                                                                                                 
-            idBodega: 0,                                        
+            nombreTipoIva: "",
+            stock: 0,
+            precioCosto: 0,
+            idBodega: 0,
             nota: "S/N"
         })
     }
 
-    addItem(entity, item){
-        let {articulo, medidas} = item;
-        let dataMedida = medidas[0];             
-        entity.codigo            = articulo.codigoArticulo;
-        entity.idArticulo        = articulo.idArticulo;
-        entity.descripcion       = articulo.descripcion;                    
-        entity.codigoTipoIva     = articulo.codigoTipoIva;
+    addItem(entity, item) {
+        let {
+            articulo,
+            medidas
+        } = item;
+        let dataMedida = medidas[0];
+        entity.codigo = articulo.codigoArticulo;
+        entity.idArticulo = articulo.idArticulo;
+        entity.descripcion = articulo.descripcion;
+        entity.codigoTipoIva = articulo.codigoTipoIva;
         entity.porcentajeTipoIva = articulo.porcentajeTipoIva;
-        entity.nombreTipoIva     = articulo.nombreTipoIva;
-        entity.stock             = articulo.stock; 
-        entity.precioCosto       = this._fS.roundNumber(dataMedida.precioCosto, this.decimal.nroPrecio)
-        entity.precioActual      = this._fS.roundNumber(dataMedida.precioCosto, this.decimal.nroPrecio) 
-        entity.total             = this._fS.roundNumber(dataMedida.precioCosto, this.decimal.nroPrecio) 
-        entity.idBodega          = this.idBodega ? this.idBodega : 0;
-        entity.llevaInventario   = articulo.llevaInventario;                        
-        entity.medidas           = medidas; //Lista Medida 
-        entity.idMedida          = dataMedida.idMedida; //Medida por defecto                                                                    
-    }    
-    
-    
+        entity.nombreTipoIva = articulo.nombreTipoIva;
+        entity.stock = articulo.stock;
+        entity.precioCosto = this._fS.roundNumber(dataMedida.precioCosto, this.decimal.nroPrecio)
+        entity.precioActual = this._fS.roundNumber(dataMedida.precioCosto, this.decimal.nroPrecio)
+        entity.total = this._fS.roundNumber(dataMedida.precioCosto, this.decimal.nroPrecio)
+        entity.idBodega = this.idBodega ? this.idBodega : 0;
+        entity.llevaInventario = articulo.llevaInventario;
+        entity.medidas = medidas; //Lista Medida 
+        entity.idMedida = dataMedida.idMedida; //Medida por defecto                                                                    
+    }
+
+
     countEnum() {
         let counter = 1;
-        for(let item of this.gridOptions.data){
+        for (let item of this.gridOptions.data) {
             item.num = counter++;
-        }       
+        }
     }
 
     focusColumnaCantidad() {
         const self = this;
-        let indexColumn = self.gridOptions.columnDefs.findIndex(item=>item.field==="cantidad");
+        let indexColumn = self.gridOptions.columnDefs.findIndex(item => item.field === "cantidad");
         self.$scope.gridApi.cellNav.scrollToFocus(
             self.gridOptions.data[0],
             self.gridOptions.columnDefs[2]
@@ -572,29 +692,31 @@ class ModalConsolidacionCtrl extends ModalBaseCtrl{
     }
 
 
-    async deleteRow(row){
-        let {isConfirmed} = await Swal.fire({
+    async deleteRow(row) {
+        let {
+            isConfirmed
+        } = await Swal.fire({
             html: `<small>Esta Ud. seguro/a de eliminar este Articulo <b>${row.entity.descripcion}</b></small>?`,
             icon: 'warning',
             showConfirmButton: true,
             confirmButtonText: `Sí, eliminar!`,
             showCancelButton: true,
             cancelButtonText: 'No, cancelar!',
-            allowOutsideClick: false              
+            allowOutsideClick: false
         })
-    
-        if(isConfirmed){
+
+        if (isConfirmed) {
             let index = this.gridOptions.data.indexOf(row.entity);
             this.gridOptions.data.splice(index, 1);
 
-            this.setTotalDetalle(); 
+            this.setTotalDetalle();
             this.countEnum();
-            this.$scope.$apply();           
-        }                 
-    }  
-    
-    
-    openModalArticuloEditar(item){        
+            this.$scope.$apply();
+        }
+    }
+
+
+    openModalArticuloEditar(item) {
         this.$scope.gridApi.cellNav.scrollToFocus(
             this.gridOptions.data[0],
             this.gridOptions.columnDefs[2]
@@ -608,19 +730,19 @@ class ModalConsolidacionCtrl extends ModalBaseCtrl{
      * @param {*} tituloModal 
      * @returns true | false
      */
-    async validForm(tituloModal){
+    async validForm(tituloModal) {
         if (!this.data.codEstab) {
-            this._tS.toastr('warning', 'Seleccione el Establecimiento', tituloModal);            
+            this._tS.toastr('warning', 'Seleccione el Establecimiento', tituloModal);
             return
         }
 
         if (!(this.data.idPuntoEmision)) {
-            this._tS.toastr('warning', 'Seleccione el Punto de Emisión', tituloModal);         
+            this._tS.toastr('warning', 'Seleccione el Punto de Emisión', tituloModal);
             return
         }
 
         if (!(this.data.fechaEmision)) {
-            this._tS.toastr('warning', 'Ingrese la Fecha de Emisión', tituloModal);            
+            this._tS.toastr('warning', 'Ingrese la Fecha de Emisión', tituloModal);
             return
         }
 
@@ -629,20 +751,20 @@ class ModalConsolidacionCtrl extends ModalBaseCtrl{
             return
         }
 
-        if(this.gridOptions.data.some(item=>(!(item.idBodega>0)))){
+        if (this.gridOptions.data.some(item => (!(item.idBodega > 0)))) {
             this._tS.toastr('warning', 'Agregue  bodega a los artículos');
             return
         }
 
-      
-        
-        
+
+
+
         return true;
-                                             
+
     }
-   
-    
-    
+
+
+
 
 
 
@@ -651,117 +773,134 @@ class ModalConsolidacionCtrl extends ModalBaseCtrl{
 
 
 
-export class ModalConsolidacionNuevoCtrl extends ModalConsolidacionCtrl{
+export class ModalConsolidacionNuevoCtrl extends ModalConsolidacionCtrl {
 
     static $inject = ['$scope', '$timeout', '$uibModalInstance', 'storageService', 'uiGridConstants', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario', 'params'];
 
-    constructor($scope, $timeout, $uibModalInstance, _storageSvc, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreConst, _tS, _fS, _params){
-        super({$scope, $timeout, $uibModalInstance, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreConst, _tS, _fS, _params})
+    constructor($scope, $timeout, $uibModalInstance, _storageSvc, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreConst, _tS, _fS, _params) {
+        super({
+            $scope,
+            $timeout,
+            $uibModalInstance,
+            uiGridConstants,
+            _mS,
+            _commonSvc,
+            _modalSvc,
+            _nombreConst,
+            _tS,
+            _fS,
+            _params
+        })
 
         this._storageSvc = _storageSvc;
 
-        let {TIPO_REGISTRO} =_params;
+        let {
+            TIPO_REGISTRO
+        } = _params;
 
         this.TIPO_REGISTRO = TIPO_REGISTRO;
 
         this.data.fechaEmision = new Date();
         this.data.total = 0;
-        
+
     }
 
 
-    async $onInit(){
+    async $onInit() {
 
         try {
             showLoader();
-            let resultsDataForm = await this.initiload();  
-                     
-           
+            let resultsDataForm = await this.initiload();
+
+
             this.establecimientos = resultsDataForm[0];
-            
-            if(this.establecimientos.length>0){
+
+            if (this.establecimientos.length > 0) {
 
                 let dataEstab = this.establecimientos[0];
 
-                let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab); 
-                
+                let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
+
                 this.data.codEstab = dataEstab.codEstab;
                 this.cloneCodEstab = dataEstab.codEstab;
 
-                this.puntosEmision = resultsDataFormEstab[0]; 
-                
-                if(this.puntosEmision.length>0){
+                this.puntosEmision = resultsDataFormEstab[0];
+
+                if (this.puntosEmision.length > 0) {
                     this.data.idPuntoEmision = this.puntosEmision[0].idPuntoEmision;
-                }else{
-                    
+                } else {
+
                 }
 
-                this.bodegas       = resultsDataFormEstab[1];                
-                this.idBodega      = this.bodegas.length>0?this.bodegas[0].idBodega:0;
-                this.cloneIdBodega = this.idBodega;                
+                this.bodegas = resultsDataFormEstab[1];
+                this.idBodega = this.bodegas.length > 0 ? this.bodegas[0].idBodega : 0;
+                this.cloneIdBodega = this.idBodega;
 
-            }else{
-                this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
-            }    
-            
+            } else {
+                this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');
+            }
+
 
             this.decimal = resultsDataForm[1][0];
-     
-            
+
+
             this.setColumnDefs();
 
 
-            if(Object.keys(this._storageSvc.getObject("consolidacionDetail")).length>0){
-                this._storageSvc.restoreInvoiceDetail("consolidacionDetail").then(result=>{
-                    if(result.isConfirmed){
-                        this.gridOptions.data = JSON.parse(result.dataInvoiceDetail[result.value]);                           
+            if (Object.keys(this._storageSvc.getObject("consolidacionDetail")).length > 0) {
+                this._storageSvc.restoreInvoiceDetail("consolidacionDetail").then(result => {
+                    if (result.isConfirmed) {
+                        this.gridOptions.data = JSON.parse(result.dataInvoiceDetail[result.value]);
                         delete result.dataInvoiceDetail[result.value];
-                                        
-                        this._storageSvc.setObject("consolidacionDetail", result.dataInvoiceDetail)                            
+
+                        this._storageSvc.setObject("consolidacionDetail", result.dataInvoiceDetail)
                     }
 
                 })
             }
-           
-            this.$scope.$apply();            
+
+            this.$scope.$apply();
 
         } catch (error) {
-            
+
             console.log(error)
 
-        }finally{
+        } finally {
 
             hideLoader();
-        }        
+        }
     }
 
 
 
-    async consolidacionArticuloImport(){
+    async consolidacionArticuloImport() {
         try {
-            
-            let {MODAL_FILE_CTRL, MODAL_CONSOL_IMPORT} = this._nombreConst.consolidacion_inv;
+
+            let {
+                MODAL_FILE_CTRL,
+                MODAL_CONSOL_IMPORT
+            } = this._nombreConst.consolidacion_inv;
             let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_CONSOL_IMPORT['controller']]
-            let template   = MODAL_CONSOL_IMPORT['template'] ;
-            
-            
+            let template = MODAL_CONSOL_IMPORT['template'];
+
+
             let modalRef = this._modalSvc.openModalCustom({
                 controller,
                 template,
-                size:'xl',
+                size: 'xl',
                 windowClass: 'uibModalFullScreen'
             })
-            
+
             // modalRef.rendered.then(()=>{
             //     this.$uibModalInstance.close();
             // })
 
-            modalRef.result.then(result=>{                
-                if(typeof result==='object'){
-                    this.$uibModalInstance.close(response);                   
-                }                
+            modalRef.result.then(result => {
+                if (typeof result === 'object') {
+                    this.$uibModalInstance.close(response);
+                }
             })
-            
+
 
         } catch (error) {
             console.trace(error)
@@ -769,31 +908,33 @@ export class ModalConsolidacionNuevoCtrl extends ModalConsolidacionCtrl{
     }
 
 
-    async onSave(){
+    async onSave() {
 
         try {
             let tituloModal = "Guardar";
 
-            if(!this.validForm(tituloModal)) return
+            if (!this.validForm(tituloModal)) return
 
             showLoader();
-            this.nroDocumentoSecuencial  = await this._commonSvc.generarNroDocumentoCompra({
+            this.nroDocumentoSecuencial = await this._commonSvc.generarNroDocumentoCompra({
                 idPuntoEmision: this.data.idPuntoEmision,
                 codigoDocumento: this.TIPO_DOC.codigo
             })
             hideLoader();
 
-            if(!this.nroDocumentoSecuencial) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE"
+            if (!this.nroDocumentoSecuencial) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE"
 
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
-                  confirmButton: 'btn btn-success',
-                  cancelButton: 'btn btn-danger ml-2'
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger ml-2'
                 },
                 buttonsStyling: false
             })
-            
-            let {isConfirmed} = await  swalWithBootstrapButtons.fire({
+
+            let {
+                isConfirmed
+            } = await swalWithBootstrapButtons.fire({
                 title: '<small>Guardar Documento</small>',
                 html: `<small>Esta seguro de guardar este Consolidación Nro. <b>${this.nroDocumentoSecuencial}</b>?</small>`,
                 icon: 'warning',
@@ -801,91 +942,91 @@ export class ModalConsolidacionNuevoCtrl extends ModalConsolidacionCtrl{
                 confirmButtonText: 'Si, guardar!',
                 cancelButtonText: 'No, cancelar!',
                 reverseButtons: false,
-                allowOutsideClick:false
+                allowOutsideClick: false
             })
 
-            if(isConfirmed){
+            if (isConfirmed) {
 
                 showLoader();
 
                 let consolidacion = Object.assign({}, this.data);
-                consolidacion.fechaEmision = this._fS.formatDateTimeZone(this.data.fechaEmision, "YYYY-MM-DD HH:mm:ss A" )
-            
-                let data ={
+                consolidacion.fechaEmision = this._fS.formatDateTimeZone(this.data.fechaEmision, "YYYY-MM-DD HH:mm:ss A")
+
+                let data = {
                     consolidacion,
                     detalle: this.gridOptions.data
                 }
 
-                await this._mS.getData('post', '/ConsolidacionInventario/Post', data).then(response=>{
-                    if(response.id==='0'){                        
+                await this._mS.getData('post', '/ConsolidacionInventario/Post', data).then(response => {
+                    if (response.id === '0') {
                         this._fS.sweetAlert('warning', response.message, response.titleSms);
                     }
-                    if(response.id==="1"){                        
-                        this._fS.sweetAlert('success', response.message, response.titleSms, 1000);                        
-                        this.$uibModalInstance.close(response);                                                                            
+                    if (response.id === "1") {
+                        this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                        this.$uibModalInstance.close(response);
                     }
                 })
 
 
             }
-            
+
         } catch (error) {
             console.log(error)
-        }finally{
+        } finally {
             hideLoader();
         }
     }
 
 
 
-    async closeModal(){
+    async closeModal() {
 
-        if(this.gridOptions.data.length>0){
+        if (this.gridOptions.data.length > 0) {
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
-                  confirmButton: 'btn btn-success',
-                  denyButton:'btn btn-info ml-2',
-                  cancelButton: 'btn btn-danger ml-2'
+                    confirmButton: 'btn btn-success',
+                    denyButton: 'btn btn-info ml-2',
+                    cancelButton: 'btn btn-danger ml-2'
                 },
                 buttonsStyling: false
             })
-            
+
             swalWithBootstrapButtons.fire({
                 title: 'Salir ?',
                 html: "<small>Tienes un documento en proceso, desea salir ahora?</small>",
                 icon: 'warning',
                 showCancelButton: true,
-                showConfirmButton:true,
-                showDenyButton:true,
+                showConfirmButton: true,
+                showDenyButton: true,
                 confirmButtonText: 'Apartar',
                 denyButtonText: 'Si, salir',
                 cancelButtonText: 'No, cancelar!',
-                focusDeny:true,
+                focusDeny: true,
                 reverseButtons: false
-            }).then(result=>{
+            }).then(result => {
 
-                if(result.isConfirmed){
+                if (result.isConfirmed) {
                     this.askToSaveStorage();
                 }
 
-                if(result.isDenied){
+                if (result.isDenied) {
                     this.$uibModalInstance.close();
                 }
-                
+
             })
-            return 
+            return
         }
-        this.$uibModalInstance.close();        
+        this.$uibModalInstance.close();
     }
 
 
-    async askToSaveStorage(){
+    async askToSaveStorage() {
         try {
             await this._storageSvc.askToSaveDetailDoc("consolidacionDetail", this.gridOptions.data);
-            this.$uibModalInstance.close(); 
+            this.$uibModalInstance.close();
         } catch (error) {
             console.log(error)
-        }             
+        }
     }
 
 }
@@ -894,173 +1035,233 @@ export class ModalConsolidacionNuevoCtrl extends ModalConsolidacionCtrl{
 
 
 
-export class ModalConsolidacionImportacionCtrl extends ModalBaseCtrl{
+export class ModalConsolidacionImportacionCtrl extends ModalBaseCtrl {
     static $inject = ['$scope', '$timeout', '$uibModalInstance', 'uiGridConstants', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario', 'params'];
 
-    constructor($scope, $timeout, $uibModalInstance, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreConst, _tS, _fS, _params){
-        super({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreConst, _tS, _fS, _params})
-        
+    constructor($scope, $timeout, $uibModalInstance, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreConst, _tS, _fS, _params) {
+        super({
+            $scope,
+            $timeout,
+            $uibModalInstance,
+            _mS,
+            _commonSvc,
+            _modalSvc,
+            _nombreConst,
+            _tS,
+            _fS,
+            _params
+        })
+
         const self = this;
 
         this.TIPO_DOC = this._commonSvc.tipoDoc['CIV']
         this.uiGridConstants = uiGridConstants;
-        this._params           = _params;
+        this._params = _params;
 
         this.data = {};
         this.data.fechaEmision = new Date();
 
         this.gridOptions = {
             showColumnFooter: true,
-            
-            enableRowSelection: true, 
+
+            enableRowSelection: true,
             enableRowHeaderSelection: false,
-            showGridFooter:true           
+            showGridFooter: true
         }
 
-        this.gridOptions.columnDefs = [
-            { name: 'N°', field: 'num', width: '2%', minWidth: '50', },
-            { name: 'Código', field: 'codigo', width: '10%', minWidth: '100',},
-            { name: 'Descripción', field:'descripcion', allowCellFocus : false,   width: '30%', minWidth:'100',  cellTooltip: function(row) {
-                return row.entity.descripcion;
-            },  },
+        this.gridOptions.columnDefs = [{
+                name: 'N°',
+                field: 'num',
+                width: '2%',
+                minWidth: '50',
+            },
+            {
+                name: 'Código',
+                field: 'codigo',
+                width: '10%',
+                minWidth: '100',
+            },
+            {
+                name: 'Descripción',
+                field: 'descripcion',
+                allowCellFocus: false,
+                width: '30%',
+                minWidth: '100',
+                cellTooltip: function (row) {
+                    return row.entity.descripcion;
+                },
+            },
             // { name: 'Tipo Articulo', field:'tipoArticulo', allowCellFocus : false },
             // { name: 'Sub Familia', field:'subFamilia', allowCellFocus : false },
-            { name: 'Cantidad', field:'cantidad',  width: '3%', minWidth: '100', },
-            { name: 'P. Costo', field:'precioCosto',  width: '8%', minWidth: '100', },
-            { name: 'Medida', field:'medida',  width: '8%', minWidth: '100', },            
-            { name: 'Iva', field:'tipoIva',  width: '8%', minWidth: '100', },            
             {
-                name: 'Bodega', field: 'idBodega', width: '15%', minWidth: '100',
+                name: 'Cantidad',
+                field: 'cantidad',
+                width: '3%',
+                minWidth: '100',
+            },
+            {
+                name: 'P. Costo',
+                field: 'precioCosto',
+                width: '8%',
+                minWidth: '100',
+            },
+            {
+                name: 'Medida',
+                field: 'medida',
+                width: '8%',
+                minWidth: '100',
+            },
+            {
+                name: 'Iva',
+                field: 'tipoIva',
+                width: '8%',
+                minWidth: '100',
+            },
+            {
+                name: 'Bodega',
+                field: 'idBodega',
+                width: '15%',
+                minWidth: '100',
                 editableCellTemplate: 'ui-grid/dropdownEditor',
                 cellFilter: 'mapBodega:grid.appScope.$ctrl.bodegas',
                 editDropdownValueLabel: 'descripcion',
                 editDropdownIdLabel: 'idBodega',
             },
-            { name: 'Total', field: 'total', width: '8%', minWidth: '100',  aggregationType: self.uiGridConstants.aggregationTypes.sum, customTreeAggregationFinalizerFn: function (aggregation) {
-                aggregation.rendered = aggregation.value;
-                }, aggregationLabel: "Total: ",                    
-                footerCellFilter: 'number:2', },            
+            {
+                name: 'Total',
+                field: 'total',
+                width: '8%',
+                minWidth: '100',
+                aggregationType: self.uiGridConstants.aggregationTypes.sum,
+                customTreeAggregationFinalizerFn: function (aggregation) {
+                    aggregation.rendered = aggregation.value;
+                },
+                aggregationLabel: "Total: ",
+                footerCellFilter: 'number:2',
+            },
 
-            
+
         ]
-    }   
-    
-    async $onInit(){
+    }
+
+    async $onInit() {
 
         try {
             showLoader();
-            let resultsDataForm = await this.initiload();                     
-           
+            let resultsDataForm = await this.initiload();
+
             this.establecimientos = resultsDataForm[0];
-            
-            if(this.establecimientos.length>0){
+
+            if (this.establecimientos.length > 0) {
 
                 let dataEstab = this.establecimientos[0];
 
-                let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab); 
-                
+                let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
+
                 this.data.codEstab = dataEstab.codEstab;
                 this.cloneCodEstab = dataEstab.codEstab;
 
-                this.puntosEmision = resultsDataFormEstab[0]; 
-                
-                if(this.puntosEmision.length>0){
+                this.puntosEmision = resultsDataFormEstab[0];
+
+                if (this.puntosEmision.length > 0) {
                     this.data.idPuntoEmision = this.puntosEmision[0].idPuntoEmision;
-                }else{
-                    
+                } else {
+
                 }
 
-                this.bodegas       = resultsDataFormEstab[1];                
-                this.idBodega      = this.bodegas.length>0?this.bodegas[0].idBodega:0;
-                this.cloneIdBodega = this.idBodega;                
+                this.bodegas = resultsDataFormEstab[1];
+                this.idBodega = this.bodegas.length > 0 ? this.bodegas[0].idBodega : 0;
+                this.cloneIdBodega = this.idBodega;
 
-            }else{
-                this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
-            }    
-            
-            this.decimal = resultsDataForm[1][0]            
-            this.tipoIvas = resultsDataForm[3];  
-            
-            
-            let json = {
-                checkBoxConsolidar: true,
-                
+            } else {
+                this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');
             }
 
-            this._mS.getData('get', '/Articulo/Get?json=' + JSON.stringify(json)).then(response=>{
-                
-                if(response.code=="0"){
+            this.decimal = resultsDataForm[1][0]
+            this.tipoIvas = resultsDataForm[3];
+
+
+            let json = {
+                checkBoxConsolidar: true,
+
+            }
+
+            this._mS.getData('get', '/Articulo/Get?json=' + JSON.stringify(json)).then(response => {
+
+                if (response.code == "0") {
                     console.warn(response.message)
                     return
                 }
 
                 this.articulosImportados = JSON.parse(response.payload) || [];
                 let num = 1;
-                this.gridOptions.data = this.articulosImportados.map(item=>({
-                    ...item, 
+                this.gridOptions.data = this.articulosImportados.map(item => ({
+                    ...item,
                     idBodega: this.idBodega,
                     cantidad: item.stock,
                     total: item.stock * item.precioCosto,
-                    num:num++
-                }))                
+                    num: num++
+                }))
             })
-            
-            this.$scope.$apply();            
+
+            this.$scope.$apply();
 
         } catch (error) {
-            
+
             console.log(error)
 
-        }finally{
+        } finally {
 
             hideLoader();
-        }       
+        }
 
     }
 
-    setStyle(){
+    setStyle() {
         return {}
     }
 
-    
-    async askToSave(){
+
+    async askToSave() {
         try {
-            
-            if(!this.data.codEstab || this.data.codEstab===0){
+
+            if (!this.data.codEstab || this.data.codEstab === 0) {
                 this._tS.toastr('warning', 'Seleccione el Establecimiento');
                 return
             }
-    
-            if(!this.data.idPuntoEmision || this.data.idPuntoEmision===0){
+
+            if (!this.data.idPuntoEmision || this.data.idPuntoEmision === 0) {
                 this._tS.toastr('warning', 'Seleccione el Punto de Emisión');
                 return
             }
-    
-            if(!this.data.fechaEmision){
+
+            if (!this.data.fechaEmision) {
                 this._tS.toastr('warning', 'Seleccione la Fecha de Emisión');
                 return
             }
-    
-            if(this.gridOptions.data.length===0){
+
+            if (this.gridOptions.data.length === 0) {
                 this._tS.toastr('warning', 'No hay articulos a Consolidar');
                 return
             }
-    
-            if(this.gridOptions.data.some(item=>["", null, undefined, 0].includes(item.idBodega))){
+
+            if (this.gridOptions.data.some(item => ["", null, undefined, 0].includes(item.idBodega))) {
                 this._tS.toastr('warning', 'La bodega en el detalle es requerido');
                 return
             }
-    
-            let nroDocumentoSecuencial  = await this._commonSvc.generarNroDocumentoCompra({
+
+            let nroDocumentoSecuencial = await this._commonSvc.generarNroDocumentoCompra({
                 idPuntoEmision: this.data.idPuntoEmision,
                 codigoDocumento: this.TIPO_DOC.codigo
-            })            
-    
-            if(!nroDocumentoSecuencial) throw "NO SE GENERÓ CORRECTAMENTE EL NÚMERO SECUENCIAL"
-    
+            })
+
+            if (!nroDocumentoSecuencial) throw "NO SE GENERÓ CORRECTAMENTE EL NÚMERO SECUENCIAL"
+
             let textAccion = 'Guardar';
 
-            let {isConfirmed} = await Swal.fire({
+            let {
+                isConfirmed
+            } = await Swal.fire({
                 icon: 'warning',
                 html: `<small>Esta seguro de ${textAccion} este <strong>Consolidación de Inventario</strong> Nro. <b>${nroDocumentoSecuencial}</b> ahora?</small>`,
                 showConfirmButton: true,
@@ -1069,29 +1270,29 @@ export class ModalConsolidacionImportacionCtrl extends ModalBaseCtrl{
                 cancelButtonText: 'No, Cancelar',
                 allowOutsideClick: false
             })
-    
-            if(!isConfirmed) return
+
+            if (!isConfirmed) return
 
 
             showLoader();
             let consolidacion = Object.assign({}, this.data);
-            consolidacion.fechaEmision = this._fS.formatDateTimeZone(this.data.fechaEmision, "YYYY-MM-DD HH:mm:ss A" )
-        
-            let data ={
+            consolidacion.fechaEmision = this._fS.formatDateTimeZone(this.data.fechaEmision, "YYYY-MM-DD HH:mm:ss A")
+
+            let data = {
                 consolidacion,
                 detalle: this.gridOptions.data
             }
 
-            this._mS.getData('post', '/ConsolidacionInventario/Post', data).then(response=>{
-                if(response.id==='0'){
+            this._mS.getData('post', '/ConsolidacionInventario/Post', data).then(response => {
+                if (response.id === '0') {
                     hideLoader();
                     this._fS.sweetAlert('warning', response.message, response.titleSms);
                 }
-                if(response.id==="1"){
+                if (response.id === "1") {
                     hideLoader();
                     this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
 
-                    if(!this.isCloseModal){
+                    if (!this.isCloseModal) {
                         this.$uibModalInstance.close(response);
                         return
                     }
@@ -1099,8 +1300,8 @@ export class ModalConsolidacionImportacionCtrl extends ModalBaseCtrl{
                     this.$onInit();
                 }
             })
-            
-            
+
+
         } catch (error) {
             console.trace(error)
         }
@@ -1115,89 +1316,109 @@ export class ModalConsolidacionImportacionCtrl extends ModalBaseCtrl{
 
 
 
-export class ModalConsolidacionEditarCtrl extends ModalConsolidacionCtrl{
+export class ModalConsolidacionEditarCtrl extends ModalConsolidacionCtrl {
 
     static $inject = ['$scope', '$timeout', '$uibModalInstance', 'uiGridConstants', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario', 'params'];
 
-    constructor($scope, $timeout, $uibModalInstance, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreConst, _tS, _fS, _params){
-        super({$scope, $timeout, $uibModalInstance, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreConst, _tS, _fS, _params})
+    constructor($scope, $timeout, $uibModalInstance, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreConst, _tS, _fS, _params) {
+        super({
+            $scope,
+            $timeout,
+            $uibModalInstance,
+            uiGridConstants,
+            _mS,
+            _commonSvc,
+            _modalSvc,
+            _nombreConst,
+            _tS,
+            _fS,
+            _params
+        })
 
-        let {TIPO_REGISTRO, data} =_params;
-        let {dataDocumento, detalleDocumento} = data;
+        let {
+            TIPO_REGISTRO,
+            data
+        } = _params;
+        let {
+            dataDocumento,
+            detalleDocumento
+        } = data;
 
         this.TIPO_REGISTRO = TIPO_REGISTRO;
         this.data = dataDocumento;
         this.detalleDocumento = detalleDocumento;
 
-    
+
         this.disabledInputFechaEmision = true;
-        
+
     }
 
 
-    async $onInit(){
-        
+    async $onInit() {
+
         try {
             showLoader();
-            let resultsDataForm = await this.initiload();                     
-           
+            let resultsDataForm = await this.initiload();
+
             this.establecimientos = resultsDataForm[0];
-            
-            if(this.establecimientos.length>0){
 
-                let dataEstab = this.establecimientos.find(item=>item.codEstab===this.data.codEstab);
+            if (this.establecimientos.length > 0) {
 
-                let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab); 
-                                
+                let dataEstab = this.establecimientos.find(item => item.codEstab === this.data.codEstab);
+
+                let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
+
                 this.cloneCodEstab = this.data.codEstab;
 
-                this.puntosEmision = resultsDataFormEstab[0];               
+                this.puntosEmision = resultsDataFormEstab[0];
 
-                this.bodegas       = resultsDataFormEstab[1];                
-                this.idBodega      = this.bodegas.length>0?this.bodegas[0].idBodega:0;
-                this.cloneIdBodega = this.idBodega;                
+                this.bodegas = resultsDataFormEstab[1];
+                this.idBodega = this.bodegas.length > 0 ? this.bodegas[0].idBodega : 0;
+                this.cloneIdBodega = this.idBodega;
 
-            }else{
-                this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
-            }    
+            } else {
+                this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');
+            }
 
 
             this.decimal = resultsDataForm[1][0];
-            
+
             this.setColumnDefs();
-            
+
             this.gridOptions.data = this.detalleDocumento;
 
-            this.$scope.$apply();            
+            this.$scope.$apply();
 
         } catch (error) {
-            
+
             console.log(error)
 
-        }finally{
+        } finally {
 
             hideLoader();
-        }        
+        }
     }
 
 
 
-    async onSave(){
+    async onSave() {
 
         try {
             let tituloModal = "Actualizar";
 
-            if(!await this.validForm(tituloModal)) return
+            if (!await this.validForm(tituloModal)) return
 
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
-                  confirmButton: 'btn btn-success',
-                  cancelButton: 'btn btn-danger ml-2'
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger ml-2'
                 },
                 buttonsStyling: false
             })
-            
-            let {isConfirmed} = await  swalWithBootstrapButtons.fire({
+
+            let {
+                isConfirmed
+            } = await swalWithBootstrapButtons.fire({
                 title: '<small>Actualizar Documento</small>',
                 html: `<small>Esta seguro de actualizar la Consolidación?</small>`,
                 icon: 'warning',
@@ -1205,111 +1426,129 @@ export class ModalConsolidacionEditarCtrl extends ModalConsolidacionCtrl{
                 confirmButtonText: 'Si, actualizar!',
                 cancelButtonText: 'No, cancelar!',
                 reverseButtons: false,
-                allowOutsideClick:false
+                allowOutsideClick: false
             })
 
-            if(isConfirmed){
+            if (isConfirmed) {
 
                 showLoader();
 
                 let consolidacion = Object.assign({}, this.data);
-                consolidacion.fechaEmision = this._fS.formatDateTimeZone(this.data.fechaEmision, "YYYY-MM-DD HH:mm:ss A" )
-            
-                let data ={
+                consolidacion.fechaEmision = this._fS.formatDateTimeZone(this.data.fechaEmision, "YYYY-MM-DD HH:mm:ss A")
+
+                let data = {
                     consolidacion,
                     detalle: this.gridOptions.data
                 }
 
-                await this._mS.getData('put', '/ConsolidacionInventario/Put?id=' + this.data.idConsolidacionInventario, data).then(response=>{
-                    if(response.id==='0'){                        
+                await this._mS.getData('put', '/ConsolidacionInventario/Put?id=' + this.data.idConsolidacionInventario, data).then(response => {
+                    if (response.id === '0') {
                         this._fS.sweetAlert('warning', response.message, response.titleSms);
                     }
-                    if(response.id==="1"){                        
-                        this._fS.sweetAlert('success', response.message, response.titleSms, 1000);                        
-                        this.$uibModalInstance.close(response);                                                                            
+                    if (response.id === "1") {
+                        this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                        this.$uibModalInstance.close(response);
                     }
                 })
 
 
             }
-            
+
         } catch (error) {
             console.log(error)
-        }finally{
+        } finally {
             hideLoader();
         }
     }
 
 
-   
+
 }
 
 
 
 
 
-export class ModalConsolidacionDetalleCtrl extends ModalConsolidacionCtrl{
+export class ModalConsolidacionDetalleCtrl extends ModalConsolidacionCtrl {
 
     static $inject = ['$scope', '$timeout', '$uibModalInstance', 'uiGridConstants', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario', 'params'];
 
-    constructor($scope, $timeout, $uibModalInstance, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreConst, _tS, _fS, _params){
-        super({$scope, $timeout, $uibModalInstance, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreConst, _tS, _fS, _params})
+    constructor($scope, $timeout, $uibModalInstance, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreConst, _tS, _fS, _params) {
+        super({
+            $scope,
+            $timeout,
+            $uibModalInstance,
+            uiGridConstants,
+            _mS,
+            _commonSvc,
+            _modalSvc,
+            _nombreConst,
+            _tS,
+            _fS,
+            _params
+        })
 
-        let {TIPO_REGISTRO, data} =_params;
-        let {dataDocumento, detalleDocumento} = data;
+        let {
+            TIPO_REGISTRO,
+            data
+        } = _params;
+        let {
+            dataDocumento,
+            detalleDocumento
+        } = data;
 
         this.TIPO_REGISTRO = TIPO_REGISTRO;
         this.data = dataDocumento;
         this.detalleDocumento = detalleDocumento;
 
-       
-        
+
+
     }
 
 
-    async $onInit(){
-        
+    async $onInit() {
+
         try {
             showLoader();
-            let resultsDataForm = await this.initiload();                     
-           
+            let resultsDataForm = await this.initiload();
+
             this.establecimientos = resultsDataForm[0];
-            
-            if(this.establecimientos.length>0){
 
-                let dataEstab = this.establecimientos.find(item=>item.codEstab===this.data.codEstab);
+            if (this.establecimientos.length > 0) {
 
-                let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab); 
-                                
+                let dataEstab = this.establecimientos.find(item => item.codEstab === this.data.codEstab);
+
+                let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
+
                 this.cloneCodEstab = this.data.codEstab;
 
-                this.puntosEmision = resultsDataFormEstab[0];               
+                this.puntosEmision = resultsDataFormEstab[0];
 
-                this.bodegas       = resultsDataFormEstab[1];                
-                this.idBodega      = this.bodegas.length>0?this.bodegas[0].idBodega:0;
-                this.cloneIdBodega = this.idBodega;                
+                this.bodegas = resultsDataFormEstab[1];
+                this.idBodega = this.bodegas.length > 0 ? this.bodegas[0].idBodega : 0;
+                this.cloneIdBodega = this.idBodega;
 
-            }else{
-                this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
-            }    
+            } else {
+                this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');
+            }
 
 
             this.decimal = resultsDataForm[1][0];
-            
+
             this.setColumnDefsView();
-            
+
             this.gridOptions.data = this.detalleDocumento;
 
-            this.$scope.$apply();            
+            this.$scope.$apply();
 
         } catch (error) {
-            
+
             console.log(error)
 
-        }finally{
+        } finally {
 
             hideLoader();
-        }        
+        }
     }
 }
 
@@ -1318,19 +1557,27 @@ export class ModalConsolidacionDetalleCtrl extends ModalConsolidacionCtrl{
 
 export class ModalConsolidacionFiltroCtrl extends ModalBaseCtrl {
     static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'toastService', 'formulario', 'params']
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc,  _tS, _fS, _params){
-        super({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _tS, _fS, _params})
-        
+    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _tS, _fS, _params) {
+        super({
+            $scope,
+            $timeout,
+            $uibModalInstance,
+            _mS,
+            _commonSvc,
+            _tS,
+            _fS,
+            _params
+        })
+
     }
 
 
-    $onInit(){
+    $onInit() {
         console.log(this)
     }
 
 
-    closeModal(){
+    closeModal() {
         this.$uibModalInstance.close()
     }
 }
-

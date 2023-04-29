@@ -1,5 +1,4 @@
-﻿using System;
-using es.mityc.firmaJava.libreria.xades;
+﻿using es.mityc.firmaJava.libreria.xades;
 using es.mityc.javasign.pkstore;
 using es.mityc.javasign.pkstore.keystore;
 using es.mityc.javasign.xml.refs;
@@ -8,10 +7,10 @@ using java.security;
 using java.security.cert;
 using java.util;
 using javax.xml.parsers;
-using org.w3c.dom;
-using org.apache.xml.security.utils;
-
 using Logs;
+using org.apache.xml.security.utils;
+using org.w3c.dom;
+using System;
 
 namespace SignerWS
 {
@@ -24,7 +23,7 @@ namespace SignerWS
             dirLogs = System.Configuration.ConfigurationManager.AppSettings["dirLogs"];
             dirCertificates = System.Configuration.ConfigurationManager.AppSettings["dirCertificates"];
         }
-        
+
 
         private X509Certificate _LoadCertificate(string archivoP12Path, string claveArvhivoP12, out PrivateKey privateKey, out Provider provider)
         {
@@ -133,7 +132,7 @@ namespace SignerWS
             catch (Exception ex)
             {
                 signed = false;
-                LogWritter.LogError(dirLogs, "Error al firmar el comprobante: "  + ex.Message);
+                LogWritter.LogError(dirLogs, "Error al firmar el comprobante: " + ex.Message);
             }
             return signed;
         }

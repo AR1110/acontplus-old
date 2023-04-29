@@ -1,6 +1,5 @@
 ﻿using DataAccess.GestionTributaria;
 using Domain.ViewModels.GestionTributaria;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Config
@@ -14,7 +13,7 @@ namespace WebUI.Controllers.Config
             _configuration = configuration;
             _cc = new ConfiguracionContribuyenteDao(_configuration);
         }
-        
+
         public IActionResult Index()
         {
             return View();
@@ -43,7 +42,7 @@ namespace WebUI.Controllers.Config
             return Ok(res);
         }
 
-        
+
         public async Task<IActionResult> Delete(int idConfigC)
         {
             int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);

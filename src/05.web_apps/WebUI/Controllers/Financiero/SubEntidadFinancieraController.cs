@@ -1,6 +1,5 @@
 ﻿using DataAccess.Tesoreria;
 using Domain.Models.Tesoreria;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.GestionFinanciera
@@ -15,7 +14,7 @@ namespace WebUI.Controllers.GestionFinanciera
             _sef = new SubEntidadFinancieraDao(_configuration);
         }
 
-        
+
         public IActionResult Index()
         {
             return View();

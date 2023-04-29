@@ -1,5 +1,4 @@
 ﻿using DataAccess.Asignaciones;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Asignacion
@@ -13,7 +12,7 @@ namespace WebUI.Controllers.Asignacion
             _config = config;
             _gAsig = new GestionAsignacionesDao(_config);
         }
-        
+
         public IActionResult Index()
         {
             return View();

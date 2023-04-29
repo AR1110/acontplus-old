@@ -1,15 +1,11 @@
-﻿using Helpers;
-using Domain.Dtos;
-using Domain.Models;
+﻿using Domain.Models;
 using Domain.Models.InfoAdicional;
 using Domain.ViewModels;
+using Helpers;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Compras
 {

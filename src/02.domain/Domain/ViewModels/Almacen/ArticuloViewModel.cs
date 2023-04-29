@@ -1,7 +1,6 @@
 ﻿using Domain.Models;
 using Domain.Models.Almacen;
 using Domain.ViewModels.Compras;
-using System.Collections.Generic;
 
 namespace Domain.ViewModels.Almacen
 {

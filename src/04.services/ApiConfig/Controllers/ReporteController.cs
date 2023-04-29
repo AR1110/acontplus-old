@@ -3,7 +3,6 @@ using DataAccess;
 using Domain.Config.Dtos;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace ApiConfig.Controllers
 {
@@ -81,7 +80,12 @@ namespace ApiConfig.Controllers
                 await _db.SPExecute("Config.Reporte_Update");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("json", JsonConvert.SerializeObject(data));
+                _db.AddDynamicParam("codigo", data.codigo);
+                _db.AddDynamicParam("reportPath", data.reportPath);
+                _db.AddDynamicParam("contentType", data.contentType);
+                _db.AddDynamicParam("storedProcedure", data.storedProcedure);
+                _db.AddDynamicParam("nombreReporte", data.nombreReporte);
+                _db.AddDynamicParam("estado", data.estado);
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

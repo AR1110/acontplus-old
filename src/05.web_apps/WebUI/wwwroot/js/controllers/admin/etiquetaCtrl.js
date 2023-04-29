@@ -5,12 +5,12 @@ app.controller('etiquetaCtrl', etiquetaCtrl);
 etiquetaCtrl.$inject = ['$scope','$http', 'modalService', 'decodeToken'];
 
 function etiquetaCtrl($scope, $http, _modalSvc, decodeToken) {
-    let accion = JSON.parse(localStorage.getItem("accion"));
-    if(accion===null){
-        location.href = "/Home/Index";
-    }else{
-        $scope.accion = accion[0];
-    }
+    // let accion = JSON.parse(localStorage.getItem("accion"));
+    // if(accion===null){
+    //     location.href = "/Home/Index";
+    // }else{
+    //     $scope.accion = accion[0];
+    // }
 
     let idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
     const json = {

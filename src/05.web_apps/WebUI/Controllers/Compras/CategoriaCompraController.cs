@@ -1,7 +1,6 @@
 ﻿using DataAccess;
 using Domain.Models;
 using Helpers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Ingresos
@@ -17,12 +16,12 @@ namespace WebUI.Controllers.Ingresos
             _configuration = configuration;
             _cc = new CategoriaCompraDao(_configuration);
         }
-        
+
         public IActionResult Index()
         {
             return View();
         }
-         
+
 
         public async Task<IActionResult> Post([FromBody] CategoriaCompra data)
         {

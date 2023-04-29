@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Domain.Models.Compras
+﻿namespace Domain.Models.Compras
 {
     public class FacturaCompraDetalle
     {
@@ -24,6 +18,6 @@ namespace Domain.Models.Compras
         public decimal porcentajeDescuento { get; set; }
         public decimal valorDescuento { get; set; }
         public decimal total { get; set; }
-        public decimal ice { get;set; }
+        public decimal ice { get; set; }
     }
 }

@@ -1,12 +1,7 @@
 ﻿using DataAccess;
 using Domain.Models;
 using Helpers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers
 {
@@ -24,7 +19,7 @@ namespace WebUI.Controllers
             _tp = new TipoClienteProveedorDao(_config);
         }
 
-        
+
         public IActionResult Index()
         {
             return View();

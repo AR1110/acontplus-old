@@ -1,11 +1,7 @@
-using System.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Helpers;
 using DataAccess;
+using Helpers;
 using Microsoft.Extensions.Configuration;
+using System.Data;
 
 namespace BL.Admin.Data
 {

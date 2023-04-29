@@ -6,12 +6,12 @@
     entidadLogoCtrl.$inject = ['$scope', 'mainService', 'toastService'];
 
     function entidadLogoCtrl($scope, mS, tS) {
-        let accion = JSON.parse(localStorage.getItem("accion"));
-        if(accion===null){
-            location.href = "/Home/Index";
-        }else{
-            $scope.accion = accion[0];
-        }
+        // let accion = JSON.parse(localStorage.getItem("accion"));
+        // if(accion===null){
+        //     location.href = "/Home/Index";
+        // }else{
+        //     $scope.accion = accion[0];
+        // }
 
         var url = '/EntidadLogo/';
         $scope.logo = {};

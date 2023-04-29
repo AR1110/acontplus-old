@@ -9,5 +9,5 @@
         public bool estado { get; set; }
         public string fechaRegistro { get; set; }
         public string tipoTransaccion { get; set; }
-    } 
+    }
 }

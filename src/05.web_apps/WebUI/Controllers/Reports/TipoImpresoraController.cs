@@ -1,7 +1,7 @@
-﻿using Helpers;
-using Microsoft.AspNetCore.Mvc;
-using Common.Logs;
+﻿using Common.Logs;
 using DataAccess;
+using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Reports
 {

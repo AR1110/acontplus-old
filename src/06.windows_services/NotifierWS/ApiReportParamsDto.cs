@@ -8,7 +8,7 @@ namespace NotifierWS
         public bool hasService { get; set; }
         public string reportParams { get; set; }
         public string dataParams { get; set; }
-        public string claveAcceso { get; set; }        
+        public string claveAcceso { get; set; }
         public Dictionary<string, string> rdlcProps { get; set; }
         public Dictionary<string, List<Dictionary<string, string>>> dataSources { get; set; }
         public Dictionary<string, string> rdlcParams { get; set; }

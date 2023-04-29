@@ -1,16 +1,9 @@
-﻿
-using Domain.Models;
-using Domain.Models.Almacen;
+﻿using Domain.Models.Almacen;
 using Domain.ViewModels.Almacen;
 using Helpers;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
 
 namespace DataAccess.Almacen
 {
@@ -70,7 +63,7 @@ namespace DataAccess.Almacen
             finally
             {
 
-                
+
             }
             return _gr;
         }

@@ -1,8 +1,8 @@
-﻿using DataAccess;
+﻿using Common.Logs;
+using DataAccess;
 using Domain.Models;
-using Microsoft.AspNetCore.Mvc;
 using Helpers;
-using Common.Logs;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Establecimiento
 {

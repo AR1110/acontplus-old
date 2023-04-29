@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace Domain.Models
+﻿namespace Domain.Models
 {
     public class TipoCuenta
     {
@@ -11,6 +6,6 @@ namespace Domain.Models
         public string descripcion { get; set; }
         public string codigo { get; set; }
         public bool estado { get; set; }
-        public string fechaRegistro { get; set;  }
+        public string fechaRegistro { get; set; }
     }
 }

@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using DataAccess.Almacen;
+﻿using DataAccess.Almacen;
 using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers
 {
@@ -18,7 +17,7 @@ namespace WebUI.Controllers
         }
         // GET: PvPArticulo
 
-        
+
         public IActionResult Index()
         {
             return View();

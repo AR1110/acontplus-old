@@ -1,12 +1,11 @@
 ﻿using Common.Logs;
 using DataAccess;
 using Helpers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiRecepcion.Controllers
 {
-    [Authorize]
+
     [Route("api/[controller]")]
     [ApiController]
     public class ProveedorController : ControllerBase

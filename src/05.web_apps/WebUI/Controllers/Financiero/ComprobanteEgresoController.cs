@@ -1,12 +1,9 @@
-﻿using Helpers;
-using DataAccess;
-using DataAccess.GestionFinanciera;
+﻿using DataAccess;
 using DataAccess.Tesoreria;
-using Domain.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Domain.Dtos.Contabilidad;
+using Domain.Models;
+using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.GestionFinanciera
 {
@@ -14,9 +11,9 @@ namespace WebUI.Controllers.GestionFinanciera
     {
         private ComprobanteIngresoDao _ci;
         private readonly IConfiguration _configuration;
-        
+
         private DataAccessObject _dao;
-        
+
         private EstadoFinancieroDao _ef;
 
         public ComprobanteEgresoController(IConfiguration configuration)
@@ -25,11 +22,11 @@ namespace WebUI.Controllers.GestionFinanciera
             _dao = new DataAccessObject(_configuration);
             _ef = new EstadoFinancieroDao(_configuration);
             _ci = new ComprobanteIngresoDao(_configuration);
-            
-            
+
+
         }
 
-        
+
         public IActionResult Index()
         {
             return View();
@@ -49,7 +46,7 @@ namespace WebUI.Controllers.GestionFinanciera
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post( [FromBody] PagoDto data)
+        public async Task<IActionResult> Post([FromBody] PagoDto data)
         {
             GenericResponse _response = new GenericResponse();
             Dictionary<string, object> parameters = new Dictionary<string, object>();

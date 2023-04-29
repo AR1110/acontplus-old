@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using DataAccess;
+﻿using DataAccess;
 using Domain.Models;
 using Helpers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Ventas
@@ -23,7 +18,7 @@ namespace WebUI.Controllers.Ventas
             _e = new EmpleadoDao(_config);
         }
 
-        
+
         public IActionResult Index()
         {
             return View();

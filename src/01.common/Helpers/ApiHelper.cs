@@ -1,6 +1,5 @@
-﻿using Newtonsoft.Json.Serialization;
-using Newtonsoft.Json;
-using System.Net.Http;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System.Text;
 
 namespace Helpers

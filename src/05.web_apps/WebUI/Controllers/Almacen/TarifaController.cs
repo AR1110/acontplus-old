@@ -1,12 +1,7 @@
 ﻿using DataAccess;
 using Domain.Models;
 using Helpers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers.Almacen
 {
@@ -15,7 +10,7 @@ namespace WebUI.Controllers.Almacen
         private readonly IConfiguration _config;
         private readonly string _connectionStrings = string.Empty;
         GenericResponse _gr = new();
-        private TarifaDao _t ;
+        private TarifaDao _t;
 
         public TarifaController(IConfiguration config)
         {
@@ -23,7 +18,7 @@ namespace WebUI.Controllers.Almacen
             _t = new TarifaDao(_config);
         }
 
-        
+
         public IActionResult Index()
         {
             return View();
@@ -62,8 +57,8 @@ namespace WebUI.Controllers.Almacen
             return Ok(_gr);
         }
 
-       //Gestiones especiales 
-       //get list tarifa para select en el Modulo de VENTA
+        //Gestiones especiales 
+        //get list tarifa para select en el Modulo de VENTA
         public async Task<IActionResult> Select()
         {
             int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);

@@ -1,10 +1,10 @@
-﻿using Domain.Models;
+﻿using Common.Logs;
 using DataAccess;
-using Microsoft.AspNetCore.Mvc;
 using DataAccess.Almacen;
+using Domain.Models;
 using Domain.ViewModels.Almacen;
 using Helpers;
-using Common.Logs;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers
 {
@@ -130,7 +130,8 @@ namespace WebUI.Controllers
 
         [HttpGet]
         public async Task<IActionResult> Search(string json)
-        {
+        {            
+            LogWriter _log = new LogWriter(_configuration);
             var _response = new GenericResponse();
             try
             {
@@ -141,7 +142,7 @@ namespace WebUI.Controllers
             }
             catch (Exception ex)
             {
-                //  _log.LogError("Error while search articles: \n" + ex.ToString());
+                _log.LogError("Error while search articles: \n" + ex.ToString());
                 _response.Create(code: "0", "Error al buscar articulo");
             }
             finally

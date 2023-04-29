@@ -9,7 +9,7 @@ namespace AdminUI.Controllers
     {
         private readonly ILogger<EntidadController> _logger;
         private readonly IConfiguration _config;
-       
+
 
         private EntidadService _eS;
         public EntidadController(ILogger<EntidadController> logger, IConfiguration config)
@@ -32,7 +32,7 @@ namespace AdminUI.Controllers
         public async Task<IActionResult> Post([FromBody] Entidad data)
         {
             return Ok(await _eS.PostAsync(data));
-            
+
         }
 
         [HttpPut]

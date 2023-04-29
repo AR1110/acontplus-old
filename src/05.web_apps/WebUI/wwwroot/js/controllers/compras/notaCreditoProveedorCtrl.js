@@ -6,13 +6,13 @@ notaCreditoProvCtrl.$inject = ['$scope', 'mainService', 'commonService', 'modalS
 
 function notaCreditoProvCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form, _tS, decodeToken){
 
-    let accion = JSON.parse(localStorage.getItem("accion"));  
-    if(accion===null){
-        location.href ="/Home/Index";
-        return
-    }else{
-        $scope.accion = accion[0];
-    }
+    // let accion = JSON.parse(localStorage.getItem("accion"));  
+    // if(accion===null){
+    //     location.href ="/Home/Index";
+    //     return
+    // }else{
+    //     $scope.accion = accion[0];
+    // }
 
     const TIPO_DOC = _commonSvc.tipoDoc['NCP'];
     let idUsuarioRol= parseInt(decodeToken.idUsuarioRol);

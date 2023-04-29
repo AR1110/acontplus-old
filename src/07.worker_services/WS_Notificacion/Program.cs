@@ -30,7 +30,7 @@ namespace WS_Notificacion
 
                     });
                     services.AddSingleton<Reports>();
-                    services.AddSingleton<NotificacionService>();                    
+                    services.AddSingleton<NotificacionService>();
                     services.AddHostedService<WindowsBackgroundService>();
                 })
                 .Build();

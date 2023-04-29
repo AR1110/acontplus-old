@@ -58,6 +58,6 @@ app.UseAuthorization();
 
 app.UseMiddleware<JWTMiddleware>();
 
-app.MapControllers();
+app.MapControllers().RequireAuthorization();
 
 app.Run();

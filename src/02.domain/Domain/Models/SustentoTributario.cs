@@ -7,5 +7,5 @@
         public string codigo { get; set; }
         public string fechaRegistro { get; set; }
         public bool estado { get; set; }
-    } 
+    }
 }

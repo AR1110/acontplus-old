@@ -1,8 +1,7 @@
-﻿using Helpers;
+﻿using Common.Logs;
 using DataAccess;
+using Helpers;
 using Microsoft.AspNetCore.Mvc;
-using Domain.Models;
-using Common.Logs;
 
 namespace WebUI.Controllers.Restaurant
 {

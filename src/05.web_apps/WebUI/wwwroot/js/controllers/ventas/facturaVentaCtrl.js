@@ -1,30 +1,36 @@
-﻿
-app.controller('facturaVentaCtrl', facturaVentaCtrl)
+﻿app.controller('facturaVentaCtrl', facturaVentaCtrl)
 
 facturaVentaCtrl.$inject = [
-    '$scope', 
-    '$filter', 
-    'mainService', 
-    'commonService', 
-    'documentoVentaService', 
-    'modalService', 
-    'nombreModal', 
-    'toastService', 
+    '$rootScope',
+    '$scope',
+    '$filter',
+    'mainService',
+    'commonService',
+    'documentoVentaService',
+    'modalService',
+    'nombreModal',
+    'toastService',
     'formulario',
     'decodeToken'
 ]
 
-function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modalSvc, _nombreModalConst, _tS, _fS, decodeToken){
-    let accion = JSON.parse(localStorage.getItem("accion"));
-    if (accion === null) {
-        location.href = "/Home/Index";
-        return
-    } else {
-        $scope.accion = accion[0]; 
+function facturaVentaCtrl($rootScope, $scope, $filter, _mS, _commonSvc, _docVentaSvc, _modalSvc, _nombreModalConst, _tS, _fS, decodeToken) {
+    // let accion = JSON.parse(localStorage.getItem("accion"));
+    // if (accion === null) {
+    //     location.href = "/Home/Index";
+    //     return
+    // } else {
+    //     $scope.accion = accion[0]; 
+    // }
+    console.log($rootScope.ventaPermiso)
+
+
+    const TIPO_DOC_FV = _commonSvc.tipoDoc['FV'];
+    const PERMISSION_KEY_ACTIONS = {
+        E: 'E',
+        A: 'A',
     }
 
-   
-    const TIPO_DOC_FV = _commonSvc.tipoDoc['FV'];
 
     $scope.dataSearch = {
         pageIndex: 1,
@@ -42,17 +48,21 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
 
     //Remove Focus new invoice 
     let btnNewInvoice = document.getElementById("btnNewInvoice");
-    btnNewInvoice.addEventListener("click", ()=>{
-        btnNewInvoice.blur();            
+    btnNewInvoice.addEventListener("click", () => {
+        btnNewInvoice.blur();
     })
 
 
 
+
+
     $scope.getTotales = () => {
-        let total = 0, totalAbono = 0, totalSaldo = 0;
+        let total = 0,
+            totalAbono = 0,
+            totalSaldo = 0;
         for (let val of $scope.facturas) {
-            if(val.estadoFinanciero!=='Anulada'){
-                total      += val.total;
+            if (val.estadoFinanciero !== 'Anulada') {
+                total += val.total;
                 totalAbono += val.abono;
                 totalSaldo += val.saldo;
             }
@@ -65,48 +75,48 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
 
 
 
-    $scope.getFacturas = async()=>{
-    
+    $scope.getFacturas = async () => {
+
         try {
-            showLoader();   
-            if($scope.dataSearch.checkBoxCliente ||
-                $scope.dataSearch.checkBoxFecha || 
-                $scope.dataSearch.checkBoxUsuario || 
-                $scope.dataSearch.checkBoxEstado){              
-                    $scope.dataSearch.checkBoxDefault = false
-                }else{                                
-                    $scope.dataSearch.checkBoxDefault = true;
-                }                 
-                
-            await _mS.getData('get', '/FacturaVenta/Get?json=' + JSON.stringify($scope.dataSearch)).then(response=>{                
+            showLoader();
+            if ($scope.dataSearch.checkBoxCliente ||
+                $scope.dataSearch.checkBoxFecha ||
+                $scope.dataSearch.checkBoxUsuario ||
+                $scope.dataSearch.checkBoxEstado) {
+                $scope.dataSearch.checkBoxDefault = false
+            } else {
+                $scope.dataSearch.checkBoxDefault = true;
+            }
+
+            await _mS.getData('get', '/FacturaVenta/Get?json=' + JSON.stringify($scope.dataSearch)).then(response => {
                 $scope.facturas = []
-                if(response.code==='0'){
+                if (response.code === '0') {
                     console.warn(response)
                     return
 
                 }
-                $scope.facturas = JSON.parse(response.payload) || [];   
+                $scope.facturas = JSON.parse(response.payload) || [];
                 $scope.cloneFacturas = JSON.parse(JSON.stringify($scope.facturas));
-                $scope.getTotales();             
+                $scope.getTotales();
             })
-            
+
         } catch (error) {
 
             console.log(error)
 
-        }finally{
+        } finally {
             hideLoader();
         }
-    }    
+    }
 
 
 
-    $scope.initiload = ()=>{
-        _commonSvc.getEstabAsign().then(response=>{            
+    $scope.initiload = () => {
+        _commonSvc.getEstabAsign().then(response => {
             $scope.establecimientos = response;
-            let codEstab = $scope.establecimientos.length>0? $scope.establecimientos[0].codEstab: 0;            
-            $scope.dataSearch.codEstab = codEstab;            
-            $scope.getFacturas();            
+            let codEstab = $scope.establecimientos.length > 0 ? $scope.establecimientos[0].codEstab : 0;
+            $scope.dataSearch.codEstab = codEstab;
+            $scope.getFacturas();
         })
     }
     $scope.initiload();
@@ -121,35 +131,38 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
         $scope.parametersPrint = {
             ...result.data,
             idDocument: result.data.id,
-            codigo: 'RFPT', 
+            codigo: 'RFPT',
         }
-        
 
-        if(result.payAutomatic==1){
-            if(result.data.esContado){
+
+        if (result.payAutomatic == 1) {
+            if (result.data.esContado) {
                 $scope.openModalRapido(result)
-            }else{
+            } else {
                 $scope.openModalCobroDocumento(result)
             }
-            return 
+            return
         }
 
-        if(result.printerAutomatic==1){
+        if (result.printerAutomatic == 1) {
             _commonSvc.getPrinter(JSON.stringify($scope.parametersPrint))
         }
 
         $scope.getFacturas();
-        
+
         //Focus New Invoice
         btnNewInvoice.focus();
     }
 
-    $scope.openModalInvoiceNew = async()=>{
-      
-        
-        let {MODAL_FILE_CTRL, MODAL_NUEVO} = _nombreModalConst.factura_venta;
+    $scope.openModalInvoiceNew = async () => {
+
+
+        let {
+            MODAL_FILE_CTRL,
+            MODAL_NUEVO
+        } = _nombreModalConst.factura_venta;
         let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_NUEVO['controller']];
-        let template   = MODAL_NUEVO['template'];
+        let template = MODAL_NUEVO['template'];
         let params = {
             dataForm: await _docVentaSvc.initiload(),
             TIPO_REGISTRO: 'NUEVO'
@@ -162,43 +175,52 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
             params,
             windowClass: 'uibModalFullScreen'
         })
-        
-        modalRef.result.then(result=>{  
-            
-            if(typeof result !=='object') return                
-            
+
+        modalRef.result.then(result => {
+
+            if (typeof result !== 'object') return
+
             $scope.validateOperationPrintAndPayment(result)
         })
 
 
     }
 
-    
-    $scope.openModalFiltro = async()=>{
-        let {MODAL_FILE_CTRL, MODAL_FILTRO} = _nombreModalConst.factura_venta;
+
+    $scope.openModalFiltro = async () => {
+        let {
+            MODAL_FILE_CTRL,
+            MODAL_FILTRO
+        } = _nombreModalConst.factura_venta;
         let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_FILTRO['controller']];
-        let template   = MODAL_FILTRO['template'];
+        let template = MODAL_FILTRO['template'];
         let params = {
             dataSearch: $scope.dataSearch,
             clienteFiltro: $scope.clienteFiltro,
             usuarioSearchFiltro: $scope.usuarioSearchFiltro,
             mes: $scope.mes
         }
-        
+
         let modalRef = _modalSvc.openModalCustom({
             controller,
             template,
             params,
-            size:'lg'
+            size: 'lg'
         })
-        
-        modalRef.result.then(result=>{
-            let {dataSearch, clienteFiltro, usuarioSearchFiltro, mes, isSearch} = result;
+
+        modalRef.result.then(result => {
+            let {
+                dataSearch,
+                clienteFiltro,
+                usuarioSearchFiltro,
+                mes,
+                isSearch
+            } = result;
             $scope.dataSearch = dataSearch;
             $scope.clienteFiltro = clienteFiltro;
-            $scope.usuarioSearchFiltro =  usuarioSearchFiltro;
+            $scope.usuarioSearchFiltro = usuarioSearchFiltro;
             $scope.mes = mes;
-            if(isSearch){
+            if (isSearch) {
                 $scope.getFacturas();
             }
         })
@@ -225,7 +247,7 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
         }
         // facturas = facturas.filter(item=>item.estadoFinanciero!=='Anulada');
         $scope.facturas = $filter("filter")(facturas, $scope.textSearch);
-        $scope.getTotales();        
+        $scope.getTotales();
     }
 
 
@@ -235,28 +257,31 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
      * @returns 
      */
 
-    $scope.getDataDocumento = (id)=>{
+    $scope.getDataDocumento = (id) => {
         return _commonSvc.getDataTipoDocVenta({
             id,
             codigoDocumento: TIPO_DOC_FV.codigo
         })
     }
-    
 
-    $scope.openModalDetalle = async(item)=>{
-        let {MODAL_FILE_CTRL, MODAL_DETALLE} = _nombreModalConst.factura_venta;
+
+    $scope.openModalDetalle = async (item) => {
+        let {
+            MODAL_FILE_CTRL,
+            MODAL_DETALLE
+        } = _nombreModalConst.factura_venta;
         let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_DETALLE['controller']];
-        let template   = MODAL_DETALLE['template'];
-        
+        let template = MODAL_DETALLE['template'];
+
         let response = await $scope.getDataDocumento(item.idFactura);
 
-        if(!response.isComplete) return
+        if (!response.isComplete) return
 
         let params = {
             TIPO_REGISTRO: 'DETALLE',
             data: response
         }
-        
+
         $scope.openModalInvoiceParam({
             controller,
             template,
@@ -264,17 +289,26 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
         })
     }
 
-    $scope.openModalInvoiceEdit = async(item)=>{
+    $scope.openModalInvoiceEdit = async (item) => {
         try {
+            let result = await _commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.E);
+            if (result.code === "2") {
+                _commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.E);
+                return
+            }
+
             showLoader();
-            let {MODAL_FILE_CTRL, MODAL_EDITAR} = _nombreModalConst.factura_venta;
+            let {
+                MODAL_FILE_CTRL,
+                MODAL_EDITAR
+            } = _nombreModalConst.factura_venta;
             let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_EDITAR['controller']];
-            let template   = MODAL_EDITAR['template'];
+            let template = MODAL_EDITAR['template'];
 
             let response = await $scope.getDataDocumento(item.idFactura);
 
-            if(!response.isComplete) return
-            
+            if (!response.isComplete) return
+
             let params = {
                 TIPO_REGISTRO: 'EDITAR',
                 data: response
@@ -285,31 +319,44 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
                 size: 'xl',
                 params,
                 windowClass: 'uibModalFullScreen'
-            }).result.then(result=>{
-                if(typeof result==='object' && result.isUpdate){
+            }).result.then(result => {
+                if (typeof result === 'object' && result.isUpdate) {
+
+                    //Una vez actualizado el documento 
+                    console.log(_commonSvc.getPermisos())
+                    let {
+                        additional
+                    } = $scope.jsonPermission;
+                    if (typeof $scope.jsonPermission === 'object' && additional.requestAuthorizationKey.requestKey) {
+                        _commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.E);
+                    }
+
                     $scope.getFacturas();
                 }
             })
         } catch (error) {
-         
+
             console.log(error)
-        }finally{
+        } finally {
             hideLoader();
-        }        
+        }
     }
 
 
-    $scope.openModalInvoiceDuplicate = async(item)=>{
+    $scope.openModalInvoiceDuplicate = async (item) => {
         try {
             showLoader();
-            let {MODAL_FILE_CTRL, MODAL_DUPLICAR} = _nombreModalConst.factura_venta;
+            let {
+                MODAL_FILE_CTRL,
+                MODAL_DUPLICAR
+            } = _nombreModalConst.factura_venta;
             let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_DUPLICAR['controller']];
-            let template   = MODAL_DUPLICAR['template'];
+            let template = MODAL_DUPLICAR['template'];
 
             let response = await $scope.getDataDocumento(item.idFactura);
 
-            if(!response.isComplete) return
-            
+            if (!response.isComplete) return
+
             let params = {
                 TIPO_REGISTRO: 'DUPLICAR',
                 data: response
@@ -322,23 +369,28 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
                 size: 'xl',
                 params,
                 windowClass: 'uibModalFullScreen'
-            }).result.then(result=>{  
+            }).result.then(result => {
 
-                if(typeof result !=='object') return                
-            
-                $scope.validateOperationPrintAndPayment(result)                                                                    
+                if (typeof result !== 'object') return
+
+                $scope.validateOperationPrintAndPayment(result)
             })
-            
+
         } catch (error) {
-         
+
             console.log(error)
-        }finally{
+        } finally {
             hideLoader();
-        }        
+        }
 
     }
 
-    $scope.openModalInvoiceParam = ({controller, template, size='xl', params})=>{
+    $scope.openModalInvoiceParam = ({
+        controller,
+        template,
+        size = 'xl',
+        params
+    }) => {
 
         _modalSvc.openModalCustom({
             controller,
@@ -346,9 +398,9 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
             size,
             params,
             windowClass: 'uibModalFullScreen'
-        }).result.then(result=>{  
-                   
-            if(typeof result==='object'){
+        }).result.then(result => {
+
+            if (typeof result === 'object') {
                 $scope.getFacturas();
             }
         })
@@ -356,17 +408,19 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
     }
 
 
-    $scope.askToDelete = async(item)=>{
+    $scope.askToDelete = async (item) => {
         try {
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
-                  confirmButton: 'btn btn-success',
-                  cancelButton: 'btn btn-danger ml-2'
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger ml-2'
                 },
                 buttonsStyling: false
             })
-              
-            let {isConfirmed} = await  swalWithBootstrapButtons.fire({
+
+            let {
+                isConfirmed
+            } = await swalWithBootstrapButtons.fire({
                 title: '<small>Anular Factura?</small>',
                 html: `<small>Esta Ud. seguro/a de anular este Factura de Venta <b>N° ${item.nroFactura}</b></small>?`,
                 icon: 'warning',
@@ -375,57 +429,50 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
                 cancelButtonText: 'No, cancelar!',
                 reverseButtons: false
             })
-    
-            if(isConfirmed){
-                Swal.fire({
-                    title: `<small>Espere</small>`,
-                    html: 'Anulando...',
-                    allowOutsideClick: false,
-                    showConfirmButton: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                        _mS.getData('delete', '/FacturaVenta/Delete?id=' + item.idFactura).then(response=> {
-                            
-                            if (response.code === "0") {
-                                _fS.sweetAlert('warning', response.message, response.titleSms);
-                            }
-                            if (response.code === "1") {
-                                _fS.sweetAlert('success', response.message, response.titleSms, 1000);
-                                $scope.getFacturas();
-                            }
-                        })
+
+            if (isConfirmed) {
+                showLoader();
+                _mS.getData('delete', 'Factura/' + item.idFactura, null, true).then(response => {
+
+                    if (response.code === "0") {
+                        hideLoader();
+                        _fS.sweetAlert('warning', response.message, response.titleSms);
                     }
+                    if (response.code === "1") {
+                        hideLoader();
+                        _fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                        $scope.getFacturas();
+                    }
+                }).catch(error => {
+                    hideLoader();
                 })
             }
         } catch (error) {
-            Swal.close();
+            hideLoader();
             console.log(error)
-        }finally{
-
         }
-
     }
 
 
 
-    $scope.getReport = function (item) {           
+    $scope.getReport = function (item) {
         showLoader();
         let format = 'pdf';
         let dataParms = {
-            id: item.idFactura,            
+            id: item.idFactura,
             codEstab: item.codEstab,
-            codigo: 'RF', 
-            format,            
+            codigo: 'RF',
+            format,
         }
 
-        let parameters = {               
+        let parameters = {
             dataParams: JSON.stringify(dataParms)
         }
 
         _commonSvc.getReportDynamic({
             parameters,
             format
-        })              
+        })
     }
 
 
@@ -433,7 +480,7 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
 
     //--------------------------------------------------COBROS----------
 
-    $scope.opcionCobro = (item)=>{
+    $scope.opcionCobro = (item) => {
         if (item.estadoFinanciero === "Cobrada") {
             _fS.sweetAlert('warning', '<small>Este documento ya se encuentra cobrada!</small>')
             return
@@ -441,21 +488,21 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
 
         let params = {
             data: {
-                ...item,                
+                ...item,
                 id: item.idFactura,
                 codEstab: item.codEstab,
                 nroFactura: item.nroFactura,
-                esContado: item.tipo,                
+                esContado: item.tipo,
                 razonSocialComprador: item.nombreFiscal,
                 identificacionComprador: item.nroIdentificacion,
-                nroDocumento: item.nroFactura,                  
-            }  ,
-            TIPO_DOC: TIPO_DOC_FV                                  
+                nroDocumento: item.nroFactura,
+            },
+            TIPO_DOC: TIPO_DOC_FV
         }
-        
-        if(params.data.esContado){
+
+        if (params.data.esContado) {
             $scope.openModalRapido(params);
-        }else{
+        } else {
             $scope.openModalCobroDocumento(params)
         }
     }
@@ -463,16 +510,19 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
 
 
 
-    $scope.openModalCobroDocumento = async(params)=>{
-        let {MODAL_FILE_CTRL, MODAL_COBRO_DOCUMENTO} = _nombreModalConst.cobro;
+    $scope.openModalCobroDocumento = async (params) => {
+        let {
+            MODAL_FILE_CTRL,
+            MODAL_COBRO_DOCUMENTO
+        } = _nombreModalConst.cobro;
         let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_COBRO_DOCUMENTO['controller']];
-        let template   = MODAL_COBRO_DOCUMENTO['template'];
+        let template = MODAL_COBRO_DOCUMENTO['template'];
 
         $scope.openModalCobro({
             controller,
             template,
             params,
-            size:'xl'
+            size: 'xl'
         })
     }
 
@@ -482,11 +532,14 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
      * 
      * @param {object} params 
      */
-    $scope.openModalRapido = async(params)=>{
-        
-        let {MODAL_FILE_CTRL, MODAL_COBRO_RAPIDO} = _nombreModalConst.cobro;
+    $scope.openModalRapido = async (params) => {
+
+        let {
+            MODAL_FILE_CTRL,
+            MODAL_COBRO_RAPIDO
+        } = _nombreModalConst.cobro;
         let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_COBRO_RAPIDO['controller']];
-        let template   = MODAL_COBRO_RAPIDO['template'];
+        let template = MODAL_COBRO_RAPIDO['template'];
 
         $scope.openModalCobro({
             controller,
@@ -501,7 +554,12 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
      * @param {object} param0 
      */
 
-    $scope.openModalCobro = ({controller, template, size='lg', params})=>{
+    $scope.openModalCobro = ({
+        controller,
+        template,
+        size = 'lg',
+        params
+    }) => {
         let $modalRef = _modalSvc.openModalCustom({
             controller,
             template,
@@ -510,119 +568,125 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
             keyboard: true
         })
 
-        $modalRef.result.then(result=>{
-           
-            if(typeof result =='object' || $scope.isRegister) {
+        $modalRef.result.then(result => {
+
+            if (typeof result == 'object' || $scope.isRegister) {
                 $scope.getFacturas();
             }
 
             //Cuando el documento es Nuevo o Duplicado 
-            if($scope.isPrintDocument==1){
-            //    $scope.getFacturas();
-                _commonSvc.getPrinter(JSON.stringify($scope.parametersPrint)) 
-                $scope.isPrintDocument= null;
+            if ($scope.isPrintDocument == 1) {
+                //    $scope.getFacturas();
+                _commonSvc.getPrinter(JSON.stringify($scope.parametersPrint))
+                $scope.isPrintDocument = null;
             }
 
             //Focus New Invoice
             btnNewInvoice.focus();
-            $scope.isRegister = false;            
-            $scope.isPrintDocument = false;
+            $scope.isRegister = null;
+            $scope.isPrintDocument = null;
         })
-    }  
+    }
 
 
 
-    $scope.openModalCuota = async(item)=>{
+    $scope.openModalCuota = async (item) => {
         try {
-            let {MODAL_FILE_CUOTA, MODAL_CUOTA_VENTA} = _nombreModalConst.cobro;
+            let {
+                MODAL_FILE_CUOTA,
+                MODAL_CUOTA_VENTA
+            } = _nombreModalConst.cobro;
             let controller = (await import('./../../' + MODAL_FILE_CUOTA))[MODAL_CUOTA_VENTA['controller']];
-            let template   = MODAL_CUOTA_VENTA['template'];
+            let template = MODAL_CUOTA_VENTA['template'];
 
             let params = {}
-            
+
             let response = await _mS.getData('get', `/CuotaXCobrar/GetByDocument?idComprobante=${item.idFactura}&idTipoDoc=${TIPO_DOC_FV.idTipoDocumento}`)
 
-            if(response.id==="0"){
+            if (response.id === "0") {
                 _fS.sweetAlert('warning', response.message, response.titleSms)
                 return
             }
 
-            if(response.id==="1"){
+            if (response.id === "1") {
                 params = {
                     cuotas: response.data,
                     data: {
-                        ...item,                
+                        ...item,
                         id: item.idFactura,
                         codEstab: item.codEstab,
                         nroFactura: item.nroFactura,
-                        esContado: item.tipo,                
+                        esContado: item.tipo,
                         razonSocialComprador: item.nombreFiscal,
                         identificacionComprador: item.nroIdentificacion,
-                        nroDocumento: item.nroFactura,                  
-                    }  ,
-                    TIPO_DOC: TIPO_DOC_FV                                  
+                        nroDocumento: item.nroFactura,
+                    },
+                    TIPO_DOC: TIPO_DOC_FV
                 }
             }
-        
+
 
             let $modalRef = _modalSvc.openModalCustom({
                 controller,
                 template,
-                size:'xl',
+                size: 'xl',
                 params
             })
 
-            $modalRef.result.then(result=>{
-                if(typeof result==='object'){
+            $modalRef.result.then(result => {
+                if (typeof result === 'object') {
                     $scope.getFacturas();
                 }
-            }) 
+            })
         } catch (error) {
-            
-        }       
+
+        }
     }
 
 
-    $scope.openModalHistorialCobro = async(item)=>{
+    $scope.openModalHistorialCobro = async (item) => {
         try {
-            let {MODAL_FILE_HISTORIAL_COBRO, MODAL_HISTORIAL_COBRO} = _nombreModalConst.cobro;
-            let controller = (await import('./../../' + MODAL_FILE_HISTORIAL_COBRO))[MODAL_HISTORIAL_COBRO['controller']] ;
-            let template   = MODAL_HISTORIAL_COBRO['template'];
+            let {
+                MODAL_FILE_HISTORIAL_COBRO,
+                MODAL_HISTORIAL_COBRO
+            } = _nombreModalConst.cobro;
+            let controller = (await import('./../../' + MODAL_FILE_HISTORIAL_COBRO))[MODAL_HISTORIAL_COBRO['controller']];
+            let template = MODAL_HISTORIAL_COBRO['template'];
             let params = {}
-            
 
-            await _mS.getData('get', `/ComprobanteIngreso/GetByDocument?idTipoDocumento=${TIPO_DOC_FV.idTipoDocumento}&idComprobante=${item.idFactura}`).then(response => {                                
-                if(response.id===null){
-                    _fS.sweetAlert('error', "Ups! algo salio mal <i class='far fa-frown'></i>!", response.titleSms); 
+
+            await _mS.getData('get', `/ComprobanteIngreso/GetByDocument?idTipoDocumento=${TIPO_DOC_FV.idTipoDocumento}&idComprobante=${item.idFactura}`).then(response => {
+                if (response.id === null) {
+                    _fS.sweetAlert('error', "Ups! algo salio mal <i class='far fa-frown'></i>!", response.titleSms);
                     return
                 }
-                if (response.id == "0") {                
-                    _fS.sweetAlert('warning', response.message, response.titleSms);                   
+                if (response.id == "0") {
+                    _fS.sweetAlert('warning', response.message, response.titleSms);
                     throw response
                 }
-                
-                if(response.id==="1"){
+
+                if (response.id === "1") {
                     params = {
                         historialCobros: response.data,
                         data: {
-                            ...item,                
+                            ...item,
                             id: item.idFactura,
                             codEstab: item.codEstab,
                             nroFactura: item.nroFactura,
-                            esContado: item.tipo,                
+                            esContado: item.tipo,
                             razonSocialComprador: item.nombreFiscal,
                             identificacionComprador: item.nroIdentificacion,
-                            nroDocumento: item.nroFactura,                  
+                            nroDocumento: item.nroFactura,
                         },
                         TIPO_DOC: TIPO_DOC_FV
                     }
                 }
             })
-            
+
             let $modalRef = _modalSvc.openModalCustom({
                 controller,
                 template,
-                size:'xl',
+                size: 'xl',
                 params
             })
         } catch (error) {
@@ -640,26 +704,24 @@ function facturaVentaCtrl($scope, $filter, _mS, _commonSvc, _docVentaSvc, _modal
 
 
 
-    $scope.print = function (item) {               
-        let parameters = {           
+    $scope.print = function (item) {
+        let parameters = {
             idDocument: item.idFactura,
-            idTipoDocumento : item.idTipoDocumento,
+            idTipoDocumento: item.idTipoDocumento,
             codEstab: item.codEstab,
             codDoc: TIPO_DOC_FV.codigo,
-            nroIdentificacion : item.nroIdentificacion,
-        }        
+            nroIdentificacion: item.nroIdentificacion,
+        }
 
         _commonSvc.askToPrint({
             parameters: JSON.stringify(parameters)
         })
-        
+
     }
 
 
-    
+
 
 
 
 }
-
-

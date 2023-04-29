@@ -1,10 +1,9 @@
 ﻿using DataAccess;
-using Domain.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using DataAccess.Almacen;
+using Domain.Models;
 using Domain.Models.Almacen;
 using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers
 {
@@ -12,9 +11,9 @@ namespace WebUI.Controllers
     {
         // GET: Modelo
         private readonly IConfiguration _configuration;
-         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
+        ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
-        
+
         GenericResponse _gr = new();
         private ModeloDao _m;
 
@@ -24,12 +23,12 @@ namespace WebUI.Controllers
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
             _m = new ModeloDao(_configuration);
-            
-            
+
+
         }
 
 
-        
+
         public IActionResult Index()
         {
             return View();

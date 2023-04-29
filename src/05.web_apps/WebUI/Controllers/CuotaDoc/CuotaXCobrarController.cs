@@ -1,11 +1,10 @@
 ﻿using DataAccess.CuotasXCobrar;
 using Domain.Models.CuotaDocumento;
 using Domain.ViewModels.CuotaDocumento;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.CuotaDoc
-{ 
+{
     public class CuotaXCobrarController : Controller
     {
         private readonly IConfiguration _configuration;
@@ -16,7 +15,7 @@ namespace WebUI.Controllers.CuotaDoc
             _configuration = configuration;
             _cxc = new CuotaXCobrarDao(_configuration);
         }
-        
+
         public IActionResult Index()
         {
             return View();
@@ -26,7 +25,7 @@ namespace WebUI.Controllers.CuotaDoc
         {
             int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _cxc.InsertAsync(idRol, data);
-            return Ok(res); 
+            return Ok(res);
         }
 
         [HttpPost]
@@ -51,7 +50,7 @@ namespace WebUI.Controllers.CuotaDoc
             return Ok(res);
         }
 
-      
+
 
     }
 }

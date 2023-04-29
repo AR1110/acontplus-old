@@ -7,12 +7,12 @@
         chequeCtrl.$inject=['$scope','$http', '$filter', 'mainService', 'commonService', 'toastService', 'formulario'];
 
     function chequeCtrl($scope, $http, $filter, _mS, commonSvc, toast, form){     
-        let accion = JSON.parse(localStorage.getItem("accion"));
-        if(accion===null){
-            location.href = "/Home/Index";
-        }else{
-            $scope.accion = accion[0];
-        }
+        // let accion = JSON.parse(localStorage.getItem("accion"));
+        // if(accion===null){
+        //     location.href = "/Home/Index";
+        // }else{
+        //     $scope.accion = accion[0];
+        // }
 
         $scope.cheques = [];
 
@@ -309,8 +309,7 @@
                 })
             }
 
-            commonSvc.getReport({
-                url: '/Reporte/Download',
+            commonSvc.getReport({                
                 parameters,
                 formatType
             })    

@@ -1,12 +1,12 @@
-﻿using DataAccess.Compras;
+﻿using Common.Logs;
+using DataAccess;
+using DataAccess.Almacen;
+using DataAccess.Compras;
 using Domain.Models;
 using Domain.ViewModels.Compras;
-using Microsoft.AspNetCore.Mvc;
-using DataAccess.Almacen;
-using DataAccess;
 using Helpers;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Common.Logs;
 
 namespace WebUI.Controllers.Compras
 {

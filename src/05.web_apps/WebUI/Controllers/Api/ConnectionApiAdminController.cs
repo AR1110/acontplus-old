@@ -17,7 +17,7 @@ namespace WebUI.Controllers.Api
 
             string urlApi = string.Empty;
 #if DEBUG
-            urlApi = typeUrl==1? "https://localhost:44354/" : "https://localhost:7224/";
+            urlApi = typeUrl == 1 ? "https://localhost:44354/" : "https://localhost:7224/";
 #else
             urlApi = typeUrl==1? "http://206.72.196.229:81/": "http://206.72.196.229:83/";
             //urlApi = typeUrl==1? "http://205.209.99.71:8090/" : "http://206.72.196.229:83/";

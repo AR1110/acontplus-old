@@ -51,6 +51,9 @@ BEGIN
 	DECLARE @inventory AS VARCHAR(5)
 	DECLARE @serieComprobante AS VARCHAR(20)
 	DECLARE @fechaEmision AS DATETIME
+	
+	DECLARE @fecha DATETIME 
+	DECLARE @hora DATETIME
 
 	--==============Parametros para el area de contabilidad============
 	DECLARE @idEstadoPago AS INT
@@ -94,18 +97,24 @@ BEGIN
         ,valor NUMERIC(18,5) NOT NULL
 	)
 
+	SELECT 
+		 @fecha = CAST(fechaEmision as date)
+		,@hora  = CAST(dbo.ufnGetDateEcuador() AS time)
+	FROM OPENJSON(@comprobante)
+	WITH(fechaEmision DATETIME '$.fechaEmision')
+
 	BEGIN TRY
 
 		INSERT INTO @document 
 		      (idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,fechaEmision,totalSinImpuestos,importeTotal,inventory)
-		SELECT idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,fechaEmision,totalSinImpuestos,importeTotal,inventory
+		SELECT idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,@fecha+@hora,totalSinImpuestos,importeTotal,inventory
 		FROM OPENJSON(@comprobante)
 		WITH (idEstablecimiento INT '$.idEstablecimiento' 
 			 ,idPuntoEmision INT '$.idPuntoEmision'
 			 ,idProveedor INT '$.idProveedor' 
 			 ,estab VARCHAR(5) '$.estab' 
 			 ,ptoEmi VARCHAR(5) '$.ptoEmi' 
-			 ,fechaEmision DATETIME '$.fechaEmision'
+		--	 ,fechaEmision DATETIME '$.fechaEmision'
 			 ,totalSinImpuestos NUMERIC (18,5) '$.totalSinImpuestos'
 			 ,importeTotal NUMERIC (18,5) '$.importeTotal'
 			 ,inventory VARCHAR(5) '$.inventory'

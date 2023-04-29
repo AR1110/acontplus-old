@@ -1,8 +1,5 @@
 
 
-
-
-
 USE AcontPlus;
 
 IF OBJECT_ID('Config.UserPermission_Get') IS NOT NULL
@@ -24,9 +21,7 @@ BEGIN
 		idUsuarioRol INT '$.idUsuarioRol'
 	)
 
-	BEGIN 
-		
-
+	
 	IF EXISTS(SELECT 1 FROM Config.UserPermission WHERE idUsuarioRol = @idUsuarioRol)
 		BEGIN 
 			SELECT 

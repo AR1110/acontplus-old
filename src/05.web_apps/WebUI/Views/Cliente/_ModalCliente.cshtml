@@ -59,6 +59,17 @@
                                 </div>                               
                             </div>
                         </div>
+
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label>Dirección</label>
+                                    @* <textarea class="form-control border-select" touppercase ng-model="$ctrl.data.direccion"
+                                        rows="0" placeholder="Av. 09 de Octubre..."></textarea> *@
+                                        <input type="text" class="form-control border-select" ng-model="$ctrl.data.direccion" touppercase placeholder="AV. 09 DE OCTUBRE..." ng-disabled="$ctrl.data.validationSri">
+                                </div>
+                            </div>
+                        </div>
                        
                         <div class="row">
                             <div class="col-xl-6 col-md-6 col-sm-6 col-xs-12">
@@ -70,10 +81,10 @@
                                         </span>
                                     </label>
                                     <md-chips ng-model="$ctrl.correos" md-add-on-blur="true"
-                                        ng-keyup="$ctrl.onKeyupEmail($event)"
+                                        ng-keyup="$ctrl.onKeyupEmail($event)"   
                                         md-transform-chip="$ctrl.transformChipEmail($chip)" md-removable="true"
                                         md-enable-chip-edit="true" placeholder="Ej: maxi@gmail.com"
-                                        input-aria-label="Correos"></md-chips>
+                                        input-aria-label="Correos" tabindex="-1"></md-chips>
                                     <small></small>
                                 </div>
                             </div>
@@ -86,23 +97,14 @@
                                         </span>
                                     </label>
                                     <md-chips ng-model="$ctrl.telefonos" md-add-on-blur="true"
-                                        md-transform-chip="$ctrl.transformChip($chip)" md-removable="true"
+                                        md-transform-chip="$ctrl.transformChipTelefono($chip)" md-removable="true"
                                         md-enable-chip-edit="true" placeholder="Ej: 0959889744"
-                                        input-aria-label="Número de teléfonos"></md-chips>
+                                        input-aria-label="Número de teléfonos" tabindex="-1"></md-chips>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                <div class="form-group">
-                                    <label>Dirección</label>
-                                    @* <textarea class="form-control border-select" touppercase ng-model="$ctrl.data.direccion"
-                                        rows="0" placeholder="Av. 09 de Octubre..."></textarea> *@
-                                        <input type="text" class="form-control border-select" ng-model="$ctrl.data.direccion" touppercase placeholder="AV. 09 DE OCTUBRE..." ng-disabled="$ctrl.data.validationSri">
-                                </div>
-                            </div>
-                        </div>
+                        
 
                         <div class="row" ng-if="$ctrl.showEstado">
                             <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">

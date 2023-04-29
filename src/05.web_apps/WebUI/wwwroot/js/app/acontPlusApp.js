@@ -1,6 +1,4 @@
-﻿
-
-const swalOffline = () => {
+﻿const swalOffline = () => {
     Swal.fire({
         html: `<small>Esperando la conexión...</small>`,
         imageUrl: "/assets/images/offline.webp",
@@ -64,8 +62,8 @@ app.config(disableLogging)
 
 
 /**************************************************************************
-  * Log bootstrap message
-  *************************************************************************/
+ * Log bootstrap message
+ *************************************************************************/
 
 function confirmBootstrap($log) {
     $log.debug('Angular bootstrapped!')
@@ -75,9 +73,11 @@ confirmBootstrap.$inject = ['$log']
 
 app.run(confirmBootstrap)
 
+
+
 /**************************************************************************
-   * Make environment available in Angular
-   *************************************************************************/
+ * Make environment available in Angular
+ *************************************************************************/
 
 app.constant('__env', __env)
 
@@ -193,12 +193,22 @@ app.factory('authInterceptorService', function ($q, $localStorage, jwtHelper) {
         config.headers = config.headers || {}
         let authData = $localStorage.currentUser
         if (authData) {
+            if (!authData.token) {
+                alertEndSession()
+                return
+            }
             config.headers.Authorization = 'Bearer ' + authData.token
             let decodedJwt = jwtHelper.decodeToken(authData.token)
             //console.log(decodedJwt)
-            const expiration = Number(decodedJwt?.exp)
-            const currentTime = Math.floor(Date.now() / 1000); // convert to seconds
+            const expiration = Number(decodedJwt.exp)
+            let newDate = moment.tz(new Date(), "America/Guayaquil")
+            //console.log(newDate)
+            const currentTime = Math.floor(new Date(newDate) / 1000); // convert to seconds
+            // console.log(currentTime)
+            // console.log(expiration)
+
             if (expiration < currentTime) {
+                //console.log('yes')
                 alertEndSession()
             }
             config.headers['X-IdUsuarioRol'] = decodedJwt.idUsuarioRol
@@ -303,7 +313,10 @@ function mainService($http, Upload, __env) {
     function _getDataFile(url, file, data = null, forApi = false) {
         return Upload.upload({
             url: (forApi) ? __env.apiUrl + url : url,
-            data: { file: file, data: data },
+            data: {
+                file: file,
+                data: data
+            },
         }).then(response => {
             return response.data
         })
@@ -352,7 +365,7 @@ function modalService($uibModal) {
         openModal: function (controller, template, size, params, animation = true, windowClass = null, props = {}) {
             return $uibModal.open({
                 animation,
-                templateUrl: `/Home/RenderView?name=~/Views/${template || '~/Views/Shared/ModalNotFound.cshtml'}`,
+                templateUrl: `/Home/RenderView?name=~/Views/${template}`,
                 controller: controller,
                 size,
                 windowClass,
@@ -378,11 +391,24 @@ function modalService($uibModal) {
          * @param {object} params {controller, template, size, params, keyboard=false, animation = true, windowClass = null, scope, props = {}}
          * @returns object 
          */
-        openModalCustom: function ({ controller, template, size, params, keyboard = false, animation = true, windowClass = null, windowTopClass, openedClass, scope, props = {}, isRenderRazorPartial = false }) {
+        openModalCustom: function ({
+            controller,
+            template,
+            size,
+            params,
+            keyboard = false,
+            animation = true,
+            windowClass = null,
+            windowTopClass,
+            openedClass,
+            scope,
+            props = {},
+            isRenderRazorPartial = false
+        }) {
 
             return $uibModal.open({
                 animation,
-                templateUrl: isRenderRazorPartial ? `/Home/RenderView?name=${template}` : `/Home/RenderView?name=~/Views/${template || 'Shared/ModalNotFound.cshtml'}`,
+                templateUrl: isRenderRazorPartial ? `/Home/RenderView?name=${template}` : `/Home/RenderView?name=~/Views/${template}`,
                 controller,
                 controllerAs: '$ctrl',
                 scope,
@@ -409,7 +435,7 @@ function modalService($uibModal) {
         openModalSecond: function (controller, template, size, params, animation = true, windowClass = null, $scope, props = {}) {
             return $uibModal.open({
                 animation,
-                templateUrl: `/Home/RenderView?name=~/Views/${template || '~/Views/Shared/ModalNotFound.cshtml'}`,
+                templateUrl: `/Home/RenderView?name=~/Views/${template}`,
                 controller,
                 controllerAs: '$ctrl',
                 scope: $scope,
@@ -798,7 +824,12 @@ app.filter('tipoEmisionSri', function ($sce) {
 //Filter tipo Iva 
 app.filter('mapTipoIva', () => {
     return function (idTipoIva, tipoIvas) {
-        let result = tipoIvas.reduce((acc, curr) => ({ ...acc, [curr.idTipoIva]: curr.descripcion }), { 0: 'Tipo Iva' });
+        let result = tipoIvas.reduce((acc, curr) => ({
+            ...acc,
+            [curr.idTipoIva]: curr.descripcion
+        }), {
+            0: 'Tipo Iva'
+        });
         return !idTipoIva ? result[0] : result[idTipoIva];
     }
 });
@@ -889,14 +920,130 @@ app.directive('stopEvent', function () {
     };
 });
 
+
+//Permiso Update Artcicle
+app.directive('updateArticle', function ($rootScope) {
+    return {
+
+        link: function (scope, element, attrs) {
+
+            if (!$rootScope.articlePermission.leer) {
+                element[0].style.display = 'none';
+            }
+
+            if (!$rootScope.articlePermission.editar) {
+                element[0].style.display = 'none';
+            }
+        },
+    }
+})
+
+
+//permiso para ver kardex en documentos de ventas 
+app.directive('viewKardex', function ($rootScope, modalService, nombreModal) {
+    return {
+        scope: {
+            params: "=",
+            btnTitle: "=",
+            sizeBtn: "="
+        },
+        template: ' <a style="cursor:pointer;" ng-if="kardex.view" class= "btn btn-info btn-xs text-white" title="Ver Kardex de Artículo"> <i class="mdi mdi-timetable"></i></a >',
+        link: function (scope, element, attr) {
+            let {
+                ventaPermiso
+            } = $rootScope.usuarioPermiso;
+
+            scope.kardex = ventaPermiso.additional.kardex;
+
+            element.on('click', async function (e) {
+
+                let {
+                    MODAL_CTRL,
+                    MODAL_CSHTML
+                } = nombreModal.kardex;
+
+                const articulo = {
+                    idArticulo: scope.params.idArticulo,
+                    codigo: scope.params.codigo,
+                    descripcion: scope.params.descripcion,
+                }
+
+                const {
+                    ModalKardexCtrl
+                } = await import('./../modal/' + MODAL_CTRL);
+
+                modalService.openModalCustom({
+                    controller: ModalKardexCtrl,
+                    template: MODAL_CSHTML,
+                    size: 'xl',
+                    params: articulo,
+                    windowClass: 'uibModalFullScreen',
+                    isRenderRazorPartial: true
+                })
+
+            })
+        }
+    };
+})
+
+
+app.directive('viewKardexBtn', function (modalService, nombreModal) {
+    return {
+        scope: {
+            params: "=",
+            btnTitle: "=",
+            sizeBtn: "="
+        },
+        link: function (scope, element, attr) {
+
+            element.on('click', async function (e) {
+
+                let {
+                    MODAL_CTRL,
+                    MODAL_CSHTML
+                } = nombreModal.kardex;
+
+                const articulo = {
+                    idArticulo: scope.params.idArticulo,
+                    codigo: scope.params.codigo,
+                    descripcion: scope.params.descripcion,
+                }
+
+                const {
+                    ModalKardexCtrl
+                } = await import('./../modal/' + MODAL_CTRL);
+
+                modalService.openModalCustom({
+                    controller: ModalKardexCtrl,
+                    template: MODAL_CSHTML,
+                    size: 'xl',
+                    params: articulo,
+                    windowClass: 'uibModalFullScreen',
+                    isRenderRazorPartial: true
+                })
+
+            })
+        }
+    };
+})
+
 // app.directive('autoocus')
 
 //Filter bodegas 
 app.filter('mapBodega', () => {
     return function (idBodega, bodegas) {
-        if (!bodegas || bodegas.length === 0) return { 0: 'Seleccionar bodega' }
+        if (!bodegas || bodegas.length === 0) return {
+            0: 'Seleccionar bodega'
+        }
 
-        let result = bodegas.reduce((acc, curr) => ({ ...acc, [curr.idBodega]: curr.descripcion }), { 0: 'Seleccionar bodega' });
+        let result = bodegas.reduce((acc, curr) => ({
+            ...acc,
+            [curr.idBodega]: curr.descripcion
+        }), {
+            0: 'Seleccionar bodega'
+        });
+        console.log(result)
+        console.log(idBodega, bodegas)
         return !idBodega ? result[0] : result[idBodega];
     };
 });
@@ -913,13 +1060,23 @@ app.filter('estadoPago', () => {
 
 app.filter('mapTipoImpuesto', () => {
     return (idTipoImpuesto, tipoImpuestos) => {
-        let result = tipoImpuestos.reduce((acc, curr) => ({ ...acc, [curr.idTipoImpuestoRenta]: curr.descripcion.toUpperCase() }), { 0: 'Seleccione el Tipo Impuesto' })
+        let result = tipoImpuestos.reduce((acc, curr) => ({
+            ...acc,
+            [curr.idTipoImpuestoRenta]: curr.descripcion.toUpperCase()
+        }), {
+            0: 'Seleccione el Tipo Impuesto'
+        })
         return !idTipoImpuesto ? result[0] : result[idTipoImpuesto];
     }
 });
 app.filter('mapRetencionIva', () => {
     return (idRetencionIva, retencionesIvas) => {
-        let result = retencionesIvas.reduce((acc, curr) => ({ ...acc, [curr.idRetencionIva]: curr.descripcion.toUpperCase() }), { 0: 'Seleccione Retención de IVA' })
+        let result = retencionesIvas.reduce((acc, curr) => ({
+            ...acc,
+            [curr.idRetencionIva]: curr.descripcion.toUpperCase()
+        }), {
+            0: 'Seleccione Retención de IVA'
+        })
         return !idRetencionIva ? result[0] : result[idRetencionIva];
     }
 });
@@ -975,5 +1132,3 @@ app.filter('mapTipoIce', () => {
         return result[input]
     }
 })
-
-

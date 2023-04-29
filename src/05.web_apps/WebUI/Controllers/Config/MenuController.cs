@@ -1,8 +1,7 @@
 ﻿using DataAccess;
 using Domain.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers
 {
@@ -17,7 +16,7 @@ namespace WebUI.Controllers
             _configuration = configuration;
             m = new MenuDao(_configuration);
         }
-        
+
         public IActionResult Index()
         {
             return View();
@@ -44,7 +43,7 @@ namespace WebUI.Controllers
             _gr = await m.UpdateAsync(idRol, idMenu, data);
             return Ok(_gr);
         }
-        
+
         public async Task<IActionResult> Delete(int idMenu)
         {
             int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);

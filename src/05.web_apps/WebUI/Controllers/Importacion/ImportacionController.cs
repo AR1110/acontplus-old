@@ -1,8 +1,7 @@
 ﻿using DataAccess;
 using Domain.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Importacion
 {
@@ -10,21 +9,21 @@ namespace WebUI.Controllers.Importacion
     {
         // GET: Articulo
         private readonly IConfiguration _configuration;
-         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
+        ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
-        
+
         GenericResponse _gr = new();
 
         public ImportacionController(IConfiguration configuration)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
-            
-            
+
+
 
         }
 
-        
+
         public IActionResult Index()
         {
             return View();
@@ -47,7 +46,7 @@ namespace WebUI.Controllers.Importacion
             parameters.Add("json", data.jsonParams);
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Importaciones.Valid_Datos_Get", parameters)));
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> Post(string codImportacion, [FromBody] ImportacionParams data)
         {

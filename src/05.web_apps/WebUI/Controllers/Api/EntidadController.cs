@@ -1,7 +1,6 @@
 ﻿using DataAccess.Aplicacion;
 using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Api

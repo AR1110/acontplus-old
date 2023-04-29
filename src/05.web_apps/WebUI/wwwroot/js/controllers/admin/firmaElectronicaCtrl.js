@@ -4,13 +4,13 @@ firmaElectronicaCtrl.$inject = ['$scope', 'mainService', 'toastService'];
 
 function firmaElectronicaCtrl($scope, mS, tS) {
     'use strict';
-    let accion = JSON.parse(localStorage.getItem("accion"));
-    if (accion === null) {
-        location.href = "/Home/Index";
-        return
-    } else {
-        $scope.accion = accion[0];
-    }
+    // let accion = JSON.parse(localStorage.getItem("accion"));
+    // if (accion === null) {
+    //     location.href = "/Home/Index";
+    //     return
+    // } else {
+    //     $scope.accion = accion[0];
+    // }
 
     let url = '/FirmaElectronica/';
 

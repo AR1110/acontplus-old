@@ -135,7 +135,7 @@
       "destination": "wwwroot/lib/angular-filter/"
     },
     {
-      "library": "microsoft-signalr@7.0.3",
+      "library": "microsoft-signalr@7.0.5",
       "destination": "wwwroot/lib/microsoft-signalr/"
     },
     {
@@ -149,6 +149,10 @@
     {
       "library": "angular-media-queries@0.6.1",
       "destination": "wwwroot/lib/angular-media-queries/"
+    },
+    {
+      "library": "tabulator@5.4.4",
+      "destination": "wwwroot/lib/tabulator/"
     }
   ]
 }

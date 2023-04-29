@@ -31,16 +31,18 @@
            
         </div>
         <div class="col-xl-6 col-lg-6 col-md-5 col-sm-12 col-xs-12">
-            <div class="form-group">
-                <div class="input-group">
-                    <input type="text" class="form-control border-select" ng-model="$ctrl.dataSearch.bySearch" ng-keyup="$ctrl.searchFilterLocal()" placeholder="Buscar">
-                    <div class="input-group-append">
-                        <button type="button" class="btn btn-secondary" ng-click="$ctrl.reloadMovimientoCaja()">
-                            <i class="fa fa-redo"></i>
-                        </button>
+            <form autocomplete="off">
+                <div class="form-group">
+                    <div class="input-group">
+                        <input type="text" class="form-control border-select" ng-model="$ctrl.dataSearch.bySearch" ng-keyup="$ctrl.searchFilterLocal()" placeholder="Buscar">
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-secondary" ng-click="$ctrl.reloadMovimientoCaja()">
+                                <i class="fa fa-redo"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 

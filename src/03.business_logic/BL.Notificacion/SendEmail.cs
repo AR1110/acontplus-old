@@ -1,20 +1,20 @@
 ﻿using Common.Logs;
+using Domain.Models;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Scriban;
+using System.Dynamic;
 using System.Net;
 using System.Net.Mail;
 using System.Net.Mime;
 using System.Text;
-using Nustache.Core;
-using Microsoft.Extensions.Configuration;
-using Domain.Models;
-using System.Data;
 
 namespace BL.Notificacion
 {
     public class SendEmail
     {
         private readonly IConfiguration _configuration;
-         public SendEmail(IConfiguration configuration)
+        public SendEmail(IConfiguration configuration)
         {
             _configuration = configuration;
         }
@@ -50,7 +50,7 @@ namespace BL.Notificacion
                 //var dataMail = JsonConvert.DeserializeObject<Dictionary<string, string>>(email.dataMail);
                 var dataMail = JsonConvert.DeserializeObject<IEnumerable<IDictionary<string, object>>>(email.dataMail).FirstOrDefault();
 
-             
+
                 //Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
                 //Dictionary<string, string> dataEmail = new Dictionary<string, string>();
                 //foreach (var paramRdlc in dataMail.FirstOrDefault())
@@ -66,7 +66,7 @@ namespace BL.Notificacion
 
                 //string pathLogo = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logos", email.logo);
 
-               string pathLogo = Path.Combine(_configuration.GetSection("Media").GetSection("Images").Value, "Logos", email.logo);
+                string pathLogo = Path.Combine(_configuration.GetSection("Media").GetSection("Images").Value, "Logos", email.logo);
 
                 LinkedResource linkedResource = new LinkedResource(pathLogo, "image/jpg");
                 linkedResource.ContentId = "Pic1";
@@ -120,12 +120,31 @@ namespace BL.Notificacion
             }
             return true;
         }
+        //private static string ProcessTemplate(string template, IDictionary<string, object> data)
+        //{
+        //    //return Regex.Replace(template, "\\{\\{(.*?)\\}\\}", m =>
+        //    //    m.Groups.Count > 1 && data.ContainsKey(m.Groups[1].Value) ? 
+        //    //        data[m.Groups[1].Value] : m.Value);
+        //    return Render.StringToString(template, data);
+        //}
         private static string ProcessTemplate(string template, IDictionary<string, object> data)
         {
-            //return Regex.Replace(template, "\\{\\{(.*?)\\}\\}", m =>
-            //    m.Groups.Count > 1 && data.ContainsKey(m.Groups[1].Value) ? 
-            //        data[m.Groups[1].Value] : m.Value);
-            return Render.StringToString(template, data);
+            ExpandoObject reportData = JsonConvert.DeserializeObject<ExpandoObject>(JsonConvert.SerializeObject(data));
+
+            var scriptObject = new Scriban.Runtime.ScriptObject();
+            foreach (var prop in reportData)
+            {
+                scriptObject.Add(prop.Key, prop.Value);
+            }
+            var templateTo = Template.Parse(template);
+            return templateTo.Render(scriptObject, member => LowerFirstCharacter(member.Name));
+        }
+
+        private static string LowerFirstCharacter(string value)
+        {
+            if (value.Length > 1)
+                return char.ToLower(value[0]) + value.Substring(1);
+            return value;
         }
     }
 }

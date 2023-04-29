@@ -15,56 +15,169 @@
         </div>
     </div>
 
-    @await Html.PartialAsync("_ModalFiltroComprobante")
+
 
     <div class="row">
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="card">
                 <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                            <div class="form-group">
+                                <label for="establecimiento">Establecimiento: </label>
+                                <select name="establecimiento" id="establecimiento" class="form-control border-select"
+                                    ng-model="codEstab_Asig" ng-change="onchangeEstablecimiento()">
+                                    <option value="">Todos</option>
+                                    <option ng-value="item.codEstab_Asig" ng-repeat="item in establecimientos">
+                                        {{item.nombreComercial}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12" ng-if="codEstab_Asig">
+                            <div class="form-group">
+                                <label for="puntoEmision">Punto Emisión: </label>
+                                <select name="puntoEmision" id="puntoEmision" class="form-control border-select"
+                                    ng-model="dataSearch.ptoEmi" ng-change="onchangePuntoEmision()">
+                                    <option value="">Todos</option>
+                                    <option ng-value="item.ptoEmi" ng-repeat="item in puntosEmision">
+                                        {{item.ptoEmi}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                            <div class="form-group">
+                                <label>Rango de Fechas: </label>
+                                <input date-range-picker class="form-control date-picker" type="text"
+                                    ng-model="dateRangePicker.date" picker="dateRangePicker.picker"
+                                    picker-classes="extra-class-names" min="'2014-02-23'" max="dateRangePicker.maxDate"
+                                    options="dateRangePicker.options" options="{locale: {separator: " :"}}" />
+                            </div>
+                        </div>
+
+                        <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                            <div class="form-group">
+                                <label for="">Tipo Documento</label>
+                                <select class="form-control b-0" ng-model="dataSearch.codDoc"
+                                    ng-change="onSelectTipoDoc()">
+                                    <option value="">Todos</option>
+                                    <option ng-value="item.codigoSri" ng-repeat="item in tiposDocumento">
+                                        {{item.descripcion}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                            <div class="form-group">
+                                <label for="">Estado</label>
+
+                                <select name="codEstado" id="codEstado" class="form-control border-select"
+                                    ng-model="dataSearch.codEstado" ng-change="onChangeEstado()">
+                                    <option value="">Todos</option>
+                                    <option ng-value="item.codigo" ng-repeat="item in estadoServicios">
+                                        {{item.descripcion}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12" ng-show="dataSearch.codDoc">
+                            <div class="form-group">
+                                <label for="customer-provider">Cliente/Proveedor</label>
+                                <div class="input-group">
+                                    <input type="text" id="customer-provider-search" autocomplete="off"
+                                        name="customer-provider-search" class="form-control border-select"
+                                        placeholder="Ingrese C.I o Nombre Fiscal" ng-model="modelCustomerProvider"
+                                        ng-keyup="onKeyupCustomerProvider()"
+                                        uib-typeahead="item as item.nameCustomerProvider for item in searchCustomerProvider($viewValue)"
+                                        typeahead-template-url="customerProviderTemplate.html" typeahead-min-length="1"
+                                        typeahead-editable="false"
+                                        typeahead-on-select="onSelectedCustomerProvider($item)" onClick="select();" />
+
+                                    <script type="text/ng-template" id="customerProviderTemplate.html">
+                                            <div class="autocomplete-suggestion-uib-typeahead">
+                                                <span class="item-title">
+                                                    <b> {{match.model.identificacionReceptor}}</b> - {{match.model.nameCustomerProvider}}
+                                                </span>
+                                            </div>
+                                        </script>
+                                    <div class="input-group-append">
+                                        <button type="button" class=" btn btn-secondary btn-xs"
+                                            ng-click="clearSearchCustomer()">
+                                            &times;
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                            <div class="form-group">
+                                <label for="customer-provider">Usuario</label>
+                                <div class="input-group">
+                                    <input type="text" id="customer-provider-search" autocomplete="off"
+                                        name="customer-provider-search" class="form-control border-select"
+                                        placeholder="Ingrese C.I o Nombre Fiscal" ng-model="modelUser"
+                                        uib-typeahead="item as item.nombreCompleto for item in searchUser($viewValue)"
+                                        typeahead-template-url="UserTemplate.html" typeahead-min-length="1"
+                                        typeahead-editable="true" typeahead-on-select="onSelectedUser($item)"
+                                        onClick="select();" />
+
+                                    <script type="text/ng-template" id="UserTemplate.html">
+                                            <div class="autocomplete-suggestion-uib-typeahead">
+                                                <span class="item-title">
+                                                    <b> {{match.model.nroIdentificacion}}</b> - {{match.model.nombreCompleto}}
+                                                </span>
+                                            </div>
+                                        </script>
+                                    <div class="input-group-append">
+                                        <button type="button" class=" btn btn-secondary btn-xs"
+                                            ng-click="clearUserSearch()">
+                                            &times;
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <hr>
                     <div class="row justify-content-between">
                         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                            <button type="button" class="btn btn-info" uib-tooltip="Filtrar Comprobantes"
-                                    tooltip-placement="top" ng-click="openModalFiltro()">
-                                <i class="mdi mdi-filter-outline"></i> Filtro
-                            </button>
-
                             <button type="button" class="btn btn-success" uib-tooltip="Autorizar Comprobantes"
-                                    tooltip-placement="top" ng-if="selectedComprobantes.length>0"
-                                    ng-click="getAuthorizate()">
+                                tooltip-placement="top" ng-if="selectedComprobantes.length>0"
+                                ng-click="getAuthorizate()">
                                 <i class="mdi mdi-file-lock"></i> Autorizar
                             </button>
 
                             <button type="button" class="btn btn-warning" uib-tooltip="Correo Comprobantes"
-                                    tooltip-placement="top" ng-click="estadoCorreoComprobantes()">
+                                tooltip-placement="top" ng-click="estadoCorreoComprobantes()">
                                 <i class="mdi mdi-contact-mail"></i> Correo
                             </button>
                         </div>
 
                         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
                             <div class="form-material">
-                                <div class="form-group">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" name="" id="" ng-model="textSearch"
-                                               placeholder="Buscar Comprobante">
-                                        <div class="input-group-append">
-                                            <button type="button" class="btn btn-secondary"
-                                                    ng-click="getComprobantes()">
-                                                <i class="fas fa-redo"></i>
-                                            </button>
-                                        </div>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" ng-model="textSearch"
+                                        placeholder="Buscar Comprobante">
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-secondary btn-sm"
+                                            ng-click="getComprobantes()">
+                                            <i class="fas fa-redo"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="d-flex">
-                        <div class="ml-auto">
-                        </div>
-                    </div>
-
-
                 </div>
-
 
                 <md-table-container md-scroll-y layout-fill style=" max-height: 400px;">
                     <table md-table md-row-select="true" multiple="true" ng-model="selectedComprobantes">
@@ -79,32 +192,31 @@
                                 <th md-column>Razón Social Receptor</th>
                                 <th md-column>Clave de acceso/Nro. autorización</th>
                                 <th md-column>Estado</th>
-                                @* <th md-column>Correo</th> *@
+                                <th md-column>Usuario</th>
 
                             </tr>
                         </thead>
                         <tbody md-body>
                             <tr md-row md-auto-select="false" md-select="item" ng-disabled="!(item.codEstado===2)"
                                 md-on-select="onSelectComprobante"
-                                ng-repeat="item in comprobantes | filter: textSearch track by $index"
-                                ng-class="item.style">
+                                ng-repeat="item in comprobantes | filter: textSearch " ng-class="item.style">
 
                                 <td md-cell>
                                     <md-menu>
                                         <md-button aria-label="Open demo menu" class="md-icon-button"
-                                                   ng-click="$mdMenu.open($event)">
+                                            ng-click="$mdMenu.open($event)">
                                             <icon class="mdi mdi-menu"></icon>
                                         </md-button>
                                         <md-menu-content class="md-dense">
-                                            <md-menu-item ng-if="(item.codDoc=='07') && item.codEstado != 4">
+                                            <md-menu-item ng-if="(item.codDoc=='07') && (item.codEstado != 4)">
                                                 <md-button ng-click="edit(item)" uib-tooltip="Editar el Documento"
-                                                           tooltip-placement="top">
+                                                    tooltip-placement="top">
                                                     <span md-menu-align-target><i class="ti-eye"></i> Editar</span>
                                                 </md-button>
                                             </md-menu-item>
                                             <md-menu-item ng-if="item.codEstado == 4">
-                                                <md-button ng-click="askToCancel(item)" uib-tooltip="Anular el Documento"
-                                                           tooltip-placement="top">
+                                                <md-button ng-click="askToCancel(item)"
+                                                    uib-tooltip="Anular el Documento" tooltip-placement="top">
                                                     <span md-menu-align-target><i class="ti-close"></i> Anular</span>
                                                 </md-button>
                                             </md-menu-item>
@@ -118,15 +230,15 @@
                                             </md-menu-item>
 
                                             <md-menu-item>
-                                                <md-button ng-click="getReport(item)"
-                                                           uib-tooltip="Ver PDF" tooltip-placement="top">
-                                                    <span md-menu-align-target><i class="ti-file"></i>                                          PDF</span>
+                                                <md-button ng-click="getReport(item)" uib-tooltip="Ver PDF"
+                                                    tooltip-placement="top">
+                                                    <span md-menu-align-target><i class="ti-file"></i> PDF</span>
                                                 </md-button>
                                             </md-menu-item>
 
                                             <md-menu-item ng-if="(item.codEstado==5 || item.codEstado==0)">
                                                 <md-button uib-tooltip="Errorres del comprobante"
-                                                           tooltip-placement="top" ng-click="getError(item)">
+                                                    tooltip-placement="top" ng-click="getError(item)">
                                                     <span md-menu-align-target>
                                                         <i class="mdi mdi-close-network"></i> Error
                                                     </span>
@@ -137,7 +249,7 @@
                                             <!--Update Xml-->
                                             <md-menu-item ng-if="showBtnUpdateXml(item)">
                                                 <md-button uib-tooltip="Actualizar el XML" tooltip-placement="top"
-                                                           ng-click="updateXml(item)">
+                                                    ng-click="updateXml(item)">
                                                     <span md-menu-align-target>
                                                         <i class="mdi mdi-clipboard-flow"></i> Actualizar XML
                                                     </span>
@@ -172,19 +284,21 @@
                                 <td md-cell>{{item.razonSocial}}</td>
                                 <td md-cell>{{item.claveAcceso}}</td>
                                 <td md-cell>{{item.estado}}</td>
-                                @* <td md-cell>{{item.statusEmail}}</td> *@
+                                <td md-cell>{{item.usuario}}</td>
                             </tr>
 
                             <tr ng-show="comprobantes.length==0" class="text-center">
-                                <td colspan="8">
+                                <td colspan="9">
                                     No hay registros en esta tabla :)
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </md-table-container>
-
-
+                <div class="card-footer">
+                    <strong>Total: {{comprobantes.length}}
+                        {{comprobantes.length>1?'Comprobantes':'Comprobante'}}</strong>
+                </div>
             </div>
         </div>
     </div>

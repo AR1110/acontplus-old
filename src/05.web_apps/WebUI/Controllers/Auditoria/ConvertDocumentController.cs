@@ -1,5 +1,4 @@
 ﻿using DataAccess.Auditoria;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Auditoria
@@ -13,7 +12,7 @@ namespace WebUI.Controllers.Auditoria
             _configuration = configuration;
             _cd = new ConvertDocumentDao(_configuration);
         }
-        
+
         // GET: ConvertDocumentController
         public ActionResult Index()
         {
@@ -27,6 +26,6 @@ namespace WebUI.Controllers.Auditoria
             return Ok(res);
         }
 
-        
+
     }
 }

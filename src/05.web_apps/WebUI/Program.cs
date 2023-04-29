@@ -1,9 +1,6 @@
-using WebUI.Services;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
-using WebUI.Hubs;
-using Helpers;
 using BL.JwtAuthenticationManger;
+using Helpers;
+using WebUI.Hubs;
 
 namespace testWebApi
 {
@@ -133,16 +130,18 @@ namespace testWebApi
 
             app.UseRouting();
 
-
             app.UseCors();
 
             app.UseAuthentication(); //added manually
 
             app.UseAuthorization();
 
+            //app.MapControllers().RequireAuthorization(); ONLY FOR API
+
             app.UseMiddleware<JWTMiddleware>();
 
             //app.UseCookiePolicy(cookiePolicyOptions);
+
 
 
             app.MapControllerRoute(

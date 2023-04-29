@@ -6,12 +6,12 @@ bodegaCtrl.$inject = ['$scope', 'mainService', 'commonService', 'modalService', 
 
 function bodegaCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, toast) {
     'use strict'
-    let accion = JSON.parse(localStorage.getItem("accion"));
-    if(accion===null){
-        location.href = "/Home/Index";
-    }else{
-        $scope.accion = accion[0];
-    }
+    // let accion = JSON.parse(localStorage.getItem("accion"));
+    // if(accion===null){
+    //     location.href = "/Home/Index";
+    // }else{
+    //     $scope.accion = accion[0];
+    // }
               
     $scope.bodegas = [];    
     $scope.dataSearch = {

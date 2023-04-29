@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Domain.Models;
-using Domain.ViewModels;
-using System.Data;
-using System.Data.SqlClient;
+﻿using Domain.Models;
 using Domain.Models.InfoAdicional;
+using Domain.ViewModels;
 using Domain.ViewModels.InfoAdicional;
 using Helpers;
 using Microsoft.Extensions.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 
 namespace DataAccess.Ventas
 {
@@ -35,16 +32,16 @@ namespace DataAccess.Ventas
                 using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("Ventas.Factura_Get_Id", con);
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("idFactura", idFactura);
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    _gr.id = reader.GetString(0);
-                    _gr.message = reader.GetString(1);
-                    _gr.titleSms = reader.GetString(2);
+                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("idFactura", idFactura);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await con.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        _gr.id = reader.GetString(0);
+                        _gr.message = reader.GetString(1);
+                        _gr.titleSms = reader.GetString(2);
                         if (_gr.id == "1")
                         {
                             factura.factura = new Factura()
@@ -154,7 +151,7 @@ namespace DataAccess.Ventas
             }
             finally
             {
-                
+
             }
             return _gr;
         }

@@ -1,7 +1,6 @@
-﻿using Domain.Models;
+﻿using DataAccess.Administracion;
+using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using DataAccess.Administracion;
 
 namespace WebUI.Controllers
 {
@@ -16,7 +15,7 @@ namespace WebUI.Controllers
             _p = new PoliticaDao(_configuration);
         }
 
-        
+
         public IActionResult Index()
         {
             return View();
@@ -44,7 +43,7 @@ namespace WebUI.Controllers
             return Ok(res);
         }
 
-        
+
         public async Task<IActionResult> Delete(int idPolitica)
         {
             int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);

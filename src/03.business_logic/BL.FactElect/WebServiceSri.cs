@@ -151,7 +151,7 @@ namespace BL.FactElect
                     _response.estado = "ERROR";
                     _response.message = "SRI no se encuentra en línea";
                 }
-                
+
             }
             catch (Exception ex)
             {

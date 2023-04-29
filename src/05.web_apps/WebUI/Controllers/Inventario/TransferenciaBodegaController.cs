@@ -1,10 +1,9 @@
-﻿using Helpers;
+﻿using Common.Logs;
 using DataAccess;
-using Domain.Models.Inventario;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Domain.Models;
-using Common.Logs;
+using Domain.Models.Inventario;
+using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Inventario
 {
@@ -12,20 +11,20 @@ namespace WebUI.Controllers.Inventario
     {
         // GET: Articulo
         private readonly IConfiguration _configuration;
-         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
+        ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
-        
+
 
         public TransferenciaBodegaController(IConfiguration configuration)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
-            
-            
+
+
 
         }
 
-        
+
         public IActionResult Index()
         {
             return View();
@@ -59,7 +58,7 @@ namespace WebUI.Controllers.Inventario
             finally
             {
                 _db.Close();
-            } 
+            }
             return Ok(_response);
         }
 

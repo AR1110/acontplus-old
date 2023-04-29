@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Domain.Models.GestionFinanciera
+﻿namespace Domain.Models.GestionFinanciera
 {
     public class Cartera
     {
@@ -19,7 +13,7 @@ namespace Domain.Models.GestionFinanciera
 
         public int expira { get; set; }
         public string estadoFinanciero { get; set; }
-       
+
         public decimal total { get; set; }
         public decimal abono { get; set; }
         public decimal saldo { get; set; }
@@ -27,7 +21,7 @@ namespace Domain.Models.GestionFinanciera
 
     public class CarteraSearch
     {
-        public int idRol { get; set; }  
+        public int idRol { get; set; }
         public int byType { get; set; }
         public int byCliente { get; set; }
         public int byProveedor { get; set; }

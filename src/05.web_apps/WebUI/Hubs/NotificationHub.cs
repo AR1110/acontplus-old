@@ -2,7 +2,7 @@
 
 namespace WebUI.Hubs
 {
-    public class NotificationHub: Hub
+    public class NotificationHub : Hub
     {
         public static List<string> _notifications = new List<string>();
         public async Task SendNotification(string notificationName)

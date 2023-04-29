@@ -1,21 +1,20 @@
 ﻿using ApiRecepcion.Utils;
+using BL.FactElect;
 using BL.Recepcion;
 using Common.Logs;
-using Helpers;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System.Xml;
 using DataAccess;
-using BL.FactElect;
-using Domain.FactElect;
-using Newtonsoft.Json;
-using System.Text;
 using Domain.Dtos;
+using Domain.FactElect;
+using Helpers;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Data;
+using System.Text;
+using System.Xml;
 
 namespace ApiRecepcion.Controllers
 {
-    [Authorize]
+
     [Route("api/[controller]")]
     [ApiController]
     public class DocumentoRecibidoController : ControllerBase
@@ -213,7 +212,7 @@ namespace ApiRecepcion.Controllers
         {
             LogWriter _logs = new LogWriter(_configuration);
             GenericResponse _response = new GenericResponse();
-            
+
             if (file.ContentType != "text/plain")
             {
                 _response.Create("0", "Formato de archivo no soportado");
@@ -306,7 +305,7 @@ namespace ApiRecepcion.Controllers
         {
             LogWriter _logs = new LogWriter(_configuration);
             GenericResponse _response = new GenericResponse();
-            
+
             if (file.ContentType != "text/plain")
             {
                 _response.Create("0", "Formato de archivo no soportado");

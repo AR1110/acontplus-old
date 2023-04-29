@@ -5,12 +5,12 @@ app.controller('actividadEtiquetaCtrl', actividadEtiquetaCtrl);
 actividadEtiquetaCtrl.$inject = ['$scope', '$http', 'modalService'];
 
 function actividadEtiquetaCtrl($scope, $http, _modalSvc){
-    let accion = JSON.parse(localStorage.getItem("accion"));
-    if(accion===null){
-        location.href = "/Home/Index";
-    }else{
-        $scope.accion = accion[0];
-    }
+    // let accion = JSON.parse(localStorage.getItem("accion"));
+    // if(accion===null){
+    //     location.href = "/Home/Index";
+    // }else{
+    //     $scope.accion = accion[0];
+    // }
 
     $scope.data = {};
 

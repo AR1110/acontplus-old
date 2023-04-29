@@ -1,25 +1,16 @@
-﻿using DataAccess;
-using DataAccess.Administracion;
-using Domain.Models;
-using Domain.ViewModels.Administracion;
-using Helpers;
-using Microsoft.AspNetCore.Authorization;
+﻿using Helpers;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers.Admin
 {
     public class RolController : Controller
     {
         GenericResponse _gr = new();
-        
+
         public IActionResult Index()
-        {            
+        {
             return View();
-        }     
+        }
 
     }
 }

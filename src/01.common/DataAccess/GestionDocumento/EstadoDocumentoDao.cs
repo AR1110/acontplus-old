@@ -1,10 +1,7 @@
 ﻿using Domain.Models;
 using Helpers;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Threading.Tasks;
 
 namespace DataAccess
 {
@@ -51,7 +48,7 @@ namespace DataAccess
             }
             finally
             {
-                
+
             }
 
             return _response;

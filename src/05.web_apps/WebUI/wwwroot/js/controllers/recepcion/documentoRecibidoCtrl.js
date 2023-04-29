@@ -131,7 +131,8 @@
                 codDoc: '',
                 codEstab: '',
                 startDate: '',
-                endDate: ''
+                endDate: '',
+                rucProveedor: ''
             }
 
             $scope.getDocs = function (doc) {
@@ -1451,7 +1452,7 @@
                         idArticulo: item.idArticulo,
                         codArticulo: (($scope.articleSelected.codigoPrincipal) ? $scope.articleSelected.codigoPrincipal : item.codigoPrincipal)
                     }
-                    mS.getData('post', '/CompraHabitual/Post?json=' + JSON.stringify(data)).then(
+                    mS.getData('post', 'CompraHabitual/Post?json=' + JSON.stringify(data), null, true).then(
                         response => {
                             if (response.code == '0') {
                                 hideLoader()
@@ -1527,7 +1528,7 @@
             }
             $scope.deleteCH = (item) => {
                 try {
-                    mS.getData('delete', '/CompraHabitual/Delete?id=' + item.idCompraHabitual).then(
+                    mS.getData('delete', 'CompraHabitual/Delete?id=' + item.idCompraHabitual, null, true).then(
                         response => {
                             if (response.code == '0') {
                                 tS.toastr('warning', response.message)
@@ -1536,6 +1537,7 @@
                             if (response.code == '1') {
                                 let index = $scope.historyComprasArticle.indexOf(item)
                                 $scope.historyComprasArticle.splice(index, 1)
+                                $scope.getTempDetails()
                                 tS.toastr('success', response.message)
                             }
                         }, error => {
@@ -1887,6 +1889,8 @@
             }
 
             $scope.refresh = () => {
+                $scope.proveedorFiltro = null
+                $scope.query.rucProveedor = ''
                 $scope.getComprobantes()
             }
 
@@ -1913,7 +1917,11 @@
                     console.log(error)
                 }
             }
-
+            $scope.proveedorSearch = (textSearch) => _commonSvc.proveedorSearch(textSearch);
+            $scope.selectProveedorFiltro = (item) => {
+                $scope.query.rucProveedor = item.proveedor.numeroIdentificacion
+                $scope.getComprobantes()
+            }
         }
         $('#compFounded').on('hidden.bs.modal', () => {
             $scope.compToImport = []

@@ -1,7 +1,8 @@
 export class CommonService {
-    static $inject = ["$http", "mainService", "FileSaver", "formulario", "modalService", "nombreModal", "__env"];
+    static $inject = ["$rootScope", "$http", "mainService", "FileSaver", "formulario", "modalService", "nombreModal", "__env"];
 
-    constructor($http, mS, FileSaver, form, _modalSvc, _nombreModalConst, __env) {
+    constructor($rootScope, $http, mS, FileSaver, form, _modalSvc, _nombreModalConst, __env) {
+        this.$rootScope = $rootScope;
         this.$http = $http;
         this.mS = mS;
         this.FileSaver = FileSaver;
@@ -162,7 +163,9 @@ export class CommonService {
     // Configuración de Decimal en modulo de configuracion general 
     getModuloDecimal(json = {}) {
         return this.$http.get("/CantidadDecimal/Get?json=" + JSON.stringify(json))
-            .then(({ data: response }) => JSON.parse(response.data));
+            .then(({
+                data: response
+            }) => JSON.parse(response.data));
     }
 
     //Obtenemos todas las configuraciones(decimales por modulo, tipo iva asignado a una Entidad)
@@ -178,7 +181,9 @@ export class CommonService {
 
 
     getConfigVentaDetalle() {
-        return this.$http.get("/ConfigVentaDetalle/Get").then(({ data: response }) => {
+        return this.$http.get("/ConfigVentaDetalle/Get").then(({
+            data: response
+        }) => {
             if (response.id === "0") {
                 toastr.warning(response.message, response.titleSms);
                 return;
@@ -189,31 +194,45 @@ export class CommonService {
 
     getAllTipoIva() {
         return this.$http.get("/TipoIva/OptionTipoIva")
-            .then(({ data: response }) => response.data)
+            .then(({
+                data: response
+            }) => response.data)
     }
 
     getAllTarifa() {
         return this.$http.get("/Tarifa/GetAll")
-            .then(({ data: response }) => response.data);
+            .then(({
+                data: response
+            }) => response.data);
     }
 
     getAllTiempoCredito(gestion) {
         return this.$http.get("/TiempoCredito/OptionTiempoCredito?gestion=" + gestion)
-            .then(({ data: response }) => response.data);
+            .then(({
+                data: response
+            }) => response.data);
     }
 
     getAllEstado(tipo) {
         return this.$http.get("/EstadoPago/Get?type=" + tipo)
-            .then(({ data: response }) => response.data);
+            .then(({
+                data: response
+            }) => response.data);
     }
 
     getEstadoDocByCodDoc(codDoc) {
-        return this.$http.get("/EstadoDocumento/Get?json=" + JSON.stringify({ codDoc }))
-            .then(({ data: response }) => response.data || []);
+        return this.$http.get("/EstadoDocumento/Get?json=" + JSON.stringify({
+                codDoc
+            }))
+            .then(({
+                data: response
+            }) => response.data || []);
     }
 
     getAllCiudadProvincia(json = {}) {
-        return this.$http.get("/Ciudad/Get?json=" + JSON.stringify(json)).then(({ data: response }) => response)
+        return this.$http.get("/Ciudad/Get?json=" + JSON.stringify(json)).then(({
+            data: response
+        }) => response)
     }
 
 
@@ -243,13 +262,15 @@ export class CommonService {
 
 
     /**
-    * 
-    * Médodos relacionados a los Impuestos de Estados 
-    */
+     * 
+     * Médodos relacionados a los Impuestos de Estados 
+     */
 
     getAllImpuestoEstado(json) {
         return this.$http.get('/ImpuestoEstado/Get?json=' + JSON.stringify(json))
-            .then(({ data: response }) => JSON.parse(response.data))
+            .then(({
+                data: response
+            }) => JSON.parse(response.data))
     }
 
 
@@ -259,31 +280,27 @@ export class CommonService {
 
     //-------------------------------------Usuario--------------------------------
     usuarioSearch(json) {
-        return this.getDataApi({
-            method: 'get',
-            url: 'apiCliente/Usuario/Search/' + JSON.stringify(json),
-            typeUrl: 1
-        }).then(response => {
-            if (response.id === '0') {
-                console.warn(response.message)
+        return this.mS.getData('get', 'Usuario/Search/' + JSON.stringify(json), null, true).then(response => {
+            if (response.code === "0") {
+                return [];
             }
-            // if(response.id==='0'){
-            //   toastr.warning(response.message, response.titleSms)
-            //   return
-            // }
-            return JSON.parse(response.data) || []
+            return JSON.parse(response.payload)
         })
     }
 
     //--------------------------------------CONSULTA COMPRAS --------------------
     getAllSustentoTributario() {
         return this.$http.get('/SustentoTributario/GetAll')
-            .then(({ data: response }) => response.data)
+            .then(({
+                data: response
+            }) => response.data)
     }
 
     getAllCategoriaCompra() {
         return this.$http.get('/CategoriaCompra/GetAll')
-            .then(({ data: response }) => response.data)
+            .then(({
+                data: response
+            }) => response.data)
     }
 
 
@@ -291,7 +308,9 @@ export class CommonService {
 
     //---------------------------------------START CLIENTE-----------------------------------------
     clienteSearch(textSearch) {
-        return this.mS.getData('get', '/Cliente/Search?json=' + JSON.stringify({ textSearch })).then(response => {
+        return this.mS.getData('get', '/Cliente/Search?json=' + JSON.stringify({
+            textSearch
+        })).then(response => {
             if (response.id === '0') {
                 console.warn(response)
                 return
@@ -337,13 +356,18 @@ export class CommonService {
 
 
     getDataClienteByIdCliente(idCliente) {
-        return this.$http.get("/Cliente/GetId?idCliente=" + idCliente).then(({ data: response }) => {
+        return this.$http.get("/Cliente/GetId?idCliente=" + idCliente).then(({
+            data: response
+        }) => {
             if (response.id === "0") {
                 toastr.warning(response.message, response.titleSms);
                 return;
             }
             if (response.id === "1") {
-                const { cliente, nombreCompleto } = response.data;
+                const {
+                    cliente,
+                    nombreCompleto
+                } = response.data;
                 cliente.empleado = nombreCompleto;
                 return cliente;
             }
@@ -359,7 +383,9 @@ export class CommonService {
     //--------------------------------------START PROVEEDOR-------------------------------------
     proveedorSearch(textSearch) {
         return this.$http.get(`/Proveedor/SearchProveedor?busqueda=${textSearch}`)
-            .then(({ data: response }) => response.data)
+            .then(({
+                data: response
+            }) => response.data)
     }
 
     proveedorSearchGeneral(textSearch) {
@@ -367,7 +393,9 @@ export class CommonService {
             response => {
                 let proveedores = response.data.data
                 if (response.data.id === '1') {
-                    return proveedores.map(({ proveedor }) => proveedor)
+                    return proveedores.map(({
+                        proveedor
+                    }) => proveedor)
                 }
                 return []
             }
@@ -388,7 +416,9 @@ export class CommonService {
                     if (response.id == "1") {
                         hideLoader();
                         const item = {};
-                        const { data } = response;
+                        const {
+                            data
+                        } = response;
                         item.tipoIdentificacion = {
                             idTipoIdentificacion: data.proveedor.idTipoIdentificacion,
                             identificacion: data.tipoIdentificacion
@@ -432,7 +462,7 @@ export class CommonService {
             .then(
                 response => {
                     const results = JSON.parse(response.payload);
-                    console.log(results);
+
                     return {
                         subFamilias: results[0],
                         familias: results[1],
@@ -463,12 +493,16 @@ export class CommonService {
     articuloSearch(busqueda, isSearchByCodigo) {
         const txtRemovedAccents = this.removeAccents(busqueda);
         return this.$http.get(`/Articulo/SearchArticuloFilter?busqueda=${txtRemovedAccents}&condicion=${isSearchByCodigo}`)
-            .then(({ data: response }) => {
+            .then(({
+                data: response
+            }) => {
                 if (response.id == "0") {
                     toastr.warning(response.message, response.titleSms);
                     return;
                 }
-                let { filter: articulos } = response.data;
+                let {
+                    filter: articulos
+                } = response.data;
                 return articulos.length > 0 ? this.getArticuloAsTemplate(articulos) : []
             })
     }
@@ -478,7 +512,9 @@ export class CommonService {
         return articulos.map((val) => {
             val.getHistorialPrecio = () => {
                 this.$http.get("/Articulo/HistoryEntradaArticulo?idArticulo=" + this.articulo.idArticulo)
-                    .then(({ data: response }) => {
+                    .then(({
+                        data: response
+                    }) => {
                         val.historialPrecio = response.data;
                     })
             }
@@ -490,7 +526,10 @@ export class CommonService {
 
 
     //Buscador Articulo en datatable
-    articuloSearchGeneral({ textSearch, code = false }) {
+    articuloSearchGeneral({
+        textSearch,
+        code = false
+    }) {
         const json = {
             bySearch: this.removeAccents(textSearch),
             code
@@ -515,7 +554,9 @@ export class CommonService {
 
     }
 
-    getDataArticuloParaVenta({ json }) {
+    getDataArticuloParaVenta({
+        json
+    }) {
         try {
             showLoader();
             return this.mS.getData('get', '/Articulo/GetIdBySale?json=' + JSON.stringify(json));
@@ -526,11 +567,15 @@ export class CommonService {
         }
     }
 
-    getDataArticuloParaCompra({ json }) {
+    getDataArticuloParaCompra({
+        json
+    }) {
         try {
             showLoader();
             return this.$http.get('/Articulo/GetIdByPurchase?json=' + JSON.stringify(json))
-                .then(({ data: response }) => response)
+                .then(({
+                    data: response
+                }) => response)
         } catch (error) {
             console.log(error)
         } finally {
@@ -538,9 +583,13 @@ export class CommonService {
         }
     }
 
-    async searchArticuloByCodigo({ busqueda }) {
+    async searchArticuloByCodigo({
+        busqueda
+    }) {
         return await this.$http.get('/Articulo/SearchArticuloFilter?busqueda=' + busqueda + '&condicion=' + true)
-            .then(({ data: response }) => {
+            .then(({
+                data: response
+            }) => {
                 if (response.id === "0") {
                     Swal.fire({
                         title: `<small>${response.titleSms}</small>`,
@@ -580,7 +629,12 @@ export class CommonService {
      * 3. Ventas 
      */
 
-    async generarNroDocumentoVenta({ puntoEmision, idPuntoEmision, nroDocumento, codigoDocumento }) {
+    async generarNroDocumentoVenta({
+        puntoEmision,
+        idPuntoEmision,
+        nroDocumento,
+        codigoDocumento
+    }) {
         let nroDocumentoSecuencial = null;
         return await this.mS.getData('get', `/GenerarNroDoc/GenerarNroDocVenta?puntoEmision=${puntoEmision}&idPuntoEmision=${idPuntoEmision}&nroDocumento=${nroDocumento}&codigoDocumento=${codigoDocumento}`)
             .then(response => {
@@ -599,7 +653,12 @@ export class CommonService {
             })
     }
 
-    async generarNroDocumentoCompra({ puntoEmision, idPuntoEmision, nroDocumento, codigoDocumento }) {
+    async generarNroDocumentoCompra({
+        puntoEmision,
+        idPuntoEmision,
+        nroDocumento,
+        codigoDocumento
+    }) {
         let nroDocumentoSecuencial = null;
         return await this.mS.getData('get', `/GenerarNroDoc/GenerarNroDocCompra?puntoEmision=${puntoEmision}&idPuntoEmision=${idPuntoEmision}&nroDocumento=${nroDocumento}&codigoDocumento=${codigoDocumento}`)
             .then(response => {
@@ -621,17 +680,23 @@ export class CommonService {
 
     //--------------------------------------METODOS RELACIONADOS AL TIPO DOCUMENTO---------------------------
 
-    
-    getDataFormVenta(){
-        return this.mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response=>{
-            if(response.code==='0'){                
+
+    getDataFormVenta() {
+        return this.mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response => {
+            if (response.code === '0') {
                 throw response
             }
             return JSON.parse(response.payload)
         })
     }
 
-    async generarNroDocumento({ puntoEmision, idPuntoEmision, nroDocumento, codigoDocumento, tipoDoc = 'C' }) {
+    async generarNroDocumento({
+        puntoEmision,
+        idPuntoEmision,
+        nroDocumento,
+        codigoDocumento,
+        tipoDoc = 'C'
+    }) {
         let nroDocumentoSecuencial = null;
         let url = tipoDoc === 'C' ? 'GenerarNroDocCompra' : 'GenerarNroDocVenta';
         return await this.mS.getData('get', `/GenerarNroDoc/${url}?puntoEmision=${puntoEmision}&idPuntoEmision=${idPuntoEmision}&nroDocumento=${nroDocumento}&codigoDocumento=${codigoDocumento}`)
@@ -661,9 +726,9 @@ export class CommonService {
             const data = {
                 idArticulo: item.idArticulo
             }
-            this.getDataArticuloParaCompra(
-                { json: data }
-            ).then(response => {
+            this.getDataArticuloParaCompra({
+                json: data
+            }).then(response => {
                 const results = JSON.parse(response.payload);
                 item.medidas = results[1]
                 item.etiquetas = results[2]
@@ -686,7 +751,10 @@ export class CommonService {
 
     }
 
-    async getDataTipoDocCompra({ id, codigoDocumento }) {
+    async getDataTipoDocCompra({
+        id,
+        codigoDocumento
+    }) {
         let isComplete = false;
         let proveedor = {};
         let dataTipoDocumento = {};
@@ -704,6 +772,7 @@ export class CommonService {
 
         switch (codigoDocumento) {
             case "FC":
+            case "FF":
                 await this.mS.getData('get', `/FacturaCompra/GetId?id=${id}`).then(response => {
 
                     if (response.code == "0") {
@@ -880,7 +949,9 @@ export class CommonService {
                 }
 
                 //Cambiar la peticion para actualizaciòn de detalle de Documento 
-                this.getDataArticuloParaVenta({ json: data }).then(response => {
+                this.getDataArticuloParaVenta({
+                    json: data
+                }).then(response => {
 
                     let results = JSON.parse(response.data);
                     let responseMsg = results[0][0];
@@ -890,8 +961,7 @@ export class CommonService {
                         let dataMedida = item.medidas.find(m => m.idMedida === item.idMedida) || {};
                         item.articuloTarifas = JSON.parse(dataMedida.tarifas);
                     }
-                }
-                )
+                })
 
                 let subTotal = item.cantidad * item[nombrePrecio] || 0;
                 let totalDescuento = item.cantidad * item.valorDescuento || 0;
@@ -906,7 +976,10 @@ export class CommonService {
         }
     }
 
-    async getDataTipoDocVenta({ id, codigoDocumento }) {
+    async getDataTipoDocVenta({
+        id,
+        codigoDocumento
+    }) {
         let isComplete = false;
         let cliente = {};
         let dataTipoDocumento = {};
@@ -1048,7 +1121,7 @@ export class CommonService {
 
             case "RV":
                 await this.mS.getData('get', '/RetencionVenta/GetId?id=' + id).then(response => {
-                    console.log(response)
+
                     if (response.code == "0") {
                         this.form.sweetAlert('warning', response.message)
                         throw response.message
@@ -1089,7 +1162,13 @@ export class CommonService {
     async getDataGuiaRemision(id) {
 
         let isComplete = false;
-        let dataDocumento = {}, cliente = {}, transportista = {}, vehiculo = {}, empleado = {}, detalleDocumento = [], infoAdicionalDocumento = []
+        let dataDocumento = {},
+            cliente = {},
+            transportista = {},
+            vehiculo = {},
+            empleado = {},
+            detalleDocumento = [],
+            infoAdicionalDocumento = []
 
         if (!id) throw "ID DOCUMENTO INVÁLIDO";
 
@@ -1141,7 +1220,10 @@ export class CommonService {
      * @returns  object 
      */
     async getDataConsolidacionInventario(id) {
-        let isComplete = false, dataTipoDocumento = {}, dataDocumento = {}, detalleDocumento = [];
+        let isComplete = false,
+            dataTipoDocumento = {},
+            dataDocumento = {},
+            detalleDocumento = [];
 
         await this.mS.getData('get', '/ConsolidacionInventario/GetId?id=' + id).then(response => {
 
@@ -1195,7 +1277,11 @@ export class CommonService {
      */
 
     async getDataTransferenciaBodega(id) {
-        let dataDocumento = {}, establecimientoOrigen = {}, establecimientoDestino = {}, detalleDocumento = [], isComplete = false;
+        let dataDocumento = {},
+            establecimientoOrigen = {},
+            establecimientoDestino = {},
+            detalleDocumento = [],
+            isComplete = false;
         if (!id) throw "ID DOCUMENTO INVÁLIDO";
 
         await this.mS.getData('get', `/TransferenciaBodega/GetId?id=${id}`).then(response => {
@@ -1215,7 +1301,9 @@ export class CommonService {
                 establecimientoDestino = dataMain[2][0];
 
                 for (let item of dataMain[3]) {
-                    this.getDataArticuloParaCompra({ json: item }).then(response => {
+                    this.getDataArticuloParaCompra({
+                        json: item
+                    }).then(response => {
                         item.medidas = JSON.parse(response.payload)[1]
                     })
 
@@ -1240,12 +1328,18 @@ export class CommonService {
 
 
     //--------------------------------------HISTORIAL DE CONVERSIÓN DEL DOCUMENTO VENTA---------------------
-    async getHistorialConversionDocVenta({ idComprobante, codigoDocumento }) {
+    async getHistorialConversionDocVenta({
+        idComprobante,
+        codigoDocumento
+    }) {
         const tipoDoc = this.tipoDoc[codigoDocumento];
-        let historialConversiones = [], isComplete = false;
+        let historialConversiones = [],
+            isComplete = false;
 
         await this.$http.get(`/ConvertDocument/GetInformacionDoc?idTipoDoc=${tipoDoc.idTipoDocumento}&idDoc=${idComprobante}`)
-            .then(({ data: response }) => {
+            .then(({
+                data: response
+            }) => {
                 if (response.id === null) {
                     toastr.info(`No se encontró documentos vinculados a esta ${tipoDoc.descripcion}`, '', {
                         positionClass: 'toast-bottom-center',
@@ -1266,50 +1360,54 @@ export class CommonService {
         }
     }
 
-
-
-
-
-
     //--------------------------------------------------REPORTE----------------------------------
-    async getReport({ method = "post", url = '/Reporte/Download', parameters, formatType = "pdf" }) {
+    async getReport({
+        method = "post",
+        url = 'Reporte/Download',
+        parameters,
+        formatType = "pdf"
+    }) {
         try {
             showLoader();
-            await this.mS.getFile(method, url, parameters).then(response => {
+            await this.mS.getFile(method, url, parameters, true).then(response => {
 
                 if (formatType === "pdf") {
                     let fileBlob = new Blob([response.data], {
                         type: response.data.type,
                     })
-
                     let objectUrl = window.URL || window.webkitURL;
                     let urlFile = objectUrl.createObjectURL(fileBlob);
-
                     // Ajuste horizontal
                     let x = parseInt((screen.width - 1200) / 2);
                     // Ajustae vertical
                     let y = parseInt((screen.height - 650) / 4);
-
                     window.open(
                         urlFile,
                         "_blank",
                         `resizable=yes
-                width=1200
-                height=650
-                screenY=${y}
-                screenX=${x}`
+                    width=1200
+                    height=650
+                    screenY=${y}
+                    screenX=${x}`
                     )
+
                 } else {
                     let serverData = new Blob([response.data], {
                         type: response.headers()["content-type"],
                     });
-                    let fileName = response
-                        .headers()["content-disposition"].split(";")[1]
-                        .split("=")[1];
+                    // let fileName = response
+                    //     .headers()["content-disposition"].split(";")[1]
+                    //     .split("=")[1];
+                    let fileName = response.headers()['content-disposition'].split(';')[1].split('=')[1].replace('"', "")
+                    fileName = fileName.replace('"', "")
                     this.FileSaver.saveAs(serverData, fileName);
                 }
+            }).catch(error => {
+                hideLoader();
+                console.log(error)
             })
         } catch (error) {
+            hideLoader();
             console.log(error)
         } finally {
             hideLoader();
@@ -1317,7 +1415,11 @@ export class CommonService {
     }
 
     //--------------------------------------------------EXCEL----------------------------------
-    async exportExcel({ method = "post", url = 'Reporte/ExportExcel', parameters }) {
+    async exportExcel({
+        method = "post",
+        url = 'Reporte/ExportExcel',
+        parameters
+    }) {
         try {
             showLoader();
             await this.mS.getFile(method, url, parameters, true).then(response => {
@@ -1330,6 +1432,7 @@ export class CommonService {
                 this.FileSaver.saveAs(serverData, fileName);
             })
         } catch (error) {
+            hideLoader()
             console.log(error)
         } finally {
             hideLoader();
@@ -1341,11 +1444,14 @@ export class CommonService {
      * @param {object} param {parameters, format}
      */
 
-    getReportDynamic({ parameters, format }) {
+    getReportDynamic({
+        parameters,
+        format
+    }) {
         try {
             showLoader();
 
-            this.mS.getFile('post', '/Reporte/DownloadDynamic', JSON.stringify(parameters)).then(response => {
+            this.mS.getFile('post', 'Reporte/DynamicReport', JSON.stringify(parameters), true).then(response => {
                 hideLoader();
 
                 if (format === "pdf") {
@@ -1378,6 +1484,9 @@ export class CommonService {
                     let fileName = response.headers()["content-disposition"].split(";")[1].split("=")[1];
                     this.FileSaver.saveAs(serverData, fileName);
                 }
+            }).catch(error => {
+                hideLoader();
+                console.log(error)
             })
         } catch (error) {
             hideLoader();
@@ -1392,9 +1501,13 @@ export class CommonService {
      * @param {*} parameters 
      */
 
-    async askToPrint({ parameters }) {
+    async askToPrint({
+        parameters
+    }) {
 
-        let { isConfirmed } = await Swal.fire({
+        let {
+            isConfirmed
+        } = await Swal.fire({
             icon: 'warning',
             html: `<small>Desea Imprimir este comprobante?</small>`,
             confirmButtonText: '<icon class="mdi mdi-cloud-print-outline"></icon> Sí, imprimir',
@@ -1431,7 +1544,7 @@ export class CommonService {
     async print(params) {
         try {
 
-              
+
             // console.log('init get name computer')           
             // console.log('end get name computer')
 
@@ -1442,15 +1555,21 @@ export class CommonService {
             // const data = await response.json();
             // console.log(data);
 
-            
 
-            let urlPrinter = (params[0].urlPrinter) ? params[0].urlPrinter + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + params[0].dataSources + '&rdlcParams=' + params[0].rdlcParams: __env.urlPrint + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + params[0].dataSources + '&rdlcParams=' + params[0].rdlcParams + '&getMachine=' + false;
+
+            let urlPrinter = (params[0].urlPrinter) ? params[0].urlPrinter + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + params[0].dataSources + '&rdlcParams=' + params[0].rdlcParams : __env.urlPrint + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + params[0].dataSources + '&rdlcParams=' + params[0].rdlcParams + '&getMachine=' + false;
 
             fetch(urlPrinter).then(function (response) {
                 if (response.ok) {
-                    toastr.success('Impresion correcta!', '', { positionClass: 'toast-bottom-right', progressBar: true })
+                    toastr.success('Impresion correcta!', '', {
+                        positionClass: 'toast-bottom-right',
+                        progressBar: true
+                    })
                 } else {
-                    toastr.warning('Error!', '', { positionClass: 'toast-bottom-right', progressBar: true })
+                    toastr.warning('Error!', '', {
+                        positionClass: 'toast-bottom-right',
+                        progressBar: true
+                    })
                 }
             }).catch(function (error) {
                 console.log('Hubo un problema al imprimir:' + error.message);
@@ -1480,12 +1599,17 @@ export class CommonService {
 
 
     //--------------------------------PETICIONES PARA API ADMIN-CLIENTE----------------------
-    async getDataApi({ method, url, data = null, typeUrl }) {
+    async getDataApi({
+        method,
+        url,
+        data = null,
+        typeUrl
+    }) {
         let urlApi = '';
         // let urlApi = await this.$http.get('/ConnectionApiAdmin/GetUrl?typeUrl=' + typeUrl).then(({data:response})=>response)    
 
         //IP Local 
-       // urlApi = typeUrl == 1 ? "http://localhost:7166/" : "https://localhost:7166/";
+        // urlApi = typeUrl == 1 ? "http://localhost:7166/" : "https://localhost:7166/";
 
         //IP Producción de Desarrollo 
         //urlApi = typeUrl == 1 ? "http://205.209.99.71:8090/" : "http://206.72.196.229:83/";
@@ -1498,7 +1622,9 @@ export class CommonService {
             method,
             url: `${urlApi}${url}`,
             data
-        }).then(({ data: response }) => {
+        }).then(({
+            data: response
+        }) => {
             return response
         }, error => {
             console.log(error)
@@ -1513,15 +1639,29 @@ export class CommonService {
      * @param {String} param1 fileExtension
      * @param {String} param2 fileName
      */
-    exportTableToExcel({ arr, fileExtension = '.xlsx', fileName }) {
+    exportTableToExcel({
+        arr,
+        fileExtension = '.xlsx',
+        fileName
+    }) {
         try {
             showLoader();
             const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
             const ws = XLSX.utils.json_to_sheet(arr);
 
-            const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
-            const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
-            const data = new Blob([excelBuffer], { type: fileType });
+            const wb = {
+                Sheets: {
+                    data: ws
+                },
+                SheetNames: ["data"]
+            };
+            const excelBuffer = XLSX.write(wb, {
+                bookType: "xlsx",
+                type: "array"
+            });
+            const data = new Blob([excelBuffer], {
+                type: fileType
+            });
             this.FileSaver.saveAs(data, fileName + fileExtension);
             hideLoader();
         } catch (error) {
@@ -1541,19 +1681,40 @@ export class CommonService {
      * 
      */
 
-    async viewDetailDocument({ id, codigoDocumento, size, windowClass = "uibModalFullScreen" }) {
+    async viewDetailDocumentII({
+        id,
+        codTransaccion,
+        codigoDocumento,
+        size,
+        windowClass = "uibModalFullScreen"
+    }) {
         try {
-            let controller = null, template = null, params = {}, response = {}, isComplete = false;
+            let controller = null,
+                template = null,
+                params = {},
+                response = {},
+                isComplete = false;
             switch (codigoDocumento) {
-                case "FV":
-                    let { factura_venta } = this._nombreModalConst;
-                    controller = (await import('./../' + factura_venta.MODAL_FILE_CTRL))[factura_venta.MODAL_DETALLE['controller']];
-                    template = factura_venta.MODAL_DETALLE['template'];
+                case "FE":
 
-                    response = await this.getDataTipoDocVenta({
-                        id,
-                        codigoDocumento
-                    })
+                    if (codTransaccion == 'E') {
+                        response = await this.getDataTipoDocVenta({
+                            id,
+                            codigoDocumento
+                        })
+                    }
+                    if (codTransaccion == 'S') {
+                        let {
+                            factura_venta
+                        } = this._nombreModalConst;
+                        controller = (await import('./../' + factura_venta.MODAL_FILE_CTRL))[factura_venta.MODAL_DETALLE['controller']];
+                        template = factura_venta.MODAL_DETALLE['template'];
+                        response = await this.getDataTipoDocVenta({
+                            id,
+                            codigoDocumento
+                        })
+                    }
+
 
                     params = {
                         TIPO_REGISTRO: 'DETALLE',
@@ -1564,7 +1725,9 @@ export class CommonService {
 
                 case "NE":
 
-                    let { nota_entrega } = this._nombreModalConst;
+                    let {
+                        nota_entrega
+                    } = this._nombreModalConst;
                     controller = (await import('./../' + nota_entrega.MODAL_FILE_CTRL))[nota_entrega.MODAL_DETALLE['controller']];
                     template = nota_entrega.MODAL_DETALLE['template'];
 
@@ -1582,7 +1745,9 @@ export class CommonService {
 
 
                 case "NC":
-                    let { nota_credito_cliente } = this._nombreModalConst;
+                    let {
+                        nota_credito_cliente
+                    } = this._nombreModalConst;
                     controller = (await import('./../' + nota_credito_cliente.MODAL_FILE_CTRL))[nota_credito_cliente.MODAL_DETALLE['controller']];
                     template = nota_credito_cliente.MODAL_DETALLE['template'];
 
@@ -1600,7 +1765,10 @@ export class CommonService {
 
 
                 case "FC":
-                    let { factura_compra } = this._nombreModalConst;
+                case "FF":
+                    let {
+                        factura_compra
+                    } = this._nombreModalConst;
                     controller = (await import('./../' + factura_compra.MODAL_FILE_CTRL))[factura_compra.MODAL_DETALLE['controller']];
                     template = factura_compra.MODAL_DETALLE['template'];
 
@@ -1617,7 +1785,9 @@ export class CommonService {
                     break
 
                 case "IB":
-                    let { ingreso_bodega } = this._nombreModalConst;
+                    let {
+                        ingreso_bodega
+                    } = this._nombreModalConst;
                     controller = (await import('./../' + ingreso_bodega.MODAL_FILE_CTRL))[ingreso_bodega.MODAL_DETALLE['controller']];
                     template = ingreso_bodega.MODAL_DETALLE['template'];
 
@@ -1634,8 +1804,157 @@ export class CommonService {
                     break
 
 
-                case "CIV":
-                    let { consolidacion_inv } = this._nombreModalConst;
+                case "CI":
+                    let {
+                        consolidacion_inv
+                    } = this._nombreModalConst;
+                    controller = (await import('./../' + consolidacion_inv.MODAL_FILE_CTRL))[consolidacion_inv.MODAL_DETALLE['controller']];
+                    template = consolidacion_inv.MODAL_DETALLE['template'];
+
+                    response = await this.getDataConsolidacionInventario(id)
+
+                    params = {
+                        TIPO_REGISTRO: 'DETALLE',
+                        data: response
+                    }
+
+                    break
+            }
+
+
+
+            this._modalSvc.openModalCustom({
+                controller,
+                template,
+                params,
+                size,
+                windowClass
+            })
+
+        } catch (error) {
+            console.log(error)
+        }
+
+    }
+
+
+    async viewDetailDocument({
+        id,
+        codigoDocumento,
+        size,
+        windowClass = "uibModalFullScreen"
+    }) {
+        try {
+            let controller = null,
+                template = null,
+                params = {},
+                response = {},
+                isComplete = false;
+            switch (codigoDocumento) {
+                case "FV":
+                    let {
+                        factura_venta
+                    } = this._nombreModalConst;
+                    controller = (await import('./../' + factura_venta.MODAL_FILE_CTRL))[factura_venta.MODAL_DETALLE['controller']];
+                    template = factura_venta.MODAL_DETALLE['template'];
+
+                    response = await this.getDataTipoDocVenta({
+                        id,
+                        codigoDocumento
+                    })
+
+                    params = {
+                        TIPO_REGISTRO: 'DETALLE',
+                        data: response,
+                    }
+
+                    break
+
+                case "NE":
+
+                    let {
+                        nota_entrega
+                    } = this._nombreModalConst;
+                    controller = (await import('./../' + nota_entrega.MODAL_FILE_CTRL))[nota_entrega.MODAL_DETALLE['controller']];
+                    template = nota_entrega.MODAL_DETALLE['template'];
+
+                    response = await this.getDataTipoDocVenta({
+                        id,
+                        codigoDocumento
+                    })
+
+                    params = {
+                        TIPO_REGISTRO: 'DETALLE',
+                        data: response,
+                    }
+
+                    break
+
+
+                case "NC":
+                    let {
+                        nota_credito_cliente
+                    } = this._nombreModalConst;
+                    controller = (await import('./../' + nota_credito_cliente.MODAL_FILE_CTRL))[nota_credito_cliente.MODAL_DETALLE['controller']];
+                    template = nota_credito_cliente.MODAL_DETALLE['template'];
+
+                    response = await this.getDataTipoDocVenta({
+                        id,
+                        codigoDocumento
+                    })
+
+                    params = {
+                        TIPO_REGISTRO: 'DETALLE',
+                        data: response,
+                    }
+
+                    break
+
+
+                case "FC":
+                case "FF":
+                    let {
+                        factura_compra
+                    } = this._nombreModalConst;
+                    controller = (await import('./../' + factura_compra.MODAL_FILE_CTRL))[factura_compra.MODAL_DETALLE['controller']];
+                    template = factura_compra.MODAL_DETALLE['template'];
+
+                    response = await this.getDataTipoDocCompra({
+                        id,
+                        codigoDocumento
+                    })
+
+                    params = {
+                        TIPO_REGISTRO: 'DETALLE',
+                        data: response
+                    }
+
+                    break
+
+                case "IB":
+                    let {
+                        ingreso_bodega
+                    } = this._nombreModalConst;
+                    controller = (await import('./../' + ingreso_bodega.MODAL_FILE_CTRL))[ingreso_bodega.MODAL_DETALLE['controller']];
+                    template = ingreso_bodega.MODAL_DETALLE['template'];
+
+                    response = await this.getDataTipoDocCompra({
+                        id,
+                        codigoDocumento
+                    })
+
+                    params = {
+                        TIPO_REGISTRO: 'DETALLE',
+                        data: response
+                    }
+
+                    break
+
+
+                case "CI":
+                    let {
+                        consolidacion_inv
+                    } = this._nombreModalConst;
                     controller = (await import('./../' + consolidacion_inv.MODAL_FILE_CTRL))[consolidacion_inv.MODAL_DETALLE['controller']];
                     template = consolidacion_inv.MODAL_DETALLE['template'];
 
@@ -1669,65 +1988,65 @@ export class CommonService {
 
 
     //Permiso para editar o anular Doc. Venta 
-    async checkHasPermissionToEditOrDelete(codigoAccion){ 
+    async checkHasPermissionToEditOrDelete(codigoAccion) {
         let jsonParams = {
             typeList: 2,
             codigoAccion,
         }
         let result = {};
-        
+
         showLoader();
         await this.mS.getData('get', 'Solicitud/Check/' + JSON.stringify(jsonParams), null, true).then(response => {
-            if(response.code==="0"){                   
+            if (response.code === "0") {
                 hideLoader();
                 this.form.sweetAlert('warning', response.message, response.titleSms);
-                throw response;              
+                throw response;
             }
             hideLoader();
             result = response;
-            
+
         }).catch(error => {
             hideLoader();
             throw error;
-        })           
+        })
         return result;
     }
 
 
-    async requestAuthorizationKey(codigoAccion){
-        let textMotivo = codigoAccion==='E'?'Editar': 'Anular';
+    async requestAuthorizationKey(codigoAccion) {
+        let textMotivo = codigoAccion === 'E' ? 'Editar' : 'Anular';
         Swal.fire({
             title: "Solicitud de Clave de Autorización",
             text: `Por favor, proporcione una explicación del motivo por el cual desea ${textMotivo} el documento!`,
             input: 'text',
             inputAttributes: {
-              autocapitalize: 'off'
+                autocapitalize: 'off'
             },
-            showCancelButton: true,                                                 
+            showCancelButton: true,
             inputPlaceholder: "Explicación del motivo",
             confirmButtonText: "Confirmar",
             cancelButtonText: "Cancelar",
             allowOutsideClick: false,
             inputValidator: (value) => {
-                if(!value){
+                if (!value) {
                     return ('Por favor ingrese la descripción del motivo');
                 }
-                if(value.length<15){
+                if (value.length < 15) {
                     return ('La descripción del motivo tiene que terner al menos de 15 caracteres');
-                }              
-            }                   
+                }
+            }
         }).then(result => {
-            if(result.isConfirmed){
+            if (result.isConfirmed) {
                 let jsonParams = JSON.stringify({
                     motivo: result.value,
                     codigoAccion
                 });
                 this.mS.getData('post', 'Solicitud/Post/' + jsonParams, null, true).then(response => {
                     console.log(response)
-                    if(response.code==="0"){
+                    if (response.code === "0") {
                         this.form.sweetAlert('warning', response.message)
                     }
-                    if(response.code==="1"){
+                    if (response.code === "1") {
                         this.form.sweetAlert('success', response.message, response.titleSms, 1000);
                     }
                 }).catch(error => {
@@ -1738,11 +2057,25 @@ export class CommonService {
     }
 
 
-    updateRequestKey(codigoAccion){
-        this.mS.getData('put', 'Solicitud/Put/' + JSON.stringify({codigoAccion, typeOperation: 2}), null, true).then(response =>{
+    updateRequestKey(codigoAccion) {
+        this.mS.getData('put', 'Solicitud/Put/' + JSON.stringify({
+            codigoAccion,
+            typeOperation: 2
+        }), null, true).then(response => {
             console.log(response)
         })
     }
+
+
+
+
+
+
+    //----------------------------PERMISOS Invoice----------------------------
+    getPermisos() {
+        console.log(this.$rootScope)
+    }
+
 }
 
 

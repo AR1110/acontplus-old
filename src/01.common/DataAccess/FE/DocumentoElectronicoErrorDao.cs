@@ -1,15 +1,9 @@
 ﻿using Helpers;
-using Domain.Models;
-using System;
-using System.Collections.Generic;
+using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
-using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.FE
 {
@@ -63,7 +57,7 @@ namespace DataAccess.FE
             }
             finally
             {
-                
+
             }
             return exists;
         }

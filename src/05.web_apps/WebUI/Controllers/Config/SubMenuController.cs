@@ -1,7 +1,6 @@
 ﻿using DataAccess;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using Domain.Models.Administracion;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Config
 {
@@ -15,7 +14,7 @@ namespace WebUI.Controllers.Config
             _configuration = configuration;
             sm = new SubMenuDao(_configuration);
         }
-        
+
         public IActionResult Index()
         {
             return View();

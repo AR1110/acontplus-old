@@ -14,7 +14,8 @@
 	</PropertyGroup>
 
 	<ItemGroup Label="Global-Tool Watch">
-		<Watch Include="..\RazorClassLibRazorComponent\**\*.razor" />
+		<Watch Include="..\..\08.razor_ui\Recepcion_UI\**\*.cshtml" />
+		<Watch Include="..\..\08.razor_ui\Reports_UI\**\*.cshtml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -1157,35 +1158,6 @@
 		<None Include="wwwroot\lib\popper\popper.min.js.map" />
 		<None Include="wwwroot\lib\sticky-kit\sticky-kit.js" />
 		<None Include="wwwroot\lib\sticky-kit\sticky-kit.min.js" />
-		<None Include="wwwroot\lib\tabulator-master\css\tabulator.css.map" />
-		<None Include="wwwroot\lib\tabulator-master\css\tabulator.min.css.map" />
-		<None Include="wwwroot\lib\tabulator-master\css\tabulator_bootstrap3.css.map" />
-		<None Include="wwwroot\lib\tabulator-master\css\tabulator_bootstrap3.min.css.map" />
-		<None Include="wwwroot\lib\tabulator-master\css\tabulator_bootstrap4.css.map" />
-		<None Include="wwwroot\lib\tabulator-master\css\tabulator_bootstrap4.min.css.map" />
-		<None Include="wwwroot\lib\tabulator-master\css\tabulator_bulma.css.map" />
-		<None Include="wwwroot\lib\tabulator-master\css\tabulator_bulma.min.css.map" />
-		<None Include="wwwroot\lib\tabulator-master\css\tabulator_materialize.css.map" />
-		<None Include="wwwroot\lib\tabulator-master\css\tabulator_materialize.min.css.map" />
-		<None Include="wwwroot\lib\tabulator-master\css\tabulator_midnight.css.map" />
-		<None Include="wwwroot\lib\tabulator-master\css\tabulator_midnight.min.css.map" />
-		<None Include="wwwroot\lib\tabulator-master\css\tabulator_modern.css.map" />
-		<None Include="wwwroot\lib\tabulator-master\css\tabulator_modern.min.css.map" />
-		<None Include="wwwroot\lib\tabulator-master\css\tabulator_semanticui.css.map" />
-		<None Include="wwwroot\lib\tabulator-master\css\tabulator_semanticui.min.css.map" />
-		<None Include="wwwroot\lib\tabulator-master\css\tabulator_simple.css.map" />
-		<None Include="wwwroot\lib\tabulator-master\css\tabulator_simple.min.css.map" />
-		<None Include="wwwroot\lib\tabulator-master\css\tabulator_site.css.map" />
-		<None Include="wwwroot\lib\tabulator-master\css\tabulator_site.min.css.map" />
-		<None Include="wwwroot\lib\tabulator-master\js\jquery_wrapper.js" />
-		<None Include="wwwroot\lib\tabulator-master\js\tabulator.js" />
-		<None Include="wwwroot\lib\tabulator-master\js\tabulator.js.map" />
-		<None Include="wwwroot\lib\tabulator-master\js\tabulator.min.js" />
-		<None Include="wwwroot\lib\tabulator-master\js\tabulator.min.js.map" />
-		<None Include="wwwroot\lib\tabulator-master\js\tabulator_esm.js" />
-		<None Include="wwwroot\lib\tabulator-master\js\tabulator_esm.js.map" />
-		<None Include="wwwroot\lib\tabulator-master\js\tabulator_esm.min.js" />
-		<None Include="wwwroot\lib\tabulator-master\js\tabulator_esm.min.js.map" />
 		<None Include="wwwroot\lib\toastr\toastr.js" />
 		<None Include="wwwroot\lib\toastr\toastr.js.map" />
 		<None Include="wwwroot\lib\toastr\toastr.min.js" />
@@ -4109,86 +4081,6 @@
 			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 		</Content>
-		<Content Update="wwwroot\lib\tabulator-master\css\tabulator.css">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
-		<Content Update="wwwroot\lib\tabulator-master\css\tabulator.min.css">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
-		<Content Update="wwwroot\lib\tabulator-master\css\tabulator_bootstrap3.css">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
-		<Content Update="wwwroot\lib\tabulator-master\css\tabulator_bootstrap3.min.css">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
-		<Content Update="wwwroot\lib\tabulator-master\css\tabulator_bootstrap4.css">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
-		<Content Update="wwwroot\lib\tabulator-master\css\tabulator_bootstrap4.min.css">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
-		<Content Update="wwwroot\lib\tabulator-master\css\tabulator_bulma.css">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
-		<Content Update="wwwroot\lib\tabulator-master\css\tabulator_bulma.min.css">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
-		<Content Update="wwwroot\lib\tabulator-master\css\tabulator_materialize.css">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
-		<Content Update="wwwroot\lib\tabulator-master\css\tabulator_materialize.min.css">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
-		<Content Update="wwwroot\lib\tabulator-master\css\tabulator_midnight.css">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
-		<Content Update="wwwroot\lib\tabulator-master\css\tabulator_midnight.min.css">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
-		<Content Update="wwwroot\lib\tabulator-master\css\tabulator_modern.css">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
-		<Content Update="wwwroot\lib\tabulator-master\css\tabulator_modern.min.css">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
-		<Content Update="wwwroot\lib\tabulator-master\css\tabulator_semanticui.css">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
-		<Content Update="wwwroot\lib\tabulator-master\css\tabulator_semanticui.min.css">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
-		<Content Update="wwwroot\lib\tabulator-master\css\tabulator_simple.css">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
-		<Content Update="wwwroot\lib\tabulator-master\css\tabulator_simple.min.css">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
-		<Content Update="wwwroot\lib\tabulator-master\css\tabulator_site.css">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
-		<Content Update="wwwroot\lib\tabulator-master\css\tabulator_site.min.css">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
 		<Content Update="wwwroot\lib\toastr\toastr.css">
 			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
@@ -4205,10 +4097,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\01.common\DataAccess\DataAccess.csproj" />
-		<ProjectReference Include="..\..\01.common\Helpers\Helpers.csproj" />
 		<ProjectReference Include="..\..\02.domain\Domain.Auth\Domain.Auth.csproj" />
-		<ProjectReference Include="..\..\02.domain\Domain\Domain.csproj" />
-		<ProjectReference Include="..\..\03.business_logic\BL.FactElect\BL.FactElect.csproj" />
 		<ProjectReference Include="..\..\03.business_logic\BL.JwtAuthenticationManger\BL.JwtAuthenticationManger.csproj" />
 		<ProjectReference Include="..\..\08.razor_ui\Compra_UI\Compra_UI.csproj">
 		  <TreatAsUsed>true</TreatAsUsed>
@@ -4219,7 +4108,9 @@
 		<ProjectReference Include="..\..\08.razor_ui\FACT_UI\FACT_UI.csproj">
 		  <TreatAsUsed>true</TreatAsUsed>
 		</ProjectReference>
-		<ProjectReference Include="..\..\08.razor_ui\Inventario_UI\Inventario_UI.csproj" />
+		<ProjectReference Include="..\..\08.razor_ui\Inventario_UI\Inventario_UI.csproj">
+			<TreatAsUsed>true</TreatAsUsed>
+		</ProjectReference>
 		<ProjectReference Include="..\..\08.razor_ui\Recepcion_UI\Recepcion_UI.csproj">
 		  <TreatAsUsed>true</TreatAsUsed>
 		</ProjectReference>

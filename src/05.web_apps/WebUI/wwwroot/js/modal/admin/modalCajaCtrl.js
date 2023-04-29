@@ -68,6 +68,7 @@ export class ModalAperturaCtrl{
         this.data = {};        
 
         this.entidadesFinancieras = [];                
+        this.data.entrada = 0;
     }
 
     $onInit(){
@@ -322,6 +323,8 @@ export class MovimientoCajaCtrl{
                 }
             }
         }
+
+        this.dataPermissions = {}
     }
 
     $onInit(){
@@ -359,8 +362,7 @@ export class MovimientoCajaCtrl{
                     this._tS.toastr('warning', response.message, response.titleSms);
                 }
                 if(response.code==="1"){
-                    this.movimientosCaja = JSON.parse(response.payload) || []; 
-                    console.log(this.movimientosCaja)
+                    this.movimientosCaja = JSON.parse(response.payload) || [];      
                     this.cloneMovimientosCaja = JSON.parse(JSON.stringify(this.movimientosCaja));
                     hideLoader();
                 }
@@ -377,6 +379,8 @@ export class MovimientoCajaCtrl{
     }
 
     verReporteMovimientoCaja(item){
+        if(!this.dataPermissions.hasOwnProperty('verOtrasCajas')) return;
+
         if(this.dataPermissions.verOtrasCajas.view){
             return true;
         }
@@ -385,6 +389,8 @@ export class MovimientoCajaCtrl{
     }
 
     cerrarCaja(item){
+        if(!this.dataPermissions.hasOwnProperty('cerrarCaja')) return;
+
         return (item.estado && this.dataPermissions.cerrarCaja.cerrar); 
     }
 
@@ -413,7 +419,10 @@ export class MovimientoCajaCtrl{
             controller: ModalCierreCajaCtrl,
             template: 'Caja/_ModalCierreCaja.cshtml',
             size: 'lg',
-            params: item
+            params: {
+                item,
+                dataPermissions: this.dataPermissions
+            }
         })
         
         modalRef.result.then(result=>{
@@ -539,8 +548,7 @@ export class ModalFiltroMovimientoCajaCtrl{
             }
         }
 
-        if(this.dataSearch.checkBoxStatus){
-            console.log(this.dataSearch)
+        if(this.dataSearch.checkBoxStatus){            
             if(this.dataSearch.statusMovement===null || this.dataSearch.statusMovement===undefined || this.dataSearch.statusMovement===""){
                 this._tS.toastr('warning', 'Seleccione el Estado');
                 return
@@ -577,9 +585,12 @@ export class ModalCierreCajaCtrl{
     constructor($uibModalInstance, _mS, _params, decodeToken){
         this.$uibModalInstance = $uibModalInstance;
         this._mS = _mS;
-        this._params = _params;
-
         this.decodeToken = decodeToken;
+        
+        let {item, dataPermissions}= _params;
+
+        this.data = item;
+        this.dataPermissions = dataPermissions;
 
         this.totalArqueo = 0;
 
@@ -588,30 +599,17 @@ export class ModalCierreCajaCtrl{
     $onInit(){
        
         this._mS.getData('get', '/ControlCaja/GetArqueoCaja?json=' + JSON.stringify({idUsuarioRol: 0})).then(resopnse=>{
-            console.log(resopnse)
+            
             if(resopnse.code==="0"){
                 console.log(resopnse)
             }
             if(resopnse.code==="1"){
                 this.arqueos = JSON.parse(resopnse.payload) || []
-                console.log(this.arqueos)
+              
             }
-        })
-
-        // let tempArqueos = [{"idMoneda":1,"cantidad":0,"valor":100.00,"descripcionMonedad":"Billetes de $100"},{"idMoneda":2,"cantidad":0,"valor":50.00,"descripcionMonedad":"Billetes de $50"},{"idMoneda":3,"cantidad":0,"valor":20.00,"descripcionMonedad":"Billetes de $20"},{"idMoneda":4,"cantidad":0,"valor":10.00,"descripcionMonedad":"Billetes de $10"},{"idMoneda":5,"cantidad":0,"valor":5.00,"descripcionMonedad":"Billetes de $5"},{"idMoneda":6,"cantidad":0,"valor":1.00,"descripcionMonedad":"Billetes de $1"},{"idMoneda":7,"cantidad":0,"valor":1.00,"descripcionMonedad":"Monedas de $1"},{"idMoneda":8,"cantidad":0,"valor":0.50,"descripcionMonedad":"Monedas de ¢0.50"},{"idMoneda":9,"cantidad":0,"valor":0.25,"descripcionMonedad":"Monedas de ¢0.25"},{"idMoneda":10,"cantidad":0,"valor":0.10,"descripcionMonedad":"Monedas de ¢0.10"},{"idMoneda":11,"cantidad":0,"valor":0.05,"descripcionMonedad":"Monedas de ¢0.05"},{"idMoneda":12,"cantidad":0,"valor":0.01,"descripcionMonedad":"Monedas de ¢0.01"}]
-
-        // this.arqueos = tempArqueos.map(item=>{
-        //     let obj = {
-        //         detalleArqueoCaja: {
-        //             idMoneda: item.idMoneda,
-        //             cantidad: item.cantidad
-        //         },
-        //         descripcionMoneda: item.descripcionMonedad,
-        //         valorMoneda: item.valor            
-        //     }            
-        //     return obj;
-        // })
-        
+        }).catch(error=>{
+            console.log(error)
+        })       
     }
 
     calcularCantidadMoneda() {            
@@ -622,14 +620,47 @@ export class ModalCierreCajaCtrl{
     
 
     async guardarCierreCaja(){
-        if(this.arqueos.some(val=>isNaN(val.cantidad))){
-            Swal.fire({
-                icon:'warning',
-                title:'<small>Cierre de Caja</small>',
-                html:`<small>Ingrese los valores validos</small>`
-            });                
-            return
+        try {
+            
+            if(this.arqueos.some(val=>isNaN(val.cantidad))){
+                Swal.fire({
+                    icon:'warning',
+                    title:'<small>Cierre de Caja</small>',
+                    html:`<small>Ingrese los valores validos</small>`
+                });                
+                return
+            }
+    
+            if(this.dataPermissions.hasOwnProperty('enterKey') && this.dataPermissions.enterKey.isRequerid){                    
+                Swal.fire({
+                    title: 'Ingrese Clave',
+                    input: 'password',
+                    inputAttributes: {
+                        autocapitalize: 'off'
+                    },
+                    showCancelButton: true,
+                    confirmButtonText: 'Cerrar Caja',
+                    cancelButtonText: 'Cancelar',                  
+                    inputValidator: (value) => {
+                        if (!value) return 'La Calve es requerida'; 
+                        if(value.length>10) return 'Número máximo de caracteres es de 15'                       
+                    },                         
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                                               
+                    }
+                })        
+    
+            }
+        } catch (error) {
+            console.log(error)
         }
+
+        this._mS.getData('get', 'UsuarioPermiso/CheckHasPermission/' + JSON.stringify({}), null, true).then(result => {
+            console.log(result)
+            return
+        })
+        return
 
         let {isConfirmed} = await Swal.fire({
             icon: 'warning',                
@@ -651,9 +682,15 @@ export class ModalCierreCajaCtrl{
 
             this._mS.getData('put','/ControlCaja/Update?id=' + this._params.idControlCaja, data).then(response=>{                
                 if(response.code==="0"){
-                    toastr.warning(response.message, response.titleSms);
-                    return
+                    Swal.fire({
+                        icon:'warning',
+                        html: `<small>${response.message}</small>`
+                    })                                  
                 }
+                if(response.code==="2"){
+
+                }
+
                 if(response.code==="1"){
                     let dataMail = JSON.parse(response.payload) || {};
                     toastr.success(response.message, response.titleSms);
@@ -661,15 +698,17 @@ export class ModalCierreCajaCtrl{
                   
                     if(dataMail.receptor){
                         this.sendEmail(dataMail)
-                    }
-
-                   
+                    }                   
                     // this.$uibModalInstance.close(response);
                 }
 
             })
 
         }
+    }
+
+    guardar(){
+
     }
 
 

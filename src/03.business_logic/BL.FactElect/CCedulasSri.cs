@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
-using System.Net.Http.Headers;
+﻿using Domain.Dtos;
+using Newtonsoft.Json;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Web;
-using Domain.Dtos;
 
 namespace BL.FactElect
 {
@@ -286,45 +286,45 @@ namespace BL.FactElect
 
             //try
             //{
-                using (var client = new HttpClient(handler: new HttpClientHandler()
+            using (var client = new HttpClient(handler: new HttpClientHandler()
+            {
+                Credentials = CredentialCache.DefaultNetworkCredentials,
+                UseCookies = true,
+                CookieContainer = cookies
+
+            }))
+            {
+                var request = new HttpRequestMessage()
                 {
-                    Credentials = CredentialCache.DefaultNetworkCredentials,
-                    UseCookies = true,
-                    CookieContainer = cookies
+                    RequestUri = new Uri("https://srienlinea.sri.gob.ec/sri-registro-civil-servicio-internet/rest/DatosRegistroCivil/obtenerDatosCompletosPorNumeroIdentificacionConToken?numeroIdentificacion=" + NumeroCedula),
+                    Method = HttpMethod.Get,
 
-                }))
+                };
+                client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0");
+                string _ContentType = "application/json";
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(_ContentType));
+                client.DefaultRequestHeaders.Add("Authorization", strtoken);
+                HttpResponseMessage response = client.SendAsync(request).Result;
+                if (!response.IsSuccessStatusCode)
                 {
-                    var request = new HttpRequestMessage()
-                    {
-                        RequestUri = new Uri("https://srienlinea.sri.gob.ec/sri-registro-civil-servicio-internet/rest/DatosRegistroCivil/obtenerDatosCompletosPorNumeroIdentificacionConToken?numeroIdentificacion=" + NumeroCedula),
-                        Method = HttpMethod.Get,
+                    throw new Exception();
+                }
 
-                    };
-                    client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0");
-                    string _ContentType = "application/json";
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(_ContentType));
-                    client.DefaultRequestHeaders.Add("Authorization", strtoken);
-                    HttpResponseMessage response = client.SendAsync(request).Result;
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        throw new Exception();
-                    }
-
-                    Task<Stream> streamTask = response.Content.ReadAsStreamAsync();
-                    Stream stream = streamTask.Result;
-                    var sr = new StreamReader(stream);
-                    Html = HttpUtility.HtmlDecode(sr.ReadToEnd());
-                    Html = Html.Replace("[", "");
-                    Html = Html.Replace("]", "");
-                    PersonaDatosError = JsonConvert.DeserializeObject<CCedulaSriDto>(Html);
-                    if (PersonaDatosError == null)
-                    {
-                        PersonaDatosError = new CCedulaSriDto();
-                        PersonaDatosError.Error = " No existe contribuyente con ese Ruc";
-                        return PersonaDatosError;
-                    }
+                Task<Stream> streamTask = response.Content.ReadAsStreamAsync();
+                Stream stream = streamTask.Result;
+                var sr = new StreamReader(stream);
+                Html = HttpUtility.HtmlDecode(sr.ReadToEnd());
+                Html = Html.Replace("[", "");
+                Html = Html.Replace("]", "");
+                PersonaDatosError = JsonConvert.DeserializeObject<CCedulaSriDto>(Html);
+                if (PersonaDatosError == null)
+                {
+                    PersonaDatosError = new CCedulaSriDto();
+                    PersonaDatosError.Error = " No existe contribuyente con ese Ruc";
                     return PersonaDatosError;
                 }
+                return PersonaDatosError;
+            }
 
             //}
             //catch (Exception ex)
@@ -333,6 +333,6 @@ namespace BL.FactElect
             //    PersonaDatosError.Error = ex.ToString();
             //    return PersonaDatosError;
             //}
-        } 
+        }
     }
 }

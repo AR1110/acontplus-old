@@ -1,10 +1,7 @@
-﻿using System;
-using Domain.Models;
+﻿using Helpers;
+using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using Helpers;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Estadisticas
 {
@@ -19,7 +16,7 @@ namespace DataAccess.Estadisticas
         }
         public async Task<string> GetAsync(string json)
         {
-            DataTable dt = new DataTable ();
+            DataTable dt = new DataTable();
             string response = "";
             try
             {
@@ -44,14 +41,14 @@ namespace DataAccess.Estadisticas
             }
             finally
             {
-                
+
             }
             return response;
         }
 
         public async Task<string> GetClienteVentaAsync(string json)
         {
-            DataTable dt = new DataTable ();
+            DataTable dt = new DataTable();
             string response = "";
             try
             {
@@ -76,7 +73,7 @@ namespace DataAccess.Estadisticas
             }
             finally
             {
-                
+
             }
             return response;
 

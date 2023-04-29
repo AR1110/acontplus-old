@@ -4,12 +4,12 @@ app.controller('rolCtrl', rolCtrl);
 rolCtrl.$inject = ['$http', '$scope', 'commonService', 'formulario', 'apiUrl', 'decodeToken'];
 
 function rolCtrl($http, $scope, _commonSvc, form, apiUrl, decodeToken) {
-    let accion = JSON.parse(localStorage.getItem("accion"));
-    if(accion===null){
-        location.href = "/Home/Index";
-    }else{
-        $scope.accion = accion[0];
-    }
+    // let accion = JSON.parse(localStorage.getItem("accion"));
+    // if(accion===null){
+    //     location.href = "/Home/Index";
+    // }else{
+    //     $scope.accion = accion[0];
+    // }
 
     $scope.maxSize = 5;
     $scope.totalRecords = 0;
