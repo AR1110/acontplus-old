@@ -42,6 +42,7 @@ BEGIN
 	--===========Datos para la validacion de informacion===============
 	DECLARE @uniqueId AS VARCHAR(20)
 	DECLARE @fechaEmision AS DATETIME
+	DECLARE @fechaEmisionTemp  DATETIME
 
 	DECLARE @fecha DATETIME 
 	DECLARE @hora DATETIME
@@ -90,17 +91,24 @@ BEGIN
         ,valor NUMERIC(18,5) NOT NULL
 	)
 
+
+	SELECT 
+		@hora = CAST(fechaEmision as time)
+	FROM Compra.Documento_Ingreso WHERE idDocumentoIngreso = @idDocumentoIngreso
+
 	SELECT 
 		 @fecha = CAST(fechaEmision as date)
-		,@hora  = CAST(dbo.ufnGetDateEcuador() AS time)
+		,@fechaEmisionTemp = @fecha + @hora 
 	FROM OPENJSON(@comprobante)
 	WITH(fechaEmision DATETIME '$.fechaEmision')
+	SELECT '0'code, CAST(@fechaEmisionTemp as varchar(60)) as 'message'
+	RETURN 
 
 	BEGIN TRY 
 
 		INSERT INTO @document 
 		      (idDocumentoIngreso,idProveedor,fechaEmision,totalSinImpuestos,importeTotal,inventory)
-		SELECT @idDocumentoIngreso,idProveedor, @fecha+@hora,totalSinImpuestos,importeTotal,inventory
+		SELECT @idDocumentoIngreso,idProveedor, @fechaEmisionTemp,totalSinImpuestos,importeTotal,inventory
 		FROM OPENJSON(@comprobante)
 		WITH (
 		      idProveedor INT '$.idProveedor' 

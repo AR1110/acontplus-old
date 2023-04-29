@@ -43,7 +43,7 @@ BEGIN
 			DECLARE @sql AS NVARCHAR(MAX) = 'SELECT TOP (100)
 												 di.idDocumentoIngreso
 												,serieComprobante = es.estab+''-''+pt.ptoEmi+''-''+Helper.F_Auto_Sequential(di.secuencial)
-												,fechaEmision     = FORMAT(di.fechaEmision, ''dd/MM/yyyy HH:mm tt'')
+												,fechaEmision     = FORMAT(di.fechaEmision, ''dd/MM/yyyy HH:mm'')
 												,nombreFiscal     = pr.nombreFiscal
 												,importeTotal     = di.importeTotal
 												,estado           = IIF(di.estado = 0, ''Anulado'',''Activo'')
