@@ -8,7 +8,7 @@ GO
 IF OBJECT_ID(N'Inventario.Transaccion_Update', N'P') IS NOT NULL
 DROP PROCEDURE Inventario.Transaccion_Update
 GO
-CREATE PROCEDURE Inventario.Transaccion_Update @codTran VARCHAR(2),@codDoc VARCHAR(2),@idDocumento INT,@estado  INT
+CREATE PROCEDURE Inventario.Transaccion_Update @codTran VARCHAR(5),@codDoc VARCHAR(5),@idDocumento INT,@estado  INT
 AS
 BEGIN
 	SET NOCOUNT ON; 
@@ -17,7 +17,7 @@ BEGIN
 
 	SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = @codDoc
 
-	SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WHERE codigo = @codTran
+	SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = @codTran
 		
 	IF @codTran = 'T'
 		BEGIN
