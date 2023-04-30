@@ -506,7 +506,8 @@ export class ModalFiltroKardex {
         this.articulo = _params.articulo;
         this.dataSearch = _params.dataSearch;
         this.dataSearch.checkBoxBodega = true
-        this.dataSearch.checkBoxUltimaConsolidacion = true
+        this.dataSearch.checkBoxFecha = true
+        this.onChangeFechaFiltro()
         this.articuloFiltro = _params.articuloFiltro;
         this.dataSearch.consolidacion = 0;
 
