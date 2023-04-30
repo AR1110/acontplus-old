@@ -233,25 +233,10 @@ BEGIN
 			--==============================================================Inventario============================================================================================
 			IF @inventory = 'SI'
 				BEGIN 
-					DECLARE @tblDetails AS TABLE (
-						 idArticulo  INT NOT NULL
-						,idTarifa  INT  NULL
-						,idBodega   INT NOT NULL
-						,idMedida  INT NULL
-						,cantidad NUMERIC (18,5)
-						,precioUnitario NUMERIC (18,5)
-						,total NUMERIC (18,5)
-						,estado BIT NOT NULL
-					)
 
 					EXEC Inventario.Transaccion_Delete 'E','IV',@idDocumentoIngreso
 
-					INSERT INTO @tblDetails(idArticulo,idBodega,idMedida,cantidad,precioUnitario,total,estado)
-							  	 SELECT idArticulo,idBodega,idMedida,cantidad,precioUnitario,precioTotalSinImpuesto,estado
-								 FROM Compra.Documento_Ingreso_Detail dd
-								 WHERE dd.idDocumentoIngreso = @idDocumentoIngreso 
-
-					IF EXISTS (SELECT 1 FROM @tblDetails td INNER JOIN Articulo a WITH (NOLOCK) ON td.idArticulo = a.idArticulo WHERE a.llevaInventario = 1)
+					IF EXISTS (SELECT 1 FROM Compra.Documento_Ingreso_Detail dd WITH (NOLOCK) INNER JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = dd.idArticulo WHERE dd.idDocumentoIngreso = @idDocumentoIngreso AND  ar.llevaInventario = 1)
 						BEGIN 
 							DECLARE @idArticulo INT
 							DECLARE @idBodega INT
@@ -264,10 +249,10 @@ BEGIN
 							DECLARE @estado BIT 
 
 							DECLARE cursor_inventory CURSOR LOCAL FOR
-							SELECT td.idArticulo, idBodega,td.idMedida,NULL, cantidad, td.precioUnitario,a.precioCosto,td.total,td.estado
-							FROM @tblDetails td 
-							INNER JOIN Articulo a WITH (NOLOCK) ON td.idArticulo = a.idArticulo 
-							WHERE a.llevaInventario = 1
+							SELECT dd.idArticulo,dd.idBodega,dd.idMedida,NULL,dd.cantidad,dd.precioUnitario,ar.precioCosto,dd.precioTotalSinImpuesto,dd.estado
+							FROM Compra.Documento_Ingreso_Detail dd WITH (NOLOCK)
+							INNER JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = dd.idArticulo
+							WHERE dd.idDocumentoIngreso = @idDocumentoIngreso AND ar.llevaInventario = 1
 
 							OPEN cursor_inventory
 
@@ -275,9 +260,9 @@ BEGIN
 
 							WHILE @@FETCH_STATUS = 0
 								BEGIN
-									--tipo transaccion 2 salidas
-									--tipo documento 1 factura electronica
-									EXEC Inventario.Transaccion_Insert 'E','IV', @fechaEmision, @idDocumentoIngreso,  @idArticulo, @idBodega ,@idMedida,@idTarifa,@cantidad, @precioCosto,@total, @precioUnitario, @idUsuario,@estado
+									--tipo transaccion Entrada
+									--tipo documento Ingresos Varios 
+									EXEC Inventario.Transaccion_Insert 'E','IV', @fechaEmision, @idDocumentoIngreso,  @idArticulo, @idBodega ,@idMedida,@idTarifa,@cantidad, @precioUnitario,@precioCosto,@total, @idUsuario,@estado
 									FETCH NEXT FROM cursor_inventory INTO @idArticulo,@idBodega,@idMedida,@idTarifa,@cantidad,@precioUnitario,@precioCosto,@total,@estado
 									
 								END
