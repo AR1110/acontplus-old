@@ -1,4 +1,4 @@
-import './modalCompraBaseCtrl.min.js?v=0.7'
+import './modalCompraBaseCtrl.min.js?v=0.6'
 
 class ModalCompraNoHabitualCtrl extends window.modalCompraBaseCtrl {
 
@@ -313,7 +313,7 @@ class ModalCompraNoHabitualCtrl extends window.modalCompraBaseCtrl {
                             idProveedor: this.data.idProveedor,
                             estab,
                             ptoEmi,
-                            fechaEmision: moment.tz(this.data.fechaEmision, "America/Guayaquil").format("YYYY-MM-DD"),
+                            fechaEmision: moment(this.data.fechaEmision, 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ (h:mm)').format('YYYY-MM-DD HH:mm:ss'),
                             totalSinImpuestos: this.data.subTotalSinImpuestos,
                             importeTotal: this.data.total,
                             inventory: this.data.inventory
@@ -321,7 +321,7 @@ class ModalCompraNoHabitualCtrl extends window.modalCompraBaseCtrl {
                         detalles: JSON.stringify(this.trimDetail()),
                         impuestos: JSON.stringify(this.taxes())
                     }
-                    console.log(data)
+
 
                     this._mS.getData(method, url, data, true).then(response => {
                         if (response.code == '0') {
@@ -530,6 +530,8 @@ export class ModalUpdateCtrl extends ModalCompraNoHabitualCtrl {
         this.searchProveedorOptions.showBtnList = true;
         this.searchProveedorOptions.showBtnEdit = true;
 
+        this.data.fechaEmision = new Date();
+
         this.CELL_TEMPLATE_OPTION = `<a  ng-click="grid.appScope.$ctrl.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
                            <a  ng-click="grid.appScope.$ctrl.openModalArticleEdit(row.entity)" style="cursor:pointer;" class="btn btn-success btn-xs text-white" title = "Editar Articulo" ><i class="fa fa-edit"></i></a >                                  
                            <a  ng-click="grid.appScope.$ctrl.abrirModalDatoAdicional(row.entity)" style="cursor:pointer;" ng-show='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar Dato Adicional al Articulo" > <i class="fas fa-tags"></i></a >                                  
@@ -551,7 +553,7 @@ export class ModalUpdateCtrl extends ModalCompraNoHabitualCtrl {
 
             this.data = this.params[0][0];
             this.data.fechaEmision = this._fS.formatDate(this.data.fechaEmision)
-            console.log(this.data.fechaEmision)
+
 
 
 
@@ -652,183 +654,6 @@ export class ModalUpdateCtrl extends ModalCompraNoHabitualCtrl {
 
 
 
-
-
-}
-
-
-
-export class ModalDetalleCtrl extends ModalCompraNoHabitualCtrl {
-
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario', 'params']
-
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS, params) {
-        super({
-            $scope,
-            $timeout,
-            $uibModalInstance,
-            _mS,
-            _commonSvc,
-            _modalSvc,
-            _nombreModalConst,
-            _tS,
-            _fS
-        });
-
-        this.params = params;
-
-        this.searchProveedorOptions = {}
-        this.searchProveedorOptions.showBtnNew = true;
-        this.searchProveedorOptions.showBtnList = true;
-        this.searchProveedorOptions.showBtnEdit = true;
-
-        this.data.fechaEmision = new Date();
-
-        this.CELL_TEMPLATE_OPTION = `<a  ng-click="grid.appScope.$ctrl.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
-                           <a  ng-click="grid.appScope.$ctrl.openModalArticleEdit(row.entity)" style="cursor:pointer;" class="btn btn-success btn-xs text-white" title = "Editar Articulo" ><i class="fa fa-edit"></i></a >                                  
-                           <a  ng-click="grid.appScope.$ctrl.abrirModalDatoAdicional(row.entity)" style="cursor:pointer;" ng-show='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar Dato Adicional al Articulo" > <i class="fas fa-tags"></i></a >                                  
-                        `;
-
-
-    }
-
-    async $onInit() {
-
-        try {
-            showLoader();
-
-            let {
-                UiGridOptionsCompra
-            } = await import('./../factElect/uiGridOptions.min.js' + CHANGE_VERSION());
-
-
-
-            this.data = this.params[0][0];
-            this.data.fechaEmision = this._fS.formatDate(this.data.fechaEmision)
-
-
-
-
-            this.actividadTipoIva = {
-                tarifa: this.data.tarifa,
-                codigoPorcentaje: this.data.codigoPorcentaje
-            }
-
-            this.establecimientos = [{
-                codEstab: this.data.codEstab,
-                nombreComercial: this.data.nombreComercial
-            }]
-
-            this.proveedor = this.params[1][0];
-
-
-            //Detalle
-            this.gridOptions.data = this.params[2];
-            for (let item of this.gridOptions.data) {
-
-                const data = {
-                    idArticulo: item.idArticulo
-                }
-
-                this._commonSvc.getDataArticuloParaCompra({
-                    json: data
-                }).then(response => {
-                    const results = JSON.parse(response.payload);
-                    item.medidas = results[1]
-                    item.etiquetas = results[2]
-                })
-
-                //Por Anlizar 
-                item.subTotal = item.cantidad * item.precioUnitario;
-                item.ice = 0;
-                item.totalIce = 0;
-            }
-
-
-
-            //Bodegas 
-            this.bodegas = this.params[4].filter(item => item.codEstab === this.data.codEstab);
-            this.idBodega = this.bodegas.find(item => (item.predeterminado)).idBodega;
-
-
-            //Ddecimal 
-            this.decimal = this.params[5][0]
-
-            //Impuestos al Iva
-            this.tipoIvas = this.params[6];
-
-            this.data.inventory = this.params[7][0].inventory;
-
-            //Calculos
-            let porcentajeDescuento = (((this.data.subTotalSinImpuestos - this.data.total) / 100) * this.data.subTotalSinImpuestos)
-            this.data.porcentajeDescuento = this._fS.roundNumber(porcentajeDescuento, this.decimal.nroTotalSubTotal)
-
-            this.setColumnDefsView();
-
-            //Eliminar Mas Adelante 
-            this.gridOptions.columnDefs[7] = {
-                name: 'I.V.A',
-                field: 'codigoPorcentaje',
-                width: '8%',
-                minWidth: '100',
-                type: 'text',
-                editableCellTemplate: 'ui-grid/dropdownEditor',
-                cellFilter: 'cellFilterTipoIva:this',
-                editDropdownValueLabel: 'descripcion',
-                editDropdownIdLabel: 'codigoPorcentaje',
-                enableCellEdit: true,
-                enableCellEditOnFocus: true,
-                //    visible: config.porcentajeIva
-            }
-
-            let indexTipoIva = this.gridOptions.columnDefs.findIndex(item => item.field === 'codigoPorcentaje');
-            this.gridOptions.columnDefs[indexTipoIva].editDropdownOptionsArray = this.tipoIvas;
-
-            this.uiGridInvoice = new UiGridOptionsCompra({
-                $scope: this.$scope,
-                gridOptions: this.gridOptions,
-                _fS: this._fS,
-                _tS: this._tS,
-                tipoIvas: this.tipoIvas,
-                decimal: this.decimal,
-                actividadTipoIva: this.actividadTipoIva
-            })
-
-
-            this.$scope.$apply();
-
-        } catch (error) {
-            console.log(error)
-        } finally {
-            hideLoader()
-        }
-    }
-
-
-    getReport() {
-        try {
-
-            let format = 'excel';
-            let dataParms = {
-                id: this.data.idDocumentoIngreso,
-                codEstab: this.data.codEstab,
-                codigo: 'RCD',
-                codDoc: 'CNH',
-                format,
-            }
-
-            const parameters = {
-                dataParams: JSON.stringify(dataParms)
-            }
-
-            this._commonSvc.getReportDynamic({
-                parameters,
-                format
-            })
-        } catch (error) {
-            console.log(error)
-        }
-    }
 
 
 }
