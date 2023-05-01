@@ -324,16 +324,16 @@ export class ModalFormaCobroCtrl extends ModalBaseCtrl {
     resetData() {
         this.data.valorAbono = this.data.saldo;
         this.data.idCiudad = 0;
-        this.data.nro = '';
+        this.data.nro = null;
         this.data.posFechado = false;
-        this.data.aprobacion = '';
-        this.data.lote = '';
-        this.data.referencia = '';
+        this.data.aprobacion = null;
+        this.data.lote = null;
+        this.data.referencia = null;
         this.banco = {};
         this.data.fechaEmision = new Date();
         this.data.tipoDocumento = null;
-        this.data.idTipoDocumento = null;
-        this.data.idComprobante = null;
+        this.data.idTipoDocumento = 0;
+        this.data.idComprobante = 0;
     }
 
 
