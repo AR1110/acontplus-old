@@ -586,20 +586,14 @@
                             if (response.code == "1") {
                                 $scope.arraysForm = JSON.parse(response.payload)
                                 $scope.sustentos = $scope.arraysForm[0];
-
                                 $scope.tiemposCredito = $scope.arraysForm[1]
-                                // for (const tc of tempCredito) {
-                                //     if (!tc.gestion) {
-                                //         $scope.tiemposCredito.push(tc)
-                                //     }
-                                // }
-
                                 $scope.categories = $scope.arraysForm[2];
                                 $scope.bodegas = $scope.arraysForm[3];
+                                console.log($scope.bodegas)
                                 $scope.medidas = $scope.arraysForm[4];
                                 $scope.getProv()
                             }
-                        }, error => {
+                        }).catch(error => {
                             console.log(error)
                         })
 
@@ -717,7 +711,7 @@
                     console.log(error)
                 }
             }
-
+            $scope.selectedEstab = {}
             $scope.customDetailTemp = []
             $scope.getId = () => {
                 try {
@@ -859,6 +853,10 @@
                             if ($scope.fullComprobante.infoAdicional) {
                                 console.log($scope.fullComprobante.infoAdicional)
                             }
+                            $scope.selectedEstab.codEstab = $scope.query.codEstab
+                            if ($scope.selectedEstab.codEstab) {
+                                $scope.filterBodega()
+                            }
                         }
                         hideLoader()
                     }).catch((error) => {
@@ -871,7 +869,19 @@
                 }
 
             }
+            $scope.bodegasFiltered = []
 
+            $scope.filterBodega = () => {
+                $scope.bodegasFiltered = []
+                for (let i = 0; i < $scope.bodegas.length; i++) {
+                    if ($scope.selectedEstab.codEstab == $scope.bodegas[i].codEstab) {
+                        $scope.bodegasFiltered.push($scope.bodegas[i])
+                    }
+                }
+                $scope.comprobanteForm.idBodega = $scope.bodegasFiltered[0].idBodega
+                $scope.addBodega()
+                $$scope.$digest();()
+            }
             /** Provedor */
 
             $scope.tipoProv = {}
@@ -1371,14 +1381,16 @@
                 }
             }
 
-            $scope.addBodega = (item) => {
+            $scope.addBodega = () => {
                 try {
-                    let data = {
-                        todos: true,
-                        idDocumento: $scope.selected[0].idDocumento,
-                        idBodega: item
+                    if ($scope.comprobanteForm.idBodega) {
+                        let data = {
+                            todos: true,
+                            idDocumento: $scope.selected[0].idDocumento,
+                            idBodega: $scope.comprobanteForm.idBodega
+                        }
+                        $scope.saveArticleTemp(3, data)
                     }
-                    $scope.saveArticleTemp(3, data)
                 } catch (error) {
                     console.log(error)
                 }

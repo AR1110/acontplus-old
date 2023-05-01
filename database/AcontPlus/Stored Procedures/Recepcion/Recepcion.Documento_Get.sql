@@ -100,23 +100,23 @@ BEGIN
 		WHERE idUsuarioRol = @idRol
 
 		SELECT *
-		FROM SustentoTributario
+		FROM SustentoTributario WITH (NOLOCK)
 
 		SELECT *
-		FROM TiempoCredito
+		FROM TiempoCredito WITH (NOLOCK)
 		WHERE idEntidad = @idEntidad
 			AND gestion = 0
 
 		SELECT *
-		FROM CategoriaCompra
+		FROM CategoriaCompra WITH (NOLOCK)
 		WHERE idEntidad = @idEntidad
 
 		SELECT *
-		FROM Bodega
-		WHERE codEstab = @codEstab
+		FROM Bodega WITH (NOLOCK)
+		WHERE codEstab IN (SELECT codEstab FROM Config.Estab_Asig WHERE idUsuarioRol = @idRol)
 
 		SELECT *
-		FROM Medida
+		FROM Medida WITH (NOLOCK)
 		WHERE idEntidad = @idEntidad
 
 		RETURN

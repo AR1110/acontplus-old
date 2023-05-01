@@ -1012,9 +1012,9 @@ app.directive('estabStock', function (mainService, $compile, $timeout) {
             });
 
             // Clean up the popover when the directive is destroyed
-            scope.$on('$destroy', function () {
-                $(element).popover('destroy');
-            });
+            // scope.$on('$destroy', function () {
+            //     $(element).popover('destroy');
+            // });
         }
     };
 })
