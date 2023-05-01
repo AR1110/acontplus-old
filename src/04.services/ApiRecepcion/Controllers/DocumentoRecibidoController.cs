@@ -21,10 +21,12 @@ namespace ApiRecepcion.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly DbAccess _db;
-        public DocumentoRecibidoController(IConfiguration configuration)
+        private readonly FileTxt _txtComp;
+        public DocumentoRecibidoController(IConfiguration configuration, FileTxt txtComp)
         {
             _configuration = configuration;
             _db = new DbAccess(_configuration);
+            _txtComp = txtComp;
         }
 
         [HttpGet("Get/{json}")]
@@ -221,13 +223,35 @@ namespace ApiRecepcion.Controllers
             try
             {
                 string path = _configuration.GetSection("ImportacionTxt").Value;
-                FileData.SaveFile(path, file);
-                FileTxt txtComp = new FileTxt();
+                FileData.SaveFile(path, file); 
                 DataTable dt = new DataTable("Comprobantes");
-                dt = await txtComp.GetDocs(FileData.GetFileByte(file));
+                dt = await _txtComp.GetDocs(FileData.GetFileByte(file));
                 if (!DataHelper.DataTableIsNull(dt))
                 {
-                    _response.Create(code: "1", payload: DataHelper.DataTableToJSON(dt));
+                    await _db.SPExecute("Recepcion.Documento_Check_Existence");
+                    _db.AddDynamicParam("json", JsonConvert.SerializeObject(dt));
+                    var dtExistent = _db.GetDataTable();
+                    if (dtExistent.Columns.Contains("code") && dtExistent.Rows[0].Field<string>("code") != "-1")
+                    {
+                        _response.Create(code: "1", payload: DataHelper.DataTableToJSON(dt));
+                    }
+                    else
+                    {
+                        if (dt.Rows.Count == dtExistent.Rows.Count)
+                        {
+                            _response.Create("0", "Los registros que intenta importar ya se encuentran registrados, intente con otro archivo!");
+                        }
+                        else
+                        {
+                            var diff = (from row1 in dt.AsEnumerable()
+                                        join row2 in dtExistent.AsEnumerable() on new { Column1 = row1["claveAcceso"]} equals new { Column1 = row2["claveAcceso"] } into gj
+                                        from subRow2 in gj.DefaultIfEmpty()
+                                        where subRow2 == null
+                                        select row1).ToList();
+                            DataTable filteredDataTable = diff.CopyToDataTable();
+                            _response.Create(code: "1", payload: DataHelper.DataTableToJSON(filteredDataTable));
+                        }
+                    }
                 }
                 else
                 {
