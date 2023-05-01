@@ -106,7 +106,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44320
+          "Port": 12786
         }
       ],
       "DownstreamPathTemplate": "/api/DocumentoRecibido/{everything}",
