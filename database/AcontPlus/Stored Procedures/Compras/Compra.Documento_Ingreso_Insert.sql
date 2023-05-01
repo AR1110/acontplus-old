@@ -53,9 +53,10 @@ BEGIN
 	DECLARE @fechaEmision AS DATETIME
 	
 	--======================Fecha Emision===============================
-	DECLARE @currentDateCreateDoc AS DATETIME = dbo.ufnGetDateEcuador() --Fecha Actual
+	DECLARE @currentDateCreateDoc AS DATETIME = CAST(dbo.ufnGetDateEcuador() AS DATE) --Fecha Actual	
 	DECLARE @fechaEmisionToCompare AS DATETIME --fecha emision  front-end
 	DEClARE @fechaEmisionTemp AS DATETIME 
+	DECLARE @hora AS DATETIME = CAST(dbo.ufnGetDateEcuador() AS TIME)
 
 	--==============Parametros para el area de contabilidad============
 	DECLARE @idEstadoPago AS INT
@@ -108,14 +109,14 @@ BEGIN
 			END
 		ELSE
 			BEGIN 
-				SET @fechaEmisionTemp =CAST(CAST(@FechaEmisionToCompare AS DATE) AS datetime)  + @hora
+				SET @fechaEmisionTemp =CAST(CAST(@fechaEmisionToCompare AS DATE) AS datetime)  + @hora
 			END
 		
 		
 
 		INSERT INTO @document 
 		      (idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,fechaEmision,totalSinImpuestos,importeTotal,inventory)
-		SELECT idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,fechaEmision,totalSinImpuestos,importeTotal,inventory
+		SELECT idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,@fechaEmisionTemp,totalSinImpuestos,importeTotal,inventory
 		FROM OPENJSON(@comprobante)
 		WITH (idEstablecimiento INT '$.idEstablecimiento' 
 			 ,idPuntoEmision INT '$.idPuntoEmision'
