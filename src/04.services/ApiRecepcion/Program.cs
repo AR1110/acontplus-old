@@ -1,4 +1,5 @@
 using BL.JwtAuthenticationManger;
+using BL.Recepcion;
 using Helpers;
 
 namespace ApiRecepcion
@@ -29,6 +30,8 @@ namespace ApiRecepcion
 
             builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
             ConfigHelper.AddJsonFiles(builder.Configuration);
+
+            builder.Services.AddScoped<FileTxt>();
 
             var app = builder.Build();
             // Configure the HTTP request pipeline.

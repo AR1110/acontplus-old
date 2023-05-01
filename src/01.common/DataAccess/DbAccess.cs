@@ -84,6 +84,21 @@ namespace DataAccess
                 _log.LogError("Error in AddDynamicParam: " + ex.ToString());
             }
         }
+        public void AddOutputParam(string paramName, object paramValue)
+        {
+            if (!string.IsNullOrEmpty(paramName) && paramValue != null && _command != null)
+            {
+                SqlParameter sqlParam = new SqlParameter();
+                sqlParam.ParameterName = paramName;
+                sqlParam.SqlDbType = DbType.Get(paramValue);
+                sqlParam.Direction = ParameterDirection.Output;
+                _command.Parameters.Add(sqlParam);
+            }
+        }
+        public object GetOutputParam(string paramName)
+        {
+            return _command.Parameters[$"{paramName}"].Value;
+        }
         public void OnlyExecute()
         {
             try
@@ -100,7 +115,26 @@ namespace DataAccess
                 _connection.Close();
             }
         }
-
+        public object ExecuteScalar()
+        {
+            return _command.ExecuteScalar();
+        }
+        public void ExecuteReader()
+        {
+            try
+            {
+                _command.ExecuteReader();
+            }
+            catch (Exception ex)
+            {
+                LogWriter _log = new LogWriter(_config);
+                _log.LogError("Error in ExecuteReader: " + ex.ToString());
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
         public DataSet GetDataSet()
         {
             DataSet ds = new DataSet();

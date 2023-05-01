@@ -20,7 +20,7 @@
                     <div class="row">
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                             <md-card-action>
-                                <md-button class="md-raised md-primary" ng-click="newImport()">
+                                <md-button class="md-raised md-primary" ng-click="askToNewImport()">
                                     <icon class="ti-upload"></icon> Nueva
                                     Importación
                                 </md-button>
@@ -67,6 +67,11 @@
                         </div>
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                             @await Html.PartialAsync("~/Views/Proveedor/_ProveedorAutocompleteFiltro.cshtml")
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                            <button class="btn btn-info" ng-click="openMigrate()"><i class="fa-solid fa-file-export"></i> Migrar Comprobantes</button>
                         </div>
                     </div>
                     <div class="table-responsive" style="max-height: 400px;">

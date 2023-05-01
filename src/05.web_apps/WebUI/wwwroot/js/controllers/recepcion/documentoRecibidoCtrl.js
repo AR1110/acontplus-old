@@ -156,6 +156,7 @@
             $scope.getComprobantes = function () {
                 try {
                     showLoader()
+                    $scope.estabToWork = $scope.establecimientos.find(x => x.codEstab == $scope.query.codEstab).nombreComercial
                     $scope.comprobantes = []
                     $scope.query.startDate = $scope.dateRangePicker.date.startDate
                     $scope.query.endDate = $scope.dateRangePicker.date.endDate
@@ -180,12 +181,13 @@
                     console.log(error)
                 }
             }
-
+            $scope.estabToWork = ""
             $scope.initialLoad = function () {
                 _commonSvc.getEstabAsign().then(response => {
                     $scope.establecimientos = response
                     let codEstab = $scope.establecimientos.length > 0 ? $scope.establecimientos[0].codEstab : 0
                     $scope.query.codEstab = codEstab
+                    $scope.estabToWork = $scope.establecimientos.length > 0 ? $scope.establecimientos[0].nombreComercial : ""
                     $scope.getComprobantes()
                 })
                 try {
@@ -287,6 +289,23 @@
                 }
             }
 
+            $scope.askToNewImport = () => {
+                Swal.fire({
+                    title: 'Estab.: ' + $scope.estabToWork,
+                    text: "Esta seguro de realizar una nueva importación de comprobantes en este establecimiento?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Si, Proceder',
+                    cancelButtonText: 'No, cancelar'
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        $scope.newImport();
+                    }
+                })
+            }
+
             $scope.newImport = function () {
                 tS.toastr('warning', 'Recuerde no haber modificado el archivo de texto descargado del SRI')
                 $('#newImportModal').modal('show')
@@ -335,7 +354,7 @@
                     }
 
                     Swal.fire({
-                        //title: 'Are you sure?',
+                        title: 'Esta seguro de guardar los comprobantes seleccionados?',
                         text: "Esta seguro de guardar los comprobantes seleccionados?",
                         icon: 'warning',
                         showCancelButton: true,
@@ -589,7 +608,9 @@
                                 $scope.tiemposCredito = $scope.arraysForm[1]
                                 $scope.categories = $scope.arraysForm[2];
                                 $scope.bodegas = $scope.arraysForm[3];
-                                console.log($scope.bodegas)
+                                if ($scope.selectedEstab.codEstab) {
+                                    $scope.filterBodega()
+                                }
                                 $scope.medidas = $scope.arraysForm[4];
                                 $scope.getProv()
                             }
@@ -720,6 +741,7 @@
                         if (!response.payload) {
                             tS.toastr('warning', "Aun no se actualizado el Xml del SRI")
                         } else {
+                            $scope.selectedEstab.codEstab = $scope.query.codEstab
                             $scope.getFormData()
                             $scope.fullComprobante = response.payload;
                             console.log($scope.fullComprobante)
@@ -853,10 +875,7 @@
                             if ($scope.fullComprobante.infoAdicional) {
                                 console.log($scope.fullComprobante.infoAdicional)
                             }
-                            $scope.selectedEstab.codEstab = $scope.query.codEstab
-                            if ($scope.selectedEstab.codEstab) {
-                                $scope.filterBodega()
-                            }
+
                         }
                         hideLoader()
                     }).catch((error) => {
@@ -880,7 +899,6 @@
                 }
                 $scope.comprobanteForm.idBodega = $scope.bodegasFiltered[0].idBodega
                 $scope.addBodega()
-                $$scope.$digest();
             }
             /** Provedor */
 
@@ -1934,11 +1952,18 @@
                 $scope.query.rucProveedor = item.proveedor.numeroIdentificacion
                 $scope.getComprobantes()
             }
+
+
+            $scope.openMigrate = () => {
+                tS.toastr('info', 'Gracias por su comprensión!', 'Funcionalidad en construcción')
+            }
+
+            $('#compFounded').on('hidden.bs.modal', () => {
+                $scope.compToImport = []
+                $scope.compFounded = []
+            })
         }
-        $('#compFounded').on('hidden.bs.modal', () => {
-            $scope.compToImport = []
-            $scope.compFounded = []
-        })
+
     }
 
 )(window.angular)
