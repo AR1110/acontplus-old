@@ -52,8 +52,6 @@ BEGIN
 	DECLARE @serieComprobante AS VARCHAR(20)
 	DECLARE @fechaEmision AS DATETIME
 	
-	DECLARE @fecha DATETIME 
-	DECLARE @hora DATETIME
 
 	--==============Parametros para el area de contabilidad============
 	DECLARE @idEstadoPago AS INT
@@ -97,24 +95,21 @@ BEGIN
         ,valor NUMERIC(18,5) NOT NULL
 	)
 
-	SELECT 
-		 @fecha = CAST(fechaEmision as date)
-		,@hora  = CAST(dbo.ufnGetDateEcuador() AS time)
-	FROM OPENJSON(@comprobante)
-	WITH(fechaEmision DATETIME '$.fechaEmision')
-
+	 
 	BEGIN TRY
+		
+		
 
 		INSERT INTO @document 
 		      (idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,fechaEmision,totalSinImpuestos,importeTotal,inventory)
-		SELECT idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,@fecha+@hora,totalSinImpuestos,importeTotal,inventory
+		SELECT idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,CONVERT(datetime,fechaEmision,103),totalSinImpuestos,importeTotal,inventory
 		FROM OPENJSON(@comprobante)
 		WITH (idEstablecimiento INT '$.idEstablecimiento' 
 			 ,idPuntoEmision INT '$.idPuntoEmision'
 			 ,idProveedor INT '$.idProveedor' 
 			 ,estab VARCHAR(5) '$.estab' 
 			 ,ptoEmi VARCHAR(5) '$.ptoEmi' 
-		--	 ,fechaEmision DATETIME '$.fechaEmision'
+		     ,fechaEmision VARCHAR(150) '$.fechaEmision'
 			 ,totalSinImpuestos NUMERIC (18,5) '$.totalSinImpuestos'
 			 ,importeTotal NUMERIC (18,5) '$.importeTotal'
 			 ,inventory VARCHAR(5) '$.inventory'
@@ -156,7 +151,7 @@ BEGIN
 		----======================================Recuperar datos de las Tablas===========================================================
 		SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
-		SELECT @idPuntoEmision = idPuntoEmision,@inventory = inventory, @fechaEmision = fechaEmision FROM @document
+		SELECT TOP 1 @idPuntoEmision = idPuntoEmision,@inventory = inventory,@fechaEmision = fechaEmision FROM @document
 		
 		SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PE'
 
@@ -267,11 +262,33 @@ BEGIN
 	END TRY 
 
 	BEGIN CATCH 
-		SELECT '0' code, 'Error en base de datos: ' + ERROR_MESSAGE() as 'message'
-		IF (@@TRANCOUNT > 0)
-			ROLLBACK TRAN
-		INSERT INTO ErroresSistema([token],[method],[errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [errorDate], [idUsuario])
-		VALUES (NEWID(), 'DocumentoIngreso/Post', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
+		IF @@TRANCOUNT > 0 
+		BEGIN
+			ROLLBACK TRAN; 
+		END
+		SELECT '0'code,'Info: Error en el procedimiento : ' + ERROR_MESSAGE() as 'message'
+		INSERT INTO ErroresSistema
+								   (token
+								   ,method
+								   ,errorNumber
+								   ,errorSeverity 
+								   ,errorState
+								   ,errorProcedure
+								   ,errorLine
+								   ,errorMessage
+								   ,errorDate
+								   ,idUsuario)
+							VALUES
+									(NEWID()
+									,'/ComprasHabituales/Insert'
+									,ERROR_NUMBER()
+									,ERROR_SEVERITY()
+									,ERROR_STATE()
+									,ERROR_PROCEDURE()
+									,ERROR_LINE()
+									,ERROR_MESSAGE()
+									,GETDATE()
+									,@idUsuario)
 	END CATCH
 END
 GO

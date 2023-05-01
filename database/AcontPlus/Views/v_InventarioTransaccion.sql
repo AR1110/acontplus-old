@@ -90,8 +90,17 @@ SELECT t.idTransaccion
 					INNER JOIN Sri.Establecimiento e  WITH (NOLOCK) ON pe.codEstab = e.codEstab
 					WHERE dr.idConsolidacionInventario = t.idDocumento
 				)
+			WHEN tt.codigo = 'E' AND td.codigo = 'LC'
+				THEN (
+						SELECT TOP 1 es.estab + '-' + pe.ptoEmi + Helper.F_Auto_Sequential(lc.nroDocumento)
+						FROM dbo.LiquidacionCompra     lc WITH (NOLOCK)
+						INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision = lc.idPuntoEmision
+						INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = pe.codEstab
+						WHERE lc.idLiquidacionCompra = t.idDocumento
+					 )
 			END
 		)
+
 	,clienteProveedor = (
 		CASE 
 			WHEN tt.codigo = 'E' AND td.codigo = 'FE'
@@ -141,7 +150,14 @@ SELECT t.idTransaccion
 						FROM Recepcion.DocumentoRecibido dr  WITH (NOLOCK)
 						WHERE dr.idDocumento = t.idDocumento
 						)
-			END
+			WHEN tt.codigo = 'E' AND td.codigo = 'LC'
+				THEN (
+						SELECT TOP 1 pr.nombreFiscal
+						FROM dbo.LiquidacionCompra lc  WITH (NOLOCK)
+						INNER JOIN dbo.Proveedor pr  WITH (NOLOCK) ON pr.idProveedor = lc.idProveedor 
+						WHERE lc.idLiquidacionCompra = t.idDocumento
+					 )
+				END
 		)
 ,rucClienteProveedor = (
 		CASE 
@@ -192,7 +208,15 @@ SELECT t.idTransaccion
 						FROM Recepcion.DocumentoRecibido dr  WITH (NOLOCK)
 						WHERE dr.idDocumento = t.idDocumento
 						)
-			END
+				
+			WHEN tt.codigo = 'E' AND td.codigo = 'LC'
+				THEN (
+						SELECT TOP 1 pr.numeroIdentificacion
+						FROM dbo.LiquidacionCompra lc  WITH (NOLOCK)
+						INNER JOIN dbo.Proveedor pr  WITH (NOLOCK) ON pr.idProveedor = lc.idProveedor 
+						WHERE lc.idLiquidacionCompra = t.idDocumento
+					 )
+				END
 		)
 ,ISNULL(CASE WHEN tt.codigo = 'E' OR tt.codigo = 'A' THEN m.descripcion END, '') medidaEntrada
 ,ISNULL(CASE WHEN tt.codigo = 'S' THEN m.descripcion END, '') medidaSalida

@@ -14,7 +14,9 @@
 		<ProjectReference Include="..\..\03.business_logic\BL.JwtAuthenticationManger\BL.JwtAuthenticationManger.csproj" />
 		<ProjectReference Include="..\..\03.business_logic\BL.Recepcion\BL.Recepcion.csproj" />
 	</ItemGroup>
-
+	<ItemGroup>
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+	</ItemGroup>
 	<ItemGroup>
 		<Content Update="appsettings.json">
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
