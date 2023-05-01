@@ -102,7 +102,7 @@ BEGIN
 
 		INSERT INTO @document 
 		      (idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,fechaEmision,totalSinImpuestos,importeTotal,inventory)
-		SELECT idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,CONVERT(datetime,fechaEmision,103),totalSinImpuestos,importeTotal,inventory
+		SELECT idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,fechaEmision,totalSinImpuestos,importeTotal,inventory
 		FROM OPENJSON(@comprobante)
 		WITH (idEstablecimiento INT '$.idEstablecimiento' 
 			 ,idPuntoEmision INT '$.idPuntoEmision'

@@ -42,9 +42,11 @@ BEGIN
 	--===========Datos para la validacion de informacion===============
 	DECLARE @uniqueId AS VARCHAR(20)
 	DECLARE @fechaEmision AS DATETIME
-	DECLARE @fechaEmisionTemp  DATETIME
-
-	DECLARE @fecha DATETIME 
+	
+	DECLARE @fechaEmisionToCompare  DATETIME --fecha emision modificada front-end
+	DECLARE @previousCrateDatetime DATETIME;  -- Fecha emision del documento 
+	DECLARE @fechaEmisionTemp DATETIME 
+	
 	DECLARE @hora DATETIME
 
 	--==============Parametros para el area de contabilidad============
@@ -93,18 +95,27 @@ BEGIN
 
 
 	SELECT 
-		@hora = CAST(fechaEmision as time)
+		@hora =CAST(dbo.ufnGetDateEcuador() AS time)
+		,@previousCrateDatetime = fechaEmision
 	FROM Compra.Documento_Ingreso WHERE idDocumentoIngreso = @idDocumentoIngreso
 
-	SELECT 
-		 @fecha = CAST(fechaEmision as date)
-		,@fechaEmisionTemp = @fecha + @hora 
+	SELECT 		 
+		@fechaEmisionToCompare = fechaEmision
 	FROM OPENJSON(@comprobante)
 	WITH(fechaEmision DATETIME '$.fechaEmision')
+	
 	--SELECT '0'code, CAST(@fechaEmisionTemp as varchar(60)) as 'message'
 	--RETURN 
 
 	BEGIN TRY 
+		IF @fechaEmisionToCompare < @previousCrateDatetime
+			BEGIN 
+				SET @fechaEmisionTemp = DATEADD(dd, DATEDIFF(dd, 0, @fechaEmisionToCompare), 0)
+			END
+		ELSE
+			BEGIN 
+				SET @fechaEmisionTemp =CAST(CAST(@FechaEmisionToCompare AS DATE) AS datetime)  + @hora
+			END
 
 		INSERT INTO @document 
 		      (idDocumentoIngreso,idProveedor,fechaEmision,totalSinImpuestos,importeTotal,inventory)
