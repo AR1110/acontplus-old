@@ -724,7 +724,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
                     showLoader();
                     let factura = Object.assign({}, this.data);
                     factura.idCliente = this.cliente.idCliente;
-                    factura.fechaEmision = this._fS.formatDateTimeZone(this.data.fechaEmision);
+                    factura.fechaEmision = this._fS.formatDateMoment(this.data.fechaEmision);
                     factura.fechaVencimiento = this._fS.formatDateTimeZone(this.data.fechaVencimiento);
 
                     //Tarifa Aplicada al Documento

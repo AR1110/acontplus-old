@@ -43,8 +43,9 @@ BEGIN
 	DECLARE @uniqueId AS VARCHAR(20)
 	DECLARE @fechaEmision AS DATETIME
 	
-	DECLARE @fechaEmisionToCompare  DATETIME --fecha emision modificada front-end
-	DECLARE @previousCrateDatetime DATETIME;  -- Fecha emision del documento 
+--	DECLARE @currentDate DATETIME = dbo.ufnGetDateEcuador()
+	DECLARE @fechaEmisionModificada  DATETIME --fecha emision modificada front-end
+	DECLARE @fechaEmisionDocCreado DATETIME;  -- Fecha emision del documento 
 	DECLARE @fechaEmisionTemp DATETIME 
 	
 	DECLARE @hora DATETIME
@@ -96,11 +97,11 @@ BEGIN
 
 	SELECT 
 		@hora =CAST(dbo.ufnGetDateEcuador() AS time)
-		,@previousCrateDatetime = fechaEmision
+		,@fechaEmisionDocCreado = fechaEmision
 	FROM Compra.Documento_Ingreso WHERE idDocumentoIngreso = @idDocumentoIngreso
 
 	SELECT 		 
-		@fechaEmisionToCompare = fechaEmision
+		@fechaEmisionModificada = fechaEmision
 	FROM OPENJSON(@comprobante)
 	WITH(fechaEmision DATETIME '$.fechaEmision')
 	
@@ -108,14 +109,30 @@ BEGIN
 	--RETURN 
 
 	BEGIN TRY 
-		IF @fechaEmisionToCompare < @previousCrateDatetime
+		IF CAST(@fechaEmisionModificada AS DATE) <> CAST(@fechaEmisionDocCreado AS DATE)
 			BEGIN 
-				SET @fechaEmisionTemp = DATEADD(dd, DATEDIFF(dd, 0, @fechaEmisionToCompare), 0)
-			END
-		ELSE
+				IF CAST(@fechaEmisionModificada AS DATE) > CAST(dbo.ufnGetDateEcuador() AS DATE)
+					BEGIN 
+						SELECT '0'code, 'La fecha de emisión del documento no puede ser posterior a la fecha actual.' as 'message'
+						RETURN 
+					END
+					
+				IF CAST(@fechaEmisionModificada AS DATE) < CAST(dbo.ufnGetDateEcuador() AS DATE)
+					BEGIN 
+						SET @fechaEmisionTemp = DATEADD(dd, DATEDIFF(dd, 0, @fechaEmisionModificada), 0)
+					END
+				ELSE
+					BEGIN 
+						SET @fechaEmisionTemp = dbo.ufnGetDateEcuador();
+					END 
+
+				--IF CONVERT(DATE, @fechaEmisionToCompare) = CONVERT(DATE, dbo.ufnGetDateEcuador())
+
+			END 
+		ELSE 
 			BEGIN 
-				SET @fechaEmisionTemp =CAST(CAST(@FechaEmisionToCompare AS DATE) AS datetime)  + @hora
-			END
+				SET @fechaEmisionTemp = @fechaEmisionDocCreado
+			END 					
 
 		INSERT INTO @document 
 		      (idDocumentoIngreso,idProveedor,fechaEmision,totalSinImpuestos,importeTotal,inventory)

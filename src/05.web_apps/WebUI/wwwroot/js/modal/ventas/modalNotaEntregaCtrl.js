@@ -1118,6 +1118,7 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
 
             const data = {
                 notaEntrega,
+                fechaEmision: this._fS.formatDateMoment(this.data.fechaEmision),
                 detalle: this.trimDetailDoc(),
                 manejoArticulo: this.datosAdicionalesArticulo
             }

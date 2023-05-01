@@ -53,8 +53,8 @@ BEGIN
 	DECLARE @fechaEmision AS DATETIME
 	
 	--======================Fecha Emision===============================
-	DECLARE @currentDateCreateDoc AS DATETIME = CAST(dbo.ufnGetDateEcuador() AS DATE) --Fecha Actual	
-	DECLARE @fechaEmisionToCompare AS DATETIME --fecha emision  front-end
+	DECLARE @fechaEmisionActual AS DATETIME = CAST(dbo.ufnGetDateEcuador() AS DATE) --Fecha Actual	
+	DECLARE @fechaEmisionModificada AS DATETIME --fecha emision  front-end
 	DEClARE @fechaEmisionTemp AS DATETIME 
 	DECLARE @hora AS DATETIME = CAST(dbo.ufnGetDateEcuador() AS TIME)
 
@@ -102,15 +102,37 @@ BEGIN
 
 	 
 	BEGIN TRY
-		SELECT @fechaEmisionToCompare = fechaEmision FROM OPENJSON(@comprobante) WITH(fechaEmision VARCHAR(150) '$.fechaEmision')			
-		IF @fechaEmisionToCompare < @currentDateCreateDoc
+		SELECT @fechaEmisionModificada = fechaEmision FROM OPENJSON(@comprobante) WITH(fechaEmision DATETIME '$.fechaEmision')	
+		
+		IF CAST(@fechaEmisionModificada AS DATE) > @fechaEmisionActual
 			BEGIN 
-				SET @fechaEmisionTemp = DATEADD(dd, DATEDIFF(dd, 0, @fechaEmisionToCompare), 0)
+				SELECT '0'code, 'La fecha de emisión del documento no puede ser posterior a la fecha actual.' as 'message'
+				RETURN 
+			END
+					
+		IF CAST(@fechaEmisionModificada AS DATE) < @fechaEmisionActual
+			BEGIN 
+				SET @fechaEmisionTemp = DATEADD(dd, DATEDIFF(dd, 0, @fechaEmisionModificada), 0)
 			END
 		ELSE
 			BEGIN 
-				SET @fechaEmisionTemp =CAST(CAST(@fechaEmisionToCompare AS DATE) AS datetime)  + @hora
-			END
+				SET @fechaEmisionTemp = dbo.ufnGetDateEcuador();
+			END 
+
+		--IF @fechaEmisionModificada > dbo.ufnGetDateEcuador()
+		--	BEGIN 
+		--		SELECT '0'code, 'La fecha de emisión del documento no puede ser posterior a la fecha actual.' as 'message'
+		--		RETURN 
+		--	END
+
+		--IF @fechaEmisionModificada < dbo.ufnGetDateEcuador()
+		--	BEGIN 
+		--		SET @fechaEmisionTemp = DATEADD(dd, DATEDIFF(dd, 0, @fechaEmisionModificada), 0)
+		--	END
+		--ELSE
+		--	BEGIN 
+		--		SET @fechaEmisionTemp =CAST(CAST(@fechaEmisionModificada AS DATE) AS datetime)  + @hora
+		--	END
 		
 		
 
