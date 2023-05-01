@@ -9,8 +9,8 @@ class MdAutocompleteProveedor {
 
     $onInit() {
 
-        this.proveedorData = this.proveedorData || {};
-        console.log(this.proveedorData)
+        // this.proveedorData = this.proveedorData || {};        
+        // console.log(this.proveedorData)
         if (typeof this.proveedorData === 'object' && this.proveedorData.idProveedor > 0) {
             this.dataProveedor = Object.assign({}, this.proveedorData)
             this.searchText = this.dataProveedor.nombreFiscal;
@@ -191,7 +191,7 @@ app.component('uibModalProveedorSearch', {
         selectedItemProveedor: '&',
         editData: "<",
         search: "<",
-        proveedorData: "<" // Se agregó en Modal Editar Proveedor
+        proveedorData: "=" // Se agregó en Modal Editar Proveedor
     },
     controller: MdAutocompleteProveedor
 })
