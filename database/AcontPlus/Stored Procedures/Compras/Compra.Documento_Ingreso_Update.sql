@@ -101,8 +101,8 @@ BEGIN
 		,@fechaEmisionTemp = @fecha + @hora 
 	FROM OPENJSON(@comprobante)
 	WITH(fechaEmision DATETIME '$.fechaEmision')
-	SELECT '0'code, CAST(@fechaEmisionTemp as varchar(60)) as 'message'
-	RETURN 
+	--SELECT '0'code, CAST(@fechaEmisionTemp as varchar(60)) as 'message'
+	--RETURN 
 
 	BEGIN TRY 
 

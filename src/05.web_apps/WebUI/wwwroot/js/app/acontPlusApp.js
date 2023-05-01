@@ -938,6 +938,86 @@ app.directive('updateArticle', function ($rootScope) {
     }
 })
 
+app.directive('estabStock', function (mainService, $compile, $timeout) {
+    return {
+        restrict: 'A',
+        scope: {
+            article: "=",
+            placement: "@"
+        },
+        link: function (scope, element) {
+            var popoverOptions = {
+                title: '<i class="mdi mdi-information-outline"></i> Bodega-Stock',
+                content: function () {
+                    var popoverContent = ` <div class="table-responsive">
+                                            <table class="table table-sm">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Estab.</th>
+                                                        <th>Bodega</th>
+                                                        <th>Stock</th>
+                                                        <th>Ub.                                                       
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody ng-repeat="s in branchs" class="small">
+                                                    <tr ng-repeat="ub in s.warehouses">
+                                                        <td ng-if="$first" rowspan="2">{{s.branchOffice}}</td>
+                                                        <td>{{ub.bodega}}</td>
+                                                        <td>{{ub.stock}}</td>
+                                                        <td>{{ub.ubicacion}}</td>
+                                                    <tr>
+                                                </tbody>
+                                            </table>
+                                        </div>   
+                                         `;
+
+                    mainService.getData('get', '/Articulo/GetId?id=' + scope.article.idArticulo).then(response => {
+                        const results = JSON.parse(response.payload) || [];
+
+                        scope.branchs = results[4].map(val => {
+                            val.warehouses = JSON.parse(val.warehouses)
+                            return val;
+                        })
+                        console.log(scope.branchs)
+                    })
+
+                    // Compile the popover content with the scope
+                    let compiledContent = $compile(popoverContent)(scope);
+                    scope.$apply();
+                    return compiledContent;
+
+                },
+                placement: scope.placement || 'bottom',
+                trigger: 'outsideClick',
+                html: true,
+                customClass: 'zindex'
+                // container: 'body'
+            };
+
+
+            // // Initialize the popover using element.popover()
+            $(element).popover(popoverOptions);
+
+            // // Open popover on element click
+            element.on('mouseover', function (event) {
+                $(element).popover('show');
+            });
+
+            // // Close popover on outside click
+            $(document).on('mouseover', function (event) {
+                if (!$(element).is(event.target) && !$(element).has(event.target).length && $('.popover').has(event.target).length === 0) {
+                    $(element).popover('hide');
+                }
+            });
+
+            // Clean up the popover when the directive is destroyed
+            scope.$on('$destroy', function () {
+                $(element).popover('destroy');
+            });
+        }
+    };
+})
 
 //permiso para ver kardex en documentos de ventas 
 app.directive('viewKardex', function ($rootScope, modalService, nombreModal) {

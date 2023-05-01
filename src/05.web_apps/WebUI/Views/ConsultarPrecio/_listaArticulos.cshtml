@@ -40,11 +40,9 @@
                     <td md-cell>{{item.tipoIva}}</td>
                     <td md-cell>
                         @* popover-title="{{item.descripcion}}" *@
-                        <span style="cursor: pointer;" ng-mouseover="$ctrl.showBodegas(item)"
-                            popover-trigger="'mouseenter'" uib-popover-template="$ctrl.dynamicPopover.templateUrl"
-                            class="btn btn-default">
+                        <span style="cursor: pointer;" estab-stock article="item" class="btn btn-default">
                             <h6>
-                                <spna style="cursor: pointer;" ng-class="item.color">{{item.stock}}</spna>
+                                <spna ng-class="item.color">{{item.stock}}</spna>
                             </h6>
 
                         </span>
@@ -66,26 +64,3 @@
         </table>
     </md-table-container>
 </div>
-
-<script type="text/ng-template" id="myPopoverTemplate.html">
-    <div class="table-responsive">
-        <table class="table table-sm">
-            <thead>
-                <tr>
-                    <th>Sucursal</th>
-                    <th>Bodega</th>
-                    <th>Stock</th>
-                    <th>Ub.</th>
-                </tr>
-            </thead>
-            <tbody ng-repeat="s in $ctrl.branchs" class="small">
-                <tr ng-repeat="ub in s.warehouses">
-                    <td ng-if="$first" rowspan="2">{{s.branchOffice}}</td>
-                    <td>{{ub.bodega}}</td>
-                    <td>{{ub.stock}}</td>
-                    <td>{{ub.ubicacion}}</td>
-                <tr>
-            </tbody>
-        </table>
-    </div>              
-</script>

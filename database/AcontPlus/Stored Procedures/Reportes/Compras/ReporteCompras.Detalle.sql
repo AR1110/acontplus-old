@@ -8,7 +8,7 @@ END
 GO
 
 
-
+-- exec ReporteCompras.Detalle '{"isReportImport":true,"codEstab":"ESTAB-000000092","id":7992,"codigo":"RCD","codDoc":"01","format":"excel"}'
 CREATE PROCEDURE ReporteCompras.Detalle @json VARCHAR(MAX)
 AS
 BEGIN 
@@ -97,8 +97,7 @@ BEGIN
 	--PRINT @isReportImport
 	IF @codDoc = '01' 
 		BEGIN 
-			SET @detailDs = (
-			SELECT 
+			SET @detailDs = (SELECT 
 								id              = dd.idDocumentoDetalle
 								,idArticulo     = dd.idArticulo
 								,codigo         = ar.codigo
