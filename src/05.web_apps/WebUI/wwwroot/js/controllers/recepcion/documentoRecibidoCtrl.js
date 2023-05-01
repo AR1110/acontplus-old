@@ -880,7 +880,7 @@
                 }
                 $scope.comprobanteForm.idBodega = $scope.bodegasFiltered[0].idBodega
                 $scope.addBodega()
-                $$scope.$digest();()
+                $$scope.$digest();
             }
             /** Provedor */
 
