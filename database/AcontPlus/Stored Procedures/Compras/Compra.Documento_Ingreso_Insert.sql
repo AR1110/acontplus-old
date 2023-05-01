@@ -52,6 +52,10 @@ BEGIN
 	DECLARE @serieComprobante AS VARCHAR(20)
 	DECLARE @fechaEmision AS DATETIME
 	
+	--======================Fecha Emision===============================
+	DECLARE @currentDateCreateDoc AS DATETIME = dbo.ufnGetDateEcuador() --Fecha Actual
+	DECLARE @fechaEmisionToCompare AS DATETIME --fecha emision  front-end
+	DEClARE @fechaEmisionTemp AS DATETIME 
 
 	--==============Parametros para el area de contabilidad============
 	DECLARE @idEstadoPago AS INT
@@ -97,6 +101,15 @@ BEGIN
 
 	 
 	BEGIN TRY
+		SELECT @fechaEmisionToCompare = fechaEmision FROM OPENJSON(@comprobante) WITH(fechaEmision VARCHAR(150) '$.fechaEmision')			
+		IF @fechaEmisionToCompare < @currentDateCreateDoc
+			BEGIN 
+				SET @fechaEmisionTemp = DATEADD(dd, DATEDIFF(dd, 0, @fechaEmisionToCompare), 0)
+			END
+		ELSE
+			BEGIN 
+				SET @fechaEmisionTemp =CAST(CAST(@FechaEmisionToCompare AS DATE) AS datetime)  + @hora
+			END
 		
 		
 
@@ -109,7 +122,7 @@ BEGIN
 			 ,idProveedor INT '$.idProveedor' 
 			 ,estab VARCHAR(5) '$.estab' 
 			 ,ptoEmi VARCHAR(5) '$.ptoEmi' 
-		     ,fechaEmision VARCHAR(150) '$.fechaEmision'
+		     --,fechaEmision VARCHAR(150) '$.fechaEmision'
 			 ,totalSinImpuestos NUMERIC (18,5) '$.totalSinImpuestos'
 			 ,importeTotal NUMERIC (18,5) '$.importeTotal'
 			 ,inventory VARCHAR(5) '$.inventory'
