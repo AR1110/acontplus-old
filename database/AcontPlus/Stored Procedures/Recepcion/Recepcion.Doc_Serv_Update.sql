@@ -42,6 +42,7 @@ BEGIN
 	,@nombreComercial VARCHAR(300)
 	,@direccion VARCHAR(300)
 	,@rucReceptor VARCHAR(15)
+	,@claveAcceso AS VARCHAR(50)
 
 	BEGIN TRY
 		BEGIN TRAN
@@ -155,11 +156,16 @@ BEGIN
 
 				SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago ep WHERE ep.codigo = 'PE'
 
-				INSERT INTO Contabilidad.CuentaPorPagar
-					  (idEstablecimiento,idProveedor,idEstadoPago,codDoc,uniqueId,serieComprobante,identificacion,fechaEmision,importeTotal,idEntidad,idUsuario)
-				SELECT idEstablecimiento,@idProveedor,@idEstadoPago,codDoc,claveAcceso,serieComprobante,@identificacion,CONVERT (date, fechaEmision, 103),importeTotal,@idEntidad,dr.idUsuario
-				FROM Recepcion.DocumentoRecibido dr WITH (NOLOCK)
-				WHERE dr.idDocumento = @idDocumento AND dr.codDoc = '01'
+				SELECT TOP 1 claveAcceso = @claveAcceso FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento AND codDoc = '01'
+
+				IF NOT EXISTS (SELECT 1 FROM Contabilidad.CuentaPorPagar WHERE uniqueId = @claveAcceso)
+					BEGIN 
+						INSERT INTO Contabilidad.CuentaPorPagar
+							  (idEstablecimiento,idProveedor,idEstadoPago,codDoc,uniqueId,serieComprobante,identificacion,fechaEmision,importeTotal,idEntidad,idUsuario)
+						SELECT idEstablecimiento,@idProveedor,@idEstadoPago,codDoc,claveAcceso,serieComprobante,@identificacion,CONVERT (date, fechaEmision, 103),importeTotal,@idEntidad,dr.idUsuario
+						FROM Recepcion.DocumentoRecibido dr WITH (NOLOCK)
+						WHERE dr.idDocumento = @idDocumento AND dr.codDoc = '01'
+					END 
 
 		COMMIT TRAN
 	END TRY

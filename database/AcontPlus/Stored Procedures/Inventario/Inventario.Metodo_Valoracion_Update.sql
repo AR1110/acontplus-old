@@ -20,17 +20,48 @@ GO
 -- Create date: 5/01/2023
 -- Description: SP para actualizar los precios de costo segun el tipo de valoracion
 -- =============================================
-CREATE PROCEDURE <Procedure_Name, sysname, ProcedureName> 
-	-- Add the parameters for the stored procedure here
-	<@Param1, sysname, @p1> <Datatype_For_Param1, , int> = <Default_Value_For_Param1, , 0>, 
-	<@Param2, sysname, @p2> <Datatype_For_Param2, , int> = <Default_Value_For_Param2, , 0>
+IF OBJECT_ID(N'Inventario.Metodo_Valoracion_Update', N'P') IS NOT NULL
+DROP PROCEDURE Inventario.Metodo_Valoracion_Update
+GO
+CREATE PROCEDURE Inventario.Metodo_Valoracion_Update @idTransaccion AS INT,@idArticulo AS INT ,@codMetodoValoracion AS VARCHAR(5)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-    -- Insert statements for procedure here
-	SELECT <@Param1, sysname, @p1>, <@Param2, sysname, @p2>
+	IF @codMetodoValoracion = 'UEPS'
+		BEGIN
+			DECLARE @precioCostoActual AS NUMERIC(18,5)
+			DECLARE @precioCosto AS NUMERIC(18,5)
+			DECLARE @diferencia AS NUMERIC(18,5)
+
+			DECLARE @table AS TABLE (
+			 	 fecha DATETIME NOT NULL
+				,precioCosto NUMERIC(18,5) NOT NULL
+			)
+			INSERT INTO @table (fecha,precioCosto)
+			SELECT TOP 1 fechaRegistro = MAX(fechaRegistro),precioUnitario FROM v_InventarioTransaccion 
+			WHERE idArticulo = 75387 
+			  AND codTransaccion = 'E'
+			  AND estado = 1 
+			GROUP BY precioUnitario 
+			ORDER BY MAX(fechaRegistro) DESC
+
+
+			SELECT @precioCostoActual = precioCosto FROM @table
+
+			SELECT TOP 1 @precioCosto = precioCosto FROM dbo.Articulo WITH (NOLOCK) WHERE idArticulo = @idArticulo
+			
+			--SET @diferencia
+
+
+			UPDATE dbo.Articulo SET precioCosto = @precioCostoActual WHERE idArticulo = @idArticulo
+				
+
+
+			UPDATE Inventario.Transaccion SET precioCosto = @precioCostoActual WHERE idTransaccion = @idTransaccion
+
+		END 
 END
 GO

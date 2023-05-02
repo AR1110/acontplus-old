@@ -47,6 +47,7 @@ BEGIN
 	DECLARE @cantidadFinal AS NUMERIC(18,5)
 	DECLARE @codMetodoValoradion AS VARCHAR(5)
 	DECLARE @idEntidad AS INT 
+	DECLARE @idTransaccion AS INT
 
 	SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = @codTran
 	
@@ -66,13 +67,18 @@ BEGIN
 			INSERT INTO Inventario.Transaccion
 				   (idTipoTransaccion, idArticulo, idBodega, idTipoDocumento, idDocumento, idMedida, idTarifa, cantidad, precioCosto, precioUnitario, total,fechaRegistro, idUsuario)
 			SELECT @idTipoTransaccion,@idArticulo,@idBodega,@idTipoDocumento,@idDocumento,@idMedida,@idTarifa,@cantidadFinal,@precioCosto,@precioUnitario,@total,@fechaRegistro,@idUsuario
-		END
+			
+			SET @idTransaccion = @@IDENTITY
 
+		END
 
 	--ACTUALIZAR LOS STOCK DE LOS ARTICULOS 
 	EXEC Inventario.Stock_Update @idArticulo,@idBodega
-	
 
-
+	--ACTUALIZAR EL PRECIO CONEL METODO DE VALORACION
+	IF @codTran = 'E'
+		BEGIN 
+			EXEC Inventario.Metodo_Valoracion_Update @idTransaccion,@idArticulo,@codMetodoValoradion
+		END
 END
 GO
