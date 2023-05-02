@@ -725,7 +725,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
                     let factura = Object.assign({}, this.data);
                     factura.idCliente = this.cliente.idCliente;
                     factura.fechaEmision = this._fS.formatDateMoment(this.data.fechaEmision);
-                    factura.fechaVencimiento = this._fS.formatDateMoment(this.data.fechaVencimiento);
+                    factura.fechaVencimiento = this._fS.formatDateTimeZone(this.data.fechaVencimiento);
 
                     //Tarifa Aplicada al Documento
                     //  factura.tarifa = this.actividadTipoIva.tarifa;
@@ -1003,8 +1003,8 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
             showLoader();
             let factura = Object.assign({}, this.data);
             factura.idCliente = this.cliente.idCliente;
-            factura.fechaEmision = this._fS.formatDateMoment(this.data.fechaEmision);
-            factura.fechaVencimiento = this._fS.formatDateMoment(this.data.fechaVencimiento);
+            factura.fechaEmision = this._fS.formatDateTimeZone(this.data.fechaEmision);
+            factura.fechaVencimiento = this._fS.formatDateTimeZone(this.data.fechaVencimiento);
 
             let data = {
                 factura: JSON.stringify(factura),
@@ -1394,7 +1394,7 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
             let factura = Object.assign({}, this.data);
             factura.idCliente = this.cliente.idCliente;
             factura.fechaEmision = this._fS.formatDateMoment(this.data.fechaEmision);
-            factura.fechaVencimiento = this._fS.formatDateMoment(this.data.fechaVencimiento);
+            factura.fechaVencimiento = this._fS.formatDateTimeZone(this.data.fechaVencimiento);
 
             //Tarifa Aplicada al Documento
             // factura.tarifa = this.actividadTipoIva.tarifa;
