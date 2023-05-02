@@ -277,6 +277,34 @@ class ModalProformaCtrl extends ModalBaseCtrl {
         }
     }
 
+
+
+    saveProforma(id) {
+        let proforma = Object.assign({}, this.data);
+        //Tarifa Aplicada al Documento
+        proforma.idCliente = this.cliente.idCliente;
+        proforma.fechaEmision = this._fS.formatDateTimeZone(this.data.fechaEmision)
+        // this.data.tarifa = this.actividadTipoIva.tarifa;            
+
+        let data = {
+            proforma,
+            detalle: this.trimDetailDoc()
+        };
+
+        if (id > 0) {
+            return this._mS.getData('put', '/Proforma/Update?id=' + id, data).then(response => response)
+                .catch(errorResponse => {
+                    throw new Error(errorResponse)
+                })
+        } else {
+
+            return this._mS.getData('post', '/Proforma/Post', data).then(response => response)
+                .catch(errorResponse => {
+                    throw new Error(errorResponse)
+                })
+        }
+    }
+
 }
 
 
@@ -486,37 +514,31 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl {
             })
 
 
-            if (!isConfirmed) return
+            if (isConfirmed) {
 
-            showLoader();
+                showLoader();
 
-            //Tarifa Aplicada al Documento
-            this.data.idCliente = this.cliente.idCliente
-            // this.data.tarifa = this.actividadTipoIva.tarifa;            
 
-            let data = {
-                proforma: this.data,
-                detalle: this.trimDetailDoc()
-            };
+                this.saveProforma().then(response => {
+                    if (response.id === '0') {
+                        hideLoader();
+                        this._fS.sweetAlert('warning', response.message, response.titleSms);
+                    }
+                    if (response.id === "1") {
+                        hideLoader();
+                        this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
 
-            await this._mS.getData('post', '/Proforma/Post', data).then(response => {
-                if (response.id === '0') {
-                    this._fS.sweetAlert('warning', response.message, response.titleSms);
-                }
-                if (response.id === "1") {
-                    this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
-
-                    this.$uibModalInstance.close(response)
-                }
-            })
-
+                        this.$uibModalInstance.close(response)
+                    }
+                }).catch(error => {
+                    hideLoader();
+                    console.log(error)
+                })
+            }
         } catch (error) {
-
+            hideLoader();
             console.log(error)
 
-        } finally {
-
-            hideLoader();
         }
     }
 
@@ -881,36 +903,29 @@ export class ModalProformaEditarCtrl extends ModalProformaCtrl {
             })
 
 
-            if (!isConfirmed) return
+            if (isConfirmed) {
 
-            showLoader();
+                showLoader();
 
-            //Tarifa Aplicada al Documento
-            this.data.idCliente = this.cliente.idCliente
-            // this.data.tarifa = this.actividadTipoIva.tarifa;            
-
-            let data = {
-                proforma: this.data,
-                detalle: this.trimDetailDoc()
-            };
-
-            await this._mS.getData('put', '/Proforma/Update?id=' + this.data.idProforma, data).then(response => {
-                if (response.id === '0') {
-                    this._fS.sweetAlert('warning', response.message, response.titleSms);
-                }
-                if (response.id === "1") {
-                    this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
-                    // let data = JSON.parse(response.payload)[0];                   
-                    // this.$uibModalInstance.close(data) 
-                    this.isUpdate = true;
-                    this.$uibModalInstance.close(response)
-                }
-            })
-
+                this.saveProforma(this.data.idProforma).then(response => {
+                    if (response.id === '0' || response.code === "0") {
+                        hideLoader();
+                        this._fS.sweetAlert('warning', response.message, response.titleSms);
+                    }
+                    if (response.id === "1" || response.code === "1") {
+                        hideLoader();
+                        this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                        this.isUpdate = true;
+                        this.$uibModalInstance.close(response)
+                    }
+                }).catch(error => {
+                    hideLoader();
+                    console.log(error)
+                })
+            }
         } catch (error) {
-            console.log(error)
-        } finally {
             hideLoader();
+            console.log(error)
         }
     }
 
@@ -1118,37 +1133,29 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl {
             })
 
 
-            if (!isConfirmed) return
+            if (isConfirmed) {
+                showLoader();
 
-            showLoader();
+                this.saveProforma().then(response => {
+                    if (response.id === '0' || response.code === '0') {
+                        hideLoader();
+                        this._fS.sweetAlert('warning', response.message, response.titleSms);
+                    }
+                    if (response.id === "1" || response.code === '0') {
+                        hideLoader();
+                        this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
 
-            //Tarifa Aplicada al Documento
-            this.data.idCliente = this.cliente.idCliente
-            //this.data.tarifa = this.actividadTipoIva.tarifa;            
-
-            let data = {
-                proforma: this.data,
-                detalle: this.trimDetailDoc()
-            };
-
-            await this._mS.getData('post', '/Proforma/Post', data).then(response => {
-                if (response.id === '0') {
-                    this._fS.sweetAlert('warning', response.message, response.titleSms);
-                }
-                if (response.id === "1") {
-                    this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
-
-                    this.$uibModalInstance.close(response)
-                }
-            })
+                        this.$uibModalInstance.close(response)
+                    }
+                }).catch(error => {
+                    hideLoader();
+                    console.log(error);
+                })
+            }
 
         } catch (error) {
-
-            console.log(error)
-
-        } finally {
-
             hideLoader();
+            console.log(error)
         }
     }
 
