@@ -223,11 +223,25 @@
             return formatDateMoment.format(format);
         }
 
-        formSvc.formatDateMoment = function (fecha, format) {
-            const date = moment(fecha, 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ (h:mm)');
-            const formattedDate = date.format('YYYY-MM-DD HH:mm:ss');
+        /**
+         * 
+         * @param {*} fecha 
+         * @returns date
+         */
+        formSvc.formatDateMoment = function (dateString) {
+            if (!this.isDateValid(dateString)) {
+                throw new Error("La fecha es inválida");
+            }
+            const date = moment(dateString);
+            const formattedDate = date.format('YYYY-MM-DD HH:mm:ss A');
             return formattedDate
         }
+
+        formSvc.isDateValid = function (dateString) {
+            var date = new Date(dateString);
+            return date instanceof Date && !isNaN(date);
+        }
+
 
 
 

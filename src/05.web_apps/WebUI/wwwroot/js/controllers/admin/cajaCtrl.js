@@ -11,12 +11,12 @@ function cajaCtrl($scope, _modalSvc, _nombreModal, mS, _modalSvc, toast) {
     // }
 
     const GESTION_CAJA_CTRL = './gestionCajaCtrl.min.js';
-    
+
     $scope.data = {};
     $scope.entidadFinanciera = {};
     $scope.cajas = [];
     $scope.usuarioCaja = {};
-    
+
     //Pagination 
     $scope.maxSize = 5;
     $scope.totalRecords = 0;
@@ -24,146 +24,169 @@ function cajaCtrl($scope, _modalSvc, _nombreModal, mS, _modalSvc, toast) {
     $scope.pageSize = 10;
     $scope.recordsQuantity = [5, 10, 25, 50];
 
-    $scope.getCajas = function() {
+    $scope.getCajas = function () {
         try {
             showLoader();
             mS.getData('get', '/Caja/Get?pageIndex=' + $scope.pageIndex + '&pageSize=' + $scope.pageSize).then(response => {
+                console.log(response);
                 if (response.id == 0) {
                     hideLoader();
                     toast.toastr('warning', response.message, response.titleSms);
                     return;
                 }
-                $scope.cajas = response.data;                              
+                $scope.cajas = response.data;
                 hideLoader();
-            }).catch(error=>{
+            }).catch(error => {
                 console.log(error);
-            })         
+            })
         } catch (error) {
             hideLoader();
-            console.error(error)            
+            console.error(error)
         }
-       
+
     }
 
     $scope.getCajas();
 
-    $scope.pagechanged = function() {
+    $scope.pagechanged = function () {
         $scope.getCajas();
     }
-    $scope.changePageSize = function() {
+    $scope.changePageSize = function () {
         $scope.pageIndex = 1;
         $scope.getCajas();
     }
-    
 
-    $scope.openModalCaja = async(item)=>{        
-        const {MODAL_CTRL, MODAL_CAJA_CSHTML} = _nombreModal.caja;        
-        const {ModalCajaCtrl} = await import('./../../modal/' + MODAL_CTRL);
+
+    $scope.openModalCaja = async (item) => {
+        const {
+            MODAL_CTRL,
+            MODAL_CAJA_CSHTML
+        } = _nombreModal.caja;
+        const {
+            ModalCajaCtrl
+        } = await import('./../../modal/' + MODAL_CTRL);
         const modalRef = _modalSvc.openModalCustom({
             controller: ModalCajaCtrl,
             template: MODAL_CAJA_CSHTML,
             size: 'md',
             params: item
-        })             
-        modalRef.result.then(result=>{
-            if(typeof result==='object'){
+        })
+        modalRef.result.then(result => {
+            if (typeof result === 'object') {
                 $scope.getCajas();
             }
         })
     }
 
-    $scope.detalleHorario = (idTurno)=>{  
-        $scope.horarios=[];
-        mS.getData('get', '/Horario/GetByIdTurno?idTurno=' + idTurno).then(response => {                
+    $scope.detalleHorario = (idTurno) => {
+        $scope.horarios = [];
+        mS.getData('get', '/Horario/GetByIdTurno?idTurno=' + idTurno).then(response => {
             $scope.horarios = response.data;
         })
     }
-   
 
-    $scope.askToDeleteCaja = async (data)=>{
-        let {isConfirmed} = await Swal.fire({
-            icon: 'warning',            
+
+    $scope.askToDeleteCaja = async (data) => {
+        let {
+            isConfirmed
+        } = await Swal.fire({
+            icon: 'warning',
             html: `<small>Esta seguro/a de eliminar esta caja ahora?</small>`,
             showDenyButton: true,
             confirmButtonText: `Si, eliminar`,
             denyButtonText: `No, cancelar`,
             allowOutsideClick: false
         })
-        
+
         if (isConfirmed) {
             mS.getData('delete', '/Caja/Delete?idCaja=' + data.caja.idCaja).then(response => {
                 if (response.id == "0") {
-                    toast.toastr('warning', response.message, response.titleSms);                    
+                    toast.toastr('warning', response.message, response.titleSms);
                 }
                 if (response.id == "1") {
                     toast.toastr('success', response.message, response.titleSms);
-                    $scope.getCajas();                    
+                    $scope.getCajas();
                 }
-            })                     
+            })
         }
     }
 
 
 
     //----------------------------APERTURA DE CAJA----------------------------------------------
-    $scope.openModalApertura = async(data)=> {
-        const {MODAL_CTRL, MODAL_APERTURA_CAJA_CSHTML} = _nombreModal.caja;        
-        const {ModalAperturaCtrl} = await import('./../../modal/' + MODAL_CTRL);
+    $scope.openModalApertura = async (data) => {
+        const {
+            MODAL_CTRL,
+            MODAL_APERTURA_CAJA_CSHTML
+        } = _nombreModal.caja;
+        const {
+            ModalAperturaCtrl
+        } = await import('./../../modal/' + MODAL_CTRL);
         const modalRef = _modalSvc.openModalCustom({
             controller: ModalAperturaCtrl,
             template: MODAL_APERTURA_CAJA_CSHTML,
             size: 'md',
             params: data
-        })                                 
-        modalRef.result.then(result=>{
-            if(typeof result==='object'){
+        })
+        modalRef.result.then(result => {
+            if (typeof result === 'object') {
                 $scope.getCajas();
             }
-        })            
-    }      
+        })
+    }
 
 
 
     //----------------------------------Asignacion de Usuario/Turno -------------------------------
-    $scope.openModalAsignUsuarioTurno = async(data)=> {
-        const {MODAL_CTRL, MODAL_ASIGNACION_USUARIO_CAJA_CSHTML} = _nombreModal.caja;        
-        const {ModalAsignacionUsuarioTurnoCtrl} = await import('./../../modal/' + MODAL_CTRL);        
+    $scope.openModalAsignUsuarioTurno = async (data) => {
+        const {
+            MODAL_CTRL,
+            MODAL_ASIGNACION_USUARIO_CAJA_CSHTML
+        } = _nombreModal.caja;
+        const {
+            ModalAsignacionUsuarioTurnoCtrl
+        } = await import('./../../modal/' + MODAL_CTRL);
         const modalRef = _modalSvc.openModalCustom({
             controller: ModalAsignacionUsuarioTurnoCtrl,
             template: MODAL_ASIGNACION_USUARIO_CAJA_CSHTML,
             size: 'md',
             params: data
-        })                                
-        modalRef.result.then(result=>{
-            if(typeof result==='object'){
+        })
+        modalRef.result.then(result => {
+            if (typeof result === 'object') {
                 $scope.getCajas();
             }
-        })                                         
+        })
     }
 
-    
+
     //----------------------------------------MOVIMIENTO CAJA -------------------------------------
-    $scope.openModalMovimientoCaja = async(idCaja)=>{     
-        const {MODAL_CTRL, MODAL_MOVIMIENTO_CAJA_CSHTML} = _nombreModal.caja;        
-        const {MovimientoCajaCtrl} = await import('./../../modal/' + MODAL_CTRL);        
+    $scope.openModalMovimientoCaja = async (idCaja) => {
+        const {
+            MODAL_CTRL,
+            MODAL_MOVIMIENTO_CAJA_CSHTML
+        } = _nombreModal.caja;
+        const {
+            MovimientoCajaCtrl
+        } = await import('./../../modal/' + MODAL_CTRL);
 
         const modalRef = _modalSvc.openModalCustom({
             controller: MovimientoCajaCtrl,
-            template: MODAL_MOVIMIENTO_CAJA_CSHTML, 
+            template: MODAL_MOVIMIENTO_CAJA_CSHTML,
             size: 'xl',
             params: {
-                idCaja                
+                idCaja
             }
-        })                                
-        modalRef.result.then(result=>{
+        })
+        modalRef.result.then(result => {
 
-            if(result){
+            if (result) {
                 $scope.getCajas();
             }
-        })                                 
+        })
     }
 
-        
 
-    
+
+
 }

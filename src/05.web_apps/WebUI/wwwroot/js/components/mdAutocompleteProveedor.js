@@ -1,61 +1,61 @@
-class MdAutocompleteProveedor{
+class MdAutocompleteProveedor {
     static $inject = ['commonService', 'modalService', 'nombreModal']
-    constructor(_commonSvc, _modalSvc, _nombreModal){
+    constructor(_commonSvc, _modalSvc, _nombreModal) {
         this._commonSvc = _commonSvc;
-        this._modalSvc  = _modalSvc;
-        this._nombreModal = _nombreModal;              
+        this._modalSvc = _modalSvc;
+        this._nombreModal = _nombreModal;
         this.search = this.search || {};
     }
 
-    $onInit(){ 
-     
-        this.proveedorData = this.proveedorData || {};
-        
-        if (typeof this.proveedorData==='object' && this.proveedorData.idProveedor > 0){            
+    $onInit() {
+
+        // this.proveedorData = this.proveedorData || {};        
+        // console.log(this.proveedorData)
+        if (typeof this.proveedorData === 'object' && this.proveedorData.idProveedor > 0) {
             this.dataProveedor = Object.assign({}, this.proveedorData)
             this.searchText = this.dataProveedor.nombreFiscal;
             this.idProveedor = this.proveedorData.idProveedor;
         }
         // console.log(this.search)
         // console.log(this.proveedorData)
-         //Accion proveedor actualizar
+        //Accion proveedor actualizar
         //  this.search.showBtnNew = this.editData.showBtnNew;
         //  this.search.showBtnList = this.editData.showBtnList;
         //  this.search.isDisabled  = this.editData.isDisabled;
         //  this.search.showBtnEdit = this.editData.showBtnEdit;
 
-      
+
     }
 
-    $onChanges(changesObj){
-        
+    $onChanges(changesObj) {
+
     }
 
-    getDynamicSearchProveedor(searchText){
-        if(searchText===null || searchText === undefined) return
-        return this._commonSvc.proveedorSearchGeneral(searchText);                
+    getDynamicSearchProveedor(searchText) {
+        if (searchText === null || searchText === undefined) return
+        return this._commonSvc.proveedorSearchGeneral(searchText);
     }
 
-    async selectedItemChange(item){
-        try {            
-            if(item===null || item ==undefined) return 
+    async selectedItemChange(item) {
+        try {
+            if (item === null || item == undefined) return
             showLoader();
             this.dataProveedor = await this._commonSvc.getDataByProveedor(item.idProveedor);
-            
-            this.searchText=  this.dataProveedor.nombreFiscal;
+
+            this.searchText = this.dataProveedor.nombreFiscal;
             this.idProveedor = this.dataProveedor.idProveedor;
             this.selectedItemProveedor({
                 item: this.dataProveedor
             })
         } catch (error) {
             console.error(error)
-        }finally{
+        } finally {
             hideLoader();
-        }        
+        }
     }
 
-    searchTextChange(item){
-        if(item==="" || item===null || item===undefined){
+    searchTextChange(item) {
+        if (item === "" || item === null || item === undefined) {
             this.idProveedor = null;
             this.selectedItemProveedor({
                 item: {}
@@ -63,45 +63,55 @@ class MdAutocompleteProveedor{
         }
     }
 
-    async abrirModalProveedor(item){  
-        const {MODAL_CTRL, MODAL_NUEVO_CSHTML} = this._nombreModal.proveedor
-        const {ModalProveedorCtrl} = await import('./../modal/' + MODAL_CTRL);
+    async abrirModalProveedor(item) {
+        const {
+            MODAL_CTRL,
+            MODAL_NUEVO_CSHTML
+        } = this._nombreModal.proveedor
+        const {
+            ModalProveedorCtrl
+        } = await import('./../modal/' + MODAL_CTRL);
         const modalRef = this._modalSvc.openModalCustom({
-            controller: ModalProveedorCtrl,            
+            controller: ModalProveedorCtrl,
             template: 'Proveedor/' + MODAL_NUEVO_CSHTML,
             size: 'xl',
             params: item
         })
-        modalRef.result.then(response=>{
-            if(typeof response==='object'){
+        modalRef.result.then(response => {
+            if (typeof response === 'object') {
                 this.selectedItemChange(response)
             }
-        })                        
+        })
     }
 
     //Comunicación con el Controlador shared/proveedor/proveedorModalCtrl 
-    abrirModalProveedorLista = async()=> {  
-        const {MODAL_CTRL, MODAL_LISTA_CSHTML} = this._nombreModal.proveedor;
-        const {ModalProveedorListaCtrl} = await import('./../modal/' + MODAL_CTRL)
+    abrirModalProveedorLista = async () => {
+        const {
+            MODAL_CTRL,
+            MODAL_LISTA_CSHTML
+        } = this._nombreModal.proveedor;
+        const {
+            ModalProveedorListaCtrl
+        } = await import('./../modal/' + MODAL_CTRL)
         const modalRef = this._modalSvc.openModalCustom({
             controller: ModalProveedorListaCtrl,
             template: 'Proveedor/' + MODAL_LISTA_CSHTML,
             size: 'xl',
             //windowClass: 'uibModalFullScreen'            
-        })  
-        modalRef.result.then(response=>{
-            if(typeof response==='object'){
+        })
+        modalRef.result.then(response => {
+            if (typeof response === 'object') {
                 this.selectedItemChange(response)
             }
-        })                      
+        })
     }
 
 }
 
 
 
-app.component("mdAutocompleteProveedor",{
-    template:`
+app.component("mdAutocompleteProveedor", {
+    template: `
                     <md-autocomplete
                         ng-disabled="$ctrl.search.isDisabled"
                         md-no-cache="$ctrl.search.noCache"
@@ -131,16 +141,16 @@ app.component("mdAutocompleteProveedor",{
 
                     </md-autocomplete>   
                    `,
-    bindings:{
-        selectedItemProveedor:'&',
-        editData:"<",
-        search:"<"
+    bindings: {
+        selectedItemProveedor: '&',
+        editData: "<",
+        search: "<"
     },
     controller: MdAutocompleteProveedor
 })
 
 app.component('uibModalProveedorSearch', {
-    template:` <div class="input-group"> 
+    template: ` <div class="input-group"> 
                     <input   type="text" 
                         id="proveedorAutocomplete"                 
                         autocomplete="off"
@@ -177,11 +187,11 @@ app.component('uibModalProveedorSearch', {
                         </button>                                                                                               
                     </div>  
                    `,
-    bindings:{
-        selectedItemProveedor:'&',
-        editData:"<",
-        search:"<",
-        proveedorData:"<" // Se agregó en Modal Editar Proveedor
+    bindings: {
+        selectedItemProveedor: '&',
+        editData: "<",
+        search: "<",
+        proveedorData: "=" // Se agregó en Modal Editar Proveedor
     },
     controller: MdAutocompleteProveedor
 })
@@ -191,36 +201,36 @@ app.component('uibModalProveedorSearch', {
 
 //Buscador simple para filtros 
 
-class MdAutocompleteSimpleProveedor{
+class MdAutocompleteSimpleProveedor {
     static $inject = ['commonService']
-    constructor(_commonSvc){
+    constructor(_commonSvc) {
         this._commonSvc = _commonSvc;
     }
 
 
-    getDynamicSearchCliente(searchText){
-        if(searchText===null || searchText === undefined) return
-        return this._commonSvc.clienteSearch(searchText);        
+    getDynamicSearchCliente(searchText) {
+        if (searchText === null || searchText === undefined) return
+        return this._commonSvc.clienteSearch(searchText);
     }
 
-    selectedItemChange(item){
-        try {            
+    selectedItemChange(item) {
+        try {
             showLoader();
-            if(item===null || item ==undefined) return 
+            if (item === null || item == undefined) return
             this.selectedItemClienteSimple({
                 item
-            });           
+            });
         } catch (error) {
             console.error(error)
-        }finally{
+        } finally {
             hideLoader();
-        }        
+        }
     }
 }
 
 
-app.component("mdAutocompleteSimpleProveedor",{
-    template:`
+app.component("mdAutocompleteSimpleProveedor", {
+    template: `
             <md-autocomplete
                 ng-disabled="$ctrl.search.isDisabled"
                 md-no-cache="$ctrl.search.noCache"
@@ -245,8 +255,8 @@ app.component("mdAutocompleteSimpleProveedor",{
                 </md-not-found>
             </md-autocomplete>
             `,
-    bindings:{
-        selectedItemProveedorSimple:'&',        
+    bindings: {
+        selectedItemProveedorSimple: '&',
     },
     controller: MdAutocompleteSimpleProveedor
 })

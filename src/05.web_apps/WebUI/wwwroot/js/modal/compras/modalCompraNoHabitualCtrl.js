@@ -524,7 +524,9 @@ export class ModalUpdateCtrl extends ModalCompraNoHabitualCtrl {
 
         this.params = params;
 
-        this.searchProveedorOptions = {}
+        this.searchProveedorOptions = {};
+        this.proveedor = this.params[1][0];
+
         this.searchProveedorOptions.showBtnNew = true;
         this.searchProveedorOptions.showBtnList = true;
         this.searchProveedorOptions.showBtnEdit = true;
@@ -566,7 +568,7 @@ export class ModalUpdateCtrl extends ModalCompraNoHabitualCtrl {
                 nombreComercial: this.data.nombreComercial
             }]
 
-            this.proveedor = this.params[1][0];
+
 
 
             //Detalle

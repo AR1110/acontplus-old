@@ -42,9 +42,12 @@ BEGIN
 	--===========Datos para la validacion de informacion===============
 	DECLARE @uniqueId AS VARCHAR(20)
 	DECLARE @fechaEmision AS DATETIME
-	DECLARE @fechaEmisionTemp  DATETIME
-
-	DECLARE @fecha DATETIME 
+	
+--	DECLARE @currentDate DATETIME = dbo.ufnGetDateEcuador()
+	DECLARE @fechaEmisionModificada  DATETIME --fecha emision modificada front-end
+	DECLARE @fechaEmisionDocCreado DATETIME;  -- Fecha emision del documento 
+	DECLARE @fechaEmisionTemp DATETIME 
+	
 	DECLARE @hora DATETIME
 
 	--==============Parametros para el area de contabilidad============
@@ -93,18 +96,43 @@ BEGIN
 
 
 	SELECT 
-		@hora = CAST(fechaEmision as time)
+		@hora =CAST(dbo.ufnGetDateEcuador() AS time)
+		,@fechaEmisionDocCreado = fechaEmision
 	FROM Compra.Documento_Ingreso WHERE idDocumentoIngreso = @idDocumentoIngreso
 
-	SELECT 
-		 @fecha = CAST(fechaEmision as date)
-		,@fechaEmisionTemp = @fecha + @hora 
+	SELECT 		 
+		@fechaEmisionModificada = fechaEmision
 	FROM OPENJSON(@comprobante)
 	WITH(fechaEmision DATETIME '$.fechaEmision')
+	
 	--SELECT '0'code, CAST(@fechaEmisionTemp as varchar(60)) as 'message'
 	--RETURN 
 
 	BEGIN TRY 
+		IF CAST(@fechaEmisionModificada AS DATE) <> CAST(@fechaEmisionDocCreado AS DATE)
+			BEGIN 
+				IF CAST(@fechaEmisionModificada AS DATE) > CAST(dbo.ufnGetDateEcuador() AS DATE)
+					BEGIN 
+						SELECT '0'code, 'La fecha de emisión del documento no puede ser posterior a la fecha actual.' as 'message'
+						RETURN 
+					END
+					
+				IF CAST(@fechaEmisionModificada AS DATE) < CAST(dbo.ufnGetDateEcuador() AS DATE)
+					BEGIN 
+						SET @fechaEmisionTemp = DATEADD(dd, DATEDIFF(dd, 0, @fechaEmisionModificada), 0)
+					END
+				ELSE
+					BEGIN 
+						SET @fechaEmisionTemp = dbo.ufnGetDateEcuador();
+					END 
+
+				--IF CONVERT(DATE, @fechaEmisionToCompare) = CONVERT(DATE, dbo.ufnGetDateEcuador())
+
+			END 
+		ELSE 
+			BEGIN 
+				SET @fechaEmisionTemp = @fechaEmisionDocCreado
+			END 					
 
 		INSERT INTO @document 
 		      (idDocumentoIngreso,idProveedor,fechaEmision,totalSinImpuestos,importeTotal,inventory)

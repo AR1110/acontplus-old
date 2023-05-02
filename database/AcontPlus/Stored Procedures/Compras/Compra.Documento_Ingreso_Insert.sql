@@ -52,6 +52,11 @@ BEGIN
 	DECLARE @serieComprobante AS VARCHAR(20)
 	DECLARE @fechaEmision AS DATETIME
 	
+	--======================Fecha Emision===============================
+	DECLARE @fechaEmisionActual AS DATETIME = CAST(dbo.ufnGetDateEcuador() AS DATE) --Fecha Actual	
+	DECLARE @fechaEmisionModificada AS DATETIME --fecha emision  front-end
+	DEClARE @fechaEmisionTemp AS DATETIME 
+	DECLARE @hora AS DATETIME = CAST(dbo.ufnGetDateEcuador() AS TIME)
 
 	--==============Parametros para el area de contabilidad============
 	DECLARE @idEstadoPago AS INT
@@ -97,19 +102,50 @@ BEGIN
 
 	 
 	BEGIN TRY
+		SELECT @fechaEmisionModificada = fechaEmision FROM OPENJSON(@comprobante) WITH(fechaEmision DATETIME '$.fechaEmision')	
+		
+		IF CAST(@fechaEmisionModificada AS DATE) > @fechaEmisionActual
+			BEGIN 
+				SELECT '0'code, 'La fecha de emisión del documento no puede ser posterior a la fecha actual.' as 'message'
+				RETURN 
+			END
+					
+		IF CAST(@fechaEmisionModificada AS DATE) < @fechaEmisionActual
+			BEGIN 
+				SET @fechaEmisionTemp = DATEADD(dd, DATEDIFF(dd, 0, @fechaEmisionModificada), 0)
+			END
+		ELSE
+			BEGIN 
+				SET @fechaEmisionTemp = dbo.ufnGetDateEcuador();
+			END 
+
+		--IF @fechaEmisionModificada > dbo.ufnGetDateEcuador()
+		--	BEGIN 
+		--		SELECT '0'code, 'La fecha de emisión del documento no puede ser posterior a la fecha actual.' as 'message'
+		--		RETURN 
+		--	END
+
+		--IF @fechaEmisionModificada < dbo.ufnGetDateEcuador()
+		--	BEGIN 
+		--		SET @fechaEmisionTemp = DATEADD(dd, DATEDIFF(dd, 0, @fechaEmisionModificada), 0)
+		--	END
+		--ELSE
+		--	BEGIN 
+		--		SET @fechaEmisionTemp =CAST(CAST(@fechaEmisionModificada AS DATE) AS datetime)  + @hora
+		--	END
 		
 		
 
 		INSERT INTO @document 
 		      (idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,fechaEmision,totalSinImpuestos,importeTotal,inventory)
-		SELECT idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,CONVERT(datetime,fechaEmision,103),totalSinImpuestos,importeTotal,inventory
+		SELECT idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,@fechaEmisionTemp,totalSinImpuestos,importeTotal,inventory
 		FROM OPENJSON(@comprobante)
 		WITH (idEstablecimiento INT '$.idEstablecimiento' 
 			 ,idPuntoEmision INT '$.idPuntoEmision'
 			 ,idProveedor INT '$.idProveedor' 
 			 ,estab VARCHAR(5) '$.estab' 
 			 ,ptoEmi VARCHAR(5) '$.ptoEmi' 
-		     ,fechaEmision VARCHAR(150) '$.fechaEmision'
+		     --,fechaEmision VARCHAR(150) '$.fechaEmision'
 			 ,totalSinImpuestos NUMERIC (18,5) '$.totalSinImpuestos'
 			 ,importeTotal NUMERIC (18,5) '$.importeTotal'
 			 ,inventory VARCHAR(5) '$.inventory'
