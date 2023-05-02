@@ -1,7 +1,15 @@
-
-
-class ModalBaseCtrl{
-    constructor({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS}){
+class ModalBaseCtrl {
+    constructor({
+        $scope,
+        $timeout,
+        $uibModalInstance,
+        _mS,
+        _commonSvc,
+        _modalSvc,
+        _nombreModalConst,
+        _tS,
+        _fS
+    }) {
         this.$scope = $scope;
         this.$timeout = $timeout;
         this.$uibModalInstance = $uibModalInstance;
@@ -12,12 +20,12 @@ class ModalBaseCtrl{
         this._tS = _tS;
         this._fS = _fS;
 
-       
+
     }
 
-    initiload(){
-        return this._mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response=>{
-            if(response.code==='0'){                
+    initiload() {
+        return this._mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response => {
+            if (response.code === '0') {
                 throw response
             }
             return JSON.parse(response.payload)
@@ -25,9 +33,9 @@ class ModalBaseCtrl{
     }
 
 
-    getDataFormEstabAsig(json={}){
-        return this._mS.getData('get', '/EstabAsig/GetDataForm?json=' + JSON.stringify(json)).then(response=>{
-            if(response.code==='0'){                
+    getDataFormEstabAsig(json = {}) {
+        return this._mS.getData('get', '/EstabAsig/GetDataForm?json=' + JSON.stringify(json)).then(response => {
+            if (response.code === '0') {
                 throw response
             }
             return JSON.parse(response.payload)
@@ -35,18 +43,20 @@ class ModalBaseCtrl{
     }
 
 
-    async onChangeEstablecimiento(){
+    async onChangeEstablecimiento() {
         try {
 
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
-                  confirmButton: 'btn btn-success',
-                  cancelButton: 'btn btn-danger ml-2'
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger ml-2'
                 },
                 buttonsStyling: false
-              })
-              
-              let {isConfirmed} = await  swalWithBootstrapButtons.fire({
+            })
+
+            let {
+                isConfirmed
+            } = await swalWithBootstrapButtons.fire({
                 title: '<small>Cambiar Establecimiento?</small>',
                 html: "<small>Esta seguro de cambiar el <b>Establecimiento</b> y el <b>Punto de Emisión</b>?</small>",
                 icon: 'warning',
@@ -54,11 +64,11 @@ class ModalBaseCtrl{
                 confirmButtonText: 'Si, cambiar!',
                 cancelButtonText: 'No, cancelar!',
                 reverseButtons: false,
-                allowOutsideClick:false,
-                allowEscapeKey:false
+                allowOutsideClick: false,
+                allowEscapeKey: false
             })
 
-            if(!isConfirmed){
+            if (!isConfirmed) {
                 this.data.codEstab = this.cloneCodEstab;
                 this.$scope.$apply();
                 return
@@ -66,28 +76,28 @@ class ModalBaseCtrl{
 
             this.cloneCodEstab = this.data.codEstab;
 
-            const dataEstab = this.establecimientos.find(item=>item.codEstab===this.data.codEstab);   
-            
+            const dataEstab = this.establecimientos.find(item => item.codEstab === this.data.codEstab);
+
             //Obtenemos Puntos de Emision y Bodegas 
             let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
-           
+
             this.puntosEmision = resultsDataFormEstab[0];
-            this.data.idPuntoEmision = this.puntosEmision.length>0 ? this.puntosEmision[0].idPuntoEmision: 0;
-                       
+            this.data.idPuntoEmision = this.puntosEmision.length > 0 ? this.puntosEmision[0].idPuntoEmision : 0;
+
             this.$scope.$apply();
         } catch (error) {
             console.trace(error)
-        }       
+        }
     }
 
     setFocusArticulo() {
-        setTimeout(function() {
-          document.querySelector('#custom-template-md-autocomplete-articulo').focus();
+        setTimeout(function () {
+            document.querySelector('#custom-template-md-autocomplete-articulo').focus();
         }, 100);
     }
 
 
-    openModalArticuloEditar(item){        
+    openModalArticuloEditar(item) {
         this.$scope.gridApi.cellNav.scrollToFocus(
             this.gridOptions.data[0],
             this.gridOptions.columnDefs[2]
@@ -98,8 +108,10 @@ class ModalBaseCtrl{
 
     async deleteRow(row) {
         let index = this.gridOptions.data.indexOf(row.entity);
-        
-        let {isConfirmed} = await Swal.fire({
+
+        let {
+            isConfirmed
+        } = await Swal.fire({
             icon: 'warning',
             html: `<small>¿Desea eliminar el artículo ${row.entity.descripcion}?</small>`,
             showConfirmButton: true,
@@ -109,39 +121,43 @@ class ModalBaseCtrl{
             allowOutsideClick: false
         })
 
-        if(isConfirmed){          
-            this.gridOptions.data.splice(index, 1);   
-            this.enumGridOptions();  
-            this.$scope.$apply()          
+        if (isConfirmed) {
+            this.gridOptions.data.splice(index, 1);
+            this.enumGridOptions();
+            this.$scope.$apply()
         }
     }
 
     enumGridOptions() {
-        let index = 0, count = 1;
-        for(let item of this.gridOptions.data){
+        let index = 0,
+            count = 1;
+        for (let item of this.gridOptions.data) {
             this.gridOptions.data[index].n = count++;
             index++
-        }       
+        }
     }
 
 
-    setItemArticuloEnDetalle(item){
-        
+    setItemArticuloEnDetalle(item) {
+
         try {
 
             showLoader();
-            let {articulo, medidas} = item;
-    
+            let {
+                articulo,
+                medidas
+            } = item;
+
             let entity = {};
 
             this.indexFind = this.gridOptions.data.findIndex(val => val.idArticulo === articulo.idArticulo);
 
-            
+
             if (this.indexFind === -1) {
                 this.addRow(articulo); //Add Article 
-                
+
                 this.indexFind = this.gridOptions.data.findIndex(val => val.idArticulo === articulo.idArticulo);
-                entity    = this.gridOptions.data[this.indexFind];
+                entity = this.gridOptions.data[this.indexFind];
 
                 this.setItem(entity, articulo);
 
@@ -149,8 +165,8 @@ class ModalBaseCtrl{
                 entity = this.gridOptions.data[this.indexFind];
                 entity.cantidad = entity.cantidad + 1;
             }
-    
-            
+
+
             this.enumGridOptions();
             this.focusColumnCantidad();
             this.$scope.$apply();
@@ -159,12 +175,12 @@ class ModalBaseCtrl{
             console.log(error)
             hideLoader();
         }
-           
+
     }
 
     addRow(item) {
         this.gridOptions.data.push({
-            idGuiaRemisionDetalle:0,
+            idGuiaRemisionDetalle: 0,
             idArticulo: item.idArticulo,
             codigo: item.codigoArticulo,
             descripcion: item.descripcion,
@@ -175,14 +191,14 @@ class ModalBaseCtrl{
 
     setItem(entity, item) {
         entity.idArticulo = item.idArticulo,
-        entity.codigo = item.codigoArticulo,
-        entity.descripcion = item.descripcion,
-        entity.llevaInventario = item.llevaInventario
+            entity.codigo = item.codigoArticulo,
+            entity.descripcion = item.descripcion,
+            entity.llevaInventario = item.llevaInventario
     }
 
     focusColumnCantidad() {
         const self = this;
-        let index = self.gridOptions.columnDefs.findIndex(item=>item.field==='cantidad')
+        let index = self.gridOptions.columnDefs.findIndex(item => item.field === 'cantidad')
         self.$scope.gridApi.cellNav.scrollToFocus(
             self.gridOptions.data[0],
             self.gridOptions.columnDefs[2]
@@ -200,35 +216,58 @@ class ModalBaseCtrl{
 
 
     //Editar Transportista 
-    async openModalTransportistaUpdate(){
-        let {MODAL_CTRL, MODAL_EDITAR} = this._nombreModalConst.transportista;
+    async openModalTransportistaUpdate() {
+        let {
+            MODAL_CTRL,
+            MODAL_EDITAR
+        } = this._nombreModalConst.transportista;
         let controller = (await import('./../../modal/' + MODAL_CTRL))[MODAL_EDITAR['controller']];
-        let template   = MODAL_EDITAR['template'];
-                        
+        let template = MODAL_EDITAR['template'];
+
         let modalRef = this._modalSvc.openModalCustom({
             controller,
             template,
-            size:'md',
+            size: 'md',
             params: Object.assign({}, this.transportista)
-        })        
+        })
 
-        modalRef.result.then(response=>{
-            if(typeof response !=='object') return
-            this.transportista = JSON.parse(response.payload)[0]                     
+        modalRef.result.then(response => {
+            if (typeof response !== 'object') return
+            this.transportista = JSON.parse(response.payload)[0]
         })
     }
 
 
 
-    closeModal(){
+    closeModal() {
         this.$uibModalInstance.close()
     }
 }
 
 
-class ModalGuiaRemisionCtrl extends ModalBaseCtrl{
-    constructor({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS}){
-        super({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS})
+class ModalGuiaRemisionCtrl extends ModalBaseCtrl {
+    constructor({
+        $scope,
+        $timeout,
+        $uibModalInstance,
+        _mS,
+        _commonSvc,
+        _modalSvc,
+        _nombreModalConst,
+        _tS,
+        _fS
+    }) {
+        super({
+            $scope,
+            $timeout,
+            $uibModalInstance,
+            _mS,
+            _commonSvc,
+            _modalSvc,
+            _nombreModalConst,
+            _tS,
+            _fS
+        })
 
         const self = this;
 
@@ -239,29 +278,29 @@ class ModalGuiaRemisionCtrl extends ModalBaseCtrl{
             enableSorting: false,
             enableFiltering: false,
             enableRowHashing: false,
-            enableCellEdit: true,                                                                            
+            enableCellEdit: true,
         }
 
-        this.gridOptions.onRegisterApi = function (gridApi) {  
-            self.$scope.gridApi = gridApi;  
+        this.gridOptions.onRegisterApi = function (gridApi) {
+            self.$scope.gridApi = gridApi;
             if (self.$scope.gridApi) {
                 self.$timeout(() => {
                     self.$scope.gridApi.core.handleWindowResize();
                     self.$scope.gridApi.grid.refresh();
                 }, 5);
-            }   
-            
-            
-            gridApi.grid.element.on('keyup', function (ev) {            
-                if(ev.which == 13 || ev.keyCode=='13'){
+            }
+
+
+            gridApi.grid.element.on('keyup', function (ev) {
+                if (ev.which == 13 || ev.keyCode == '13') {
                     self.setFocusArticulo();
                     self.$scope.gridApi.grid.cellNav.clearFocus();
-                // ev.stopPropagation();   
+                    // ev.stopPropagation();   
                 }
             })
 
             gridApi.edit.on.afterCellEdit(self.$scope, (rowEntity, colDef, newValue, oldValue) => {
-                
+
                 const index = self.gridOptions.data.indexOf(rowEntity); //Obtenemos indice         
 
                 if ([undefined, null, ""].includes(rowEntity[colDef.field])) {
@@ -271,9 +310,9 @@ class ModalGuiaRemisionCtrl extends ModalBaseCtrl{
                     rowEntity.cantidad = oldValue;
                 }
                 if (colDef.field === "cantidad") {
-                    self.gridOptions.data[index].cantidad = self._fS.roundNumber(newValue, 5);            
+                    self.gridOptions.data[index].cantidad = self._fS.roundNumber(newValue, 5);
                 }
-                
+
             })
         }
 
@@ -288,21 +327,32 @@ class ModalGuiaRemisionCtrl extends ModalBaseCtrl{
     }
 
 
-    setColumnDefs(){
-        this.gridOptions.columnDefs = [
-            {
-                name: 'N°', field: 'n', type: 'number',
-                width: '5%', minWidth: '50', enableCellEdit: false,
+    setColumnDefs() {
+        this.gridOptions.columnDefs = [{
+                name: 'N°',
+                field: 'n',
+                type: 'number',
+                width: '5%',
+                minWidth: '50',
+                enableCellEdit: false,
                 allowCellFocus: false
             },
             {
-                name: "Código", field: "codigo", type: 'string',
-                width: '8%', minWidth: '50', enableCellEdit: false,
+                name: "Código",
+                field: "codigo",
+                type: 'string',
+                width: '8%',
+                minWidth: '50',
+                enableCellEdit: false,
                 allowCellFocus: false
             },
             {
-                name: 'Descripcion', field: 'descripcion', type: 'string', width: '65%',
-                minWidth: '150', enableCellEditOnFocus: true,
+                name: 'Descripcion',
+                field: 'descripcion',
+                type: 'string',
+                width: '65%',
+                minWidth: '150',
+                enableCellEditOnFocus: true,
                 cellEditableCondition: function (scope) {
                     return scope.row.entity.llevaInventario !== true;
 
@@ -312,8 +362,13 @@ class ModalGuiaRemisionCtrl extends ModalBaseCtrl{
                 }
             },
             {
-                name: "Cantidad", field: 'cantidad', type: "number", width: '10%',
-                minWidth: '100', allowCellFocus: true, enableCellEditOnFocus: true
+                name: "Cantidad",
+                field: 'cantidad',
+                type: "number",
+                width: '10%',
+                minWidth: '100',
+                allowCellFocus: true,
+                enableCellEditOnFocus: true
             },
             {
                 name: 'Op',
@@ -326,26 +381,40 @@ class ModalGuiaRemisionCtrl extends ModalBaseCtrl{
                                <button type="button" class="btn btn-danger btn-sm text-white" style="cursor:pointer;" title="Eliminar Item" ng-click="grid.appScope.$ctrl.deleteRow(row)"><i class="ti-trash"></i></button></div>`,
             },
             {
-                name: '', field: 'goBackArticulo', enableCellEdit: false, width: '1%'
+                name: '',
+                field: 'goBackArticulo',
+                enableCellEdit: false,
+                width: '1%'
             },
         ]
     }
 
-    setColumnDefsView(){
-        this.gridOptions.columnDefs = [
-            {
-                name: 'N°', field: 'n', type: 'number',
-                width: '5%', minWidth: '50', enableCellEdit: false,
+    setColumnDefsView() {
+        this.gridOptions.columnDefs = [{
+                name: 'N°',
+                field: 'n',
+                type: 'number',
+                width: '5%',
+                minWidth: '50',
+                enableCellEdit: false,
                 allowCellFocus: false
             },
             {
-                name: "Código", field: "codigo", type: 'string',
-                width: '8%', minWidth: '50', enableCellEdit: false,
+                name: "Código",
+                field: "codigo",
+                type: 'string',
+                width: '8%',
+                minWidth: '50',
+                enableCellEdit: false,
                 allowCellFocus: false
             },
             {
-                name: 'Descripcion', field: 'descripcion', type: 'string', width: '65%',
-                minWidth: '150', enableCellEditOnFocus: true,
+                name: 'Descripcion',
+                field: 'descripcion',
+                type: 'string',
+                width: '65%',
+                minWidth: '150',
+                enableCellEditOnFocus: true,
                 cellEditableCondition: function (scope) {
                     return scope.row.entity.llevaInventario !== true;
 
@@ -355,8 +424,13 @@ class ModalGuiaRemisionCtrl extends ModalBaseCtrl{
                 }
             },
             {
-                name: "Cantidad", field: 'cantidad', type: "number", width: '10%',
-                minWidth: '100', allowCellFocus: true, enableCellEditOnFocus: true
+                name: "Cantidad",
+                field: 'cantidad',
+                type: "number",
+                width: '10%',
+                minWidth: '100',
+                allowCellFocus: true,
+                enableCellEditOnFocus: true
             },
             {
                 name: 'Op',
@@ -369,30 +443,38 @@ class ModalGuiaRemisionCtrl extends ModalBaseCtrl{
                                <a class="btn btn-danger btn-sm text-white disabled" style="cursor:pointer;" title="Eliminar Item" ><i class="ti-trash"></i></a></div>`,
             },
             {
-                name: '', field: 'goBackArticulo', enableCellEdit: false, width: '1%'
+                name: '',
+                field: 'goBackArticulo',
+                enableCellEdit: false,
+                width: '1%'
             },
         ]
     }
 
 
     //Información Adicional del Documento 
-    async openModalInfoAdicional(isView){
+    async openModalInfoAdicional(isView) {
         let params = {
             isView,
             infoAdicionalDocumento: this.infoAdicionalDocumento
         }
-        
-        let {MODAL_INFO_ADICIONAL_TIPO_DOC_CTRL, MODAL_INFO_ADICIONAL_TIPO_DOC_CSHTML} = this._nombreModalConst.common;
-        let {InfoAdicionalTipoDocCtrl} = await import('./../../modal/' + MODAL_INFO_ADICIONAL_TIPO_DOC_CTRL);
+
+        let {
+            MODAL_INFO_ADICIONAL_TIPO_DOC_CTRL,
+            MODAL_INFO_ADICIONAL_TIPO_DOC_CSHTML
+        } = this._nombreModalConst.common;
+        let {
+            InfoAdicionalTipoDocCtrl
+        } = await import('./../../modal/' + MODAL_INFO_ADICIONAL_TIPO_DOC_CTRL);
 
         let modalRef = this._modalSvc.openModalCustom({
             controller: InfoAdicionalTipoDocCtrl,
-            template: 'Shared/Common/'+MODAL_INFO_ADICIONAL_TIPO_DOC_CSHTML,
-            size:'md',
+            template: 'Shared/Common/' + MODAL_INFO_ADICIONAL_TIPO_DOC_CSHTML,
+            size: 'md',
             params
         })
 
-        modalRef.result.then(infoAdicionalDocumento=>{
+        modalRef.result.then(infoAdicionalDocumento => {
             this.infoAdicionalDocumento = infoAdicionalDocumento
         })
     }
@@ -400,19 +482,19 @@ class ModalGuiaRemisionCtrl extends ModalBaseCtrl{
 
     //----------------------------TRANSPORTISTA----------------------
 
-    onKeyupTransportistaSearch(){
-        if(this._fS.campo(this.transportista.nombre)) {
+    onKeyupTransportistaSearch() {
+        if (this._fS.campo(this.transportista.nombre)) {
             this.transportista = {};
         }
     }
 
     transporteSearch(bySearch) {
         const json = {
-            typeList:2,
+            typeList: 2,
             bySearch
         }
 
-        return this._mS.getData('get', '/Transportista/Get?json=' + JSON.stringify(json)).then(response => {            
+        return this._mS.getData('get', '/Transportista/Get?json=' + JSON.stringify(json)).then(response => {
             if (response.id === "0") {
                 toastr.error(response.message)
                 return
@@ -421,28 +503,31 @@ class ModalGuiaRemisionCtrl extends ModalBaseCtrl{
         })
     }
 
-    selectedTransportstaChange(data){
-        this.transportista = data;        
+    selectedTransportstaChange(data) {
+        this.transportista = data;
     }
 
-    async openModalTransportistaNew(){
-        let {MODAL_CTRL, MODAL_NUEVO} = this._nombreModalConst.transportista;
+    async openModalTransportistaNew() {
+        let {
+            MODAL_CTRL,
+            MODAL_NUEVO
+        } = this._nombreModalConst.transportista;
         let controller = (await import('./../../modal/' + MODAL_CTRL))[MODAL_NUEVO['controller']];
-        let template   = MODAL_NUEVO['template'];
+        let template = MODAL_NUEVO['template'];
 
         let modalRef = this._modalSvc.openModalCustom({
             controller,
             template,
-            size:'md'
+            size: 'md'
         })
     }
-    
+
 
 
     async vehiculoSearch(textSearch) {
-        return this._mS.getData('get','/Vehiculo/Search?text=' + textSearch).then(response => {            
+        return this._mS.getData('get', '/Vehiculo/Search?text=' + textSearch).then(response => {
             if (response.id === "0") {
-                console.warn(response)               
+                console.warn(response)
                 return
             }
             return response.data
@@ -457,43 +542,49 @@ class ModalGuiaRemisionCtrl extends ModalBaseCtrl{
     }
 
     selectedVehiculoChange(item) {
-        this.vehiculo = item;              
+        this.vehiculo = item;
     }
 
-    async openModalVehiculoNew(){
-        let {MODAL_CTRL, MODAL_NUEVO} = this._nombreModalConst.vehiculo;
+    async openModalVehiculoNew() {
+        let {
+            MODAL_CTRL,
+            MODAL_NUEVO
+        } = this._nombreModalConst.vehiculo;
         let controller = (await import('./../../modal/' + MODAL_CTRL))[MODAL_NUEVO['controller']];
-        let template   = MODAL_NUEVO['template'];
-        
+        let template = MODAL_NUEVO['template'];
+
         let modalRef = this._modalSvc.openModalCustom({
             controller,
             template,
-            size:'md'
+            size: 'md'
         })
-       
+
     }
 
-    async openModalVehiculoEditar(){
-        let {MODAL_CTRL, MODAL_NUEVO} = this._nombreModalConst.vehiculo;
+    async openModalVehiculoEditar() {
+        let {
+            MODAL_CTRL,
+            MODAL_NUEVO
+        } = this._nombreModalConst.vehiculo;
         let controller = (await import('./../../modal/' + MODAL_CTRL))[MODAL_NUEVO['controller']];
-        let template   = MODAL_NUEVO['template'];
-        
+        let template = MODAL_NUEVO['template'];
+
         let modalRef = this._modalSvc.openModalCustom({
             controller,
             template,
-            size:'md',
+            size: 'md',
             params: Object.assign({}, this.vehiculo)
         })
 
-        modalRef.result.then(response=>{
-            if(typeof response !=='object') return
-            this.vehiculo = JSON.parse(response.payload)[0]            
+        modalRef.result.then(response => {
+            if (typeof response !== 'object') return
+            this.vehiculo = JSON.parse(response.payload)[0]
         })
     }
 
 
     empleadoSearch(textSearch) {
-        return this._mS.getData('get','/Empleado/Search?busqueda=' + textSearch).then(response => {
+        return this._mS.getData('get', '/Empleado/Search?busqueda=' + textSearch).then(response => {
             if (response.id == "0") {
                 console.warn(response)
                 return
@@ -502,82 +593,85 @@ class ModalGuiaRemisionCtrl extends ModalBaseCtrl{
         })
     }
 
-    onKeyupSearchEmpleado(){
+    onKeyupSearchEmpleado() {
         if (this._fS.campo(this.empleado.nombreCompleto)) {
             this.empleado = {};
         }
     }
 
     selectedEmpleadoChange(item) {
-        this.empleado = item;       
+        this.empleado = item;
     }
 
-    async openModalEmpleadoNew(){
-        let {MODAL_CTRL, MODAL_NUEVO} = this._nombreModalConst.empleado;
+    async openModalEmpleadoNew() {
+        let {
+            MODAL_CTRL,
+            MODAL_NUEVO
+        } = this._nombreModalConst.empleado;
         let controller = (await import('./../../modal/' + MODAL_CTRL))[MODAL_NUEVO['controller']];
-        let template   = MODAL_NUEVO['template'];
-        
+        let template = MODAL_NUEVO['template'];
+
         let modalRef = this._modalSvc.openModalCustom({
             controller,
             template,
-            size:'md'
+            size: 'md'
         })
     }
 
-    validForm(tituloModal){
-              
+    validForm(tituloModal) {
+
         if (!this.data.codEstab) {
-            this._tS.toastr('warning','Seleccione el Establecimiento', tituloModal);
+            this._tS.toastr('warning', 'Seleccione el Establecimiento', tituloModal);
             return
         }
-        
-        if (!(this.data.idPuntoEmision>0)) {
-            this._tS.toastr('warning','Seleccione el Pto. Emisión', tituloModal);
+
+        if (!(this.data.idPuntoEmision > 0)) {
+            this._tS.toastr('warning', 'Seleccione el Pto. Emisión', tituloModal);
             return
         }
 
         if (!this.data.fechaEmision) {
-            this._tS.toastr('warning','Ingrese la Fecha de Emisión', tituloModal);
+            this._tS.toastr('warning', 'Ingrese la Fecha de Emisión', tituloModal);
             return
         }
 
-        if (!(this.cliente.idCliente>0)) {
-            this._tS.toastr('warning','Seleccione el Cliente', tituloModal);
+        if (!(this.cliente.idCliente > 0)) {
+            this._tS.toastr('warning', 'Seleccione el Cliente', tituloModal);
             return
         };
 
         if (!this.data.fechaInicio) {
-            this._tS.toastr('warning','Ingrese Fecha de Inicio', tituloModal);
+            this._tS.toastr('warning', 'Ingrese Fecha de Inicio', tituloModal);
             return
         }
         if (!this.data.fechaFin) {
-            this._tS.toastr('warning','Ingrese Fecha de Fin', tituloModal);
+            this._tS.toastr('warning', 'Ingrese Fecha de Fin', tituloModal);
             return
         }
         if (!(Date.parse(this.data.fechaFin) <= Date.parse(this.data.fechaInicio))) {
-            this._tS.toastr('warning','Fecha Fin no tiene que ser menor al Fecha de Inicio', tituloModal);
+            this._tS.toastr('warning', 'Fecha Fin no tiene que ser menor al Fecha de Inicio', tituloModal);
             return
         }
-        if (!(this.transportista.idTransportista>0)) {
-            this._tS.toastr('warning','Seleccione el Transportista', tituloModal);
+        if (!(this.transportista.idTransportista > 0)) {
+            this._tS.toastr('warning', 'Seleccione el Transportista', tituloModal);
             return
         }
-        if (!(this.vehiculo.idVehiculo>0)) {
-            this._tS.toastr('warning','Seleccione el Vehiculo', tituloModal);
+        if (!(this.vehiculo.idVehiculo > 0)) {
+            this._tS.toastr('warning', 'Seleccione el Vehiculo', tituloModal);
             return
         }
-        
+
         if (!this.data.ptoPartida) {
-            this._tS.toastr('warning','Ingrese el Punto de Partida', tituloModal);
+            this._tS.toastr('warning', 'Ingrese el Punto de Partida', tituloModal);
             return
         }
         if (!this.data.ptoLlegada) {
-            this._tS.toastr('warning','Ingrese el Punto de Llegada', tituloModal);
+            this._tS.toastr('warning', 'Ingrese el Punto de Llegada', tituloModal);
             return
         }
 
         if (!this.data.estableDestino) {
-            this._tS.toastr('warning','Ingrese Est. Destino', tituloModal);
+            this._tS.toastr('warning', 'Ingrese Est. Destino', tituloModal);
             return
         }
 
@@ -592,66 +686,109 @@ class ModalGuiaRemisionCtrl extends ModalBaseCtrl{
         }
 
         if (this.gridOptions.data.length === 0) {
-            this._tS.toastr('warning','Al menos ingrese un Articulo en el Detalle', tituloModal);
+            this._tS.toastr('warning', 'Al menos ingrese un Articulo en el Detalle', tituloModal);
             return
         }
 
         return true;
     }
 
-    generarNroDocumento(){
+    generarNroDocumento() {
         return this._commonSvc.generarNroDocumentoCompra({
-            idPuntoEmision: this.data.idPuntoEmision, 
+            idPuntoEmision: this.data.idPuntoEmision,
             codigoDocumento: this.TIPO_DOC.codigo
         })
+    }
+
+    saveGuiaRemision(id) {
+
+        let guia = Object.assign({}, this.data);
+
+        guia.idCliente = this.cliente.idCliente;
+        guia.idTransportista = this.transportista.idTransportista;
+        guia.idVehiculo = this.vehiculo.idVehiculo;
+        guia.idEmpleado = this.empleado.idEmpleado
+
+        guia.fechaEmision = this._fS.formatDateTimeZone(this.data.fechaEmision);
+        guia.fechaInicio = this._fS.formatDateTimeZone(this.data.fechaInicio);
+        guia.fechaFin = this._fS.formatDateTimeZone(this.data.fechaFin);
+
+        let data = {
+            guia,
+            detalle: this.gridOptions.data,
+            adicional: this.infoAdicionalDocumento
+        }
+
+        if (id > 0) {
+            return this._mS.getData('put', '/GuiaRemision/Update?id=' + id, data).then(response => response)
+                .catch(errorResponse => {
+                    throw new Error(errorResponse);
+                })
+        } else {
+
+            return this._mS.getData('post', '/GuiaRemision/Insert', data).then(response => response)
+                .catch(errorResponse => {
+                    throw new Error(errorResponse);
+                })
+        }
     }
 
 }
 
 
-export class ModalGuiaRemisionNuevoCtrl extends ModalGuiaRemisionCtrl{
+export class ModalGuiaRemisionNuevoCtrl extends ModalGuiaRemisionCtrl {
 
     static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario']
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS){
-        super({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS})
+    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS) {
+        super({
+            $scope,
+            $timeout,
+            $uibModalInstance,
+            _mS,
+            _commonSvc,
+            _modalSvc,
+            _nombreModalConst,
+            _tS,
+            _fS
+        })
         this.searchClienteOptions = {}
         this.searchClienteOptions.showBtnNew = true;
         this.searchClienteOptions.showBtnList = true;
 
         this.data.fechaEmision = new Date()
-        this.data.fechaInicio  = new Date();
-        this.data.fechaFin     = new Date();
+        this.data.fechaInicio = new Date();
+        this.data.fechaFin = new Date();
     }
 
 
-    async $onInit(){
+    async $onInit() {
 
         try {
-            
+
             showLoader();
 
-            let resultsDataForm = await this.initiload();                                   
-            
+            let resultsDataForm = await this.initiload();
+
             this.establecimientos = resultsDataForm[0];
-           
-            if(this.establecimientos.length>0){
 
-                let dataEstab = this.establecimientos[0]          
+            if (this.establecimientos.length > 0) {
 
-                let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);               
-                                                
+                let dataEstab = this.establecimientos[0]
+
+                let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
+
                 this.data.codEstab = dataEstab.codEstab;
                 this.cloneCodEstab = dataEstab.codEstab;
 
                 this.puntosEmision = resultsDataFormEstab[0];
-                this.data.idPuntoEmision = this.puntosEmision.length>0?this.puntosEmision[0].idPuntoEmision:0;
+                this.data.idPuntoEmision = this.puntosEmision.length > 0 ? this.puntosEmision[0].idPuntoEmision : 0;
 
-                
+
 
                 // this.actividadTipoIva = resultsDataFormEstab[2][0]
 
-            }else{
-                this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
+            } else {
+                this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');
             }
 
             this.setColumnDefs();
@@ -659,28 +796,28 @@ export class ModalGuiaRemisionNuevoCtrl extends ModalGuiaRemisionCtrl{
             this.$scope.$apply();
         } catch (error) {
             console.log(error)
-        }finally{
+        } finally {
             hideLoader()
-        }        
+        }
     }
 
-    selectedItemCliente(item){        
+    selectedItemCliente(item) {
         this.cliente = item;
         this.$scope.$apply()
     }
 
 
-    async onSave(){
+    async onSave() {
         try {
-            
+
             let tituloModal = "Guardar";
 
-            if(!this.validForm(tituloModal)) return
+            if (!this.validForm(tituloModal)) return
 
             showLoader();
             let nroDocSecuencial = await this.generarNroDocumento();
 
-            if(!nroDocSecuencial){
+            if (!nroDocSecuencial) {
                 hideLoader();
                 throw "NO SE GENERÓ CORRECTAMENTE EL NÚMERO SECUENCIAL";
             }
@@ -688,13 +825,15 @@ export class ModalGuiaRemisionNuevoCtrl extends ModalGuiaRemisionCtrl{
 
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
-                  confirmButton: 'btn btn-success',
-                  cancelButton: 'btn btn-danger ml-2'
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger ml-2'
                 },
                 buttonsStyling: false
             })
-              
-            let {isConfirmed} = await swalWithBootstrapButtons.fire({
+
+            let {
+                isConfirmed
+            } = await swalWithBootstrapButtons.fire({
                 title: '<small>Guardar Guía de Remisión</small>',
                 html: `<small>Esta Ud. seguro de ${tituloModal} este <b> Documento</b> N° ${nroDocSecuencial}</small>?`,
                 icon: 'warning',
@@ -702,48 +841,32 @@ export class ModalGuiaRemisionNuevoCtrl extends ModalGuiaRemisionCtrl{
                 confirmButtonText: 'Si, guardar!',
                 cancelButtonText: 'No, cancelar!',
                 reverseButtons: false,
-                allowOutsideClick:false,
-                allowEscapeKey:false
-            })  
-            
-            if(isConfirmed){
-                hideLoader();
+                allowOutsideClick: false,
+                allowEscapeKey: false
+            })
 
-                let guia = Object.assign({}, this.data);
+            if (isConfirmed) {
+                showLoader();
 
-                guia.idCliente       = this.cliente.idCliente;
-                guia.idTransportista = this.transportista.idTransportista;
-                guia.idVehiculo      = this.vehiculo.idVehiculo;
-                guia.idEmpleado      = this.empleado.idEmpleado
-                
-                guia.fechaEmision = this._fS.formatDateTimeZone(this.data.fechaEmision );
-                guia.fechaInicio  = this._fS.formatDateTimeZone(this.data.fechaInicio );
-                guia.fechaFin     = this._fS.formatDateTimeZone(this.data.fechaFin );
-
-                let data = {
-                    guia,
-                    detalle: this.gridOptions.data,
-                    adicional: this.infoAdicionalDocumento
-                }
-                
-                await this._mS.getData('post', '/GuiaRemision/Insert', data).then(response=>{                    
-                    if (response.id === "0") {                       
-                        this._fS.sweetAlert('warning', response.message, response.titleSms);                        
+                this.saveGuiaRemision().then(response => {
+                    if (response.id === "0" || response.code === "0") {
+                        hideLoader();
+                        this._fS.sweetAlert('warning', response.message, response.titleSms);
                     }
-                    if (response.id === "1") {                        
-                        this._fS.sweetAlert('success', response.message, response.titleSms, 1000);                                               
+                    if (response.id === "1" || response.code === "1") {
+                        hideLoader();
+                        this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
                         this.$uibModalInstance.close(response);
                     }
+                }).catch(error => {
+                    hideLoader();
+                    console.log(error);
                 })
             }
 
         } catch (error) {
-
-            console.log(error)
-
-        }finally{
-
             hideLoader();
+            console.log(error)
 
         }
     }
@@ -752,22 +875,43 @@ export class ModalGuiaRemisionNuevoCtrl extends ModalGuiaRemisionCtrl{
 }
 
 
-export class ModalGuiaRemisionEditarCtrl extends ModalGuiaRemisionCtrl{
+export class ModalGuiaRemisionEditarCtrl extends ModalGuiaRemisionCtrl {
 
     static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario', 'params']
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS, _params){
-        super({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS})
-       
+    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS, _params) {
+        super({
+            $scope,
+            $timeout,
+            $uibModalInstance,
+            _mS,
+            _commonSvc,
+            _modalSvc,
+            _nombreModalConst,
+            _tS,
+            _fS
+        })
+
         this.searchClienteOptions = {}
         this.searchClienteOptions.showBtnNew = true;
         this.searchClienteOptions.showBtnList = true;
         this.searchClienteOptions.showBtnEdit = true;
 
-        let {TIPO_REGISTRO, data} = _params;
-        let {dataDocumento, cliente, transportista, vehiculo, empleado, detalleDocumento, infoAdicionalDocumento} = data;
-       
+        let {
+            TIPO_REGISTRO,
+            data
+        } = _params;
+        let {
+            dataDocumento,
+            cliente,
+            transportista,
+            vehiculo,
+            empleado,
+            detalleDocumento,
+            infoAdicionalDocumento
+        } = data;
+
         this.TIPO_REGISTRO = TIPO_REGISTRO;
-        
+
         this.data = dataDocumento;
         this.cliente = cliente;
         this.transportista = transportista;
@@ -780,28 +924,28 @@ export class ModalGuiaRemisionEditarCtrl extends ModalGuiaRemisionCtrl{
     }
 
 
-    async $onInit(){
+    async $onInit() {
 
         try {
-            
+
             showLoader();
 
-            let resultsDataForm = await this.initiload();                                   
-            
+            let resultsDataForm = await this.initiload();
+
             this.establecimientos = resultsDataForm[0];
-           
-            if(this.establecimientos.length>0){
 
-                let dataEstab = this.establecimientos.find(item=>item.codEstab===this.data.codEstab)          
+            if (this.establecimientos.length > 0) {
 
-                let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);               
-                                                
+                let dataEstab = this.establecimientos.find(item => item.codEstab === this.data.codEstab)
+
+                let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
+
                 this.data.codEstab = dataEstab.codEstab;
                 this.cloneCodEstab = dataEstab.codEstab;
 
-                this.puntosEmision = resultsDataFormEstab[0];                
-            }else{
-                this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
+                this.puntosEmision = resultsDataFormEstab[0];
+            } else {
+                this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');
             }
 
             this.setColumnDefs();
@@ -810,36 +954,38 @@ export class ModalGuiaRemisionEditarCtrl extends ModalGuiaRemisionCtrl{
             this.$scope.$apply();
         } catch (error) {
             console.log(error)
-        }finally{
+        } finally {
             hideLoader()
         }
-        
+
     }
 
-    selectedItemCliente(item){        
+    selectedItemCliente(item) {
         this.cliente = item;
         this.$scope.$apply()
     }
 
 
-    async onSave(){
+    async onSave() {
         try {
-            
+
             let tituloModal = "Actualizar";
 
-            if(!this.validForm(tituloModal)) return
+            if (!this.validForm(tituloModal)) return
 
-           
+
 
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
-                  confirmButton: 'btn btn-success',
-                  cancelButton: 'btn btn-danger ml-2'
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger ml-2'
                 },
                 buttonsStyling: false
             })
-              
-            let {isConfirmed} = await swalWithBootstrapButtons.fire({
+
+            let {
+                isConfirmed
+            } = await swalWithBootstrapButtons.fire({
                 title: '<small>Guardar Guía de Remisión</small>',
                 html: `<small>Esta Ud. seguro de ${tituloModal} el Documento</small>?`,
                 icon: 'warning',
@@ -847,48 +993,31 @@ export class ModalGuiaRemisionEditarCtrl extends ModalGuiaRemisionCtrl{
                 confirmButtonText: 'Si, actualizar!',
                 cancelButtonText: 'No, cancelar!',
                 reverseButtons: false,
-                allowOutsideClick:false,
-                allowEscapeKey:false
-            })  
-            
-            if(isConfirmed){
-                hideLoader();
+                allowOutsideClick: false,
+                allowEscapeKey: false
+            })
 
-                let guia = Object.assign({}, this.data);
-
-                guia.idCliente       = this.cliente.idCliente;
-                guia.idTransportista = this.transportista.idTransportista;
-                guia.idVehiculo      = this.vehiculo.idVehiculo;
-                guia.idEmpleado      = this.empleado.idEmpleado
-                
-                guia.fechaEmision = this._fS.formatDateTimeZone(this.data.fechaEmision );
-                guia.fechaInicio  = this._fS.formatDateTimeZone(this.data.fechaInicio );
-                guia.fechaFin     = this._fS.formatDateTimeZone(this.data.fechaFin );
-
-                let data = {
-                    guia,
-                    detalle: this.gridOptions.data,
-                    adicional: this.infoAdicionalDocumento
-                }
-                console.log(guia)
-                await this._mS.getData('put', '/GuiaRemision/Update?id=' + this.data.idGuiaRemision, data).then(response=>{                    
-                    if (response.id === "0") {                       
-                        this._fS.sweetAlert('warning', response.message, response.titleSms);                        
+            if (isConfirmed) {
+                showLoader();
+                this.saveGuiaRemision(this.data.idGuiaRemision).then(response => {
+                    if (response.id === "0" || response.code === "0") {
+                        hideLoader();
+                        this._fS.sweetAlert('warning', response.message, response.titleSms);
                     }
-                    if (response.id === "1") {                        
-                        this._fS.sweetAlert('success', response.message, response.titleSms, 1000);                                               
+                    if (response.id === "1" || response.code === "1") {
+                        hideLoader();
+                        this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
                         this.$uibModalInstance.close(response);
                     }
+                }).catch(error => {
+                    hideLoader();
+                    console.log(error);
                 })
             }
 
         } catch (error) {
-
-            console.log(error)
-
-        }finally{
-
             hideLoader();
+            console.log(error)
 
         }
     }
@@ -898,17 +1027,38 @@ export class ModalGuiaRemisionEditarCtrl extends ModalGuiaRemisionCtrl{
 
 
 
-export class ModalGuiaRemisionDetalleCtrl extends ModalGuiaRemisionCtrl{
+export class ModalGuiaRemisionDetalleCtrl extends ModalGuiaRemisionCtrl {
 
     static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario', 'params']
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS, _params){
-        super({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS})      
+    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS, _params) {
+        super({
+            $scope,
+            $timeout,
+            $uibModalInstance,
+            _mS,
+            _commonSvc,
+            _modalSvc,
+            _nombreModalConst,
+            _tS,
+            _fS
+        })
 
-        let {TIPO_REGISTRO, data} = _params;
-        let {dataDocumento, cliente, transportista, vehiculo, empleado, detalleDocumento, infoAdicionalDocumento} = data;
-       
+        let {
+            TIPO_REGISTRO,
+            data
+        } = _params;
+        let {
+            dataDocumento,
+            cliente,
+            transportista,
+            vehiculo,
+            empleado,
+            detalleDocumento,
+            infoAdicionalDocumento
+        } = data;
+
         this.TIPO_REGISTRO = TIPO_REGISTRO;
-        
+
         this.data = dataDocumento;
         this.cliente = cliente;
         this.transportista = transportista;
@@ -921,28 +1071,28 @@ export class ModalGuiaRemisionDetalleCtrl extends ModalGuiaRemisionCtrl{
     }
 
 
-    async $onInit(){
+    async $onInit() {
 
         try {
-            
+
             showLoader();
 
-            let resultsDataForm = await this.initiload();                                   
-            
+            let resultsDataForm = await this.initiload();
+
             this.establecimientos = resultsDataForm[0];
-           
-            if(this.establecimientos.length>0){
 
-                let dataEstab = this.establecimientos.find(item=>item.codEstab===this.data.codEstab)          
+            if (this.establecimientos.length > 0) {
 
-                let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);               
-                                                
+                let dataEstab = this.establecimientos.find(item => item.codEstab === this.data.codEstab)
+
+                let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
+
                 this.data.codEstab = dataEstab.codEstab;
                 this.cloneCodEstab = dataEstab.codEstab;
 
-                this.puntosEmision = resultsDataFormEstab[0];                
-            }else{
-                this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
+                this.puntosEmision = resultsDataFormEstab[0];
+            } else {
+                this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');
             }
 
             this.setColumnDefsView();
@@ -951,23 +1101,36 @@ export class ModalGuiaRemisionDetalleCtrl extends ModalGuiaRemisionCtrl{
             this.$scope.$apply();
         } catch (error) {
             console.log(error)
-        }finally{
+        } finally {
             hideLoader()
         }
-        
+
     }
 
 
 }
 
 
-export class ModalGuiaRemisionFiltroCtrl extends ModalGuiaRemisionCtrl{
+export class ModalGuiaRemisionFiltroCtrl extends ModalGuiaRemisionCtrl {
     static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'toastService', 'formulario', 'params', 'decodeToken']
 
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _tS, _fS, _params, decodeToken){
-        super({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _tS, _fS}) 
-        
-        let {dataSearch, clienteFiltro, usuarioSearchFiltro, mes} = _params;
+    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _tS, _fS, _params, decodeToken) {
+        super({
+            $scope,
+            $timeout,
+            $uibModalInstance,
+            _mS,
+            _commonSvc,
+            _tS,
+            _fS
+        })
+
+        let {
+            dataSearch,
+            clienteFiltro,
+            usuarioSearchFiltro,
+            mes
+        } = _params;
 
         this.dataSearch = dataSearch || {};
         this.clienteFiltro = clienteFiltro || {}
@@ -983,94 +1146,97 @@ export class ModalGuiaRemisionFiltroCtrl extends ModalGuiaRemisionCtrl{
 
     }
 
-    async $onInit(){
+    async $onInit() {
 
         try {
             showLoader();
             let resultsDataForm = await this.initiload();
-            this.estadoDocumentos = await this._commonSvc.getEstadoDocByCodDoc('GR');    
-            
+            this.estadoDocumentos = await this._commonSvc.getEstadoDocByCodDoc('GR');
+
             this.establecimientos = resultsDataForm[0];
             // this.dataSearch.codEstab = this.establecimientos.length>0? this.establecimientos[0].codEstab: 0;
-            
+
             this.$scope.$apply();
         } catch (error) {
             console.log(error)
-        }finally{
+        } finally {
             hideLoader();
-        }        
+        }
     }
 
-     /**
+    /**
      * 
      * @param {string} textSearch 
      * @returns 
      */
-     clienteSearchDynamic(textSearch){
-        try {            
-            return this._commonSvc.clienteSearch(textSearch);   
-            
+    clienteSearchDynamic(textSearch) {
+        try {
+            return this._commonSvc.clienteSearch(textSearch);
+
         } catch (error) {
             console.log(error)
         }
     }
 
 
-    onKeyupSearchCliente(){
-        if(!this.cliente.nombreFiscal){
+    onKeyupSearchCliente() {
+        if (!this.cliente.nombreFiscal) {
             this.cliente = {};
         }
     }
 
 
-    onKeyupClienteSearchFiltro(){
-        if(!this.clienteFiltro.nombreFiscal){
+    onKeyupClienteSearchFiltro() {
+        if (!this.clienteFiltro.nombreFiscal) {
             this.clienteFiltro = {};
             this.dataSearch.byCustomer = 0;
         }
     }
 
-    selectedClienteSearchFiltro(item){
+    selectedClienteSearchFiltro(item) {
         this.clienteFiltro.nombreFiscal = item.nombreFiscal;
         this.dataSearch.byCustomer = item.idCliente;
     }
 
     //---------------Fecha------------
-    onChangeFechaFiltro(){
+    onChangeFechaFiltro() {
         this.mes = new Date().getMonth() + 1;
-       
+
         this.getFechaInicioFinFilter(this.mes)
     }
 
-    getFechaInicioFinFilter(mes){
-        let { fechaInicio, fechaFin } = this._fS.getFechaInicioFinFilter(mes);
+    getFechaInicioFinFilter(mes) {
+        let {
+            fechaInicio,
+            fechaFin
+        } = this._fS.getFechaInicioFinFilter(mes);
         this.dataSearch.dateStart = fechaInicio;
         this.dataSearch.dateEnd = fechaFin;
     }
 
 
     //---------------Usuario--------------------    
-    usuarioSearchDynamic(textSearch){
+    usuarioSearchDynamic(textSearch) {
         return this._commonSvc.usuarioSearch({
             idRol: this.idUsuarioRol,
             busqueda: textSearch
         })
     }
 
-    onKeyupUsuarioSearchFiltro(){
-        if(this.usuarioSearchFiltro.nombreCompleto==='' || this.usuarioSearchFiltro.nombreCompleto===null || this.usuarioSearchFiltro.nombreCompleto===undefined){
+    onKeyupUsuarioSearchFiltro() {
+        if (this.usuarioSearchFiltro.nombreCompleto === '' || this.usuarioSearchFiltro.nombreCompleto === null || this.usuarioSearchFiltro.nombreCompleto === undefined) {
             this.usuarioSearchFiltro = {};
             this.dataSearch.byUser = 0;
         }
     }
 
-    selectedUsuarioSearchFiltro(item){
+    selectedUsuarioSearchFiltro(item) {
         this.usuarioSearchFiltro.nombreCompleto = item.nombreCompleto;
-        this.dataSearch.byUser = item.idUsuario;        
+        this.dataSearch.byUser = item.idUsuario;
     }
 
 
-    getSearch(){
+    getSearch() {
         let titutoToast = "Búsqueda";
         if (!this.dataSearch.codEstab) {
             this._tS.toastr('warning', 'Seleccione el Establecimiento', titutoToast);
@@ -1092,13 +1258,13 @@ export class ModalGuiaRemisionFiltroCtrl extends ModalGuiaRemisionCtrl{
         }
 
         if (this.dataSearch.checkBoxDate) {
-            
+
             if (!this.dataSearch.dateStart) {
                 this._tS.toastr('warning', 'Ingrese la Fecha Inicio', titutoToast);
                 return;
             }
 
-            if(!this.dataSearch.dateStart instanceof Date && !isNaN(this.dataSearch.dateStart)){
+            if (!this.dataSearch.dateStart instanceof Date && !isNaN(this.dataSearch.dateStart)) {
                 this._tS.toastr('warning', 'Ingrese una fecha válida', titutoToast);
                 return;
             }
@@ -1108,7 +1274,7 @@ export class ModalGuiaRemisionFiltroCtrl extends ModalGuiaRemisionCtrl{
                 return;
             }
 
-            if(!this.dataSearch.dateEnd instanceof Date && !isNaN(this.dataSearch.dateEnd)){
+            if (!this.dataSearch.dateEnd instanceof Date && !isNaN(this.dataSearch.dateEnd)) {
                 this._tS.toastr('warning', 'Ingrese una fecha válida', titutoToast);
                 return;
             }
@@ -1128,23 +1294,22 @@ export class ModalGuiaRemisionFiltroCtrl extends ModalGuiaRemisionCtrl{
 
         this.$uibModalInstance.close({
             isSearch: true,
-            dataSearch: this.dataSearch, 
-            clienteFiltro: this.clienteFiltro, 
-            usuarioSearchFiltro: this.usuarioSearchFiltro, 
+            dataSearch: this.dataSearch,
+            clienteFiltro: this.clienteFiltro,
+            usuarioSearchFiltro: this.usuarioSearchFiltro,
             mes: this.mes
         })
     }
 
-    closeModal(){
+    closeModal() {
         this.$uibModalInstance.close({
             isSearch: false,
-            dataSearch: this.dataSearch, 
-            clienteFiltro: this.clienteFiltro, 
-            usuarioSearchFiltro: this.usuarioSearchFiltro, 
+            dataSearch: this.dataSearch,
+            clienteFiltro: this.clienteFiltro,
+            usuarioSearchFiltro: this.usuarioSearchFiltro,
             mes: this.mes
         })
     }
 
 
 }
-

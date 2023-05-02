@@ -53,6 +53,10 @@ BEGIN
     DECLARE @secuencial INT
     DECLARE @claveAcceso VARCHAR(50)
 
+	--======================Fecha Emision===============================
+	DECLARE @fechaEmisionActual AS DATETIME = dbo.ufnGetDateEcuador()   --Fecha Actual	
+	DECLARE @fechaEmisionModificada AS DATETIME --fecha emision  front-end	
+
 	BEGIN TRY 
 		SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 
@@ -69,11 +73,30 @@ BEGIN
 		   ,@estab                   = s.estab
 		   ,@ptoEmi                  = pto.ptoEmi
 		   ,@ambiente                = pto.ambiente
-		   ,@fechaEmision            = dt.fechaEmision
+		   ,@fechaEmisionModificada            = dt.fechaEmision
 		FROM Helper.F_DeserializeDocument_header(@jsonHeader) dt 
 		INNER JOIN dbo.PuntoEmision  pto ON pto.idPuntoEmision = dt.idPuntoEmision
 		INNER JOIN Sri.Establecimiento s ON s.codEstab         = pto.codEstab
 		INNER JOIN dbo.Cliente        cl ON cl.idCliente       = dt.idCliente 
+		
+
+		-- Verificacion de fecha emision: verifica si la fecha emision es anterior a fecha actual, y si lo es seatea las horas en cero.				
+		IF  CAST(@fechaEmisionModificada AS DATE)  >  CAST(@fechaEmisionActual AS DATE)
+			BEGIN 
+				SELECT '0'code, 'La fecha de emisión del documento no puede ser posterior a la fecha actual.' as 'message'
+				RETURN 
+			END
+
+		IF CAST(@fechaEmisionModificada AS DATE) < CAST(@fechaEmisionActual AS DATE)
+			BEGIN 
+				SET @fechaEmision = DATEADD(dd, DATEDIFF(dd, 0, @fechaEmisionModificada), 0)
+			END
+		ELSE
+			BEGIN 
+				SET @fechaEmision = dbo.ufnGetDateEcuador();
+			END 
+
+
 
 		SELECT @secuencial =  COUNT(*)+1 FROM Ventas.Aprob_Document WHERE idPuntoEmision = @idPuntoEmision
 

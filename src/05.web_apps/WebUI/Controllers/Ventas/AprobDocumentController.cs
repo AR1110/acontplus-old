@@ -107,7 +107,6 @@ namespace WebUI.Controllers.Ventas
                 _db.AddDynamicParam("id", id);
                 _db.AddDynamicParam("jsonHeader", SqlValidation.ValidateSqlString(data.jsonHeader));
                 _db.AddDynamicParam("jsonDetail", SqlValidation.ValidateSqlString(data.jsonDetail));
-                _db.AddDynamicParam("jsonHistory", SqlValidation.ValidateSqlString(data.jsonHistory));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

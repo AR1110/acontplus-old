@@ -277,8 +277,6 @@ class ModalProformaCtrl extends ModalBaseCtrl {
         }
     }
 
-
-
     saveProforma(id) {
         let proforma = Object.assign({}, this.data);
         //Tarifa Aplicada al Documento
@@ -1141,7 +1139,7 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl {
                         hideLoader();
                         this._fS.sweetAlert('warning', response.message, response.titleSms);
                     }
-                    if (response.id === "1" || response.code === '0') {
+                    if (response.id === "1" || response.code === '1') {
                         hideLoader();
                         this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
 
