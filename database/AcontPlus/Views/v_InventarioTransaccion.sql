@@ -33,6 +33,16 @@ SELECT t.idTransaccion
 	,u.nombreUsuario usuario
 	,nroDocumento = (
 		CASE 
+			
+			WHEN tt.codigo = 'E' AND td.codigo = 'LC'
+				THEN (
+						SELECT TOP 1 es.estab + '-' + pe.ptoEmi + '-' + Helper.F_Auto_Sequential(lc.nroDocumento)
+						FROM dbo.LiquidacionCompra     lc WITH (NOLOCK)
+						INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision = lc.idPuntoEmision
+						INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = pe.codEstab
+						WHERE lc.idLiquidacionCompra = t.idDocumento
+					 )
+
 			WHEN tt.codigo = 'E' AND td.codigo = 'FE'
 				THEN (
 						SELECT TOP 1 serieComprobante
@@ -41,180 +51,173 @@ SELECT t.idTransaccion
 						)
 			WHEN tt.codigo = 'E' AND td.codigo = 'FF'
 				THEN (
-						SELECT TOP 1  puntoEmision + '-' + CONVERT(VARCHAR(10), nroDocumento)
+						SELECT TOP 1  puntoEmision + '-' + Helper.F_Auto_Sequential(nroDocumento)
 						FROM FacturaCompra fc  WITH (NOLOCK)
 						WHERE fc.idFacturaCompra = t.idDocumento
 						)
 			WHEN tt.codigo = 'E' AND td.codigo = 'NC'
 				THEN (
-						SELECT TOP 1 estab + '-' + ptoEmi + '-' + CONVERT(VARCHAR(10), nroDocumento)
-						FROM NotaCredito nc  WITH (NOLOCK)
-						INNER JOIN PuntoEmision pe  WITH (NOLOCK) ON nc.idPuntoEmision = pe.idPuntoEmision
-						INNER JOIN Sri.Establecimiento e  WITH (NOLOCK) ON pe.codEstab = e.codEstab
-						WHERE nc.idNotaCredito = t.idDocumento
+							SELECT TOP 1 dr.serieComprobante
+							FROM Recepcion.DocumentoRecibido dr  WITH (NOLOCK)
+							WHERE dr.idDocumento = t.idDocumento
 						)
 			WHEN tt.codigo = 'E' AND td.codigo = 'IV'
-				THEN (
-						SELECT TOP 1 estab + '-' + ptoEmi + '-' + CONVERT(VARCHAR(10), secuencial)
+				   THEN(
+						SELECT TOP 1 estab + '-' + ptoEmi + '-' + Helper.F_Auto_Sequential(secuencial)
 						FROM Compra.Documento_Ingreso di  WITH (NOLOCK)
 						WHERE di.idDocumentoIngreso = t.idDocumento
 						)
 			WHEN tt.codigo = 'S' AND td.codigo = 'FE'
 				THEN (
-						SELECT TOP 1 e.estab + '-' + pe.ptoEmi + '-' + CONVERT(VARCHAR(10), f.nroFactura)
-						FROM Factura f  WITH (NOLOCK)
-						INNER JOIN PuntoEmision pe  WITH (NOLOCK) ON f.idPuntoEmision = pe.idPuntoEmision
-						INNER JOIN Sri.Establecimiento e  WITH (NOLOCK) ON pe.codEstab = e.codEstab
+						SELECT TOP 1 e.estab + '-' + pe.ptoEmi + '-' + Helper.F_Auto_Sequential(f.nroFactura)
+						FROM Factura                   f WITH (NOLOCK)
+						INNER JOIN PuntoEmision       pe WITH (NOLOCK) ON f.idPuntoEmision = pe.idPuntoEmision
+						INNER JOIN Sri.Establecimiento e WITH (NOLOCK) ON pe.codEstab = e.codEstab
 						WHERE f.idFactura = t.idDocumento
 						)
 			WHEN tt.codigo = 'S' AND td.codigo = 'NE'
 				THEN (
-						SELECT TOP 1 e.estab + '-' + pe.ptoEmi + '-' + CONVERT(VARCHAR(10), ne.nroDocumento)
-						FROM NotaEntrega ne  WITH (NOLOCK)
-						INNER JOIN PuntoEmision pe  WITH (NOLOCK) ON ne.idPuntoEmision = pe.idPuntoEmision
-						INNER JOIN Sri.Establecimiento e  WITH (NOLOCK) ON pe.codEstab = e.codEstab
+						SELECT TOP 1 e.estab + '-' + pe.ptoEmi + '-' + Helper.F_Auto_Sequential(ne.nroDocumento)
+						FROM NotaEntrega              ne WITH (NOLOCK)
+						INNER JOIN PuntoEmision       pe WITH (NOLOCK) ON ne.idPuntoEmision = pe.idPuntoEmision
+						INNER JOIN Sri.Establecimiento e WITH (NOLOCK) ON pe.codEstab = e.codEstab
 						WHERE ne.idNotaEntrega = t.idDocumento
 						)
 			WHEN tt.codigo = 'S' AND td.codigo = 'NC'
 				THEN (
-						SELECT TOP 1 dr.serieComprobante
-						FROM Recepcion.DocumentoRecibido dr  WITH (NOLOCK)
-						WHERE dr.idDocumento = t.idDocumento
+						SELECT TOP 1 estab + '-' + ptoEmi + '-' + Helper.F_Auto_Sequential( nroDocumento)
+						FROM NotaCredito              nc WITH (NOLOCK)
+						INNER JOIN PuntoEmision       pe WITH (NOLOCK) ON nc.idPuntoEmision = pe.idPuntoEmision
+						INNER JOIN Sri.Establecimiento e WITH (NOLOCK) ON pe.codEstab = e.codEstab
+						WHERE nc.idNotaCredito = t.idDocumento
+						
 						)
 			WHEN tt.codigo = 'A' AND td.codigo = 'CI'
 				THEN 
 				(
-					SELECT TOP 1 e.estab + '-' + pe.ptoEmi + '-' + CAST(dr.nroDoc AS varchar(9))
-					FROM ConsolidacionInventario dr  WITH (NOLOCK)
-					INNER JOIN PuntoEmision pe  WITH (NOLOCK) ON dr.idPuntoEmision = pe.idPuntoEmision
+					SELECT TOP 1 e.estab + '-' + pe.ptoEmi + '-' + Helper.F_Auto_Sequential(dr.nroDoc)
+					FROM ConsolidacionInventario  dr  WITH (NOLOCK)
+					INNER JOIN PuntoEmision       pe  WITH (NOLOCK) ON dr.idPuntoEmision = pe.idPuntoEmision
 					INNER JOIN Sri.Establecimiento e  WITH (NOLOCK) ON pe.codEstab = e.codEstab
 					WHERE dr.idConsolidacionInventario = t.idDocumento
 				)
-			WHEN tt.codigo = 'E' AND td.codigo = 'LC'
-				THEN (
-						SELECT TOP 1 es.estab + '-' + pe.ptoEmi + Helper.F_Auto_Sequential(lc.nroDocumento)
-						FROM dbo.LiquidacionCompra     lc WITH (NOLOCK)
-						INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision = lc.idPuntoEmision
-						INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = pe.codEstab
-						WHERE lc.idLiquidacionCompra = t.idDocumento
-					 )
 			END
 		)
 
 	,clienteProveedor = (
 		CASE 
 			WHEN tt.codigo = 'E' AND td.codigo = 'FE'
-				THEN (
+				THEN	(
 						SELECT TOP 1 dr.razonSocialEmisior
 						FROM Recepcion.DocumentoRecibido dr  WITH (NOLOCK)
 						WHERE dr.idDocumento = t.idDocumento
 						)
 			WHEN tt.codigo = 'E' AND td.codigo = 'FF'
-				THEN (
+				THEN	(
 						SELECT TOP 1  p.nombreFiscal
 						FROM FacturaCompra fc  WITH (NOLOCK)
 						INNER JOIN Proveedor p  WITH (NOLOCK) ON fc.idProveedor = p.idProveedor
 						WHERE fc.idFacturaCompra = t.idDocumento
 						)
 			WHEN tt.codigo = 'E' AND td.codigo = 'NC'
-				THEN (
-						SELECT TOP 1 c.nombreFiscal
-						FROM NotaCredito nc  WITH (NOLOCK)  
-						INNER JOIN Cliente c  WITH (NOLOCK) On nc.idCliente = c.idCliente
-						WHERE nc.idNotaCredito = t.idDocumento
+				THEN	(
+						SELECT TOP 1 dr.razonSocialEmisior
+						FROM Recepcion.DocumentoRecibido dr  WITH (NOLOCK)
+						WHERE dr.idDocumento = t.idDocumento
 						)
 			WHEN tt.codigo = 'E' AND td.codigo = 'IV'
-				THEN (
+				THEN	(
 						SELECT TOP 1 p.nombreFiscal
 						FROM Compra.Documento_Ingreso di  WITH (NOLOCK)
 						INNER JOIN Proveedor p  WITH (NOLOCK) ON di.idProveedor = p.idProveedor
 						WHERE di.idDocumentoIngreso = t.idDocumento
 						)
 			WHEN tt.codigo = 'S' AND td.codigo = 'FE'
-				THEN (
+				THEN    (
 						SELECT TOP 1 c.nombreFiscal
 						FROM Factura f  WITH (NOLOCK)
 						INNER JOIN Cliente c  WITH (NOLOCK) On f.idCliente = c.idCliente 
 						WHERE f.idFactura = t.idDocumento
 						)
 			WHEN tt.codigo = 'S' AND td.codigo = 'NE'
-				THEN (
+				THEN	(
 						SELECT TOP 1 c.nombreFiscal
 						FROM NotaEntrega ne  WITH (NOLOCK)
 						INNER JOIN Cliente c  WITH (NOLOCK) On ne.idCliente = c.idCliente
 						WHERE ne.idNotaEntrega = t.idDocumento
 						)
 			WHEN tt.codigo = 'S' AND td.codigo = 'NC'
-				THEN (
-						SELECT TOP 1 dr.razonSocialEmisior
-						FROM Recepcion.DocumentoRecibido dr  WITH (NOLOCK)
-						WHERE dr.idDocumento = t.idDocumento
+				THEN	(
+						SELECT TOP 1 c.nombreFiscal
+						FROM NotaCredito nc  WITH (NOLOCK)  
+						INNER JOIN Cliente c  WITH (NOLOCK) On nc.idCliente = c.idCliente
+						WHERE nc.idNotaCredito = t.idDocumento
 						)
 			WHEN tt.codigo = 'E' AND td.codigo = 'LC'
-				THEN (
+				THEN	(
 						SELECT TOP 1 pr.nombreFiscal
 						FROM dbo.LiquidacionCompra lc  WITH (NOLOCK)
 						INNER JOIN dbo.Proveedor pr  WITH (NOLOCK) ON pr.idProveedor = lc.idProveedor 
 						WHERE lc.idLiquidacionCompra = t.idDocumento
-					 )
+						)
 				END
 		)
 ,rucClienteProveedor = (
 		CASE 
 			WHEN tt.codigo = 'E' AND td.codigo = 'FE'
-				THEN (
+				THEN   (
 						SELECT TOP 1 dr.rucEmisor
 						FROM Recepcion.DocumentoRecibido dr  WITH (NOLOCK)
 						WHERE dr.idDocumento = t.idDocumento
 						)
 			WHEN tt.codigo = 'E' AND td.codigo = 'FF'
-				THEN (
+				THEN    (
 						SELECT TOP 1  p.numeroIdentificacion
 						FROM FacturaCompra fc  WITH (NOLOCK)
 						INNER JOIN Proveedor p  WITH (NOLOCK) ON fc.idProveedor = p.idProveedor
 						WHERE fc.idFacturaCompra = t.idDocumento
 						)
 			WHEN tt.codigo = 'E' AND td.codigo = 'NC'
-				THEN (
-						SELECT TOP 1 c.numeroIdentificacion
-						FROM NotaCredito nc  WITH (NOLOCK)
-						INNER JOIN Cliente c  WITH (NOLOCK) On nc.idCliente = c.idCliente
-						WHERE nc.idNotaCredito = t.idDocumento
+				THEN   (
+						SELECT TOP 1 dr.rucEmisor
+						FROM Recepcion.DocumentoRecibido dr  WITH (NOLOCK)
+						WHERE dr.idDocumento = t.idDocumento
 						)
 			WHEN tt.codigo = 'E' AND td.codigo = 'IV'
-				THEN (
+				THEN    (
 						SELECT TOP 1 p.numeroIdentificacion
 						FROM Compra.Documento_Ingreso di  WITH (NOLOCK)
 						INNER JOIN Proveedor p  WITH (NOLOCK) ON di.idProveedor = p.idProveedor
 						WHERE di.idDocumentoIngreso = t.idDocumento
 						)
 			WHEN tt.codigo = 'S' AND td.codigo = 'FE'
-				THEN (
+				THEN    (
 						SELECT TOP 1 c.numeroIdentificacion
 						FROM Factura f  WITH (NOLOCK)
 						INNER JOIN Cliente c  WITH (NOLOCK) On f.idCliente = c.idCliente 
 						WHERE f.idFactura = t.idDocumento
 						)
 			WHEN tt.codigo = 'S' AND td.codigo = 'NE'
-				THEN (
+				THEN    (
 						SELECT TOP 1 c.numeroIdentificacion
 						FROM NotaEntrega ne  WITH (NOLOCK)
 						INNER JOIN Cliente c On ne.idCliente = c.idCliente
 						WHERE ne.idNotaEntrega = t.idDocumento
 						)
 			WHEN tt.codigo = 'S' AND td.codigo = 'NC'
-				THEN (
-						SELECT TOP 1 dr.rucEmisor
-						FROM Recepcion.DocumentoRecibido dr  WITH (NOLOCK)
-						WHERE dr.idDocumento = t.idDocumento
+				THEN	(
+						SELECT TOP 1 c.numeroIdentificacion
+						FROM NotaCredito nc  WITH (NOLOCK)
+						INNER JOIN Cliente c  WITH (NOLOCK) On nc.idCliente = c.idCliente
+						WHERE nc.idNotaCredito = t.idDocumento
 						)
 				
 			WHEN tt.codigo = 'E' AND td.codigo = 'LC'
 				THEN (
-						SELECT TOP 1 pr.numeroIdentificacion
-						FROM dbo.LiquidacionCompra lc  WITH (NOLOCK)
-						INNER JOIN dbo.Proveedor pr  WITH (NOLOCK) ON pr.idProveedor = lc.idProveedor 
-						WHERE lc.idLiquidacionCompra = t.idDocumento
+					SELECT TOP 1 pr.numeroIdentificacion
+					FROM dbo.LiquidacionCompra lc  WITH (NOLOCK)
+					INNER JOIN dbo.Proveedor pr  WITH (NOLOCK) ON pr.idProveedor = lc.idProveedor 
+					WHERE lc.idLiquidacionCompra = t.idDocumento
 					 )
 				END
 		)
@@ -242,7 +245,3 @@ LEFT JOIN Medida m  WITH (NOLOCK) ON a.idMedida = m.idMedida
 LEFT JOIN Usuario u WITH (NOLOCK) ON t.idUsuario = u.idUsuario
 
 )
-
---select * from FacturaCompra where idFacturaCompra = 175
-
---select * from FacturaCompra where estab is null

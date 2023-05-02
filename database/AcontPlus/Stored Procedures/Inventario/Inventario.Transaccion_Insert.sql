@@ -43,19 +43,36 @@ BEGIN
 	SET NOCOUNT ON; 
 	DECLARE @idTipoTransaccion INT 
 	DECLARE @idTipoDocumento INT
+	DECLARE @fraccion AS NUMERIC(18,5)
+	DECLARE @cantidadFinal AS NUMERIC(18,5)
+	DECLARE @codMetodoValoradion AS VARCHAR(5)
+	DECLARE @idEntidad AS INT 
 
-	SET @idTipoTransaccion = (SELECT TOP 1 idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = @codTran)
+	SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = @codTran
 	
-	SET @idTipoDocumento = (SELECT TOP 1 idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = @codDoc)
+	SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = @codDoc
 
+	SELECT TOP 1 @fraccion = conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idMedida = @idMedida
+
+	SELECT TOP 1 @idEntidad = idEntidad FROM dbo.Articulo WITH (NOLOCK) WHERE idArticulo = @idArticulo
+
+	SELECT TOP 1 @codMetodoValoradion = codMetodoValoracion FROM Config.GestionSistema WITH (NOLOCK) WHERE idEntidad = @idEntidad
+
+	SET @cantidadFinal = @cantidad * ISNULL(@fraccion,1)
+
+	--REGISTRAR LAS TRANSACCIONES DEL ARTICULO 
 	IF @estado = 1 
 		BEGIN 
 			INSERT INTO Inventario.Transaccion
 				   (idTipoTransaccion, idArticulo, idBodega, idTipoDocumento, idDocumento, idMedida, idTarifa, cantidad, precioCosto, precioUnitario, total,fechaRegistro, idUsuario)
-			SELECT @idTipoTransaccion,@idArticulo,@idBodega,@idTipoDocumento,@idDocumento,@idMedida,@idTarifa,@cantidad,@precioCosto,@precioUnitario,@total,@fechaRegistro,@idUsuario
+			SELECT @idTipoTransaccion,@idArticulo,@idBodega,@idTipoDocumento,@idDocumento,@idMedida,@idTarifa,@cantidadFinal,@precioCosto,@precioUnitario,@total,@fechaRegistro,@idUsuario
 		END
 
+
+	--ACTUALIZAR LOS STOCK DE LOS ARTICULOS 
 	EXEC Inventario.Stock_Update @idArticulo,@idBodega
 	
+
+
 END
 GO
