@@ -183,9 +183,12 @@ namespace DataAccess.Compras
                 {
                     var cmd = new SqlCommand("Compra.Liquidacion_Insert", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
-                    var liquidacion = JsonConvert.SerializeObject(data.liquidacion); cmd.Parameters.Add(new SqlParameter("jsonLiquidacion", liquidacion));
-                    var detalle = JsonConvert.SerializeObject(data.detalle); cmd.Parameters.Add(new SqlParameter("jsonDetalle", detalle));
-                    var infoAdicional = JsonConvert.SerializeObject(data.adicional); cmd.Parameters.Add(new SqlParameter("jsonInfoAdicional", infoAdicional));
+                    var liquidacion = JsonConvert.SerializeObject(data.liquidacion); 
+                    cmd.Parameters.Add(new SqlParameter("jsonLiquidacion", liquidacion));
+                    var detalle = JsonConvert.SerializeObject(data.detalle); 
+                    cmd.Parameters.Add(new SqlParameter("jsonDetalle", detalle));
+                    var infoAdicional = JsonConvert.SerializeObject(data.adicional); 
+                    cmd.Parameters.Add(new SqlParameter("jsonInfoAdicional", infoAdicional));
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
                     SqlDataReader reader = cmd.ExecuteReader();
@@ -223,9 +226,12 @@ namespace DataAccess.Compras
                     var cmd = new SqlCommand("Compra.Liquidacion_Update", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
                     cmd.Parameters.AddWithValue("idLiquidacionCompra", idLiquidacionCompra);
-                    var liquidacion = JsonConvert.SerializeObject(data.liquidacion); cmd.Parameters.Add(new SqlParameter("jsonLiquidacion", liquidacion));
-                    var detalle = JsonConvert.SerializeObject(data.detalle); cmd.Parameters.Add(new SqlParameter("jsonDetalle", detalle));
-                    var infoAdicional = JsonConvert.SerializeObject(data.adicional); cmd.Parameters.Add(new SqlParameter("jsonInfoAdicional", infoAdicional));
+                    var liquidacion = JsonConvert.SerializeObject(data.liquidacion);
+                    cmd.Parameters.Add(new SqlParameter("jsonLiquidacion", liquidacion));
+                    var detalle = JsonConvert.SerializeObject(data.detalle); 
+                    cmd.Parameters.Add(new SqlParameter("jsonDetalle", detalle));
+                    var infoAdicional = JsonConvert.SerializeObject(data.adicional); 
+                    cmd.Parameters.Add(new SqlParameter("jsonInfoAdicional", infoAdicional));
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
                     SqlDataReader reader = cmd.ExecuteReader();

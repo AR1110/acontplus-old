@@ -5,6 +5,7 @@ using Domain.Models;
 using Domain.ViewModels.Compras;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace WebUI.Controllers.Compras
 {
@@ -28,13 +29,32 @@ namespace WebUI.Controllers.Compras
         {
             return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> Insert([FromBody] LiquidacionCompraViewModel data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-            _gr = await _lc.InsertAsync(idRol, data);
-            return Ok(_gr);
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();           
+            try
+            {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                await _db.SPExecute("Compra.Liquidacion_Insert");
+                _db.AddDynamicParam("idRol", idUsuarioRol);
+                _db.AddDynamicParam("jsonLiquidacion", SqlValidation.ValidateSqlString(JsonConvert.SerializeObject(data.liquidacion)));
+                _db.AddDynamicParam("jsonDetalle", SqlValidation.ValidateSqlString(JsonConvert.SerializeObject(data.detalle)));
+                _db.AddDynamicParam("jsonInfoAdicional", SqlValidation.ValidateSqlString(JsonConvert.SerializeObject(data.adicional)));                
+                _response = _db.GetDefault();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error al crear la liquidacion de compra: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al crear la liquidacion compra");
+            }
+            return Ok(_response);          
         }
+
+
 
         [HttpGet]
         public async Task<IActionResult> Get(string json)
@@ -74,9 +94,26 @@ namespace WebUI.Controllers.Compras
         [HttpPut]
         public async Task<IActionResult> Update(int id, [FromBody] LiquidacionCompraViewModel data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-            _gr = await _lc.UpdateAsync(idRol, id, data);
-            return Ok(_gr);
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                await _db.SPExecute("Compra.Liquidacion_Update");
+                _db.AddDynamicParam("idRol", idUsuarioRol);
+                _db.AddDynamicParam("idLiquidacionCompra", id);
+                _db.AddDynamicParam("jsonLiquidacion", SqlValidation.ValidateSqlString(JsonConvert.SerializeObject(data.liquidacion)));
+                _db.AddDynamicParam("jsonDetalle", SqlValidation.ValidateSqlString(JsonConvert.SerializeObject(data.detalle)));
+                _db.AddDynamicParam("jsonInfoAdicional", SqlValidation.ValidateSqlString(JsonConvert.SerializeObject(data.adicional)));
+                _response = _db.GetDefault();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error al actualizar la liquidacion de compra: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al actualizar la liquidacion compra");
+            }
+            return Ok(_response);
         }
 
         [HttpDelete]

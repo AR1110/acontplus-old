@@ -259,6 +259,44 @@ class ModalNotaCreditoCtrl extends ModalBaseCtrl {
         }
     }
 
+
+    /**
+     * 
+     * @param {*} id 
+     * @returns object
+     */
+    saveNotaCredito(id) {
+
+        let notaCredito = Object.assign({}, this.data);
+        notaCredito.idCliente = this.cliente.idCliente;
+
+        //Tarifa Aplicada al Documento
+        //notaCredito.tarifa = this.actividadTipoIva.tarifa;
+        notaCredito.fechaEmision = this._fS.formatDateTimeZone(this.data.fechaEmision);
+        // notaCredito.fechaVecimiento = this._fS.formatDateTimeZone(this.data.fechaVecimiento);
+
+        notaCredito.tarifa = this.actividadTipoIva.tarifa;
+
+        let data = {
+            nota: notaCredito,
+            detalle: this.gridOptions.data,
+            adicional: this.infoAdicionalDocumento,
+        }
+
+        if (id > 0) {
+            return this._mS.getData('put', '/NotaCreditoCliente/Update?id=' + id, data).then(response => response)
+                .catch(errorResponse => {
+                    throw new Error(errorResponse)
+                })
+        } else {
+
+            return this._mS.getData('post', '/NotaCreditoCliente/Insert', data).then(response => response)
+                .catch(errorResponse => {
+                    throw new Error(errorResponse)
+                })
+        }
+    }
+
 }
 
 
@@ -514,39 +552,29 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl {
             })
 
 
-            if (!isConfirmed) return
+            if (isConfirmed) {
+                showLoader();
+                this.saveNotaCredito().then(response => {
+                    if (response.id === '0' || response.code === '0') {
+                        hideLoader();
+                        this._fS.sweetAlert('warning', response.message, response.titleSms);
+                    }
+                    if (response.id === "1" || response.code === "1") {
+                        hideLoader();
+                        this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                        this.$uibModalInstance.close(response)
+                    }
+                }).catch(error => {
+                    hideLoader();
+                    console.error(error)
+                })
 
-            showLoader();
-            let notaCredito = Object.assign({}, this.data);
-            notaCredito.idCliente = this.cliente.idCliente;
-
-            //Tarifa Aplicada al Documento
-            //notaCredito.tarifa = this.actividadTipoIva.tarifa;
-
-
-
-            let data = {
-                nota: notaCredito,
-                detalle: this.gridOptions.data,
-                adicional: this.infoAdicionalDocumento,
             }
 
 
-            await this._mS.getData('post', '/NotaCreditoCliente/Insert', data).then(response => {
-
-                if (response.id === '0') {
-                    this._fS.sweetAlert('warning', response.message, response.titleSms);
-                }
-                if (response.id === "1") {
-                    this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
-                    this.$uibModalInstance.close(response)
-                }
-            })
-
         } catch (error) {
-            console.log(error)
-        } finally {
             hideLoader();
+            console.log(error)
         }
     }
 }
@@ -704,37 +732,29 @@ export class ModalNotaCreditoEditarCtrl extends ModalNotaCreditoCtrl {
             })
 
 
-            if (!isConfirmed) return
+            if (isConfirmed) {
+                showLoader();
+                this.saveNotaCredito(this.data.idNotaCredito).then(response => {
 
-            showLoader();
-            let notaCredito = Object.assign({}, this.data);
-            notaCredito.idCliente = this.cliente.idCliente;
-
-            //Tarifa Aplicada al Documento
-            notaCredito.tarifa = this.actividadTipoIva.tarifa;
-
-
-            let data = {
-                nota: notaCredito,
-                detalle: this.gridOptions.data,
-                adicional: this.infoAdicionalDocumento,
+                    if (response.id === '0' || response.code === '0') {
+                        hideLoader();
+                        this._fS.sweetAlert('warning', response.message, response.titleSms);
+                    }
+                    if (response.id === "1" || response.code === "1") {
+                        hideLoader();
+                        this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                        this.$uibModalInstance.close(response)
+                    }
+                }).catch(error => {
+                    hideLoader();
+                    console.error(error)
+                })
             }
 
-            await this._mS.getData('put', '/NotaCreditoCliente/Update?id=' + this.data.idNotaCredito, data).then(response => {
-
-                if (response.id === '0') {
-                    this._fS.sweetAlert('warning', response.message, response.titleSms);
-                }
-                if (response.id === "1") {
-                    this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
-                    this.$uibModalInstance.close(data)
-                }
-            })
 
         } catch (error) {
-            console.log(error)
-        } finally {
             hideLoader();
+            console.log(error)
         }
     }
 
