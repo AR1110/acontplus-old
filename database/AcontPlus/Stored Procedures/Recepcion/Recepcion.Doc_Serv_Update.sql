@@ -156,7 +156,7 @@ BEGIN
 
 				SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago ep WHERE ep.codigo = 'PE'
 
-				SELECT TOP 1 claveAcceso = @claveAcceso FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento AND codDoc = '01'
+				SELECT TOP 1 @claveAcceso = claveAcceso FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento
 
 				IF NOT EXISTS (SELECT 1 FROM Contabilidad.CuentaPorPagar WHERE uniqueId = @claveAcceso)
 					BEGIN 
