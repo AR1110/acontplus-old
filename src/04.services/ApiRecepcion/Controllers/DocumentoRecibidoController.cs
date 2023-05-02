@@ -296,6 +296,30 @@ namespace ApiRecepcion.Controllers
             }
             return Ok(_response);
         }
+        [HttpPut("Migrate")]
+        public async Task<IActionResult> Migrate(RequestApiDto parameters)
+        {
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                await _db.SPExecute("Recepcion.Documento_Migrate");
+                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+                _db.AddDynamicParam("json", DataHelper.SerializeDictionary(parameters.data));
+                _response = _db.GetDefault();
+            }
+            catch (Exception ex)
+            {
+                LogWriter _logs = new LogWriter(_configuration);
+                _logs.LogError("Error al importar el archivo: " + ex.ToString());
+                _response.Create(code: "0", message: "Error al importar el archivo");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
+        }
 
         [HttpPut("Put/{id}")]
         public async Task<IActionResult> Put(int id)

@@ -41,7 +41,7 @@
                                 <input type="text" ng-model="search" ng-keyup="onKeyupSearchFilter()">
                             </md-input-container>
                             <md-button class="md-icon-button" ng-click="refresh()" aria-label="Stock"
-                                title="Actualizar">
+                                       title="Actualizar">
                                 <md-icon md-font-set="md" class="text-info">sync</md-icon>
                             </md-button>
                         </div>
@@ -51,7 +51,7 @@
                             <div class="form-group">
                                 <label for="sucursalFilter">Estab.:</label>
                                 <select class="form-control border-select" ng-model="query.codEstab"
-                                    ng-change="getComprobantes()">
+                                        ng-change="getComprobantes()">
                                     <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
                                         {{item.nombreComercial}}
                                     </option>
@@ -61,15 +61,15 @@
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                             <label>Rango de Fechas: </label>
                             <input date-range-picker class="form-control date-picker" type="text"
-                                ng-model="dateRangePicker.date" picker="dateRangePicker.picker"
-                                picker-classes="extra-class-names" min="'2014-02-23'" max="dateRangePicker.maxDate"
-                                options="dateRangePicker.options" options="{locale: {separator: " :"}}" />
+                                   ng-model="dateRangePicker.date" picker="dateRangePicker.picker"
+                                   picker-classes="extra-class-names" min="'2014-02-23'" max="dateRangePicker.maxDate"
+                                   options="dateRangePicker.options" options="{locale: {separator: " :"}}" />
                         </div>
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                             @await Html.PartialAsync("~/Views/Proveedor/_ProveedorAutocompleteFiltro.cshtml")
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" ng-if="establecimientos.length > 1">
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                             <button class="btn btn-info" ng-click="openMigrate()"><i class="fa-solid fa-file-export"></i> Migrar Comprobantes</button>
                         </div>
@@ -114,8 +114,8 @@
                             </tbody>
                         </table>
                         @*<md-table-pagination md-limit="query.limit" md-limit-options="pages" md-page="query.page"
-                        md-total="{{totalRecords}}" md-on-paginate="getComprobantes" md-page-select>
-                        </md-table-pagination>*@
+                            md-total="{{totalRecords}}" md-on-paginate="getComprobantes" md-page-select>
+                            </md-table-pagination>*@
                     </div>
 
                 </div>
@@ -124,6 +124,7 @@
     </div>
     @await Html.PartialAsync("_NewImport")
     @await Html.PartialAsync("_CompFounded")
+    @await Html.PartialAsync("_MigrateEstab")
     @await Html.PartialAsync("_Retencion")
     @await Html.PartialAsync("_NotaCredito")
     @await Html.PartialAsync("_Doc_Relacionado")
