@@ -144,7 +144,7 @@ BEGIN
 							DECLARE @precioCosto NUMERIC(18,5) 
 							DECLARE @precioTotalSimImpuestos AS NUMERIC(18,5)
 							DECLARE @codDocInv VARCHAR(2)
-							DECLARE @codTran VARCHAR(2)
+							DECLARE @multiplier INT 
 							DECLARE @tblDetails AS TABLE (
 								 idArticulo  INT NOT NULL
 								,idTarifa  INT  NULL
@@ -173,25 +173,24 @@ BEGIN
 								END 
 
 							SET @codDocInv = (SELECT CASE WHEN @codDoc = '01' THEN 'FE' WHEN @codDoc = '04' THEN 'NC' END)
-		
-							SET @codTran   = (SELECT CASE WHEN @codDoc = '01' THEN 'E'  WHEN @codDoc = '04' THEN 'S' END)
 
+							SET @multiplier = (SELECT CASE WHEN @codDoc = '01' THEN 1  WHEN @codDoc = '04' THEN -1 END)
 
 							DECLARE cursor_inventory CURSOR LOCAL FOR
-							SELECT td.idArticulo, idBodega,td.idMedida,NULL, cantidad, td.precioUnitario,a.precioCosto,td.precioTotalSimImpuestos
+							SELECT td.idArticulo, idBodega,td.idMedida,NULL, cantidad * @multiplier, td.precioUnitario * @multiplier,a.precioCosto,td.precioTotalSimImpuestos * @multiplier
 							FROM @tblDetails td
 							INNER JOIN Articulo a WITH(NOLOCK) ON td.idArticulo = a.idArticulo
 							
 							OPEN cursor_inventory
 
-							FETCH NEXT FROM cursor_inventory INTO @idArticuloStock,@idBodega,@idMedida,@idTarifa,@cantidad,@precioCosto,@precioUnitario,@precioTotalSimImpuestos
+							FETCH NEXT FROM cursor_inventory INTO @idArticuloStock,@idBodega,@idMedida,@idTarifa,@cantidad,@precioUnitario,@precioCosto,@precioTotalSimImpuestos
 
 							WHILE @@FETCH_STATUS = 0
 								BEGIN
 									--tipo transaccion 2 salidas
 									--tipo documento 1 factura electronica
-									EXEC Inventario.Transaccion_Insert @codTran, @codDocInv, @fechaEmision, @idDocumento,  @idArticuloStock, @idBodega ,@idMedida,@idTarifa,@cantidad,@precioUnitario,@precioCosto,@precioTotalSimImpuestos, @idUsuario
-									FETCH NEXT FROM cursor_inventory INTO @idArticuloStock,@idBodega,@idMedida,@idTarifa,@cantidad,@precioCosto,@precioUnitario,@precioTotalSimImpuestos
+									EXEC Inventario.Transaccion_Insert 'E', @codDocInv, @fechaEmision, @idDocumento,  @idArticuloStock, @idBodega ,@idMedida,@idTarifa,@cantidad,@precioUnitario,@precioCosto,@precioTotalSimImpuestos, @idUsuario
+									FETCH NEXT FROM cursor_inventory INTO @idArticuloStock,@idBodega,@idMedida,@idTarifa,@cantidad,@precioUnitario,@precioCosto,@precioTotalSimImpuestos
 								END
 							CLOSE cursor_inventory
 							DEALLOCATE cursor_inventory  

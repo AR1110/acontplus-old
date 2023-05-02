@@ -897,8 +897,10 @@
                         $scope.bodegasFiltered.push($scope.bodegas[i])
                     }
                 }
-                $scope.comprobanteForm.idBodega = $scope.bodegasFiltered[0].idBodega
-                $scope.addBodega()
+                // $scope.comprobanteForm.idBodega = $scope.bodegasFiltered[0].idBodega
+                if ($scope.comprobanteForm.idBodega > 0) {
+                    $scope.addBodega()
+                }
             }
             /** Provedor */
 
@@ -1953,14 +1955,85 @@
                 $scope.getComprobantes()
             }
 
-
+            $scope.comprobantesTempToMigrate = []
+            $scope.comprobantesToMigrate = []
+            $scope.establecimientosToMigrate = []
             $scope.openMigrate = () => {
-                tS.toastr('info', 'Gracias por su comprensión!', 'Funcionalidad en construcción')
+                if ($scope.comprobantes.length == 0) {
+                    tS.toastr('warning', 'No se encontraron registros para migrar')
+                    return
+                }
+                for (const c of $scope.comprobantes) {
+                    if (!c.complete) {
+                        $scope.comprobantesTempToMigrate.push(c)
+                    }
+                }
+                for (const e of $scope.establecimientos) {
+                    if (e.codEstab != $scope.query.codEstab) {
+                        $scope.establecimientosToMigrate.push(e)
+                    }
+                }
+                $('#migrateEstabModal').modal('show')
+                //tS.toastr('info', 'Gracias por su comprensión!', 'Funcionalidad en construcción')
+            }
+            $scope.migrate = {}
+            $scope.askToMigrate = () => {
+
+                if (!$scope.migrate.codEstab) {
+                    tS.toastr("warning", 'Por favor seleccione el establecimiento de destino')
+                    return
+                }
+                if ($scope.query.codEstab === $scope.migrate.codEstab) {
+                    tS.toastr("warning", 'El establecimiento de destino, no puede ser el mismo al de origen')
+                    return
+                }
+                Swal.fire({
+                    //title: 'Estab.: ' + $scope.estabToWork,
+                    text: "Esta seguro de migrar de establecimiento a los siguientes comprobantes?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Si, Proceder',
+                    cancelButtonText: 'No, cancelar'
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        $scope.migrate();
+                    }
+                })
+            }
+
+            $scope.migrate = () => {
+                try {
+                    let data = { codEstab: $scope.migrate.codEstab, jsonData: $scope.comprobantesToMigrate }
+                    mS.getData('put', 'DocumentoRecibido/Migrate', { data: data }, true).then(response => {
+                        if (response.code == '0') {
+                            tS.toastr('warning', response.message)
+                        }
+                        if (response.code == "1") {
+                            $scope.initialLoad()
+                            $('#migrateEstabModal').modal('hide')
+                            tS.toastr("success", response.message)
+                        }
+                        hideLoader()
+                    }).catch(error => {
+                        hideLoader()
+                        console.log(error)
+                    })
+                } catch (error) {
+                    hideLoader()
+                    console.log(error)
+                }
             }
 
             $('#compFounded').on('hidden.bs.modal', () => {
                 $scope.compToImport = []
                 $scope.compFounded = []
+            })
+            $('#migrateEstabModal').on('hidden.bs.modal', () => {
+                $scope.comprobantesTempToMigrate = []
+                $scope.comprobantesToMigrate = []
+                $scope.establecimientosToMigrate = []
             })
         }
 
