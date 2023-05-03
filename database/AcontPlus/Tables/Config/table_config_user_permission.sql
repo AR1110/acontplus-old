@@ -74,8 +74,12 @@ DECLARE @newjson VARCHAR(MAX);
 		--UPDATE Config.UserPermission SET jsonPermission = REPLACE(REPLACE(JSON_MODIFY(jsonPermission, 'append $.additional.viewOthersDocs', JSON_QUERY(@newjson)),'[', ''), ']', '') 
 		--WHERE codModule='V'
 
-		SET @newjson = N'{"label":"Ver Kardex", "view":true}';		
-		UPDATE Config.UserPermission SET jsonPermission = REPLACE(REPLACE(JSON_MODIFY(jsonPermission, 'append $.additional.kardex', JSON_QUERY(@newjson)),'[', ''), ']', '') 
+		--SET @newjson = N'{"label":"Ver Kardex", "view":true}';		
+		--UPDATE Config.UserPermission SET jsonPermission = REPLACE(REPLACE(JSON_MODIFY(jsonPermission, 'append $.additional.kardex', JSON_QUERY(@newjson)),'[', ''), ']', '') 
+		--WHERE codModule='V'
+
+		SET @newjson = N'{"label":"Mostrar totales de ventas ", "view":true}';		
+		UPDATE Config.UserPermission SET jsonPermission = REPLACE(REPLACE(JSON_MODIFY(jsonPermission, 'append $.additional.totalesVenta', JSON_QUERY(@newjson)),'[', ''), ']', '') 
 		WHERE codModule='V'
 
 	--Update properties (label, update) of detail
