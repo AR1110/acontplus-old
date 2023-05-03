@@ -1,10 +1,8 @@
-
-
 app.controller('cobroCtrl', cobroCtrl);
 
 cobroCtrl.$inject = ['$scope', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'decodeToken']
 
-function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form, _tS, decodeToken){
+function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form, _tS, decodeToken) {
 
     // let accion = JSON.parse(localStorage.getItem("accion"));  
     // if(accion===null){
@@ -18,10 +16,10 @@ function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form,
     let idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
 
 
-     //Filtro y Pagination 
-     $scope.meses = _form.meses();
-     $scope.mes   = new Date().getMonth() + 1;
- 
+    //Filtro y Pagination 
+    $scope.meses = _form.meses();
+    $scope.mes = new Date().getMonth() + 1;
+
 
 
     $scope.dataSearch = {
@@ -33,47 +31,55 @@ function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form,
 
 
 
-    $scope.getCobros = async()=>{
+    $scope.getCobros = function () {
         try {
             showLoader();
-            $scope.cobros = [];            
-            await _mS.getData('get', '/ComprobanteIngreso/Get?json=' + JSON.stringify($scope.dataSearch)).then(response=>{
-                if(response.code==="0"){
-                    console.warn(response)                    
+            $scope.cobros = [];
+            _mS.getData('get', '/ComprobanteIngreso/Get?json=' + JSON.stringify($scope.dataSearch)).then(response => {
+                if (response.code === "0") {
+                    hideLoader();
+                    console.warn(response)
+                }
+                if (response.id === "1") {
+                    hideLoader();
+                    $scope.cobros = JSON.parse(response.payload) || [];
                 }
 
-                $scope.cobros =  JSON.parse(response.payload) || [];                             
+            }).catch(error => {
+                hideLoader();
+                console.error(error)
             })
         } catch (error) {
             console.log(error)
-        }finally{
-            hideLoader();
         }
     }
 
-    $scope.initiload = ()=>{
-        _commonSvc.getEstabAsign().then(response=>{
+    $scope.initiload = () => {
+        _commonSvc.getEstabAsign().then(response => {
             $scope.establecimientos = response
-            let codEstab = $scope.establecimientos.length>0?$scope.establecimientos[0].codEstab: 0;            
+            let codEstab = $scope.establecimientos.length > 0 ? $scope.establecimientos[0].codEstab : 0;
             $scope.dataSearch.codEstab = codEstab;
-            $scope.getCobros();            
-        })       
+            $scope.getCobros();
+        })
     }
     $scope.initiload();
 
-    
 
 
-    $scope.openModalCobroLote = async()=>{
 
-        let {MODAL_FILE_CTRL, MODAL_COBRO_LOTE} = _nombreModalConst.cobro;
-        let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_COBRO_LOTE['controller']];        
-        let template   = MODAL_COBRO_LOTE['template'];
-        
+    $scope.openModalCobroLote = async () => {
+
+        let {
+            MODAL_FILE_CTRL,
+            MODAL_COBRO_LOTE
+        } = _nombreModalConst.cobro;
+        let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_COBRO_LOTE['controller']];
+        let template = MODAL_COBRO_LOTE['template'];
+
         let params = {
             TIPO_REGISTRO: 'NUEVO'
         }
-      
+
         $scope.openModalParam({
             controller,
             template,
@@ -83,52 +89,55 @@ function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form,
 
 
 
-    $scope.openModalFiltro = function(){
+    $scope.openModalFiltro = function () {
         $("#modalCobroFiltro").modal('show');
     }
 
 
-    $scope.clienteSearch = (textSearch)=>{
+    $scope.clienteSearch = (textSearch) => {
         return _commonSvc.clienteSearch(textSearch);
-    } 
+    }
 
-    $scope.onChangeFechaFiltro =()=>{            
-        $scope.mes = new Date().getMonth() +1;
+    $scope.onChangeFechaFiltro = () => {
+        $scope.mes = new Date().getMonth() + 1;
         $scope.getFechaInicioFinFilter($scope.mes)
     }
 
     //Fecha Inicial y Final dependiendo el Mes que seleccione el usuario en el Buscador AVanzado
-    $scope.getFechaInicioFinFilter = (mes)=> {
-        let { fechaInicio, fechaFin } = _form.getFechaInicioFinFilter(mes);
+    $scope.getFechaInicioFinFilter = (mes) => {
+        let {
+            fechaInicio,
+            fechaFin
+        } = _form.getFechaInicioFinFilter(mes);
         $scope.dataSearch.fechaInicio = fechaInicio;
         $scope.dataSearch.fechaFin = fechaFin;
     }
 
-    $scope.onKeyupSearchClienteFilter = ()=>{
-        if(_form.campo($scope.selectedClienteFilter)) {
-            $scope.dataSearch.byPersona = null;                
+    $scope.onKeyupSearchClienteFilter = () => {
+        if (_form.campo($scope.selectedClienteFilter)) {
+            $scope.dataSearch.byPersona = null;
         }
     }
 
-    $scope.selectedClienteFiltroChange = (item)=>{            
+    $scope.selectedClienteFiltroChange = (item) => {
         $scope.dataSearch.byPersona = item.numeroIdentificacion
     }
 
-    $scope.onKeyupSearchEmpleadoFiltro = ()=>{
-        if(_form.campo($scope.selectedEmpleadoFiltro)){
-            $scope.dataSearch.byPersona = null;   
+    $scope.onKeyupSearchEmpleadoFiltro = () => {
+        if (_form.campo($scope.selectedEmpleadoFiltro)) {
+            $scope.dataSearch.byPersona = null;
         }
     }
 
-    $scope.searchEmpleadoFilter = (textSearch)=>{
-        return _mS.getData('get', '/Empleado/Search?busqueda=' + textSearch).then(response=>{
+    $scope.searchEmpleadoFilter = (textSearch) => {
+        return _mS.getData('get', '/Empleado/Search?busqueda=' + textSearch).then(response => {
             return response.data;
         })
     }
 
 
-    $scope.selectedEmpleadoFiltroChange = (item)=>{
-        $scope.dataSearch.byPersona = item.nroIdentificacion;            
+    $scope.selectedEmpleadoFiltroChange = (item) => {
+        $scope.dataSearch.byPersona = item.nroIdentificacion;
     }
 
     //------------------------Usuario-----------------------------------------------
@@ -150,43 +159,43 @@ function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form,
         $scope.dataSearch.byUsuario = item.idUsuario;
     }
 
-    $scope.onChangeDocumentoFiltro = ()=>{
+    $scope.onChangeDocumentoFiltro = () => {
         $scope.dataSearch.checkBoxPersona = false;
     }
 
-    $scope.onChangeTipoDocumento = ()=>{
+    $scope.onChangeTipoDocumento = () => {
         $scope.dataSearch.byComprobante = null
         $scope.dataSearch.byTipoDocumento = null;
 
-        if($scope.dataSearch.tipoDocumento==='FV'){
+        if ($scope.dataSearch.tipoDocumento === 'FV') {
             $scope.getFacturas();
         }
 
-        if($scope.dataSearch.tipoDocumento==='NE'){
+        if ($scope.dataSearch.tipoDocumento === 'NE') {
             $scope.getNotaEntregas();
         }
 
     }
 
     //Get Facturas 
-    $scope.getFacturas = ()=> {  
+    $scope.getFacturas = () => {
         showLoader();
         _mS.getData('get', '/FacturaVenta/Get?json=' + JSON.stringify({})).then(response => {
             if (response.id === "0") {
                 hideLoader();
-                _form.sweetAlert('warning', response.message, response.titleSms);                   
+                _form.sweetAlert('warning', response.message, response.titleSms);
                 return
-            }                         
-            $scope.facturas = JSON.parse(response.data) || [];                               
+            }
+            $scope.facturas = JSON.parse(response.data) || [];
             hideLoader();
-        }).catch(error=>{
+        }).catch(error => {
             hideLoader();
-            const msg = error.config?error.config.url:error;
+            const msg = error.config ? error.config.url : error;
             toastr.error(msg)
         })
     }
 
-    $scope.getNotaEntregas = ()=> {
+    $scope.getNotaEntregas = () => {
         showLoader();
         _mS.getData('get', '/NotaEntrega/Get?json=' + JSON.stringify($scope.dataSearch)).then(response => {
             if (response.id === "0") {
@@ -198,7 +207,7 @@ function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form,
                 return
             }
 
-            $scope.notaEntregas = JSON.parse(response.data) || [];               
+            $scope.notaEntregas = JSON.parse(response.data) || [];
             hideLoader();
         }).catch(error => {
             hideLoader();
@@ -209,63 +218,63 @@ function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form,
 
 
 
-    $scope.onChangeSelectDocumentoFiltro = (item)=>{            
+    $scope.onChangeSelectDocumentoFiltro = (item) => {
         $scope.dataSearch.byTipoDocumento = item.idTipoDocumento;
 
-        if($scope.dataSearch.tipoDocumento==='FV'){
-            $scope.dataSearch.byComprobante = item.idFactura;                
+        if ($scope.dataSearch.tipoDocumento === 'FV') {
+            $scope.dataSearch.byComprobante = item.idFactura;
         }
 
-        if($scope.dataSearch.tipoDocumento==='NE'){
-            $scope.dataSearch.byComprobante = item.idNotaEntrega;                
-        }            
+        if ($scope.dataSearch.tipoDocumento === 'NE') {
+            $scope.dataSearch.byComprobante = item.idNotaEntrega;
+        }
     }
 
-    $scope.buscarCobro = ()=>{
-        if($scope.dataSearch.checkBoxFecha){
-            if(_form.campo($scope.dataSearch.fechaInicio)){
+    $scope.buscarCobro = () => {
+        if ($scope.dataSearch.checkBoxFecha) {
+            if (_form.campo($scope.dataSearch.fechaInicio)) {
                 toastr.warning('Seleccione la Fecha de Inicio');
                 return
             }
-            if(_form.campo($scope.dataSearch.fechaFin)){
+            if (_form.campo($scope.dataSearch.fechaFin)) {
                 toastr.warning('Seleccione la Fecha Fin');
                 return
             }
         }
 
-        if($scope.dataSearch.checkBoxPersona){
-            if(_form.campo($scope.dataSearch.byTipoPersona)) {
+        if ($scope.dataSearch.checkBoxPersona) {
+            if (_form.campo($scope.dataSearch.byTipoPersona)) {
                 toastr.warning('Seleccione el Tipo Persona (Cliente/Empleado)');
                 return
             }
 
-            if(_form.campo($scope.dataSearch.byPersona)){
+            if (_form.campo($scope.dataSearch.byPersona)) {
                 toastr.warning('Seleccione la Persona');
                 return
             }
         }
 
-        if($scope.dataSearch.checkBoxUsuario){
-            if(_form.campo($scope.dataSearch.byUsuario)){
+        if ($scope.dataSearch.checkBoxUsuario) {
+            if (_form.campo($scope.dataSearch.byUsuario)) {
                 toastr.warning('Seleccione el Usuario');
                 return
             }
         }
 
-        if($scope.dataSearch.checkBoxEstado){
-            if(_form.campo($scope.dataSearch.byEstado)){
+        if ($scope.dataSearch.checkBoxEstado) {
+            if (_form.campo($scope.dataSearch.byEstado)) {
                 toastr.warning('Seleccione el Estado');
                 return
             }
         }
 
-        if($scope.dataSearch.checkBoxDocumento){
-            if(_form.campo($scope.dataSearch.tipoDocumento)){
+        if ($scope.dataSearch.checkBoxDocumento) {
+            if (_form.campo($scope.dataSearch.tipoDocumento)) {
                 toastr.warning('Seleccione el Tipo Documento');
                 return
             }
 
-            if(_form.campo($scope.dataSearch.byTipoDocumento)){
+            if (_form.campo($scope.dataSearch.byTipoDocumento)) {
                 toastr.warning('Seleccione el Documento');
                 return
             }
@@ -281,25 +290,28 @@ function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form,
 
 
 
-    $scope.openModalDetalle = async(item)=>{
+    $scope.openModalDetalle = async (item) => {
         try {
             showLoader();
-            let {MODAL_FILE_CTRL, MODAL_DETALLE} = _nombreModalConst.factura_compra;
-            let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_DETALLE['controller']];        
-            let template   = MODAL_DETALLE['template'];
-         
+            let {
+                MODAL_FILE_CTRL,
+                MODAL_DETALLE
+            } = _nombreModalConst.factura_compra;
+            let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_DETALLE['controller']];
+            let template = MODAL_DETALLE['template'];
+
             let response = await _commonSvc.getDataTipoDocCompra({
                 id: item.idFacturaCompra,
                 codigoDocumento: TIPO_DOC.codigo
             })
 
-            if(!response.isComplete) return
-            
+            if (!response.isComplete) return
+
             let params = {
                 TIPO_REGISTRO: 'DETALLE',
                 data: response
             }
-        
+
             $scope.openModalParam({
                 controller,
                 template,
@@ -307,30 +319,33 @@ function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form,
             })
         } catch (error) {
             console.log(error)
-        }finally{
+        } finally {
             hideLoader();
         }
     }
 
-    $scope.openModalEditar = async(item)=>{
+    $scope.openModalEditar = async (item) => {
         try {
             showLoader();
-            let {MODAL_FILE_CTRL, MODAL_EDITAR} = _nombreModalConst.factura_compra;
-            let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_EDITAR['controller']];        
-            let template   = MODAL_EDITAR['template'];
-            
+            let {
+                MODAL_FILE_CTRL,
+                MODAL_EDITAR
+            } = _nombreModalConst.factura_compra;
+            let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_EDITAR['controller']];
+            let template = MODAL_EDITAR['template'];
+
             let response = await _commonSvc.getDataTipoDocCompra({
                 id: item.idFacturaCompra,
                 codigoDocumento: TIPO_DOC.codigo
             })
 
-            if(!response.isComplete) return
-            
+            if (!response.isComplete) return
+
             let params = {
                 TIPO_REGISTRO: 'EDITAR',
                 data: response
             }
-        
+
             $scope.openModalParam({
                 controller,
                 template,
@@ -338,31 +353,39 @@ function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form,
             })
         } catch (error) {
             console.log(error)
-        }finally{
+        } finally {
             hideLoader();
         }
     }
 
-    $scope.openModalParam = async({controller, template, size='xl', params})=>{
+    $scope.openModalParam = async ({
+        controller,
+        template,
+        size = 'xl',
+        params
+    }) => {
         _modalSvc.openModalCustom({
             controller,
             template,
             size,
             params,
-            windowClass:'uibModalFullScreen'
-        }).result.then(result=>{
-            if(typeof result ==='object'){
+            windowClass: 'uibModalFullScreen'
+        }).result.then(result => {
+            if (typeof result === 'object') {
                 $scope.getCobros()
             }
-        })        
+        })
     }
 
 
 
-    $scope.askToDelete = async (item)=>{
-        
-        let {isConfirmed, value} = await Swal.fire({
-            icon: 'warning',                
+    $scope.askToDelete = async (item) => {
+
+        let {
+            isConfirmed,
+            value
+        } = await Swal.fire({
+            icon: 'warning',
             html: '<small>Esta seguro/a de Anular este registro ahora?</small>',
             input: 'text',
             inputPlaceholder: 'Ingrese la observación',
@@ -374,14 +397,14 @@ function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form,
             inputValidator: (value) => {
                 if (!value) {
                     return 'Ingrese la Observación!'
-                }                
+                }
             }
-        })  
-        
-        if(isConfirmed){
+        })
+
+        if (isConfirmed) {
             _mS.getData('delete', `/ComprobanteIngreso/Anular?idComprobanteIngreso=${item.idComprobanteIngreso}&observacion=${value}`).then(response => {
                 if (response.id == "0") {
-                    _tS.toastr('warning', response.message, response.titleSms);                    
+                    _tS.toastr('warning', response.message, response.titleSms);
                 }
                 if (response.id == "1") {
                     _tS.toastr('success', response.message, response.titleSms);
@@ -391,57 +414,57 @@ function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form,
         }
     }
     //----------------------------Detalle Comprobante Ingreso ---------------------
-    $scope.openModalHistorialCobro=(item)=>{            
+    $scope.openModalHistorialCobro = (item) => {
         try {
             showLoader();
-            _mS.getData('get', `/Cobro/GetByComprobante?idComprobanteIngreso=${item.idComprobanteIngreso}`).then(response=>{
-                if(response.code===null || response.code===undefined){
+            _mS.getData('get', `/Cobro/GetByComprobante?idComprobanteIngreso=${item.idComprobanteIngreso}`).then(response => {
+                if (response.code === null || response.code === undefined) {
                     console.log(response)
                     hideLoader()
                 }
-                if(response.id==="0"){
+                if (response.id === "0") {
                     hideLoader();
                     form.sweetAlert('warning', response.message, response.titleSms)
                 }
-                if(response.id==="1"){                                                  
-                    $scope.data = item;                    
+                if (response.id === "1") {
+                    $scope.data = item;
                     $scope.comprobanteIngresos = response.data.map($scope.getCobroDetalle);
                     hideLoader();
-                    $("#modalHistorialCobro").modal('show');                    
-                }               
-            });  
+                    $("#modalHistorialCobro").modal('show');
+                }
+            });
         } catch (error) {
             console.log(error)
-        } finally{
+        } finally {
             hideLoader()
-        }                                 
+        }
     };
 
-    $scope.getCobroDetalle = (data)=> {
+    $scope.getCobroDetalle = (data) => {
         data.showDetalle = !data.showDetalle;
-        _mS.getData('get', `/CobroDetalle/GetByCobro?idCobro=${data.cobro.idCobro}`).then(response => { 
-            if(response.id==="0"){
+        _mS.getData('get', `/CobroDetalle/GetByCobro?idCobro=${data.cobro.idCobro}`).then(response => {
+            if (response.id === "0") {
                 Swal.fire({
-                    title:`<small>${response.titleSms}</small>`,
-                    icon:'warning',
-                    html:`<small>${response.message}</small>`
+                    title: `<small>${response.titleSms}</small>`,
+                    icon: 'warning',
+                    html: `<small>${response.message}</small>`
                 });
-            };                             
+            };
             data.cobroDetalles = response.data;
-        });   
-        return data;         
+        });
+        return data;
     }
 
 
 
 
 
-     //Reporte 
-     $scope.getReport = function (item) {                   
+    //Reporte 
+    $scope.getReport = function (item) {
         let formatType = 'pdf'
         let parameters = {
             reportParams: JSON.stringify({
-                codigo: "RCINGR", 
+                codigo: "RCINGR",
                 format: formatType,
                 aditionalParams: []
             }),
@@ -454,7 +477,7 @@ function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form,
         _commonSvc.getReport({
             parameters,
             formatType
-        })             
+        })
     }
 
 
