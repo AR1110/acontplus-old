@@ -13,6 +13,8 @@
 <a class="nav-link text-dark" asp-page="/Index" asp-area="MyFeature">MyFeature</a>
 <a class="nav-link text-dark" asp-page="/Index" asp-area="Documento">Documento</a>
 <div ng-controller="testCtrl">
+    <img src="" alt="QR Code" id="qrcode">
+    <ul class="logs"></ul>
     <button type="button" class="btn btn-info" ng-click="postLocalHost()"><i class="fa fa-server"></i> Test Local Server</button>
 </div>
 
@@ -20,6 +22,16 @@
     <button type="submit" class="btn btn-info">Generate Key</button>
 </form>
 
-@section Scripts{ 
+@section Scripts{
+    @*<script>
+        if (window.location.protocol.indexOf('https') == 0) {
+            var el = document.createElement('meta')
+            el.setAttribute('http-equiv', 'Content-Security-Policy')
+            el.setAttribute('content', 'upgrade-insecure-requests')
+            document.head.append(el)
+        }
+    </script>*@
+    <script src="~/lib/socket.io/socket.io.min.js"></script>
+    <script src="~/js/services/socketService.js" asp-append-version="true"></script>
     <script src="~/js/controllers/testCtrl.js" asp-append-version="true"></script>
 }
