@@ -3,10 +3,19 @@
 
     app.controller('testCtrl', testCtrl);
 
-    testCtrl.$inject = ['$scope', '$http'];
+    testCtrl.$inject = ['$scope', '$http', 'socketService'];
 
-    function testCtrl($scope, $http) {
+    function testCtrl($scope, $http, socket) {
         $scope.title = 'testCtrl';
+
+        socket.on('message', (msg) => {
+            $('.logs').append($('<li>').text(msg))
+        })
+
+        socket.on('qr', (src) => {
+            console.log(src)
+            $('#qrcode').attr('src', src)
+        })
 
         $scope.postLocalHost = () => {
             try {

@@ -8,7 +8,11 @@ const mongoose = require('mongoose')
 
 const app = express()
 const server = http.createServer(app)
-const io = socketIO(server)
+const io = socketIO(server, {
+    cors: {
+        origin: '*',
+    }
+})
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
@@ -73,7 +77,7 @@ mongoose.connect('mongodb://205.209.99.71:27017/').then(() => {
     app.post('/send-media', (req, res) => {
         const number = req.body.number
         const caption = req.body.caption
-        const media = MessageMedia.fromFilePath('FACT_020010000482458.pdf') 
+        const media = MessageMedia.fromFilePath('FACT_020010000482458.pdf')
         client.sendMessage(number, media, { caption: caption }).then(response => {
             res.status(200).json({
                 status: true,
