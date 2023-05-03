@@ -9,7 +9,8 @@
         </div>
         <div class="col-md-7 align-self-center text-right">
             <div class="d-flex justify-content-end align-items-center">
-                <button class="btn btn-info m-l-15" ng-show="accion.crear" id="btnNewDocument" ng-click="openModalNew()"><i class="fa fa-plus-circle"></i> Nuevo</button>
+                <button class="btn btn-info m-l-15" ng-show="accion.crear" id="btnNewDocument"
+                    ng-click="openModalNew()"><i class="fa fa-plus-circle"></i> Nuevo</button>
             </div>
         </div>
     </div>
@@ -21,18 +22,21 @@
                 <div class="card-body">
                     <md-toolbar class="md-table-toolbar md-default">
                         <div class="md-toolbar-tools">
-                            <div class="col-lg-9 col-md-9 col-sm-1">                            
-                                <button type="button"  class="btn btn-info" ng-click="openModalFiltro()"><i class=" fas fa-filter"></i> Filtrar</button>
-                                <button class="btn  waves-effect waves-light btn-secondary" ng-click="getNotaEntregas()"><i class=" fas fa-sync"></i></button>                                
+                            <div class="col-lg-9 col-md-9 col-sm-1">
+                                <button type="button" class="btn btn-info" ng-click="openModalFiltro()"><i
+                                        class=" fas fa-filter"></i> Filtrar</button>
+                                <button class="btn  waves-effect waves-light btn-secondary"
+                                    ng-click="getNotaEntregas()"><i class=" fas fa-sync"></i></button>
                             </div>
                             <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
                                 <form class="form-material">
-                                    <input type="text" class="form-control" ng-keyup="searchLocalNotaEntregas()" ng-model="dataSearch.bySearch" placeholder="Buscar Nota de Entrega">
+                                    <input type="text" class="form-control" ng-keyup="searchLocalNotaEntregas()"
+                                        ng-model="dataSearch.bySearch" placeholder="Buscar Nota de Entrega">
                                 </form>
-                            </div> 
+                            </div>
                         </div>
                     </md-toolbar>
-                    
+
 
                     <!--Lista Nota de Entregas-->
 
@@ -40,7 +44,9 @@
                         <div name="innerScroll" ng-style="duelScroll" style="height:20px;"></div>
                     </div>
                     <div ng-style="getStyle($index)">
-                        <md-table-container name="wireTable" infinite-scroll="loadMore($index)" infinite-scroll-distance="1" infinite-scroll-parent="true" ng-init="isShow=true" ng-show="isShow" style=" max-height: 400px; overflow-x: hidden;">
+                        <md-table-container name="wireTable" infinite-scroll="loadMore($index)"
+                            infinite-scroll-distance="1" infinite-scroll-parent="true" ng-init="isShow=true"
+                            ng-show="isShow" style=" max-height: 400px; overflow-x: hidden;">
                             <table resize master md-table name="innerWireTable">
                                 <thead fix-head md-head md-trim-column-names>
                                     <tr md-row>
@@ -50,9 +56,9 @@
                                         <th md-column>F. Emision</th>
                                         <th md-column>F. Vcto</th>
                                         <th md-column>Cliente</th>
-                                        <th md-column>Total</th>
-                                        <th md-column>Abono</th>
-                                        <th md-column>Saldo</th>
+                                        <th md-column totales-venta-view="ventaPermiso">Total</th>
+                                        <th md-column totales-venta-view="ventaPermiso">Abono</th>
+                                        <th md-column totales-venta-view="ventaPermiso">Saldo</th>
                                         <th md-column>Estado </th>
                                         <th md-column>Usuario</th>
                                     </tr>
@@ -62,72 +68,86 @@
                                         <td md-cell>
                                             <md-menu>
                                                 <md-button aria-label="Open demo menu" class="md-icon-button"
-                                                           ng-click="$mdMenu.open($event)">
+                                                    ng-click="$mdMenu.open($event)">
                                                     <icon class="mdi mdi-menu"></icon>
                                                 </md-button>
                                                 <md-menu-content class="md-dense">
                                                     <md-menu-item>
                                                         <md-button ng-click="openModalDetalle(ne)">
-                                                            <span md-menu-align-target><i class="ti-menu"></i> Detalle</span>
+                                                            <span md-menu-align-target><i class="ti-menu"></i>
+                                                                Detalle</span>
                                                         </md-button>
                                                     </md-menu-item>
 
                                                     <md-menu-item ng-if="accion.editar">
-                                                        <md-button ng-click="openModalEdit(ne)" ng-disabled="ne.codDoc==='A'">
-                                                            <span md-menu-align-target><i class="ti-pencil"></i> Editar</span>
+                                                        <md-button ng-click="openModalEdit(ne)"
+                                                            ng-disabled="ne.codDoc==='A'">
+                                                            <span md-menu-align-target><i class="ti-pencil"></i>
+                                                                Editar</span>
                                                         </md-button>
                                                     </md-menu-item>
 
                                                     <md-menu-item ng-if="accion.anular">
-                                                        <md-button ng-click="askToDelete(ne)" ng-disabled="ne.codDoc==='A'">
-                                                            <span md-menu-align-target><i class="ti-close"></i> Anular</span>
+                                                        <md-button ng-click="askToDelete(ne)"
+                                                            ng-disabled="ne.codDoc==='A'">
+                                                            <span md-menu-align-target><i class="ti-close"></i>
+                                                                Anular</span>
                                                         </md-button>
                                                     </md-menu-item>
 
                                                     <md-menu-item>
                                                         <md-button ng-click="openModalDuplicate(ne)">
-                                                            <span md-menu-align-target><i class="ti-files"></i> Duplicar</span>
+                                                            <span md-menu-align-target><i class="ti-files"></i>
+                                                                Duplicar</span>
                                                         </md-button>
                                                     </md-menu-item>
 
                                                     <md-menu-item ng-if="accion.cobroPago">
-                                                        <md-button ng-click="opcionCobro(ne)" ng-disabled="ne.codDoc==='A' || ne.cobro || ne.gestion">
-                                                            <span md-menu-align-target><i class="ti-shortcode"></i> Cobro</span>
+                                                        <md-button ng-click="opcionCobro(ne)"
+                                                            ng-disabled="ne.codDoc==='A' || ne.cobro || ne.gestion">
+                                                            <span md-menu-align-target><i class="ti-shortcode"></i>
+                                                                Cobro</span>
                                                         </md-button>
                                                     </md-menu-item>
 
 
                                                     <md-menu-item ng-if="accion.cuota">
                                                         <md-button ng-click="openModalCuota(ne)">
-                                                            <span md-menu-align-target><i class="ti-list"></i> Cuota</span>
+                                                            <span md-menu-align-target><i class="ti-list"></i>
+                                                                Cuota</span>
                                                         </md-button>
                                                     </md-menu-item>
 
 
                                                     <md-menu-item ng-if="accion.historialFinanciero">
                                                         <md-button ng-click="openModalHistorialCobro(ne)">
-                                                            <span md-menu-align-target><i class="ti-layout-cta-center"></i> Hist. Mov.</span>
+                                                            <span md-menu-align-target><i
+                                                                    class="ti-layout-cta-center"></i> Hist. Mov.</span>
                                                         </md-button>
                                                     </md-menu-item>
 
                                                     <md-menu-item>
                                                         <md-button ng-click="print(ne)">
                                                             <span md-menu-align-target>
-                                                                <icon class="mdi mdi-cloud-print-outline"></icon> Impresión
+                                                                <icon class="mdi mdi-cloud-print-outline"></icon>
+                                                                Impresión
                                                             </span>
                                                         </md-button>
                                                     </md-menu-item>
 
                                                     <md-menu-item ng-if="accion.enviarCorreo">
-                                                        <md-button ng-click="askToSendEmail(ne)" ng-disabled="ne.gestion">
-                                                            <span md-menu-align-target><i class="far fa-envelope"></i> Enviar Correo</span>
+                                                        <md-button ng-click="askToSendEmail(ne)"
+                                                            ng-disabled="ne.gestion">
+                                                            <span md-menu-align-target><i class="far fa-envelope"></i>
+                                                                Enviar Correo</span>
                                                         </md-button>
                                                     </md-menu-item>
 
 
                                                     <md-menu-item ng-if="accion.reporte">
                                                         <md-button ng-click="getReport(ne)">
-                                                            <span md-menu-align-target><i class="ti-file"></i> PDF</span>
+                                                            <span md-menu-align-target><i class="ti-file"></i>
+                                                                PDF</span>
                                                         </md-button>
                                                     </md-menu-item>
                                                 </md-menu-content>
@@ -139,23 +159,27 @@
                                         <td md-cell>{{ne.fechaEmision}}</td>
                                         <td md-cell>{{ne.fechaVencimiento}}</td>
                                         <td md-cell>{{ne.nombreFiscal}}</td>
-                                        <td md-cell>${{ne.total}}</td>
-                                        <td md-cell>${{ne.abono}}</td>
-                                        <td md-cell>${{ne.saldo}}</td>
+                                        <td md-cell totales-venta-view="ventaPermiso">${{ne.total}}</td>
+                                        <td md-cell totales-venta-view="ventaPermiso">${{ne.abono}}</td>
+                                        <td md-cell totales-venta-view="ventaPermiso">${{ne.saldo}}</td>
                                         <td md-cell>{{ne.estadoFinanciero}}</td>
                                         <td md-cell>{{ne.usuario}}</td>
                                     </tr>
-                                    <tr class="text-center" ng-show="notaEntregas.length===0">
-                                        <td colspan="11">No hay registros</td>
-                                    </tr>
+                                    @* <tr class="text-center" ng-show="notaEntregas.length===0">
+                                    <td colspan="11">No hay registros</td>
+                                    </tr> *@
                                 </tbody>
                                 <tfoot md-foot fixed-tfoot>
                                     <tr md-row>
-                                        <td md-cell colspan="2"><span class="font-weight-bold">{{notaEntregas.length}} Notas de Entregas</span></td>
+                                        <td md-cell colspan="2"><span class="font-weight-bold">{{notaEntregas.length}}
+                                                Notas de Entregas</span></td>
                                         <td md-cell colspan="3"><span class="font-weight-bold">Total: </span></td>
-                                        <td md-cell><span class="font-weight-bold">${{total}}</span></td>
-                                        <td md-cell><span class="font-weight-bold">${{totalAbono}}</span></td>
-                                        <td md-cell><span class="font-weight-bold">${{totalSaldo}}</span></td>
+                                        <td md-cell totales-venta-view="ventaPermiso"><span
+                                                class="font-weight-bold">${{total}}</span></td>
+                                        <td md-cell totales-venta-view="ventaPermiso"><span
+                                                class="font-weight-bold">${{totalAbono}}</span></td>
+                                        <td md-cell totales-venta-view="ventaPermiso"><span
+                                                class="font-weight-bold">${{totalSaldo}}</span></td>
                                         <td md-cell colspan="3"></td>
                                     </tr>
                                 </tfoot>
@@ -169,7 +193,7 @@
 
 </div>
 
-@section Scripts{ 
-    <script src="~/js/services/storageService.min.js" asp-append-version="true"></script>           
-    <script src="~/js/controllers/ventas/notaEntregaCtrl.min.js" asp-append-version="true"></script>      
+@section Scripts{
+    <script src="~/js/services/storageService.min.js" asp-append-version="true"></script>
+    <script src="~/js/controllers/ventas/notaEntregaCtrl.min.js" asp-append-version="true"></script>
 }

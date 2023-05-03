@@ -104,9 +104,9 @@
                                         <th md-column><span>F. Emisión</span></th>
                                         <th md-column><span>F. Vcto</span></th>
                                         <th md-column><span>Cliente</span></th>
-                                        <th md-column><span>Total</span></th>
-                                        <th md-column><span>Abono</span></th>
-                                        <th md-column><span>Saldo</span></th>
+                                        <th md-column totales-venta-view="ventaPermiso"><span>Total</span></th>
+                                        <th md-column totales-venta-view="ventaPermiso"><span>Abono</span></th>
+                                        <th md-column totales-venta-view="ventaPermiso"><span>Saldo</span></th>
                                         <th md-column><span>Nro. Ret</span></th>
                                         <th md-column><span>Nro. NC.</span></th>
                                         <th md-column><span>Estado</span></th>
@@ -203,9 +203,9 @@
                                         <td md-cell>{{item.fechaEmision}}</td>
                                         <td md-cell>{{item.fechaVencimiento}}</td>
                                         <td md-cell>{{item.nombreFiscal}}</td>
-                                        <td md-cell>${{item.total}}</td>
-                                        <td md-cell>${{item.abono}}</td>
-                                        <td md-cell>${{item.saldo}}</td>
+                                        <td md-cell totales-venta-view="ventaPermiso">${{item.total}}</td>
+                                        <td md-cell totales-venta-view="ventaPermiso">${{item.abono}}</td>
+                                        <td md-cell totales-venta-view="ventaPermiso">${{item.saldo}}</td>
                                         <td md-cell>{{item.nroRetencion}}</td>
                                         <td md-cell>{{item.nroNotaCredito}}</td>
                                         <td md-cell>{{item.estadoFinanciero}}</td>
@@ -213,20 +213,23 @@
                                         <td md-cell>{{item.tipo?"CONTADO":"CREDITO"}}</td>
                                         <td md-cell>{{item.usuario}}</td>
                                     </tr>
-                                    <tr ng-show="facturas.length==0" class="text-center">
-                                        <td colspan="13">
-                                            No hay registros en esta tabla :)
-                                        </td>
-                                    </tr>
+                                    @* <tr ng-show="facturas.length==0" class="text-center">
+                                    <td colspan="13">
+                                    No hay registros en esta tabla :)
+                                    </td>
+                                    </tr> *@
                                 </tbody>
                                 <tfoot md-foot fixed-tfoot>
                                     <tr md-row>
                                         <td md-cell colspan="2"><span class="font-weight-bold">{{facturas.length}}
                                                 Facturas</span></td>
                                         <td md-cell colspan="3"><span class="font-weight-bold">Total</span></td>
-                                        <td md-cell><span class="font-weight-bold">{{total}}</span></td>
-                                        <td md-cell><span class="font-weight-bold">{{totalAbono}}</span></td>
-                                        <td md-cell><span class="font-weight-bold">{{totalSaldo}}</span></td>
+                                        <td md-cell totales-venta-view="ventaPermiso"><span
+                                                class="font-weight-bold">{{total}}</span></td>
+                                        <td md-cell totales-venta-view="ventaPermiso"><span
+                                                class="font-weight-bold">{{totalAbono}}</span></td>
+                                        <td md-cell totales-venta-view="ventaPermiso"><span
+                                                class="font-weight-bold">{{totalSaldo}}</span></td>
                                         <td md-cell colspan="6"></td>
                                     </tr>
                                 </tfoot>

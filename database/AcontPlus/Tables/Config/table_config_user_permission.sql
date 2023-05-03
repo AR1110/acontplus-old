@@ -49,6 +49,7 @@ DECLARE @newjson VARCHAR(MAX);
 		--UPDATE Config.UserPermission SET jsonPermission = JSON_MODIFY(jsonPermission, '$.additional', JSON_QUERY(@newjson)) 
 		--WHERE codModule='V'
 		--RETURN 
+	
 
 		--Append to property permission caja a property enterKey
 		

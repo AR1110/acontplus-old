@@ -1,8 +1,8 @@
 ﻿app.controller('cajaCtrl', cajaCtrl);
 
-cajaCtrl.$inject = ['$scope', 'modalService', 'nombreModal', 'mainService', 'modalService', 'toastService'];
+cajaCtrl.$inject = ['$rootScope', '$scope', 'modalService', 'nombreModal', 'mainService', 'modalService', 'toastService'];
 
-function cajaCtrl($scope, _modalSvc, _nombreModal, mS, _modalSvc, toast) {
+function cajaCtrl($rootScope, $scope, _modalSvc, _nombreModal, mS, _modalSvc, toast) {
     // let accion = JSON.parse(localStorage.getItem("accion"));
     // if(accion===null){
     //     location.href = "/Home/Index";
@@ -115,6 +115,63 @@ function cajaCtrl($scope, _modalSvc, _nombreModal, mS, _modalSvc, toast) {
 
     //----------------------------APERTURA DE CAJA----------------------------------------------
     $scope.openModalApertura = async (data) => {
+        let {
+            cajaPermiso
+        } = $rootScope.usuarioPermiso;
+        let modalRef = {};
+
+        if (cajaPermiso.enterKey.isRequerid) {
+            Swal.fire({
+                title: 'Ingrese su clave',
+                input: 'password',
+                inputAttributes: {
+                    autocapitalize: 'off'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Continuar',
+                cancelButtonText: 'Cancelar',
+                showLoaderOnConfirm: true,
+                allowEscapeKey: false,
+                backdrop: true,
+                preConfirm: function (clave) {
+                    let obj = JSON.stringify({
+                        typeCheck: 1,
+                        clave
+                    })
+                    return mS.getData('get', 'UsuarioPermiso/CheckHasPermission/' + obj, null, true)
+                        .then(response => {
+                            console.log(response)
+                            if (response.code === "0") {
+                                Swal.showValidationMessage(
+                                    `${response.message}`
+                                )
+                            }
+                            if (response.code === "1") {
+                                return response.code
+                            }
+                        })
+                        .catch(error => {
+                            console.log(error)
+                            Swal.showValidationMessage(
+                                `Algo salio mal: ${error.message}`
+                            )
+                        })
+                },
+                allowOutsideClick: () => Swal.isLoading(),
+                didClose: function (result) {
+                    modalRef.close();
+                }
+            }).then((result) => {
+                console.log(result)
+                if (result.isDismissed) {
+                    modalRef.close();
+                }
+                if (result.isConfirmed) {
+                    console.log(result)
+                }
+            })
+        }
+
         const {
             MODAL_CTRL,
             MODAL_APERTURA_CAJA_CSHTML
@@ -122,7 +179,7 @@ function cajaCtrl($scope, _modalSvc, _nombreModal, mS, _modalSvc, toast) {
         const {
             ModalAperturaCtrl
         } = await import('./../../modal/' + MODAL_CTRL);
-        const modalRef = _modalSvc.openModalCustom({
+        modalRef = _modalSvc.openModalCustom({
             controller: ModalAperturaCtrl,
             template: MODAL_APERTURA_CAJA_CSHTML,
             size: 'md',
@@ -134,6 +191,8 @@ function cajaCtrl($scope, _modalSvc, _nombreModal, mS, _modalSvc, toast) {
             }
         })
     }
+
+
 
 
 
