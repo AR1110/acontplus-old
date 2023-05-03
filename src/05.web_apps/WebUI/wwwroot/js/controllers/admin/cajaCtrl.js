@@ -127,9 +127,9 @@ function cajaCtrl($rootScope, $scope, _modalSvc, _nombreModal, mS, _modalSvc, to
                 inputAttributes: {
                     autocapitalize: 'off'
                 },
-                showCancelButton: true,
+                showDenyButton: true,
                 confirmButtonText: 'Continuar',
-                cancelButtonText: 'Cancelar',
+                denyButtonText: 'Cancelar',
                 showLoaderOnConfirm: true,
                 allowEscapeKey: false,
                 backdrop: true,
@@ -158,14 +158,16 @@ function cajaCtrl($rootScope, $scope, _modalSvc, _nombreModal, mS, _modalSvc, to
                         })
                 },
                 allowOutsideClick: () => Swal.isLoading(),
-                didClose: function (result) {
-                    modalRef.close();
-                }
             }).then((result) => {
-                console.log(result)
-                if (result.isDismissed) {
+
+                if (result.isDenied) {
+                    // El modal se cerró haciendo clic en el botón "Cancelar"
                     modalRef.close();
+                    // Realizar acciones adicionales aquí
                 }
+                // if (result.isDismissed) {
+                //     modalRef.close();
+                // }
                 if (result.isConfirmed) {
                     console.log(result)
                 }

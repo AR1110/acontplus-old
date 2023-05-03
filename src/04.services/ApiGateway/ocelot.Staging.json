@@ -943,6 +943,25 @@
       "UpstreamPathTemplate": "/api/UsuarioPermiso"
     },
     {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 8098
+        }
+      ],
+      "DownstreamPathTemplate": "/api/UsuarioPermiso/CheckHasPermission/{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "UpstreamPathTemplate": "/api/UsuarioPermiso/CheckHasPermission/{everything}"
+    },
+    {
       "DownstreamHostAndPorts": [
         {
           "Host": "205.209.99.71",
