@@ -779,87 +779,59 @@ export class ModalCierreCajaCtrl {
                 return
             }
 
-            if (this.dataPermissions.hasOwnProperty('enterKey') && this.dataPermissions.enterKey.isRequerid) {
-                Swal.fire({
-                    title: 'Ingrese Clave',
-                    input: 'password',
-                    inputAttributes: {
-                        autocapitalize: 'off'
-                    },
-                    showCancelButton: true,
-                    confirmButtonText: 'Cerrar Caja',
-                    cancelButtonText: 'Cancelar',
-                    inputValidator: (value) => {
-                        if (!value) return 'La Calve es requerida';
-                        if (value.length > 10) return 'Número máximo de caracteres es de 15'
-                    },
-                }).then((result) => {
-                    if (result.isConfirmed) {
+
+            let {
+                isConfirmed
+            } = await Swal.fire({
+                icon: 'warning',
+                text: 'Esta seguro/a de guardar los valores ahora?',
+                showDenyButton: true,
+                confirmButtonText: `Si, guardar`,
+                denyButtonText: `No, cancelar`,
+                allowOutsideClick: false
+            })
+
+            if (isConfirmed) {
+                const data = {
+                    spParams: JSON.stringify({
+                        totalArqueo: JSON.stringify(this.totalArqueo),
+                        detalle: JSON.stringify(this.arqueos),
+                        idUsuarioRol: Number(this.decodeToken.idUsuarioRol),
+                    })
+                }
+
+                this._mS.getData('put', '/ControlCaja/Update?id=' + this._params.idControlCaja, data).then(response => {
+                    if (response.code === "0") {
+                        Swal.fire({
+                            icon: 'warning',
+                            html: `<small>${response.message}</small>`
+                        })
+                    }
+                    if (response.code === "2") {
 
                     }
+
+                    if (response.code === "1") {
+                        let dataMail = JSON.parse(response.payload) || {};
+                        toastr.success(response.message, response.titleSms);
+                        this.$uibModalInstance.close(response)
+
+                        if (dataMail.receptor) {
+                            this.sendEmail(dataMail)
+                        }
+                        // this.$uibModalInstance.close(response);
+                    }
+
                 })
 
             }
+
         } catch (error) {
             console.log(error)
         }
 
-        this._mS.getData('get', 'UsuarioPermiso/CheckHasPermission/' + JSON.stringify({}), null, true).then(result => {
-            console.log(result)
-            return
-        })
-        return
-
-        let {
-            isConfirmed
-        } = await Swal.fire({
-            icon: 'warning',
-            text: 'Esta seguro/a de guardar los valores ahora?',
-            showDenyButton: true,
-            confirmButtonText: `Si, guardar`,
-            denyButtonText: `No, cancelar`,
-            allowOutsideClick: false
-        })
-
-        if (isConfirmed) {
-            const data = {
-                spParams: JSON.stringify({
-                    totalArqueo: JSON.stringify(this.totalArqueo),
-                    detalle: JSON.stringify(this.arqueos),
-                    idUsuarioRol: Number(this.decodeToken.idUsuarioRol),
-                })
-            }
-
-            this._mS.getData('put', '/ControlCaja/Update?id=' + this._params.idControlCaja, data).then(response => {
-                if (response.code === "0") {
-                    Swal.fire({
-                        icon: 'warning',
-                        html: `<small>${response.message}</small>`
-                    })
-                }
-                if (response.code === "2") {
-
-                }
-
-                if (response.code === "1") {
-                    let dataMail = JSON.parse(response.payload) || {};
-                    toastr.success(response.message, response.titleSms);
-                    this.$uibModalInstance.close(response)
-
-                    if (dataMail.receptor) {
-                        this.sendEmail(dataMail)
-                    }
-                    // this.$uibModalInstance.close(response);
-                }
-
-            })
-
-        }
     }
 
-    guardar() {
-
-    }
 
 
     sendEmail(dataMail) {
