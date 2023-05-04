@@ -35,6 +35,7 @@ BEGIN
 			DECLARE @precioCostoActual AS NUMERIC(18,5)
 			DECLARE @precioCosto AS NUMERIC(18,5)
 			DECLARE @diferencia AS NUMERIC(18,5)
+			DECLARE @porcentaje AS NUMERIC(18,5)
 
 			DECLARE @table AS TABLE (
 			 	 fecha DATETIME NOT NULL
@@ -53,14 +54,19 @@ BEGIN
 
 			SELECT TOP 1 @precioCosto = precioCosto FROM dbo.Articulo WITH (NOLOCK) WHERE idArticulo = @idArticulo
 			
-			--SET @diferencia
+			SET @diferencia = @precioCosto -  @precioCostoActual
 
+			SET @diferencia = @diferencia / @precioCosto
 
-			UPDATE dbo.Articulo SET precioCosto = @precioCostoActual WHERE idArticulo = @idArticulo
-				
+			SET @porcentaje = @diferencia * 100
 
+			
+			--SELECT '0'code,'El poncentaje de diferencia es: '+cast(@precioCosto as varchar) as 'message'
+			--ROLLBACK TRAN
+			--RETURN
+			--UPDATE dbo.Articulo SET precioCosto = @precioCostoActual WHERE idArticulo = @idArticulo
 
-			UPDATE Inventario.Transaccion SET precioCosto = @precioCostoActual WHERE idTransaccion = @idTransaccion
+			--UPDATE Inventario.Transaccion SET precioCosto = @precioCostoActual WHERE idTransaccion = @idTransaccion
 
 		END 
 END
