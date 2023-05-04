@@ -23,7 +23,7 @@
         //     $scope.accion = accion[0];
         // }        
         Id_Usuario_Rol = parseInt(decodeToken.idUsuarioRol);
-        console.log(Id_Usuario_Rol)
+
         role = decodeToken.role;
 
         $scope.dataSearch = {
@@ -379,7 +379,6 @@
                         tS.toastr('warning', response.message)
                     }
                     if (response.code === "1") {
-                        console.log(response)
                         $scope.usuarioRoles = JSON.parse(response.payload) || [];
                         hideLoader();
                     }
@@ -443,10 +442,6 @@
                     $scope.articlePermissions = JSON.parse($scope.dataArticlePermissions.jsonPermission)
                     $scope.cajaPermissions = JSON.parse($scope.dataCajaPermissions.jsonPermission)
 
-
-                    console.log($scope.salePermissions)
-                    console.log($scope.articlePermissions)
-                    console.log($scope.cajaPermissions)
                     hideLoader();
                 }
             })
@@ -462,7 +457,7 @@
             $scope.authorizationKeyRequests = [];
             mS.getData('get', 'Solicitud/Get/' + jsonParams, null, true).then(response => {
                 if (response.code === "0") {
-                    tS.toastr('warning', response.message)
+                    console.log(response)
                 }
                 if (response.code === "1") {
                     $scope.authorizationKeyRequests = JSON.parse(response.payload);
@@ -613,7 +608,7 @@
                 }
 
                 mS.getData('put', 'UsuarioPermiso', data, true).then(response => {
-                    console.log(response)
+
                     if (response.code === "0") {
                         hideLoader();
                         console.log(response)
@@ -651,8 +646,6 @@
         }
 
         $scope.onSelectUser = (data, item) => {
-            console.log(data)
-            console.log(item)
             item.usuarioAprobante = data.nombreCompleto;
             item.idUsuarioRolAprobante = data.idUsuarioRol;
         }

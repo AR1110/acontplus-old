@@ -1,4 +1,4 @@
-
+USE AcontPlus;
 
 IF OBJECT_ID('Config.UserPermission_CheckHasPermission') IS NOT NULL
 	DROP PROCEDURE Config.UserPermission_CheckHasPermission
