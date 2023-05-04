@@ -19,7 +19,7 @@ GO
 
 --GO
 
-INSERT INTO Inventario.Transaccion(idTipoTransaccion, idArticulo, idBodega, idTipoDocumento, idDocumento,idMedida,idTarifa, cantidad, precioUnitario, precioCosto,total, fechaRegistro, idUsuario,estado)
+--INSERT INTO Inventario.Transaccion(idTipoTransaccion, idArticulo, idBodega, idTipoDocumento, idDocumento,idMedida,idTarifa, cantidad, precioUnitario, precioCosto,total, fechaRegistro, idUsuario,estado)
 
 SELECT 2, 
        fd.idArticulo,
