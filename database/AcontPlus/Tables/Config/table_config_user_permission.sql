@@ -29,7 +29,7 @@ USE AcontPlus;
 --	,codEstado VARCHAR(2) -- P(PENDIENTE), A(APROBADA), F(FINALIZADO)
 --)
 
---DECLARE @jsonSalePermission VARCHAR(MAX) = '{"comprobante":{"fechaEmision":{"label":"Modificar Fecha de Emisión","update":true},"tiempoCredito":{"label":"Cambiar tiempo Credito","update":true},"tarifa":{"label":"Modifcar tarifa general","update":true},"porcentajeDescuento":{"label":"Cambiar Porcentaje Descuento ","update":true},"descuento":{"label":"Cambiar Descuento","update":true}},"detail":{"medida":{"label":"Cambiar Medida","update":true},"tipoIva":{"label":"Cambiar Tipo IVA","update":true},"tarifa":{"label":"Cambiar tarifa","update":true},"precioUnitario":{"label":"Modificar Precio Unitario","update":true},"precioConIva":{"label":"Modificar Precio con IVA","update":true},"porcentajeDescuento":{"label":"Modificar Porcentaje Descuento","update":true},"descuento":{"label":"Modificar Descuento","update":true}},"additional":{"requestAuthorizationKey":{"label":"Solicitar Autorización para Editar o Anular el Doc. Venta","requestKey":true,"usuarioAprobante":"CORREA CALLE MARTHA MARICELA","idUsuarioRolAprobante":28},"viewOthersDocs":{"label":"Consultar documentos electronicos de otros usuarios","view":false},"kardex":{"label":"Ver Kardex","view":true},"totalesVenta":{"label":"Mostrar totales de ventas ","view":true}}}';
+DECLARE @jsonSalePermission VARCHAR(MAX) = '{"comprobante":{"fechaEmision":{"label":"Modificar Fecha de Emisión","update":true},"tiempoCredito":{"label":"Cambiar tiempo Credito","update":true},"tarifa":{"label":"Modifcar tarifa general","update":true},"porcentajeDescuento":{"label":"Cambiar Porcentaje Descuento ","update":true},"descuento":{"label":"Cambiar Descuento","update":true}},"detail":{"medida":{"label":"Cambiar Medida","update":true},"tipoIva":{"label":"Cambiar Tipo IVA","update":true},"tarifa":{"label":"Cambiar tarifa","update":true},"precioUnitario":{"label":"Modificar Precio Unitario","update":true},"precioConIva":{"label":"Modificar Precio con IVA","update":true},"porcentajeDescuento":{"label":"Modificar Porcentaje Descuento","update":true},"descuento":{"label":"Modificar Descuento","update":true}},"additional":{"requestAuthorizationKey":{"label":"Solicitar Autorización para Editar o Anular el Doc. Venta","requestKey":false,"usuarioAprobante":null,"idUsuarioRolAprobante":0},"viewOthersDocs":{"label":"Consultar documentos electronicos de otros usuarios","view":false},"kardex":{"label":"Ver Kardex","view":false},"totalesVenta":{"label":"Mostrar totales de ventas ","view":true}}}';
 
 --DECLARE @jsonArticlePermission VARCHAR(MAX) = '{"precio":{"label":"Permitir actualizar el precio costo y venta","update":true}}';
 
@@ -62,9 +62,9 @@ DECLARE @newjson VARCHAR(MAX);
 		
 	
 	--Update properties (label, update) of voucher 
-		SET @newjson = N'{"label":"Mostrar totales de ventas ","view":true}';		
-		UPDATE Config.UserPermission SET jsonPermission = REPLACE(REPLACE(JSON_MODIFY(jsonPermission, '$.additional.totalesVenta', JSON_QUERY(@newjson)),'[', ''), ']', '') 
-		WHERE codModule='V'
+		--SET @newjson = N'{"label":"Mostrar totales de ventas ","view":true}';		
+		--UPDATE Config.UserPermission SET jsonPermission = REPLACE(REPLACE(JSON_MODIFY(jsonPermission, '$.additional.totalesVenta', JSON_QUERY(@newjson)),'[', ''), ']', '') 
+		--WHERE codModule='V'
 
 
 		--UPDATE Config.UserPermission SET jsonPermission = JSON_MODIFY(jsonPermission, '$.additional.requestAuthorizationKey.label', 'Solicitar Autorización para Editar o Anular el Doc. Venta')
@@ -119,7 +119,7 @@ DECLARE @newjson VARCHAR(MAX);
 --INSERT INTO Config.UserPermission(idUsuarioRol, codModule, jsonPermission)SELECT idUsuarioRol, 'V', @jsonSalePermission FROM App.UsuarioRol 
 --INSERT INTO Config.UserPermission(idUsuarioRol, codModule, jsonPermission)SELECT idUsuarioRol, 'AR', @jsonArticlePermission FROM App.UsuarioRol 
 --INSERT INTO Config.UserPermission(idUsuarioRol, codModule, jsonPermission)SELECT idUsuarioRol, 'C', @jsonCajaPermission FROM App.UsuarioRol
-
---SELECT  * FROM Config.UserPermission WHERE codModule='V'
+UPDATE Config.UserPermission SET jsonPermission=@jsonSalePermission WHERE codModule='V'
+--SELECT  * FROM Config.UserPermission WHERE codModule='C'
 
 
