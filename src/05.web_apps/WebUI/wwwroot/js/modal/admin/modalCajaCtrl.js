@@ -800,15 +800,12 @@ export class ModalCierreCajaCtrl {
                     })
                 }
 
-                this._mS.getData('put', '/ControlCaja/Update?id=' + this._params.idControlCaja, data).then(response => {
+                this._mS.getData('put', '/ControlCaja/Update?id=' + this.data.idControlCaja, data).then(response => {
                     if (response.code === "0") {
                         Swal.fire({
                             icon: 'warning',
                             html: `<small>${response.message}</small>`
                         })
-                    }
-                    if (response.code === "2") {
-
                     }
 
                     if (response.code === "1") {
@@ -850,7 +847,7 @@ export class ModalCierreCajaCtrl {
                 },
                 spParams: {
                     idUsuarioRol: this.decodeToken.idUsuarioRol,
-                    id: this._params.idControlCaja
+                    id: this.data.idControlCaja
                 }
             }
         }
