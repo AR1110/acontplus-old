@@ -515,7 +515,7 @@ export class MovimientoCajaCtrl {
 
 
     getReport(idControlCaja) {
-
+        console.log(idControlCaja);
         let {
             cajaPermiso
         } = this.$rootScope.usuarioPermiso;
