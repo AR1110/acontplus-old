@@ -1197,6 +1197,31 @@
         "Delete"
       ],
       "UpstreamPathTemplate": "/api/Entidad/{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7074
+        }
+      ],
+      "DownstreamPathTemplate": "/api/EntidadConfigSri/{everything}",
+      "DownstreamScheme": "https",
+      "HttpHandlerOptions": {
+        "UseTracing": true
+      },
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/api/EntidadConfigSri/{everything}"
     }
   ]
 }

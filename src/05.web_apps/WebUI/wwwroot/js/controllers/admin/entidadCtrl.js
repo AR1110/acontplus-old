@@ -1,13 +1,8 @@
-﻿/**
- * Type Url:
- * 1=>Ip Local
- * 2=>Ip Servidor
- */
-app.controller('entidadCtrl', entidadCtrl);
+﻿app.controller('entidadCtrl', entidadCtrl);
 
-entidadCtrl.$inject = ['$scope', 'mainService', 'commonService', 'modalService', 'toastService', 'decodeToken'];
+entidadCtrl.$inject = ['$scope', 'mainService', 'modalService', 'toastService', 'decodeToken'];
 
-function entidadCtrl($scope, mS, _commonSvc, _modalSvc, toast, decodeToken) {
+function entidadCtrl($scope, mS, _modalSvc, toast, decodeToken) {
     // let accion = JSON.parse(localStorage.getItem("accion"));
     // if(accion===null){
     //     location.href = "/Home/Index";
@@ -21,7 +16,7 @@ function entidadCtrl($scope, mS, _commonSvc, _modalSvc, toast, decodeToken) {
     const json = {
         idRol: idUsuarioRol
     }
-    console.log(json)
+
 
     $scope.maxSize = 5;
     $scope.totalRecords = 0;
@@ -35,7 +30,6 @@ function entidadCtrl($scope, mS, _commonSvc, _modalSvc, toast, decodeToken) {
             $scope.entidades = [];
 
             mS.getData('get', 'Entidad/Get?json=' + JSON.stringify(json), null, true).then(response => {
-                console.log(response)
                 if (response.code === "0") {
                     hideLoader();
                 }

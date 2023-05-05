@@ -165,11 +165,6 @@ export class ModalBaseCtrl {
                         this.data.idTipoIdentificacion = contribuyente.idTipoIdentificacion;
                         this.data.codigoIdentificacion = contribuyente.codigoIdentificacion;
                     }
-
-                    setTimeout(() => {
-                        let container = document.querySelector('input[ng-model="$ctrl.data.direccion"]');
-                        container.removeAttribute("disabled");
-                    }, 500)
                 } else {
                     this.typeNotify = 'is-invalid';
                     this.message = 'No se encontró los datos';
@@ -205,10 +200,10 @@ export class ModalBaseCtrl {
                     this.typeNotify = 'is-valid';
                     this.message = 'Número de Cédula correcta';
 
-                    setTimeout(() => {
-                        let container = document.querySelector('input[ng-model="$ctrl.data.direccion"]');
-                        container.removeAttribute("disabled");
-                    }, 500)
+                    // setTimeout(() => {
+                    //     let container = document.querySelector('input[ng-model="$ctrl.data.direccion"]');
+                    //     container.removeAttribute("disabled");
+                    // }, 500)
 
                 } else {
                     this.typeNotify = 'is-invalid';
@@ -698,11 +693,6 @@ export class ModalClienteCtrl extends ModalBaseCliente {
                 } else {
                     $("#nombreComercial").focus();
                 }
-                setTimeout(() => {
-
-                    let container = document.querySelector('input[ng-model="$ctrl.data.direccion"]');
-                    container.removeAttribute("disabled");
-                }, 500)
             })
 
             this.$scope.$apply();
@@ -992,14 +982,6 @@ export class ModalClienteEditarCtrl extends ModalBaseCliente {
                 })
             }
 
-            this.$uibModalInstance.rendered.then(result => {
-
-                setTimeout(() => {
-
-                    let container = document.querySelector('input[ng-model="$ctrl.data.direccion"]');
-                    container.removeAttribute("disabled");
-                }, 500)
-            })
 
             this.$scope.$apply();
             hideLoader()
