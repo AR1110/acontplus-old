@@ -1,78 +1,93 @@
-﻿/**
- * Type Url:
- * 1=>Ip Local
- * 2=>Ip Servidor
- */
-app.controller('entidadCtrl', entidadCtrl);
+﻿app.controller('entidadCtrl', entidadCtrl);
 
-entidadCtrl.$inject = ['$scope', '$http', 'commonService', 'modalService', 'toastService', 'decodeToken'];
+entidadCtrl.$inject = ['$scope', 'mainService', 'modalService', 'toastService', 'decodeToken'];
 
-function entidadCtrl($scope, $http, _commonSvc, _modalSvc, toast,  decodeToken) {
+function entidadCtrl($scope, mS, _modalSvc, toast, decodeToken) {
     // let accion = JSON.parse(localStorage.getItem("accion"));
     // if(accion===null){
     //     location.href = "/Home/Index";
     // }else{
     //     $scope.accion = accion[0];
     // }        
-    
-    
+
+
     let idUsuarioRol = parseInt(decodeToken.idUsuarioRol);
-    
+
     const json = {
         idRol: idUsuarioRol
-    }  
+    }
+
 
     $scope.maxSize = 5;
     $scope.totalRecords = 0;
     $scope.pageIndex = 1;
     $scope.pageSize = 900000000;
-    $scope.recordsQuantity = [5, 10, 25, 50]      
+    $scope.recordsQuantity = [5, 10, 25, 50]
 
-    $scope.getEntidades = async()=>{         
-        const entidades = await _commonSvc.getDataApi({
-            method:'get',
-            url:`apiCliente/Entidad/Get/${JSON.stringify(json)}`,
-            typeUrl: 1
-        }).then(response=>JSON.parse(response.data) || [])
-        
-        $scope.entidades = entidades           
-        $scope.totalRecords = $scope.entidades.length > 0 ? $scope.entidades[0].totalRecords : 0                
-        $scope.$apply()               
+    $scope.getEntidades = function () {
+        try {
+            showLoader();
+            $scope.entidades = [];
+
+            mS.getData('get', 'Entidad/Get?json=' + JSON.stringify(json), null, true).then(response => {
+                if (response.code === "0") {
+                    hideLoader();
+                }
+                if (response.code === "1") {
+                    $scope.entidades = JSON.parse(response.payload)
+                    $scope.totalRecords = $scope.entidades.length > 0 ? $scope.entidades[0].totalRecords : 0
+                    hideLoader();
+                }
+            }).catch(error => {
+                hideLoader();
+                console.log(error)
+            })
+        } catch (error) {
+            hideLoader();
+            console.log(error);
+        }
     }
     $scope.getEntidades();
 
-    $scope.pagechanged = function() {
-        $scope.getEntidades();
-    }
 
-    $scope.changePageSize = function() {
-        $scope.pageIndex = 1;
-        $scope.getEntidades();
-    }
 
-    $scope.openModal=async(item)=>{                   
-        const {ModalEntidadCtrl} = await import('../../modal/admin/modalEntidadCtrl.min.js' + CHANGE_VERSION());
-        const modalRef = _modalSvc.openModalSecond(ModalEntidadCtrl, 'Entidad/_ModalEntidad.cshtml', 'lg', item);
-        modalRef.result.then(result=>{
-            if(typeof result==='object'){
+    $scope.openModal = async (item) => {
+        const {
+            ModalEntidadCtrl
+        } = await import('../../modal/admin/modalEntidadCtrl.min.js' + CHANGE_VERSION());
+        const modalRef = _modalSvc.openModalCustom({
+            controller: ModalEntidadCtrl,
+            template: 'Entidad/_ModalEntidad.cshtml',
+            size: 'lg',
+            params: item
+        });
+        modalRef.result.then(result => {
+            if (typeof result === 'object') {
                 $scope.getEntidades();
             }
-        })             
-    };    
-    
-    $scope.openModalConfigSri = async(item)=>{
+        })
+    };
+
+    $scope.openModalConfigSri = async (item) => {
         const data = Object.assign({}, item)
         data.isConfigSri = true;
-        const {ModalEntidadCtrl} = await import('../../modal/admin/modalEntidadCtrl.min.js' + CHANGE_VERSION());
-        const modalRef = _modalSvc.openModalSecond(ModalEntidadCtrl, 'Entidad/_ModalEntidadConfigSri.cshtml', 'lg', data);
-        modalRef.result.then(result=>{
-            if(typeof result==='object'){
+        const {
+            ModalEntidadCtrl
+        } = await import('../../modal/admin/modalEntidadCtrl.min.js' + CHANGE_VERSION());
+        const modalRef = _modalSvc.openModalCustom({
+            controller: ModalEntidadCtrl,
+            template: 'Entidad/_ModalEntidadConfigSri.cshtml',
+            size: 'lg',
+            params: data
+        });
+        modalRef.result.then(result => {
+            if (typeof result === 'object') {
                 $scope.getEntidades();
             }
-        })          
+        })
     }
 
-    $scope.askToDelete=function(idEntidad){
+    $scope.askToDelete = function (idEntidad) {
         Swal.fire({
             icon: 'warning',
             html: '<small>Esta seguro de elimnar este registro ahora?</small>',
@@ -83,21 +98,22 @@ function entidadCtrl($scope, $http, _commonSvc, _modalSvc, toast,  decodeToken) 
             allowOutsideClick: false
         }).then(result => {
             if (result.isConfirmed) {
-                $scope.postDelete(idEntidad);                    
+                $scope.postDelete(idEntidad);
             }
         })
     }
 
-    $scope.postDelete = async(idEntidad)=> {
-        const {data:response} = await $http.post( '/Entidad/Delete?idEntidad', idEntidad)
+    $scope.postDelete = async (idEntidad) => {
+        const {
+            response
+        } = await mS.getData('post', '/Entidad/Delete?idEntidad', idEntidad)
         if (response.id == "0") {
             toast.toastr('warning', response.message, response.titleSms);
             return
         }
         if (response.id == "1") {
             toast.toastr('success', response.message, response.titleSms);
-            $scope.getEntidades();            
-        }        
-    }      
+            $scope.getEntidades();
+        }
+    }
 }
-
