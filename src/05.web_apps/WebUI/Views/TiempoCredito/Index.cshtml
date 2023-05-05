@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Index";
 }
 <div ng-controller="tiempoCreditoCtrl">
@@ -10,7 +9,8 @@
             </div>
             <div class="col-md-7 align-self-center text-right">
                 <div class="d-flex justify-content-end align-items-center">
-                    <button type="button" ng-if="accion.crear" ng-click="openModalNew()" class="btn btn-info d-none d-lg-block m-l-15">
+                    <button type="button" ng-if="accion.crear" ng-click="openModalNew()"
+                        class="btn btn-info d-none d-lg-block m-l-15">
                         <i class="fa fa-plus-circle"></i>Agregar
                     </button>
                 </div>
@@ -26,16 +26,17 @@
 
                                 <div class="col-lg-9 col-md-6 col-sm-1 col-xs-1 m-t-20">
                                     @*<span class="form-group pull-left page-size form-inline">
-                                            <select class="form-control control-color"
-                                                    ng-model="pageSize"
-                                                    ng-change="changePageSize()"
-                                                    ng-options="ra for ra in recordsQuantity">
-                                            </select>
-                                        </span>*@
+                                    <select class="form-control control-color"
+                                    ng-model="pageSize"
+                                    ng-change="changePageSize()"
+                                    ng-options="ra for ra in recordsQuantity">
+                                    </select>
+                                    </span>*@
                                 </div>
                                 <div class="col-lg-3 col-md-6 col-sm-11 col-xs-11">
                                     <form class="form-material">
-                                        <input type="text" class="form-control" ng-model="buscar" placeholder="Buscar Tiempo Credito" />
+                                        <input type="text" class="form-control" ng-model="buscar"
+                                            placeholder="Buscar Tiempo Credito" />
                                     </form>
                                 </div>
 
@@ -46,8 +47,8 @@
 
                             <table md-table>
                                 <thead md-head md-order="query.order" md-on-reorder="subFinancieras">
-                                    <tr md-row>                        
-                                        <th md-column ng-if="accion.editar || accion.eliminar">Op.</th>                     
+                                    <tr md-row>
+                                        <th md-column ng-if="accion.editar || accion.eliminar">Op.</th>
                                         <th md-column>N°</th>
                                         <th md-column md-order-by="etiqueta.descripcion">Descripción</th>
                                         <th md-column>Día Credito</th>
@@ -55,17 +56,23 @@
                                         <th md-column>Entrada</th>
                                         <th md-column>Gestion</th>
                                         <th md-column>Tipo</th>
-                                        <th md-column>Estado</th>   
+                                        <th md-column>Estado</th>
                                     </tr>
                                 </thead>
                                 <tbody md-body>
-                                    <tr md-row ng-repeat="tc in tiempoCreditos |filter:buscar  | orderBy: query.order | limitTo: query.limit : (query.page -1) * query.limit">                        
+                                    <tr md-row
+                                        ng-repeat="tc in tiempoCreditos |filter:buscar  | orderBy: query.order | limitTo: query.limit : (query.page -1) * query.limit">
                                         <td md-cell ng-if="accion.editar || accion.eliminar">
                                             <div class="justify-content-center">
-                                                <a href="javascript:void(0)" ng-if="accion.editar" ng-click="openModalEdit(tc)" class="btn btn-info btn-xs" title="Actualizar" data-toggle="tooltip"><i class="ti-pencil"></i></a>                                            
-                                                <a href="javascript:void(0)" ng-if="accion.eliminar" ng-click="delete(tc)" class="btn btn-danger btn-xs" data-toggle="tooltip" title="Eliminar"><i class="ti-trash"></i></a>                                
+                                                <a href="javascript:void(0)" ng-if="accion.editar"
+                                                    ng-click="openModalEdit(tc)" class="btn btn-info btn-xs"
+                                                    title="Actualizar" data-toggle="tooltip"><i
+                                                        class="ti-pencil"></i></a>
+                                                <a href="javascript:void(0)" ng-if="accion.eliminar"
+                                                    ng-click="delete(tc)" class="btn btn-danger btn-xs"
+                                                    data-toggle="tooltip" title="Eliminar"><i class="ti-trash"></i></a>
                                             </div>
-                                        </td>                      
+                                        </td>
                                         <td md-cell>{{$index+1}}</td>
                                         <td md-cell>{{tc.tiempoCredito.descripcion}}</td>
                                         <td md-cell>{{tc.tiempoCredito.diasCredito}}</td>
@@ -73,46 +80,55 @@
                                         <td md-cell ng-bind-html="tc.tiempoCredito.entrada | sino"></td>
                                         <td md-cell>{{tc.nombreGestion}}</td>
                                         <td md-cell>{{tc.tipoCredito}}</td>
-                                        <td md-cell ng-bind-html="tc.tiempoCredito.estado | estadoPrimario"></td>   
+                                        <td md-cell ng-bind-html="tc.tiempoCredito.estado | estadoPrimario"></td>
                                     </tr>
                                     <tr md-row ng-show="tiempoCreditos.length==0">
-                                        <td md-cell colspan="8" class="text-center">No hay registros disponibles en esta tabla.</td>
+                                        <td md-cell colspan="8" class="text-center">No hay registros disponibles en esta
+                                            tabla.</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </md-table-container>
-                        <md-table-pagination md-limit="query.limit" md-limit-options="recordsQuantity" md-page="query.page" md-total="{{totalRecords}}" md-page-select="options.pageSelect" md-boundary-links="options.boundaryLinks" md-on-paginate="logPagination"></md-table-pagination>
+                        <md-table-pagination md-limit="query.limit" md-limit-options="recordsQuantity"
+                            md-page="query.page" md-total="{{totalRecords}}" md-page-select="options.pageSelect"
+                            md-boundary-links="options.boundaryLinks"
+                            md-on-paginate="logPagination"></md-table-pagination>
                     </div>
                 </div>
             </div>
         </div>
 
 
-        <div class="modal fade" id="agregarTiempoCredito" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1" data-backdrop="static" data-keyboard="false">
+        <div class="modal fade" id="agregarTiempoCredito" tabindex="-1" role="dialog"
+            aria-labelledby="exampleModalLabel1" data-backdrop="static" data-keyboard="false">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <form ng-submit="guardar(tipo)" autocomplete="off" novalidate>
                         <div class="modal-content">
                             <div class="modal-header {{colorHeader}}">
-                                <h5 class="modal-title text-white" id="exampleModalLabel"><i class="{{iconoModal}}"></i>{{tituloModal}}</h5>
+                                <h5 class="modal-title text-white" id="exampleModalLabel"><i
+                                        class="{{iconoModal}}"></i>{{tituloModal}}</h5>
                             </div>
                             <div class="modal-body">
                                 <div class="row">
                                     <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <label for="Descripcion">Descripción <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" ng-model="data.descripcion" touppercase placeholder="Ej: COMPRAS-CONTADO">
+                                        <input type="text" class="form-control" ng-model="data.descripcion" touppercase
+                                            placeholder="Ej: COMPRAS-CONTADO">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-6">
                                         <div class="icheck-primary">
-                                            <input type="radio" ng-model="data.tipo" ng-value="true" checked id="someRadioId1" name="someGroupName" />
+                                            <input type="radio" ng-model="data.tipo" ng-value="true" checked
+                                                id="someRadioId1" name="someGroupName" />
                                             <label for="someRadioId1">Contado</label>
                                         </div>
                                     </div>
                                     <div class="col-6 text-right">
                                         <div class="icheck-info">
-                                            <input type="radio" ng-model="data.tipo" ng-value="false" id="someRadioId2" name="someGroupName" />
+                                            <input type="radio" ng-model="data.tipo" ng-value="false" id="someRadioId2"
+                                                name="someGroupName" />
                                             <label for="someRadioId2">Credito</label>
                                         </div>
                                     </div>
@@ -121,52 +137,62 @@
                                     <div class="form-group col-lg-6 col-md-6 col-sm-6 col-xs-6">
                                         <label for="codigo">Días Crédito <span class="text-danger">*</span></label>
                                         <div class="input-group mb-3">
-                                            <input type="text" class="form-control" ng-model="data.diasCredito" ng-disabled="data.tipo" valid-number placeholder="0">
+                                            <input type="text" class="form-control" ng-model="data.diasCredito"
+                                                ng-disabled="data.tipo" valid-number placeholder="0">
                                             <div class="input-group-append">
                                                 <span class="input-group-text" id="basic-addon2">Días</span>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-group col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                                        <label for="Descripcion">Número Cuotas <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" ng-model="data.numeroCuota" ng-disabled="data.tipo" valid-number placeholder="0">
+                                        <label for="Descripcion">Número Cuotas <span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" ng-model="data.numeroCuota"
+                                            ng-disabled="data.tipo" valid-number placeholder="0">
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="form-group col-lg-6 col-md-6 col-sm-6 col-xs-6">                                    
+                                    <div class="form-group col-lg-6 col-md-6 col-sm-6 col-xs-6">
                                         <div class="radio icheck-turquoise">
-                                            <input type="radio" ng-model="data.gestion" ng-value="false" id="gestionCompra" name="gestionCompra" />
+                                            <input type="radio" ng-model="data.gestion" ng-value="false"
+                                                id="gestionCompra" name="gestionCompra" />
                                             <label for="gestionCompra">Compra</label>
                                         </div>
                                         <div class="radio icheck-turquoise">
-                                            <input type="radio" ng-model="data.gestion" ng-value="true" id="gestionVenta" name="gestionVenta" />
+                                            <input type="radio" ng-model="data.gestion" ng-value="true"
+                                                id="gestionVenta" name="gestionVenta" />
                                             <label for="gestionVenta">Venta</label>
                                         </div>
                                     </div>
                                     <div class="form-group col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                                        <md-checkbox ng-model="data.entrada" ng-disabled="data.tipo" aria-label="Entrada">
+                                        <md-checkbox ng-model="data.entrada" ng-disabled="data.tipo"
+                                            aria-label="Entrada">
                                             <label for="Entrada"><span class="text-success">Entrada</span></label>
                                         </md-checkbox>
                                     </div>
                                 </div>
-                                <div class="row">                               
+                                <div class="row">
                                     <!--Estado -->
                                     <div class="form-group col-lg-6 col-md-6 col-sm-6 col-xs-6" ng-if="tipo==2">
                                         <label for="">Estado: </label>
                                         <div class="icheck-primary">
-                                            <input type="radio" ng-model="data.estado" ng-value="true" id="estadoActivo" name="estadoActivo" />
+                                            <input type="radio" ng-model="data.estado" ng-value="true" id="estadoActivo"
+                                                name="estadoActivo" />
                                             <label for="estadoActivo">Activo</label>
                                         </div>
                                         <div class="icheck-primary">
-                                            <input type="radio" ng-model="data.estado" ng-value="false" id="estadoInactivo" name="estadoInactivo" />
+                                            <input type="radio" ng-model="data.estado" ng-value="false"
+                                                id="estadoInactivo" name="estadoInactivo" />
                                             <label for="estadoInactivo">Inactivo</label>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="submit" class="btn {{colorHeader}} text-white"><i class="{{icono}}"></i> {{btnModal}}</button>
-                                <button type="button" class="btn btn-dark" data-dismiss="modal"><i class="fa fa-times-circle"></i>Cerrar</button>
+                                <button type="submit" class="btn {{colorHeader}} text-white"><i class="{{icono}}"></i>
+                                    {{btnModal}}</button>
+                                <button type="button" class="btn btn-dark" data-dismiss="modal"><i
+                                        class="fa fa-times-circle"></i>Cerrar</button>
                             </div>
                         </div>
                     </form>
@@ -174,10 +200,9 @@
             </div>
         </div>
     </div>
-    <partial name="PageNotAccessible"/>
 </div>
 
 @section Scripts{
-    <script src="~/js/controllers/financiera/tiempoCreditoCtrl.js"  asp-append-version="true"></script>    
+    <script src="~/js/controllers/financiera/tiempoCreditoCtrl.js" asp-append-version="true"></script>
 }
 

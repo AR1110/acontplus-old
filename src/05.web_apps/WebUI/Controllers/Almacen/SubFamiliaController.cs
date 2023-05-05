@@ -29,9 +29,7 @@ namespace WebUI.Controllers
 
 
         public IActionResult Index()
-        {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-            ViewBag.idRol = idRol;
+        {           
             return View();
         }
 
