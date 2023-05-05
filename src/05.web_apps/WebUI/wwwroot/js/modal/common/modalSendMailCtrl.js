@@ -1,6 +1,3 @@
-
-
-
 export class SendMailCtrl {
     static $inject = ['$scope', '$localStorage', '$uibModalInstance', 'mainService', 'commonService', 'toastService', 'formulario', 'params', 'jwtHelper']
 
@@ -79,52 +76,78 @@ export class SendMailCtrl {
 
 
 
-            switch (this.TYPE_NOTIFICATION) {
-                case "N":
-                    url = '/Notificacion/Post?json='
-                    data = {
-                        subject: this.data.subject,
-                        params: this.data.json,
-                        idUsuarioRol: this.idUsuarioRol,
-                        receptor: this.correos.join(';')
-                    }
+            // switch (this.TYPE_NOTIFICATION) {
+            //     case "N":
+            //         url = '/Notificacion/Post?json='
+            //         data = {
+            //             subject: this.data.subject,
+            //             params: this.data.json,
+            //             idUsuarioRol: this.idUsuarioRol,
+            //             receptor: this.correos.join(';')
+            //         }
 
-                    break;
+            //         break;
 
-                default:
-                    url = 'NotificacionTributaria/'
-                    data = {
-                        codDoc: this.data.codDoc,
-                        codEstado: this.data.codEstado,
-                        idDocumento: this.data.idDocumento,
-                        idDocumentoElectronico: this.data.idDocumentoElectronico,
-                        receptor: this.correos.join(';')
-                    }
-                    break;
+            //     default:
+            //         url = 'NotificacionTributaria/'
+            //         data = {
+            //             codDoc: this.data.codDoc,
+            //             codEstado: this.data.codEstado,
+            //             idDocumento: this.data.idDocumento,
+            //             idDocumentoElectronico: this.data.idDocumentoElectronico,
+            //             receptor: this.correos.join(';')
+            //         }
+            //         break;
+            // }
+
+
+            if (this.TYPE_NOTIFICATION === 'N') {
+                url = '/Notificacion/Post?json='
+                data = {
+                    subject: this.data.subject,
+                    params: this.data.json,
+                    idUsuarioRol: this.idUsuarioRol,
+                    receptor: this.correos.join(';')
+                }
+
+                this._mS.getData('post', url + JSON.stringify(data)).then(this.successResponse).catch(error => {
+                    Swal.close();
+                    console.log(error)
+                })
+
+            } else {
+                url = 'NotificacionTributaria/'
+                data = {
+                    codDoc: this.data.codDoc,
+                    codEstado: this.data.codEstado,
+                    idDocumento: this.data.idDocumento,
+                    idDocumentoElectronico: this.data.idDocumentoElectronico,
+                    receptor: this.correos.join(';')
+                }
+                this._mS.getData('post', url, {
+                    data: data
+                }, true).then(this.successResponse).catch(error => {
+                    Swal.close();
+                    console.log(error)
+                })
             }
 
-
-
-            this._mS.getData('post', url, { data: data }, true).then(response => {
-
-                if (response.code === "0") {
-                    this._form.sweetAlert('warning', response.message, response.titleSms);
-                }
-                if (response.code === "1") {
-                    this._form.sweetAlert('success', response.message, response.titleSms, 1000);
-                    response.isComplete = true;
-                    this.$uibModalInstance.close(response)
-                }
-
-            }).catch(error => {
-                Swal.close();
-                console.log(error)
-            })
         } catch (error) {
             Swal.close();
             console.log(error)
         }
 
+    }
+
+    successResponse = (response) => {
+        if (response.code === "0") {
+            this._form.sweetAlert('warning', response.message, response.titleSms);
+        }
+        if (response.code === "1") {
+            this._form.sweetAlert('success', response.message, response.titleSms, 1000);
+            response.isComplete = true;
+            this.$uibModalInstance.close(response)
+        }
     }
 
     closeModal() {
@@ -212,8 +235,13 @@ export class StatusEmail {
         try {
 
             this.data.correo = item.receptor;
-            const { MODAL_SEND_MAIL_CTRL, MODAL_SEND_MAIL_CSHTML } = this._nombreModalConst.common;
-            const { SendMailCtrl } = await import('./../../modal/' + MODAL_SEND_MAIL_CTRL);
+            const {
+                MODAL_SEND_MAIL_CTRL,
+                MODAL_SEND_MAIL_CSHTML
+            } = this._nombreModalConst.common;
+            const {
+                SendMailCtrl
+            } = await import('./../../modal/' + MODAL_SEND_MAIL_CTRL);
             this._modalSvc.openModalCustom({
                 controller: SendMailCtrl,
                 template: 'Shared/' + MODAL_SEND_MAIL_CSHTML,
