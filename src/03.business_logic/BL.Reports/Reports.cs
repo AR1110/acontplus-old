@@ -1,14 +1,9 @@
-﻿using Common.Logs;
-using Domain.Config.Dtos;
-using Domain.Dtos;
+﻿using Domain.Dtos;
 using Helpers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Reporting.NETCore;
 using Newtonsoft.Json;
 using System.Data;
-using System.Diagnostics;
-using System.Drawing.Imaging;
-using System.Drawing.Printing;
 
 namespace BL.Reports
 {
@@ -98,7 +93,6 @@ namespace BL.Reports
                 return lr.Render(dsParams.Tables[0].Rows[0]["format"].ToString(), null, out _, out _, out _, out _, out _);
             }
         }
-
         public byte[] ByteReportDynamic(dynamic data, ref string mimeType, ref string fileName)
         {
             ApiReportParamsDto parameters = RdlcHelpers.ConverToModelReportParams(data);
@@ -170,118 +164,5 @@ namespace BL.Reports
                 return lr.Render(format, null, out mimeType, out _, out _, out _, out _);
             }
         }
-        public static bool DynamicPrint(ApiPrintRequestDto parameters, string printerName)
-        {
-            var streams = new List<Stream>();
-            try
-            {
-
-                using (LocalReport lr = new LocalReport())
-                {
-                    string format = string.Empty;
-                    string deviceInfo = string.Empty;
-                    foreach (var props in parameters.rdlcProps)
-                    {
-                        foreach (var item in props)
-                        {
-                            if (item.Key == "rdlcName")
-                            {
-                                //lr.ReportPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", item.Value);
-                                lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", item.Value)));
-                            }
-                            if (item.Key == "formato")
-                            {
-                                format = item.Value;
-                            }
-                            if (item.Key == "deviceInfo")
-                            {
-                                deviceInfo = item.Value;
-                            }
-                        }
-                    }
-                    if (parameters.dataSources != null)
-                    {
-                        foreach (var item in parameters.dataSources)
-                        {
-                            lr.DataSources.Add(new ReportDataSource(item.Key, DataHelper.JsonToDataTable(JsonConvert.SerializeObject(item.Value))));
-                        }
-                    }
-
-                    if (parameters.rdlcParams != null)
-                    {
-                        foreach (var item in parameters.rdlcParams)
-                        {
-                            if (item.Key == "logo")
-                            {
-                                string dirlogo = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logos", item.Value);
-                                lr.SetParameters(new ReportParameter(item.Key, Convert.ToBase64String(File.ReadAllBytes(dirlogo))));
-                            }
-                            else
-                            {
-                                lr.SetParameters(new ReportParameter(item.Key, item.Value));
-                            }
-                        }
-                    }
-
-                    lr.Render(format, deviceInfo, (name, fileNameExtension, encoding, mimeType, willSeek) =>
-                    {
-                        var stream = new MemoryStream();
-                        streams.Add(stream);
-                        return stream;
-                    }, out _);
-
-                    foreach (Stream stream in streams)
-                        stream.Position = 0;
-
-                    if (streams == null || streams.Count == 0)
-                    {
-                        throw new Exception("Error: no stream to print.");
-                    }
-
-                    PrintDocument printDoc = new PrintDocument();
-                    printDoc.PrinterSettings.PrinterName = printerName;
-                    PrinterSettings pageSettings = new PrinterSettings();
-                    pageSettings.PrinterName = printerName;
-                    printDoc.DefaultPageSettings = pageSettings.DefaultPageSettings;
-
-                    int currentIndex = 0;
-                    if (printDoc.PrinterSettings.IsValid)
-                    {
-                        printDoc.PrintPage += (sender, e) =>
-                        {
-                            Metafile pageImage = new Metafile(streams[currentIndex]);
-                            e.Graphics.DrawImage(
-                                pageImage, e.PageBounds);
-                            currentIndex++;
-                            e.HasMorePages = (currentIndex < streams.Count);
-                        };
-                        printDoc.EndPrint += (sender, e) =>
-                        {
-                            if (streams != null)
-                            {
-                                foreach (Stream item in streams)
-                                {
-                                    item.Close();
-                                }
-                                streams.Clear();
-                            }
-                        };
-                        printDoc.Print();
-                        return true;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                var appLog = new EventLog("Application");
-                var eventSource = "PrintServer";
-                appLog.Source = EventsLogs.CreateEventSource(eventSource);
-                appLog.WriteEntry(ex.StackTrace, EventLogEntryType.Error);
-                return false;
-            }
-            return false;
-        }
-
     }
-
 }
