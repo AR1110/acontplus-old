@@ -26,11 +26,7 @@ namespace WebUI.Controllers.Compras
 
         [HttpPost]
         public async Task<IActionResult> Insert([FromBody] NotaCreditoProveedorViewModel data)
-        {
-            if (data == null)
-            {
-                return NotFound();
-            }
+        {           
             int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _ncprov.InsertAsync(idRol, data);
             return Ok(res);

@@ -5,7 +5,7 @@
             <tr>
                 <th>N°</th>
                 <th>F. Emisión</th>
-                <th>Sub Entidad</th>                
+                <th>Sub Entidad</th>
                 <th>Valor</th>
                 <th>Número</th>
                 <th>Valor Cobrado</th>
@@ -15,13 +15,14 @@
         <tbody>
             <tr ng-repeat="c in $ctrl.abonoEntidadesFinancieras">
                 <td>{{$index+1}}</td>
-                <td>{{c.fechaEmision|date:'MM/dd/yyyy  h:mma'}}</td>
-                <td><sup>{{c.posFechado?'*':''}}</sup> <span>{{c.subEntidad}}</span></td>                
+                <td>{{c.fechaEmision|date:'dd/MM/yyyy h:mma'}}</td>
+                <td><sup>{{c.posFechado?'*':''}}</sup> <span>{{c.subEntidad}}</span></td>
                 <td>{{c.abono|currency:'$'}}</td>
                 <td>{{c.nro}}</td>
                 <td>{{c.valor|currency:'$'}}</td>
                 <td>
-                    <button class="btn btn-danger btn-sm" ng-click="$ctrl.askToDeleteAbono(c)"><i class="ti-trash"></i></button>
+                    <button class="btn btn-danger btn-sm" ng-click="$ctrl.askToDeleteAbono(c)"><i
+                            class="ti-trash"></i></button>
                 </td>
 
             </tr>

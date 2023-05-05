@@ -10,19 +10,14 @@
                     <label class="form-control-label">Buscar Articulo</label><br>
                     <span class="text-muted" ng-if="$ctrl.tipoRegistro==2">{{$ctrl.data.articulo}}</span>
 
-                    <input type="text" id="articuloAutocomplete" ng-if="$ctrl.tipoRegistro==1"
-                            autocomplete="off"
-                            name="articuloAutocomplete"
-                            class="form-control  border-select"
-                            placeholder="Ingrese Descripción del Articulo"
-                            ng-model="$ctrl.data.selectedArticulo"
-                            ng-keyup="$ctrl.onKeyupSearchArticulo()"
-                            uib-typeahead="a as a.descripcion for a in $ctrl.searchArticuloFraccionadoFilter($viewValue)"
-                            typeahead-loading="$ctrl.loadingLocations"
-                            typeahead-no-results="$ctrl.data.noResults"
-                            typeahead-template-url="autocompleteArticulo.html"
-                            typeahead-editable="false"
-                            typeahead-on-select="$ctrl.selectedArticuloChange($item)" />
+                    <input type="text" id="articuloAutocomplete" ng-if="$ctrl.tipoRegistro==1" autocomplete="off"
+                        name="articuloAutocomplete" class="form-control  border-select"
+                        placeholder="Ingrese Descripción del Articulo" ng-model="$ctrl.data.selectedArticulo"
+                        ng-keyup="$ctrl.onKeyupSearchArticulo()"
+                        uib-typeahead="a as a.descripcion for a in $ctrl.searchArticuloFraccionadoFilter($viewValue)"
+                        typeahead-loading="$ctrl.loadingLocations" typeahead-no-results="$ctrl.data.noResults"
+                        typeahead-template-url="autocompleteArticulo.html" typeahead-editable="false"
+                        typeahead-on-select="$ctrl.selectedArticuloChange($item)" />
                     <span class="text-danger" ng-if="$ctrl.data.noResults">No se encontraron resultados</span><br />
                     <script type="text/ng-template" id="autocompleteArticulo.html">
                         <div class="autocomplete-suggestion-cliente">
@@ -59,7 +54,8 @@
             <div class="col-lg-3 col-md-6 col-sm-12 col-xs-12">
                 <div class="form-group">
                     <label class="form-control-label">Conversión: <span class="text-danger">*</span></label>
-                    <input type="text" id="conversion" class="form-control border-select" ng-model="$ctrl.data.conversion" valid-number placeholder="0.00">
+                    <input type="text" id="conversion" class="form-control border-select"
+                        ng-model="$ctrl.data.conversion" valid-number placeholder="0.00">
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 col-sm-12 col-xs-12">
@@ -69,16 +65,22 @@
                         <option ng-value="m.idMedida" ng-repeat="m in $ctrl.medidas">{{m.descripcion}}</option>
                     </select>
                     <div class="input-group-append">
-                        <button type="button" ng-click="$ctrl.openModalMedida()" class="btn btn-outline-secondary btn-sm"><i class="fas fa-plus fa-xs"></i></button>
+                        <button type="button" ng-click="$ctrl.openModalMedida()"
+                            class="btn btn-outline-secondary btn-sm"><i class="fas fa-plus fa-xs"></i></button>
                     </div>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 col-sm-12 col-xs-12">
-                <div class="form-group">
+                <div class="form-group" ng-if="$ctrl.tipoRegistro==1">
                     <label>Precio U./Fraccionable <span class="text-danger">*</span></label>
                     <input type="text" class="form-control border-select" ng-model="$ctrl.data.precioCostoFraccionado"
-                            ng-keyup="$ctrl.recalculateTarifaAdd()"
-                            decimal placeholder="0.00">
+                        ng-keyup="$ctrl.recalculateTarifaAdd()" decimal placeholder="0.00">
+                </div>
+
+                <div class="form-group" ng-if="$ctrl.tipoRegistro==2 && usuarioPermiso.almacenPermiso.precio.update">
+                    <label>Precio U./Fraccionable <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control border-select" ng-model="$ctrl.data.precioCostoFraccionado"
+                        ng-keyup="$ctrl.recalculateTarifaAdd()" decimal placeholder="0.00">
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 col-sm-12 col-xs-12">
@@ -91,18 +93,16 @@
                 </div>
             </div>
         </div>
-        
-                                
-        <div ui-grid="$ctrl.gridOptions" ng-if="$ctrl.gridOptions.data.length > 0"
-                    ui-grid-edit
-                                ui-grid-resize-columns
-                                ui-grid-cellNav
-                                ui-grid-auto-resize class="grid">
-        </div>                                            
+
+
+        <div ui-grid="$ctrl.gridOptions" ng-if="$ctrl.gridOptions.data.length > 0" ui-grid-edit ui-grid-resize-columns
+            ui-grid-cellNav ui-grid-auto-resize class="grid">
+        </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-success" ng-click="$ctrl.saveAndUpdate()">
-            <i class="{{$ctrl.tipoRegistro==1?'ti-save':'fa fa-edit'}}"></i>{{$ctrl.tipoRegistro==1?' Guardar':' Actualizar'}}
+            <i class="{{$ctrl.tipoRegistro==1?'ti-save':'fa fa-edit'}}"></i>{{$ctrl.tipoRegistro==1?' Guardar':'
+            Actualizar'}}
         </button>
         <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">&times; Cerrar</button>
     </div>

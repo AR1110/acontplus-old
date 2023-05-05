@@ -13,13 +13,54 @@
 <a class="nav-link text-dark" asp-page="/Index" asp-area="MyFeature">MyFeature</a>
 <a class="nav-link text-dark" asp-page="/Index" asp-area="Documento">Documento</a>
 <div ng-controller="testCtrl">
-    <button type="button" class="btn btn-info" ng-click="postLocalHost()"><i class="fa fa-server"></i> Test Local Server</button>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-body">Envios por whatsapp</h5>
+            <div class="row">
+                <div class="col-6">
+                    <img src="" class="img-rounded" alt="QR Code" id="qrcode">
+                    <ul class="logs"></ul>
+                </div>
+            </div>
+            <form ng-submit="sendMessage()">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="">Para:</label>
+                            <input type="tel" name="" id="" class="form-control" ng-model="whatsapp.number" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Mensaje:</label>
+                            <textarea type="tel" name="" id="" class="form-control" ng-model="whatsapp.message"
+                                required></textarea>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <button type="submit" class="btn btn-success"><i class="fa fa-whatsapp" aria-hidden="true"></i>
+                    Enviar</button>
+            </form>
+        </div>
+    </div>
+
+    <button type="button" class="btn btn-info" ng-click="postLocalHost()"><i class="fa fa-server"></i> Test Local
+        Server</button>
 </div>
 
 <form action="/Test/GenerateRandomKey" method="post">
     <button type="submit" class="btn btn-info">Generate Key</button>
 </form>
 
-@section Scripts{ 
+@section Scripts{
+    @*<script>
+if (window.location.protocol.indexOf('https') == 0) {
+var el = document.createElement('meta')
+el.setAttribute('http-equiv', 'Content-Security-Policy')
+el.setAttribute('content', 'upgrade-insecure-requests')
+document.head.append(el)
+}
+</script>*@
+    <script src="~/lib/socket.io/socket.io.min.js"></script>
+    <script src="~/js/services/socketService.js" asp-append-version="true"></script>
     <script src="~/js/controllers/testCtrl.js" asp-append-version="true"></script>
 }

@@ -228,6 +228,16 @@
                                                     for="permissionAddtional{{$index+2}}">{{key.kardex.label}}</label>
                                             </div>
                                         </div>
+
+                                        <div ng-if="key.totalesVenta">
+                                            <div class="icheck-info">
+                                                <input type="checkbox" name="permissionAddtional{{$index+3}}"
+                                                    id="permissionAddtional{{$index+3}}"
+                                                    ng-model="key.totalesVenta.view">
+                                                <label
+                                                    for="permissionAddtional{{$index+3}}">{{key.totalesVenta.label}}</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -265,15 +275,6 @@
                                         <label for="cajaPermissionEnterKey">{{cajaPermissions.enterKey.label}}</label>
                                     </div>
 
-                                    <div ng-if="cajaPermissions.enterKey.isRequerid">
-                                        <form autocomplete="off">
-                                            <div class="form-group">
-                                                <label>Clave</label>
-                                                <input type="password" name="clave" id="clave"
-                                                    class="form-control border-select" placeholder="Ingrese el Clave">
-                                            </div>
-                                        </form>
-                                    </div>
                                 </div>
                             </div>
                         </div>

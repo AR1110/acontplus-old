@@ -54,6 +54,12 @@ BEGIN
 	DECLARE @propina DECIMAL(20,5)
 	DECLARE @importeTotal DECIMAL(20,5)
 
+	--Datos temporales fecha
+	DECLARE @fechaEmisionModificada  DATETIME --fecha emision modificada front-end
+	DECLARE @fechaEmisionDocCreado DATETIME;  -- Fecha emision del documento 	
+
+
+
 	BEGIN TRY 
 		SELECT @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idRol
 
@@ -65,12 +71,14 @@ BEGIN
 		   ,@estab       = estab
 		   ,@ptoEmi      = ptoEmi
 		   ,@ambiente    = ambiente
+		   ,@fechaEmisionDocCreado = fechaEmision
 		FROM Ventas.Aprob_Document WHERE idAprob_Document = @id
 
 		SELECT	
 			@observacion             = dt.observacion
 		   ,@identificacionComprador = cl.numeroIdentificacion
-		   ,@fechaEmision            = dt.fechaEmision
+		--   ,@fechaEmision            = dt.fechaEmision
+		   ,@fechaEmisionModificada  = dt.fechaEmision
 		   ,@totalSinImpuestos       = dt.subTotalSinImpuestos
 		   ,@totalDescuento          = dt.totalDescuento 
 		   ,@totalConImpuestos       = dt.total 
@@ -78,6 +86,30 @@ BEGIN
 		   ,@importeTotal            = dt.total
 		FROM Helper.F_DeserializeDocument_header(@jsonHeader) dt 
 		INNER JOIN dbo.Cliente cl ON cl.idCliente = dt.idCliente 
+		
+		-- Verificacion de fecha emision: verifica si la fecha emision es anterior a fecha actual, y si lo es seatea las horas en cero.
+		IF CAST(@fechaEmisionModificada AS DATE) <> CAST(@fechaEmisionDocCreado AS DATE)
+			BEGIN 
+				IF CAST(@fechaEmisionModificada AS DATE) > CAST(dbo.ufnGetDateEcuador() AS DATE)
+					BEGIN 
+						SELECT '0'code, 'La fecha de emisión del documento no puede ser posterior a la fecha actual.' as 'message'
+						RETURN 
+					END
+					
+				IF CAST(@fechaEmisionModificada AS DATE) < CAST(dbo.ufnGetDateEcuador() AS DATE)
+					BEGIN 
+						SET @fechaEmision = DATEADD(dd, DATEDIFF(dd, 0, @fechaEmisionModificada), 0)
+					END
+				ELSE
+					BEGIN 
+						SET @fechaEmision = dbo.ufnGetDateEcuador();
+					END 
+			END 
+		ELSE 
+			BEGIN 
+				SET @fechaEmision = @fechaEmisionDocCreado
+			END 
+
 
 		SELECT @claveAcceso = dbo.ufnGeneraClaveAcceso(dbo.AFTDeleteCero(@estab)
 													   ,@codDoc

@@ -153,6 +153,10 @@
     {
       "library": "tabulator@5.4.4",
       "destination": "wwwroot/lib/tabulator/"
+    },
+    {
+      "library": "socket.io@4.6.1",
+      "destination": "wwwroot/lib/socket.io/"
     }
   ]
 }

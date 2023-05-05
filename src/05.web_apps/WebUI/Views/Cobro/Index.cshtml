@@ -29,7 +29,14 @@
                                 </div>
                                 <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
                                     <form class="form-material">
-                                        <input type="text" class="form-control" ng-model="buscar" placeholder="Buscar cobros" />
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" ng-model="buscar" placeholder="Buscar cobros" />
+                                            <div class="input-group-append">
+                                                <button class="btn btn-secondary btn-xs" ng-click="getCobros()">
+                                                    <i class="fas fa-redo"></i>
+                                                </button>
+                                            </div>
+                                        </div>
                                     </form>
                                 </div>
                             </div>

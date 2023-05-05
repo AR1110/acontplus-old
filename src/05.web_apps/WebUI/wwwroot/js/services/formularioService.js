@@ -232,9 +232,7 @@
             if (!this.isDateValid(dateString)) {
                 throw new Error("La fecha es inválida");
             }
-            const date = moment(dateString);
-            const formattedDate = date.format('YYYY-MM-DD HH:mm:ss A');
-            return formattedDate
+            return moment(dateString).format('YYYY-MM-DD HH:mm:ss A')
         }
 
         formSvc.isDateValid = function (dateString) {

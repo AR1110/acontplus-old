@@ -290,20 +290,24 @@
             }
 
             $scope.askToNewImport = () => {
-                Swal.fire({
-                    title: 'Estab.: ' + $scope.estabToWork,
-                    text: "Esta seguro de realizar una nueva importación de comprobantes en este establecimiento?",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Si, Proceder',
-                    cancelButtonText: 'No, cancelar'
-                }).then(result => {
-                    if (result.isConfirmed) {
-                        $scope.newImport();
-                    }
-                })
+                if ($scope.establecimientos.length > 1) {
+                    Swal.fire({
+                        title: 'Estab.: ' + $scope.estabToWork,
+                        text: "Esta seguro de realizar una nueva importación de comprobantes en este establecimiento?",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Si, Proceder',
+                        cancelButtonText: 'No, cancelar'
+                    }).then(result => {
+                        if (result.isConfirmed) {
+                            $scope.newImport();
+                        }
+                    })
+                } else {
+                    $scope.newImport();
+                }
             }
 
             $scope.newImport = function () {

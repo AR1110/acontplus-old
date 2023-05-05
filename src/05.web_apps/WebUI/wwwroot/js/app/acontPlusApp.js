@@ -1107,6 +1107,24 @@ app.directive('viewKardexBtn', function (modalService, nombreModal) {
     };
 })
 
+
+app.directive('totalesVentaView', function ($rootScope, $timeout) {
+    return {
+        restrict: 'A',
+        link: function (scope, element, attrs) {
+            scope.$watch(attrs.totalesVentaView, function (obj) {
+                if (typeof obj === 'object' && !obj.additional.totalesVenta.view) {
+                    // Aquí puedes aplicar la lógica de la directiva cuando el objeto tenga un valor
+                    // Por ejemplo, mostrar el elemento, modificar su estilo, etc.
+                    element.remove();
+                }
+            });
+
+            // element.remove();
+        }
+    };
+})
+
 // app.directive('autoocus')
 
 //Filter bodegas 

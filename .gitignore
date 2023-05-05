@@ -352,3 +352,6 @@
 /src/07.worker_services/WS_Notificacion_Tributaria/bin/Debug/net6.0
 /src/07.worker_services/WS_Notificacion_Tributaria/obj
 /src/07.worker_services/WS_Notificacion_Tributaria/bin/Release/net6.0
+/src/04.services/whatsapp-api/node_modules
+/src/04.services/whatsapp-api/.wwebjs_auth/RemoteAuth
+/src/04.services/whatsapp-api/.wwebjs_auth/session

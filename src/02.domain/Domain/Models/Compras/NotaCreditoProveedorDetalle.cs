@@ -8,6 +8,7 @@
         public int idArticulo { get; set; }
         public long idTipoIva { get; set; }
         public long idMedida { get; set; }
+        public string codigoPorcentaje { get; set; }
         public decimal cantidad { get; set; }
         public string descripcion { get; set; }
         public string nota { get; set; }

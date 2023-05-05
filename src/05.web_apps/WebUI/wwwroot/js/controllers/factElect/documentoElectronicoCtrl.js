@@ -56,7 +56,7 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
     // $scope.meses = _fS.meses();
     // $scope.dataSearch.mes = new Date().getMonth() + 1;
 
-    let thisMoment = moment()
+    let thisMoment = moment(new Date())
     // let endOfMonth = moment(thisMoment).endOf('month')
     // let startOfMonth = moment(thisMoment).startOf('month')
 

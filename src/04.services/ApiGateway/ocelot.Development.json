@@ -773,7 +773,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44354
+          "Port": 7074
         }
       ],
       "DownstreamPathTemplate": "/api/Reporte/Post",
@@ -792,7 +792,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44354
+          "Port": 7074
         }
       ],
       "DownstreamPathTemplate": "/api/Reporte/{method}/{everything}",
@@ -813,7 +813,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44354
+          "Port": 7074
         }
       ],
       "DownstreamPathTemplate": "/api/ReporteDataSource/",
@@ -832,7 +832,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44354
+          "Port": 7074
         }
       ],
       "DownstreamPathTemplate": "/api/ReporteDataSource/{everything}",
@@ -853,7 +853,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7097
+          "Port": 7074
         }
       ],
       "DownstreamPathTemplate": "/api/Reporte/Download",
@@ -872,7 +872,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7097
+          "Port": 7074
         }
       ],
       "DownstreamPathTemplate": "/api/Reporte/ExportExcel",
@@ -891,7 +891,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7097
+          "Port": 7074
         }
       ],
       "DownstreamPathTemplate": "/api/Reporte/DynamicReport",
@@ -1000,6 +1000,25 @@
         "Put"
       ],
       "UpstreamPathTemplate": "/api/UsuarioPermiso"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7074
+        }
+      ],
+      "DownstreamPathTemplate": "/api/UsuarioPermiso/CheckHasPermission/{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "UpstreamPathTemplate": "/api/UsuarioPermiso/CheckHasPermission/{everything}"
     },
     {
       "DownstreamHostAndPorts": [

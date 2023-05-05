@@ -29,11 +29,11 @@ USE AcontPlus;
 --	,codEstado VARCHAR(2) -- P(PENDIENTE), A(APROBADA), F(FINALIZADO)
 --)
 
-DECLARE @jsonSalePermission VARCHAR(MAX) = '{"comprobante":{"fechaEmision":{"label":"Modificar Fecha Emisión","update":true},"tiempoCredito":{"label":"Cambiar tiempo Credito","update":true},"tarifa":{"label":"Modifcar tarifa general","update":true},"porcentajeDescuento":{"label":"Cambiar Porcentaje Descuento ","update":true},"descuento":{"label":"Cambiar Descuento","update":true}},"detail":{"medida":{"label":"Cambiar Medida","update":true},"tipoIva":{"label":"Cambiar Tipo IVA","update":true},"tarifa":{"label":"Cambiar tarifa","update":true},"precioUnitario":{"label":"Modificar Precio Unitario","update":true},"precioConIva":{"label":"Modificar Precio con IVA","update":true},"porcentajeDescuento":{"label":"Modificar Porcentaje Descuento","update":true},"descuento":{"label":"Modificar Descuento","update":true}},"additional":{"requestAuthorizationKey":{"label":"Solicitar Clave Autorización para Editar o Anular el Doc. Venta","requestKey":true}}}';
+--DECLARE @jsonSalePermission VARCHAR(MAX) = '{"comprobante":{"fechaEmision":{"label":"Modificar Fecha de Emisión","update":true},"tiempoCredito":{"label":"Cambiar tiempo Credito","update":true},"tarifa":{"label":"Modifcar tarifa general","update":true},"porcentajeDescuento":{"label":"Cambiar Porcentaje Descuento ","update":true},"descuento":{"label":"Cambiar Descuento","update":true}},"detail":{"medida":{"label":"Cambiar Medida","update":true},"tipoIva":{"label":"Cambiar Tipo IVA","update":true},"tarifa":{"label":"Cambiar tarifa","update":true},"precioUnitario":{"label":"Modificar Precio Unitario","update":true},"precioConIva":{"label":"Modificar Precio con IVA","update":true},"porcentajeDescuento":{"label":"Modificar Porcentaje Descuento","update":true},"descuento":{"label":"Modificar Descuento","update":true}},"additional":{"requestAuthorizationKey":{"label":"Solicitar Autorización para Editar o Anular el Doc. Venta","requestKey":true,"usuarioAprobante":"CORREA CALLE MARTHA MARICELA","idUsuarioRolAprobante":28},"viewOthersDocs":{"label":"Consultar documentos electronicos de otros usuarios","view":false},"kardex":{"label":"Ver Kardex","view":true},"totalesVenta":{"label":"Mostrar totales de ventas ","view":true}}}';
 
-DECLARE @jsonArticlePermission VARCHAR(MAX) = '{"precio":{"label":"Permitir actualizar el precio costo y venta","update":true}}';
+--DECLARE @jsonArticlePermission VARCHAR(MAX) = '{"precio":{"label":"Permitir actualizar el precio costo y venta","update":true}}';
 
-DECLARE @jsonCajaPermission VARCHAR(MAX) = '{"verOtrasCajas": {"label": "Ver otras cajas", "view": true}, "reporteMovimientoCaja": {"label": "Ver Reporte", "view": true}, "cerrarCaja": {"label": "Cerrar Caja", "cerrar": true}}'
+--DECLARE @jsonCajaPermission VARCHAR(MAX) = '{"verOtrasCajas":{"label":"Ver otras cajas","view":true},"reporteMovimientoCaja":{"label":"Ver Reporte","view":true},"cerrarCaja":{"label":"Cerrar Caja","cerrar":true},"enterKey":{"label":"Ingresar Clave para las acciones de caja","isRequerid":true}}'
 
 
 DECLARE @newjson VARCHAR(MAX);
@@ -49,6 +49,7 @@ DECLARE @newjson VARCHAR(MAX);
 		--UPDATE Config.UserPermission SET jsonPermission = JSON_MODIFY(jsonPermission, '$.additional', JSON_QUERY(@newjson)) 
 		--WHERE codModule='V'
 		--RETURN 
+	
 
 		--Append to property permission caja a property enterKey
 		
@@ -61,9 +62,9 @@ DECLARE @newjson VARCHAR(MAX);
 		
 	
 	--Update properties (label, update) of voucher 
-		--SET @newjson = N'{"label":"Punto Emision UPDATE", "update":true}';		
-		--UPDATE Config.UserPermission SET jsonPermission = REPLACE(REPLACE(JSON_MODIFY(jsonPermission, '$.comprobante.puntoEmision', JSON_QUERY(@newjson)),'[', ''), ']', '') 
-		--WHERE codModule='V'
+		SET @newjson = N'{"label":"Mostrar totales de ventas ","view":true}';		
+		UPDATE Config.UserPermission SET jsonPermission = REPLACE(REPLACE(JSON_MODIFY(jsonPermission, '$.additional.totalesVenta', JSON_QUERY(@newjson)),'[', ''), ']', '') 
+		WHERE codModule='V'
 
 
 		--UPDATE Config.UserPermission SET jsonPermission = JSON_MODIFY(jsonPermission, '$.additional.requestAuthorizationKey.label', 'Solicitar Autorización para Editar o Anular el Doc. Venta')
@@ -73,9 +74,13 @@ DECLARE @newjson VARCHAR(MAX);
 		--UPDATE Config.UserPermission SET jsonPermission = REPLACE(REPLACE(JSON_MODIFY(jsonPermission, 'append $.additional.viewOthersDocs', JSON_QUERY(@newjson)),'[', ''), ']', '') 
 		--WHERE codModule='V'
 
-		SET @newjson = N'{"label":"Ver Kardex", "view":true}';		
-		UPDATE Config.UserPermission SET jsonPermission = REPLACE(REPLACE(JSON_MODIFY(jsonPermission, 'append $.additional.kardex', JSON_QUERY(@newjson)),'[', ''), ']', '') 
-		WHERE codModule='V'
+		--SET @newjson = N'{"label":"Ver Kardex", "view":true}';		
+		--UPDATE Config.UserPermission SET jsonPermission = REPLACE(REPLACE(JSON_MODIFY(jsonPermission, 'append $.additional.kardex', JSON_QUERY(@newjson)),'[', ''), ']', '') 
+		--WHERE codModule='V'
+
+		--SET @newjson = N'{"label":"Mostrar totales de ventas ", "view":true}';		
+		--UPDATE Config.UserPermission SET jsonPermission = REPLACE(REPLACE(JSON_MODIFY(jsonPermission, 'append $.additional.totalesVenta', JSON_QUERY(@newjson)),'[', ''), ']', '') 
+		--WHERE codModule='V'
 
 	--Update properties (label, update) of detail
 
@@ -115,6 +120,6 @@ DECLARE @newjson VARCHAR(MAX);
 --INSERT INTO Config.UserPermission(idUsuarioRol, codModule, jsonPermission)SELECT idUsuarioRol, 'AR', @jsonArticlePermission FROM App.UsuarioRol 
 --INSERT INTO Config.UserPermission(idUsuarioRol, codModule, jsonPermission)SELECT idUsuarioRol, 'C', @jsonCajaPermission FROM App.UsuarioRol
 
-SELECT * FROM Config.UserPermission WHERE codModule='V'
+--SELECT  * FROM Config.UserPermission WHERE codModule='V'
 
 

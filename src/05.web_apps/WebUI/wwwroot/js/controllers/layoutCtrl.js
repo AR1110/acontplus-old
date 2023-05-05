@@ -153,8 +153,8 @@ function layoutCtrl($scope, $rootScope, $window, Idle, mS, _modalSvc, toast, for
                             }
                             $scope.accion = permisoModulo[0]
                             $rootScope.articlePermission = articlePermission[0];
-                            console.log($rootScope.usuarioPermiso)
-                            console.log($rootScope.articlePermission)
+                            $rootScope.ventaPermiso = $rootScope.usuarioPermiso.ventaPermiso;
+
                         }
                     })
                 } else {
