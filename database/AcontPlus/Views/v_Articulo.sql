@@ -19,6 +19,9 @@ SELECT  a.idArticulo
 	,medida		 = me.descripcion 
 	,a.estado 
 	,ti.porcentaje
+	,a.llevaInventario
+	,a.idSubFamilia
+	,a.precioCosto
 FROM dbo.Articulo a WITH(NOLOCK)
 INNER JOIN dbo.TipoIva    ti WITH(NOLOCK) ON ti.idTipoIva    = a.idTipoIva 
 LEFT JOIN dbo.SubFamilia sf WITH(NOLOCK) ON sf.idSubFamilia = a.idSubFamilia
