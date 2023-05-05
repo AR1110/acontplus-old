@@ -1,5 +1,8 @@
 USE AcontPlus
 GO
+IF OBJECT_ID('Inventario.Stock') IS NOT NULL
+DROP TABLE Inventario.Stock
+GO
 CREATE TABLE Inventario.Stock( 
 idStock INT NOT NULL CONSTRAINT pk_Stock PRIMARY KEY IDENTITY(1,1)
 ,idArticulo INT NOT NULL CONSTRAINT fk_inv_stock_Articulo FOREIGN KEY (idArticulo) REFERENCES Articulo(idArticulo)
