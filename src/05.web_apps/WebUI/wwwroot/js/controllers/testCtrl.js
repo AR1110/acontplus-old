@@ -7,6 +7,7 @@
 
     function testCtrl($scope, $http, socket) {
         $scope.title = 'testCtrl';
+        $scope.whatsapp = { number: '0991229095' }
 
         socket.on('message', (msg) => {
             $('.logs').append($('<li>').text(msg))
@@ -16,6 +17,18 @@
             console.log(src)
             $('#qrcode').attr('src', src)
         })
+
+        $scope.sendMessage = () => {
+            let data = { number: $scope.whatsapp.number, message: $scope.whatsapp.message }
+            $http.post('http://localhost:8000/send-message', data).then(
+                response => {
+                    console.log(response)
+                }
+            ).catch(error => {
+                console.log(error)
+            })
+        }
+
 
         $scope.postLocalHost = () => {
             try {

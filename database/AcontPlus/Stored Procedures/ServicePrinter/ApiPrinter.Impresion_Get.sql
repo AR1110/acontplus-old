@@ -183,9 +183,14 @@ BEGIN
 								AND cd.estado = 1 FOR JSON PATH
 							 )
 
-							 
-	   -- SET @rdlcParams = (SELECT logo = nombreImagen, mimeType FROM Config.Estab_Logo WHERE codEstab = @codEstab FOR JSON PATH)
-
+		IF EXISTS (SELECT 1 FROM Config.Estab_Logo WHERE codEstab = @codEstab)		
+			BEGIN
+				SET @rdlcParams = (SELECT logo = nombreImagen, mimeType FROM Config.Estab_Logo WHERE codEstab = @codEstab FOR JSON PATH)
+			END
+		ELSE
+			BEGIN
+				SET @rdlcParams = 'undefined'
+			END
 		SELECT  @dataSources = dataSources FROM ApiPrinter.Document_Data(@idDocument,@idTipoDocumento,@codDoc)
 
 		--SET @rdlcProps = (SELECT rdlcName = CASE @codDoc WHEN 'FV' THEN @invoice+@printer+'.rdl' 
@@ -201,6 +206,7 @@ BEGIN
 		--				  ) 
 
 
-		SELECT '1' code, payload = (SELECT 'http://' + @urlPrinter urlPrinter,  @rdlcProps rdlcProps, @dataSources dataSources FOR JSON PATH)
+		SELECT '1' code, payload = (SELECT 'http://' + @urlPrinter urlPrinter,  @rdlcProps rdlcProps, @dataSources dataSources--, @rdlcParams rdlcParams 
+		FOR JSON PATH)
 END
 GO
