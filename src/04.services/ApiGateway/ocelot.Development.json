@@ -1172,6 +1172,31 @@
         "Get"
       ],
       "UpstreamPathTemplate": "/api/Ats{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7074
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Entidad/{everything}",
+      "DownstreamScheme": "https",
+      "HttpHandlerOptions": {
+        "UseTracing": true
+      },
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/api/Entidad/{everything}"
     }
   ]
 }

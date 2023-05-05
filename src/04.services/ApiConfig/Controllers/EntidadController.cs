@@ -1,5 +1,6 @@
 ﻿using Common.Logs;
 using DataAccess;
+using Domain.Dtos;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,7 +18,7 @@ namespace ApiConfig.Controllers
             _db = new DbAccess(_configuration);
         }
 
-        [HttpGet]
+        [HttpGet("Get")]
         public async Task<IActionResult> Get(string json)
         {
             LogWriter _log = new LogWriter(_configuration);
@@ -31,8 +32,8 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while getting reports: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error getting reports");
+                _log.LogError("Error al obtener lista de entidades : \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al obtener lista de entidades");
             }
             return Ok(_response);
         }
