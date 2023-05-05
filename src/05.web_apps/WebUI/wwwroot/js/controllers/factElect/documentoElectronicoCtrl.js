@@ -57,6 +57,7 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
     // $scope.dataSearch.mes = new Date().getMonth() + 1;
 
     let thisMoment = moment(new Date())
+    console.log(thisMoment)
     // let endOfMonth = moment(thisMoment).endOf('month')
     // let startOfMonth = moment(thisMoment).startOf('month')
 
@@ -120,9 +121,10 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
             } else {
                 data = $scope.dataSearch;
 
-                data.dateStart = $scope.dateRangePicker.date.startDate
-                data.dateEnd = $scope.dateRangePicker.date.endDate
+                data.dateStart = _fS.formatDateTimeZone($scope.dateRangePicker.date.startDate)
+                data.dateEnd = _fS.formatDateTimeZone($scope.dateRangePicker.date.endDate);
             }
+
 
 
             $scope.comprobantes = [];
