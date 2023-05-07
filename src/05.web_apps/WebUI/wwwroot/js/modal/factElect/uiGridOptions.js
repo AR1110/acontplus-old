@@ -474,8 +474,9 @@ export class UiGridOptions{
         
         let iva = subTotalNetoIva * this.actividadTipoIva.tarifa / 100;  
        
-        let total = iva + this.getTotalDetalle() +  this.getTotalIce();
-       
+        let total = this.getSubTotalSinImpuesto() + iva  +  this.getTotalIce();
+        let importeTotal = total - this.getTotalDescuento();
+
         return {
             subTotalSinImpuestos: this.getSubTotalSinImpuesto(),
             subTotalIva,
@@ -496,7 +497,7 @@ export class UiGridOptions{
             irbpnr : 0,
             propina : 0,
             iva:  this._fS.roundNumber(iva, this.decimal.nroIva),
-            total: this._fS.roundNumber(total, this.decimal.nroTotalSubTotal)
+            total: this._fS.roundNumber(importeTotal, this.decimal.nroTotalSubTotal)
         }
         //this.data.subTotalSinImpuestos = this.getSubTotalSinImpuesto();
 
