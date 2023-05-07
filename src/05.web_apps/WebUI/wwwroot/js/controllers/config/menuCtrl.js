@@ -188,18 +188,23 @@
                 allowOutsideClick: false
             })
             
-            if(isConfirmed){                
-                mS.getData('post', '/SubMenu/Delete?idSubMenu=' + dataSubMenu.idSubMenu).then(response => {                  
-                    if (response.id == "0") {
-                        toast.toastr('warning', response.message, response.titleSms);
-                        return
+            if(isConfirmed){      
+                showLoader();          
+                mS.getData('delete', 'SubMenu/Delete/' + dataSubMenu.idSubMenu, null, true).then(response => {  
+                    console.log(response);                
+                    if (response. code == "0") {
+                        hideLoader();
+                        toast.toastr('warning', response.message, response.titleSms);                        
                     }
-                    if (response.id == "1") {
+                    if (response.code == "1") {
+                        hideLoader();
                         toast.toastr('success', response.message, response.titleSms);
                         $scope.getSubMenus(dataMenu, dataMenu.idMenu);
                         return
                     }
-                }, error => console.log(error));
+                }).catch(error=>{
+                    console.log(error);
+                })
             };                
         }
 

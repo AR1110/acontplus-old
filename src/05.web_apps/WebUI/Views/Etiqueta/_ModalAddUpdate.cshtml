@@ -1,0 +1,30 @@
+<form autocomplete="off" ng-submit="save()">
+    <div class="modal-header">
+        <h5 class="modal-title">{{modalTitle}} Etiqueta</h5>
+        <button ng-click="closeModal()" class="close">&times;</button>
+    </div>
+
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="form-group">
+                    <label for="description">Descripción <span class="text-danger">*</span></label>
+                    <input type="text" ng-model="data.description" class="form-control border-select"
+                        placeholder="Cel.">
+                </div>
+            </div>
+        </div>
+
+        @* <div class="grid" ui-grid="gridOptions" ui-grid-edit ui-grid-resize-columns ui-grid-cellNav
+        ui-grid-auto-resize>
+        </div> *@
+    </div>
+
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-success">
+            <i ng-class="iconSave"></i>
+            {{txtSave}}
+        </button>
+        <button type="button" ng-click="closeModal()" class="btn btn-dark">&times; Cerrar</button>
+    </div>
+</form>

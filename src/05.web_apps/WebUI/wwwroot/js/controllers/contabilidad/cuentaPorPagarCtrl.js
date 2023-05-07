@@ -381,8 +381,9 @@
                         //Open Modal 
                         let modalRef = _modalSvc.openModalCustom(modalParams)
                         modalRef.result.then(result=>{
+                            $scope.selectedDocumentos = [];
+
                             if(typeof result==='object'){
-                                $scope.selectedDocumentos = [];
                                 $scope.getCuentasPorPagar();
                             }
                         })

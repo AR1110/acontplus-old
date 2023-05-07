@@ -853,7 +853,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 44320
         }
       ],
       "DownstreamPathTemplate": "/api/Reporte/Download",
@@ -891,7 +891,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 44320
         }
       ],
       "DownstreamPathTemplate": "/api/Reporte/DynamicReport",
@@ -1222,6 +1222,56 @@
         "Delete"
       ],
       "UpstreamPathTemplate": "/api/EntidadConfigSri/{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7074
+        }
+      ],
+      "DownstreamPathTemplate": "/api/SubMenu/{everything}",
+      "DownstreamScheme": "https",
+      "HttpHandlerOptions": {
+        "UseTracing": true
+      },
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/api/SubMenu/{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7210
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Etiqueta/{everything}",
+      "DownstreamScheme": "https",
+      "HttpHandlerOptions": {
+        "UseTracing": true
+      },
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/api/Etiqueta/{everything}"
     }
   ]
 }
