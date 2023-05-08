@@ -86,7 +86,7 @@
 
         const idDocumentoElectronico = document.getElementById("idDocumentoElectronico").value
         //console.log(idDocumentoElectronico)
-        const _urlService = document.getElementById("urlGateway").value + 'api/'
+        const _urlService = document.getElementById("urlGateway").value 
 
         $scope.retencionesTemp = []
 

@@ -1,6 +1,6 @@
 {
   "GlobalConfiguration": {
-    "BaseUrl": "https://localhost:7261/",
+    "BaseUrl": "http://localhost:57340/",
     "RateLimitOptions": {
       "ClientIdHeader": "Test",
       "ClientWhitelist": [

@@ -1,5 +1,5 @@
 export class CommonService {
-    static $inject = ["$rootScope", "$http", "mainService", "FileSaver", "formulario", "modalService", "nombreModal", "__env"];
+    static $inject = ["$rootScope", "$http", "mainService", "FileSaver", "formulario", "modalService", "nombreModal"];
 
     constructor($rootScope, $http, mS, FileSaver, form, _modalSvc, _nombreModalConst, __env) {
         this.$rootScope = $rootScope;
@@ -1557,7 +1557,7 @@ export class CommonService {
 
 
 
-            let urlPrinter = (params[0].urlPrinter) ? params[0].urlPrinter + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + params[0].dataSources + '&rdlcParams=' + params[0].rdlcParams : __env.urlPrint + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + params[0].dataSources + '&rdlcParams=' + params[0].rdlcParams + '&getMachine=' + false;
+            let urlPrinter = params[0].urlPrinter + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + params[0].dataSources + '&rdlcParams=' + params[0].rdlcParams
 
             fetch(urlPrinter).then(function (response) {
                 if (response.ok) {

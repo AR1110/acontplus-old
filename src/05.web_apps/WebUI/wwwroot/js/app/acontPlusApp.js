@@ -31,7 +31,7 @@ let app = angular.module('acontPlusApp', [
     'fixed.table.header',
     'ngMessages',
     'ngFileUpload', //for  file upload
-    'ngIdle',
+    //'ngIdle',
     'ngMask',
     'ngStorage',
     'ui.router',
@@ -43,66 +43,16 @@ let app = angular.module('acontPlusApp', [
     'matchMedia'
 ]);
 
+// app.config(['KeepaliveProvider', 'IdleProvider', function (KeepaliveProvider, IdleProvider) {
+//     IdleProvider.idle(600);
+//     IdleProvider.timeout(15);
+//     KeepaliveProvider.interval(10);
+//     IdleProvider.interrupt('mousemove keydown DOMMouseScroll mousewheel mousedown');
+// }]);
 
-// Default environment variables
-let __env = {}
-
-// Import variables if present
-if (window) {
-    Object.assign(__env, window.__env)
-}
-
-function disableLogging($logProvider) {
-    $logProvider.debugEnabled(__env.enableDebug)
-}
-
-disableLogging.$inject = ['$logProvider']
-
-app.config(disableLogging)
-
-
-/**************************************************************************
- * Log bootstrap message
- *************************************************************************/
-
-function confirmBootstrap($log) {
-    $log.debug('Angular bootstrapped!')
-}
-
-confirmBootstrap.$inject = ['$log']
-
-app.run(confirmBootstrap)
-
-
-
-/**************************************************************************
- * Make environment available in Angular
- *************************************************************************/
-
-app.constant('__env', __env)
-
-function logEnvironment($log, __env) {
-    $log.debug('Environment variables:')
-    $log.debug(__env)
-}
-
-logEnvironment.$inject = ['$log', '__env']
-
-app.run(logEnvironment)
-
-//Configs
-
-app.config(['KeepaliveProvider', 'IdleProvider', function (KeepaliveProvider, IdleProvider) {
-    IdleProvider.idle(600);
-    IdleProvider.timeout(15);
-    KeepaliveProvider.interval(10);
-    IdleProvider.interrupt('mousemove keydown DOMMouseScroll mousewheel mousedown');
-}]);
-
-app.run(function (Idle) {
-    Idle.watch();
-})
-
+// app.run(function (Idle) {
+//     Idle.watch();
+// })
 
 //check connection offilne/online
 app.run(function ($window, $rootScope) {
@@ -131,28 +81,7 @@ app.run(function ($window, $rootScope) {
     if (!$rootScope.online) {
         swalOffline();
     }
-});
-
-// app.run(function ($rootScope, $http, $location, $localStorage, jwtHelper) {
-//     // keep user logged in after page refresh
-//     if ($localStorage.currentUser) {
-//         $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.currentUser.token
-//         let decodedJwt = jwtHelper.decodeToken($localStorage.currentUser.token)
-//         $http.defaults.headers.common['X-IdUsuarioRol'] = decodedJwt.idUsuarioRol
-//         console.log(decodedJwt)
-//         //console.log($http.defaults)
-//     }
-
-//     // redirect to login page if not logged in and trying to access a restricted page
-//     //$rootScope.$on('$locationChangeStart', function (event, next, current) {
-//     //    let publicPages = ['/login'];
-//     //    let restrictedPage = publicPages.indexOf($location.path()) === -1;
-//     //    if (restrictedPage && !$localStorage.currentUser) {
-//     //        toastr.warning('error', 'Ha perdido session')
-//     //        //$location.path('/Login');
-//     //    }
-//     //});
-// })
+})
 
 function alertEndSession() {
     let timerInterval = 0
@@ -256,33 +185,6 @@ app.constant('sessionDataEntidad', JSON.parse(localStorage.getItem('userData')))
 
 //SERVICIOS
 
-// app.factory('interceptorApi', [function () {
-//     // defining interceptor configuration.
-//     var interceptor = {
-//         request: function (config) {
-//             if(config && config.config && config.config.showLoader){
-//                 showLoader();
-//             }
-//             return config;
-//         },
-//         response: function (response) {
-//             hideLoader();
-//             return response;
-//         },
-//         responseError: function(response) {
-
-//             hideLoader();
-
-//             return response
-//         }
-//     };
-//     return interceptor;
-// }]);
-
-// app.config(['$httpProvider', function ($httpProvider) {
-//     $httpProvider.interceptors.push('interceptorApi');
-// }]);
-
 app.factory('decodeToken', function ($localStorage, jwtHelper) {
     let authData = $localStorage.currentUser;
     let decodedJwt = {};
@@ -292,18 +194,17 @@ app.factory('decodeToken', function ($localStorage, jwtHelper) {
     return decodedJwt
 })
 
-
 app.factory('mainService', mainService);
 
-mainService.$inject = ['$http', 'Upload', '__env'];
+mainService.$inject = ['$http', 'Upload', 'decodeToken'];
 
-function mainService($http, Upload, __env) {
+function mainService($http, Upload, _token) {
     let service = {};
 
     function _getData(method, url, data = null, forApi = false) {
         return $http({
             method: method,
-            url: (forApi) ? __env.apiUrl + url : url,
+            url: (forApi) ? _token.urlGateway + url : url,
             data: data
         }).then(response => {
             return response.data
@@ -312,7 +213,7 @@ function mainService($http, Upload, __env) {
 
     function _getDataFile(url, file, data = null, forApi = false) {
         return Upload.upload({
-            url: (forApi) ? __env.apiUrl + url : url,
+            url: (forApi) ? _token.urlGateway + url : url,
             data: {
                 file: file,
                 data: data
@@ -325,7 +226,7 @@ function mainService($http, Upload, __env) {
     function _getFile(method, url, data = null, forApi = false) {
         return $http({
             method: method,
-            url: (forApi) ? __env.apiUrl + url : url,
+            url: (forApi) ? _token.urlGateway + url : url,
             data: data,
             responseType: 'blob'
         }).then(response => {

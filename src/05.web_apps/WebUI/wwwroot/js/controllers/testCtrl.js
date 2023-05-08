@@ -3,30 +3,105 @@
 
     app.controller('testCtrl', testCtrl);
 
-    testCtrl.$inject = ['$scope', '$http', 'socketService'];
+    testCtrl.$inject = ['$scope', '$http', 'socketService', 'mainService'];
 
-    function testCtrl($scope, $http, socket) {
+    function testCtrl($scope, $http, socket, mS) {
         $scope.title = 'testCtrl';
+
+        $scope.client = {}
+        $scope.sessions = []
+
         $scope.whatsapp = { number: '0991229095' }
 
-        socket.on('message', (msg) => {
-            $('.logs').append($('<li>').text(msg))
-        })
+        $scope.login = () => {
+            socket.emit('create-session', {
+                id: $scope.client.id,
+                description: $scope.client.description
+            })
+        }
 
-        socket.on('qr', (src) => {
-            console.log(src)
-            $('#qrcode').attr('src', src)
-        })
-
-        $scope.sendMessage = () => {
-            let data = { number: $scope.whatsapp.number, message: $scope.whatsapp.message }
-            $http.post('http://localhost:8000/send-message', data).then(
-                response => {
-                    console.log(response)
+        socket.on('init', (data) => {
+            for (const session of data) {
+                if ($scope.client.id == session.id) {
+                    $scope.sessions.push({ id: session.id, description: session.description })
                 }
-            ).catch(error => {
+                if (session.ready) {
+                    //$(`.client.${clientClass} .logs`).prepend($('<li>').text('Whatsapp is ready!'))
+                    $('.logs').append($('<li>').text('Whatsapp is ready!'))
+                } else {
+                    //$(`.client.${clientClass} .logs`).prepend($('<li>').text('Connecting...'))
+                    $('.logs').append($('<li>').text('Connecting...'))
+                }
+            }
+        })
+
+        socket.on('remove-session', (id) => {
+            //$(`.client.client-${id}`).remove()
+        })
+
+        socket.on('message', (msg) => {
+            $('.logs').append($('<li>').text(msg.text))
+        })
+
+        socket.on('qr', (data) => {
+            console.log(data)
+            //$('#qrcode').attr('src', src)
+            if ($scope.client.id == data.id) {
+                $scope.sessions.push({
+                    id: data.id,
+                    description: data.description
+                })
+                $(`#${data.id}-qrcode`).attr('src', data.src);
+            }
+        })
+
+        socket.on('ready', (data) => {
+            //$(`.client.client-${data.id} #qrcode`).hide()
+        })
+        
+        $scope.getRide = () => {
+            let format = 'pdf';
+            let dataParms = {
+                id: item.idFactura,
+                codEstab: item.codEstab,
+                codigo: 'RF',
+                format,
+            }
+
+            let parameters = {
+                dataParams: JSON.stringify(dataParms)
+            }
+            mS.getFile('post', 'Reporte/DynamicReport', JSON.stringify(parameters), true).then(response => {
+                hideLoader();
+                let fileBlob = new Blob([response.data], {
+                    type: response.data.type,
+                })
+                return fileBlob
+            }).catch(error => {
+                hideLoader();
                 console.log(error)
             })
+        }
+
+        $scope.sendMessage = () => {
+            try {
+                showLoader()
+                //var file = getRide()
+                let data = { number: $scope.whatsapp.number, message: $scope.whatsapp.message, sender: $scope.client.id }
+                //let data = { number: $scope.whatsapp.number, file: file, caption: 'caption' }
+                $http.post('http://localhost:8000/send-message', data).then(
+                    response => {
+                        console.log(response)
+                        hideLoader()
+                    }
+                ).catch(error => {
+                    hideLoader()
+                    console.log(error)
+                })
+            } catch (error) {
+                hideLoader()
+                console.log(error)
+            }
         }
 
 

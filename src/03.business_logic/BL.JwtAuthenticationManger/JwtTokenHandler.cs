@@ -29,7 +29,7 @@ namespace BL.JwtAuthenticationManger
                         //new Claim("image",  authRequest.image),
                         new Claim("ruc", authRequest.ruc),
                         new Claim("razonSocial", authRequest.razonSocial),
-
+                        new Claim("urlGateway", authRequest.urlGateway)
                 });
                 var securityTokenDescriptor = new SecurityTokenDescriptor
                 {

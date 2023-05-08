@@ -1,0 +1,58 @@
+﻿<div class="modal-header">
+
+</div>
+<div class="modal-body">
+    <div class="row" ng-if="!client.isLogged">
+        <div class="col-xl-6">
+            <form ng-submit="login()">
+                <label for="client-id">ID</label><br>
+                <input type="text" id="client-id" ng-model="client.id" class="form-control" placeholder="ID">
+                <br><br>
+                <label for="client-description">Descripción</label><br>
+                <textarea rows="3" id="client-description" ng-model="client.description" class="form-control"
+                          placeholder="Session description"></textarea>
+                <br>
+                <button type="submit" class="btn btn-success"><i class="fa fa-sign-in"></i> Login</button>
+            </form>
+        </div>
+        <div class="col-xl-6">
+            <div class="table-responsive">
+                <table class="table">
+                    <tbody>
+                        <tr ng-repeat="item in sessions">
+                            <td>{{item.id}}</td>
+                            <td>{{item.description}}</td>
+                            <td><img src="" id="{{item.id}}-qrcode" alt=""></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <form ng-submit="sendMessage()" ng-if="client.isLogged">
+        <div class="row">
+            <div class="col-6">
+                <div class="form-group">
+                    <label for="">Para:</label>
+                    <input type="tel" name="" id="" class="form-control" ng-model="whatsapp.number" required>
+                </div>
+                <div class="form-group">
+                    <label for="">Mensaje:</label>
+                    <textarea type="tel" name="" id="" class="form-control" ng-model="whatsapp.message"
+                              required></textarea>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <button type="submit" class="btn btn-success">
+            <i class="fa fa-whatsapp" aria-hidden="true"></i>
+            Enviar
+        </button>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-dark btn-sm" ng-click="$ctrl.closeModal()">
+        &times; Cerrar
+    </button>
+</div>

@@ -22,6 +22,31 @@
                     <ul class="logs"></ul>
                 </div>
             </div>
+
+            <div class="form-container">
+                <form ng-submit="login()">
+                    <label for="client-id">ID</label><br>
+                    <input type="text" id="client-id" ng-model="client.id" class="form-control" placeholder="ID">
+                    <br><br>
+                    <label for="client-description">Descripción</label><br>
+                    <textarea rows="3" id="client-description" ng-model="client.description" class="form-control"
+                        placeholder="Session description"></textarea>
+                    <br>
+                    <button type="submit" class="btn btn-success"><i class="fa fa-sign-in"></i> Login</button>
+                </form>
+                <div class="table-responsive">
+                    <table class="table">
+                        <tbody>
+                            <tr ng-repeat="item in sessions">
+                                <td>{{item.id}}</td>
+                                <td>{{item.description}}</td>
+                                <td><img src="" id="{{item.id}}-qrcode" alt=""></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <form ng-submit="sendMessage()">
                 <div class="row">
                     <div class="col-6">

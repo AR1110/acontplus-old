@@ -10,5 +10,6 @@
         public string image { get; set; }
         public string ruc { get; set; }
         public string razonSocial { get; set; }
+        public string urlGateway { get; set; }
     }
 }
