@@ -1,6 +1,6 @@
 ﻿@*{
-    @inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment hostingEnv
-}*@
+        @inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment hostingEnv
+    }*@
 <!DOCTYPE html>
 <html lang="es">
 
@@ -144,7 +144,7 @@
                     <!-- ============================================================== -->
                     <!-- User profile and search -->
                     <!-- ============================================================== -->
-                    <ul class="navbar-nav my-lg-0">   
+                    <ul class="navbar-nav my-lg-0">
 
                         <li class="nav-item dropdown u-pro">
                             <a class="nav-link dropdown-toggle waves-effect waves-dark profile-pic" href=""
@@ -367,12 +367,16 @@
     <script src="~/lib/Chart.js/Chart.min.js" asp-append-version="true"></script>
 
     <!--JS Barcode-->
-    <script src="~/lib/jsbarcode/JsBarcode.all.min.js"></script>    
+    <script src="~/lib/jsbarcode/JsBarcode.all.min.js"></script>
     <script src="~/lib/html2canvas/html2canvas.min.js"></script>
 
     <!--SingalR-->
 
     <script src="~/lib/microsoft-signalr/signalr.min.js"></script>
+
+    <script src="~/lib/socket.io/socket.io.min.js"></script>
+
+
     <script src="~/js/app/acontPlusApp.js" asp-append-version="true"></script>
     <script src="~/js/controllers/layoutCtrl.min.js" asp-append-version="true"></script>
 
@@ -394,8 +398,8 @@
     <script src="~/js/doubleScroll.min.js" asp-append-version="true"></script>
 
     <script>
-      
-        
+
+
         $(document).on({
             'show.bs.modal': function () {
                 var zIndex = 1040 + (10 * $('.modal:visible').length);
@@ -424,7 +428,7 @@
 
     @await RenderSectionAsync("Scripts", required: false)
 
-    
+
 
 </body>
 
