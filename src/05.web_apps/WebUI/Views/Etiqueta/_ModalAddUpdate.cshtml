@@ -1,4 +1,4 @@
-<form autocomplete="off" ng-submit="save()">
+<form autocomplete="off" ng-submit="save();" ng-keypress="$event.preventDefault();">
     <div class="modal-header">
         <h5 class="modal-title">{{modalTitle}} Etiqueta</h5>
         <button ng-click="closeModal()" class="close">&times;</button>
@@ -9,10 +9,33 @@
             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="description">Descripción <span class="text-danger">*</span></label>
-                    <input type="text" ng-model="data.description" class="form-control border-select"
+                    <input type="text" ng-model="data.descripcion" touppercase class="form-control border-select"
                         placeholder="Cel.">
                 </div>
             </div>
+
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="form-group">
+                    <label for="etiquetas">Etiquetas <span class="text-danger"></span></label>
+                    <md-chips id="etiquetas" ng-model="dataLabel.etiquetas" readonly="dataLabel.readonly"
+                        md-enable-chip-edit="dataLabel.edit" input-aria-label="Nombre de las Etiquetas"
+                        placeholder="Ej. SERIE" ng-change="onChipSelect($chip)">
+                    </md-chips>
+
+
+                </div>
+            </div>
+
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="form-group">
+                    <label for="estado">Estado</label>
+                    <md-switch ng-model="data.estado" aria-label="Estado" ng-true-value="true" ng-false-value="false"
+                        class="md-warn">
+                        {{ data.estado?'Activo':'Inactivo'}}
+                    </md-switch>
+                </div>
+            </div>
+
         </div>
 
         @* <div class="grid" ui-grid="gridOptions" ui-grid-edit ui-grid-resize-columns ui-grid-cellNav

@@ -4,13 +4,34 @@
     'use strict';
 
     let mS = {};
+    let tS = {};
 
+    app.directive('forceChipEnable', forceChipEnable);
+    
+    function forceChipEnable() {
+        return {
+            require: ['?^mdChips', '?^mdChip'],
+            link: function(scope, element, attrs, controllers) {
+                if (controllers) {
+                    console.log(controllers)
+                    let chipsCtrl = controllers[0];
+                    let chipCtrl = controllers[1];
+                    
+                    chipsCtrl.enableChipEdit = true;
+                    chipCtrl.init(chipsCtrl);
+                }
+            }
+        }
+    }
+    
     app.controller('etiquetaCtrl', etiquetaCtrl);
     
     etiquetaCtrl.$inject = ['$scope', '$injector', 'modalService', 'decodeToken'];
 
     function etiquetaCtrl($scope, $injector, modalSvc, decodeToken) {
+      
         mS = $injector.get('mainService');
+        tS = $injector.get('toastService');
         
         $scope.dataSearch = {
             pageIndex: 1,
@@ -142,7 +163,19 @@
     modalEtiquetaCtrl.$inject=['$scope', '$uibModalInstance', 'params'];
 
     function modalEtiquetaCtrl($scope, $uibModalInstance, params) {
+        
+        $scope.data = {}
 
+        $scope.dataLabel = {
+            etiquetas:[],
+            readonly:false,
+            removable:false,
+            edit: true,
+
+        }
+
+          
+        
         if(params.idEtiqueta){
 
         }else{
@@ -150,6 +183,76 @@
             $scope.txtSave = 'Guardar';
             $scope.iconSave = 'ti-save';
         }
+
+        $scope.newLabel = function(chip) {
+            return {
+              name: chip,
+              type: 'unknown'
+            };
+        };
+
+        $uibModalInstance.rendered.then(result=>{
+            $("#etiquetas").on('keyup', e=>{
+                return e.target.value.toUpperCase();
+            })
+        })
+
+
+          
+        $scope.save = function(e) {
+            try {
+                console.log(e)
+                let url = null;
+                let method = null;
+
+                if(!$scope.data.descripcion){
+                    tS.toastr('warning', 'Ingrese la descripción');
+                    return
+                }
+
+                if($scope.dataLabel.etiquetas.length === 0){
+                    tS.toastr('warning', 'Ingrese al menos una etiqueta');
+                    return
+                }
+
+                showLoader();
+
+                if($scope.data.idEtiqueta > 0){
+                    url = 'Etiqueta/Insert';
+                    method = 'post';
+                }else{
+                    url = 'Etiqueta/Update/' + $scope.data.idEtiqueta
+                    method = 'put';
+                }
+
+                const data = {
+                    descripcion: $scope.data.descripcion,
+                    estado: $scope.data.estado,
+                    etiquetas: $scope.dataLabel.etiquetas
+                }
+                console.log(data);
+
+                mS.getData(method, url, $scope.data).then(response => {
+                    if(response.code==="0"){
+                        hideLoader();
+                        Swal.fire('warning', response.message)                        
+                    }
+                    if(response.code==="1"){
+                        hideLoader();
+                        Swal.fire('success', response.message, 1000);
+                        $uibModalInstance.close(response);
+                    }
+                }).catch(error => {
+                    hideLoader();
+                    console.log(error);
+                })
+
+            } catch (error) {
+                hideLoader();
+                console.log(error);
+            }
+        }
+          
 
         $scope.closeModal = function(){
             $uibModalInstance.close();
