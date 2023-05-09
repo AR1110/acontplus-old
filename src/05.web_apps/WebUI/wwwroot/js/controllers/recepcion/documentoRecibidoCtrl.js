@@ -117,7 +117,7 @@
             };
             // console.log(jwtDecoded)
 
-            const _urlService = document.getElementById("urlGateway").value + 'api/'
+            const _urlService = document.getElementById("urlGateway").value 
 
             //console.log(_urlService)
 

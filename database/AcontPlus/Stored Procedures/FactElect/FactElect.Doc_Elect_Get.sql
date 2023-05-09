@@ -91,6 +91,7 @@ BEGIN
 										,de.versionComp
 										,de.ambiente
 										,usuario = u.nombreUsuario
+										,ISNULL(de.codEstab, '''') codEstab
 									 FROM v_DocElectronico de WITH (NOLOCK)
 									 INNER JOIN Usuario u WITH(NOLOCK) ON u.idUsuario = de.idUsuario
 									 WHERE de.idEntidad = @idEntidad   ';

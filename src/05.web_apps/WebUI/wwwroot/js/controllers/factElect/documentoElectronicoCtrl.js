@@ -537,6 +537,27 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
         }
     }
 
+    $scope.openModalSendWhatsapp = async (item) => {
+        try {
+            item.typeSendMail = 'SRI';
+            const {
+                MODAL_SEND_WHATSAPP_CTRL,
+                MODAL_SEND_WHATSAPP_CSHTML
+            } = _nombreModalConst.common;
+            const {
+                ModalWhatsAppCtrl
+            } = await import('./../../modal/' + MODAL_SEND_WHATSAPP_CTRL)
+            _modalSvc.openModalCustom({
+                controller: ModalWhatsAppCtrl,
+                template: MODAL_SEND_WHATSAPP_CSHTML,
+                isRenderRazorPartial: true,
+                size: 'md',
+                params: item
+            })
+        } catch (error) {
+            console.error(error)
+        }
+    }
 
     $scope.showBtnUpdateXml = (item) => {
         return [2, 0, 5].includes(item.codEstado)

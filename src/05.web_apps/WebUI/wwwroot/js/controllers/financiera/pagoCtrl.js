@@ -467,7 +467,8 @@ function pagoCtrl($timeout, $http, $filter, $scope, mS, _commonSvc, toast, _moda
         const formatType = 'pdf'
 
         const parameters = {
-            reportParams: JSON.stringify({
+            hasService: true,
+            reportParams: JSON.stringify({                
                 codEstab: item.codEstab,
                 codigo: "RCEGR",
                 format: formatType,
@@ -475,7 +476,7 @@ function pagoCtrl($timeout, $http, $filter, $scope, mS, _commonSvc, toast, _moda
             }),
             dataParams: JSON.stringify({
                 codEstab: item.codEstab,
-                idComprobanteEgreso: item.idComprobanteEgreso
+                id: item.idComprobanteEgreso
             })
         }
 
@@ -484,6 +485,7 @@ function pagoCtrl($timeout, $http, $filter, $scope, mS, _commonSvc, toast, _moda
             formatType
         })
     }
+
 
 
 

@@ -4099,6 +4099,9 @@
 		<ProjectReference Include="..\..\01.common\DataAccess\DataAccess.csproj" />
 		<ProjectReference Include="..\..\02.domain\Domain.Auth\Domain.Auth.csproj" />
 		<ProjectReference Include="..\..\03.business_logic\BL.JwtAuthenticationManger\BL.JwtAuthenticationManger.csproj" />
+		<ProjectReference Include="..\..\08.razor_ui\Common_UI\Common_UI.csproj">
+			<TreatAsUsed>true</TreatAsUsed>
+		</ProjectReference>
 		<ProjectReference Include="..\..\08.razor_ui\Compra_UI\Compra_UI.csproj">
 		  <TreatAsUsed>true</TreatAsUsed>
 		</ProjectReference>

@@ -1,6 +1,6 @@
 {
   "GlobalConfiguration": {
-    "BaseUrl": "https://localhost:7261/",
+    "BaseUrl": "http://localhost:57340/",
     "RateLimitOptions": {
       "ClientIdHeader": "Test",
       "ClientWhitelist": [
@@ -25,9 +25,6 @@
       ],
       "DownstreamPathTemplate": "/api/Account",
       "DownstreamScheme": "http",
-      "HttpHandlerOptions": {
-        "UseTracing": true
-      },
       "UpstreamHttpMethod": [
         "Post"
       ],
@@ -47,9 +44,6 @@
       ],
       "DownstreamPathTemplate": "/api/CompraHabitual{everything}",
       "DownstreamScheme": "http",
-      "HttpHandlerOptions": {
-        "UseTracing": true
-      },
       "UpstreamHttpMethod": [
         "Get",
         "Post",
@@ -111,9 +105,6 @@
       ],
       "DownstreamPathTemplate": "/api/DocumentoRecibido/{everything}",
       "DownstreamScheme": "http",
-      "HttpHandlerOptions": {
-        "UseTracing": true
-      },
       "UpstreamHttpMethod": [
         "Get",
         "Put",
@@ -853,7 +844,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 44320
         }
       ],
       "DownstreamPathTemplate": "/api/Reporte/Download",
@@ -891,7 +882,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 44320
         }
       ],
       "DownstreamPathTemplate": "/api/Reporte/DynamicReport",
@@ -1172,6 +1163,115 @@
         "Get"
       ],
       "UpstreamPathTemplate": "/api/Ats{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7074
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Entidad/{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/api/Entidad/{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7074
+        }
+      ],
+      "DownstreamPathTemplate": "/api/EntidadConfigSri/{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/api/EntidadConfigSri/{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7074
+        }
+      ],
+      "DownstreamPathTemplate": "/api/SubMenu/{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/api/SubMenu/{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7210
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Etiqueta/{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/api/Etiqueta/{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 44354
+        }
+      ],
+      "DownstreamPathTemplate": "/api/WhatsAppSession{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/api/WhatsAppSession{everything}"
     }
   ]
 }

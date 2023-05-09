@@ -1,4 +1,3 @@
-
 // (function(){
 
 //     'use strict';    
@@ -14,7 +13,7 @@
 
 //         $scope.dataSearch = {}
 
-        
+
 //         const tipoDoc = {
 //             'FC': {
 //                 codigoReporte: 'FCRG',               
@@ -114,7 +113,7 @@
 //                 })
 
 //                 commonSvc.getEstabAsign().then(response=>{            
-                    
+
 //                     $scope.establecimientos = response;  
 //                     console.log($scope.establecimientos)
 //                     if($scope.establecimientos.length>0){
@@ -130,7 +129,7 @@
 //                     }        
 //                 })   
 //             } catch (error) {
-                
+
 //             }
 //         }
 
@@ -138,14 +137,14 @@
 
 //         $scope.onChangeTipoDocumento = function(){
 
-             
+
 //             commonSvc.getEstadoDocByCodDoc($scope.dataSearch.tipoDoc).then(response =>{
 //                 console.log(response);
 //                 $scope.documentoEstados = response;
 //             })
 
 //             $scope.ordenCampos = tipoDoc[$scope.dataSearch.tipoDoc].ordenCampos;
-             
+
 //             $scope.showCategoriaCompra = false;
 //             $scope.showRetencionRetencion = false;
 //             $scope.showRetencionDevolucion = false;
@@ -179,10 +178,10 @@
 //                     $scope.dataSearch.checkboxRetencionFiltro = false;
 //                     $scope.dataSearch.checkboxDevolucionFiltro = false;
 //                     $scope.dataSearch.radioFechaFiltro = true;
-                    
+
 //                     $scope.dataSearch.byOrderCampo = "ND";
 //                     break
-                
+
 //                 case 'RC':
 //                     $scope.dataSearch.checkboxCategoriaFiltro = false;                
 //                     $scope.dataSearch.checkboxRetencionFiltro = false;
@@ -204,13 +203,13 @@
 //                     $scope.dataSearch.checkboxRetencionFiltro = false;
 //                     $scope.dataSearch.checkboxDevolucionFiltro = false;
 //                     $scope.dataSearch.radioFechaFiltro = true;
-                    
+
 //                     $scope.dataSearch.byOrderCampo = "FE";
 //                     break
 //                 default:
 //                     break;
 //             }      
-            
+
 //         }
 
 
@@ -253,67 +252,109 @@ function reporteCompraCtrl($scope, _commonSvc, mS, modalSvc, toast, form, FileSa
 
     $scope.dataSearch.byOrderCampo = 'fechaEmision';
     $scope.dataSearch.byOrder = 'ASC';
-    $scope.dataSearch.byTipoFormato = 'pdf'; 
+    $scope.dataSearch.byTipoFormato = 'pdf';
 
-    $scope.tipoDocumentos = [
-        { codigo: 'FC', descripcion: 'Factura Compra',        codigoReporte: 'FCRG'},
-        { codigo: 'LC', descripcion: 'Liquidación de Compra', codigoReporte: 'LCRG' },
-        { codigo: 'NCP',descripcion: 'Nota de Crédito',      codigoReporte: 'NCPRG' },
-        { codigo: 'RC', descripcion: 'Retención de Compra',   codigoReporte: 'RCRG' },
-        { codigo: 'IB', descripcion: 'Compra No Habitual',   codigoReporte: 'IBRG' },
-        { codigo: 'OC', descripcion: 'Orden de Compra',   codigoReporte: 'OCRG' }
+    $scope.tipoDocumentos = [{
+            codigo: 'FC',
+            descripcion: 'Factura Compra',
+            codigoReporte: 'FCRG'
+        },
+        {
+            codigo: 'LC',
+            descripcion: 'Liquidación de Compra',
+            codigoReporte: 'LCRG'
+        },
+        {
+            codigo: 'NCP',
+            descripcion: 'Nota de Crédito',
+            codigoReporte: 'NCPRG'
+        },
+        {
+            codigo: 'RC',
+            descripcion: 'Retención de Compra',
+            codigoReporte: 'RCRG'
+        },
+        {
+            codigo: 'IB',
+            descripcion: 'Compra No Habitual',
+            codigoReporte: 'IBRG'
+        },
+        {
+            codigo: 'OC',
+            descripcion: 'Orden de Compra',
+            codigoReporte: 'OCRG'
+        }
     ];
 
     $scope.dataSearch.tipoDoc = 'FC';
 
     //Estado Pago Factura de Venta 
-    const estadoPagosFC = [
-        { id: 3, descripcion: 'Pagada' },
-        { id: 1, descripcion: 'Diferente de Pagada' }          
+    const estadoPagosFC = [{
+            id: 3,
+            descripcion: 'Pagada'
+        },
+        {
+            id: 1,
+            descripcion: 'Diferente de Pagada'
+        }
     ];
 
-    const estadoPagosRC = [
-        {id: 1, descripcion:'Autorizada'},
-        {id: -1, descripcion:'Diferente de Autorizada'},
-        {id: 0, descripcion:'Anulada'},
-        {id: -0, descripcion:'Diferente de Anulada'},
+    const estadoPagosRC = [{
+            id: 1,
+            descripcion: 'Autorizada'
+        },
+        {
+            id: -1,
+            descripcion: 'Diferente de Autorizada'
+        },
+        {
+            id: 0,
+            descripcion: 'Anulada'
+        },
+        {
+            id: -0,
+            descripcion: 'Diferente de Anulada'
+        },
     ];
 
     $scope.estadoPagos = estadoPagosFC;
 
     $scope.getFechaInicioFinFilter = function () {
-        let { fechaInicio, fechaFin } = form.getFechaInicioFinFilter($scope.mes);
+        console.log($scope.mes)
+        let {
+            fechaInicio,
+            fechaFin
+        } = form.getFechaInicioFinFilter($scope.mes);
         $scope.dataSearch.fechaInicio = fechaInicio;
         $scope.dataSearch.fechaFin = fechaFin;
-        return
     }
 
-    $scope.getAsignacionByRol = async()=>{
-        
-        let dataEstab = $scope.sucursales.find(item=>item.codEstab===$scope.dataSearch.codEstab)        
-        _commonSvc.getDataFormEstabAsig(dataEstab).then(response=>{
+    $scope.getAsignacionByRol = async () => {
+
+        let dataEstab = $scope.sucursales.find(item => item.codEstab === $scope.dataSearch.codEstab)
+        _commonSvc.getDataFormEstabAsig(dataEstab).then(response => {
             $scope.puntosEmisiones = response[0];
             $scope.bodegas = response[1];
         })
-    
+
     }
 
     $scope.load = function () {
-        _commonSvc.getEstabAsign().then(response=>{            
-            $scope.sucursales = response;  
-            if($scope.sucursales.length>0){
+        _commonSvc.getEstabAsign().then(response => {
+            $scope.sucursales = response;
+            if ($scope.sucursales.length > 0) {
                 let dataEstab = $scope.sucursales[0]
                 $scope.dataSearch.codEstab = dataEstab.codEstab; //Para Filtro avanzado 
-                _commonSvc.getDataFormEstabAsig(dataEstab).then(response=>{
+                _commonSvc.getDataFormEstabAsig(dataEstab).then(response => {
                     $scope.puntosEmisiones = response[0];
                     $scope.bodegas = response[1];
                 })
-            }else{
+            } else {
                 toastr.warning('NO TIENES ASIGNADO NINGUNA SUCURSAL')
-            }        
-        })    
+            }
+        })
 
-        mS.getData('get', '/CategoriaCompra/GetAll').then(response => {                
+        mS.getData('get', '/CategoriaCompra/GetAll').then(response => {
             $scope.categoriaCompras = response.data;
         }, error => console.log(error));
 
@@ -321,14 +362,24 @@ function reporteCompraCtrl($scope, _commonSvc, mS, modalSvc, toast, form, FileSa
     };
     $scope.load();
 
-  
+
     $scope.openModalReporte = function () {
         try {
             let modalRef = modalSvc.openModalCustom({
-                controller: function ($scope, $uibModalInstance){
-                    $scope.closeModal = function(){
+                controller: function ($scope, $uibModalInstance) {
+
+                    $scope.getFechaInicioFinFilter = function () {
+                        let {
+                            fechaInicio,
+                            fechaFin
+                        } = form.getFechaInicioFinFilter($scope.mes);
+                        $scope.dataSearch.fechaInicio = fechaInicio;
+                        $scope.dataSearch.fechaFin = fechaFin;
+                    }
+
+                    $scope.closeModal = function () {
                         $uibModalInstance.close();
-                    }                     
+                    }
                 },
                 template: '~/Areas/ReporteCompra/Pages/Shared/_ModalFiltro.cshtml',
                 scope: $scope,
@@ -336,12 +387,12 @@ function reporteCompraCtrl($scope, _commonSvc, mS, modalSvc, toast, form, FileSa
                 isRenderRazorPartial: true
             })
 
-            modalRef.result.then(result=>{
+            modalRef.result.then(result => {
                 console.log(result)
             })
         } catch (error) {
             console.log(error);
-        }       
+        }
     };
 
     //------------------------Tipo Documento  -----------------
@@ -358,7 +409,7 @@ function reporteCompraCtrl($scope, _commonSvc, mS, modalSvc, toast, form, FileSa
         //LIQUIDACIÓN DE COMPRA 
         if ($scope.dataSearch.tipoDoc === "LC") {
             $scope.dataSearch.byOrderCampo = 'lc.fechaEmision';
-            $scope.dataSearch.checkboxCategoriaFiltro = false;                
+            $scope.dataSearch.checkboxCategoriaFiltro = false;
             $scope.dataSearch.checkboxRetencionFiltro = false;
             $scope.dataSearch.checkboxDevolucionFiltro = false;
             $scope.estadoPagos = estadoPagosRC;
@@ -369,7 +420,7 @@ function reporteCompraCtrl($scope, _commonSvc, mS, modalSvc, toast, form, FileSa
         if ($scope.dataSearch.tipoDoc === "NCP") {
             $scope.dataSearch.checkboxPuntoEmisionFiltro = false;
             $scope.dataSearch.byOrderCampo = "ncp.nroDoc";
-            $scope.dataSearch.checkboxCategoriaFiltro = false;                
+            $scope.dataSearch.checkboxCategoriaFiltro = false;
             $scope.dataSearch.checkboxRetencionFiltro = false;
             $scope.dataSearch.checkboxDevolucionFiltro = false;
             $scope.dataSearch.radioFechaFiltro = true;
@@ -380,7 +431,7 @@ function reporteCompraCtrl($scope, _commonSvc, mS, modalSvc, toast, form, FileSa
         //RETENCION DE COMPRA 
         if ($scope.dataSearch.tipoDoc === "RC") {
             $scope.dataSearch.byOrderCampo = "rc.nroDocumento";
-            $scope.dataSearch.checkboxCategoriaFiltro = false;                
+            $scope.dataSearch.checkboxCategoriaFiltro = false;
             $scope.dataSearch.checkboxRetencionFiltro = false;
             $scope.dataSearch.checkboxDevolucionFiltro = false;
             $scope.dataSearch.radioFechaFiltro = true;
@@ -391,7 +442,7 @@ function reporteCompraCtrl($scope, _commonSvc, mS, modalSvc, toast, form, FileSa
         //INGRESO DE BODEGA 
         if ($scope.dataSearch.tipoDoc === "IB") {
             $scope.dataSearch.byOrderCampo = "fechaEmision";
-            $scope.dataSearch.checkboxCategoriaFiltro = false;                
+            $scope.dataSearch.checkboxCategoriaFiltro = false;
             $scope.dataSearch.checkboxRetencionFiltro = false;
             $scope.dataSearch.checkboxDevolucionFiltro = false;
             $scope.dataSearch.radioFechaFiltro = true;
@@ -402,7 +453,7 @@ function reporteCompraCtrl($scope, _commonSvc, mS, modalSvc, toast, form, FileSa
         //ORDEN DE COMPRA 
         if ($scope.dataSearch.tipoDoc === "OC") {
             $scope.dataSearch.byOrderCampo = "oc.fechaEmision";
-            $scope.dataSearch.checkboxCategoriaFiltro = false;                
+            $scope.dataSearch.checkboxCategoriaFiltro = false;
             $scope.dataSearch.checkboxRetencionFiltro = false;
             $scope.dataSearch.checkboxDevolucionFiltro = false;
             $scope.dataSearch.radioFechaFiltro = true;
@@ -414,8 +465,8 @@ function reporteCompraCtrl($scope, _commonSvc, mS, modalSvc, toast, form, FileSa
     }
 
     //---------------Sucursal------------
-    $scope.onChangeSucursalFiltro = function(){
-        if(!$scope.dataSearch.checkboxSucursalFiltro){
+    $scope.onChangeSucursalFiltro = function () {
+        if (!$scope.dataSearch.checkboxSucursalFiltro) {
             $scope.dataSearch.checkboxPuntoEmisionFiltro = false;
         }
     }
@@ -453,21 +504,21 @@ function reporteCompraCtrl($scope, _commonSvc, mS, modalSvc, toast, form, FileSa
     }
 
     $scope.dataUsuarioFilter = {}
-    $scope.usuarioSearch = (textSearch)=>{
+    $scope.usuarioSearch = (textSearch) => {
         return _commonSvc.usuarioSearch({
             idRol: idUsuarioRol,
             busqueda: textSearch
         })
     }
 
-    $scope.onKeyupUsuarioSearchFilter = ()=>{
-        if(form.campo($scope.dataUsuarioFilter.nombreCompleto)){
+    $scope.onKeyupUsuarioSearchFilter = () => {
+        if (form.campo($scope.dataUsuarioFilter.nombreCompleto)) {
             $scope.dataSearch.byUsuario = null;
         }
-    } 
+    }
 
-    $scope.selectedUsuarioSearchFilter = (item)=>{        
-        $scope.dataSearch.byUsuario = item.idUsuario;                       
+    $scope.selectedUsuarioSearchFilter = (item) => {
+        $scope.dataSearch.byUsuario = item.idUsuario;
     }
 
 
@@ -475,7 +526,10 @@ function reporteCompraCtrl($scope, _commonSvc, mS, modalSvc, toast, form, FileSa
     $scope.onChangeFechaFiltro = function () {
         $scope.mes = new Date().getMonth() + 1;
 
-        let { fechaInicio, fechaFin } = form.getFechaInicioFinFilter($scope.mes);
+        let {
+            fechaInicio,
+            fechaFin
+        } = form.getFechaInicioFinFilter($scope.mes);
         $scope.dataSearch.fechaInicio = fechaInicio;
         $scope.dataSearch.fechaFin = fechaFin;
         return
@@ -491,7 +545,7 @@ function reporteCompraCtrl($scope, _commonSvc, mS, modalSvc, toast, form, FileSa
 
     $scope.filtrarReporteCompra = async function () {
         let tituloToast = 'Filtro';
-        
+
         if (form.campo($scope.dataSearch.tipoDoc)) {
             toast.toastr('warning', 'Seleccione el Tipo Documento', tituloToast);
             return
@@ -502,9 +556,9 @@ function reporteCompraCtrl($scope, _commonSvc, mS, modalSvc, toast, form, FileSa
             return
         }
 
-        if($scope.dataSearch.tipoDoc==='LC' || $scope.dataSearch.tipoDoc==='NCP'){
+        if ($scope.dataSearch.tipoDoc === 'LC' || $scope.dataSearch.tipoDoc === 'NCP') {
 
-            if($scope.dataSearch.checkboxPuntoEmisionFiltro){
+            if ($scope.dataSearch.checkboxPuntoEmisionFiltro) {
                 if (form.campo($scope.dataSearch.byPuntoEmision) || $scope.dataSearch.byPuntoEmision === 0) {
                     toast.toastr('warning', 'Seleccione el Punto de Emisión', tituloToast);
                     return
@@ -537,10 +591,10 @@ function reporteCompraCtrl($scope, _commonSvc, mS, modalSvc, toast, form, FileSa
             return
         }
 
-        if($scope.dataSearch.checkboxCategoriaFiltro){
-            if(form.campo($scope.dataSearch.byCategoria)){
+        if ($scope.dataSearch.checkboxCategoriaFiltro) {
+            if (form.campo($scope.dataSearch.byCategoria)) {
                 toast.toastr('warning', 'Seleccione la Categoria', tituloToast);
-                return                    
+                return
             }
         }
 
@@ -563,31 +617,31 @@ function reporteCompraCtrl($scope, _commonSvc, mS, modalSvc, toast, form, FileSa
                 toast.toastr('warning', 'Seleccion la Devolución', tituloToast);
                 return
             }
-        };        
-        $scope.getReport();                
-    };    
+        };
+        $scope.getReport();
+    };
 
-    $scope.getReport = function() {  
-        let dataReporte = $scope.tipoDocumentos.find(val=>val.codigo===$scope.dataSearch.tipoDoc);
+    $scope.getReport = function () {
+        let dataReporte = $scope.tipoDocumentos.find(val => val.codigo === $scope.dataSearch.tipoDoc);
 
         const parameters = {
             reportParams: JSON.stringify({
                 codEstab: $scope.dataSearch.codEstab,
                 hasParams: true,
-                codigo: dataReporte.codigoReporte, 
+                codigo: dataReporte.codigoReporte,
                 format: $scope.dataSearch.byTipoFormato,
                 aditionalParams: []
             }),
             dataParams: JSON.stringify($scope.dataSearch)
         }
-       
+
         _commonSvc.getReport({
             formatType: $scope.dataSearch.byReportType,
             parameters
         })
         // mS.getFile('post', '/Reporte/Download', parameters).then(response=>{
         //     Swal.close();
-            
+
         //     if ($scope.dataSearch.byTipoFormato == 'pdf' || $scope.dataSearch.byTipoFormato == 'excel') {
         //         let fileBlob = new Blob([response.data], {
         //             type: response.data.type
@@ -605,13 +659,3 @@ function reporteCompraCtrl($scope, _commonSvc, mS, modalSvc, toast, form, FileSa
         // }, error=>console.log(error));
     };
 }
-
-
-
-
-
-
-
-
-
-

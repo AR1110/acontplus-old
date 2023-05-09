@@ -99,7 +99,7 @@ namespace ApiConfig.Controllers
             }
             return Ok(_response);
         }
-        [HttpGet("Delete/{id}")]
+        [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             LogWriter _log = new LogWriter(_configuration);

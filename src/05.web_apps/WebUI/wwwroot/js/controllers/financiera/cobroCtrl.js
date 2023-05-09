@@ -179,41 +179,51 @@ function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form,
 
     //Get Facturas 
     $scope.getFacturas = () => {
-        showLoader();
-        _mS.getData('get', '/FacturaVenta/Get?json=' + JSON.stringify({})).then(response => {
-            if (response.id === "0") {
+        try {
+            showLoader();
+            $scope.facturas = [];
+            _mS.getData('get', '/FacturaVenta/Get?json=' + JSON.stringify($scope.dataSearch)).then(response => {
+                if (response.id === "0") {
+                    hideLoader();
+                    _form.sweetAlert('warning', response.message, response.titleSms);
+                    return
+                }
+                $scope.facturas = JSON.parse(response.data) || [];
                 hideLoader();
-                _form.sweetAlert('warning', response.message, response.titleSms);
-                return
-            }
-            $scope.facturas = JSON.parse(response.data) || [];
+            }).catch(error => {
+                hideLoader();
+                const msg = error.config ? error.config.url : error;
+                toastr.error(msg)
+            })
+        } catch (error) {
             hideLoader();
-        }).catch(error => {
-            hideLoader();
-            const msg = error.config ? error.config.url : error;
-            toastr.error(msg)
-        })
+        }
     }
 
     $scope.getNotaEntregas = () => {
-        showLoader();
-        _mS.getData('get', '/NotaEntrega/Get?json=' + JSON.stringify($scope.dataSearch)).then(response => {
-            if (response.id === "0") {
-                hideLoader();
-                Swal.fire({
-                    icon: 'warning',
-                    html: `<small>${response.message}</small>`
-                })
-                return
-            }
+        try {
+            showLoader();
+            $scope.notaEntregas = [];
+            _mS.getData('get', '/NotaEntrega/Get?json=' + JSON.stringify($scope.dataSearch)).then(response => {
+                if (response.id === "0") {
+                    hideLoader();
+                    Swal.fire({
+                        icon: 'warning',
+                        html: `<small>${response.message}</small>`
+                    })
+                    return
+                }
 
-            $scope.notaEntregas = JSON.parse(response.data) || [];
+                $scope.notaEntregas = JSON.parse(response.data) || [];
+                hideLoader();
+            }).catch(error => {
+                hideLoader();
+                const msg = error.config ? error.config.url : error
+                toastr.error(msg)
+            })
+        } catch (error) {
             hideLoader();
-        }).catch(error => {
-            hideLoader();
-            const msg = error.config ? error.config.url : error
-            toastr.error(msg)
-        })
+        }
     };
 
 

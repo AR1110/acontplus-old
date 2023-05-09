@@ -1,9 +1,9 @@
 ﻿angular.module('acontPlusApp')
     .controller('layoutCtrl', layoutCtrl);
 
-layoutCtrl.$inject = ['$scope', '$rootScope', '$window', 'Idle', 'mainService', 'modalService', 'toastService', 'formulario'];
+layoutCtrl.$inject = ['$scope', '$rootScope', '$window', 'mainService', 'modalService', 'toastService', 'formulario'];
 
-function layoutCtrl($scope, $rootScope, $window, Idle, mS, _modalSvc, toast, form) {
+function layoutCtrl($scope, $rootScope, $window, mS, _modalSvc, toast, form) {
     'use strict';
 
     // $scope.IsVisible = false;
@@ -158,7 +158,7 @@ function layoutCtrl($scope, $rootScope, $window, Idle, mS, _modalSvc, toast, for
                         }
                     })
                 } else {
-                    //  location.href = '/Home/Index'
+                    location.href = '/Home/Index'
                 }
 
             }

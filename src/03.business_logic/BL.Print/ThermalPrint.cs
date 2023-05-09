@@ -25,7 +25,11 @@ namespace BL.Print
                 machine = d["computerName"],
                 name = d["printerName"],
                 isThermal = Convert.ToBoolean(d["isThermal"]),
-                copyPrint = Convert.ToInt16(d["copyPrint"])
+                copyPrint = Convert.ToInt16(d["copyPrint"]),
+                rdlcName = d["rdlcName"],
+                formato = d["formato"],
+                deviceInfo = d["deviceInfo"],
+                hasParams = Convert.ToBoolean(d["hasParams"])
             }).ToList();
 
             if (incomePrinters.Any(p => p.machine == Environment.MachineName))
@@ -58,7 +62,7 @@ namespace BL.Print
                     }
                     else
                     {
-                        response = Reports.Reports.DynamicPrint(_data, obj.name);
+                        response = RdlcPrint.Print(obj, _data, obj.name);
                     }
                 }
                 //}
