@@ -61,7 +61,7 @@ BEGIN
 		
 					SET @codTran   = (SELECT CASE WHEN @codDoc = '01' THEN 'E'  WHEN @codDoc = '04' THEN 'S'  END)
 
-					EXEC Inventario.Transaccion_Delete  @codTran,@codDocInv,@idDocumento
+					EXEC Inventario.Transaccion_Delete  'E',@codDocInv,@idDocumento
 				END 
 
 		COMMIT TRAN

@@ -142,7 +142,7 @@ BEGIN
 					   ,codEstab = @codEstab
 					WHERE idDocumentoElectronico = @id
 
-					IF @receptor IS NOT NULL
+					IF @receptor IS NOT NULL OR @receptor != ''
 						BEGIN
 							INSERT INTO FactElect.NotificacionTributaria (idDocumentoElectronico,receptor,fechaRegistro,estado)
 							SELECT @id,REPLACE(@receptor,';',','),dbo.ufnGetDateEcuador(),'NE'
