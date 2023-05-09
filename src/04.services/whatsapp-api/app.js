@@ -74,19 +74,20 @@ const getSessionsFile = () => {
 }
 
 const createSession = (id, description) => {
-    console.log('Creating ' + id)
     const client = new Client({
         restartOnAuthFail: true,
         puppeteer: {
             headless: true,
+            handleSIGINT: false,
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
                 '--disable-dev-shm-usage',
                 '--disable-accelerated-2d-canvas',
                 '--no-first-run',
-                '--no-zygote',
-                '--single-process', // <- this one doesn't works in Windows '--disable-gpu', 
+                '--no-zygote'
+                //'--single-process', // <- this one doesn't works in Windows '--disable-gpu', 
+                //'--disable-gpu'
             ],
         },
         authStrategy: new LocalAuth({
@@ -97,13 +98,6 @@ const createSession = (id, description) => {
     client.initialize()
 
     client.on('qr', (qr) => {
-        //qrcode.generate(qr, { small: true })
-        //console.log('QR RECEIVED', qr)
-        // qrcode.toDataURL(qr, (err, url) => {
-        //     socket.emit('qr', url)
-        //     socket.emit('message', 'CODIGO QR RECIBIDO, POR FAVOR ESCANEAR')
-        // })
-
         qrcode.toDataURL(qr, (err, url) => {
             io.emit('qr', { id: id, src: url });
             io.emit('message', { id: id, text: 'QR Code recibido, por favor scanear!' });
@@ -111,16 +105,9 @@ const createSession = (id, description) => {
     })
 
     client.on('ready', () => {
-        // console.log('Client is ready!')
-        // client.getChats().then(chats => {
-        //     console.log(chats[0])
-        // })
-
         io.emit('ready', { id: id })
         io.emit('message', { id: id, text: 'Whatsapp esta listo!' })
-
         const savedSessions = getSessionsFile()
-        console.log(savedSessions)
         const sessionIndex = savedSessions.findIndex(sess => sess.id == id)
         savedSessions[sessionIndex].ready = true
         setSessionsFile(savedSessions)
@@ -138,14 +125,14 @@ const createSession = (id, description) => {
     client.on('disconnected', (reason) => {
         io.emit('message', { id: id, text: 'Whatsapp ha sido desconectado!' })
         client.destroy();
-        client.initialize();
+        client.initialize()
 
         // Menghapus pada file sessions
         const savedSessions = getSessionsFile()
         const sessionIndex = savedSessions.findIndex(sess => sess.id == id)
         savedSessions.splice(sessionIndex, 1)
         setSessionsFile(savedSessions)
-
+        console.log('yes disconected')
         io.emit('remove-session', id)
     })
 
@@ -187,8 +174,6 @@ const init = (socket) => {
 
 init()
 
-
-
 // mongoose.connect('mongodb://205.209.99.71:27017/').then(() => {
 //     const store = new MongoStore({ mongoose: mongoose })
 //     const client = new Client({
@@ -225,48 +210,10 @@ init()
 // })
 //Socket IO   
 io.on('connection', (socket) => {
-    //socket.emit('message', 'Connecting...')
-
-    // client.on('qr', (qr) => {
-    //     //qrcode.generate(qr, { small: true })
-    //     //console.log('QR RECEIVED', qr)
-    //     qrcode.toDataURL(qr, (err, url) => {
-    //         socket.emit('qr', url)
-    //         socket.emit('message', 'CODIGO QR RECIBIDO, POR FAVOR ESCANEAR')
-    //     })
-    // })
-
-    // client.on('ready', () => {
-    //     // console.log('Client is ready!')
-    //     // client.getChats().then(chats => {
-    //     //     console.log(chats[0])
-    //     // })
-    //     socket.emit('message', 'Whatsapp esta listo')
-    // })
-
-    // client.on('authenticated', () => {
-    //     socket.emit('authenticated', 'Whatsapp is authenticated!');
-    //     socket.emit('message', 'Whatsapp is authenticated!');
-    //     console.log('AUTHENTICATED');
-    // })
-
-    // client.on('auth_failure', function (session) {
-    //     socket.emit('message', 'Auth failure, restarting...');
-    // })
-
-    // client.on('disconnected', (reason) => {
-    //     socket.emit('message', 'Whatsapp is disconnected!');
-    //     client.destroy();
-    //     client.initialize();
-    // })
-
-    init(socket)
-
+    init(socket) 
     socket.on('create-session', (data) => {
-        console.log("Create session: " + data.id)
         createSession(data.id, data.description)
     })
-
 })
 
 const checkRegisteredNumber = async (number) => {
@@ -292,7 +239,7 @@ app.post('/send-message', [
     const message = req.body.message
 
     const client = sessions.find(sess => sess.id === sender)?.client
-    console.log(client)
+    //console.log(client)
     if (!client) {
         return res.status(422).json({
             status: false,
@@ -308,7 +255,7 @@ app.post('/send-message', [
     //         message: 'El número no se encuentra registrado en whatsaap'
     //     })
     // }
-    console.log(number, message)
+    //console.log(number, message)
     client.sendMessage(number, message).then(response => {
         res.status(200).json({
             status: true,

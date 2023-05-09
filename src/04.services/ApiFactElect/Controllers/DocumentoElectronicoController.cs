@@ -1,7 +1,11 @@
 ﻿using Common.Logs;
 using DataAccess;
+using Domain.Models;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
+using System.Text;
+using System.Web;
 
 namespace ApiFactElect.Controllers
 {
@@ -64,6 +68,35 @@ namespace ApiFactElect.Controllers
             finally { _db.Close(); }
             return Ok(_response);
         }
+        //[HttpGet("GetXmlSri")]
+        //public async Task<IActionResult> GetXmlSri(int id)
+        //{
+        //    LogWriter _logs = new LogWriter(_configuration);
+        //    FileModel _response = new FileModel();
+        //    try
+        //    {
+        //        int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+
+        //        await _db.SPExecute("FactElect.Doc_Elect_Get_Xml");
+        //        _db.AddDynamicParam("idUsuarioRol ", idUsuarioRol);
+        //        _db.AddDynamicParam("id", id);
+        //        DataTable dt = _db.GetDataTable();
+        //        if (dt.Rows.Count > 0 && dt.Columns.Contains("xmlSri"))
+        //        {
+        //            string xmlSri = string.Empty;
+        //            xmlSri = HttpUtility.HtmlDecode(dt.Rows[0].Field<string>("xmlSri"));
+        //            byte[] byteXml = Encoding.UTF8.GetBytes(xmlSri);
+        //            _response.Create(byteXml, "text/xml", dt.Rows[0].Field<string>("filename") + ".xml");
+        //            return Ok(_response);
+        //        }
+        //        return BadRequest("No se encontro xml");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logs.LogError("Error while getting data form: " + ex.ToString());
+        //        return BadRequest("Error al obtener el xml");
+        //    }
+        //}
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id)

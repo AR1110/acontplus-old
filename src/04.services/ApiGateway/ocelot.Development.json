@@ -25,9 +25,6 @@
       ],
       "DownstreamPathTemplate": "/api/Account",
       "DownstreamScheme": "http",
-      "HttpHandlerOptions": {
-        "UseTracing": true
-      },
       "UpstreamHttpMethod": [
         "Post"
       ],
@@ -47,9 +44,6 @@
       ],
       "DownstreamPathTemplate": "/api/CompraHabitual{everything}",
       "DownstreamScheme": "http",
-      "HttpHandlerOptions": {
-        "UseTracing": true
-      },
       "UpstreamHttpMethod": [
         "Get",
         "Post",
@@ -111,9 +105,6 @@
       ],
       "DownstreamPathTemplate": "/api/DocumentoRecibido/{everything}",
       "DownstreamScheme": "http",
-      "HttpHandlerOptions": {
-        "UseTracing": true
-      },
       "UpstreamHttpMethod": [
         "Get",
         "Put",
@@ -1187,9 +1178,6 @@
       ],
       "DownstreamPathTemplate": "/api/Entidad/{everything}",
       "DownstreamScheme": "https",
-      "HttpHandlerOptions": {
-        "UseTracing": true
-      },
       "UpstreamHttpMethod": [
         "Get",
         "Post",
@@ -1212,9 +1200,6 @@
       ],
       "DownstreamPathTemplate": "/api/EntidadConfigSri/{everything}",
       "DownstreamScheme": "https",
-      "HttpHandlerOptions": {
-        "UseTracing": true
-      },
       "UpstreamHttpMethod": [
         "Get",
         "Post",
@@ -1237,9 +1222,6 @@
       ],
       "DownstreamPathTemplate": "/api/SubMenu/{everything}",
       "DownstreamScheme": "https",
-      "HttpHandlerOptions": {
-        "UseTracing": true
-      },
       "UpstreamHttpMethod": [
         "Get",
         "Post",
@@ -1262,9 +1244,6 @@
       ],
       "DownstreamPathTemplate": "/api/Etiqueta/{everything}",
       "DownstreamScheme": "https",
-      "HttpHandlerOptions": {
-        "UseTracing": true
-      },
       "UpstreamHttpMethod": [
         "Get",
         "Post",
@@ -1272,6 +1251,27 @@
         "Delete"
       ],
       "UpstreamPathTemplate": "/api/Etiqueta/{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 44354
+        }
+      ],
+      "DownstreamPathTemplate": "/api/WhatsAppSession{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/api/WhatsAppSession{everything}"
     }
   ]
 }
