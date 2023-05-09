@@ -31,8 +31,11 @@ BEGIN
 	SET NOCOUNT ON;
 	DECLARE @idEntidad INT
 	DECLARE @idPolitica INT 	
+	DECLARE @jsonConfig AS VARCHAR(MAX)
 
 	SELECT @idEntidad = idEntidad, @idPolitica = idRol FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol	
+
+
 
 	SELECT 
 		es.codEstab_Asig

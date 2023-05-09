@@ -64,9 +64,9 @@ BEGIN
 			--SELECT '0'code,'El poncentaje de diferencia es: '+cast(@precioCosto as varchar) as 'message'
 			--ROLLBACK TRAN
 			--RETURN
-			--UPDATE dbo.Articulo SET precioCosto = @precioCostoActual WHERE idArticulo = @idArticulo
+			UPDATE dbo.Articulo SET precioCosto = @precioCostoActual WHERE idArticulo = @idArticulo
 
-			--UPDATE Inventario.Transaccion SET precioCosto = @precioCostoActual WHERE idTransaccion = @idTransaccion
+			UPDATE Inventario.Transaccion SET precioCosto = @precioCostoActual WHERE idTransaccion = @idTransaccion
 
 		END 
 END
