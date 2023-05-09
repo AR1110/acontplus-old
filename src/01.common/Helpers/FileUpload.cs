@@ -1,20 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
-
-namespace Helpers
+﻿namespace Helpers
 {
     public class FileUpload
     {
-        private IConfiguration _configuration;
-        private readonly string _path = "";
-
-        public FileUpload(IConfiguration configuration)
-        {
-            _configuration = configuration;
-            _path = _configuration.GetSection("FactElectCerts").Value;
-        }
-
-
-        public bool Upload(string fileName, byte[] content, ref string msg)
+        public bool Upload(string _path, string fileName, byte[] content, ref string msg)
         {
             try
             {
@@ -37,7 +25,6 @@ namespace Helpers
                 msg = ex.Message;
                 return false;
             }
-
         }
     }
 }

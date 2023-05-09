@@ -2,6 +2,7 @@
 using Domain.Models;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using WebUI.Utils;
 
 namespace WebUI.Controllers.Admin
@@ -51,7 +52,7 @@ namespace WebUI.Controllers.Admin
                 //string expirationDate = cert.GetExpirationDateString();
                 string msg = string.Empty;
 
-                if (new FileUpload(_config).Upload(signFile.FileName, signFile.Content, ref msg))
+                if (new FileUpload().Upload(_config.GetSection("FactElectCerts").Value, signFile.FileName, signFile.Content, ref msg))
                 {
                     _response = await _fe.InsertAsync(idRol, data, signFile);
                     return Ok(_response);

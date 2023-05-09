@@ -1,19 +1,27 @@
 const { Client, RemoteAuth, LocalAuth, MessageMedia } = require('whatsapp-web.js')
 const express = require('express')
-const { body, validationResult } = require('express-validator')
 const socketIO = require('socket.io')
 const qrcode = require('qrcode')
 const http = require('http')
-// const { MongoStore } = require('wwebjs-mongo')
-// const mongoose = require('mongoose')
 const fs = require('fs')
 const { phoneNumberFormatter } = require('./helpers/formatter')
+
+const { body, validationResult } = require('express-validator')
+const { MongoStore } = require('wwebjs-mongo')
+const mongoose = require('mongoose')
 // const fileUpload = require('express-fileupload')
 // const axios = require('axios')
 const port = process.env.PORT || 8000
+//require('events').EventEmitter.defaultMaxListeners = infinity;
 
 const app = express()
 const server = http.createServer(app)
+
+// let store
+// mongoose.connect('mongodb://205.209.99.71:27017/').then(() => {
+//     store = new MongoStore({ mongoose: mongoose })
+// })
+
 const io = socketIO(server, {
     cors: {
         origin: '*',
@@ -77,25 +85,31 @@ const createSession = (id, description) => {
     const client = new Client({
         restartOnAuthFail: true,
         puppeteer: {
-            headless: true,
-            handleSIGINT: false,
+            headless: false,
+            //handleSIGINT: false,
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
                 '--disable-dev-shm-usage',
                 '--disable-accelerated-2d-canvas',
                 '--no-first-run',
-                '--no-zygote'
-                //'--single-process', // <- this one doesn't works in Windows '--disable-gpu', 
-                //'--disable-gpu'
+                '--no-zygote',
+                '--single-process', // <- this one doesn't works in Windows
+                '--disable-gpu',
             ],
         },
         authStrategy: new LocalAuth({
             clientId: id
         })
     })
-
     client.initialize()
+
+    // process.on('SIGINT', async () => {
+    //     console.log('(SIGINT) Shutting down...');
+    //     await this.client.destroy();
+    //     console.log('client destroyed');
+    //     process.exit(0);
+    // })
 
     client.on('qr', (qr) => {
         qrcode.toDataURL(qr, (err, url) => {
@@ -107,6 +121,7 @@ const createSession = (id, description) => {
     client.on('ready', () => {
         io.emit('ready', { id: id })
         io.emit('message', { id: id, text: 'Whatsapp esta listo!' })
+
         const savedSessions = getSessionsFile()
         const sessionIndex = savedSessions.findIndex(sess => sess.id == id)
         savedSessions[sessionIndex].ready = true
@@ -118,7 +133,7 @@ const createSession = (id, description) => {
         io.emit('message', { id: id, text: 'Whatsapp ha sido autenticado!' })
     })
 
-    client.on('auth_failure', function () {
+    client.on('auth_failure', () => {
         io.emit('message', { id: id, text: 'Atenticación fallida, reiniciado...' })
     })
 
@@ -132,7 +147,7 @@ const createSession = (id, description) => {
         const sessionIndex = savedSessions.findIndex(sess => sess.id == id)
         savedSessions.splice(sessionIndex, 1)
         setSessionsFile(savedSessions)
-        console.log('yes disconected')
+        //console.log('yes disconected')
         io.emit('remove-session', id)
     })
 
@@ -160,6 +175,7 @@ const init = (socket) => {
 
     if (savedSessions.length > 0) {
         if (socket) {
+
             savedSessions.forEach((e, i, arr) => {
                 arr[i].ready = false
             })
@@ -182,35 +198,12 @@ init()
 //             backupSyncIntervalMs: 300000
 //         })
 //     })
-
-
 // })
 
-// const client = new Client({
-//     restartOnAuthFail: true,
-//     puppeteer: {
-//         headless: true,
-//         args: [
-//             '--no-sandbox',
-//             '--disable-setuid-sandbox',
-//             '--disable-dev-shm-usage',
-//             '--disable-accelerated-2d-canvas',
-//             '--no-first-run',
-//             '--no-zygote',
-//             '--single-process', // <- this one doesn't works in Windows '--disable-gpu', 
-//         ],
-//     },
-//     authStrategy: new LocalAuth()
-// })
-
-// client.on('message', message => {
-//     if (message.body === '!ping') {
-//         message.reply('Hola Saecorp');
-//     }
-// })
 //Socket IO   
 io.on('connection', (socket) => {
-    init(socket) 
+    init(socket)
+
     socket.on('create-session', (data) => {
         createSession(data.id, data.description)
     })
@@ -313,21 +306,6 @@ app.post('/send-media', async (req, res) => {
     })
 })
 
-//client.initialize()
-
 server.listen(port, () => {
     console.log('App running on *:' + port)
 })
-
-// client.on('ready', () => {
-//     console.log('Client is ready!')
-//     client.getChats().then(chats => {
-//         console.log(chats[0])
-//     })
-// })
-// client.on('message', message => {
-//     if (message.body === '!ping') {
-//         message.reply('Hola Saecorp');
-//     }
-// });
-// client.initialize()
