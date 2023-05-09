@@ -64,4 +64,4 @@ FROM dbo.Entidad en WITH (NOLOCK) WHERE estado = 1
 --SELECT idEntidad,codConfig,jsonConfig FROM @tableAplicacion  order by idEntidad ASC 
 
 
-select * from Config.Sistema 
+select jsonConfig from Config.Sistema WHERE idEntidad = 4 AND codConfig = 'CD'
