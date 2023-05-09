@@ -191,13 +191,7 @@
             };
         };
 
-        $uibModalInstance.rendered.then(result=>{
-            $("#etiquetas").on('keyup', e=>{
-                return e.target.value.toUpperCase();
-            })
-        })
-
-
+    
           
         $scope.save = function(e) {
             try {
@@ -218,11 +212,11 @@
                 showLoader();
 
                 if($scope.data.idEtiqueta > 0){
-                    url = 'Etiqueta/Insert';
-                    method = 'post';
-                }else{
                     url = 'Etiqueta/Update/' + $scope.data.idEtiqueta
                     method = 'put';
+                }else{
+                    url = 'Etiqueta/Create';
+                    method = 'post';
                 }
 
                 const data = {
@@ -232,7 +226,7 @@
                 }
                 console.log(data);
 
-                mS.getData(method, url, $scope.data).then(response => {
+                mS.getData(method, url, $scope.data,  true).then(response => {
                     if(response.code==="0"){
                         hideLoader();
                         Swal.fire('warning', response.message)                        
