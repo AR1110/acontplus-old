@@ -1,38 +1,43 @@
 ﻿<div class="modal-header">
-
+    <h5 class="modal-title"><i class="mdi mdi-whatsapp"></i> Envio de notificación por WhatsApp</h5>
+    <button type="button" class="close" data-dismiss="modal">&times;</button>
 </div>
 <div class="modal-body">
-    <div class="row" ng-if="!client.isLogged">
-        <div class="col-xl-6">
-            <form ng-submit="login()">
-                <label for="client-id">ID</label><br>
-                <input type="text" id="client-id" ng-model="client.id" class="form-control" placeholder="ID">
-                <br><br>
-                <label for="client-description">Descripción</label><br>
-                <textarea rows="3" id="client-description" ng-model="client.description" class="form-control"
-                          placeholder="Session description"></textarea>
-                <br>
-                <button type="submit" class="btn btn-success"><i class="fa fa-sign-in"></i> Login</button>
-            </form>
+    <div class="row">
+        @* <div class="col-xl-6">
+        <div class="form-group">
+        <label for="client-id">ID</label><br>
+        <input type="text" id="client-id" ng-model="client.id" class="form-control" placeholder="ID" disabled
+        required>
         </div>
-        <div class="col-xl-6">
-            <div class="table-responsive">
-                <table class="table">
-                    <tbody>
-                        <tr ng-repeat="item in sessions">
-                            <td>{{item.id}}</td>
-                            <td>{{item.description}}</td>
-                            <td><img src="" id="{{item.id}}-qrcode" alt=""></td>
-                        </tr>
-                    </tbody>
-                </table>
+        <div class="form-group">
+        <label for="client-description">Descripción</label><br>
+        <textarea rows="3" id="client-description" ng-model="client.description" class="form-control"
+        placeholder="Session description" disabled required></textarea>
+        </div>
+        </div> *@
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="text-center" ng-if="!session.isLogged">
+                <img src="{{session.src}}" alt="" class="img-fluid">
             </div>
+            <small class="text-info">{{session.message}}</small>
+            @* <div class="table-responsive">
+            <table class="table">
+            <tbody>
+            <tr ng-repeat="item in sessions">
+            <td>{{item.id}}</td>
+            <td>{{item.description}}</td>
+            <td><img src="{{item.src}}" id="{{item.id}}-qrcode" alt=""></td>
+            </tr>
+            </tbody>
+            </table>
+            </div> *@
         </div>
     </div>
     <hr />
-    <form ng-submit="sendMessage()" ng-if="client.isLogged">
+    <form ng-submit="sendMessage()" ng-if="session.isLogged">
         <div class="row">
-            <div class="col-6">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="">Para:</label>
                     <input type="tel" name="" id="" class="form-control" ng-model="whatsapp.number" required>
@@ -40,7 +45,7 @@
                 <div class="form-group">
                     <label for="">Mensaje:</label>
                     <textarea type="tel" name="" id="" class="form-control" ng-model="whatsapp.message"
-                              required></textarea>
+                        required></textarea>
                 </div>
             </div>
         </div>
@@ -52,7 +57,7 @@
     </form>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-dark btn-sm" ng-click="$ctrl.closeModal()">
+    <button type="button" class="btn btn-dark btn-sm" ng-click="closeModal()">
         &times; Cerrar
     </button>
 </div>

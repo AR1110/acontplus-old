@@ -30,7 +30,7 @@
                     <br><br>
                     <label for="client-description">Descripción</label><br>
                     <textarea rows="3" id="client-description" ng-model="client.description" class="form-control"
-                        placeholder="Session description"></textarea>
+                              placeholder="Session description"></textarea>
                     <br>
                     <button type="submit" class="btn btn-success"><i class="fa fa-sign-in"></i> Login</button>
                 </form>
@@ -57,19 +57,23 @@
                         <div class="form-group">
                             <label for="">Mensaje:</label>
                             <textarea type="tel" name="" id="" class="form-control" ng-model="whatsapp.message"
-                                required></textarea>
+                                      required></textarea>
                         </div>
                     </div>
                 </div>
                 <hr>
-                <button type="submit" class="btn btn-success"><i class="fa fa-whatsapp" aria-hidden="true"></i>
-                    Enviar</button>
+                <button type="submit" class="btn btn-success">
+                    <i class="fa fa-whatsapp" aria-hidden="true"></i>
+                    Enviar
+                </button>
             </form>
         </div>
     </div>
 
-    <button type="button" class="btn btn-info" ng-click="postLocalHost()"><i class="fa fa-server"></i> Test Local
-        Server</button>
+    <button type="button" class="btn btn-info" ng-click="postLocalHost()">
+        <i class="fa fa-server"></i> Test Local
+        Server
+    </button>
 </div>
 
 <form action="/Test/GenerateRandomKey" method="post">
@@ -78,14 +82,12 @@
 
 @section Scripts{
     @*<script>
-if (window.location.protocol.indexOf('https') == 0) {
-var el = document.createElement('meta')
-el.setAttribute('http-equiv', 'Content-Security-Policy')
-el.setAttribute('content', 'upgrade-insecure-requests')
-document.head.append(el)
-}
-</script>*@
-    <script src="~/lib/socket.io/socket.io.min.js"></script>
-    <script src="~/js/services/socketService.js" asp-append-version="true"></script>
+        if (window.location.protocol.indexOf('https') == 0) {
+        var el = document.createElement('meta')
+        el.setAttribute('http-equiv', 'Content-Security-Policy')
+        el.setAttribute('content', 'upgrade-insecure-requests')
+        document.head.append(el)
+        }
+        </script>*@
     <script src="~/js/controllers/testCtrl.js" asp-append-version="true"></script>
 }

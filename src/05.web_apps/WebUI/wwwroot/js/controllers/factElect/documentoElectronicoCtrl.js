@@ -546,12 +546,12 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
             } = _nombreModalConst.common;
             const {
                 ModalWhatsAppCtrl
-            } = await import('./../../modal/' + MODAL_SEND_WHATSAPP_CTRL);
+            } = await import('./../../modal/' + MODAL_SEND_WHATSAPP_CTRL)
             _modalSvc.openModalCustom({
                 controller: ModalWhatsAppCtrl,
                 template: MODAL_SEND_WHATSAPP_CSHTML,
                 isRenderRazorPartial: true,
-                size: 'xl',
+                size: 'md',
                 params: item
             })
         } catch (error) {
