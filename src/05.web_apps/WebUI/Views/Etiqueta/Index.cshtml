@@ -15,7 +15,7 @@
                         <li class="breadcrumb-item"><a href="javascript:void(0)">Administración</a></li>
                         <li class="breadcrumb-item active">Etiquetas</li>
                     </ol> *@
-                    <button type="button" class="btn btn-info m-l-15" ng-click="openModalNew()"><i class="fa fa-plus-circle"></i> Nuevo</button> 
+                    <button type="button" class="btn btn-info m-l-15" ng-if="accion.crear" ng-click="openModalNew()"><i class="fa fa-plus-circle"></i> Nuevo</button> 
                 </div>
             </div>
         </div>
@@ -112,7 +112,7 @@
 </div>
 
 @section Scripts{
-        <script src="~/js/controllers/almacen/etiquetaCtrl.min.js" asp-append-version="true"></script>
+            <script src="~/js/controllers/almacen/etiquetaCtrl.min.js" asp-append-version="true"></script>
 
 
 
