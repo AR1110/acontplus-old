@@ -10,5 +10,8 @@ CREATE PROCEDURE Inventario.Etiqueta_Get @idUsuarioRol INT, @json VARCHAR(900)
 AS
 BEGIN 
 	SET NOCOUNT ON;
-	--SET LA
+	SET LANGUAGE SPANISH;
+
+	SELECT * FROM Inventario.Etiqueta
+
 END 

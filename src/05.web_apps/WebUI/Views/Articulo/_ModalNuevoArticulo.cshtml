@@ -145,9 +145,9 @@
                         </div>
                         <div class="form-group col-lg-2 col-md-3 col-sm-6 col-xs-12 text-center"
                             ng-show="$ctrl.data.datosAdicionales">
-                            <label>Actividades: </label>
-                            <select ng-model="$ctrl.data.idActividad" class="form-control">
-                                <option ng-value="item.idActividadEtiqueta"
+                            <label>Etiqueta: </label>
+                            <select ng-model="$ctrl.data.idEtiqueta" class="form-control">
+                                <option ng-value="item.idEtiqueta"
                                     ng-repeat="item in $ctrl.etiquetaActividades">{{item.descripcion}}</option>
                             </select>
                         </div>
@@ -232,9 +232,9 @@
 
                             <div class="form-group col-lg-2 col-md-2 col-sm-4 col-xs-6 text-center"
                                 ng-show="$ctrl.data.datosAdicionales">
-                                <label>Actividades: </label>
-                                <select ng-model="$ctrl.data.idActividad" class="form-control">
-                                    <option ng-value="item.idActividadEtiqueta"
+                                <label>Etiqueta: </label>
+                                <select ng-model="$ctrl.data.idEtiqueta" class="form-control">
+                                    <option ng-value="item.idEtiqueta"
                                         ng-repeat="item in $ctrl.etiquetaActividades">{{item.descripcion}}</option>
                                 </select>
                             </div>

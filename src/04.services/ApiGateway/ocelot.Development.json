@@ -230,7 +230,8 @@
       "DownstreamPathTemplate": "/api/Articulo/{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
-        "Post"
+        "Post",
+        "Get"
       ],
       "UpstreamPathTemplate": "/api/Articulo/{everything}"
     },

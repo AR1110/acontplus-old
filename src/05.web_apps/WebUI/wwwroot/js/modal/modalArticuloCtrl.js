@@ -183,7 +183,7 @@
          try {
              showLoader();
              let results = await this.initiload();
-
+             console.log(results);
              const {
                  subFamilias,
                  familias,
@@ -553,8 +553,8 @@
              }
 
              if (this.data.datosAdicionales) {
-                 if (this.data.idActividad === null || this.data.idActividad === undefined || this.data.idActividad === 0) {
-                     this._toastr.toastr('warning', 'Seleccione la actividad', titulo);
+                 if (!(this.data.idEtiqueta > 0)) {
+                     this._toastr.toastr('warning', 'Seleccione la Etiqueta', titulo);
                      return
                  }
              }

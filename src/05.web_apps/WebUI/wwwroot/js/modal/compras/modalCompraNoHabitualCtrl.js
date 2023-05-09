@@ -1,4 +1,4 @@
-import './modalCompraBaseCtrl.min.js?v=0.7'
+import './modalCompraBaseCtrl.min.js?v=0.8'
 
 class ModalCompraNoHabitualCtrl extends window.modalCompraBaseCtrl {
 

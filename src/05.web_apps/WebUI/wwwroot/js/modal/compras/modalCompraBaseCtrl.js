@@ -751,6 +751,8 @@ class ModalCompraBaseCtrl {
             etiquetas
         } = self.dataArticulo;
 
+        console.log(etiquetas)
+
         let index = self.gridOptions.data.findIndex(value => value.idArticulo === 0);
         let entity = self.gridOptions.data[index];
 
