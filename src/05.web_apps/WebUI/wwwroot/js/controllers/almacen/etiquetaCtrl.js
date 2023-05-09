@@ -228,7 +228,7 @@
                 const data = {
                     descripcion: $scope.data.descripcion,
                     estado: $scope.data.estado,
-                    etiquetas: $scope.dataLabel.etiquetas
+                    etiquetas: $scope.dataLabel.etiquetas.join(';'),
                 }
                 console.log(data);
 
