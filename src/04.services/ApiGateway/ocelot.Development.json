@@ -347,52 +347,15 @@
           "Port": 54948
         }
       ],
-      "DownstreamPathTemplate": "/api/DocumentoElectronico/{everything}",
+      "DownstreamPathTemplate": "/api/DocumentoElectronico{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
+        "Get",
         "Put",
         "Delete",
         "Options"
       ],
-      "UpstreamPathTemplate": "/api/DocumentoElectronico/{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 54948
-        }
-      ],
-      "DownstreamPathTemplate": "/api/DocumentoElectronico?json={json}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Get"
-      ],
-      "UpstreamPathTemplate": "/api/DocumentoElectronico?json={json}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 54948
-        }
-      ],
-      "DownstreamPathTemplate": "/api/DocumentoElectronico/GetDataForm",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Get"
-      ],
-      "UpstreamPathTemplate": "/api/DocumentoElectronico/GetDataForm"
+      "UpstreamPathTemplate": "/api/DocumentoElectronico{everything}"
     },
     {
       "AuthenticationOptions": {
