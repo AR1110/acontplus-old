@@ -792,50 +792,12 @@
           "Port": 44320
         }
       ],
-      "DownstreamPathTemplate": "/api/Reporte/Download",
+      "DownstreamPathTemplate": "/api/Reporte{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "Post"
       ],
-      "UpstreamPathTemplate": "/api/Reporte/Download"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7074
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Reporte/ExportExcel",
-      "DownstreamScheme": "https",
-      "UpstreamHttpMethod": [
-        "Post"
-      ],
-      "UpstreamPathTemplate": "/api/Reporte/ExportExcel"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 44320
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Reporte/DynamicReport",
-      "DownstreamScheme": "https",
-      "UpstreamHttpMethod": [
-        "Post"
-      ],
-      "UpstreamPathTemplate": "/api/Reporte/DynamicReport"
+      "UpstreamPathTemplate": "/api/Reporte{everything}"
     },
     {
       "AuthenticationOptions": {

@@ -77,6 +77,7 @@ const createWhatsappSession = (id, socket) => {
     console.log('session creating: ' + id)
     client = new Client({
         puppeteer: {
+            executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
             headless: false,
             args: [
                 '--no-sandbox'
@@ -209,7 +210,7 @@ app.post('/send-message', [
             message: errors.mapped()
         })
     }
-    const sender = req.body.sender
+    //const sender = req.body.sender
     const number = phoneNumberFormatter(req.body.number)
     const message = req.body.message
     // console.log(allSessionsObject[sender])
@@ -260,9 +261,7 @@ app.post('/logout', async (req, res) => {
 
 
 app.post('/send-media', async (req, res) => {
-
-    const sender = req.body.sender
-
+    //const sender = req.body.sender 
     const number = phoneNumberFormatter(req.body.number)
     const caption = req.body.caption
     const fileName = req.body.fileName
