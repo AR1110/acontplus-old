@@ -51,7 +51,7 @@ namespace ApiInventory.Controllers
                 await _db.SPExecute("Almacen.Articulo_Get_Id_By_Purchase");
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
-                _response = _db.GetDataTableAsync();
+                _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)
             {
