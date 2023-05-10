@@ -251,8 +251,6 @@ namespace DataAccess
             }
             return _response;
         }
-
-
         public GenericResponse GetDataSetAsync()
         {
             DataSet ds = new DataSet();

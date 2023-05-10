@@ -29,7 +29,7 @@ namespace ApiConfig.Controllers
                 await _db.SPExecute("Config.Sistema_Get");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
-                _response = _db.GetDataTableAsync();
+                _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)
             {
