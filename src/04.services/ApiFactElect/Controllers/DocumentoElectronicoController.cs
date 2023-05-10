@@ -1,9 +1,12 @@
 ﻿using Common.Logs;
 using DataAccess;
+using Domain.Dtos;
 using Domain.Models;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Data;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Web;
 
@@ -88,7 +91,7 @@ namespace ApiFactElect.Controllers
                     byte[] byteXml = Encoding.UTF8.GetBytes(xmlSri);
                     _response.Create(byteXml, "text/xml", dt.Rows[0].Field<string>("filename") + ".xml");
                     var sms = "";
-                    new FileUpload().Upload("C:\\Users\\Ivan\\source\\repos\\AcontPlus\\src\\04.services\\whatsapp-api\\files", _response.FileName, _response.Content, ref sms);
+                    await new FileUpload().Upload(_configuration.GetSection("WhatsAppFiles").Value, _response.FileName, _response.Content);
                     return Ok(_response.FileName);
                 }
                 return BadRequest("No se encontro xml");

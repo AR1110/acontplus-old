@@ -17,6 +17,10 @@ function ModalWhatsAppCtrl($scope, uibModal, tS, socket, mS, params) {
     //$scope.client.description = !params.description ? 'Session de Whatsapp del estab: ' + params.codEstab : params.description
     $scope.session = {}
 
+    $scope.type = params.type
+    $scope.codDoc = params.codDoc
+
+
     $scope.whatsapp = { number: '0989297817' }
     //$scope.whatsapp.number = params.celular
 
@@ -71,20 +75,7 @@ function ModalWhatsAppCtrl($scope, uibModal, tS, socket, mS, params) {
         }).catch(error => {
             console.log(error)
         })
-        mS.getData('get', 'DocumentoElectronico/GetXmlSri/' + params.idDocumentoElectronico, null, true).then(response => {
-            console.log(response)
-            $scope.fileName = response //response.headers()['content-disposition'].split(';')[1].split('=')[1];
-            // console.log($scope.fileName)
-            // let mimetype = response.headers()['content-type']
-            // $scope.files.push({
-            //         data: response.data,
-            //         name: fileName,
-            //         mimetype
-            // })
-            //console.log($scope.files)
-        }).catch(error => {
-            console.log(error)
-        })
+
     }
 
     $scope.initialLoad()
@@ -123,37 +114,96 @@ function ModalWhatsAppCtrl($scope, uibModal, tS, socket, mS, params) {
         }
     })
     socket.on('remote_session_saved', function (data) {
+        console.log(data)
         if (data.id == $scope.session.id) {
             $scope.session.isLogged = true
         }
     })
+
+    $scope.sendSms = () => {
+        let data = { number: $scope.whatsapp.number, message: $scope.whatsapp.message }
+        mS.getData('post', 'http://localhost:8000/send-message', data).then(
+            response => {
+                console.log(response)
+            }
+        ).catch(error => {
+            console.log(error)
+        })
+    }
+
+    $scope.sendMedia = (caption, fileName) => {
+        let data = { number: $scope.whatsapp.number, caption: caption, fileName: fileName }
+        mS.getData('post', 'http://localhost:8000/send-media', data).then(
+            response => {
+                console.log(response)
+            }
+        ).catch(error => {
+            console.log(error)
+        })
+    }
+
+    $scope.generateXml = () => {
+        mS.getData('get', 'DocumentoElectronico/GetXmlSri/' + params.idDocumentoElectronico, null, true).then(response => {
+            //$scope.fileName = response
+            $scope.sendMedia('Xml Ride', response)
+        }).catch(error => {
+            console.log(error)
+        })
+    }
+
+    $scope.generateFile = () => {
+        let format = 'pdf'
+        let dataParms = {
+            id: params.idDocumento,
+            codEstab: params.codEstab,
+            codigo: 'RF',
+            format,
+        }
+
+        let parameters = {
+            sendToWhatsapp: true,
+            dataParams: JSON.stringify(dataParms)
+        }
+        mS.getData('post', 'Reporte/DynamicReport', JSON.stringify(parameters), true).then(response => {
+            $scope.sendMedia('Pdf Ride', response)
+        }).catch(error => {
+            console.log(error)
+        })
+    }
+
     $scope.sendMessage = () => {
         try {
-            showLoader()
-            //var file = getRide()
-            let data = {
-                number: $scope.whatsapp.number,
-                message: $scope.whatsapp.message,
-                sender: $scope.session.id,
-                caption: 'test caption', 
-                fileName:  $scope.fileName
+            switch ($scope.type) {
+                case 'SRI':
+                    $scope.generateXml()
+                    // if (!$scope.generateXml()) {
+                    //     tS.toastr('warning', 'No se pudo general el xml para enviar por correo')
+                    //     return
+                    // }
+                    // if (!$scope.generateFile()) {
+                    //     return
+                    // }
+                    setTimeout(() => {
+                        $scope.generateFile()
+                    }, 500)
+
+                    setTimeout(() => {
+                        $scope.sendSms()
+                    }, 1000)
+                    break
+                case 'GenericFile':
+                    // if (!$scope.generateFile()) {
+                    //     return
+                    // }
+                    $scope.generateFile()
+                    $scope.sendSms()
+                    break
+                default:
+                    $scope.sendSms()
+                    break
             }
-            //let data = { number: $scope.whatsapp.number, file: file, caption: 'caption' }
-            mS.getData('post', 'http://localhost:8000/send-media', data).then(
-                response => {
-                    console.log(response)
-                    hideLoader()
-                }
-            ).catch(error => {
-                hideLoader()
-                console.log(error)
-            })
-            // socket.emit('message', {
-            //     number: $scope.whatsapp.number,
-            //     message: $scope.whatsapp.message,
-            // })
+
         } catch (error) {
-            hideLoader()
             console.log(error)
         }
     }

@@ -8,7 +8,7 @@
         public string reportParams { get; set; }
         public string dataParams { get; set; }
         public string claveAcceso { get; set; }
-        public bool isReportDynamic { get; set; }
+        public bool sendToWhatsapp { get; set; }
         public bool sendEmail { get; set; }
         public Dictionary<string, string> parameters { get; set; }
         public Dictionary<string, string> rdlcProps { get; set; }
