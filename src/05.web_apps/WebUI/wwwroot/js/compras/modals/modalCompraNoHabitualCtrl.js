@@ -358,6 +358,11 @@ class ModalCompraNoHabitualCtrl extends window.modalCompraBaseCtrl {
         }
     }
 
+    getDataEtiqueta(item) {
+        console.log(item)
+        console.log(entity)
+    }
+
 
     async closeModal() {
 
@@ -396,7 +401,8 @@ export class ModalAddCtrl extends ModalCompraNoHabitualCtrl {
 
         this.CELL_TEMPLATE_OPTION = `<a  ng-click="grid.appScope.$ctrl.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
                            <a  ng-click="grid.appScope.$ctrl.openModalArticleEdit(row.entity)" style="cursor:pointer;" class="btn btn-success btn-xs text-white" title = "Editar Articulo" ><i class="fa fa-edit"></i></a >                                  
-                           <a  ng-click="grid.appScope.$ctrl.abrirModalDatoAdicional(row.entity)" style="cursor:pointer;" ng-show='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar Dato Adicional al Articulo" > <i class="fas fa-tags"></i></a >                                  
+                          
+                           <a  btn-data-adicional-articulo entity="row.entity" get-data-etiqueta="$ctrl.getDataEtiqueta(item)" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar Dato Adicional al Articulo" > <i class="fas fa-tags"></i></a >                                  
                         `;
 
         this.CAMPOS = ["codEstab", "idProveedor", "idPuntoEmision", "fechaEmision", "gridOptions", "gridOptionsBodega"];

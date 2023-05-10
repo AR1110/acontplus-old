@@ -1,10 +1,10 @@
 app.controller('compraNoHabitualCtrl', compraNoHabitualCtrl);
 
 
-compraNoHabitualCtrl.$inject = ['$scope', 'commonService', 'mainService', 'toastService', 'modalService', 'nombreModal', 'formulario', 'toastService']
+compraNoHabitualCtrl.$inject = ['$scope', 'commonService', 'compraNoHabitualService', 'mainService', 'toastService', 'modalService', 'nombreModal', 'formulario', 'toastService']
 
 
-function compraNoHabitualCtrl($scope, commonSvc, mS, tS, modalSvc, nombreModal, _fS, _tS) {
+function compraNoHabitualCtrl($scope, commonSvc, compraNoHabSvc, mS, tS, modalSvc, nombreModal, _fS, _tS) {
 
     //Variables Generales
     const {
@@ -191,7 +191,7 @@ function compraNoHabitualCtrl($scope, commonSvc, mS, tS, modalSvc, nombreModal, 
         try {
             showLoader();
 
-            let json = JSON.stringify({
+            let query = {
                 typeList: 1,
                 checkBoxFecha: true,
                 checkBoxEstab: $scope.dataSearch.checkBoxEstab,
@@ -202,25 +202,18 @@ function compraNoHabitualCtrl($scope, commonSvc, mS, tS, modalSvc, nombreModal, 
                 codEstab: $scope.dataSearch.codEstab,
                 idProveedor: $scope.dataSearch.byProveedor,
                 estado: $scope.dataSearch.byEstado,
-            });
+            };
 
             $scope.documentoIngreso = [];
-            mS.getData('get', 'CompraNoHabitual/' + json, null, true).then(response => {
-                if (response.code === "0") {
-                    console.log(response)
-                    hideLoader();
-                }
+            compraNoHabSvc.getAll(query).then(response => {
+                $scope.documentoIngreso = response;
+                $scope.sumImporteTotal();
+                hideLoader();
 
-                if (response.code === "1") {
-                    $scope.documentoIngreso = JSON.parse(response.payload)[0] || []; //
-                    $scope.sumImporteTotal();
-                    hideLoader();
-                }
             }).catch(error => {
                 hideLoader();
-                console.log(error)
-            })
-
+                console.log(error);
+            })            
         } catch (error) {
             $scope.documentoIngreso = [];
             console.log(error)

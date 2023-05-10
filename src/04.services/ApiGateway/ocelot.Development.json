@@ -195,7 +195,7 @@
         "Get"
       ],
       "UpstreamPathTemplate": "/api/Articulo?json={json}"
-    },
+    },    
     {
       "AuthenticationOptions": {
         "AllowedScopes": [
@@ -205,30 +205,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 12786
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Articulo/Search?json={json}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Get"
-      ],
-      "UpstreamPathTemplate": "/api/Articulo/Search?json={json}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 12786
+          "Port": 44331
         }
       ],
       "DownstreamPathTemplate": "/api/Articulo/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "Post",
         "Get"
