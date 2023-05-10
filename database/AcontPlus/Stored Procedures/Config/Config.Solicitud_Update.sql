@@ -1,4 +1,3 @@
-
 USE AcontPlus;
 
 IF OBJECT_ID('Config.Solicitud_Update')IS NOT NULL

@@ -200,7 +200,8 @@ mainService.$inject = ['$http', 'Upload', 'decodeToken'];
 
 function mainService($http, Upload, _token) {
     let service = {};
-
+    console.log(_token)
+    
     function _getData(method, url, data = null, forApi = false) {
         return $http({
             method: method,

@@ -12,14 +12,13 @@ GO
 IF OBJECT_ID(N'FactElect.RetencionAts_Cancel', N'P') IS NOT NULL
 DROP PROCEDURE FactElect.RetencionAts_Cancel 
 GO
-CREATE PROCEDURE FactElect.RetencionAts_Cancel @idUsuarioRol INT
-,@id INT 
+CREATE PROCEDURE FactElect.RetencionAts_Cancel @idRol INT,@id INT 
 AS
 BEGIN
 	SET NOCOUNT ON; 
 	DECLARE @idUsuario INT
 	,@idRetencionAts INT
-	SELECT @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol
+	SELECT @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idRol
 	SET @idRetencionAts = (select idDocumento from DocumentoElectronico with (nolock) where idDocumentoElectronico = @id)
 	BEGIN TRY
 		BEGIN TRAN 

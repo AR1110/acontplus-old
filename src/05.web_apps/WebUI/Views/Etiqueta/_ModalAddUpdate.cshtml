@@ -1,7 +1,7 @@
-<form autocomplete="off" ng-submit="save();" ng-keypress="$event.preventDefault();">
+<form autocomplete="off" ng-submit="save();">
     <div class="modal-header">
-        <h5 class="modal-title">{{modalTitle}} Etiqueta</h5>
-        <button ng-click="closeModal()" class="close">&times;</button>
+        <h5 class="modal-title"><i class="fa fa-tags"></i> {{modalTitle}} Etiqueta</h5>
+        <button type="button" ng-click="closeModal()" class="close">&times;</button>
     </div>
 
     <div class="modal-body">
@@ -19,14 +19,14 @@
                     <label for="etiquetas">Etiquetas <span class="text-danger"></span></label>
                     <md-chips id="etiquetas" ng-model="dataLabel.etiquetas" readonly="dataLabel.readonly"
                         md-enable-chip-edit="dataLabel.edit" input-aria-label="Nombre de las Etiquetas"
-                        placeholder="Ej. SERIE" ng-change="onChipSelect($chip)">
+                        placeholder="Ej. SERIE" ng-change="onChipSelect($chip)" md-on-remove="onChipRemove($chip, $index)">
                     </md-chips>
 
 
                 </div>
             </div>
 
-            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" ng-if="data.idEtiqueta>0">
                 <div class="form-group">
                     <label for="estado">Estado</label>
                     <md-switch ng-model="data.estado" aria-label="Estado" ng-true-value="true" ng-false-value="false"

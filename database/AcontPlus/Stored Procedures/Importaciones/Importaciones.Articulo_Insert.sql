@@ -31,6 +31,7 @@ BEGIN
 	SET NOCOUNT ON;
 	DECLARE @idUsuario INT
 	DECLARE @idEntidad INT
+	DECLARE @ruc AS VARCHAR(15)
 	DECLARE @count INT
 	DECLARE @sequential INT
 	DECLARE @tablaTarifa TABLE
@@ -74,7 +75,9 @@ BEGIN
 		,precioCosto DECIMAL(15,5)
 	)
 
-	SELECT @idEntidad = idEntidad,@idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idRol
+	SELECT TOP 1 @idEntidad = idEntidad,@idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
+
+	SELECT TOP 1 @ruc = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
 
 	SELECT @sequential = COUNT(*) FROM dbo.Articulo 
 
@@ -221,6 +224,16 @@ BEGIN
 			INNER JOIN @tablaArticuloImport ai ON ai.codArticulo = pvp.codArticulo
 			INNER JOIN @tablaTarifa ta ON ta.codTarifa = pvp.codTarifa
 			INNER JOIN dbo.TipoIva ti ON ti.idTipoIva = pvp.idTipoIva
+
+
+			INSERT INTO Inventario.Stock(idBodega,idArticulo,cantidad)
+							  SELECT bo.idBodega,ar.idArticulo,0
+							  FROM dbo.Articulo      ar WITH (NOLOCK)
+							  INNER JOIN dbo.Entidad en WITH (NOLOCK) ON en.idEntidad = ar.idEntidad
+							  INNER JOIn dbo.Bodega  bo WITH (NOLOCK) ON bo.ruc       = en.ruc
+							  WHERE ar.idEntidad = @idEntidad 
+							    AND ar.llevaInventario = 1 
+								AND ar.estado = 1
 
 			INSERT INTO Importaciones.Historial(idUsuario,idEntidad,modulo,cantidad,fechaRegistro)
 			SELECT @idUsuario,@idEntidad,'/Almacen/Articulo',@count,dbo.ufnGetDateEcuador()

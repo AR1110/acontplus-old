@@ -409,7 +409,7 @@ export class UiGridOptions{
     //Calculo de Totales 
     getSubTotalSinImpuesto(){
         let total = this.gridOptions.data.map(val => val.subTotal).reduce((acc, curr) => acc + curr, 0);        
-        return this._fS.roundNumber(total, this.decimal.nroTotalSubTotal);
+        return this._fS.roundNumber(total, this.decimal.nroTotalDetalle);
     }
 
     getTotalIva(codigoIva) {

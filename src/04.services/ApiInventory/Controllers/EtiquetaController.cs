@@ -40,8 +40,8 @@ namespace ApiInventory.Controllers
             return Ok(_response);
         }
 
-        [HttpPost("Create")]
-        public async Task<IActionResult> Create(string json)
+        [HttpPost("Insert")]
+        public async Task<IActionResult> Insert(string json)
         {
             LogWriter _log = new LogWriter(_configuration);
             GenericResponse _response = new GenericResponse();

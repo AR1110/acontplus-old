@@ -230,7 +230,8 @@
       "DownstreamPathTemplate": "/api/Articulo/{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
-        "Post"
+        "Post",
+        "Get"
       ],
       "UpstreamPathTemplate": "/api/Articulo/{everything}"
     },
@@ -997,7 +998,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44331
+          "Port": 7210
         }
       ],
       "DownstreamPathTemplate": "/api/Kardex?json={json}",
@@ -1016,7 +1017,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44331
+          "Port": 7210
         }
       ],
       "DownstreamPathTemplate": "/api/Kardex/Filters",
@@ -1067,6 +1068,46 @@
       ],
       "UpstreamPathTemplate": "/api/Solicitud/Check/{everything}"
     },
+
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7074
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Sistema?json={json}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "UpstreamPathTemplate": "/api/Sistema?json={json}"
+    },
+
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7074
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Sistema/{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": ["Put"],
+      "UpstreamPathTemplate": "/api/Sistema/{everything}"
+    },
+
+
     {
       "AuthenticationOptions": {
         "AllowedScopes": [
@@ -1202,7 +1243,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7210
+          "Port": 44331
         }
       ],
       "DownstreamPathTemplate": "/api/Etiqueta/{everything}",
