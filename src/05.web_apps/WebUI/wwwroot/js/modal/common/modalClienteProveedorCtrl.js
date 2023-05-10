@@ -1264,6 +1264,7 @@ export class ModalProveedorCtrl extends ModalBaseCtrl {
                 this._commonSvc.getDataByProveedor(this._params.idProveedor).then(response => {
                     this.data = response;
                     console.log(this.data)
+                    this.tipoIdentificacion = response.tipoIdentificacion;
                     this.correos = response.correo.split(';')
                     this.telefonos = response.telefono.split(';')
                 })

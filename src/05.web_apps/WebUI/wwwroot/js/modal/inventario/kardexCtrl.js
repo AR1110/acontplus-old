@@ -153,6 +153,7 @@ export class KardexCtrl {
                     width: 60,
                     headerSort: false,
                     cssClass: "table-entradas",
+                    bottomCalc: this.sumCantidadEntrada,
                 },
                 {
                     title: "Costo U.",
@@ -189,6 +190,7 @@ export class KardexCtrl {
                     width: 60,
                     headerSort: false,
                     cssClass: "table-salidas",
+                    bottomCalc: this.sumCantidadSalida,
                 },
                 {
                     title: "P. Venta",
