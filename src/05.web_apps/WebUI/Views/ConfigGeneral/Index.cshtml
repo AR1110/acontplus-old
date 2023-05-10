@@ -20,54 +20,13 @@
                 <md-content>
                     <md-tabs class="md-primary" md-center-tabs md-dynamic-height="">
 
-                        <md-tab label="SISTEMA">
+                        <md-tab label="Ventas" md-on-select="getDataTabs('CV')">
                             <md-content class="md-padding">
                                 <div class="row align-items-center">
                                     <div class="col-8 mx-auto">
                                         <div class="card shadow border">
                                             <div class="card-body">
-                                                <div class="row justify-content-between">
-                                                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
-                                                        <div class="icheck-success">
-                                                            <input type="checkbox" name="tipoIva" id="tipoIva"  ng-model="gestionSistema.taxesDefault">
-                                                            <label for="tipoIva">
-                                                                Tipo IVA
-                                                            </label>
-                                                        </div>  
-                                                    </div>
-
-                                                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
-                                                        <div class="form-group" ng-if="gestionSistema.taxesDefault">
-                                                            <select name="selectTipoIva" id="selectTipoIva" class="form-control border-select">
-                                                                <option ng-value="item.idTipoIva" ng-repeat="item in tipoIvas">
-                                                                    {{item.descripcion}}
-                                                                </option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>   
-
-                                                <hr>
-
-                                                <div class="row justify-content-between">
-                                                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
-                                                        <div class="icheck-success">
-                                                            <input type="checkbox" name="llevaInventario" id="llevaInventario" ng-model="gestionSistema.llevaInventario">
-                                                            <label for="llevaInventario">Control Inventario</label>
-                                                        </div>     
-                                                    </div>
-
-                                                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
-                                                        <div class="form-group" ng-if="gestionSistema.llevaInventario">
-                                                            <select name="metodoValoracion" id="metodoValoracion" class="form-control border-select" ng-model="gestionSistema.idMetodoValoracion">
-                                                                <option ng-value="item.idMetodoValoracion" ng-repeat="item in valoracionMetodos">{{item.descripcion}}</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div> 
-
-                                                <hr>
-
+                                                
                                                 <div class="row justify-content-between">
                                                     <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                                                         <div class="icheck-success">
@@ -188,7 +147,42 @@
                         </md-tab>
 
 
-                        <md-tab label="DECIMALES" >
+                        <md-tab label="Inventario" md-on-select="getDataTabs('CI')">
+                            <md-content class="md-padding">
+                                <div class="row align-items-center">
+                                    <div class="col-8 mx-auto">
+                                        <div class="card shadow border">
+                                            <div class="card-body">
+                                                <div class="row justify-content-between">
+                                                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                                                        <div class="icheck-success">
+                                                            <input type="checkbox" name="llevaInventario" id="llevaInventario" ng-model="gestionSistema.llevaInventario">
+                                                            <label for="llevaInventario">Control Inventario</label>
+                                                        </div>     
+                                                    </div>
+
+                                                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                                                        <div class="form-group" ng-if="gestionSistema.llevaInventario">
+                                                            <select name="metodoValoracion" id="metodoValoracion" class="form-control border-select" ng-model="gestionSistema.idMetodoValoracion">
+                                                                <option ng-value="item.idMetodoValoracion" ng-repeat="item in valoracionMetodos">{{item.descripcion}}</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>                                                                                     
+                                            </div>
+
+                                            <div class="card-footer">
+                                                <button type="button" class="btn btn-success float-right" ng-click="updateConfigSistema()">
+                                                    <i class="ti-save"></i> Guardar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>                         
+                            </md-content>
+                        </md-tab>
+
+                        <md-tab label="DECIMALES" md-on-select="getDataTabs('CD')">
                             <md-content class="md-padding">
                                 <div class="row">
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
@@ -464,95 +458,7 @@
 
                         </md-tab>
                 
-
-                        <md-tab label="COLUMNAS EN DOCUMENTOS">
-                            <md-content class="md-padding">
-                                <div class="row">
-                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                        <div class="card">
-                                            <div class="card-header bg-warning">
-                                                <h6 class="m-b-0 text-white">COLUMNAS A MOSTRAR EN DOCUMENTOS DE VENTA</h6>   
-                                            </div>
-                                            <div class="card-body shadow">                                              
-                                                <div class="row pb-1">
-                                                    <div class="col-md-12">
-                                                        <div class="row">
-                                                            <div class="col-6 py-2">
-                                                                <span>1. Descuento </span>
-                                                            </div>
-                                                            <div class="col-6 py-2 text-truncate">
-                                                                <div class="icheck-primary text-right">
-                                                                    <input type="checkbox" id="showDescuento" ng-model="configDetalle.descuento">
-                                                                    <label for="showDescuento"></label>
-                                                                </div>
-                                                            </div>
-                                                        </div> 
-
-                                                        <div class="row">
-                                                            <div class="col-6 py-2">
-                                                                <span>2. ICE </span>
-                                                            </div>
-                                                            <div class="col-6 py-2 text-truncate">
-                                                                <div class="icheck-primary text-right">
-                                                                    <input type="checkbox" id="showIce" ng-model="configDetalle.ice">
-                                                                    <label for="showIce"></label>
-                                                                </div>
-                                                            </div>
-                                                        </div>  
-
-                                                        <div class="row">
-                                                            <div class="col-6 py-2">
-                                                                <span>3. Porcentaje Descuento </span>
-                                                            </div>
-                                                            <div class="col-6 py-2 text-truncate">
-                                                                <div class="icheck-primary text-right">
-                                                                    <input type="checkbox" id="showPorcentajeDescuento" ng-model="configDetalle.porcentajeDescuento">
-                                                                    <label for="showPorcentajeDescuento"></label>
-                                                                </div>
-                                                            </div>
-                                                        </div>   
-
-                                                        <div class="row">
-                                                            <div class="col-6 py-2">
-                                                                <span>4. Porcentaje Iva </span>
-                                                            </div>
-                                                            <div class="col-6 py-2 text-truncate">
-                                                                <div class="icheck-primary text-right">
-                                                                    <input type="checkbox" id="showPorcentajeIva" ng-model="configDetalle.porcentajeIva">
-                                                                    <label for="showPorcentajeIva"></label>
-                                                                </div>
-                                                            </div>
-                                                        </div> 
-
-                                                        <div class="row">
-                                                            <div class="col-6 py-2">
-                                                                <span>5. Total Descuento </span>
-                                                            </div>
-                                                            <div class="col-6 py-2 text-truncate">
-                                                                <div class="icheck-primary text-right">
-                                                                    <input type="checkbox" id="showTotalDescuento" ng-model="configDetalle.totalDescuento">
-                                                                    <label for="showTotalDescuento"></label>
-                                                                </div>
-                                                            </div>
-                                                        </div> 
-
-                                                    </div>                                                  
-                                                </div>
-
-                                            </div>                                            
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="float-right">
-                                    <button type="button" class="btn btn-success" ng-click="updateConfigShowDetalle()">
-                                        <icon class="ti-pencil"></icon> Actualizar
-                                    </button>
-                                </div>  
-                            </md-content>
-                        </md-tab>
-
-                        <md-tab label="NOTIFICACIONES">
+                        <md-tab label="NOTIFICACIONES" md-on-select="getDataTabs('CS')">
                             <md-content class="md-padding">
                                 <div class="row">                                   
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
