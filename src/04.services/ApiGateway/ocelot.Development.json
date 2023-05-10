@@ -1114,35 +1114,17 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Sistema?json={json}",
-      "DownstreamScheme": "https",
-      "UpstreamHttpMethod": [
-        "Get"
-      ],
-      "UpstreamPathTemplate": "/api/Sistema?json={json}"
-    },
-
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7074
+          "Port": 44354
         }
       ],
       "DownstreamPathTemplate": "/api/Sistema/{everything}",
       "DownstreamScheme": "https",
-      "UpstreamHttpMethod": ["Put"],
+      "UpstreamHttpMethod": [
+        "Get",
+        "Put"
+      ],
       "UpstreamPathTemplate": "/api/Sistema/{everything}"
     },
-
 
     {
       "AuthenticationOptions": {
