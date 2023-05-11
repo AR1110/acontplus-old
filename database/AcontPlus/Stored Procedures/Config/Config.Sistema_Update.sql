@@ -35,7 +35,7 @@ BEGIN
 		BEGIN TRAN 
 			UPDATE Config.Sistema SET jsonConfig = @jsonConfig WHERE idSistema = @idSistema 
 		COMMIT TRAN 
-		SELECT '0'code,'Registrado Exitosamente' as 'message'
+		SELECT '1'code,'Registrado Exitosamente' as 'message'
 		RETURN 
 
 	END TRY 

@@ -40,7 +40,7 @@ BEGIN
 	DECLARE @uniqueId VARCHAR(150) = NEWID()
 	DECLARE @docOrigen VARCHAR(5)
 	DECLARE @idEstadoDocumento INT
-	DECLARE @codigoPorcentaje INT 
+	DECLARE @codigoPorcentaje INT = 2
 
     DECLARE @fechaEmision DATETIME
 	DECLARE @identificacionComprador VARCHAR(20)
@@ -61,9 +61,6 @@ BEGIN
 		SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 
 		SELECT TOP 1 @ruc = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
-
-		SELECT TOP 1 @codigoPorcentaje = codigoPorcentaje FROM Config.GestionSistema WITH (NOLOCK) WHERE idEntidad = @idEntidad
-
 
 		SELECT @docOrigen = docOrigen FROM OPENJSON(@jsonHeader) WITH (docOrigen VARCHAR(5) '$.docOrigen')
 

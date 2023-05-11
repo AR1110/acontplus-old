@@ -136,7 +136,7 @@ BEGIN
 					,@nombreComercial
 					,@direccion
 					,@telefono
-					,@correo
+					,CASE WHEN LEN(@correo) > 7 THEN @correo ELSE NULL END 
 					,@placa
 					,@montoCredito
 					,@nota

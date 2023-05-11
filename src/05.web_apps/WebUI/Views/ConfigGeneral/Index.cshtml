@@ -101,14 +101,7 @@
                                                             <label for="searchBarcode">Búsqueda de artículo por <code>Código de Barra</code> en venta</label>
                                                         </div>     
                                                     </div>
-@* 
-                                                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
-                                                        <div class="form-group" ng-if="gestionSistema.llevaInventario">
-                                                            <select name="metodoValoracion" id="metodoValoracion" class="form-control border-select">
-                                                                <option ng-repeat="item in valoracionMetodos">{{item.descripcion}}</option>
-                                                            </select>
-                                                        </div>
-                                                    </div> *@
+
                                                 </div>    
 
                                                 <hr>    
@@ -136,7 +129,7 @@
                                             </div>
 
                                             <div class="card-footer">
-                                                <button type="button" class="btn btn-success float-right" ng-click="updateConfigSistema()">
+                                                <button type="button" class="btn btn-success float-right" ng-click="save()">
                                                     <i class="ti-save"></i> Guardar
                                                 </button>
                                             </div>
@@ -156,14 +149,14 @@
                                                 <div class="row justify-content-between">
                                                     <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                                                         <div class="icheck-success">
-                                                            <input type="checkbox" name="llevaInventario" id="llevaInventario" ng-model="gestionSistema.llevaInventario">
+                                                            <input type="checkbox" name="llevaInventario" id="llevaInventario" ng-model="gestionInventario.llevaInventario">
                                                             <label for="llevaInventario">Control Inventario</label>
                                                         </div>     
                                                     </div>
 
                                                     <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
-                                                        <div class="form-group" ng-if="gestionSistema.llevaInventario">
-                                                            <select name="metodoValoracion" id="metodoValoracion" class="form-control border-select" ng-model="gestionSistema.idMetodoValoracion">
+                                                        <div class="form-group" ng-if="gestionInventario.llevaInventario">
+                                                            <select name="metodoValoracion" id="metodoValoracion" class="form-control border-select" ng-model="gestionInventario.idMetodoValoracion">
                                                                 <option ng-value="item.idMetodoValoracion" ng-repeat="item in valoracionMetodos">{{item.descripcion}}</option>
                                                             </select>
                                                         </div>
@@ -172,7 +165,7 @@
                                             </div>
 
                                             <div class="card-footer">
-                                                <button type="button" class="btn btn-success float-right" ng-click="updateConfigSistema()">
+                                                <button type="button" class="btn btn-success float-right" ng-click="save()">
                                                     <i class="ti-save"></i> Guardar
                                                 </button>
                                             </div>
@@ -450,7 +443,7 @@
                                 </div>
                                 <hr>
                                 <div class="float-right">
-                                    <button type="button" class="btn btn-success" ng-click="updateModuloDecimal()">
+                                    <button type="button" class="btn btn-success" ng-click="save()">
                                         <icon class="ti-pencil"></icon> Actualizar
                                     </button>
                                 </div>
@@ -490,7 +483,7 @@
                                 </div>  
                                 <hr>
                                 <div class="float-right">
-                                    <button type="button" class="btn btn-success" ng-click="updateNotificacion()">
+                                    <button type="button" class="btn btn-success" ng-click="save()">
                                         <icon class="ti-pencil"></icon> Actualizar
                                     </button>
                                 </div>                          
