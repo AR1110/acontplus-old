@@ -119,8 +119,13 @@ BEGIN
 		IF  @checkboxStockFiltro = 1 AND @byStock = 2 
 			BEGIN			
 				SET @sql = @sql + ' AND ar.stock <= 0 '
-			END 
-				
+			END
+
+		IF @byOrderCampo = 'ar.idSubFamilia'
+		BEGIN
+			SET @byOrderCampo = 'ar.subfamilia'
+		END
+
 	    SET @sql = @sql + ' ORDER BY '+ @byOrderCampo+ ' ' +  @byOrder
 		
 		SELECT		    
