@@ -58,6 +58,8 @@ BEGIN
 			WITH (idMetodoValoracion INT        '$.idMetodoValoracion'
 				,llevaInventario     VARCHAR(5) '$.llevaInventario'
 				,codMetodoValoracion VARCHAR(5) '$.codMetodoValoracion') as dt
+
+			SELECT idMetodoValoracion , descripcion, codMetodoValoracion = codigo FROM Inventario.MetodoValoracion WHERE estado = 1
 			
 		END 
 

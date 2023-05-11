@@ -40,7 +40,7 @@ namespace ApiConfig.Controllers
         }
 
 
-        [HttpPut("Put/{json}")]
+        [HttpPut("Put")]
         public async Task<IActionResult> Put(string json)
         {
             LogWriter _log = new LogWriter(_configuration);
