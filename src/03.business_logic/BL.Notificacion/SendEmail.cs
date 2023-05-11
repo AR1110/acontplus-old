@@ -89,20 +89,17 @@ namespace BL.Notificacion
                         }
                     }
                 }
-                using (SmtpClient smtpClient = new SmtpClient())
-                {
-                    smtpClient.Host = email.host;
-                    smtpClient.Port = email.port;
-                    smtpClient.EnableSsl = email.enableSsl;
-
-                    NetworkCredential NetworkCred = new NetworkCredential();
-                    NetworkCred.UserName = email.from;
-                    NetworkCred.Password = email.password;
-                    smtpClient.Credentials = NetworkCred;
-
-                    smtpClient.DeliveryFormat = SmtpDeliveryFormat.International;
-                    smtpClient.Send(message);
-                }
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls
+                                      | SecurityProtocolType.Tls11
+                                      | SecurityProtocolType.Tls12;
+                SmtpClient smtpClient = new SmtpClient();
+                smtpClient.Host = email.host;
+                smtpClient.Port = email.port;
+                smtpClient.EnableSsl = email.enableSsl;
+                smtpClient.UseDefaultCredentials = false;
+                smtpClient.Credentials = new NetworkCredential(email.from, email.password);
+                smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                smtpClient.Send(message);
             }
             catch (Exception ex)
             {
@@ -110,7 +107,7 @@ namespace BL.Notificacion
                 {
                     message.Dispose();
                 }
-                msgError = ex.ToString();
+                msgError = ex.Message;
                 _log.LogError("Error al enviar por correo la notificación: " + ex.ToString());
                 return false;
             }

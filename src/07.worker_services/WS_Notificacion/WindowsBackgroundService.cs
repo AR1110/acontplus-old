@@ -158,18 +158,18 @@ namespace WS_Notificacion
                 _email.template = dataMail["template"].ToString();
                 _email.to = dataRow.Field<string>("receptor");
 
-                string msgError = string.Empty;
+                //SendEmail _sendEmail = new SendEmail(_configuration);
 
-                SendEmail _sendEmail = new SendEmail(_configuration);
-                if (_sendEmail.Send(_email, ref msgError))
+                SendEmailMailKit _sendEmail = new SendEmailMailKit(_configuration);
+                if (await _sendEmail.Send(_email, new CancellationToken()))
                 {
                     _notService.Update(dataRow.Field<int>("idNotificacion"), "E");
                     _log.LogInfo("Notificación enviada: idNotificacion -> " + Convert.ToString(dataRow.Field<int>("idNotificacion")));
                 }
                 else
                 {
-                    _notService.Update(dataRow.Field<int>("idNotificacion"), "EE", msgError);
-                    _log.LogError("No se pudo enviar la notificación: idNotificacion -> " + Convert.ToString(dataRow.Field<int>("idNotificacion")) + "\n" + msgError);
+                    _notService.Update(dataRow.Field<int>("idNotificacion"), "EE", "Error al Enviar");
+                    _log.LogError("No se pudo enviar la notificación: idNotificacion -> " + Convert.ToString(dataRow.Field<int>("idNotificacion")) + "\n" + "Error al Enviar");
                 }
                 bytesPdf = null;
                 return true;
