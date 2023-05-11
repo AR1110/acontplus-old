@@ -15,18 +15,57 @@
             </div>
 
             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                <div class="form-group">
-                    <label for="etiquetas">Etiquetas <span class="text-danger"></span></label>
-                    <md-chips id="etiquetas" ng-model="dataLabel.etiquetas" readonly="dataLabel.readonly"
-                        md-enable-chip-edit="dataLabel.edit" input-aria-label="Nombre de las Etiquetas"
-                        placeholder="Ej. SERIE" ng-change="onChipSelect($chip)" md-on-remove="onChipRemove($chip, $index)">
-                    </md-chips>
-
-
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>N°</th>
+                                <th>Código</th>
+                                <th>Descripción</th>
+                                <th>
+                                    <button type="button" class="btn btn-secondary btn-sm" ng-click="addRow()">
+                                        <i class="ti-plus"></i>
+                                    </button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="item in etiquetas">
+                                <td>{{$index+1}}</td>
+                                <td>
+                                    <div ng-if="isNew">
+                                        <input type="text" ng-model="item.codigo" class="form-control border-select"
+                                            touppercase>
+                                    </div>
+                                    <div ng-if="!isNew">
+                                        {{item.codigo}}
+                                    </div>
+                                </td>
+                                <td>
+                                    <input type="text" ng-model="item.descripcion" class="form-control border-select"
+                                        touppercase>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-danger btn-sm" ng-click="removeRow(item)">
+                                        <i class="ti-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
+                @* <div class="form-group">
+                <label for="etiquetas">Etiquetas <span class="text-danger"></span></label>
+                <md-chips id="etiquetas" ng-model="dataLabel.etiquetas" readonly="dataLabel.readonly"
+                md-enable-chip-edit="dataLabel.edit" input-aria-label="Nombre de las Etiquetas"
+                placeholder="Ej. SERIE" ng-change="onChipSelect($chip)" md-on-remove="onChipRemove($chip, $index)">
+                </md-chips>
+
+
+                </div> *@
             </div>
 
-            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" ng-if="data.idEtiqueta>0">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" ng-if="data.idEtiqueta>0 && showEstado">
                 <div class="form-group">
                     <label for="estado">Estado</label>
                     <md-switch ng-model="data.estado" aria-label="Estado" ng-true-value="true" ng-false-value="false"

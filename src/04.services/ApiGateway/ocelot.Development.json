@@ -195,7 +195,7 @@
         "Get"
       ],
       "UpstreamPathTemplate": "/api/Articulo?json={json}"
-    },    
+    },
     {
       "AuthenticationOptions": {
         "AllowedScopes": [
@@ -1201,6 +1201,28 @@
         "Delete"
       ],
       "UpstreamPathTemplate": "/api/WhatsAppSession{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 55793
+        }
+      ],
+      "DownstreamPathTemplate": "/api/FacturaCompra{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Put",
+        "Delete",
+        "Options"
+      ],
+      "UpstreamPathTemplate": "/api/CompraNoHabitual{everything}"
     }
   ]
 }

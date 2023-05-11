@@ -10,10 +10,11 @@ function ModalDatoAdicionalArticuloCtrl($scope, $uibModalInstance, params){
 
     let {entity, datosAdicionales} = params 
 
-    let dataEtiqueta = entity.etiquetas[0];
+     
+    let dataEtiqueta =  entity.etiquetas[0] 
     
     $scope.articulo = entity;
-    $scope.etiquetas = dataEtiqueta.etiquetas; //etiqueta asignado al articulo 
+    $scope.etiquetas = JSON.parse(dataEtiqueta.etiquetas[0]); //etiqueta asignado al articulo 
 
     
     $scope.data = [];
@@ -77,7 +78,7 @@ function ModalDatoAdicionalArticuloCtrl($scope, $uibModalInstance, params){
             for(let data of $scope.etiquetas) {
                 for(let item of $scope.data) {
 
-                    if([null, undefined, ""].includes(item[data])){
+                    if([null, undefined, ""].includes(item[data.codigo])){
                         Swal.fire({
                             title: 'Datos Adicionales',
                             icon:'warning',
@@ -91,7 +92,10 @@ function ModalDatoAdicionalArticuloCtrl($scope, $uibModalInstance, params){
             
             $uibModalInstance.close({
                 isAdd: true,
-                data: $scope.data
+                data: $scope.data.map(item=>{
+                    let {$$hashKey, ...rest} = item;
+                    return rest;
+                })
             })
         } catch (error) {
             console.log(error);

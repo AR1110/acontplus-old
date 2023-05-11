@@ -17,7 +17,7 @@
                         return etiquetas.map(item => ({
                             idEtiqueta: item.idEtiqueta,
                             descripcion: item.descripcion,
-                            etiquetas: item.etiquetas,
+                            etiquetas: JSON.parse(item.etiquetas),
                             estado: item.estado
                         }))
                     }
@@ -27,7 +27,7 @@
             create: function(data){
                 return mainService.getData('post', url + 'Insert?json=' + JSON.stringify(data), null, true).then(response => {
                     if(response.code==="0"){
-                        throw response;
+                        return response;
                     }
 
                     if(response.code==="1"){
@@ -36,9 +36,9 @@
                 })
             },
             update: function(id, data){
-                return mainService.getData('put', url + 'Update/' + id + JSON.stringify(data), null, true).then(response => {
+                return mainService.getData('put', url + 'Update/' + id +'/?json=' + JSON.stringify(data), null, true).then(response => {
                     if(response.code==="0"){
-                        throw new Error(response);
+                        return response;
                     }
 
                     if(response.code==="1"){
@@ -49,7 +49,7 @@
             delete: function(id){
                 return mainService.getData('delete', url + 'Delete/' + id, null, true).then(response => {
                     if(response.code==="0"){
-                        throw new Error(response);
+                        return response;
                     }
 
                     if(response.code==="1"){

@@ -576,7 +576,7 @@ class ModalBaseCliente extends ModalBaseCtrl {
         this.data.correo = this.correos.length > 0 ? this.correos.join(';') : "";
         this.data.placa = this.placas.length > 0 ? this.placas.join(';') : "";
 
-        return true;
+        return false;
 
     }
 

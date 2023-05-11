@@ -27,7 +27,7 @@ BEGIN
 		BEGIN TRAN
 			IF EXISTS(SELECT 1 FROM Inventario.Etiqueta WHERE descripcion = LTRIM(TRIM(@descripcion)))
 				BEGIN
-					SELECT '0'code, 'Etiqueta con este nombre ya se encuentra regustrado' as 'message'
+					SELECT '0'code, 'Etiqueta con este nombre ya se encuentra registrado' as 'message'
 					RETURN
 				END
 
@@ -47,5 +47,3 @@ BEGIN
 		VALUES (NEWID(), 'api/Etiqueta/Insert', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
 	END CATCH 
 END 
-
-SELECT * FROM FirmaElectronica
