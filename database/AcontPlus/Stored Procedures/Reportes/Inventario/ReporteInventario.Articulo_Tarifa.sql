@@ -103,7 +103,10 @@ BEGIN
 		END
 		ELSE
 		BEGIN 
-			SET @sql = @sql + ' AND ar.idSubFamilia = @bySubFamilia '
+			IF @checkboxSubFamiliaFiltro = 1
+				BEGIN
+					SET @sql = @sql + ' AND ar.idSubFamilia = @bySubFamilia '
+				END
 		END
 
 		--Articulo con stock

@@ -117,7 +117,7 @@
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 		<Content Include="Reports\GestionReporte\KardexRG.rdl">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 		<Content Include="Reports\GestionReporte\LiquidacionCompraRG.rdlc">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>

@@ -94,13 +94,27 @@ function reporteInventarioCtrl($scope, _commonSvc, mS, form, toast, FileSaver, B
         //     }
         // }
 
-        if (!$scope.dataSearch.chkProveedor) {
+        // if (!$scope.dataSearch.chkProveedor) {
+        //     if (form.campo($scope.dataSearch.bySubFamilia)) {
+        //         toast.toastr('warning', 'Seleccione la SubFamilia', 'Reporte');
+        //         return
+        //     }
+        // }
+
+        if ($scope.dataSearch.chkProveedor) {
+            if (!$scope.dataSearch.numeroIdentificacion) {
+                toast.toastr('warning', 'Debe ingresar el proveedor', 'Reporte');
+                return
+            }
+        }
+
+        if (!$scope.dataSearch.chkProveedor && $scope.dataSearch.checkboxSubFamiliaFiltro) {
             if (form.campo($scope.dataSearch.bySubFamilia)) {
                 toast.toastr('warning', 'Seleccione la SubFamilia', 'Reporte');
                 return
             }
         }
-
+       
         if ($scope.dataSearch.checkboxStockFiltro) {
             if (form.campo($scope.dataSearch.byStock)) {
                 toast.toastr('warning', 'Seleccione el Stock', 'Reporte');
