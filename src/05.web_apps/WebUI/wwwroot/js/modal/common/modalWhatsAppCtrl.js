@@ -13,6 +13,21 @@ ModalWhatsAppCtrl.$inject = [
 
 function ModalWhatsAppCtrl($scope, uibModal, tS, socket, mS, params) {
     $scope.client = {}
+    // $scope.agent = navigator.userAgent
+    // $scope.platform = navigator.platform
+
+    // console.log($scope.agent)
+    // console.log($scope.platform)
+
+    let parser = new UAParser(navigator.userAgent) // you need to pass the user-agent for nodejs
+    //console.log(parser) // {}
+    let parserResults = parser.getResult()
+    //console.log(parserResults)
+
+    //return
+    $scope.browser = parserResults.browser.name + parserResults.browser.version
+    $scope.os = parserResults.os.name + parserResults.os.version
+
     //$scope.client.id = params.codEstab
     //$scope.client.description = !params.description ? 'Session de Whatsapp del estab: ' + params.codEstab : params.description
     $scope.session = {}
@@ -41,7 +56,11 @@ function ModalWhatsAppCtrl($scope, uibModal, tS, socket, mS, params) {
     }
 
     $scope.insert = () => {
-        mS.getData('post', 'WhatsAppSession/Post', null, true).then(response => {
+        let data = {
+            browser: JSON.stringify(parserResults.browser),
+            os: JSON.stringify(parserResults.os),
+        }
+        mS.getData('post', 'WhatsAppSession/Post', { data: data }, true).then(response => {
             if (response.code == '1') {
                 var temp = JSON.parse(response.payload)
                 $scope.client.id = temp[0].id
@@ -69,7 +88,11 @@ function ModalWhatsAppCtrl($scope, uibModal, tS, socket, mS, params) {
     $scope.fileName = ''
 
     $scope.initialLoad = () => {
-        mS.getData('get', 'WhatsAppSession/', null, true).then(response => {
+        let data = {
+            browser: JSON.stringify(parserResults.browser),
+            os: JSON.stringify(parserResults.os),
+        }
+        mS.getData('get', 'WhatsAppSession/Get?json=' + JSON.stringify(data), null, true).then(response => {
             if (response.code == '1') {
                 $scope.session.id = JSON.parse(response.payload)[0].id
                 $scope.client.id = JSON.parse(response.payload)[0].id
