@@ -8,15 +8,24 @@ ModalDatoAdicionalArticuloCtrl.$inject = ['$scope', '$uibModalInstance',  'param
 
 function ModalDatoAdicionalArticuloCtrl($scope, $uibModalInstance, params){
 
-    $scope.articulo = params;    
-    let dataEtiqueta = params.etiquetas[0];
-    console.log(params)
+    let {entity, datosAdicionales} = params 
 
-    $scope.etiquetas = dataEtiqueta.etiquetas;
+    let dataEtiqueta = entity.etiquetas[0];
+    
+    $scope.articulo = entity;
+    $scope.etiquetas = dataEtiqueta.etiquetas; //etiqueta asignado al articulo 
 
-    $scope.columns = ['IMEI', 'SERIE'];
+    
     $scope.data = [];
 
+   
+   let dataInfo = datosAdicionales.info.find(item=>item.idArticulo===$scope.articulo.idArticulo);
+
+   if(dataInfo){
+        $scope.data = dataInfo.adicionales
+   }
+       
+   
 
     $scope.addRow = function() {
        
@@ -34,8 +43,21 @@ function ModalDatoAdicionalArticuloCtrl($scope, $uibModalInstance, params){
 
     $scope.removeRow = function(row) {
         try {
-            let index = $scope.data.indexOf(row);
-            $scope.data.splice(index, 1);
+            Swal.fire({
+                title: 'Eliminar Dato Adicional',
+                icon:'warning',
+                html: `Esta seguro de eliminar este dato adicional?`,
+                showConfirmButton: true,
+                showCancelButton: true,
+                cancelButtonText: 'No, cancelar',
+                confirmButtonText:'Si, eliminar'
+            }).then(result => {
+                if(result.isConfirmed){
+                    let index = $scope.data.indexOf(row);
+                    $scope.data.splice(index, 1);
+                    $scope.$apply();
+                }
+            })
         } catch (error) {
             console.log(error)
         }
@@ -65,6 +87,12 @@ function ModalDatoAdicionalArticuloCtrl($scope, $uibModalInstance, params){
                     }                    
                 }
             }
+
+            
+            $uibModalInstance.close({
+                isAdd: true,
+                data: $scope.data
+            })
         } catch (error) {
             console.log(error);
         }

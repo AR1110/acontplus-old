@@ -294,8 +294,10 @@ BEGIN
 				,total = dt.precioTotalSinImpuesto
 				,dt.codigoPorcentaje
 				,tarifa = ti.porcentaje
+				,ar.datosAdicionales
 			FROM Compra.Documento_Ingreso_Detail dt WITH (NOLOCK)
 			INNER JOIN Sri.TarifaImpuesto ti WITH (NOLOCK) ON ti.codigo = dt.codigoPorcentaje
+			INNER JOIN Articulo ar WITH(NOLOCK) ON ar.idArticulo = dt.idArticulo
 			WHERE dt.idDocumentoIngreso = @idDocumentoIngreso
 
 			SELECT tx.* 
@@ -322,6 +324,9 @@ BEGIN
 			--===============================Inventario========================================================================
 			SELECT TOP 1 inventory =  llevaInventario FROM Config.GestionSistema WITH (NOLOCK) WHERE idEntidad = @idEntidad
 
+			--=============================Datos Adicionales===================================================================
+			SELECT * FROM Compra.CompEtiquetaArticulo 
+				    WHERE uniqueId = (SELECT uniqueId FROM Compra.Documento_Ingreso WHERE idDocumentoIngreso = @idDocumentoIngreso)
 		END 
 END
 GO

@@ -101,6 +101,13 @@ BEGIN
 	)
 
 	 
+	DECLARE @compEtiquetaArticulo AS TABLE (
+		idArticulo INT  NULL		
+		,idEtiqueta INT  NULL
+		,adicionales VARCHAR(MAX) NULL
+		
+	)
+	 
 	BEGIN TRY
 		SELECT @fechaEmisionModificada = fechaEmision FROM OPENJSON(@comprobante) WITH(fechaEmision DATETIME '$.fechaEmision')	
 		
@@ -184,6 +191,16 @@ BEGIN
 			 ) as dt
 
 		
+		INSERT INTO @compEtiquetaArticulo  
+		SELECT idArticulo, idEtiqueta, JSON_QUERY(REPLACE(adicionales, '\"', '"')) FROM OPENJSON(@comprobante, '$.adicionales')
+		WITH(
+			idArticulo INT '$.idArticulo'
+			,idEtiqueta INT '$.idEtiqueta'
+			,adicionales NVARCHAR(MAX) '$.adicionales' AS JSON  
+		)
+		--Comprobante Etiqueta Articulo 
+		--SELECT '0'code, 'message' = CAST((SELECT COUNT(*) FROM @compEtiquetaArticulo) AS VARCHAR(MAX))
+		--return
 		----======================================Recuperar datos de las Tablas===========================================================
 		SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
@@ -246,6 +263,13 @@ BEGIN
                    (idDocumentoIngreso,idArticulo,codigo,codigoPorcentaje,tarifa,baseImponible,valor)
 			SELECT @idDocumentoIngreso,idArticulo,codigo,codigoPorcentaje,tarifa,baseImponible,valor
 			FROM @taxes
+
+			---Datos Adicionales de articulo (etiquetas)
+			IF (SELECT COUNT(*) FROM @compEtiquetaArticulo) > 0
+				BEGIN
+					INSERT INTO Compra.CompEtiquetaArticulo(uniqueId, info)VALUES(@uniqueId, (SELECT * FROM @compEtiquetaArticulo FOR JSON PATH ))					
+				END
+			
 			
 			--==============================================================Inventario============================================================================================
 			IF @inventory = 'SI'

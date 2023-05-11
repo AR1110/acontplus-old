@@ -152,25 +152,27 @@ function compraNoHabitualCtrl($scope, commonSvc, compraNoHabSvc, mS, tS, modalSv
                 template: MODAL_EDITAR['template'],
                 isRenderRazorPartial: true
             }
+            showLoader();
+            compraNoHabSvc.findById(item.idDocumentoIngreso).then(response => {
+                console.log(response);
+                // if (response.code === "0") {
+                //     console.log(response)
+                //     hideLoader();
+                // }
 
-            mS.getData('get', 'CompraNoHabitual/' + JSON.stringify({
-                idDocumentoIngreso: item.idDocumentoIngreso,
-                typeList: 4
-            }), null, true).then(response => {
-                if (response.code === "0") {
-                    console.log(response)
-                    hideLoader();
-                }
+                // if (response.code === "1") {
 
-                if (response.code === "1") {
+                modalParams.params = response;
+                $scope.openModal(modalParams)
 
-                    modalParams.params = JSON.parse(response.payload);
-                    $scope.openModal(modalParams)
-
-                    hideLoader();
-                }
+                //     hideLoader();
+                // }
+            }).catch(error=>{
+                hideLoader();
+                console.log(error);
             })
         } catch (error) {
+            hideLoader();
             console.log(error)
         }
 

@@ -7,12 +7,13 @@
             restrict: 'A',
             scope: {                
                 entity: '=',
-                getDataEtiqueta:'&'
+                getDataEtiqueta:'&',
+                datosAdicionales:'='
             },
             link: function (scope, element, attrs) {
 
                 element.on('click', async function () {
-
+                    console.log(scope)
                     if(!Number.isInteger(scope.entity.cantidad)){
                         Swal.fire({
                             title: 'Datos Adicionales',
@@ -28,16 +29,37 @@
                         controller: ModalDatoAdicionalArticuloCtrl,
                         template: '~/Areas/Compra/Pages/Shared/_ModalDatoAdicionalArticulo.cshtml',
                         size:'lg',
-                        params: scope.entity,
+                        params: {
+                            entity: scope.entity,
+                            datosAdicionales: scope.datosAdicionales
+                        },
                         isRenderRazorPartial: true
                     })  
                     
                     modalRef.result.then(function (result) {
-                        console.log(result);  
-                        console.log(scope)                  
-                        scope.getDataEtiqueta({
-                            items: result
-                        })
+                        if(typeof result ==='object'){
+
+                            //Cuando es editar 
+                            if(scope.datosAdicionales.info.some(item=>item.idArticulo ===scope.entity.idArticulo)){
+                                for(let label of scope.datosAdicionales.info){
+                                    if(label.idArticulo===scope.entity.idArticulo){
+                                        label.adicionales = result.data;                                     
+                                    }
+                                }
+                            }else {
+
+                                scope.datosAdicionales.info.push({
+                                    idArticulo: scope.entity.idArticulo,
+                                    idEtiqueta: scope.entity.etiquetas[0].idEtiqueta,
+                                    adicionales: result.data
+                                });
+                            }                            
+                        }
+                       
+                        // scope.getDataEtiqueta({
+                        //     items: result
+                        // })
+                        console.log(scope.datosAdicionales)
                     })
                 });
             }

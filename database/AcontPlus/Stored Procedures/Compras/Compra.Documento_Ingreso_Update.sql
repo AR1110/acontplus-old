@@ -94,6 +94,13 @@ BEGIN
         ,valor NUMERIC(18,5) NOT NULL
 	)
 
+	--Etiquetas
+	DECLARE @compEtiquetaArticulo AS TABLE (
+		idArticulo INT  NULL		
+		,idEtiqueta INT  NULL
+		,adicionales VARCHAR(MAX) NULL
+		
+	)
 
 	SELECT 
 		@hora =CAST(dbo.ufnGetDateEcuador() AS time)
@@ -178,6 +185,16 @@ BEGIN
                ,valor NUMERIC(18,5) '$.valor'
 			 ) as dt
 
+
+		--Datos Adicionales 
+		INSERT INTO @compEtiquetaArticulo  
+		SELECT idArticulo, idEtiqueta, JSON_QUERY(REPLACE(adicionales, '\"', '"')) FROM OPENJSON(@comprobante, '$.adicionales')
+		WITH(
+			idArticulo INT '$.idArticulo'
+			,idEtiqueta INT '$.idEtiqueta'
+			,adicionales NVARCHAR(MAX) '$.adicionales' AS JSON  
+		)
+
 		----======================================Recuperar datos de las Tablas===========================================================
 		SELECT @fechaEmision = fechaEmision FROM @document
 
@@ -202,7 +219,8 @@ BEGIN
 
 		IF @codPago != 'PE'
 			BEGIN 
-				SELECT '0' code,'El Documento tiene un proceso contable no puede ser editado' as 'message'
+				--SELECT '0' code,'El Documento tiene un proceso contable no puede ser editado' as 'message'
+				SELECT '0'code, 'Ya se ha realizado el cobro de algunas de las cuotas correspondientes a este documento.' as 'message'
 				RETURN  
 			END 
 
@@ -257,7 +275,16 @@ BEGIN
 			FROM @taxes
 
 			
-			
+			--Insert o Update Etiqueta 
+			IF (SELECT COUNT(*) FROM Compra.CompEtiquetaArticulo WHERE uniqueId = @uniqueId) > 0
+				BEGIN
+					UPDATE Compra.CompEtiquetaArticulo SET info = (SELECT * FROM @compEtiquetaArticulo FOR JSON PATH ) WHERE uniqueId = @uniqueId
+				END 
+			ELSE IF  (SELECT COUNT(*) FROM @compEtiquetaArticulo) > 0
+				BEGIN
+					INSERT INTO Compra.CompEtiquetaArticulo(uniqueId, info)VALUES(@uniqueId, (SELECT * FROM @compEtiquetaArticulo FOR JSON PATH ))	
+				END 
+
 			--==============================================================Inventario============================================================================================
 			IF @inventory = 'SI'
 				BEGIN 

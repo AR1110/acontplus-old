@@ -31,22 +31,102 @@
             })
         }
 
-        service.create = function({data, detalles}){
-            
-                                    
-
-            return mS.getData(method, url, data, true).then(response=>{
+        service.create = function(query){                                        
+            return mS.getData('post', 'CompraNoHabitual', query, true).then(response=>{
                 return response
             })
         }
         
-        service.update = function(id, data){
-
+        service.update = function(id, query){
+            return mS.getData('put', url + id, query, true).then(response=>{
+                return response;
+            })
         }
 
         service.delete = function(id){
 
             
+        }
+
+        service.findById = function(id){
+            let query = JSON.stringify({
+                idDocumentoIngreso: id,
+                typeList: 4
+            })
+            return mS.getData('get', url + query, null, true).then(response=>{
+                if(response.code==='0'){
+                    throw response;
+                }
+                if(response.code==='1'){
+                    let dataRepository = JSON.parse(response.payload);
+
+                    let comprobante = dataRepository[0][0];
+                    let proveedor = dataRepository[1][0];
+                    let detalles = dataRepository[2];
+                    let taxes = dataRepository[3];
+                    let bodegas = dataRepository[4];
+                    let decimal = dataRepository[5][0];
+                    let tipoIvas = dataRepository[6];
+                    let inventario = dataRepository[7][0];
+                    let datosAdicionales = dataRepository[8].map(item=>{
+                        if(typeof item.info=='string'){
+                            item.info = JSON.parse(item.info).map(item=>{
+                                let adicionales = JSON.parse(item.adicionales)
+                                return {
+                                    ...item,
+                                    adicionales
+                                }
+                            })
+                        }
+                        return item;
+                    })
+                   
+                   console.log(datosAdicionales)
+                    return {
+                        comprobante,
+                        proveedor,
+                        detalles,
+                        taxes,
+                        bodegas,
+                        decimal,
+                        tipoIvas,
+                        inventario,
+                        datosAdicionales: datosAdicionales[0]
+                    }
+                }
+            })
+        }
+
+        /**
+         * 
+         * @param {*} param0 object
+         * @returns object
+         */
+        service.queryMapper = function({data, details, proveedor, idEstablecimiento, estab, ptoEmi, datosAdicionalesArticulo}){
+            let comprobante ={
+                idEstablecimiento,
+                idPuntoEmision: data.idPuntoEmision,
+                idProveedor: proveedor.idProveedor,
+                estab,
+                ptoEmi,
+                fechaEmision: moment(data.fechaEmision).format('YYYY-MM-DD HH:mm:ss A'),
+                totalSinImpuestos: data.subTotalSinImpuestos,
+                importeTotal: data.total,
+                inventory: data.inventory,
+                tarifa: data.tarifa,
+                adicionales: datosAdicionalesArticulo.map(obj=>{
+                    const { $$hashKey, ...cleanAd } = obj;
+                    return cleanAd;
+                })
+            };
+
+            let query =  {
+                comprobante: JSON.stringify(comprobante),
+                detalles: JSON.stringify(service.detalleMapTo(details)),
+                impuestos: JSON.stringify(service.taxesMapTo(details))
+            }
+
+            return JSON.stringify(query)
         }
 
         service.detalleMapTo = function(detalles){
@@ -68,15 +148,43 @@
                     descuento: item.valorDescuento,
                     precioTotalSinImpuesto: item.total,
                     codigoPorcentaje: item.codigoPorcentaje,
+                    adicionales: item.adicionales
                 }
                 return obj;
             })
         }
 
-        service.taxesMapTo = function (detalles){
+        service.taxesMapTo = function (detalles){         
+            let index = 1
+            return detalles.map(item => {
+                let obj = {
+                    index: index++,
+                    idArticulo: item.idArticulo,
+                    codigo: "2",
+                    codigoPorcentaje: item.codigoPorcentaje,
+                    tarifa: item.tarifa,
+                    baseImponible: item.total,
+                    valor: (item.tarifa / 100) * item.total,
+                }
+                return obj;
+            })
             
-        }
+        }       
 
+        service.generateNroSecuencial = function (idPuntoEmision){
+            let query = JSON.stringify({
+                idPuntoEmision,
+                typeList: 3
+            })
+            return mS.getData('get', url  + query, null, true).then(response => {
+                if(response.code==="0"){
+                    throw response;
+                }
+                if(response.code==="1"){
+                    return JSON.parse(response.payload)[0][0].serieComprobante
+                }
+            })
+        }
         return service;
     })
 })(window.angular)
