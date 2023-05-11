@@ -208,6 +208,7 @@ export class KardexCtrl {
                     headerSort: false,
                     width: 75,
                     cssClass: "table-salidas",
+                    bottomCalc: this.sumTotalSalida,
                 },
                 ],
             },
@@ -469,17 +470,36 @@ export class ModalKardexCtrl extends KardexCtrl {
         this._params = _params;
     }
 
-    $onInit() {
-        let {
-            fechaInicio,
-            fechaFin
-        } = this.form.getFechaInicioFinFilter(0);
-        this.dataSearch.fechaInicio = fechaInicio;
-        this.dataSearch.fechaFin = fechaFin;
+    async $onInit() {
+        // let {
+        //     fechaInicio,
+        //     fechaFin
+        // } = this.form.getFechaInicioFinFilter(new Date().getMonth() + 1);
+
+        this.dataSearch.checkBoxFecha = true;
+        this.dataSearch.fechaInicio = this.form.formatDateTimeZone(new Date());
+        this.dataSearch.fechaFin = this.form.formatDateTimeZone(new Date());
 
         this.articulo = this._params;
         this.articuloFiltro = this.articulo;
         this.dataSearch.byArticulo = this.articulo.idArticulo;
+
+        await this._commonSvc.getEstabAsign().then(response => {
+            this.establecimientos = response;
+
+            if (this.establecimientos.length > 0) {
+                this.dataSearch.codEstab = this.establecimientos[0].codEstab;            
+
+                let dataEstab = this.establecimientos.find(item => item.codEstab === this.dataSearch.codEstab);
+                this._commonSvc.getDataFormEstabAsig(dataEstab).then(response => {
+                    this.bodegas = response[1];
+                    this.dataSearch.byBodega = this.bodegas[0].idBodega
+        
+                })
+            } else {
+                taostr.warning('warning', 'NO TIENES ASIGNADO NINGÚN ESTABLECIMIENTO');
+            }
+        })
 
         this.getKardex();
     }
@@ -536,7 +556,8 @@ export class ModalFiltroKardex {
         this._mS.getData('GET', 'Kardex/Filters', null, true).then(
             response => {
                 if (response.code == '0') {
-                    this._tS.toastr('warning', response.message)
+                    console.log(response)
+                    // this._tS.toastr('warning', response.message)
                 }
                 if (response.code == '1') {
                     let tempArray = JSON.parse(response.payload)
