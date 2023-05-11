@@ -16,13 +16,20 @@ function ModalWhatsAppCtrl($scope, uibModal, tS, socket, mS, params) {
     //$scope.client.id = params.codEstab
     //$scope.client.description = !params.description ? 'Session de Whatsapp del estab: ' + params.codEstab : params.description
     $scope.session = {}
-
+    const _env = 2
+    let url = _env == 1 ? 'http://localhost:8000' : 'http://205.209.99.71:8000'
     $scope.type = params.type
     $scope.codDoc = params.codDoc
 
-
-    $scope.whatsapp = { number: '0989297817' }
-    //$scope.whatsapp.number = params.celular
+    $scope.whatsapp = {}
+    if (params.telefono) {
+        $scope.whatsapp.number = params.telefono
+    }
+    if ($scope.type == 'SRI') {
+        $scope.whatsapp.message = 'Estimado cliente adjuntamos el siguiente comprobante electrónico'
+    } else {
+        $scope.whatsapp.message = 'Estimado cliente adjuntamos el siguiente documento'
+    }
 
     $scope.login = () => {
         //console.log($scope.client)
@@ -114,26 +121,19 @@ function ModalWhatsAppCtrl($scope, uibModal, tS, socket, mS, params) {
         }
     })
     socket.on('remote_session_saved', function (data) {
-        console.log(data)
         if (data.id == $scope.session.id) {
             $scope.session.isLogged = true
+            tS.toastr("info", data.text)
         }
     })
 
     $scope.sendSms = () => {
-        let data = { number: $scope.whatsapp.number, message: $scope.whatsapp.message }
-        mS.getData('post', 'http://localhost:8000/send-message', data).then(
-            response => {
-                console.log(response)
-            }
-        ).catch(error => {
-            console.log(error)
-        })
+
     }
 
     $scope.sendMedia = (caption, fileName) => {
         let data = { number: $scope.whatsapp.number, caption: caption, fileName: fileName }
-        mS.getData('post', 'http://localhost:8000/send-media', data).then(
+        mS.getData('post', url + '/send-media', data).then(
             response => {
                 console.log(response)
             }
@@ -173,36 +173,56 @@ function ModalWhatsAppCtrl($scope, uibModal, tS, socket, mS, params) {
 
     $scope.sendMessage = () => {
         try {
-            switch ($scope.type) {
-                case 'SRI':
-                    $scope.generateXml()
-                    // if (!$scope.generateXml()) {
-                    //     tS.toastr('warning', 'No se pudo general el xml para enviar por correo')
-                    //     return
-                    // }
-                    // if (!$scope.generateFile()) {
-                    //     return
-                    // }
-                    setTimeout(() => {
-                        $scope.generateFile()
-                    }, 500)
-
-                    setTimeout(() => {
-                        $scope.sendSms()
-                    }, 1000)
-                    break
-                case 'GenericFile':
-                    // if (!$scope.generateFile()) {
-                    //     return
-                    // }
-                    $scope.generateFile()
-                    $scope.sendSms()
-                    break
-                default:
-                    $scope.sendSms()
-                    break
+            if (!$scope.whatsapp.number) {
+                tS.toastr('warning', 'El número de celular no puede estar vacio!')
+                return
             }
 
+            if ($scope.whatsapp.number.length < 10) {
+                tS.toastr('warning', 'El número de celular no puede ser menor a diez digitos!')
+                return
+            }
+
+            if ($scope.whatsapp.number.length > 10) {
+                tS.toastr('warning', 'El número de celular no puede ser mayor a diez digitos!')
+                return
+            }
+
+            if (!$scope.whatsapp.message) {
+                tS.toastr('warning', 'El mensaje no puede estar vacio!')
+                return
+            }
+            let data = { number: $scope.whatsapp.number, message: $scope.whatsapp.message }
+            mS.getData('post', url + '/send-message', data).then(
+                response => {
+                    if (response.status) {
+                        switch ($scope.type) {
+                            case 'SRI':
+                                $scope.generateXml()
+                                // if (!$scope.generateXml()) {
+                                //     tS.toastr('warning', 'No se pudo general el xml para enviar por correo')
+                                //     return
+                                // }
+                                // if (!$scope.generateFile()) {
+                                //     return
+                                // }
+                                $scope.generateFile()
+                                break
+                            case 'GenericFile':
+                                // if (!$scope.generateFile()) {
+                                //     return
+                                // }
+                                $scope.generateFile()
+                                break
+                            default:
+                                break
+                        }
+                    }
+                    console.log(response)
+                }
+            ).catch(error => {
+                console.log(error)
+            })
         } catch (error) {
             console.log(error)
         }

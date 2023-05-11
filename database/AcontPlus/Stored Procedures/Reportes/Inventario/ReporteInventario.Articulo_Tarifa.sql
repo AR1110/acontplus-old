@@ -103,7 +103,10 @@ BEGIN
 		END
 		ELSE
 		BEGIN 
-			SET @sql = @sql + ' AND ar.idSubFamilia = @bySubFamilia '
+			IF @checkboxSubFamiliaFiltro = 1
+				BEGIN
+					SET @sql = @sql + ' AND ar.idSubFamilia = @bySubFamilia '
+				END
 		END
 
 		--Articulo con stock
@@ -116,8 +119,13 @@ BEGIN
 		IF  @checkboxStockFiltro = 1 AND @byStock = 2 
 			BEGIN			
 				SET @sql = @sql + ' AND ar.stock <= 0 '
-			END 
-				
+			END
+
+		IF @byOrderCampo = 'ar.idSubFamilia'
+		BEGIN
+			SET @byOrderCampo = 'ar.subfamilia'
+		END
+
 	    SET @sql = @sql + ' ORDER BY '+ @byOrderCampo+ ' ' +  @byOrder
 		
 		SELECT		    

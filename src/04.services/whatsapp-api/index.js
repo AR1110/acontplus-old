@@ -4,15 +4,12 @@ const { Server } = require('socket.io')
 const qrcode = require('qrcode')
 const http = require('http')
 const { phoneNumberFormatter } = require('./helpers/formatter')
-const fs = require("fs")
 const { body, validationResult } = require('express-validator')
+
 const { MongoStore } = require('wwebjs-mongo')
 const mongoose = require('mongoose')
-// const fileUpload = require('express-fileupload')
-// const axios = require('axios')
-const port = process.env.PORT || 8000
-//require('events').EventEmitter.defaultMaxListeners = infinity;
 
+const port = process.env.PORT || 8000
 const app = express()
 const server = http.createServer(app)
 
@@ -41,18 +38,12 @@ app.use(cors(corsOptions))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-// app.use(fileUpload({
-//     debug: true
-// }))
-
 app.get('/', (req, res) => {
     res.status(200).json({
         status: true,
         message: 'Not just hello world'
     })
-    //res.sendFile('index.html', { root: __dirname })
 })
-
 
 const save = async (id) => {
     await store.save({ session: 'RemoteAuth-' + id })
@@ -60,18 +51,18 @@ const save = async (id) => {
 }
 const get = async (id) => {
     let test = await store.extract({ session: 'RemoteAuth-' + id })
-    console.log(test)
 }
+
 const exists = async (id) => {
     return await store.sessionExists({ session: 'RemoteAuth-' + id })
 }
 
 const logout = async (id) => {
     let response = await store.delete({ session: 'RemoteAuth-' + id })
-    console.log(response)
 }
 
 const allSessionsObject = {}
+
 let client
 const createWhatsappSession = (id, socket) => {
     console.log('session creating: ' + id)
@@ -80,7 +71,13 @@ const createWhatsappSession = (id, socket) => {
             executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
             headless: false,
             args: [
-                '--no-sandbox'
+                '--enable-features=NetworkService',
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-web-security',
+                '--disable-features=IsolateOrigins,site-per-process',
+                '--shm-size=3gb', // this solves the issue
             ],
         },
         authStrategy: new RemoteAuth({
@@ -115,11 +112,10 @@ const createWhatsappSession = (id, socket) => {
     client.on('remote_session_saved', () => {
         console.log('saved')
         socket.emit('remote_session_saved', {
-            id,
+            id: id,
             text: "session guardada",
         })
     })
-
     client.initialize()
 }
 
@@ -130,7 +126,13 @@ const getWhatsappSession = (id, socket) => {
             executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
             headless: false,
             args: [
-                '--no-sandbox'
+                '--enable-features=NetworkService',
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-web-security',
+                '--disable-features=IsolateOrigins,site-per-process',
+                '--shm-size=3gb', // this solves the issue
             ],
         },
         authStrategy: new RemoteAuth({
@@ -159,13 +161,6 @@ const getWhatsappSession = (id, socket) => {
     })
 
     client.initialize()
-
-    // client.on('message', async msg => {
-    //     console.log(msg)
-    //     const number = phoneNumberFormatter(msg.number)
-    //     const message = msg.message
-    //     client.sendMessage(number, message) 
-    // })
 }
 
 //Socket IO   
@@ -210,13 +205,52 @@ app.post('/send-message', [
             message: errors.mapped()
         })
     }
-    //const sender = req.body.sender
     const number = phoneNumberFormatter(req.body.number)
     const message = req.body.message
-    // console.log(allSessionsObject[sender])
-    //console.log(sender)
-    //const client = await get(sender)
-    //console.log(client)
+    if (!client) {
+        return res.status(422).json({
+            status: false,
+            message: `No se encontro la solicitud ${sender}`
+        })
+    }
+    const isRegisteredNumber = await checkRegisteredNumber(number)
+    if (!isRegisteredNumber) {
+        return res.status(422).json({
+            status: false,
+            message: 'El número no se encuentra registrado en whatsapp!'
+        })
+    }
+    client.sendMessage(number, message).then(response => {
+        res.status(200).json({
+            status: true,
+            response: response
+        })
+    }).catch(error => {
+        res.status(500).json({
+            status: false,
+            response: error
+        })
+    })
+})
+app.post('/send-media', [
+    body('number').notEmpty(),
+], async (req, res) => {
+
+    const errors = validationResult(req).formatWith(({ msg }) => {
+        return msg
+    })
+
+    if (!errors.isEmpty()) {
+        return res.status(422).json({
+            status: false,
+            message: errors.mapped()
+        })
+    }
+
+    const number = phoneNumberFormatter(req.body.number)
+    const caption = req.body.caption
+    const fileName = req.body.fileName
+
     if (!client) {
         return res.status(422).json({
             status: false,
@@ -224,16 +258,27 @@ app.post('/send-message', [
         })
     }
 
-    //console.log("", number, message)
-    //const isRegisteredNumber = await checkRegisteredNumber(number)
-    // if (!client.isRegisteredUser(number)) {
-    //     return res.status(422).json({
-    //         status: false,
-    //         message: 'El número no se encuentra registrado en whatsaap'
-    //     })
-    // }
-    //console.log(number, message)
-    client.sendMessage(number, message).then(response => {
+    const media = MessageMedia.fromFilePath(`./files/${fileName}`)
+
+    //const file = req.body.file
+    //const media = new MessageMedia(file.mimetype, file.data.toString('base64'), file.name)
+    // const fileUrl = req.body.file
+    // let mimetype
+    // const attachment = await axios.get(fileUrl, { responseType: 'arraybupper' }).then(response => {
+    //     mimetype = response.headers['content-type']
+    //     return response.data.toString('base64')
+    // })
+    //const media = new MessageMedia(mimetype, attachment, 'Media')
+
+    const isRegisteredNumber = await checkRegisteredNumber(number)
+    if (!isRegisteredNumber) {
+        return res.status(422).json({
+            status: false,
+            message: 'El número no se encuentra registrado en whatsapp'
+        })
+    }
+
+    client.sendMessage(number, media, { caption: caption }).then(response => {
         res.status(200).json({
             status: true,
             response: response
@@ -249,7 +294,6 @@ app.post('/send-message', [
 app.post('/logout', async (req, res) => {
     const sender = req.body.sender
     const client = allSessionsObject[sender]
-    //console.log(client)
     if (!client) {
         return res.status(422).json({
             status: false,
@@ -257,51 +301,6 @@ app.post('/logout', async (req, res) => {
         })
     }
     await logout(sender)
-})
-
-
-app.post('/send-media', async (req, res) => {
-    //const sender = req.body.sender 
-    const number = phoneNumberFormatter(req.body.number)
-    const caption = req.body.caption
-    const fileName = req.body.fileName
-    console.log(fileName)
-    const media = MessageMedia.fromFilePath(`./files/${fileName}`)
-    //const file = req.body.file
-    //console.log(media)
-    if (!client) {
-        return res.status(422).json({
-            status: false,
-            message: `No se encontro la solicitud ${sender}`
-        })
-    }
-    // const file = fs.readFileSync(`./files/${fileName}`);
-    // console.log(file)
-    //const media = new MessageMedia(file.mimetype, file.data.toString('base64'), file.name)
-    // const fileUrl = req.body.file
-    // let mimetype
-    // const attachment = await axios.get(fileUrl, { responseType: 'arraybupper' }).then(response => {
-    //     mimetype = response.headers['content-type']
-    //     return response.data.toString('base64')
-    // })
-    // console.log(fileUrl)
-    // console.log(attachment)
-    // console.log(mimetype)
-    //const media = new MessageMedia(mimetype, attachment, 'Media')
-    // console.log(file)
-    // return
-    console.log(number)
-    client.sendMessage(number, media, { caption: caption }).then(response => {
-        res.status(200).json({
-            status: true,
-            response: response
-        })
-    }).catch(error => {
-        res.status(500).json({
-            status: false,
-            response: error
-        })
-    })
 })
 
 server.listen(port, () => {

@@ -1189,7 +1189,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44354
+          "Port": 7074
         }
       ],
       "DownstreamPathTemplate": "/api/WhatsAppSession{everything}",

@@ -1296,6 +1296,7 @@
                     mS.getData('get', _urlService + 'Articulo?json=' + JSON.stringify(jsonData)).then(
                         response => {
                             if (response.code == '1') {
+                                $scope.articleNotFound = true;
                                 $scope.articlesTemp = JSON.parse(response.payload)
                             } else {
                                 $scope.articleNotFound = true;
@@ -1347,6 +1348,7 @@
                                 $scope.articleMergeSearch = {}
                                 $scope.articleMergeSearch.tipo = tipo
                                 $scope.articlesTemp = JSON.parse(response.payload)
+                                $scope.articleNotFound = true
                             } else {
                                 hideLoader()
                                 $scope.articleNotFound = true
