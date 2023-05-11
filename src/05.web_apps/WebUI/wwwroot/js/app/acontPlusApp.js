@@ -318,10 +318,7 @@ function modalService($uibModal) {
                 templateUrl = `/Home/RenderView?name=~/Views/${template}`
             }
 
-            if(isRenderHtmlNormal){
-                templateUrl = template;
-            }
-
+            
             return $uibModal.open({
                 animation,
                 templateUrl,

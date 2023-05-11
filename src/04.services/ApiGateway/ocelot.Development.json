@@ -941,7 +941,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7210
+          "Port": 44331
         }
       ],
       "DownstreamPathTemplate": "/api/Kardex?json={json}",
@@ -960,7 +960,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7210
+          "Port": 44331
         }
       ],
       "DownstreamPathTemplate": "/api/Kardex/Filters",
