@@ -21,7 +21,7 @@ BEGIN
 	SET NOCOUNT ON;
 	BEGIN TRY
 		BEGIN TRAN
-			IF (@estado = 'ERROR' OR @estado = 'NE')
+			IF (@estado = 'ERROR' OR @estado = 'NE' OR @estado = 'EE')
 				BEGIN
 					UPDATE App.Notificacion SET estado = @estado, msgError = @msgError WHERE idNotificacion = @id
 				END
