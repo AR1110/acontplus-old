@@ -509,10 +509,10 @@ class ModalBaseCliente extends ModalBaseCtrl {
             return;
         };
 
-        if ($("#numeroIdentificacion").hasClass('is-invalid')) {
-            this._tS.toastr('warning', 'Ingrese el número de Identificación válido', tituloModal);
-            return
-        }
+        // if ($("#numeroIdentificacion").hasClass('is-invalid')) {
+        //     this._tS.toastr('warning', 'Ingrese el número de Identificación válido', tituloModal);
+        //     return
+        // }
 
         if (this.data.codigoIdentificacion === "CF" && this.data.numeroIdentificacion.length !== 13) {
             this._tS.toastr('warning', 'Número de Consumidor Final tiene que ser de 13 dígitos', tituloModal);
@@ -576,7 +576,7 @@ class ModalBaseCliente extends ModalBaseCtrl {
         this.data.correo = this.correos.length > 0 ? this.correos.join(';') : "";
         this.data.placa = this.placas.length > 0 ? this.placas.join(';') : "";
 
-        return true;
+        return false;
 
     }
 
@@ -1264,6 +1264,7 @@ export class ModalProveedorCtrl extends ModalBaseCtrl {
                 this._commonSvc.getDataByProveedor(this._params.idProveedor).then(response => {
                     this.data = response;
                     console.log(this.data)
+                    this.tipoIdentificacion = response.tipoIdentificacion;
                     this.correos = response.correo.split(';')
                     this.telefonos = response.telefono.split(';')
                 })
@@ -1360,10 +1361,10 @@ export class ModalProveedorCtrl extends ModalBaseCtrl {
                 return;
             };
 
-            if ($("#numeroIdentificacion").hasClass('is-invalid')) {
-                this._tS.toastr('warning', 'Ingrese el número de Identificación válido', tituloModal);
-                return
-            }
+            // if ($("#numeroIdentificacion").hasClass('is-invalid')) {
+            //     this._tS.toastr('warning', 'Ingrese el número de Identificación válido', tituloModal);
+            //     return
+            // }
             if (this._form.campo(this.data.idSubContribuyente)) {
                 this._tS.toastr('warning', 'Seleccione el Contribuyente', tituloModal)
                 return

@@ -1,4 +1,4 @@
-import './modalCompraBaseCtrl.min.js?v=0.7'
+import './modalCompraBaseCtrl.min.js?v=0.8'
 
 class ModalCompraNoHabitualCtrl extends window.modalCompraBaseCtrl {
 
@@ -237,113 +237,91 @@ class ModalCompraNoHabitualCtrl extends window.modalCompraBaseCtrl {
 
 
 
-            let textAccion = this.data.idDocumentoIngreso > 0 ? 'Actualizar' : 'Guardar';
-            let method = this.data.idDocumentoIngreso > 0 ? 'put' : 'post';
-            let url = this.data.idDocumentoIngreso > 0 ? 'CompraNoHabitual/' + this.data.idDocumentoIngreso : 'CompraNoHabitual';
+            let textAccion = this.data.idDocumentoIngreso > 0 ? 'Actualizar' : 'Guardar';           
             let serieComprobante = this.data.ptoEmi + '-' + this.data.secuencial;
 
+            //Validaciones
             if (!this.isValidaForm()) return;
 
-            if (!this.data.idDocumentoIngreso) {
-                console.log('generate sequemn')
-                //===============================Generar el Numero de Secuencial============================
-                showLoader();
-                serieComprobante = await this._mS.getData('get', 'CompraNoHabitual/' + JSON.stringify({
-                    idPuntoEmision: this.data.idPuntoEmision,
-                    typeList: 3
-                }), null, true).then(response => {
-                    if (response.code === "0") {
-                        console.log(response)
-                        hideLoader();
-                        return null;
-                    }
-                    if (response.code === "1") {
-                        hideLoader();
-                        return JSON.parse(response.payload)[0][0].serieComprobante
-                    }
-                })
+            //Generar el Numero de Secuencial
+            if (!this.data.idDocumentoIngreso) {              
+                showLoader();                
+                serieComprobante = await this.compraNoHabSvc.generateNroSecuencial(this.data.idPuntoEmision);               
+                hideLoader();
                 if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE"
             }
 
 
-
-
-            const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                    confirmButton: 'btn btn-success',
-                    cancelButton: 'btn btn-danger ml-2'
-                },
-                buttonsStyling: false
-            })
-
-            swalWithBootstrapButtons.fire({
+            let {isConfirmed} = await Swal.fire({
                 title: `<small>${textAccion} Documento no Habitual</small>`,
                 html: `<small>Esta Ud. seguro de ${textAccion} este Documento <b> Nro. ${serieComprobante}</b></small>?`,
                 icon: 'warning',
                 showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
                 confirmButtonText: `Si, ${textAccion}!`,
                 cancelButtonText: 'No, cancelar!',
-                reverseButtons: false,
-                allowOutsideClick: false,
-                allowEscapeKey: false
-            }).then(result => {
-
-                if (result.isConfirmed) {
-                    showLoader();
-
-
-                    this.data.idProveedor = this.proveedor.idProveedor
-
-                    //Tarifa Aplicada al Documento
-                    this.data.tarifa = this.actividadTipoIva.tarifa;
-
-                    let idEstablecimiento, estab, ptoEmi;
-                    if (this.data.idDocumentoIngreso > 0) {
-
-                    } else {
-                        idEstablecimiento = this.establecimientos.find(item => item.codEstab === this.data.codEstab).idEstablecimiento;
-                        estab = this.establecimientos.find(item => item.codEstab === this.data.codEstab).estab;
-                        ptoEmi = this.puntosEmision.find(item => item.idPuntoEmision === this.data.idPuntoEmision).puntoEmi;
-                    }
-
-                    const data = {
-                        comprobante: JSON.stringify({
-                            idEstablecimiento,
-                            idPuntoEmision: this.data.idPuntoEmision,
-                            idProveedor: this.data.idProveedor,
-                            estab,
-                            ptoEmi,
-                            fechaEmision: moment(this.data.fechaEmision).format('YYYY-MM-DD HH:mm:ss A'),
-                            totalSinImpuestos: this.data.subTotalSinImpuestos,
-                            importeTotal: this.data.total,
-                            inventory: this.data.inventory
-                        }),
-                        detalles: JSON.stringify(this.trimDetail()),
-                        impuestos: JSON.stringify(this.taxes())
-                    }
-                    console.log(data)
-                    this._mS.getData(method, url, data, true).then(response => {
-                        if (response.code == '0') {
-                            hideLoader();
-                            this._fS.sweetAlert('warning', response.message, response.titleSms);
-                        }
-
-                        if (response.code == "1") {
-                            hideLoader();
-                            this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
-
-                            this.$uibModalInstance.close(response)
-                        }
-                    })
-
-
-                }
-
             })
+
+
+            if (isConfirmed) {
+                                
+                showLoader();                    
+                let idEstablecimiento, estab, ptoEmi, query;                
+                
+                this.data.tarifa = this.actividadTipoIva.tarifa;
+
+                idEstablecimiento = this.establecimientos.find(item => item.codEstab === this.data.codEstab).idEstablecimiento;
+
+                estab = this.establecimientos.find(item => item.codEstab === this.data.codEstab).estab;
+                
+                ptoEmi = this.puntosEmision.find(item => item.idPuntoEmision === this.data.idPuntoEmision)
+
+                query = this.compraNoHabSvc.queryMapper({
+                    data: this.data,
+                    details: this.gridOptions.data,
+                    proveedor: this.proveedor,
+                    idEstablecimiento,
+                    estab,
+                    ptoEmi: ptoEmi?ptoEmi.puntoEmi: null,
+                    datosAdicionalesArticulo: this.datosAdicionalesArticulo.info
+                })
+
+                //Actualizar
+                if(this.data.idDocumentoIngreso>0) {
+                    this.compraNoHabSvc.update(this.data.idDocumentoIngreso, query).then(this.successReponse)
+                    .catch(error=>{
+                        hideLoader();
+                        console.log(error);
+                    })
+                }else{                                                
+                    this.compraNoHabSvc.create(query).then(this.successReponse)
+                    .catch(error=>{
+                        hideLoader();
+                        console.log(error);
+                    })
+                }
+            }
+            
 
         } catch (error) {
             hideLoader()
             console.log(error)
+        }
+    }
+
+
+    successReponse =(response)=>{       
+        if (response.code == '0') {
+            hideLoader();
+            this._fS.sweetAlert('warning', response.message, response.titleSms);
+        }
+
+        if (response.code == "1") {
+            hideLoader();
+            this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
+
+            this.$uibModalInstance.close(response)
         }
     }
 
@@ -356,6 +334,11 @@ class ModalCompraNoHabitualCtrl extends window.modalCompraBaseCtrl {
         } catch (error) {
             console.log(error)
         }
+    }
+
+    getDataEtiqueta(item) {
+        console.log(item)
+        console.log(entity)
     }
 
 
@@ -373,9 +356,9 @@ class ModalCompraNoHabitualCtrl extends window.modalCompraBaseCtrl {
 
 export class ModalAddCtrl extends ModalCompraNoHabitualCtrl {
 
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario']
+    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'compraNoHabitualService', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario']
 
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS) {
+    constructor($scope, $timeout, $uibModalInstance, compraNoHabSvc, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS) {
         super({
             $scope,
             $timeout,
@@ -388,15 +371,24 @@ export class ModalAddCtrl extends ModalCompraNoHabitualCtrl {
             _fS
         });
 
+        this.compraNoHabSvc = compraNoHabSvc;
+
         this.searchProveedorOptions = {}
         this.searchProveedorOptions.showBtnNew = true;
         this.searchProveedorOptions.showBtnList = true;
 
         this.data.fechaEmision = new Date();
 
+        this.datosAdicionalesArticulo = {
+            idCompEtiquetaArticulo: 0, 
+            uniqueId: null, 
+            info: []
+        };
+
         this.CELL_TEMPLATE_OPTION = `<a  ng-click="grid.appScope.$ctrl.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
                            <a  ng-click="grid.appScope.$ctrl.openModalArticleEdit(row.entity)" style="cursor:pointer;" class="btn btn-success btn-xs text-white" title = "Editar Articulo" ><i class="fa fa-edit"></i></a >                                  
-                           <a  ng-click="grid.appScope.$ctrl.abrirModalDatoAdicional(row.entity)" style="cursor:pointer;" ng-show='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar Dato Adicional al Articulo" > <i class="fas fa-tags"></i></a >                                  
+                          
+                           <a  btn-data-adicional-articulo entity="row.entity" get-data-etiqueta="$ctrl.getDataEtiqueta(item)" datos-adicionales="grid.appScope.$ctrl.datosAdicionalesArticulo" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar Dato Adicional al Articulo" > <i class="fas fa-tags"></i></a >                                  
                         `;
 
         this.CAMPOS = ["codEstab", "idProveedor", "idPuntoEmision", "fechaEmision", "gridOptions", "gridOptionsBodega"];
@@ -507,9 +499,9 @@ export class ModalAddCtrl extends ModalCompraNoHabitualCtrl {
 
 export class ModalUpdateCtrl extends ModalCompraNoHabitualCtrl {
 
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario', 'params']
+    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'articuloService', 'compraNoHabitualService',  'modalService', 'nombreModal', 'toastService', 'formulario', 'params']
 
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS, params) {
+    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, articuloSvc, compraNoHabSvc, _modalSvc, _nombreModalConst, _tS, _fS, params) {
         super({
             $scope,
             $timeout,
@@ -522,11 +514,21 @@ export class ModalUpdateCtrl extends ModalCompraNoHabitualCtrl {
             _fS
         });
 
+        this.articuloSvc = articuloSvc;
+        this.compraNoHabSvc = compraNoHabSvc;
         this.params = params;
 
         this.searchProveedorOptions = {};
-        this.proveedor = this.params[1][0];
+        this.proveedor = this.params.proveedor;
+        this.datosAdicionalesArticulo = this.params.datosAdicionales || {
+                idCompEtiquetaArticulo: 0, 
+                uniqueId: null, 
+                info: []
+        };
+        
+        console.log(this.datosAdicionalesArticulo)
 
+        this.puntosEmision = [];
         this.searchProveedorOptions.showBtnNew = true;
         this.searchProveedorOptions.showBtnList = true;
         this.searchProveedorOptions.showBtnEdit = true;
@@ -534,8 +536,9 @@ export class ModalUpdateCtrl extends ModalCompraNoHabitualCtrl {
         this.data.fechaEmision = new Date();
 
         this.CELL_TEMPLATE_OPTION = `<a  ng-click="grid.appScope.$ctrl.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
-                           <a  ng-click="grid.appScope.$ctrl.openModalArticleEdit(row.entity)" style="cursor:pointer;" class="btn btn-success btn-xs text-white" title = "Editar Articulo" ><i class="fa fa-edit"></i></a >                                  
-                           <a  ng-click="grid.appScope.$ctrl.abrirModalDatoAdicional(row.entity)" style="cursor:pointer;" ng-show='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar Dato Adicional al Articulo" > <i class="fas fa-tags"></i></a >                                  
+                           <a  ng-click="grid.appScope.$ctrl.openModalArticleEdit(row.entity)" style="cursor:pointer;" class="btn btn-success btn-xs text-white" title = "Editar Articulo" ><i class="fa fa-edit"></i></a >  
+
+                           <a  btn-data-adicional-articulo entity="row.entity" datos-adicionales="grid.appScope.$ctrl.datosAdicionalesArticulo" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar Dato Adicional al Articulo" > <i class="fas fa-tags"></i></a >                                  
                         `;
 
         this.CAMPOS = ["codEstab", "idProveedor", "idPuntoEmision", "fechaEmision", "gridOptions", "gridOptionsBodega"];
@@ -552,7 +555,7 @@ export class ModalUpdateCtrl extends ModalCompraNoHabitualCtrl {
 
 
 
-            this.data = this.params[0][0];
+            this.data = this.params.comprobante;
             this.data.fechaEmision = this._fS.formatDate(this.data.fechaEmision)
 
 
@@ -572,19 +575,16 @@ export class ModalUpdateCtrl extends ModalCompraNoHabitualCtrl {
 
 
             //Detalle
-            this.gridOptions.data = this.params[2];
+            this.gridOptions.data = this.params.detalles;
             for (let item of this.gridOptions.data) {
-
-                const data = {
+                
+                item.idDetalle = item.idDocumentoIngresoDetail;
+                
+                this.articuloSvc.findForPurchase({
                     idArticulo: item.idArticulo
-                }
-
-                this._commonSvc.getDataArticuloParaCompra({
-                    json: data
-                }).then(response => {
-                    const results = JSON.parse(response.payload);
-                    item.medidas = results[1]
-                    item.etiquetas = results[2]
+                }).then(response => {                  
+                    item.medidas = response.medidas
+                    item.etiquetas = response.etiquetas;
                 })
 
                 //Por Anlizar 
@@ -596,17 +596,17 @@ export class ModalUpdateCtrl extends ModalCompraNoHabitualCtrl {
 
 
             //Bodegas 
-            this.bodegas = this.params[4].filter(item => item.codEstab === this.data.codEstab);
+            this.bodegas = this.params.bodegas.filter(item => item.codEstab === this.data.codEstab);
             this.idBodega = this.bodegas.find(item => (item.predeterminado)).idBodega;
 
 
             //Ddecimal 
-            this.decimal = this.params[5][0]
+            this.decimal = this.params.decimal;
 
             //Impuestos al Iva
-            this.tipoIvas = this.params[6];
+            this.tipoIvas = this.params.tipoIvas;
 
-            this.data.inventory = this.params[7][0].inventory;
+            this.data.inventory = this.params.inventario.inventory;
 
             //Calculos
             let porcentajeDescuento = (((this.data.subTotalSinImpuestos - this.data.total) / 100) * this.data.subTotalSinImpuestos)

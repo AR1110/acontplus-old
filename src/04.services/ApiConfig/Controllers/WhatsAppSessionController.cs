@@ -1,6 +1,7 @@
 ﻿using Common.Logs;
 using DataAccess;
 using Domain.Config.Dtos;
+using Domain.Dtos;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,8 +16,8 @@ namespace ApiConfig.Controllers
         {
             _configuration = configuration;
         }
-        [HttpGet]
-        public async Task<IActionResult> Get()
+        [HttpGet("Get")]
+        public async Task<IActionResult> Get(string json)
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
@@ -25,6 +26,7 @@ namespace ApiConfig.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Config.WhatsAppSession_Get");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
                 _response = _db.GetDataTableAsync();
             }
             catch (Exception ex)
@@ -40,7 +42,7 @@ namespace ApiConfig.Controllers
             return Ok(_response);
         }
         [HttpPost("Post")]
-        public async Task<IActionResult> Post()
+        public async Task<IActionResult> Post([FromBody] RequestApiDto parameters)
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
@@ -49,6 +51,7 @@ namespace ApiConfig.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Config.WhatsAppSession_Insert");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+                _db.AddDynamicParam("json", DataHelper.SerializeDictionary(parameters.data));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

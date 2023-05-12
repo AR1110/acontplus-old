@@ -128,7 +128,7 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
 
 
             $scope.comprobantes = [];
-            _mS.getData('get', 'DocumentoElectronico?json=' + JSON.stringify(data), null, true).then(
+            _mS.getData('get', 'DocumentoElectronico/?json=' + JSON.stringify(data), null, true).then(
                 response => {
 
                     if (response.code === "0") {
@@ -539,7 +539,7 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
 
     $scope.openModalSendWhatsapp = async (item) => {
         try {
-            item.typeSendMail = 'SRI';
+            item.type = 'SRI'
             const {
                 MODAL_SEND_WHATSAPP_CTRL,
                 MODAL_SEND_WHATSAPP_CSHTML

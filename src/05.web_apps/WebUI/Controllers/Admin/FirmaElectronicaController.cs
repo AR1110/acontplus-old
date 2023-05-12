@@ -2,6 +2,7 @@
 using Domain.Models;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using WebUI.Utils;
 
 namespace WebUI.Controllers.Admin
@@ -49,16 +50,15 @@ namespace WebUI.Controllers.Admin
                 //X509Certificate2 cert = new X509Certificate2(_dirCertificates + dataRow.Field<string>("certificate"), dataRow.Field<string>("password"), X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
                 //// Get the value.
                 //string expirationDate = cert.GetExpirationDateString();
-                string msg = string.Empty;
 
-                if (new FileUpload(_config).Upload(signFile.FileName, signFile.Content, ref msg))
+                if (await new FileUpload().Upload(_config.GetSection("FactElectCerts").Value, signFile.FileName, signFile.Content))
                 {
                     _response = await _fe.InsertAsync(idRol, data, signFile);
                     return Ok(_response);
                 }
                 else
                 {
-                    _response.Create("0", msg);
+                    _response.Create("0", "Error al subir la firma");
                 }
             }
             catch (Exception ex)

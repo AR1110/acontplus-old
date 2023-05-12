@@ -1,6 +1,6 @@
 ﻿<div class="modal-header">
     <h5 class="modal-title"><i class="mdi mdi-whatsapp"></i> Envio de notificación por WhatsApp</h5>
-    <button type="button" class="close" data-dismiss="modal">&times;</button>
+    <button type="button" class="close" ng-click="closeModal()">&times;</button>
 </div>
 <div class="modal-body">
     <div class="row">
@@ -55,6 +55,11 @@
             Enviar
         </button>
     </form>
+
+     @* <button type="submit" class="btn btn-danger" ng-click="logout()">
+            <i class="fa fa-sign-out" aria-hidden="true"></i>
+            Salir
+        </button> *@
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-dark btn-sm" ng-click="closeModal()">

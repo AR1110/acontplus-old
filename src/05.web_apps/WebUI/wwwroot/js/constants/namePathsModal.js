@@ -326,19 +326,19 @@ app.constant('nombreModal', {
         MODAL_FILE_CTRL: 'modal/compras/modalFacturaCtrl.js' + CHANGE_VERSION(),
         MODAL_NUEVO: {
             controller: 'ModalFacturaNuevoCtrl',
-            template: 'FacturaCompra/_ModalNuevo.cshtml'
+            template: '~/Areas/FacturaCompra/Pages/Shared/_ModalNuevo.cshtml'
         },
         MODAL_DETALLE: {
             controller: 'ModalFacturaDetalleCtrl',
-            template: 'FacturaCompra/_ModalDetalle.cshtml'
+            template: '~/Areas/FacturaCompra/Pages/Shared/_ModalDetalle.cshtml'
         },
         MODAL_EDITAR: {
             controller: 'ModalFacturaEditarCtrl',
-            template: 'FacturaCompra/_ModalEditar.cshtml'
+            template: '~/Areas/FacturaCompra/Pages/Shared/_ModalEditar.cshtml'
         },
         MODAL_INVOICE_FAST: {
             controller: 'ModalFacturaSinDetalleCtrl',
-            template: 'FacturaCompra/_ModalInvoiceFast.cshtml'
+            template: '~/Areas/FacturaCompra/Pages/Shared/_ModalInvoiceFast.cshtml'
         }
     },
     factura_venta: {

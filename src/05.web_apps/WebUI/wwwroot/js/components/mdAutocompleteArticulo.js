@@ -155,27 +155,39 @@ class BaseSearchArticulo {
     async getDataArticuloParaCompra() {
         try {
 
+            showLoader();
             this.dataArticulo.idBodega = this.idBodega;
-
-            let results = await this._commonSvc.getDataArticuloParaCompra({
-                json: this.dataArticulo
-            }).then(response => JSON.parse(response.payload));
-
-
-
-            let responseMsg = results[0][0];
-
-            let sharedData = {
-                articulo: results[0][0],
-                medidas: results[1],
-                etiquetas: results[2]
-            }
-            // console.log(responseMsg)
-            // if (responseMsg.code === "1") {
-            this.setItemArticuloEnDetalle({
-                item: sharedData
+            this.articuloSvc.findForPurchase(this.dataArticulo).then(response =>{
+                hideLoader();
+                this.setItemArticuloEnDetalle({
+                    item: response
+                })
+            }).catch(error=>{
+                hideLoader();
+                console.log(error);
             })
-            //}
+            
+
+            
+
+            // let results = await this._commonSvc.getDataArticuloParaCompra({
+            //     json: this.dataArticulo
+            // }).then(response => JSON.parse(response.payload));
+
+
+
+            // let responseMsg = results[0][0];
+
+            // let sharedData = {
+            //     articulo: results[0][0],
+            //     medidas: results[1],
+            //     etiquetas: results[2]
+            // }
+             
+            // this.setItemArticuloEnDetalle({
+            //     item: sharedData
+            // })
+           
         } catch (error) {
             console.error(error)
         }
@@ -187,8 +199,8 @@ class BaseSearchArticulo {
 
 class MdArticuloCtrl extends BaseSearchArticulo {
 
-    static $inject = ['mainService', '$rootScope', '$scope', '$timeout', '$q', 'commonService', 'modalService', 'nombreModal', 'toastService']
-    constructor(_mS, $rootScope, $scope, $timeout, $q, _commonSvc, _modalSvc, _nombreModalConst, tS) {
+    static $inject = ['articuloService', 'mainService', '$rootScope', '$scope', '$timeout', '$q', 'commonService', 'modalService', 'nombreModal', 'toastService']
+    constructor(articuloSvc, _mS, $rootScope, $scope, $timeout, $q, _commonSvc, _modalSvc, _nombreModalConst, tS) {
         super({
             _mS,
             $rootScope,
@@ -200,6 +212,8 @@ class MdArticuloCtrl extends BaseSearchArticulo {
             _nombreModalConst,
             tS
         })
+
+        this.articuloSvc = articuloSvc;
 
         this.mdNoCache = false;
         this.dataSearch = {

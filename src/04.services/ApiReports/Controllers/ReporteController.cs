@@ -6,6 +6,7 @@ using Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Primitives;
+using Org.BouncyCastle.Pqc.Crypto.Lms;
 using System.Data;
 
 namespace ApiReports.Controllers
@@ -147,6 +148,11 @@ namespace ApiReports.Controllers
                     else
                     {
                         _response.Create(bytes, mimeType, fileName);
+                        if (data.sendToWhatsapp)
+                        {
+                            await new FileUpload().Upload(_configuration.GetSection("WhatsAppFiles").Value, _response.FileName, _response.Content);
+                            return Ok(_response.FileName);
+                        }
                     }
                 }
                 else
@@ -158,6 +164,10 @@ namespace ApiReports.Controllers
             {
                 _log.LogError("Error in DynamicReport: \n" + ex.ToString());
                 ReportError.ReportNotFound(_response);
+                if (data.sendToWhatsapp)
+                {
+                    return BadRequest(ex.Message);
+                }
             }
             finally
             {

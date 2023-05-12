@@ -43,13 +43,13 @@
                             </select>
                         </div>
                     </div>
-                    @*<div class="col-xl-2 col-lg-2 col-md-3 col-sm-6 col-xs-12">
-                    <div class="icheck-info">
-                    <input type="checkbox" ng-model="dataSearch.checkboxSubFamiliaFiltro" class="form-control"
-                    name="checkboxSubFamiliaFiltro" id="checkboxSubFamiliaFiltro">
-                    <label for="checkboxSubFamiliaFiltro">SubFamilia</label>
-                    </div>
-                    </div>
+                    <div class="col-xl-2 col-lg-2 col-md-3 col-sm-6 col-xs-12" ng-show="!dataSearch.chkProveedor">
+                        <div class="icheck-info">
+                            <input type="checkbox" ng-model="dataSearch.checkboxSubFamiliaFiltro" class="form-control"
+                                name="checkboxSubFamiliaFiltro" id="checkboxSubFamiliaFiltro">
+                            <label for="checkboxSubFamiliaFiltro">SubFamilia</label>
+                        </div>
+                    </div> @*
                     <div class="col-xl-2 col-lg-2 col-md-3 col-sm-6 col-xs-12">
                     <div class="icheck-info">
                     <input type="checkbox" ng-model="dataSearch.checkboxStockFiltro" class="form-control"
@@ -78,7 +78,8 @@
                 </div> *@
 
                 <div class="row">
-                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12" ng-if="!dataSearch.chkProveedor">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12"
+                        ng-if="(!dataSearch.chkProveedor && dataSearch.checkboxSubFamiliaFiltro)">
                         <div class="form-group">
                             <label for="">SubFamilia</label>
                             <select class="form-control border-select" ng-model="dataSearch.bySubFamilia"

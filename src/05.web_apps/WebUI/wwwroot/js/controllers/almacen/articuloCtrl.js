@@ -1,13 +1,13 @@
-(() => {
+(function() {
 
     'use strict'
 
     app.controller('articuloCtrl', articuloCtrl)
 
-    articuloCtrl.$inject = ['$scope', 'mainService', 'modalService', 'nombreModal', 'toastService', 'formulario'];
+    articuloCtrl.$inject = ['$scope', 'mainService', 'articuloService', 'modalService', 'nombreModal', 'toastService', 'formulario'];
 
 
-    function articuloCtrl($scope, mS, modalSvc, nombreModalConst, tS, form) {
+    function articuloCtrl($scope, mS, articuloSvc, modalSvc, nombreModalConst, tS, form) {
 
         // let accion = JSON.parse(localStorage.getItem("accion"));
 
@@ -97,22 +97,17 @@
         $scope.getArticulos = () => {
             try {
                 showLoader();
+                $scope.articulos = [];
 
-                mS.getData('get', '/Articulo/Get?json=' + JSON.stringify($scope.dataSearch)).then(response => {
-
-                    if (response.code === "0") {
-                        hideLoader();
-                        $scope.articulos = [];
-                        console.log(response)
-                    }
-                    if (response.code === "1") {
-                        $scope.articulos = JSON.parse(response.payload) || [];
-                        hideLoader();
-                    }
-                })
+                articuloSvc.getAll($scope.dataSearch).then(response=>{
+                    hideLoader();
+                    $scope.articulos = response;
+                }).catch(error=>{
+                    hideLoader();
+                    console.log(error);
+                })              
             } catch (error) {
-                hideLoader();
-                $scope.articulos = []
+                hideLoader();                
                 console.log(error);
             }
         }

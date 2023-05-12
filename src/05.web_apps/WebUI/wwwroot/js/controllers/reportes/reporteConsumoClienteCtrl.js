@@ -173,15 +173,12 @@ function reporteConsumoClienteCtrl($scope, _commonSvc, mS, form, toast, FileSave
                 return
             }
         };
-
-        let loaderGif = $scope.dataSearch.byTipoFormato === "pdf" ? 'document-office.gif' : 'transfer-file.gif'
-        form.showLoaderForm('Descargando...', 'Espere', `/assets/images/gif/${loaderGif}`)
-        $scope.getReport();
-        return
-
+       
+        $scope.getReport();        
     };
 
     $scope.getReport = function () {
+       try {
         const parameters = {
             reportParams: JSON.stringify({
                 codigo: 'RCCRG',
@@ -194,6 +191,9 @@ function reporteConsumoClienteCtrl($scope, _commonSvc, mS, form, toast, FileSave
             formatType: $scope.dataSearch.byTipoFormato,
             parameters
         })
+       } catch (error) {
+        console.log(error)
+       }
     };
 
 

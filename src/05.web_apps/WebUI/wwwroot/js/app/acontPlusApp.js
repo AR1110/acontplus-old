@@ -305,12 +305,23 @@ function modalService($uibModal) {
             openedClass,
             scope,
             props = {},
-            isRenderRazorPartial = false
+            isRenderRazorPartial = false,
+            isRenderHtmlNormal = false,
         }) {
 
+            let templateUrl = '';
+            if(isRenderRazorPartial){
+                templateUrl = `/Home/RenderView?name=${template}`;
+            }
+
+            if(!isRenderRazorPartial){
+                templateUrl = `/Home/RenderView?name=~/Views/${template}`
+            }
+
+            
             return $uibModal.open({
                 animation,
-                templateUrl: isRenderRazorPartial ? `/Home/RenderView?name=${template}` : `/Home/RenderView?name=~/Views/${template}`,
+                templateUrl,
                 controller,
                 controllerAs: '$ctrl',
                 scope,

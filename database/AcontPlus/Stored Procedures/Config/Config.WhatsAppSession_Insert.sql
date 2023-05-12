@@ -14,6 +14,7 @@ IF OBJECT_ID(N'Config.WhatsAppSession_Insert', N'P') IS NOT NULL
 DROP PROCEDURE Config.WhatsAppSession_Insert
 GO
 CREATE PROCEDURE Config.WhatsAppSession_Insert @idUsuarioRol INT
+,@json VARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -23,13 +24,33 @@ BEGIN
 
 	SELECT @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol
 	
+		DECLARE @tbl AS TABLE (
+	browser VARCHAR(MAX),
+	os VARCHAR(MAX) 
+	)
+	declare @browser VARCHAR(300)
+	declare @os VARCHAR(300)
+	
+	declare @browserName VARCHAR(300)
+		declare @osName VARCHAR(300)
+
+
+	INSERT INTO @tbl(browser, os)
+	SELECT browser, os FROM  OPENJSON(@JSON) WITH (browser VARCHAR(MAX) '$.browser', os VARCHAR(MAX) '$.os')
+
+	SELECT @browser = browser, @os = os FROM @tbl
+
+	SET @browserName = (SELECT bname  + '_' + bversion FROM OPENJSON (@browser) WITH (bname VARCHAR(300) '$.name', bversion VARCHAR(300) '$.version'))
+	SET @osName = (SELECT oname  + '_' + oversion FROM OPENJSON (@os) WITH (oname VARCHAR(300) '$.name', oversion VARCHAR(300) '$.version'))
+
+
 	BEGIN TRY
 		BEGIN TRAN
-			INSERT INTO Config.WhatsAppSession(idUsuarioRol)
-			VALUES(@idUsuarioRol)
+			INSERT INTO Config.WhatsAppSession(idUsuarioRol, browser, os)
+			VALUES(@idUsuarioRol, @browserName, @osName)
 			SET @idSession = @@IDENTITY
 
-			UPDATE Config.WhatsAppSession SET estado = 0 WHERE idUsuarioRol = @idUsuarioRol AND idSession != @idSession
+			--UPDATE Config.WhatsAppSession SET estado = 0 WHERE idUsuarioRol = @idUsuarioRol AND idSession != @idSession
 
  			SELECT '1' code, 'Exitos' as 'message', (SELECT idSession id FROM Config.WhatsAppSession WHERE idSession = @idSession for json path) as payload
 		COMMIT TRAN

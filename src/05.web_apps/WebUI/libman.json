@@ -157,6 +157,11 @@
     {
       "library": "socket.io@4.6.1",
       "destination": "wwwroot/lib/socket.io/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "UAParser.js@1.0.35",
+      "destination": "wwwroot/lib/UAParser.js/"
     }
   ]
 }

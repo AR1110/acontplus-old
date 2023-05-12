@@ -3,117 +3,87 @@
 }
 
 <div ng-controller="etiquetaCtrl">
-    <div ng-if="accion.leer">
-        <div class="row page-titles">
-            <div class="col-md-5 align-self-center">
-                <h4 class="text-themecolor">Gestión de Etiquetas</h4>
-            </div>
-            <div class="col-md-7 align-self-center text-right">
-                <div class="d-flex justify-content-end align-items-center">
-                    @* <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="/Home/Index">Inicio</a></li>
-                        <li class="breadcrumb-item"><a href="javascript:void(0)">Administración</a></li>
-                        <li class="breadcrumb-item active">Etiquetas</li>
-                    </ol> *@
-                    <button type="button" class="btn btn-info m-l-15" ng-if="accion.crear" ng-click="openModalNew()"><i class="fa fa-plus-circle"></i> Nuevo</button> 
-                </div>
+
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Gestión de Etiquetas</h4>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+                @* <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/Home/Index">Inicio</a></li>
+                <li class="breadcrumb-item"><a href="javascript:void(0)">Administración</a></li>
+                <li class="breadcrumb-item active">Etiquetas</li>
+                </ol> *@
+                <button type="button" class="btn btn-info m-l-15" ng-if="accion.crear" ng-click="openModalNew()"><i
+                        class="fa fa-plus-circle"></i> Nuevo</button>
             </div>
         </div>
+    </div>
 
-        <div class="card">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>N°</th>
-                                <th>Descripción</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr ng-repeat="item in etiquetas">
-                                <td>$index+1</td>
-                                <td>item.descripcion</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-12">
-                <md-card>                
-                    <md-table-container>
-                        <table md-table>
-                            <thead md-head>
-                                <tr md-row>                                
-                                    <th md-column><span></span></th>                            
-                                    <th md-column>Op</th>                                
-                                    <th md-column><span>N°</span></th>                            
-                                    <th md-column><span>Actividad</span></th>
-                                    <th md-column>Estado</th>                                
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th ng-if="accion.editar || accion.eliminar || accion.acceso">Op.</th>
+                                    <th>N°</th>
+                                    <th>Descripción</th>
+                                    @* <th>Etiquetas</th> *@
+                                    <th>Estado</th>
                                 </tr>
                             </thead>
-                            <tbody md-body>
-                                <tr md-row ng-repeat-start="item in actividadEtiquetas">
-                                    <td md-cell ng-click="expandDetalle(item)">
-                                        <span ng-if="item.expanded"><i class="fas fa-caret-square-down"></i></span>
-                                        <span ng-if="!item.expanded"><i class="fas fa-caret-square-right"></i></span>
-                                    </td>                                                          
-                                    <td md-cell>                                    
-                                        <button type="button" class="btn btn-success btn-sm" ng-click="openModalEtiqueta(item)"><i class="fas fa-tags fa-xs"></i></button>                                    
-                                        <button type="button" class="btn btn-info btn-sm" ng-click="openModalActividadEtiqueta(item)"><i class="fa fa-edit fa-xs"></i></button>                                    
-                                    </td>                                
-                                    <td md-cell>{{$index+1}}</td>                            
-                                    <td md-cell><b class="text-primary">{{item.descripcion}}</b></td>
-                                    <td md-cell ng-bind-html="item.estado | estadoPrimario"></td>                                
-                                </tr>
-                                <tr md-row ng-if="item.expanded" ng-repeat-end="">
-                                    <td md-cell colspan="5">
-                                        <div class="ml-3 mt-2 mr-3">
-                                            <div class="table-responsive">
-                                                <table class="table table-no-bordered table-sm text-center">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>N°</th>
-                                                            <th>Código</th>
-                                                            <th>Descripción</th>                                                                                                     
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr ng-repeat="e in item.etiquetas">
-                                                            <td>{{$index+1}}</td>
-                                                            <td>{{e.codigo}}</td>
-                                                            <td>{{e.descripcion}}</td>                                                        
-                                                        </tr>
-                                                        @*<tr class="text-center" mg-show="tc.subContribuyentes.length==0">
-                                                                <td colspan="5"> No hay registros en esta tabla</td>
-                                                            </tr>*@
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
+                            <tbody>
+                                <tr ng-repeat="item in etiquetas">
+                                    <td ng-if="accion.editar || accion.eliminar || accion.acceso">
+                                        <button class="btn btn-info btn-sm" ng-if="accion.editar"
+                                            ng-click="openModalEdit(item)">
+                                            <i class="mdi mdi-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-danger btn-sm" ng-if="accion.eliminar && !item.estado"
+                                            ng-click="onDelete(item)">
+                                            <i class="mdi mdi-delete"></i>
+                                        </button>
+
+                                        <button class="btn btn-warning btn-sm"
+                                            uib-popover-template="'tempEtiqueta.html'" popover-trigger="'mouseenter'"
+                                            popover-placement="top" href="javascript:void(0)">
+                                            <i class="mdi mdi-eye"></i>
+                                        </button>
                                     </td>
-                                </tr>
-                                <tr ng-show="actividadEtiquetas.length==0" class="text-center">
-                                    <td colspan="5">
-                                        No hay registros en esta tabla :)
-                                    </td>
+                                    <td>{{$index+1}}</td>
+                                    <td>{{item.descripcion}}</td>
+                                    @* <td>{{item.etiquetas}}</td> *@
+                                    <td ng-bind-html="item.estado | estadoPrimario"></td>
                                 </tr>
                             </tbody>
                         </table>
-                    </md-table-container>                            
-                </md-card>  
+                    </div>
+                </div>
             </div>
-        </div>   
-    </div>    
-
+        </div>
+    </div>
 </div>
 
 @section Scripts{
-            <script src="~/js/controllers/almacen/etiquetaCtrl.min.js" asp-append-version="true"></script>
+    <script src="~/js/inventario/services/etiquetaService.min.js" asp-append-version="true"></script>
+    <script src="~/js/inventario/controllers/etiquetaCtrl.min.js" asp-append-version="true"></script>
+    <script type="text/ng-template" id="tempEtiqueta.html">
+                                <table class="table table-sm">
+                                    <tbody>
+                                        <tr class="text-center">
+                                            <th>Codigo</th>
+                                            <th>Descripcion</th>                 
+                                        </tr>
+                                        <tr ng-repeat="data in item.etiquetas" class="text-muted text-center">
+                                            <td>{{data.codigo}}</td>
+                                            <td>{{data.descripcion}}</td>                  
+                                        </tr>
 
-
-
+                                    </tbody>
+                                </table>
+                            </script>
 }

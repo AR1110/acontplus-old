@@ -20,7 +20,8 @@ BEGIN
 
 	SELECT TOP (@cantDocs)
 	de.codDoc, 
-	td.descripcion as comprobante,
+	comprobante,
+	de.serieComprobante,
 	n.estado,
 	n.idNotificacionTributaria, 
 	n.idDocumentoElectronico, 
@@ -40,8 +41,8 @@ BEGIN
 							               WHEN '07' THEN 'FactElect.Retencion_Send_Email'
 							 END
 	FROM FactElect.NotificacionTributaria n WITH (NOLOCK)
-	INNER JOIN dbo.DocumentoElectronico de WITH (NOLOCK) ON n.idDocumentoElectronico = de.idDocumentoElectronico	
-	INNER JOIN dbo.TipoDocumento td WITH (NOLOCK) ON td.codigoSri = de.codDoc
+	INNER JOIN v_DocElectronico de WITH (NOLOCK) ON n.idDocumentoElectronico = de.idDocumentoElectronico	
+	--INNER JOIN dbo.TipoDocumento td WITH (NOLOCK) ON td.codigoSri = de.codDoc
 	WHERE n.estado = 'NE'
 
 	

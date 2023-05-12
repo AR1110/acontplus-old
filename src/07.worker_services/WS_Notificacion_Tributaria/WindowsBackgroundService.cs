@@ -92,12 +92,12 @@ namespace WS_Notificacion_Tributaria
                 string mimeType = string.Empty;
                 string fileName = string.Empty;
                 byte[] bytesPdf = _reports.ByteReportDynamic(data.reportParams, ref mimeType, ref fileName);
-                reportFile.Create(bytesPdf, mimeType, fileName);
+                reportFile.Create(bytesPdf, mimeType, $"{dataRow.Field<string>("comprobante")} {dataRow.Field<string>("serieComprobante")}.pdf");
                 if (bytesPdf == null || bytesPdf.Length == 0) return false;
                 string xmlSri = string.Empty;
                 xmlSri = HttpUtility.HtmlDecode(dataRow.Field<string>("xmlSri"));
                 byte[] byteXml = Encoding.UTF8.GetBytes(xmlSri);
-                xmlFile.Create(byteXml, "text/xml", dataRow.Field<string>("comprobante") + ".xml");
+                xmlFile.Create(byteXml, "text/xml", $"{dataRow.Field<string>("comprobante")} {dataRow.Field<string>("serieComprobante")}.xml");
 
                 var files = new List<FileModel>
                 {
@@ -120,15 +120,16 @@ namespace WS_Notificacion_Tributaria
 
                 string msgError = string.Empty;
 
-                SendEmail _sendEmail = new SendEmail(_configuration);
-                if (_sendEmail.Send(_email, ref msgError))
+                //SendEmail _sendEmail = new SendEmail(_configuration);
+                SendEmailMailKit _sendEmail = new SendEmailMailKit(_configuration);
+                if (await _sendEmail.Send(_email, new CancellationToken()))
                 {
                     _notService.Update(dataRow.Field<long>("idNotificacionTributaria"), "E");
                     _log.LogInfo("Notificación enviada: idNotificacion -> " + Convert.ToString(dataRow.Field<long>("idNotificacionTributaria")));
                 }
                 else
                 {
-                    _notService.Update(dataRow.Field<long>("idNotificacionTributaria"), "EE", msgError);
+                   _notService.Update(dataRow.Field<long>("idNotificacionTributaria"), "EE", msgError);
                     _log.LogError("No se pudo enviar la notificación: idNotificacion -> " + Convert.ToString(dataRow.Field<long>("idNotificacionTributaria")) + "\n" + msgError);
                 }
                 bytesPdf = null;
