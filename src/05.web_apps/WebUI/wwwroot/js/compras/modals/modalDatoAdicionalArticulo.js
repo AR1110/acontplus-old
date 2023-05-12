@@ -10,26 +10,25 @@ function ModalDatoAdicionalArticuloCtrl($scope, $uibModalInstance, params){
 
     let {entity, datosAdicionales} = params 
 
+    $scope.articulo = entity; // Datos generales del articulo 
      
     let dataEtiqueta =  entity.etiquetas[0] 
     
-    $scope.articulo = entity;
     $scope.etiquetas = JSON.parse(dataEtiqueta.etiquetas[0]); //etiqueta asignado al articulo 
 
     
     $scope.data = [];
 
-   
    let dataInfo = datosAdicionales.info.find(item=>item.idArticulo===$scope.articulo.idArticulo);
 
    if(dataInfo){
         $scope.data = dataInfo.adicionales
    }
        
-   
 
-    $scope.addRow = function() {
-       
+
+   //Nuevo Dato Adicional
+    $scope.addRow = function() {       
         if($scope.data.length === $scope.articulo.cantidad){
             Swal.fire({
                 title: 'Datos Adicionales',
@@ -38,10 +37,10 @@ function ModalDatoAdicionalArticuloCtrl($scope, $uibModalInstance, params){
             })
             return
         }        
-        $scope.data.push({});
-        
+        $scope.data.push({});        
     };
 
+    //Quitar Dato Adicional del Articulo 
     $scope.removeRow = function(row) {
         try {
             Swal.fire({

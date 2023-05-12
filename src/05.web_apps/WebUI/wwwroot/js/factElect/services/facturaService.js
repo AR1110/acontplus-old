@@ -8,13 +8,22 @@
         let formSvc = $injector.get('formulario');
         let service = {}
 
+
+        /**
+         *Este funcion declarada se usa en Retencion de Venta, Factura Venta(Listado General) 
+         * @param {object} query 
+         * @returns 
+         */
         service.getAll = function(query){
             return mainService.getData('get', url +'Get?json=' + JSON.stringify(query), null, true ).then(response =>{
                 if(response.code==="0"){
                     throw response;
                 }
+                
                 if(response.code==="1"){
+                    
                     let facturas = JSON.parse(response.payload) || [];
+                    
                     return facturas.map(item=>{
                         return {
                             idFactura:item.idFactura,

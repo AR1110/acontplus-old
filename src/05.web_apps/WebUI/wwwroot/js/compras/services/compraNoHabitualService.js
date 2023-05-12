@@ -69,7 +69,7 @@
                     let tipoIvas = dataRepository[6];
                     let inventario = dataRepository[7][0];
 
-                    console.log(dataRepository)
+                   
                     let datosAdicionales = dataRepository[8].map(item=>{
                         if(typeof item.info=='string'){
                             item.info = JSON.parse(item.info).map(item=>{

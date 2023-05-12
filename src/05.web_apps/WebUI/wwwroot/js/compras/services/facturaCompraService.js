@@ -63,6 +63,11 @@
             })            
         }
 
+        /**
+         * Estte funcion declara se usa en Nota Credito Proveedor, Retencion Compra
+         * @param {*} idProveedor 
+         * @returns 
+         */
         service.findByProveedor = function(idProveedor){
             return mS.getData('get', url + 'FindByProveedor/' + idProveedor, null, true).then(response=>{
                 if(response.code==="0"){
@@ -131,6 +136,7 @@
         }
 
         /**
+         * Mappeo de datos necesarios para la factura 
          * 
          * @param {*} param0 object
          * @returns object
