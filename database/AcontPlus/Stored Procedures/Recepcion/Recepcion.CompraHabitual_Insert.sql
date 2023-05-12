@@ -52,9 +52,7 @@ BEGIN
 	--		RETURN
 	--	END
 	SET @idEntidad = (SELECT idEntidad FROM AFTDataRol(@idUsuarioRol))
-
-	BEGIN TRY
-		INSERT INTO @tmp(idProveedor, ruc, idArticulo, codArticulo)
+	INSERT INTO @tmp(idProveedor, ruc, idArticulo, codArticulo)
 		SELECT idProveedor, ruc, idArticulo, LTRIM(RTRIM(codArticulo)) FROM OPENJSON(@json) 
 													WITH (idProveedor INT '$.idProveedor'
 													,ruc VARCHAR(13) '$.ruc'
@@ -66,12 +64,19 @@ BEGIN
 				RETURN
 			END
 
+		IF NOT EXISTS (SELECT 1 FROM @tmp t INNER JOIN Articulo a WITH (NOLOCK) ON t.idArticulo = a.idArticulo AND a.llevaInventario = 1)
+			BEGIN
+				SELECT '0' code, 'Este articulo no esta configurado para llevar inventario' as 'message'
+				RETURN
+			END
+		
 		IF EXISTS (SELECT 1 FROM @tmp WHERE LEN(Rtrim(ltrim(codArticulo))) = 0)
 			BEGIN
 				SELECT '0' code, 'No existe codigo de articulo' as 'message'
+				RETURN
 			END
 
-		IF EXISTS(SELECT 1 FROM Recepcion.CompraHabitual ch WITH (NOLOCK) 
+				IF EXISTS(SELECT 1 FROM Recepcion.CompraHabitual ch WITH (NOLOCK) 
 							INNER JOIN Proveedor p ON ch.idProveedor = p.idProveedor AND p.idEntidad = @idEntidad
 							INNER JOIN @tmp t ON ch.codArticulo = t.codArticulo AND ch.ruc = t.ruc)
 			BEGIN
@@ -88,7 +93,7 @@ BEGIN
 				SELECT '1' code, 'El articulo ya se encuentra vinculado previa con este proveedor: '  + @articleFounded as 'message'
 				RETURN
 			END
-
+	BEGIN TRY
 		SELECT @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
 		SELECT @codEstab = codEstab FROM Config.Estab_Asig WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol AND predeterminado = 1

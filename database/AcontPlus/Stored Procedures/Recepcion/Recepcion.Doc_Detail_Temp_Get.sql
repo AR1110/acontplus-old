@@ -49,5 +49,6 @@ BEGIN
 	FROM Recepcion.Doc_Detalle_Temp d
  	
 	WHERE d.idDocumento = @idDocumento
+	ORDER BY d.idDetalle
 END
 GO
