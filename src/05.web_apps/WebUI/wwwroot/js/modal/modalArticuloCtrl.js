@@ -243,11 +243,14 @@
              //Registro de artículo desde Importación 
              if (this._params && this._params.isImport) {
                  this.data.codigo = this._params.codigo;
-                 this.data.codigoAuxiliar = this._params.codigoAuxiliar;
+                 
                  this.data.codigoBarra = this._params.codigo;
                  this.data.descripcion = this._params.descripcion;
                  this.data.precioCosto = this._form.roundNumber(this._params.precioCosto, this.config.nroPrecio);
                  this.tarifaInstance.setPrecioCosto = this.data.precioCosto;
+                 if(this._params.codigoAuxiliar){
+                    this.data.codigoAuxiliar = this._params.codigoAuxiliar;
+                }
                  return
              }
 
@@ -319,7 +322,7 @@
      }
 
      setCodigoSecuencialArticulo() {
-         if (this.subFamilias.length === 0 || (this._params && this._params.isImport)) return
+         if (this.subFamilias.length === 0) return
          const {
              codigo,
              idSubFamilia
