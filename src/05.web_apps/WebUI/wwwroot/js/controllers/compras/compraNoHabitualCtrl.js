@@ -154,19 +154,9 @@ function compraNoHabitualCtrl($scope, commonSvc, compraNoHabSvc, mS, tS, modalSv
             }
             showLoader();
             compraNoHabSvc.findById(item.idDocumentoIngreso).then(response => {
-                console.log(response);
-                // if (response.code === "0") {
-                //     console.log(response)
-                //     hideLoader();
-                // }
-
-                // if (response.code === "1") {
-
+               hideLoader();
                 modalParams.params = response;
                 $scope.openModal(modalParams)
-
-                //     hideLoader();
-                // }
             }).catch(error=>{
                 hideLoader();
                 console.log(error);

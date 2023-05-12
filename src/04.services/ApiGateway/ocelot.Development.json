@@ -1222,7 +1222,7 @@
         "Delete",
         "Options"
       ],
-      "UpstreamPathTemplate": "/api/CompraNoHabitual{everything}"
+      "UpstreamPathTemplate": "/api/FacturaCompra{everything}"
     }
   ]
 }

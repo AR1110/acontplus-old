@@ -1,8 +1,17 @@
 app.controller('facturaCompraCtrl', facturaCompraCtrl);
 
-facturaCompraCtrl.$inject = ['$scope', '$filter', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario']
+facturaCompraCtrl.$inject = [
+    '$scope', 
+    '$filter', 
+    'mainService', 
+    'commonService', 
+    'facturaComptaService', 
+    'modalService', 
+    'nombreModal', 
+    'formulario'
+]
 
-function facturaCompraCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form) {
+function facturaCompraCtrl($scope, $filter, _mS, _commonSvc, factCompraSvc, _modalSvc, _nombreModalConst, _form) {
 
     // let accion = JSON.parse(localStorage.getItem("accion"));  
     // if(accion===null){
@@ -13,6 +22,8 @@ function facturaCompraCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreM
     // }
 
     const TIPO_DOC = _commonSvc.tipoDoc['FC'];
+    const { MODAL_FILE_CTRL,
+        MODAL_NUEVO} = _nombreModalConst.factura_compra;
 
     $scope.dataSearch = {
         pageIndex: 1,
@@ -45,29 +56,23 @@ function facturaCompraCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreM
     }
 
 
-    $scope.getFacturas = async () => {
+    $scope.getFacturas = function () {
         try {
             showLoader();
             $scope.facturas = [];
-            await _mS.getData('get', '/FacturaCompra/Get?json=' + JSON.stringify($scope.dataSearch)).then(response => {
-                if (response.code === "0") {
-                    $scope.facturas = [];
-                    console.warn(response)
-                    return
-                }
 
-                if (response.code === "1") {
-                    $scope.facturas = JSON.parse(response.payload) || [];
-                    $scope.cloneFacturas = JSON.parse(JSON.stringify($scope.facturas));
-                    $scope.getTotalColumna();
-                }
-
-            })
+            factCompraSvc.getAll($scope.dataSearch).then(response => {
+                hideLoader();
+                $scope.facturas = response || [];
+                $scope.cloneFacturas = JSON.parse(JSON.stringify($scope.facturas));
+                $scope.getTotalColumna();
+            }).catch(error => {
+                hideLoader();
+            })            
         } catch (error) {
-            console.log(error)
-        } finally {
             hideLoader();
-        }
+            console.log(error)
+        } 
     }
 
     $scope.initiload = () => {
@@ -156,11 +161,6 @@ function facturaCompraCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreM
 
 
     $scope.openModalNew = async () => {
-
-        let {
-            MODAL_FILE_CTRL,
-            MODAL_NUEVO
-        } = _nombreModalConst.factura_compra;
         let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_NUEVO['controller']];
         let template = MODAL_NUEVO['template'];
 
@@ -254,7 +254,8 @@ function facturaCompraCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreM
             template,
             size,
             params,
-            windowClass: 'uibModalFullScreen'
+            windowClass: 'uibModalFullScreen',
+            isRenderRazorPartial: true,
         }).result.then(result => {
             if (typeof result === 'object') {
                 $scope.getFacturas()

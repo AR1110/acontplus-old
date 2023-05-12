@@ -3,28 +3,42 @@
 
     'use strict';
 
-    app.factory('compraNoHabitualService', function($injector){        
+    app.factory('facturaComptaService', function($injector){        
        
-        let url = 'CompraNoHabitual/'
+        let url = 'FacturaCompra/'
         let mS = $injector.get('mainService');
 
         let service = {};
 
         service.getAll = function(query){
-            return mS.getData('get', url  + JSON.stringify(query), null, true).then(response=>{
+            return mS.getData('get', url +'Get?json=' + JSON.stringify(query), null, true).then(response=>{
+                console.log(response)
                 if(response.code==='0'){
                     throw response;
                 }
                 if(response.code==='1'){
                     let results = JSON.parse(response.payload)[0] || [];
+                    
                     return results.map(item => ({
-                        colorRow: item.colorRow,
-                        estado: item.estado,
+                        abono: item.abono,
+                        codDoc: item.codDoc,
+                        codEstab: item.codEstab,
+                        correo: item.correo,
+                        direccion: item.direccion,
+                        estadoFinanciero: item.estadoFinanciero,                        
                         fechaEmision: item.fechaEmision,
-                        idDocumentoIngreso: item.idDocumentoIngreso,
-                        importeTotal: item.importeTotal,
-                        nombreFiscal: item.nombreFiscal,
-                        serieComprobante: item.serieComprobante, 
+                        fechaVencimiento: item.fechaVencimiento,
+                        idFacturaCompra: item.idFacturaCompra,
+                        idProveedor: item.idProveedor,
+                        item: item.idTiempoCredito,
+                        idTipoDocumento: item.idTipoDocumento,
+                        nroDocumento: item.nroDocumento,
+                        nroIdentificacion: item.nroIdentificacion,
+                        nroRetencion: item.nroRetencion,
+                        proveedor: item.proveedor,
+                        retencion: item.retencion,                        
+                        saldo: item.saldo,
+                        total: item.total,
                         usuario: item.usuario
                     }))
                 }
@@ -32,7 +46,7 @@
         }
 
         service.create = function(query){                                        
-            return mS.getData('post', 'CompraNoHabitual', query, true).then(response=>{
+            return mS.getData('post', url, query, true).then(response=>{
                 return response
             })
         }
@@ -44,8 +58,9 @@
         }
 
         service.delete = function(id){
-
-            
+            return mS.getData('delete', url + id, query, true).then(response=>{
+                return response;
+            })            
         }
 
         service.findById = function(id){

@@ -8,11 +8,81 @@
         let url = 'Articulo/';
 
         return {
+            getAll: function(query){
+                return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response=>{
+                    if(response.code==="0"){
+                        throw response;
+                    }
+
+                    if(response.code==="1"){
+                        let articulos = JSON.parse(response.payload) || [];
+                        return articulos.map(item=>{
+                            
+                            return { 
+                                idArticulo: item.idArticulo,
+                                idMedida: item.idMedida,
+                                code_unique: item.code_unique,
+                                codigo: item.codigo,
+                                descripcion: item.descripcion,
+                                precioCosto: item.precioCosto,
+                                estado: item.estado,
+                                stock: item.stock,
+                                observaciones: item.observaciones,
+                                imagen: item.imagen,
+                                subFamilia: item.subFamilia,
+                                medida: item.medida,
+                                tipoIva: item.tipoIva,
+                                tipoArticulo: item.tipoArticulo,
+                                totalRecords: item.totalRecords,
+                                style: item.style
+                            }
+                        })
+                    }
+                })
+            },
+
+            getDataForm: function(query){
+                return mainService.getData('get', url + 'GetDataForm/' + JSON.stringify(query), null, true).then(response=>{
+                    if(response.code==="0"){
+                        throw response;
+                    }
+
+                    if(response.code==="1"){
+                        console.log(response)
+                    }
+                })
+            },
+            insert: function(data){
+                return mainService.getData('post', url  + 'Insert/', data, true).then(response=>{
+                    if(response.code==="0"){
+                        throw response;
+                    }
+
+                    if(response.code==="1"){
+                        console.log(response)
+                    }
+                })
+
+            },
+
+            update: function(id, data){
+                return mainService.getData('put', url + 'Update/' + id, data, true).then(response=>{
+                    if(response.code==="0"){
+                        throw response;
+                    }
+
+                    if(response.code==="1"){
+                        console.log(response)
+                    }
+                })
+            },
+
             search: function(query){
                 return mainService.getData('get', url + query).hen(response=>{
 
                 })
             },
+
             findForPurchase: function(query){
                 return mainService.getData('get', url + 'FindForPurchase?json='+ JSON.stringify(query), null, true).then(response=>{
                     if(response.code==='0'){
