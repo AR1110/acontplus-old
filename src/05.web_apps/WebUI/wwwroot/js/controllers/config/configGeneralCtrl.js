@@ -160,10 +160,11 @@
                             tS.toastr('warning', 'Seleccione un Metodo de Valoración')
                             return
                         }else{
-                            jsonConfig.idMetodoValoracion =  $scope.gestionInventario.idMetodoValoracion;                            
+                            jsonConfig = $scope.valoracionMetodos.find(item=>item.idMetodoValoracion===$scope.gestionInventario.idMetodoValoracion)                            
                         }
                     }else{
                         jsonConfig.idMetodoValoracion = undefined;
+                        jsonConfig.codMetodoValoracion = undefined;
                     }
 
                     jsonConfig.llevaInventario = $scope.gestionInventario.llevaInventario?'SI':'NO';

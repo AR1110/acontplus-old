@@ -57,7 +57,7 @@ BEGIN
 
 	SELECT TOP 1 @idEntidad = idEntidad FROM dbo.Articulo WITH (NOLOCK) WHERE idArticulo = @idArticulo
 
-	SELECT TOP 1 @codMetodoValoradion = codMetodoValoracion FROM Config.GestionSistema WITH (NOLOCK) WHERE idEntidad = @idEntidad
+	SELECT TOP 1 @codMetodoValoradion = JSON_VALUE(dbo.f_sanitize_json(jsonConfig),'$.codMetodoValoracion') FROM Config.Sistema WHERE idEntidad = @idEntidad AND codConfig = 'CI'
 
 	SET @cantidadFinal = @cantidad * ISNULL(@fraccion,1)
 

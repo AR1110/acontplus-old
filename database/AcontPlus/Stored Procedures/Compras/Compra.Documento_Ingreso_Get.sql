@@ -165,7 +165,7 @@ BEGIN
 
 			--=============================Impuestos===========================================================================
 			SELECT codImpuesto = codImpuesto, codigoPorcentaje = codigo, descripcion = 'Iva '+descripcion,tarifa = porcentaje 
-			FROM sri.TarifaImpuesto WHERE estado = 1 AND codImpuesto = 2
+			FROM sri.TarifaImpuesto WITH (NOLOCK) WHERE estado = 1 AND codImpuesto = 2
 
 			--============================Impuestos por tipo de Actividad======================================================
 			SELECT ea.codEstab,codigoPorcentaje = ae.codTarifaImpuesto,tarifa = ae.porcentaje
@@ -175,7 +175,7 @@ BEGIN
 			WHERE idUsuarioRol = @idUsuarioRol
 
 			--===============================Inventario========================================================================
-			SELECT TOP 1 inventory =  llevaInventario FROM Config.GestionSistema WITH (NOLOCK) WHERE idEntidad = @idEntidad
+			SELECT TOP 1 inventory = JSON_VALUE(dbo.f_sanitize_json(jsonConfig),'$.llevaInventario') FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CI'
 	END 
 
 	IF @typeList = 3
@@ -322,7 +322,7 @@ BEGIN
 			FROM sri.TarifaImpuesto WHERE estado = 1 AND codImpuesto = 2
 
 			--===============================Inventario========================================================================
-			SELECT TOP 1 inventory =  llevaInventario FROM Config.GestionSistema WITH (NOLOCK) WHERE idEntidad = @idEntidad
+			SELECT TOP 1 inventory = JSON_VALUE(dbo.f_sanitize_json(jsonConfig),'$.llevaInventario') FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CI'
 
 			--=============================Datos Adicionales===================================================================
 			SELECT * FROM Compra.CompEtiquetaArticulo 

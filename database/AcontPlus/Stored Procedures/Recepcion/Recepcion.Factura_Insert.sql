@@ -56,37 +56,37 @@ BEGIN
 		   ,payments VARCHAR(MAX)
 		   )
 
-	SELECT @idEntidad = idEntidad,@idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
+	SELECT TOP 1 @idEntidad = idEntidad,@idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 
-	SELECT @codEstab = codEstab FROM Config.Estab_Asig  WITH (NOLOCK) WHERE idUsuarioRol = @idRol AND predeterminado = 1
+	SELECT TOP 1 @codEstab = codEstab FROM Config.Estab_Asig  WITH (NOLOCK) WHERE idUsuarioRol = @idRol AND predeterminado = 1
 	
-	SELECT @idTipoDocumento = idTipoDocumento FROM dbo.TipoDocumento  WITH (NOLOCK) WHERE codigo = 'FC'
+	SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM dbo.TipoDocumento  WITH (NOLOCK) WHERE codigo = 'FC'
 
-	SELECT @inventory = llevaInventario FROM Config.GestionSistema WITH (NOLOCK) WHERE idEntidad = @idEntidad
+	SELECT TOP 1 @inventory = JSON_VALUE(dbo.f_sanitize_json(jsonConfig),'$.llevaInventario') FROM Config.Sistema WHERE idEntidad = 9 AND codConfig = 'CI'
 
 	INSERT INTO @tmp(idDocumento,secuencial, estab, ptoEmi,claveAcceso,codDoc,totalDescuento,totalSinImpuestos,importeTotal,propina,idSustentoTributario
 				   ,idTiempoCredito,idCategoriaCompra ,idProveedor, idBodega, observacion, payments)
 	SELECT idDocumento, secuencial, estab,ptoEmi,claveAcceso,codDoc,totalDescuento,totalSinImpuestos ,importeTotal,propina,idSustentoTributario
 				   ,idTiempoCredito ,idCategoriaCompra,idProveedor, idBodega,observacion, payments
 				   FROM OPENJSON(@jsonComp) WITH (
-										idDocumento INT '$.idDocumento'
+										 idDocumento INT '$.idDocumento'
 										,secuencial BIGINT '$.secuencial'
 										,estab VARCHAR(4) '$.estab'
-									   ,ptoEmi VARCHAR(4) '$.ptoEmi'
-									   ,claveAcceso NVARCHAR(50) '$.claveAcceso'
-									   ,codDoc VARCHAR(2) '$.codDoc'
-									   ,totalDescuento DECIMAL(15,5) '$.totalDescuento'
-									   ,totalSinImpuestos DECIMAL(15,5) '$.totalSinImpuestos'
-									   ,importeTotal DECIMAL(15,5) '$.importeTotal'
-									   ,propina DECIMAL(15,5) '$.propina'
-									   ,idSustentoTributario INT '$.idSustentoTributario'
-									   ,idTiempoCredito INT '$.idTiempoCredito'
-									   ,idCategoriaCompra INT '$.idCategoriaCompra'
-									   ,idProveedor INT '$.idProveedor'
-									   ,idBodega INT '$.idBodega'
-									   ,observacion VARCHAR(300) '$.observacion'
-									   ,payments VARCHAR(MAX) '$.payments'
-				   )
+									    ,ptoEmi VARCHAR(4) '$.ptoEmi'
+									    ,claveAcceso NVARCHAR(50) '$.claveAcceso'
+									    ,codDoc VARCHAR(2) '$.codDoc'
+									    ,totalDescuento DECIMAL(15,5) '$.totalDescuento'
+									    ,totalSinImpuestos DECIMAL(15,5) '$.totalSinImpuestos'
+									    ,importeTotal DECIMAL(15,5) '$.importeTotal'
+									    ,propina DECIMAL(15,5) '$.propina'
+									    ,idSustentoTributario INT '$.idSustentoTributario'
+									    ,idTiempoCredito INT '$.idTiempoCredito'
+									    ,idCategoriaCompra INT '$.idCategoriaCompra'
+									    ,idProveedor INT '$.idProveedor'
+									    ,idBodega INT '$.idBodega'
+									    ,observacion VARCHAR(300) '$.observacion'
+									    ,payments VARCHAR(MAX) '$.payments'
+				                        )
 
 
 	IF EXISTS(SELECT 1 FROM FacturaCompra fc 

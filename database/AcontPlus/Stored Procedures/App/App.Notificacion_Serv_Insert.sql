@@ -142,7 +142,7 @@ BEGIN
 									 'from' = 'envio.comprobantes@acontplus.com.ec',
 									 'host'= 'smtp.gmail.com', 
 									 'logo'= 'logoAcontPlus.jpg', 
-									 'password'= 'rmdodmyvosnwxzwt', 
+									 'password'= 'rovsnbdgalpwbnfx', 
 									 'port'= '587', 
 									 'subject'= @subject, 
 									 'template'= @template FOR JSON PATH
