@@ -83,7 +83,8 @@ namespace ApiCompras.Controllers
                 await _db.SPExecute("Compra.Factura_Insert");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _db.AddDynamicParam("jsonFactura", JsonConvert.SerializeObject(data.factura));
-                _db.AddDynamicParam("jsonDetalle", JsonConvert.SerializeObject(data.detalle));               
+                _db.AddDynamicParam("jsonDetalle", JsonConvert.SerializeObject(data.detalle));
+                _db.AddDynamicParam("datosAdiciones", data.datosAdiciones);
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -110,7 +111,8 @@ namespace ApiCompras.Controllers
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _db.AddDynamicParam("id", id);
                 _db.AddDynamicParam("jsonFactura", JsonConvert.SerializeObject(data.factura));
-                _db.AddDynamicParam("jsonDetalle", JsonConvert.SerializeObject(data.detalle));               
+                _db.AddDynamicParam("jsonDetalle", JsonConvert.SerializeObject(data.detalle));
+                _db.AddDynamicParam("datosAdiciones", data.datosAdiciones);
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -142,6 +144,32 @@ namespace ApiCompras.Controllers
             {
                 _logs.LogError("Error al anular la factura compra: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al anular la factura");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
+        }
+
+        //----------------------Other Methods------------------------
+        [HttpGet("FindByProveedor/{idProveedor}")]
+        public async Task<IActionResult> FindByProveedor(int idProveedor)
+        {
+            LogWriter _logs = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                await _db.SPExecute("Compra.Factura_FindByProveedor");
+                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+                _db.AddDynamicParam("idProveedor", idProveedor);
+                _response = _db.GetDataTableAsync();
+            }
+            catch (Exception ex)
+            {
+                _logs.LogError("Error al obtener facturas por proveedor: " + ex.ToString());
+                _response.Create(code: "0", message: "Error al obtener facturas por proveedor");
             }
             finally
             {

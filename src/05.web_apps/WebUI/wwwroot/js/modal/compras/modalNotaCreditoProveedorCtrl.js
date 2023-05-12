@@ -269,9 +269,31 @@ class ModalNotaCreditoCtrl extends window.modalCompraBaseCtrl {
 
 export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl {
 
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario']
+    static $inject = [
+        '$scope', 
+        '$timeout', 
+        '$uibModalInstance', 
+        'mainService', 
+        'commonService', 
+        'facturaCompraService',
+        'modalService', 
+        'nombreModal', 
+        'toastService', 
+        'formulario'
+    ]
 
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS) {
+    constructor(
+        $scope, 
+        $timeout, 
+        $uibModalInstance, 
+        _mS, 
+        _commonSvc, 
+        factCompraSvc,
+        _modalSvc,
+        _nombreModalConst, 
+        _tS, 
+        _fS
+    ) {
         super({
             $scope,
             $timeout,
@@ -284,6 +306,7 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl {
             _fS
         });
 
+        this.factCompraSvc = factCompraSvc;
         this.searchProveedorOptions = {}
         this.searchProveedorOptions.showBtnNew = true;
         this.searchProveedorOptions.showBtnList = true;
@@ -377,24 +400,25 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl {
 
     getFacturas() {
         try {
-            this._mS.getData('get', '/FacturaCompra/GetByProveedor?idProveedor=' + this.proveedor.idProveedor).then(response => {
-                if (response.id === "0") {
-                    toast.toastr('warning', response.message);
-                    return
-                }
-                if (response.id === "1") {
-                    let tempFacturas = response.data;
-
-                    this.facturas = tempFacturas.map(item => {
-                        return {
-                            idFactura: item.factura.idFacturaCompra,
-                            nroDocumento: item.nroDocumento
-                        }
+            showLoader();
+            this.factCompraSvc.findByProveedor(this.proveedor.idProveedor).then(response=> {
+                if(response.code==='0'){
+                    hideLoader();
+                    Swal.fire({
+                        icon:'warning',
+                        html: response.message
                     })
-
                 }
+                if(response.code==='1'){
+                    hideLoader();
+                    this.facturas = response.payload;
+                }                
+            }).catch(error=>{
+                hideLoader();
+                console.log(error);
             })
         } catch (error) {
+            hideLoader();
             console.log(error)
         }
 

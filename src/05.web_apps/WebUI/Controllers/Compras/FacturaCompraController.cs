@@ -93,55 +93,6 @@ namespace WebUI.Controllers.Compras
             return Ok(_response);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] FacturaCompraViewModel data)
-        {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("jsonFactura", JsonConvert.SerializeObject(data.factura));
-            parameters.Add("jsonDetalle", JsonConvert.SerializeObject(data.detalle));
-            parameters.Add("jsonManejoArticuloDetalle", JsonConvert.SerializeObject(data.manejoArticuloDetalle));
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Compra.Factura_Insert", parameters)));
-        }
-
-        [HttpPut]
-        public async Task<IActionResult> Put(int id, [FromBody] FacturaCompraViewModel data)
-        {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("id", id);
-            parameters.Add("jsonFactura", JsonConvert.SerializeObject(data.factura));
-            parameters.Add("jsonDetalle", JsonConvert.SerializeObject(data.detalle));
-            parameters.Add("jsonManejoArticuloDetalle", JsonConvert.SerializeObject(data.manejoArticuloDetalle));
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Compra.Factura_Update", parameters)));
-        }
-
-
-
-        [HttpDelete]
-        public async Task<IActionResult> Delete(int id)
-        {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("id", id);
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Compra.Factura_Delete", parameters)));
-        }
-
-
-        //Get Factura By Proveedor for module Retention Purchase
-        public async Task<IActionResult> GetByProveedor(int idProveedor)
-        {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-            var res = await _fc.GetForProveedorAsync(idRol, idProveedor);
-            return Ok(res);
-        }
-
-        public async Task<IActionResult> GetDetailByInvoice(int idFactura, int idSubContribuyente, int idConfigContribuyente)
-        {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-            var res = await _fc.GetDetailAsync(idRol, idFactura, idSubContribuyente, idConfigContribuyente);
-            return Ok(res);
-        }
 
     }
 }

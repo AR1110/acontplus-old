@@ -186,7 +186,7 @@ BEGIN
 			 ) as dt
 
 
-		--Datos Adicionales 
+		----------------------------------Datos Adicionales ---------------------------------------------
 		INSERT INTO @compEtiquetaArticulo  
 		SELECT idArticulo, idEtiqueta, JSON_QUERY(REPLACE(adicionales, '\"', '"')) FROM OPENJSON(@comprobante, '$.adicionales')
 		WITH(
@@ -275,7 +275,7 @@ BEGIN
 			FROM @taxes
 
 			
-			--Insert o Update Etiqueta 
+			---------------------------------Insert o Update Etiqueta -------------------------------
 			IF (SELECT COUNT(*) FROM Compra.CompEtiquetaArticulo WHERE uniqueId = @uniqueId) > 0
 				BEGIN
 					UPDATE Compra.CompEtiquetaArticulo SET info = (SELECT * FROM @compEtiquetaArticulo FOR JSON PATH ) WHERE uniqueId = @uniqueId

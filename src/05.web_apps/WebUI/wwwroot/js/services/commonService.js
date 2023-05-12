@@ -1,7 +1,7 @@
 export class CommonService {
-    static $inject = ["$rootScope", "$http", "mainService", "FileSaver", "formulario", "modalService", "nombreModal"];
+    static $inject = ["$rootScope", "$http", "mainService", "FileSaver", "formulario", "modalService", "nombreModal", "articuloService"];
 
-    constructor($rootScope, $http, mS, FileSaver, form, _modalSvc, _nombreModalConst, __env) {
+    constructor($rootScope, $http, mS, FileSaver, form, _modalSvc, _nombreModalConst, articuloSvc) {
         this.$rootScope = $rootScope;
         this.$http = $http;
         this.mS = mS;
@@ -9,7 +9,8 @@ export class CommonService {
         this.form = form;
 
         this._modalSvc = _modalSvc;
-        this._nombreModalConst = _nombreModalConst
+        this._nombreModalConst = _nombreModalConst;
+        this.articuloSvc = articuloSvc;
 
         // this.$http.get('/TipoDocumento/GetAll').then(({data:response})=>{
         //     this.tipoDoc = response.data.reduce((groups, item)=>{
@@ -726,14 +727,14 @@ export class CommonService {
             const data = {
                 idArticulo: item.idArticulo
             }
-            this.getDataArticuloParaCompra({
-                json: data
-            }).then(response => {
-                const results = JSON.parse(response.payload);
-                item.medidas = results[1]
-                item.etiquetas = results[2]
-            })
 
+            this.articuloSvc.findForPurchase({
+                idArticulo: item.idArticulo
+            }).then(response => {                  
+                item.medidas = response.medidas
+                item.etiquetas = response.etiquetas;
+            })
+           
             let subTotal = item.cantidad * item.precioUnitario;
             let totalDescuento = item.cantidad * item.valorDescuento;
 
@@ -781,13 +782,30 @@ export class CommonService {
                     }
                     if (response.code === "1") {
                         let dataMain = JSON.parse(response.payload);
-
+                        let datosAdicionales = []
                         dataDocumento = dataMain[0][0];
                         dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision);
                         dataDocumento.fechaVencimiento = this.form.formatDate(dataDocumento.fechaVencimiento)
+                        
                         proveedor = dataMain[1][0];
-                        detalleDocumento = this.setUiGridDetalleCompra(dataMain[2]);
-                        datosAdicionalesArticulo = dataMain[3];
+                        
+                        detalleDocumento = this.setUiGridDetalleCompra(dataMain[2])
+
+                        
+                        datosAdicionales = dataMain[3].map(item=>{
+                            if(typeof item.info=='string'){
+                                item.info = JSON.parse(item.info).map(item=>{
+                                    let adicionales = JSON.parse(item.adicionales)
+                                    return {
+                                        ...item,
+                                        adicionales
+                                    }
+                                })
+                            }
+                            return item;
+                        })
+                        
+                        datosAdicionalesArticulo = datosAdicionales[0];
 
                         isComplete = true;
                     }

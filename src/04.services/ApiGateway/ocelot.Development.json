@@ -1219,6 +1219,7 @@
       "UpstreamHttpMethod": [
         "Get",
         "Put",
+        "Post",
         "Delete",
         "Options"
       ],

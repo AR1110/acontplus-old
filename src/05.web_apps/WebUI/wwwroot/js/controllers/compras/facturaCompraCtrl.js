@@ -5,7 +5,7 @@ facturaCompraCtrl.$inject = [
     '$filter', 
     'mainService', 
     'commonService', 
-    'facturaComptaService', 
+    'facturaCompraService', 
     'modalService', 
     'nombreModal', 
     'formulario'
@@ -267,30 +267,40 @@ function facturaCompraCtrl($scope, $filter, _mS, _commonSvc, factCompraSvc, _mod
 
     $scope.askToDelete = async (item) => {
 
-        let {
-            isConfirmed
-        } = await Swal.fire({
-            title: 'Eliminar Documento?',
-            html: `<small>Esta Ud. seguro de eliminar este Factura</b> N° ${item.nroDocumento}</small>?`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Si, eliminar!',
-            cancelButtonText: 'No, cancelar'
-        })
-
-        if (isConfirmed) {
-            _form.showLoaderAnular();
-            _mS.getData('delete', '/FacturaCompra/Delete?id=' + item.idFacturaCompra).then(response => {
-                if (response.code === "0") {
-                    _form.sweetAlert('warning', response.message, response.titleSms);
-                }
-                if (response.code === "1") {
-                    _form.sweetAlert('success', response.message, response.titleSms, 1000);
-                    $scope.getFacturas();
-                }
+        try {
+            let {
+                isConfirmed
+            } = await Swal.fire({
+                title: 'Eliminar Documento?',
+                html: `<small>Esta Ud. seguro de eliminar este Factura</b> N° ${item.nroDocumento}</small>?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, eliminar!',
+                cancelButtonText: 'No, cancelar'
             })
+    
+            if (isConfirmed) {
+                showLoader();
+                factCompraSvc.delete(item.idFacturaCompra).then(response => {
+                    if (response.code === "0") {
+                        hideLoader();
+                        _form.sweetAlert('warning', response.message, response.titleSms);
+                    }
+                    if (response.code === "1") {
+                        hideLoader();
+                        _form.sweetAlert('success', response.message, response.titleSms, 1000);
+                        $scope.getFacturas();
+                    }
+                }).catch(error => {
+                    hideLoader();
+                    console.log(error);
+                })
+            }
+        } catch (error) {
+            hideLoader();
+            console.log(error);
         }
     }
 

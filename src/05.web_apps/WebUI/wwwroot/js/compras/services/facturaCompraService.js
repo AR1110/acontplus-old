@@ -3,7 +3,7 @@
 
     'use strict';
 
-    app.factory('facturaComptaService', function($injector){        
+    app.factory('facturaCompraService', function($injector){        
        
         let url = 'FacturaCompra/'
         let mS = $injector.get('mainService');
@@ -12,7 +12,7 @@
 
         service.getAll = function(query){
             return mS.getData('get', url +'Get?json=' + JSON.stringify(query), null, true).then(response=>{
-                console.log(response)
+              
                 if(response.code==='0'){
                     throw response;
                 }
@@ -45,73 +45,89 @@
             })
         }
 
-        service.create = function(query){                                        
-            return mS.getData('post', url, query, true).then(response=>{
+        service.save = function(data){                                        
+            return mS.getData('post', url + 'Insert', data, true).then(response=>{                
                 return response
             })
         }
         
-        service.update = function(id, query){
-            return mS.getData('put', url + id, query, true).then(response=>{
+        service.update = function(id, data){
+            return mS.getData('put', url  + 'Update/' + id, data, true).then(response=>{
                 return response;
             })
         }
 
         service.delete = function(id){
-            return mS.getData('delete', url + id, query, true).then(response=>{
+            return mS.getData('delete', url + id, null, true).then(response=>{
                 return response;
             })            
         }
 
-        service.findById = function(id){
-            let query = JSON.stringify({
-                idDocumentoIngreso: id,
-                typeList: 4
-            })
-            return mS.getData('get', url + query, null, true).then(response=>{
-                if(response.code==='0'){
-                    throw response;
+        service.findByProveedor = function(idProveedor){
+            return mS.getData('get', url + 'FindByProveedor/' + idProveedor, null, true).then(response=>{
+                if(response.code==="0"){
+                    return response;
                 }
-                if(response.code==='1'){
-                    let dataRepository = JSON.parse(response.payload);
-
-                    let comprobante = dataRepository[0][0];
-                    let proveedor = dataRepository[1][0];
-                    let detalles = dataRepository[2];
-                    let taxes = dataRepository[3];
-                    let bodegas = dataRepository[4];
-                    let decimal = dataRepository[5][0];
-                    let tipoIvas = dataRepository[6];
-                    let inventario = dataRepository[7][0];
-
-                    console.log(dataRepository)
-                    let datosAdicionales = dataRepository[8].map(item=>{
-                        if(typeof item.info=='string'){
-                            item.info = JSON.parse(item.info).map(item=>{
-                                let adicionales = JSON.parse(item.adicionales)
-                                return {
-                                    ...item,
-                                    adicionales
-                                }
-                            })
-                        }
-                        return item;
-                    })
-                   
-                   console.log(datosAdicionales)
+                if(response.code==="1"){
+                    let facturas = JSON.parse(response.payload) || [];
                     return {
-                        comprobante,
-                        proveedor,
-                        detalles,
-                        taxes,
-                        bodegas,
-                        decimal,
-                        tipoIvas,
-                        inventario,
-                        datosAdicionales: datosAdicionales[0]
-                    }
+                        code: '1',
+                        payload: facturas
+                    };
+
                 }
-            })
+            })               
+        }
+
+        service.findById = function(id){
+            // let query = JSON.stringify({
+            //     idDocumentoIngreso: id,
+            //     typeList: 4
+            // })
+            // return mS.getData('get', url + query, null, true).then(response=>{
+            //     if(response.code==='0'){
+            //         throw response;
+            //     }
+            //     if(response.code==='1'){
+            //         let dataRepository = JSON.parse(response.payload);
+
+            //         let comprobante = dataRepository[0][0];
+            //         let proveedor = dataRepository[1][0];
+            //         let detalles = dataRepository[2];
+            //         let taxes = dataRepository[3];
+            //         let bodegas = dataRepository[4];
+            //         let decimal = dataRepository[5][0];
+            //         let tipoIvas = dataRepository[6];
+            //         let inventario = dataRepository[7][0];
+
+            //         console.log(dataRepository)
+            //         let datosAdicionales = dataRepository[8].map(item=>{
+            //             if(typeof item.info=='string'){
+            //                 item.info = JSON.parse(item.info).map(item=>{
+            //                     let adicionales = JSON.parse(item.adicionales)
+            //                     return {
+            //                         ...item,
+            //                         adicionales
+            //                     }
+            //                 })
+            //             }
+            //             return item;
+            //         })
+                   
+            //        console.log(datosAdicionales)
+            //         return {
+            //             comprobante,
+            //             proveedor,
+            //             detalles,
+            //             taxes,
+            //             bodegas,
+            //             decimal,
+            //             tipoIvas,
+            //             inventario,
+            //             datosAdicionales: datosAdicionales[0]
+            //         }
+            //     }
+            // })
         }
 
         /**
@@ -119,87 +135,49 @@
          * @param {*} param0 object
          * @returns object
          */
-        service.queryMapper = function({data, details, proveedor, idEstablecimiento, estab, ptoEmi, datosAdicionalesArticulo}){
-            let comprobante ={
-                idEstablecimiento,
-                idPuntoEmision: data.idPuntoEmision,
-                idProveedor: proveedor.idProveedor,
-                estab,
-                ptoEmi,
-                fechaEmision: moment(data.fechaEmision).format('YYYY-MM-DD HH:mm:ss A'),
-                totalSinImpuestos: data.subTotalSinImpuestos,
-                importeTotal: data.total,
-                inventory: data.inventory,
-                tarifa: data.tarifa,
-                adicionales: datosAdicionalesArticulo.map(obj=>{
+        service.queryMapper = function({data, details, proveedor, datosAdicionalesArticulo}){
+            data.idProveedor = proveedor.idProveedor;
+            let adicionales = datosAdicionalesArticulo.map(obj=>{
                     const { $$hashKey, ...cleanAd } = obj;
                     return cleanAd;
                 })
-            };
-
+            
+            
             let query =  {
-                comprobante: JSON.stringify(comprobante),
-                detalles: JSON.stringify(service.detalleMapTo(details)),
-                impuestos: JSON.stringify(service.taxesMapTo(details))
+                factura: data,
+                detalle: service.detalleMapTo(details),   
+                datosAdiciones: JSON.stringify(adicionales)          
             }
 
             return JSON.stringify(query)
         }
 
         service.detalleMapTo = function(detalles){
-            let index = 0;
-    
-            return detalles.map(item => {
-                let obj = {
-                    index: index++,
-                    idDocumentoIngresoDetail: item.idDocumentoIngresoDetail || 0,
+            let index = 1;
+            return detalles.map(item=>{
+                let data = {
+                    ordeIndex: index++,
+                    idFacturaCompraDetalle: item.idFacturaCompraDetalle || 0,
+                    idBodega: item.idBodega,
                     idArticulo: item.idArticulo,
                     idMedida: item.idMedida,
-                    idBodega: item.idBodega,
-                    codigoPrincipal: item.codigoPrincipal,
-                    codigoAuxiliar: item.codigoAuxiliar,
+                    idTipoIva: item.idTipoIva,
+    
                     descripcion: item.descripcion,
                     cantidad: item.cantidad,
                     precioUnitario: item.precioUnitario,
-                    costoNeto: item.costoNeto,
-                    descuento: item.valorDescuento,
-                    precioTotalSinImpuesto: item.total,
-                    codigoPorcentaje: item.codigoPorcentaje,
-                    adicionales: item.adicionales
-                }
-                return obj;
-            })
-        }
-
-        service.taxesMapTo = function (detalles){         
-            let index = 1
-            return detalles.map(item => {
-                let obj = {
-                    index: index++,
-                    idArticulo: item.idArticulo,
-                    codigo: "2",
+                    precioCostoNeto: item.precioCostoNeto,
+                    porcentajeDescuento: item.porcentajeDescuento,
+                    valorDescuento: item.valorDescuento,
+                    ice: item.ice,
+                    iva: item.iva,
+    
                     codigoPorcentaje: item.codigoPorcentaje,
                     tarifa: item.tarifa,
-                    baseImponible: item.total,
-                    valor: (item.tarifa / 100) * item.total,
+                    nota: item.nota || null,
+                    total: item.total,
                 }
-                return obj;
-            })
-            
-        }       
-
-        service.generateNroSecuencial = function (idPuntoEmision){
-            let query = JSON.stringify({
-                idPuntoEmision,
-                typeList: 3
-            })
-            return mS.getData('get', url  + query, null, true).then(response => {
-                if(response.code==="0"){
-                    throw response;
-                }
-                if(response.code==="1"){
-                    return JSON.parse(response.payload)[0][0].serieComprobante
-                }
+                return data;
             })
         }
         return service;

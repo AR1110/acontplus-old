@@ -265,35 +265,30 @@ class MdArticuloCtrl extends BaseSearchArticulo {
             fraccionado: false,
         }
 
-        if (json.busqueda.length < 3) return []
+        if (json.busqueda.length < 3) return [];
 
-
-        return this._mS.getData('get', '/Articulo/Search?json=' + JSON.stringify(json)).then(response => {
-
-            if (response.code === '0') {
-                console.log(response)
-                return []
-            }
-
-            let articulos = JSON.parse(response.payload) || [];
+        return this.articuloSvc.search(json).then(articulos=>{
             if (articulos.length > 0) {
                 articulos.unshift({
                     showHeader: true,
-                    priceSale: JSON.parse(articulos[0].priceSale),
-                    warehouses: JSON.parse(articulos[0].warehouses)
+                    priceSale: articulos[0].priceSales,
+                    warehouses: articulos[0].warehouses
 
                 })
+                
                 articulos = articulos.map(item => {
                     if (!item.hasOwnProperty('showHeader')) {
-                        item.priceSale = JSON.parse(item.priceSale)
-                        item.warehouses = JSON.parse(item.warehouses)
+                        item.priceSale = item.priceSales;
+                        item.warehouses = item.warehouses;
                     }
                     return item;
                 })
+                return articulos;
             }
-
-            return articulos;
-
+        }).catch(error=>{
+            hideLoader();
+            console.log(error)
+            return [];
         })
     }
 

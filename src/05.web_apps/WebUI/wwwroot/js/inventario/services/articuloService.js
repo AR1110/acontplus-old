@@ -78,8 +78,38 @@
             },
 
             search: function(query){
-                return mainService.getData('get', url + query).hen(response=>{
+                return mainService.getData('get', url + 'Search?json=' + JSON.stringify(query), null, true).then(response=>{
+                    if(response.code==="0"){
+                        throw response;
+                    }
+                    if(response.code==="1"){
+                        let articulos = JSON.parse(response.payload) || [];
 
+                        return articulos.map(item=>{
+                            let priceSales = JSON.parse(item.priceSale) || [];
+                            let warehouses = JSON.parse(item.warehouses) || [];
+                            
+                            return {
+                                codigo: item.codigo,
+                                descripcion: item.descripcion,
+                                idArticulo: item.idArticulo,
+                                iva: item.iva,
+                                marca: item.marca,
+                                medida: item.medida,
+                                stock: item.stock,
+                                stockMinimo: item.stockMinimo,
+                                style: item.style,
+                                subFamilia: item.subFamilia,
+                                priceSales: priceSales.map(item=>{
+                                    return {
+                                        tarifa: item.tarifa,
+                                        precio: item.precio,
+                                    }
+                                }),
+                                warehouses
+                            }
+                        })                       
+                    }
                 })
             },
 
