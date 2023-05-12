@@ -411,7 +411,7 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl {
                 }
                 if(response.code==='1'){
                     hideLoader();
-                    this.facturas = response.payload;
+                    this.facturas = response.payload;                  
                 }                
             }).catch(error=>{
                 hideLoader();
@@ -432,6 +432,13 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl {
         const self = this;
 
         try {
+            if((this.factura.idFactura>0)){
+                Swal.fire({
+                    icon:'warning',
+                    html:'Seleccione la Factura'
+                })
+                return
+            }
             showLoader();
             let response = await this._commonSvc.getDataTipoDocCompra({
                 id: this.factura.idFactura,
@@ -456,12 +463,13 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl {
     async onSave() {
         try {
 
-            showLoader();
+            
 
             let textAccion = 'Guardar';
 
             if (!this.isValidaForm(textAccion)) return
 
+            showLoader();
             this.nroDocumentoSecuencial = await this._commonSvc.generarNroDocumentoCompra({
                 puntoEmision: this.data.ptoEmision,
                 nroDocumento: this.data.nroDoc,

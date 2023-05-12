@@ -18,7 +18,7 @@ namespace ApiFactElect.Controllers
             _db = new DbAccess(_configuration);
         }
 
-        [HttpGet("{json}")]
+        [HttpGet("Get")]
         public async Task<IActionResult> Get(string json)
         {
             LogWriter _log = new LogWriter(_configuration);
@@ -39,8 +39,8 @@ namespace ApiFactElect.Controllers
             return Ok(_response);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] FacturaParams data)
+        [HttpPost("Insert")]
+        public async Task<IActionResult> Insert([FromBody] FacturaParams data)
         {
             LogWriter _log = new LogWriter(_configuration);
             var _response = new GenericResponse();
@@ -48,11 +48,11 @@ namespace ApiFactElect.Controllers
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Ventas.Factura_Insert");
-                _db.AddDynamicParam("idRol", idUsuarioRol);
+                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _db.AddDynamicParam("jsonFactura", SqlValidation.ValidateSqlString(data.factura));
                 _db.AddDynamicParam("jsonDetalle", SqlValidation.ValidateSqlString(data.detalle));
                 _db.AddDynamicParam("jsonInfoAdicional", SqlValidation.ValidateSqlString(data.adicional));
-                _db.AddDynamicParam("jsonManejoArticulo", SqlValidation.ValidateSqlString(data.manejoArticulo) ?? "");
+                _db.AddDynamicParam("infoAdicionalArticulo", data.infoAdicionalArticulo);
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -63,8 +63,8 @@ namespace ApiFactElect.Controllers
             return Ok(_response);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] FacturaParams data)
+        [HttpPut("Update/{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] FacturaParams data)
         {
             DbAccess _db = new DbAccess(_configuration);
             LogWriter _log = new LogWriter(_configuration);
@@ -77,13 +77,13 @@ namespace ApiFactElect.Controllers
                 _db.AddDynamicParam("jsonFactura", SqlValidation.ValidateSqlString(data.factura));
                 _db.AddDynamicParam("jsonDetalle", SqlValidation.ValidateSqlString(data.detalle));
                 _db.AddDynamicParam("jsonInfoAdicional", SqlValidation.ValidateSqlString(data.adicional));
-                _db.AddDynamicParam("jsonManejoArticulo", SqlValidation.ValidateSqlString(data.manejoArticulo) ?? "");
+                _db.AddDynamicParam("infoAdicionalArticulo", data.infoAdicionalArticulo);
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in Update: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al actualizar");
+                _log.LogError("Error in Update Invoice: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al actualizar la factura");
             }
             finally
             {
@@ -93,7 +93,7 @@ namespace ApiFactElect.Controllers
         }
 
 
-        [HttpDelete("{id}")]
+        [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             DbAccess _db = new DbAccess(_configuration);

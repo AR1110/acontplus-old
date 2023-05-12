@@ -125,41 +125,6 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
     }
 
 
-
-    trimDetailDoc() {
-        let tempDetails = [];
-        let orderIndex = 1;
-
-        for (let item of this.gridOptions.data) {
-            tempDetails.push({
-                orderIndex: orderIndex++,
-                idFacturaDetalle: item.idFacturaDetalle || 0,
-                idArticulo: item.idArticulo,
-                idTarifa: item.idTarifa,
-                idBodega: item.idBodega,
-                idMedida: item.idMedida,
-                idPresentacion: item.idPresentacion || 0,
-                idTipoIva: item.idTipoIva,
-                tarifa: item.tarifa,
-                codigoPorcentaje: item.codigoPorcentaje,
-                ice: item.ice,
-                descripcion: item.descripcion,
-                cantidad: item.cantidad,
-                precioCostoNeto: item.precioCostoNeto,
-                precioUnitario: item.precioUnitario,
-                precioVenta: item.precioUnitario,
-                precioConIva: item.precioConIva,
-                valorDescuento: item.valorDescuento,
-                precioTotalSinImpuesto: item.precioTotalSinImpuesto || 0,
-                porcentajeDescuento: item.porcentajeDescuento,
-                total: item.total,
-                nota: item.nota,
-            })
-        }
-        return tempDetails;
-    }
-
-
     async setItemArticuloEnDetalle(dataArticulo) {
         try {
             const self = this;
@@ -454,9 +419,35 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
 
 
 export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params', 'storageService']
+    static $inject = [
+        '$scope', 
+        '$timeout', 
+        '$uibModalInstance', 
+        'mainService', 
+        'commonService', 
+        'facturaService',
+        'modalService', 
+        'nombreModal', 
+        'formulario', 
+        'toastService', 
+        'params', 
+        'storageService'
+    ]
 
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params, _storageSvc) {
+    constructor(
+        $scope, 
+        $timeout, 
+        $uibModalInstance, 
+        _mS, 
+        _commonSvc, 
+        facturaSvc,
+        _modalSvc, 
+        _nombreModalConst, 
+        _fS, 
+        _tS, 
+        _params, 
+        _storageSvc
+    ) {
         super({
             $scope,
             $timeout,
@@ -469,6 +460,8 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
             _tS
         })
         const self = this;
+
+        this.facturaSvc = facturaSvc;
 
         this._params = _params;
         this._storageSvc = _storageSvc;
@@ -699,81 +692,57 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
             if (!this.nroDocumentoSecuencial) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE"
 
             let textAccion = 'Guardar';
-            const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                    confirmButton: 'btn btn-success',
-                    cancelButton: 'btn btn-danger ml-2'
-                },
-                buttonsStyling: false
-            })
 
-            swalWithBootstrapButtons.fire({
+            let {isConfirmed} = await Swal.fire({
                 title: '<small>Guardar Factura</small>',
-                html: `<small>Esta Ud. seguro de ${textAccion} este <b> Factura de Venta</b> N° ${this.nroDocumentoSecuencial}</small>?`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Si, guardar!',
-                cancelButtonText: 'No, cancelar!',
-                reverseButtons: false,
-                allowOutsideClick: false,
-                allowEscapeKey: true
-            }).then(response => {
-
-                if (response.isConfirmed) {
-
-                    showLoader();
-                    let factura = Object.assign({}, this.data);
-                    factura.idCliente = this.cliente.idCliente;
-                    factura.fechaEmision = this._fS.formatDateTimeZone(this.data.fechaEmision);
-                    factura.fechaVencimiento = this._fS.formatDateTimeZone(this.data.fechaVencimiento);
-
-                    //Tarifa Aplicada al Documento
-                    //  factura.tarifa = this.actividadTipoIva.tarifa;
-
-
-
-                    const data = {
-                        factura: JSON.stringify(factura),
-                        detalle: JSON.stringify(this.trimDetailDoc()),
-                        adicional: JSON.stringify(this.infoAdicionalDocumento || []),
-                        manejoArticulo: JSON.stringify(this.datosAdicionalesArticulo)
-                    }
-
-                    this.createInvoice(data).then(response => {
-                        if (response.code === '0') {
-                            hideLoader();
-                            this._fS.sweetAlert('warning', response.message, response.titleSms);
-                        }
-                        if (response.code === "1") {
-                            hideLoader();
-                            this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
-
-                            let data = JSON.parse(response.payload)[0];
-
-
-                            let mainData = {
-                                isRegister: true,
-                                printerAutomatic: this.printerAutomatic,
-                                payAutomatic: this.payAutomatic,
-                                data: {
-                                    ...data,
-                                    nroDocumento: data.estab + data.ptoEmi + data.secuencial,
-                                    esContado: data.gestion,
-                                },
-                                TIPO_DOC: this.TIPO_DOC_FV
-                            }
-
-                            this.$uibModalInstance.close(mainData)
-
-                        }
-                    }).catch(error => {
-                        hideLoader();
-                        console.log(error)
-                    })
-                }
-
+                  html: `<small>Esta Ud. seguro de ${textAccion} este <b> Factura de Venta</b> N° ${this.nroDocumentoSecuencial}</small>?`,
+                  icon: 'warning',
+                  showCancelButton: true,
+                  confirmButtonColor: '#3085d6',
+                  cancelButtonColor: '#d33',
+                  confirmButtonText: 'Si, guardar!',
+                  cancelButtonText: 'No, cancelar!',                
+                  allowOutsideClick: false,
+                  allowEscapeKey: true
             })
+  
+            if(isConfirmed){
+                showLoader();
+  
+                //Mappeamos todo el objecto necesario para guardar factura.
+                let params = this.facturaSvc.queryMapper({
+                    data: this.data, 
+                    cliente: this.cliente,
+                    detalles: this.gridOptions.data, 
+                    infoAdicionalDocumento: this.infoAdicionalDocumento,
+                    datosAdicionalesArticulo: this.datosAdicionalesArticulo
+                })
+  
+                this.facturaSvc.save(params).then(response=>{
+                    hideLoader();
+                    if (response.code === '0') {
+                        this._fS.sweetAlert('warning', response.message, response.titleSms);
+                        return
+                    }
+                    if (response.code === "1") {                        
+                        this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
 
+                        let mainData = {
+                            isRegister: true,
+                            printerAutomatic: this.printerAutomatic,
+                            payAutomatic: this.payAutomatic,
+                            data: response.dataResponse,
+                            TIPO_DOC: this.TIPO_DOC_FV
+                        }
+
+                        this.$uibModalInstance.close(mainData)
+
+                    }
+                }).catch(error => {
+                      hideLoader();
+                      console.log(error);
+                })
+            }
 
         } catch (error) {
             hideLoader();
@@ -1170,9 +1139,33 @@ export class ModalFacturaDetalleCtrl extends ModalFacturaCtrl {
 
 
 export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params']
+    static $inject = [
+        '$scope', 
+        '$timeout', 
+        '$uibModalInstance', 
+        'mainService', 
+        'commonService', 
+        'facturaService',
+        'modalService', 
+        'nombreModal', 
+        'formulario', 
+        'toastService', 
+        'params'
+    ]
 
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params) {
+    constructor(
+        $scope, 
+        $timeout, 
+        $uibModalInstance, 
+        _mS, 
+        _commonSvc, 
+        facturaSvc,
+        _modalSvc,
+        _nombreModalConst, 
+        _fS, 
+        _tS, 
+        _params
+    ) {
         super({
             $scope,
             $timeout,
@@ -1184,9 +1177,10 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
             _fS,
             _tS
         })
+
         const self = this;
 
-
+        this.facturaSvc = facturaSvc;
         let {
             TIPO_REGISTRO,
             data
@@ -1364,82 +1358,77 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
 
             this.validarDatosAdicionales("idFacturaDetalle");
 
-            let textAccion = 'Guardar';
-            const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                    confirmButton: 'btn btn-success',
-                    cancelButton: 'btn btn-danger ml-2'
-                },
-                buttonsStyling: false
+            showLoader();
+            this.nroDocumentoSecuencial = await this._commonSvc.generarNroDocumentoVenta({
+                idPuntoEmision: this.data.idPuntoEmision,
+                codigoDocumento: this.TIPO_DOC_FV.codigo,
             })
+            hideLoader();
 
-            let {
-                isConfirmed
-            } = await swalWithBootstrapButtons.fire({
-                title: '<small>Guardar Factura</small>',
-                html: `<small>Esta Ud. seguro de ${textAccion} este <b> Factura de Venta</b> N° ${this.nroDocSecuencial}</small>?`,
+            if (!this.nroDocumentoSecuencial) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE"
+
+            let textAccion = 'Guardar';
+            
+            let {isConfirmed} = await Swal.fire({
+              title: '<small>Guardar Factura</small>',
+                html: `<small>Esta Ud. seguro de ${textAccion} este <b> Factura de Venta</b> N° ${this.nroDocumentoSecuencial}</small>?`,
                 icon: 'warning',
                 showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
                 confirmButtonText: 'Si, guardar!',
-                cancelButtonText: 'No, cancelar!',
-                reverseButtons: false,
+                cancelButtonText: 'No, cancelar!',                
                 allowOutsideClick: false,
                 allowEscapeKey: true
             })
 
+            if(isConfirmed){
+                showLoader();
 
-            if (!isConfirmed) return
+                //Mappeamos todo el objecto necesario para guardar factura.
+                let params = this.facturaSvc.queryMapper({
+                    data: this.data, 
+                    cliente: this.cliente,
+                    detalles: this.gridOptions.data, 
+                    infoAdicionalDocumento: this.infoAdicionalDocumento,
+                    datosAdicionalesArticulo: this.datosAdicionalesArticulo
+                })
 
-            showLoader();
-            let factura = Object.assign({}, this.data);
-            factura.idCliente = this.cliente.idCliente;
-            factura.fechaEmision = this._fS.formatDateTimeZone(this.data.fechaEmision);
-            factura.fechaVencimiento = this._fS.formatDateTimeZone(this.data.fechaVencimiento);
-
-            //Tarifa Aplicada al Documento
-            // factura.tarifa = this.actividadTipoIva.tarifa;
-
-            const data = {
-                factura: JSON.stringify(factura),
-                detalle: JSON.stringify(this.trimDetailDoc()),
-                adicional: JSON.stringify(this.infoAdicionalDocumento || []),
-                manejoArticulo: JSON.stringify(this.datosAdicionalesArticulo)
-            }
-
-            this.createInvoice(data).then(response => {
-                if (response.code === '0') {
-                    hideLoader();
-                    this._fS.sweetAlert('warning', response.message, response.titleSms);
-                }
-                if (response.code === "1") {
-                    hideLoader();
-                    this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
-
-                    let data = JSON.parse(response.payload)[0];
-
-                    let mainData = {
-                        printerAutomatic: this.printerAutomatic,
-                        payAutomatic: this.payAutomatic,
-                        data: {
-                            ...data,
-                            nroDocumento: data.estab + data.ptoEmi + data.secuencial,
-                            esContado: data.gestion,
-                        },
-                        TIPO_DOC: this.TIPO_DOC_FV
+                this.facturaSvc.save(params).then(response=>{
+                    if (response.code === '0') {
+                        hideLoader();
+                        this._fS.sweetAlert('warning', response.message, response.titleSms);
                     }
-
-                    this.$uibModalInstance.close(mainData)
-
-                }
-            }).catch(error => {
-                hideLoader();
-                console.log(error);
-            })
+                    if (response.code === "1") {
+                        hideLoader();
+                        this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
+    
+                        let data = JSON.parse(response.payload)[0];
+    
+                        let mainData = {
+                            printerAutomatic: this.printerAutomatic,
+                            payAutomatic: this.payAutomatic,
+                            data: {
+                                ...data,
+                                nroDocumento: data.estab + data.ptoEmi + data.secuencial,
+                                esContado: data.gestion,
+                            },
+                            TIPO_DOC: this.TIPO_DOC_FV
+                        }
+    
+                        this.$uibModalInstance.close(mainData)
+    
+                    }
+                }).catch(error => {
+                    hideLoader();
+                    console.log(error);
+                })
+            }
 
         } catch (error) {
             hideLoader();
             console.log(error)
-        } finally {}
+        }  
     }
 
 }

@@ -39,7 +39,7 @@ namespace Domain.ViewModels
         public string factura { get; set; }
         public string detalle { get; set; }
         public string adicional { get; set; }
-        public string manejoArticulo { get; set; }
+        public string infoAdicionalArticulo { get; set; }
     }
 
     public class FacturaData

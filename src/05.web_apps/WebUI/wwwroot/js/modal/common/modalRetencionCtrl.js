@@ -511,27 +511,28 @@ class ModalRetencionCompraCtrl extends ModalBaseCtrl{
     }
 
     async getFacturas(){
-        let facturas = [];
-        await this._mS.getData('get', '/FacturaCompra/GetByProveedor?idProveedor=' + this.proveedor.idProveedor).then(response=>{
-            if (response.id === "0") {                    
-                Swal.fire({                    
-                    icon:'warning',
-                    html:`<small>${response.message}</small>`
-                })  
-            }
-            
-            if (response.id === "1") {
-                facturas = response.data.map(item=>{
-                    let obj = {
-                        idFacturaCompra: item.factura.idFacturaCompra,                         
-                        idTipoDocumento: item.factura.idTipoDocumento,
-                        nroDocumento: item.nroDocumento
-                    }
-                    return obj;
-                })               
-            }
-        })
-        return facturas;
+
+        try {
+            let facturas = [];
+            showLoader();
+            await this.factCompraSvc.findByProveedor(this.proveedor.idProveedor).then(response => {
+                hideLoader();
+                if (response.id === "0") {                    
+                    Swal.fire({                    
+                        icon:'warning',
+                        html:`<small>${response.message}</small>`
+                    })  
+                }
+                
+                if (response.id === "1") {
+                    facturas = response.payload;     
+                }
+            })
+            return facturas;
+        } catch (error) {
+            hideLoader();
+            console.log(error)
+        }        
     }
 
     
@@ -748,7 +749,8 @@ export class ModalRetencionCompraNuevoCtrl extends ModalRetencionCompraCtrl{
         '$scope',
         '$timeout', 
         'mainService', 
-        'commonService', 
+        'commonService',
+        'facturaCompraService', 
         'modalService', 
         'nombreModal', 
         '$uibModalInstance', 
@@ -758,9 +760,24 @@ export class ModalRetencionCompraNuevoCtrl extends ModalRetencionCompraCtrl{
         'toastService',
         'params'
     ]
-    constructor($scope, $timeout, _mS, _commonSvc, _modalSvc, _nombreModal,  $uibModalInstance, uiGridConstants, toastr, _form, _tS, _params){                              
+    constructor(
+        $scope, 
+        $timeout, 
+        _mS, 
+        _commonSvc, 
+        factCompraSvc,
+        _modalSvc, 
+        _nombreModal,  
+        $uibModalInstance, 
+        uiGridConstants, 
+        toastr, 
+        _form, 
+        _tS, 
+        _params
+    ){                              
         super({$scope, $timeout, _mS, _commonSvc, _modalSvc, _nombreModal, $uibModalInstance, uiGridConstants, toastr, _form})
 
+        this.factCompraSvc = factCompraSvc;
         this.searchProveedorOptions = {}
         this.searchProveedorOptions.showBtnNew = true;
         this.searchProveedorOptions.showBtnList = true; 
@@ -1724,6 +1741,7 @@ export class ModalRetencionVentaNuevoCtrl extends ModalRetencionVentaCtrl{
         '$timeout', 
         'mainService', 
         'commonService', 
+        'facturaService',
         'modalService', 
         'nombreModal', 
         '$uibModalInstance', 
@@ -1733,8 +1751,25 @@ export class ModalRetencionVentaNuevoCtrl extends ModalRetencionVentaCtrl{
         'toastService',
         'params'
     ]
-    constructor($scope, $timeout, _mS, _commonSvc, _modalSvc, _nombreModal,  $uibModalInstance, uiGridConstants, toastr, _form, _tS, _params){                              
-        super({$scope, $timeout, _mS, _commonSvc, _modalSvc, _nombreModal, $uibModalInstance, uiGridConstants, toastr, _form, codigoDocumento: "RV"})        
+    constructor(
+        $scope, 
+        $timeout, 
+        _mS, 
+        _commonSvc, 
+        facturaSvc,
+        _modalSvc, 
+        _nombreModal, 
+        $uibModalInstance, 
+        uiGridConstants, 
+        toastr, 
+        _form, 
+        _tS, 
+        _params
+    ){                              
+        super({$scope, $timeout, _mS, _commonSvc, _modalSvc, _nombreModal, $uibModalInstance, uiGridConstants, toastr, _form, codigoDocumento: "RV"}) 
+        
+        this.facturaSvc = facturaSvc;
+
         this._tS     = _tS;
         this._params = {};       
         this.cliente = {}
@@ -1810,23 +1845,16 @@ export class ModalRetencionVentaNuevoCtrl extends ModalRetencionVentaCtrl{
             "byEstado": 13,
             "paraNotaCredito": true            
         }      
-        await this._mS.getData('get', '/FacturaVenta/Get?json=' + JSON.stringify(dataSearch)).then(response=>{
-            if (response.id === "0") {
-                Swal.fire({
-                    icon: 'warning',
-                    html: `<small>${response.message}</small>`
-                });                    
-            }
-            if (response.id === "1") {
-                let tempArr = JSON.parse(response.payload) || [];
-                facturas = tempArr.map(item=>{
-                    let obj = {};
-                    obj.idFactura = item.idFactura;
-                    obj.idTipoDocumento = item.idTipoDocumento;
-                    obj.nroDocumento = item.nroFactura;
-                    return obj;
-                })                                
-            }
+
+        await this.facturaSvc.getAll(dataSearch).then(response=>{           
+            let tempArr = response;
+            facturas = tempArr.map(item=>({                
+                idFactura: item.idFactura,
+                idTipoDocumento: item.idTipoDocumento,
+                nroDocumento: item.nroFactura
+                
+            }))                                
+            
         }) 
         return facturas;      
     }

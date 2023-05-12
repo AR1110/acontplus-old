@@ -228,54 +228,16 @@
           "Port": 54948
         }
       ],
-      "DownstreamPathTemplate": "/api/Factura/{everything}",
+      "DownstreamPathTemplate": "/api/Factura{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Get",
+        "Post",
         "Put",
         "Delete",
         "Options"
       ],
-      "UpstreamPathTemplate": "/api/Factura/{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 54948
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Factura",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Post"
-      ],
-      "UpstreamPathTemplate": "/api/Factura"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 12786
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Factura?json={json}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Post",
-        "Put"
-      ],
-      "UpstreamPathTemplate": "/api/Factura?json={json}"
+      "UpstreamPathTemplate": "/api/Factura{everything}"
     },
     {
       "AuthenticationOptions": {
