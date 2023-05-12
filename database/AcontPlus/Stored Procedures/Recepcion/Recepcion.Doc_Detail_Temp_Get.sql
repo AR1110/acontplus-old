@@ -47,8 +47,7 @@ BEGIN
 	
 	,idDocumentoDetalle = ISNULL((SELECT TOP 1 dd.idDocumentoDetalle FROM Recepcion.DocumentoDetalle dd WHERE d.idArticulo = dd.idArticulo AND dd.idDocumento = d.idDocumento), 0) 
 	FROM Recepcion.Doc_Detalle_Temp d
- 	
 	WHERE d.idDocumento = @idDocumento
-	ORDER BY d.idDetalle
+	ORDER BY d.idDetalle ASC
 END
 GO

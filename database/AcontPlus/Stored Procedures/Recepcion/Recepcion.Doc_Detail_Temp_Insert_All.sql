@@ -136,6 +136,7 @@ BEGIN
 					LEFT JOIN dbo.Medida m ON a.idMedida = m.idMedida AND m.idEntidad = @idEntidad
 					WHERE NOT EXISTS (SELECT * FROM Recepcion.Doc_Detalle_Temp tt 
 					WHERE t.idDocumento = tt.idDocumento AND t.codigoPrincipal = tt.codigoPrincipal)
+					ORDER BY t.idDetalle ASC
 
 					 INSERT INTO Recepcion.Doc_Impuesto_Temp(idDetalle, idDocumento, codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor)
 					 SELECT idDetalle, (SELECT TOP 1 idDocumento FROM @tmp), codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor 
