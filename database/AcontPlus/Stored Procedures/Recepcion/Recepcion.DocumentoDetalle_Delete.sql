@@ -37,9 +37,11 @@ BEGIN
 
 		SELECT TOP 1 @idUsuario = idUsuario, @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
-		SELECT TOP 1 @inventory = llevaInventario FROM Config.GestionSistema WITH (NOLOCK) WHERE idEntidad = @idEntidad
+		SELECT TOP 1 @inventory = JSON_VALUE(dbo.f_sanitize_json(jsonConfig),'$.llevaInventario') FROM Config.Sistema WHERE idEntidad = @idEntidad AND codConfig = 'CI'
+
 
 		BEGIN TRAN
+			
 			DELETE FROM Recepcion.Doc_Detalle_Impuesto WHERE idDocumentoDetalle = @id
 			
 			DELETE FROM Recepcion.DocumentoDetalle WHERE idDocumentoDetalle = @id
@@ -53,13 +55,10 @@ BEGIN
 				BEGIN
 					DECLARE @codDoc AS VARCHAR(2)
 					DECLARE @codDocInv VARCHAR(2)
-					DECLARE @codTran VARCHAR(2)
 
 					SELECT TOP 1 @codDoc = codDoc FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE idDocumento = @idDocumento
 
 					SET @codDocInv = (SELECT CASE WHEN @codDoc = '01' THEN 'FE' WHEN @codDoc = '04' THEN 'NC' END)
-		
-					SET @codTran   = (SELECT CASE WHEN @codDoc = '01' THEN 'E'  WHEN @codDoc = '04' THEN 'S'  END)
 
 					EXEC Inventario.Transaccion_Delete  'E',@codDocInv,@idDocumento
 				END 
