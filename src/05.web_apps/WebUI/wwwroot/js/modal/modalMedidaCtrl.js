@@ -12,7 +12,7 @@ export class ModalMedidaCtrl {
     }
 
     $onInit() {
-        if (this._params) {
+        if (this._params && this._params.idMedida > 0) {
             this.tipoRegistro = 2;
             this.data = this._params;
             this.showStatus = !this._params.estado;

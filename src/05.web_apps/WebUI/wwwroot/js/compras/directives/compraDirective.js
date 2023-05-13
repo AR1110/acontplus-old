@@ -40,15 +40,15 @@
                         if(typeof result ==='object'){
 
                             //Cuando es editar 
-                            if(scope.datosAdicionales.info.some(item=>item.idArticulo ===scope.entity.idArticulo)){
-                                for(let label of scope.datosAdicionales.info){
+                            if(scope.datosAdicionales.some(item=>item.idArticulo ===scope.entity.idArticulo)){
+                                for(let label of scope.datosAdicionales){
                                     if(label.idArticulo===scope.entity.idArticulo){
                                         label.adicionales = result.data;                                     
                                     }
                                 }
                             }else {
 
-                                scope.datosAdicionales.info.push({
+                                scope.datosAdicionales.push({
                                     idArticulo: scope.entity.idArticulo,
                                     idEtiqueta: scope.entity.etiquetas[0].idEtiqueta,
                                     adicionales: result.data

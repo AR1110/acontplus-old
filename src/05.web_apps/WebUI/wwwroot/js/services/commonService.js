@@ -555,6 +555,7 @@ export class CommonService {
 
     }
 
+    //Eliminar mas adelante esta función (depuracion se encuentra en inventario/services/articuloService.js)
     getDataArticuloParaVenta({
         json
     }) {

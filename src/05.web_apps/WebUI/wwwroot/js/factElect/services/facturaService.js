@@ -10,7 +10,7 @@
 
 
         /**
-         *Este funcion declarada se usa en Retencion de Venta, Factura Venta(Listado General) 
+         *Esta funcion declarada se usa en Retencion de Venta, Factura Venta(Listado General) 
          * @param {object} query 
          * @returns 
          */

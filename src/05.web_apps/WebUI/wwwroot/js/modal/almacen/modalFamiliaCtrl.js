@@ -1,60 +1,74 @@
-export class ModalFamiliaCtrl{
-    static get $inject(){
-        return ['$http', '$uibModalInstance', 'formulario', 'params']
+export { 
+    ModalFamiliaCtrl
+}
+
+ModalFamiliaCtrl.$inject = ["$scope", '$uibModalInstance', 'familiaService', 'toastService', 'params']
+
+function ModalFamiliaCtrl($scope, $uibModalInstance, familiaSvc, tS, params) {
+    $scope.data = {};
+
+    if(typeof params == 'object' && params.idFamilia > 0){
+        $scope.tipoRegistro = 2;
+        $scope.data = Object.assign({}, params)
+    }else{
+        $scope.tipoRegistro = 1;
     }
 
-    constructor($http, $uibModalInstance, _form, _params){      
-        this.$http = $http;
-        this.$uibModalInstance = $uibModalInstance;
-        this._form = _form;
-        this._params = _params;
-        this.tipoRegistro = 1;
-        this.data = {};                     
-    }
-
-    $onInit(){
-        if(this._params){
-            this.tipoRegistro=2;
-            this.data = this._params;
-        }
-        
-    }
-
-    getFamilyCode(){
-        if (!this._form.campo(this.data.descripcion) && this.tipoRegistro === 1) {
-            this.data.siglas = this._form.obtenerTresLetras(this.data.descripcion);            
+    $scope.getFamilyCode = function(){
+        if ($scope.data.descripcion && $scope.tipoRegistro === 1) {
+            this.data.siglas = this.data.descripcion.substring(0, 3);           
         }      
     }
 
-    saveAndUpdate(){
-        const tituloToastr = this.tipoRegistro === 1 ? 'Nuevo':'Actualizar';
+    $scope.saveAndUpdate = function(){
+        try {
+            const tituloToastr = $scope.tipoRegistro === 1 ? 'Nuevo':'Actualizar';
 
-        if (this._form.campo(this.data.descripcion)) {
-            toastr.warning('Por favor, ingrese la Descripción', tituloToastr);
-            return;
+            if (!$scope.data.descripcion) {
+                tS.toastr('warning', 'Ingrese la Descripción', tituloToastr);
+                return;
+            }
+
+            if (!$scope.data.siglas) {
+                tS.toastr('warning', 'Ingrese la Sigla', tituloToastr);
+                return;
+            }
+
+            showLoader();
+
+            if($scope.data.idFamilia > 0){
+                familiaSvc.update($scope.data.idFamilia, $scope.data).then($scope.successReponse)
+                .catch(err => {
+                    hideLoader();
+                    console.log(err);
+                })
+            }else{
+                familiaSvc.save($scope.data).then($scope.successReponse)
+                .catch(err => {
+                    hideLoader();
+                    console.log(err);
+                })
+            }
+        } catch (error) {
+            hideLoader();
+            console.log(error);
         }
-        if (this._form.campo(this.data.siglas)) {
-            toastr.warning('Por favor, ingrese la Sigla', tituloToastr);
-            return;
-        };
-
-        const url = this.tipoRegistro === 1 ? '/Familia/Post' : '/Familia/Put?idFamilia=' + this.data.idFamilia;
-        this.$http.post(url, this.data).then(({data:response}) => {
-            console.log(response)
-            if (response.id === "0" || response.code==='0') {
-                toastr.warning(response.message, response.titleSms);
-                return
-            }
-            if (response.id === "1" || response.code==='1') {
-                this.$uibModalInstance.close(response)
-                toastr.success(response.message, response.titleSms);                
-                return
-            }
-        })
-
-       
     }
 
+    $scope.successReponse = function(response) {
+        hideLoader();
+        if (response.code==='0') {
+            tS.toastr('warning', response.message, response.titleSms);            
+        }
+        if (response.code==='1') {
+            tS.toastr('success', response.message, response.titleSms);                            
+            $uibModalInstance.close(response)
+        }
+    }
 
+    $scope.closeModal = function(){
+        $uibModalInstance.close()
+    }
 }
+
 

@@ -230,11 +230,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
         this.searchProveedorOptions.showBtnNew = true;
         this.searchProveedorOptions.showBtnList = true;   
 
-        this.datosAdicionalesArticulo = {
-            idCompEtiquetaArticulo: 0, 
-            uniqueId: null, 
-            info: []
-        };
+        this.datosAdicionalesArticulo = []
         
         this.data.fechaEmision = new Date();
 

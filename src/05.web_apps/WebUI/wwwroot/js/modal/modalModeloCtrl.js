@@ -19,7 +19,7 @@ export class ModalModeloCtrl {
     $onInit() {
         this.getAllMarca();
 
-        if (this._params) {
+        if (this._params && this._params.idModelo > 0) {
             this.tipoRegistro = 2;
             this.marca = this._params;
             this.data = this._params;

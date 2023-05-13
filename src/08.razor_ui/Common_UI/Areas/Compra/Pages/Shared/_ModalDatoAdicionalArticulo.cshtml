@@ -6,13 +6,43 @@
 <div class="modal-body">
 
     <div class="table-responsive">
+        @* <table class="table table-sm">
+        <thead>
+        <tr>
+        <th ng-repeat="column in etiquetas">{{column.descripcion}}</th>
+        <th>
+        <button class="btn btn-info btn-sm" ng-click="addRow()">
+        <i class="fa fa-plus fa-fw"></i>
+        </button>
+        </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="item in data">
+        <td ng-repeat="column in etiquetas">
+        <input type="text" ng-model="item[column.codigo]" class="form-control border-select">
+        </td>
+        <td>
+        <button class="btn btn-danger btn-sm" ng-click="removeRow(item)">
+        <i class="ti-trash"></i>
+        </button>
+        </td>
+        </tr>
+        </tbody>
+        </table> *@
+
         <table class="table table-sm">
             <thead>
                 <tr>
-                    <th ng-repeat="column in etiquetas">{{column.descripcion}}</th>
+                    <th ng-repeat="column in etiquetas" ng-dblclick="updateNameColumn($index, column)">
+                        <span uib-tooltip="Haz doble click para editar el nombre de la columna!">{{column}}</span>
+                    </th>
                     <th>
-                        <button class="btn btn-info btn-sm" ng-click="addRow()">
-                            <i class="fa fa-plus fa-fw"></i>
+                        <button class="btn btn-info btn-xs" uib-tooltip="Añadir fila." ng-click="addRow()">
+                            <i class="mdi mdi-playlist-plus"></i>
+                        </button>
+                        <button class="btn btn-secondary btn-sm" uib-tooltip="Añadir Columna." ng-click="addColumn()">
+                            <i class="fas fa-plus fa-xs"></i>
                         </button>
                     </th>
                 </tr>
@@ -20,15 +50,27 @@
             <tbody>
                 <tr ng-repeat="item in data">
                     <td ng-repeat="column in etiquetas">
-                        <input type="text" ng-model="item[column.codigo]" class="form-control border-select">
+                        <input type="text" ng-model="item[column]" onClick="this.select();"
+                            class="form-control border-select">
                     </td>
                     <td>
-                        <button class="btn btn-danger btn-sm" ng-click="removeRow(item)">
+                        <button tabindex="-1" type="button" class="btn btn-danger btn-xs" uib-tooltip="Eliminar fila."
+                            ng-click="removeRow(item)">
                             <i class="ti-trash"></i>
                         </button>
                     </td>
                 </tr>
             </tbody>
+            <tfoot>
+                <tr>
+                    <td ng-repeat="column in etiquetas">
+                        <button class="btn btn-danger btn-xs" tabindex="-1" uib-tooltip="Eliminar columna"
+                            ng-click="removeColumn(column)">
+                            <i class="ti-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tfoot>
         </table>
     </div>
 

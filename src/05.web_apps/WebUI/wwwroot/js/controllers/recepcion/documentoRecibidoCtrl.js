@@ -211,13 +211,6 @@
                     console.log(error)
                 }
 
-                //Configuracion de Decimal 
-                _commonSvc.getGestionConfig().then(
-                    response => {
-                        $scope.decimal = response[1][0];
-                    }
-                )
-
             }
             $scope.initialLoad()
 
@@ -1886,7 +1879,8 @@
 
             $scope.resetMainModal = () => {
                 $scope.showFormCustomDetails = false
-                $scope.customDetailTemp = []
+                $scope.customDetailTemp = [];
+                $scope.comprobanteForm.idBodega = 0;
             }
 
             $scope.closeMainModal = () => {

@@ -166,27 +166,6 @@ class BaseSearchArticulo {
                 hideLoader();
                 console.log(error);
             })
-            
-
-            
-
-            // let results = await this._commonSvc.getDataArticuloParaCompra({
-            //     json: this.dataArticulo
-            // }).then(response => JSON.parse(response.payload));
-
-
-
-            // let responseMsg = results[0][0];
-
-            // let sharedData = {
-            //     articulo: results[0][0],
-            //     medidas: results[1],
-            //     etiquetas: results[2]
-            // }
-             
-            // this.setItemArticuloEnDetalle({
-            //     item: sharedData
-            // })
            
         } catch (error) {
             console.error(error)

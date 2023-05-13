@@ -14,7 +14,7 @@
                         <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
                         <li class="breadcrumb-item active">Modelos</li>
                     </ol>*@
-                <button type="button" ng-if="accion.crear" ng-click="openModalNew()" class="btn btn-info   m-l-15">
+                <button type="button" ng-if="accion.crear" btn-add-update-modelo results="getModelos(item)" class="btn btn-info   m-l-15">
                     <i class="ti-plus"></i> Nuevo 
                 </button>
             </div>
@@ -100,5 +100,7 @@
 </div>
 @section Scripts{    
     <script src="~/lib/xlsx/xlsx.full.min.js" asp-append-version="true"></script>
-    <script src="~/js/controllers/almacen/modeloCtrl.min.js" asp-append-version="true"></script>
+    <script src="~/js/inventario/directives/inventarioDirective.js" asp-append-version="true"></script>    
+    <script src="~/js/inventario/services/inventarioService.js" asp-append-version="true"></script>
+    <script src="~/js/inventario/controllers/modeloCtrl.min.js" asp-append-version="true"></script>
 }

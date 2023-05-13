@@ -32,15 +32,7 @@ namespace WebUI.Controllers
         {           
             return View();
         }
-
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
-        {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("json", SqlValidation.ValidateSqlString(json));
-            return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Almacen.SubFamilia_Get", parameters)));
-        }
+       
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] SubFamilia data)
