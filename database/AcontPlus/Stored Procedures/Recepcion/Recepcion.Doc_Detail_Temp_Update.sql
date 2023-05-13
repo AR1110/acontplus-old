@@ -215,6 +215,7 @@ BEGIN
 							SELECT TOP 1 idDocumento
 							FROM @tmp
 							)
+					ORDER BY idDetalle ASC
 					FOR JSON AUTO
 					)
 
@@ -269,6 +270,7 @@ BEGIN
 							SELECT TOP 1 idDocumento
 							FROM @tmp
 							)
+					ORDER BY d.idDetalle asc
 					FOR JSON AUTO
 					)
 
