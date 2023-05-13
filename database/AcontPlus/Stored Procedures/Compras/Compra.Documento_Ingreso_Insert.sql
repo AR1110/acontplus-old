@@ -29,6 +29,7 @@ CREATE PROCEDURE Compra.Documento_Ingreso_Insert
    ,@comprobante AS VARCHAR(MAX)
    ,@detalles AS VARCHAR(MAX)
    ,@impuestos AS VARCHAR(MAX)
+   ,@artInfoAdicionales VARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -101,13 +102,15 @@ BEGIN
 	)
 
 	 
-	DECLARE @compEtiquetaArticulo AS TABLE (
-		idArticulo INT  NULL		
-		,idEtiqueta INT  NULL
-		,adicionales VARCHAR(MAX) NULL
+	DECLARE @artInfoAdicional AS TABLE (
+		idArticulo INT  NOT NULL		
+		,idEtiqueta INT  NOT NULL
+		,jsonAdicional NVARCHAR(MAX)  NULL
 		
 	)
 	 
+	 --SELECT '0'code, 'message' = CAST(@artInfoAdicionales AS VARCHAR(MAX))
+		--return
 	BEGIN TRY
 		SELECT @fechaEmisionModificada = fechaEmision FROM OPENJSON(@comprobante) WITH(fechaEmision DATETIME '$.fechaEmision')	
 		
@@ -191,16 +194,15 @@ BEGIN
 			 ) as dt
 
 		
-		INSERT INTO @compEtiquetaArticulo  
-		SELECT idArticulo, idEtiqueta, JSON_QUERY(REPLACE(adicionales, '\"', '"')) FROM OPENJSON(@comprobante, '$.adicionales')
-		WITH(
-			idArticulo INT '$.idArticulo'
-			,idEtiqueta INT '$.idEtiqueta'
-			,adicionales NVARCHAR(MAX) '$.adicionales' AS JSON  
-		)
-		--Comprobante Etiqueta Articulo 
-		--SELECT '0'code, 'message' = CAST((SELECT COUNT(*) FROM @compEtiquetaArticulo) AS VARCHAR(MAX))
-		--return
+		INSERT INTO @artInfoAdicional  (idArticulo, idEtiqueta, jsonAdicional)
+		SELECT idArticulo, idEtiqueta, jsonAdicional
+		FROM OPENJSON(@artInfoAdicionales) WITH (
+		  idArticulo int,
+		  idEtiqueta int,
+		  jsonAdicional nvarchar(max) '$.jsonAdicional' AS JSON		
+		) 
+		
+		
 		----======================================Recuperar datos de las Tablas===========================================================
 		SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
@@ -265,9 +267,10 @@ BEGIN
 			FROM @taxes
 
 			---Datos Adicionales de articulo (etiquetas)
-			IF (SELECT COUNT(*) FROM @compEtiquetaArticulo) > 0
+			IF EXISTS (SELECT 1 FROM @artInfoAdicional WHERE JSON_QUERY(jsonAdicional, '$') IS NOT NULL)
 				BEGIN
-					INSERT INTO Compra.CompEtiquetaArticulo(uniqueId, info)VALUES(@uniqueId, (SELECT * FROM @compEtiquetaArticulo FOR JSON PATH ))					
+					INSERT INTO Compra.InfoAdicional(uniqueId, idArticulo, idEtiqueta, jsonAdicional, fechaRegistro)
+					SELECT @uniqueId, idArticulo, idEtiqueta, jsonAdicional, dbo.ufnGetDateEcuador() FROM @artInfoAdicional
 				END
 			
 			

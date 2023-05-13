@@ -24,7 +24,7 @@ function ModalDatoAdicionalArticuloCtrl($scope, $uibModalInstance, params){
     let dataInfo = datosAdicionales.find(item=>item.idArticulo===$scope.articulo.idArticulo);
     
     if(dataInfo){
-       $scope.data = dataInfo.adicionales
+       $scope.data = [...dataInfo.adicionales]
     }
     
     $scope.addColumn = function(){
@@ -162,6 +162,15 @@ function ModalDatoAdicionalArticuloCtrl($scope, $uibModalInstance, params){
             }
             for(let data of $scope.etiquetas) {
                 for(let item of $scope.data) {
+                    console.log(item)
+                    if(Object.keys(item).length === 0) {
+                        Swal.fire({
+                            title: 'Datos Adicionales',
+                            icon:'warning',
+                            html: `Ingrese todos campos!`
+                        })
+                        return 
+                    }
 
                     if([null, undefined, ""].includes(item[data])){
                         Swal.fire({

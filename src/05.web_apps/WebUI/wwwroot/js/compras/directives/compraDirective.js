@@ -13,7 +13,7 @@
             link: function (scope, element, attrs) {
 
                 element.on('click', async function () {
-                    console.log(scope)
+                    
                     if(!Number.isInteger(scope.entity.cantidad)){
                         Swal.fire({
                             title: 'Datos Adicionales',
@@ -23,11 +23,12 @@
                         return
                     }
 
-                    let {ModalDatoAdicionalArticuloCtrl} = await import('/js/compras/modals/modalDatoAdicionalArticulo.js' + CHANGE_VERSION());
+                    let {fileCtrl, controller, template} = nombreModal.compra.MODAL_DATO_ADICIONAL_ARTICULO;                    
+                    let ctrl = (await import(fileCtrl))[controller]
                     
                     let modalRef = modalService.openModalCustom({
-                        controller: ModalDatoAdicionalArticuloCtrl,
-                        template: '~/Areas/Compra/Pages/Shared/_ModalDatoAdicionalArticulo.cshtml',
+                        controller: ctrl,
+                        template,
                         size:'lg',
                         params: {
                             entity: scope.entity,

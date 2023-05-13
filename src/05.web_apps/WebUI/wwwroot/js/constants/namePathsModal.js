@@ -176,7 +176,12 @@ app.constant('nombreModal', {
     },
     compra: {
         MODAL_CUOTA_CTRL: 'modalCompraCuotaCtrl.js' + CHANGE_VERSION(),
-        MODAL_CUOTA_CSHTML: '_ModalCompraCuota.cshtml'
+        MODAL_CUOTA_CSHTML: '_ModalCompraCuota.cshtml',        
+        MODAL_DATO_ADICIONAL_ARTICULO: {
+            fileCtrl: '/js/compras/modals/modalDatoAdicionalArticulo.js' + CHANGE_VERSION(),
+            controller: 'ModalDatoAdicionalArticuloCtrl',
+            template:'~/Areas/Compra/Pages/Shared/_ModalDatoAdicionalArticulo.cshtml'
+        }
     },
 
     cliente: {

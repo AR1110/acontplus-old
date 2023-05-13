@@ -115,17 +115,20 @@
                 totalSinImpuestos: data.subTotalSinImpuestos,
                 importeTotal: data.total,
                 inventory: data.inventory,
-                tarifa: data.tarifa,
-                adicionales: datosAdicionalesArticulo.map(obj=>{
-                    const { $$hashKey, ...cleanAd } = obj;
-                    return cleanAd;
-                })
+                tarifa: data.tarifa                
             };
 
             let query =  {
                 comprobante: JSON.stringify(comprobante),
                 detalles: JSON.stringify(service.detalleMapTo(details)),
-                impuestos: JSON.stringify(service.taxesMapTo(details))
+                impuestos: JSON.stringify(service.taxesMapTo(details)),
+                artInfoAdicionales: JSON.stringify(datosAdicionalesArticulo.map(obj=>{
+                    return {
+                        idArticulo: obj.idArticulo,
+                        idEtiqueta: obj.idEtiqueta,
+                        jsonAdicional: obj.adicionales
+                    }                   
+                }))
             }
 
             return JSON.stringify(query)
