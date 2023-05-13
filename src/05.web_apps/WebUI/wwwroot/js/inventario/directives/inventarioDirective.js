@@ -20,7 +20,7 @@
 
 
     //Se usa en familia, articulo 
-    app.directive('btnAddUpdateFamilia', function (modalService, nombreModal) {
+    app.directive('btnAddUpdateFamilia', function (modalService, nombreModalInventario) {
         return {
             restrict: 'A',
             scope: {
@@ -30,11 +30,12 @@
             link: function (scope, element, attrs) {
     
                 element.on('click', async function () {
-                    const {MODAL_FAMILIA_CTRL, MODAL_FAMILIA_CSHTML} = nombreModal.familia;
-                    const {ModalFamiliaCtrl} = await import('./../../inventario/modals/' + MODAL_FAMILIA_CTRL);
+                    const {fileCtrl, controller, template} = nombreModalInventario.FAMILIA;
+                    let ctrl = (await import(fileCtrl))[controller];
+                    
                     const modalDialogRef = modalService.openModalCustom({
-                        controller: ModalFamiliaCtrl,
-                        template: `Familia/${MODAL_FAMILIA_CSHTML}`,
+                        controller: ctrl,
+                        template,
                         size: 'md',
                         params: scope.params
                     })       
@@ -53,7 +54,7 @@
 
 
     //Se usa en sub-familia, articulo 
-    app.directive('btnAddUpdateSubFamilia', function (modalService, nombreModal) {
+    app.directive('btnAddUpdateSubFamilia', function (modalService, nombreModalInventario) {
         return {
             restrict: 'A',
             scope: {
@@ -63,12 +64,12 @@
             link: function (scope, element, attrs) {
     
                 element.on('click', async function () {
-                    const {MODAL_CSHTML, MODAL_CTRL} = nombreModal.subFamilia;          
-                    const {ModalSubFamiliaCtrl} = await import(`./../../inventario/modals/${MODAL_CTRL}`);
-                    console.log(scope)
+                    const {fileCtrl, controller, template} = nombreModalInventario.SUBFAMILIA;
+                    let ctrl = (await import(fileCtrl))[controller];
+                    
                     const modalDialogRef = modalService.openModalCustom({
-                        controller: ModalSubFamiliaCtrl,
-                        template: `SubFamilia/${MODAL_CSHTML}`,
+                        controller: ctrl,
+                        template,
                         size: 'md',
                         params: scope.params || {},
                     })        
@@ -86,8 +87,8 @@
     })
 
 
-     //Se usa en sub-familia, articulo 
-     app.directive('btnAddUpdateModelo', function (modalService, nombreModal) {
+    //Se usa en medida, articulo 
+    app.directive('btnAddUpdateMedida', function (modalService, nombreModalInventario) {
         return {
             restrict: 'A',
             scope: {
@@ -97,12 +98,46 @@
             link: function (scope, element, attrs) {
     
                 element.on('click', async function () {
-                    const {MODAL_CSHTML, MODAL_CTRL} = nombreModal.modelo
-                    const {ModalModeloCtrl} = await import('./../../inventario/modals/' + MODAL_CTRL);
+                    const {fileCtrl, controller, template} = nombreModalInventario.MEDIDA;
+                    let ctrl = (await import(fileCtrl))[controller];
+                   
+                    const modalDialogRef = modalService.openModalCustom({
+                        controller: ctrl,
+                        template,
+                        size: 'md',
+                        params: scope.params || {}
+                    })              
+                          
+                    modalDialogRef.result.then(result=>{
+                        if(typeof result==="object"){
+                            scope.results({
+                                item: result
+                            })
+                        }
+                    })
+                });
+            }
+        }
+    })
+
+    //Se usa en marca, articulo, modelo
+    app.directive('btnAddUpdateMarca', function (modalService, nombreModalInventario) {
+        return {
+            restrict: 'A',
+            scope: {
+                params: '=',   
+                results:'&'             
+            },
+            link: function (scope, element, attrs) {
+    
+                element.on('click', async function () {
+                    const {fileCtrl, controller, template} = nombreModalInventario.MARCA;
+                    let ctrl = (await import(fileCtrl))[controller];
+                    
                     
                     const modalDialogRef = modalService.openModalCustom({
-                        controller: ModalModeloCtrl,
-                        template: 'Modelo/' + MODAL_CSHTML,
+                        controller: ctrl,
+                        template,
                         size: 'md',
                         params: scope.params || {}
                     })          
@@ -120,8 +155,8 @@
     })
 
 
-    //Se usa en sub-familia, articulo 
-    app.directive('btnAddUpdateMedida', function (modalService, nombreModal) {
+     //Se usa en modelo, articulo 
+     app.directive('btnAddUpdateModelo', function (modalService, nombreModalInventario) {
         return {
             restrict: 'A',
             scope: {
@@ -131,15 +166,15 @@
             link: function (scope, element, attrs) {
     
                 element.on('click', async function () {
-                    let {MODAL_CTRL, MODAL_CSHTML} = nombreModal.medida
-                    const {ModalMedidaCtrl} = await import(`./../../inventario/modals/${MODAL_CTRL}`);
-
+                    const {fileCtrl, controller, template} = nombreModalInventario.MODELO;
+                    let ctrl = (await import(fileCtrl))[controller];
+                    
                     const modalDialogRef = modalService.openModalCustom({
-                        controller: ModalMedidaCtrl,
-                        template: `Medida/${MODAL_CSHTML}`,
+                        controller:ctrl,
+                        template,
                         size: 'md',
                         params: scope.params || {}
-                    })              
+                    })          
                           
                     modalDialogRef.result.then(result=>{
                         if(typeof result==="object"){
@@ -152,6 +187,9 @@
             }
         }
     })
+
+
+    
 
 
 

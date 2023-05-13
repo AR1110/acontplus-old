@@ -79,24 +79,6 @@ function marcaCtrl(_mS, $filter, $scope, _commonSvc, _modalSvc, _nombreModal, to
         $scope.totalRecords = 0;
     }
 
-    $scope.openModal = async (item) => {
-        const { marca } = _nombreModal;
-        const { ModalMarcaCtrl } = await import(`./../../modal/${marca.MODAL_CTRL}`);
-        const uibModalRef = _modalSvc.openModalCustom({
-            controller: ModalMarcaCtrl,
-            template: `Marca/${marca.MODAL_CSHTML}`,
-            size:'md',
-            params: item
-        })
-         
-        uibModalRef.result.then(result => {
-            if (typeof result === 'object') {
-                $scope.getMarcas();
-            }
-        })
-    }
-
-
     $scope.delete = async (item) => {
         let { isConfirmed } = await Swal.fire({
             icon: 'warning',

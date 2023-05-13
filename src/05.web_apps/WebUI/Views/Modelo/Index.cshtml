@@ -67,7 +67,7 @@
                     <tbody>
                         <tr ng-repeat="m in modelos | filter:buscar">
                             <td ng-if="accion.editar || accion.eliminar">
-                                <button class="btn btn-info btn-sm" ng-if="accion.editar" ng-click="openModalEdit(m)"><i class="ti-pencil"></i></button>
+                                <button class="btn btn-info btn-sm" ng-if="accion.editar" btn-add-update-modelo results="getModelos(item)" params="m"><i class="ti-pencil"></i></button>
                                 <button class="btn btn-danger btn-sm" ng-if="accion.eliminar" ng-click="delete(m)"><i class="ti-trash"></i></button>
 
                             </td>
@@ -100,7 +100,5 @@
 </div>
 @section Scripts{    
     <script src="~/lib/xlsx/xlsx.full.min.js" asp-append-version="true"></script>
-    <script src="~/js/inventario/directives/inventarioDirective.js" asp-append-version="true"></script>    
-    <script src="~/js/inventario/services/inventarioService.js" asp-append-version="true"></script>
     <script src="~/js/inventario/controllers/modeloCtrl.min.js" asp-append-version="true"></script>
 }

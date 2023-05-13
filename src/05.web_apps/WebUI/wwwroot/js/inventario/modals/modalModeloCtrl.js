@@ -25,10 +25,16 @@ function ModalModeloCtrl($scope, $uibModalInstance, marcaSvc, modeloSvc, tS, par
 
     $scope.getAllMarca();
 
+
+
     if(typeof params ==='object' && params.idModelo>0){
         $scope.tipoRegistro = 2;        
         $scope.data = Object.assign({}, params);
         $scope.showStatus = !params.estado;        
+    }
+
+    $scope.resultModalMarca = function(result) {
+        $scope.getAllMarca();
     }
 
     $scope.saveAndUpdate = function() {
