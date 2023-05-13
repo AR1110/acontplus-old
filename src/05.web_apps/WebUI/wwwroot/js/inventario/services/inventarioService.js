@@ -35,7 +35,7 @@
         }
 
         service.delete = function(id){
-            return mS.getData('delete', url + 'Delete' + id, null, true);
+            return mS.getData('delete', url + 'Delete/' + id, null, true);
         }
 
         service.listForSelect = function(query){

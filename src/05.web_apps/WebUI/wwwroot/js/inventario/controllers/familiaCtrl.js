@@ -21,6 +21,7 @@
 
         $scope.getFamilias = function() {
             try {
+                showLoader();
                 $scope.familias = [];
                 familiaSvc.getAll($scope.dataSearch).then(response => {
                     $scope.familias = response;
@@ -38,15 +39,17 @@
 
         $scope.getFamilias();
 
-        $scope.pagechanged = ()=> $scope.getFamilias();
+        $scope.pagechanged = function(){
+            $scope.getFamilias();
+        } 
         
-        $scope.changePageSize = ()=> {
+        $scope.changePageSize = function() {
             $scope.dataSearch.pageIndex = 1;
             $scope.getFamilias();
         }
 
-        $scope.getResultsFamilia = function(results) {
-            console.log(results)
+        $scope.resultModal = function(item) {
+            $scope.getFamilias();
         }
 
         $scope.onKeyupSearch = ()=>{

@@ -15,7 +15,7 @@
                             <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
                             <li class="breadcrumb-item active">Familias</li>
                         </ol>*@
-                    <button type="button" ng-if="accion.crear" btn-add-update-familia results class="btn btn-info m-l-15">
+                    <button type="button" ng-if="accion.crear" btn-add-update-familia results="resultModal(item)" class="btn btn-info m-l-15">
                         <i class="ti-plus"></i> Nuevo
                     </button>                  
                 </div>
@@ -56,7 +56,7 @@
                                 <tbody>
                                     <tr ng-repeat="item in familias">                           
                                         <td ng-if="accion.editar || accion.eliminar">
-                                            <button type="button" class="btn btn-info btn-xs"  ng-if="accion.editar" btn-add-update-familia results="getResultsFamilia(item)" params="item">
+                                            <button type="button" class="btn btn-info btn-xs"  ng-if="accion.editar" btn-add-update-familia results="resultModal(item)" params="item">
                                                 <i class="ti-pencil"></i>
                                             </button>
                                             <button type="button" class="btn btn-danger btn-xs" ng-if="accion.eliminar" ng-click="delete(item)">
@@ -91,8 +91,5 @@
     </div>    
 </div>
 @section Scripts{
-
-    <script src="~/js/inventario/directives/inventarioDirective.js" asp-append-version="true"></script>    
-    <script src="~/js/inventario/services/inventarioService.js" asp-append-version="true"></script>    
-    <script src="~/js/inventario/controllers/familiaCtrl.js" asp-append-version="true"></script>    
+    <script src="~/js/inventario/controllers/familiaCtrl.min.js" asp-append-version="true"></script>    
 }
