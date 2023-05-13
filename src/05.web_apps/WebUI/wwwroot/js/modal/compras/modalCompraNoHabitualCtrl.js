@@ -477,9 +477,7 @@ export class ModalUpdateCtrl extends ModalCompraNoHabitualCtrl {
 
         this.searchProveedorOptions = {};
         this.proveedor = this.params.proveedor;
-        this.datosAdicionalesArticulo = [];
-        
-        console.log(this.datosAdicionalesArticulo)
+        this.datosAdicionalesArticulo = this.params.datosAdicionales || [];        
 
         this.puntosEmision = [];
         this.searchProveedorOptions.showBtnNew = true;
@@ -528,11 +526,11 @@ export class ModalUpdateCtrl extends ModalCompraNoHabitualCtrl {
 
 
             //Detalle
+            let index = 1;
             this.gridOptions.data = this.params.detalles;
             for (let item of this.gridOptions.data) {
-                
-                item.idDetalle = item.idDocumentoIngresoDetail;
-                
+                item.n = index++;     
+                                      
                 this.articuloSvc.findForPurchase({
                     idArticulo: item.idArticulo
                 }).then(response => {                  

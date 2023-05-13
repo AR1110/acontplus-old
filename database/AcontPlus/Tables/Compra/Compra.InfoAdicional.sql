@@ -1,5 +1,7 @@
 
 USE AcontPlus;
+--DROP TABLE Compra.InfoAdicional
+--SELECT * FROM Compra.InfoAdicional
 CREATE TABLE Compra.InfoAdicional (
      idInfoAdicional INT NOT NULL PRIMARY KEY IDENTITY(1,1)
     ,uniqueId VARCHAR(50) NOT NULL
@@ -8,5 +10,6 @@ CREATE TABLE Compra.InfoAdicional (
     ,jsonAdicional VARCHAR(MAX) NOT NULL
     ,estado INT DEFAULT 1
     ,fechaVenta DATE NULL
-    ,fechaRegisto DATETIME NOT NULL
+    ,fechaRegistro DATETIME NOT NULL
 )
+SELECT dbo.f_sanitize_json(jsonAdicional) FROM Compra.InfoAdicional

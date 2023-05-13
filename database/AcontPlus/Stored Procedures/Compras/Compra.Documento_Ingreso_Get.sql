@@ -275,7 +275,8 @@ BEGIN
 			WHERE di.idDocumentoIngreso = @idDocumentoIngreso
 
 			SELECT	
-				 dt.idDocumentoIngresoDetail
+				 idDetalle = dt.idDocumentoIngresoDetail 
+				,dt.idDocumentoIngresoDetail
 				,dt.idArticulo
 				,dt.idMedida
 				,dt.idBodega
@@ -325,7 +326,7 @@ BEGIN
 			SELECT TOP 1 inventory = JSON_VALUE(dbo.f_sanitize_json(jsonConfig),'$.llevaInventario') FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CI'
 
 			--=============================Datos Adicionales===================================================================
-			SELECT * FROM Compra.CompEtiquetaArticulo 
+			SELECT * FROM Compra.InfoAdicional 
 				    WHERE uniqueId = (SELECT uniqueId FROM Compra.Documento_Ingreso WHERE idDocumentoIngreso = @idDocumentoIngreso)
 		END 
 END

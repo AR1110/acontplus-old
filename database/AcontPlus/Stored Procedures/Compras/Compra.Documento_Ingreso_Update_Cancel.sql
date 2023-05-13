@@ -84,6 +84,7 @@ BEGIN
 
 			UPDATE Compra.Documento_Ingreso_Taxes SET estado = 0 WHERE idDocumentoIngreso = @idDocumentoIngreso
 
+			UPDATE  Compra.InfoAdicional SET estado = 0 WHERE  uniqueId = @uniqueId
 
 			--==============================================================Inventario============================================================================================
 			IF @inventory = 'SI'

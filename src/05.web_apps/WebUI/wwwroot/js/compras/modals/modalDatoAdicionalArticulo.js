@@ -1,3 +1,4 @@
+ 
 
 
 export {
@@ -10,19 +11,22 @@ function ModalDatoAdicionalArticuloCtrl($scope, $uibModalInstance, params){
 
     let {entity, datosAdicionales} = params 
 
+
     $scope.etiquetas = entity.etiquetas[0].etiquetas;
         
     $scope.articulo = entity; // Datos generales del articulo 
      
-    //let dataEtiqueta =  entity.etiquetas[0] 
-    
-    //$scope.etiquetas = JSON.parse(dataEtiqueta.etiquetas[0]); //etiqueta asignado al articulo 
-
-    
     $scope.data = [{}];
         
     let dataInfo = datosAdicionales.find(item=>item.idArticulo===$scope.articulo.idArticulo);
-    
+
+    if($scope.articulo.idDetalle > 0){
+        //si es editar datos adicionales tomamos las etiquetas guardar ya en compra.infoAdicional BD
+        $scope.etiquetas = Object.keys(angular.copy(dataInfo.adicionales[0]))       
+    }else{
+        $scope.etiquetas = entity.etiquetas[0].etiquetas;
+    }    
+
     if(dataInfo){
        $scope.data = [...dataInfo.adicionales]
     }
@@ -54,6 +58,8 @@ function ModalDatoAdicionalArticuloCtrl($scope, $uibModalInstance, params){
             console.log(error);
         }        
     }
+    
+ 
 
     
 
@@ -187,7 +193,7 @@ function ModalDatoAdicionalArticuloCtrl($scope, $uibModalInstance, params){
             $uibModalInstance.close({
                 isAdd: true,
                 data: $scope.data.map(item=>{
-                    let {$$hashKey, ...rest} = item;
+                    let rest = angular.copy(item);
                     return rest;
                 })
             })

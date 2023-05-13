@@ -29,6 +29,7 @@ CREATE PROCEDURE Compra.Documento_Ingreso_Update
    ,@comprobante AS VARCHAR(MAX)
    ,@detalles AS VARCHAR(MAX)
    ,@impuestos AS VARCHAR(MAX)
+   ,@artInfoAdicionales VARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -95,10 +96,11 @@ BEGIN
 	)
 
 	--Etiquetas
-	DECLARE @compEtiquetaArticulo AS TABLE (
-		idArticulo INT  NULL		
-		,idEtiqueta INT  NULL
-		,adicionales VARCHAR(MAX) NULL
+	DECLARE @artInfoAdicional AS TABLE (
+		idInfoAdicional INT NOT NULL
+		,idArticulo INT  NOT NULL		
+		,idEtiqueta INT  NOT NULL
+		,jsonAdicional NVARCHAR(MAX)  NULL
 		
 	)
 
@@ -187,13 +189,14 @@ BEGIN
 
 
 		----------------------------------Datos Adicionales ---------------------------------------------
-		INSERT INTO @compEtiquetaArticulo  
-		SELECT idArticulo, idEtiqueta, JSON_QUERY(REPLACE(adicionales, '\"', '"')) FROM OPENJSON(@comprobante, '$.adicionales')
-		WITH(
-			idArticulo INT '$.idArticulo'
-			,idEtiqueta INT '$.idEtiqueta'
-			,adicionales NVARCHAR(MAX) '$.adicionales' AS JSON  
-		)
+		INSERT INTO @artInfoAdicional  (idInfoAdicional, idArticulo, idEtiqueta, jsonAdicional)
+		SELECT idInfoAdicional, idArticulo, idEtiqueta, jsonAdicional
+		FROM OPENJSON(@artInfoAdicionales) WITH (
+		  idInfoAdicional INT,
+		  idArticulo int,
+		  idEtiqueta int,
+		  jsonAdicional nvarchar(max) '$.jsonAdicional' AS JSON		
+		) 
 
 		----======================================Recuperar datos de las Tablas===========================================================
 		SELECT @fechaEmision = fechaEmision FROM @document
@@ -276,14 +279,17 @@ BEGIN
 
 			
 			---------------------------------Insert o Update Etiqueta -------------------------------
-			IF (SELECT COUNT(*) FROM Compra.CompEtiquetaArticulo WHERE uniqueId = @uniqueId) > 0
-				BEGIN
-					UPDATE Compra.CompEtiquetaArticulo SET info = (SELECT * FROM @compEtiquetaArticulo FOR JSON PATH ) WHERE uniqueId = @uniqueId
-				END 
-			ELSE IF  (SELECT COUNT(*) FROM @compEtiquetaArticulo) > 0
-				BEGIN
-					INSERT INTO Compra.CompEtiquetaArticulo(uniqueId, info)VALUES(@uniqueId, (SELECT * FROM @compEtiquetaArticulo FOR JSON PATH ))	
-				END 
+			UPDATE Compra.InfoAdicional SET estado = 0 WHERE uniqueId = @uniqueId
+			UPDATE  infoAdd SET infoAdd.idEtiqueta =  temp.idEtiqueta, infoAdd.jsonAdicional = temp.jsonAdicional, infoAdd.estado = 1 
+			FROM  Compra.InfoAdicional infoAdd WITH(NOLOCK) 
+			INNER JOIN @artInfoAdicional temp ON temp.idInfoAdicional = infoAdd.idInfoAdicional
+
+			INSERT INTO  Compra.InfoAdicional (uniqueId, idArticulo, idEtiqueta, jsonAdicional)
+			SELECT @uniqueId, idArticulo, idEtiqueta, jsonAdicional FROM @artInfoAdicional WHERE idInfoAdicional = 0;
+
+			DELETE FROM Compra.InfoAdicional 
+			WHERE estado = 0  AND uniqueId = @uniqueId
+
 
 			--==============================================================Inventario============================================================================================
 			IF @inventory = 'SI'

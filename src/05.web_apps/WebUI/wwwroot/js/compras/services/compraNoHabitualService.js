@@ -68,20 +68,27 @@
                     let decimal = dataRepository[5][0];
                     let tipoIvas = dataRepository[6];
                     let inventario = dataRepository[7][0];
-
-                   
                     let datosAdicionales = dataRepository[8].map(item=>{
-                        if(typeof item.info=='string'){
-                            item.info = JSON.parse(item.info).map(item=>{
-                                let adicionales = JSON.parse(item.adicionales)
-                                return {
-                                    ...item,
-                                    adicionales
-                                }
-                            })
+                        return {
+                            idArticulo: item.idArticulo,
+                            idEtiqueta: item.idEtiqueta,
+                            idInfoAdicional: item.idInfoAdicional,
+                            adicionales: JSON.parse(item.jsonAdicional)
                         }
-                        return item;
                     })
+               
+                    // let datosAdicionales = dataRepository[8].map(item=>{
+                    //     if(typeof item.info=='string'){
+                    //         item.info = JSON.parse(item.info).map(item=>{
+                    //             let adicionales = JSON.parse(item.adicionales)
+                    //             return {
+                    //                 ...item,
+                    //                 adicionales
+                    //             }
+                    //         })
+                    //     }
+                    //     return item;
+                    // })
                    
                    console.log(datosAdicionales)
                     return {
@@ -93,7 +100,7 @@
                         decimal,
                         tipoIvas,
                         inventario,
-                        datosAdicionales: datosAdicionales[0]
+                        datosAdicionales
                     }
                 }
             })
@@ -124,6 +131,7 @@
                 impuestos: JSON.stringify(service.taxesMapTo(details)),
                 artInfoAdicionales: JSON.stringify(datosAdicionalesArticulo.map(obj=>{
                     return {
+                        idInfoAdicional: obj.idInfoAdicional || 0,
                         idArticulo: obj.idArticulo,
                         idEtiqueta: obj.idEtiqueta,
                         jsonAdicional: obj.adicionales
