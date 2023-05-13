@@ -31,7 +31,7 @@
     
                 element.on('click', async function () {
                     const {MODAL_FAMILIA_CTRL, MODAL_FAMILIA_CSHTML} = nombreModal.familia;
-                    const {ModalFamiliaCtrl} = await import('./../../modal/' + MODAL_FAMILIA_CTRL);
+                    const {ModalFamiliaCtrl} = await import('./../../inventario/modals/' + MODAL_FAMILIA_CTRL);
                     const modalDialogRef = modalService.openModalCustom({
                         controller: ModalFamiliaCtrl,
                         template: `Familia/${MODAL_FAMILIA_CSHTML}`,

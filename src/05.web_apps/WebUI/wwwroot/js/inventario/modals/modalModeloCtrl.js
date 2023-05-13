@@ -1,81 +1,77 @@
-export class ModalModeloCtrl {
-    static get $inject() {
-        return ['mainService', '$uibModalInstance', 'modalService', 'nombreModal', 'params'];
+export { 
+    ModalModeloCtrl
+}
+
+ModalModeloCtrl.$inject = ['$scope', '$uibModalInstance', 'marcaService', 'modeloService', 'toastService', 'params'];
+
+function ModalModeloCtrl($scope, $uibModalInstance, marcaSvc, modeloSvc, tS, params){
+
+    $scope.tipoRegistro = 1;
+    $scope.data = {};
+    $scope.modelo = {};
+    $scope.marca = {};
+
+    $scope.getAllMarca = function() {
+        try {
+            marcaSvc.listForSelect({}).then(response => {
+                $scope.marcas = response;
+            }).catch(error => {
+                console.log(error);
+            })
+        } catch (error) {
+            console.log(error);
+        }       
     }
 
-    constructor(_mS, $uibModalInstance, _modalSvc, _nombreModal, _params) {
-        this._mS = _mS;
-        this.$uibModalInstance = $uibModalInstance;
-        this._modalSvc = _modalSvc;
-        this._nombreModal = _nombreModal;
-        this._params = _params;
-        this.tipoRegistro = 1;
-        this.data = {};
-        this.modelo = {};
-        this.marca = {};
+    $scope.getAllMarca();
 
+    if(typeof params ==='object' && params.idModelo>0){
+        $scope.tipoRegistro = 2;        
+        $scope.data = Object.assign({}, params);
+        $scope.showStatus = !params.estado;        
     }
 
-    $onInit() {
-        this.getAllMarca();
+    $scope.saveAndUpdate = function() {
+        try {
+            const tituloToastr = $scope.tipoRegistro === 1 ? 'Guardar' : 'Actualizar'          
 
-        if (this._params && this._params.idModelo > 0) {
-            this.tipoRegistro = 2;
-            this.marca = this._params;
-            this.data = this._params;
-            this.showStatus = !this._params.estado;
+            if (["", null, undefined].includes($scope.data.descripcion)) {
+                tS.toastr('warning', 'Ingrese la descripciòn', tituloToastr);
+                return;
+            }
+
+            if($scope.data.idModelo > 0){
+                modeloSvc.update($scope.data.idModelo, $scope.data).then($scope.successReponse)
+                .catch(err => {
+                    hideLoader();
+                    console.log(err);
+                })
+            }else{
+                modeloSvc.save($scope.data).then($scope.successReponse)
+                .catch(err => {
+                    hideLoader();
+                    console.log(err);
+                })
+            }            
+        } catch (error) {
+            hideLoader(); 
+            console.log(error);
         }
-
     }
 
-    getAllMarca() {
-        this._mS.getData('get', '/Marca/ListMarca').then(response => {
-            if (response.id == "0") {
-                toastr.warning(response.message, response.titleSms);
-                return
-            }
-            this.marcas = response.data;
-        })
-    }
-
-    async openModalMarca() {
-        const { marca } = this._nombreModal;
-        const { ModalMarcaCtrl } = await import(`./../modal/${marca.MODAL_CTRL}`);
-        const uibModalRef = this._modalSvc.openModalSecond(ModalMarcaCtrl, `Marca/${marca.MODAL_CSHTML}`, 'md')
-        uibModalRef.result.then(result => {
-            if (typeof result === 'object' && result.id === '1') {
-                this.getAllMarca();
-            }
-        })
-    }
-
-    saveAndUpdate() {
-        const tituloToastr = this.tipoRegistro === 1 ? 'Guardar' : 'Actualizar'
-        const URL = this.tipoRegistro == 1 ? '/Modelo/Post' : '/Modelo/Put?id=' + this.data.idModelo;
-        const method = this.tipoRegistro == 1 ? 'post' : 'put';
-
-        if (["", null, undefined].includes(this.data.descripcion)) {
-            toastr.warning('Ingrese la descripciòn', tituloToastr);
-            return;
+    $scope.successReponse = function(response) {
+        hideLoader();
+        if (response.code==='0') {
+            tS.toastr('warning', response.message, response.titleSms);            
         }
-        if (this.marca == null) this.marca = { idMarca: 0 };
-        this.data.idMarca = this.marca.idMarca
-
-        this._mS.getData(method,URL, this.data).then( response  => {
-
-            if (response.code == "0") {
-                toastr.warning(response.message, response.titleSms);
-                return
-            }
-            if (response.code == "1") {
-                toastr.success(response.message, response.titleSms);
-                this.$uibModalInstance.close(response);
-            }
-        })
+        if (response.code==='1') {
+            tS.toastr('success', response.message, response.titleSms);                            
+            $uibModalInstance.close(response)
+        }
     }
 
-    closeModal() {
-        this.$uibModalInstance.close();
+    $scope.closeModal = function() {
+        $uibModalInstance.close();
     }
 
 }
