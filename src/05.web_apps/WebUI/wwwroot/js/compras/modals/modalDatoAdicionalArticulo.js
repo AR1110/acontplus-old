@@ -167,8 +167,7 @@ function ModalDatoAdicionalArticuloCtrl($scope, $uibModalInstance, params){
                 return
             }
             for(let data of $scope.etiquetas) {
-                for(let item of $scope.data) {
-                    console.log(item)
+                for(let item of $scope.data) {                    
                     if(Object.keys(item).length === 0) {
                         Swal.fire({
                             title: 'Datos Adicionales',

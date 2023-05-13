@@ -278,7 +278,7 @@ BEGIN
 			FROM @taxes
 
 			
-			---------------------------------Insert o Update Etiqueta -------------------------------
+			---------------------------------SRTART Insert o Update Etiqueta -------------------------------
 			UPDATE Compra.InfoAdicional SET estado = 0 WHERE uniqueId = @uniqueId
 			UPDATE  infoAdd SET infoAdd.idEtiqueta =  temp.idEtiqueta, infoAdd.jsonAdicional = temp.jsonAdicional, infoAdd.estado = 1 
 			FROM  Compra.InfoAdicional infoAdd WITH(NOLOCK) 
@@ -289,6 +289,7 @@ BEGIN
 
 			DELETE FROM Compra.InfoAdicional 
 			WHERE estado = 0  AND uniqueId = @uniqueId
+			---------------------------------END Insert o Update Etiqueta -------------------------------
 
 
 			--==============================================================Inventario============================================================================================

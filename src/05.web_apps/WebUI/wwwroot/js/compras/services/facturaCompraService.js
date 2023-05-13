@@ -143,16 +143,18 @@
          */
         service.queryMapper = function({data, details, proveedor, datosAdicionalesArticulo}){
             data.idProveedor = proveedor.idProveedor;
-            let adicionales = datosAdicionalesArticulo.map(obj=>{
-                    const { $$hashKey, ...cleanAd } = obj;
-                    return cleanAd;
-                })
-            
-            
+           
             let query =  {
                 factura: data,
                 detalle: service.detalleMapTo(details),   
-                datosAdiciones: JSON.stringify(adicionales)          
+                datosAdiciones: JSON.stringify(datosAdicionalesArticulo.map(obj=>{
+                    return {
+                        idInfoAdicional: obj.idInfoAdicional || 0,
+                        idArticulo: obj.idArticulo,
+                        idEtiqueta: obj.idEtiqueta,
+                        jsonAdicional: obj.adicionales
+                    }                   
+                }))          
             }
 
             return JSON.stringify(query)

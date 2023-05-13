@@ -364,7 +364,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
                     data: this.data,
                     proveedor: this.proveedor,
                     details: this.gridOptions.data,
-                    datosAdicionalesArticulo: this.datosAdicionalesArticulo.info
+                    datosAdicionalesArticulo: this.datosAdicionalesArticulo
                 })
 
                 this.factCompraSvc.save(query).then(response=>{
@@ -522,16 +522,12 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl{
         this.CAMPOS = ["codEstab", "idSustentoTributario", "idCategoriaCompra", "idProveedor", "puntoEmision", "nroDoc", "nroAutorizacion", "idTiempoCredito", "fechaEmision", "fechaVencimiento", "validFechaVcto", "gridOptions", "gridOptionsBodega"];
         let {TIPO_REGISTRO, data} = _params;        
         let {dataDocumento, proveedor, detalleDocumento, datosAdicionalesArticulo} = data;
-        console.log(data)
+        
         this.dataDocumento = dataDocumento;
         this.proveedor = proveedor;
         this.detalleDocumento = detalleDocumento;
 
-        this.datosAdicionalesArticulo = datosAdicionalesArticulo || {
-            idCompEtiquetaArticulo: 0, 
-            uniqueId: null, 
-            info: []
-        };    
+        this.datosAdicionalesArticulo = datosAdicionalesArticulo || [];        
         
         this.TIPO_REGISTRO = TIPO_REGISTRO;
     }
@@ -653,7 +649,7 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl{
                     data: this.data,
                     proveedor: this.proveedor,
                     details: this.gridOptions.data,
-                    datosAdicionalesArticulo: this.datosAdicionalesArticulo.info
+                    datosAdicionalesArticulo: this.datosAdicionalesArticulo
                 })
 
                 this.factCompraSvc.update(this.data.idFacturaCompra, query).then(response=>{

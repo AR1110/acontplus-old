@@ -617,6 +617,29 @@
           "Port": 55793
         }
       ],
+      "DownstreamPathTemplate": "/api/FacturaCompra{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete",
+        "Options"
+      ],
+      "UpstreamPathTemplate": "/api/FacturaCompra{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 55793
+        }
+      ],
       "DownstreamPathTemplate": "/api/CompraNoHabitual",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
@@ -1273,29 +1296,6 @@
         "Delete"
       ],
       "UpstreamPathTemplate": "/api/WhatsAppSession{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 55793
-        }
-      ],
-      "DownstreamPathTemplate": "/api/FacturaCompra{everything}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Get",
-        "Put",
-        "Post",
-        "Delete",
-        "Options"
-      ],
-      "UpstreamPathTemplate": "/api/FacturaCompra{everything}"
     }
   ]
 }

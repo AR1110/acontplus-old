@@ -56,11 +56,6 @@
                                 });
                             }                            
                         }
-                       
-                        // scope.getDataEtiqueta({
-                        //     items: result
-                        // })
-                        console.log(scope.datosAdicionales)
                     })
                 });
             }
