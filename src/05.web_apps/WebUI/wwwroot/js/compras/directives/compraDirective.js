@@ -37,24 +37,27 @@
                         isRenderRazorPartial: true
                     })  
                     
-                    modalRef.result.then(function (result) {
-                        if(typeof result ==='object'){
+                    modalRef.result.then(function (results) {
+                        if(angular.isArray(results)){
 
                             //Cuando es editar 
                             if(scope.datosAdicionales.some(item=>item.idArticulo ===scope.entity.idArticulo)){
-                                for(let label of scope.datosAdicionales){
-                                    if(label.idArticulo===scope.entity.idArticulo){
-                                        label.adicionales = result.data;                                     
-                                    }
+                                scope.datosAdicionales = scope.datosAdicionales.filter(item=>item.idArticulo !==scope.entity.idArticulo);
+                                
+                                for(let item of results){
+                                    scope.datosAdicionales.push(item);
                                 }
+                                // for(let label of scope.datosAdicionales){
+                                //     if(label.idArticulo===scope.entity.idArticulo){
+                                //         label.adicionales = result.data;                                     
+                                //     }
+                                // }
                             }else {
-
-                                scope.datosAdicionales.push({
-                                    idArticulo: scope.entity.idArticulo,
-                                    idEtiqueta: scope.entity.etiquetas[0].idEtiqueta,
-                                    adicionales: result.data
-                                });
-                            }                            
+                                for(let item of results){
+                                    scope.datosAdicionales.push(item);
+                                }
+                            }
+                            console.log(scope.datosAdicionales)                            
                         }
                     })
                 });

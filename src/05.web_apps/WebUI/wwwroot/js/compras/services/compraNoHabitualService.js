@@ -129,14 +129,7 @@
                 comprobante: JSON.stringify(comprobante),
                 detalles: JSON.stringify(service.detalleMapTo(details)),
                 impuestos: JSON.stringify(service.taxesMapTo(details)),
-                artInfoAdicionales: JSON.stringify(datosAdicionalesArticulo.map(obj=>{
-                    return {
-                        idInfoAdicional: obj.idInfoAdicional || 0,
-                        idArticulo: obj.idArticulo,
-                        idEtiqueta: obj.idEtiqueta,
-                        jsonAdicional: obj.adicionales
-                    }                   
-                }))
+                artInfoAdicionales: JSON.stringify(service.dataAdicionalMapTo(datosAdicionalesArticulo))
             }
 
             return JSON.stringify(query)
@@ -182,7 +175,30 @@
                 return obj;
             })
             
-        }       
+        }     
+        
+        service.dataAdicionalMapTo = function(datosAdicionales){
+            // let results = []
+            // for(let item of datosAdicionales){
+            //     for(let dataAdd of item.adicionales){
+            //         results.push({
+            //             idArticulo: item.idArticulo,
+            //             idEtiqueta: item.idEtiqueta,
+            //             idInfoAdicional: item.idInfoAdicional || 0,
+            //             jsonAdicional: angular.copy(dataAdd)
+            //         })
+            //     }
+            // }
+            
+            return datosAdicionales.map(item=>{
+                return {
+                    idArticulo: item.idArticulo,
+                    idEtiqueta: item.idEtiqueta,
+                    idInfoAdicional: item.idInfoAdicional || 0,
+                    jsonAdicional: item.adicionales
+                }
+            });
+        }
 
         service.generateNroSecuencial = function (idPuntoEmision){
             let query = JSON.stringify({

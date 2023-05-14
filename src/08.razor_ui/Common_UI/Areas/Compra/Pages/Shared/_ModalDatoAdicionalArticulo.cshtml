@@ -4,7 +4,8 @@
 </div>
 
 <div class="modal-body">
-
+    <h5><b>Código: {{articulo.codigo}}</b></h5> 
+    <h5><b>Artículo: {{articulo.descripcion}}</b></h5>
     <div class="table-responsive">
         @* <table class="table table-sm">
         <thead>
@@ -50,11 +51,11 @@
             <tbody>
                 <tr ng-repeat="item in data">
                     <td ng-repeat="column in etiquetas">
-                        <input type="text" ng-model="item[column]" onClick="this.select();"
+                        <input type="text" ng-model="item.adicionales[column]" onClick="this.select();" ng-disabled="item.estado===2"
                             class="form-control border-select">
                     </td>
                     <td>
-                        <button tabindex="-1" type="button" class="btn btn-danger btn-xs" uib-tooltip="Eliminar fila."
+                        <button tabindex="-1" type="button" ng-disabled="item.estado===2" class="btn btn-danger btn-xs" uib-tooltip="Eliminar fila."
                             ng-click="removeRow(item)">
                             <i class="ti-trash"></i>
                         </button>

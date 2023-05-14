@@ -103,49 +103,53 @@ class BaseSearchArticulo {
 
             this.dataArticulo.idBodega = this.idBodega;
 
-            let results = await this._commonSvc.getDataArticuloParaVenta({
-                json: this.dataArticulo
-            }).then(response => {
-                if (response.code === '0') {
-                    throw response;
-                }
-                return JSON.parse(response.payload)
-            });
-
-            let responseMsg = results[0][0];
-            let sharedData = {
-                articulo: results[0][0],
-                medidas: results[1],
-                datosAdicionales: results[2]
-            }
-
-            if (responseMsg.code === "1") {
-                this.setItemArticuloEnDetalle({
-                    item: sharedData
-                })
-                return
-            }
-
-            let {
-                isConfirmed
-            } = await Swal.fire({
-                title: `<small>${responseMsg.titleSms}</small>`,
-                icon: 'warning',
-                html: `<small>${responseMsg.message}</small>`,
-                allowOutsideClick: false,
-                allowEscapeKey: false,
+            this.articuloSvc.findForSale(this.dataArticulo).then(response => {
+                console.log(response)
             })
 
-            if (isConfirmed) {
-                if (responseMsg.code === "0") {
-                    $("#custom-template-md-autocomplete-articulo").focus();
-                }
-                if (responseMsg.code === "2") {
-                    this.setItemArticuloEnDetalle({
-                        item: sharedData
-                    })
-                }
-            }
+            // let results = await this._commonSvc.getDataArticuloParaVenta({
+            //     json: this.dataArticulo
+            // }).then(response => {
+            //     if (response.code === '0') {
+            //         throw response;
+            //     }
+            //     return JSON.parse(response.payload)
+            // });
+
+            // let responseMsg = results[0][0];
+            // let sharedData = {
+            //     articulo: results[0][0],
+            //     medidas: results[1],
+            //     datosAdicionales: results[2]
+            // }
+
+            // if (responseMsg.code === "1") {
+            //     this.setItemArticuloEnDetalle({
+            //         item: sharedData
+            //     })
+            //     return
+            // }
+
+            // let {
+            //     isConfirmed
+            // } = await Swal.fire({
+            //     title: `<small>${responseMsg.titleSms}</small>`,
+            //     icon: 'warning',
+            //     html: `<small>${responseMsg.message}</small>`,
+            //     allowOutsideClick: false,
+            //     allowEscapeKey: false,
+            // })
+
+            // if (isConfirmed) {
+            //     if (responseMsg.code === "0") {
+            //         $("#custom-template-md-autocomplete-articulo").focus();
+            //     }
+            //     if (responseMsg.code === "2") {
+            //         this.setItemArticuloEnDetalle({
+            //             item: sharedData
+            //         })
+            //     }
+            // }
 
         } catch (error) {
             console.log(error)

@@ -279,13 +279,13 @@ BEGIN
 
 			
 			---------------------------------SRTART Insert o Update Etiqueta -------------------------------
-			UPDATE Compra.InfoAdicional SET estado = 0 WHERE uniqueId = @uniqueId
+			UPDATE Compra.InfoAdicional SET estado = 0 WHERE uniqueId = @uniqueId AND estado = 1
 			UPDATE  infoAdd SET infoAdd.idEtiqueta =  temp.idEtiqueta, infoAdd.jsonAdicional = temp.jsonAdicional, infoAdd.estado = 1 
 			FROM  Compra.InfoAdicional infoAdd WITH(NOLOCK) 
 			INNER JOIN @artInfoAdicional temp ON temp.idInfoAdicional = infoAdd.idInfoAdicional
 
 			INSERT INTO  Compra.InfoAdicional (uniqueId, idArticulo, idEtiqueta, jsonAdicional)
-			SELECT @uniqueId, idArticulo, idEtiqueta, jsonAdicional FROM @artInfoAdicional WHERE idInfoAdicional = 0;
+			SELECT @uniqueId, idArticulo, idEtiqueta, jsonAdicional FROM @artInfoAdicional WHERE idInfoAdicional = 0 
 
 			DELETE FROM Compra.InfoAdicional 
 			WHERE estado = 0  AND uniqueId = @uniqueId
