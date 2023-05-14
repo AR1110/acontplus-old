@@ -1,48 +1,63 @@
-export class ModalMedidaCtrl {
-    static get $inject() {
-        return ['mainService', '$uibModalInstance', 'formulario', 'params'];
-    }
-    constructor(_mS, $uibModalInstance, _form, _params) {
-        this._mS = _mS;
-        this.$uibModalInstance = $uibModalInstance;
-        this._form = _form;
-        this._params = _params;
-        this.tipoRegistro = 1;
-        this.data = {};
-    }
+export { 
+    ModalMedidaCtrl
+}
 
-    $onInit() {
-        if (this._params && this._params.idMedida > 0) {
-            this.tipoRegistro = 2;
-            this.data = this._params;
-            this.showStatus = !this._params.estado;
-        }
+ModalMedidaCtrl.$inject = ['$scope', '$uibModalInstance', 'medidaService', 'toastService', 'params'];
 
+function ModalMedidaCtrl($scope, $uibModalInstance, medidaSvc, tS, params) {
+    $scope.tipoRegistro = 1;
+    $scope.data = {};
+
+    if (params && params.idMedida > 0) {
+        $scope.tipoRegistro = 2;
+        $scope.data = Object.assign({}, params);
+        $scope.showStatus = !params.estado;
     }
 
-    saveAndUpdate() {
-        const tituloToast = this.tipoRegistro == 1 ? 'Guardar' : 'Actualizar';
-        const url = this.tipoRegistro == 1 ? '/Medida/Post' : '/Medida/Put?id=' + this.data.idMedida;
-        const method = this.tipoRegistro == 1 ? 'post' : 'put';
-
-        if (["", null, undefined].includes(this.data.descripcion)) {
-            toastr.warning('Por favor, ingrese la Descripción', tituloToast);
-            return;
-        }
-        this._mS.getData(method, url, this.data).then((response) => {
-            if (response.code == "0") {
-                toastr.warning(response.message, response.titleSms);
+    $scope.saveAndUpdate = function() {
+        try {
+            const tituloToast = $scope.tipoRegistro == 1 ? 'Guardar' : 'Actualizar';
+       
+            if (!$scope.data.descripcion) {
+                tS.toastr('warning', 'Ingrese la Descripción', tituloToast);
+                return;
             }
-            if (response.code == "1") {
-                this.$uibModalInstance.close(response);
-                toastr.success(response.message, response.titleSms);
+
+            showLoader();
+
+            if($scope.data.idMedida > 0){
+                medidaSvc.update($scope.data.idMedida, $scope.data).then($scope.successReponse)
+                .catch(err => {
+                    hideLoader();
+                    console.log(err);
+                })
+            }else{
+                medidaSvc.save($scope.data).then($scope.successReponse)
+                .catch(err => {
+                    hideLoader();
+                    console.log(err);
+                })
             }
-        })
+        } catch (error) {
+            console.log(error);
+            hideLoader();
+        }
+       
     }
 
-    closeModal() {
-        this.$uibModalInstance.close();
+    $scope.successReponse = function(response) {
+        hideLoader();
+        if (response.code==='0') {
+            tS.toastr('warning', response.message, response.titleSms);            
+        }
+        if (response.code==='1') {
+            tS.toastr('success', response.message, response.titleSms);                            
+            $uibModalInstance.close(response)
+        }
     }
 
 
+    $scope.closeModal = function() {
+        $uibModalInstance.close();
+    }
 }

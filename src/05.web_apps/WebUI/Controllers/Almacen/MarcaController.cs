@@ -31,44 +31,6 @@ namespace WebUI.Controllers
             return View();
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
-        {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("json", SqlValidation.ValidateSqlString(json));
-            return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Almacen.Marca_Get", parameters)));
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Marca data)
-        {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("descripcion", data.descripcion);
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Almacen.Marca_Insert", parameters)));
-        }
-
-        [HttpPut]
-        public async Task<IActionResult> Put(int id, [FromBody] Marca data)
-        {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("id", id);
-            parameters.Add("descripcion", data.descripcion);
-            parameters.Add("estado", data.estado);
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Almacen.Marca_Update", parameters)));
-        }
-
-        [HttpDelete]
-        public async Task<IActionResult> Delete(int id)
-        {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("id", id);
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Almacen.Marca_Delete", parameters)));
-        }
-
         //Operaciones Especiales 
 
         public async Task<IActionResult> ListMarca(int idMarca)

@@ -13,7 +13,7 @@ function ModalModeloCtrl($scope, $uibModalInstance, marcaSvc, modeloSvc, tS, par
 
     $scope.getAllMarca = function() {
         try {
-            marcaSvc.listForSelect({}).then(response => {
+            marcaSvc.listForSelect({idMarca: 0}).then(response => {
                 $scope.marcas = response;
             }).catch(error => {
                 console.log(error);

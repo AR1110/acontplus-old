@@ -14,7 +14,7 @@
                         <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
                         <li class="breadcrumb-item active">Modelos</li>
                     </ol>*@
-                <button type="button" ng-if="accion.crear" btn-add-update-modelo results="getModelos(item)" class="btn btn-info   m-l-15">
+                <button type="button" ng-if="accion.crear" btn-add-update-modelo results="resultModal(item)" class="btn btn-info   m-l-15">
                     <i class="ti-plus"></i> Nuevo 
                 </button>
             </div>
@@ -67,7 +67,7 @@
                     <tbody>
                         <tr ng-repeat="m in modelos | filter:buscar">
                             <td ng-if="accion.editar || accion.eliminar">
-                                <button class="btn btn-info btn-sm" ng-if="accion.editar" btn-add-update-modelo results="getModelos(item)" params="m"><i class="ti-pencil"></i></button>
+                                <button class="btn btn-info btn-sm" ng-if="accion.editar" btn-add-update-modelo results="resultModal(item)" params="m"><i class="ti-pencil"></i></button>
                                 <button class="btn btn-danger btn-sm" ng-if="accion.eliminar" ng-click="delete(m)"><i class="ti-trash"></i></button>
 
                             </td>

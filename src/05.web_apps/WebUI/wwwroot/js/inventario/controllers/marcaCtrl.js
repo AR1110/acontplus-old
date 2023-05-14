@@ -1,9 +1,9 @@
 ﻿
 app.controller('marcaCtrl', marcaCtrl);
 
-marcaCtrl.$inject = ['mainService', '$filter', '$scope', 'commonService', 'modalService', 'nombreModal', 'toastService'];
+marcaCtrl.$inject = ['$filter', '$scope', 'commonService', 'marcaService', 'toastService'];
 
-function marcaCtrl(_mS, $filter, $scope, _commonSvc, _modalSvc, _nombreModal, toast) {
+function marcaCtrl($filter, $scope, _commonSvc, marcaSvc, tS) {
     'use strict'
     // let accion = JSON.parse(localStorage.getItem("accion"));
     // if (accion === null) {
@@ -23,22 +23,24 @@ function marcaCtrl(_mS, $filter, $scope, _commonSvc, _modalSvc, _nombreModal, to
     $scope.totalRecords = 0;
     $scope.recordsQuantity = [5, 10, 25, 50]
 
-    $scope.getMarcas = () => {
-        showLoader();
-        _mS.getData('get', '/Marca/Get?json=' + JSON.stringify($scope.dataSearch)).then(response => {
-            if (response.code == "0") {
-                hideLoader();
-                toast.toastr('warning', response.message, response.titleSms);
-                return
-            }
+    $scope.getMarcas = function() {
+        try {
+            
+            showLoader();
+            $scope.marcas = [];
 
-            $scope.marcas = JSON.parse(response.data);
-            $scope.totalRecords = $scope.marcas.length > 0 ? $scope.marcas[0].totalRecords : 0;
+            marcaSvc.getAll($scope.dataSearch).then(response => {
+                hideLoader();               
+                $scope.marcas = response;
+                $scope.totalRecords = $scope.marcas.length > 0 ? $scope.marcas[0].totalRecords : 0;               
+            }).catch(error => {
+                hideLoader();
+                console.log(error);
+            })
+        } catch (error) {
             hideLoader();
-        }, error => {
-            hideLoader();
-            console.error(error)
-        })
+            console.log(error)
+        }
     }
     $scope.getMarcas();
 
@@ -48,6 +50,10 @@ function marcaCtrl(_mS, $filter, $scope, _commonSvc, _modalSvc, _nombreModal, to
 
     $scope.changePageSize = function () {
         $scope.dataSearch.pageIndex = 1;
+        $scope.getMarcas();
+    }
+
+    $scope.resultModal = function (item) {
         $scope.getMarcas();
     }
 
@@ -92,14 +98,17 @@ function marcaCtrl(_mS, $filter, $scope, _commonSvc, _modalSvc, _nombreModal, to
 
 
         if (isConfirmed) {
-            _mS.getData('delete', '/Marca/Delete?id=' + item.idMarca).then(response => {
+            marcaSvc.delete(item.idMarca).then(response => {
                 if (response.code == "0") {
-                    toast.toastr('warning', response.message, response.titleSms);
+                    tS.toastr('warning', response.message, response.titleSms);
                 }
                 if (response.code == "1") {
-                    toast.toastr('success', response.message, response.titleSms);
+                    tS.toastr('success', response.message, response.titleSms);
                     $scope.getMarcas();
                 }
+            }).catch(error=>{
+                hideLoader();
+                console.log(error);
             })
         }
 

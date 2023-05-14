@@ -47,11 +47,7 @@
                                 for(let item of results){
                                     scope.datosAdicionales.push(item);
                                 }
-                                // for(let label of scope.datosAdicionales){
-                                //     if(label.idArticulo===scope.entity.idArticulo){
-                                //         label.adicionales = result.data;                                     
-                                //     }
-                                // }
+                                                              
                             }else {
                                 for(let item of results){
                                     scope.datosAdicionales.push(item);

@@ -73,7 +73,7 @@ namespace ApiInventory.Controllers
             return Ok(_response);
         }
 
-        [HttpPut("Update")]
+        [HttpPut("Update/{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] SubFamilia data)
         {
             GenericResponse _response = new GenericResponse();
@@ -102,7 +102,7 @@ namespace ApiInventory.Controllers
             return Ok(_response);
         }
 
-        [HttpDelete("Delete")]
+        [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             GenericResponse _response = new GenericResponse();

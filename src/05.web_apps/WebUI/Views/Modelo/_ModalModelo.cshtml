@@ -8,8 +8,12 @@
     <div class="row">
         <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <label for=""> Marca: </label>           
-            <div class="input-group">
-                <select class="form-control border-select" ng-model="marca" ng-options="m as m.descripcion for m in marcas track by m.idMarca "></select>
+            <div class="input-group">             
+                <select class="form-control border-select" ng-model="data.idMarca">
+                    <option ng-value="item.idMarca" ng-repeat="item in marcas">
+                        {{item.descripcion}}
+                    </option>
+                </select>
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary btn-sm" btn-add-update-marca results="resultModalMarca(item)" tabindex="-1"><i class="fa fa-plus fa-xs"></i></button>
                 </div>

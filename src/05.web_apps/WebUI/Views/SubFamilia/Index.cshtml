@@ -17,7 +17,7 @@
                         <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
                         <li class="breadcrumb-item active">Sub-Familias</li>
                     </ol>*@
-                <button type="button" ng-if="accion.crear" btn-add-update-sub-familia results="getFamilias(item)" class="btn btn-info m-l-15">
+                <button type="button" ng-if="accion.crear" btn-add-update-sub-familia results="resultModal(item)" class="btn btn-info m-l-15">
                     <i class="ti-plus"></i> Nuevo 
                 </button>
             </div>
@@ -73,7 +73,7 @@
                             <tbody>
                                 <tr ng-repeat="sf in subFamilias | filter:buscar">                           
                                     <td ng-if="accion.editar || accion.eliminar">
-                                        <button type="button" ng-if="accion.editar" class="btn btn-info btn-xs" btn-add-update-sub-familia results="getFamilias(item)" params="sf"><i class="ti-pencil"></i></button>
+                                        <button type="button" ng-if="accion.editar" class="btn btn-info btn-xs" btn-add-update-sub-familia results="resultModal(item)" params="sf"><i class="ti-pencil"></i></button>
                                         <button type="button" ng-if="accion.eliminar" class="btn btn-danger btn-xs"  ng-click="delete(sf)"><i class="ti-trash"></i></button>                                                                                
                                     </td>                          
                                     <td>{{$index+1}}</td>

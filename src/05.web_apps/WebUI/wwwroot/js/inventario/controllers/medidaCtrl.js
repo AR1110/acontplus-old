@@ -5,17 +5,10 @@
         .module('acontPlusApp')
         .controller('medidaCtrl', medidaCtrl);
 
-    medidaCtrl.$inject = ['$scope',  'mainService', 'modalService', 'FileSaver', 'nombreModal', 'toastService'];
+    medidaCtrl.$inject = ['$scope', 'medidaService', 'toastService'];
 
-    function medidaCtrl($scope, mS, _modalSvc, FileSaver, _nombreModal, toast) {
-        // let accion = JSON.parse(localStorage.getItem("accion"));
-        // if(accion===null){
-        //     location.href = "/Home/Index";
-        // }else{
-        //     $scope.accion = accion[0];
-        // };
-        
-        $scope.data = {};
+    function medidaCtrl($scope, medidaSvc, tS) {
+              
         $scope.medidas = [];
         $scope.dataSearch = {
             pageIndex: 1,
@@ -25,17 +18,24 @@
         $scope.totalRecords = 0;
         $scope.recordsQuantity = [5, 10, 25, 50];
 
-        $scope.getMedidas = () => {
-            mS.getData('get', '/Medida/Get?json=' + JSON.stringify($scope.dataSearch)).then((response) => {
-                if (response.code == 0) {
-                    toast.toastr('warning', response.message, response.titleSms);
-                    return;
-                }
-                $scope.medidas = JSON.parse(response.data) || [];                
-                $scope.totalRecords = $scope.medidas.length > 0 ? $scope.medidas[0].totalRecords : 0;
-                return;
-            })
+        $scope.getMedidas = function() {
+            try {
+                showLoader();
+                $scope.medidas=[];
+                medidaSvc.getAll($scope.dataSearch).then(response => {          
+                    hideLoader();        
+                    $scope.medidas = response;          
+                    $scope.totalRecords = $scope.medidas.length > 0 ? $scope.medidas[0].totalRecords : 0;                   
+                }).catch(error => {
+                    hideLoader();
+                    console.log(error);
+                })
+            } catch (error) {
+                console.log(error);
+                hideLoader();
+            }
         }
+
         $scope.getMedidas();
         $scope.pagechanged = () => {
             $scope.getMedidas();
@@ -65,66 +65,43 @@
             
         }
 
-        $scope.openModalNew = async()=>{
-            let {medida} = _nombreModal;
-            const {ModalMedidaCtrl} = await import(`./../../modal/${medida.MODAL_CTRL}`);
-
-            const modalDialogRef = _modalSvc.openModalCustom({
-                controller: ModalMedidaCtrl,
-                template: `Medida/${medida.MODAL_CSHTML}`,
-                size: 'md'
-            })     
-            
-            modalDialogRef.result.then(result => {                
-                if(typeof result ==='object'){
-                    $scope.getMedidas();
-                }
-            })
-
-        }
-
-        $scope.openModalUpdate = async(item)=>{
-            let {medida} = _nombreModal;
-            const {ModalMedidaCtrl} = await import(`./../../modal/${medida.MODAL_CTRL}`);
-            const uibModalRef = _modalSvc.openModalSecond(ModalMedidaCtrl, `Medida/${medida.MODAL_CSHTML}`, 'md', item);
-            uibModalRef.result.then(result=>{
-                if(typeof result ==='object'){
-                    $scope.getMedidas();
-                }
-            })            
-        }
-       
+        $scope.resultModal = function(item) {
+            $scope.getMedidas();
+        }        
 
         $scope.delete = function (data) {
-            Swal.fire({
-                icon: 'warning',
-                html: `<small>Esta seguro/a de eliminar esta Medida ahora?</small>`,
-                showConfirmButton: true,
-                confirmButtonText: 'Si, eliminar',
-                showCancelButton: true,
-                cancelButtonText: 'No, cancelar',
-                allowOutsideClick: false
-            }).then(result => {
-                if (result.value) {
-                    mS.getData('delete', '/Medida/Delete?id=' + data.idMedida).then(response => {
-                        if (response.code == "0") {
-                            toast.toastr('warning', response.message, response.titleSms);
-                            return
-                        }
-                        if (response.code == "1") {
-                            toast.toastr('success', response.message, response.titleSms);
-                            $scope.getMedidas();
-                            return
-                        }
-                    })
-
-                }
-            })
+            try {
+                Swal.fire({
+                    icon: 'warning',
+                    html: `<small>Esta seguro/a de eliminar esta Medida ahora?</small>`,
+                    showConfirmButton: true,
+                    confirmButtonText: 'Si, eliminar',
+                    showCancelButton: true,
+                    cancelButtonText: 'No, cancelar',
+                    allowOutsideClick: false
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        showLoader();
+                        medidaSvc.delete(data.idMedida).then(response => {
+                            hideLoader();
+                            if (response.code == "0") {
+                                tS.toastr('warning', response.message, response.titleSms);                                
+                            }
+                            if (response.code == "1") {
+                                tS.toastr('success', response.message, response.titleSms);
+                                $scope.getMedidas();                                
+                            }
+                        }).catch(error => {
+                            hideLoader();
+                            console.log(error);
+                        })
+    
+                    }
+                })
+            } catch (error) {
+                hideLoader();
+                console.log(error)
+            }
         }
-
-        $("#agregar").on('hide.bs.modal', e => {
-            $scope.get();
-            $scope.data = {};
-        })
     }
 })(window.angular);

@@ -5,7 +5,7 @@
 
     subFamiliaCtrl.$inject = ['$scope', 'subFamiliaService', 'commonService', 'toastService'];
 
-    function subFamiliaCtrl($scope, subFamiliaSvc,  commonSvc, ts) {
+    function subFamiliaCtrl($scope, subFamiliaSvc,  commonSvc, tS) {
        
         $scope.dataSearch = {
             pageIndex: 1,
@@ -44,6 +44,10 @@
             $scope.dataSearch.pageIndex = 1;
             $scope.getSubFamilias();
         }
+
+        $scope.resultModal = function(item) {
+            $scope.getSubFamilias();
+        }
       
         $scope.exportTableToExcel = () => {       
             try {
@@ -80,11 +84,11 @@
                     subFamiliaSvc.delete(idSubFamilia).then(response => {
                         hideLoader();
                         if (response.code == "0") {
-                            toast.toastr('warning', response.message, response.titleSms);
+                            tS.toastr('warning', response.message, response.titleSms);
                             return
                         }
                         if (response.code == "1") {
-                            toast.toastr('success', response.message, response.titleSms);
+                            tS.toastr('success', response.message, response.titleSms);
                             $scope.getSubFamilias();                        
                         }
                     }).catch(error => {

@@ -97,7 +97,7 @@
             })
         }
 
-        service.queryMapper = function({data, cliente, detalles, infoAdicionalDocumento, datosAdicionalesArticulo}){
+        service.queryMapper = function({data, cliente, detalles, infoAdicionalDocumento, historyDatosAdicionales}){
 
             let factura = Object.assign({}, data);                    
 
@@ -109,7 +109,7 @@
                 factura: JSON.stringify(factura),
                 detalle: JSON.stringify(service.detalleMapperTo(detalles)),
                 adicional: JSON.stringify(infoAdicionalDocumento || []),
-                infoAdicionalArticulo: JSON.stringify(datosAdicionalesArticulo)
+                infoAdicionalArticulo: JSON.stringify(historyDatosAdicionales)
             }
         }
 

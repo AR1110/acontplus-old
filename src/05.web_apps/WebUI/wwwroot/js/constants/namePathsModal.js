@@ -9,6 +9,7 @@ const CHANGE_VERSION = (largo = 50) => {
 }
 
 
+//Inventario 
 app.constant('nombreModalInventario', {
     FAMILIA: {
         fileCtrl: '/js/inventario/modals/modalFamiliaCtrl.js' + CHANGE_VERSION(),
@@ -35,6 +36,15 @@ app.constant('nombreModalInventario', {
         controller: 'ModalModeloCtrl',
         template: 'Modelo/_ModalModelo.cshtml'
     }    
+})
+
+//Facturacion Electronica 
+app.constant('nombreModalFactElect', {
+    DATO_ADICIONAL_ARTICULO: {
+        fileCtrl: '/js/factElect/modals/modalDatoAdicionalArticuloCtrl.js',
+        controller: 'ModalDatoAdicionalArticuloCtrl',
+        template:'~/Areas/FactElect/Pages/Shared/_ModalDatoAdicionalArticulo.cshtml'
+    }
 })
 
 app.constant('nombreModal', {

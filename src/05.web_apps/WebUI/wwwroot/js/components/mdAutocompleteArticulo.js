@@ -97,62 +97,48 @@ class BaseSearchArticulo {
     }
 
 
-    async getDataArticuloParaVenta() {
+    getDataArticuloParaVenta() {
         try {
             console.log(this.idBodega)
-
+            showLoader();
             this.dataArticulo.idBodega = this.idBodega;
 
-            this.articuloSvc.findForSale(this.dataArticulo).then(response => {
-                console.log(response)
-            })
+            this.articuloSvc.findForSale(this.dataArticulo).then(async result => {
+                hideLoader();               
+                let {code, message, titleSms} = result.response
+               
+                if (code === "1") {
+                    this.setItemArticuloEnDetalle({
+                        item: result
+                    })
+                    return
+                }
+                
+                let {isConfirmed} = await Swal.fire({
+                    title: `<small>${titleSms}</small>`,
+                    icon: 'warning',
+                    html: `<small>${message}</small>`,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                })
 
-            // let results = await this._commonSvc.getDataArticuloParaVenta({
-            //     json: this.dataArticulo
-            // }).then(response => {
-            //     if (response.code === '0') {
-            //         throw response;
-            //     }
-            //     return JSON.parse(response.payload)
-            // });
-
-            // let responseMsg = results[0][0];
-            // let sharedData = {
-            //     articulo: results[0][0],
-            //     medidas: results[1],
-            //     datosAdicionales: results[2]
-            // }
-
-            // if (responseMsg.code === "1") {
-            //     this.setItemArticuloEnDetalle({
-            //         item: sharedData
-            //     })
-            //     return
-            // }
-
-            // let {
-            //     isConfirmed
-            // } = await Swal.fire({
-            //     title: `<small>${responseMsg.titleSms}</small>`,
-            //     icon: 'warning',
-            //     html: `<small>${responseMsg.message}</small>`,
-            //     allowOutsideClick: false,
-            //     allowEscapeKey: false,
-            // })
-
-            // if (isConfirmed) {
-            //     if (responseMsg.code === "0") {
-            //         $("#custom-template-md-autocomplete-articulo").focus();
-            //     }
-            //     if (responseMsg.code === "2") {
-            //         this.setItemArticuloEnDetalle({
-            //             item: sharedData
-            //         })
-            //     }
-            // }
-
+                if (isConfirmed) {
+                    if (code === "0") {
+                        $("#custom-template-md-autocomplete-articulo").focus();
+                    }
+                    if (code === "2") {
+                        this.setItemArticuloEnDetalle({
+                            item: result
+                        })
+                    }
+                }
+            }).catch(error => {
+                hideLoader();
+                console.log(error);
+            })        
         } catch (error) {
-            console.log(error)
+            hideLoader();
+            console.log(error)            
         }
     }
 

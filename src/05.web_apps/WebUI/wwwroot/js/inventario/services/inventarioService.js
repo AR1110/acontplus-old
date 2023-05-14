@@ -99,7 +99,7 @@
         }
 
         service.delete = function(id){
-            return mS.getData('delete', url + 'Delete' + id, null, true);
+            return mS.getData('delete', url + 'Delete/' + id, null, true);
         }
 
         service.listForSelect = function(query){
@@ -136,18 +136,14 @@
                     throw response;
                 }
                 if(response.code==="1"){
-                    let subFamilias = JSON.parse(response.payload) || [];
+                    let marcas = JSON.parse(response.payload) || [];                    
                     
-                    return subFamilias.map(item=>({                        
-                        idSubFamilia: item.idSubFamilia,
-                        idFamilia: item.idFamilia,
+                    return marcas.map(item=>({
+                        idMarca: item.idMarca,
                         descripcion: item.descripcion,
                         estado: item.estado,
-                        siglas: item.siglas,
                         codigo: item.codigo,
-                        montoObjetivo: item.montoObjetivo,
-                        nombreFamilia: item.nombreFamilia,
-                        totalRecords: item.totalRecords,                                               
+                        totalRecords: item.totalRecords,
                     }))                    
                 }
             })
@@ -162,7 +158,7 @@
         }
 
         service.delete = function(id){
-            return mS.getData('delete', url + 'Delete' + id, null, true);
+            return mS.getData('delete', url + 'Delete/' + id, null, true);
         }
 
         service.listForSelect = function(query){
@@ -171,9 +167,10 @@
                     throw response;
                 }
                 if(response.code==="1"){
-                    let subFamilias = JSON.parse(response.payload) || [];
-                    return subFamilias.map(item=>({
-                        idFamilia: item.idFamilia,
+                    let marcas = JSON.parse(response.payload) || [];
+                    
+                    return marcas.map(item=>({
+                        idMarca: item.idMarca,
                         descripcion: item.descripcion,                                           
                     }))                    
                 }
@@ -199,18 +196,16 @@
                     throw response;
                 }
                 if(response.code==="1"){
-                    let subFamilias = JSON.parse(response.payload) || [];
+                    let modelos = JSON.parse(response.payload) || [];
                     
-                    return subFamilias.map(item=>({                        
-                        idSubFamilia: item.idSubFamilia,
-                        idFamilia: item.idFamilia,
+                    return modelos.map(item=>({
+                        idModelo: item.idModelo,
+                        codigo: item.codigo,
                         descripcion: item.descripcion,
                         estado: item.estado,
-                        siglas: item.siglas,
-                        codigo: item.codigo,
-                        montoObjetivo: item.montoObjetivo,
-                        nombreFamilia: item.nombreFamilia,
-                        totalRecords: item.totalRecords,                                               
+                        idMarca: item.idMarca,
+                        marca: item.marca,
+                        totalRecords: item.totalRecords,
                     }))                    
                 }
             })
@@ -225,7 +220,54 @@
         }
 
         service.delete = function(id){
-            return mS.getData('delete', url + 'Delete' + id, null, true);
+            return mS.getData('delete', url + 'Delete/' + id, null, true);
+        }
+
+        
+        return service;
+    })
+
+
+
+
+    /**
+     * Modelos 
+     */
+    app.factory('medidaService', function($injector){
+        
+        let url = 'Medida/';
+        let mS = $injector.get('mainService');
+        let service = {};
+
+        service.getAll = function(query){
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+                if(response.code==="0"){
+                    throw response;
+                }
+                if(response.code==="1"){
+                    let medidas = JSON.parse(response.payload) || [];
+                    
+                    return medidas.map(item=>({
+                        idMedida:  item.idMedida,
+                        descripcion:item.descripcion,
+                        estado: item.estado,
+                        codigo: item.codigo,
+                        totalRecords: item.totalRecords,
+                    }))                    
+                }
+            })
+        }
+
+        service.save = function(data){
+            return mS.getData('post', url + 'Insert', data, true);
+        }
+
+        service.update = function(id, data){
+            return mS.getData('put', url + 'Update/' + id, data, true);
+        }
+
+        service.delete = function(id){
+            return mS.getData('delete', url + 'Delete/' + id, null, true);
         }
 
         

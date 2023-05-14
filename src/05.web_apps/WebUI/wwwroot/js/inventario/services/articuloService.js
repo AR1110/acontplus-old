@@ -175,14 +175,16 @@
                 }
 
                 if(response.code==='1'){
+                    console.log(JSON.parse(response.payload))
                     let dataRepository = JSON.parse(response.payload);
                     let dataArticulo = dataRepository[0][0];
                     let dataMedida = dataRepository[1];
                     let dataInfoAdicionales = dataRepository[2];
-
-                    let articuloMapper = {
+                    console.log(dataArticulo)
+                    let articuloMapper = {                        
                         idArticulo: dataArticulo.idArticulo,
                         idTipoIva: dataArticulo.idTipoIva,
+                        idMedida: dataArticulo.idMedida,
                         descripcion: dataArticulo.descripcion,
                         valorIce: dataArticulo.valorIce,
                         llevaInventario: dataArticulo.llevaInventario,
@@ -197,13 +199,15 @@
                         codigoAuxiliar: dataArticulo.codigoAuxiliar,
                         codImpuesto: dataArticulo.codImpuesto,
                         codigoPorcentaje:dataArticulo.codigoPorcentaje,
-                        tarifa: dataArticulo.tarifa
+                        tarifa: dataArticulo.tarifa,
+                        precioCosto: dataArticulo.precioCosto,
                     }
                     
                     let medidaMapper = dataMedida.map(item=>({
                         idMedida: item.idMedida,
                         descripcion: item.descripcion,
-                        precioCosto: item.precioCosto
+                        precioCosto: item.precioCosto,
+                        tarifas: item.tarifas
                     }))
 
                     let infoAdicionalMapper = dataInfoAdicionales.map(item => ({
@@ -211,13 +215,19 @@
                         idEtiqueta: item.idEtiqueta,
                         idInfoAdicional: item.idInfoAdicional,
                         jsonAdicional: JSON.parse(item.jsonAdicional),
-                        uniqueId: item.uniqueId
+                        uniqueId: item.uniqueId,
+                        estado: item.estado
                     }))
                     
                     return {
+                        response: {
+                            code: dataArticulo.code,
+                            message: dataArticulo.message,
+                            titleSms: dataArticulo.titleSms,
+                        },
                         articulo: articuloMapper,
                         medidas: medidaMapper,
-                        adicionales: infoAdicionalMapper
+                        datosAdicionalesArticulo: infoAdicionalMapper
                     }                 
                 }
             })

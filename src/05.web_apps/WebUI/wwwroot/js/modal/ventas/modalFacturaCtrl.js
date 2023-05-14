@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.js?v=0.84";
+} from "./modalBaseCtrl.js?v=0.85";
 
 class ModalFacturaCtrl extends ModalBaseCtrl {
 
@@ -134,7 +134,7 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
             const {
                 articulo,
                 medidas,
-                datosAdicionales
+                datosAdicionalesArticulo
             } = self.dataArticulo;
 
 
@@ -181,7 +181,10 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
             entity.productoFraccionable = articulo.productoFraccionable;
             entity.medidas = medidas; //Lista Medida 
             entity.idMedida = dataMedida.idMedida; //Medida por defecto 
-            entity.adicional = datosAdicionales; //
+
+            // if(!(entity.idFacturaDetalle > 0)){
+                entity.datosAdicionalesArticulo = datosAdicionalesArticulo; //
+            //}
 
 
             entity.articuloTarifas = JSON.parse(dataMedida.tarifas);
@@ -218,7 +221,7 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
         const {
             articulo,
             medidas,
-            datosAdicionales
+            datosAdicionalesArticulo
         } = self.dataArticulo;
         let index = self.gridOptions.data.findIndex(value => value.idArticulo === 0);
         let entity = self.gridOptions.data[index];
@@ -232,6 +235,7 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
 
         entity.codigoPorcentaje = articulo.codigoPorcentaje;
         entity.tarifa = articulo.tarifa;
+
         // entity.nombreTipoIva        = articulo.nombreTipoIva;
         entity.ice = articulo.valorIce;
         entity.idBodega = self.idBodega ? self.idBodega : 0;
@@ -240,7 +244,8 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
         entity.productoFraccionable = articulo.productoFraccionable;
         entity.medidas = medidas; //Lista Medida 
         entity.idMedida = dataMedida.idMedida; //Medida por defecto 
-        entity.adicional = datosAdicionales; //
+       
+        entity.datosAdicionalesArticulo = datosAdicionalesArticulo; //
 
 
         entity.articuloTarifas = JSON.parse(dataMedida.tarifas);
@@ -470,6 +475,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
             TIPO_REGISTRO
         } = _params;
 
+        this.historyDatosAdicionales = [];
 
 
         this.TIPO_REGISTRO = TIPO_REGISTRO;
@@ -480,7 +486,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
 
        <view-kardex params="row.entity"></view-kardex>
 
-        <a  ng-click="grid.appScope.$ctrl.openModalDatoAdicionalArticulo(row.entity, false)" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-warning btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
+        <a  btn-dato-adicional-articulo-fact-elect entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' history-datos-adicionales="grid.appScope.$ctrl.historyDatosAdicionales" result-modal-adicional="grid.appScope.$ctrl.resultModalAdicional(result)" class= "btn btn-warning btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
 
         this.isDefaultArticle = true;
 
@@ -593,7 +599,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
             this.data.fechaEmision = new Date();
             this.getFechaVencimiento();
 
-            this.setColumnDefs('9%');
+            this.setColumnDefs('12%');
 
             this.uiGridInvoice = new UiGridOptions({
                 $scope: this.$scope,
@@ -669,6 +675,19 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
         }
     }
 
+    resultModalAdicional(result) {
+        let {entity, historyDatosAdicionales} = result;
+        this.historyDatosAdicionales = historyDatosAdicionales;
+
+        // this.infoAdicionalDocumento.push({
+        //     idInfoAdicionalDoc:0,            
+        //     n: 0,
+        //     nombre: '',
+        //     valor: ''
+        // })
+        console.log(result)
+    }
+
     async onSave() {
         try {
 
@@ -715,7 +734,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
                     cliente: this.cliente,
                     detalles: this.gridOptions.data, 
                     infoAdicionalDocumento: this.infoAdicionalDocumento,
-                    datosAdicionalesArticulo: this.datosAdicionalesArticulo
+                    historyDatosAdicionales: this.historyDatosAdicionales
                 })
   
                 this.facturaSvc.save(params).then(response=>{
@@ -725,7 +744,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
                         return
                     }
                     if (response.code === "1") {                        
-                        this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                        this._fS.sweetAlert('success', 'Registrado Correctamente', response.titleSms, 1000);
 
                         let mainData = {
                             isRegister: true,
