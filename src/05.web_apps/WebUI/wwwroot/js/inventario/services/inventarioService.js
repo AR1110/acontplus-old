@@ -275,6 +275,52 @@
     })
 
 
+     /**
+     * Modelos 
+     */
+     app.factory('tarifaService', function($injector){
+        
+        let url = 'Tarifa/';
+        let mS = $injector.get('mainService');
+        let service = {};
+
+        service.getAll = function(query){
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+                if(response.code==="0"){
+                    throw response;
+                }
+                if(response.code==="1"){
+                    let tarifas = JSON.parse(response.payload) || [];
+                    
+                    return tarifas.map(item=>({
+                        idTarifa: item.idTarifa,
+                        descripcion: item.descripcion,
+                        codigo: item.codigo,
+                        predeterminada: item.predeterminada,
+                        estado: item.estado,
+                        totalRecords: item.totalRecords,
+                    }))                    
+                }
+            })
+        }
+
+        service.save = function(data){
+            return mS.getData('post', url + 'Insert', data, true);
+        }
+
+        service.update = function(id, data){
+            return mS.getData('put', url + 'Update/' + id, data, true);
+        }
+
+        service.delete = function(id){
+            return mS.getData('delete', url + 'Delete/' + id, null, true);
+        }
+
+        
+        return service;
+    })
+
+
     
 
 

@@ -16,7 +16,7 @@ function ModalFamiliaCtrl($scope, $uibModalInstance, familiaSvc, tS, params) {
 
     $scope.getFamilyCode = function(){
         if ($scope.data.descripcion && $scope.tipoRegistro === 1) {
-            this.data.siglas = this.data.descripcion.substring(0, 3);           
+            $scope.data.siglas = $scope.data.descripcion.substring(0, 3);           
         }      
     }
 
