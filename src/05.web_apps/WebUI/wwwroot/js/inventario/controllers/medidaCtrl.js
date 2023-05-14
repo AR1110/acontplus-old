@@ -1,9 +1,7 @@
 ﻿(() => {
     'use strict';
 
-    angular
-        .module('acontPlusApp')
-        .controller('medidaCtrl', medidaCtrl);
+    app.controller('medidaCtrl', medidaCtrl);
 
     medidaCtrl.$inject = ['$scope', 'medidaService', 'toastService'];
 
