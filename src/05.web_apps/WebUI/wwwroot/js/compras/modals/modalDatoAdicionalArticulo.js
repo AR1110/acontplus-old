@@ -160,6 +160,7 @@ function ModalDatoAdicionalArticuloCtrl($scope, $uibModalInstance, params){
     //Quitar Dato Adicional del Articulo 
     $scope.removeRow = function(row) {       
         try {
+           
             Swal.fire({
                 title: 'Eliminar Dato Adicional',
                 icon:'warning',
@@ -181,20 +182,38 @@ function ModalDatoAdicionalArticuloCtrl($scope, $uibModalInstance, params){
     }
 
     $scope.removeColumn = function(row) {
+        console.log(row)
         let index = $scope.etiquetas.indexOf(row);        
-        $scope.etiquetas.splice(index, 1);
+        
 
         for(let item of $scope.data){            
+            if (item.adicionales.hasOwnProperty(row) && item.estado===2) {
+                Swal.fire({
+                    icon:'warning',
+                    html:'La etiqueta está asociada a una factura o nota de entrega, por eso no puedes borrar la columna.'
+                })
+                return
+            }
             if (item.adicionales.hasOwnProperty(row)) {
                 delete item.adicionales[row];
-            }
-              
+            }              
         }
+        $scope.etiquetas.splice(index, 1);
     }
 
 
     $scope.save = function() {
         try {            
+
+            if($scope.etiquetas.length === 0) {
+                Swal.fire({
+                    title: 'Datos Adicionales',
+                    icon:'warning',
+                    html: `Define la columna de los datos adicionales del artículo!`
+                })
+                return
+            }
+
             if($scope.data.length === 0) {
                 Swal.fire({
                     title: 'Datos Adicionales',

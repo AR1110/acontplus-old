@@ -46,22 +46,17 @@ class BaseSearchArticulo {
                 return
             }
 
+            if(this.searchText.length < 3) return
 
-            this._commonSvc.articuloSearchGeneral({
-                textSearch: this.searchText,
-                code: true
-            }).then(response => {
-
-                if (!response || (Array.isArray(response) && response.length === 0)) {
-                    this.searchText = null;
-                    return
-                }
-
-                //Tomamos  posicion 1 para obtener datos del articulo                  
-                this.selectArticleSearch(response[0])
-                this.searchText = null
+            /**
+             * return object {idArticulo: 0}
+             */
+            this.articuloSvc.findByEnterCode({textSearch: this.searchText, isSearchByCode: true}).then(response=>{
+                this.selectArticleSearch(response)
+                this.searchText = null                
+            }).catch(error => {             
+                console.log(error);
             })
-
         } catch (error) {
             console.log(error)
         }
@@ -103,6 +98,9 @@ class BaseSearchArticulo {
             showLoader();
             this.dataArticulo.idBodega = this.idBodega;
 
+            /**
+             * return object {articulo, medidas, datosAdicionales}
+             */
             this.articuloSvc.findForSale(this.dataArticulo).then(async result => {
                 hideLoader();               
                 let {code, message, titleSms} = result.response
@@ -355,8 +353,8 @@ class MdArticuloCtrl extends BaseSearchArticulo {
 
 //Buscador Articulo 
 class InputSearchBarcodeCtrl extends BaseSearchArticulo {
-    static $inject = ['mainService', '$scope', '$timeout', '$q', 'commonService', 'modalService', 'nombreModal', 'toastService']
-    constructor(_mS, $scope, $timeout, $q, _commonSvc, _modalSvc, _nombreModalConst, tS) {
+    static $inject = ['mainService', 'articuloService', '$scope', '$timeout', '$q', 'commonService', 'modalService', 'nombreModal', 'toastService']
+    constructor(_mS, articuloSvc, $scope, $timeout, $q, _commonSvc, _modalSvc, _nombreModalConst, tS) {
         super({
             _mS,
             $scope,
@@ -367,6 +365,8 @@ class InputSearchBarcodeCtrl extends BaseSearchArticulo {
             _nombreModalConst,
             tS
         })
+
+        this.articuloSvc = articuloSvc;
 
 
 

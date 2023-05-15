@@ -486,7 +486,7 @@ export class CommonService {
 
     //---------------------------------------------Almacen-------------------------
     /**
-     * Metodos relacionaddos con Almacen
+     *Eliminar mas adelante esta función (depuracion se encuentra en inventario/services/articuloService.js)
      * @param {*} busqueda 
      * @param {*} isSearchByCodigo 
      * @returns 
@@ -526,7 +526,7 @@ export class CommonService {
 
 
 
-    //Buscador Articulo en datatable
+    //Eliminar mas adelante esta función (depuracion se encuentra en inventario/services/articuloService.js)
     articuloSearchGeneral({
         textSearch,
         code = false
@@ -569,6 +569,7 @@ export class CommonService {
         }
     }
 
+    //Eliminar mas adelante esta función (depuracion se encuentra en inventario/services/articuloService.js)
     getDataArticuloParaCompra({
         json
     }) {
@@ -585,6 +586,7 @@ export class CommonService {
         }
     }
 
+    //Eliminar mas adelante esta función (depuracion se encuentra en inventario/services/articuloService.js)
     async searchArticuloByCodigo({
         busqueda
     }) {
@@ -961,27 +963,21 @@ export class CommonService {
             return detalleVenta.map(item => {
                 item.n = index++;
 
-                let data = {
+                let query = {
                     idArticulo: item.idArticulo,
-                    // idPresentacion: item.idPresentacion,
-                    // presentacion: item.presentacion
                 }
+                this.articuloSvc.findForSale(query).then(response => {
+                    let  {articulo, medidas, datosAdicionalesArticulo} = response;
+                    item.medidas = medidas;
+                    item.datosAdicionalesArticulo = datosAdicionalesArticulo;
 
-                //Cambiar la peticion para actualizaciòn de detalle de Documento 
-                this.getDataArticuloParaVenta({
-                    json: data
-                }).then(response => {
-
-                    let results = JSON.parse(response.data);
-                    let responseMsg = results[0][0];
-
-                    if (responseMsg.code === '1' || responseMsg.code === '2') {
-                        item.medidas = results[1];
-                        let dataMedida = item.medidas.find(m => m.idMedida === item.idMedida) || {};
-                        item.articuloTarifas = JSON.parse(dataMedida.tarifas);
-                    }
+                    let dataMedida = medidas.find(m => m.idMedida === item.idMedida) || {};
+                    item.articuloTarifas = JSON.parse(dataMedida.tarifas);
+                }).catch(err => {
+                    console.log(err);
                 })
 
+              
                 let subTotal = item.cantidad * item[nombrePrecio] || 0;
                 let totalDescuento = item.cantidad * item.valorDescuento || 0;
 
@@ -1005,6 +1001,7 @@ export class CommonService {
         let detalleDocumento = [];
         let dataDocumento = {};
         let infoAdicionalDocumento = [];
+        let datosAdicionalesArticulo = [];
         let factura = {}
         let actividadTipoIva = {};
         const TIPO_DOC = this.tipoDoc[codigoDocumento];
@@ -1018,9 +1015,12 @@ export class CommonService {
                     }
                     if (response.id === "1") {
                         let dataMain = JSON.parse(response.payload);
+                        console.log(dataMain)
                         let detalle = dataMain[2];
                         dataDocumento = dataMain[0][0];
+                        
                         dataDocumento.nroDocSecuencial = `${dataDocumento.estab}-${dataDocumento.ptoEmi}-${dataDocumento.secuencial}`;
+
                         dataDocumento.ptoEmi = `${dataDocumento.estab}-${dataDocumento.ptoEmi}`
                         //Fechas                         
                         dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision);
@@ -1028,11 +1028,25 @@ export class CommonService {
 
                         cliente = dataMain[1][0];
                         detalleDocumento = this.getDetalleVenta(detalle, 'precioUnitario');
+                      
                         infoAdicionalDocumento = dataMain[3];
+                      
                         actividadTipoIva = {
                             tarifa: dataDocumento.tarifa,
                             codigoPorcentaje: dataDocumento.codigoPorcentaje
                         }
+
+                        //----------------------Datos Adicionales del Articulo-----------------
+                        datosAdicionalesArticulo = dataMain[4].map(item=>({
+                            idHistoryInfoAdicional: item.idHistoryInfoAdicional,
+                            idArticulo: item.idArticulo,
+                            idEtiqueta: item.idEtiqueta,
+                            idInfoAdicional: item.idInfoAdicional,
+                            jsonAdicional: JSON.parse(item.jsonAdicional),
+                            selected: item.selected,
+                            estado: item.estado
+                        }))
+
                         isComplete = true;
                         hideLoader();
                     }
@@ -1159,15 +1173,16 @@ export class CommonService {
                 });
                 break;
         }
-
+console.log(datosAdicionalesArticulo)
         return {
             cliente,
             dataTipoDocumento,
             dataDocumento,
             factura,
             detalleDocumento,
-            infoAdicionalDocumento,
+            infoAdicionalDocumento,            
             actividadTipoIva,
+            datosAdicionalesArticulo,
             isComplete,
         };
     }

@@ -116,6 +116,23 @@
             })
         }
 
+        service.findByEnterCode = function(objSearch) {
+            const query = {
+                bySearch: objSearch.textSearch,
+                code: objSearch.isSearchByCode 
+            }
+            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+                if(response.code==="0"){
+                    throw response;
+                }
+
+                if(response.code==="1"){
+                    const dataRepository = JSON.parse(response.payload)[0];
+                    return dataRepository;
+                }
+            })
+        }
+
         service.findForPurchase = function(query){
             return mainService.getData('get', url + 'FindForPurchase?json='+ JSON.stringify(query), null, true).then(response=>{
                 if(response.code==='0'){
@@ -168,6 +185,11 @@
             })
         }
         
+        /**
+         * 
+         * @param {*} query 
+         * @returns object
+         */
         service.findForSale = function(query){
             return mainService.getData('get', url + 'FindForSale?json='+ JSON.stringify(query), null, true).then(response=>{
                 if(response.code==='0'){

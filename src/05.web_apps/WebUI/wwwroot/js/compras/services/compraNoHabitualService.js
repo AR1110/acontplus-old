@@ -73,7 +73,8 @@
                             idArticulo: item.idArticulo,
                             idEtiqueta: item.idEtiqueta,
                             idInfoAdicional: item.idInfoAdicional,
-                            adicionales: JSON.parse(item.jsonAdicional)
+                            adicionales: JSON.parse(item.jsonAdicional),
+                            estado: item.estado,
                         }
                     })
                

@@ -117,6 +117,7 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
 
         if (isConfirmed && entity.datosAdicionales) {
             this.datosAdicionalesArticulo = this.datosAdicionalesArticulo.filter(val => val.idArticulo !== entity.idArticulo);
+            this.historyDatosAdicionales = this.historyDatosAdicionales.filter(val => val.idArticulo !== entity.idArticulo);
         }
 
         this.data = Object.assign(this.data, this.uiGridInvoice.getTotales());
@@ -280,6 +281,19 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
         this.openModalDatoAdicionalArticuloParam(params)
     }
 
+
+    resultModalAdicional(result) {
+        let {entity, historyDatosAdicionales} = result;
+        this.historyDatosAdicionales = historyDatosAdicionales;
+
+        // this.infoAdicionalDocumento.push({
+        //     idInfoAdicionalDoc:0,            
+        //     n: 0,
+        //     nombre: '',
+        //     valor: ''
+        // })
+        console.log(result)
+    }
 
     calcularPorcentajeDescuento() {
 
@@ -675,18 +689,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
         }
     }
 
-    resultModalAdicional(result) {
-        let {entity, historyDatosAdicionales} = result;
-        this.historyDatosAdicionales = historyDatosAdicionales;
-
-        // this.infoAdicionalDocumento.push({
-        //     idInfoAdicionalDoc:0,            
-        //     n: 0,
-        //     nombre: '',
-        //     valor: ''
-        // })
-        console.log(result)
-    }
+    
 
     async onSave() {
         try {
@@ -773,9 +776,9 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
 
 export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
 
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params']
+    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'facturaService', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params']
 
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params) {
+    constructor($scope, $timeout, $uibModalInstance, facturaSvc, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params) {
         super({
             $scope,
             $timeout,
@@ -787,8 +790,11 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
             _fS,
             _tS
         })
-        const self = this;
 
+        this.facturaSvc = facturaSvc;
+
+        this.historyDatosAdicionales = [];
+        this.datosAdicionalesArticulo = [];
 
         let {
             TIPO_REGISTRO,
@@ -798,21 +804,31 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
         this.CELL_TEMPLATE_OPTION = `<a  ng-click="grid.appScope.$ctrl.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
 
         <a  update-article ng-click="grid.appScope.$ctrl.openModalArticle(row.entity)" id="btnEditArticuloDetalle" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >
+        
         <view-kardex params="row.entity"></view-kardex>
-        <a  ng-click="grid.appScope.$ctrl.openModalDatoAdicionalArticulo(row.entity, false)" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
+
+        <a  btn-dato-adicional-articulo-fact-elect entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' history-datos-adicionales="grid.appScope.$ctrl.historyDatosAdicionales" result-modal-adicional="grid.appScope.$ctrl.resultModalAdicional(result)" datos-adicionales="grid.appScope.$ctrl.datosAdicionalesArticulo" class= "btn btn-warning btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
 
         let {
             dataDocumento,
             cliente,
             detalleDocumento,
             infoAdicionalDocumento,
-            actividadTipoIva
+            actividadTipoIva,
+            datosAdicionalesArticulo
         } = data;
         this.dataDocumento = dataDocumento;
         this.cliente = cliente;
         this.detalleDocumento = detalleDocumento;
         this.infoAdicionalDocumento = infoAdicionalDocumento;
         this.actividadTipoIva = actividadTipoIva;
+        this.datosAdicionalesArticulo = datosAdicionalesArticulo || [];
+
+        this.historyDatosAdicionales = this.datosAdicionalesArticulo.map(item=>({
+            idArticulo: item.idArticulo,
+            idInfoAdicional: item.idInfoAdicional,
+            selected: true,
+        }))
 
         this.data.tarifa = this.actividadTipoIva.tarifa;
         this.disabledImpuestoTarifa = this.actividadTipoIva.codigoPorcentaje == '2'
@@ -889,7 +905,7 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
             this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
 
 
-            this.setColumnDefs('8%');
+            this.setColumnDefs('12%');
 
             this.uiGridInvoice = new UiGridOptions({
                 $scope: this.$scope,
@@ -986,37 +1002,34 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
             })
 
 
-            if (!isConfirmed) return
+            if (isConfirmed) {
+                showLoader();
+                //Mappeamos todo el objecto necesario para guardar factura.
+                let params = this.facturaSvc.queryMapper({
+                    data: this.data, 
+                    cliente: this.cliente,
+                    detalles: this.gridOptions.data, 
+                    infoAdicionalDocumento: this.infoAdicionalDocumento,
+                    historyDatosAdicionales: this.historyDatosAdicionales
+                })
+  
+                this.facturaSvc.update(this.data.idFactura, params).then(response=>{
+                    hideLoader();
+                    if (response.code === '0') {
+                        this._fS.sweetAlert('warning', response.message, response.titleSms);
+                        return
+                    }
+                    if (response.code === "1") {                        
+                        this._fS.sweetAlert('success', 'Registrado Correctamente', response.titleSms, 1000);
+                        this.isUpdate = true;
+                       // this.$uibModalInstance.close(mainData)
 
-            showLoader();
-            let factura = Object.assign({}, this.data);
-            factura.idCliente = this.cliente.idCliente;
-            factura.fechaEmision = this._fS.formatDateTimeZone(this.data.fechaEmision);
-            factura.fechaVencimiento = this._fS.formatDateTimeZone(this.data.fechaVencimiento);
-
-            let data = {
-                factura: JSON.stringify(factura),
-                detalle: JSON.stringify(this.trimDetailDoc()),
-                adicional: JSON.stringify(this.infoAdicionalDocumento || []),
-                manejoArticulo: JSON.stringify(this.datosAdicionalesArticulo)
+                    }
+                }).catch(error => {
+                      hideLoader();
+                      console.log(error);
+                })
             }
-
-            this.updateInvoice(this.data.idFactura, data).then(response => {
-                if (response.code === '0') {
-                    hideLoader();
-                    this._fS.sweetAlert('warning', response.message, response.titleSms);
-                }
-                if (response.code === "1") {
-                    hideLoader();
-                    this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
-                    // let data = JSON.parse(response.payload)[0];                   
-                    // this.$uibModalInstance.close(data) 
-                    this.isUpdate = true;
-                }
-            }).catch(error => {
-                hideLoader();
-                console.log(error);
-            })
 
         } catch (error) {
             hideLoader();
@@ -1197,7 +1210,7 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
             _tS
         })
 
-        const self = this;
+        this.historyDatosAdicionales = [];
 
         this.facturaSvc = facturaSvc;
         let {
@@ -1211,7 +1224,7 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
 
         <view-kardex params="row.entity"></view-kardex>
 
-        <a  ng-click="grid.appScope.$ctrl.openModalDatoAdicionalArticulo(row.entity, false)" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
+        <a  btn-dato-adicional-articulo-fact-elect entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' history-datos-adicionales="grid.appScope.$ctrl.historyDatosAdicionales" result-modal-adicional="grid.appScope.$ctrl.resultModalAdicional(result)" class= "btn btn-warning btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
 
         let {
             dataDocumento,
@@ -1298,7 +1311,7 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
             this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
 
 
-            this.setColumnDefs('8%');
+            this.setColumnDefs('12%');
 
             this.uiGridInvoice = new UiGridOptions({
                 $scope: this.$scope,
@@ -1403,44 +1416,39 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
 
             if(isConfirmed){
                 showLoader();
-
+  
                 //Mappeamos todo el objecto necesario para guardar factura.
                 let params = this.facturaSvc.queryMapper({
                     data: this.data, 
                     cliente: this.cliente,
                     detalles: this.gridOptions.data, 
                     infoAdicionalDocumento: this.infoAdicionalDocumento,
-                    datosAdicionalesArticulo: this.datosAdicionalesArticulo
+                    historyDatosAdicionales: this.historyDatosAdicionales
                 })
-
+  
                 this.facturaSvc.save(params).then(response=>{
+                    hideLoader();
                     if (response.code === '0') {
-                        hideLoader();
                         this._fS.sweetAlert('warning', response.message, response.titleSms);
+                        return
                     }
-                    if (response.code === "1") {
-                        hideLoader();
-                        this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
-    
-                        let data = JSON.parse(response.payload)[0];
-    
+                    if (response.code === "1") {                        
+                        this._fS.sweetAlert('success', 'Registrado Correctamente', response.titleSms, 1000);
+
                         let mainData = {
+                            isRegister: true,
                             printerAutomatic: this.printerAutomatic,
                             payAutomatic: this.payAutomatic,
-                            data: {
-                                ...data,
-                                nroDocumento: data.estab + data.ptoEmi + data.secuencial,
-                                esContado: data.gestion,
-                            },
+                            data: response.dataResponse,
                             TIPO_DOC: this.TIPO_DOC_FV
                         }
-    
+
                         this.$uibModalInstance.close(mainData)
-    
+
                     }
                 }).catch(error => {
-                    hideLoader();
-                    console.log(error);
+                      hideLoader();
+                      console.log(error);
                 })
             }
 
