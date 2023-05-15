@@ -1294,7 +1294,7 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
             this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
 
 
-            this.setColumnDefs('8%');
+            this.setColumnDefs('12%');
 
             this.uiGridInvoice = new UiGridOptions({
                 $scope: this.$scope,
@@ -1423,7 +1423,7 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
             const sendData = {
                 notaEntrega,
                 detalle: this.trimDetailDoc(),
-                manejoArticulo: this.datosAdicionalesArticulo
+                infoAdicionalArticulo: this.historyDatosAdicionales
             }
 
             await this._mS.getData('post', '/NotaEntrega/Insert', sendData).then(response => {
@@ -1530,7 +1530,7 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
                 factura: JSON.stringify(factura),
                 detalle: JSON.stringify(this.trimDetailDoc()),
                 adicional: JSON.stringify(this.infoAdicionalDocumento || []),
-                manejoArticulo: JSON.stringify(this.datosAdicionalesArticulo)
+                infoAdicionalArticulo: JSON.stringify(this.historyDatosAdicionales)
             }
 
             this.createInvoice(sendData).then(response => {

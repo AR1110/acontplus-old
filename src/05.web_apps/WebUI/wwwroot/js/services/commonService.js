@@ -1075,7 +1075,18 @@ export class CommonService {
 
                         cliente = dataMain[1][0];
                         detalleDocumento = this.getDetalleVenta(detalle, 'precioUnitario');
-                        infoAdicionalDocumento = dataMain[3];
+                        
+                        //----------------------Datos Adicionales del Articulo-----------------
+                        datosAdicionalesArticulo = dataMain[3].map(item=>({
+                            idHistoryInfoAdicional: item.idHistoryInfoAdicional,
+                            idArticulo: item.idArticulo,
+                            idEtiqueta: item.idEtiqueta,
+                            idInfoAdicional: item.idInfoAdicional,
+                            jsonAdicional: JSON.parse(item.jsonAdicional),
+                            selected: item.selected,
+                            estado: item.estado
+                        }))
+
                         actividadTipoIva = {
                             tarifa: dataDocumento.tarifa,
                             codigoPorcentaje: dataDocumento.codigoPorcentaje

@@ -285,14 +285,6 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
     resultModalAdicional(result) {
         let {entity, historyDatosAdicionales} = result;
         this.historyDatosAdicionales = historyDatosAdicionales;
-
-        // this.infoAdicionalDocumento.push({
-        //     idInfoAdicionalDoc:0,            
-        //     n: 0,
-        //     nombre: '',
-        //     valor: ''
-        // })
-        console.log(result)
     }
 
     calcularPorcentajeDescuento() {
