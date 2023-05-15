@@ -329,7 +329,7 @@
                     tipo: '7',
                     textSearch: $scope.infoCompRet.identificacionSujetoRetenido
                 }
-                mS.getData('get', '/FacturaCompra/Get?json=' + JSON.stringify(json), null, true).then(
+                mS.getData('get', 'FacturaCompra/Get?json=' + JSON.stringify(json), null, true).then(
                     response => {
                         if (response.code == '0') {
                             tS.toastr('warning', response.message)
@@ -361,7 +361,7 @@
                     id: item.idDocumento,
                     isAutomatic: item.isAutomatic
                 }
-                mS.getData('get', '/FacturaCompra/Get?json=' + JSON.stringify(json), null, true).then(
+                mS.getData('get', 'FacturaCompra/Get?json=' + JSON.stringify(json), null, true).then(
                     response => {
                         if (response.code == '0') {
                             tS.toastr('warning', response.message)
