@@ -29,8 +29,8 @@
     async resultModalMedida(result){
         try {
             if (typeof result !== 'object') return
-            const results = await this.initiload();
-            this.medidas = results[0].medidas;
+            const {medidas} = await this.articuloSvc.getDataForm({})
+            this.medidas  = medidas;
             this.data.idMedida = this.medidas.at(this.medidas.length - 1).idMedida;
         } catch (error) {
             console.log(error)
@@ -116,12 +116,14 @@
  export class ModalArticuloCtrl extends ModalBaseCtrl {
 
      static $inject = [
+        '$q',
          '$scope',
          '$timeout',
          '$interval',
          '$uibModalInstance',
          'mainService',
          'commonService',
+         'articuloService',
          'modalService',
          'nombreModal',
          'toastService',
@@ -130,18 +132,21 @@
          'decodeToken'
      ]
 
-     constructor($scope, $timeout, $interval, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModal, _toastr, _form, _params, decodeToken) {
+     constructor($q, $scope, $timeout, $interval, $uibModalInstance, _mS, _commonSvc, articuloSvc, _modalSvc, _nombreModal, _toastr, _form, _params, decodeToken) {
          super({
              $scope,
              _mS,
              _commonSvc,
              _form
          })
+
+        this.$q = $q;
          this.$scope = $scope;
          this.$timeout = $timeout;
          this.$interval = $interval;
          this.$uibModalInstance = $uibModalInstance;
          this._commonSvc = _commonSvc;
+         this.articuloSvc = articuloSvc;
          this._modalSvc = _modalSvc;
          this._nombreModal = _nombreModal;
          this._toastr = _toastr;
@@ -168,66 +173,66 @@
 
      }
 
-     async $onInit() {
-         try {
-             showLoader();
-             let results = await this.initiload();
-             console.log(results);
-             const {
-                 subFamilias,
-                 familias,
-                 medidas,
-                 modelos,
-                 marcas,
-                 valoracionMetodos,
-                 tipoArticulos,
-                 tarifas,
-                 etiquetaActividades,
-                 jsonPersmission
-             } = results[0];
+    async $onInit() {
+        try {
+            showLoader();
+            let results = await this.articuloSvc.getDataForm({}).catch(error =>{
+                console.log(error)
+            })
+             
+              
+            const {
+                subFamilias,
+                familias,
+                medidas,
+                modelos,
+                marcas,
+                valoracionMetodos,
+                tipoArticulos,
+                tarifas,
+                etiquetaActividades,
+                jsonPersmission,
+                decimal,
+                tipoIvas,
+                tipoIces
+            } = results;
 
-             let moduloDecimales = results[1];
-             let estadoImpuestos = results[2];
+            //SubFamilias
+            this.subFamilias = subFamilias;
 
-             //Permisos Especiales asignados por el usuario 
+            //  //Tipo Articulo
+            this.tipoArticulos = tipoArticulos;
+            this.data.idTipoArticulo = this.tipoArticulos.length > 0 ? this.tipoArticulos[0].idTipoArticulo : 0
 
+            //  //Medida 
+            this.medidas = medidas;
+            this.data.idMedida = this.medidas.length > 0 ? this.medidas[0].idMedida : 0;
 
+            //  //Etiqueta Actividades 
+            this.etiquetaActividades = etiquetaActividades;
 
+            //Aplicacion de Permisos
+            this.articlePermission = JSON.parse(jsonPersmission[0].jsonPermission);
+            this.gridOptions.articlePermission = this.articlePermission;
 
-             this.subFamilias = subFamilias;
+            this.tarifas = tarifas;
 
-             //Tipo Articulo
-             this.tipoArticulos = tipoArticulos;
-             this.data.idTipoArticulo = this.tipoArticulos.length > 0 ? this.tipoArticulos[0].idTipoArticulo : 0
-
-             //Medida 
-             this.medidas = medidas;
-             this.data.idMedida = this.medidas.length > 0 ? this.medidas[0].idMedida : 0;
-
-             //Etiqueta Actividades 
-             this.etiquetaActividades = etiquetaActividades;
-             //Aplicacion de Permisos
-             this.articlePermission = JSON.parse(jsonPersmission[0].jsonPermission);
-             this.gridOptions.articlePermission = this.articlePermission;
-
-             this.tarifas = tarifas;
-
-             this.marcas = marcas
-             this.modelos = modelos;
+            this.marcas = marcas
+            this.modelos = modelos;
 
 
-             this.config = moduloDecimales[0][0];
-             this.tarifaInstance.setConfigDecimal = this.config;
+            this.config = decimal;
+            this.tarifaInstance.setConfigDecimal = this.config;
 
-             this.tipoIces = estadoImpuestos[1];
-             this.tipoIvas = estadoImpuestos[0];
-             this.tipoIva = this.tipoIvas.find(item => item.codigo == "IVA12");
+            this.tipoIces = tipoIces;
+            this.tipoIvas = tipoIvas;
+            this.tipoIva = this.tipoIvas.find(item => item.codigo == "IVA12");
 
-             this.setCodigoSecuencialArticulo();
-             this.setGridTarifa();
-             this.getEstablecimientos();
+            this.setCodigoSecuencialArticulo();
+            this.setGridTarifa();
+            this.getEstablecimientos();
 
-             hideLoader();
+            hideLoader();
 
              //Registro de artículo desde Importación 
              if (this._params && this._params.isImport) {
@@ -421,8 +426,8 @@
         try {            
             if (typeof result !== 'object') return
 
-             const results = await this.initiload();
-             this.subFamilias = results[0].subFamilias;
+             const {subFamilias} = await this.articuloSvc.getDataForm({});
+             this.subFamilias = subFamilias;
              this.setCodigoSecuencialArticulo();
         } catch (error) {
             console.log(error)
@@ -433,8 +438,8 @@
         try {
             if (typeof result !== 'object') return
             
-            let results = await this.initiload();
-            this.marcas = results[0].marcas;
+            let {marcas} = await this.articuloSvc.getDataForm({})
+            this.marcas = marcas;
             this.data.idMarca = this.marcas.at(this.marcas.length - 1).idMarca;
         } catch (error) {
             console.log(error);
@@ -444,8 +449,8 @@
     async resultModalModelo(result) {
         try {
             if (typeof result !== 'object') return
-             const results = await this.initiload();
-             this.modelos = results[0].modelos;
+             const {modelos} = await this.articuloSvc.getDataForm({});
+             this.modelos = modelos;
              this.data.idModelo = this.modelos.at(this.modelos.length - 1).idModelo;
         } catch (error) {
             console.log(error);
@@ -1409,13 +1414,15 @@
   */
 
  export class ModalArticuloDetalleCtrl extends ModalBaseCtrl {
-     static $inject = ['$scope', 'mainService', 'commonService', '$uibModalInstance', 'formulario', 'params', 'decodeToken'];
-     constructor($scope, _mS, _commonSvc, $uibModalInstance, _form, _params, decodeToken) {
+     static $inject = ['$scope', 'articuloService', 'mainService', 'commonService', '$uibModalInstance', 'formulario', 'params', 'decodeToken'];
+     constructor($scope, articuloSvc, _mS, _commonSvc, $uibModalInstance, _form, _params, decodeToken) {
          super({
              $scope,
              _mS,
              _commonSvc
          })
+
+         this.articuloSvc = articulSvc;
          this.$uibModalInstance = $uibModalInstance;
          this._form = _form;
          this._params = _params;
@@ -1439,21 +1446,21 @@
      }
 
      async $onInit() {
-         let results = await this.initiload();
+        //  let results = await this.articuloSvc.getDataForm({})
          let dataArticulo = await this._mS.getData('get', '/Articulo/GetId?id=' + this._params.idArticulo).then(
              response => JSON.parse(response.payload)
          )
-         const {
-             subFamilias,
-             familias,
-             medidas,
-             modelos,
-             marcas,
-             valoracionMetodos,
-             tipoArticulos,
-             tarifas,
-             etiquetaActividades
-         } = results[0];
+        //  const {
+        //      subFamilias,
+        //      familias,
+        //      medidas,
+        //      modelos,
+        //      marcas,
+        //      valoracionMetodos,
+        //      tipoArticulos,
+        //      tarifas,
+        //      etiquetaActividades
+        //  } = results[0];
 
          this.data = dataArticulo[0][0]
 
@@ -1915,19 +1922,23 @@
          '$interval',
          '$uibModalInstance',
          'mainService',
+         'articuloService',
          'commonService',
          'modalService',
          'nombreModal',
          'formulario',
          'params'
      ];
-     constructor($scope, $interval, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModal, _form, _params) {
+     constructor($scope, $interval, $uibModalInstance, _mS, articulSvc, _commonSvc, _modalSvc, _nombreModal, _form, _params) {
          super({
              $scope,
              _mS,
              _commonSvc,
              _form
          })
+
+         this.articulSvc = articulSvc;
+
          this.$uibModalInstance = $uibModalInstance;
          this._modalSvc = _modalSvc;
          this._nombreModal = _nombreModal;
@@ -1945,19 +1956,19 @@
      async $onInit() {
          try {
              showLoader();
-             let results = await this.initiload();
+            
              const {
                  medidas,
-                 tarifas
-             } = results[0];
+                 tarifas,
+                 decimal
+             } = await this.articuloSvc.getDataForm({})
 
              this.medidas = medidas;
              this.data.idMedida = this.medidas.length > 0 ? this.medidas[0].idMedida : 0;
 
              this.tarifas = tarifas;
-
-             const moduloDecimales = results[1];
-             this.config = moduloDecimales[0][0];
+ 
+             this.config =decimal;
              this.tarifaInstance.setConfigDecimal = this.config;
 
              if (this._params) {
