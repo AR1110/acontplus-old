@@ -299,10 +299,7 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params) {
         })
     }
 
-    $scope.lastMessage = false
-
-
-    $scope.sendMedia = (caption, file) => {
+    $scope.sendMedia = (caption, file, lastMessage = null) => {
 
         return new Promise(async (resolve, reject) => {
             try {
@@ -318,7 +315,7 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params) {
                 //this.sendMessageReset();
                 resolve(response.data.message)
 
-                if ($scope.lastMessage) {
+                if (lastMessage) {
                     sendSms('Gracias por preferirnos, este comprobante se adjuntara a su correo electrónico!')
                 }
 
@@ -353,7 +350,6 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params) {
     }
 
     $scope.generateXml = () => {
-        $scope.lastMessage = false
         mS.getFile('get', 'DocumentoElectronico/GetXmlSri/' + params.idDocumentoElectronico, null, true).then(response => {
             //$scope.fileName = response
             let fileName = response.headers()['content-disposition'].split(';')[1].split('=')[1].replace('"', "")
@@ -391,9 +387,7 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params) {
                 .split("=")[1];
             const file = new File([response.data], fileName, { type: response.headers()["content-type"], })
 
-            $scope.sendMedia(fileName, file)
-
-            $scope.lastMessage = true
+            $scope.sendMedia(fileName, file, true)
 
         }).catch(error => {
             console.log(error)
@@ -501,8 +495,7 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params) {
             try {
                 showLoader()
                 await http.get(`/app/logout`)
-                $scope.session.is_logged_in = false
-                $scope.lastMessage = false
+                $scope.session.is_logged_in = false 
                 resolve()
             } catch (error) {
                 if (error.response) {
