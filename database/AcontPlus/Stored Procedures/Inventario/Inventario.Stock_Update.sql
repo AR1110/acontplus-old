@@ -37,11 +37,12 @@ BEGIN
 
 
 	INSERT INTO @ajustes (idAjuste,cantidad,fechaEmision)
-	SELECT tt.idTransaccion, tt.cantidad,MAX(tt.fechaRegistro) 
+	SELECT TOP 1 tt.idTransaccion, tt.cantidad,MAX(tt.fechaRegistro) 
 	FROM Inventario.Transaccion tt WITH (NOLOCK) 
 	INNER JOIN Inventario.TipoTransaccion ti WITH (NOLOCK) ON ti.idTipoTransaccion = tt.idTipoTransaccion 
 	WHERE ti.codigo = 'A' AND tt.idArticulo = @idArticulo AND tt.idBodega = @idBodega AND tt.estado = 1  
 	GROUP BY tt.idTransaccion,cantidad
+	ORDER BY MAX(tt.fechaRegistro) DESC
 
 	IF (SELECT COUNT(*) FROM @ajustes) > 0 
 		BEGIN

@@ -31,13 +31,16 @@ BEGIN
 	SET LANGUAGE SPANISH;
 	DECLARE @typeList INT = 0
 	DECLARE @idEntidad INT
-	
+	DECLARE @jsonConfig AS VARCHAR(MAX)
 
 	SELECT @typeList = typeList FROM OPENJSON(@json) WITH(typeList INT '$.typeList')
 
 	SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
-	IF @typeList = 1 
+	SELECT TOP 1 @jsonConfig = jsonConfig FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CD'
+
+
+	IF @typeList = 1
 		BEGIN
 
 			DECLARE @sql AS NVARCHAR(MAX) = 'SELECT TOP (100)
@@ -159,8 +162,18 @@ BEGIN
 
 
 			--==============================Configuracion Decimal============================================================== 
-			SELECT nroPrecio, nroCantidad, nroIva, nroDescuentoDetalle, nroTotalDetalle, nroTotalSubTotal, nroDescuento, nroIce
-			FROM Config.CantidadDecimal WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codTransaccion = 'C'
+			SELECT nroPrecio,nroCantidad,nroIva,nroDescuentoDetalle ,nroTotalDetalle,nroTotalSubTotal,nroDescuento,nroIce
+			FROM OPENJSON(@jsonConfig)
+			WITH (codTransaccion VARCHAR(5) '$.codTransaccion'
+				,nroPrecio              INT '$.nroPrecio'
+				,nroCantidad            INT '$.nroCantidad'
+				,nroIva                 INT '$.nroIva'
+				,nroDescuentoDetalle    INT '$.nroDescuentoDetalle'
+				,nroTotalDetalle        INT '$.nroTotalDetalle'
+				,nroTotalSubTotal       INT '$.nroTotalSubTotal'
+				,nroDescuento           INT '$.nroDescuento'
+				,nroIce                 INT '$.nroIce') as dt
+			 WHERE dt.codTransaccion = 'C'
 
 
 			--=============================Impuestos===========================================================================
@@ -207,7 +220,6 @@ BEGIN
 			DECLARE @subTotalNetoNoObjetoIva AS NUMERIC(18,5)
 			DECLARE @iva AS NUMERIC(18,5)
 			DECLARE @decuento AS NUMERIC(18,5)
-
 			DECLARE @taxes AS TABLE (
 				 descuento NUMERIC(18,5) NOT NULL
 				,codigoPorcentaje VARCHAR(5) NOT NULL
@@ -313,8 +325,18 @@ BEGIN
 
 
 			--==============================Configuracion Decimal============================================================== 
-			SELECT nroPrecio, nroCantidad, nroIva, nroDescuentoDetalle, nroTotalDetalle, nroTotalSubTotal, nroDescuento, nroIce
-			FROM Config.CantidadDecimal WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codTransaccion = 'C'
+			SELECT nroPrecio,nroCantidad,nroIva,nroDescuentoDetalle ,nroTotalDetalle,nroTotalSubTotal,nroDescuento,nroIce
+			FROM OPENJSON(@jsonConfig)
+			WITH (codTransaccion VARCHAR(5) '$.codTransaccion'
+				,nroPrecio              INT '$.nroPrecio'
+				,nroCantidad            INT '$.nroCantidad'
+				,nroIva                 INT '$.nroIva'
+				,nroDescuentoDetalle    INT '$.nroDescuentoDetalle'
+				,nroTotalDetalle        INT '$.nroTotalDetalle'
+				,nroTotalSubTotal       INT '$.nroTotalSubTotal'
+				,nroDescuento           INT '$.nroDescuento'
+				,nroIce                 INT '$.nroIce') as dt
+			 WHERE dt.codTransaccion = 'C'
 
 
 			--=============================Impuestos===========================================================================

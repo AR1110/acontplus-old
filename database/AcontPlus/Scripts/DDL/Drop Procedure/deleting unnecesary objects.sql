@@ -72,6 +72,25 @@ GO
 DROP PROCEDURE IF EXISTS [Ventas].[NotaEntrega_Detele]
 GO
 
+DROP PROCEDURE IF EXISTS [Config].[CantidadDecimal_Get]
+GO
+
+DROP PROCEDURE IF EXISTS [Config].[CantidadDecimal_Update]
+GO
+
+
+DROP PROCEDURE IF EXISTS [ReporteCompras].[Factura_Detalle]
+GO
+
+
+DROP PROCEDURE IF EXISTS ReporteCompras.IngresoBodega
+GO
+
+DROP PROCEDURE IF EXISTS [Config].[EntidadNotificacion_Get]
+GO
+
+DROP PROCEDURE IF EXISTS [Config].[EntidadNotificacion_Update]
+GO
 --OJO SOLO DESPUES DE MIGRAR TODO
 --GO
 --DROP TABLE ReporteDataSource
