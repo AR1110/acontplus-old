@@ -5,9 +5,9 @@ export {
     ModalDatoAdicionalArticuloCtrl
 }
 
-ModalDatoAdicionalArticuloCtrl.$inject = ['$scope', '$uibModalInstance',  'params'];
+ModalDatoAdicionalArticuloCtrl.$inject = ['$scope', 'mainService', '$uibModalInstance',  'params'];
 
-function ModalDatoAdicionalArticuloCtrl($scope, $uibModalInstance, params){
+function ModalDatoAdicionalArticuloCtrl($scope, mS, $uibModalInstance, params){
 
     let {entity, datosAdicionales, codDoc} = params 
     console.log(entity)
@@ -184,21 +184,23 @@ function ModalDatoAdicionalArticuloCtrl($scope, $uibModalInstance, params){
     }
 
     $scope.removeRowBD = function(idInfoAdicional) {
-        if(codDoc!=='01') return
-        mS.getData('post', 'DatoAdicionalArticulo/Delete/' + idInfoAdicional, null, true).then(response => {
-            if(response.code==="0"){
-                Swa.fire({
-                    icon:'warnig',
-                    html: response.message
-                })
-            }
-            if(response.code==="1"){
-                Swa.fire({
-                    icon:'success',
-                    html: response.message
-                })
-            }
-        })
+        if(codDoc=='01' && idInfoAdicional > 0) {
+            mS.getData('post', 'DatoAdicionalArticulo/Delete/' + idInfoAdicional, null, true).then(response => {
+                if(response.code==="0"){
+                    Swal.fire({
+                        icon:'warnig',
+                        html: response.message
+                    })
+                }
+                if(response.code==="1"){
+                    Swal.fire({
+                        icon:'success',
+                        html: response.message,
+                        timer: 1000
+                    })
+                }
+            })
+        }
     }
     $scope.removeColumn = function(row) {
         console.log(row)
