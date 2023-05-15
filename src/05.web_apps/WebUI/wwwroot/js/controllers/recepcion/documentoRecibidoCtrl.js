@@ -1075,7 +1075,8 @@
                         condicion: false,
                         busqueda: item
                     }
-                    return mS.getData('get', '/Articulo/Search?json=' + JSON.stringify(data)).then(
+                    //Api Inventario
+                    return mS.getData('get', 'Articulo/Search?json=' + JSON.stringify(data), null, true).then(
                         response => {
                             return JSON.parse(response.data)
                         }
@@ -1093,7 +1094,8 @@
 
             $scope.selectArticleSearch = (item, itemDetail) => {
                 try {
-                    mS.getData('get', '/Articulo/GetId?id=' + item.idArticulo).then(
+                    //Inventario 
+                    mS.getData('get', 'Articulo/GetId?id=' + item.idArticulo, null, true).then(
                         response => {
                             if (response.id == "1") {
                                 $scope.articleFinded = { descripcion: '' }
@@ -1368,7 +1370,7 @@
                         codigoAuxiliar: $scope.articleSelected.codigoAuxiliar,
                         descripcion: $scope.articleSelected.descripcion
                     }
-                    mS.getData('get', _urlService + 'Articulo?json=' + JSON.stringify(jsonData)).then(
+                    mS.getData('get', _urlService + 'Recepcion/Articulo?json=' + JSON.stringify(jsonData)).then(
                         response => {
                             if (response.code == '1') {
                                 $scope.articleNotFound = true;
@@ -1413,7 +1415,8 @@
                         descripcion: $scope.articleMergeSearch.textSearch,
                         tipo: tipo
                     }
-                    mS.getData('get', _urlService + 'Articulo?json=' + JSON.stringify(jsonData)).then(
+                    //Recepcion/Articulo
+                    mS.getData('get', _urlService + 'Recepcion/Articulo?json=' + JSON.stringify(jsonData)).then(
                         response => {
                             if (response.code == '1') {
                                 // if ($scope.articleNotFound) {
@@ -1451,7 +1454,7 @@
                         id: item.idArticulo,
                         tipo: 'H'
                     }
-                    mS.getData('get', _urlService + 'Articulo?json=' + JSON.stringify(data)).then(
+                    mS.getData('get', _urlService + 'Recepcion/Articulo?json=' + JSON.stringify(data)).then(
                         response => {
                             if (response.code == '1') {
                                 $scope.articleHistory = JSON.parse(response.payload)
