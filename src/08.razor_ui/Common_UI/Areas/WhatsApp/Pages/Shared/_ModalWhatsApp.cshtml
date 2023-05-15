@@ -3,17 +3,17 @@
     <button type="button" class="close" ng-click="closeModal()">&times;</button>
 </div>
 <div class="modal-body">
-    <div class="row" ng-show="connected_devices != null">
-        <div class="col-12">
-            <div class="header">
-                Device has connected
+    <div class="row" ng-show="session.is_logged_in">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="text-success">
+                Dispositivo Connectado
             </div>
             <p>
-                Device ID: <b>{{current_device.device}}</b>
+                ID del Dispositivo: <b class="text-info">{{current_device.device}}</b>
             </p>
         </div>
     </div>
-    <div class="row">
+    <div class="row" ng-if="!session.is_logged_in">
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="text-center">
                 <img src="{{session.src}}" id="qrcode" alt="" class="img-fluid">
@@ -22,25 +22,42 @@
         </div>
     </div>
     <hr />
-    <form ng-submit="sendMessage()" ng-if="session.isLogged">
-        <div class="row">
+    <form ng-submit="sendMessage()" >
+        <div class="row" ng-if="session.is_logged_in">
             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                 <div class="form-group">
-                    <label for="">Para:</label>
+                    <label for="">Destinatario:</label>
                     <input type="tel" name="" id="" class="form-control" ng-model="whatsapp.number" required>
                 </div>
                 <div class="form-group">
                     <label for="">Mensaje:</label>
-                    <textarea type="tel" name="" id="" class="form-control" ng-model="whatsapp.message"
+                    <textarea type="tel" name="" id="" class="form-control" rows="3" ng-model="whatsapp.message"
                         required></textarea>
                 </div>
             </div>
         </div>
         <hr>
-        <button type="submit" class="btn btn-success">
-            <i class="fa fa-whatsapp" aria-hidden="true"></i>
-            Enviar
-        </button>
+        <div class="row">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12" ng-if="session.is_logged_in">
+                <button type="submit" class="btn btn-success">
+                    <i class="mdi mdi-whatsapp"></i>
+                    Enviar
+                </button>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12" ng-if="!session.is_logged_in">
+                <button type="button" class="btn btn-danger" ng-click="reconnect()">
+                    <i class="fa fa-sync-alt"></i>
+                    Reconectar
+                </button>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12" ng-if="session.is_logged_in">
+                <button type="button" class="btn btn-danger" ng-click="askToLogout()">
+                    <i class="fa fa-sign-out"></i>
+                    Cerrar Sesión
+                </button>
+            </div>
+        </div>
+
     </form>
 </div>
 <div class="modal-footer">

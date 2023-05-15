@@ -8,10 +8,12 @@ documentoElectronicoCtrl.$inject = ['$scope',
     'formulario',
     'toastService',
     '$window',
-    'decodeToken'
+    'decodeToken',
+    'FileSaver',
+    'Blob'
 ]
 
-function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, $window, decodeToken) {
+function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, $window, decodeToken, FileSaver, Blob) {
     $scope.comprobantes = [];
     $scope.selectedComprobantes = [];
     $scope.isMobile = true;
@@ -404,6 +406,20 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
     }
 
 
+    $scope.downloadXml = (item) => {
+        try {
+            _mS.getFile('get', 'DocumentoElectronico/GetXmlSri/' + item.idDocumentoElectronico, null, true).then(response => {
+                let fileName = response.headers()['content-disposition'].split(';')[1].split('=')[1].replace('"', "")
+                fileName = fileName.replace('"', "")
+                let serverData = new Blob([response.data], { type: response.headers()['content-type'] })
+                FileSaver.saveAs(serverData, fileName)
+            }).catch(error => {
+                console.log(error)
+            })
+        } catch (error) { 
+            console.log(item);
+        }
+    }
 
 
     $scope.getDetalleDoc = async (item) => {
