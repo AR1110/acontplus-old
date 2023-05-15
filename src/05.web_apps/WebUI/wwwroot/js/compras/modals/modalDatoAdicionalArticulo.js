@@ -10,18 +10,19 @@ ModalDatoAdicionalArticuloCtrl.$inject = ['$scope', 'mainService', '$uibModalIns
 function ModalDatoAdicionalArticuloCtrl($scope, mS, $uibModalInstance, params){
 
     let {entity, datosAdicionales, codDoc} = params 
-    console.log(entity)
+ 
 
-    $scope.etiquetas = entity.etiquetas[0].etiquetas;
-        
+    $scope.etiquetas = [];
     $scope.articulo = entity; // Datos generales del articulo 
      
     $scope.data = [{
         idArticulo: $scope.articulo.idArticulo,
-        idEtiqueta: $scope.articulo.etiquetas[0].idEtiqueta,
+        idEtiqueta: $scope.articulo.etiquetas.length>0? $scope.articulo.etiquetas[0].idEtiqueta: 0,
         idInfoAdicional: 0,
         adicionales: {}
     }];
+
+    
 
     if(datosAdicionales.some(item=>item.idArticulo === $scope.articulo.idArticulo)){
         let dataInfo = datosAdicionales.filter(item=>item.idArticulo === $scope.articulo.idArticulo)
@@ -32,7 +33,9 @@ function ModalDatoAdicionalArticuloCtrl($scope, mS, $uibModalInstance, params){
         $scope.data =[...dataInfo]
         // $scope.data = dataInfo.map(item=>item.adicionales)
     }else{
-        $scope.etiquetas = entity.etiquetas[0].etiquetas;
+        if(entity.etiquetas.length>0){
+            $scope.etiquetas = entity.etiquetas[0].etiquetas;
+        }
     }   
     
     
@@ -120,7 +123,7 @@ function ModalDatoAdicionalArticuloCtrl($scope, mS, $uibModalInstance, params){
                         // console.log(newObj);
                         for (let key in obj.adicionales) {
                           if (key === columnOriginal) {
-                            console.log(obj)
+                            
                             obj.adicionales[result.value] = obj.adicionales[key];
                             delete obj.adicionales[key];
                           } 
@@ -203,23 +206,27 @@ function ModalDatoAdicionalArticuloCtrl($scope, mS, $uibModalInstance, params){
         }
     }
     $scope.removeColumn = function(row) {
-        console.log(row)
-        let index = $scope.etiquetas.indexOf(row);        
+        
+        try {
+            let index = $scope.etiquetas.indexOf(row);        
         
 
-        for(let item of $scope.data){            
-            if (item.adicionales.hasOwnProperty(row) && item.estado===2) {
-                Swal.fire({
-                    icon:'warning',
-                    html:'La etiqueta está asociada a una factura o nota de entrega, por eso no puedes borrar la columna.'
-                })
-                return
+            for(let item of $scope.data){            
+                if (item.adicionales.hasOwnProperty(row) && item.estado===2) {
+                    Swal.fire({
+                        icon:'warning',
+                        html:'La etiqueta está asociada a una factura o nota de entrega, por eso no puedes borrar la columna.'
+                    })
+                    return
+                }
+                if (item.adicionales.hasOwnProperty(row)) {
+                    delete item.adicionales[row];
+                }              
             }
-            if (item.adicionales.hasOwnProperty(row)) {
-                delete item.adicionales[row];
-            }              
+            $scope.etiquetas.splice(index, 1);
+        } catch (error) {
+            console.log(error);
         }
-        $scope.etiquetas.splice(index, 1);
     }
 
 

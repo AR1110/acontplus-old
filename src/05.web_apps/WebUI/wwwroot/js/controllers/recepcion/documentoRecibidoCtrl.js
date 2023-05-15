@@ -1171,7 +1171,7 @@
                                 let tempDetail = JSON.parse(response.payload);
 
                                 $scope.tempDetail = tempDetail.map(item => {
-                                    let tempEtiquetas = JSON.parse(item.etiquetas);
+                                    let tempEtiquetas = JSON.parse(item.etiquetas) || [];
                                 
                                     let etiquetasMapper = tempEtiquetas.map(etiquet=>{
                                         return {
@@ -1185,7 +1185,7 @@
                                         etiquetas: etiquetasMapper
                                     }
                                 })
-                                console.log($scope.tempDetail)
+                                
                             }
                         }).catch(error => {
                             console.log(error)
@@ -1218,7 +1218,7 @@
                                     estado: item.estado,
                                 }
                             })
-                            console.log(response)
+                            
                         }
                     })
                 } catch (error) {
@@ -1244,7 +1244,7 @@
                     if(response.code==='1'){
                         tS.toastr('success', response.message);
                         let dtAdicional = JSON.parse(response.payload);
-                        console.log(response.payload);
+                        
                         $scope.datosAdicionalesArticulo =  dtAdicional.map(item=>{
                             return {
                                 idArticulo: item.idArticulo,

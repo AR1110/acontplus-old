@@ -17,15 +17,6 @@
          this.tarifaInstance = new ArticuloTarifaGridOption(_form);
      }
 
-     initiload() {
-         return Promise.all([
-             this._commonSvc.getGestionAlmacen(),
-             this._commonSvc.getGestionConfig(),
-             this._commonSvc.getAllImpuestoEstado(),
-             // this._mS.getData('get', '/ActividadEtiqueta/Get?json=' + JSON.stringify({})),            
-         ])
-     }
-
     async resultModalMedida(result){
         try {
             if (typeof result !== 'object') return
@@ -1929,7 +1920,7 @@
          'formulario',
          'params'
      ];
-     constructor($scope, $interval, $uibModalInstance, _mS, articulSvc, _commonSvc, _modalSvc, _nombreModal, _form, _params) {
+     constructor($scope, $interval, $uibModalInstance, _mS, articuloSvc, _commonSvc, _modalSvc, _nombreModal, _form, _params) {
          super({
              $scope,
              _mS,
@@ -1937,7 +1928,7 @@
              _form
          })
 
-         this.articulSvc = articulSvc;
+         this.articuloSvc = articuloSvc;
 
          this.$uibModalInstance = $uibModalInstance;
          this._modalSvc = _modalSvc;
