@@ -100,9 +100,7 @@ BEGIN
 			LEFT JOIN Recepcion.CompraHabitual ch ON t.codigoPrincipal = ch.codArticulo AND ch.ruc = @rucProv
 			LEFT JOIN dbo.Articulo a ON a.codigo = t.codigoPrincipal AND a.idEntidad = @idEntidad
 			LEFT JOIN dbo.Medida m ON a.idMedida = m.idMedida AND m.idEntidad = @idEntidad
-			WHERE NOT EXISTS (SELECT * FROM Recepcion.Doc_Detalle_Temp tt 
-			WHERE t.idDocumento = tt.idDocumento AND t.codigoPrincipal = tt.codigoPrincipal)
-
+			order by idDetalle asc
 			--UPDATE Recepcion.Doc_Impuesto_Temp SET codArticulo = (SELECT TOP 1 codigoPrincipal FROM @tmp) WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp)
 
 			IF EXISTS(SELECT 1 FROM Recepcion.Doc_Impuesto_Temp WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp))
@@ -120,7 +118,7 @@ BEGIN
 			--WHERE t.idDocumento = tt.idDocumento AND t.codigoPrincipal = tt.codigoPrincipal)
 
 
-			SET @payload = (SELECT * FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp) FOR JSON AUTO) 
+			SET @payload = (SELECT * FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp) order by idDetalle ASC FOR JSON AUTO) 
 
 			SELECT '1' AS code, @payload AS payload, 'Detalle añadido correctamente'  as 'message'
 			

@@ -26,28 +26,17 @@
          ])
      }
 
-     async openModalMedida() {
-         let {
-             MODAL_CTRL,
-             MODAL_CSHTML
-         } = this._nombreModal.medida;
-         const {
-             ModalMedidaCtrl
-         } = await import(`./../modal/${MODAL_CTRL}`);
-         const uibModalRef = this._modalSvc.openModalCustom({
-             controller: ModalMedidaCtrl,
-             template: `Medida/${MODAL_CSHTML}`,
-             size: 'md',
-         })
-
-         uibModalRef.result.then(async result => {
-             if (typeof result !== 'object') return
-             const results = await this.initiload();
-             this.medidas = results[0].medidas;
-             this.data.idMedida = this.medidas.at(this.medidas.length - 1).idMedida;
-         })
-     }
-
+    async resultModalMedida(result){
+        try {
+            if (typeof result !== 'object') return
+            const results = await this.initiload();
+            this.medidas = results[0].medidas;
+            this.data.idMedida = this.medidas.at(this.medidas.length - 1).idMedida;
+        } catch (error) {
+            console.log(error)
+        }
+    }
+     
 
      //generate barcode
 
@@ -248,6 +237,12 @@
                  this.data.descripcion = this._params.descripcion;
                  this.data.precioCosto = this._form.roundNumber(this._params.precioCosto, this.config.nroPrecio);
                  this.tarifaInstance.setPrecioCosto = this.data.precioCosto;
+
+                 if(this.data.codigoAuxiliar){
+                    this.data.codigoAuxiliar = this._params.codigoAuxiliar;                    
+                 }else{
+                    this.data.codigoAuxiliar = this._params.codigo;
+                 }
                  return
              }
 
@@ -418,74 +413,43 @@
          if (this.step === 4 || this.tipoRegistro === 2) {
              this._aUbic = new UbicacionArticulo(this._mS, this._form, this._commonSvc, this._params)
          }
-     }
+    }
 
-     async openModalSubFamilia() {
-         const {
-             MODAL_CTRL,
-             MODAL_CSHTML
-         } = this._nombreModal.subFamilia
-         const {
-             ModalSubFamiliaCtrl
-         } = await import(`./../modal/${MODAL_CTRL}`);
 
-         const modalRef = this._modalSvc.openModalCustom({
-             controller: ModalSubFamiliaCtrl,
-             template: `SubFamilia/${MODAL_CSHTML}`,
-             size: 'md',
-         })
 
-         modalRef.result.then(async result => {
-             if (typeof result !== 'object') return
+    async resultModalSubFamilia(result) {
+        try {            
+            if (typeof result !== 'object') return
 
              const results = await this.initiload();
              this.subFamilias = results[0].subFamilias;
              this.setCodigoSecuencialArticulo();
-         })
-     }
+        } catch (error) {
+            console.log(error)
+        }        
+    }
 
-     async openModalMarca() {
-         const {
-             MODAL_CTRL,
-             MODAL_CSHTML
-         } = this._nombreModal.marca;
-         const {
-             ModalMarcaCtrl
-         } = await import(`./../modal/${MODAL_CTRL}`);
-         const uibModalRef = this._modalSvc.openModalCustom({
-             controller: ModalMarcaCtrl,
-             template: `Marca/${MODAL_CSHTML}`,
-             size: 'md'
-         })
-         uibModalRef.result.then(async result => {
-             if (typeof result !== 'object') return
-             const results = await this.initiload();
-             this.marcas = results[0].marcas;
-             this.data.idMarca = this.marcas.at(this.marcas.length - 1).idMarca;
-         })
-     }
+    async resultModalMarca(result) {
+        try {
+            if (typeof result !== 'object') return
+            
+            let results = await this.initiload();
+            this.marcas = results[0].marcas;
+            this.data.idMarca = this.marcas.at(this.marcas.length - 1).idMarca;
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
-     async openModalModelo() {
-         const {
-             MODAL_CTRL,
-             MODAL_CSHTML
-         } = this._nombreModal.modelo;
-         const {
-             ModalModeloCtrl
-         } = await import('./../modal/' + MODAL_CTRL);
-
-         const _uibModalRef = this._modalSvc.openModalCustom({
-             controller: ModalModeloCtrl,
-             template: 'Modelo/' + MODAL_CSHTML,
-             size: 'md'
-         })
-
-         _uibModalRef.result.then(async result => {
-             if (typeof result !== 'object') return
+    async resultModalModelo(result) {
+        try {
+            if (typeof result !== 'object') return
              const results = await this.initiload();
              this.modelos = results[0].modelos;
              this.data.idModelo = this.modelos.at(this.modelos.length - 1).idModelo;
-         })
+        } catch (error) {
+            console.log(error);
+        }         
      }
 
      //Calcular Tarifa al momento de agregar el articulo 

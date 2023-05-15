@@ -65,7 +65,7 @@
                         <option ng-value="m.idMedida" ng-repeat="m in $ctrl.medidas">{{m.descripcion}}</option>
                     </select>
                     <div class="input-group-append">
-                        <button type="button" ng-click="$ctrl.openModalMedida()"
+                        <button type="button" btn-add-update-medida results="$ctrl.resultModalMedida(item)"
                             class="btn btn-outline-secondary btn-sm"><i class="fas fa-plus fa-xs"></i></button>
                     </div>
                 </div>

@@ -1,0 +1,209 @@
+<form ng-submit="$ctrl.onSave()" autocomplete="off">
+    <div class="modal-header bg-info">
+        <h5 class="modal-title text-white">Factura Física</h5>
+        <button class="close" ng-click="$ctrl.closeModal()">&times;</button>
+    </div>
+
+    <div class="modal-body">
+        <div layout-gt-sm="row">
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Esta.:</label>
+                <input ng-model="$ctrl.establecimiento.nombreComercial" disabled>
+            </md-input-container>
+
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Proveedor</label>
+                <input ng-model="$ctrl.proveedor.nombreFiscal" disabled>
+            </md-input-container>
+
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Nro. Identificaciòn</label>
+                <input ng-model="$ctrl.proveedor.numeroIdentificacion" disabled>
+            </md-input-container>
+        </div>
+
+        <div layout-gt-sm="row">
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Sustento Tributario</label>
+                <md-select ng-model="$ctrl.data.idSustentoTributario">
+                    <md-option ng-repeat="item in $ctrl.sustentoTributarios" ng-value="item.idSustentoTributario">
+                        {{item.descripcion}}
+                    </md-option>
+                </md-select>
+            </md-input-container>
+
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Categoria</label>
+                <md-select ng-model="$ctrl.data.idCategoriaCompra">
+                    <md-option ng-repeat="item in $ctrl.categoriaCompras" ng-value="item.idCategoriaCompra">
+                        {{item.descripcion}}
+                    </md-option>
+                </md-select>
+                <button type="button" class="btn btn-success btn-sm mt-1" ng-click="$ctrl.openModalCategoria()">
+                    <i class="fas fa-plus"></i> Nuevo
+                </button>
+            </md-input-container>
+
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Punto Emisión</label>
+                <input ng-model="$ctrl.data.puntoEmision" mask="999-999" md-minlength="7" md-maxlength="7"
+                    placeholder="001-002">
+            </md-input-container>
+
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Nro. Documento</label>
+                <input ng-model="$ctrl.data.nroDocumento" valid-number>
+            </md-input-container>
+        </div>
+
+
+
+        <div layout-gt-sm="row">
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Tiempo Crédito</label>
+                <md-select ng-model="$ctrl.data.idTiempoCredito"
+                    ng-change="$ctrl.getFechaVencimiento($ctrl.data.fechaEmision)">
+                    <md-option ng-repeat="item in $ctrl.tiempoCreditos" ng-value="item.idTiempoCredito">
+                        {{item.descripcion}}
+                    </md-option>
+                </md-select>
+            </md-input-container>
+
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Fecha Emisión <span class="text-danger">*</span></label>
+                <input type="date" ng-model="$ctrl.data.fechaEmision"
+                    ng-change="$ctrl.getFechaVencimiento($ctrl.data.fechaEmision)"
+                    ng-keyup="$ctrl.getFechaVencimiento($ctrl.data.fechaEmision)" aria-label="Fecha Emisión">
+                <span class="text-info">{{$ctrl.fechaEmisionEscrita}}</span>
+            </md-input-container>
+
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Fecha Vencimiento <span class="text-danger">*</span> </label>
+                <input type="date" ng-model="$ctrl.data.fechaVencimiento" aria-label="Fecha Vencimiento" disabled />
+                <span class="text-info">{{$ctrl.fechaVencimientoEscrita}}</span>
+            </md-input-container>
+        </div>
+
+        <div layout-gt-sm="row">
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Nro. Autorización</label>
+                <input ng-model="$ctrl.data.nroAutorizacion">
+                <span class="text-info">{{$ctrl.data.nroAutorizacion.length}} números</span>
+            </md-input-container>
+
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Observación: </label>
+                <input ng-model="$ctrl.data.observacion">
+            </md-input-container>
+        </div>
+
+        <div layout="row">
+            <div flex="25">
+                <md-input-container class="md-block">
+                    <label>Subtotal IVA 12.0%:</label>
+                    <input ng-model="$ctrl.data.subTotalIva" decimal>
+                </md-input-container>
+                <md-input-container class="md-block">
+                    <label>Subtotal IVA 0%:</label>
+                    <input ng-model="$ctrl.data.subTotalIvaCero" decimal>
+                </md-input-container>
+
+                <md-input-container class="md-block">
+                    <label>Subtotal Exento IVA:</label>
+                    <input ng-model="$ctrl.data.subTotalExentoIva" decimal>
+                </md-input-container>
+
+                <md-input-container class="md-block">
+                    <label>Subtotal no Objeto IVA:</label>
+                    <input ng-model="$ctrl.data.subTotalNoObjetoIva" decimal>
+                </md-input-container>
+            </div>
+
+
+            <div flex="25">
+                <md-input-container class="md-block">
+                    <label>SubTotal Neto IVA:</label>
+                    <input ng-model="$ctrl.data.subTotalNetoIva" decimal>
+                </md-input-container>
+                <md-input-container class="md-block">
+                    <label>SubTotal Neto IVA 0:</label>
+                    <input ng-model="$ctrl.data.subTotalNetoIvaCero" decimal>
+                </md-input-container>
+
+                <md-input-container class="md-block">
+                    <label>SubTotal Neto Exento IVA:</label>
+                    <input ng-model="$ctrl.data.subTotalNetoExentoIva" decimal>
+                </md-input-container>
+
+                <md-input-container class="md-block">
+                    <label>SubTotal Neto no Objeto IVA:</label>
+                    <input ng-model="$ctrl.data.subTotalNetoNoObjetoIva" decimal>
+                </md-input-container>
+            </div>
+
+
+            <div flex="25">
+                <md-input-container class="md-block">
+                    <label>IRBPNR:</label>
+                    <input ng-model="$ctrl.data.irbpnr" decimal>
+                </md-input-container>
+                <md-input-container class="md-block">
+                    <label>PROPINA:</label>
+                    <input ng-model="$ctrl.data.propina" decimal>
+                </md-input-container>
+
+                <md-input-container class="md-block">
+                    <label>% Descuento:</label>
+                    <input ng-model="$ctrl.data.porcentajeDescuento" decimal>
+                </md-input-container>
+
+                <md-input-container class="md-block">
+                    <label>Descuento:</label>
+                    <input ng-model="$ctrl.data.totalDescuento" decimal>
+                </md-input-container>
+            </div>
+
+
+            <div flex="25">
+                <md-input-container class="md-block">
+                    <label>Subtotal sin Impuesto:</label>
+                    <input ng-model="$ctrl.data.subTotalSinImpuestos" decimal>
+                </md-input-container>
+
+                <md-input-container class="md-block">
+                    <label>ICE:</label>
+                    <input ng-model="$ctrl.data.totalIce" decimal>
+                </md-input-container>
+
+                <md-input-container class="md-block">
+                    <label>IVA 12:</label>
+                    <input ng-model="$ctrl.data.iva" decimal>
+                </md-input-container>
+
+                <md-input-container class="md-block">
+                    <label>Transporte:</label>
+                    <input ng-model="$ctrl.data.transporte" decimal>
+                </md-input-container>
+
+                <md-input-container class="md-block">
+                    <label>Recargo:</label>
+                    <input ng-model="$ctrl.data.recargo" decimal>
+                </md-input-container>
+
+                <md-input-container class="md-block">
+                    <label>Total:</label>
+                    <input ng-model="$ctrl.data.total" decimal>
+                </md-input-container>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-success">
+            <i class="ti-save"></i> Guardar
+        </button>
+        <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">
+            &times; Cerrar
+        </button>
+    </div>
+</form>

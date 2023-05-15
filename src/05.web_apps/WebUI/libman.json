@@ -162,6 +162,11 @@
       "provider": "cdnjs",
       "library": "UAParser.js@1.0.35",
       "destination": "wwwroot/lib/UAParser.js/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "axios@1.4.0",
+      "destination": "wwwroot/lib/axios/"
     }
   ]
 }

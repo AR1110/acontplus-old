@@ -9,6 +9,50 @@ const CHANGE_VERSION = (largo = 50) => {
 }
 
 
+//Inventario 
+app.constant('nombreModalInventario', {
+    FAMILIA: {
+        fileCtrl: '/js/inventario/modals/modalFamiliaCtrl.js' + CHANGE_VERSION(),
+        controller: 'ModalFamiliaCtrl',
+        template: 'Familia/_ModalFamilia.cshtml'
+    },
+    SUBFAMILIA: {
+        fileCtrl: '/js/inventario/modals/modalSubFamiliaCtrl.js' + CHANGE_VERSION(),
+        controller: 'ModalSubFamiliaCtrl',
+        template: 'SubFamilia/_ModalSubFamilia.cshtml'
+    },
+    MEDIDA: {
+        fileCtrl: '/js/inventario/modals/modalMedidaCtrl.js' + CHANGE_VERSION(),
+        controller: 'ModalMedidaCtrl',
+        template: 'Medida/_ModalMedida.cshtml'
+    },
+    MARCA: {
+        fileCtrl: '/js/inventario/modals/modalMarcaCtrl.js' + CHANGE_VERSION(),
+        controller: 'ModalMarcaCtrl',
+        template: 'Marca/_ModalMarca.cshtml'
+    }  ,
+    MODELO: {
+        fileCtrl: '/js/inventario/modals/modalModeloCtrl.js' + CHANGE_VERSION(),
+        controller: 'ModalModeloCtrl',
+        template: 'Modelo/_ModalModelo.cshtml'
+    },
+    ARTICULO_FRACCIONADO: {
+        fileCtrl: '/js/modal/modalArticuloCtrl.min.js' + CHANGE_VERSION(),
+        controller: 'ModalArticuloFraccionadoCtrl',
+        template: 'ArticuloFraccionado/_ModalArticuloFraccionado.cshtml'
+    },
+        
+})
+
+//Facturacion Electronica 
+app.constant('nombreModalFactElect', {
+    DATO_ADICIONAL_ARTICULO: {
+        fileCtrl: '/js/factElect/modals/modalDatoAdicionalArticuloCtrl.js',
+        controller: 'ModalDatoAdicionalArticuloCtrl',
+        template:'~/Areas/FactElect/Pages/Shared/_ModalDatoAdicionalArticulo.cshtml'
+    }
+})
+
 app.constant('nombreModal', {
     aprob_comp: {
         MODAL_FILE_CTRL: 'modal/ventas/modalAprobDocument.js' + CHANGE_VERSION(),
@@ -122,7 +166,6 @@ app.constant('nombreModal', {
         MODAL_ARTICULO_IMPUESTO_RETENCION_CSHTML: 'Articulo/_ModalArticuloImpuestoRetencion.cshtml',
         MODAL_DETALLE_CSHTML: 'Articulo/_ModalArticuloDetalle.cshtml',
         MODAL_ARTICULO_IMPUESTO_CSHTML: 'Articulo/_ModalArticuloImpuesto.cshtml',
-        MODAL_ARTICULO_FRACCIONADO_CSHTML: 'ArticuloFraccionado/_ModalArticuloFraccionado.cshtml',
         MODAL_NUEVO: {
             controller: 'ModalArticuloCtrl',
             template: 'Articulo/_ModalNuevoArticulo.cshtml'
@@ -176,7 +219,12 @@ app.constant('nombreModal', {
     },
     compra: {
         MODAL_CUOTA_CTRL: 'modalCompraCuotaCtrl.js' + CHANGE_VERSION(),
-        MODAL_CUOTA_CSHTML: '_ModalCompraCuota.cshtml'
+        MODAL_CUOTA_CSHTML: '_ModalCompraCuota.cshtml',        
+        MODAL_DATO_ADICIONAL_ARTICULO: {
+            fileCtrl: '/js/compras/modals/modalDatoAdicionalArticulo.js' + CHANGE_VERSION(),
+            controller: 'ModalDatoAdicionalArticuloCtrl',
+            template:'~/Areas/Compra/Pages/Shared/_ModalDatoAdicionalArticulo.cshtml'
+        }
     },
 
     cliente: {

@@ -1,9 +1,7 @@
 ﻿using Common.Logs;
 using DataAccess;
-using Domain.Dtos.Compras;
 using Domain.ViewModels.Compras;
 using Helpers;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -15,18 +13,17 @@ namespace ApiCompras.Controllers
     {
 
         private readonly IConfiguration _configuration;
-        private readonly DbAccess _db;
         public FacturaCompraController(IConfiguration configuration)
         {
-            _configuration = configuration;
-            _db = new DbAccess(_configuration);
+            _configuration = configuration;          
         }
 
         [HttpGet("Get")]
         public async Task<IActionResult> Get(string json)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
+            DbAccess _db = new DbAccess(_configuration);
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -37,6 +34,7 @@ namespace ApiCompras.Controllers
             }
             catch (Exception ex)
             {
+                LogWriter _logs = new LogWriter(_configuration);
                 _logs.LogError("Error al obtener datos de Factura Compras: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos de Facturas Compras");
             }
@@ -50,8 +48,8 @@ namespace ApiCompras.Controllers
         [HttpGet("GetId")]
         public async Task<IActionResult> GetId(int id)
         {
-            LogWriter _logs = new LogWriter(_configuration);
             GenericResponse _response = new GenericResponse();
+            DbAccess _db = new DbAccess(_configuration);
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -62,6 +60,7 @@ namespace ApiCompras.Controllers
             }
             catch (Exception ex)
             {
+                LogWriter _logs = new LogWriter(_configuration);
                 _logs.LogError("Error al obtener datos de Factura Compras por Id: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos de Facturas Compras por Id");
             }
@@ -75,19 +74,21 @@ namespace ApiCompras.Controllers
         [HttpPost("Insert")]
         public async Task<IActionResult> Insert([FromBody] FacturaCompraViewModel data)
         {
-            LogWriter _logs = new LogWriter(_configuration);
             GenericResponse _response = new GenericResponse();
+            DbAccess _db = new DbAccess(_configuration);
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Compra.Factura_Insert");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _db.AddDynamicParam("jsonFactura", JsonConvert.SerializeObject(data.factura));
-                _db.AddDynamicParam("jsonDetalle", JsonConvert.SerializeObject(data.detalle));               
+                _db.AddDynamicParam("jsonDetalle", JsonConvert.SerializeObject(data.detalle));
+                _db.AddDynamicParam("artInfoAdicionales", data.artInfoAdicionales);
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
+                LogWriter _logs = new LogWriter(_configuration);
                 _logs.LogError("Error al guardar datos de la Factura Compra: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al guardar los datos de la Factura Compra");
             }
@@ -101,8 +102,8 @@ namespace ApiCompras.Controllers
         [HttpPut("Update/{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] FacturaCompraViewModel data)
         {
-            LogWriter _logs = new LogWriter(_configuration);
             GenericResponse _response = new GenericResponse();
+            DbAccess _db = new DbAccess(_configuration);
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -110,11 +111,13 @@ namespace ApiCompras.Controllers
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _db.AddDynamicParam("id", id);
                 _db.AddDynamicParam("jsonFactura", JsonConvert.SerializeObject(data.factura));
-                _db.AddDynamicParam("jsonDetalle", JsonConvert.SerializeObject(data.detalle));               
+                _db.AddDynamicParam("jsonDetalle", JsonConvert.SerializeObject(data.detalle));
+                _db.AddDynamicParam("artInfoAdicionales", data.artInfoAdicionales);
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
+                LogWriter _logs = new LogWriter(_configuration);
                 _logs.LogError("Error al editar datos de Factura Compra: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al editar los datos de la Factura Compra");
             }
@@ -128,8 +131,8 @@ namespace ApiCompras.Controllers
         [HttpPut("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            LogWriter _logs = new LogWriter(_configuration);
             GenericResponse _response = new GenericResponse();
+            DbAccess _db = new DbAccess(_configuration);
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -140,8 +143,36 @@ namespace ApiCompras.Controllers
             }
             catch (Exception ex)
             {
+                LogWriter _logs = new LogWriter(_configuration);
                 _logs.LogError("Error al anular la factura compra: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al anular la factura");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
+        }
+
+        //----------------------Other Methods------------------------
+        [HttpGet("FindByProveedor/{idProveedor}")]
+        public async Task<IActionResult> FindByProveedor(int idProveedor)
+        {
+            GenericResponse _response = new GenericResponse();
+            DbAccess _db = new DbAccess(_configuration);
+            try
+            {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                await _db.SPExecute("Compra.Factura_FindByProveedor");
+                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+                _db.AddDynamicParam("idProveedor", idProveedor);
+                _response = _db.GetDataTableAsync();
+            }
+            catch (Exception ex)
+            {
+                LogWriter _logs = new LogWriter(_configuration);
+                _logs.LogError("Error al obtener facturas por proveedor: " + ex.ToString());
+                _response.Create(code: "0", message: "Error al obtener facturas por proveedor");
             }
             finally
             {

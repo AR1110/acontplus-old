@@ -1,20 +1,30 @@
 ﻿app.controller('facturaVentaCtrl', facturaVentaCtrl)
 
-facturaVentaCtrl.$inject = [
-    '$rootScope',
+facturaVentaCtrl.$inject = [    
     '$scope',
     '$filter',
     'mainService',
     'commonService',
     'documentoVentaService',
+    'facturaService',
     'modalService',
     'nombreModal',
     'toastService',
-    'formulario',
-    'decodeToken'
+    'formulario'    
 ]
 
-function facturaVentaCtrl($rootScope, $scope, $filter, _mS, _commonSvc, _docVentaSvc, _modalSvc, _nombreModalConst, _tS, _fS, decodeToken) {
+function facturaVentaCtrl(
+    $scope, 
+    $filter, 
+    _mS, 
+    _commonSvc, 
+    _docVentaSvc, 
+    facturaSvc, 
+    _modalSvc, 
+    _nombreModalConst, 
+    _tS, 
+    _fS    
+) {
     // let accion = JSON.parse(localStorage.getItem("accion"));
     // if (accion === null) {
     //     location.href = "/Home/Index";
@@ -75,33 +85,29 @@ function facturaVentaCtrl($rootScope, $scope, $filter, _mS, _commonSvc, _docVent
 
 
 
-    $scope.getFacturas = async () => {
+    $scope.getFacturas = function () {
 
         try {
-            showLoader();
             if ($scope.dataSearch.checkBoxCliente ||
                 $scope.dataSearch.checkBoxFecha ||
                 $scope.dataSearch.checkBoxUsuario ||
                 $scope.dataSearch.checkBoxEstado) {
-                $scope.dataSearch.checkBoxDefault = false
+                    $scope.dataSearch.checkBoxDefault = false
             } else {
                 $scope.dataSearch.checkBoxDefault = true;
             }
-
-            _mS.getData('get', '/FacturaVenta/Get?json=' + JSON.stringify($scope.dataSearch)).then(response => {
-                $scope.facturas = []
-                if (response.code === '0') {
-                    hideLoader();
-                    console.warn(response)
-                    return
-
-                }
-                $scope.facturas = JSON.parse(response.payload) || [];
+                
+            showLoader();
+            $scope.facturas = [];
+            facturaSvc.getAll($scope.dataSearch).then(response=>{
+                $scope.facturas = response;
                 $scope.cloneFacturas = JSON.parse(JSON.stringify($scope.facturas));
                 $scope.getTotales();
                 hideLoader();
-            })
-
+            }).catch(error => {
+                hideLoader();
+                console.log(error);
+            })           
             _commonSvc.getDataFormVenta().then(result => {
                 $scope.jsonPermission = JSON.parse(result[9][0].jsonPermission)
             })
@@ -109,8 +115,7 @@ function facturaVentaCtrl($rootScope, $scope, $filter, _mS, _commonSvc, _docVent
         } catch (error) {
             hideLoader();
             console.log(error)
-
-        } finally {}
+        } 
     }
 
 
@@ -452,8 +457,7 @@ function facturaVentaCtrl($rootScope, $scope, $filter, _mS, _commonSvc, _docVent
 
             if (isConfirmed) {
                 showLoader();
-                _mS.getData('delete', 'Factura/' + item.idFactura, null, true).then(response => {
-
+                facturaSvc.delete(item.idFactura).then(response => {
                     if (response.code === "0") {
                         hideLoader();
                         _fS.sweetAlert('warning', response.message, response.titleSms);
@@ -475,6 +479,7 @@ function facturaVentaCtrl($rootScope, $scope, $filter, _mS, _commonSvc, _docVent
                     }
                 }).catch(error => {
                     hideLoader();
+                    console.log(error)
                 })
             }
         } catch (error) {

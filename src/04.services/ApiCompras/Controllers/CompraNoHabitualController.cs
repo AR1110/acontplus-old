@@ -59,6 +59,7 @@ namespace ApiCompras.Controllers
                 _db.AddDynamicParam("comprobante", SqlValidation.ValidateSqlString(data.comprobante));
                 _db.AddDynamicParam("detalles", SqlValidation.ValidateSqlString(data.detalles));
                 _db.AddDynamicParam("impuestos", SqlValidation.ValidateSqlString(data.impuestos));
+                _db.AddDynamicParam("artInfoAdicionales", SqlValidation.ValidateSqlString(data.artInfoAdicionales));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -87,6 +88,7 @@ namespace ApiCompras.Controllers
                 _db.AddDynamicParam("Comprobante", SqlValidation.ValidateSqlString(data.comprobante));
                 _db.AddDynamicParam("detalles", SqlValidation.ValidateSqlString(data.detalles));
                 _db.AddDynamicParam("impuestos", SqlValidation.ValidateSqlString(data.impuestos));
+                _db.AddDynamicParam("artInfoAdicionales", SqlValidation.ValidateSqlString(data.artInfoAdicionales));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

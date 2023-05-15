@@ -6,29 +6,12 @@
     let etiquetaSvc = {};
     let tS = {};
 
-    app.directive('forceChipEnable', forceChipEnable);
-    
-    function forceChipEnable() {
-        return {
-            require: ['?^mdChips', '?^mdChip'],
-            link: function(scope, element, attrs, controllers) {
-                if (controllers) {
-                    console.log(controllers)
-                    let chipsCtrl = controllers[0];
-                    let chipCtrl = controllers[1];
-                    
-                    chipsCtrl.enableChipEdit = true;
-                    chipCtrl.init(chipsCtrl);
-                }
-            }
-        }
-    }
     
     app.controller('etiquetaCtrl', etiquetaCtrl);
     
-    etiquetaCtrl.$inject = ['$scope', '$injector', 'modalService', 'decodeToken'];
+    etiquetaCtrl.$inject = ['$scope', '$injector', 'modalService'];
 
-    function etiquetaCtrl($scope, $injector, modalSvc, decodeToken) {
+    function etiquetaCtrl($scope, $injector, modalSvc) {
       
         etiquetaSvc = $injector.get('etiquetaService');
         tS = $injector.get('toastService');
@@ -136,52 +119,45 @@
 
     function modalEtiquetaCtrl($scope, $uibModalInstance, params) {
         
-        $scope.data = {}
+        $scope.data = {};
+
+        $scope.dataLabel = {
+            etiquetas:[],
+            readonly:false,
+            removable:false,
+            edit: true,       
+        }
         $scope.etiquetas = []
 
         if(params.idEtiqueta>0){
             $scope.data = Object.assign({}, params);
-            
-            $scope.etiquetas =$scope.data.etiquetas;
+            $scope.dataLabel.etiquetas =  $scope.data.etiquetas.split(';');
             $scope.modalTitle = 'Editar';
             $scope.txtSave = 'Actualizar';
             $scope.iconSave = 'ti-pencil';
-            $scope.isNew = false;
-            $scope.showEstado = !$scope.data.estado;
-        }else{
-            $scope.isNew = true
+            $scope.showEstado = true;            
+        }else{            
             $scope.modalTitle = 'Nuevo';
             $scope.txtSave = 'Guardar';
             $scope.iconSave = 'ti-save';
         }
-
-        $scope.addRow = function() {
-            $scope.etiquetas.push({
-                codigo: null,
-                descripcion: null,
-            });
-        };
-
+       
         $scope.removeRow = function(item) {
             
-            let index = $scope.etiquetas.indexOf(item)
+            if(!($scope.data.idEtiqueta > 0)) return 
 
-            if(!($scope.data.idEtiqueta > 0)) {
-                $scope.etiquetas.splice(index, 1);
-            }
-
-            
+            console.log('onChipRemove', $chip, $index);
             Swal.fire({
                 title: 'Eliminar Etiqueta',
                 icon:'warning',
-                html: `Recuerde no haber usado este etiqueta en algún documento de compras!`,
+                html: 'Recuerde no haber usado este etiqueta en algún documento de compras!',
                 showCancelButton: true,
                 showConfirmButton: true,
                 confirmButtonText: 'Si',
                 cancelButtonText: 'No'
             }).then(result => {
-                if(result.isConfirmed) {                    
-                    $scope.etiquetas.splice(index, 1);
+                if(!result.isConfirmed) {                    
+                    $scope.dataLabel.etiquetas.push($chip);
                     $scope.$apply();
                 }
             })
@@ -197,34 +173,9 @@
                     return
                 }
 
-                if($scope.etiquetas.length === 0){
+                if($scope.dataLabel.etiquetas.length === 0){
                     tS.toastr('warning', 'Ingrese al menos una etiqueta');
                     return
-                }
-
-                const codigos = new Set();
-
-                for (const codigoObjeto of $scope.etiquetas) {
-                    if(!codigoObjeto.codigo){
-                        tS.toastr('warning', `Los código son obligatorios`);
-                        return
-                    }
-
-                    if(!codigoObjeto.descripcion){
-                        tS.toastr('warning', `Los código son obligatorios`);
-                        return
-                    }
-                    if (codigos.has(codigoObjeto.codigo)) {                     
-                        tS.toastr('warning', `El código ${codigoObjeto.codigo} ya ha sido ingresado anteriormente`);
-                        return
-                    } else {
-                        // El código no existe aún, agregarlo al conjunto "codigos"
-                        codigos.add(codigoObjeto.codigo);
-                        console.log(`El código ${codigoObjeto.codigo} se ha agregado correctamente`);
-                    }
-
-                    codigoObjeto.codigo.trim();
-                    codigoObjeto.descripcion.trim();
                 }
 
                 showLoader();
@@ -232,10 +183,9 @@
                 const data = {
                     descripcion: $scope.data.descripcion,
                     estado: $scope.data.estado,
-                    etiquetas: JSON.stringify($scope.etiquetas),
+                    etiquetas: $scope.dataLabel.etiquetas.join(';'),
                 }
 
-            
                 if($scope.data.idEtiqueta > 0){
                     etiquetaSvc.update($scope.data.idEtiqueta, data).then($scope.successResponse)
                     .catch(error => {

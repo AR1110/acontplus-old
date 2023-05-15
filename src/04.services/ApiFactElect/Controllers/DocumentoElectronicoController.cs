@@ -90,9 +90,9 @@ namespace ApiFactElect.Controllers
                     xmlSri = HttpUtility.HtmlDecode(dt.Rows[0].Field<string>("xmlSri"));
                     byte[] byteXml = Encoding.UTF8.GetBytes(xmlSri);
                     _response.Create(byteXml, "text/xml", dt.Rows[0].Field<string>("filename") + ".xml");
-                    var sms = "";
-                    await new FileUpload().Upload(_configuration.GetSection("WhatsAppFiles").Value, _response.FileName, _response.Content);
-                    return Ok(_response.FileName);
+                    //var sms = "";
+                    //await new FileUpload().Upload(_configuration.GetSection("WhatsAppFiles").Value, _response.FileName, _response.Content);
+                    return File(_response.Content, _response.ContentType, _response.FileName);
                 }
                 return BadRequest("No se encontro xml");
             }

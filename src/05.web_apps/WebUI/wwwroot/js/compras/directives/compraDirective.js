@@ -13,7 +13,7 @@
             link: function (scope, element, attrs) {
 
                 element.on('click', async function () {
-                    console.log(scope)
+                    
                     if(!Number.isInteger(scope.entity.cantidad)){
                         Swal.fire({
                             title: 'Datos Adicionales',
@@ -23,11 +23,12 @@
                         return
                     }
 
-                    let {ModalDatoAdicionalArticuloCtrl} = await import('/js/compras/modals/modalDatoAdicionalArticulo.js' + CHANGE_VERSION());
+                    let {fileCtrl, controller, template} = nombreModal.compra.MODAL_DATO_ADICIONAL_ARTICULO;                    
+                    let ctrl = (await import(fileCtrl))[controller]
                     
                     let modalRef = modalService.openModalCustom({
-                        controller: ModalDatoAdicionalArticuloCtrl,
-                        template: '~/Areas/Compra/Pages/Shared/_ModalDatoAdicionalArticulo.cshtml',
+                        controller: ctrl,
+                        template,
                         size:'lg',
                         params: {
                             entity: scope.entity,
@@ -36,30 +37,24 @@
                         isRenderRazorPartial: true
                     })  
                     
-                    modalRef.result.then(function (result) {
-                        if(typeof result ==='object'){
+                    modalRef.result.then(function (results) {
+                        if(angular.isArray(results)){
 
                             //Cuando es editar 
-                            if(scope.datosAdicionales.info.some(item=>item.idArticulo ===scope.entity.idArticulo)){
-                                for(let label of scope.datosAdicionales.info){
-                                    if(label.idArticulo===scope.entity.idArticulo){
-                                        label.adicionales = result.data;                                     
-                                    }
+                            if(scope.datosAdicionales.some(item=>item.idArticulo ===scope.entity.idArticulo)){
+                                scope.datosAdicionales = scope.datosAdicionales.filter(item=>item.idArticulo !==scope.entity.idArticulo);
+                                
+                                for(let item of results){
+                                    scope.datosAdicionales.push(item);
                                 }
+                                                              
                             }else {
-
-                                scope.datosAdicionales.info.push({
-                                    idArticulo: scope.entity.idArticulo,
-                                    idEtiqueta: scope.entity.etiquetas[0].idEtiqueta,
-                                    adicionales: result.data
-                                });
-                            }                            
+                                for(let item of results){
+                                    scope.datosAdicionales.push(item);
+                                }
+                            }
+                            console.log(scope.datosAdicionales)                            
                         }
-                       
-                        // scope.getDataEtiqueta({
-                        //     items: result
-                        // })
-                        console.log(scope.datosAdicionales)
                     })
                 });
             }

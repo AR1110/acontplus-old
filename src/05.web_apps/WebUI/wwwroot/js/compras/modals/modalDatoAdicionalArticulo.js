@@ -1,3 +1,4 @@
+ 
 
 
 export {
@@ -9,27 +10,136 @@ ModalDatoAdicionalArticuloCtrl.$inject = ['$scope', '$uibModalInstance',  'param
 function ModalDatoAdicionalArticuloCtrl($scope, $uibModalInstance, params){
 
     let {entity, datosAdicionales} = params 
+    console.log(entity)
 
+    $scope.etiquetas = entity.etiquetas[0].etiquetas;
+        
+    $scope.articulo = entity; // Datos generales del articulo 
      
-    let dataEtiqueta =  entity.etiquetas[0] 
+    $scope.data = [{
+        idArticulo: $scope.articulo.idArticulo,
+        idEtiqueta: $scope.articulo.etiquetas[0].idEtiqueta,
+        idInfoAdicional: 0,
+        adicionales: {}
+    }];
+
+    if(datosAdicionales.some(item=>item.idArticulo === $scope.articulo.idArticulo)){
+        let dataInfo = datosAdicionales.filter(item=>item.idArticulo === $scope.articulo.idArticulo)
+                           
+        //si es editar datos adicionales tomamos las etiquetas guardadas ya en compra.infoAdicional BD
+        $scope.etiquetas = Object.keys(angular.copy(dataInfo[0].adicionales))
     
-    $scope.articulo = entity;
-    $scope.etiquetas = JSON.parse(dataEtiqueta.etiquetas[0]); //etiqueta asignado al articulo 
+        $scope.data =[...dataInfo]
+        // $scope.data = dataInfo.map(item=>item.adicionales)
+    }else{
+        $scope.etiquetas = entity.etiquetas[0].etiquetas;
+    }   
+    
+    
+    //Agrupar articulos duplicados uniendo los datos adicionales
+    // $scope.groupedData = function(arr){
+    //     return  arr.reduce((acc, curr) => {
+    //         const index = acc.findIndex(item => item.idArticulo === curr.idArticulo);
+    //         if (index !== -1) {
+    //           acc[index].jsonAdicional.push(curr.jsonAdicional);
+    //         } else {
+    //           acc.push({
+    //             ...curr,
+    //             jsonAdicional: [curr.jsonAdicional],
+    //           });
+    //         }
+    //         return acc;
+    //     }, []);
+    // }
+
+    // if(dataInfo){
+    //    $scope.data = [...dataInfo.adicionales]
+    // }
+    
+    $scope.addColumn = function(){
+        try {
+            Swal.fire({
+                title: 'Ingrese el nombre de la columna',
+                input: 'text',
+                inputAttributes: {
+                  autocapitalize: 'off'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Ingresar',
+                cancelButtonText: 'Cancelar',                
+                inputValidator: (value) => {
+                    if(!value) return 'Ingrese el nombre de la columna';
+
+                    if($scope.etiquetas.some(item=>item===value.trim())) return 'El nombre de la columna proporcionada ya existe';                    
+                },               
+                allowOutsideClick: false
+            }).then(result => {
+               if(result.isConfirmed){
+                $scope.etiquetas.push(result.value);
+                $scope.$apply();
+               }
+            })
+        } catch (error) {
+            console.log(error);
+        }        
+    }
+    
+ 
 
     
-    $scope.data = [];
 
-   
-   let dataInfo = datosAdicionales.info.find(item=>item.idArticulo===$scope.articulo.idArticulo);
+    $scope.updateNameColumn = function(index, column){
+        try {
+            
+            let columnOriginal = column;
+            
+            Swal.fire({
+                title: 'Modificar el nombre de la columna',
+                input: 'text',
+                inputValue: column,
+                inputAttributes: {
+                  autocapitalize: 'off'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Ingresar',
+                cancelButtonText: 'Cancelar',                
+                inputValidator: (value) => {
+                    if(!value) return 'Ingrese el nombre de la columna';
 
-   if(dataInfo){
-        $scope.data = dataInfo.adicionales
-   }
+                    if($scope.etiquetas.some(item=>item===value.trim())) return 'El nombre de la columna proporcionada ya existe';                    
+                },               
+                allowOutsideClick: false
+            }).then(result => {
+                if(result.isConfirmed){
+                 
+                    $scope.etiquetas[index] = result.value;
+
+                    $scope.data = $scope.data.map(obj => {
+                    
+                        // const newObj = {};
+                        // console.log(newObj);
+                        for (let key in obj.adicionales) {
+                          if (key === columnOriginal) {
+                            console.log(obj)
+                            obj.adicionales[result.value] = obj.adicionales[key];
+                            delete obj.adicionales[key];
+                          } 
+                        }
+                        return obj;
+                    });
+
+                    $scope.$apply();
+                }
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
        
-   
 
-    $scope.addRow = function() {
-       
+
+    //Nuevo Dato Adicional
+    $scope.addRow = function() {       
         if($scope.data.length === $scope.articulo.cantidad){
             Swal.fire({
                 title: 'Datos Adicionales',
@@ -38,12 +148,19 @@ function ModalDatoAdicionalArticuloCtrl($scope, $uibModalInstance, params){
             })
             return
         }        
-        $scope.data.push({});
-        
+        $scope.data.push({
+            idArticulo: $scope.articulo.idArticulo,
+            idEtiqueta: $scope.articulo.etiquetas[0].idEtiqueta,
+            idInfoAdicional: 0,
+            adicionales: {}
+        });        
     };
 
-    $scope.removeRow = function(row) {
+
+    //Quitar Dato Adicional del Articulo 
+    $scope.removeRow = function(row) {       
         try {
+           
             Swal.fire({
                 title: 'Eliminar Dato Adicional',
                 icon:'warning',
@@ -64,9 +181,39 @@ function ModalDatoAdicionalArticuloCtrl($scope, $uibModalInstance, params){
         }
     }
 
+    $scope.removeColumn = function(row) {
+        console.log(row)
+        let index = $scope.etiquetas.indexOf(row);        
+        
+
+        for(let item of $scope.data){            
+            if (item.adicionales.hasOwnProperty(row) && item.estado===2) {
+                Swal.fire({
+                    icon:'warning',
+                    html:'La etiqueta está asociada a una factura o nota de entrega, por eso no puedes borrar la columna.'
+                })
+                return
+            }
+            if (item.adicionales.hasOwnProperty(row)) {
+                delete item.adicionales[row];
+            }              
+        }
+        $scope.etiquetas.splice(index, 1);
+    }
+
 
     $scope.save = function() {
-        try {
+        try {            
+
+            if($scope.etiquetas.length === 0) {
+                Swal.fire({
+                    title: 'Datos Adicionales',
+                    icon:'warning',
+                    html: `Define la columna de los datos adicionales del artículo!`
+                })
+                return
+            }
+
             if($scope.data.length === 0) {
                 Swal.fire({
                     title: 'Datos Adicionales',
@@ -76,9 +223,17 @@ function ModalDatoAdicionalArticuloCtrl($scope, $uibModalInstance, params){
                 return
             }
             for(let data of $scope.etiquetas) {
-                for(let item of $scope.data) {
+                for(let item of $scope.data) {                    
+                    if(Object.keys(item.adicionales).length === 0) {
+                        Swal.fire({
+                            title: 'Datos Adicionales',
+                            icon:'warning',
+                            html: `Ingrese todos campos!`
+                        })
+                        return 
+                    }
 
-                    if([null, undefined, ""].includes(item[data.codigo])){
+                    if([null, undefined, ""].includes(item.adicionales[data])){
                         Swal.fire({
                             title: 'Datos Adicionales',
                             icon:'warning',
@@ -89,20 +244,17 @@ function ModalDatoAdicionalArticuloCtrl($scope, $uibModalInstance, params){
                 }
             }
 
+            console.log($scope.data)
             
-            $uibModalInstance.close({
-                isAdd: true,
-                data: $scope.data.map(item=>{
-                    let {$$hashKey, ...rest} = item;
-                    return rest;
-                })
-            })
+            $uibModalInstance.close($scope.data)
         } catch (error) {
             console.log(error);
         }
         
     }
+
     $scope.closeModal = function(){
         $uibModalInstance.close();
     }
 }
+

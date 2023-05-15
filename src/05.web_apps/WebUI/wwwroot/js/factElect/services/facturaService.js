@@ -1,0 +1,154 @@
+(function(){
+
+    'use strict';
+
+    app.factory('facturaService', function($injector){
+        let url = 'Factura/'
+        let mainService = $injector.get('mainService');
+        let formSvc = $injector.get('formulario');
+        let service = {}
+
+
+        /**
+         *Esta funcion declarada se usa en Retencion de Venta, Factura Venta(Listado General) 
+         * @param {object} query 
+         * @returns 
+         */
+        service.getAll = function(query){
+            return mainService.getData('get', url +'Get?json=' + JSON.stringify(query), null, true ).then(response =>{
+                if(response.code==="0"){
+                    throw response;
+                }
+                
+                if(response.code==="1"){
+                    
+                    let facturas = JSON.parse(response.payload) || [];
+                    
+                    return facturas.map(item=>{
+                        return {
+                            idFactura:item.idFactura,
+                            idTipoDocumento:item.idTipoDocumento,
+                            idTiempoCredito:item.idTiempoCredito,
+                            idCliente:item.idCliente,
+                            codEstab:item.codEstab,
+                            fechaEmision:item.fechaEmision,
+                            fechaVencimiento:item.fechaVencimiento,
+                            total:item.total,
+                            nroFactura: item.nroFactura,
+                            nombreFiscal: item.nombreFiscal,
+                            correos: item.correos,
+                            identificacionComprador: item.identificacionComprador,
+                            estadoFinanciero: item.estadoFinanciero,
+                            estadoSri: item.estadoSri,
+                            claveAcceso: item.claveAcceso,
+                            codDoc: item.codDoc,
+                            tipo: item.tipo,
+                            abono: item.abono,
+                            saldo: item.saldo,
+                            posfechado: item.posfechado,
+                            style: item.style,
+                            usuario: item.usuario,
+                            nroNotaCredito: item.nroNotaCredito,
+                            nroGuiaRemision: item.nroGuiaRemision,
+                            nroRetencion: item.nroRetencion,
+                            nroIdentificacion: item.nroIdentificacion,
+                            anulada: item.anulada,
+                        }
+                    })
+                }
+            })
+        }
+
+        service.save = function(data){         
+            return mainService.getData('post', url +'Insert', data, true ).then(response =>{
+                if(response.code==="0"){
+                    return response;
+                }
+                if(response.code==="1"){
+                    let dataRepository = JSON.parse(response.payload)[0];
+                    let dataResponse = {
+                        ...dataRepository,
+                        nroDocumento: dataRepository.estab + dataRepository.ptoEmi + dataRepository.secuencial,
+                        esContado: dataRepository.gestion,
+                    }
+                    return {                        
+                        dataResponse,
+                        code: '1'                       
+                    }
+                }
+            })
+        }
+
+        service.update = function(id, data){
+            return mainService.getData('put', url +'Update/' + id, data, true ).then(response =>{
+                if(response.code==="0"){
+                    return response;
+                }
+                if(response.code==="1"){
+                    return response;
+                }
+            })
+        }
+
+
+        service.delete = function(id){
+            return mainService.getData('delete', url +'Delete/' + id, null, true ).then(response =>{
+                return response;
+            })
+        }
+
+        service.queryMapper = function({data, cliente, detalles, infoAdicionalDocumento, historyDatosAdicionales}){
+
+            let factura = Object.assign({}, data);                    
+
+            factura.idCliente = cliente.idCliente;
+            factura.fechaEmision = formSvc.formatDateTimeZone(data.fechaEmision);
+            factura.fechaVencimiento = formSvc.formatDateTimeZone(data.fechaVencimiento);
+
+            return {
+                factura: JSON.stringify(factura),
+                detalle: JSON.stringify(service.detalleMapperTo(detalles)),
+                adicional: JSON.stringify(infoAdicionalDocumento || []),
+                infoAdicionalArticulo: JSON.stringify(historyDatosAdicionales)
+            }
+        }
+
+        service.detalleMapperTo = function(detalles) {
+            let tempDetails = [];
+            let orderIndex = 1;
+    
+            for (let item of detalles) {
+                tempDetails.push({
+                    orderIndex: orderIndex++,
+                    idFacturaDetalle: item.idFacturaDetalle || 0,
+                    idArticulo: item.idArticulo,
+                    idTarifa: item.idTarifa,
+                    idBodega: item.idBodega,
+                    idMedida: item.idMedida,
+                    idPresentacion: item.idPresentacion || 0,
+                    idTipoIva: item.idTipoIva,
+                    tarifa: item.tarifa,
+                    codigoPorcentaje: item.codigoPorcentaje,
+                    ice: item.ice,
+                    descripcion: item.descripcion,
+                    cantidad: item.cantidad,
+                    precioCostoNeto: item.precioCostoNeto,
+                    precioUnitario: item.precioUnitario,
+                    precioVenta: item.precioUnitario,
+                    precioConIva: item.precioConIva,
+                    valorDescuento: item.valorDescuento,
+                    precioTotalSinImpuesto: item.precioTotalSinImpuesto || 0,
+                    porcentajeDescuento: item.porcentajeDescuento,
+                    total: item.total,
+                    nota: item.nota,
+                })
+            }
+            return tempDetails;
+        }
+
+        return service;
+
+    })
+
+
+})(window.angular);

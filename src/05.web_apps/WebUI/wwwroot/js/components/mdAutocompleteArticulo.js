@@ -46,22 +46,17 @@ class BaseSearchArticulo {
                 return
             }
 
+            if(this.searchText.length < 3) return
 
-            this._commonSvc.articuloSearchGeneral({
-                textSearch: this.searchText,
-                code: true
-            }).then(response => {
-
-                if (!response || (Array.isArray(response) && response.length === 0)) {
-                    this.searchText = null;
-                    return
-                }
-
-                //Tomamos  posicion 1 para obtener datos del articulo                  
-                this.selectArticleSearch(response[0])
-                this.searchText = null
+            /**
+             * return object {idArticulo: 0}
+             */
+            this.articuloSvc.findByEnterCode({textSearch: this.searchText, isSearchByCode: true}).then(response=>{
+                this.selectArticleSearch(response)
+                this.searchText = null                
+            }).catch(error => {             
+                console.log(error);
             })
-
         } catch (error) {
             console.log(error)
         }
@@ -97,58 +92,51 @@ class BaseSearchArticulo {
     }
 
 
-    async getDataArticuloParaVenta() {
+    getDataArticuloParaVenta() {
         try {
             console.log(this.idBodega)
-
+            showLoader();
             this.dataArticulo.idBodega = this.idBodega;
 
-            let results = await this._commonSvc.getDataArticuloParaVenta({
-                json: this.dataArticulo
-            }).then(response => {
-                if (response.code === '0') {
-                    throw response;
-                }
-                return JSON.parse(response.payload)
-            });
-
-            let responseMsg = results[0][0];
-            let sharedData = {
-                articulo: results[0][0],
-                medidas: results[1],
-                datosAdicionales: results[2]
-            }
-
-            if (responseMsg.code === "1") {
-                this.setItemArticuloEnDetalle({
-                    item: sharedData
-                })
-                return
-            }
-
-            let {
-                isConfirmed
-            } = await Swal.fire({
-                title: `<small>${responseMsg.titleSms}</small>`,
-                icon: 'warning',
-                html: `<small>${responseMsg.message}</small>`,
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-            })
-
-            if (isConfirmed) {
-                if (responseMsg.code === "0") {
-                    $("#custom-template-md-autocomplete-articulo").focus();
-                }
-                if (responseMsg.code === "2") {
+            /**
+             * return object {articulo, medidas, datosAdicionales}
+             */
+            this.articuloSvc.findForSale(this.dataArticulo).then(async result => {
+                hideLoader();               
+                let {code, message, titleSms} = result.response
+               
+                if (code === "1") {
                     this.setItemArticuloEnDetalle({
-                        item: sharedData
+                        item: result
                     })
+                    return
                 }
-            }
+                
+                let {isConfirmed} = await Swal.fire({
+                    title: `<small>${titleSms}</small>`,
+                    icon: 'warning',
+                    html: `<small>${message}</small>`,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                })
 
+                if (isConfirmed) {
+                    if (code === "0") {
+                        $("#custom-template-md-autocomplete-articulo").focus();
+                    }
+                    if (code === "2") {
+                        this.setItemArticuloEnDetalle({
+                            item: result
+                        })
+                    }
+                }
+            }).catch(error => {
+                hideLoader();
+                console.log(error);
+            })        
         } catch (error) {
-            console.log(error)
+            hideLoader();
+            console.log(error)            
         }
     }
 
@@ -166,27 +154,6 @@ class BaseSearchArticulo {
                 hideLoader();
                 console.log(error);
             })
-            
-
-            
-
-            // let results = await this._commonSvc.getDataArticuloParaCompra({
-            //     json: this.dataArticulo
-            // }).then(response => JSON.parse(response.payload));
-
-
-
-            // let responseMsg = results[0][0];
-
-            // let sharedData = {
-            //     articulo: results[0][0],
-            //     medidas: results[1],
-            //     etiquetas: results[2]
-            // }
-             
-            // this.setItemArticuloEnDetalle({
-            //     item: sharedData
-            // })
            
         } catch (error) {
             console.error(error)
@@ -265,35 +232,30 @@ class MdArticuloCtrl extends BaseSearchArticulo {
             fraccionado: false,
         }
 
-        if (json.busqueda.length < 3) return []
+        if (json.busqueda.length < 3) return [];
 
-
-        return this._mS.getData('get', '/Articulo/Search?json=' + JSON.stringify(json)).then(response => {
-
-            if (response.code === '0') {
-                console.log(response)
-                return []
-            }
-
-            let articulos = JSON.parse(response.payload) || [];
+        return this.articuloSvc.search(json).then(articulos=>{
             if (articulos.length > 0) {
                 articulos.unshift({
                     showHeader: true,
-                    priceSale: JSON.parse(articulos[0].priceSale),
-                    warehouses: JSON.parse(articulos[0].warehouses)
+                    priceSale: articulos[0].priceSales,
+                    warehouses: articulos[0].warehouses
 
                 })
+                
                 articulos = articulos.map(item => {
                     if (!item.hasOwnProperty('showHeader')) {
-                        item.priceSale = JSON.parse(item.priceSale)
-                        item.warehouses = JSON.parse(item.warehouses)
+                        item.priceSale = item.priceSales;
+                        item.warehouses = item.warehouses;
                     }
                     return item;
                 })
+                return articulos;
             }
-
-            return articulos;
-
+        }).catch(error=>{
+            hideLoader();
+            console.log(error)
+            return [];
         })
     }
 
@@ -391,8 +353,8 @@ class MdArticuloCtrl extends BaseSearchArticulo {
 
 //Buscador Articulo 
 class InputSearchBarcodeCtrl extends BaseSearchArticulo {
-    static $inject = ['mainService', '$scope', '$timeout', '$q', 'commonService', 'modalService', 'nombreModal', 'toastService']
-    constructor(_mS, $scope, $timeout, $q, _commonSvc, _modalSvc, _nombreModalConst, tS) {
+    static $inject = ['mainService', 'articuloService', '$scope', '$timeout', '$q', 'commonService', 'modalService', 'nombreModal', 'toastService']
+    constructor(_mS, articuloSvc, $scope, $timeout, $q, _commonSvc, _modalSvc, _nombreModalConst, tS) {
         super({
             _mS,
             $scope,
@@ -403,6 +365,8 @@ class InputSearchBarcodeCtrl extends BaseSearchArticulo {
             _nombreModalConst,
             tS
         })
+
+        this.articuloSvc = articuloSvc;
 
 
 

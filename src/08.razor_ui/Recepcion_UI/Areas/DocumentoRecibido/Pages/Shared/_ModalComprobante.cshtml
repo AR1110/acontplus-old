@@ -12,7 +12,7 @@
             <div class="form-group">
                 <label>Proveedor:</label>
                 <input maxlength="300" class="form-control" required name="description"
-                       ng-model="infoTributaria.razonSocial" disabled>
+                    ng-model="infoTributaria.razonSocial" disabled>
             </div>
             <div class="form-group">
                 <label>Dirección Matriz:</label>
@@ -27,7 +27,7 @@
                 <h5>{{infoComprobante.obligadoContabilidad}}</h5>
             </div>
             <button type="button" id="btnProv" ng-disabled="btnProvIsEnable" ng-click="addProvClient()"
-                    class="btn btn-success btn-sm">
+                class="btn btn-success btn-sm">
                 <icon class="ti-save"></icon> Guardar Proveedor
             </button>
         </div>
@@ -248,25 +248,25 @@
                         <td>
                             <div class="form-group">
                                 <input type="text" id="{{$index}}-descripcion" class="form-control"
-                                       name="{{$index}}-descripcion" autocomplete="off" class="form-control border-select"
-                                       placeholder="Buscar articulo" ng-model="item.descripcion" ng-keyup="clearSearch()"
-                                       uib-typeahead="a as a.codigo + '-' + a.descripcion for a in searchArticleCustomDetail($viewValue)"
-                                       typeahead-loading="articleFinded.loading"
-                                       typeahead-no-results="articleFinded.noResults" typeahead-editable="false"
-                                       typeahead-on-select="selectArticleSearch($item, item)" onclick="select()"
-                                       required />
+                                    name="{{$index}}-descripcion" autocomplete="off" class="form-control border-select"
+                                    placeholder="Buscar articulo" ng-model="item.descripcion" ng-keyup="clearSearch()"
+                                    uib-typeahead="a as a.codigo + '-' + a.descripcion for a in searchArticleCustomDetail($viewValue)"
+                                    typeahead-loading="articleFinded.loading"
+                                    typeahead-no-results="articleFinded.noResults" typeahead-editable="false"
+                                    typeahead-on-select="selectArticleSearch($item, item)" onclick="select()"
+                                    required />
                             </div>
                         </td>
                         <td>
                             <div class="form-group">
                                 <input type="text" id="{{$index}}-codigoPrincipal" class="form-control"
-                                       ng-model="item.codigoPrincipal" name="{{$index}}-codigoPrincipal" required />
+                                    ng-model="item.codigoPrincipal" name="{{$index}}-codigoPrincipal" required />
                             </div>
                         </td>
                         <td>
                             <div class="form-group">
                                 <input type="text" id="{{$index}}-codigoAuxiliar" class="form-control"
-                                       ng-model="item.codigoAuxiliar" name="{{$index}}-codigoAuxiliar" />
+                                    ng-model="item.codigoAuxiliar" name="{{$index}}-codigoAuxiliar" />
                             </div>
                         </td>
 
@@ -294,12 +294,13 @@
     </ng-form>
     <div class="row">
         @*<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
-            <div class="form-group">
-                <label for="estabFilter">Estab.:</label>
-                <select class="form-control border-select" id="estabFilter" ng-model="selectedEstab.codEstab" ng-change="filterBodega()">
-                    <option ng-value="item.codEstab" ng-repeat="item in establecimientos">{{item.nombreComercial}}</option>
-                </select>
-            </div>
+        <div class="form-group">
+        <label for="estabFilter">Estab.:</label>
+        <select class="form-control border-select" id="estabFilter" ng-model="selectedEstab.codEstab"
+        ng-change="filterBodega()">
+        <option ng-value="item.codEstab" ng-repeat="item in establecimientos">{{item.nombreComercial}}</option>
+        </select>
+        </div>
         </div>*@
         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
             <div class="row justify-content-start">
@@ -307,7 +308,7 @@
                     <div class="form-group">
                         <label for="idBodega">Aplicar Bodega para todos:</label>
                         <select id="idBodega" class="form-control" ng-model="comprobanteForm.idBodega"
-                                ng-change="addBodega()" required>
+                            ng-change="addBodega()" required>
                             <option></option>
                             <option ng-value="item.idBodega" ng-repeat="item in bodegasFiltered">
                                 {{item.descripcion}}
@@ -321,7 +322,7 @@
                         <label for="sizeAll">Aplicar Medida para todos</label>
                         <select class="form-control" ng-model="articleSize" ng-change="updateSizeArticles(articleSize)">
                             <option ng-value="size.idMedida" ng-repeat="size in medidas"
-                                    ng-selected="size.idMedida == articleSize">
+                                ng-selected="size.idMedida == articleSize">
                                 {{size.descripcion}}
                             </option>
                         </select>
@@ -333,7 +334,8 @@
             <div class="row justify-content-end">
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                     <div class="form-group">
-                        <button type="button" ng-if="selected[0].complete" class="btn btn-success btn-lg mt-4" ng-click="exportToExcel()">
+                        <button type="button" ng-if="selected[0].complete" class="btn btn-success btn-lg mt-4"
+                            ng-click="exportToExcel()">
                             <i class="fas fa-file-excel"></i> Exportar Articulos
                         </button>
                     </div>
@@ -365,31 +367,37 @@
                 <tr ng-repeat="item in tempDetail" class="small">
                     <td class="text-center">
                         <md-button ng-if="!(item.idArticulo > 0 && item.idProveedor > 0)" class="md-icon-button"
-                                   ng-click="openMerge(item)" aria-label="Unir" title="Unir">
+                            ng-click="openMerge(item)" aria-label="Unir" title="Unir">
                             <md-icon md-font-set="md" class="text-info">sync_alt</md-icon>
                         </md-button>
                         <md-button ng-if="(item.idArticulo > 0 && item.idProveedor > 0)" class="md-icon-button"
-                                   ng-click="getArticleHistory(item)" aria-label="Historial"
-                                   title="Historial de ingresos de facturas">
+                            ng-click="getArticleHistory(item)" aria-label="Historial"
+                            title="Historial de ingresos de facturas">
                             <md-icon md-font-set="md" class="text-danger">shopping_cart</md-icon>
                         </md-button>
                         <md-button ng-if="(item.idArticulo > 0 && item.idProveedor > 0)" class="md-icon-button"
-                                   ng-click="getArticleHC(item)" aria-label="Historial" title="Historial de vinculación">
+                            ng-click="getArticleHC(item)" aria-label="Historial" title="Historial de vinculación">
                             <md-icon md-font-set="md" class="text-info">history</md-icon>
                         </md-button>
                         <md-button ng-if="(item.idDocumentoDetalle == 0 && item.idArticulo > 0 && selected[0].complete)"
-                                   class="md-icon-button" ng-click="askToAddStok(item)" aria-label="Stock"
-                                   title="Añadir a stock">
+                            class="md-icon-button" ng-click="askToAddStok(item)" aria-label="Stock"
+                            title="Añadir a stock">
                             <md-icon md-font-set="md" class="text-success">inventory</md-icon>
                         </md-button>
                         <md-button ng-if="(item.idDocumentoDetalle > 0 && selected[0].complete)" class="md-icon-button"
-                                   ng-click="askToDeleteStok(item)" aria-label="Stock" title="Eliminar del stock">
+                            ng-click="askToDeleteStok(item)" aria-label="Stock" title="Eliminar del stock">
                             <md-icon md-font-set="md" class="text-danger">delete_forever</md-icon>
                         </md-button>
 
-                        <md-button ng-if="(item.idDocumentoDetalle > 0 && selected[0].complete)" class="md-icon-button md-primary"
-                                   ng-click="openModalEditArticulo(item)" aria-label="Editar Artículo" title="Editar Artículo">
+                        <md-button ng-if="item.idArticulo > 0" class="md-icon-button md-primary"
+                            ng-click="openModalEditArticulo(item)" aria-label="Editar Artículo" title="Editar Artículo">
                             <md-icon md-font-set="md">edit_forever</md-icon>
+                        </md-button>
+
+                        <md-button ng-if="item.idArticulo > 0 && item.datosAdicionales && selected[0].codDoc=='04'"
+                            class="md-icon-button md-primary" ng-click="openModalEditArticulo(item)"
+                            aria-label="Datos Adicionales" title="Datos Adicionales">
+                            <md-icon md-font-set="md">plus_forever</md-icon>
                         </md-button>
                     </td>
                     <td class="text-center">{{item.cantidad}}</td>
@@ -519,13 +527,14 @@
             <div class="form-group">
                 <label for="observacion">Observación:</label>
                 <textarea name="observacion" id="observacion" ng-model="comprobanteForm.observacion"
-                          class="form-control"></textarea>
+                    class="form-control"></textarea>
             </div>
         </div>
     </div>
 </div>
 <div class="modal-footer">
-    <button type="submit" class="btn btn-success" ng-if="!selected[0].complete" ng-click="askToSave()" title="Guardar Detalle">
+    <button type="submit" class="btn btn-success" ng-if="!selected[0].complete" ng-click="askToSave()"
+        title="Guardar Detalle">
         <icon class="ti-save"></icon> Guardar Detalle
     </button>
     <button class="btn btn-dark" ng-click="closeMainModal()">

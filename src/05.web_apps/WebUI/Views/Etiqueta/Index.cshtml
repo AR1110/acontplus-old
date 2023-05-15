@@ -32,7 +32,7 @@
                                     <th ng-if="accion.editar || accion.eliminar || accion.acceso">Op.</th>
                                     <th>N°</th>
                                     <th>Descripción</th>
-                                    @* <th>Etiquetas</th> *@
+                                    <th>Etiquetas</th> 
                                     <th>Estado</th>
                                 </tr>
                             </thead>
@@ -46,17 +46,11 @@
                                         <button class="btn btn-danger btn-sm" ng-if="accion.eliminar && !item.estado"
                                             ng-click="onDelete(item)">
                                             <i class="mdi mdi-delete"></i>
-                                        </button>
-
-                                        <button class="btn btn-warning btn-sm"
-                                            uib-popover-template="'tempEtiqueta.html'" popover-trigger="'mouseenter'"
-                                            popover-placement="top" href="javascript:void(0)">
-                                            <i class="mdi mdi-eye"></i>
-                                        </button>
+                                        </button>                                        
                                     </td>
                                     <td>{{$index+1}}</td>
                                     <td>{{item.descripcion}}</td>
-                                    @* <td>{{item.etiquetas}}</td> *@
+                                    <td>{{item.etiquetas}}</td> 
                                     <td ng-bind-html="item.estado | estadoPrimario"></td>
                                 </tr>
                             </tbody>
@@ -71,19 +65,5 @@
 @section Scripts{
     <script src="~/js/inventario/services/etiquetaService.min.js" asp-append-version="true"></script>
     <script src="~/js/inventario/controllers/etiquetaCtrl.min.js" asp-append-version="true"></script>
-    <script type="text/ng-template" id="tempEtiqueta.html">
-                                <table class="table table-sm">
-                                    <tbody>
-                                        <tr class="text-center">
-                                            <th>Codigo</th>
-                                            <th>Descripcion</th>                 
-                                        </tr>
-                                        <tr ng-repeat="data in item.etiquetas" class="text-muted text-center">
-                                            <td>{{data.codigo}}</td>
-                                            <td>{{data.descripcion}}</td>                  
-                                        </tr>
-
-                                    </tbody>
-                                </table>
-                            </script>
+ 
 }

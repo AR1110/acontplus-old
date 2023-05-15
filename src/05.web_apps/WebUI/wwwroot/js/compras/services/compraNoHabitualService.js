@@ -68,20 +68,28 @@
                     let decimal = dataRepository[5][0];
                     let tipoIvas = dataRepository[6];
                     let inventario = dataRepository[7][0];
-
-                    console.log(dataRepository)
                     let datosAdicionales = dataRepository[8].map(item=>{
-                        if(typeof item.info=='string'){
-                            item.info = JSON.parse(item.info).map(item=>{
-                                let adicionales = JSON.parse(item.adicionales)
-                                return {
-                                    ...item,
-                                    adicionales
-                                }
-                            })
+                        return {
+                            idArticulo: item.idArticulo,
+                            idEtiqueta: item.idEtiqueta,
+                            idInfoAdicional: item.idInfoAdicional,
+                            adicionales: JSON.parse(item.jsonAdicional),
+                            estado: item.estado,
                         }
-                        return item;
                     })
+               
+                    // let datosAdicionales = dataRepository[8].map(item=>{
+                    //     if(typeof item.info=='string'){
+                    //         item.info = JSON.parse(item.info).map(item=>{
+                    //             let adicionales = JSON.parse(item.adicionales)
+                    //             return {
+                    //                 ...item,
+                    //                 adicionales
+                    //             }
+                    //         })
+                    //     }
+                    //     return item;
+                    // })
                    
                    console.log(datosAdicionales)
                     return {
@@ -93,7 +101,7 @@
                         decimal,
                         tipoIvas,
                         inventario,
-                        datosAdicionales: datosAdicionales[0]
+                        datosAdicionales
                     }
                 }
             })
@@ -115,17 +123,14 @@
                 totalSinImpuestos: data.subTotalSinImpuestos,
                 importeTotal: data.total,
                 inventory: data.inventory,
-                tarifa: data.tarifa,
-                adicionales: datosAdicionalesArticulo.map(obj=>{
-                    const { $$hashKey, ...cleanAd } = obj;
-                    return cleanAd;
-                })
+                tarifa: data.tarifa                
             };
 
             let query =  {
                 comprobante: JSON.stringify(comprobante),
                 detalles: JSON.stringify(service.detalleMapTo(details)),
-                impuestos: JSON.stringify(service.taxesMapTo(details))
+                impuestos: JSON.stringify(service.taxesMapTo(details)),
+                artInfoAdicionales: JSON.stringify(service.dataAdicionalMapTo(datosAdicionalesArticulo))
             }
 
             return JSON.stringify(query)
@@ -171,7 +176,30 @@
                 return obj;
             })
             
-        }       
+        }     
+        
+        service.dataAdicionalMapTo = function(datosAdicionales){
+            // let results = []
+            // for(let item of datosAdicionales){
+            //     for(let dataAdd of item.adicionales){
+            //         results.push({
+            //             idArticulo: item.idArticulo,
+            //             idEtiqueta: item.idEtiqueta,
+            //             idInfoAdicional: item.idInfoAdicional || 0,
+            //             jsonAdicional: angular.copy(dataAdd)
+            //         })
+            //     }
+            // }
+            
+            return datosAdicionales.map(item=>{
+                return {
+                    idArticulo: item.idArticulo,
+                    idEtiqueta: item.idEtiqueta,
+                    idInfoAdicional: item.idInfoAdicional || 0,
+                    jsonAdicional: item.adicionales
+                }
+            });
+        }
 
         service.generateNroSecuencial = function (idPuntoEmision){
             let query = JSON.stringify({

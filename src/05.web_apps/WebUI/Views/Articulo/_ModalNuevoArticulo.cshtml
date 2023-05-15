@@ -29,8 +29,7 @@
                                         ng-options="sf.idSubFamilia as sf.subFamilia group by sf.familia  for sf in $ctrl.subFamilias">
                                     </select>
                                     <div class="input-group-append">
-                                        <button class="btn btn-outline-secondary btn-sm"
-                                            ng-click="$ctrl.openModalSubFamilia()" type="button" tabindex="-1">
+                                        <button class="btn btn-outline-secondary btn-sm" btn-add-update-sub-familia results="$ctrl.resultModalSubFamilia(item)" type="button" tabindex="-1">
                                             <i class="fa fa-plus fa-xs"></i>
                                         </button>
                                     </div>
@@ -100,8 +99,7 @@
                                                     {{item.descripcion}}</option>
                                             </select>
                                             <div class="input-group-append">
-                                                <button class="btn btn-outline-secondary btn-sm"
-                                                    ng-click="$ctrl.openModalMedida()" tabindex="-1"><i
+                                                <button class="btn btn-outline-secondary btn-sm" btn-add-update-medida results="$ctrl.resultModalMedida(item)" tabindex="-1"><i
                                                         class="fa fa-plus fa-xs"></i></button>
                                             </div>
                                         </div>
@@ -211,8 +209,7 @@
                                             {{item.descripcion}}</option>
                                     </select>
                                     <div class="input-group-append">
-                                        <button class="btn btn-outline-secondary btn-sm"
-                                            ng-click="$ctrl.openModalMedida()" tabindex="-1"><i
+                                        <button class="btn btn-outline-secondary btn-sm" btn-add-update-medida results="$ctrl.resultModalMedida(item)" tabindex="-1"><i
                                                 class="fa fa-plus fa-xs"></i></button>
                                     </div>
                                 </div>
@@ -319,7 +316,7 @@
                                         {{item.descripcion}}</option>
                                 </select>
                                 <div class="input-group-append">
-                                    <button class="btn btn-outline-secondary btn-sm" ng-click="$ctrl.openModalMarca()"
+                                    <button class="btn btn-outline-secondary btn-sm" btn-add-update-marca results="$ctrl.resultModalMarca(item)"
                                         tabindex="-1"><i class="fa fa-plus fa-xs"></i></button>
                                 </div>
                             </div>
@@ -332,8 +329,7 @@
                                 </select>
                                 <div class="input-group-append">
                                     <div class="input-group-append">
-                                        <button class="btn btn-outline-secondary btn-sm"
-                                            ng-click="$ctrl.openModalModelo()" tabindex="-1"><i
+                                        <button class="btn btn-outline-secondary btn-sm" btn-add-update-modelo results="$ctrl.resultModalModelo(item)" tabindex="-1"><i
                                                 class="fa fa-plus fa-xs"></i></button>
                                     </div>
                                 </div>
@@ -439,8 +435,7 @@
                                                     {{item.descripcion}}</option>
                                             </select>
                                             <div class="input-group-append" id="button-addon4">
-                                                <button class="btn btn-outline-secondary btn-sm"
-                                                    ng-click="abrirModalMedida()" tabindex="-1"><i
+                                                <button class="btn btn-outline-secondary btn-sm" btn-add-update-medida results="$ctrl.resultModalMedida(item)" tabindex="-1"><i
                                                         class="fa fa-plus fa-xs"></i></button>
                                             </div>
                                         </div>

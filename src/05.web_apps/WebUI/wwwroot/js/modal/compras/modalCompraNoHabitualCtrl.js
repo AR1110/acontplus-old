@@ -97,45 +97,6 @@ class ModalCompraNoHabitualCtrl extends window.modalCompraBaseCtrl {
 
     }
 
-    trimDetail() {
-        let index = 1
-        return this.gridOptions.data.map(item => {
-            let data = {
-                index: index++,
-                idDocumentoIngresoDetail: item.idDocumentoIngresoDetail || 0,
-                idArticulo: item.idArticulo,
-                idMedida: item.idMedida,
-                idBodega: item.idBodega,
-                codigoPrincipal: item.codigoPrincipal,
-                codigoAuxiliar: item.codigoAuxiliar,
-                descripcion: item.descripcion,
-                cantidad: item.cantidad,
-                precioUnitario: item.precioUnitario,
-                costoNeto: item.costoNeto,
-                descuento: item.valorDescuento,
-                precioTotalSinImpuesto: item.total,
-                codigoPorcentaje: item.codigoPorcentaje,
-            }
-            return data;
-        })
-    }
-
-    taxes() {
-        let index = 1
-        return this.gridOptions.data.map(item => {
-            let data = {
-                index: index++,
-                idArticulo: item.idArticulo,
-                codigo: "2",
-                codigoPorcentaje: item.codigoPorcentaje,
-                tarifa: item.tarifa,
-                baseImponible: item.total,
-                valor: (item.tarifa / 100) * item.total,
-            }
-            return data;
-        })
-    }
-
 
     calcularPorcentajeDescuento() {
         this.data.porcentajeDescuento = this.data.porcentajeDescuento || 0;
@@ -284,7 +245,7 @@ class ModalCompraNoHabitualCtrl extends window.modalCompraBaseCtrl {
                     idEstablecimiento,
                     estab,
                     ptoEmi: ptoEmi?ptoEmi.puntoEmi: null,
-                    datosAdicionalesArticulo: this.datosAdicionalesArticulo.info
+                    datosAdicionalesArticulo: this.datosAdicionalesArticulo
                 })
 
                 //Actualizar
@@ -379,11 +340,7 @@ export class ModalAddCtrl extends ModalCompraNoHabitualCtrl {
 
         this.data.fechaEmision = new Date();
 
-        this.datosAdicionalesArticulo = {
-            idCompEtiquetaArticulo: 0, 
-            uniqueId: null, 
-            info: []
-        };
+        this.datosAdicionalesArticulo = []
 
         this.CELL_TEMPLATE_OPTION = `<a  ng-click="grid.appScope.$ctrl.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
                            <a  ng-click="grid.appScope.$ctrl.openModalArticleEdit(row.entity)" style="cursor:pointer;" class="btn btn-success btn-xs text-white" title = "Editar Articulo" ><i class="fa fa-edit"></i></a >                                  
@@ -520,13 +477,7 @@ export class ModalUpdateCtrl extends ModalCompraNoHabitualCtrl {
 
         this.searchProveedorOptions = {};
         this.proveedor = this.params.proveedor;
-        this.datosAdicionalesArticulo = this.params.datosAdicionales || {
-                idCompEtiquetaArticulo: 0, 
-                uniqueId: null, 
-                info: []
-        };
-        
-        console.log(this.datosAdicionalesArticulo)
+        this.datosAdicionalesArticulo = this.params.datosAdicionales || [];        
 
         this.puntosEmision = [];
         this.searchProveedorOptions.showBtnNew = true;
@@ -575,11 +526,11 @@ export class ModalUpdateCtrl extends ModalCompraNoHabitualCtrl {
 
 
             //Detalle
+            let index = 1;
             this.gridOptions.data = this.params.detalles;
             for (let item of this.gridOptions.data) {
-                
-                item.idDetalle = item.idDocumentoIngresoDetail;
-                
+                item.n = index++;     
+                                      
                 this.articuloSvc.findForPurchase({
                     idArticulo: item.idArticulo
                 }).then(response => {                  

@@ -1,6 +1,6 @@
 <div class="modal-header">
-    <h5 class="modal-title">{{$ctrl.tipoRegistro===1?'Nuevo':'Editar'}} Medida</h5>
-    <button type="button" class="close" ng-click="$ctrl.closeModal()" aria-label="Close">
+    <h5 class="modal-title">{{tipoRegistro===1?'Nuevo':'Editar'}} Medida</h5>
+    <button type="button" class="close" ng-click="closeModal()" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
@@ -9,21 +9,21 @@
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="form-group">
                 <label class="form-control-label" for="descripcion">Descripcion <span class="text-danger">*</span></label>
-                <input type="text" ng-model="$ctrl.data.descripcion" touppercase class="form-control border-select" placeholder="Ej: Litro">
+                <input type="text" ng-model="data.descripcion" touppercase class="form-control border-select" placeholder="Ej: Litro">
             </div>
         </div>
     </div>
 
-    <div class="row" ng-if="$ctrl.tipoRegistro==2 && $ctrl.showStatus" >
+    <div class="row" ng-if="tipoRegistro==2 && showStatus" >
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
             <div class="icheck-primary">
-                <input type="radio" ng-model="$ctrl.data.estado" ng-value="true" id="someRadioId1" name="someGroupName" />
+                <input type="radio" ng-model="data.estado" ng-value="true" id="someRadioId1" name="someGroupName" />
                 <label for="someRadioId1">Activo</label>
             </div>
         </div>
         <div class="col-6 col-md-6 col-sm-6 col-xs-6 text-right">
             <div class="icheck-primary">
-                <input type="radio" ng-model="$ctrl.data.estado" ng-value="false" id="someRadioId2" name="someGroupName" />
+                <input type="radio" ng-model="data.estado" ng-value="false" id="someRadioId2" name="someGroupName" />
                 <label for="someRadioId2">Inactivo</label>
             </div>
         </div>
@@ -31,6 +31,6 @@
 
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-success" ng-click="$ctrl.saveAndUpdate()">{{$ctrl.tipoRegistro===1?'Guardar':'Actualizar'}}</button>
-    <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()"> &times; Cerrar</button>
+    <button type="button" class="btn btn-success" ng-click="saveAndUpdate()">{{tipoRegistro===1?'Guardar':'Actualizar'}}</button>
+    <button type="button" class="btn btn-dark" ng-click="closeModal()"> &times; Cerrar</button>
 </div>
