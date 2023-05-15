@@ -283,6 +283,14 @@
                                                     </span>
                                                 </md-button>
                                             </md-menu-item>
+                                            <md-menu-item ng-if="item.codEstado==4">
+                                                <md-button uib-tooltip="Descargar Xml"
+                                                           tooltip-placement="top" ng-click="downloadXml(item)">
+                                                    <span md-menu-align-target>
+                                                        <i class="mdi mdi-file-xml"></i> Descargar Xml
+                                                    </span>
+                                                </md-button>
+                                            </md-menu-item>
                                         </md-menu-content>
                                     </md-menu>
                                 </td>
