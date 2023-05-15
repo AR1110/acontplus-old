@@ -5,11 +5,11 @@ export {
     ModalDatoAdicionalArticuloCtrl
 }
 
-ModalDatoAdicionalArticuloCtrl.$inject = ['$scope', '$uibModalInstance',  'params'];
+ModalDatoAdicionalArticuloCtrl.$inject = ['$scope', 'mainService', '$uibModalInstance',  'params'];
 
-function ModalDatoAdicionalArticuloCtrl($scope, $uibModalInstance, params){
+function ModalDatoAdicionalArticuloCtrl($scope, mS, $uibModalInstance, params){
 
-    let {entity, datosAdicionales} = params 
+    let {entity, datosAdicionales, codDoc} = params 
     console.log(entity)
 
     $scope.etiquetas = entity.etiquetas[0].etiquetas;
@@ -139,8 +139,9 @@ function ModalDatoAdicionalArticuloCtrl($scope, $uibModalInstance, params){
 
 
     //Nuevo Dato Adicional
-    $scope.addRow = function() {       
-        if($scope.data.length === $scope.articulo.cantidad){
+    $scope.addRow = function() {  
+        let cantidad = parseInt($scope.articulo.cantidad);     
+        if($scope.data.length === cantidad){
             Swal.fire({
                 title: 'Datos Adicionales',
                 icon:'warning',
@@ -173,6 +174,7 @@ function ModalDatoAdicionalArticuloCtrl($scope, $uibModalInstance, params){
                 if(result.isConfirmed){
                     let index = $scope.data.indexOf(row);
                     $scope.data.splice(index, 1);
+                    $scope.removeRowBD(row.idInfoAdicional)
                     $scope.$apply();
                 }
             })
@@ -181,6 +183,25 @@ function ModalDatoAdicionalArticuloCtrl($scope, $uibModalInstance, params){
         }
     }
 
+    $scope.removeRowBD = function(idInfoAdicional) {
+        if(codDoc=='01' && idInfoAdicional > 0) {
+            mS.getData('post', 'DatoAdicionalArticulo/Delete/' + idInfoAdicional, null, true).then(response => {
+                if(response.code==="0"){
+                    Swal.fire({
+                        icon:'warnig',
+                        html: response.message
+                    })
+                }
+                if(response.code==="1"){
+                    Swal.fire({
+                        icon:'success',
+                        html: response.message,
+                        timer: 1000
+                    })
+                }
+            })
+        }
+    }
     $scope.removeColumn = function(row) {
         console.log(row)
         let index = $scope.etiquetas.indexOf(row);        
@@ -244,9 +265,25 @@ function ModalDatoAdicionalArticuloCtrl($scope, $uibModalInstance, params){
                 }
             }
 
-            console.log($scope.data)
+            //Cuando se registra datos adicionales desde la importacion 
+           if(codDoc==='01'){
+                Swal.fire({
+                    title: 'Guardar Dato Adicional',
+                    icon:'warning',
+                    html: `Esta seguro de guardar los datos adicionales?`,
+                    showConfirmButton: true,
+                    showCancelButton: true,
+                    cancelButtonText: 'No, guardar',
+                    confirmButtonText:'Si, cancelar'
+                }).then(result => {
+                    if(result.isConfirmed){
+                        $uibModalInstance.close($scope.data)
+                    }
+                })            
+           }else{
+               $uibModalInstance.close($scope.data)
+           }
             
-            $uibModalInstance.close($scope.data)
         } catch (error) {
             console.log(error);
         }

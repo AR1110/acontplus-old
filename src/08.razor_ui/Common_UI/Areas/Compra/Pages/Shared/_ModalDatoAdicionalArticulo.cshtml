@@ -4,7 +4,7 @@
 </div>
 
 <div class="modal-body">
-    <h5><b>Código: {{articulo.codigo}}</b></h5> 
+    <h5><b>Código: {{articulo.codigo || articulo.codigoPrincipal}}</b></h5> 
     <h5><b>Artículo: {{articulo.descripcion}}</b></h5>
     <div class="table-responsive">
         @* <table class="table table-sm">

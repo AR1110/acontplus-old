@@ -8,13 +8,14 @@
             scope: {                
                 entity: '=',
                 getDataEtiqueta:'&',
-                datosAdicionales:'='
+                datosAdicionales:'=',
+                codDoc: '='
             },
             link: function (scope, element, attrs) {
 
                 element.on('click', async function () {
-                    
-                    if(!Number.isInteger(scope.entity.cantidad)){
+                    let cantidad = parseFloat(scope.entity.cantidad)                    
+                    if(!Number.isInteger(cantidad)){
                         Swal.fire({
                             title: 'Datos Adicionales',
                             icon:'warning',
@@ -26,13 +27,15 @@
                     let {fileCtrl, controller, template} = nombreModal.compra.MODAL_DATO_ADICIONAL_ARTICULO;                    
                     let ctrl = (await import(fileCtrl))[controller]
                     
+                    
                     let modalRef = modalService.openModalCustom({
                         controller: ctrl,
                         template,
                         size:'lg',
                         params: {
                             entity: scope.entity,
-                            datosAdicionales: scope.datosAdicionales
+                            datosAdicionales: scope.datosAdicionales,
+                            codDoc: scope.codDoc
                         },
                         isRenderRazorPartial: true
                     })  
@@ -52,6 +55,12 @@
                                 for(let item of results){
                                     scope.datosAdicionales.push(item);
                                 }
+                            }
+
+                            if(scope.codDoc==='01'){
+                                scope.getDataEtiqueta({
+                                    item: scope.datosAdicionales
+                                })
                             }
                             console.log(scope.datosAdicionales)                            
                         }

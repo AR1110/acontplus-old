@@ -324,7 +324,7 @@
                             return;
                         }
                         if (response.code == 1) {
-                            console.log(response);
+                            
                             tS.toastr('success', response.message);
                             $scope.compFounded = JSON.parse(response.payload) || [];
                             $scope.fileTxt = null;
@@ -411,8 +411,8 @@
                         codDoc: $scope.selected[0].codDoc,
                         claveAcceso: $scope.selected[0].claveAcceso
                     }
-                    console.log(data)
-                    console.log($scope.selected[0])
+                    
+                    
                     mS.getData('get', _urlService + 'DocumentoRecibido/Get/' + JSON.stringify(data)).then(
                         response => {
                             console.log(response)
@@ -1106,7 +1106,8 @@
                                 itemDetail.idArticulo = item.idArticulo
                                 itemDetail.codigoPrincipal = objArticle.codigo
                                 itemDetail.codigoAuxiliar = objArticle.codigoAuxiliar
-                                itemDetail.descripcion = objArticle.descripcion
+                                itemDetail.descripcion = objArticle.descripcion;
+                                itemDetail.datosAdicionales = objArticle.datosAdicionales;
                             }
                         }).catch((error) => {
                             console.log(error)
@@ -1158,21 +1159,102 @@
 
 
 
+            $scope.datosAdicionalesArticulo = [];
             $scope.getTempDetails = function () {
                 try {
                     $scope.tempDetail = []
                     mS.getData('get', _urlService + 'Doc_Rec_DetailTemp/' + $scope.selected[0].idDocumento).then(
                         response => {
                             if (response.code == "1") {
-                                $scope.tempDetail = JSON.parse(response.payload)
+                                let tempDetail = JSON.parse(response.payload);
+
+                                $scope.tempDetail = tempDetail.map(item => {
+                                    let tempEtiquetas = JSON.parse(item.etiquetas);
+                                
+                                    let etiquetasMapper = tempEtiquetas.map(etiquet=>{
+                                        return {
+                                            ...etiquet,
+                                            etiquetas: etiquet.etiquetas.split(';')
+                                        }
+                                    })
+
+                                    return {
+                                        ...item,
+                                        etiquetas: etiquetasMapper
+                                    }
+                                })
                                 console.log($scope.tempDetail)
                             }
                         }).catch(error => {
                             console.log(error)
                         })
+
+                    if($scope.selected[0].codDoc==='01'){
+                       $scope.getDatoAdicionalArticulo();
+                    }
                 } catch (error) {
                     console.log(error)
                 }
+            }
+
+            $scope.getDatoAdicionalArticulo = function() {
+                try {
+                    mS.getData('get', 'DatoAdicionalArticulo/Get?json=' + JSON.stringify({
+                        idDocumento: $scope.selected[0].idDocumento
+                    }), null, true).then(response => {
+                        if(response.code=='0'){
+                            console.log(response)
+                        }
+                        if(response.code=='1'){
+                            let dtAdicional = JSON.parse(response.payload);
+                            $scope.datosAdicionalesArticulo =  dtAdicional.map(item=>{
+                                return {
+                                    idArticulo: item.idArticulo,
+                                    idEtiqueta: item.idEtiqueta,
+                                    idInfoAdicional: item.idInfoAdicional,
+                                    adicionales: JSON.parse(item.jsonAdicional),
+                                    estado: item.estado,
+                                }
+                            })
+                            console.log(response)
+                        }
+                    })
+                } catch (error) {
+                    console.log(error)                
+               }
+            }
+
+            
+            $scope.resultModalDatoAdicional = function(item) {                
+                let datosAdicionales = item.map(item=>{
+                    return {
+                        idArticulo: item.idArticulo,
+                        idEtiqueta: item.idEtiqueta,
+                        idInfoAdicional: item.idInfoAdicional || 0,
+                        jsonAdicional: item.adicionales
+                    }
+                })
+
+                mS.getData('post', 'DatoAdicionalArticulo/Insert/' + $scope.selected[0].idDocumento +'/' + JSON.stringify(datosAdicionales), null, true).then(response => {
+                    if(response.code==='0'){
+                        tS.toastr('warning', response.message);
+                    }
+                    if(response.code==='1'){
+                        tS.toastr('success', response.message);
+                        let dtAdicional = JSON.parse(response.payload);
+                        console.log(response.payload);
+                        $scope.datosAdicionalesArticulo =  dtAdicional.map(item=>{
+                            return {
+                                idArticulo: item.idArticulo,
+                                idEtiqueta: item.idEtiqueta,
+                                idInfoAdicional: item.idInfoAdicional,
+                                adicionales: JSON.parse(item.jsonAdicional),
+                                estado: item.estado,
+                            }
+                        })
+                    }
+                })
+                console.log(item)
             }
 
             $scope.saveArticleTemp = function (tipo, data) {
@@ -1910,7 +1992,7 @@
                     const parameters = {
                         dataParams: JSON.stringify(dataParms)
                     }
-                    console.log(parameters)
+                    
                     _commonSvc.getReportDynamic({
                         parameters,
                         format
@@ -1942,7 +2024,7 @@
                     const parameters = {
                         dataParams: JSON.stringify(dataParms)
                     }
-                    console.log(parameters)
+                    
 
                     _commonSvc.getReportDynamic({ parameters, format })
                 } catch (error) {
