@@ -353,6 +353,7 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params) {
     }
 
     $scope.generateXml = () => {
+        $scope.lastMessage = false
         mS.getFile('get', 'DocumentoElectronico/GetXmlSri/' + params.idDocumentoElectronico, null, true).then(response => {
             //$scope.fileName = response
             let fileName = response.headers()['content-disposition'].split(';')[1].split('=')[1].replace('"', "")
@@ -501,6 +502,7 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params) {
                 showLoader()
                 await http.get(`/app/logout`)
                 $scope.session.is_logged_in = false
+                $scope.lastMessage = false
                 resolve()
             } catch (error) {
                 if (error.response) {
