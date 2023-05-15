@@ -44,13 +44,45 @@
         }
 
         service.getDataForm = function(query){
-            return mainService.getData('get', url + 'GetDataForm/' + JSON.stringify(query), null, true).then(response=>{
+            return mainService.getData('get', url + 'GetDataForm?json=' + JSON.stringify(query), null, true).then(response=>{
                 if(response.code==="0"){
                     throw response;
                 }
 
                 if(response.code==="1"){
-                    console.log(response)
+                    let mainDataRepository = JSON.parse(response.payload);
+                    let subFamiliaRepository = mainDataRepository[0];
+                    let familiaRepository = mainDataRepository[1];
+                    let medidaRepository = mainDataRepository[2];
+                    let modeloRepository = mainDataRepository[3];
+                    let marcaRepository = mainDataRepository[4];
+                    let metodoValoracionRepository = mainDataRepository[5]; //"Ultimos en entrar, primeros en salir";                                        
+                    let tipoArticuloRepository = mainDataRepository[6];
+                    let tarifaRepository = mainDataRepository[7];
+                    let etiquetaRepository = mainDataRepository[8];
+                    let movimientoRepository = mainDataRepository[9]; //[Entrdas, salidas]
+                    let permisoAlmacenRepository = mainDataRepository[10];
+                    let decimalAlmacenRepository = mainDataRepository[11][0];
+
+                    let tipoIvaRepository = mainDataRepository[12];
+                    let tipoIceRepository = mainDataRepository[13];
+                    
+                    return {
+                        subFamilias: subFamiliaRepository,
+                        familias: familiaRepository,
+                        medidas: medidaRepository,
+                        modelos: modeloRepository,
+                        marcas: marcaRepository,
+                        valoracionMetodos: metodoValoracionRepository,
+                        tipoArticulos: tipoArticuloRepository,
+                        tarifas: tarifaRepository,
+                        etiquetaActividades:etiquetaRepository,
+                        movimientosStocks: movimientoRepository,
+                        jsonPersmission: permisoAlmacenRepository,
+                        decimal: decimalAlmacenRepository,
+                        tipoIvas: tipoIvaRepository,
+                        tipoIces: tipoIceRepository,
+                    }
                 }
             })
         }
