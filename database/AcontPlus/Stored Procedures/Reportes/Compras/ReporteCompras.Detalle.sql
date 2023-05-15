@@ -22,6 +22,7 @@ BEGIN
 	DECLARE @isReportImport BIT 
 
 	--Config. Decimales 
+	DECLARE @jsonConfig AS VARCHAR(MAX)
 	DECLARE @nroPrecio INT
 	DECLARE @nroCantidad INT
 	DECLARE @nroIva INT
@@ -36,63 +37,59 @@ BEGIN
 	DECLARE @rdlcParams VARCHAR(MAX)
 	DECLARE @dataSources VARCHAR(MAX)
 
-	SELECT 
-	  
-	       @id         = id, 
-		   @codDoc     = codDoc,
-		   @rdlcParams = rdlcParams
+	SELECT @id = id, @codDoc = codDoc, @rdlcParams = rdlcParams
 	FROM OPENJSON(@json) WITH (id INT '$.id', codDoc VARCHAR(10) '$.codDoc', rdlcParams VARCHAR(MAX) '$.rdlcParams')
+
 
 	IF @codDoc = '01' AND @isReportImport =1
 		BEGIN
-			SELECT @idEntidad = (SELECT e.idEntidad FROM Sri.Establecimiento se 
-													INNER JOIN Entidad e WITH(NOLOCK) ON e.ruc = se.ruc
+			SELECT @idEntidad = (SELECT e.idEntidad FROM Sri.Establecimiento se WITH(NOLOCK)
+													 INNER JOIN Entidad e WITH(NOLOCK) ON e.ruc = se.ruc
 													 WHERE se.codEstab = dr.codEstab )
 			FROM Recepcion.DocumentoRecibido dr WHERE idDocumento = @id
 		END 
 
 	IF @codDoc = 'FC'
-	BEGIN 
-		SELECT 
-			@idEntidad = idEntidad
-		FROM dbo.FacturaCompra WHERE idFacturaCompra = @id		
-	END 
+		BEGIN 
+			SELECT @idEntidad = idEntidad FROM dbo.FacturaCompra WITH(NOLOCK) WHERE idFacturaCompra = @id		
+		END 
 
 	IF @codDoc = 'IB'
-	BEGIN 
-		SELECT 
-			@idEntidad = idEntidad
-		FROM dbo.IngresoBodega WHERE idIngresoBodega = @id		
-	END 
+		BEGIN 
+			SELECT @idEntidad = idEntidad FROM dbo.IngresoBodega WITH(NOLOCK) WHERE idIngresoBodega = @id		
+		END 
 
 	IF @codDoc = 'LC'
-	BEGIN 
-		SELECT 
-			@idEntidad = idEntidad
-		FROM dbo.LiquidacionCompra WHERE idLiquidacionCompra = @id		
-	END 
+		BEGIN 
+			SELECT @idEntidad = idEntidad FROM dbo.LiquidacionCompra WITH(NOLOCK) WHERE idLiquidacionCompra = @id		
+		END 
 
 	IF @codDoc = 'CNH'
-	BEGIN 
-		SELECT 
-			@idEntidad = idEntidad
-		FROM Compra.Documento_Ingreso WHERE idDocumentoIngreso = @id		
-	END 
+		BEGIN 
+			SELECT @idEntidad = idEntidad FROM Compra.Documento_Ingreso WITH(NOLOCK) WHERE idDocumentoIngreso = @id		
+		END 
 
+	SELECT TOP 1 @jsonConfig = jsonConfig FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CD'
 
-
-	SELECT 
-		@nroPrecio = ISNULL(nroPrecio, 2)
-	   ,@nroCantidad = ISNULL(nroCantidad, 2)
-	   ,@nroIva = ISNULL(nroIva, 2)
-	   ,@nroDescuentoDetalle = ISNULL(nroDescuentoDetalle, 2)
-	   ,@nroTotalDetalle = ISNULL(nroTotalDetalle, 2)
-	   ,@nroTotalSubTotal = ISNULL(nroTotalSubTotal, 2)
-	   ,@nroDescuento = ISNULL(nroDescuento, 2)
-	   ,@nroIce = ISNULL(nroIce, 2)
-	FROM Config.CantidadDecimal WHERE idEntidad = @idEntidad AND codTransaccion = 'C'
-
-	
+	SELECT @nroPrecio           = ISNULL(nroPrecio, 2)
+	      ,@nroCantidad         = ISNULL(nroCantidad, 2)
+	      ,@nroIva              = ISNULL(nroIva, 2)
+	      ,@nroDescuentoDetalle = ISNULL(nroDescuentoDetalle, 2)
+	      ,@nroTotalDetalle     = ISNULL(nroTotalDetalle, 2)
+	      ,@nroTotalSubTotal    = ISNULL(nroTotalSubTotal, 2)
+	      ,@nroDescuento        = ISNULL(nroDescuento, 2)
+	      ,@nroIce              = ISNULL(nroIce, 2)
+	FROM OPENJSON(@jsonConfig)
+	WITH (codTransaccion VARCHAR(5) '$.codTransaccion'
+		 ,nroPrecio             INT '$.nroPrecio'
+		 ,nroCantidad           INT '$.nroCantidad'
+		 ,nroIva                INT '$.nroIva'
+		 ,nroDescuentoDetalle   INT '$.nroDescuentoDetalle'
+		 ,nroTotalDetalle       INT '$.nroTotalDetalle'
+		 ,nroTotalSubTotal      INT '$.nroTotalSubTotal'
+		 ,nroDescuento          INT '$.nroDescuento'
+		 ,nroIce                INT '$.nroIce') as dt
+	WHERE dt.codTransaccion = 'C'
 	
 	--PRINT @isReportImport
 	IF @codDoc = '01' 
@@ -103,22 +100,21 @@ BEGIN
 								,codigo         = ar.codigo
 								,descripcion    = dd.descripcion
 								,cantidad       = Herramientas.Round_Out(dd.cantidad,@nroCantidad) 
-								,medida         = m.descripcion
+								,medida         = me.descripcion
 								,tipoIva        = ti.descripcion
 								,precioUnitario = Herramientas.Round_Out(dd.precioUnitario,@nroPrecio) 
 								,valorDescuento = Herramientas.Round_Out(dd.descuento,@nroDescuentoDetalle)
 								,total          = Herramientas.Round_Out(dd.costoNeto,@nroTotalDetalle)		
-								,precioVenta    = arPvp.precioVenta
-								,precioConIva   = arPvp.precioConIva
-								,tarifa         = t.descripcion
+								,precioVenta    = pv.precioVenta
+								,precioConIva   = pv.precioConIva
+								,tarifa         = ta.descripcion
 								,nota           = ISNULL(ar.observaciones, '')
-
-							FROM Recepcion.DocumentoDetalle dd
-							INNER JOIN Articulo ar WITH(NOLOCK) ON ar.idArticulo = dd.idArticulo
-							INNER JOIN ArticuloPvP arPvp WITH(NOLOCK) ON arPvp.idArticulo = dd.idArticulo
-							INNER JOIN TipoIva ti WITH(NOLOCK) ON ti.idTipoIva = ar.idTipoIva
-							LEFT JOIN Medida m WITH(NOLOCK) ON m.idMedida = dd.idMedida
-							INNER JOIN Tarifa       t ON t.idTarifa    = arPvp.idTarifa
+							FROM Recepcion.DocumentoDetalle dd WITH (NOLOCK)
+							INNER JOIN Articulo             ar WITH (NOLOCK) ON ar.idArticulo  = dd.idArticulo
+							INNER JOIN ArticuloPvP          pv WITH (NOLOCK) ON pv.idArticulo  = dd.idArticulo
+							INNER JOIN TipoIva              ti WITH (NOLOCK) ON ti.idTipoIva   = ar.idTipoIva
+							 LEFT JOIN Medida               me WITH (NOLOCK) ON me.idMedida    = dd.idMedida
+							INNER JOIN Tarifa               ta WITH (NOLOCK) ON ta.idTarifa    = pv.idTarifa
 							WHERE dd.idDocumento = @id ORDER BY dd.idDocumentoDetalle ASC 
 							
 							FOR JSON PATH 
@@ -127,33 +123,32 @@ BEGIN
 
 
 	IF @codDoc='FC'
-	BEGIN 
-		SET @detailDs = (
-						SELECT 
-							 id              =fcd.idFacturaCompraDetalle
-							,idArticulo     = fcd.idArticulo
-							,codigo         = a.codigo
-							,descripcion    = fcd.descripcion
-							,cantidad       = Herramientas.Round_Out(fcd.cantidad,@nroCantidad) 
-							,medida         = m.descripcion
-							,tipoIva        = ti.descripcion
-							,precioUnitario = Herramientas.Round_Out(fcd.precioCosto,@nroPrecio) 
-							,valorDescuento = Herramientas.Round_Out(fcd.valorDescuento,@nroDescuentoDetalle)
-							,total          = Herramientas.Round_Out(fcd.total,@nroTotalDetalle)		
-							,precioVenta    = ap.precioVenta
-							,precioConIva   = ap.precioConIva
-							,tarifa         = t.descripcion
-							,nota           = ISNULL(a.observaciones, '')
-						FROM dbo.FacturaCompraDetalle fcd 
-						INNER JOIN ArticuloPvP ap ON ap.idarticulo = fcd.idArticulo 
-						INNER JOIN Tarifa       t ON t.idTarifa    = ap.idTarifa
-						INNER JOIN dbo.Medida   m ON m.idMedida    = fcd.idMedida		
-						INNER JOIN dbo.Articulo a ON a.idArticulo  = fcd.idArticulo 
-						INNER JOIN dbo.TipoIva ti ON ti.idTipoIva  = a.idTipoIva
-						WHERE fcd.idFacturaCompra = @id AND fcd.estado = 1 ORDER BY fcd.idFacturaCompraDetalle ASC
-						FOR JSON PATH
-					)
-	END 
+		BEGIN 
+			SET @detailDs = (SELECT 
+								 id             = fcd.idFacturaCompraDetalle
+								,idArticulo     = fcd.idArticulo
+								,codigo         = a.codigo
+								,descripcion    = fcd.descripcion
+								,cantidad       = Herramientas.Round_Out(fcd.cantidad,@nroCantidad) 
+								,medida         = m.descripcion
+								,tipoIva        = ti.descripcion
+								,precioUnitario = Herramientas.Round_Out(fcd.precioCosto,@nroPrecio) 
+								,valorDescuento = Herramientas.Round_Out(fcd.valorDescuento,@nroDescuentoDetalle)
+								,total          = Herramientas.Round_Out(fcd.total,@nroTotalDetalle)		
+								,precioVenta    = ap.precioVenta
+								,precioConIva   = ap.precioConIva
+								,tarifa         = t.descripcion
+								,nota           = ISNULL(a.observaciones, '')
+							FROM dbo.FacturaCompraDetalle fd 
+							INNER JOIN ArticuloPvP  ap WITH (NOLOCK) ON ap.idarticulo = fd.idArticulo 
+							INNER JOIN Tarifa       ta WITH (NOLOCK) ON ta.idTarifa   = ap.idTarifa
+							INNER JOIN dbo.Medida   me WITH (NOLOCK) ON me.idMedida   = fd.idMedida		
+							INNER JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = fd.idArticulo 
+							INNER JOIN dbo.TipoIva  ti WITH (NOLOCK) ON ti.idTipoIva  = ar.idTipoIva
+							WHERE fd.idFacturaCompra = @id AND fd.estado = 1 ORDER BY fd.idFacturaCompraDetalle ASC
+							FOR JSON PATH
+							)
+		END 
 
 	IF @codDoc='IB'
 	BEGIN 

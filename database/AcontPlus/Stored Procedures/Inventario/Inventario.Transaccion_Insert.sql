@@ -76,9 +76,9 @@ BEGIN
 	EXEC Inventario.Stock_Update @idArticulo,@idBodega
 
 	--ACTUALIZAR EL PRECIO CONEL METODO DE VALORACION
-	--IF @codTran = 'E'
-	--	BEGIN 
-	--		EXEC Inventario.Metodo_Valoracion_Update @idTransaccion,@idArticulo,@codMetodoValoradion
-	--	END
+	IF @codTran = 'E'
+		BEGIN 
+			EXEC Inventario.Metodo_Valoracion_Update @idTransaccion,@idArticulo,@codMetodoValoradion
+		END
 END
 GO

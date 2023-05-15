@@ -7,7 +7,8 @@ namespace Domain.ViewModels
     {
         public NotaEntrega notaEntrega { get; set; }
         public List<NotaEntregaDetalle> detalle { get; set; }
-        public List<ManejoArticulo> manejoArticulo { get; set; }
+      //  public List<ManejoArticulo> manejoArticulo { get; set; }
+        public string infoAdicionalArticulo { get; set; }
         public int totalRecords { get; set; }
         public string nroDocumento { get; set; }
         public string nombreFiscal { get; set; }

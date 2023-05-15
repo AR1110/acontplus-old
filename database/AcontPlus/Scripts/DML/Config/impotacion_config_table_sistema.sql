@@ -51,15 +51,6 @@ jsonConfig =ISNULL((
 FROM dbo.Entidad en WITH (NOLOCK) WHERE estado = 1
 
 
-INSERT INTO @tableAplicacion (idEntidad,codConfig,jsonConfig)
-SELECT en.idEntidad,codConfig = 'CM', 
-jsonConfig = (
-				SELECT cm.diasGracia,cm.porcentajeMora,cm.tiempoConfiguracion FROM dbo.ConfiguracionMora cm WHERE cm.idEntidad = en.idEntidad for json path
-			  )
-
-FROM dbo.Entidad en WITH (NOLOCK) WHERE estado = 1
-
-
 --INSERT INTO Config.Sistema (idEntidad,codConfig,jsonConfig)
 --SELECT idEntidad,codConfig,jsonConfig FROM @tableAplicacion  order by idEntidad ASC 
 

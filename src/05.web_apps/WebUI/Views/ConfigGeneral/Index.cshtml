@@ -125,6 +125,27 @@
                                                         </div>  
                                                     </div>
                                                 </div>    
+
+                                                 <hr>
+                                                <div class="row justify-content-between">
+                                                    <div class="col-xl-5 col-lg-5 col-md-6 col-sm-12 col-12">
+                                                        <div class="icheck-success">
+                                                            <input type="checkbox" name="configDeuda" id="configDeuda" ng-model="gestionSistema.configDeuda">
+                                                            <label for="configDeuda">Crédito Vencido de Clientes</label>
+                                                        </div>  
+                                                    </div>
+                                                    <div class="col-xl-5 col-lg-5 col-md-6 col-sm-12 col-12" ng-if="gestionSistema.configDeuda">
+                                                        <div class="form-group">
+                                                            <label for="dias">Porcentaje de Interes</label>
+                                                            <input type="text" name="porcentaje" id="porcentaje" valid-number class="form-control border-select" placeholder="20%" ng-model="gestionSistema.porcentajeInteres">
+                                                        </div>
+                                                          <div class="form-group">
+                                                            <label for="dias">Días de Gracia</label>
+                                                            <input type="text" name="diasGracia" id="diasGracia" valid-number class="form-control border-select" placeholder="2 días" ng-model="gestionSistema.diasGracia">
+                                                        </div>
+                                                    </div>                                                   
+                                                </div>
+
                                                 <hr>                                                                                      
                                             </div>
 
@@ -138,7 +159,6 @@
                                 </div>                         
                             </md-content>
                         </md-tab>
-
 
                         <md-tab label="Inventario" md-on-select="getDataTabs('CI')">
                             <md-content class="md-padding">
@@ -413,7 +433,6 @@
                                     </div>
                                 </div>
 
-
                                 <div class="row">
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                         <div class="card">
@@ -450,15 +469,12 @@
                             </md-content>
 
                         </md-tab>
-                
+
                         <md-tab label="NOTIFICACIONES" md-on-select="getDataTabs('CS')">
                             <md-content class="md-padding">
                                 <div class="row">                                   
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                         <div class="card">
-                                            @* <div class="card-header bg-info">
-                                                <h6 class="m-b-0 text-white">CONFIGURACIÓN DE INVENTARIO</h6>     
-                                            </div> *@
                                             <div class="card-body shadow">
                                                 <div class="row pb-1">
                                                     <div class="col-md-12">

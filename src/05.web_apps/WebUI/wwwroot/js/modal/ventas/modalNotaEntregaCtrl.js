@@ -111,6 +111,8 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl {
 
         if (isConfirmed && entity.datosAdicionales) {
             this.datosAdicionalesArticulo = this.datosAdicionalesArticulo.filter(val => val.idArticulo !== entity.idArticulo);
+   
+            this.historyDatosAdicionales = this.historyDatosAdicionales.filter(val => val.idArticulo !== entity.idArticulo);
         }
 
         this.data = Object.assign(this.data, this.uiGridInvoice.getTotales());
@@ -316,6 +318,11 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl {
 
     }
 
+    resultModalAdicional(result) {
+        let {entity, historyDatosAdicionales} = result;
+        this.historyDatosAdicionales = historyDatosAdicionales;
+    }
+
 }
 
 
@@ -343,11 +350,15 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
         } = _params;
         this.TIPO_REGISTRO = TIPO_REGISTRO;
 
+        this.historyDatosAdicionales = [];
+
         this.CELL_TEMPLATE_OPTION = `<a  ng-click="grid.appScope.$ctrl.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
 
         <a update-article ng-click="grid.appScope.$ctrl.openModalArticle(row.entity)" id="btnEditArticuloDetalle" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >
+
         <view-kardex params="row.entity"></view-kardex>
-        <a  ng-click="grid.appScope.abrirModalDatoAdicional(row.entity)" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
+
+        <a  btn-dato-adicional-articulo-fact-elect entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' history-datos-adicionales="grid.appScope.$ctrl.historyDatosAdicionales" result-modal-adicional="grid.appScope.$ctrl.resultModalAdicional(result)" class= "btn btn-warning btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
 
         this.TIPO_DOC_FV = this._commonSvc.tipoDoc['FV'];
 
@@ -442,7 +453,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
             this.data.fechaEmision = new Date();
             this.getFechaVencimiento();
 
-            this.setColumnDefs('8%');
+            this.setColumnDefs('12%');
 
             this.uiGridInvoice = new UiGridOptions({
                 $scope: this.$scope,
@@ -573,7 +584,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
                     const sendData = {
                         notaEntrega,
                         detalle: this.trimDetailDoc(),
-                        manejoArticulo: this.datosAdicionalesArticulo
+                        infoAdicionalArticulo: this.historyDatosAdicionales
                     }
 
                     this._mS.getData('post', '/NotaEntrega/Insert', sendData).then(response => {
@@ -683,7 +694,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
                         factura: JSON.stringify(factura),
                         detalle: JSON.stringify(this.trimDetailDoc()),
                         adicional: JSON.stringify(this.infoAdicionalDocumento || []),
-                        manejoArticulo: JSON.stringify(this.datosAdicionalesArticulo)
+                        infoAdicionalArticulo: JSON.stringify(this.historyDatosAdicionales)
                     }
 
                     this.createInvoice(data).then(response => {
@@ -797,6 +808,8 @@ export class ModalNotaEntregaDetalleCtrl extends ModalNotaEntregaCtrl {
             _tS
         })
         const self = this;
+
+      
 
         this.CELL_TEMPLATE_OPTION = `
         <a  ng-click="grid.appScope.$ctrl.openModalDatoAdicionalArticle(row.entity)" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
@@ -918,6 +931,8 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
         })
         const self = this;
 
+        this.historyDatosAdicionales = [];
+        this.datosAdicionalesArticulo = [];
 
         let {
             TIPO_REGISTRO,
@@ -930,20 +945,29 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
 
         <view-kardex params="row.entity"></view-kardex>
 
-        <a  ng-click="grid.appScope.$ctrl.openModalDatoAdicionalArticulo(row.entity, false)" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
+        <a  btn-dato-adicional-articulo-fact-elect entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' history-datos-adicionales="grid.appScope.$ctrl.historyDatosAdicionales" result-modal-adicional="grid.appScope.$ctrl.resultModalAdicional(result)" datos-adicionales="grid.appScope.$ctrl.datosAdicionalesArticulo" class= "btn btn-warning btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
 
         let {
             dataDocumento,
             cliente,
             detalleDocumento,
             infoAdicionalDocumento,
-            actividadTipoIva
+            actividadTipoIva,
+            datosAdicionalesArticulo
         } = data;
         this.dataDocumento = dataDocumento;
         this.cliente = cliente;
         this.detalleDocumento = detalleDocumento;
         this.infoAdicionalDocumento = infoAdicionalDocumento;
         this.actividadTipoIva = actividadTipoIva;
+
+        this.datosAdicionalesArticulo = datosAdicionalesArticulo || [];
+
+        this.historyDatosAdicionales = this.datosAdicionalesArticulo.map(item=>({
+            idArticulo: item.idArticulo,
+            idInfoAdicional: item.idInfoAdicional,
+            selected: true,
+        }))
 
         this.data.tarifa = this.actividadTipoIva.tarifa;
         this.disabledImpuestoTarifa = this.actividadTipoIva.codigoPorcentaje == '2';
@@ -1010,7 +1034,7 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
             this.ventaComprobantePermission = Object.freeze(this.ventaPermission.comprobante);
             this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
 
-            this.setColumnDefs('8%');
+            this.setColumnDefs('12%');
 
             this.uiGridInvoice = new UiGridOptions({
                 $scope: this.$scope,
@@ -1120,7 +1144,7 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
                 notaEntrega,
                 fechaEmision: this._fS.formatDateMoment(this.data.fechaEmision),
                 detalle: this.trimDetailDoc(),
-                manejoArticulo: this.datosAdicionalesArticulo
+                infoAdicionalArticulo: this.historyDatosAdicionales
             }
 
             await this._mS.getData('put', '/NotaEntrega/Update?id=' + this.data.idNotaEntrega, data).then(response => {
@@ -1166,6 +1190,7 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
         })
         const self = this;
 
+        this.historyDatosAdicionales = [];
 
         let {
             TIPO_REGISTRO,
@@ -1179,7 +1204,7 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
 
         <view-kardex params="row.entity"></view-kardex>
 
-        <a  ng-click="grid.appScope.$ctrl.openModalDatoAdicionalArticulo(row.entity, false)" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
+        <a  btn-dato-adicional-articulo-fact-elect entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' history-datos-adicionales="grid.appScope.$ctrl.historyDatosAdicionales" result-modal-adicional="grid.appScope.$ctrl.resultModalAdicional(result)" class= "btn btn-warning btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
 
         let {
             dataDocumento,
