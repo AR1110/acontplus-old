@@ -29,19 +29,23 @@ BEGIN
 	DECLARE @idEntidad AS INT
 	DECLARE @idUsuario AS INT
 	DECLARE @idDocumento AS INT 
+	DECLARE @idArticulo AS INT 
+	DECLARE @idBodega AS INT 
 	DECLARE @inventory AS VARCHAR(5)
 
 	BEGIN TRY
 		
-		SELECT TOP 1 @idDocumento = idDocumento FROM Recepcion.DocumentoDetalle WITH (NOLOCK) WHERE idDocumentoDetalle = @id
+		SELECT TOP 1 @idDocumento = idDocumento, @idArticulo = idArticulo, @idBodega = idBodega FROM Recepcion.DocumentoDetalle WITH (NOLOCK) WHERE idDocumentoDetalle = @id
 
 		SELECT TOP 1 @idUsuario = idUsuario, @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
-		SELECT TOP 1 @inventory = JSON_VALUE(dbo.f_sanitize_json(jsonConfig),'$.llevaInventario') FROM Config.Sistema WHERE idEntidad = @idEntidad AND codConfig = 'CI'
+		SELECT TOP 1 @inventory = llevaInventario FROM Config.GestionSistema WITH (NOLOCK) WHERE idEntidad = @idEntidad
+
+		--SELECT TOP 1 @inventory = JSON_VALUE(dbo.f_sanitize_json(jsonConfig),'$.llevaInventario') FROM Config.Sistema WHERE idEntidad = @idEntidad AND codConfig = 'CI'
 
 
 		BEGIN TRAN
-			
+
 			DELETE FROM Recepcion.Doc_Detalle_Impuesto WHERE idDocumentoDetalle = @id
 			
 			DELETE FROM Recepcion.DocumentoDetalle WHERE idDocumentoDetalle = @id
@@ -55,12 +59,20 @@ BEGIN
 				BEGIN
 					DECLARE @codDoc AS VARCHAR(2)
 					DECLARE @codDocInv VARCHAR(2)
+					DECLARE @idTipoDocumento INT
+					DECLARE @idTipoTransaccion INT
 
 					SELECT TOP 1 @codDoc = codDoc FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE idDocumento = @idDocumento
 
-					SET @codDocInv = (SELECT CASE WHEN @codDoc = '01' THEN 'FE' WHEN @codDoc = '04' THEN 'NC' END)
+					SELECT @codDocInv =  CASE WHEN @codDoc = '01' THEN 'FE' WHEN @codDoc = '04' THEN 'NC' END
 
-					EXEC Inventario.Transaccion_Delete  'E',@codDocInv,@idDocumento
+					SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo  = @codDocInv
+
+					SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo  = 'E'
+
+					UPDATE Inventario.Transaccion SET estado = 0 WHERE idDocumento = @idDocumento AND idTipoDocumento = @idTipoDocumento AND idTipoTransaccion = @idTipoTransaccion AND idArticulo = @idArticulo
+					
+					EXEC Inventario.Stock_Update @idArticulo, @idBodega
 				END 
 
 		COMMIT TRAN

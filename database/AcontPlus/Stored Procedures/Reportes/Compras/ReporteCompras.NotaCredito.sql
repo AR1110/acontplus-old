@@ -20,6 +20,7 @@ BEGIN
 	DECLARE @idEntidad INT 
 	DECLARE @claveAcceso NVARCHAR(50) 
 	DECLARE @idTipoDocumento bigint 
+	DECLARE @jsonConfig AS VARCHAR(MAX)
 	DECLARE @nroPrecio INT
 	DECLARE @nroCantidad INT
 	DECLARE @nroIva INT
@@ -35,17 +36,27 @@ BEGIN
 
 	SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM dbo.NotaCreditoProveedor WITH (NOLOCK) WHERE idNotaCreditoProveedor= @idNotaCreditoProveedor
 
+	SELECT TOP 1 @jsonConfig = jsonConfig FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CD'
 
-	SELECT 
-		@nroPrecio = nroPrecio
-	   ,@nroCantidad = nroCantidad
-	   ,@nroIva = nroIva
-	   ,@nroDescuentoDetalle = nroDescuentoDetalle
-	   ,@nroTotalDetalle = nroTotalDetalle
-	   ,@nroTotalSubTotal = nroTotalSubTotal
-	   ,@nroDescuento = nroDescuento
-	   ,@nroIce = nroIce
-	FROM Config.CantidadDecimal WHERE idEntidad = @idEntidad AND codTransaccion = 'C'
+	SELECT @nroPrecio           = nroPrecio
+	      ,@nroCantidad         = nroCantidad
+	      ,@nroIva              = nroIva
+	      ,@nroDescuentoDetalle = nroDescuentoDetalle
+	      ,@nroTotalDetalle     = nroTotalDetalle
+	      ,@nroTotalSubTotal    = nroTotalSubTotal
+	      ,@nroDescuento        = nroDescuento
+	      ,@nroIce              = nroIce
+	FROM OPENJSON(@jsonConfig)
+	WITH (codTransaccion VARCHAR(5) '$.codTransaccion'
+		 ,nroPrecio             INT '$.nroPrecio'
+	     ,nroCantidad           INT '$.nroCantidad'
+		 ,nroIva                INT '$.nroIva'
+		 ,nroDescuentoDetalle   INT '$.nroDescuentoDetalle'
+		 ,nroTotalDetalle       INT '$.nroTotalDetalle'
+		 ,nroTotalSubTotal      INT '$.nroTotalSubTotal'
+		 ,nroDescuento          INT '$.nroDescuento'
+		 ,nroIce                INT '$.nroIce') as dt
+	WHERE dt.codTransaccion = 'C'
 
 
 	SELECT 

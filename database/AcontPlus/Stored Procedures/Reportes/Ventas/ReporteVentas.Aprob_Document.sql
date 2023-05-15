@@ -36,6 +36,7 @@ BEGIN
 	DECLARE @cliente VARCHAR(150)
 
 	--Decimales 
+	DECLARE @jsonConfig AS VARCHAR(MAX)
 	DECLARE @nroPrecio INT
 	DECLARE @nroCantidad INT 
 	DECLARE @nroIva INT 
@@ -63,42 +64,54 @@ BEGIN
 	DECLARE @cc VARCHAR(100)
 
 	SELECT @id = id, @rdlcParams = rdlcParams FROM OPENJSON(@json) WITH (id INT '$.id',rdlcParams VARCHAR(MAX) '$.rdlcParams') AS dt 
-	
+
 	SELECT 	
 
 		@uniqueId        = ad.uniqueId,
 		@idEntidad       = ad.idEntidad,
 		@codEstab        = pe.codEstab,
-		@telefono        = e.telefono,
-		@razonSocial     = e.razonSocial,
-		@cc              = e.email,
+		@telefono        = en.telefono,
+		@razonSocial     = en.razonSocial,
+		@cc              = en.email,
 		@nroDoc          = dbo.AFTGenerarNroDocumento(ad.estab+ad.ptoEmi, ad.secuencial),
 		@claveAcceso     = claveAcceso,		
 		@fecha           = CONVERT(NVARCHAR,FORMAT(ad.fechaEmision, 'dd/MM/yyyy HH:mm')),
 		@nameDoc         = 'Prefactura' +'-'+  ad.estab+'-'+ad.ptoEmi+'-'+Helper.F_Auto_Sequential(ad.secuencial),		
 		@subject         = 'Comprobante Electrónico - Acontplus N°: '+ ad.estab+'-'+ad.ptoEmi+'-'+dbo.AFTAutoComplete(ad.secuencial),		
 		@importeTotal    = CAST(ad.importeTotal AS DECIMAL(15,2))				
-	FROM Ventas.Aprob_Document ad
-	INNER JOIN Entidad           e ON e.idEntidad = ad.idEntidad
-	INNER JOIN dbo.EstadoPago   ep ON ep.codigo = ad.codEstado
-	INNER JOIN dbo.Cliente      cl ON cl.idCliente = ad.idCliente
-	INNER JOIN dbo.PuntoEmision pe ON pe.idPuntoEmision = ad.idPuntoEmision
+	FROM Ventas.Aprob_Document  ad WITH (NOLOCK)
+	INNER JOIN dbo.Entidad      en WITH (NOLOCK) ON en.idEntidad      = ad.idEntidad
+	INNER JOIN dbo.EstadoPago   ep WITH (NOLOCK) ON ep.codigo         = ad.codEstado
+	INNER JOIN dbo.Cliente      cl WITH (NOLOCK) ON cl.idCliente      = ad.idCliente
+	INNER JOIN dbo.PuntoEmision pe WITH (NOLOCK) ON pe.idPuntoEmision = ad.idPuntoEmision
 	WHERE idAprob_Document = @id
 
-	SELECT @imagen = imagen, @mimeType = mimeType FROM Config.Estab_Logo WHERE codEstab = @codEstab
+	SELECT TOP 1 @imagen = imagen, @mimeType = mimeType FROM Config.Estab_Logo WITH (NOLOCK) WHERE codEstab = @codEstab
 
+	SELECT TOP 1 @jsonConfig = jsonConfig FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CD'
+	
 	--Decimales 
 	SELECT 
-		@nroPrecio = ISNULL(nroPrecio, 2)
-	   ,@nroCantidad = ISNULL(nroCantidad, 2)
-	   ,@nroIva = ISNULL(nroIva, 2)
+		@nroPrecio           = ISNULL(nroPrecio, 2)
+	   ,@nroCantidad         = ISNULL(nroCantidad, 2)
+	   ,@nroIva              = ISNULL(nroIva, 2)
 	   ,@nroDescuentoDetalle = ISNULL(nroDescuentoDetalle, 2)
-	   ,@nroTotalDetalle = ISNULL(nroTotalDetalle, 2)
-	   ,@nroTotalSubTotal = ISNULL(nroTotalSubTotal, 2)
-	   ,@nroDescuento = ISNULL(nroDescuento, 2)
-	   ,@nroIce = ISNULL(nroIce, 2)
-	FROM Config.CantidadDecimal WHERE idEntidad = @idEntidad AND codTransaccion = 'V'
-	
+	   ,@nroTotalDetalle     = ISNULL(nroTotalDetalle, 2)
+	   ,@nroTotalSubTotal    = ISNULL(nroTotalSubTotal, 2)
+	   ,@nroDescuento        = ISNULL(nroDescuento, 2)
+	   ,@nroIce              = ISNULL(nroIce, 2)
+	FROM OPENJSON(@jsonConfig)
+	WITH (codTransaccion  VARCHAR(5) '$.codTransaccion'
+		 ,nroPrecio              INT '$.nroPrecio'
+		 ,nroCantidad            INT '$.nroCantidad'
+		 ,nroIva                 INT '$.nroIva'
+		 ,nroDescuentoDetalle    INT '$.nroDescuentoDetalle'
+		 ,nroTotalDetalle        INT '$.nroTotalDetalle'
+		 ,nroTotalSubTotal       INT '$.nroTotalSubTotal'
+		 ,nroDescuento           INT '$.nroDescuento'
+		 ,nroIce                 INT '$.nroIce') as dt
+	WHERE dt.codTransaccion = 'V'
+
 
 	SET @headerDs = (SELECT 
 						     ruc             = ad.ruc

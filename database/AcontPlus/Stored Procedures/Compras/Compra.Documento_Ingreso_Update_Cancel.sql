@@ -54,7 +54,7 @@ BEGIN
 
 		SELECT TOP 1 @idUsuario = idUsuario, @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
-		SELECT TOP 1 @inventory = JSON_VALUE(dbo.f_sanitize_json(jsonConfig),'$.llevaInventario') FROM Config.Sistema WHERE idEntidad = @idEntidad AND codConfig = 'CI'
+		SELECT TOP 1 @inventory = llevaInventario FROM Config.GestionSistema WHERE idEntidad = @idEntidad 
 
 		SELECT TOP 1 @uniqueId = uniqueId FROM Compra.Documento_Ingreso WITH (NOLOCK) WHERE idDocumentoIngreso = @idDocumentoIngreso
 		
@@ -70,7 +70,7 @@ BEGIN
 				RETURN 
 			END 
 
-		IF @codPago != 'PE'
+		IF @codPago = 'PP' AND @codPago = 'PA'
 			BEGIN 
 				SELECT '0' code,'El Documento tiene un proceso contable no puede ser editado' as 'message'
 				RETURN  
