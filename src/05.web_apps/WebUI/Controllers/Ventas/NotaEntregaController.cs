@@ -82,7 +82,7 @@ namespace WebUI.Controllers.Ventas
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("jsonNotaEntrega", JsonConvert.SerializeObject(data.notaEntrega));
                 _db.AddDynamicParam("jsonDetalle", JsonConvert.SerializeObject(data.detalle));
-                _db.AddDynamicParam("jsonManejoArticulo", JsonConvert.SerializeObject(data.manejoArticulo) ?? "");
+                _db.AddDynamicParam("infoAdicionalArticulo", data.infoAdicionalArticulo);
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -111,7 +111,7 @@ namespace WebUI.Controllers.Ventas
                 _db.AddDynamicParam("id", id);
                 _db.AddDynamicParam("jsonNotaEntrega", JsonConvert.SerializeObject(data.notaEntrega));
                 _db.AddDynamicParam("jsonDetalle", JsonConvert.SerializeObject(data.detalle));
-                _db.AddDynamicParam("jsonManejoArticulo", JsonConvert.SerializeObject(data.manejoArticulo) ?? "");
+                _db.AddDynamicParam("infoAdicionalArticulo", data.infoAdicionalArticulo);
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
