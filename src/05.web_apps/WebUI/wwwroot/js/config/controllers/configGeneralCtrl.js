@@ -141,10 +141,33 @@
                     }else{
                         jsonConfig.idArticulo = undefined;
                     }
+
                     
+                    if($scope.gestionSistema.configDeuda ){
+                        if (!($scope.gestionSistema.porcentajeInteres > 0)){
+                            tS.toastr('warning', 'Ingrese un porcentaje de interes')
+                            return
+                        }else{
+                            jsonConfig.porcentajeInteres =  $scope.gestionSistema.porcentajeInteres;                            
+                        }
+
+                        if (!($scope.gestionSistema.diasGracia > 0)){
+                            tS.toastr('warning', 'Ingrese los días de gracia')
+                            return
+                        }else{
+                            jsonConfig.diasGracia =  $scope.gestionSistema.diasGracia;                            
+                        }
+
+                    }else{
+                        $scope.gestionSistema.porcentajeInteres = undefined;
+                        $scope.gestionSistema.diasGracia = undefined;
+                    }
+                
                     jsonConfig.searchCode = $scope.gestionSistema.searchCode;
                     jsonConfig.printerAutomatic = $scope.gestionSistema.printerAutomatic;
                     jsonConfig.payAutomatic = $scope.gestionSistema.payAutomatic;
+                    jsonConfig.porcentajeInteres = $scope.gestionSistema.porcentajeInteres;
+                    jsonConfig.diasGracia = $scope.gestionSistema.diasGracia;
                    
                     data = {
                         idSistema: $scope.gestionSistema.idSistema, 
