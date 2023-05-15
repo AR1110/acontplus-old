@@ -117,7 +117,7 @@ namespace BL.FactElect
             infoFac.fechaEmision = nodeInfoFactura.SelectSingleNode("fechaEmision").InnerText;
             infoFac.dirEstablecimiento = (nodeInfoFactura.SelectSingleNode("dirEstablecimiento") == null) ? "" : nodeInfoFactura.SelectSingleNode("dirEstablecimiento").InnerText;
             infoFac.contribuyenteEspecial = (nodeInfoFactura.SelectSingleNode("contribuyenteEspecial") == null) ? "" : nodeInfoFactura.SelectSingleNode("contribuyenteEspecial").InnerText;
-            infoFac.obligadoContabilidad = nodeInfoFactura.SelectSingleNode("obligadoContabilidad").InnerText;
+            infoFac.obligadoContabilidad = (nodeInfoFactura.SelectSingleNode("obligadoContabilidad") == null) ? "" : nodeInfoFactura.SelectSingleNode("obligadoContabilidad").InnerText;
             infoFac.tipoIdentificacionComprador = nodeInfoFactura.SelectSingleNode("tipoIdentificacionComprador").InnerText;
             infoFac.razonSocialComprador = nodeInfoFactura.SelectSingleNode("razonSocialComprador").InnerText;
             infoFac.identificacionComprador = nodeInfoFactura.SelectSingleNode("identificacionComprador").InnerText;
