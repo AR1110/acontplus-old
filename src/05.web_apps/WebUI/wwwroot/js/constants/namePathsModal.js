@@ -35,7 +35,13 @@ app.constant('nombreModalInventario', {
         fileCtrl: '/js/inventario/modals/modalModeloCtrl.js' + CHANGE_VERSION(),
         controller: 'ModalModeloCtrl',
         template: 'Modelo/_ModalModelo.cshtml'
-    }    
+    },
+    ARTICULO_FRACCIONADO: {
+        fileCtrl: '/js/modal/modalArticuloCtrl.min.js' + CHANGE_VERSION(),
+        controller: 'ModalArticuloFraccionadoCtrl',
+        template: 'ArticuloFraccionado/_ModalArticuloFraccionado.cshtml'
+    },
+        
 })
 
 //Facturacion Electronica 
@@ -160,7 +166,6 @@ app.constant('nombreModal', {
         MODAL_ARTICULO_IMPUESTO_RETENCION_CSHTML: 'Articulo/_ModalArticuloImpuestoRetencion.cshtml',
         MODAL_DETALLE_CSHTML: 'Articulo/_ModalArticuloDetalle.cshtml',
         MODAL_ARTICULO_IMPUESTO_CSHTML: 'Articulo/_ModalArticuloImpuesto.cshtml',
-        MODAL_ARTICULO_FRACCIONADO_CSHTML: 'ArticuloFraccionado/_ModalArticuloFraccionado.cshtml',
         MODAL_NUEVO: {
             controller: 'ModalArticuloCtrl',
             template: 'Articulo/_ModalNuevoArticulo.cshtml'
