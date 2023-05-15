@@ -148,11 +148,11 @@ namespace ApiReports.Controllers
                     else
                     {
                         _response.Create(bytes, mimeType, fileName);
-                        if (data.sendToWhatsapp)
-                        {
-                            await new FileUpload().Upload(_configuration.GetSection("WhatsAppFiles").Value, _response.FileName, _response.Content);
-                            return Ok(_response.FileName);
-                        }
+                        //if (data.sendToWhatsapp)
+                        //{
+                        //    //await new FileUpload().Upload(_configuration.GetSection("WhatsAppFiles").Value, _response.FileName, _response.Content);
+                        //    return Ok(_response);
+                        //}
                     }
                 }
                 else
