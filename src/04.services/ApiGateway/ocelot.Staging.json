@@ -954,7 +954,7 @@
         }
       ],
       "DownstreamPathTemplate": "/api/Sistema/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Get",
         "Put"
