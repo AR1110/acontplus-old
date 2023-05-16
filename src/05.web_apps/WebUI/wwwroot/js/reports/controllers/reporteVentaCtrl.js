@@ -1,9 +1,7 @@
 (() => {
 
     'use strict';
-
-    let app = angular.module('acontPlusApp');
-
+    
     app.controller('reporteVentaCtrl', reporteVentaCtrl);
     reporteVentaCtrl.$inject = ['$scope', 'commonService', 'mainService', 'toastService', 'formulario', 'FileSaver', 'Blob', 'decodeToken'];
 
