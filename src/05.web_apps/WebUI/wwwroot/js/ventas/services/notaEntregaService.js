@@ -130,6 +130,17 @@
             })
         }
 
+        service.delete = function(id){
+            return mS.getData('delete', url + 'Delete/' + id, null, true).then(response => {
+                if(response.code==="0"){
+                    return response;
+                }
+                if(response.code==="1"){
+                    return response
+                }
+            })
+        }
+
 
         //Mappers 
 

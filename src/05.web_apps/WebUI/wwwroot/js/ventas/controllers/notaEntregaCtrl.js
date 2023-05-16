@@ -398,10 +398,9 @@
 
                 if (isConfirmed) {
                     showLoader();
-                    _mS.getData('delete', '/NotaEntrega/Delete?id=' + item.idNotaEntrega).then(response => {
-
+                    notaEntregaSvc.delete(item.idNotaEntrega).then(response => {
+                        hideLoader();
                         if (response.code === "0") {
-                            hideLoader();
                             _fS.sweetAlert('warning', response.message, response.titleSms);
                         }
                         if (response.code === "1") {
@@ -415,6 +414,9 @@
                             }
                             $scope.getNotaEntregas();
                         }
+                    }).catch(error => {
+                        hideLoader();
+                        console.log(error);
                     })
 
                 }

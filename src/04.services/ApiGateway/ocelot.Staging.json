@@ -1318,7 +1318,7 @@
         }
       ],
       "DownstreamPathTemplate": "/api/NotaEntrega{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Get",
         "Post",
