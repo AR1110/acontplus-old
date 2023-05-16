@@ -51,6 +51,7 @@ BEGIN
 	   ,nroTotalSubTotal INT NOT NULL
 	   ,nroDescuento INT NOT NULL
 	   ,nroIce INT NOT NULL
+	   ,importeTotal INT NOT NULL
 	)
 
 	SELECT @idEntidad = idEntidad, @idPolitica = idRol FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol	
@@ -68,8 +69,8 @@ BEGIN
 							 ,printerAutomatic BIT '$.printerAutomatic'
 							 ,payAutomatic     BIT '$.payAutomatic') as dt
 	
-	INSERT INTO @configDecimal(nroPrecio,nroCantidad,nroIva,nroDescuentoDetalle ,nroTotalDetalle,nroTotalSubTotal,nroDescuento,nroIce)
-						SELECT nroPrecio,nroCantidad,nroIva,nroDescuentoDetalle ,nroTotalDetalle,nroTotalSubTotal,nroDescuento,nroIce
+	INSERT INTO @configDecimal(nroPrecio,nroCantidad,nroIva,nroDescuentoDetalle ,nroTotalDetalle,nroTotalSubTotal,nroDescuento,nroIce,importeTotal)
+						SELECT nroPrecio,nroCantidad,nroIva,nroDescuentoDetalle ,nroTotalDetalle,nroTotalSubTotal,nroDescuento,nroIce,importeTotal
 						FROM OPENJSON(@jsonConfigDecimal)
 						WITH (codTransaccion      VARCHAR(5) '$.codTransaccion'
 							 ,nroPrecio                  INT '$.nroPrecio'
@@ -79,7 +80,8 @@ BEGIN
 							 ,nroTotalDetalle            INT '$.nroTotalDetalle'
 							 ,nroTotalSubTotal           INT '$.nroTotalSubTotal'
 							 ,nroDescuento               INT '$.nroDescuento'
-							 ,nroIce                     INT '$.nroIce') as dt
+							 ,nroIce                     INT '$.nroIce'
+							 ,importeTotal               INT '$.importeTotal') as dt
 					   WHERE dt.codTransaccion = 'V'
 
 	SELECT 
@@ -102,6 +104,7 @@ BEGIN
 	   ,nroTotalSubTotal
 	   ,nroDescuento
 	   ,nroIce
+	   ,importeTotal
 	FROM @configDecimal
 
 	SELECT 
