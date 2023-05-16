@@ -34,8 +34,8 @@
                         size:'lg',
                         params: {
                             entity: scope.entity,
-                            datosAdicionales: scope.datosAdicionales,
-                            historyDatosAdicionales: scope.historyDatosAdicionales
+                            datosAdicionales: scope.datosAdicionales || [],
+                            historyDatosAdicionales: scope.historyDatosAdicionales || [],
                         },
                         isRenderRazorPartial: true
                     })  

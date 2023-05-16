@@ -87,8 +87,8 @@ namespace WebUI.Controllers.Ventas
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in Insert: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al insertar");
+                _log.LogError("Error in Insert Nota Entrega: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al insertar nota entrega");
             }
             finally
             {

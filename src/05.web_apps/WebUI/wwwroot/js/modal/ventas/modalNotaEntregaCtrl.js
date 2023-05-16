@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.js?v=0.31";
+} from "./modalBaseCtrl.js?v=0.32";
 
 
 class ModalNotaEntregaCtrl extends ModalBaseCtrl {
@@ -129,7 +129,7 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl {
             const {
                 articulo,
                 medidas,
-                datosAdicionales
+                datosAdicionalesArticulo
             } = self.dataArticulo;
 
             let index = 0;
@@ -173,7 +173,8 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl {
             entity.productoFraccionable = articulo.productoFraccionable;
             entity.medidas = medidas; //Lista Medida 
             entity.idMedida = dataMedida.idMedida; //Medida por defecto 
-            entity.adicional = datosAdicionales; //
+            
+            entity.datosAdicionalesArticulo = datosAdicionalesArticulo; //
 
             entity.articuloTarifas = JSON.parse(dataMedida.tarifas);
             let tarifa = entity.articuloTarifas.find(item => item.idTarifa === self.idTarifa);
@@ -197,41 +198,6 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl {
         } catch (error) {
             console.log(error)
         }
-    }
-
-
-    trimDetailDoc() {
-        let tempDetails = [];
-        let orderIndex = 1;
-
-        for (let item of this.gridOptions.data) {
-            tempDetails.push({
-                orderIndex: orderIndex++,
-                idNotaEntregaDetalle: item.idNotaEntregaDetalle || 0,
-                idFacturaDetalle: item.idFacturaDetalle || 0,
-                idArticulo: item.idArticulo,
-                idTarifa: item.idTarifa,
-                idBodega: item.idBodega,
-                idMedida: item.idMedida,
-                idPresentacion: item.idPresentacion || 0,
-                idTipoIva: item.idTipoIva,
-                tarifa: item.tarifa,
-                codigoPorcentaje: item.codigoPorcentaje,
-                ice: item.ice,
-                descripcion: item.descripcion,
-                cantidad: item.cantidad,
-                precioCostoNeto: item.precioCostoNeto,
-                precioUnitario: item.precioUnitario,
-                precioVenta: item.precioUnitario,
-                precioConIva: item.precioConIva,
-                valorDescuento: item.valorDescuento,
-                precioTotalSinImpuesto: item.precioTotalSinImpuesto || 0,
-                porcentajeDescuento: item.porcentajeDescuento,
-                total: item.total,
-                nota: item.nota,
-            })
-        }
-        return tempDetails;
     }
 
     calcularPorcentajeDescuento() {
@@ -328,9 +294,37 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl {
 
 
 export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'storageService', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params']
+    static $inject = [
+        '$scope', 
+        '$timeout', 
+        '$uibModalInstance', 
+        'notaEntregaService', 
+        'facturaService',
+        'storageService', 
+        'mainService', 
+        'commonService', 
+        'modalService', 
+        'nombreModal', 
+        'formulario', 
+        'toastService', 
+        'params'
+    ]
 
-    constructor($scope, $timeout, $uibModalInstance, _storageSvc, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params) {
+    constructor(
+        $scope, 
+        $timeout, 
+        $uibModalInstance, 
+        notaEntregaSvc,
+        facturaSvc, 
+        _storageSvc, 
+        _mS, 
+        _commonSvc,
+        _modalSvc, 
+        _nombreModalConst, 
+        _fS, 
+        _tS, 
+        _params
+    ) {
         super({
             $scope,
             $timeout,
@@ -342,7 +336,10 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
             _fS,
             _tS
         })
-        const self = this;
+    
+        this.facturaSvc = facturaSvc, 
+        this.notaEntregaSvc = notaEntregaSvc,
+
         this._storageSvc = _storageSvc;
 
         let {
@@ -573,46 +570,38 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
             }).then(result => {
                 if (result.isConfirmed) {
                     showLoader();
-                    let notaEntrega = Object.assign({}, this.data);
-                    notaEntrega.fechaEmision = this._fS.formatDateTimeZone(this.data.fechaEmision)
-                    notaEntrega.fechaVencimiento = this._fS.formatDateTimeZone(this.data.fechaVencimiento)
-                    notaEntrega.idCliente = this.cliente.idCliente;
 
                     //Tarifa Aplicada al Documento
-                    // notaEntrega.tarifa = this.actividadTipoIva.tarifa;
-
-                    const sendData = {
-                        notaEntrega,
-                        detalle: this.trimDetailDoc(),
-                        infoAdicionalArticulo: this.historyDatosAdicionales
-                    }
-
-                    this._mS.getData('post', '/NotaEntrega/Insert', sendData).then(response => {
+                    this.data.tarifa = this.actividadTipoIva.tarifa;
+                   
+                    let query = this.notaEntregaSvc.queryMapper({
+                        data: this.data,
+                        cliente: this.cliente,
+                        detalles: this.gridOptions.data,
+                        historyDatosAdicionales: this.historyDatosAdicionales
+                    })
+                    
+                    this.notaEntregaSvc.save(query).then(response => {
+                        hideLoader()
                         if (response.code === '0') {
-                            hideLoader()
                             this._fS.sweetAlert('warning', response.message, response.titleSms);
                         }
-                        if (response.code === "1") {
-                            hideLoader()
+                        if (response.code === "1") {                            
                             this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
-
-                            let data = JSON.parse(response.payload)[0];
-                            let ptoEmi = this.puntosEmisiones.find(item => item.idPuntoEmision == this.data.idPuntoEmision).ptoEmi;
-
+                            
                             let mainData = {
                                 isRegister: true,
                                 printerAutomatic: this.printerAutomatic,
                                 payAutomatic: this.payAutomatic,
-                                data: {
-                                    ...data,
-                                    nroDocumento: ptoEmi + '-' + data.secuencial,
-                                    esContado: data.gestion,
-                                },
+                                data: response.dataResponse,
                                 TIPO_DOC: this.TIPO_DOC_NE
                             }
 
                             this.$uibModalInstance.close(mainData)
                         }
+                    }).catch(error => {
+                        hideLoader();
+                        console.log(error)
                     })
                 }
             })
@@ -623,13 +612,10 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
 
 
         } catch (error) {
-
+            hideLoader();
             console.log(error)
 
-        } finally {
-
-
-        }
+        } 
     }
 
 
@@ -680,50 +666,41 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
                 if (result.isConfirmed) {
 
                     showLoader();
-                    let factura = Object.assign({}, this.data);
-                    factura.idCliente = this.cliente.idCliente;
-                    factura.fechaEmision = this._fS.formatDateTimeZone(this.data.fechaEmision);
-                    factura.fechaVencimiento = this._fS.formatDateTimeZone(this.data.fechaVencimiento);
+                    this.data.tarifa = this.actividadTipoIva.tarifa;
+                   
+                    //Mappeamos todo el objecto necesario para guardar factura.
+                    let params = this.facturaSvc.queryMapper({
+                        data: this.data, 
+                        cliente: this.cliente,
+                        detalles: this.gridOptions.data, 
+                        infoAdicionalDocumento: [],
+                        historyDatosAdicionales: this.historyDatosAdicionales
+                    })
 
-                    //Tarifa Aplicada al Documento
-                    factura.tarifa = this.actividadTipoIva.tarifa;
-
-
-
-                    const data = {
-                        factura: JSON.stringify(factura),
-                        detalle: JSON.stringify(this.trimDetailDoc()),
-                        adicional: JSON.stringify(this.infoAdicionalDocumento || []),
-                        infoAdicionalArticulo: JSON.stringify(this.historyDatosAdicionales)
-                    }
-
-                    this.createInvoice(data).then(response => {
+                    this.facturaSvc.save(params).then(response=>{
+                        hideLoader();
                         if (response.code === '0') {
-                            hideLoader();
                             this._fS.sweetAlert('warning', response.message, response.titleSms);
+                            return
                         }
-                        if (response.code === "1") {
-                            hideLoader();
-                            this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
-
-                            let data = JSON.parse(response.payload)[0];
-
+                        if (response.code === "1") {                        
+                            this._fS.sweetAlert('success', 'Registrado Correctamente', response.titleSms, 1000);
+    
                             let mainData = {
                                 isRegister: true,
                                 printerAutomatic: this.printerAutomatic,
                                 payAutomatic: this.payAutomatic,
-                                data: {
-                                    ...data,
-                                    nroDocumento: data.estab + data.ptoEmi + data.secuencial,
-                                    esContado: data.gestion,
-                                },
+                                data: response.dataResponse,
                                 TIPO_DOC: this.TIPO_DOC_FV
                             }
-
+    
                             this.$uibModalInstance.close(mainData)
+    
                         }
+                    }).catch(error => {
+                          hideLoader();
+                          console.log(error);
                     })
-
 
                 }
             })
@@ -793,9 +770,33 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
 
 export class ModalNotaEntregaDetalleCtrl extends ModalNotaEntregaCtrl {
 
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params']
+    static $inject = [
+        '$scope', 
+        '$timeout', 
+        '$uibModalInstance', 
+        'mainService', 
+        'commonService', 
+       
+        'modalService', 
+        'nombreModal', 
+        'formulario', 
+        'toastService', 
+        'params'
+    ]
 
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params) {
+    constructor(
+        $scope, 
+        $timeout, 
+        $uibModalInstance, 
+        _mS, 
+        _commonSvc, 
+       
+        _modalSvc, 
+        _nombreModalConst, 
+        _fS, 
+        _tS, 
+        _params
+    ) {
         super({
             $scope,
             $timeout,
@@ -807,7 +808,8 @@ export class ModalNotaEntregaDetalleCtrl extends ModalNotaEntregaCtrl {
             _fS,
             _tS
         })
-        const self = this;
+        
+       
 
       
 
@@ -915,9 +917,35 @@ export class ModalNotaEntregaDetalleCtrl extends ModalNotaEntregaCtrl {
 
 export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
 
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params']
+    static $inject = [
+        '$scope', 
+        '$timeout', 
+        '$uibModalInstance', 
+        'mainService', 
+        'commonService', 
+        'notaEntregaService', 
+        'facturaService',
+        'modalService', 
+        'nombreModal', 
+        'formulario', 
+        'toastService', 
+        'params'
+    ]
 
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params) {
+    constructor(
+        $scope, 
+        $timeout, 
+        $uibModalInstance,
+        _mS, 
+        _commonSvc, 
+        notaEntregaSvc,
+        facturaSvc,
+        _modalSvc, 
+        _nombreModalConst, 
+        _fS,
+        _tS, 
+        _params
+    ) {
         super({
             $scope,
             $timeout,
@@ -929,7 +957,9 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
             _fS,
             _tS
         })
-        const self = this;
+        
+        this.notaEntregaSvc = notaEntregaSvc;
+        this.facturaSvc = facturaSvc;
 
         this.historyDatosAdicionales = [];
         this.datosAdicionalesArticulo = [];
@@ -1129,41 +1159,39 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
             })
 
 
-            if (!isConfirmed) return
+            if (isConfirmed){
+                showLoader();
 
-            showLoader();
-            let notaEntrega = Object.assign({}, this.data);
-            notaEntrega.fechaEmision = this._fS.formatDateTimeZone(this.data.fechaEmision)
-            notaEntrega.fechaVencimiento = this._fS.formatDateTimeZone(this.data.fechaVencimiento)
-            notaEntrega.idCliente = this.cliente.idCliente;
-
-            //Tarifa Aplicada al Documento
-            notaEntrega.tarifa = this.actividadTipoIva.tarifa;
-
-            const data = {
-                notaEntrega,
-                fechaEmision: this._fS.formatDateMoment(this.data.fechaEmision),
-                detalle: this.trimDetailDoc(),
-                infoAdicionalArticulo: this.historyDatosAdicionales
+                    //Tarifa Aplicada al Documento
+                    this.data.tarifa = this.actividadTipoIva.tarifa;
+                   
+                    let query = this.notaEntregaSvc.queryMapper({
+                        data: this.data,
+                        cliente: this.cliente,
+                        detalles: this.gridOptions.data,
+                        historyDatosAdicionales: this.historyDatosAdicionales
+                    })
+                    showLoader();
+                    
+                    this.notaEntregaSvc.update(this.data.idNotaEntrega, query).then(response => {
+                        hideLoader()
+                        if (response.code === '0') {
+                            this._fS.sweetAlert('warning', response.message, response.titleSms);
+                        }
+                        if (response.code === "1") {                            
+                            this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                            this.isUpdate = true;
+                        }
+                    }).catch(error => {
+                        hideLoader();
+                        console.log(error)
+                    })
             }
 
-            await this._mS.getData('put', '/NotaEntrega/Update?id=' + this.data.idNotaEntrega, data).then(response => {
-                if (response.code === '0') {
-                    this._fS.sweetAlert('warning', response.message, response.titleSms);
-                }
-                if (response.code === "1") {
-                    this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
-                    // let data = JSON.parse(response.payload)[0];                   
-                    // this.$uibModalInstance.close(data) 
-                    this.isUpdate = true;
-                }
-            })
-
         } catch (error) {
-            console.log(error)
-        } finally {
             hideLoader();
-        }
+            console.log(error)
+        } 
     }
 
     closeModal() {
@@ -1174,9 +1202,35 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
 
 
 export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params']
+    static $inject = [
+        '$scope', 
+        '$timeout', 
+        '$uibModalInstance', 
+        'mainService', 
+        'commonService', 
+        'notaEntregaService',
+        'facturaService',
+        'modalService', 
+        'nombreModal', 
+        'formulario', 
+        'toastService', 
+        'params'
+    ]
 
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params) {
+    constructor(
+        $scope, 
+        $timeout, 
+        $uibModalInstance, 
+        _mS, 
+        _commonSvc, 
+        notaEntregaSvc,
+        facturaSvc,
+        _modalSvc, 
+        _nombreModalConst, 
+        _fS, 
+        _tS, 
+        _params
+    ) {
         super({
             $scope,
             $timeout,
@@ -1188,7 +1242,9 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
             _fS,
             _tS
         })
-        const self = this;
+
+        this.notaEntregaSvc = notaEntregaSvc;
+        this.facturaSvc = facturaSvc;
 
         this.historyDatosAdicionales = [];
 
@@ -1365,7 +1421,7 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
 
     async onSave() {
         try {
-            showLoader();
+          
 
             if (!this.isValidaForm()) return
 
@@ -1377,6 +1433,7 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
             this.validarDatosAdicionales("idNotaEntregaDetalle");
 
 
+            showLoader();
             this.nroDocumentoSecuencial = await this._commonSvc.generarNroDocumentoVenta({
                 idPuntoEmision: this.data.idPuntoEmision,
                 codigoDocumento: this.TIPO_DOC_NE.codigo,
@@ -1409,59 +1466,49 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
             })
 
 
-            if (!isConfirmed) return
+            if (isConfirmed){
+                showLoader();
 
-            showLoader();
-            let notaEntrega = Object.assign({}, this.data);
-            notaEntrega.fechaEmision = this._fS.formatDateTimeZone(this.data.fechaEmision)
-            notaEntrega.fechaVencimiento = this._fS.formatDateTimeZone(this.data.fechaVencimiento)
-            notaEntrega.idCliente = this.cliente.idCliente;
+                //Tarifa Aplicada al Documento
+                this.data.tarifa = this.actividadTipoIva.tarifa;
+                
+                let query = this.notaEntregaSvc.queryMapper({
+                    data: this.data,
+                    cliente: this.cliente,
+                    detalles: this.gridOptions.data,
+                    historyDatosAdicionales: this.historyDatosAdicionales
+                })
+                
+                this.notaEntregaSvc.save(query).then(response => {
+                    hideLoader()
+                    if (response.code === '0') {
+                        this._fS.sweetAlert('warning', response.message, response.titleSms);
+                    }
+                    if (response.code === "1") {                            
+                        this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                        
+                        let mainData = {
+                            isRegister: true,
+                            printerAutomatic: this.printerAutomatic,
+                            payAutomatic: this.payAutomatic,
+                            data: response.dataResponse,
+                            TIPO_DOC: this.TIPO_DOC_NE
+                        }
 
-            //Tarifa Aplicada al Documento
-            // notaEntrega.tarifa = this.actividadTipoIva.tarifa;
-
-            const sendData = {
-                notaEntrega,
-                detalle: this.trimDetailDoc(),
-                infoAdicionalArticulo: this.historyDatosAdicionales
+                        this.$uibModalInstance.close(mainData)
+                    }
+                }).catch(error => {
+                    hideLoader();
+                    console.log(error)
+                })
             }
 
-            await this._mS.getData('post', '/NotaEntrega/Insert', sendData).then(response => {
-                if (response.code === '0') {
-                    this._fS.sweetAlert('warning', response.message, response.titleSms);
-                }
-                if (response.code === "1") {
-                    this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
-
-                    let data = JSON.parse(response.payload)[0];
-                    let ptoEmi = this.puntosEmisiones.find(item => item.idPuntoEmision == this.data.idPuntoEmision).ptoEmi;
-
-                    let mainData = {
-                        isRegister: true,
-                        printerAutomatic: this.printerAutomatic,
-                        payAutomatic: this.payAutomatic,
-                        data: {
-                            ...data,
-                            nroDocumento: ptoEmi + '-' + data.secuencial,
-                            esContado: data.gestion,
-                        },
-                        TIPO_DOC: this.TIPO_DOC_NE
-                    }
-
-
-                    this.$uibModalInstance.close(mainData)
-
-
-                }
-            })
+            
 
         } catch (error) {
-
+            hideLoader();
             console.log(error)
 
-        } finally {
-
-            hideLoader();
         }
     }
 
@@ -1469,7 +1516,6 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
     //Guardar Nota de Entrega como Nota de Entrega    
     async onSaveInvoice() {
         try {
-            showLoader();
 
             if (!this.isValidaForm()) return
 
@@ -1480,6 +1526,8 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
 
             this.validarDatosAdicionales("idFacturaDetalle");
 
+
+            showLoader();
 
             this.nroDocumentoSecuencial = await this._commonSvc.generarNroDocumentoVenta({
                 idPuntoEmision: this.data.idPuntoEmision,
@@ -1513,60 +1561,48 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
             })
 
 
-            if (!isConfirmed) return
+            if (isConfirmed){
+                showLoader();
+                this.data.tarifa = this.actividadTipoIva.tarifa;
+               
+                //Mappeamos todo el objecto necesario para guardar factura.
+                let params = this.facturaSvc.queryMapper({
+                    data: this.data, 
+                    cliente: this.cliente,
+                    detalles: this.gridOptions.data, 
+                    infoAdicionalDocumento: [],
+                    historyDatosAdicionales: this.historyDatosAdicionales
+                })
 
-            showLoader();
-            let factura = Object.assign({}, this.data);
-            factura.idCliente = this.cliente.idCliente;
-            factura.fechaEmision = this._fS.formatDateTimeZone(this.data.fechaEmision);
-            factura.fechaVencimiento = this._fS.formatDateTimeZone(this.data.fechaVencimiento);
-
-            //Tarifa Aplicada al Documento
-            factura.tarifa = this.actividadTipoIva.tarifa;
-
-
-
-            const sendData = {
-                factura: JSON.stringify(factura),
-                detalle: JSON.stringify(this.trimDetailDoc()),
-                adicional: JSON.stringify(this.infoAdicionalDocumento || []),
-                infoAdicionalArticulo: JSON.stringify(this.historyDatosAdicionales)
-            }
-
-            this.createInvoice(sendData).then(response => {
-                if (response.code === '0') {
+                this.facturaSvc.save(params).then(response=>{
                     hideLoader();
-                    this._fS.sweetAlert('warning', response.message, response.titleSms);
-                }
-                if (response.code === "1") {
-                    hideLoader();
-                    this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
-
-                    let data = JSON.parse(response.payload)[0];
-                    let mainData = {
-                        isRegister: true,
-                        printerAutomatic: this.printerAutomatic,
-                        payAutomatic: this.payAutomatic,
-                        data: {
-                            ...data,
-                            nroDocumento: data.estab + data.ptoEmi + data.secuencial,
-                            esContado: data.gestion,
-                        },
-                        TIPO_DOC: this.TIPO_DOC_FV
+                    if (response.code === '0') {
+                        this._fS.sweetAlert('warning', response.message, response.titleSms);
+                        return
                     }
+                    if (response.code === "1") {                        
+                        this._fS.sweetAlert('success', 'Registrado Correctamente', response.titleSms, 1000);
 
+                        let mainData = {
+                            isRegister: true,
+                            printerAutomatic: this.printerAutomatic,
+                            payAutomatic: this.payAutomatic,
+                            data: response.dataResponse,
+                            TIPO_DOC: this.TIPO_DOC_FV
+                        }
 
-                    this.$uibModalInstance.close(mainData)
-                }
-            }).catch(error => {
-                hideLoader();
-                console.log(error)
-            })
+                        this.$uibModalInstance.close(mainData)
 
+                    }
+                }).catch(error => {
+                      hideLoader();
+                      console.log(error);
+                })
+            }
         } catch (error) {
             hideLoader();
             console.log(error)
-        } finally {}
+        }  
     }
 
 }

@@ -206,7 +206,7 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
             this.indexRow = index;
 
             this.focusColumnCantidad();
-            console.log(entity)
+     
 
         } catch (error) {
             console.log(error)
