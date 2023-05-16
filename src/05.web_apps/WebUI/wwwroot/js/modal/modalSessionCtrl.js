@@ -1,7 +1,0 @@
-export class ModalSessionCtrl{
-    static $inject = ['$uibModalInstance']
-
-    constructor($uibModalInstance){
-        this.$uibModalInstance = $uibModalInstance;
-    }
-}

@@ -1384,7 +1384,7 @@
         $scope.initialLoad();
 
 
-        $scope.onChangeTabEntidadEntifiera = (item)=>{
+        $scope.onChangeTabEntidadFinanciera = (item)=>{
             try {
                              
                 let {idEntidadFinanciera, codigo} = $scope.entidadesFinancieras.at($scope.selectedIndexTab)
