@@ -309,6 +309,19 @@
                                                             </div>
                                                         </div>
 
+                                                        <div class="row">
+                                                            <div class="col-6 py-2">
+                                                                <span>Importe Total</span>
+                                                            </div>
+                                                            <div class="col-6 py-2 text-truncate">
+                                                                 <select class="form-control border-select" ng-model="decimalVenta.importeTotal">
+                                                                    <option ng-value="decimal" ng-repeat="decimal in decimales">
+                                                                        {{decimal}}
+                                                                    </option>                                    
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
                                                     </div>                                                  
                                                 </div>
                                             </div>

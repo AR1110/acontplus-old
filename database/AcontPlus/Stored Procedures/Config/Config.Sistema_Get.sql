@@ -80,6 +80,7 @@ BEGIN
 				 ,nroTotalDetalle            INT '$.nroTotalDetalle'
 				 ,nroTotalSubTotal           INT '$.nroTotalSubTotal'
 				 ,nroDescuento               INT '$.nroDescuento'
+				 ,importeTotal               INT '$.importeTotal'
 				 ,nroIce                     INT '$.nroIce') as dt
 		END 
 
