@@ -1,3 +1,6 @@
+using BL.JwtAuthenticationManger;
+using Helpers;
+
 namespace ApiVentas
 {
     public class Program
@@ -9,9 +12,15 @@ namespace ApiVentas
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddCustomJwtAuthentication();
+
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
+            ConfigHelper.AddJsonFiles(builder.Configuration);
 
             var app = builder.Build();
 
@@ -24,10 +33,13 @@ namespace ApiVentas
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
+
             app.UseAuthorization();
 
+            app.UseMiddleware<JWTMiddleware>();
 
-            app.MapControllers();
+            app.MapControllers().RequireAuthorization();
 
             app.Run();
         }
