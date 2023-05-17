@@ -1365,6 +1365,28 @@
         "Delete"
       ],
       "UpstreamPathTemplate": "/api/NotaEntrega{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7074
+        }
+      ],
+      "DownstreamPathTemplate": "/api/WhatsappMessage{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/api/WhatsappMessage{everything}"
     }
   ]
 }

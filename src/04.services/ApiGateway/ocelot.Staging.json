@@ -880,7 +880,7 @@
         }
       ],
       "DownstreamPathTemplate": "/api/UsuarioPermiso/CheckHasPermission/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Get"
       ],
@@ -1053,7 +1053,7 @@
         }
       ],
       "DownstreamPathTemplate": "/api/EntidadConfigSri/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Get",
         "Post",
@@ -1075,7 +1075,7 @@
         }
       ],
       "DownstreamPathTemplate": "/api/SubMenu/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Get",
         "Post",
@@ -1097,7 +1097,7 @@
         }
       ],
       "DownstreamPathTemplate": "/api/Etiqueta/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Get",
         "Post",
@@ -1119,7 +1119,7 @@
         }
       ],
       "DownstreamPathTemplate": "/api/Familia{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Get",
         "Post",
@@ -1141,7 +1141,7 @@
         }
       ],
       "DownstreamPathTemplate": "/api/SubFamilia{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Get",
         "Post",
@@ -1163,7 +1163,7 @@
         }
       ],
       "DownstreamPathTemplate": "/api/Medida{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Get",
         "Post",
@@ -1185,7 +1185,7 @@
         }
       ],
       "DownstreamPathTemplate": "/api/Modelo{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Get",
         "Post",
@@ -1207,7 +1207,7 @@
         }
       ],
       "DownstreamPathTemplate": "/api/Marca{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Get",
         "Post",
@@ -1229,7 +1229,7 @@
         }
       ],
       "DownstreamPathTemplate": "/api/Tarifa{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Get",
         "Post",
@@ -1247,11 +1247,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "205.209.99.71",
-          "Port": 8096
+          "Port": 8098
         }
       ],
       "DownstreamPathTemplate": "/api/WhatsAppSession{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Get",
         "Post",
@@ -1326,6 +1326,28 @@
         "Delete"
       ],
       "UpstreamPathTemplate": "/api/NotaEntrega{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 8098
+        }
+      ],
+      "DownstreamPathTemplate": "/api/WhatsappMessage{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/api/WhatsappMessage{everything}"
     }
   ]
 }

@@ -93,6 +93,9 @@ BEGIN
 										,usuario = u.nombreUsuario
 										,ISNULL(de.codEstab, '''') codEstab
 										,ISNULL(telefono, '''') telefono
+										,de.telefonoEstablecimiento
+										,de.entidad
+										,de.nombreComercial
 									 FROM v_DocElectronico de WITH (NOLOCK)
 									 INNER JOIN Usuario u WITH(NOLOCK) ON u.idUsuario = de.idUsuario
 									 WHERE de.idEntidad = @idEntidad   ';

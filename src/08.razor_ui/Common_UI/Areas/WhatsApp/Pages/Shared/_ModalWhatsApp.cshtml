@@ -11,9 +11,12 @@
             <p>
                 ID del Dispositivo: <b class="text-info">{{current_device.device}}</b>
             </p>
+            <p>
+                <b class="text-success">{{comprobante}}</b>
+            </p>
         </div>
     </div>
-    <div class="row" ng-if="!session.is_logged_in">
+    <div class="row" ng-if="!session.is_logged_in && hasPermissions">
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="text-center">
                 <img src="{{session.src}}" id="qrcode" alt="" class="img-fluid">
@@ -22,12 +25,18 @@
         </div>
     </div>
     <hr />
-    <form ng-submit="sendMessage()" >
+    <form ng-submit="sendMessage()">
         <div class="row" ng-if="session.is_logged_in">
             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="">Destinatario:</label>
-                    <input type="tel" name="" id="" class="form-control" ng-model="whatsapp.number" required>
+                    <input type="tel" name="" id="" class="form-control" ng-if="!hasPhoneNumber"
+                        ng-model="whatsapp.number" required>
+                    <select name="" id="" class="form-control" ng-if="hasPhoneNumber" ng-model="whatsapp.number" ng-change="addOtherNumber(whatsapp.number)"
+                        required>
+                        <option ng-value="item.number" ng-repeat="item in phoneNumbers">{{item.number}}</option>
+                        <option value="0">Otro Número</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="">Mensaje:</label>
@@ -50,7 +59,7 @@
                     Reconectar
                 </button>
             </div>
-            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12" ng-if="session.is_logged_in">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12" ng-if="session.is_logged_in && hasPermissions">
                 <button type="button" class="btn btn-danger" ng-click="askToLogout()">
                     <i class="fa fa-sign-out"></i>
                     Cerrar Sesión
