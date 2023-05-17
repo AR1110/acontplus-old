@@ -1278,8 +1278,8 @@ export class ModalProveedorCtrl extends ModalBaseCtrl {
         }
     }
 
-    onChangeTipoIdentificacion() {
-        if (this.tipoIdentificacion && this.tipoRegistro === 1) {
+    onChangeTipoIdentificacion() {        
+        if (this.tipoIdentificacion ) {
             this.typeNotify = '';
             this.message = ''
             this.data.numeroIdentificacion = '';
@@ -1290,7 +1290,7 @@ export class ModalProveedorCtrl extends ModalBaseCtrl {
         if (this._form.campo(this.data.numeroIdentificacion)) return
 
         this.data.idTipoIdentificacion = this.tipoIdentificacion.idTipoIdentificacion;
-        console.log(this.dataFindByIdTipoIdentificacion())
+       
         let codigoIdentificacion = this.dataFindByIdTipoIdentificacion().codigoIdentificacion;
 
         this.dataSearchValidacion = {
@@ -1300,42 +1300,41 @@ export class ModalProveedorCtrl extends ModalBaseCtrl {
             titulo: 'Proveedor Registrado.',
             codigoIdentificacion
         }
-
-        switch (codigoIdentificacion) {
-            case 'C':
-                $("#numeroIdentificacion").attr('maxlength', 10);
-                if (this.data.numeroIdentificacion.toString().length < 10) {
-                    this.typeNotify = 'is-invalid';
-                    this.message = 'Número de Cédula debe tener 10 dígitos';
-                    this.id = 0;
-                } else {
-                    this.validarNumIdentificacion();
-                }
-                break;
-            case 'R':
-                $("#numeroIdentificacion").attr('maxlength', 13);
-                if (this.data.numeroIdentificacion.toString().length < 13) {
-                    this.typeNotify = 'is-invalid';
-                    this.message = 'Número de RUC debe tener 13 dígitos';
-                    this.id = 0;
-                    return
-                }
-
-                if (this.data.numeroIdentificacion.slice(this.data.numeroIdentificacion.length - 3) !== '001') {
-                    this.typeNotify = 'is-invalid';
-                    this.message = 'Número de RUC tiene que contener (001) en últimos dígitos';
-                    return
-                }
-
-                this.typeNotify = 'is-valid';
-                this.message = '';
-                this.verificarSiExisteNumIdentificacion();
-
-                // else {
-                //     this.validarNumIdentificacion();
-                // }
-                break;
+       
+ 
+        if (codigoIdentificacion === 'C') {
+            $("#numeroIdentificacion").attr('maxlength', 10);
+            if (this.data.numeroIdentificacion.toString().length < 10) {
+                this.typeNotify = 'is-invalid';
+                this.message = 'Número de Cédula debe tener 10 dígitos';
+                this.id = 0;
+                return
+            }
         }
+
+        
+        if (codigoIdentificacion === 'R') {
+            $("#numeroIdentificacion").attr('maxlength', 13);
+            console.log( $("#numeroIdentificacion"))
+            if (this.data.numeroIdentificacion.toString().length < 13) {
+                this.typeNotify = 'is-invalid';
+                this.message = 'Número de RUC debe tener 13 dígitos';
+                this.id = 0;
+                return
+            }
+
+            if (this.data.numeroIdentificacion.slice(this.data.numeroIdentificacion.length - 3) !== '001') {
+                this.typeNotify = 'is-invalid';
+                this.message = 'Número de RUC tiene que contener (001) en últimos dígitos';
+                return
+            }
+
+        }
+        this.typeNotify = '';
+        this.message = '';
+        this.verificarSiExisteNumIdentificacion();
+
+
     }
 
 

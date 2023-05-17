@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.js?v=0.86";
+} from "./modalBaseCtrl.js?v=0.90";
 
 class ModalFacturaCtrl extends ModalBaseCtrl {
 
