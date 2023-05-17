@@ -363,7 +363,7 @@
                                 val.warehouses = JSON.parse(val.warehouses)
                                 return val;
                             })
-                            console.log(scope.branchs)
+                            
                         })
     
                         // Compile the popover content with the scope
@@ -442,7 +442,7 @@
                     let {fileCtrl, controllers, templates} = nombreModalVenta.CLIENTE;
                     let ctrl = (await import(fileCtrl))[controllers['M']];
                     let template = templates['M'];
-                    console.log(controllers['M']);
+                    
                     let modalRef = modalService.openModalCustom({
                         controller: ctrl,
                         template,

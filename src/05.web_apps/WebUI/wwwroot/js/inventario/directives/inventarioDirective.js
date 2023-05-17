@@ -262,27 +262,25 @@
             link: function (scope, element, attr) {
     
                 element.on('click', async function (e) {
-    
-                    let {
-                        MODAL_CTRL,
-                        MODAL_CSHTML
-                    } = nombreModalInventario.KARDEX;
-    
-                    const articulo = {
+
+                    
+                    let {fileCtrl, controllers, templates} = nombreModalInventario.KARDEX;
+                    let ctrl = (await import(fileCtrl))[controllers['M']];
+                    let template = templates['M']
+
+                    
+                    const params = {
                         idArticulo: scope.params.idArticulo,
                         codigo: scope.params.codigo,
                         descripcion: scope.params.descripcion,
                     }
     
-                    const {
-                        ModalKardexCtrl
-                    } = await import('./../modal/' + MODAL_CTRL);
-    
+                    
                     modalService.openModalCustom({
-                        controller: ModalKardexCtrl,
-                        template: MODAL_CSHTML,
+                        controller: ctrl,
+                        template,
                         size: 'xl',
-                        params: articulo,
+                        params,
                         windowClass: 'uibModalFullScreen',
                         isRenderRazorPartial: true
                     })

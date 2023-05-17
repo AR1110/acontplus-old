@@ -548,7 +548,8 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
             }
 
 
-            this.decimal = resultsDataForm[1][0]
+            this.decimal = resultsDataForm[1][0];
+         
             this.configDetalle = resultsDataForm[2][0]
 
             this.tipoIvas = resultsDataForm[3];
