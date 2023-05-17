@@ -10,7 +10,7 @@ CREATE PROCEDURE Inventario.Etiqueta_Insert @idUsuarioRol INT, @json VARCHAR(500
 AS
 BEGIN
 	DECLARE @idUsuario INT = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
-
+	DECLARE @idEntidad INT = (SELECT idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
 	DECLARE @descripcion VARCHAR(100)
 	DECLARE @etiquetas VARCHAR(600) 
 
@@ -31,8 +31,8 @@ BEGIN
 					RETURN
 				END
 
-			INSERT INTO Inventario.Etiqueta(descripcion, etiquetas, fechaRegistro, idUsuario)
-									VALUES(@descripcion,@etiquetas, dbo.ufnGetDateEcuador(), @idUsuario)
+			INSERT INTO Inventario.Etiqueta(descripcion, etiquetas, fechaRegistro, idUsuario, idEntidad)
+									VALUES(@descripcion,@etiquetas, dbo.ufnGetDateEcuador(), @idUsuario, @idEntidad)
 			
 			SELECT '1'code, 'Registrado correctamente' as 'message'
 			

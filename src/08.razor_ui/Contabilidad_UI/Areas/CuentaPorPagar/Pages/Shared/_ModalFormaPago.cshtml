@@ -7,7 +7,7 @@
 
 <div class="modal-body">    
     <md-tabs class="md-raised" md-selected="selectedIndexTab" md-center-tabs md-dynamic-height md-border-bottom>
-        <md-tab ng-repeat="item in entidadesFinancieras" md-on-select="onChangeTabEntidadEntifiera(item)">
+        <md-tab ng-repeat="item in entidadesFinancieras" md-on-select="onChangeTabEntidadFinanciera(item)">
             <md-tab-label>{{item.descripcion}}</md-tab-label>
             <md-tab-body>
                 <div class="card border border-info mt-2">
@@ -214,7 +214,7 @@
                                 </div>
                             </div>                            
                         </div>
-                       
+
                         <div class="row">
                             <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-xs-12">
                                 <div class="form-group">

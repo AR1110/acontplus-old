@@ -416,7 +416,7 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
             }).catch(error => {
                 console.log(error)
             })
-        } catch (error) { 
+        } catch (error) {
             console.log(item);
         }
     }
@@ -553,9 +553,20 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
         }
     }
 
-    $scope.openModalSendWhatsapp = async (item) => {
+    $scope.hasPermissions = decodeToken.role == 'RT' ? true : false
+
+    $scope.paramsToWhatsapp = {
+        loginOnly: true
+    }
+
+    $scope.loginWhatsapp = () => {
+        $scope.openModalSendWhatsapp($scope.paramsToWhatsapp)
+    }
+
+    $scope.openModalSendWhatsapp = async (item = null) => {
         try {
             item.type = 'SRI'
+            item.hasPermissions = $scope.hasPermissions
             const {
                 MODAL_SEND_WHATSAPP_CTRL,
                 MODAL_SEND_WHATSAPP_CSHTML

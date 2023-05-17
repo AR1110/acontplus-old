@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.js?v=0.85";
+} from "./modalBaseCtrl.js?v=0.86";
 
 class ModalFacturaCtrl extends ModalBaseCtrl {
 
@@ -206,9 +206,7 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
             this.indexRow = index;
 
             this.focusColumnCantidad();
-
-
-
+     
 
         } catch (error) {
             console.log(error)

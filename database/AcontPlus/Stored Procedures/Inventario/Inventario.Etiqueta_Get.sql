@@ -11,7 +11,7 @@ AS
 BEGIN 
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
-
-	SELECT * FROM Inventario.Etiqueta
+	DECLARE @idEntidad INT = (SELECT idEntidad FROM App.UsuarioRol where idUsuarioRol = @idUsuarioRol)
+	SELECT * FROM Inventario.Etiqueta WHERE idEntidad  = @idEntidad
 
 END 

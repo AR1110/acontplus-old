@@ -1005,18 +1005,19 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 54948
+          "Port": 7079
         }
       ],
-      "DownstreamPathTemplate": "/api/Cliente/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamPathTemplate": "/api/Cliente{everything}",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "Get",
+        "Post",
         "Put",
         "Delete",
         "Options"
       ],
-      "UpstreamPathTemplate": "/api/Cliente/{everything}"
+      "UpstreamPathTemplate": "/api/Cliente{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -1342,6 +1343,50 @@
         "Delete"
       ],
       "UpstreamPathTemplate": "/api/Articulo{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7079
+        }
+      ],
+      "DownstreamPathTemplate": "/api/NotaEntrega{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/api/NotaEntrega{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7074
+        }
+      ],
+      "DownstreamPathTemplate": "/api/WhatsappMessage{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/api/WhatsappMessage{everything}"
     }
   ]
 }

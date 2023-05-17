@@ -6,8 +6,8 @@
     socketService.$inject = ['$http', '$rootScope'];
 
     function socketService($http, $rootScope) {
-        const _env = 2
-        let host = _env == 1 ? 'http://localhost:8000' : 'http://74.50.85.164:3000'
+        const _env = 1
+        let host = _env == 1 ? 'http://localhost:8000' : 'http://74.50.85.164:8000'
         let socket = io.connect(host, { path: '/socket.io' })
         return {
             on: function (eventName, callback) {
