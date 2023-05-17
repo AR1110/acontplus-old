@@ -53,6 +53,20 @@ app.constant('nombreModalFactElect', {
     }
 })
 
+app.constant('nombreModalVenta', {
+    CLIENTE: {
+        fileCtrl: '/js/ventas/modals/modalClienteCtrl.js',
+        controllers: {
+            M: 'ModalClienteCtrl',
+            L: 'ModalClienteListaCtrl'
+        } ,
+        templates: {
+            M: 'Cliente/_ModalCliente.cshtml',
+            L: 'Cliente/_ModalClienteLista.cshtml'
+        } 
+    }
+})
+
 app.constant('nombreModal', {
     aprob_comp: {
         MODAL_FILE_CTRL: 'modal/ventas/modalAprobDocument.js' + CHANGE_VERSION(),

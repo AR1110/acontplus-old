@@ -5,15 +5,15 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-IF OBJECT_ID('FactElect.Cliente_Get_Data_Form')IS NOT NULL
-	DROP PROCEDURE FactElect.Cliente_Get_Data_Form
+IF OBJECT_ID('Ventas.Cliente_Get_Data_Form')IS NOT NULL
+	DROP PROCEDURE Ventas.Cliente_Get_Data_Form
 GO
 -- =============================================
 -- Author:		Emilio Senguana
 -- Create date: 22-04-2023 20h43 
 -- Description:	<Description,,>
 -- =============================================
-CREATE PROCEDURE FactElect.Cliente_Get_Data_Form
+CREATE PROCEDURE Ventas.Cliente_Get_Data_Form
 	@idUsuarioRol INT, 
 	@json VARCHAR(800)
 AS

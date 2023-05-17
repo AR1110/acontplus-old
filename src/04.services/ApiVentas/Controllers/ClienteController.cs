@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Common.Logs;
+using DataAccess;
+using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ApiVentas.Controllers
 {
@@ -6,5 +9,164 @@ namespace ApiVentas.Controllers
     [ApiController]
     public class ClienteController : ControllerBase
     {
+        private readonly IConfiguration _configuration;       
+        public ClienteController(IConfiguration configuration)
+        {
+            _configuration = configuration;            
+        }
+
+        [HttpGet("Get")]
+        public async Task<IActionResult> Get(string json)
+        {
+            DbAccess _db = new DbAccess(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                await _db.SPExecute("Ventas.Cliente_Get");
+                _db.AddDynamicParam("idRol", idUsuarioRol);
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDataTableAsync();
+            }
+            catch (Exception ex)
+            {
+                LogWriter _logs = new LogWriter(_configuration);
+                _logs.LogError("Error al listar clientes: " + ex.ToString());
+                _response.Create(code: "0", message: "Error al listar clientes");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
+        }
+
+        [HttpGet("GetDataForm")]
+        public async Task<IActionResult> GetDataForm(string json)
+        {
+            LogWriter _logs = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            DbAccess _db = new DbAccess(_configuration);
+            try
+            {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+
+                await _db.SPExecute("Ventas.Cliente_Get_Data_Form");
+                _db.AddDynamicParam("idUsuarioRol ", idUsuarioRol);
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDataSetAsync();
+            }
+            catch (Exception ex)
+            {
+                _logs.LogError("Error while getting data form customer: " + ex.ToString());
+                _response.Create(code: "0", message: "Error while getting data form customer");
+            }
+            finally { _db.Close(); }
+            return Ok(_response);
+        }
+
+        [HttpGet("Search")]
+        public async Task<IActionResult> Search(string json)
+        {           
+            GenericResponse _response = new GenericResponse();
+            DbAccess _db = new DbAccess(_configuration);
+            try
+            {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+
+                await _db.SPExecute("Ventas.Cliente_Get_Search");
+                _db.AddDynamicParam("idRol ", idUsuarioRol);
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDataSetAsync();
+            }
+            catch (Exception ex)
+            {
+                LogWriter _logs = new LogWriter(_configuration);
+                _logs.LogError("Error while searching data form customer: " + ex.ToString());
+                _response.Create(code: "0", message: "Error al buscar cliente");
+            }
+            finally { _db.Close(); }
+            return Ok(_response);
+        }
+
+
+        [HttpPost("Insert")]
+        public async Task<IActionResult> Insert(string json)
+        {           
+            GenericResponse _response = new GenericResponse();
+            DbAccess _db = new DbAccess(_configuration);
+            try
+            {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                await _db.SPExecute("Ventas.Cliente_Insert");
+                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDefault();
+            }
+            catch (Exception ex)
+            {
+                LogWriter _logs = new LogWriter(_configuration);
+                _logs.LogError("Error while creating customer: \n " + ex.ToString());
+                _response.Create(code: "0", message: "Error al crear el cliente");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
+        }
+
+        [HttpPut("Update/{id}")]
+        public async Task<IActionResult> Update(int id, string json)
+        {            
+            GenericResponse _response = new GenericResponse();
+            DbAccess _db = new DbAccess(_configuration);
+            try
+            {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                await _db.SPExecute("Ventas.Cliente_Update");
+                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+                _db.AddDynamicParam("id", id);
+                _db.AddDynamicParam("json", json);
+                _response = _db.GetDefault();
+            }
+            catch (Exception ex)
+            {
+                LogWriter _logs = new LogWriter(_configuration);
+                _logs.LogError("Error while updating customer: \n " + ex.ToString());
+                _response.Create(code: "0", message: "Error al actualizar el cliente");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
+        }
+
+        [HttpDelete("Delete/{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {            
+            GenericResponse _response = new GenericResponse();
+            DbAccess _db = new DbAccess(_configuration);
+            try
+            {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                await _db.SPExecute("Ventas.Cliente_Update");
+                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+                _db.AddDynamicParam("id", id);
+                _response = _db.GetDefault();
+            }
+            catch (Exception ex)
+            {
+                LogWriter _logs = new LogWriter(_configuration);
+                _logs.LogError("Error while deleting customer: \n " + ex.ToString());
+                _response.Create(code: "0", message: "Error al eliminar el cliente");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
+        }
     }
 }
