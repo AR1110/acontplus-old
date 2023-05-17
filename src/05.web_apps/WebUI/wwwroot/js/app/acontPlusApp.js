@@ -196,12 +196,11 @@ app.factory('decodeToken', function ($localStorage, jwtHelper) {
 
 app.factory('mainService', mainService);
 
-mainService.$inject = ['$http', 'Upload', 'decodeToken'];
+mainService.$inject = ['$http', 'Upload', 'decodeToken', 'screenSize', '$timeout'];
 
-function mainService($http, Upload, _token) {
-    let service = {};
-    console.log(_token)
-    
+function mainService($http, Upload, _token, _screenSize, $timeout) {
+    let service = {}
+
     function _getData(method, url, data = null, forApi = false) {
         return $http({
             method: method,
@@ -235,9 +234,27 @@ function mainService($http, Upload, _token) {
         })
     }
 
+    _detectDevice = () => {
+        let isMobile = _screenSize.on('xs, sm', (isMatch) => {
+            isMobile = isMatch
+        })
+        if (isMobile) {
+            Swal.fire(
+                'Dispositivo Móvil Detectado!',
+                'Para una mejor comodidad, le recomendamos usar una Laptop o PC.',
+                'success'
+            )
+        } else {
+            $timeout(() => {
+                document.getElementById('menu_toggle').click()
+            }, 1100)
+        }
+    }
+
     service.getData = _getData
     service.getDataFile = _getDataFile
     service.getFile = _getFile
+    service.detectDevice = _detectDevice
     return service
 }
 
@@ -288,7 +305,7 @@ function modalService($uibModal) {
             });
         },
 
-        
+
         /**
          * 
          * @param {object} params {controller, template, size, params, keyboard=false, animation = true, windowClass = null, scope, props = {}}
@@ -311,15 +328,15 @@ function modalService($uibModal) {
         }) {
 
             let templateUrl = '';
-            if(isRenderRazorPartial){
+            if (isRenderRazorPartial) {
                 templateUrl = `/Home/RenderView?name=${template}`;
             }
 
-            if(!isRenderRazorPartial){
+            if (!isRenderRazorPartial) {
                 templateUrl = `/Home/RenderView?name=~/Views/${template}`
             }
 
-            
+
             return $uibModal.open({
                 animation,
                 templateUrl,
