@@ -512,4 +512,43 @@
 
 
 
-})
+    /**
+     * ====================================START DIRECTIVES SALES=============================
+     */ 
+    app.directive('btnCliente', function(modalService, nombreModalVenta){
+        return {
+            restrict: 'A',
+            scope: {
+                resultModal: '&',
+                params: '='
+            },
+            link: function(scope, element, att){
+                element.on('click', async function(ev){
+
+                    let {fileCtrl, controllers, templates} = nombreModalVenta.CLIENTE;
+                    let ctrl = (await import(fileCtrl))[controllers['M']];
+                    let template = templates['M'];
+
+                    let modalRef = modalService.openModalCustom({
+                        controller: ctrl,
+                        template,
+                        size: 'lg',
+                        params: scope.params || {},
+                    })
+
+                    modalRef.result.then(result => {
+                        if(typeof result === 'object'){
+                            scope.resultModal({
+                                result
+                            })
+                        }
+                    })
+                    
+                })            
+            }
+        }
+    })
+
+    
+
+})(window.angular)

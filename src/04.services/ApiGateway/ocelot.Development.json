@@ -1005,18 +1005,19 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 54948
+          "Port": 7079
         }
       ],
-      "DownstreamPathTemplate": "/api/Cliente/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamPathTemplate": "/api/Cliente{everything}",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "Get",
+        "Post",
         "Put",
         "Delete",
         "Options"
       ],
-      "UpstreamPathTemplate": "/api/Cliente/{everything}"
+      "UpstreamPathTemplate": "/api/Cliente{everything}"
     },
     {
       "AuthenticationOptions": {
