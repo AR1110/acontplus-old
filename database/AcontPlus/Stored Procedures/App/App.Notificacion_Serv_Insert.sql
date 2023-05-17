@@ -6,7 +6,7 @@ GO
 --UPDATE App.Notificacion SET estado ='NE' WHERE idNotificacion = 2
 --select * from aPP.Notificacion
 --DELETE FROM App.Notificacion WHERE idNotificacion = 3
--- exec App.Notificacion_Serv_Insert '{"params":{"hasFile":true,"isReport":"SI","reportParams":{"codEstab":"ESTAB-000000002","codigo":"PR","format":"pdf"},"spParams":{"id":67}},"idUsuarioRol":38,"receptor":"sengua2017@gmail.com"}'
+-- exec App.Notificacion_Serv_Insert '{"subject":"Documento Nota Entrega - Acontplus N°: 002-003-000000042","params":{"hasFile":true,"isReport":"SI","reportParams":{"hasParams":true,"codEstab":"ESTAB-000000002","codigo":"RNE","format":"pdf"},"spParams":{"id":69577}},"idUsuarioRol":25,"receptor":"sengua2017@gmail.com;emilio.senguana@itsae.edu.ec"}'
 
 CREATE PROCEDURE App.Notificacion_Serv_Insert @json VARCHAR(MAX)
 AS
@@ -44,9 +44,6 @@ BEGIN
 	)
 
 
-	--SELECT @idUsuario, @id, @codigo, @receptor
-
-	--RETURN 
 
 	BEGIN TRY
 		
@@ -69,7 +66,9 @@ BEGIN
 		) as js ON js.idUsuarioRol = ur.idUsuarioRol
 
 		
-		SELECT TOP 1 @jsonConfig = jsonConfig FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad
+
+		
+		SELECT TOP 1 @jsonConfig = jsonConfig FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig='CD'
 		
 		INSERT INTO @tlDecimal(idEntidad,nroPrecio,nroCantidad,nroIva,nroDescuentoDetalle,nroTotalDetalle,nroTotalSubTotal,nroDescuento,nroIce)
 					   SELECT @idEntidad,nroPrecio,nroCantidad,nroIva,nroDescuentoDetalle,nroTotalDetalle,nroTotalSubTotal,nroDescuento,nroIce              
@@ -87,7 +86,7 @@ BEGIN
 						WHERE dt.codTransaccion = 'C'
 
 		SELECT  @template = 'EmailTemplate.html'
-
+		
 		BEGIN TRAN 
 
 			--Proforma 
