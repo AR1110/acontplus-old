@@ -26,6 +26,8 @@
                                 ciudades: mainDataRepository[3]
                             }
                         }
+                    }).catch(response=>{
+                        throw response;
                     })
             
         }
