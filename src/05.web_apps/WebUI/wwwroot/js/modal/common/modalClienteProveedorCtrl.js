@@ -69,7 +69,7 @@ export class ModalBaseCtrl {
     }
 
     transformChipEmail(item) {
-        console.log(item)
+        
         let textChip = item || "";
         textChip = this._form.removeAccents(textChip);
         item = textChip.toLowerCase();
@@ -576,7 +576,7 @@ class ModalBaseCliente extends ModalBaseCtrl {
         this.data.correo = this.correos.length > 0 ? this.correos.join(';') : "";
         this.data.placa = this.placas.length > 0 ? this.placas.join(';') : "";
 
-        return false;
+        return true;
 
     }
 
@@ -708,13 +708,14 @@ export class ModalClienteCtrl extends ModalBaseCliente {
 
     saveUpdateCliente() {
         try {
-
+            
             if (!this.isValidForm()) return;
 
             const url = this.tipoRegistro === 1 ? '/Cliente/Post' : '/Cliente/Put?idCliente=' + this.data.idCliente;
             const method = this.tipoRegistro === 1 ? 'post' : 'put';
             showLoader();
             this._mS.getData(method, url, this.data).then(async response => {
+                
                 if (response.id === "0") {
                     hideLoader();
                     this._tS.toastr('warning', response.message, response.titleSms);

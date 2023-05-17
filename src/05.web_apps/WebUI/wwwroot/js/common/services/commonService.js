@@ -1,7 +1,33 @@
 export class CommonService {
-    static $inject = ["$rootScope", "$http", "mainService", "FileSaver", "formulario", "modalService", "nombreModal", "articuloService"];
+    static $inject = [
+        "$rootScope", 
+        "$http", 
+        "mainService", 
+        "FileSaver", 
+        "formulario", 
+        "modalService", 
+        "nombreModal", 
+        "nombreModalFactElect", 
+        "nombreModalVenta", 
+        "nombreModalInventario", 
+        "articuloService",
+        "nombreModalCompra"
+    ];
 
-    constructor($rootScope, $http, mS, FileSaver, form, _modalSvc, _nombreModalConst, articuloSvc) {
+    constructor(
+        $rootScope, 
+        $http, 
+        mS, 
+        FileSaver, 
+        form, 
+        _modalSvc, 
+        _nombreModalConst, 
+        nombreModalFactElect, 
+        nombreModalVenta, 
+        nombreModalInventario, 
+        nombreModalCompra,
+        articuloSvc
+    ) {
         this.$rootScope = $rootScope;
         this.$http = $http;
         this.mS = mS;
@@ -10,6 +36,10 @@ export class CommonService {
 
         this._modalSvc = _modalSvc;
         this._nombreModalConst = _nombreModalConst;
+        this.nombreModalFactElect = nombreModalFactElect;
+        this.nombreModalVenta = nombreModalVenta;
+        this.nombreModalInventario = nombreModalInventario;
+        this.nombreModalCompra = nombreModalCompra;
         this.articuloSvc = articuloSvc;
 
         // this.$http.get('/TipoDocumento/GetAll').then(({data:response})=>{
@@ -1741,6 +1771,11 @@ console.log(datosAdicionalesArticulo)
                 params = {},
                 response = {},
                 isComplete = false;
+            let controllers = {};
+            let templates = {};
+            let fileCtrl = '';
+            let ctrl;
+    
             switch (codigoDocumento) {
                 case "FE":
 
@@ -1751,14 +1786,16 @@ console.log(datosAdicionalesArticulo)
                         })
                     }
                     if (codTransaccion == 'S') {
-                        let {
-                            factura_venta
-                        } = this._nombreModalConst;
-                        controller = (await import('./../' + factura_venta.MODAL_FILE_CTRL))[factura_venta.MODAL_DETALLE['controller']];
-                        template = factura_venta.MODAL_DETALLE['template'];
+                        
+                        fileCtrl = this.nombreModalFactElect.FACTURA.fileCtrl;
+                        ctrl = this.nombreModalFactElect.FACTURA.controllers['D']
+                        template = this.nombreModalFactElect.FACTURA.templates['D']
+    
+                        controller = (await import(fileCtrl))[ctrl];
+
                         response = await this.getDataTipoDocVenta({
                             id,
-                            codigoDocumento
+                            codigoDocumento: 'FV'
                         })
                     }
 
@@ -1772,11 +1809,11 @@ console.log(datosAdicionalesArticulo)
 
                 case "NE":
 
-                    let {
-                        nota_entrega
-                    } = this._nombreModalConst;
-                    controller = (await import('./../' + nota_entrega.MODAL_FILE_CTRL))[nota_entrega.MODAL_DETALLE['controller']];
-                    template = nota_entrega.MODAL_DETALLE['template'];
+                    fileCtrl = this.nombreModalVenta.NOTA_ENTREGA.fileCtrl;
+                    ctrl = this.nombreModalVenta.NOTA_ENTREGA.controllers['D']
+                    template = this.nombreModalVenta.NOTA_ENTREGA.templates['D']
+
+                    controller = (await import(fileCtrl))[ctrl];
 
                     response = await this.getDataTipoDocVenta({
                         id,
@@ -1810,18 +1847,15 @@ console.log(datosAdicionalesArticulo)
 
                     break
 
-
-                case "FC":
+                
                 case "FF":
-                    let {
-                        factura_compra
-                    } = this._nombreModalConst;
-                    controller = (await import('./../' + factura_compra.MODAL_FILE_CTRL))[factura_compra.MODAL_DETALLE['controller']];
-                    template = factura_compra.MODAL_DETALLE['template'];
+                    fileCtrl = this.nombreModalCompra.FACTURA_FISICA.fileCtrl;
+                    ctrl = this.nombreModalCompra.FACTURA_FISICA.controllers['D']
+                    template = this.nombreModalCompra.FACTURA_FISICA.templates['D']
 
                     response = await this.getDataTipoDocCompra({
                         id,
-                        codigoDocumento
+                        codigoDocumento:'FC'
                     })
 
                     params = {
@@ -1852,11 +1886,12 @@ console.log(datosAdicionalesArticulo)
 
 
                 case "CI":
-                    let {
-                        consolidacion_inv
-                    } = this._nombreModalConst;
-                    controller = (await import('./../' + consolidacion_inv.MODAL_FILE_CTRL))[consolidacion_inv.MODAL_DETALLE['controller']];
-                    template = consolidacion_inv.MODAL_DETALLE['template'];
+
+                    fileCtrl = this.nombreModalInventario.CONSOLIDACION_INVENTARIO.fileCtrl;
+                    ctrl = this.nombreModalInventario.CONSOLIDACION_INVENTARIO.controllers['D']
+                    template = this.nombreModalInventario.CONSOLIDACION_INVENTARIO.templates['D']
+
+                    controller = (await import(fileCtrl))[ctrl];
 
                     response = await this.getDataConsolidacionInventario(id)
 
@@ -1897,13 +1932,18 @@ console.log(datosAdicionalesArticulo)
                 params = {},
                 response = {},
                 isComplete = false;
+            let fileCtrl = null;
+            let ctrl;
+
             switch (codigoDocumento) {
                 case "FV":
-                    let {
-                        factura_venta
-                    } = this._nombreModalConst;
-                    controller = (await import('./../' + factura_venta.MODAL_FILE_CTRL))[factura_venta.MODAL_DETALLE['controller']];
-                    template = factura_venta.MODAL_DETALLE['template'];
+
+                    fileCtrl = this.nombreModalFactElect.FACTURA.fileCtrl;
+                    ctrl = this.nombreModalFactElect.FACTURA.controllers['D']
+                    template = this.nombreModalFactElect.FACTURA.templates['D']
+
+                    controller = (await import(fileCtrl))[ctrl];
+                   
 
                     response = await this.getDataTipoDocVenta({
                         id,
@@ -1919,11 +1959,11 @@ console.log(datosAdicionalesArticulo)
 
                 case "NE":
 
-                    let {
-                        nota_entrega
-                    } = this._nombreModalConst;
-                    controller = (await import('./../' + nota_entrega.MODAL_FILE_CTRL))[nota_entrega.MODAL_DETALLE['controller']];
-                    template = nota_entrega.MODAL_DETALLE['template'];
+                    fileCtrl = this.nombreModalVenta.NOTA_ENTREGA.fileCtrl;
+                    ctrl = this.nombreModalVenta.NOTA_ENTREGA.controllers['D']
+                    template = this.nombreModalVenta.NOTA_ENTREGA.templates['D']
+
+                    controller = (await import(fileCtrl))[ctrl];
 
                     response = await this.getDataTipoDocVenta({
                         id,
@@ -1959,12 +1999,9 @@ console.log(datosAdicionalesArticulo)
 
 
                 case "FC":
-                case "FF":
-                    let {
-                        factura_compra
-                    } = this._nombreModalConst;
-                    controller = (await import('./../' + factura_compra.MODAL_FILE_CTRL))[factura_compra.MODAL_DETALLE['controller']];
-                    template = factura_compra.MODAL_DETALLE['template'];
+                    fileCtrl = this.nombreModalCompra.FACTURA_FISICA.fileCtrl;
+                    ctrl = this.nombreModalCompra.FACTURA_FISICA.controllers['D']
+                    template = this.nombreModalCompra.FACTURA_FISICA.templates['D']
 
                     response = await this.getDataTipoDocCompra({
                         id,
@@ -1979,31 +2016,30 @@ console.log(datosAdicionalesArticulo)
                     break
 
                 case "IB":
-                    let {
-                        ingreso_bodega
-                    } = this._nombreModalConst;
-                    controller = (await import('./../' + ingreso_bodega.MODAL_FILE_CTRL))[ingreso_bodega.MODAL_DETALLE['controller']];
-                    template = ingreso_bodega.MODAL_DETALLE['template'];
+                    // fileCtrl = this.nombreModalInventario.CONSOLIDACION_INVENTARIO.fileCtrl;
+                    // ctrl = this.nombreModalInventario.CONSOLIDACION_INVENTARIO.controllers['D']
+                    // template = this.nombreModalInventario.CONSOLIDACION_INVENTARIO.templates['D']
 
-                    response = await this.getDataTipoDocCompra({
-                        id,
-                        codigoDocumento
-                    })
 
-                    params = {
-                        TIPO_REGISTRO: 'DETALLE',
-                        data: response
-                    }
+                    // response = await this.getDataTipoDocCompra({
+                    //     id,
+                    //     codigoDocumento
+                    // })
+
+                    // params = {
+                    //     TIPO_REGISTRO: 'DETALLE',
+                    //     data: response
+                    // }
 
                     break
 
 
                 case "CI":
-                    let {
-                        consolidacion_inv
-                    } = this._nombreModalConst;
-                    controller = (await import('./../' + consolidacion_inv.MODAL_FILE_CTRL))[consolidacion_inv.MODAL_DETALLE['controller']];
-                    template = consolidacion_inv.MODAL_DETALLE['template'];
+                    fileCtrl = this.nombreModalInventario.CONSOLIDACION_INVENTARIO.fileCtrl;
+                    ctrl = this.nombreModalInventario.CONSOLIDACION_INVENTARIO.controllers['D']
+                    template = this.nombreModalInventario.CONSOLIDACION_INVENTARIO.templates['D']
+
+                    controller = (await import(fileCtrl))[ctrl];
 
                     response = await this.getDataConsolidacionInventario(id)
 

@@ -65,13 +65,39 @@
                 })
         }
 
-        service.findById = function (id) {
-            return clienteRepository.findById(id)
-                .catch(errorResponse => {
-                    let error = apiErrorHandler.handle(errorResponse);
-                    throw new Error(error.message);
-                })
+        service.save = function (data) {
+            return mS.getData('post', url + 'Insert', data, true)
+            .catch(error => { 
+                console.log('Error service save customer: '+ error)                 
+                throw error;
+            })
         }
+
+        service.update = function (id, data) {
+            return mS.getData('put', url + 'Update/' + id, data, true)
+            .catch(error => { 
+                console.log('Error service update customer: '+ error)                 
+                throw error;
+            })
+        }
+
+        service.delete = function (id) {
+            return mS.getData('delete', url + 'Delete/' + id, null, true)
+            .catch(error => { 
+                console.log('Error service delete customer: '+ error)                 
+                throw error;
+            })
+        }
+
+        service.findById = function (id) {
+            return mS.getData('get', url + 'Insert', data, true)
+            .catch(error => { 
+                console.log('Error service get customer: '+ error)                 
+                throw error;
+            })
+        }
+
+        
 
 
         service.validateForm = function (data) {
@@ -141,21 +167,7 @@
             return true;
         }
 
-        service.save = function (data) {
-            return clienteRepository.save(data)
-                .catch(errorResponse => {
-                    let error = apiErrorHandler.handle(errorResponse);
-                    throw new Error(error.message);
-                })
-        }
-
-        service.update = function (id, data) {
-            return clienteRepository.update(id, data)
-                .catch(errorResponse => {
-                    let error = apiErrorHandler.handle(errorResponse);
-                    throw new Error(error.message);
-                })
-        }
+        
 
         service.checkClientByIdentification = function (query, codigoIdentificacion, callback) {
             clienteRepository.checkClientByIdentification(query).then(response => {
@@ -216,6 +228,9 @@
             textChip = validationsUtils.removeAccents(textChip);
             item = textChip.toLowerCase();
         }
+
+
+        
 
 
 

@@ -166,8 +166,8 @@ class BaseSearchArticulo {
 
 class MdArticuloCtrl extends BaseSearchArticulo {
 
-    static $inject = ['articuloService', 'mainService', '$rootScope', '$scope', '$timeout', '$q', 'commonService', 'modalService', 'nombreModal', 'toastService']
-    constructor(articuloSvc, _mS, $rootScope, $scope, $timeout, $q, _commonSvc, _modalSvc, _nombreModalConst, tS) {
+    static $inject = ['articuloService', 'mainService', '$rootScope', '$scope', '$timeout', '$q', 'commonService', 'modalService', 'nombreModal', 'nombreModalInventario', 'toastService']
+    constructor(articuloSvc, _mS, $rootScope, $scope, $timeout, $q, _commonSvc, _modalSvc, _nombreModalConst, nombreModalInventario, tS) {
         super({
             _mS,
             $rootScope,
@@ -181,6 +181,8 @@ class MdArticuloCtrl extends BaseSearchArticulo {
         })
 
         this.articuloSvc = articuloSvc;
+
+        this.nombreModalInventario = nombreModalInventario;
 
         this.mdNoCache = false;
         this.dataSearch = {
@@ -276,77 +278,64 @@ class MdArticuloCtrl extends BaseSearchArticulo {
 
 
     async openModalArticulo(item) {
-        const {
-            MODAL_CTRL,
-            MODAL_NUEVO_CSHTML
-        } = this._nombreModalConst.articulo;
-        const {
-            ModalArticuloCtrl
-        } = await import('./../modal/' + MODAL_CTRL);
-        const modalRef = this._modalSvc.openModalCustom({
-            controller: ModalArticuloCtrl,
-            template: 'Articulo/' + MODAL_NUEVO_CSHTML,
-            size: 'xl',
-            params: item
-        })
-
-        modalRef.result.then(response => {
-            if (typeof response !== 'object') return
-            this.dataArticulo = {
-                idArticulo: response.idArticulo,
-                idPresentacion: response.idPresentacion,
-                presentacion: 'A'
-            }
-            //Funcion pasada como referencia desde el controlador                 
-            this.validarGetDataArticulo();
-        })
+        try {          
+            let fileCtrl = this.nombreModalInventario.ARTICULO.fileCtrl;  
+            
+            let ctrl = this.nombreModalInventario.ARTICULO.controllers['M'];
+            let template = this.nombreModalInventario.ARTICULO.templates['M'];
+            let controller = (await import(fileCtrl))[ctrl];
+            
+            const modalRef = this._modalSvc.openModalCustom({
+                controller,
+                template,
+                size: 'xl',
+                params: item
+            })
+    
+            modalRef.result.then(response => {
+                if (typeof response !== 'object') return
+                this.dataArticulo = {
+                    idArticulo: response.idArticulo,
+                    idPresentacion: response.idPresentacion,
+                    presentacion: 'A'
+                }
+                //Funcion pasada como referencia desde el controlador                 
+                this.validarGetDataArticulo();
+            })
+        } catch (error) {
+            console.log(error);
+        }
+       
     }
 
+    
     async openModalArticuloGeneral(item) {
-        let {
-            MODAL_CTRL,
-            MODAL_GENERAL_CSHTML
-        } = this._nombreModalConst.articulo;
-        let {
-            ModalArticuloGeneralCtrl
-        } = await import('./../modal/' + MODAL_CTRL);
-        let modalRef = this._modalSvc.openModalCustom({
-            controller: ModalArticuloGeneralCtrl,
-            template: 'Articulo/' + MODAL_GENERAL_CSHTML,
-            size: 'xl',
-            params: item,
-            windowClass: 'uibModalFullScreen'
-        })
-
-        modalRef.result.then(response => {
-            if (typeof response !== 'object') return
-            this.dataArticulo = {
-                idArticulo: response.idArticulo,
-                idPresentacion: response.idPresentacion,
-                presentacion: 'A'
-            }
-            //Funcion pasada como referencia desde el controlador                 
-            this.validarGetDataArticulo();
-        })
-    }
-
-
-    async showDetailTarifa(item) {
-        let {
-            MODAL_CTRL,
-            MODAL_DETALLE_CSHTML
-        } = this._nombreModalConst.articulo;
-        let {
-            ModalArticuloDetalleCtrl
-        } = await import('./../modal/' + MODAL_CTRL);
-        let _modalRef = this._modalSvc.openModalCustom({
-            controller: ModalArticuloDetalleCtrl,
-            template: MODAL_DETALLE_CSHTML,
-            size: 'lg',
-            windowClass: 'zindex',
-            params: item,
-            keyboard: true
-        })
+        try {
+            const {fileCtrl, controllers, templates} = this.nombreModalInventario.ARTICULO;
+            let ctrl = (await import(fileCtrl))[controllers['LG']];
+            let template = templates['LG'];
+            let modalRef = this._modalSvc.openModalCustom({
+                controller: ctrl,
+                template,
+                size: 'xl',
+                params: item,
+                windowClass: 'uibModalFullScreen'
+            })
+    
+            modalRef.result.then(response => {
+                if (typeof response !== 'object') return
+                this.dataArticulo = {
+                    idArticulo: response.idArticulo,
+                    idPresentacion: response.idPresentacion,
+                    presentacion: 'A'
+                }
+                //Funcion pasada como referencia desde el controlador                 
+                this.validarGetDataArticulo();
+            })
+        } catch (error) {
+            console.log(error)
+        }
+        
     }
 }
 

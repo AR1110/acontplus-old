@@ -10,7 +10,7 @@ GO
 -- Create date: 2021-08-02 
 -- Description:	SP para registrar clientes 
 -- =============================================
-ALTER PROCEDURE [Ventas].[Cliente_Insert] @idRol INT,@json NVARCHAR(MAX)
+ALTER PROCEDURE [Ventas].[Cliente_Insert] @idUsuarioRol INT,@json NVARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -44,7 +44,7 @@ BEGIN
 	SELECT 
 	     @idEntidad = idEntidad
 		,@idUsuario = idUsuario
-	FROM AFTDataRol(@idRol)
+	FROM AFTDataRol(@idUsuarioRol)
 
 
 

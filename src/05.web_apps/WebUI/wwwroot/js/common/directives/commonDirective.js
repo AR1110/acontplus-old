@@ -403,93 +403,7 @@
         };
     })
     
-    //permiso para ver kardex en documentos de ventas 
-    app.directive('viewKardex', function ($rootScope, modalService, nombreModal) {
-        return {
-            scope: {
-                params: "=",
-                btnTitle: "=",
-                sizeBtn: "="
-            },
-            template: ' <a style="cursor:pointer;" ng-if="kardex.view" class= "btn btn-info btn-xs text-white" title="Ver Kardex de Artículo"> <i class="mdi mdi-timetable"></i></a >',
-            link: function (scope, element, attr) {
-                let {
-                    ventaPermiso
-                } = $rootScope.usuarioPermiso;
-    
-                scope.kardex = ventaPermiso.additional.kardex;
-    
-                element.on('click', async function (e) {
-    
-                    let {
-                        MODAL_CTRL,
-                        MODAL_CSHTML
-                    } = nombreModal.kardex;
-    
-                    const articulo = {
-                        idArticulo: scope.params.idArticulo,
-                        codigo: scope.params.codigo,
-                        descripcion: scope.params.descripcion,
-                    }
-    
-                    const {
-                        ModalKardexCtrl
-                    } = await import('./../modal/' + MODAL_CTRL);
-    
-                    modalService.openModalCustom({
-                        controller: ModalKardexCtrl,
-                        template: MODAL_CSHTML,
-                        size: 'xl',
-                        params: articulo,
-                        windowClass: 'uibModalFullScreen',
-                        isRenderRazorPartial: true
-                    })
-    
-                })
-            }
-        };
-    })
-    
-    
-    app.directive('viewKardexBtn', function (modalService, nombreModal) {
-        return {
-            scope: {
-                params: "=",
-                btnTitle: "=",
-                sizeBtn: "="
-            },
-            link: function (scope, element, attr) {
-    
-                element.on('click', async function (e) {
-    
-                    let {
-                        MODAL_CTRL,
-                        MODAL_CSHTML
-                    } = nombreModal.kardex;
-    
-                    const articulo = {
-                        idArticulo: scope.params.idArticulo,
-                        codigo: scope.params.codigo,
-                        descripcion: scope.params.descripcion,
-                    }
-    
-                    const {
-                        ModalKardexCtrl
-                    } = await import('./../modal/' + MODAL_CTRL);
-    
-                    modalService.openModalCustom({
-                        controller: ModalKardexCtrl,
-                        template: MODAL_CSHTML,
-                        size: 'xl',
-                        params: articulo,
-                        windowClass: 'uibModalFullScreen',
-                        isRenderRazorPartial: true
-                    })
-    
-                })
-            }
-        };
-    })
+  
     
     
     app.directive('totalesVentaView', function ($rootScope, $timeout) {
@@ -528,11 +442,11 @@
                     let {fileCtrl, controllers, templates} = nombreModalVenta.CLIENTE;
                     let ctrl = (await import(fileCtrl))[controllers['M']];
                     let template = templates['M'];
-
+                    console.log(controllers['M']);
                     let modalRef = modalService.openModalCustom({
                         controller: ctrl,
                         template,
-                        size: 'lg',
+                        size: 'xl',
                         params: scope.params || {},
                     })
 
