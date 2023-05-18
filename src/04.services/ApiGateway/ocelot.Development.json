@@ -1387,6 +1387,26 @@
         "Delete"
       ],
       "UpstreamPathTemplate": "/api/WhatsappMessage{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 44331
+        }
+      ],
+      "DownstreamPathTemplate": "/api/PrecioMasivo{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post"
+      ],
+      "UpstreamPathTemplate": "/api/PrecioMasivo{everything}"
     }
   ]
 }
