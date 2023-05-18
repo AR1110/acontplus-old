@@ -16,8 +16,6 @@ documentoElectronicoCtrl.$inject = ['$scope',
 function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, $window, decodeToken, FileSaver, Blob) {
     $scope.comprobantes = [];
     $scope.selectedComprobantes = [];
-    $scope.isMobile = true;
-
 
     $scope.establecimientos = [];
     $scope.puntosEmision = [];
@@ -25,26 +23,7 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
     $scope.codEstab_Asig = null;
 
     //DETECT MOBILE DEVICE
-    $scope.detectMobilDevice = function () {
-        if (navigator.userAgent.match(/Android/i) ||
-            navigator.userAgent.match(/webOS/i) ||
-            navigator.userAgent.match(/iPhone/i) ||
-            navigator.userAgent.match(/iPad/i) ||
-            navigator.userAgent.match(/iPod/i) ||
-            navigator.userAgent.match(/BlackBerry/i) ||
-            navigator.userAgent.match(/Windows Phone/i)
-        ) {
-            Swal.fire(
-                'Dispositivo Movil Detectado!',
-                'Para una mejor comodidad, le recomendamos usar una Laptop o PC.',
-                'success'
-            )
-        } else {
-            $scope.isMobile = false
-        }
-    }
-    $scope.detectMobilDevice()
-
+    _mS.detectDevice()
 
     const tipo = document.getElementById("tipo").value
 

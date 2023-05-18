@@ -2,6 +2,39 @@
 
     'use strict';
 
+    app.directive('btnArticuloGeneral', function(modalService, nombreModalInventario){
+        return {
+            restrict: 'A',
+            scope: {
+                params:'=',
+                resultModal: '=',
+            },
+            link: function(scope, element, att){
+                element.on('click', async function () {
+                     
+                    const {fileCtrl, controllers, templates} = nombreModalInventario.ARTICULO;
+                    let ctrl = (await import(fileCtrl))[controllers['LG']];
+                    let template = templates['LG'];
+                    const modalDialogRef = modalService.openModalCustom({
+                        controller: ctrl,
+                        template,
+                        size: 'xl',
+                        params: scope.params,
+                        windowClass: 'uibModalFullScreen'
+                    })       
+                          
+                    modalDialogRef.result.then(result=>{
+                        if(typeof result==="object"){
+                            scope.resultModal({
+                                item: result
+                            })
+                        }
+                    })
+                });
+            }
+        }
+    })
+
     
 
     //Se usa en familia, articulo 
@@ -174,6 +207,88 @@
     })
 
 
+
+    //............................Inventario-------------------------------------------------
+      //permiso para ver kardex en documentos de ventas 
+      app.directive('viewKardex', function ($rootScope, modalService, nombreModalInventario) {
+        return {
+            scope: {
+                params: "=",
+                btnTitle: "=",
+                sizeBtn: "="
+            },
+            template: ' <a style="cursor:pointer;" ng-if="kardex.view" class= "btn btn-info btn-xs text-white" title="Ver Kardex de Artículo"> <i class="mdi mdi-timetable"></i></a >',
+            link: function (scope, element, attr) {
+                let {
+                    ventaPermiso
+                } = $rootScope.usuarioPermiso;
+    
+                scope.kardex = ventaPermiso.additional.kardex;
+    
+                element.on('click', async function (e) {
+    
+                    let {fileCtrl, controllers, templates} = nombreModalInventario.KARDEX;
+                    let ctrl = (await import(fileCtrl))[controllers['M']];
+                    let template = templates['M']
+                
+                    const params = {
+                        idArticulo: scope.params.idArticulo,
+                        codigo: scope.params.codigo,
+                        descripcion: scope.params.descripcion,
+                    }
+    
+                    modalService.openModalCustom({
+                        controller: ctrl,
+                        template,
+                        size: 'xl',
+                        params,
+                        windowClass: 'uibModalFullScreen',
+                        isRenderRazorPartial: true
+                    })
+    
+                })
+            }
+        };
+    })
+    
+    
+    app.directive('viewKardexBtn', function (modalService, nombreModalInventario) {
+        return {
+            scope: {
+                params: "=",
+                btnTitle: "=",
+                sizeBtn: "="
+            },
+            link: function (scope, element, attr) {
+    
+                element.on('click', async function (e) {
+
+                    
+                    let {fileCtrl, controllers, templates} = nombreModalInventario.KARDEX;
+                    let ctrl = (await import(fileCtrl))[controllers['M']];
+                    let template = templates['M']
+
+                    
+                    const params = {
+                        idArticulo: scope.params.idArticulo,
+                        codigo: scope.params.codigo,
+                        descripcion: scope.params.descripcion,
+                    }
+    
+                    
+                    modalService.openModalCustom({
+                        controller: ctrl,
+                        template,
+                        size: 'xl',
+                        params,
+                        windowClass: 'uibModalFullScreen',
+                        isRenderRazorPartial: true
+                    })
+    
+                })
+            }
+        };
+    })
     
 
 

@@ -65,13 +65,75 @@
                 })
         }
 
-        service.findById = function (id) {
-            return clienteRepository.findById(id)
-                .catch(errorResponse => {
-                    let error = apiErrorHandler.handle(errorResponse);
-                    throw new Error(error.message);
-                })
+        service.save = function (data) {
+            return mS.getData('post', url + 'Insert', data, true)
+            .catch(error => { 
+                console.log('Error service save customer: '+ error)                 
+                throw error;
+            })
         }
+
+        service.update = function (id, data) {
+            return mS.getData('put', url + 'Update/' + id, data, true)
+            .catch(error => { 
+                console.log('Error service update customer: '+ error)                 
+                throw error;
+            })
+        }
+
+        service.delete = function (id) {
+            return mS.getData('delete', url + 'Delete/' + id, null, true)
+            .catch(error => { 
+                console.log('Error service delete customer: '+ error)                 
+                throw error;
+            })
+        }
+
+        service.findById = function (id) {
+            return mS.getData('get', url + 'FindById/' + id, null, true)
+            .then(response => {
+                if(response.code==="0"){
+                    throw response;
+                }
+                if(response.code==="1"){
+                    let dataRepository  = JSON.parse(response.payload)[0];
+          
+                    return {
+                        idCliente: dataRepository.idCliente,
+                        idTipoClienteProveedor: dataRepository.idTipoClienteProveedor,
+                        idTipoEntidad: dataRepository.idTipoEntidad,
+                        idSubContribuyente: dataRepository.idSubContribuyente,
+                        idTiempoCredito: dataRepository.idTiempoCredito,
+                        idTipoIdentificacion: dataRepository.idTipoIdentificacion,
+                        idCiudad: dataRepository.idCiudad,
+                        numeroIdentificacion: dataRepository.numeroIdentificacion,
+                        nombreFiscal: dataRepository.nombreFiscal,
+                        montoCredito: dataRepository.montoCredito,
+                        nombreComercial: dataRepository.nombreComercial,
+                        direccion: dataRepository.direccion,
+                        telefono: dataRepository.telefono,
+                        correo: dataRepository.correo,
+                        estado: dataRepository.estado,
+                        idEmpleado: dataRepository.idEmpleado,
+                        diasCredito: dataRepository.diasCredito,
+                        empleado: dataRepository.empleado,
+                        idEmpresa: dataRepository.idEmpresa,
+                        idCargo: dataRepository.idCargo,
+                        placa: dataRepository.placa,
+                        validationSri: dataRepository.validationSri,
+                        correos: dataRepository.correo ? dataRepository.correo.split(';') : [],
+                        telefonos: dataRepository.telefono ? dataRepository.telefono.split(';') : [],
+                        placas: dataRepository.placa !== '' ? dataRepository.placa.split(';') : []
+                    }                    
+                }
+            })
+            .catch(error => { 
+                console.log('Error service get customer Find by Id: '+ error)                 
+                throw error;
+            })
+        }
+
+        
 
 
         service.validateForm = function (data) {
@@ -141,21 +203,7 @@
             return true;
         }
 
-        service.save = function (data) {
-            return clienteRepository.save(data)
-                .catch(errorResponse => {
-                    let error = apiErrorHandler.handle(errorResponse);
-                    throw new Error(error.message);
-                })
-        }
-
-        service.update = function (id, data) {
-            return clienteRepository.update(id, data)
-                .catch(errorResponse => {
-                    let error = apiErrorHandler.handle(errorResponse);
-                    throw new Error(error.message);
-                })
-        }
+        
 
         service.checkClientByIdentification = function (query, codigoIdentificacion, callback) {
             clienteRepository.checkClientByIdentification(query).then(response => {
@@ -216,6 +264,9 @@
             textChip = validationsUtils.removeAccents(textChip);
             item = textChip.toLowerCase();
         }
+
+
+        
 
 
 

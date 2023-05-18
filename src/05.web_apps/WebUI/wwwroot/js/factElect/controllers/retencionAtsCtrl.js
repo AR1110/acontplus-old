@@ -42,30 +42,7 @@
         $scope.establecimientos = []
         $scope.puntosEmisionTemp = []
 
-        $scope.isMobile = true;
-
-        //DETECT MOBILE DEVICE
-        $scope.detectMobilDevice = function () {
-            if (navigator.userAgent.match(/Android/i)
-                || navigator.userAgent.match(/webOS/i)
-                || navigator.userAgent.match(/iPhone/i)
-                || navigator.userAgent.match(/iPad/i)
-                || navigator.userAgent.match(/iPod/i)
-                || navigator.userAgent.match(/BlackBerry/i)
-                || navigator.userAgent.match(/Windows Phone/i)
-            ) {
-                Swal.fire(
-                    'Dispositivo Movil Detectado!',
-                    'Para una mejor comodidad, le recomendamos usar una Laptop o PC.',
-                    'success'
-                )
-            } else {
-                $scope.isMobile = false;
-            }
-        }
-        $scope.detectMobilDevice()
-
-
+        mS.detectDevice()
 
         function formatDateTimeZone(fecha) {
             const formatDateMoment = moment.tz(fecha, "America/Guayaquil")

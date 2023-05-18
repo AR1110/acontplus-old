@@ -1145,14 +1145,14 @@ export class ModalBaseCtrl {
 
     validarDatosAdicionales(id) {
         let isValid = true;
-        for (let item of this.gridOptions.data) {
-            let datosAdicionales = this.datosAdicionalesArticulo.filter(val => val.idArticulo === item.idArticulo);
-            if (!item[id] > 0 && item.datosAdicionales && datosAdicionales.length !== item.cantidad) {
-                this._tS.toastr('warning', `La cantidad de etiquetas no coincide con el numero de cantidad del artículo: ${item.descripcion}`, '', 'toast-bottom-right');
-                isValid = false
-                break
-            }
-        }
+        // for (let item of this.gridOptions.data) {
+        //     let datosAdicionales = this.datosAdicionalesArticulo.filter(val => val.idArticulo === item.idArticulo);
+        //     if (!item[id] > 0 && item.datosAdicionales && datosAdicionales.length !== item.cantidad) {
+        //         this._tS.toastr('warning', `La cantidad de etiquetas no coincide con el numero de cantidad del artículo: ${item.descripcion}`, '', 'toast-bottom-right');
+        //         isValid = false
+        //         break
+        //     }
+        // }
         return true
     }
 

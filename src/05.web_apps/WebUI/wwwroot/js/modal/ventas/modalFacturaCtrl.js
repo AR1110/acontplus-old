@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.js?v=0.86";
+} from "./modalBaseCtrl.js?v=0.90";
 
 class ModalFacturaCtrl extends ModalBaseCtrl {
 
@@ -548,7 +548,8 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
             }
 
 
-            this.decimal = resultsDataForm[1][0]
+            this.decimal = resultsDataForm[1][0];
+         
             this.configDetalle = resultsDataForm[2][0]
 
             this.tipoIvas = resultsDataForm[3];

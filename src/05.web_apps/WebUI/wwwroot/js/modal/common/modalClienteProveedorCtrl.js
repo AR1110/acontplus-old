@@ -69,7 +69,7 @@ export class ModalBaseCtrl {
     }
 
     transformChipEmail(item) {
-        console.log(item)
+        
         let textChip = item || "";
         textChip = this._form.removeAccents(textChip);
         item = textChip.toLowerCase();
@@ -576,10 +576,31 @@ class ModalBaseCliente extends ModalBaseCtrl {
         this.data.correo = this.correos.length > 0 ? this.correos.join(';') : "";
         this.data.placa = this.placas.length > 0 ? this.placas.join(';') : "";
 
-        return false;
+        return true;
 
     }
 
+
+    successResponse = async (response)=>{
+        hideLoader();                
+        if(response.code==='0'){
+            this._tS.toastr('warning', response.message);
+        }
+
+        if(response.code==='1'){
+            this._tS.toastr('success', response.message);
+            
+            let idCliente = this.data.idCliente > 0 ? this.data.idCliente : response.payload;
+            let dataCliente = {};
+           
+            if(idCliente>0){
+                dataCliente = await this.clienteSvc.findById(idCliente);
+            }
+            
+            this.$uibModalInstance.close(dataCliente)
+        }
+    }
+    
 }
 
 
@@ -595,6 +616,7 @@ export class ModalClienteCtrl extends ModalBaseCliente {
         'mainService',
         'commonService',
         '$uibModalInstance',
+        'clienteService',
         'modalService',
         'nombreModal',
         'formulario',
@@ -602,7 +624,18 @@ export class ModalClienteCtrl extends ModalBaseCliente {
         'params'
     ];
 
-    constructor($scope, _mS, _commonSvc, $uibModalInstance, _modalSvc, _nombreModal, _form, _tS, _params) {
+    constructor(
+        $scope, 
+        _mS, 
+        _commonSvc, 
+        $uibModalInstance, 
+        clienteSvc,
+        _modalSvc, 
+        _nombreModal, 
+        _form, 
+        _tS, 
+        _params
+    ) {
         super({
             $scope,
             _mS,
@@ -614,6 +647,8 @@ export class ModalClienteCtrl extends ModalBaseCliente {
             _tS,
             _params
         })
+
+        this.clienteSvc = clienteSvc;
 
         this.initiloadParams = {
             esCredito: true,
@@ -708,29 +743,47 @@ export class ModalClienteCtrl extends ModalBaseCliente {
 
     saveUpdateCliente() {
         try {
-
+            
             if (!this.isValidForm()) return;
-
-            const url = this.tipoRegistro === 1 ? '/Cliente/Post' : '/Cliente/Put?idCliente=' + this.data.idCliente;
-            const method = this.tipoRegistro === 1 ? 'post' : 'put';
             showLoader();
-            this._mS.getData(method, url, this.data).then(async response => {
-                if (response.id === "0") {
+            if(this.data.idCliente>0){
+                this.clienteSvc.update(this.data.idCliente, this.data)
+                .then(this.successResponse)
+                .catch(error=>{
+                    console.log(error)
                     hideLoader();
-                    this._tS.toastr('warning', response.message, response.titleSms);
-                    return
-                }
-                if (response.id === "1") {
-                    let idCliente = this.tipoRegistro === 1 ? response.payload : this._params.idCliente;
-                    let dataCliente = await this._commonSvc.getDataCliente(idCliente);
-
-                    this.$uibModalInstance.close(dataCliente)
-                    this._tS.toastr('success', response.message, response.titleSms);
+                })
+            }else{
+                this.clienteSvc.save(this.data)
+                .then(this.successResponse)
+                .catch(error=>{
                     hideLoader();
+                    console.log(error)
+                })
+            }
 
-                }
-            })
+            // const url = this.tipoRegistro === 1 ? '/Cliente/Post' : '/Cliente/Put?idCliente=' + this.data.idCliente;
+            // const method = this.tipoRegistro === 1 ? 'post' : 'put';
+            // showLoader();
+            // this._mS.getData(method, url, this.data).then(async response => {
+                
+            //     if (response.id === "0") {
+            //         hideLoader();
+            //         this._tS.toastr('warning', response.message, response.titleSms);
+            //         return
+            //     }
+            //     if (response.id === "1") {
+            //         let idCliente = this.tipoRegistro === 1 ? response.payload : this._params.idCliente;
+            //         let dataCliente = await this._commonSvc.getDataCliente(idCliente);
+
+            //         this.$uibModalInstance.close(dataCliente)
+            //         this._tS.toastr('success', response.message, response.titleSms);
+            //         hideLoader();
+
+            //     }
+            // })
         } catch (error) {
+            hideLoader();
             console.error(error)
         }
     }
@@ -1277,8 +1330,8 @@ export class ModalProveedorCtrl extends ModalBaseCtrl {
         }
     }
 
-    onChangeTipoIdentificacion() {
-        if (this.tipoIdentificacion && this.tipoRegistro === 1) {
+    onChangeTipoIdentificacion() {        
+        if (this.tipoIdentificacion ) {
             this.typeNotify = '';
             this.message = ''
             this.data.numeroIdentificacion = '';
@@ -1289,7 +1342,7 @@ export class ModalProveedorCtrl extends ModalBaseCtrl {
         if (this._form.campo(this.data.numeroIdentificacion)) return
 
         this.data.idTipoIdentificacion = this.tipoIdentificacion.idTipoIdentificacion;
-        console.log(this.dataFindByIdTipoIdentificacion())
+       
         let codigoIdentificacion = this.dataFindByIdTipoIdentificacion().codigoIdentificacion;
 
         this.dataSearchValidacion = {
@@ -1299,42 +1352,41 @@ export class ModalProveedorCtrl extends ModalBaseCtrl {
             titulo: 'Proveedor Registrado.',
             codigoIdentificacion
         }
-
-        switch (codigoIdentificacion) {
-            case 'C':
-                $("#numeroIdentificacion").attr('maxlength', 10);
-                if (this.data.numeroIdentificacion.toString().length < 10) {
-                    this.typeNotify = 'is-invalid';
-                    this.message = 'Número de Cédula debe tener 10 dígitos';
-                    this.id = 0;
-                } else {
-                    this.validarNumIdentificacion();
-                }
-                break;
-            case 'R':
-                $("#numeroIdentificacion").attr('maxlength', 13);
-                if (this.data.numeroIdentificacion.toString().length < 13) {
-                    this.typeNotify = 'is-invalid';
-                    this.message = 'Número de RUC debe tener 13 dígitos';
-                    this.id = 0;
-                    return
-                }
-
-                if (this.data.numeroIdentificacion.slice(this.data.numeroIdentificacion.length - 3) !== '001') {
-                    this.typeNotify = 'is-invalid';
-                    this.message = 'Número de RUC tiene que contener (001) en últimos dígitos';
-                    return
-                }
-
-                this.typeNotify = 'is-valid';
-                this.message = '';
-                this.verificarSiExisteNumIdentificacion();
-
-                // else {
-                //     this.validarNumIdentificacion();
-                // }
-                break;
+       
+ 
+        if (codigoIdentificacion === 'C') {
+            $("#numeroIdentificacion").attr('maxlength', 10);
+            if (this.data.numeroIdentificacion.toString().length < 10) {
+                this.typeNotify = 'is-invalid';
+                this.message = 'Número de Cédula debe tener 10 dígitos';
+                this.id = 0;
+                return
+            }
         }
+
+        
+        if (codigoIdentificacion === 'R') {
+            $("#numeroIdentificacion").attr('maxlength', 13);
+            console.log( $("#numeroIdentificacion"))
+            if (this.data.numeroIdentificacion.toString().length < 13) {
+                this.typeNotify = 'is-invalid';
+                this.message = 'Número de RUC debe tener 13 dígitos';
+                this.id = 0;
+                return
+            }
+
+            if (this.data.numeroIdentificacion.slice(this.data.numeroIdentificacion.length - 3) !== '001') {
+                this.typeNotify = 'is-invalid';
+                this.message = 'Número de RUC tiene que contener (001) en últimos dígitos';
+                return
+            }
+
+        }
+        this.typeNotify = '';
+        this.message = '';
+        this.verificarSiExisteNumIdentificacion();
+
+
     }
 
 

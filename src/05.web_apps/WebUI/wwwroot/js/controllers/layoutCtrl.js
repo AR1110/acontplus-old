@@ -158,7 +158,7 @@ function layoutCtrl($scope, $rootScope, $window, mS, _modalSvc, toast, form) {
                         }
                     })
                 } else {
-                    location.href = '/Home/Index'
+                    // location.href = '/Home/Index'
                 }
 
             }

@@ -409,7 +409,8 @@ export class UiGridOptions{
     //Calculo de Totales 
     getSubTotalSinImpuesto(){
         let total = this.gridOptions.data.map(val => val.subTotal).reduce((acc, curr) => acc + curr, 0);        
-        return this._fS.roundNumber(total, this.decimal.nroTotalDetalle);
+        // return this._fS.roundNumber(total, this.decimal.nroTotalSubTotal);
+        return total;
     }
 
     getTotalIva(codigoIva) {
@@ -431,7 +432,8 @@ export class UiGridOptions{
 
     getTotalDescuento(){
         let total = this.gridOptions.data.map(val => val.totalDescuento).reduce((acc, curr) => acc + curr, 0);      
-        return this._fS.roundNumber(total, this.decimal.nroTotalSubTotal);
+        // return this._fS.roundNumber(total, this.decimal.nroTotalSubTotal);
+        return total;
     }
 
     //get total porcentaje descuento 
@@ -445,7 +447,8 @@ export class UiGridOptions{
             
             total = ((this.getSubTotalSinImpuesto() - totalDetalle ) * 100) / this.getSubTotalSinImpuesto();
         }        
-        return this._fS.roundNumber(total, this.decimal.nroTotalSubTotal);
+        // return this._fS.roundNumber(total, this.decimal.nroTotalSubTotal);
+        return total;
     }
 
     //Sumamos el valor ice de cada articulo del detalle  
@@ -478,7 +481,7 @@ export class UiGridOptions{
         let importeTotal = total - this.getTotalDescuento();
 
         return {
-            subTotalSinImpuestos: this.getSubTotalSinImpuesto(),
+            subTotalSinImpuestos: this._fS.roundNumber(this.getSubTotalSinImpuesto(), this.decimal.nroTotalSubTotal),
             subTotalIva,
             subTotalNetoIva,
 
@@ -491,13 +494,13 @@ export class UiGridOptions{
             subTotalNoObjetoIva,
             subTotalNetoNoObjetoIva,
 
-            totalDescuento: this.getTotalDescuento(),
-            porcentajeDescuento: this.getTotalPorcentajeDescuento(),
+            totalDescuento: this._fS.roundNumber(this.getTotalDescuento(), this.decimal.nroTotalSubTotal),
+            porcentajeDescuento: this._fS.roundNumber(this.getTotalPorcentajeDescuento(), this.decimal.nroTotalSubTotal),
             totalIce: this.getTotalIce(),
             irbpnr : 0,
             propina : 0,
             iva:  this._fS.roundNumber(iva, this.decimal.nroIva),
-            total: this._fS.roundNumber(importeTotal, this.decimal.nroTotalSubTotal)
+            total: this._fS.roundNumber(importeTotal, this.decimal.importeTotal)
         }
         //this.data.subTotalSinImpuestos = this.getSubTotalSinImpuesto();
 

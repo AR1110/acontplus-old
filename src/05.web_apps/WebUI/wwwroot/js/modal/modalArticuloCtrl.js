@@ -213,6 +213,7 @@
 
 
             this.config = decimal;
+            console.log(this.config)
             this.tarifaInstance.setConfigDecimal = this.config;
 
             this.tipoIces = tipoIces;

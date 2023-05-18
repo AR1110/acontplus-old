@@ -11,6 +11,17 @@ const CHANGE_VERSION = (largo = 50) => {
 
 //Inventario 
 app.constant('nombreModalInventario', {
+    ARTICULO: {
+        fileCtrl: '/js/modal/modalArticuloCtrl.min.js' + CHANGE_VERSION(),
+        controllers: {
+            'LG': 'ModalArticuloGeneralCtrl',
+            'M': 'ModalArticuloCtrl'
+        },
+        templates:{
+            'LG': 'Articulo/_ModalArticuloGeneral.cshtml',
+            'M': 'Articulo/_ModalNuevoArticulo.cshtml'
+        }
+    },
     FAMILIA: {
         fileCtrl: '/js/inventario/modals/modalFamiliaCtrl.js' + CHANGE_VERSION(),
         controller: 'ModalFamiliaCtrl',
@@ -41,6 +52,26 @@ app.constant('nombreModalInventario', {
         controller: 'ModalArticuloFraccionadoCtrl',
         template: 'ArticuloFraccionado/_ModalArticuloFraccionado.cshtml'
     },
+    KARDEX: {
+        fileCtrl: '/js/modal/inventario/kardexCtrl.js',
+        controllers: {
+            M:'ModalKardexCtrl',
+            MF: ''
+        },
+        templates: {
+            M:'~/Areas/Kardex/Pages/Shared/_ModalKardex.cshtml',
+            MF: '~/Areas/Kardex/Pages/Shared/_ModalFiltroKardex.cshtml'
+        }
+    },
+    CONSOLIDACION_INVENTARIO: {
+        fileCtrl: '/js/modal/inventario/modalConsolidacionInventarioCtrl.js' + CHANGE_VERSION(),
+        controllers: {
+            D:'ModalConsolidacionDetalleCtrl',
+        },
+        templates: {
+            D:'ConsolidacionInventario/_ModalDetalle.cshtml',
+        }
+    }
         
 })
 
@@ -50,12 +81,22 @@ app.constant('nombreModalFactElect', {
         fileCtrl: '/js/factElect/modals/modalDatoAdicionalArticuloCtrl.js',
         controller: 'ModalDatoAdicionalArticuloCtrl',
         template:'~/Areas/FactElect/Pages/Shared/_ModalDatoAdicionalArticulo.cshtml'
+    },
+    FACTURA:{
+        fileCtrl: '/js/modal/ventas/modalFacturaCtrl.js' + CHANGE_VERSION(),
+        controllers:{
+            D:'ModalFacturaDetalleCtrl'
+        },
+        templates:{
+            D:'FacturaVenta/_ModalDetalle.cshtml'
+        }
     }
 })
 
 app.constant('nombreModalVenta', {
     CLIENTE: {
-        fileCtrl: '/js/ventas/modals/modalClienteCtrl.js',
+        fileCtrl: '/js/modal/common/modalClienteProveedorCtrl.js' + CHANGE_VERSION(),
+        // fileCtrl: '/js/ventas/modals/modalClienteCtrl.js',
         controllers: {
             M: 'ModalClienteCtrl',
             L: 'ModalClienteListaCtrl'
@@ -64,8 +105,32 @@ app.constant('nombreModalVenta', {
             M: 'Cliente/_ModalCliente.cshtml',
             L: 'Cliente/_ModalClienteLista.cshtml'
         } 
+    },
+    NOTA_ENTREGA:{
+        fileCtrl: '/js/modal/ventas/modalNotaEntregaCtrl.js',
+        controllers: {
+            D: 'ModalNotaEntregaDetalleCtrl',
+        } ,
+        templates: {
+            D: 'NotaEntrega/_ModalDetalle.cshtml',
+        } 
     }
 })
+
+app.constant('nombreModalCompra', {
+    FACTURA_FISICA: {
+        fileCtrl: '/js/modal/',
+        controllers: {
+            D:'ModalFacturaDetalleCtrl'
+        },
+        templates: {
+            D:'~/Areas/FacturaCompra/Pages/Shared/_ModalDetalle.cshtml'
+        }
+    }
+   
+})
+
+
 
 app.constant('nombreModal', {
     aprob_comp: {
