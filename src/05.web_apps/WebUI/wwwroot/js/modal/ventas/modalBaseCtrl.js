@@ -1163,7 +1163,7 @@ export class ModalBaseCtrl {
         let recargo = Number(this.data.recargo);
         let importeTotal = total + transporte + recargo;
         this.data.total = importeTotal;
-        return this._fS.roundNumber(importeTotal, this.decimal.nroTotalSubTotal);
+        return this._fS.roundNumber(importeTotal, this.decimal.importeTotal);
     }
 
     async closeModal() {

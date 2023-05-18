@@ -52,7 +52,8 @@
         $scope.getClientes();
         
         $scope.resultModal = function(item){
-            try {                
+            try {  
+                console.log(item);              
                 if(typeof item==='object'){
                     console.log('result modal')
                     $scope.getClientes();

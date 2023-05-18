@@ -389,8 +389,7 @@
                             <md-icon md-font-set="md" class="text-danger">delete_forever</md-icon>
                         </md-button>
 
-                        <md-button ng-if="item.idArticulo > 0" class="md-icon-button md-primary"
-                            ng-click="openModalEditArticulo(item)" aria-label="Editar Artículo" title="Editar Artículo">
+                        <md-button ng-if="item.idArticulo > 0" class="md-icon-button md-primary" btn-article-add-update params="item" result-modal="resultModalArticleEdit(result)" aria-label="Editar Artículo" title="Editar Artículo">
                             <md-icon md-font-set="md">edit_forever</md-icon>
                         </md-button>
 

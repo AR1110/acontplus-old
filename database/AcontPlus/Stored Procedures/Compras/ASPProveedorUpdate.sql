@@ -5,12 +5,16 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
+IF OBJECT_ID('ASPProveedorUpdate') IS NOT NULL
+	DROP PROCEDURE  ASPProveedorUpdate 
+GO
 -- =============================================
 -- Author:		Alexis Ramirez
 -- Create date: 2021-07-30
 -- Description:	SP para acutualizar los datos de la persona 
 -- =============================================
-ALTER PROCEDURE [dbo].[ASPProveedorUpdate]
+CREATE PROCEDURE  ASPProveedorUpdate 
 	 @idRol int
     ,@idProveedor int 
 	,@nombreFiscal nvarchar(100)

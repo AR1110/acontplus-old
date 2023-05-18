@@ -213,7 +213,7 @@
 
 
             this.config = decimal;
-            console.log(this.config)
+           
             this.tarifaInstance.setConfigDecimal = this.config;
 
             this.tipoIces = tipoIces;
@@ -604,33 +604,42 @@
 
          let URL = this.tipoRegistro === 1 ? '/Articulo/Post' : '/Articulo/Put?idArticulo=' + this.data.idArticulo;
          const method = this.tipoRegistro === 1 ? 'post' : 'put';
-
-         this._mS.getData(method, URL, senData).then(
-             response => {
-                 if (response.id == 0 || response.code == 0) {
-                     this._toastr.toastr('warning', response.message, response.titleSms);
-                     return;
-                 };
-                 if (response.id == 1 || response.code == 1) {
-                     let mainData = {}
-                     if (this.tipoRegistro === 1) {
-                         mainData = JSON.parse(response.payload)[0]
-                     }
-
-                     const data = {
-                         idArticulo: this.tipoRegistro === 1 ? mainData.idArticulo : this._params.idArticulo,
-                         idPresentacion: this.tipoRegistro === 1 ? mainData.data : this._params.idPresentacion,
-                         presentacion: this.tipoRegistro === 1 ? mainData.gestion : this._params.presentacion,
-                         idMedida: this.data.idMedida,
-                         codigoPrincipal: this.data.codigo,
-                         codigoAuxiliar: this.data.codigoAuxiliar,
-                         codigoBarra: this.data.codigoBarra
-                     }
-                     this.$uibModalInstance.close(data)
-                     this._toastr.toastr('success', response.message, response.titleSms);
-                 }
-             }
-         )
+         showLoader();
+        this._mS.getData(method, URL, senData).then(response => {
+            hideLoader();                
+            if (response.id == 0 || response.code == 0) {
+                this._toastr.toastr('warning', response.message, response.titleSms);
+                return;
+            };
+            
+            if (response.id == 1 || response.code == 1) {
+                this._toastr.toastr('success', response.message, response.titleSms);
+                let dataRepository = JSON.parse(response.payload)[0];
+                    console.log(dataRepository)
+                    //  let mainData = {}
+                    
+                const data = {
+                    idArticulo: dataRepository.idArticulo,
+                    // idPresentacion: this.tipoRegistro === 1 ? mainData.data : this._params.idPresentacion,
+                    // presentacion: this.tipoRegistro === 1 ? mainData.gestion : this._params.presentacion,
+                    idMedida: dataRepository.idMedida,
+                    codigoPrincipal: dataRepository.codigo,
+                    codigoAuxiliar: dataRepository.codigoAuxiliar,
+                    codigoBarra: dataRepository.codigoBarra,
+                    etiquetas: dataRepository.etiquetas.map(item=>{
+                        return {
+                            ...item,
+                            etiquetas: item.etiquetas.split(';'),
+                        }
+                    })
+                }
+                this.$uibModalInstance.close(data)
+                
+            }
+        }).catch(error => {
+            hideLoader();
+            console.log(error);
+        })
      }
 
      closeModal() {
