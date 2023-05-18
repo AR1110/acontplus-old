@@ -91,7 +91,7 @@ BEGIN
 
 	IF EXISTS (SELECT 1 FROM Cliente WHERE numeroIdentificacion = @numeroIdentificacion AND idEntidad = @idEntidad)
 		BEGIN
-			SELECT * FROM Gestion.HelperResponse('0','Este cliente ya se encuentra registrado','')
+			SELECT '0'code,'Este cliente ya se encuentra registrado'
 			RETURN 
 		END 
 
@@ -145,7 +145,7 @@ BEGIN
 		SET @idCliente = @@IDENTITY;
 
 		COMMIT TRAN 
-			SELECT *,payload = @idCliente FROM Gestion.HelperResponse('1','Registrado Correctamente','')
+			SELECT '1'code, 'Registrado Correctamente' as 'message',payload =  @idCliente
 			RETURN 
 	END TRY 
 
@@ -154,7 +154,7 @@ BEGIN
 		BEGIN
 			ROLLBACK TRAN ;
 		END 
-		SELECT * FROM Gestion.HelperResponse('0','Info: Error en el procedimiento: '+ERROR_MESSAGE(),'')
+		SELECT '0'code,'Info: Error en el procedimiento: '+ERROR_MESSAGE() as 'message'
 		INSERT INTO ErroresSistema
 								   (token
 								   ,method

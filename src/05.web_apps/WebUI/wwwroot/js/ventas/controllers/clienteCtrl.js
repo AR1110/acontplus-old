@@ -54,6 +54,7 @@
         $scope.resultModal = function(item){
             try {                
                 if(typeof item==='object'){
+                    console.log('result modal')
                     $scope.getClientes();
                 }
             } catch (err) {
@@ -64,10 +65,10 @@
         $scope.askToDelete = async function (item) {
             try {
                 let { isConfirmed } = await Swal.fire({
-                    html: `<small>Esta Ud. seguro de Inactivar al Cliente <b>${data.nombreFiscal}</b></small>?`,
+                    html: `<small>Esta Ud. seguro de Inactivar al Cliente <b>${item.nombreFiscal}</b></small>?`,
                     icon: 'warning',
                     showConfirmButton: true,
-                    confirmButtonText: 'Sí, Inactivar!',
+                    confirmButtonText: 'Sí, inactivar!',
                     showCancelButton: true,
                     cancelButtonText: 'No, cancelar!',
                     allowOutsideClick: false,
@@ -91,6 +92,7 @@
                     })                   
                 }  
             } catch (e) {
+                hideLoader();
                 console.log(e)
             }
         }

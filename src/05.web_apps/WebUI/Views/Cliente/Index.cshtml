@@ -61,7 +61,7 @@
                                         <button class="btn btn-info btn-xs" ng-if="accion.editar && !c.esConsumidorFinal" btn-cliente result-modal="resultModal(result)" params="c">
                                             <i class="ti-pencil"></i>
                                         </button> 
-                                        <button class="btn btn-danger btn-xs ml-2" ng-if="accion.eliminar && c.estado && !c.esConsumidorFinal" ng-click="eliminarCliente(c)">
+                                        <button class="btn btn-danger btn-xs ml-2" ng-if="accion.eliminar && c.estado && !c.esConsumidorFinal" ng-click="askToDelete(c)">
                                             <i class="fas fa-user-times"></i>
                                         </button>
                                     </div>

@@ -580,6 +580,27 @@ class ModalBaseCliente extends ModalBaseCtrl {
 
     }
 
+
+    successResponse = async (response)=>{
+        hideLoader();                
+        if(response.code==='0'){
+            this._tS.toastr('warning', response.message);
+        }
+
+        if(response.code==='1'){
+            this._tS.toastr('success', response.message);
+            
+            let idCliente = this.data.idCliente > 0 ? this.data.idCliente : response.payload;
+            let dataCliente = {};
+           
+            if(idCliente>0){
+                dataCliente = await this.clienteSvc.findById(idCliente);
+            }
+            
+            this.$uibModalInstance.close(dataCliente)
+        }
+    }
+    
 }
 
 
@@ -595,6 +616,7 @@ export class ModalClienteCtrl extends ModalBaseCliente {
         'mainService',
         'commonService',
         '$uibModalInstance',
+        'clienteService',
         'modalService',
         'nombreModal',
         'formulario',
@@ -602,7 +624,18 @@ export class ModalClienteCtrl extends ModalBaseCliente {
         'params'
     ];
 
-    constructor($scope, _mS, _commonSvc, $uibModalInstance, _modalSvc, _nombreModal, _form, _tS, _params) {
+    constructor(
+        $scope, 
+        _mS, 
+        _commonSvc, 
+        $uibModalInstance, 
+        clienteSvc,
+        _modalSvc, 
+        _nombreModal, 
+        _form, 
+        _tS, 
+        _params
+    ) {
         super({
             $scope,
             _mS,
@@ -614,6 +647,8 @@ export class ModalClienteCtrl extends ModalBaseCliente {
             _tS,
             _params
         })
+
+        this.clienteSvc = clienteSvc;
 
         this.initiloadParams = {
             esCredito: true,
@@ -710,28 +745,45 @@ export class ModalClienteCtrl extends ModalBaseCliente {
         try {
             
             if (!this.isValidForm()) return;
-
-            const url = this.tipoRegistro === 1 ? '/Cliente/Post' : '/Cliente/Put?idCliente=' + this.data.idCliente;
-            const method = this.tipoRegistro === 1 ? 'post' : 'put';
             showLoader();
-            this._mS.getData(method, url, this.data).then(async response => {
+            if(this.data.idCliente>0){
+                this.clienteSvc.update(this.data.idCliente, this.data)
+                .then(this.successResponse)
+                .catch(error=>{
+                    console.log(error)
+                    hideLoader();
+                })
+            }else{
+                this.clienteSvc.save(this.data)
+                .then(this.successResponse)
+                .catch(error=>{
+                    hideLoader();
+                    console.log(error)
+                })
+            }
+
+            // const url = this.tipoRegistro === 1 ? '/Cliente/Post' : '/Cliente/Put?idCliente=' + this.data.idCliente;
+            // const method = this.tipoRegistro === 1 ? 'post' : 'put';
+            // showLoader();
+            // this._mS.getData(method, url, this.data).then(async response => {
                 
-                if (response.id === "0") {
-                    hideLoader();
-                    this._tS.toastr('warning', response.message, response.titleSms);
-                    return
-                }
-                if (response.id === "1") {
-                    let idCliente = this.tipoRegistro === 1 ? response.payload : this._params.idCliente;
-                    let dataCliente = await this._commonSvc.getDataCliente(idCliente);
+            //     if (response.id === "0") {
+            //         hideLoader();
+            //         this._tS.toastr('warning', response.message, response.titleSms);
+            //         return
+            //     }
+            //     if (response.id === "1") {
+            //         let idCliente = this.tipoRegistro === 1 ? response.payload : this._params.idCliente;
+            //         let dataCliente = await this._commonSvc.getDataCliente(idCliente);
 
-                    this.$uibModalInstance.close(dataCliente)
-                    this._tS.toastr('success', response.message, response.titleSms);
-                    hideLoader();
+            //         this.$uibModalInstance.close(dataCliente)
+            //         this._tS.toastr('success', response.message, response.titleSms);
+            //         hideLoader();
 
-                }
-            })
+            //     }
+            // })
         } catch (error) {
+            hideLoader();
             console.error(error)
         }
     }

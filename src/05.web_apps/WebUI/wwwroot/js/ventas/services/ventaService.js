@@ -90,9 +90,45 @@
         }
 
         service.findById = function (id) {
-            return mS.getData('get', url + 'Insert', data, true)
+            return mS.getData('get', url + 'FindById/' + id, null, true)
+            .then(response => {
+                if(response.code==="0"){
+                    throw response;
+                }
+                if(response.code==="1"){
+                    let dataRepository  = JSON.parse(response.payload)[0];
+          
+                    return {
+                        idCliente: dataRepository.idCliente,
+                        idTipoClienteProveedor: dataRepository.idTipoClienteProveedor,
+                        idTipoEntidad: dataRepository.idTipoEntidad,
+                        idSubContribuyente: dataRepository.idSubContribuyente,
+                        idTiempoCredito: dataRepository.idTiempoCredito,
+                        idTipoIdentificacion: dataRepository.idTipoIdentificacion,
+                        idCiudad: dataRepository.idCiudad,
+                        numeroIdentificacion: dataRepository.numeroIdentificacion,
+                        nombreFiscal: dataRepository.nombreFiscal,
+                        montoCredito: dataRepository.montoCredito,
+                        nombreComercial: dataRepository.nombreComercial,
+                        direccion: dataRepository.direccion,
+                        telefono: dataRepository.telefono,
+                        correo: dataRepository.correo,
+                        estado: dataRepository.estado,
+                        idEmpleado: dataRepository.idEmpleado,
+                        diasCredito: dataRepository.diasCredito,
+                        empleado: dataRepository.empleado,
+                        idEmpresa: dataRepository.idEmpresa,
+                        idCargo: dataRepository.idCargo,
+                        placa: dataRepository.placa,
+                        validationSri: dataRepository.validationSri,
+                        correos: dataRepository.correo ? dataRepository.correo.split(';') : [],
+                        telefonos: dataRepository.telefono ? dataRepository.telefono.split(';') : [],
+                        placas: dataRepository.placa !== '' ? dataRepository.placa.split(';') : []
+                    }                    
+                }
+            })
             .catch(error => { 
-                console.log('Error service get customer: '+ error)                 
+                console.log('Error service get customer Find by Id: '+ error)                 
                 throw error;
             })
         }
