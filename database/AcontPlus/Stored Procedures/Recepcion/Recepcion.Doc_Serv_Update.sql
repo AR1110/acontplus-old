@@ -48,7 +48,7 @@ BEGIN
 		BEGIN TRAN
 			UPDATE dr SET dr.codDoc = @codDoc
 			,dr.xmlDoc = @xmlDoc
-			,dr.downloaded = @downloaded 
+			,dr.downloaded = @downloaded
 			,versionComp = @versionComp
 			,fechaEmision = @fechaEmision
 			,fechaAutorizacion = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion')))).value('(/autorizacion/fechaAutorizacion)[1]','VARCHAR(49)')
@@ -105,57 +105,60 @@ BEGIN
 					,@rucReceptor = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//comprobanteRetencion/infoCompRetencion/identificacionSujetoRetenido)[1]','VARCHAR(25)')
 				END
 
-			SET @identificacionCliProv = (SELECT LTRIM(RTRIM(@identificacionCliProv)))
 
-			SET @idTipoIdentificacion = (SELECT CASE 
-											WHEN LEN(@identificacionCliProv) = 10 THEN (SELECT TOP 1 idTipoIdentificacion FROM TipoIdentificacion
-																														WHERE codigoSri = '05')
-											WHEN LEN(@identificacionCliProv) = 13 THEN (SELECT TOP 1 idTipoIdentificacion FROM TipoIdentificacion
-																														WHERE codigoSri = '04')
-											WHEN LEN(@identificacionCliProv) < 10 OR LEN(@identificacionCliProv) > 13 THEN (SELECT TOP 1 idTipoIdentificacion FROM TipoIdentificacion
-																														WHERE codigoSri = '06')
-										END)
-
-
-			IF LEN(LTRIM(RTRIM(@rucReceptor))) = 13
+			IF (@codDoc != '07')
 				BEGIN
-					IF EXISTS (SELECT 1 FROM Entidad WHERE LTRIM(RTRIM(ruc)) = LTRIM(RTRIM(@rucReceptor)))
+					SET @identificacionCliProv = (SELECT LTRIM(RTRIM(@identificacionCliProv)))
+
+					SET @idTipoIdentificacion = (SELECT CASE 
+													WHEN LEN(@identificacionCliProv) = 10 THEN (SELECT TOP 1 idTipoIdentificacion FROM TipoIdentificacion
+																																WHERE codigoSri = '05')
+													WHEN LEN(@identificacionCliProv) = 13 THEN (SELECT TOP 1 idTipoIdentificacion FROM TipoIdentificacion
+																																WHERE codigoSri = '04')
+													WHEN LEN(@identificacionCliProv) < 10 OR LEN(@identificacionCliProv) > 13 THEN (SELECT TOP 1 idTipoIdentificacion FROM TipoIdentificacion
+																																WHERE codigoSri = '06')
+												END)
+
+
+					IF LEN(LTRIM(RTRIM(@rucReceptor))) = 13
 						BEGIN
-							SET @idEntidad = (SELECT TOP 1 idEntidad FROM Entidad WHERE LTRIM(RTRIM(ruc)) = LTRIM(RTRIM(@rucReceptor)) AND estado = 1)
-							
-							IF NOT EXISTS(SELECT 1 FROM Proveedor WHERE idEntidad = @idEntidad AND LTRIM(RTRIM(numeroIdentificacion)) = LTRIM(RTRIM(@identificacionCliProv)))
+							IF EXISTS (SELECT 1 FROM Entidad WHERE LTRIM(RTRIM(ruc)) = LTRIM(RTRIM(@rucReceptor)))
 								BEGIN
-									INSERT INTO Proveedor(idTipoIdentificacion, nombreFiscal, nombreComercial, numeroIdentificacion, direccion, idEntidad)
-									VALUES (@idTipoIdentificacion,@razonSocial, @nombreComercial, @identificacionCliProv, @direccion, @idEntidad)
+									SET @idEntidad = (SELECT TOP 1 idEntidad FROM Entidad WHERE LTRIM(RTRIM(ruc)) = LTRIM(RTRIM(@rucReceptor)) AND estado = 1)
+							
+									IF NOT EXISTS(SELECT 1 FROM Proveedor WHERE idEntidad = @idEntidad AND LTRIM(RTRIM(numeroIdentificacion)) = LTRIM(RTRIM(@identificacionCliProv)))
+										BEGIN
+											INSERT INTO Proveedor(idTipoIdentificacion, nombreFiscal, nombreComercial, numeroIdentificacion, direccion, idEntidad)
+											VALUES (@idTipoIdentificacion,@razonSocial, @nombreComercial, @identificacionCliProv, @direccion, @idEntidad)
+										END
+								END
+						END
+					IF LEN(LTRIM(RTRIM(@rucReceptor))) = 10
+						BEGIN
+							IF EXISTS (SELECT 1 FROM Entidad WHERE LTRIM(RTRIM(ruc)) = LTRIM(RTRIM(@rucReceptor)))
+								BEGIN
+						
+									SET @idEntidad = (SELECT TOP 1 idEntidad FROM Entidad WHERE LTRIM(RTRIM(ruc)) = LTRIM(RTRIM(@rucReceptor)) AND estado = 1)
+							
+									IF NOT EXISTS(SELECT 1 FROM Proveedor WHERE idEntidad = @idEntidad AND LTRIM(RTRIM(numeroIdentificacion)) = LTRIM(RTRIM(@identificacionCliProv)))
+										BEGIN
+											INSERT INTO Proveedor(idTipoIdentificacion, nombreFiscal, nombreComercial, numeroIdentificacion, direccion, idEntidad)
+											VALUES (@idTipoIdentificacion,@razonSocial, @nombreComercial, @identificacionCliProv, @direccion, @idEntidad)
+										END
+								END
+							IF EXISTS (SELECT 1 FROM Entidad WHERE LTRIM(RTRIM(ruc)) = LTRIM(RTRIM(@rucReceptor+'001')))
+								BEGIN
+						
+									SET @idEntidad = (SELECT TOP 1 idEntidad FROM Entidad WHERE LTRIM(RTRIM(ruc)) = LTRIM(RTRIM(@rucReceptor+'001')) AND estado = 1)
+							
+									IF NOT EXISTS(SELECT 1 FROM Proveedor WHERE idEntidad = @idEntidad AND LTRIM(RTRIM(numeroIdentificacion)) = LTRIM(RTRIM(@identificacionCliProv)))
+										BEGIN
+											INSERT INTO Proveedor(idTipoIdentificacion, nombreFiscal, nombreComercial, numeroIdentificacion, direccion, idEntidad)
+											VALUES (@idTipoIdentificacion,@razonSocial, @nombreComercial, @identificacionCliProv, @direccion, @idEntidad)
+										END
 								END
 						END
 				END
-			IF LEN(LTRIM(RTRIM(@rucReceptor))) = 10
-				BEGIN
-					IF EXISTS (SELECT 1 FROM Entidad WHERE LTRIM(RTRIM(ruc)) = LTRIM(RTRIM(@rucReceptor)))
-						BEGIN
-						
-							SET @idEntidad = (SELECT TOP 1 idEntidad FROM Entidad WHERE LTRIM(RTRIM(ruc)) = LTRIM(RTRIM(@rucReceptor)) AND estado = 1)
-							
-							IF NOT EXISTS(SELECT 1 FROM Proveedor WHERE idEntidad = @idEntidad AND LTRIM(RTRIM(numeroIdentificacion)) = LTRIM(RTRIM(@identificacionCliProv)))
-								BEGIN
-									INSERT INTO Proveedor(idTipoIdentificacion, nombreFiscal, nombreComercial, numeroIdentificacion, direccion, idEntidad)
-									VALUES (@idTipoIdentificacion,@razonSocial, @nombreComercial, @identificacionCliProv, @direccion, @idEntidad)
-								END
-						END
-					IF EXISTS (SELECT 1 FROM Entidad WHERE LTRIM(RTRIM(ruc)) = LTRIM(RTRIM(@rucReceptor+'001')))
-						BEGIN
-						
-							SET @idEntidad = (SELECT TOP 1 idEntidad FROM Entidad WHERE LTRIM(RTRIM(ruc)) = LTRIM(RTRIM(@rucReceptor+'001')) AND estado = 1)
-							
-							IF NOT EXISTS(SELECT 1 FROM Proveedor WHERE idEntidad = @idEntidad AND LTRIM(RTRIM(numeroIdentificacion)) = LTRIM(RTRIM(@identificacionCliProv)))
-								BEGIN
-									INSERT INTO Proveedor(idTipoIdentificacion, nombreFiscal, nombreComercial, numeroIdentificacion, direccion, idEntidad)
-									VALUES (@idTipoIdentificacion,@razonSocial, @nombreComercial, @identificacionCliProv, @direccion, @idEntidad)
-								END
-						END
-				END
-
 				
 				--===========================================================Contabilidad=================================================================================================
 			
