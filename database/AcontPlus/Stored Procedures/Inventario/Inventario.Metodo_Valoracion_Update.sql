@@ -35,6 +35,7 @@ BEGIN
 			DECLARE @precioCostoActual AS NUMERIC(18,5)
 			DECLARE @precioCosto AS NUMERIC(18,5)
 			DECLARE @precioTransaccion AS NUMERIC(18,5)
+			DECLARE @porcentajeUtilidad AS NUMERIC(18,5)
 
 			DECLARE @table AS TABLE (
 			 	 fecha DATETIME NOT NULL
@@ -56,9 +57,11 @@ BEGIN
 			SELECT TOP 1 @precioTransaccion = precioUnitario FROM Inventario.Transaccion WITH (NOLOCK) WHERE idTransaccion = @idTransaccion
 			
 
+			UPDATE Inventario.Transaccion SET precioCosto = @precioTransaccion WHERE idTransaccion = @idTransaccion
+
 			UPDATE dbo.Articulo SET precioCosto = @precioCostoActual WHERE idArticulo = @idArticulo
 
-			UPDATE Inventario.Transaccion SET precioCosto = @precioTransaccion WHERE idTransaccion = @idTransaccion
+			UPDATE dbo.ArticuloPvP SET porcentajeUtilidad = ((precioVenta / @precioCostoActual) * 100) - 100 WHERE idArticulo = @idArticulo
 
 		END 
 END
