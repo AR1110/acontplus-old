@@ -11,7 +11,7 @@
         let service = {};
 
         service.getAll = function(query){
-            return mS.getData('get', url +'Get?json=' + JSON.stringify(query), null, true).then(response=>{
+            return mS.getData('get', url +'?json=' + JSON.stringify(query), null, true).then(response=>{
               
                 if(response.code==='0'){
                     throw response;
