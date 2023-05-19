@@ -1,6 +1,7 @@
 using BL.JwtAuthenticationManger;
 using BL.Recepcion;
 using Helpers;
+using System.Reflection;
 
 namespace ApiRecepcion
 {
@@ -13,7 +14,6 @@ namespace ApiRecepcion
             // Add services to the container.
 
             builder.Services.AddControllers();
-            builder.Services.AddSwaggerGen();
 
             builder.Services.AddCustomJwtAuthentication();
 
@@ -34,12 +34,9 @@ namespace ApiRecepcion
             builder.Services.AddScoped<FileTxt>();
 
             var app = builder.Build();
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+            
+            app.UseRouting();
+
             //app.UseCors();
 
             app.UseAuthentication();
@@ -47,6 +44,15 @@ namespace ApiRecepcion
             app.UseAuthorization();
 
             app.UseMiddleware<JWTMiddleware>();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapGet("/", async context =>
+                {
+                    string projectName = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
+                    await context.Response.WriteAsync($"{projectName} is running at {string.Join(", ", app.Urls)}");
+                });
+            });
 
             app.MapControllers().RequireAuthorization();
 
