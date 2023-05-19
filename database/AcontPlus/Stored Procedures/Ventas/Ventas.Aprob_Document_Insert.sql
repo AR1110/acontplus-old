@@ -83,7 +83,7 @@ BEGIN
 		,precioUnitario NUMERIC(18,5) NOT NULL
 		,descuento NUMERIC(18,5) NOT NULL
 		,precioTotalSinImpuesto NUMERIC(18,5) NOT NULL
-		,codigo INT NOT NULL
+	--	,codigo INT NOT NULL
 		,codigoPorcentaje INT NOT NULL
 		,tarifa NUMERIC(18,5) NOT NULL
 		,baseImponible NUMERIC(18,5) NOT NULL
@@ -103,6 +103,8 @@ BEGIN
 		idInfoAdicional INT UNIQUE NOT NULL
 	)
 
+	--SELECT '0'code, @comprobante AS 'message'
+	--RETURN
 	--======================Fecha Emision===============================
 
 	BEGIN TRY 
@@ -116,30 +118,40 @@ BEGIN
 			   ,idPuntoEmision              INT '$.idPuntoEmision' 
 			   ,fechaEmision       VARCHAR(300) '$.fechaEmision'
 			   ,codDoc               VARCHAR(5) '$.codDoc'
-			   ,totalSinImpuestos NUMERIC(18,5) '$.totalSinImpuestos' 
+			 --  ,totalSinImpuestos NUMERIC(18,5) '$.totalSinImpuestos' 
+			   ,totalSinImpuestos NUMERIC(18,5) '$.subTotalSinImpuestos' 
+			 
 			   ,totalDescuento    NUMERIC(18,5) '$.totalDescuento'
-			   ,totalConImpuestos NUMERIC(18,5) '$.totalConImpuestos' 
+			 --  ,totalConImpuestos NUMERIC(18,5) '$.totalConImpuestos' 
+			   ,totalConImpuestos NUMERIC(18,5) '$.total' 
 			   ,propina           NUMERIC(18,5) '$.propina'
-			   ,importeTotal      NUMERIC(18,5) '$.importeTotal'
+			--   ,importeTotal      NUMERIC(18,5) '$.importeTotal'
+			   ,importeTotal      NUMERIC(18,5) '$.total'
 			   ,codigoPorcentaje            INT '$.codigoPorcentaje' 
 			   ,docOrigen           VARCHAR(15) '$.docOrigen'
 			   ,observacion        VARCHAR(300) '$.observacion'
 		     )
 
 		INSERT INTO @tbDetalle 
-			  (idTarifa,idArticulo,idMedida,cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigo,codigoPorcentaje,tarifa,baseImponible)
-		SELECT idTarifa,idArticulo,idMedida,cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigo,codigoPorcentaje,tarifa,baseImponible
+			  (orderIndex, idTarifa,idArticulo,idMedida, idTipoIva, cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,
+			  --codigo,
+			  codigoPorcentaje,tarifa,baseImponible)
+		SELECT orderIndex, idTarifa,idArticulo,idMedida, idTipoIva, cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,
+		--codigo,
+		codigoPorcentaje,tarifa,baseImponible
 		FROM OPENJSON(@detalle)
 		WITH (
+				orderIndex                       INT '$.orderIndex',
 				idTarifa                         INT '$.idTarifa'
 			   ,idArticulo                       INT '$.idArticulo'
 		       ,idMedida                         INT '$.idMedida' 
+			   ,idTipoIva                        INT '$.idTipoIva' 
 		       ,cantidad               NUMERIC(18,5) '$.cantidad' 
 		       ,descripcion             VARCHAR(300) '$.descripcion' 
 		       ,precioUnitario         NUMERIC(18,5) '$.precioUnitario' 
 		       ,descuento              NUMERIC(18,5) '$.descuento'
 		       ,precioTotalSinImpuesto NUMERIC(18,5) '$.precioTotalSinImpuesto' 
-		       ,codigo                           INT '$.codigo' 
+		    --   ,codigo                           INT '$.codigo' 
 		       ,codigoPorcentaje                 INT '$.codigoPorcentaje'
 		       ,tarifa                 NUMERIC(18,5) '$.tarifa'
 		       ,baseImponible          NUMERIC(18,5) '$.baseImponible'

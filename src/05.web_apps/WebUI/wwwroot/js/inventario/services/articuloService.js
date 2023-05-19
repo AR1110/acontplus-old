@@ -229,12 +229,12 @@
                 }
 
                 if(response.code==='1'){
-                    console.log(JSON.parse(response.payload))
+                    
                     let dataRepository = JSON.parse(response.payload);
                     let dataArticulo = dataRepository[0][0];
                     let dataMedida = dataRepository[1];
                     let dataInfoAdicionales = dataRepository[2];
-                    console.log(dataArticulo)
+                    
                     let articuloMapper = {                        
                         idArticulo: dataArticulo.idArticulo,
                         idTipoIva: dataArticulo.idTipoIva,

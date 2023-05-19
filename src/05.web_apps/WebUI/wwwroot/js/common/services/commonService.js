@@ -1047,7 +1047,7 @@ export class CommonService {
                     }
                     if (response.id === "1") {
                         let dataMain = JSON.parse(response.payload);
-                        console.log(dataMain)
+                        
                         let detalle = dataMain[2];
                         dataDocumento = dataMain[0][0];
                         
@@ -1070,6 +1070,7 @@ export class CommonService {
 
                         //----------------------Datos Adicionales del Articulo-----------------
                         datosAdicionalesArticulo = dataMain[4].map(item=>({
+                            idDocumento: item.idDocumento,
                             idHistoryInfoAdicional: item.idHistoryInfoAdicional,
                             idArticulo: item.idArticulo,
                             idEtiqueta: item.idEtiqueta,
@@ -1108,8 +1109,11 @@ export class CommonService {
                         cliente = dataMain[1][0];
                         detalleDocumento = this.getDetalleVenta(detalle, 'precioUnitario');
                         
+                        infoAdicionalDocumento = dataMain[3];
+
                         //----------------------Datos Adicionales del Articulo-----------------
-                        datosAdicionalesArticulo = dataMain[3].map(item=>({
+                        datosAdicionalesArticulo = dataMain[4].map(item=>({
+                            idDocumento: item.idDocumento,
                             idHistoryInfoAdicional: item.idHistoryInfoAdicional,
                             idArticulo: item.idArticulo,
                             idEtiqueta: item.idEtiqueta,
