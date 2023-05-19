@@ -407,17 +407,53 @@ class ModalBaseCtrl {
 
 
 export class ModalSelectDocumentoCtrl extends ModalBaseCtrl {
-    static $inject = ['$scope', '$uibModalInstance', 'uiGridConstants', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario', 'params', 'decodeToken'];
+    static $inject = [
+        '$scope', 
+        '$uibModalInstance', 
+        'uiGridConstants', 
+        'mainService', 
+        'commonService', 
+        'aprobacionDocService', //Aprobacion Comprobante Service
+        'notaEntregaService', //NotaEntrega Service
+        'modalService', 
+        'nombreModal', 
+        'nombreModalVenta',
+        'toastService', 
+        'formulario', 
+        'params', 
+        'decodeToken'
+    ];
 
-    constructor($scope, $uibModalInstance, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS, _params, decodeToken) {
+    constructor(
+        $scope, 
+        $uibModalInstance, 
+        uiGridConstants, 
+        _mS, 
+        _commonSvc, 
+        aprobacionDocSvc,
+        notaEntregaSvc,
+        _modalSvc, 
+        _nombreModalConst, 
+        nombreModalVenta,
+        _tS, 
+        _fS, 
+        _params, 
+        decodeToken
+    ) {
         super(_commonSvc)
         const self = this;
         this.$scope = $scope;
         this.$uibModalInstance = $uibModalInstance;
         this.uiGridConstants = uiGridConstants;
         this._mS = _mS;
+
+        this.aprobacionDocSvc = aprobacionDocSvc;
+        this.notaEntregaSvc = notaEntregaSvc;
+
         this._modalSvc = _modalSvc;
         this._nombreModalConst = _nombreModalConst;
+        this.nombreModalVenta = nombreModalVenta;
+
         this._tS = _tS;
         this._fS = _fS;
 
@@ -449,6 +485,9 @@ export class ModalSelectDocumentoCtrl extends ModalBaseCtrl {
         this.cliente = {};
 
         this.documentos = [];
+
+        this.historialVentas = [];
+        this.infoAdicionalDocumento = [];
 
         this.gridOptions = {
             enableFiltering: true,
@@ -527,6 +566,7 @@ export class ModalSelectDocumentoCtrl extends ModalBaseCtrl {
                 this.impuestoTarifas = resultsDataFormEstab[2]; //Impuesto tarifas dependiendo el tipo Actividad
                 this.actividadTipoIva = resultsDataFormEstab[2][0];
                 this.data.tarifa = this.actividadTipoIva.tarifa;
+                this.data.codigoPorcentaje = this.actividadTipoIva.codigoPorcentaje
             } else {
                 this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');
             }
@@ -803,30 +843,24 @@ export class ModalSelectDocumentoCtrl extends ModalBaseCtrl {
 
 
     async openModalFiltroDocumento() {
-
-        let controller, template;
+        let fileCtrl, controller, template, ctrl;
 
         if (this.TIPO_DOC.codigo === "NE") {
-
-            let {
-                MODAL_FILE_CTRL,
-                MODAL_FILTRO_NE
-            } = this._nombreModalConst.aprob_comp;
-
-            controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_FILTRO_NE['controller']]
-            template = MODAL_FILTRO_NE['template'];
+            fileCtrl = this.nombreModalVenta.APROB_COMPROBANTE.fileCtrl;
+            ctrl = this.nombreModalVenta.APROB_COMPROBANTE.controllers['MF_NE'];
+            template = this.nombreModalVenta.APROB_COMPROBANTE.templates['MF_NE'];
+        
+            controller = (await import(fileCtrl))[ctrl]          
 
         }
 
         if (this.TIPO_DOC.codigo === 'PR') {
 
-            let {
-                MODAL_FILE_CTRL,
-                MODAL_FILTRO_PR
-            } = this._nombreModalConst.aprob_comp;
-
-            controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_FILTRO_PR['controller']]
-            template = MODAL_FILTRO_PR['template'];
+            fileCtrl = this.nombreModalVenta.APROB_COMPROBANTE.fileCtrl;
+            ctrl = this.nombreModalVenta.APROB_COMPROBANTE.controllers['MF_PR'];
+            template = this.nombreModalVenta.APROB_COMPROBANTE.templates['MF_PR'];
+        
+            controller = (await import(fileCtrl))[ctrl] 
 
         }
 
@@ -912,15 +946,11 @@ export class ModalSelectDocumentoCtrl extends ModalBaseCtrl {
     }
 
     getNotaEntregas() {
-        const self = this;
-        this._mS.getData('get', '/NotaEntrega/Get?json=' + JSON.stringify(this.dataSearch)).then(async response => {
-            if (response.id === "0") {
-                this.documentos = [];
-                console.warn(response)
-                return
-            }
-
-            this.gridOptions.columnDefs = [{
+        try {
+            const self = this;
+            this.documentos = [];
+            this.notaEntregaSvc.getAll(this.dataSearch).then(async response=>{
+                this.gridOptions.columnDefs = [{
                     name: 'Nro. Doc',
                     field: 'nroDocumento'
                 },
@@ -936,10 +966,10 @@ export class ModalSelectDocumentoCtrl extends ModalBaseCtrl {
                     name: 'Cliente',
                     field: 'nombreFiscal',
                     cellTemplate: `<div class="grid-tooltip"  tooltip-placement="left" uib-tooltip="{{row.entity.nombreFiscal }}">
-                <div class="ui-grid-cell-contents">
-                  {{ COL_FIELD }}
-                </div>
-              </div>`
+                        <div class="ui-grid-cell-contents">
+                        {{ COL_FIELD }}
+                        </div>
+                    </div>`
                 },
                 {
                     name: 'Total',
@@ -963,11 +993,16 @@ export class ModalSelectDocumentoCtrl extends ModalBaseCtrl {
                 },
             ];
 
-            this.documentos = JSON.parse(response.data) || [];
+            this.documentos = response;
             await this.setDataGridOptionsChildren();
 
             Swal.close();
-        })
+            }).catch(error => {
+                console.log(error);
+            })                    
+        } catch (error) {
+            console.log(error);
+        }       
     }
 
 
@@ -1037,6 +1072,8 @@ export class ModalSelectDocumentoCtrl extends ModalBaseCtrl {
     async setDataGridOptionsChildren() {
 
         const self = this;
+        let tempHistorialInfoAdicional = []; //
+        let tempInfoAdicionalDocumento = []; //
 
         for (let item of this.documentos) {
             let id;
@@ -1051,15 +1088,22 @@ export class ModalSelectDocumentoCtrl extends ModalBaseCtrl {
             }
 
             //Obtenemos detalle de Nota de Entrega
-            let response = await self._commonSvc.getDataTipoDocVenta({
+            let {detalleDocumento, datosAdicionalesArticulo, infoAdicionalDocumento} = await self._commonSvc.getDataTipoDocVenta({
                 id,
                 codigoDocumento: self.TIPO_DOC.codigo
             })
-            item.subGridOptions.data = response.detalleDocumento;
+            item.subGridOptions.data = detalleDocumento;
+
+            //Historial Ventas de Nota Entrega 
+            tempHistorialInfoAdicional.push(datosAdicionalesArticulo);
+            tempInfoAdicionalDocumento.push(infoAdicionalDocumento)
         }
 
         this.gridOptions.data = this.documentos;
-
+        this.historialVentas = tempHistorialInfoAdicional.flat();
+        this.infoAdicionalDocumento = tempInfoAdicionalDocumento.flat();
+        console.log(tempHistorialInfoAdicional);
+        console.log(tempInfoAdicionalDocumento);
         if (this.documentos.length === 0) {
             this._tS.toastr('info', 'No se encontraron los Documentos');
         }
@@ -1366,6 +1410,7 @@ export class ModalSelectDocumentoCtrl extends ModalBaseCtrl {
 
                 const jsonHeader = {
                     ...this.data,
+                    codDoc: '01',
                     idCliente: this.cliente.idCliente,
                     fechaEmision: this._fS.formatDateTimeZone(this.data.fechaEmision),
                     docOrigen: this.TIPO_DOC.codigo,
@@ -1376,10 +1421,12 @@ export class ModalSelectDocumentoCtrl extends ModalBaseCtrl {
                 //jsonHeader.tarifa = this.actividadTipoIva.tarifa;
 
                 let tempDetail = [];
+                let orderIndex = 1;
                 for (let item of this.gridOptionsDetailDocument.data) {
 
                     let precioTotalSinImpuesto = (item.precioUnitario - item.valorDescuento) * item.cantidad;
                     let obj = {
+                        orderIndex: orderIndex ++,
                         idAprob_Document_Detailt: 0,
                         idTarifa: item.idTarifa,
                         idArticulo: item.idArticulo,
@@ -1390,25 +1437,37 @@ export class ModalSelectDocumentoCtrl extends ModalBaseCtrl {
                         precioUnitario: item.precioUnitario,
                         precioConIva: item.precioConIva,
                         valorDescuento: item.valorDescuento,
+                        descuento: item.valorDescuento,
                         precioTotalSinImpuesto: this._fS.roundNumber(precioTotalSinImpuesto, this.decimal.nroTotalDetalle),
+                        baseImponible:  this._fS.roundNumber(precioTotalSinImpuesto, this.decimal.nroTotalDetalle),
                         codigoPorcentaje: item.codigoPorcentaje,
                         tarifa: item.tarifa
                     }
                     tempDetail.push(obj);
                 }
 
+                let infoAdicional = this.infoAdicionalDocumento.filter(item => {
+                    return this.selectedDocuments.some(docs => docs.idComprobante===item.idDocumento)
+                })
+
+                let historialVenta = this.historialVentas.filter(item => {
+                    return this.selectedDocuments.some(docs => docs.idNotaEntrega===item.idDocumento)
+                })
+
+                
+
                 const data = {
-                    jsonHeader: JSON.stringify(jsonHeader),
-                    jsonDetail: JSON.stringify(tempDetail),
-                    jsonHistory: JSON.stringify(this.selectedDocuments.map(item => ({
+                    comprobante: JSON.stringify(jsonHeader),
+                    detalle: JSON.stringify(tempDetail),
+                    historial: JSON.stringify(this.selectedDocuments.map(item => ({
                         idDocumento: item.idNotaEntrega || item.idProforma,
                         serie: item.nroDocumento,
-
-                    })))
+                    }))),
+                    infoAdicional: JSON.stringify(infoAdicional),
+                    historialVenta: JSON.stringify(historialVenta),
                 }
 
-
-                this._mS.getData('post', '/AprobDocument/Insert', data).then(response => {
+                this.aprobacionDocSvc.save(data).then(response => {
                     if (response.code === "0") {
                         hideLoader();
                         this._fS.sweetAlert('warning', response.message);
@@ -1561,7 +1620,7 @@ export class ModalNotaEntregaFiltroCtrl extends ModalBaseCtrl {
             clienteFiltro: this.clienteFiltro,
             usuarioSearchFiltro: this.usuarioSearchFiltro,
             mes: this.mes,
-            isSearch: true
+            isSearch: false
         });
     }
 

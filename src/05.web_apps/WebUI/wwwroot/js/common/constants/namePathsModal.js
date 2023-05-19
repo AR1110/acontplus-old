@@ -114,7 +114,24 @@ app.constant('nombreModalVenta', {
         templates: {
             D: 'NotaEntrega/_ModalDetalle.cshtml',
         } 
-    }
+    },
+    APROB_COMPROBANTE:{
+        fileCtrl: '/js/modal/ventas/modalAprobDocument.js' + CHANGE_VERSION(),
+        controllers: {            
+            MSD:'ModalSelectDocumentoCtrl',
+            MADE:'ModalApproveDocEditCtrl',
+            MAD:'ModalApproveDocDetalleCtrl',
+            MF_NE: 'ModalNotaEntregaFiltroCtrl',
+            MF_PR:'ModalProformaFiltroCtrl'    
+        },
+        templates:{
+            MSD:'AprobDocument/_ModalSelectDocument.cshtml',
+            MADE:'AprobDocument/_ModalAprobDocumentEdit.cshtml',
+            MADD:'AprobDocument/_ModalAprobDocumentDetalle.cshtml', 
+            MF_NE: 'AprobDocument/_ModalNotaEntregaFiltro.cshtml',
+            MF_PR:'AprobDocument/_ModalProformaFiltro.cshtml'           
+        }
+    }  
 })
 
 app.constant('nombreModalCompra', {

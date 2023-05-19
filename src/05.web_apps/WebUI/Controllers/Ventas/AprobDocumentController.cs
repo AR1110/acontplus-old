@@ -77,9 +77,11 @@ namespace WebUI.Controllers.Ventas
             {
                 await _db.SPExecute("Ventas.Aprob_Document_Insert");
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("jsonHeader", SqlValidation.ValidateSqlString(data.jsonHeader));
-                _db.AddDynamicParam("jsonDetail", SqlValidation.ValidateSqlString(data.jsonDetail));
-                _db.AddDynamicParam("jsonHistory", SqlValidation.ValidateSqlString(data.jsonHistory));
+                _db.AddDynamicParam("comprobante", SqlValidation.ValidateSqlString(data.comprobante));
+                _db.AddDynamicParam("detalle", SqlValidation.ValidateSqlString(data.detalle));
+                _db.AddDynamicParam("historial", SqlValidation.ValidateSqlString(data.historial));
+                _db.AddDynamicParam("infoAdicional", SqlValidation.ValidateSqlString(data.infoAdicional));
+                _db.AddDynamicParam("historialVenta", SqlValidation.ValidateSqlString(data.historialVenta));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -105,8 +107,8 @@ namespace WebUI.Controllers.Ventas
                 await _db.SPExecute("Ventas.Aprob_Document_Update");
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("jsonHeader", SqlValidation.ValidateSqlString(data.jsonHeader));
-                _db.AddDynamicParam("jsonDetail", SqlValidation.ValidateSqlString(data.jsonDetail));
+                _db.AddDynamicParam("comprobante", SqlValidation.ValidateSqlString(data.comprobante));
+                _db.AddDynamicParam("detalle", SqlValidation.ValidateSqlString(data.detalle));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
