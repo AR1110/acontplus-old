@@ -606,7 +606,7 @@
         "Delete",
         "Options"
       ],
-      "UpstreamPathTemplate": "/api/FacturaCompra{everything}"
+      "UpstreamPathTemplate": "/api/IngresoFacturaCompra{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -1404,7 +1404,8 @@
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "Get",
-        "Post"
+        "Post",
+        "Put"
       ],
       "UpstreamPathTemplate": "/api/PrecioMasivo{everything}"
     }

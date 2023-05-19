@@ -27,7 +27,7 @@ namespace ApiInventory.Controllers
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
                 _response = _db.GetDataSetAsync();
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
                 _log.LogError("Error on Get: \n" + ex.ToString());
@@ -50,9 +50,9 @@ namespace ApiInventory.Controllers
                 await _db.SPExecute("Inventario.PrecioMasivo_Insert");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("json", DataHelper.SerializeDictionary(parameters.data));
-                _response = _db.GetDataSetAsync();
+                _response = _db.GetDefault();
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
                 _log.LogError("Error on Post: \n" + ex.ToString());
@@ -74,13 +74,13 @@ namespace ApiInventory.Controllers
                 await _db.SPExecute("Inventario.PrecioMasivo_Update");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("json", DataHelper.SerializeDictionary(parameters.data));
-                _response = _db.GetDataSetAsync();
+                _response = _db.GetDefault();
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Post: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al guardar");
+                _log.LogError("Error on Put: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al actualizar");
             }
             finally
             {

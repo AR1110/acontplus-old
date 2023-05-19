@@ -20,6 +20,7 @@ SELECT  a.idArticulo
 	,a.estado 
 	,ti.porcentaje
 	,a.llevaInventario
+	,a.idFamilia
 	,a.idSubFamilia
 	,a.precioCosto
 FROM dbo.Articulo a WITH(NOLOCK)
