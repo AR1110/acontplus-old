@@ -1,7 +1,7 @@
 ﻿using iTextSharp.text;
 using iTextSharp.text.pdf;
 
-namespace BL.Reports
+namespace BL.PdfReports
 {
     public class RoundRectangle : IPdfPCellEvent
     {

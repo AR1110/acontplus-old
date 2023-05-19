@@ -361,3 +361,9 @@
 /src/08.razor_ui/Common_UI/obj
 /src/04.services/whatsapp-api/files
 /src/04.services/ApiVentas/ApiVentas.csproj.user
+/src/03.business_logic/BL.ExcelReports/bin/Debug/net6.0
+/src/03.business_logic/BL.ExcelReports/obj
+/src/03.business_logic/BL.PdfReports/bin/Debug/net6.0
+/src/03.business_logic/BL.PdfReports/obj
+/src/03.business_logic/BL.ExcelReports/bin/Release/net6.0
+/src/03.business_logic/BL.PdfReports/bin/Release/net6.0

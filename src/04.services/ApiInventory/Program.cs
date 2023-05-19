@@ -1,5 +1,6 @@
 using BL.JwtAuthenticationManger;
 using Helpers;
+using System.Reflection;
 
 namespace ApiInventory
 {
@@ -16,14 +17,6 @@ namespace ApiInventory
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-
-            //builder.Services.AddTransient<IConfiguration>(sp =>
-            //{
-            //    IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-            //    configurationBuilder.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
-            //    return configurationBuilder.Build();
-            //});
 
             builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
             ConfigHelper.AddJsonFiles(builder.Configuration);
@@ -42,19 +35,10 @@ namespace ApiInventory
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
-            else
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+            app.UseRouting();
 
-            //app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
+
             app.UseCors();
 
             app.UseAuthentication();
@@ -62,6 +46,15 @@ namespace ApiInventory
             app.UseAuthorization();
 
             app.UseMiddleware<JWTMiddleware>();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapGet("/", async context =>
+                {
+                    string projectName = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
+                    await context.Response.WriteAsync($"{projectName} is running at {string.Join(", ", app.Urls)}");
+                });
+            });
 
             app.MapControllers().RequireAuthorization();
 

@@ -1,7 +1,7 @@
 ﻿using ClosedXML.Excel;
 using System.Data;
 
-namespace BL.Reports
+namespace BL.ExcelReports
 {
     public static class ExcelReports
     {
