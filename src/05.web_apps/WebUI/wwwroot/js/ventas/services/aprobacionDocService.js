@@ -40,6 +40,10 @@
             })
         }
 
+        service.getInfoAdicionalFindById = function(id){
+            return service.getInfoAdicionalFind
+        }
+
         
         service.save = function(data){
             return mS.getData('post', url + 'Insert', data)
