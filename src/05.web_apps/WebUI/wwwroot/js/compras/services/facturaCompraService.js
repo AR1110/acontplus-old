@@ -147,7 +147,7 @@
             let query =  {
                 factura: data,
                 detalle: service.detalleMapTo(details),   
-                datosAdiciones: JSON.stringify(datosAdicionalesArticulo.map(obj=>{
+                artInfoAdicionales: JSON.stringify(datosAdicionalesArticulo.map(obj=>{
                     return {
                         idInfoAdicional: obj.idInfoAdicional || 0,
                         idArticulo: obj.idArticulo,

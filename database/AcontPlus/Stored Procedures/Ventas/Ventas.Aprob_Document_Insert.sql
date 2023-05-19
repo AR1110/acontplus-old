@@ -24,7 +24,7 @@ IF OBJECT_ID(N'Ventas.Aprob_Document_Insert', N'P') IS NOT NULL
 DROP PROCEDURE Ventas.Aprob_Document_Insert 
 GO
 CREATE PROCEDURE Ventas.Aprob_Document_Insert 
-	@idRol INT 
+	@idUsuarioRol INT 
    ,@comprobante VARCHAR(MAX)
    ,@detalle	 VARCHAR(MAX)
    ,@historial VARCHAR(MAX)
@@ -167,7 +167,7 @@ BEGIN
 		-- ========================== CAPTURAR LAS VARIABLES =============================================================
 		SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo = 'APR'
 
-		SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
+		SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
 		SELECT TOP 1 @ruc = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
 

@@ -209,13 +209,9 @@ function aprobComprobanteCtrl($scope, mS, commonSvc, aprobacionDocSvc, _modalSvc
 
     $scope.openModalEdit = async (item) => {
         try {
-
-            let {
-                MODAL_FILE_CTRL,
-                MODAL_APROB_DOC_EDIT
-            } = _nombreModalConst.aprob_comp;
-            let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_APROB_DOC_EDIT['controller']]
-            let template = MODAL_APROB_DOC_EDIT['template'];
+            ctrl = nombreModalVenta.APROB_COMPROBANTE.controllers['MADE'];
+            template = nombreModalVenta.APROB_COMPROBANTE.templates['MADE'];          
+            let controller = (await import(fileCtrl))[ctrl]
 
             $scope.openModalParam({
                 controller,
@@ -230,14 +226,9 @@ function aprobComprobanteCtrl($scope, mS, commonSvc, aprobacionDocSvc, _modalSvc
 
     $scope.approveDocument = async (item) => {
         try {
-            let {
-                MODAL_FILE_CTRL,
-                MODAL_APPROVE_DOC
-            } = _nombreModalConst.aprob_comp;
-            let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_APPROVE_DOC['controller']]
-            let template = MODAL_APPROVE_DOC['template'];
-
-
+            ctrl = nombreModalVenta.APROB_COMPROBANTE.controllers['MADF'];
+            template = nombreModalVenta.APROB_COMPROBANTE.templates['MADF'];          
+            let controller = (await import(fileCtrl))[ctrl]           
             $scope.openModalParam({
                 controller,
                 template,
@@ -260,34 +251,50 @@ function aprobComprobanteCtrl($scope, mS, commonSvc, aprobacionDocSvc, _modalSvc
         template,
         item
     }) => {
-        let params = {}
-        await mS.getData('get', '/AprobDocument/GetId?id=' + item.idAprob_Document).then(response => {
-            if (response.code === '0') {
-                _tS.toastr('warning', response.message, response.titleSms);
-            }
-            if (response.code === '1') {
-                params = JSON.parse(response.payload);
-                params[0].forEach(value => {
-                    value.serie = item.serie
-                })
-            }
-        })
+        try {
+            let params = {}
+            showLoader();
+            await aprobacionDocSvc.findById(item.idAprob_Document).then(response=>{
+                hideLoader();
+                params = response;
+                console.log(response)
+            }).catch(error=>{
+                hideLoader();
+                console.log(error);
+            })
+            // await mS.getData('get', '/AprobDocument/GetId?id=' + item.idAprob_Document).then(response => {
+            //     if (response.code === '0') {
+            //         _tS.toastr('warning', response.message, response.titleSms);
+            //     }
+            //     if (response.code === '1') {
+            //         let dataRepository = 
+            //         console.log(response.payload)
+            //         // params = JSON.parse(response.payload);
+            //         // params[0].forEach(value => {
+            //         //     value.serie = item.serie
+            //         // })
+            //     }
+            // })
 
 
 
-        if (!Object.keys(params).length) return
+            if (!Object.keys(params).length) return
 
-        _modalSvc.openModalCustom({
-            controller,
-            template,
-            size: 'xl',
-            windowClass: 'uibModalFullScreen',
-            params
-        }).result.then(response => {
-            if (typeof response === 'object') {
-                $scope.getAprobComprobantes();
-            }
-        })
+            _modalSvc.openModalCustom({
+                controller,
+                template,
+                size: 'xl',
+                windowClass: 'uibModalFullScreen',
+                params
+            }).result.then(response => {
+                if (typeof response === 'object') {
+                    $scope.getAprobComprobantes();
+                }
+            })
+        } catch (error) {
+            hideLoader();
+            console.log(error);
+        }
     }
 
 

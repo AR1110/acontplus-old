@@ -140,7 +140,15 @@
 </div>
 
 @section Scripts{
+
+    <!--Se usa para gestion de datos adicionales-->
+    <script src="~/js/factElect/directives/factElectDirective.min.js" asp-append-version="true"></script>
+
+    <!--Se usa para listar documentos de nota emtrega-->
     <script src="~/js/ventas/services/notaEntregaService.js" asp-append-version="true"></script>
+    
+    <!--Se usa para guardar aprobacion del documento FV-->
+    <script src="~/js/factElect/services/facturaService.min.js" asp-append-version="true"></script>
     <script src="~/js/ventas/services/aprobacionDocService.js" asp-append-version="true"></script>    
     <script src="~/js/ventas/controllers/aprobDocumentCtrl.min.js" asp-append-version="true"></script>
 }

@@ -40,8 +40,32 @@
             })
         }
 
-        service.getInfoAdicionalFindById = function(id){
-            return service.getInfoAdicionalFind
+        service.findById = function(id){
+            return mS.getData('get', url + 'GetId?id=' + id).then(response =>{
+                if(response.code==='0'){
+                    throw response;
+                }
+                if(response.code==='1'){
+                    let dataRepository = JSON.parse(response.payload)
+                    return {
+                        comprobante: dataRepository[0][0],
+                        detalle: dataRepository[1],
+                        infoAdicionalDocumento: dataRepository[2],
+                        datosAdicionalesArticulo: dataRepository[3].map(item=>({
+                            idDocumento: item.idDocumento,
+                            idHistoryInfoAdicional: item.idHistoryInfoAdicional,
+                            idArticulo: item.idArticulo,
+                            idEtiqueta: item.idEtiqueta,
+                            idInfoAdicional: item.idInfoAdicional,
+                            jsonAdicional: JSON.parse(item.jsonAdicional),
+                            selected: item.selected,
+                            estado: item.estado
+                        }))
+                    } 
+                }
+            }).catch(error=>{
+                throw error
+            })
         }
 
         

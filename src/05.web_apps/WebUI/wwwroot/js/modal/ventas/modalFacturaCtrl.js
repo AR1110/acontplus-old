@@ -1423,7 +1423,9 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
 
             if(isConfirmed){
                 showLoader();
-  
+
+                 //Tarifa Aplicada al Documento
+                 this.data.tarifa = this.actividadTipoIva.tarifa;
                 //Mappeamos todo el objecto necesario para guardar factura.
                 let params = this.facturaSvc.queryMapper({
                     data: this.data, 

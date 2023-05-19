@@ -78,12 +78,12 @@ app.constant('nombreModalInventario', {
 //Facturacion Electronica 
 app.constant('nombreModalFactElect', {
     DATO_ADICIONAL_ARTICULO: {
-        fileCtrl: '/js/factElect/modals/modalDatoAdicionalArticuloCtrl.js',
+        fileCtrl: '/js/factElect/modals/modalDatoAdicionalArticuloCtrl.min.js'  + CHANGE_VERSION(),
         controller: 'ModalDatoAdicionalArticuloCtrl',
         template:'~/Areas/FactElect/Pages/Shared/_ModalDatoAdicionalArticulo.cshtml'
     },
     FACTURA:{
-        fileCtrl: '/js/modal/ventas/modalFacturaCtrl.js' + CHANGE_VERSION(),
+        fileCtrl: '/js/modal/ventas/modalFacturaCtrl.min.js' + CHANGE_VERSION(),
         controllers:{
             D:'ModalFacturaDetalleCtrl'
         },
@@ -95,7 +95,7 @@ app.constant('nombreModalFactElect', {
 
 app.constant('nombreModalVenta', {
     CLIENTE: {
-        fileCtrl: '/js/modal/common/modalClienteProveedorCtrl.js' + CHANGE_VERSION(),
+        fileCtrl: '/js/modal/common/modalClienteProveedorCtrl.min.js' + CHANGE_VERSION(),
         // fileCtrl: '/js/ventas/modals/modalClienteCtrl.js',
         controllers: {
             M: 'ModalClienteCtrl',
@@ -120,6 +120,7 @@ app.constant('nombreModalVenta', {
         controllers: {            
             MSD:'ModalSelectDocumentoCtrl',
             MADE:'ModalApproveDocEditCtrl',
+            MADF: 'ModalApproveDocCtrl', //Modal Aprobacion Documento Factura
             MAD:'ModalApproveDocDetalleCtrl',
             MF_NE: 'ModalNotaEntregaFiltroCtrl',
             MF_PR:'ModalProformaFiltroCtrl'    
@@ -127,6 +128,7 @@ app.constant('nombreModalVenta', {
         templates:{
             MSD:'AprobDocument/_ModalSelectDocument.cshtml',
             MADE:'AprobDocument/_ModalAprobDocumentEdit.cshtml',
+            MADF:'AprobDocument/_ModalApproveDocument.cshtml',
             MADD:'AprobDocument/_ModalAprobDocumentDetalle.cshtml', 
             MF_NE: 'AprobDocument/_ModalNotaEntregaFiltro.cshtml',
             MF_PR:'AprobDocument/_ModalProformaFiltro.cshtml'           
