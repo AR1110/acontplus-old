@@ -5,7 +5,7 @@
 
     app.factory('facturaCompraService', function($injector){        
        
-        let url = 'FacturaCompra/'
+        let url = 'IngresoFacturaCompra/'
         let mS = $injector.get('mainService');
 
         let service = {};
