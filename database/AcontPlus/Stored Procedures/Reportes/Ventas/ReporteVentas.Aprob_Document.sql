@@ -199,7 +199,7 @@ BEGIN
 						
 					)
 
-	SET @dataSources = (SELECT headerDs = @headerDs, detailDs = @detailDs, paymentDs = ISNULL(@paymentDs,'[]'), normativeDs = ISNULL(@normativeDs, '[]'), InfoAdicionalDs = ISNULL(@additional,'[]') FOR JSON PATH)
+	SET @dataSources = (SELECT headerDs = @headerDs, detailDs = @detailDs, paymentDs = ISNULL(@paymentDs,'[]'), normativeDs = ISNULL(@normativeDs, '[]'), infoAdicionalDs = ISNULL(@additional,'[]') FOR JSON PATH)
 
 	SET @dataMail = (SELECT 'Prefactura Nro. '+@nroDoc documento, @fecha fechaEmision,  @cliente cliente, @importeTotal importeTotal,
 						@razonSocial razonSocial,
