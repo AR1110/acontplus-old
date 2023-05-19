@@ -4,12 +4,12 @@
     'use strict';
 
     app.factory('aprobacionDocService', function($injector){
-        let url = '/AprobDocument/';
+        let url = 'AprobacionDocumento/';
         let mS = $injector.get('mainService');
         let service = {}
 
         service.getAll = function(query){
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query))
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true)
                 .then(response => {
                    
                     if(response.code==="0"){
@@ -41,7 +41,7 @@
         }
 
         service.findById = function(id){
-            return mS.getData('get', url + 'GetId?id=' + id).then(response =>{
+            return mS.getData('get', url + 'GetId/' + id, null, true).then(response =>{
                 if(response.code==='0'){
                     throw response;
                 }
@@ -70,7 +70,7 @@
 
         
         service.save = function(data){
-            return mS.getData('post', url + 'Insert', data)
+            return mS.getData('post', url + 'Insert', data, true)
             .then(response => {
                 return response;
             }).catch(error=>{
@@ -81,7 +81,7 @@
 
 
         service.update = function(id, data){
-            return mS.getData('put', url + 'Update/' + id, data)
+            return mS.getData('put', url + 'Update/' + id, data, true)
             .then(response => {
                 return response;
             }).catch(error=>{

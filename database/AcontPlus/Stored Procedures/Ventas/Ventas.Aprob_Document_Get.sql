@@ -14,7 +14,7 @@ GO
 IF OBJECT_ID(N'Ventas.Aprob_Document_Get', N'P') IS NOT NULL
 DROP PROCEDURE Ventas.Aprob_Document_Get 
 GO
-CREATE PROCEDURE Ventas.Aprob_Document_Get @idRol INT, @json NVARCHAR(MAX)
+CREATE PROCEDURE Ventas.Aprob_Document_Get @idUsuarioRol INT, @json NVARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -68,7 +68,7 @@ BEGIN
 								  INNER JOIN dbo.Cliente cl ON cl.idCliente = ad.idCliente
 								  WHERE ad.idEntidad = @idEntidad '
 
-	SELECT @idEntidad = idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @idRol
+	SELECT @idEntidad = idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol
 
 	SELECT 
 		 @checkBoxFecha   = checkBoxFecha

@@ -744,7 +744,7 @@
         "Delete",
         "Options"
       ],
-      "UpstreamPathTemplate": "/api/FacturaCompra{everything}"
+      "UpstreamPathTemplate": "/api/IngresoFacturaCompra{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -1368,6 +1368,28 @@
         "Post"
       ],
       "UpstreamPathTemplate": "/api/PrecioMasivo{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7079
+        }
+      ],
+      "DownstreamPathTemplate": "/api/AprobacionDocumento{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/api/AprobacionDocumento{everything}"
     }
   ]
 }
