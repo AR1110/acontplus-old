@@ -280,8 +280,8 @@ function ModalDatoAdicionalArticuloCtrl($scope, mS, $uibModalInstance, params){
                     html: `Esta seguro de guardar los datos adicionales?`,
                     showConfirmButton: true,
                     showCancelButton: true,
-                    cancelButtonText: 'No, guardar',
-                    confirmButtonText:'Si, cancelar'
+                    cancelButtonText: 'No, cancelar',
+                    confirmButtonText:'Si, guardar'
                 }).then(result => {
                     if(result.isConfirmed){
                         $uibModalInstance.close($scope.data)

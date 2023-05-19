@@ -10,8 +10,8 @@ export class CommonService {
         "nombreModalFactElect", 
         "nombreModalVenta", 
         "nombreModalInventario", 
-        "articuloService",
-        "nombreModalCompra"
+        "nombreModalCompra",
+        "articuloService"
     ];
 
     constructor(

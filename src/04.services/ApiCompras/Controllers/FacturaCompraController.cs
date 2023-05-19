@@ -18,7 +18,7 @@ namespace ApiCompras.Controllers
             _configuration = configuration;          
         }
 
-        [HttpGet("Get")]
+        [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
            

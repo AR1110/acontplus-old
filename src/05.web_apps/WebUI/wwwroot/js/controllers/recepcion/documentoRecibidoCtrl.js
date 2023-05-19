@@ -1118,25 +1118,39 @@
             }
 
 
-            $scope.openModalEditArticulo = async (item) => {
+            $scope.resultModalArticleEdit = function(dataArticulo) {
                 try {
-
-                    let { MODAL_CTRL, MODAL_NUEVO_CSHTML } = nameModalConst.articulo;
-                    let { ModalArticuloCtrl } = await import('../../modal/' + MODAL_CTRL);
-
-                    modalService.openModalCustom({
-                        controller: ModalArticuloCtrl,
-                        template: 'Articulo/' + MODAL_NUEVO_CSHTML,
-                        size: 'xl',
-                        params: {
-                            idArticulo: item.idArticulo,
-                            isUpdateImport: true
+                    for(let item of $scope.tempDetail)                    {
+                        if(dataArticulo.idArticulo===item.idArticulo){
+                            item.etiquetas = dataArticulo.etiquetas;
+                            item.datosAdicionales = dataArticulo.datosAdicionales;
                         }
-                    })
+                    }
                 } catch (error) {
                     console.log(error)
-                }
+                }                
             }
+
+
+            // $scope.openModalEditArticulo = async (item) => {
+            //     try {
+
+            //         let { MODAL_CTRL, MODAL_NUEVO_CSHTML } = nameModalConst.articulo;
+            //         let { ModalArticuloCtrl } = await import('../../modal/' + MODAL_CTRL);
+
+            //         modalService.openModalCustom({
+            //             controller: ModalArticuloCtrl,
+            //             template: 'Articulo/' + MODAL_NUEVO_CSHTML,
+            //             size: 'xl',
+            //             params: {
+            //                 idArticulo: item.idArticulo,
+            //                 isUpdateImport: true
+            //             }
+            //         })
+            //     } catch (error) {
+            //         console.log(error)
+            //     }
+            // }
 
 
 
@@ -1255,7 +1269,10 @@
                                 $scope.showFormCustomDetails = false
                                 $scope.customDetailTemp = []
                                 tS.toastr('success', response.message)
-                                $scope.tempDetail = JSON.parse(response.payload)
+
+                                $scope.getTempDetails();
+                                // $scope.tempDetail = JSON.parse(response.payload)
+                                // console.log($scope.tempDetail)
                             } else {
                                 tS.toastr('warning', response.message)
                             }

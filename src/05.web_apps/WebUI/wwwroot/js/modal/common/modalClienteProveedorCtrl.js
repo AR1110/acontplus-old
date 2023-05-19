@@ -1429,18 +1429,18 @@ export class ModalProveedorCtrl extends ModalBaseCtrl {
                 this._tS.toastr('warning', 'Ingrese el nombre Comercial', tituloModal)
                 return
             }
-            if (this._form.campo(this.data.idCiudad)) {
-                this._tS.toastr('warning', 'Seleccione la Ciudad', tituloModal);
-                return;
-            }
-            if (this._form.campo(this.data.idTipoClienteProveedor)) {
-                this._tS.toastr('warning', 'Seleccione el Tipo Proveedor', tituloModal)
-                return;
-            }
-            if (this._form.campo(this.data.idTipoEntidad)) {
-                this._tS.toastr('warning', 'Seleccione el Tipo Entidad', tituloModal)
-                return;
-            }
+            // if (this._form.campo(this.data.idCiudad)) {
+            //     this._tS.toastr('warning', 'Seleccione la Ciudad', tituloModal);
+            //     return;
+            // }
+            // if (this._form.campo(this.data.idTipoClienteProveedor)) {
+            //     this._tS.toastr('warning', 'Seleccione el Tipo Proveedor', tituloModal)
+            //     return;
+            // }
+            // if (this._form.campo(this.data.idTipoEntidad)) {
+            //     this._tS.toastr('warning', 'Seleccione el Tipo Entidad', tituloModal)
+            //     return;
+            // }
 
             if (this.correos.length > 0) {
                 if (!this.correos.every(item => this.validarEmail(item))) {
