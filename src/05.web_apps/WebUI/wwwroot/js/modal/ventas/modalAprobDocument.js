@@ -432,6 +432,7 @@ export class ModalSelectDocumentoCtrl extends ModalBaseCtrl {
         'commonService', 
         'aprobacionDocService', //Aprobacion Comprobante Service
         'notaEntregaService', //NotaEntrega Service
+        'proformaService',
         'modalService', 
         'nombreModal', 
         'nombreModalVenta',
@@ -449,6 +450,7 @@ export class ModalSelectDocumentoCtrl extends ModalBaseCtrl {
         _commonSvc, 
         aprobacionDocSvc,
         notaEntregaSvc,
+        proformaSvc,
         _modalSvc, 
         _nombreModalConst, 
         nombreModalVenta,
@@ -466,6 +468,7 @@ export class ModalSelectDocumentoCtrl extends ModalBaseCtrl {
 
         this.aprobacionDocSvc = aprobacionDocSvc;
         this.notaEntregaSvc = notaEntregaSvc;
+        this.proformaSvc = proformaSvc;
 
         this._modalSvc = _modalSvc;
         this._nombreModalConst = _nombreModalConst;
@@ -1056,65 +1059,66 @@ export class ModalSelectDocumentoCtrl extends ModalBaseCtrl {
 
 
     getProformas() {
-        const self = this;
-        this._mS.getData('get', '/Proforma/Get?json=' + JSON.stringify(this.dataSearch)).then(async response => {
-            if (response.id === '0') {
-                this.documentos = [];
-                console.warn(response)
-                return
-
-            }
-
-            this.gridOptions.columnDefs = [{
-                    name: 'Nro. Doc',
-                    field: 'nroDocumento'
-                },
-                {
-                    name: 'F. Emisión',
-                    field: 'fechaEmision'
-                },
-                {
-                    name: 'F. Vcto',
-                    field: 'fechaVencimiento',
-                    visible: false
-                },
-                {
-                    name: 'Cliente',
-                    field: 'nombreFiscal',
-                    cellTemplate: `<div class="grid-tooltip"  tooltip-placement="left" uib-tooltip="{{row.entity.nombreFiscal }}">
-                <div class="ui-grid-cell-contents">
-                  {{ COL_FIELD }}
-                </div>
-              </div>`
-                },
-                {
-                    name: 'Total',
-                    field: 'total',
-                    cellTemplate: ` <div class="grid-tooltip"><div class="ui-grid-cell-contents">$ {{ COL_FIELD }}</div></div>`,
-                    aggregationType: self.uiGridConstants.aggregationTypes.sum,
-                    customTreeAggregationFinalizerFn: function (aggregation) {
-                        aggregation.rendered = aggregation.value;
+        try {
+            const self = this;
+            this.proformaSvc.getAll(this.dataSearch).then(async response => {             
+                this.gridOptions.columnDefs = [{
+                        name: 'Nro. Doc',
+                        field: 'nroDocumento'
                     },
-                    aggregationLabel: "Total: ",
-                    aggregationHideLabel: true,
-                    footerCellFilter: 'number:2',
-                },
-                {
-                    name: 'Estado',
-                    field: 'estadoDoc',
-                    visible: true
-                },
-                {
-                    name: 'Usuario',
-                    field: 'usuario'
-                },
-            ];
-
-            this.documentos = JSON.parse(response.data) || [];
-            await this.setDataGridOptionsChildren();
-
+                    {
+                        name: 'F. Emisión',
+                        field: 'fechaEmision'
+                    },
+                    {
+                        name: 'F. Vcto',
+                        field: 'fechaVencimiento',
+                        visible: false
+                    },
+                    {
+                        name: 'Cliente',
+                        field: 'nombreFiscal',
+                        cellTemplate: `<div class="grid-tooltip"  tooltip-placement="left" uib-tooltip="{{row.entity.nombreFiscal }}">
+                    <div class="ui-grid-cell-contents">
+                      {{ COL_FIELD }}
+                    </div>
+                  </div>`
+                    },
+                    {
+                        name: 'Total',
+                        field: 'total',
+                        cellTemplate: ` <div class="grid-tooltip"><div class="ui-grid-cell-contents">$ {{ COL_FIELD }}</div></div>`,
+                        aggregationType: self.uiGridConstants.aggregationTypes.sum,
+                        customTreeAggregationFinalizerFn: function (aggregation) {
+                            aggregation.rendered = aggregation.value;
+                        },
+                        aggregationLabel: "Total: ",
+                        aggregationHideLabel: true,
+                        footerCellFilter: 'number:2',
+                    },
+                    {
+                        name: 'Estado',
+                        field: 'estadoDoc',
+                        visible: true
+                    },
+                    {
+                        name: 'Usuario',
+                        field: 'usuario'
+                    },
+                ];
+    
+                this.documentos = response;
+                await this.setDataGridOptionsChildren();
+    
+                Swal.close();
+            }).catch(error => {
+                Swal.close();
+                console.log(error)
+            })       
+        } catch (error) {
             Swal.close();
-        })
+            console.log(error);        
+        }
     }
 
 

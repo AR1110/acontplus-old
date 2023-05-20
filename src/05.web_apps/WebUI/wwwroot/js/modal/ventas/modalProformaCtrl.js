@@ -184,37 +184,7 @@ class ModalProformaCtrl extends ModalBaseCtrl {
 
 
 
-    trimDetailDoc() {
-        let tempDetails = [];
-        let orderIndex = 1;
-
-        for (let item of this.gridOptions.data) {
-            tempDetails.push({
-                orderIndex: orderIndex++,
-                idProformaDetalle: item.idProformaDetalle || 0,
-                idArticulo: item.idArticulo,
-                idTarifa: item.idTarifa,
-                idBodega: item.idBodega,
-                idMedida: item.idMedida,
-                idPresentacion: item.idPresentacion || 0,
-                idTipoIva: item.idTipoIva,
-                tarifa: item.tarifa,
-                codigoPorcentaje: item.codigoPorcentaje,
-                ice: item.ice,
-                descripcion: item.descripcion,
-                cantidad: item.cantidad,
-                precioCostoNeto: item.precioCostoNeto,
-                precioUnitario: item.precioUnitario,
-                precioConIva: item.precioConIva,
-                valorDescuento: item.valorDescuento,
-                precioTotalSinImpuesto: item.precioTotalSinImpuesto || 0,
-                porcentajeDescuento: item.porcentajeDescuento,
-                total: item.total,
-                nota: item.nota,
-            })
-        }
-        return tempDetails;
-    }
+    
 
     calcularPorcentajeDescuento() {
         if (!this.ventaComprobantePermission.porcentajeDescuento.update) {
@@ -277,40 +247,40 @@ class ModalProformaCtrl extends ModalBaseCtrl {
         }
     }
 
-    saveProforma(id) {
-        let proforma = Object.assign({}, this.data);
-        //Tarifa Aplicada al Documento
-        proforma.idCliente = this.cliente.idCliente;
-        proforma.fechaEmision = this._fS.formatDateTimeZone(this.data.fechaEmision)
-        // this.data.tarifa = this.actividadTipoIva.tarifa;            
-
-        let data = {
-            proforma,
-            detalle: this.trimDetailDoc()
-        };
-
-        if (id > 0) {
-            return this._mS.getData('put', '/Proforma/Update?id=' + id, data).then(response => response)
-                .catch(errorResponse => {
-                    throw new Error(errorResponse)
-                })
-        } else {
-
-            return this._mS.getData('post', '/Proforma/Post', data).then(response => response)
-                .catch(errorResponse => {
-                    throw new Error(errorResponse)
-                })
-        }
-    }
-
 }
 
 
 
 export class ModalProformaNuevoCtrl extends ModalProformaCtrl {
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'storageService', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params']
+    static $inject = [
+        '$scope', 
+        '$timeout', 
+        '$uibModalInstance', 
+        'storageService', 
+        'mainService', 
+        'commonService',
+        'proformaService', 
+        'modalService', 
+        'nombreModal', 
+        'formulario', 
+        'toastService', 
+        'params'
+    ]
 
-    constructor($scope, $timeout, $uibModalInstance, _storageSvc, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params) {
+    constructor(
+        $scope, 
+        $timeout, 
+        $uibModalInstance,
+        _storageSvc, 
+        _mS, 
+        _commonSvc, 
+        proformaSvc,
+        _modalSvc, 
+        _nombreModalConst, 
+        _fS, 
+        _tS, 
+        _params
+    ) {
         super({
             $scope,
             $timeout,
@@ -324,6 +294,7 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl {
         })
         const self = this;
         this._storageSvc = _storageSvc;
+        this.proformaSvc = proformaSvc;
 
         let {
             TIPO_REGISTRO
@@ -515,15 +486,19 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl {
             if (isConfirmed) {
 
                 showLoader();
+                this.data.tarifa = this.actividadTipoIva.tarifa;       
 
-
-                this.saveProforma().then(response => {
-                    if (response.id === '0') {
-                        hideLoader();
+                let query = this.proformaSvc.queryMapper({
+                    data: this.data,
+                    cliente: this.cliente,
+                    detalles: this.gridOptions.data
+                })
+                this.proformaSvc.save(query).then(response => {
+                    hideLoader();
+                    if (response.code === '0') {
                         this._fS.sweetAlert('warning', response.message, response.titleSms);
                     }
-                    if (response.id === "1") {
-                        hideLoader();
+                    if (response.code === "1") {
                         this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
 
                         this.$uibModalInstance.close(response)
@@ -715,9 +690,33 @@ export class ModalProformaDetalleCtrl extends ModalProformaCtrl {
 
 export class ModalProformaEditarCtrl extends ModalProformaCtrl {
 
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params']
+    static $inject = [
+        '$scope', 
+        '$timeout', 
+        '$uibModalInstance', 
+        'mainService', 
+        'commonService', 
+        'proformaService',
+        'modalService', 
+        'nombreModal', 
+        'formulario', 
+        'toastService', 
+        'params'
+    ]
 
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params) {
+    constructor(
+        $scope, 
+        $timeout, 
+        $uibModalInstance, 
+        _mS, 
+        _commonSvc, 
+        proformaSvc,
+        _modalSvc, 
+        _nombreModalConst, 
+        _fS, 
+        _tS, 
+        _params
+    ) {
         super({
             $scope,
             $timeout,
@@ -731,6 +730,7 @@ export class ModalProformaEditarCtrl extends ModalProformaCtrl {
         })
         const self = this;
 
+        this.proformaSvc = proformaSvc;
 
         let {
             TIPO_REGISTRO,
@@ -904,13 +904,17 @@ export class ModalProformaEditarCtrl extends ModalProformaCtrl {
             if (isConfirmed) {
 
                 showLoader();
-
-                this.saveProforma(this.data.idProforma).then(response => {
-                    if (response.id === '0' || response.code === "0") {
-                        hideLoader();
+                let query = this.proformaSvc.queryMapper({
+                    data: this.data,
+                    cliente: this.cliente,
+                    detalles: this.gridOptions.data
+                })
+                this.proformaSvc.update(this.data.idProforma, query).then(response => {
+                    hideLoader();
+                    if (response.code === "0") {
                         this._fS.sweetAlert('warning', response.message, response.titleSms);
                     }
-                    if (response.id === "1" || response.code === "1") {
+                    if (response.code === "1") {
                         hideLoader();
                         this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
                         this.isUpdate = true;
@@ -935,9 +939,33 @@ export class ModalProformaEditarCtrl extends ModalProformaCtrl {
 
 
 export class ModalProformaDuplicarCtrl extends ModalProformaCtrl {
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params']
+    static $inject = [
+        '$scope', 
+        '$timeout', 
+        '$uibModalInstance', 
+        'mainService', 
+        'commonService', 
+        'proformaService', 
+        'modalService', 
+        'nombreModal', 
+        'formulario', 
+        'toastService', 
+        'params'
+    ]
 
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params) {
+    constructor(
+        $scope, 
+        $timeout, 
+        $uibModalInstance, 
+        _mS, 
+        _commonSvc, 
+        proformaSvc,
+        _modalSvc, 
+        _nombreModalConst, 
+        _fS, 
+        _tS, 
+        _params
+    ) {
         super({
             $scope,
             $timeout,
@@ -951,6 +979,7 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl {
         })
         const self = this;
 
+        this.proformaSvc = proformaSvc;
 
         let {
             TIPO_REGISTRO,
@@ -1134,15 +1163,20 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl {
             if (isConfirmed) {
                 showLoader();
 
-                this.saveProforma().then(response => {
-                    if (response.id === '0' || response.code === '0') {
-                        hideLoader();
+                let query = this.proformaSvc.queryMapper({
+                    data: this.data,
+                    cliente: this.cliente,
+                    detalles: this.gridOptions.data
+                })
+                
+
+                this.proformaSvc.save(query).then(response => {
+                    hideLoader();
+                    if (response.code === '0') {
                         this._fS.sweetAlert('warning', response.message, response.titleSms);
                     }
-                    if (response.id === "1" || response.code === '1') {
-                        hideLoader();
+                    if (response.code === '1') {                        
                         this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
-
                         this.$uibModalInstance.close(response)
                     }
                 }).catch(error => {
@@ -1158,91 +1192,91 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl {
     }
 
 
-    //Guardar Nota de Entrega como Nota de Entrega    
-    async onSaveInvoice() {
-        try {
-            showLoader();
+    // //Guardar Nota de Entrega como Nota de Entrega    
+    // async onSaveInvoice() {
+    //     try {
+    //         showLoader();
 
-            if (!this.isValidaForm()) return
+    //         if (!this.isValidaForm()) return
 
-            if (this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total > 50) {
-                this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')
-                return
-            }
+    //         if (this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total > 50) {
+    //             this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')
+    //             return
+    //         }
 
-            this.validarDatosAdicionales("idFacturaDetalle");
-
-
-            this.nroDocumentoSecuencial = await this._commonSvc.generarNroDocumentoVenta({
-                idPuntoEmision: this.data.idPuntoEmision,
-                codigoDocumento: this.TIPO_DOC_FV.codigo,
-            })
-            hideLoader();
-
-            if (!this.nroDocumentoSecuencial) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE"
-
-            let textAccion = 'Guardar';
-            const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                    confirmButton: 'btn btn-success',
-                    cancelButton: 'btn btn-danger ml-2'
-                },
-                buttonsStyling: false
-            })
-
-            let {
-                isConfirmed
-            } = await swalWithBootstrapButtons.fire({
-                title: '<small>Guardar Factura</small>',
-                html: `<small>Esta Ud. seguro de ${textAccion} este Documento <b>N°. ${this.nroDocumentoSecuencial} </b></small>?`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Si, guardar!',
-                cancelButtonText: 'No, cancelar!',
-                reverseButtons: false,
-                allowOutsideClick: false,
-                allowEscapeKey: false
-            })
+    //         this.validarDatosAdicionales("idFacturaDetalle");
 
 
-            if (!isConfirmed) return
+    //         this.nroDocumentoSecuencial = await this._commonSvc.generarNroDocumentoVenta({
+    //             idPuntoEmision: this.data.idPuntoEmision,
+    //             codigoDocumento: this.TIPO_DOC_FV.codigo,
+    //         })
+    //         hideLoader();
 
-            showLoader();
-            let factura = Object.assign({}, this.data);
-            factura.idCliente = this.cliente.idCliente;
-            factura.fechaEmision = this._fS.formatDateTimeZone(this.data.fechaEmision);
-            factura.fechaVencimiento = this._fS.formatDateTimeZone(this.data.fechaVencimiento);
+    //         if (!this.nroDocumentoSecuencial) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE"
 
-            //Tarifa Aplicada al Documento
-            factura.tarifa = this.actividadTipoIva.tarifa;
+    //         let textAccion = 'Guardar';
+    //         const swalWithBootstrapButtons = Swal.mixin({
+    //             customClass: {
+    //                 confirmButton: 'btn btn-success',
+    //                 cancelButton: 'btn btn-danger ml-2'
+    //             },
+    //             buttonsStyling: false
+    //         })
+
+    //         let {
+    //             isConfirmed
+    //         } = await swalWithBootstrapButtons.fire({
+    //             title: '<small>Guardar Factura</small>',
+    //             html: `<small>Esta Ud. seguro de ${textAccion} este Documento <b>N°. ${this.nroDocumentoSecuencial} </b></small>?`,
+    //             icon: 'warning',
+    //             showCancelButton: true,
+    //             confirmButtonText: 'Si, guardar!',
+    //             cancelButtonText: 'No, cancelar!',
+    //             reverseButtons: false,
+    //             allowOutsideClick: false,
+    //             allowEscapeKey: false
+    //         })
+
+
+    //         if (!isConfirmed) return
+
+    //         showLoader();
+    //         let factura = Object.assign({}, this.data);
+    //         factura.idCliente = this.cliente.idCliente;
+    //         factura.fechaEmision = this._fS.formatDateTimeZone(this.data.fechaEmision);
+    //         factura.fechaVencimiento = this._fS.formatDateTimeZone(this.data.fechaVencimiento);
+
+    //         //Tarifa Aplicada al Documento
+    //         factura.tarifa = this.actividadTipoIva.tarifa;
 
 
 
-            const data = {
-                factura: JSON.stringify(factura),
-                detalle: JSON.stringify(this.trimDetailDoc()),
-                adicional: JSON.stringify(this.infoAdicionalDocumento || []),
-                manejoArticulo: JSON.stringify(this.datosAdicionalesArticulo)
-            }
+    //         const data = {
+    //             factura: JSON.stringify(factura),
+    //             detalle: JSON.stringify(this.trimDetailDoc()),
+    //             adicional: JSON.stringify(this.infoAdicionalDocumento || []),
+    //             manejoArticulo: JSON.stringify(this.datosAdicionalesArticulo)
+    //         }
 
-            await this._mS.getData('post', '/FacturaVenta/Insert', data).then(response => {
-                if (response.code === '0') {
-                    this._fS.sweetAlert('warning', response.message, response.titleSms);
-                }
-                if (response.code === "1") {
-                    this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
-                    let data = JSON.parse(response.payload)[0];
+    //         await this._mS.getData('post', '/FacturaVenta/Insert', data).then(response => {
+    //             if (response.code === '0') {
+    //                 this._fS.sweetAlert('warning', response.message, response.titleSms);
+    //             }
+    //             if (response.code === "1") {
+    //                 this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
+    //                 let data = JSON.parse(response.payload)[0];
 
-                    this.$uibModalInstance.close(data)
-                }
-            })
+    //                 this.$uibModalInstance.close(data)
+    //             }
+    //         })
 
-        } catch (error) {
-            console.log(error)
-        } finally {
-            hideLoader();
-        }
-    }
+    //     } catch (error) {
+    //         console.log(error)
+    //     } finally {
+    //         hideLoader();
+    //     }
+    // }
 
 }
 

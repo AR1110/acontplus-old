@@ -133,9 +133,27 @@ app.constant('nombreModalVenta', {
             MF_NE: 'AprobDocument/_ModalNotaEntregaFiltro.cshtml',
             MF_PR:'AprobDocument/_ModalProformaFiltro.cshtml'           
         }
+    },
+    PROFORMA: {
+        fileCtrl: '/js/modal/ventas/modalProformaCtrl.js' + CHANGE_VERSION(),
+        controllers: {
+            MN:'ModalProformaNuevoCtrl',
+            ME:'ModalProformaEditarCtrl',
+            MD:'ModalProformaDetalleCtrl',
+            MDUPLICATE: 'ModalProformaDuplicarCtrl',
+            MF:'ModalProformaFiltroCtrl'
+        },
+        templates: {
+            MN: 'Proforma/_ModalNuevo.cshtml',
+            ME: 'Proforma/_ModalEditar.cshtml',
+            MD:'Proforma/_ModalDetalle.cshtml',
+            MDUPLICATE: 'Proforma/_ModalDuplicar.cshtml',
+            MF: 'Proforma/_ModalFiltro.cshtml'
+        }
     }  
 })
 
+ 
 app.constant('nombreModalCompra', {
     FACTURA_FISICA: {
         fileCtrl: '/js/modal/',
@@ -695,27 +713,11 @@ app.constant('nombreModal', {
         }
     },
     proforma: {
-        MODAL_FILE_CTRL: 'modal/ventas/modalProformaCtrl.js' + CHANGE_VERSION(),
-        MODAL_NUEVO: {
-            controller: 'ModalProformaNuevoCtrl',
-            template: 'Proforma/_ModalNuevo.cshtml'
-        },
-        MODAL_EDITAR: {
-            controller: 'ModalProformaEditarCtrl',
-            template: 'Proforma/_ModalEditar.cshtml'
-        },
+        MODAL_FILE_CTRL: 'modal/ventas/modalProformaCtrl.js' + CHANGE_VERSION(),       
         MODAL_DETALLE: {
             controller: 'ModalProformaDetalleCtrl',
             template: 'Proforma/_ModalDetalle.cshtml'
-        },
-        MODAL_DUPLICAR: {
-            controller: 'ModalProformaDuplicarCtrl',
-            template: 'Proforma/_ModalDuplicar.cshtml'
-        },
-        MODAL_FILTRO: {
-            controller: 'ModalProformaFiltroCtrl',
-            template: 'Proforma/_ModalFiltro.cshtml'
-        }
+        }       
     },
     proveedor: {
         MODAL_CTRL: 'common/modalClienteProveedorCtrl.js' + CHANGE_VERSION(),
