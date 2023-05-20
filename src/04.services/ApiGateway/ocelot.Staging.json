@@ -1377,7 +1377,7 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
+          "Host": "205.209.99.71",
           "Port": 7079
         }
       ],
@@ -1390,6 +1390,28 @@
         "Delete"
       ],
       "UpstreamPathTemplate": "/api/AprobacionDocumento{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 7079
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Proforma{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/api/Proforma{everything}"
     }
   ]
 }
