@@ -222,12 +222,14 @@
                 swalWithBootstrapButtons.fire({
                     title: 'Comprobante',
                     html: `<div> ${$scope.selected[0].comprobante} <strong> ${$scope.selected[0].serieComprobante} </strong> </div>
-                            <div class="btn btn-group btn-group-sm" role="group">
+                            <div class="btn btn-group btn-group-xs" role="group">
                                 <button type="button" id="btnImportar" class="btn btn-info btn-sm" title="Importar Comprobante"><i class="ti-upload"></i> Visualizar</button>
                                 <button type="button" id="btnGetXml" class="btn btn-success btn-sm" title="Actualizar Xml Sri"><i class="ti-download"></i> Actualizar Xml</button>
                                 <button type="button" id="btnDelete" class="btn btn-danger btn-sm" title="Eliminar"><i class="ti-trash"></i> Eliminar</button>
                                 <button type="button" id="btnDocRel" class="btn btn-primary btn-sm" title="Documentos relacionados"><i class="fa fa-link"></i> Docs. Rel.</button>
+                                <button type="button" id="btnReport" class="btn btn-secondary btn-sm" title="PDF"><i class="mdi mdi-file-pdf"></i> Reporte</button>
                             </div>`,
+                            width: 600,
                     showCancelButton: true,
                     showConfirmButton: false,
                     cancelButtonText: 'Cancelar',
@@ -239,7 +241,9 @@
                     console.log('Confirm')
                 })
 
-                if ($scope.selected[0].complete) {
+             
+
+                if($scope.selected[0].complete) {
                     document.getElementById("btnDelete").style.display = "none";
                 }
                 document.getElementById("btnImportar").onclick = function (event) {
@@ -259,6 +263,16 @@
                     $scope.getMergedDocs()
                     event.preventDefault()
                 }
+
+                //Reporte 
+                if ($scope.selected[0].codDoc!=='01') {
+                    document.getElementById("btnReport").style.display = "none";
+                }else{
+                    document.getElementById("btnReport").onclick = function (event) {
+                        $scope.getReport();
+                    }
+                }
+
             }
 
             $scope.askToNewImport = () => {
@@ -1974,28 +1988,55 @@
 
 
             const COD_REPORTS = {
-                "07": 'RCR'
+                "07": 'RCR',
+                '01': 'RFC'
             }
             $scope.getReport = () => {
                 try {
-                    if ($scope.selected[0].codDoc != '07') {
+                    let format = 'pdf';
+                    let codDoc = $scope.selected[0].codDoc;
+                    let id = $scope.selected[0].idDocumento;
+                    let codEstab = $scope.selected[0].codEstab;
+
+                    if (!['01', '07'].includes(codDoc)){
+                        tS.toastr('warning', 'Reporte no disponible')
                         return
                     }
-                    let format = 'pdf';
+
                     let dataParms = {
-                        id: $scope.selected[0].idDocumento,
-                        codigo: COD_REPORTS[$scope.selected[0].codDoc],
+                        id,
+                        codigo: COD_REPORTS[codDoc],
                         format,
+                        isReportImported: true,
                     }
 
-                    const parameters = {
-                        dataParams: JSON.stringify(dataParms)
+                    let parameters = {
+                        reportParams: JSON.stringify({
+                            codigo: COD_REPORTS[codDoc],
+                            codEstab,
+                            format,
+                            aditionalParams: []
+                        }),                             
+                    }
+
+           
+                    if (codDoc='01') {
+                        parameters.hasService = true;
+                        parameters.dataParams =  JSON.stringify(dataParms);         
+                        _commonSvc.getReport({
+                            parameters,
+                            formatType:  format
+                        })
                     }
                     
-                    _commonSvc.getReportDynamic({
-                        parameters,
-                        format
-                    })
+                    if(codDoc ==='07'){   
+                        parameters.dataParams =  JSON.stringify(dataParms);                     
+                        _commonSvc.getReportDynamic({
+                            parameters,
+                            format
+                        })
+                    }
+                    
                 } catch (error) {
                     console.log(error)
                 }

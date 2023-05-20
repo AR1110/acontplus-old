@@ -1852,7 +1852,7 @@ console.log(datosAdicionalesArticulo)
                     fileCtrl = this.nombreModalCompra.FACTURA_FISICA.fileCtrl;
                     ctrl = this.nombreModalCompra.FACTURA_FISICA.controllers['D']
                     template = this.nombreModalCompra.FACTURA_FISICA.templates['D']
-
+                    controller = (await import(fileCtrl))[ctrl];
                     response = await this.getDataTipoDocCompra({
                         id,
                         codigoDocumento:'FC'
@@ -1934,6 +1934,7 @@ console.log(datosAdicionalesArticulo)
                 isComplete = false;
             let fileCtrl = null;
             let ctrl;
+            let isRenderRazorPartial = false;
 
             switch (codigoDocumento) {
                 case "FV":
@@ -1999,10 +2000,11 @@ console.log(datosAdicionalesArticulo)
 
 
                 case "FC":
+                    isRenderRazorPartial = true;
                     fileCtrl = this.nombreModalCompra.FACTURA_FISICA.fileCtrl;
                     ctrl = this.nombreModalCompra.FACTURA_FISICA.controllers['D']
                     template = this.nombreModalCompra.FACTURA_FISICA.templates['D']
-
+                    controller = (await import(fileCtrl))[ctrl];
                     response = await this.getDataTipoDocCompra({
                         id,
                         codigoDocumento
@@ -2049,6 +2051,10 @@ console.log(datosAdicionalesArticulo)
                     }
 
                     break
+
+                    default:
+                        console.log(`Detalle del Documento No definido: ${codigoDocumento}`);
+                        throw 'Detalle del Documento No definido'
             }
 
 
@@ -2058,7 +2064,8 @@ console.log(datosAdicionalesArticulo)
                 template,
                 params,
                 size,
-                windowClass
+                windowClass,
+                isRenderRazorPartial
             })
 
         } catch (error) {

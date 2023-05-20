@@ -156,9 +156,9 @@ app.constant('nombreModalVenta', {
  
 app.constant('nombreModalCompra', {
     FACTURA_FISICA: {
-        fileCtrl: '/js/modal/',
+        fileCtrl: '/js/modal/compras/modalFacturaCtrl.js' + CHANGE_VERSION(),
         controllers: {
-            D:'ModalFacturaDetalleCtrl'
+            D:'ModalFacturaDetalleCtrl',            
         },
         templates: {
             D:'~/Areas/FacturaCompra/Pages/Shared/_ModalDetalle.cshtml'
