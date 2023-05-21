@@ -461,12 +461,21 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
         })
     }
 
+    const REPORT_CODES = Object.freeze({
+        '01': 'RF',
+        '03': 'RLC',
+        '04': 'RNCC',
+        '06': 'RGR',
+        '07': 'RRC',
+    })
+
+
     $scope.generateFile = () => {
         let format = 'pdf'
         let dataParms = {
             id: params.idDocumento,
             codEstab: params.codEstab,
-            codigo: 'RF',
+            codigo: REPORT_CODES[params.codDoc],
             format,
         }
 
