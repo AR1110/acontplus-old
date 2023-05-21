@@ -249,7 +249,7 @@
           "Port": 8097
         }
       ],
-      "DownstreamPathTemplate": "/api/Factura/{everything}",
+      "DownstreamPathTemplate": "/api/Factura{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Get",
