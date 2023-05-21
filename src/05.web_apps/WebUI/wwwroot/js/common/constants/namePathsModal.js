@@ -155,16 +155,7 @@ app.constant('nombreModalVenta', {
             MDUPLICATE: 'Proforma/_ModalDuplicar.cshtml',
             MF: 'Proforma/_ModalFiltro.cshtml'
         }
-    },
-    TRANSPORTISTA: {
-        fileCtrl: '/js/ventas/modals/modalTransportistaCtrl.js' + CHANGE_VERSION(),
-        controllers: {
-            M: 'ModalTransportistaCtrl'
-        },
-        templates: {
-            M: 'Transportista/_ModalAddUpdate.cshtml'
-        }
-    }  
+    }   
 })
 
  
@@ -179,6 +170,27 @@ app.constant('nombreModalCompra', {
         }
     }
    
+})
+
+app.constant('nombreModalLogistica', {
+    TRANSPORTISTA: {
+        fileCtrl: '/js/logistica/modals/modalTransportistaCtrl.js' + CHANGE_VERSION(),
+        controllers: {
+            M: 'ModalTransportistaCtrl'
+        },
+        templates: {
+            M: 'Transportista/_ModalAddUpdate.cshtml'
+        }
+    }  ,
+    VEHICULO: {
+        fileCtrl: '/js/logistica/modals/modalVehiculoCtrl.js' + CHANGE_VERSION(),
+        controllers: {
+            M: 'ModalVehiculoCtrl'
+        },
+        templates: {
+            M: 'Vehiculo/_ModalAddUpdate.cshtml'
+        }
+    }  
 })
 
 

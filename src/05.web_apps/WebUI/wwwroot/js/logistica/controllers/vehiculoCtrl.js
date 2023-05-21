@@ -1,42 +1,35 @@
 
 
-(()=>{
+(function(){
     'use strict';
 
-    angular.module('acontPlusApp')
-           .controller('vehiculoCtrl', vehiculoCtrl);
+    app.controller('vehiculoCtrl', vehiculoCtrl);
 
-    vehiculoCtrl.$inject=['$scope', '$http', 'modalService', 'nombreModal'];
+    vehiculoCtrl.$inject=['$scope', '$http', 'vehiculoService', 'modalService', 'nombreModal'];
 
-    function vehiculoCtrl($scope, $http, _modalSvc, _nombreModal){
-        $scope.data = {};
-
+    function vehiculoCtrl($scope, $http, vehiculoSvc, _modalSvc, _nombreModal){
         
-        $scope.openModal = async(item)=> {            
-           const {vehiculo} = _nombreModal;
-           const {ModalVehiculoCtrl} = await import('./../../modal/' + vehiculo.MODAL_CTRL);
-           const modalRef = _modalSvc.openModalSecond(ModalVehiculoCtrl, 'Vehiculo/'+vehiculo.MODAL_CSHTML, 'md', item);
-           modalRef.result.then(result=>{
-                if(typeof result==='object'){
-                    $scope.getVehiculos();
-                }
-            })
+        $scope.resultModal = function(result) {  
+            if(typeof result==='object'){
+                $scope.getVehiculos();
+            }
         }
 
         $scope.getVehiculos = function () {
-            showLoader();
-            $http.get('/Vehiculo/Get').then(({data:response}) => {
-                if (response.id === "0") {
+            try {
+                showLoader();
+                $scope.vehiculos = [];
+                vehiculoSvc.getAll({}).then(response => {                  
+                    $scope.vehiculos = response            
                     hideLoader();
-                    toastr.warning(response.message);
-                    return
-                }
-                $scope.vehiculos = response.data;                
-                hideLoader();
-            }).catch(error=>{
-                hideLoader();
-                toastr.error(error)
-            });
+                }).catch(error=>{
+                    hideLoader();
+                    console.log(error)
+                });
+            } catch (error) {
+                console.log(error)
+            }
+            
         }
         $scope.getVehiculos();
 

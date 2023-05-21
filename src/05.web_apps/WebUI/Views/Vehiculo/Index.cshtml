@@ -9,7 +9,7 @@
         </div>
         <div class="col-md-7 align-self-center text-right">
             <div class="d-flex justify-content-end align-items-center">
-                <button type="button" class="btn btn-info m-l-15" ng-click="openModal()"> <i class="ti-plus"></i> Nuevo</button>
+                <button type="button" class="btn btn-info m-l-15" btn-vehiculo result-modal="resultModal(result)"> <i class="ti-plus"></i> Nuevo</button>
             </div>            
         </div>
     </div>
@@ -46,7 +46,7 @@
                             <tbody md-body>
                                 <tr md-row ng-repeat="v in vehiculos">
                                     <td md-cell>
-                                        <button class="btn btn-info btn-xs" ng-click="openModal(v)"><i class="ti-pencil"></i></button>
+                                        <button class="btn btn-info btn-xs" btn-vehiculo result-modal="resultModal(result)" params="v"><i class="ti-pencil"></i></button>
                                         <button class="btn btn-danger btn-xs" ng-click="sweetAlertEliminar(v)"><i class="ti-trash"></i></button>                                        
                                     </td>
                                     <td md-cell>{{$index+1}}</td>
@@ -68,6 +68,7 @@
 </div>
 
 @section Scripts{
-    <script src="~/js/controllers/logistica/vehiculoCtrl.min.js" asp-append-version="true"></script>
+    <script src="~/js/logistica/services/logisticaService.min.js" asp-append-version="true"></script>
+    <script src="~/js/logistica/controllers/vehiculoCtrl.min.js" asp-append-version="true"></script>
 }
 

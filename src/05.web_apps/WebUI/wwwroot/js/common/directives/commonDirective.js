@@ -541,7 +541,7 @@
      * ---------------------------------------
      */
     
-    app.directive('btnTransportista', function(modalService, nombreModalVenta){
+    app.directive('btnTransportista', function(modalService, nombreModalLogistica){
         return {
             restrict: 'A',
             scope: {
@@ -551,11 +551,46 @@
             link: function(scope, element, att){
                 element.on('click', async function () {
                      
-                    let fileCtrl = nombreModalVenta.TRANSPORTISTA.fileCtrl;
-                    let ctrl = nombreModalVenta.TRANSPORTISTA.controllers['M'];
-                    let template = nombreModalVenta.TRANSPORTISTA.templates['M'];
+                    let fileCtrl = nombreModalLogistica.TRANSPORTISTA.fileCtrl;
+                    let ctrl = nombreModalLogistica.TRANSPORTISTA.controllers['M'];
+                    let template = nombreModalLogistica.TRANSPORTISTA.templates['M'];
                     let controller = (await import(fileCtrl))[ctrl];
 
+
+                    const modalDialogRef = modalService.openModalCustom({
+                        controller,
+                        template,
+                        size: 'md',
+                        params: scope.params || {},
+                    })       
+                          
+                    modalDialogRef.result.then(result=>{
+                        if(typeof result==="object"){
+                            scope.resultModal({
+                                result
+                            })
+                        }
+                    })
+                });
+            }
+        }
+    })
+
+    app.directive('btnVehiculo', function(modalService, nombreModalLogistica){
+        return {
+            restrict: 'A',
+            scope: {
+                params:'=',
+                resultModal: '&',
+            },
+            link: function(scope, element, att){
+                element.on('click', async function () {
+                     
+                    let fileCtrl = nombreModalLogistica.VEHICULO.fileCtrl;
+                    let ctrl = nombreModalLogistica.VEHICULO.controllers['M'];
+                    let template = nombreModalLogistica.VEHICULO.templates['M'];
+                    let controller = (await import(fileCtrl))[ctrl];
+                    console.log(template)
 
                     const modalDialogRef = modalService.openModalCustom({
                         controller,

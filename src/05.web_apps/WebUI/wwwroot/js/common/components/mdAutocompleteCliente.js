@@ -1,10 +1,11 @@
 class MdAutocompleteClienteComponent{
-    static $inject = ['$scope','commonService', 'modalService', 'nombreModal']
-    constructor($scope, _commonSvc, _modalSvc, _nombreModal){
+    static $inject = ['$scope','commonService', 'modalService', 'nombreModal', 'nombreModalVenta']
+    constructor($scope, _commonSvc, _modalSvc, _nombreModal, nombreModalVenta){
         this.$scope = $scope;
         this._commonSvc = _commonSvc;
         this._modalSvc  = _modalSvc;
-        this._nombreModal = _nombreModal;              
+        this._nombreModal = _nombreModal;       
+        this.nombreModalVenta = nombreModalVenta;       
         this.search = {
             isDisabled: false,
             noCache: false,
@@ -71,36 +72,54 @@ class MdAutocompleteClienteComponent{
         }        
     }
 
-    async openModalCliente(params){               
-        const {MODAL_CTRL, MODAL_CSHTML} = this._nombreModal.cliente;
-        const {ModalClienteCtrl} = await import('./../modal/' + MODAL_CTRL);
-        const modalRef = this._modalSvc.openModalCustom({
-            controller: ModalClienteCtrl,
-            template: 'Cliente/' + MODAL_CSHTML,
-            size: 'xl',
-            params
-        })         
-                
-        modalRef.result.then(response=>{
-            if(typeof response==='object'){
-                this.selectedItemChange(response)
-            }
-        })
+    async openModalCliente(params){     
+        try {
+            let fileCtrl = this.nombreModalVenta.CLIENTE.fileCtrl;
+            let ctrl = this.nombreModalVenta.CLIENTE.controllers['M'];
+            let template = this.nombreModalVenta.CLIENTE.templates['M'];
+            
+            let controller = (await import(fileCtrl))[ctrl]
+            const modalRef = this._modalSvc.openModalCustom({
+                controller,
+                template,
+                size: 'xl',
+                params
+            })         
+                    
+            modalRef.result.then(response=>{
+                if(typeof response==='object'){
+                    this.selectedItemChange(response)
+                }
+            })
+        } catch (error) {
+            console.log(error)
+        }          
+   
     }
 
     async openModalClienteLista(){
-        const {MODAL_CTRL, MODAL_LISTA_CSHTML} = this._nombreModal.cliente;
-        const {ModalClienteListaCtrl} = await import('./../modal/' + MODAL_CTRL);
-        const modalRef = this._modalSvc.openModalCustom({
-            controller: ModalClienteListaCtrl,
-            template: 'Cliente/'+ MODAL_LISTA_CSHTML,
-            size: 'xl',
-        })         
-        modalRef.result.then(response=>{
-            if(typeof response==='object'){                
-                this.selectedItemChange(response)
-            }
-        })
+        try {
+            let fileCtrl = this.nombreModalVenta.CLIENTE.fileCtrl;
+            let ctrl = this.nombreModalVenta.CLIENTE.controllers['L'];
+            let template = this.nombreModalVenta.CLIENTE.templates['L'];
+            
+            let controller = (await import(fileCtrl))[ctrl]
+            const modalRef = this._modalSvc.openModalCustom({
+                controller,
+                template,
+                size: 'xl',
+                
+            })         
+                    
+            modalRef.result.then(response=>{
+                if(typeof response==='object'){
+                    this.selectedItemChange(response)
+                }
+            })
+        } catch (error) {
+            console.log(error)
+        } 
+       
     }
 
 }
