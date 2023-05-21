@@ -40,6 +40,7 @@
                 }
             }).catch(error =>{
                 console.log('Error al obtener datos->proforma service', error)
+                throw error;
             })
         }
 

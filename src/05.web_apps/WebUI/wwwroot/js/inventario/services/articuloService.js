@@ -229,11 +229,29 @@
                 }
 
                 if(response.code==='1'){
+                   
                     
-                    let dataRepository = JSON.parse(response.payload);
+                    let dataRepository = JSON.parse(response.payload);                    
+                    let dataMedida = []
+                    let dataInfoAdicionales = []
+
+                    let medidaMapper = [];
+                    let infoAdicionalMapper = [];
+
+                    // let responseMsg = results[0][0];
+                    // let sharedData = {
+                    //     articulo: results[0][0],
+                    //     medidas: results[1],
+                    //     datosAdicionales: results[2]
+                    // }
+
                     let dataArticulo = dataRepository[0][0];
-                    let dataMedida = dataRepository[1];
-                    let dataInfoAdicionales = dataRepository[2];
+                    if(dataRepository[1]){
+                        dataMedida = dataRepository[1];
+                    }
+                    if(dataRepository[2]){
+                        dataInfoAdicionales = dataRepository[2]
+                    }
                     
                     let articuloMapper = {                        
                         idArticulo: dataArticulo.idArticulo,
@@ -257,14 +275,14 @@
                         precioCosto: dataArticulo.precioCosto,
                     }
                     
-                    let medidaMapper = dataMedida.map(item=>({
+                    medidaMapper = dataMedida.map(item=>({
                         idMedida: item.idMedida,
                         descripcion: item.descripcion,
                         precioCosto: item.precioCosto,
                         tarifas: item.tarifas
                     }))
 
-                    let infoAdicionalMapper = dataInfoAdicionales.map(item => ({
+                    infoAdicionalMapper = dataInfoAdicionales.map(item => ({
                         idArticulo: item.idArticulo,
                         idEtiqueta: item.idEtiqueta,
                         idInfoAdicional: item.idInfoAdicional,

@@ -321,7 +321,7 @@ function facturaCompraCtrl($scope, $filter, _mS, _commonSvc, factCompraSvc, _mod
             dataParams: JSON.stringify(dataParms),
             sendEmail: false
         }
-        showLoader();
+    
         _commonSvc.getReport({
             parameters,
             formatType: 'pdf'
