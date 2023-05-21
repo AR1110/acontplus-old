@@ -8,6 +8,11 @@ const CHANGE_VERSION = (largo = 50) => {
     return '?v=' + codigo;
 }
 
+// app.constant('nombreModalConfig', {
+//     ENTIDAD: {
+//         fileCtrl: ''
+//     }
+// })
 
 //Inventario 
 app.constant('nombreModalInventario', {
@@ -149,6 +154,15 @@ app.constant('nombreModalVenta', {
             MD:'Proforma/_ModalDetalle.cshtml',
             MDUPLICATE: 'Proforma/_ModalDuplicar.cshtml',
             MF: 'Proforma/_ModalFiltro.cshtml'
+        }
+    },
+    TRANSPORTISTA: {
+        fileCtrl: '/js/ventas/modals/modalTransportistaCtrl.js' + CHANGE_VERSION(),
+        controllers: {
+            M: 'ModalTransportistaCtrl'
+        },
+        templates: {
+            M: 'Transportista/_ModalAddUpdate.cshtml'
         }
     }  
 })

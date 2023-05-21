@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.js?v=0.34";
+} from "./modalBaseCtrl.js?v=0.35";
 
 
 class ModalNotaEntregaCtrl extends ModalBaseCtrl {
@@ -433,6 +433,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
                     printerAutomatic,
                     payAutomatic
                 } = resultsDataForm[8][0];
+                console.log(resultsDataForm[8])
                 this.isSearchBarcode = searchCode;
                 this.printerAutomatic = printerAutomatic;
                 this.payAutomatic = payAutomatic;

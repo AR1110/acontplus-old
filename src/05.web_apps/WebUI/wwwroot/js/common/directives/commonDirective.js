@@ -535,6 +535,45 @@
         };
 
     })
+
+
+    /**
+     * ---------------------------------------
+     */
     
+    app.directive('btnTransportista', function(modalService, nombreModalVenta){
+        return {
+            restrict: 'A',
+            scope: {
+                params:'=',
+                resultModal: '&',
+            },
+            link: function(scope, element, att){
+                element.on('click', async function () {
+                     
+                    let fileCtrl = nombreModalVenta.TRANSPORTISTA.fileCtrl;
+                    let ctrl = nombreModalVenta.TRANSPORTISTA.controllers['M'];
+                    let template = nombreModalVenta.TRANSPORTISTA.templates['M'];
+                    let controller = (await import(fileCtrl))[ctrl];
+
+
+                    const modalDialogRef = modalService.openModalCustom({
+                        controller,
+                        template,
+                        size: 'md',
+                        params: scope.params || {},
+                    })       
+                          
+                    modalDialogRef.result.then(result=>{
+                        if(typeof result==="object"){
+                            scope.resultModal({
+                                result
+                            })
+                        }
+                    })
+                });
+            }
+        }
+    })
 
 })(window.angular)
