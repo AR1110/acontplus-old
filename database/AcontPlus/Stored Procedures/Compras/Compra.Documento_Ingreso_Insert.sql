@@ -289,7 +289,7 @@ BEGIN
 							DECLARE @total AS NUMERIC(18,5)
 
 							DECLARE cursor_inventory CURSOR LOCAL FOR
-							SELECT td.idArticulo, idBodega,td.idMedida,NULL,cantidad,td.precioUnitario,a.precioCosto,td.precioTotalSinImpuesto
+							SELECT td.idArticulo, idBodega,td.idMedida,NULL,cantidad,td.precioUnitario - td.descuento,td.precioUnitario - td.descuento,td.precioTotalSinImpuesto
 							FROM @detail td 
 							INNER JOIN Articulo a WITH (NOLOCK) ON td.idArticulo = a.idArticulo 
 							WHERE a.llevaInventario = 1

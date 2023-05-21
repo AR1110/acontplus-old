@@ -125,20 +125,20 @@ BEGIN
 	IF @codDoc='FC'
 		BEGIN 
 			SET @detailDs = (SELECT 
-								 id             = fcd.idFacturaCompraDetalle
-								,idArticulo     = fcd.idArticulo
-								,codigo         = a.codigo
-								,descripcion    = fcd.descripcion
-								,cantidad       = Herramientas.Round_Out(fcd.cantidad,@nroCantidad) 
-								,medida         = m.descripcion
+								 id             = fd.idFacturaCompraDetalle
+								,idArticulo     = fd.idArticulo
+								,codigo         = ar.codigo
+								,descripcion    = fd.descripcion
+								,cantidad       = Herramientas.Round_Out(fd.cantidad,@nroCantidad) 
+								,medida         = me.descripcion
 								,tipoIva        = ti.descripcion
-								,precioUnitario = Herramientas.Round_Out(fcd.precioCosto,@nroPrecio) 
-								,valorDescuento = Herramientas.Round_Out(fcd.valorDescuento,@nroDescuentoDetalle)
-								,total          = Herramientas.Round_Out(fcd.total,@nroTotalDetalle)		
+								,precioUnitario = Herramientas.Round_Out(fd.precioCosto,@nroPrecio) 
+								,valorDescuento = Herramientas.Round_Out(fd.valorDescuento,@nroDescuentoDetalle)
+								,total          = Herramientas.Round_Out(fd.total,@nroTotalDetalle)		
 								,precioVenta    = ap.precioVenta
 								,precioConIva   = ap.precioConIva
-								,tarifa         = t.descripcion
-								,nota           = ISNULL(a.observaciones, '')
+								,tarifa         = ta.descripcion
+								,nota           = ISNULL(ar.observaciones, '')
 							FROM dbo.FacturaCompraDetalle fd 
 							INNER JOIN ArticuloPvP  ap WITH (NOLOCK) ON ap.idarticulo = fd.idArticulo 
 							INNER JOIN Tarifa       ta WITH (NOLOCK) ON ta.idTarifa   = ap.idTarifa
