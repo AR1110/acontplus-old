@@ -311,7 +311,7 @@ BEGIN
 							DECLARE @estado BIT 
 
 							DECLARE cursor_inventory CURSOR LOCAL FOR
-							SELECT dd.idArticulo,dd.idBodega,dd.idMedida,NULL,dd.cantidad,dd.precioUnitario,ar.precioCosto,dd.precioTotalSinImpuesto,dd.estado
+							SELECT dd.idArticulo,dd.idBodega,dd.idMedida,NULL,dd.cantidad,dd.precioUnitario - dd.descuento,dd.precioUnitario - dd.descuento,dd.precioTotalSinImpuesto,dd.estado
 							FROM Compra.Documento_Ingreso_Detail dd WITH (NOLOCK)
 							INNER JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = dd.idArticulo
 							WHERE dd.idDocumentoIngreso = @idDocumentoIngreso AND ar.llevaInventario = 1

@@ -180,7 +180,7 @@ BEGIN
 					SET @multiplier = (SELECT CASE WHEN @codDoc = '01' THEN 1  WHEN @codDoc = '04' THEN -1 END)
 
 					DECLARE cursor_inventory CURSOR LOCAL FOR
-					SELECT td.idArticulo, idBodega,td.idMedida,NULL, cantidad * @multiplier, td.precioUnitario * @multiplier,a.precioCosto,td.precioTotalSimImpuestos * @multiplier
+					SELECT td.idArticulo, idBodega,td.idMedida,NULL, cantidad * @multiplier, td.precioUnitario * @multiplier,td.precioUnitario,td.precioTotalSimImpuestos * @multiplier
 					FROM @tblDetails td
 					INNER JOIN Articulo a WITH(NOLOCK) ON td.idArticulo = a.idArticulo
 							
