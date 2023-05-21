@@ -1,8 +1,8 @@
 app.controller('proformaCtrl', proformaCtrl);
 
-proformaCtrl.$inject = ['$scope', '$filter', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario']
+proformaCtrl.$inject = ['$scope', '$filter', 'mainService', 'commonService', 'proformaService', 'modalService', 'nombreModalVenta', 'nombreModal', 'toastService', 'formulario']
 
-function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS) {
+function proformaCtrl($scope, $filter, _mS, _commonSvc, proformaSvc, _modalSvc, nombreModalVenta, _nombreModalConst, _tS, _fS) {
 
     // let accion = JSON.parse(localStorage.getItem("accion"));
     // if (accion === null) {
@@ -12,11 +12,17 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
     //     $scope.accion = accion[0];
     // }
 
+
     const TIPO_DOC_PR = _commonSvc.tipoDoc['PR'];
     const PERMISSION_KEY_ACTIONS = {
         E: 'E',
         A: 'A',
     }
+    
+    let fileCtrl = nombreModalVenta.PROFORMA.fileCtrl;
+    let template;
+    let controller;
+    let ctrl;
 
     $scope.jsonPermission = {}
 
@@ -49,17 +55,17 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
             } else {
                 $scope.dataSearch.checkBoxDefault = true;
             }
-
-            await _mS.getData('get', '/Proforma/Get?json=' + JSON.stringify($scope.dataSearch)).then(response => {
-                if (response.id === '0') {
-                    $scope.proformas = []
-                    console.warn(response)
-                    return
-
-                }
-                $scope.proformas = JSON.parse(response.data) || [];
+            $scope.proformas = [];
+            $scope.total = $scope.sumarColumnaTotal();
+            proformaSvc.getAll($scope.dataSearch).then(response => {
+                hideLoader();
+                $scope.proformas = response;
                 $scope.cloneProformas = JSON.parse(JSON.stringify($scope.proformas));
                 $scope.total = $scope.sumarColumnaTotal();
+                
+            }).catch(error=>{
+                hideLoader();
+                console.log(error)
             })
 
             _commonSvc.getDataFormVenta().then(result => {
@@ -68,12 +74,9 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
 
 
         } catch (error) {
-
-            console.log(error)
-
-        } finally {
             hideLoader();
-        }
+            console.log(error)
+        } 
     }
 
 
@@ -92,63 +95,64 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
 
 
     $scope.openModalNew = async () => {
-
-        let {
-            MODAL_FILE_CTRL,
-            MODAL_NUEVO
-        } = _nombreModalConst.proforma;
-        let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_NUEVO['controller']];
-        let template = MODAL_NUEVO['template'];
-
-        let params = {
-            TIPO_REGISTRO: 'NUEVO'
+        try {
+            ctrl = nombreModalVenta.PROFORMA.controllers['MN'];
+            template = nombreModalVenta.PROFORMA.templates['MN'];
+            let controller = (await import(fileCtrl))[ctrl];
+            
+            let params = {
+                TIPO_REGISTRO: 'NUEVO'
+            }
+            $scope.openModalParam({
+                controller,
+                template,
+                params
+            })
+        } catch (error) {
+            console.log(error);
         }
-        $scope.openModalParam({
-            controller,
-            template,
-            params
-        })
     }
 
 
-    $scope.openModalFiltro = async () => {
-
-        let {
-            MODAL_FILE_CTRL,
-            MODAL_FILTRO
-        } = _nombreModalConst.proforma;
-        let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_FILTRO['controller']];
-        let template = MODAL_FILTRO['template'];
-        let params = {
-            dataSearch: $scope.dataSearch,
-            clienteFiltro: $scope.clienteFiltro,
-            usuarioSearchFiltro: $scope.usuarioSearchFiltro,
-            mes: $scope.mes
-        }
-
-        let modalRef = _modalSvc.openModalCustom({
-            controller,
-            template,
-            params,
-            size: 'lg'
-        })
-
-        modalRef.result.then(result => {
-            let {
-                dataSearch,
-                clienteFiltro,
-                usuarioSearchFiltro,
-                mes,
-                isSearch
-            } = result;
-            $scope.dataSearch = dataSearch;
-            $scope.clienteFiltro = clienteFiltro;
-            $scope.usuarioSearchFiltro = usuarioSearchFiltro;
-            $scope.mes = mes;
-            if (isSearch) {
-                $scope.getProformas();
+    $scope.openModalFiltro = async function() {
+        try {
+            ctrl = nombreModalVenta.PROFORMA.controllers['MF'];
+            template = nombreModalVenta.PROFORMA.templates['MF'];
+            controller = (await import(fileCtrl))[ctrl];
+    
+            let params = {
+                dataSearch: $scope.dataSearch,
+                clienteFiltro: $scope.clienteFiltro,
+                usuarioSearchFiltro: $scope.usuarioSearchFiltro,
+                mes: $scope.mes
             }
-        })
+    
+            let modalRef = _modalSvc.openModalCustom({
+                controller,
+                template,
+                params,
+                size: 'lg'
+            })
+    
+            modalRef.result.then(result => {
+                let {
+                    dataSearch,
+                    clienteFiltro,
+                    usuarioSearchFiltro,
+                    mes,
+                    isSearch
+                } = result;
+                $scope.dataSearch = dataSearch;
+                $scope.clienteFiltro = clienteFiltro;
+                $scope.usuarioSearchFiltro = usuarioSearchFiltro;
+                $scope.mes = mes;
+                if (isSearch) {
+                    $scope.getProformas();
+                }
+            })
+        } catch (error) {
+            console.log(error)
+        }
     }
 
 
@@ -161,30 +165,31 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
 
 
     $scope.openModalDetalle = async (item) => {
+        try {
+            ctrl = nombreModalVenta.PROFORMA.controllers['MD'];
+            template = nombreModalVenta.PROFORMA.templates['MD'];
+            controller = (await import(fileCtrl))[ctrl];
 
-        let {
-            MODAL_FILE_CTRL,
-            MODAL_DETALLE
-        } = _nombreModalConst.proforma;
-        let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_DETALLE['controller']];
-        let template = MODAL_DETALLE['template'];
-        let response = await _commonSvc.getDataTipoDocVenta({
-            id: item.idProforma,
-            codigoDocumento: TIPO_DOC_PR.codigo
-        })
-
-        if (!response.isComplete) return
-
-        let params = {
-            TIPO_REGISTRO: 'DETALLE',
-            data: response
-        }
-
-        $scope.openModalParam({
-            controller,
-            template,
-            params
-        })
+            let response = await _commonSvc.getDataTipoDocVenta({
+                id: item.idProforma,
+                codigoDocumento: TIPO_DOC_PR.codigo
+            })
+    
+            if (!response.isComplete) return
+    
+            let params = {
+                TIPO_REGISTRO: 'DETALLE',
+                data: response
+            }
+    
+            $scope.openModalParam({
+                controller,
+                template,
+                params
+            })            
+        } catch (error) {
+            console.log(error);
+        }        
     }
 
     $scope.openModalEdit = async (item) => {
@@ -197,12 +202,9 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
             }
 
             showLoader();
-            let {
-                MODAL_FILE_CTRL,
-                MODAL_EDITAR
-            } = _nombreModalConst.proforma;
-            let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_EDITAR['controller']];
-            let template = MODAL_EDITAR['template'];
+            ctrl = nombreModalVenta.PROFORMA.controllers['ME'];
+            template = nombreModalVenta.PROFORMA.templates['ME'];
+            controller = (await import(fileCtrl))[ctrl];
 
             let response = await _commonSvc.getDataTipoDocVenta({
                 id: item.idProforma,
@@ -247,12 +249,9 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
     $scope.openModalDuplicate = async (item) => {
         try {
             showLoader();
-            let {
-                MODAL_FILE_CTRL,
-                MODAL_DUPLICAR
-            } = _nombreModalConst.proforma;
-            let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_DUPLICAR['controller']];
-            let template = MODAL_DUPLICAR['template'];
+            ctrl = nombreModalVenta.PROFORMA.controllers['MDUPLICATE'];
+            template = nombreModalVenta.PROFORMA.templates['MDUPLICATE'];
+            controller = (await import(fileCtrl))[ctrl];
 
             let response = await _commonSvc.getDataTipoDocVenta({
                 id: item.idProforma,
@@ -339,14 +338,12 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
 
             if (isConfirmed) {
                 showLoader();
-                _mS.getData('delete', '/Proforma/Delete?id=' + item.idProforma).then(response => {
-                    Swal.close()
-                    if (response.code === "0") {
-                        hideLoader();
+                proformaSvc.delete(item.idProforma).then(response => {
+                    hideLoader();                    
+                    if (response.code === "0") {                        
                         _fS.sweetAlert('warning', response.message, response.titleSms);
                     }
-                    if (response.code === "1") {
-                        hideLoader();
+                    if (response.code === "1") {                        
                         _fS.sweetAlert('success', response.message, response.titleSms, 1000);
 
 
@@ -367,11 +364,9 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalC
 
             }
         } catch (error) {
+            hideLoader();
             console.log(error)
-        } finally {
-
         }
-
     }
 
 

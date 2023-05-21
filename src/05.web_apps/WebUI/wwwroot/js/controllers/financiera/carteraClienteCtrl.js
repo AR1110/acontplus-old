@@ -217,7 +217,9 @@ function carteraClienteCtrl(_mS, $scope, $filter, _mS, commonSvc, _modalSvc, _no
 
 
         const parameters = {
+            hasService: false,
             reportParams: JSON.stringify({
+                hasParams: false,
                 codigo: "RCCL",
                 format: formatType,
                 aditionalParams: []

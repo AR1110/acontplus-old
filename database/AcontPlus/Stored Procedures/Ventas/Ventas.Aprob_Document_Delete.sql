@@ -48,6 +48,10 @@ BEGIN
 			SELECT @uniqueId,@idUsuario,dbo.ufnGetDateEcuador()
 
 			UPDATE Ventas.Aprob_Document SET codEstado = @codEstado WHERE idAprob_Document = @id
+			UPDATE infoAdd  SET estado = 1
+			FROM Compra.InfoAdicional infoAdd
+			INNER JOIN Ventas.HistoryInfoAdicional h WITH(NOLOCK) ON h.idInfoAdicional = infoAdd.idInfoAdicional
+			WHERE h.codDoc ='APR' AND h.idDocumento = @id
 
 			IF @docOrigen = 'NE'
 				BEGIN

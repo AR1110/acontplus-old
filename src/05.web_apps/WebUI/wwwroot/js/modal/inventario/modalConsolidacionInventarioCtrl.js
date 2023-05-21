@@ -604,6 +604,14 @@ class ModalConsolidacionCtrl extends ModalBaseCtrl {
                 articulo
             } = item;
 
+            if(!articulo.llevaInventario){
+                Swal.fire({
+                    icon:'warning',
+                    html: 'Este articulo no esta configurado para llevar inventario'
+                })
+                return
+            }
+
             let entity = {}
             this.indexRow = this.gridOptions.data.findIndex(value => value.idArticulo === articulo.idArticulo);
             if (this.indexRow !== -1) {

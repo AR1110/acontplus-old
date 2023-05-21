@@ -23,8 +23,10 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	DECLARE @uniqueId VARCHAR(150)
+	DECLARE @idTipoDocumento INT 
 	
 	SELECT @uniqueId = uniqueId FROM Ventas.Aprob_Document WHERE idAprob_Document = @id
+	SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo = 'APR'
 
 	SELECT 
 		d.idAprob_Document
@@ -37,6 +39,7 @@ BEGIN
 	   ,cliente = cl.nombreFiscal
 	   ,d.identificacionComprador
 	   ,direccion = ISNULL(cl.direccion, NULL)
+	   ,d.codDoc
 	   ,d.docOrigen
 	   ,d.fechaEmision
 	   ,total = d.importeTotal
@@ -66,11 +69,28 @@ BEGIN
 	   ,codigoTipoIva = t.codigo
 	   ,codigoPorcentaje = CONVERT(VARCHAR(4), dt.codigoPorcentaje)
 	   ,tarifa = dt.tarifa
+	   ,datosAdicionales = a.datosAdicionales
 	FROM  Ventas.Aprob_Document_Detailt dt
 	INNER JOIN dbo.Articulo a ON a.code_unique      = dt.codArticulo
 	INNER JOIN dbo.Medida   m ON m.codigo           = dt.codMedida
 	INNER JOIN dbo.TipoIva  t ON t.codigoPorcentaje = dt.codigoPorcentaje
 	WHERE dt.uniqueId = @uniqueId AND dt.estado = 1 ORDER BY dt.idAprob_Document_Detailt ASC 
+
+	
+	SELECT 
+		ia.idInfoAdicionalDoc,
+		ia.nombre,
+		ia.valor,
+		ia.estado
+	FROM InfoAdicionalDoc ia
+	WHERE ia.idComprobante = @id AND ia.idTipoDocumento = @idTipoDocumento
+
+	-----------------------------------------------------Datos Adicionales de Articulo------------------------------------
+	SELECT h.idDocumento, h.idHistoryInfoAdicional, selected = CAST(1 as BIT), i.* FROM Ventas.HistoryInfoAdicional h WITH(NOLOCK)
+	INNER JOIN Compra.InfoAdicional i WITH(NOLOCK) ON i.idInfoAdicional = h.idInfoAdicional
+	WHERE h.codDoc='APR' AND h.idDocumento = @id	
+	
+
 
 END
 

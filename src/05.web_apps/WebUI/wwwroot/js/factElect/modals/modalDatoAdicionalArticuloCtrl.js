@@ -32,7 +32,7 @@ function ModalDatoAdicionalArticuloCtrl($scope, $uibModalInstance, params) {
             $scope.etiquetas = Object.keys(angular.copy(info[0].jsonAdicional))
         }
 
-        console.log(info)
+        
         //unimos datos adicionales registradas para factura y no registradas
         $scope.data = $scope.data.concat(info);
         // for(let info of datosAdicionales){
@@ -40,8 +40,7 @@ function ModalDatoAdicionalArticuloCtrl($scope, $uibModalInstance, params) {
         //         $scope.data.push(info);
         //     }
         // }
-    }
-    console.log(params);
+    } 
 
 
 
@@ -58,9 +57,26 @@ function ModalDatoAdicionalArticuloCtrl($scope, $uibModalInstance, params) {
     // } 
 
     $scope.onCheck = function(item) { 
+        let cantidad = parseInt($scope.articulo.cantidad); 
+        // console.log(cantidad, historyDatosAdicionales.length);  
+        // if(historyDatosAdicionales.length ===cantidad){
+     
+        //     return
+        // }
         historyDatosAdicionales = historyDatosAdicionales.filter(h=>h.idInfoAdicional!==item.idInfoAdicional);
         
         if(item.selected)       {
+             
+            if(historyDatosAdicionales.length == cantidad) {
+                item.selected = false;
+                Swal.fire({
+                    title: 'Datos Adicionales',
+                    icon:'warning',
+                    html: `El número de datos adicionales proporcionados no debe exceder la cantidad de artículo: <b>${$scope.articulo.descripcion}</b>!`
+                })
+                return
+            }
+
             historyDatosAdicionales.push({
                 idArticulo: item.idArticulo,
                 idInfoAdicional: item.idInfoAdicional,

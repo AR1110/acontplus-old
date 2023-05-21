@@ -268,7 +268,7 @@ class ModalBaseCtrl {
         const {
             articulo,
             medidas,
-            datosAdicionales
+            datosAdicionalesArticulo
         } = self.dataArticulo;
         let index = self.gridOptionsDetailDocument.data.findIndex(value => value.idArticulo === 0);
         let entity = self.gridOptionsDetailDocument.data[index];
@@ -289,7 +289,9 @@ class ModalBaseCtrl {
         entity.productoFraccionable = articulo.productoFraccionable;
         entity.medidas = medidas; //Lista Medida 
         entity.idMedida = dataMedida.idMedida; //Medida por defecto 
-        entity.adicional = datosAdicionales; //
+        
+        //Datos Adicionales 
+        entity.datosAdicionalesArticulo = datosAdicionalesArticulo; //
 
         entity.articuloTarifas = JSON.parse(dataMedida.tarifas);
         let tarifa = entity.articuloTarifas.find(item => item.idTarifa === self.idTarifa);
@@ -327,10 +329,20 @@ class ModalBaseCtrl {
 
     async askToDeleteArticle(rowEntity) {
         const self = this;
-        if (await this.uiGridInvoice.deleteRow(rowEntity.entity)) {
+        let isConfirmed = await this.uiGridInvoice.deleteRow(rowEntity.entity);        
+
+        if(isConfirmed) {
             this.data = Object.assign(this.data, this.uiGridInvoice.getTotales());
             self.$scope.$apply();
         }
+
+        if (isConfirmed && rowEntity.entity.datosAdicionales) {
+            this.datosAdicionalesArticulo = this.datosAdicionalesArticulo.filter(val => val.idArticulo !== rowEntity.entity.idArticulo);
+            this.historyDatosAdicionales = this.historyDatosAdicionales.filter(val => val.idArticulo !== rowEntity.entity.idArticulo);
+        }
+
+        
+        
     }
 
 
@@ -398,6 +410,11 @@ class ModalBaseCtrl {
         return tempDetails;
     }
 
+    resultModalAdicional(result) {
+        let {entity, historyDatosAdicionales} = result;
+        this.historyDatosAdicionales = historyDatosAdicionales;
+    }
+
 
     closeModal() {
         this.$uibModalInstance.close();
@@ -415,6 +432,7 @@ export class ModalSelectDocumentoCtrl extends ModalBaseCtrl {
         'commonService', 
         'aprobacionDocService', //Aprobacion Comprobante Service
         'notaEntregaService', //NotaEntrega Service
+        'proformaService',
         'modalService', 
         'nombreModal', 
         'nombreModalVenta',
@@ -432,6 +450,7 @@ export class ModalSelectDocumentoCtrl extends ModalBaseCtrl {
         _commonSvc, 
         aprobacionDocSvc,
         notaEntregaSvc,
+        proformaSvc,
         _modalSvc, 
         _nombreModalConst, 
         nombreModalVenta,
@@ -449,6 +468,7 @@ export class ModalSelectDocumentoCtrl extends ModalBaseCtrl {
 
         this.aprobacionDocSvc = aprobacionDocSvc;
         this.notaEntregaSvc = notaEntregaSvc;
+        this.proformaSvc = proformaSvc;
 
         this._modalSvc = _modalSvc;
         this._nombreModalConst = _nombreModalConst;
@@ -583,6 +603,12 @@ export class ModalSelectDocumentoCtrl extends ModalBaseCtrl {
             this.tiempoCreditos = resultsDataForm[5];
             this.data.idTiempoCredito = this.tiempoCreditos.length > 0 ? this.tiempoCreditos[0].idTiempoCredito : 0;
 
+              //Permisos             
+            //   let userPermission = resultsDataForm[9];
+            //   this.ventaPermission = JSON.parse(userPermission[0].jsonPermission);
+  
+            //   this.ventaComprobantePermission = Object.freeze(this.ventaPermission.comprobante);
+            //   this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
 
             //Creamos columna de Factura 
             this.columnDefsInvoice();
@@ -603,6 +629,32 @@ export class ModalSelectDocumentoCtrl extends ModalBaseCtrl {
     }
 
     columnDefsInvoice() {
+        // let defaultPermission = Object.freeze({
+        //     tarifa: {
+        //         update: true
+        //     },
+        //     medida: {
+        //         update: true
+        //     },
+        //     tipoIva: {
+        //         update: true
+        //     },
+        //     porcentajeDescuento: {
+        //         update: true
+        //     },
+        //     descuento: {
+        //         update: true
+        //     },
+        //     precioUnitario: {
+        //         update: true
+        //     },
+        //     precioConIva: {
+        //         update: true
+        //     },
+        // })
+
+        // const ventaDetailPermission = this.ventaDetailPermission || defaultPermission;
+        
         this.gridOptionsDetailDocument.columnDefs = [{
                 name: 'N°',
                 field: 'n',
@@ -1007,65 +1059,66 @@ export class ModalSelectDocumentoCtrl extends ModalBaseCtrl {
 
 
     getProformas() {
-        const self = this;
-        this._mS.getData('get', '/Proforma/Get?json=' + JSON.stringify(this.dataSearch)).then(async response => {
-            if (response.id === '0') {
-                this.documentos = [];
-                console.warn(response)
-                return
-
-            }
-
-            this.gridOptions.columnDefs = [{
-                    name: 'Nro. Doc',
-                    field: 'nroDocumento'
-                },
-                {
-                    name: 'F. Emisión',
-                    field: 'fechaEmision'
-                },
-                {
-                    name: 'F. Vcto',
-                    field: 'fechaVencimiento',
-                    visible: false
-                },
-                {
-                    name: 'Cliente',
-                    field: 'nombreFiscal',
-                    cellTemplate: `<div class="grid-tooltip"  tooltip-placement="left" uib-tooltip="{{row.entity.nombreFiscal }}">
-                <div class="ui-grid-cell-contents">
-                  {{ COL_FIELD }}
-                </div>
-              </div>`
-                },
-                {
-                    name: 'Total',
-                    field: 'total',
-                    cellTemplate: ` <div class="grid-tooltip"><div class="ui-grid-cell-contents">$ {{ COL_FIELD }}</div></div>`,
-                    aggregationType: self.uiGridConstants.aggregationTypes.sum,
-                    customTreeAggregationFinalizerFn: function (aggregation) {
-                        aggregation.rendered = aggregation.value;
+        try {
+            const self = this;
+            this.proformaSvc.getAll(this.dataSearch).then(async response => {             
+                this.gridOptions.columnDefs = [{
+                        name: 'Nro. Doc',
+                        field: 'nroDocumento'
                     },
-                    aggregationLabel: "Total: ",
-                    aggregationHideLabel: true,
-                    footerCellFilter: 'number:2',
-                },
-                {
-                    name: 'Estado',
-                    field: 'estadoDoc',
-                    visible: true
-                },
-                {
-                    name: 'Usuario',
-                    field: 'usuario'
-                },
-            ];
-
-            this.documentos = JSON.parse(response.data) || [];
-            await this.setDataGridOptionsChildren();
-
+                    {
+                        name: 'F. Emisión',
+                        field: 'fechaEmision'
+                    },
+                    {
+                        name: 'F. Vcto',
+                        field: 'fechaVencimiento',
+                        visible: false
+                    },
+                    {
+                        name: 'Cliente',
+                        field: 'nombreFiscal',
+                        cellTemplate: `<div class="grid-tooltip"  tooltip-placement="left" uib-tooltip="{{row.entity.nombreFiscal }}">
+                    <div class="ui-grid-cell-contents">
+                      {{ COL_FIELD }}
+                    </div>
+                  </div>`
+                    },
+                    {
+                        name: 'Total',
+                        field: 'total',
+                        cellTemplate: ` <div class="grid-tooltip"><div class="ui-grid-cell-contents">$ {{ COL_FIELD }}</div></div>`,
+                        aggregationType: self.uiGridConstants.aggregationTypes.sum,
+                        customTreeAggregationFinalizerFn: function (aggregation) {
+                            aggregation.rendered = aggregation.value;
+                        },
+                        aggregationLabel: "Total: ",
+                        aggregationHideLabel: true,
+                        footerCellFilter: 'number:2',
+                    },
+                    {
+                        name: 'Estado',
+                        field: 'estadoDoc',
+                        visible: true
+                    },
+                    {
+                        name: 'Usuario',
+                        field: 'usuario'
+                    },
+                ];
+    
+                this.documentos = response;
+                await this.setDataGridOptionsChildren();
+    
+                Swal.close();
+            }).catch(error => {
+                Swal.close();
+                console.log(error)
+            })       
+        } catch (error) {
             Swal.close();
-        })
+            console.log(error);        
+        }
     }
 
 
@@ -1783,9 +1836,39 @@ export class ModalProformaFiltroCtrl extends ModalBaseCtrl {
 
 
 export class ModalApproveDocCtrl extends ModalBaseCtrl {
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'uiGridConstants', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario', 'params', 'decodeToken'];
+    static $inject = [
+        '$scope', 
+        '$timeout', 
+        '$uibModalInstance', 
+        'uiGridConstants', 
+        'mainService', 
+        'commonService', 
+        'articuloService',
+        'facturaService',
+        'modalService', 
+        'nombreModal', 
+        'toastService', 
+        'formulario', 
+        'params', 
+        'decodeToken'
+    ];
 
-    constructor($scope, $timeout, $uibModalInstance, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS, _params, decodeToken) {
+    constructor(
+        $scope, 
+        $timeout, 
+        $uibModalInstance, 
+        uiGridConstants, 
+        _mS, 
+        _commonSvc, 
+        articuloSvc,
+        facturaSvc,
+        _modalSvc, 
+        _nombreModalConst,
+        _tS, 
+        _fS, 
+        _params, 
+        decodeToken
+    ) {
         super(_commonSvc)
         const self = this;
 
@@ -1795,16 +1878,32 @@ export class ModalApproveDocCtrl extends ModalBaseCtrl {
         this.uiGridConstants = uiGridConstants;
         this._mS = _mS;
         this._commonSvc = _commonSvc;
+        this.articuloSvc = articuloSvc;
+        this.facturaSvc = facturaSvc;
+
         this._modalSvc = _modalSvc;
         this._nombreModalConst = _nombreModalConst;
         this._tS = _tS;
         this._fS = _fS;
         this._params = _params;
 
-        this.data = this._params[0][0];
-        this.data.fechaEmision = this._fS.formatDate(this.data.fechaEmision)
-        this.detalleDocumento = this._params[1];
-        this.infoAdicionalDocumento = [];
+        this._params = _params;
+        let {comprobante, detalle, datosAdicionalesArticulo, infoAdicionalDocumento} = _params;
+
+        this.data = comprobante;
+        this.data.fechaEmision = this._fS.formatDate(this.data.fechaEmision)        
+       
+        this.detalleDocumento = detalle;
+
+        this.datosAdicionalesArticulo = datosAdicionalesArticulo || [];
+        this.historyDatosAdicionales = datosAdicionalesArticulo.map(item=>({
+            idArticulo: item.idArticulo,
+            idInfoAdicional: item.idInfoAdicional,
+            selected: true,
+        }))
+
+        this.infoAdicionalDocumento = infoAdicionalDocumento;
+
 
         this.TIPO_DOC = _commonSvc.tipoDoc[this.data.docOrigen];
         this.TIPO_DOC_FV = _commonSvc.tipoDoc['FV'];
@@ -1881,6 +1980,13 @@ export class ModalApproveDocCtrl extends ModalBaseCtrl {
             this.actividadTipoIva = this.tipoIvas.find(ti => ti.codigoPorcentaje === this.data.codigoPorcentaje)
             this.data.tarifa = this.actividadTipoIva.tarifa;
 
+             //Permisos             
+             let userPermission = resultsDataForm[9];
+             this.ventaPermission = JSON.parse(userPermission[0].jsonPermission);
+ 
+             this.ventaComprobantePermission = Object.freeze(this.ventaPermission.comprobante);
+             this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
+
             //Cargamos Nombres de las Columnas del Detalle Documento  
             this.setColumnDefs();
             this.convertDetail();
@@ -1917,6 +2023,33 @@ export class ModalApproveDocCtrl extends ModalBaseCtrl {
 
     setColumnDefs() {
         const self = this;
+
+        let defaultPermission = Object.freeze({
+            tarifa: {
+                update: true
+            },
+            medida: {
+                update: true
+            },
+            tipoIva: {
+                update: true
+            },
+            porcentajeDescuento: {
+                update: true
+            },
+            descuento: {
+                update: true
+            },
+            precioUnitario: {
+                update: true
+            },
+            precioConIva: {
+                update: true
+            },
+        })
+
+        const ventaDetailPermission = this.ventaDetailPermission || defaultPermission;
+
         this.gridOptionsDetailDocument.columnDefs = [{
                 name: 'Op.',
                 enableCellEdit: false,
@@ -1928,7 +2061,8 @@ export class ModalApproveDocCtrl extends ModalBaseCtrl {
                 </button>
                 <button type="button" ng-if="articlePermission.editar" class= "btn btn-success btn-xs text-white" ng-click="grid.appScope.$ctrl.openModalArticulo(row.entity)" title = "Editar Articulo" >
                     <i class="fa fa-edit"></i>
-                </button > `
+                </button > 
+                <a  btn-dato-adicional-articulo-fact-elect entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' history-datos-adicionales="grid.appScope.$ctrl.historyDatosAdicionales" result-modal-adicional="grid.appScope.$ctrl.resultModalAdicional(result)" datos-adicionales="grid.appScope.$ctrl.datosAdicionalesArticulo" class= "btn btn-warning btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`
             },
             {
                 name: 'Cód.',
@@ -1960,9 +2094,9 @@ export class ModalApproveDocCtrl extends ModalBaseCtrl {
             {
                 name: 'Medida',
                 field: 'idMedida',
-                enableCellEdit: true,
-                allowCellFocus: true,
-                enableCellEditOnFocus: true,
+                 enableCellEdit: ventaDetailPermission.medida.update,
+                enableCellEditOnFocus: ventaDetailPermission.medida.update,
+                allowCellFocus: ventaDetailPermission.medida.update,
                 cellFilter: 'mapMedida:row.entity.medidas',
                 editableCellTemplate: 'ui-grid/dropdownEditor',
                 editDropdownOptionsFunction: (rowEntity, colDef) => rowEntity.medidas.map(val => ({
@@ -1980,9 +2114,9 @@ export class ModalApproveDocCtrl extends ModalBaseCtrl {
                 cellFilter: 'cellFilterTipoIva:this',
                 editDropdownValueLabel: 'descripcion',
                 editDropdownIdLabel: 'idTipoIva',
-                enableCellEdit: true,
-                allowCellFocus: true,
-                enableCellEditOnFocus: true,
+                enableCellEdit: ventaDetailPermission.tipoIva.update,
+                allowCellFocus: ventaDetailPermission.tipoIva.update,
+                enableCellEditOnFocus: ventaDetailPermission.tipoIva.update,
                 type: 'number',
                 width: '8%',
                 minWidth: '100',
@@ -1999,9 +2133,9 @@ export class ModalApproveDocCtrl extends ModalBaseCtrl {
                         value: val.tarifa + ' - $' + val.precioConIva
                     }))
                 },
-                enableCellEdit: true,
-                allowCellFocus: true,
-                enableCellEditOnFocus: true,
+                enableCellEdit: ventaDetailPermission.tarifa.update,
+                enableCellEditOnFocus: ventaDetailPermission.tarifa.update,
+                allowCellFocus: ventaDetailPermission.tarifa.update,
                 type: 'number',
                 width: '12%',
                 minWidth: '100',
@@ -2015,6 +2149,9 @@ export class ModalApproveDocCtrl extends ModalBaseCtrl {
                 type: 'number',
                 width: '8%',
                 minWidth: '100',
+                cellEditableCondition: function (scope) {
+                    return scope.row.entity.llevaInventario ? ventaDetailPermission.precioUnitario.update : true;
+                },
             },
             {
                 name: 'P. Iva',
@@ -2024,14 +2161,17 @@ export class ModalApproveDocCtrl extends ModalBaseCtrl {
                 enableCellEditOnFocus: true,
                 type: 'number',
                 width: '7%',
-                minWidth: '100'
+                minWidth: '100',
+                cellEditableCondition: function (scope) {
+                    return scope.row.entity.llevaInventario ? ventaDetailPermission.precioConIva.update : true;
+                },
             },
             {
                 name: '%',
                 field: 'porcentajeDescuento',
-                enableCellEdit: true,
-                allowCellFocus: true,
-                enableCellEditOnFocus: true,
+                enableCellEdit: ventaDetailPermission.porcentajeDescuento.update,
+                allowCellFocus: ventaDetailPermission.porcentajeDescuento.update,
+                enableCellEditOnFocus: ventaDetailPermission.porcentajeDescuento.update,
                 type: 'number',
                 width: '6%',
                 minWidth: '100',
@@ -2040,9 +2180,9 @@ export class ModalApproveDocCtrl extends ModalBaseCtrl {
             {
                 name: 'dsto.',
                 field: 'valorDescuento',
-                enableCellEdit: true,
-                allowCellFocus: true,
-                enableCellEditOnFocus: true,
+                enableCellEdit: ventaDetailPermission.descuento.update,
+                enableCellEditOnFocus: ventaDetailPermission.descuento.update,
+                allowCellFocus: ventaDetailPermission.descuento.update,
                 type: 'number',
                 width: '6%',
                 minWidth: '100',
@@ -2117,16 +2257,20 @@ export class ModalApproveDocCtrl extends ModalBaseCtrl {
             item.total = item.precioTotalSinImpuesto;
             // item.total          = this._fS.roundNumber(item.precioTotalSinImpuesto, this.decimal.nroTotalDetalle);
 
-            this._commonSvc.getDataArticuloParaVenta({
-                json: item
-            }).then(response => {
-                const results = JSON.parse(response.data);
-                const responseMsg = results[0][0];
-                if (responseMsg.code === '1' || responseMsg.code === '2') {
-                    item.medidas = results[1];
-                    let dataMedida = item.medidas.find(m => m.idMedida === item.idMedida) || {};
-                    item.articuloTarifas = JSON.parse(dataMedida.tarifas);
-                }
+            let query = {
+                idArticulo: item.idArticulo,
+            }
+            //Obteniendo datos del articulo 
+            this.articuloSvc.findForSale(query).then(response => {
+                let  {articulo, medidas, datosAdicionalesArticulo} = response;
+                item.medidas = medidas;
+                item.datosAdicionalesArticulo = datosAdicionalesArticulo;
+
+                let dataMedida = medidas.find(m => m.idMedida === item.idMedida) || {};
+                item.articuloTarifas = JSON.parse(dataMedida.tarifas);
+            }).catch(err => {
+                console.log('error al cargar articulo en el detalle-> modal-aprob-comprobante')
+                console.log(err);
             })
 
             this.gridOptionsDetailDocument.data.push(item);
@@ -2136,10 +2280,19 @@ export class ModalApproveDocCtrl extends ModalBaseCtrl {
 
     async askToDeleteArticle(rowEntity) {
         const self = this;
-        if (await this.uiGridInvoice.deleteRow(rowEntity.entity)) {
+        let isConfirmed = await this.uiGridInvoice.deleteRow(rowEntity.entity);        
+
+        if(isConfirmed) {
             this.data = Object.assign(this.data, this.uiGridInvoice.getTotales());
             self.$scope.$apply();
         }
+
+        if (isConfirmed && rowEntity.entity.datosAdicionales) {
+            this.datosAdicionalesArticulo = this.datosAdicionalesArticulo.filter(val => val.idArticulo !== rowEntity.entity.idArticulo);
+            this.historyDatosAdicionales = this.historyDatosAdicionales.filter(val => val.idArticulo !== rowEntity.entity.idArticulo);
+        }
+       
+       
     }
 
 
@@ -2228,31 +2381,28 @@ export class ModalApproveDocCtrl extends ModalBaseCtrl {
 
             if (isConfirmed) {
                 showLoader();
-
-                const factura = {
-                    ...this.data,
-                    fechaEmision: this._fS.formatDateTimeZone(this.data.fechaEmision),
-                    fechaVencimiento: this._fS.formatDateTimeZone(this.data.fechaVencimiento),
-                }
-
-                //Tarifa Aplicada al Documento
+                 //Tarifa Aplicada al Documento
+                let factura = Object.assign({}, this.data);
                 factura.tarifa = this.uiGridInvoice.actividadTipoIva.tarifa;
                 factura.codigoPorcentaje = this.uiGridInvoice.actividadTipoIva.codigoPorcentaje;
+                
 
-                const data = {
-                    factura: JSON.stringify(factura),
-                    detalle: JSON.stringify(this.trimDetailDoc()),
-                    adicional: JSON.stringify(this.infoAdicionalDocumento),
-                    manejoArticulo: JSON.stringify([])
-                }
-
-                this._mS.getData('post', 'Factura', data, true).then(response => {
+                let params = this.facturaSvc.queryMapper({
+                    data: factura, 
+                    cliente: {
+                        idCliente: this.data.idCliente
+                    },
+                    detalles: this.gridOptionsDetailDocument.data, 
+                    infoAdicionalDocumento: this.infoAdicionalDocumento,
+                    historyDatosAdicionales: this.historyDatosAdicionales
+                })
+  
+                this.facturaSvc.save(params).then(response => {
+                    hideLoader();
                     if (response.code === "0") {
-                        hideLoader();
                         this._fS.sweetAlert('warning', response.message);
                     }
-                    if (response.code === '1') {
-                        hideLoader();
+                    if (response.code === '1') {                   
                         this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
                         this.$uibModalInstance.close(response);
                     }
@@ -2275,9 +2425,39 @@ export class ModalApproveDocCtrl extends ModalBaseCtrl {
 
 
 export class ModalApproveDocEditCtrl extends ModalBaseCtrl {
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'uiGridConstants', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario', 'params', 'decodeToken'];
+    static $inject = [
+        '$scope', 
+        '$timeout', 
+        '$uibModalInstance', 
+        'uiGridConstants', 
+        'mainService', 
+        'commonService', 
+        'aprobacionDocService',
+        'articuloService',
+        'modalService', 
+        'nombreModal', 
+        'toastService', 
+        'formulario', 
+        'params', 
+        'decodeToken'
+    ];
 
-    constructor($scope, $timeout, $uibModalInstance, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS, _params, decodeToken) {
+    constructor(
+        $scope, 
+        $timeout, 
+        $uibModalInstance, 
+        uiGridConstants, 
+        _mS, 
+        _commonSvc, 
+        aprobacionDocSvc,
+        articuloSvc,
+        _modalSvc, 
+        _nombreModalConst, 
+        _tS, 
+        _fS, 
+        _params, 
+        decodeToken
+    ) {
         super(_commonSvc, 'FV')
         const self = this;
 
@@ -2286,16 +2466,28 @@ export class ModalApproveDocEditCtrl extends ModalBaseCtrl {
         this.$uibModalInstance = $uibModalInstance;
         this.uiGridConstants = uiGridConstants;
         this._mS = _mS;
+
+        this.aprobacionDocSvc = aprobacionDocSvc;
+        this.articuloSvc = articuloSvc;
         this._modalSvc = _modalSvc;
         this._nombreModalConst = _nombreModalConst;
         this._tS = _tS;
         this._fS = _fS;
+
         this._params = _params;
+        let {comprobante, detalle, datosAdicionalesArticulo} = _params;
 
         //Data Params 
-        this.data = this._params[0][0];
+        this.data = comprobante;
         this.data.fechaEmision = this._fS.formatDate(this.data.fechaEmision)
-        this.detalleDocumento = this._params[1];
+        this.detalleDocumento = detalle;
+
+        this.datosAdicionalesArticulo = datosAdicionalesArticulo || [];
+        this.historyDatosAdicionales = datosAdicionalesArticulo.map(item=>({
+            idArticulo: item.idArticulo,
+            idInfoAdicional: item.idInfoAdicional,
+            selected: true,
+        }))
 
         this.TIPO_DOC = this._commonSvc.tipoDoc[this.data.docOrigen]
 
@@ -2369,8 +2561,17 @@ export class ModalApproveDocEditCtrl extends ModalBaseCtrl {
             this.idTarifa = this.tarifas.length > 0 ? this.tarifas[0].idTarifa : 0;
             this.cloneIdTarifa = this.idTarifa;
 
-            this.actividadTipoIva = this.tipoIvas.find(ti => ti.codigoPorcentaje === this.data.codigoPorcentaje)
+            this.actividadTipoIva = this.tipoIvas.find(ti => ti.codigoPorcentaje === this.data.codigoPorcentaje);
+
             this.data.tarifa = this.actividadTipoIva.tarifa
+
+              //Permisos             
+              let userPermission = resultsDataForm[9];
+              this.ventaPermission = JSON.parse(userPermission[0].jsonPermission);
+  
+              this.ventaComprobantePermission = Object.freeze(this.ventaPermission.comprobante);
+              this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
+
             //Cargamos Nombres de las Columnas del Detalle Documento  
             this.setColumnDefs();
             this.convertDetail();
@@ -2406,6 +2607,33 @@ export class ModalApproveDocEditCtrl extends ModalBaseCtrl {
 
     setColumnDefs() {
         const self = this;
+
+        let defaultPermission = Object.freeze({
+            tarifa: {
+                update: true
+            },
+            medida: {
+                update: true
+            },
+            tipoIva: {
+                update: true
+            },
+            porcentajeDescuento: {
+                update: true
+            },
+            descuento: {
+                update: true
+            },
+            precioUnitario: {
+                update: true
+            },
+            precioConIva: {
+                update: true
+            },
+        })
+
+        const ventaDetailPermission = this.ventaDetailPermission || defaultPermission;
+
         this.gridOptionsDetailDocument.columnDefs = [{
                 name: 'Op.',
                 enableCellEdit: false,
@@ -2417,7 +2645,8 @@ export class ModalApproveDocEditCtrl extends ModalBaseCtrl {
                 </button>
                 <button type="button" ng-if="articlePermission.editar" class= "btn btn-success btn-xs text-white" ng-click="grid.appScope.$ctrl.openModalArticulo(row.entity)" title = "Editar Articulo" >
                     <i class="fa fa-edit"></i>
-                </button > `
+                </button > 
+                <a  btn-dato-adicional-articulo-fact-elect entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' history-datos-adicionales="grid.appScope.$ctrl.historyDatosAdicionales" result-modal-adicional="grid.appScope.$ctrl.resultModalAdicional(result)" datos-adicionales="grid.appScope.$ctrl.datosAdicionalesArticulo" class= "btn btn-warning btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`
             },
             {
                 name: 'Cód.',
@@ -2449,9 +2678,9 @@ export class ModalApproveDocEditCtrl extends ModalBaseCtrl {
             {
                 name: 'Medida',
                 field: 'idMedida',
-                enableCellEdit: true,
-                allowCellFocus: true,
-                enableCellEditOnFocus: true,
+                 enableCellEdit: ventaDetailPermission.medida.update,
+                enableCellEditOnFocus: ventaDetailPermission.medida.update,
+                allowCellFocus: ventaDetailPermission.medida.update,
                 cellFilter: 'mapMedida:row.entity.medidas',
                 editableCellTemplate: 'ui-grid/dropdownEditor',
                 editDropdownOptionsFunction: (rowEntity, colDef) => rowEntity.medidas.map(val => ({
@@ -2469,9 +2698,9 @@ export class ModalApproveDocEditCtrl extends ModalBaseCtrl {
                 cellFilter: 'cellFilterTipoIva:this',
                 editDropdownValueLabel: 'descripcion',
                 editDropdownIdLabel: 'idTipoIva',
-                enableCellEdit: true,
-                allowCellFocus: true,
-                enableCellEditOnFocus: true,
+                enableCellEdit: ventaDetailPermission.tipoIva.update,
+                allowCellFocus: ventaDetailPermission.tipoIva.update,
+                enableCellEditOnFocus: ventaDetailPermission.tipoIva.update,
                 type: 'number',
                 width: '8%',
                 minWidth: '100',
@@ -2488,9 +2717,9 @@ export class ModalApproveDocEditCtrl extends ModalBaseCtrl {
                         value: val.tarifa + ' - $' + val.precioConIva
                     }))
                 },
-                enableCellEdit: true,
-                allowCellFocus: true,
-                enableCellEditOnFocus: true,
+                enableCellEdit: ventaDetailPermission.tarifa.update,
+                enableCellEditOnFocus: ventaDetailPermission.tarifa.update,
+                allowCellFocus: ventaDetailPermission.tarifa.update,
                 type: 'number',
                 width: '12%',
                 minWidth: '100',
@@ -2504,6 +2733,9 @@ export class ModalApproveDocEditCtrl extends ModalBaseCtrl {
                 type: 'number',
                 width: '8%',
                 minWidth: '100',
+                cellEditableCondition: function (scope) {
+                    return scope.row.entity.llevaInventario ? ventaDetailPermission.precioUnitario.update : true;
+                },
             },
             {
                 name: 'P. Iva',
@@ -2513,14 +2745,17 @@ export class ModalApproveDocEditCtrl extends ModalBaseCtrl {
                 enableCellEditOnFocus: true,
                 type: 'number',
                 width: '7%',
-                minWidth: '100'
+                minWidth: '100',
+                cellEditableCondition: function (scope) {
+                    return scope.row.entity.llevaInventario ? ventaDetailPermission.precioConIva.update : true;
+                },
             },
             {
                 name: '%',
-                field: 'porcentajeDescuento',
-                enableCellEdit: true,
-                allowCellFocus: true,
-                enableCellEditOnFocus: true,
+                field: 'porcentajeDescuento',              
+                enableCellEdit: ventaDetailPermission.porcentajeDescuento.update,
+                allowCellFocus: ventaDetailPermission.porcentajeDescuento.update,
+                enableCellEditOnFocus: ventaDetailPermission.porcentajeDescuento.update,
                 type: 'number',
                 width: '6%',
                 minWidth: '100',
@@ -2529,9 +2764,9 @@ export class ModalApproveDocEditCtrl extends ModalBaseCtrl {
             {
                 name: 'dsto.',
                 field: 'valorDescuento',
-                enableCellEdit: true,
-                allowCellFocus: true,
-                enableCellEditOnFocus: true,
+                enableCellEdit: ventaDetailPermission.descuento.update,
+                enableCellEditOnFocus: ventaDetailPermission.descuento.update,
+                allowCellFocus: ventaDetailPermission.descuento.update,
                 type: 'number',
                 width: '6%',
                 minWidth: '100',
@@ -2609,19 +2844,21 @@ export class ModalApproveDocEditCtrl extends ModalBaseCtrl {
             item.subTotal = this._fS.roundNumber(subTotal, 5);
             item.total = this._fS.roundNumber(total, this.decimal.nroTotalDetalle);
 
-            this._commonSvc.getDataArticuloParaVenta({
-                json: item
-            }).then(response => {
+            let query = {
+                idArticulo: item.idArticulo,
+            }
+            //Obteniendo datos del articulo 
+            this.articuloSvc.findForSale(query).then(response => {
+                let  {articulo, medidas, datosAdicionalesArticulo} = response;
+                item.medidas = medidas;
+                item.datosAdicionalesArticulo = datosAdicionalesArticulo;
 
-                const results = JSON.parse(response.data);
-
-                const responseMsg = results[0][0];
-                if (responseMsg.code === '1' || responseMsg.code === '2') {
-                    item.medidas = results[1];
-                    let dataMedida = item.medidas.find(m => m.idMedida === item.idMedida) || {};
-                    item.articuloTarifas = JSON.parse(dataMedida.tarifas);
-                }
+                let dataMedida = medidas.find(m => m.idMedida === item.idMedida) || {};
+                item.articuloTarifas = JSON.parse(dataMedida.tarifas);
+            }).catch(err => {
+                console.log(err);
             })
+           
 
             this.gridOptionsDetailDocument.data.push(item);
         }
@@ -2719,6 +2956,9 @@ export class ModalApproveDocEditCtrl extends ModalBaseCtrl {
 
                 const jsonHeader = {
                     ...this.data,
+                    totalSinImpuestos: this.data.subTotalSinImpuestos,
+                    totalConImpuestos: this.data.total,
+                    importeTotal: this.data.total,
                     fechaEmision: this._fS.formatDateTimeZone(this.data.fechaEmision, "YYYY-MM-DD h:mm A"),
                 }
 
@@ -2727,9 +2967,11 @@ export class ModalApproveDocEditCtrl extends ModalBaseCtrl {
                 jsonHeader.codigoPorcentaje = this.uiGridInvoice.actividadTipoIva.codigoPorcentaje;
 
                 let tempDetail = [];
+                let orderIndex = 1;
                 for (let item of this.gridOptionsDetailDocument.data) {
                     const precioTotalSinImpuesto = (item.precioUnitario - item.valorDescuento) * item.cantidad;
                     const obj = {
+                        orderIndex: orderIndex++,
                         idAprob_Document_Detailt: item.idAprob_Document_Detailt,
                         idTarifa: item.idTarifa,
                         idArticulo: item.idArticulo,
@@ -2740,7 +2982,9 @@ export class ModalApproveDocEditCtrl extends ModalBaseCtrl {
                         precioUnitario: item.precioUnitario,
                         precioConIva: item.precioConIva,
                         valorDescuento: item.valorDescuento,
+                        descuento: item.valorDescuento,
                         precioTotalSinImpuesto: this._fS.roundNumber(precioTotalSinImpuesto, this.decimal.nroTotalDetalle),
+                        baseImponible: this._fS.roundNumber(precioTotalSinImpuesto, this.decimal.nroTotalDetalle),
                         nota: item.nota,
                         codigoPorcentaje: item.codigoPorcentaje,
                         tarifa: item.tarifa
@@ -2749,14 +2993,13 @@ export class ModalApproveDocEditCtrl extends ModalBaseCtrl {
                 }
 
                 const data = {
-                    jsonHeader: JSON.stringify(jsonHeader),
-                    jsonDetail: JSON.stringify(tempDetail),
+                    comprobante: JSON.stringify(jsonHeader),
+                    detalle: JSON.stringify(tempDetail),
+                    historialVenta: JSON.stringify(this.historyDatosAdicionales)
                 }
+                console.log(this.TIPO_DOC_FV)
 
-
-
-
-                this._mS.getData('put', '/AprobDocument/Update?id=' + this.data.idAprob_Document, data).then(response => {
+                this.aprobacionDocSvc.update(this.data.idAprob_Document, data).then(response => {
                     if (response.code === "0") {
                         hideLoader();
                         this._fS.sweetAlert('warning', response.message);

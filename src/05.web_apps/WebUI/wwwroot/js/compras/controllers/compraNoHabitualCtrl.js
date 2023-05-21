@@ -1,10 +1,10 @@
 app.controller('compraNoHabitualCtrl', compraNoHabitualCtrl);
 
 
-compraNoHabitualCtrl.$inject = ['$scope', 'commonService', 'compraNoHabitualService', 'mainService', 'toastService', 'modalService', 'nombreModal', 'formulario', 'toastService']
+compraNoHabitualCtrl.$inject = ['$scope', 'commonService', 'compraNoHabitualService', 'mainService', 'toastService', 'modalService', 'nombreModal', 'formulario']
 
 
-function compraNoHabitualCtrl($scope, commonSvc, compraNoHabSvc, mS, tS, modalSvc, nombreModal, _fS, _tS) {
+function compraNoHabitualCtrl($scope, commonSvc, compraNoHabSvc, mS, tS, modalSvc, nombreModal, _fS) {
 
     //Variables Generales
     const {
@@ -19,12 +19,12 @@ function compraNoHabitualCtrl($scope, commonSvc, compraNoHabSvc, mS, tS, modalSv
     //Filtro 
     $scope.dataSearch = {
         checkBoxFecha: true,
-        fechaInicio: new Date(),
-        fechaFin: new Date()
+        // fechaInicio: new Date(),
+        // fechaFin: new Date()
     };
 
-    $scope.meses = _fS.meses();
-    $scope.mes = new Date().getMonth() + 1;
+    // $scope.meses = _fS.meses();
+    // $scope.mes = new Date().getMonth() + 1;
     $scope.proveedorFilter = {};
 
     $scope.estadoDocs = [{
@@ -34,27 +34,9 @@ function compraNoHabitualCtrl($scope, commonSvc, compraNoHabSvc, mS, tS, modalSv
         estado: 'A',
         descripcion: 'Anulado',
     }]
-    $scope.openModalFiltro = () => {
+    $scope.openModalFiltro = function() {
         $("#modalFiltro").modal('show');
-    }
-
-    $scope.onChangeFechaFiltro = () => {
-        $scope.dataSearch.tipoFecha = 'FE';
-        $scope.mes = new Date().getMonth() + 1;
-        $scope.getFechaInicioFinFilter($scope.mes)
-    }
-
-    //Fecha Inicial y Final dependiendo el Mes que seleccione el usuario en el Buscador AVanzado
-    $scope.getFechaInicioFinFilter = function (mes) {
-        let {
-            fechaInicio,
-            fechaFin
-        } = _fS.getFechaInicioFinFilter(mes);
-        $scope.dataSearch.fechaInicio = fechaInicio;
-        $scope.dataSearch.fechaFin = fechaFin;
-
-    }
-    // $scope.getFechaInicioFinFilter()
+    }    
 
     //-------------------------------------------Proveedor filter------------------------------
     $scope.searchProveedorFilter = (textSearch) => {
@@ -70,18 +52,18 @@ function compraNoHabitualCtrl($scope, commonSvc, compraNoHabSvc, mS, tS, modalSv
     $scope.busquedaAvanzada = () => {
         if ($scope.dataSearch.checkBoxProveedor) {
             if (_fS.campo($scope.dataSearch.byProveedor)) {
-                _tS.toastr('warning', 'Por favor seleccione el Proveedor');
+                tS.toastr('warning', 'Por favor seleccione el Proveedor');
                 return;
             };
         }
 
         if ($scope.dataSearch.checkBoxFecha) {
             if (_fS.campo($scope.dataSearch.fechaInicio)) {
-                _tS.toastr('warning', 'Por favor seleccione la Fecha Inicio');
+                tS.toastr('warning', 'Por favor seleccione la Fecha Inicio');
                 return;
             };
             if (_fS.campo($scope.dataSearch.fechaFin)) {
-                _tS.toastr('warning', 'Por favor seleccione la Fecha Fin');
+                tS.toastr('warning', 'Por favor seleccione la Fecha Fin');
                 return;
             };
         }
@@ -89,7 +71,7 @@ function compraNoHabitualCtrl($scope, commonSvc, compraNoHabSvc, mS, tS, modalSv
 
         if ($scope.dataSearch.checkBoxEstado) {
             if ($scope.dataSearch.byEstado === null || $scope.dataSearch.byEstado === undefined) {
-                _tS.toastr('warning', 'Por favor seleccione el Estado');
+                tS.toastr('warning', 'Por favor seleccione el Estado');
                 return
             }
         }
@@ -195,8 +177,10 @@ function compraNoHabitualCtrl($scope, commonSvc, compraNoHabSvc, mS, tS, modalSv
                 idProveedor: $scope.dataSearch.byProveedor,
                 estado: $scope.dataSearch.byEstado,
             };
+          
 
             $scope.documentoIngreso = [];
+            $scope.sumImporteTotal();
             compraNoHabSvc.getAll(query).then(response => {
                 $scope.documentoIngreso = response;
                 $scope.sumImporteTotal();
@@ -207,7 +191,7 @@ function compraNoHabitualCtrl($scope, commonSvc, compraNoHabSvc, mS, tS, modalSv
                 console.log(error);
             })            
         } catch (error) {
-            $scope.documentoIngreso = [];
+            hideLoader();
             console.log(error)
         }
     }

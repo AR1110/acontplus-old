@@ -24,10 +24,11 @@ IF OBJECT_ID(N'Ventas.Aprob_Document_Update', N'P') IS NOT NULL
 DROP PROCEDURE Ventas.Aprob_Document_Update 
 GO
 CREATE PROCEDURE Ventas.Aprob_Document_Update 
-	@idRol INT
+	@idUsuarioRol INT
    ,@id INT
    ,@comprobante VARCHAR(MAX)
    ,@detalle VARCHAR(MAX)
+   ,@historialVenta NVARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -36,7 +37,7 @@ BEGIN
 	DECLARE @idEntidad INT 
 	DECLARE @idUsuario INT
 	DECLARE @uniqueId VARCHAR(150)
-
+	DECLARE @idTipoDocumento INT 
 	DECLARE @fechaEmision DATETIME
 	DECLARE @observacion VARCHAR(300)
 	DECLARE @identificacionComprador VARCHAR(20)
@@ -80,10 +81,20 @@ BEGIN
 		,precioUnitario NUMERIC(18,5) NOT NULL
 		,descuento NUMERIC(18,5) NOT NULL
 		,precioTotalSinImpuesto NUMERIC(18,5) NOT NULL
-		,codigo INT NOT NULL
+		,codigo INT  NULL
 		,codigoPorcentaje INT NOT NULL
 		,tarifa NUMERIC(18,5) NOT NULL
 		,baseImponible NUMERIC(18,5) NOT NULL
+	)
+
+	DECLARE @tblInfoAdicional AS TABLE (
+		 nombre VARCHAR(300) NOT NULL
+		,valor VARCHAR(300) NOT NULL
+	)
+
+	DECLARE @historyInfoAdicional AS TABLE(
+		idArticulo INT NOT NULL,
+		idInfoAdicional INT NOT NULL
 	)
 
 	BEGIN TRY 
@@ -108,13 +119,15 @@ BEGIN
 		     )
 
 		INSERT INTO @tbDetalle 
-			  (idTarifa,idArticulo,idMedida,cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigo,codigoPorcentaje,tarifa,baseImponible)
-		SELECT idTarifa,idArticulo,idMedida,cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigo,codigoPorcentaje,tarifa,baseImponible
+			  (orderIndex, idTarifa,idArticulo,idMedida, idTipoIva, cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigo,codigoPorcentaje,tarifa,baseImponible)
+		SELECT orderIndex, idTarifa,idArticulo,idMedida, idTipoIva, cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigo,codigoPorcentaje,tarifa,baseImponible
 		FROM OPENJSON(@detalle)
 		WITH (
+				orderIndex                       INT '$.orderIndex',
 				idTarifa                         INT '$.idTarifa'
 			   ,idArticulo                       INT '$.idArticulo'
 		       ,idMedida                         INT '$.idMedida' 
+			   ,idTipoIva                        INT '$.idTipoIva' 
 		       ,cantidad               NUMERIC(18,5) '$.cantidad' 
 		       ,descripcion             VARCHAR(300) '$.descripcion' 
 		       ,precioUnitario         NUMERIC(18,5) '$.precioUnitario' 
@@ -126,9 +139,12 @@ BEGIN
 		       ,baseImponible          NUMERIC(18,5) '$.baseImponible'
 		     )
 
-		SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
+		INSERT INTO @historyInfoAdicional SELECT * FROM OPENJSON(@historialVenta)WITH(idArticulo INT, idInfoAdicional INT)
+
+		SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
 		SELECT TOP 1 @ruc = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
+		SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo = 'APR'
 
 		SELECT 
 			@uniqueId     = uniqueId
@@ -248,6 +264,39 @@ BEGIN
 			LEFT JOIN dbo.Impuesto im WITH (NOLOCK) ON im.idImpuesto = ti.idImpuesto
 			LEFT JOIN dbo.Medida   me WITH (NOLOCK) ON me.idMedida   = dt.idMedida
 			 ORDER BY dt.orderIndex ASC 
+
+		---------------------------------------------START-INFO-ADICIONAL-ARTICULO-------------------------------------------
+			UPDATE infoAdd  SET estado = 1
+			FROM Compra.InfoAdicional infoAdd
+			INNER JOIN Ventas.HistoryInfoAdicional h WITH(NOLOCK) ON h.idInfoAdicional = infoAdd.idInfoAdicional
+			WHERE h.codDoc ='APR' AND h.idDocumento = @id
+
+			DELETE FROM Ventas.HistoryInfoAdicional WHERE codDoc='APR' AND idDocumento = @id;
+
+			INSERT INTO Ventas.HistoryInfoAdicional(idInfoAdicional, codDoc, idDocumento, secuencial, ptoEmi, estab)
+			SELECT idInfoAdicional, 'APR', @id, @secuencial, @ptoEmi, @estab FROM @historyInfoAdicional
+			
+			UPDATE infoAdd  SET estado = 2 
+			FROM Compra.InfoAdicional infoAdd
+			INNER JOIN @historyInfoAdicional h ON h.idInfoAdicional = infoAdd.idInfoAdicional
+			--------------------------------------------END-INFO-ADICIONAL-ARTICULO------------------------------
+			 
+			INSERT INTO @tblInfoAdicional
+			SELECT j.[key] as nombre, ar.codigo + ' : ' +  STRING_AGG(j.[value], ', ') WITHIN GROUP (ORDER BY j.[value]) AS valor
+			FROM Compra.InfoAdicional t WITH (NOLOCK)
+			INNER JOIN Ventas.HistoryInfoAdicional h WITH (NOLOCK) ON t.idInfoAdicional = h.idInfoAdicional
+			INNER JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = t.idArticulo
+			CROSS APPLY OPENJSON(t.jsonAdicional) j
+			WHERE h.codDoc = 'APR' AND h.idDocumento = @id
+			GROUP BY j.[key],ar.codigo
+
+			
+			--informacion Adiciomal--
+			DELETE FROM dbo.InfoAdicionalDoc WHERE idComprobante = @id AND idTipoDocumento = @idTipoDocumento
+
+			INSERT INTO dbo.InfoAdicionalDoc (idComprobante,idTipoDocumento,nombre,valor)
+									      SELECT @id,@idTipoDocumento,nombre,valor FROM @tblInfoAdicional
+			--informacion Adicional--
 
 		COMMIT TRAN 
 		SELECT '1'code,'Actualizado Correctamente' as 'message'

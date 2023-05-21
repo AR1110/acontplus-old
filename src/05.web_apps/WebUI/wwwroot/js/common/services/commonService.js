@@ -807,9 +807,8 @@ export class CommonService {
         }
 
         switch (codigoDocumento) {
-            case "FC":
-            case "FF":
-                await this.mS.getData('get', `/FacturaCompra/GetId?id=${id}`).then(response => {
+            case "FC":        
+                await this.mS.getData('get', `IngresoFacturaCompra/GetId?id=${id}`, null, true).then(response => {
 
                     if (response.code == "0") {
                         this.form.sweetAlert('warning', response.message)
@@ -828,19 +827,16 @@ export class CommonService {
 
                         
                         datosAdicionales = dataMain[3].map(item=>{
-                            if(typeof item.info=='string'){
-                                item.info = JSON.parse(item.info).map(item=>{
-                                    let adicionales = JSON.parse(item.adicionales)
-                                    return {
-                                        ...item,
-                                        adicionales
-                                    }
-                                })
+                            return {
+                                idArticulo: item.idArticulo,
+                                idEtiqueta: item.idEtiqueta,
+                                idInfoAdicional: item.idInfoAdicional,
+                                adicionales: JSON.parse(item.jsonAdicional),
+                                estado: item.estado,
                             }
-                            return item;
                         })
                         
-                        datosAdicionalesArticulo = datosAdicionales[0];
+                        datosAdicionalesArticulo = datosAdicionales
 
                         isComplete = true;
                     }
@@ -1856,7 +1852,7 @@ console.log(datosAdicionalesArticulo)
                     fileCtrl = this.nombreModalCompra.FACTURA_FISICA.fileCtrl;
                     ctrl = this.nombreModalCompra.FACTURA_FISICA.controllers['D']
                     template = this.nombreModalCompra.FACTURA_FISICA.templates['D']
-
+                    controller = (await import(fileCtrl))[ctrl];
                     response = await this.getDataTipoDocCompra({
                         id,
                         codigoDocumento:'FC'
@@ -1938,6 +1934,7 @@ console.log(datosAdicionalesArticulo)
                 isComplete = false;
             let fileCtrl = null;
             let ctrl;
+            let isRenderRazorPartial = false;
 
             switch (codigoDocumento) {
                 case "FV":
@@ -2003,10 +2000,11 @@ console.log(datosAdicionalesArticulo)
 
 
                 case "FC":
+                    isRenderRazorPartial = true;
                     fileCtrl = this.nombreModalCompra.FACTURA_FISICA.fileCtrl;
                     ctrl = this.nombreModalCompra.FACTURA_FISICA.controllers['D']
                     template = this.nombreModalCompra.FACTURA_FISICA.templates['D']
-
+                    controller = (await import(fileCtrl))[ctrl];
                     response = await this.getDataTipoDocCompra({
                         id,
                         codigoDocumento
@@ -2053,6 +2051,10 @@ console.log(datosAdicionalesArticulo)
                     }
 
                     break
+
+                    default:
+                        console.log(`Detalle del Documento No definido: ${codigoDocumento}`);
+                        throw 'Detalle del Documento No definido'
             }
 
 
@@ -2062,7 +2064,8 @@ console.log(datosAdicionalesArticulo)
                 template,
                 params,
                 size,
-                windowClass
+                windowClass,
+                isRenderRazorPartial
             })
 
         } catch (error) {

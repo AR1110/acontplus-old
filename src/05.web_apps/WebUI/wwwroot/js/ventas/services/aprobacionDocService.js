@@ -4,12 +4,12 @@
     'use strict';
 
     app.factory('aprobacionDocService', function($injector){
-        let url = '/AprobDocument/';
+        let url = 'AprobacionDocumento/';
         let mS = $injector.get('mainService');
         let service = {}
 
         service.getAll = function(query){
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query))
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true)
                 .then(response => {
                    
                     if(response.code==="0"){
@@ -40,13 +40,37 @@
             })
         }
 
-        service.getInfoAdicionalFindById = function(id){
-            return service.getInfoAdicionalFind
+        service.findById = function(id){
+            return mS.getData('get', url + 'GetId/' + id, null, true).then(response =>{
+                if(response.code==='0'){
+                    throw response;
+                }
+                if(response.code==='1'){
+                    let dataRepository = JSON.parse(response.payload)
+                    return {
+                        comprobante: dataRepository[0][0],
+                        detalle: dataRepository[1],
+                        infoAdicionalDocumento: dataRepository[2],
+                        datosAdicionalesArticulo: dataRepository[3].map(item=>({
+                            idDocumento: item.idDocumento,
+                            idHistoryInfoAdicional: item.idHistoryInfoAdicional,
+                            idArticulo: item.idArticulo,
+                            idEtiqueta: item.idEtiqueta,
+                            idInfoAdicional: item.idInfoAdicional,
+                            jsonAdicional: JSON.parse(item.jsonAdicional),
+                            selected: item.selected,
+                            estado: item.estado
+                        }))
+                    } 
+                }
+            }).catch(error=>{
+                throw error
+            })
         }
 
         
         service.save = function(data){
-            return mS.getData('post', url + 'Insert', data)
+            return mS.getData('post', url + 'Insert', data, true)
             .then(response => {
                 return response;
             }).catch(error=>{
@@ -57,7 +81,7 @@
 
 
         service.update = function(id, data){
-            return mS.getData('put', url + 'Update/' + id, data)
+            return mS.getData('put', url + 'Update/' + id, data, true)
             .then(response => {
                 return response;
             }).catch(error=>{

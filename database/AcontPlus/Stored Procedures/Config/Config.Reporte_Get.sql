@@ -14,6 +14,7 @@ GO
 -- Create date: 2023-03-20
 -- Description: SP FOR GET REPORTS CONFIG
 -- =============================================
+-- Config.Reporte_Get 25, '{\"codigo\":\"RCCL\",\"format\":\"pdf\",\"aditionalParams\":[]}'
 IF OBJECT_ID(N'Config.Reporte_Get', N'P') IS NOT NULL
 DROP PROCEDURE Config.Reporte_Get 
 GO
