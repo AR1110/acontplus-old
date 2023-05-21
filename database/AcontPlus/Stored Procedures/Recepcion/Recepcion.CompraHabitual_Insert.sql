@@ -64,6 +64,8 @@ BEGIN
 				RETURN
 			END
 
+
+		 
 		IF NOT EXISTS (SELECT 1 FROM @tmp t INNER JOIN Articulo a WITH (NOLOCK) ON t.idArticulo = a.idArticulo AND a.llevaInventario = 1)
 			BEGIN
 				SELECT '0' code, 'Este articulo no esta configurado para llevar inventario' as 'message'

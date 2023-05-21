@@ -148,6 +148,7 @@
                         if (response.code == "1") {
                             $scope.comprobantes = JSON.parse(response.payload)[0]
                             $scope.cloneComprobantes = JSON.parse(JSON.stringify($scope.comprobantes))
+                            $scope.onKeyupSearchFilter();
                             hideLoader()
                         }
 
@@ -1192,6 +1193,7 @@
                                         etiquetas: etiquetasMapper
                                     }
                                 })
+                                console.log($scope.tempDetail)
                                 
                             }
                         }).catch(error => {
@@ -2043,9 +2045,16 @@
             }
 
             $scope.refresh = () => {
-                $scope.proveedorFiltro = null
-                $scope.query.rucProveedor = ''
+                // $scope.proveedorFiltro = null
+                // $scope.query.rucProveedor = ''
                 $scope.getComprobantes()
+            }
+
+            $scope.onKeyupProvedorAutocompleteFiltro = function(){
+                if(!$scope.proveedorFiltro.nombreFiscal){
+                    $scope.proveedorFiltro = null
+                    $scope.query.rucProveedor = ''
+                }
             }
 
 
