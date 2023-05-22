@@ -1507,7 +1507,10 @@
         {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> origin/ivan_work
           "Host": "localhost",
           "Port": 44320
         }
@@ -1527,6 +1530,9 @@
       },
       "DownstreamHostAndPorts": [
         {
+<<<<<<< HEAD
+>>>>>>> origin/ivan_work
+=======
 >>>>>>> origin/ivan_work
           "Host": "205.209.99.71",
           "Port": 8099
@@ -1542,6 +1548,7 @@
       ],
       "UpstreamPathTemplate": "/api/CuentaPorCobrar/{everything}"
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
           "Host": "localhost",
           "Port": 44320
@@ -1553,6 +1560,8 @@
         "Get"
       ],
       "UpstreamPathTemplate": "/api/Dashboard{everything}"
+>>>>>>> origin/ivan_work
+=======
 >>>>>>> origin/ivan_work
 =======
 >>>>>>> origin/ivan_work

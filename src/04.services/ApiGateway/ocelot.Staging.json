@@ -1469,7 +1469,10 @@
           "Host": "205.209.99.71",
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> origin/ivan_work
           "Port": 8091
         }
       ],
@@ -1489,6 +1492,9 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "205.209.99.71",
+<<<<<<< HEAD
+>>>>>>> origin/ivan_work
+=======
 >>>>>>> origin/ivan_work
           "Port": 8099
         }
@@ -1503,6 +1509,7 @@
       ],
       "UpstreamPathTemplate": "/api/CuentaPorCobrar/{everything}"
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
           "Port": 8091
         }
@@ -1513,6 +1520,8 @@
         "Get"
       ],
       "UpstreamPathTemplate": "/api/Dashboard{everything}"
+>>>>>>> origin/ivan_work
+=======
 >>>>>>> origin/ivan_work
 =======
 >>>>>>> origin/ivan_work
