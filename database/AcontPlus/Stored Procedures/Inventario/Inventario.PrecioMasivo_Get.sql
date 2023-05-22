@@ -155,6 +155,10 @@ BEGIN
 				BEGIN
 					SET @sql = @sql + 'AND idArticulo IN (SELECT idArticulo FROM v_InventarioTransaccion WHERE rucClienteProveedor = @rucProveedor) '
 				END
+			IF (@opcion = 5)
+				BEGIN
+					SET @sql = @sql + 'AND idArticulo IN (SELECT idArticulo FROM v_InventarioTransaccion WHERE nroDocumento = @nroDocumento) '
+				END
 		EXEC sp_executesql @sql, @params
 							   ,@idEntidad = @idEntidad
 							   ,@idTarifa = @idTarifa

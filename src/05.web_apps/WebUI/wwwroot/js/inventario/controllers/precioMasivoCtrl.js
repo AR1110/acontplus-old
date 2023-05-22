@@ -16,7 +16,6 @@
 
         $scope.catalogs = [
             { code: 1, description: 'Articulo' },
-            { code: 2, description: 'Familias' },
             { code: 3, description: 'Subfamilias' },
             { code: 4, description: 'Proveedor' },
             { code: 5, description: 'N° Documento' }
