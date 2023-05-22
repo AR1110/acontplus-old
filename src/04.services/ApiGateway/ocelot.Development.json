@@ -1515,6 +1515,28 @@
         "Get"
       ],
       "UpstreamPathTemplate": "/api/Dashboard{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 8099
+        }
+      ],
+      "DownstreamPathTemplate": "/api/CuentaPorCobrar{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/api/CuentaPorCobrar/{everything}"
     }
   ]
 }

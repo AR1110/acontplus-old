@@ -15,6 +15,8 @@
             A: 'A',
         }
 
+        $scope.typeSend = 'DN';
+
         $scope.jsonPermission = {}
 
         $scope.dataSearch = {
