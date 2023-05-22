@@ -136,7 +136,10 @@
         $scope.docDestino = docDestino;
 
         $scope.cliente = {};
-        $scope.dataSearch = {};
+        $scope.dataSearch = {
+            fechaInicio: new Date(),
+            fechaFin: new Date(),
+        };
 
 
         $scope.gridOptionsDetalle = {};
@@ -309,7 +312,7 @@
         $scope.resultDateRange = function(item){
             $scope.getDocumentos();
             if($scope.cliente.idCliente>0){
-
+                $scope.getDocumentos();
             }
         }
 
@@ -326,10 +329,28 @@
             }
         }
 
+        $scope.selectedClienteSearch = function(item) {
+            console.log(item)
+            if(!$scope.dataSearch.fechaInicio || !$scope.dataSearch.fechaFin){
+                tS.toastr('warning', 'Seleccione rango de fecha')
+            }
+            if(item.idCliente>0){
+                $scope.dataSearch.byCliente = item.idCliente;
+                $scope.getDocumentos();
+            }           
+        }
+
 
         $scope.getDocumentos = function(){
             try {
-               
+                $scope.documentos = [];
+                if ($scope.docOrigen.codigo === 'NE') {
+                    $scope.getNotaEntregas();
+                }
+    
+                if ($scope.docOrigen.codigo === 'PR') {
+                    $scope.getProformas();
+                }
 
             } catch (error) {
                 console.log(error)
