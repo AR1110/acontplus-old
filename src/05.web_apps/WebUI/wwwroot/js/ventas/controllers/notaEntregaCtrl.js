@@ -650,9 +650,9 @@
             try {
                 let params = {
                     TYPE_NOTIFICATION: 'N',
-                    serie: item.nroDocumento,
+                    serie: item.serieComprobante,
                     correo: item.correo,
-                    subject: 'Documento Nota Entrega - Acontplus N°: ' + item.nroDocumento,
+                    subject: 'Documento Nota Entrega - Acontplus N°: ' + item.serieComprobante,
                     json: {
                         hasFile: true,
                         isReport: "SI",
@@ -663,7 +663,7 @@
                             format: "pdf"
                         },
                         spParams: {
-                            id: item.idNotaEntrega
+                            id: item.idDocumento
                         }
                     }
                 }
@@ -686,7 +686,7 @@
         $scope.getReport = function (item) {
             let format = 'pdf';
             let dataParms = {
-                id: item.idNotaEntrega
+                id: item.idDocumento
             }
 
             const parameters = {
