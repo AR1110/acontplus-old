@@ -21,6 +21,7 @@
                     console.log(proformas)
                     return proformas.map(item =>{
                         return {
+                            compronte: 'Proforma',
                             entidad: item.entidad,
                             codEstab: item.codEstab,
                             idProforma: item.idProforma,
@@ -33,6 +34,7 @@
                             fechaEmision: item.fechaEmision,
                             total: item.total,
                             nroDocumento: item.nroDocumento,
+                            serieComoprobante: item.nroDocumento,
                             nombreFiscal: item.nombreFiscal,
                             nroIdentificacion: item.nroIdentificacion,
                             telefono: item.telefono,

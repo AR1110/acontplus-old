@@ -20,6 +20,7 @@
                     console.log(notaEntregas)
                     return notaEntregas.map(item=>{
                         return {
+                            compronte: 'Nota de Entrega',
                             idDocumento: item.idDocumento,
                             idNotaEntrega: item.idNotaEntrega,
                             idTipoDocumento: item.idTipoDocumento,
@@ -32,7 +33,8 @@
                             fechaEmision: item.fechaEmision,
                             fechaVencimiento: item.fechaVencimiento,
                             total: item.total,
-                            nroDocumento: item.nroDocumento,
+                            nroDocumento: item.nroDocumento, //eliminar mas adelante
+                            serieComoprobante: item.nroDocumento,
                             nombreFiscal: item.nombreFiscal,
                             identificacionComprador: item.identificacionComprador,
                             correo: item.correo,
