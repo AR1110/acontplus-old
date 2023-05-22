@@ -24,7 +24,7 @@ BEGIN
 	
 	BEGIN TRY
 		BEGIN TRAN
-			UPDATE Config.WhatsAppSession SET estado = 0 WHERE idUsuarioRol = @idUsuarioRol AND id = @id
+			UPDATE Config.WhatsAppSession SET estado = 0 WHERE idUsuarioRol = @idUsuarioRol AND idSession = @id
 			SELECT '1' code, 'Exitos' as 'message'
 		COMMIT TRAN
 	END TRY

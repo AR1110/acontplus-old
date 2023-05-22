@@ -144,7 +144,7 @@ function facturaVentaCtrl(
         }
 
 
-        if (result.payAutomatic == 1) {
+        if (result.payAutomatic) {
             if (result.data.esContado) {
                 $scope.openModalRapido(result)
             } else {
@@ -153,7 +153,7 @@ function facturaVentaCtrl(
             return
         }
 
-        if (result.printerAutomatic == 1) {
+        if (result.printerAutomatic) {
             _commonSvc.getPrinter(JSON.stringify($scope.parametersPrint))
         }
 

@@ -284,8 +284,8 @@ BEGIN
 			FROM  Compra.InfoAdicional infoAdd WITH(NOLOCK) 
 			INNER JOIN @artInfoAdicional temp ON temp.idInfoAdicional = infoAdd.idInfoAdicional
 
-			INSERT INTO  Compra.InfoAdicional (uniqueId, idArticulo, idEtiqueta, jsonAdicional)
-			SELECT @uniqueId, idArticulo, idEtiqueta, jsonAdicional FROM @artInfoAdicional WHERE idInfoAdicional = 0 
+			INSERT INTO  Compra.InfoAdicional (uniqueId, idArticulo, idEtiqueta, jsonAdicional, fechaRegistro)
+			SELECT @uniqueId, idArticulo, idEtiqueta, jsonAdicional, dbo.ufnGetDateEcuador() FROM @artInfoAdicional WHERE idInfoAdicional = 0 
 
 			DELETE FROM Compra.InfoAdicional 
 			WHERE estado = 0  AND uniqueId = @uniqueId

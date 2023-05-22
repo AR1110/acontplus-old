@@ -308,20 +308,21 @@ function facturaCompraCtrl($scope, $filter, _mS, _commonSvc, factCompraSvc, _mod
     $scope.getReport = function (item) {
         let dataParms = {
             codEstab: item.codEstab,
-            idFacturaCompra: item.idFacturaCompra,
+            id: item.idFacturaCompra,
+            isReportImported: false
         }
 
         let parameters = {
+            hasService: true,
             reportParams: JSON.stringify({
                 codigo: 'RFC',
                 codEstab: item.codEstab,
                 format: 'pdf',
                 aditionalParams: []
             }),
-            dataParams: JSON.stringify(dataParms),
-            sendEmail: false
+            dataParams: JSON.stringify(dataParms),            
         }
-        showLoader();
+    
         _commonSvc.getReport({
             parameters,
             formatType: 'pdf'

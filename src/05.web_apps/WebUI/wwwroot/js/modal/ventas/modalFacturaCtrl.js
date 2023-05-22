@@ -721,7 +721,9 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
   
             if(isConfirmed){
                 showLoader();
-  
+
+                 //Tarifa Aplicada al Documento
+                 this.data.tarifa = this.actividadTipoIva.tarifa;
                 //Mappeamos todo el objecto necesario para guardar factura.
                 let params = this.facturaSvc.queryMapper({
                     data: this.data, 
@@ -767,7 +769,19 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
 
 export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
 
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'facturaService', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params']
+    static $inject = [
+        '$scope', 
+        '$timeout', 
+        '$uibModalInstance', 
+        'facturaService', 
+        'mainService', 
+        'commonService', 
+        'modalService', 
+        'nombreModal', 
+        'formulario', 
+        'toastService', 
+        'params'
+    ]
 
     constructor($scope, $timeout, $uibModalInstance, facturaSvc, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params) {
         super({
@@ -996,6 +1010,8 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
             if (isConfirmed) {
                 showLoader();
                 //Mappeamos todo el objecto necesario para guardar factura.
+                 //Tarifa Aplicada al Documento
+                 this.data.tarifa = this.actividadTipoIva.tarifa;
                 let params = this.facturaSvc.queryMapper({
                     data: this.data, 
                     cliente: this.cliente,
@@ -1407,7 +1423,9 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
 
             if(isConfirmed){
                 showLoader();
-  
+
+                 //Tarifa Aplicada al Documento
+                 this.data.tarifa = this.actividadTipoIva.tarifa;
                 //Mappeamos todo el objecto necesario para guardar factura.
                 let params = this.facturaSvc.queryMapper({
                     data: this.data, 

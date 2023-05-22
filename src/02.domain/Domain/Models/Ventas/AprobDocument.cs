@@ -2,8 +2,10 @@
 {
     public class AprobDocument
     {
-        public string jsonHeader { get; set; }
-        public string jsonDetail { get; set; }
-        public string jsonHistory { get; set; }
+        public string comprobante { get; set; }
+        public string detalle { get; set; }
+        public string historial { get; set; }
+        public string infoAdicional { get; set; }
+        public string historialVenta { get; set; }
     }
 }

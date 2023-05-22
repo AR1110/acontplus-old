@@ -30,22 +30,20 @@ BEGIN
 	DECLARE @tipo INT
 	,@opcion INT
 	,@idArticulo INT
+	,@idTarifa Int
 	,@rucProveedor VARCHAR(25)
 	,@idFamilia INT
 	,@idSubFamilia INT
 	,@nroDocumento VARCHAR(25)
 	,@sql NVARCHAR(MAX)
+	,@idEntidad INT
+	,@params NVARCHAR(MAX)
 
-	DECLARE @idEntidad INT = (
-			SELECT idEntidad
-			FROM App.UsuarioRol
-			WHERE idUsuarioRol = @idUsuarioRol
-			)
-	DECLARE @params NVARCHAR(MAX)
-
+	SET @idEntidad = (SELECT idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
 
 	SET @params = '@idEntidad INT,
 				   @idArticulo INT,
+				   @idTarifa INT,
 				   @rucProveedor VARCHAR(25),
 				   @idFamilia INT,
 				   @idSubFamilia INT,
@@ -58,42 +56,63 @@ BEGIN
 				,descripcion
 				,stock
 				,precioCosto
-				,pvp1 = ISNULL((SELECT TOP 1 ap.precioVenta FROM v_ArticuloPvp ap
+				,estado
+				,@idTarifa idTarifa
+				,iva
+				,idArticuloPvp = ISNULL((SELECT TOP 1 ap.idArticuloPvp FROM v_ArticuloPvp ap
 														WHERE ap.idArticulo = a.idArticulo 
-														AND ap.codTarifa = ''1''), 0)
-				,pvp2 = ISNULL((SELECT TOP 1 ap.precioVenta FROM v_ArticuloPvp ap
+														AND ap.idTarifa = @idTarifa), 0)
+				,precioVenta = ISNULL((SELECT TOP 1 ap.precioVenta FROM v_ArticuloPvp ap
 														WHERE ap.idArticulo = a.idArticulo 
-														AND ap.codTarifa = ''2''), 0)
-				,pvp3 = ISNULL((SELECT TOP 1 ap.precioVenta FROM v_ArticuloPvp ap
-															WHERE ap.idArticulo = a.idArticulo 
-															AND ap.codTarifa = ''3''), 0)
-				,pvp4 = ISNULL((SELECT TOP 1 ap.precioVenta FROM v_ArticuloPvp ap
-															WHERE ap.idArticulo = a.idArticulo 
-															AND ap.codTarifa = ''4''), 0)
-				,pvp5 = ISNULL((SELECT TOP 1 ap.precioVenta FROM v_ArticuloPvp ap
-															WHERE ap.idArticulo = a.idArticulo 
-															AND ap.codTarifa = ''5''), 0)
-				,pvpIva1 = ISNULL((SELECT TOP 1 ap.precioConIva FROM v_ArticuloPvp ap
+														AND ap.idTarifa = @idTarifa), 0)
+				
+				,precioConIva = ISNULL((SELECT TOP 1 ap.precioConIva FROM v_ArticuloPvp ap
 														WHERE ap.idArticulo = a.idArticulo 
-														AND ap.codTarifa = ''1''), 0)
-				,pvpIva2 = ISNULL((SELECT TOP 1 ap.precioConIva FROM v_ArticuloPvp ap
+														AND ap.idTarifa = @idTarifa), 0)
+				,porcentajeUtilidad = ISNULL((SELECT TOP 1 ap.porcentajeUtilidad FROM v_ArticuloPvp ap
 														WHERE ap.idArticulo = a.idArticulo 
-														AND ap.codTarifa = ''2''), 0)
-				,pvpIva3 = ISNULL((SELECT TOP 1 ap.precioConIva FROM v_ArticuloPvp ap
-															WHERE ap.idArticulo = a.idArticulo 
-															AND ap.codTarifa = ''3''), 0)
-				,pvpIva4 = ISNULL((SELECT TOP 1 ap.precioConIva FROM v_ArticuloPvp ap
-															WHERE ap.idArticulo = a.idArticulo 
-															AND ap.codTarifa = ''4''), 0)
-				,pvpIva5 = ISNULL((SELECT TOP 1 ap.precioConIva FROM v_ArticuloPvp ap
-															WHERE ap.idArticulo = a.idArticulo 
-															AND ap.codTarifa = ''5''), 0)
+														AND ap.idTarifa = @idTarifa), 0)
+				,estadoTarifa = ISNULL((SELECT TOP 1 ap.estado FROM v_ArticuloPvp ap
+														WHERE ap.idArticulo = a.idArticulo 
+														AND ap.idTarifa = @idTarifa), 0)
+				--,pvp1 = ISNULL((SELECT TOP 1 ap.precioVenta FROM v_ArticuloPvp ap
+				--										WHERE ap.idArticulo = a.idArticulo 
+				--										AND ap.codTarifa = ''1''), 0)
+				--,pvp2 = ISNULL((SELECT TOP 1 ap.precioVenta FROM v_ArticuloPvp ap
+				--										WHERE ap.idArticulo = a.idArticulo 
+				--										AND ap.codTarifa = ''2''), 0)
+				--,pvp3 = ISNULL((SELECT TOP 1 ap.precioVenta FROM v_ArticuloPvp ap
+				--											WHERE ap.idArticulo = a.idArticulo 
+				--											AND ap.codTarifa = ''3''), 0)
+				--,pvp4 = ISNULL((SELECT TOP 1 ap.precioVenta FROM v_ArticuloPvp ap
+				--											WHERE ap.idArticulo = a.idArticulo 
+				--											AND ap.codTarifa = ''4''), 0)
+				--,pvp5 = ISNULL((SELECT TOP 1 ap.precioVenta FROM v_ArticuloPvp ap
+				--											WHERE ap.idArticulo = a.idArticulo 
+				--											AND ap.codTarifa = ''5''), 0)
+				--,pvpIva1 = ISNULL((SELECT TOP 1 ap.precioConIva FROM v_ArticuloPvp ap
+				--										WHERE ap.idArticulo = a.idArticulo 
+				--										AND ap.codTarifa = ''1''), 0)
+				--,pvpIva2 = ISNULL((SELECT TOP 1 ap.precioConIva FROM v_ArticuloPvp ap
+				--										WHERE ap.idArticulo = a.idArticulo 
+				--										AND ap.codTarifa = ''2''), 0)
+				--,pvpIva3 = ISNULL((SELECT TOP 1 ap.precioConIva FROM v_ArticuloPvp ap
+				--											WHERE ap.idArticulo = a.idArticulo 
+				--											AND ap.codTarifa = ''3''), 0)
+				--,pvpIva4 = ISNULL((SELECT TOP 1 ap.precioConIva FROM v_ArticuloPvp ap
+				--											WHERE ap.idArticulo = a.idArticulo 
+				--											AND ap.codTarifa = ''4''), 0)
+				--,pvpIva5 = ISNULL((SELECT TOP 1 ap.precioConIva FROM v_ArticuloPvp ap
+				--											WHERE ap.idArticulo = a.idArticulo 
+				--											AND ap.codTarifa = ''5''), 0)
 
 				FROM v_Articulo a 
-				WHERE a.estado = 1 AND a.idEntidad = @idEntidad '
+				WHERE a.estado = 1 
+				AND a.idEntidad = @idEntidad '
 	
 	SELECT @tipo = tipo
 	,@opcion = opcion
+	,@idTarifa = idTarifa
 	,@idArticulo = idArticulo
 	,@rucProveedor = rucProveedor
 	,@idFamilia = idFamilia
@@ -102,6 +121,7 @@ BEGIN
 	FROM OPENJSON(@json) WITH (
 		tipo INT '$.tipo',
 		opcion INT '$.opcion',
+		idTarifa INT '$.idTarifa',
 		idArticulo INT '$.idArticulo',
 		rucProveedor VARCHAR(25) '$.rucProveedor',
 		idFamilia INT '$.idFamilia',
@@ -111,8 +131,10 @@ BEGIN
 
 	IF (@tipo = 1)
 		BEGIN
-			SELECT * FROM Familia
-			SELECT * FROM SubFamilia
+			SELECT * FROM Familia WITH (NOLOCK) WHERE idEntidad = @idEntidad
+			SELECT * FROM SubFamilia WITH (NOLOCK) WHERE idEntidad = @idEntidad
+			SELECT * FROM Tarifa WITH (NOLOCK) WHERE idEntidad = @idEntidad
+			SELECT * FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CD' --AND JSON_VALUE(jsonConfig, '$[0].codTransaccion') = 'AL'
 		END
 	IF (@tipo = 2)
 		BEGIN
@@ -120,12 +142,22 @@ BEGIN
 				BEGIN 
 					SET @sql = @sql + 'AND a.idArticulo = @idArticulo '
 				END
+			IF (@opcion = 2)
+				BEGIN 
+					PRINT CAST(@IDFAMILIA AS VARCHAR(4))
+					SET @sql = @sql + 'AND a.idFamilia = @idFamilia '
+				END
+			IF (@opcion = 3)
+				BEGIN
+					SET @sql = @sql + 'AND a.idSubFamilia = @idSubFamilia '
+				END
 			IF (@opcion = 4)
 				BEGIN
 					SET @sql = @sql + 'AND idArticulo IN (SELECT idArticulo FROM v_InventarioTransaccion WHERE rucClienteProveedor = @rucProveedor) '
 				END
 		EXEC sp_executesql @sql, @params
 							   ,@idEntidad = @idEntidad
+							   ,@idTarifa = @idTarifa
 							   ,@idArticulo = @idArticulo
 							   ,@idFamilia = @idFamilia
 							   ,@idSubFamilia = @idSubFamilia

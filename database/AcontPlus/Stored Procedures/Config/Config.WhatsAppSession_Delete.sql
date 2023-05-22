@@ -14,7 +14,7 @@ IF OBJECT_ID(N'Config.WhatsAppSession_Delete', N'P') IS NOT NULL
 DROP PROCEDURE Config.WhatsAppSession_Delete
 GO
 CREATE PROCEDURE Config.WhatsAppSession_Delete @idUsuarioRol INT
-,@id UNIQUEIDENTIFIER
+,@id INT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -24,7 +24,7 @@ BEGIN
 	
 	BEGIN TRY
 		BEGIN TRAN
-			DELETE FROM Config.WhatsAppSession WHERE idUsuarioRol = @idUsuarioRol AND id = @id
+			DELETE FROM Config.WhatsAppSession WHERE idUsuarioRol = @idUsuarioRol AND idSession = @id
 			SELECT '1' code, 'Exitos' as 'message'
 		COMMIT TRAN
 	END TRY

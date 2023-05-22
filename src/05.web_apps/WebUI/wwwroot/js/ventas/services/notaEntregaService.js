@@ -104,15 +104,16 @@
                 }
                 if(response.code==="1"){
                     let dataRepository = JSON.parse(response.payload)[0];
-                    console.log(dataRepository)
+                  
                     let dataResponse = {
-                        ...dataRepository, 
-                        nroDocumento: '' ,                       
+                        ...dataRepository,                         
                         esContado: dataRepository.gestion,
                     }
+          
                     return {                        
                         dataResponse,
-                        code: '1'                       
+                        code: '1' ,
+                        message: 'Registrado Correctamente'                      
                     }
                 }
             })

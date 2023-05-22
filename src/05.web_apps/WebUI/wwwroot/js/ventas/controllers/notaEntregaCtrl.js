@@ -69,7 +69,7 @@
                     $scope.notaEntregas = response;
                     $scope.cloneNotaEntregas = JSON.parse(JSON.stringify($scope.notaEntregas));
                     $scope.getTotales();
-                    console.log(response)
+                    
                 }).catch(error => {
                     hideLoader();
                     $scope.getTotales();
@@ -147,6 +147,7 @@
 
         $scope.validateOperationPrintAndPayment = (result) => {
             //Verificamos 
+            
             $scope.isRegister = result.isRegister;
 
             $scope.isPrintDocument = result.printerAutomatic;
@@ -157,7 +158,7 @@
                 codigo: result.TIPO_DOC.codigo === "FV" ? 'RFPT' : 'RNEPT',
             }
 
-            if (result.payAutomatic === 1) {
+            if (result.payAutomatic) {
                 if (result.data.esContado) {
                     $scope.openModalRapido(result)
                 } else {
@@ -166,7 +167,7 @@
                 return
             }
 
-            if (result.printerAutomatic === 1) {
+            if (result.printerAutomatic) {
                 _commonSvc.getPrinter(JSON.stringify($scope.parametersPrint))
             }
 

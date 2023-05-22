@@ -214,29 +214,10 @@ class ModalBaseCtrl {
 
 
 
-
-    //Editar Transportista 
-    async openModalTransportistaUpdate() {
-        let {
-            MODAL_CTRL,
-            MODAL_EDITAR
-        } = this._nombreModalConst.transportista;
-        let controller = (await import('./../../modal/' + MODAL_CTRL))[MODAL_EDITAR['controller']];
-        let template = MODAL_EDITAR['template'];
-
-        let modalRef = this._modalSvc.openModalCustom({
-            controller,
-            template,
-            size: 'md',
-            params: Object.assign({}, this.transportista)
-        })
-
-        modalRef.result.then(response => {
-            if (typeof response !== 'object') return
-            this.transportista = JSON.parse(response.payload)[0]
-        })
+    resultModalTransportista(result) {
+        if (typeof result !== 'object') return
+        this.transportista = result;
     }
-
 
 
     closeModal() {
@@ -493,45 +474,23 @@ class ModalGuiaRemisionCtrl extends ModalBaseCtrl {
             typeList: 2,
             bySearch
         }
-
-        return this._mS.getData('get', '/Transportista/Get?json=' + JSON.stringify(json)).then(response => {
-            if (response.id === "0") {
-                toastr.error(response.message)
-                return
-            }
-            return JSON.parse(response.data) || []
-        })
+        if(bySearch.length>2){
+            return this.transportistaSvc.getAll(json);
+        }
     }
 
     selectedTransportstaChange(data) {
         this.transportista = data;
     }
 
-    async openModalTransportistaNew() {
-        let {
-            MODAL_CTRL,
-            MODAL_NUEVO
-        } = this._nombreModalConst.transportista;
-        let controller = (await import('./../../modal/' + MODAL_CTRL))[MODAL_NUEVO['controller']];
-        let template = MODAL_NUEVO['template'];
-
-        let modalRef = this._modalSvc.openModalCustom({
-            controller,
-            template,
-            size: 'md'
-        })
-    }
-
-
-
     async vehiculoSearch(textSearch) {
-        return this._mS.getData('get', '/Vehiculo/Search?text=' + textSearch).then(response => {
-            if (response.id === "0") {
-                console.warn(response)
-                return
-            }
-            return response.data
-        })
+        const json = {        
+            textSearch
+        }
+
+        if(textSearch.length>2){
+            return this.vehiculoSvc.search(json);
+        }      
     }
 
 
@@ -545,41 +504,15 @@ class ModalGuiaRemisionCtrl extends ModalBaseCtrl {
         this.vehiculo = item;
     }
 
-    async openModalVehiculoNew() {
-        let {
-            MODAL_CTRL,
-            MODAL_NUEVO
-        } = this._nombreModalConst.vehiculo;
-        let controller = (await import('./../../modal/' + MODAL_CTRL))[MODAL_NUEVO['controller']];
-        let template = MODAL_NUEVO['template'];
+    resultModalVehiculo(result) {
+        try {
+            if (typeof result == 'object') {
+                this.vehiculo = result;
+            }
+        } catch (error) {
+            console.log(error)
+        }
 
-        let modalRef = this._modalSvc.openModalCustom({
-            controller,
-            template,
-            size: 'md'
-        })
-
-    }
-
-    async openModalVehiculoEditar() {
-        let {
-            MODAL_CTRL,
-            MODAL_NUEVO
-        } = this._nombreModalConst.vehiculo;
-        let controller = (await import('./../../modal/' + MODAL_CTRL))[MODAL_NUEVO['controller']];
-        let template = MODAL_NUEVO['template'];
-
-        let modalRef = this._modalSvc.openModalCustom({
-            controller,
-            template,
-            size: 'md',
-            params: Object.assign({}, this.vehiculo)
-        })
-
-        modalRef.result.then(response => {
-            if (typeof response !== 'object') return
-            this.vehiculo = JSON.parse(response.payload)[0]
-        })
     }
 
 
@@ -738,8 +671,32 @@ class ModalGuiaRemisionCtrl extends ModalBaseCtrl {
 
 export class ModalGuiaRemisionNuevoCtrl extends ModalGuiaRemisionCtrl {
 
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario']
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS) {
+    static $inject = [
+        '$scope', 
+        '$timeout', 
+        '$uibModalInstance', 
+        'mainService', 
+        'commonService', 
+        'transportistaService',
+        'vehiculoService',
+        'modalService', 
+        'nombreModal', 
+        'toastService', 
+        'formulario'
+    ]
+    constructor(
+        $scope, 
+        $timeout, 
+        $uibModalInstance, 
+        _mS, 
+        _commonSvc, 
+        transportistaSvc,
+        vehiculoSvc,
+        _modalSvc, 
+        _nombreModalConst,
+        _tS,
+        _fS
+    ) {
         super({
             $scope,
             $timeout,
@@ -751,6 +708,10 @@ export class ModalGuiaRemisionNuevoCtrl extends ModalGuiaRemisionCtrl {
             _tS,
             _fS
         })
+
+        this.transportistaSvc = transportistaSvc;
+        this.vehiculoSvc = vehiculoSvc;
+
         this.searchClienteOptions = {}
         this.searchClienteOptions.showBtnNew = true;
         this.searchClienteOptions.showBtnList = true;
@@ -877,8 +838,34 @@ export class ModalGuiaRemisionNuevoCtrl extends ModalGuiaRemisionCtrl {
 
 export class ModalGuiaRemisionEditarCtrl extends ModalGuiaRemisionCtrl {
 
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario', 'params']
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS, _params) {
+    static $inject = [
+        '$scope', 
+        '$timeout', 
+        '$uibModalInstance', 
+        'mainService', 
+        'commonService', 
+        'transportistaService',
+        'vehiculoService',
+        'modalService', 
+        'nombreModal', 
+        'toastService', 
+        'formulario', 
+        'params'
+    ]
+    constructor(
+        $scope, 
+        $timeout, 
+        $uibModalInstance,
+        _mS, 
+        _commonSvc, 
+        transportistaSvc,
+        vehiculoSvc,
+        _modalSvc, 
+        _nombreModalConst, 
+        _tS, 
+        _fS, 
+        _params
+    ) {
         super({
             $scope,
             $timeout,
@@ -891,6 +878,8 @@ export class ModalGuiaRemisionEditarCtrl extends ModalGuiaRemisionCtrl {
             _fS
         })
 
+        this.transportistaSvc = transportistaSvc;
+        this.vehiculoSvc = vehiculoSvc;
         this.searchClienteOptions = {}
         this.searchClienteOptions.showBtnNew = true;
         this.searchClienteOptions.showBtnList = true;
@@ -915,6 +904,7 @@ export class ModalGuiaRemisionEditarCtrl extends ModalGuiaRemisionCtrl {
         this.data = dataDocumento;
         this.cliente = cliente;
         this.transportista = transportista;
+  
         this.vehiculo = vehiculo;
         this.empleado = empleado;
         this.detalleDocumento = detalleDocumento;

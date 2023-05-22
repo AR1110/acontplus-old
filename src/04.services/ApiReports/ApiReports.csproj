@@ -190,6 +190,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\01.common\Common.Logs\Common.Logs.csproj" />
 		<ProjectReference Include="..\..\01.common\DataAccess\DataAccess.csproj" />
+		<ProjectReference Include="..\..\03.business_logic\BL.ExcelReports\BL.ExcelReports.csproj" />
 		<ProjectReference Include="..\..\03.business_logic\BL.JwtAuthenticationManger\BL.JwtAuthenticationManger.csproj" />
 		<ProjectReference Include="..\..\03.business_logic\BL.Reports\BL.Reports.csproj" />
 
@@ -239,15 +240,6 @@
 
 	<ItemGroup>
 		<Folder Include="..\..\00.shared_settings\" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Content Update="appsettings.json">
-			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
-		</Content>
-	</ItemGroup>
-	<ItemGroup>
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 	</ItemGroup>
 
 </Project>

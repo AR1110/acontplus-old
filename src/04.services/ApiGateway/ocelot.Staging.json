@@ -249,7 +249,7 @@
           "Port": 8097
         }
       ],
-      "DownstreamPathTemplate": "/api/Factura/{everything}",
+      "DownstreamPathTemplate": "/api/Factura{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Get",
@@ -744,7 +744,7 @@
         "Delete",
         "Options"
       ],
-      "UpstreamPathTemplate": "/api/FacturaCompra{everything}"
+      "UpstreamPathTemplate": "/api/IngresoFacturaCompra{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -970,18 +970,19 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 54948
+          "Port": 7079
         }
       ],
-      "DownstreamPathTemplate": "/api/Cliente/{everything}",
+      "DownstreamPathTemplate": "/api/Cliente{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Get",
+        "Post",
         "Put",
         "Delete",
         "Options"
       ],
-      "UpstreamPathTemplate": "/api/Cliente/{everything}"
+      "UpstreamPathTemplate": "/api/Cliente{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -1362,12 +1363,119 @@
         }
       ],
       "DownstreamPathTemplate": "/api/PrecioMasivo{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Get",
         "Post"
       ],
       "UpstreamPathTemplate": "/api/PrecioMasivo{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 7079
+        }
+      ],
+      "DownstreamPathTemplate": "/api/AprobacionDocumento{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/api/AprobacionDocumento{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 7079
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Proforma{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/api/Proforma{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 8005
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Transportista{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/api/Transportista{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 8005
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Vehiculo{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/api/Vehiculo{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 8091
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Dashboard{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "UpstreamPathTemplate": "/api/Dashboard{everything}"
     }
   ]
 }

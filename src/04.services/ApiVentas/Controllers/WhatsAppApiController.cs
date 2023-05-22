@@ -1,7 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Twilio;
-using Twilio.Rest.Api.V2010.Account;
-using Twilio.Types;
 
 namespace ApiVentas.Controllers
 {
@@ -27,20 +24,20 @@ namespace ApiVentas.Controllers
 
                 //Console.WriteLine(result.Sid); 
 
-                var accountSid = "AC4e631fc3fd6cb56d3f937dd2a3bbe43b";
-                var authToken = "7536a6ea3da476b1f61eb5ffa5218e0c";
-                TwilioClient.Init(accountSid, authToken);
+                //var accountSid = "AC4e631fc3fd6cb56d3f937dd2a3bbe43b";
+                //var authToken = "7536a6ea3da476b1f61eb5ffa5218e0c";
+                //TwilioClient.Init(accountSid, authToken);
 
-                var messageOptions = new CreateMessageOptions(
-                  new PhoneNumber("whatsapp:+593960588365"));
-                messageOptions.From = new PhoneNumber("whatsapp:+14155238886");
-                messageOptions.Body = "Your appointment is coming up on July 21 at 3PM";
+                //var messageOptions = new CreateMessageOptions(
+                //  new PhoneNumber("whatsapp:+593960588365"));
+                //messageOptions.From = new PhoneNumber("whatsapp:+14155238886");
+                //messageOptions.Body = "Your appointment is coming up on July 21 at 3PM";
                 
 
-                var messageR = MessageResource.Create(messageOptions);
+                //var messageR = MessageResource.Create(messageOptions);
                 
-                Console.WriteLine(messageR.Body); 
-                return Ok(messageR);
+                //Console.WriteLine(messageR.Body); 
+                return Ok("");
             }
             catch (Exception ex)
             {

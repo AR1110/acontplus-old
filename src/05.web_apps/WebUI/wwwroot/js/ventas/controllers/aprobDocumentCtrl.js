@@ -1,8 +1,18 @@
 app.controller('aprobComprobanteCtrl', aprobComprobanteCtrl);
 
-aprobComprobanteCtrl.$inject = ['$scope', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService'];
+aprobComprobanteCtrl.$inject = [
+    '$scope', 
+    'mainService', 
+    'commonService', 
+    'aprobacionDocService',
+    'modalService', 
+    'nombreModal', 
+    'nombreModalVenta',
+    'formulario', 
+    'toastService'
+];
 
-function aprobComprobanteCtrl($scope, mS, commonSvc, _modalSvc, _nombreModalConst, _form, _tS) {
+function aprobComprobanteCtrl($scope, mS, commonSvc, aprobacionDocSvc, _modalSvc, _nombreModalConst, nombreModalVenta, _form, _tS) {
 
     // let accion = JSON.parse(localStorage.getItem("accion")); 
 
@@ -12,6 +22,9 @@ function aprobComprobanteCtrl($scope, mS, commonSvc, _modalSvc, _nombreModalCons
     // } else {
     //     $scope.accion = accion[0];
     // }
+    let fileCtrl = nombreModalVenta.APROB_COMPROBANTE.fileCtrl;
+    let ctrl = nombreModalVenta.APROB_COMPROBANTE.controllers['MSD'];
+    let template = nombreModalVenta.APROB_COMPROBANTE.templates['MSD'];
 
     $scope.dataSearch = {
         pageIndex: 1,
@@ -50,24 +63,23 @@ function aprobComprobanteCtrl($scope, mS, commonSvc, _modalSvc, _nombreModalCons
 
         if (!resultOp.isConfirmed) return
 
-        let {
-            MODAL_FILE_CTRL,
-            MODAL_SELECT_DOC
-        } = _nombreModalConst.aprob_comp;
-        let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_SELECT_DOC['controller']]
-        let template = MODAL_SELECT_DOC['template'];
+       
+        let controller = (await import(fileCtrl))[ctrl]
+      
         let params = {
             TIPO_DOC: commonSvc.tipoDoc[resultOp.value]
         }
 
 
-        _modalSvc.openModalCustom({
+        let modalRef = _modalSvc.openModalCustom({
             controller,
             template,
             size: 'xl',
             windowClass: 'uibModalFullScreen',
             params
-        }).result.then(response => {
+        })
+        
+        modalRef.result.then(response => {
             if (typeof response === 'object') {
                 $scope.getAprobComprobantes();
             }
@@ -130,26 +142,21 @@ function aprobComprobanteCtrl($scope, mS, commonSvc, _modalSvc, _nombreModalCons
                 $scope.dataSearch.checkBoxDefault = true;
             }
 
-            mS.getData('get', '/AprobDocument/Get?json=' + JSON.stringify($scope.dataSearch)).then(response => {
-                if (response.code === '0') {
-                    hideLoader();
-                    $scope.aprobComprobantes = [];
-                    console.warn(response)
-                    return
-                }
-                if (response.code === '1') {
-                    $scope.aprobComprobantes = JSON.parse(response.payload) || [];
-
-                    const total = $scope.aprobComprobantes.map(item => item.total).reduce((prev, acc) => prev + acc, 0)
-                    $scope.total = _form.roundNumber(total, 2)
-                    hideLoader();
-                }
-            }).catch(error => {
-                $scope.aprobComprobantes = [];
+            $scope.aprobComprobantes = [];
+            showLoader();
+            aprobacionDocSvc.getAll($scope.dataSearch).then(response => {
+                hideLoader();
+                $scope.aprobComprobantes = response;
+                let total = $scope.aprobComprobantes.map(item => item.total).reduce((prev, acc) => prev + acc, 0)
+                $scope.total = _form.roundNumber(total, 2)
+                hideLoader();
+                
+            }).catch(error=>{
+                hideLoader();
                 console.log(error)
             })
         } catch (error) {
-            $scope.aprobComprobantes = [];
+           hideLoader();
             console.log(error)
 
         }
@@ -202,13 +209,9 @@ function aprobComprobanteCtrl($scope, mS, commonSvc, _modalSvc, _nombreModalCons
 
     $scope.openModalEdit = async (item) => {
         try {
-
-            let {
-                MODAL_FILE_CTRL,
-                MODAL_APROB_DOC_EDIT
-            } = _nombreModalConst.aprob_comp;
-            let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_APROB_DOC_EDIT['controller']]
-            let template = MODAL_APROB_DOC_EDIT['template'];
+            ctrl = nombreModalVenta.APROB_COMPROBANTE.controllers['MADE'];
+            template = nombreModalVenta.APROB_COMPROBANTE.templates['MADE'];          
+            let controller = (await import(fileCtrl))[ctrl]
 
             $scope.openModalParam({
                 controller,
@@ -223,14 +226,9 @@ function aprobComprobanteCtrl($scope, mS, commonSvc, _modalSvc, _nombreModalCons
 
     $scope.approveDocument = async (item) => {
         try {
-            let {
-                MODAL_FILE_CTRL,
-                MODAL_APPROVE_DOC
-            } = _nombreModalConst.aprob_comp;
-            let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_APPROVE_DOC['controller']]
-            let template = MODAL_APPROVE_DOC['template'];
-
-
+            ctrl = nombreModalVenta.APROB_COMPROBANTE.controllers['MADF'];
+            template = nombreModalVenta.APROB_COMPROBANTE.templates['MADF'];          
+            let controller = (await import(fileCtrl))[ctrl]           
             $scope.openModalParam({
                 controller,
                 template,
@@ -253,34 +251,50 @@ function aprobComprobanteCtrl($scope, mS, commonSvc, _modalSvc, _nombreModalCons
         template,
         item
     }) => {
-        let params = {}
-        await mS.getData('get', '/AprobDocument/GetId?id=' + item.idAprob_Document).then(response => {
-            if (response.code === '0') {
-                _tS.toastr('warning', response.message, response.titleSms);
-            }
-            if (response.code === '1') {
-                params = JSON.parse(response.payload);
-                params[0].forEach(value => {
-                    value.serie = item.serie
-                })
-            }
-        })
+        try {
+            let params = {}
+            showLoader();
+            await aprobacionDocSvc.findById(item.idAprob_Document).then(response=>{
+                hideLoader();
+                params = response;
+                console.log(response)
+            }).catch(error=>{
+                hideLoader();
+                console.log(error);
+            })
+            // await mS.getData('get', '/AprobDocument/GetId?id=' + item.idAprob_Document).then(response => {
+            //     if (response.code === '0') {
+            //         _tS.toastr('warning', response.message, response.titleSms);
+            //     }
+            //     if (response.code === '1') {
+            //         let dataRepository = 
+            //         console.log(response.payload)
+            //         // params = JSON.parse(response.payload);
+            //         // params[0].forEach(value => {
+            //         //     value.serie = item.serie
+            //         // })
+            //     }
+            // })
 
 
 
-        if (!Object.keys(params).length) return
+            if (!Object.keys(params).length) return
 
-        _modalSvc.openModalCustom({
-            controller,
-            template,
-            size: 'xl',
-            windowClass: 'uibModalFullScreen',
-            params
-        }).result.then(response => {
-            if (typeof response === 'object') {
-                $scope.getAprobComprobantes();
-            }
-        })
+            _modalSvc.openModalCustom({
+                controller,
+                template,
+                size: 'xl',
+                windowClass: 'uibModalFullScreen',
+                params
+            }).result.then(response => {
+                if (typeof response === 'object') {
+                    $scope.getAprobComprobantes();
+                }
+            })
+        } catch (error) {
+            hideLoader();
+            console.log(error);
+        }
     }
 
 

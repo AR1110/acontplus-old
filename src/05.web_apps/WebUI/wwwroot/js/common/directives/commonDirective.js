@@ -463,6 +463,152 @@
         }
     })
 
+
+    app.directive('dateRangeFilter', function(){
+        return {            
+            template: ` <div class="form-group">
+            <label>Rango de Fechas: </label>
+            <input date-range-picker class="form-control date-picker" type="text"
+                   ng-model="dateRangePicker.date" picker="dateRangePicker.picker"
+                   picker-classes="extra-class-names" min="'2014-02-23'" max="dateRangePicker.maxDate"
+                   options="dateRangePicker.options" options="{locale: {separator: " :"}}" />
+        </div>`,
+            restrict: 'E',
+            replace: true,
+            scope: {
+                currentDate: '=',
+                startDate:'=',
+                endDate:'=',
+                resultRangeDate: '&',
+            },
+            link: function(scope, $element, $attrs, form) {
+                let thisMoment = moment(new Date()) 
+                scope.startDate = thisMoment;
+                scope.endDate = thisMoment;            
+                scope.dateRangePicker = {
+                    date: {
+                        startDate: thisMoment,
+                        endDate: thisMoment,
+                    },
+                    picker: null,
+                    options: {
+                        pickerClasses: 'custom-display', //angular-daterangepicker extra
+                        buttonClasses: 'btn',
+                        applyButtonClasses: 'btn-success',
+                        cancelButtonClasses: 'btn-danger',
+                        locale: {
+                            applyLabel: "Aplicar",
+                            cancelLabel: 'Cancelar',
+                            customRangeLabel: 'Rango Personalizado',
+                            separator: ' - ',
+                            format: "YYYY-MM-DD", //will give you 2017-01-06
+                            //format: "D-MMM-YY", //will give you 6-Jan-17
+                            //format: "D-MMMM-YY", //will give you 6-January-17
+                        },
+                        ranges: {
+                            'Hoy': [moment(), moment()],
+                            'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                            'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
+                            'Ultimos 15 Días': [moment().subtract(14, 'days'), moment()],
+                            'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
+                            'Este Mes': [moment().startOf('month'), moment().endOf('month')],
+                        },
+                        eventHandlers: {
+                            'apply.daterangepicker': function (event, picker) {
+
+                                scope.startDate = scope.dateRangePicker.date.startDate
+                                scope.endDate = scope.dateRangePicker.date.endDate;
+                                
+                                scope.resultRangeDate({
+                                    result: {
+                                        startDate: scope.startDate,
+                                        endDate: scope.endDate
+                                    }
+                                })
+                                // $scope.getComprobantes()
+                                // console.log('applied')
+                            }
+                        }
+                    }
+                };               
+            }
+        };
+
+    })
+
+
+    /**
+     * ---------------------------------------
+     */
     
+    app.directive('btnTransportista', function(modalService, nombreModalLogistica){
+        return {
+            restrict: 'A',
+            scope: {
+                params:'=',
+                resultModal: '&',
+            },
+            link: function(scope, element, att){
+                element.on('click', async function () {
+                     
+                    let fileCtrl = nombreModalLogistica.TRANSPORTISTA.fileCtrl;
+                    let ctrl = nombreModalLogistica.TRANSPORTISTA.controllers['M'];
+                    let template = nombreModalLogistica.TRANSPORTISTA.templates['M'];
+                    let controller = (await import(fileCtrl))[ctrl];
+
+
+                    const modalDialogRef = modalService.openModalCustom({
+                        controller,
+                        template,
+                        size: 'md',
+                        params: scope.params || {},
+                    })       
+                          
+                    modalDialogRef.result.then(result=>{
+                        if(typeof result==="object"){
+                            scope.resultModal({
+                                result
+                            })
+                        }
+                    })
+                });
+            }
+        }
+    })
+
+    app.directive('btnVehiculo', function(modalService, nombreModalLogistica){
+        return {
+            restrict: 'A',
+            scope: {
+                params:'=',
+                resultModal: '&',
+            },
+            link: function(scope, element, att){
+                element.on('click', async function () {
+                     
+                    let fileCtrl = nombreModalLogistica.VEHICULO.fileCtrl;
+                    let ctrl = nombreModalLogistica.VEHICULO.controllers['M'];
+                    let template = nombreModalLogistica.VEHICULO.templates['M'];
+                    let controller = (await import(fileCtrl))[ctrl];
+                    console.log(template)
+
+                    const modalDialogRef = modalService.openModalCustom({
+                        controller,
+                        template,
+                        size: 'md',
+                        params: scope.params || {},
+                    })       
+                          
+                    modalDialogRef.result.then(result=>{
+                        if(typeof result==="object"){
+                            scope.resultModal({
+                                result
+                            })
+                        }
+                    })
+                });
+            }
+        }
+    })
 
 })(window.angular)

@@ -306,13 +306,13 @@
                     tipo: '7',
                     textSearch: $scope.infoCompRet.identificacionSujetoRetenido
                 }
-                mS.getData('get', 'FacturaCompra/Get?json=' + JSON.stringify(json), null, true).then(
+                mS.getData('get', 'IngresoFacturaCompra/?json=' + JSON.stringify(json), null, true).then(
                     response => {
                         if (response.code == '0') {
                             tS.toastr('warning', response.message)
                         }
                         if (response.code == '1') {
-                            $scope.docsFounded = JSON.parse(response.payload)
+                            $scope.docsFounded = JSON.parse(response.payload)[0]
                             $('#docsModal').modal('show')
                             console.log($scope.docsFounded)
                         }
@@ -338,13 +338,13 @@
                     id: item.idDocumento,
                     isAutomatic: item.isAutomatic
                 }
-                mS.getData('get', 'FacturaCompra/Get?json=' + JSON.stringify(json), null, true).then(
+                mS.getData('get', 'IngresoFacturaCompra/?json=' + JSON.stringify(json), null, true).then(
                     response => {
                         if (response.code == '0') {
                             tS.toastr('warning', response.message)
                         }
                         if (response.code == '1') {
-                            let temp = JSON.parse(response.payload)
+                            let temp = JSON.parse(response.payload)[0]
                             if (temp) {
                                 $scope.docData = JSON.parse(temp[0].doc)[0]
                                 $scope.tempTaxes = JSON.parse(temp[0].taxes) || []

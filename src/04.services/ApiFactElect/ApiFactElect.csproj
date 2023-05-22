@@ -22,12 +22,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Update="appsettings.json">
-			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
-		</Content>
-	</ItemGroup>
-
-	<ItemGroup>
 		<Content Include="..\..\00.shared_settings\sharedsettings.Development.json" Link="00.sharedsettings\sharedsettings.Development.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
@@ -41,9 +35,4 @@
 	<ItemGroup>
 		<Folder Include="..\..\00.shared_settings\" />
 	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-	</ItemGroup>
-
 </Project>

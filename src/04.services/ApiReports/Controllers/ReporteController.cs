@@ -1,4 +1,5 @@
-﻿using BL.Reports;
+﻿using BL.ExcelReports;
+using BL.Reports;
 using Common.Logs;
 using DataAccess;
 using Domain.Dtos;
@@ -6,7 +7,6 @@ using Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Primitives;
-using Org.BouncyCastle.Pqc.Crypto.Lms;
 using System.Data;
 
 namespace ApiReports.Controllers

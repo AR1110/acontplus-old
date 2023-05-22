@@ -53,6 +53,7 @@ BEGIN
 	DECLARE @detailDs VARCHAR(MAX)
 	DECLARE @paymentDs VARCHAR(MAX)
 	DECLARE @normativeDs VARCHAR(MAX)
+	DECLARE @additional VARCHAR(MAX)
 	DECLARE @dataSources VARCHAR(MAX)
 
 	--Email 
@@ -62,6 +63,9 @@ BEGIN
 	DECLARE @nameDoc VARCHAR(150)
 	DECLARE @dataMail VARCHAR(MAX)
 	DECLARE @cc VARCHAR(100)
+	DECLARE @idTipoDocumento INT  
+
+	SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo = 'APR'
 
 	SELECT @id = id, @rdlcParams = rdlcParams FROM OPENJSON(@json) WITH (id INT '$.id',rdlcParams VARCHAR(MAX) '$.rdlcParams') AS dt 
 
@@ -189,7 +193,13 @@ BEGIN
 						SELECT descripcion FROM Config.Normativa n WHERE n.estado = 1 AND n.idEntidad = @idEntidad FOR JSON PATH
 					   )
 
-	SET @dataSources = (SELECT headerDs = @headerDs, detailDs = @detailDs, paymentDs = ISNULL(@paymentDs,'[]'), normativeDs = ISNULL(@normativeDs, '[]') FOR JSON PATH)
+	SET @additional = 
+					(
+						SELECT nombre,valor from dbo.InfoAdicionalDoc WHERE idComprobante = @id AND idTipoDocumento = @idTipoDocumento FOR JSON PATH 
+						
+					)
+
+	SET @dataSources = (SELECT headerDs = @headerDs, detailDs = @detailDs, paymentDs = ISNULL(@paymentDs,'[]'), normativeDs = ISNULL(@normativeDs, '[]'), infoAdicionalDs = ISNULL(@additional,'[]') FOR JSON PATH)
 
 	SET @dataMail = (SELECT 'Prefactura Nro. '+@nroDoc documento, @fecha fechaEmision,  @cliente cliente, @importeTotal importeTotal,
 						@razonSocial razonSocial,

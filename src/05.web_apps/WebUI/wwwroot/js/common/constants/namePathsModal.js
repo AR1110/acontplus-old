@@ -8,6 +8,11 @@ const CHANGE_VERSION = (largo = 50) => {
     return '?v=' + codigo;
 }
 
+// app.constant('nombreModalConfig', {
+//     ENTIDAD: {
+//         fileCtrl: ''
+//     }
+// })
 
 //Inventario 
 app.constant('nombreModalInventario', {
@@ -78,12 +83,12 @@ app.constant('nombreModalInventario', {
 //Facturacion Electronica 
 app.constant('nombreModalFactElect', {
     DATO_ADICIONAL_ARTICULO: {
-        fileCtrl: '/js/factElect/modals/modalDatoAdicionalArticuloCtrl.js',
+        fileCtrl: '/js/factElect/modals/modalDatoAdicionalArticuloCtrl.min.js'  + CHANGE_VERSION(),
         controller: 'ModalDatoAdicionalArticuloCtrl',
         template:'~/Areas/FactElect/Pages/Shared/_ModalDatoAdicionalArticulo.cshtml'
     },
     FACTURA:{
-        fileCtrl: '/js/modal/ventas/modalFacturaCtrl.js' + CHANGE_VERSION(),
+        fileCtrl: '/js/modal/ventas/modalFacturaCtrl.min.js' + CHANGE_VERSION(),
         controllers:{
             D:'ModalFacturaDetalleCtrl'
         },
@@ -95,7 +100,7 @@ app.constant('nombreModalFactElect', {
 
 app.constant('nombreModalVenta', {
     CLIENTE: {
-        fileCtrl: '/js/modal/common/modalClienteProveedorCtrl.js' + CHANGE_VERSION(),
+        fileCtrl: '/js/modal/common/modalClienteProveedorCtrl.min.js' + CHANGE_VERSION(),
         // fileCtrl: '/js/ventas/modals/modalClienteCtrl.js',
         controllers: {
             M: 'ModalClienteCtrl',
@@ -114,20 +119,78 @@ app.constant('nombreModalVenta', {
         templates: {
             D: 'NotaEntrega/_ModalDetalle.cshtml',
         } 
-    }
+    },
+    APROB_COMPROBANTE:{
+        fileCtrl: '/js/modal/ventas/modalAprobDocument.js' + CHANGE_VERSION(),
+        controllers: {            
+            MSD:'ModalSelectDocumentoCtrl',
+            MADE:'ModalApproveDocEditCtrl',
+            MADF: 'ModalApproveDocCtrl', //Modal Aprobacion Documento Factura
+            MAD:'ModalApproveDocDetalleCtrl',
+            MF_NE: 'ModalNotaEntregaFiltroCtrl',
+            MF_PR:'ModalProformaFiltroCtrl'    
+        },
+        templates:{
+            MSD:'AprobDocument/_ModalSelectDocument.cshtml',
+            MADE:'AprobDocument/_ModalAprobDocumentEdit.cshtml',
+            MADF:'AprobDocument/_ModalApproveDocument.cshtml',
+            MADD:'AprobDocument/_ModalAprobDocumentDetalle.cshtml', 
+            MF_NE: 'AprobDocument/_ModalNotaEntregaFiltro.cshtml',
+            MF_PR:'AprobDocument/_ModalProformaFiltro.cshtml'           
+        }
+    },
+    PROFORMA: {
+        fileCtrl: '/js/modal/ventas/modalProformaCtrl.js' + CHANGE_VERSION(),
+        controllers: {
+            MN:'ModalProformaNuevoCtrl',
+            ME:'ModalProformaEditarCtrl',
+            MD:'ModalProformaDetalleCtrl',
+            MDUPLICATE: 'ModalProformaDuplicarCtrl',
+            MF:'ModalProformaFiltroCtrl'
+        },
+        templates: {
+            MN: 'Proforma/_ModalNuevo.cshtml',
+            ME: 'Proforma/_ModalEditar.cshtml',
+            MD:'Proforma/_ModalDetalle.cshtml',
+            MDUPLICATE: 'Proforma/_ModalDuplicar.cshtml',
+            MF: 'Proforma/_ModalFiltro.cshtml'
+        }
+    }   
 })
 
+ 
 app.constant('nombreModalCompra', {
     FACTURA_FISICA: {
-        fileCtrl: '/js/modal/',
+        fileCtrl: '/js/modal/compras/modalFacturaCtrl.js' + CHANGE_VERSION(),
         controllers: {
-            D:'ModalFacturaDetalleCtrl'
+            D:'ModalFacturaDetalleCtrl',            
         },
         templates: {
             D:'~/Areas/FacturaCompra/Pages/Shared/_ModalDetalle.cshtml'
         }
     }
    
+})
+
+app.constant('nombreModalLogistica', {
+    TRANSPORTISTA: {
+        fileCtrl: '/js/logistica/modals/modalTransportistaCtrl.js' + CHANGE_VERSION(),
+        controllers: {
+            M: 'ModalTransportistaCtrl'
+        },
+        templates: {
+            M: 'Transportista/_ModalAddUpdate.cshtml'
+        }
+    }  ,
+    VEHICULO: {
+        fileCtrl: '/js/logistica/modals/modalVehiculoCtrl.js' + CHANGE_VERSION(),
+        controllers: {
+            M: 'ModalVehiculoCtrl'
+        },
+        templates: {
+            M: 'Vehiculo/_ModalAddUpdate.cshtml'
+        }
+    }  
 })
 
 
@@ -676,27 +739,11 @@ app.constant('nombreModal', {
         }
     },
     proforma: {
-        MODAL_FILE_CTRL: 'modal/ventas/modalProformaCtrl.js' + CHANGE_VERSION(),
-        MODAL_NUEVO: {
-            controller: 'ModalProformaNuevoCtrl',
-            template: 'Proforma/_ModalNuevo.cshtml'
-        },
-        MODAL_EDITAR: {
-            controller: 'ModalProformaEditarCtrl',
-            template: 'Proforma/_ModalEditar.cshtml'
-        },
+        MODAL_FILE_CTRL: 'modal/ventas/modalProformaCtrl.js' + CHANGE_VERSION(),       
         MODAL_DETALLE: {
             controller: 'ModalProformaDetalleCtrl',
             template: 'Proforma/_ModalDetalle.cshtml'
-        },
-        MODAL_DUPLICAR: {
-            controller: 'ModalProformaDuplicarCtrl',
-            template: 'Proforma/_ModalDuplicar.cshtml'
-        },
-        MODAL_FILTRO: {
-            controller: 'ModalProformaFiltroCtrl',
-            template: 'Proforma/_ModalFiltro.cshtml'
-        }
+        }       
     },
     proveedor: {
         MODAL_CTRL: 'common/modalClienteProveedorCtrl.js' + CHANGE_VERSION(),
