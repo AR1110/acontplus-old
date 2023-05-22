@@ -14,7 +14,7 @@
                         <li class="breadcrumb-item active">Usuario</li>
                     </ol>*@
                 <button type="button" ng-if="accion.leer && accion.crear" ng-click="openModalUserNew()" class="btn btn-info d-block d-lg-inline-block m-l-15">
-                    <i class="fa fa-plus-circle"></i> Nuevo 
+                    <i class="fa fa-plus-circle"></i> Nuevo  
                 </button>
             </div>
         </div>
@@ -28,7 +28,12 @@
                         <div class="col-lg-4"></div>
                         <div class="col-lg-4">
                             <form class="form-material">
-                                <input type="text" class="form-control" ng-model="txtFilter" placeholder="Buscar Usuario">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" ng-model="txtFilter" placeholder="Buscar Usuario">
+                                    <button class="btn btn-secondary btn-sm" ng-click="getUsuarios()">
+                                        <i class="ti-search"></i>
+                                    </button>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -46,23 +51,23 @@
                                 </tr>
                             </thead>
                             <tbody md-body>
-                                <tr md-row ng-repeat="u in usuarios | filter:txtFilter track by $index">                           
+                                <tr md-row ng-repeat="item in usuarios | filter:txtFilter">                           
                                     <td md-cell>{{$index+1}}</td>
                                     <td md-cell ng-if="accion.editar || accion.eliminar || accion.acceso">                                        
-                                        <button class="btn btn-info btn-sm" ng-if="accion.editar" ng-click="openModalUserEdit(u)">
+                                        <button class="btn btn-info btn-sm" ng-if="accion.editar" ng-click="openModalUserEdit(item)">
                                             <i class="mdi mdi-pencil"></i>
                                         </button>
-                                        <button class="btn btn-danger btn-sm" ng-if="accion.eliminar" ng-click="askToDelete(u)">
+                                        <button class="btn btn-danger btn-sm" ng-if="accion.eliminar" ng-click="askToDelete(item)">
                                             <i class="mdi mdi-delete"></i>
                                         </button>
-                                        <button class="btn btn-default btn-sm" ng-if="accion.acceso" tooltip-placement='top' uib-tooltip='Entidades' ng-click="openModalUserCompany(u)">
-                                            <i class="fas fa-id-card-alt"></i>
-                                        </button>                                    
+                                        <button class="btn btn-warning btn-sm" ng-if="accion.acceso" tooltip-placement='top' uib-tooltip='Asig. de Establecimientos, Puntos de Emisión, Bodegas y Permisos' ng-click="openModalUserConfig(item)">
+                                            <i class="mdi mdi-account-settings-variant"></i>
+                                        </button>                                  
                                     </td>
-                                    <td md-cell>{{u.nroIdentificacion}}</td>
-                                    <td md-cell>{{u.nombreCompleto|uppercase}}</td>
-                                    <td md-cell>{{u.nombreUsuario}}</td>
-                                    <td md-cell>{{u.correo}}</td>                
+                                    <td md-cell>{{item.nroIdentificacion}}</td>
+                                    <td md-cell>{{item.nombreCompleto|uppercase}}</td>
+                                    <td md-cell>{{item.nombreUsuario}}</td>
+                                    <td md-cell>{{item.correo}}</td>                
                                 </tr>
                             </tbody>
                         </table>
@@ -72,6 +77,6 @@
         </div>
     </div>              
 </div>
-@section Scripts{
+@section Scripts{    
     <script src="~/js/controllers/admin/usuarioCtrl.js" asp-append-version="true" ></script>
 }

@@ -25,7 +25,9 @@
             }).then(response => {
                 console.log(response)
                 if (response.data.code == "2") {
-                    $localStorage.currentUser = { username: response.data.data.userData[0].userName, token: response.data.data.userData[0].jwtToken }
+                    $localStorage.currentUser = {
+                        token: response.data.data.userData[0].jwtToken
+                    }
                     // add jwt token to auth header for all requests made by the $http service
                     $http.defaults.headers.common.Authorization = 'Bearer ' + response.data.data.userData[0].jwtToken
                 }
@@ -84,7 +86,7 @@
                         location.href = response.data.returnUrl;
                         localStorage.setItem('userData', JSON.stringify(response.data.userData[0]));
                         localStorage.setItem('menus', JSON.stringify(response.data.menus));
-                        localStorage.setItem('subMenus', JSON.stringify(response.data.subMenus));                        
+                        localStorage.setItem('subMenus', JSON.stringify(response.data.subMenus));
                         hideLoader();
                     };
                 }, function (error) {

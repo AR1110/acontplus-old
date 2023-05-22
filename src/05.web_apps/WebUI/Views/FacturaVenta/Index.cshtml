@@ -9,11 +9,12 @@
         </div>
         <div class="col-md-7 align-self-center text-right">
             <div class="d-flex justify-content-end align-items-center">
-                @* <button type="button" class="btn btn-dark m-l-15"  ng-click="openModalTPV()">
+                @* <button type="button" class="btn btn-dark m-l-15" ng-click="openModalTPV()">
                 <i class="fa fa-plus-circle"></i> Factura TPV
                 </button> *@
                 @* ng-if="accion.leer && accion.crear" *@
-                <button type="button" class="btn btn-info m-l-15"  ng-click="openModalInvoiceNew()"><i class="fa fa-plus-circle"></i> Nuevo</button>
+                <button type="button" class="btn btn-info m-l-15" ng-show="accion.crear" id="btnNewInvoice"
+                    ng-click="openModalInvoiceNew()"><i class="fa fa-plus-circle"></i> Nuevo</button>
             </div>
         </div>
     </div>
@@ -25,38 +26,34 @@
                 <div class="card-body">
                     <div class="row justify-content-between">
                         <div class="col-lg-4">
-                            <button type="button" class="btn btn-info" ng-click="openModalFiltro()"><i class=" fas fa-filter"></i> Filtrar</button>
+                            <button type="button" class="btn btn-info" ng-click="openModalFiltro()"><i
+                                    class=" fas fa-filter"></i> Filtrar</button>
                         </div>
                         <div class="col-lg-4">
                             <div class="btn-group btn-group-sm" role="group" data-toggle="buttons">
                                 <label class="btn btn-default btn-sm">
                                     <div class="custom-control custom-radio">
-                                        <input type="radio" id="todosRetencion"
-                                               ng-model="dataSearch.filterCheckedLocal"
-                                               ng-value="'todosRetencion'"
-                                               ng-change="filterLocalRetencion()"
-                                               name="customRadio" class="custom-control-input">
+                                        <input type="radio" id="todosRetencion" ng-model="dataSearch.filterCheckedLocal"
+                                            ng-value="'todosRetencion'" ng-change="filterLocalRetencion()"
+                                            name="customRadio" class="custom-control-input">
                                         <label class="custom-control-label" for="todosRetencion">Todos</label>
                                     </div>
                                 </label>
                                 <label class="btn btn-default btn-sm">
                                     <div class="custom-control custom-radio" uib-tooltip="Con Retenciones"
-                                         tooltip-trigger="'mouseenter'" tooltip-placement="top">
-                                        <input type="radio" id="conRetencion"
-                                               ng-model="dataSearch.filterCheckedLocal"
-                                               ng-value="'CR'"
-                                               ng-change="filterLocalRetencion()"
-                                               name="customRadio" class="custom-control-input">
+                                        tooltip-trigger="'mouseenter'" tooltip-placement="top">
+                                        <input type="radio" id="conRetencion" ng-model="dataSearch.filterCheckedLocal"
+                                            ng-value="'CR'" ng-change="filterLocalRetencion()" name="customRadio"
+                                            class="custom-control-input">
                                         <label class="custom-control-label" for="conRetencion">CR</label>
                                     </div>
                                 </label>
                                 <label class="btn btn-default btn-sm">
                                     <div class="custom-control custom-radio" uib-tooltip="Sin Retenciones"
-                                         tooltip-trigger="'mouseenter'" tooltip-placement="top">
-                                        <input type="radio" id="sinRetencion"
-                                               ng-model="dataSearch.filterCheckedLocal"
-                                               ng-change="filterLocalRetencion()"
-                                               ng-value="'SR'" name="customRadio" class="custom-control-input">
+                                        tooltip-trigger="'mouseenter'" tooltip-placement="top">
+                                        <input type="radio" id="sinRetencion" ng-model="dataSearch.filterCheckedLocal"
+                                            ng-change="filterLocalRetencion()" ng-value="'SR'" name="customRadio"
+                                            class="custom-control-input">
                                         <label class="custom-control-label" for="sinRetencion">SR</label>
                                     </div>
                                 </label>
@@ -66,12 +63,10 @@
 
                                 <label class="btn btn-default btn-sm">
                                     <div class="custom-control custom-radio" uib-tooltip="Con Notas de Crédito"
-                                         tooltip-trigger="'mouseenter'" tooltip-placement="top">
-                                        <input type="radio" id="conNotaCredito"
-                                               ng-model="dataSearch.filterCheckedLocal"
-                                               ng-value="'CNC'"
-                                               ng-change="filterLocalRetencion()"
-                                               name="customRadio" class="custom-control-input">
+                                        tooltip-trigger="'mouseenter'" tooltip-placement="top">
+                                        <input type="radio" id="conNotaCredito" ng-model="dataSearch.filterCheckedLocal"
+                                            ng-value="'CNC'" ng-change="filterLocalRetencion()" name="customRadio"
+                                            class="custom-control-input">
                                         <label class="custom-control-label" for="conNotaCredito">CNC</label>
                                     </div>
                                 </label>
@@ -81,7 +76,8 @@
                         <div class="col-lg-4">
                             <form class="form-material">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" ng-keyup="filterLocalRetencion()" ng-model="textSearch" placeholder="Buscar Factura de Venta" />
+                                    <input type="text" class="form-control" ng-keyup="filterLocalRetencion()"
+                                        ng-model="textSearch" placeholder="Buscar Factura de Venta" />
                                     <div class="input-gorup-appen">
                                         <button type="button" class="btn btn-secondary" ng-click="getFacturas()">
                                             <i class="fas fa-redo"></i>
@@ -95,9 +91,11 @@
                     <div id="upperScroll" style="overflow-x:scroll; overflow-y: hidden; max-height:20px; width:100%">
                         <div name="innerScroll" ng-style="duelScroll" style="height:20px;"></div>
                     </div>
-                    
+
                     <div ng-style="getStyle($index)">
-                        <md-table-container name="wireTable" infinite-scroll="loadMore($index)" infinite-scroll-distance="1" infinite-scroll-parent="true" ng-init="isShow=true" ng-show="isShow" style=" max-height: 400px; overflow-x: hidden">
+                        <md-table-container name="wireTable" infinite-scroll="loadMore($index)"
+                            infinite-scroll-distance="1" infinite-scroll-parent="true" ng-init="isShow=true"
+                            ng-show="isShow" style=" max-height: 400px; overflow-x: hidden">
                             <table resize master md-table name="innerWireTable">
                                 <thead md-trim-column-names fix-head md-head>
                                     <tr md-row>
@@ -106,9 +104,9 @@
                                         <th md-column><span>F. Emisión</span></th>
                                         <th md-column><span>F. Vcto</span></th>
                                         <th md-column><span>Cliente</span></th>
-                                        <th md-column><span>Total</span></th>
-                                        <th md-column><span>Abono</span></th>
-                                        <th md-column><span>Saldo</span></th>
+                                        <th md-column totales-venta-view="ventaPermiso"><span>Total</span></th>
+                                        <th md-column totales-venta-view="ventaPermiso"><span>Abono</span></th>
+                                        <th md-column totales-venta-view="ventaPermiso"><span>Saldo</span></th>
                                         <th md-column><span>Nro. Ret</span></th>
                                         <th md-column><span>Nro. NC.</span></th>
                                         <th md-column><span>Estado</span></th>
@@ -122,68 +120,92 @@
                                         <td md-cell>
                                             <md-menu>
                                                 <md-button aria-label="Open demo menu" class="md-icon-button"
-                                                           ng-click="$mdMenu.open($event)">
+                                                    ng-click="$mdMenu.open($event)">
                                                     <icon class="mdi mdi-menu"></icon>
                                                 </md-button>
                                                 <md-menu-content class="md-dense">
                                                     <md-menu-item>
                                                         <md-button ng-click="openModalDetalle(item)">
-                                                            <span md-menu-align-target><i class="ti-menu"></i> Detalle</span>
+                                                            <span md-menu-align-target><i class="ti-menu"></i>
+                                                                Detalle</span>
                                                         </md-button>
                                                     </md-menu-item>
 
                                                     <md-menu-item ng-if="accion.editar">
-                                                        <md-button ng-click="openModalInvoiceEdit(item)" ng-disabled="item.gestion">
-                                                            <span md-menu-align-target><i class="ti-pencil"></i> Editar</span>
+                                                        <md-button ng-click="openModalInvoiceEdit(item)"
+                                                            ng-disabled="item.gestion">
+                                                            <span md-menu-align-target><i class="ti-pencil"></i>
+                                                                Editar</span>
                                                         </md-button>
                                                     </md-menu-item>
 
                                                     <md-menu-item>
                                                         <md-button ng-click="openModalInvoiceDuplicate(item)">
-                                                            <span md-menu-align-target><i class="ti-files"></i> Duplicar</span>
+                                                            <span md-menu-align-target><i class="ti-files"></i>
+                                                                Duplicar</span>
                                                         </md-button>
                                                     </md-menu-item>
 
                                                     <md-menu-item>
                                                         <md-button ng-click="openModalDetalle(item, true)">
-                                                            <span md-menu-align-target><i class="ti-files"></i> Dividir</span>
+                                                            <span md-menu-align-target><i class="ti-files"></i>
+                                                                Dividir</span>
                                                         </md-button>
                                                     </md-menu-item>
 
                                                     <md-menu-item ng-if="accion.anular">
-                                                        <md-button ng-click="askToDelete(item)" ng-disabled="item.gestionTributaria">
-                                                            <span md-menu-align-target><i class="ti-na"></i> Anular</span>
+                                                        <md-button ng-click="askToDelete(item)"
+                                                            ng-disabled="item.gestionTributaria">
+                                                            <span md-menu-align-target><i class="ti-na"></i>
+                                                                Anular</span>
                                                         </md-button>
-                                                    </md-menu-item>                                                  
+                                                    </md-menu-item>
 
-                                                    <md-menu-item ng-if="accion.cobroPago">
-                                                        <md-button ng-click="opcionCobro(item)" ng-disabled="item.gestionFinanciera">
-                                                            <span md-menu-align-target><i class=" fas fa-hand-holding-usd"></i> Cobro</span>
+                                                    <md-menu-item ng-if="(accion.cobroPago && item.codDoc==='PP') || (accion.cobroPago && item.codDoc==='PE')">
+                                                        <md-button ng-click="opcionCobro(item)"
+                                                            ng-disabled="item.gestionFinanciera">
+                                                            <span md-menu-align-target><i
+                                                                    class=" fas fa-hand-holding-usd"></i> Cobro</span>
                                                         </md-button>
                                                     </md-menu-item>
 
                                                     <md-menu-item ng-if="accion.cuota">
-                                                        <md-button ng-click="openModalCuota(item)" ng-disabled="item.gestionTributaria">
-                                                            <span md-menu-align-target><i class=" fas fa-hand-holding-usd"></i> Cuotas</span>
+                                                        <md-button ng-click="openModalCuota(item)"
+                                                            ng-disabled="item.gestionTributaria">
+                                                            <span md-menu-align-target><i
+                                                                    class=" fas fa-hand-holding-usd"></i> Cuotas</span>
                                                         </md-button>
                                                     </md-menu-item>
 
                                                     <md-menu-item ng-if="accion.historialFinanciero">
                                                         <md-button ng-click="openModalHistorialCobro(item)">
-                                                            <span md-menu-align-target><i class=" fas fa-tasks"></i> Hist. Mov.</span>
+                                                            <span md-menu-align-target><i class=" fas fa-tasks"></i>
+                                                                Hist. Mov.</span>
                                                         </md-button>
                                                     </md-menu-item>
 
                                                     <md-menu-item ng-if="accion.reporte">
                                                         <md-button ng-click="getReport(item)">
-                                                            <span md-menu-align-target> <i class="fa fa-file-pdf fa-xs"></i> PDF</span>
+                                                            <span md-menu-align-target> <i
+                                                                    class="fa fa-file-pdf fa-xs"></i> PDF</span>
                                                         </md-button>
                                                     </md-menu-item>
+                                                   
                                                     <md-menu-item>
                                                         <md-button ng-click="print(item)">
-                                                            <span md-menu-align-target> <i class="fa fa-file-pdf fa-xs"></i> Impresion</span>
+                                                            <span md-menu-align-target> <i
+                                                                    class="fa fa-file-pdf fa-xs"></i> Impresion</span>
                                                         </md-button>
-                                                    </md-menu-item>                                                
+                                                    </md-menu-item>
+
+                                                     <md-menu-item>
+                                                        <md-button uib-tooltip="Enviar por Whatsapp" tooltip-placement="top" btn-send-to-whats-app params="item" has-permission="hasPermissions" type-send="typeSend"  >
+                                                            <span md-menu-align-target>
+                                                                <i class="mdi mdi-whatsapp"></i> Enviar por Whatsapp
+                                                            </span>
+                                                        </md-button>
+                                                    </md-menu-item>
+                                                    
                                                 </md-menu-content>
                                             </md-menu>
                                         </td>
@@ -191,9 +213,9 @@
                                         <td md-cell>{{item.fechaEmision}}</td>
                                         <td md-cell>{{item.fechaVencimiento}}</td>
                                         <td md-cell>{{item.nombreFiscal}}</td>
-                                        <td md-cell>${{item.total}}</td>
-                                        <td md-cell>${{item.abono}}</td>
-                                        <td md-cell>${{item.saldo}}</td>
+                                        <td md-cell totales-venta-view="ventaPermiso">${{item.total}}</td>
+                                        <td md-cell totales-venta-view="ventaPermiso">${{item.abono}}</td>
+                                        <td md-cell totales-venta-view="ventaPermiso">${{item.saldo}}</td>
                                         <td md-cell>{{item.nroRetencion}}</td>
                                         <td md-cell>{{item.nroNotaCredito}}</td>
                                         <td md-cell>{{item.estadoFinanciero}}</td>
@@ -201,19 +223,23 @@
                                         <td md-cell>{{item.tipo?"CONTADO":"CREDITO"}}</td>
                                         <td md-cell>{{item.usuario}}</td>
                                     </tr>
-                                    <tr ng-show="facturas.length==0" class="text-center">
-                                        <td colspan="13">
-                                            No hay registros en esta tabla :)
-                                        </td>
-                                    </tr>
+                                    @* <tr ng-show="facturas.length==0" class="text-center">
+                                    <td colspan="13">
+                                    No hay registros en esta tabla :)
+                                    </td>
+                                    </tr> *@
                                 </tbody>
                                 <tfoot md-foot fixed-tfoot>
                                     <tr md-row>
-                                        <td md-cell colspan="2"><span class="font-weight-bold">{{facturas.length}} Facturas</span></td>
+                                        <td md-cell colspan="2"><span class="font-weight-bold">{{facturas.length}}
+                                                Facturas</span></td>
                                         <td md-cell colspan="3"><span class="font-weight-bold">Total</span></td>
-                                        <td md-cell><span class="font-weight-bold">{{total}}</span></td>
-                                        <td md-cell><span class="font-weight-bold">{{totalAbono}}</span></td>
-                                        <td md-cell><span class="font-weight-bold">{{totalSaldo}}</span></td>
+                                        <td md-cell totales-venta-view="ventaPermiso"><span
+                                                class="font-weight-bold">{{total}}</span></td>
+                                        <td md-cell totales-venta-view="ventaPermiso"><span
+                                                class="font-weight-bold">{{totalAbono}}</span></td>
+                                        <td md-cell totales-venta-view="ventaPermiso"><span
+                                                class="font-weight-bold">{{totalSaldo}}</span></td>
                                         <td md-cell colspan="6"></td>
                                     </tr>
                                 </tfoot>
@@ -228,6 +254,8 @@
 </div>
 @section Scripts{
     <script src="~/js/services/storageService.js" asp-append-version="true"></script>
-    <script src="~/js/controllers/ventas/facturaVentaCtrl.min.js" asp-append-version="true"></script>
+    <script src="~/js/factElect/directives/factElectDirective.min.js" asp-append-version="true"></script>
+    <script src="~/js/factElect/services/facturaService.min.js" asp-append-version="true"></script>
+    <script src="~/js/factElect/controllers/facturaVentaCtrl.min.js" asp-append-version="true"></script>
 
 }

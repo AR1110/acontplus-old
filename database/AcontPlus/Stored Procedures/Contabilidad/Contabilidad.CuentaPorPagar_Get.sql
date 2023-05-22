@@ -280,7 +280,7 @@ BEGIN
 					 d.idDocRelacionado
 					,idTipoDocumento = (SELECT TOP 1 idTipoDocumento FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo = 'NC')
 					,dr.serieComprobante
-					,saldo = d.valorRetenido
+					,saldo = d.baseImponible + valorRetenido
 					,codDoc = 'Nota Crédito Version:'+dr.versionComp
 				FROM factelect.DocRelacionado d
 				INNER JOIN Recepcion.DocumentoRecibido dr ON dr.idDocumento = d.idDocumentoRecibido
@@ -315,15 +315,16 @@ BEGIN
 				,ce.nombreFiscal
 				,ce.total
 				,tipoDocumento = 'CE-' + es.estab + '-' + Helper.F_Auto_Sequential(ce.nroDocumento) 
-				,usuario = u.nombreUsuario
+				,usuario = us.nombreUsuario
 				,estado = IIF(ce.estado=1, 'ACTIVO', 'ANULADA')
-				,fechaRegistro = FORMAT(ce.fechaRegistro, 'yyyy-dd-mm hh:mm')
+				,fechaRegistro = FORMAT(ce.fechaRegistro, 'yyyy-MM-dd hh:mm')
 
-			FROM Contabilidad.Historial_Pago hp 
-			INNER JOIN ComprobanteEgreso ce WITH(NOLOCK) ON ce.idComprobanteEgreso = hp.idComprobanteEgreso
-			INNER JOIN Sri.Establecimiento es WITH(NOLOCK) ON es.codEstab = ce.codEstab 
-			INNER JOIN Usuario u WITH(NOLOCK) ON u.idUsuario = ce.idUsuario
+			FROM Contabilidad.Historial_Pago hp WITH(NOLOCK)
+			INNER JOIN ComprobanteEgreso     ce WITH(NOLOCK) ON ce.idComprobanteEgreso = hp.idComprobanteEgreso
+			INNER JOIN Sri.Establecimiento   es WITH(NOLOCK) ON es.codEstab            = ce.codEstab 
+			INNER JOIN Usuario               us WITH(NOLOCK) ON us.idUsuario           = ce.idUsuario
 			WHERE hp.idCuentaPorPagar = @idCuentaPorPagar
+			ORDER BY fechaRegistro 
 
 		END 
 		

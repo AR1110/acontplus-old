@@ -32,7 +32,7 @@ namespace AdminUI.Controllers
                 GenericResponse _response = new GenericResponse();
                 _response = await _lSvc.LoginAsync(data);
                 var loginData = _response.payload as LoginDataDto;
-                var urlService = _config.GetSection("UrlApis").GetSection("ApiGateway").Value;
+                var urlService = _config.GetSection("UrlApis").GetSection("UrlGateway").Value;
                 var _authService = await new ApiServer(urlService).PostAsync<AuthResponse>("api/account", loginData);
                 return Ok(_authService);
             }

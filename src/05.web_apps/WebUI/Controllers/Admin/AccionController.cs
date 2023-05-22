@@ -1,8 +1,7 @@
 ﻿using DataAccess;
 using Domain.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers
 {
@@ -17,7 +16,7 @@ namespace WebUI.Controllers
         }
         // GET: Acciones
         GenericResponse _gr = new();
-        [Authorize]
+
         public IActionResult Index()
         {
             return View();
@@ -42,7 +41,7 @@ namespace WebUI.Controllers
             return Ok(_gr);
         }
 
-        
+
         public async Task<IActionResult> Delete(int idAccion)
         {
             _gr = await ac.DeleteAccionesAsync(idAccion);

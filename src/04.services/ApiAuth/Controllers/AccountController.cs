@@ -22,6 +22,6 @@ namespace ApiAuth.Controllers
             if (authResponse == null) { return Unauthorized(); }
             _log.LogInfo("Login successful: idRol -> " + Convert.ToString(authRequest.idUsuarioRol) + " \n jwt: " + authResponse.jwtToken);
             return authResponse;
-        }         
+        }
     }
 }

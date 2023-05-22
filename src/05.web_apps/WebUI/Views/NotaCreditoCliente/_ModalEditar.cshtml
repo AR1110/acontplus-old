@@ -10,51 +10,56 @@
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
                 <div class="form-group">
                     <label for="establecimiento">Estab.: <span class="text-danger">*</span></label>
-                    <select name="establecimiento" id="establecimiento" class="form-control border-select" ng-model="$ctrl.data.codEstab" disabled>
+                    <select name="establecimiento" id="establecimiento" class="form-control border-select"
+                        ng-model="$ctrl.data.codEstab" disabled>
                         <option ng-value="item.codEstab" ng-repeat="item in $ctrl.establecimientos">
                             {{item.nombreComercial}}
                         </option>
                     </select>
-                </div>            
+                </div>
             </div>
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
                 <div class="form-group">
                     <label for="puntoEmision">Punto Emisión: <span class="text-danger">*</span></label>
-                    <select name="puntoEmision" id="puntoEmision" class="form-control border-select" ng-model="$ctrl.data.idPuntoEmision" disabled>
-                        <option ng-value="item.idPuntoEmision" ng-repeat="item in $ctrl.puntosEmisiones">{{item.ptoEmi}}</option>
+                    <select name="puntoEmision" id="puntoEmision" class="form-control border-select"
+                        ng-model="$ctrl.data.idPuntoEmision" disabled>
+                        <option ng-value="item.idPuntoEmision" ng-repeat="item in $ctrl.puntosEmisiones">{{item.ptoEmi}}
+                        </option>
                     </select>
                 </div>
             </div>
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
                 <div class="form-group">
                     <label for="">Fecha Emisión <span class="text-danger">*</span></label>
-                    <input type="date" ng-model="$ctrl.data.fechaEmision"  class="form-control border-select">
-                </div> 
+                    <input type="date" ng-model="$ctrl.data.fechaEmision" class="form-control border-select">
+                </div>
             </div>
         </div>
 
         <div class="row">
-            <div class="co-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">            
-                <div class="form-group">
-                    <label for="">Cliente: <span class="text-danger">*</span></label>
-                    <input type="text" ng-value="$ctrl.cliente.nombreFiscal" class="form-control" disabled>                    
-                </div>                       
-            </div>
-
             <div class="co-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
                 <div class="form-group">
-                    <label for="nroIndentificacion" class="">Nro. Identificación:</label>
-                    <input type="text" name="nroIndentificacion" id="nroIndentificacion" class="form-control" readonly ng-value="$ctrl.cliente.numeroIdentificacion" placeholder="..." />
+                    <label for="">Cliente: <span class="text-danger">*</span></label>
+                    <input type="text" ng-value="$ctrl.cliente.nombreFiscal" class="form-control" disabled>
                 </div>
             </div>
 
             <div class="co-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
                 <div class="form-group">
-                    <label for="Facturas">Factura</label>    
-                    <input type="text" ng-model="$ctrl.factura.nroFactura" class="form-control border-select" disabled>                
-                    <button type="button" class="btn btn-info btn-xs mt-1" ng-click="$ctrl.verDetalleFactura()"><i class="ti-file"></i> Ver documento
-                    </button>                                                                                  
-                </div>      
+                    <label for="nroIndentificacion" class="">Nro. Identificación:</label>
+                    <input type="text" name="nroIndentificacion" id="nroIndentificacion" class="form-control" readonly
+                        ng-value="$ctrl.cliente.numeroIdentificacion" placeholder="..." />
+                </div>
+            </div>
+
+            <div class="co-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                <div class="form-group">
+                    <label for="Facturas">Factura</label>
+                    <input type="text" ng-model="$ctrl.factura.nroFactura" class="form-control border-select" disabled>
+                    <button type="button" class="btn btn-info btn-xs mt-1" ng-click="$ctrl.verDetalleFactura()"><i
+                            class="ti-file"></i> Ver documento
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -62,14 +67,13 @@
             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <div class="row justify-content-between">
                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                        <label for="">Buscar Articulo</label>             
-                        <md-autocomplete-articulo-component 
-                            tipo-doc="$ctrl.TIPO_DOC"
+                        <label for="">Buscar Articulo</label>
+                        <md-autocomplete-articulo-component tipo-doc="$ctrl.TIPO_DOC"
                             abrir-modal-articulo="$ctrl.abrirModalArticulo(item)"
                             get-data-articulo="$ctrl.getDataIdArticulo(item)"
                             set-item-articulo-en-detalle="$ctrl.setItemArticuloEnDetalle(item)"
-                            scope-parent="scopeParent">
-                        </md-autocomplete-articulo-component>            
+                            scope-parent="scopeParent" id-bodega="$ctrl.idBodega">
+                        </md-autocomplete-articulo-component>
                     </div>
                 </div>
             </div>
@@ -78,40 +82,37 @@
                     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
                         <div class="form-group">
                             <label for="bodegas">Bodega</label>
-                            <select name="bodegas" id="bodegas" class="form-control border-select" ng-model="$ctrl.idBodega" ng-change="$ctrl.onChangeBodega()">
+                            <select name="bodegas" id="bodegas" class="form-control border-select"
+                                ng-model="$ctrl.idBodega" ng-change="$ctrl.onChangeBodega()">
                                 <option ng-value="item.idBodega" ng-repeat="item in $ctrl.bodegas">
                                     {{item.descripcion}}
                                 </option>
                             </select>
-                        </div>                       
+                        </div>
                     </div>
                     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
                         <div class="form-group">
-                            <label for="tarifas">Tarifa: 
-                                <span tooltip-placement="top" uib-tooltip="Asignación Rápida de listas de precios seleccionada a todos los productos del documento.">
+                            <label for="tarifas">Tarifa:
+                                <span tooltip-placement="top"
+                                    uib-tooltip="Asignación Rápida de listas de precios seleccionada a todos los productos del documento.">
                                     <i class="fas fa-info-circle fa-xs"></i>
-                                </span>                                                                
+                                </span>
                             </label>
-                            <select id="tarifas" class="form-control border-select" ng-model="$ctrl.idTarifa" ng-change="$ctrl.askToChangeTariga()">
+                            <select id="tarifas" class="form-control border-select" ng-model="$ctrl.idTarifa"
+                                ng-change="$ctrl.askToChangeTariga()">
                                 <option ng-value="item.idTarifa" ng-repeat="item in $ctrl.tarifas">
                                     {{item.descripcion}}
                                 </option>
                             </select>
                         </div>
-                    </div> 
+                    </div>
                 </div>
-            </div>          
-        </div> 
+            </div>
+        </div>
 
-        <div ui-grid="$ctrl.gridOptions"
-            ui-grid-edit
-            ui-grid-resize-columns
-            ui-grid-cellNav
-            ui-grid-auto-resize
-            ui-grid-validate
-            ui-grid-save-state
-            class="grid">
-        </div> 
+        <div ui-grid="$ctrl.gridOptions" ui-grid-edit ui-grid-resize-columns ui-grid-cellNav ui-grid-auto-resize
+            ui-grid-validate ui-grid-save-state class="grid">
+        </div>
 
         <div class="row">
             <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-xs-12">
@@ -122,7 +123,8 @@
                                 <tbody>
                                     <tr>
                                         <td class="left">
-                                            <strong class="text-dark">SubTotal Iva {{$ctrl.actividadTipoIva.tarifa}}%</strong>
+                                            <strong class="text-dark">SubTotal Iva
+                                                {{$ctrl.actividadTipoIva.tarifa}}%</strong>
                                         </td>
                                         <td class="right">${{$ctrl.data.subTotalIva}}</td>
                                     </tr>
@@ -146,10 +148,10 @@
                                             <strong class="text-dark">SubTotal no Objeto IVA</strong>
                                         </td>
                                         <td class="right">${{$ctrl.data.subTotalNoObjetoIva}}</td>
-                                    </tr>                                                       
+                                    </tr>
                                 </tbody>
-                            </table>  
-                        </div>             
+                            </table>
+                        </div>
                     </div>
 
                     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
@@ -182,10 +184,10 @@
                                             <strong class="text-dark">SubTotal Neto no Objeto IVA</strong>
                                         </td>
                                         <td class="right">${{$ctrl.data.subTotalNetoNoObjetoIva}}</td>
-                                    </tr>                                                       
+                                    </tr>
                                 </tbody>
-                            </table>  
-                        </div> 
+                            </table>
+                        </div>
                     </div>
 
                     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
@@ -211,11 +213,11 @@
                                             <strong class="text-dark">Propina</strong>
                                         </td>
                                         <td class="right">${{$ctrl.data.propina}}</td>
-                                    </tr>                                                                               
+                                    </tr>
                                 </tbody>
-                            </table>  
-                        </div> 
-                    </div>                      
+                            </table>
+                        </div>
+                    </div>
                 </div>
                 <md-divider></md-divider>
                 <div class="row mt-2" ng-if="$ctrl.showSubtotales">
@@ -223,14 +225,15 @@
                         <div class="form-group">
                             <label>% Descuento</label>
                             <div class="input-group">
-                                <input ng-model="$ctrl.data.porcentajeDescuento" ng-disabled="$ctrl.gridOptions.data.length==0" 
-                                decimal class="form-control" />
+                                <input ng-model="$ctrl.data.porcentajeDescuento"
+                                    ng-disabled="$ctrl.gridOptions.data.length==0" decimal class="form-control" />
                                 <div class="input-group-append">
-                                    <button type="button" class="btn btn-secondary btn-sm" ng-click="$ctrl.calcularPorcentajeDescuento()">
+                                    <button type="button" class="btn btn-secondary btn-sm"
+                                        ng-click="$ctrl.calcularPorcentajeDescuento()">
                                         <i class="fa fa-calculator fa-xs"></i>
-                                    </button>                                            
+                                    </button>
                                 </div>
-                            </div>                    
+                            </div>
                         </div>
                     </div>
 
@@ -238,83 +241,97 @@
                         <div class="form-group">
                             <label>Descuento</label>
                             <div class="input-group">
-                                <input ng-model="$ctrl.data.totalDescuento" id="totalDescuento" ng-disabled="$ctrl.gridOptions.data.length==0" decimal placeholder="0.00" class="form-control" />
+                                <input ng-model="$ctrl.data.totalDescuento" id="totalDescuento"
+                                    ng-disabled="$ctrl.gridOptions.data.length==0" decimal placeholder="0.00"
+                                    class="form-control" />
                                 <div class="input-group-append">
-                                    <button type="button" class="btn btn-secondary btn-sm" ng-click="$ctrl.calcularDescuento()">
+                                    <button type="button" class="btn btn-secondary btn-sm"
+                                        ng-click="$ctrl.calcularDescuento()">
                                         <i class="fa fa-calculator fa-xs"></i>
                                     </button>
                                 </div>
-                            </div>                                    
+                            </div>
                         </div>
                     </div>
 
                     <div class="col-lg-2 col-md-6 col-sm-12 col-xs-12">
                         <div class="form-group">
                             <label>Transporte</label>
-                            <input type="text" decimal ng-model="$ctrl.data.transporte" class="form-control border-select" placeholder="0.00" />
+                            <input type="text" decimal ng-model="$ctrl.data.transporte"
+                                class="form-control border-select" placeholder="0.00" />
                         </div>
                     </div>
 
                     <div class="col-lg-2 col-md-6 col-sm-12 col-xs-12">
                         <div class="form-group">
                             <label>Rercargo</label>
-                            <input type="text" decimal ng-model="$ctrl.data.recargo" class="form-control border-select" placeholder="0.00" />
+                            <input type="text" decimal ng-model="$ctrl.data.recargo" class="form-control border-select"
+                                placeholder="0.00" />
                         </div>
                     </div>
 
                     <div class="col-lg-4">
                         <div class="form-group">
                             <label>Observacion</label>
-                            <textarea class="form-control border-select" ng-model="$ctrl.data.observacion" touppercase placeholder="..."></textarea>
+                            <textarea class="form-control border-select" ng-model="$ctrl.data.observacion" touppercase
+                                placeholder="..."></textarea>
                         </div>
                     </div>
-                </div> 
+                </div>
             </div>
 
-            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">             
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
                 <div class="table-responsive mt-2">
                     <table class="table table-clear table-sm">
                         <tbody>
                             <tr>
                                 <td class="left">
-                                <strong class="text-dark">SubTotal sin Impuesto</strong>
+                                    <strong class="text-dark">SubTotal sin Impuesto</strong>
                                 </td>
                                 <td class="right">${{$ctrl.data.subTotalSinImpuestos}}</td>
                             </tr>
 
                             <tr>
                                 <td class="left">
-                                    <strong class="text-dark">IVA {{$ctrl.actividadTipoIva.tarifa}}%</strong>
+                                    @* <strong class="text-dark">IVA {{$ctrl.actividadTipoIva.tarifa}}%</strong> *@
+                                    <select style="width: 150px;" name="impuestoTarifa" id="impuestoTarifa"
+                                        ng-model="$ctrl.data.tarifa" class="form-control form-control-sm border-select"
+                                        ng-change="$ctrl.recalculateImpuestoTarifa()">
+                                        <option ng-value="item.tarifa" ng-repeat="item in $ctrl.impuestoTarifas">
+                                            {{item.descripcion}}
+                                        </option>
+                                    </select>
                                 </td>
                                 <td class="right">${{$ctrl.data.iva}}</td>
                             </tr>
 
                             <tr>
                                 <td class="left">
-                                <strong class="text-dark">Total Descuento</strong>
+                                    <strong class="text-dark">Total Descuento</strong>
                                 </td>
                                 <td class="right">${{$ctrl.data.totalDescuento}}</td>
                             </tr>
-                            
+
                             <tr>
                                 <td class="left">
-                                    <h4> <strong class="text-dark">Total</strong></h4>                                       
+                                    <h4> <strong class="text-dark">Total</strong></h4>
                                 </td>
                                 <td class="right">
                                     <h4><strong class="text-dark">${{$ctrl.getImporteTotal()}}</strong></h4>
                                 </td>
                             </tr>
                         </tbody>
-                    </table>  
-                </div> 
+                    </table>
+                </div>
                 <div class="mt-2">
-                    <button type="button" class="btn btn-secondary btn-sm btn-lg btn-block" ng-click="$ctrl.openModalInfoAdicional(false)">
+                    <button type="button" class="btn btn-secondary btn-sm btn-lg btn-block"
+                        ng-click="$ctrl.openModalInfoAdicional(false)">
                         <i class="fas fa-info-circle text-info"></i> Dato Adicional
                     </button>
-                </div>                        
+                </div>
             </div>
         </div>
-        
+
 
 
     </div>
@@ -328,4 +345,4 @@
         </button>
         <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">&times; Cerrar</button>
     </div>
-</form>    
+</form>

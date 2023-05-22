@@ -14,7 +14,7 @@
                     <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
                     <li class="breadcrumb-item active">Medida</li>
                 </ol>*@
-                <button type="button" ng-if="accion.crear" ng-click="openModalNew()" class="btn btn-info d-sm-block m-l-15">
+                <button type="button" ng-if="accion.crear" btn-add-update-medida results="resultModal(item)" class="btn btn-info d-sm-block m-l-15">
                     <i class="ti-plus"></i> Nuevo
                 </button>
             </div>
@@ -68,7 +68,8 @@
                             <tbody>
                                 <tr ng-repeat="t in medidas | filter:buscar track by $index">
                                     <td ng-if="accion.editar || accion.eliminar">
-                                        <button type="button" ng-if="accion.editar" class="btn btn-info btn-xs" tooltip data-toggle="toggle" title="Editar" ng-click="openModalUpdate(t)"><i class="ti-pencil"></i></button>
+                                        <button type="button" ng-if="accion.editar" class="btn btn-info btn-xs"  btn-add-update-medida results="resultModal(item)" params="t"><i class="ti-pencil"></i></button>
+
                                         <button type="button" ng-if="accion.eliminar" class="btn btn-danger btn-xs" tooltip data-toggle="toggle" title="Eliminar" ng-click="delete(t)"><i class="ti-trash"></i></button>
                                     </td>
                                     <td>{{$index+1}}</td>
@@ -101,8 +102,8 @@
    
 </div>
 @section Scripts{
-    <script src="~/lib/xlsx/xlsx.full.min.js" asp-append-version="true"></script>
-    <script src="~/js/controllers/almacen/medidaCtrl.min.js" asp-append-version="true"></script>
+    <script src="~/lib/xlsx/xlsx.full.min.js" asp-append-version="true"></script>     
+    <script src="~/js/inventario/controllers/medidaCtrl.min.js" asp-append-version="true"></script>
 
 }
 

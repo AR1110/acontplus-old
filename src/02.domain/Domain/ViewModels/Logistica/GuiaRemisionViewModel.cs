@@ -1,6 +1,5 @@
 ﻿using Domain.Models.InfoAdicional;
 using Domain.Models.Logistica;
-using System.Collections.Generic;
 
 namespace Domain.ViewModels.Logistica
 {

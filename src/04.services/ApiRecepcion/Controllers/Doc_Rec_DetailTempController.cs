@@ -1,100 +1,97 @@
 ﻿using Common.Logs;
 using DataAccess;
 using Helpers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiRecepcion.Controllers
 {
-    [Authorize]
+
     [Route("api/[controller]")]
     [ApiController]
     public class Doc_Rec_DetailTempController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public Doc_Rec_DetailTempController(IConfiguration configuration) => (_configuration) = (configuration);
+        private readonly DbAccess _db;
+        public Doc_Rec_DetailTempController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _db = new DbAccess(configuration);
+        }
 
         [HttpGet("{idDocumento}")]
         public async Task<IActionResult> GetId(int idDocumento)
         {
             LogWriter _logs = new LogWriter(_configuration);
-
+            var _response = new GenericResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-
-                Dictionary<string, object> parameters = new Dictionary<string, object>();
-                parameters.Add("idRol", idUsuarioRol);
-                parameters.Add("idDocumento", idDocumento);
-                parameters.Add("jsonData", "");
-                DAO _dao = new DAO(_configuration);
-                return Ok(await _dao.GetDataTable("Recepcion.Doc_Detail_Temp_Get", parameters));
+                await _db.SPExecute("Recepcion.Doc_Detail_Temp_Get");
+                _db.AddDynamicParam("idRol", idUsuarioRol);
+                _db.AddDynamicParam("idDocumento", idDocumento);
+                _db.AddDynamicParam("jsonData", "");
+                _response = _db.GetDataTableAsync();
             }
             catch (Exception ex)
             {
                 _logs.LogError("Error al obtener los detalles temporales: " + ex.ToString());
-                return new BadRequestObjectResult(new
-                {
-                    code = 0,
-                    message = "Error al obtener los detalles temporales"
-                });
+                _response.Create(code: "0", message: "Error al obtener los detalles temporales");
             }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
 
         [HttpPost]
         public async Task<IActionResult> Post(string json)
         {
             LogWriter _logs = new LogWriter(_configuration);
-
+            GenericResponse _response = new GenericResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-
-                Dictionary<string, object> parameters = new Dictionary<string, object>
-                {
-                    { "idRol", idUsuarioRol },
-                    { "jsonData", SqlValidation.ValidateSqlString(json) }
-                };
-                DAO _dao = new DAO(_configuration);
-                return Ok(await _dao.Default("Recepcion.Doc_Detail_Temp_Insert", parameters));
+                await _db.SPExecute("Recepcion.Doc_Detail_Temp_Insert");
+                _db.AddDynamicParam("idRol", idUsuarioRol);
+                _db.AddDynamicParam("jsonData", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
                 _logs.LogError("Error al insertar el detalle temporal: " + ex.ToString());
-                return new BadRequestObjectResult(new
-                {
-                    code = 0,
-                    message = "Error al insertar el detalle"
-                });
+                _response.Create(code: "0", message: "Error al insertar el detalle");
             }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
 
         [HttpPut]
         public async Task<IActionResult> Put(string json)
         {
             LogWriter _logs = new LogWriter(_configuration);
-
+            GenericResponse _response = new GenericResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-
-                Dictionary<string, object> parameters = new Dictionary<string, object>
-                {
-                    { "idRol", idUsuarioRol },
-                    { "jsonData", SqlValidation.ValidateSqlString(json) }
-                };
-                DAO _dao = new DAO(_configuration);
-                return Ok(await _dao.Default("Recepcion.Doc_Detail_Temp_Update", parameters));
+                await _db.SPExecute("Recepcion.Doc_Detail_Temp_Update");
+                _db.AddDynamicParam("idRol", idUsuarioRol);
+                _db.AddDynamicParam("jsonData", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
                 _logs.LogError("Error al actualizar el detalle temporal: " + ex.ToString());
-                return new BadRequestObjectResult(new
-                {
-                    code = 0,
-                    message = "Error al actualizar el detalle"
-                });
+                _response.Create(code: "0", message: "Error al actualizar el detalle");
             }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
     }
 }

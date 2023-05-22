@@ -1,7 +1,6 @@
-﻿using Helpers;
-using DataAccess;
+﻿using DataAccess;
 using Domain.Models;
-using Microsoft.AspNetCore.Authorization;
+using Helpers;
 using Microsoft.AspNetCore.Mvc;
 using WebUI.Utils;
 
@@ -10,20 +9,20 @@ namespace WebUI.Controllers
     public class EstabLogoController : Controller
     {
         private readonly IConfiguration _configuration;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private DataAccessObject _dao;
-        private readonly int _idRol;
 
-        public EstabLogoController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        private DataAccessObject _dao;
+
+
+        public EstabLogoController(IConfiguration configuration)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
-            _httpContextAccessor = httpContextAccessor;
-            _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+
+
 
         }
 
-        [Authorize]
+
         public IActionResult Index()
         {
             return View();
@@ -42,7 +41,7 @@ namespace WebUI.Controllers
                 Content = FileData.GetFileByte(file)
             };
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("codEstab", data.codEstab);
             parameters.Add("imagen", signFile.Content);
             parameters.Add("mimeType", signFile.ContentType);
@@ -54,7 +53,7 @@ namespace WebUI.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("id", id);
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Config.Estab_Logo_Delete", parameters)));
         }

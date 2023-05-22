@@ -1,17 +1,12 @@
 ﻿using Domain.Models;
 using Helpers;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccess
 {
-    public class TipoTransaccionDao 
+    public class TipoTransaccionDao
     {
         private readonly IConfiguration _config;
         protected GenericResponse _gr;
@@ -55,7 +50,7 @@ namespace DataAccess
                             listar.Add(_tt);
                         }
                     }
-                    
+
                     _gr.data = listar;
                 }
             }

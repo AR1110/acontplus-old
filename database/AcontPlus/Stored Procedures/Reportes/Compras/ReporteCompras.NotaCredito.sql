@@ -10,53 +10,63 @@ IF OBJECT_ID(N'ReporteCompras.NotaCredito', N'P') IS NOT NULL
 DROP PROCEDURE ReporteCompras.NotaCredito
 GO
 
-CREATE PROCEDURE ReporteCompras.NotaCredito
-	 @idRol INT 
-	,@json NVARCHAR(MAX)
+CREATE PROCEDURE ReporteCompras.NotaCredito @idRol INT ,@json NVARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
 	DECLARE @idTipoAmbiente int 
-		   ,@idNotaCreditoProveedor BIGINT
-		   ,@idEntidad int = (SELECT idEntidad FROM AFTDataRol(@idRol))
-		   ,@claveAcceso nvarchar(50) 
-		   ,@idTipoDocumento bigint 
-		   ,@nroPrecio INT
-		   ,@nroCantidad INT
-	       ,@nroIva INT
-	       ,@nroDescuentoDetalle INT
-	       ,@nroTotalDetalle INT
-	       ,@nroTotalSubTotal INT
-	       ,@nroDescuento INT
-	       ,@nroIce INT
+	DECLARE @idNotaCreditoProveedor BIGINT
+	DECLARE @idEntidad INT 
+	DECLARE @claveAcceso NVARCHAR(50) 
+	DECLARE @idTipoDocumento bigint 
+	DECLARE @jsonConfig AS VARCHAR(MAX)
+	DECLARE @nroPrecio INT
+	DECLARE @nroCantidad INT
+	DECLARE @nroIva INT
+	DECLARE @nroDescuentoDetalle INT
+	DECLARE @nroTotalDetalle INT
+	DECLARE @nroTotalSubTotal INT
+	DECLARE @nroDescuento INT
+	DECLARE @nroIce INT
 
 	SELECT @idNotaCreditoProveedor = idNotaCreditoProveedor FROM OPENJSON(@json)WITH (idNotaCreditoProveedor BIGINT '$.idNotaCreditoProveedor') AS jsonValues 
 
-	SELECT 
-		@idTipoDocumento = idTipoDocumento 
-	FROM dbo.NotaCreditoProveedor 
-	WHERE idNotaCreditoProveedor= @idNotaCreditoProveedor
+	SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
+
+	SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM dbo.NotaCreditoProveedor WITH (NOLOCK) WHERE idNotaCreditoProveedor= @idNotaCreditoProveedor
+
+	SELECT TOP 1 @jsonConfig = jsonConfig FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CD'
+
+	SELECT @nroPrecio           = nroPrecio
+	      ,@nroCantidad         = nroCantidad
+	      ,@nroIva              = nroIva
+	      ,@nroDescuentoDetalle = nroDescuentoDetalle
+	      ,@nroTotalDetalle     = nroTotalDetalle
+	      ,@nroTotalSubTotal    = nroTotalSubTotal
+	      ,@nroDescuento        = nroDescuento
+	      ,@nroIce              = nroIce
+	FROM OPENJSON(@jsonConfig)
+	WITH (codTransaccion VARCHAR(5) '$.codTransaccion'
+		 ,nroPrecio             INT '$.nroPrecio'
+	     ,nroCantidad           INT '$.nroCantidad'
+		 ,nroIva                INT '$.nroIva'
+		 ,nroDescuentoDetalle   INT '$.nroDescuentoDetalle'
+		 ,nroTotalDetalle       INT '$.nroTotalDetalle'
+		 ,nroTotalSubTotal      INT '$.nroTotalSubTotal'
+		 ,nroDescuento          INT '$.nroDescuento'
+		 ,nroIce                INT '$.nroIce') as dt
+	WHERE dt.codTransaccion = 'C'
+
 
 	SELECT 
-		@nroPrecio = nroPrecio
-	   ,@nroCantidad = nroCantidad
-	   ,@nroIva = nroIva
-	   ,@nroDescuentoDetalle = nroDescuentoDetalle
-	   ,@nroTotalDetalle = nroTotalDetalle
-	   ,@nroTotalSubTotal = nroTotalSubTotal
-	   ,@nroDescuento = nroDescuento
-	   ,@nroIce = nroIce
-	FROM Config.CantidadDecimal WHERE idEntidad = @idEntidad AND codTransaccion = 'C'
-
-	SELECT 
-		 nroDocumento           = dbo.AFTGenerarNroDocumento(ncp.ptoEmision,ncp.nroDoc)												
-		,razonSocialEntidad     = e.razonSocial
-		,nombreComercialEntidad = e.nombreComercial
-		,rucEntidad             = e.ruc
-		,telefonoEntidad        = e.telefono
-		,correoEntidad			= e.email														
-		,direccionEntidad       = e.direccion								
+		 nroDocumento               = dbo.AFTGenerarNroDocumento(ncp.ptoEmision,ncp.nroDoc)												
+		,razonSocialEntidad         = e.razonSocial
+		,nombreComercialEntidad     = e.nombreComercial
+		,rucEntidad                 = e.ruc
+		,telefonoEntidad            = e.telefono
+		,correoEntidad			    = e.email														
+		,direccionEntidad           = e.direccion								
 		,obligadoLlevarContabilidad = es.obligadoContabilidad
 		,nroIdentificacionProveedor = prov.numeroIdentificacion
 		,nombreFiscalProveedor		= prov.nombreFiscal
@@ -70,30 +80,28 @@ BEGIN
 		,subtotalExcentoIva			= Herramientas.Round_Out(ncp.subTotalExentoIva,@nroTotalSubTotal)
 		,ice						= Herramientas.Round_Out(ncp.totalIce,@nroIce)
 		,irbpnr						= CAST(ncp.irbpnr AS numeric(15,2))
-		,subTotalSinImpuestos		=  Herramientas.Round_Out(ncp.subTotalSinImpuestos,@nroTotalSubTotal)
+		,subTotalSinImpuestos		= Herramientas.Round_Out(ncp.subTotalSinImpuestos,@nroTotalSubTotal)
 		,totalDescuento				= Herramientas.Round_Out(ncp.totalDescuento,@nroDescuento)
 		,iva12						= Herramientas.Round_Out(ncp.iva,@nroIva)
 		,propina					= CAST(ncp.propina AS numeric(15,2)) 
 		,importeTotal				= Herramientas.Round_Out(ncp.total,@nroTotalSubTotal)			
 		,fechaEmision				= CONVERT(NVARCHAR, FORMAT(ncp.fechaEmision, 'dd/MM/yyyy hh:mm:ss')) 												
-	FROM dbo.NotaCreditoProveedor ncp				
-	INNER JOIN Sri.Establecimiento     es ON es.codEstab             = ncp.codEstab		
-	INNER JOIN dbo.Proveedor         prov ON prov.idProveedor        = ncp.idProveedor			
-	INNER JOIN dbo.Entidad              e ON e.idEntidad             = ncp.idEntidad	
-	INNER JOIN Config.GestionSistema     c ON c.idEntidad            = e.idEntidad	
-	INNER JOIN dbo.SubContribuyente    sc ON sc.idSubContribuyente   = prov.idSubContribuyente	
-	WHERE ncp.idNotaCreditoProveedor = @idNotaCreditoProveedor;
+	FROM dbo.NotaCreditoProveedor     ncp WITH (NOLOCK)				
+	INNER JOIN Sri.Establecimiento     es WITH (NOLOCK) ON es.codEstab             = ncp.codEstab		
+	INNER JOIN dbo.Proveedor         prov WITH (NOLOCK) ON prov.idProveedor        = ncp.idProveedor			
+	INNER JOIN dbo.Entidad              e WITH (NOLOCK) ON e.idEntidad             = ncp.idEntidad	
+	WHERE ncp.idNotaCreditoProveedor = @idNotaCreditoProveedor
 
 	SELECT 
-		 codigo = a.codigo
-		,cantidad = Herramientas.Round_Out(ncpd.cantidad,@nroCantidad)
-		,descripcion = ncpd.descripcion
-		,precioUnitario =  Herramientas.Round_Out(ncpd.precioUnitario,@nroPrecio) 
+		 codigo         = a.codigo
+		,cantidad       = Herramientas.Round_Out(ncpd.cantidad,@nroCantidad)
+		,descripcion    = ncpd.descripcion
+		,precioUnitario = Herramientas.Round_Out(ncpd.precioUnitario,@nroPrecio) 
 		,valorDescuento = Herramientas.Round_Out(ncpd.valorDescuento,@nroDescuentoDetalle)
-		,precioTotal =  Herramientas.Round_Out(ncpd.total,@nroTotalDetalle)		
-		,medida = m.descripcion
-	FROM NotaCreditoProveedorDetalle ncpd 		
-	INNER JOIN Articulo a ON a.idArticulo = ncpd.idArticulo 
-	INNER JOIN Medida   m ON m.idMedida   = a.idMedida
+		,precioTotal    = Herramientas.Round_Out(ncpd.total,@nroTotalDetalle)		
+		,medida         = m.descripcion
+	FROM NotaCreditoProveedorDetalle ncpd WITH (NOLOCK) 		
+	INNER JOIN Articulo a WITH (NOLOCK) ON a.idArticulo = ncpd.idArticulo 
+	INNER JOIN Medida   m WITH (NOLOCK) ON m.idMedida   = a.idMedida
 	WHERE ncpd.idNotaCreditoProveedor = @idNotaCreditoProveedor AND ncpd.estado = 1
 END 

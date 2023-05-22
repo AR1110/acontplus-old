@@ -2,11 +2,7 @@
 using DataAccess.Compras;
 using Domain.Models;
 using Helpers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers
 {
@@ -14,25 +10,25 @@ namespace WebUI.Controllers
     {
         // GET: Proveedor
         private readonly IConfiguration _configuration;
-        private readonly IHttpContextAccessor _httpContextAccessor; ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
+        ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
-        private readonly int _idRol;
+
         GenericResponse _gr = new();
         private PersonaDao p;
         private ProveedorDao _prov;
 
-        public ProveedorController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public ProveedorController(IConfiguration configuration)
         {
             _configuration = configuration;
             p = new PersonaDao(_configuration);
             _prov = new ProveedorDao(_configuration);
             _dao = new DataAccessObject(_configuration);
-            _httpContextAccessor = httpContextAccessor;
-            _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+
+
 
         }
 
-        [Authorize]
+
         public IActionResult Index()
         {
             return View();
@@ -42,7 +38,7 @@ namespace WebUI.Controllers
         public async Task<IActionResult> Get(string json)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", SqlValidation.ValidateSqlString(json));
             return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Compra.Proveedor_Get", parameters)));
         }
@@ -50,7 +46,7 @@ namespace WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Proveedor data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _prov.InsertAsync(idRol, data);
             return Ok(res);
         }
@@ -58,7 +54,7 @@ namespace WebUI.Controllers
         [HttpPut]
         public async Task<IActionResult> Put(int id, [FromBody] Proveedor data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _prov.UpdateAsync(idRol, id, data);
             return Ok(res);
         }
@@ -66,7 +62,7 @@ namespace WebUI.Controllers
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _prov.DeleteAsync(idRol, id);
             return Ok(res);
         }
@@ -75,7 +71,7 @@ namespace WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> SearchPersona([FromBody] HelpersResponse data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await p.SearchPersonaAsync(idRol, data);
             return Ok(_gr);
         }
@@ -84,7 +80,7 @@ namespace WebUI.Controllers
         //Buscador proveedor por Nombre Comercial o RUC
         public async Task<IActionResult> SearchProveedor(string busqueda)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _prov.SearchProveedorAsync(idRol, busqueda);
             return Ok(_gr);
         }
@@ -92,7 +88,7 @@ namespace WebUI.Controllers
         //Traer Datos del Proveedor por id Provedor
         public async Task<IActionResult> SearchProveedorId(int idProveedor)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var response = await _prov.GetIdAsync(idRol, idProveedor);
             return Ok(response);
         }
@@ -100,7 +96,7 @@ namespace WebUI.Controllers
         //Traer Datos del Proveedor por id Provedor
         public async Task<IActionResult> GetId(int idProveedor)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var response = await _prov.GetIdAsync(idRol, idProveedor);
             return Ok(response);
         }

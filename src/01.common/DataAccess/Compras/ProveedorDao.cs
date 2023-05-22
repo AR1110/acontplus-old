@@ -1,13 +1,10 @@
 ﻿
-using Helpers;
 using Domain.Models;
 using Domain.ViewModels;
-using System;
-using System.Collections.Generic;
+using Helpers;
+using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Compras
 {
@@ -162,6 +159,7 @@ namespace DataAccess.Compras
                     cmd.Parameters.AddWithValue("idCiudad", data.idCiudad);
                     cmd.Parameters.AddWithValue("idSubContribuyente", data.idSubContribuyente);
                     cmd.Parameters.AddWithValue("idTiempoCredito", data.idTiempoCredito);
+                    cmd.Parameters.AddWithValue("validationSri", data.validationSri);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
                     SqlDataReader reader = await cmd.ExecuteReaderAsync();
@@ -210,6 +208,7 @@ namespace DataAccess.Compras
                     cmd.Parameters.AddWithValue("idSubContribuyente", data.idSubContribuyente);
                     cmd.Parameters.AddWithValue("idTiempoCredito", data.idTiempoCredito);
                     cmd.Parameters.AddWithValue("estado", data.estado);
+                    cmd.Parameters.AddWithValue("validationSri", data.validationSri);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
                     SqlDataReader reader = await cmd.ExecuteReaderAsync();

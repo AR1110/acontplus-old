@@ -11,6 +11,7 @@
 	  <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
 	  <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
 	<PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="7.0.0" />
+	<PackageReference Include="Scriban" Version="5.7.0" />
   </ItemGroup>
 
   <ItemGroup>

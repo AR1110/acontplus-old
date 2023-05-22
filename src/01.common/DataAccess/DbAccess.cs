@@ -1,10 +1,8 @@
-﻿using System.Data;
-using System;
-using System.Data.SqlClient;
-using System.Threading.Tasks;
+﻿using Common.Logs;
 using Helpers;
 using Microsoft.Extensions.Configuration;
-using Common.Logs;
+using System.Data;
+using System.Data.SqlClient;
 
 namespace DataAccess
 {
@@ -13,12 +11,19 @@ namespace DataAccess
         private IConfiguration _config;
         private readonly SqlConnection _connection;
         private SqlCommand _command;
-        private LogWriter _log;
         public DbAccess(IConfiguration config)
         {
             _config = config;
             _connection = new SqlConnection(Encryption.DecryptString(_config.GetSection("keyEncrypt").Value, _config.GetConnectionString("AcontPlus")));
-            _log = new LogWriter(_config);
+        }
+        public async Task QueryExecute(string query)
+        {
+            if (_connection != null)
+            {
+                await _connection.OpenAsync();
+                _command = new SqlCommand(query, _connection);
+                _command.CommandType = CommandType.Text;
+            }
         }
         public async Task SPExecute(string spName)
         {
@@ -34,6 +39,7 @@ namespace DataAccess
             catch (Exception ex)
             {
                 Close();
+                LogWriter _log = new LogWriter(_config);
                 _log.LogError("Error in SPExecute: " + ex.ToString());
             }
         }
@@ -54,6 +60,7 @@ namespace DataAccess
             catch (Exception ex)
             {
                 Close();
+                LogWriter _log = new LogWriter(_config);
                 _log.LogError("Error in AddParameter: " + ex.ToString());
             }
         }
@@ -73,8 +80,24 @@ namespace DataAccess
             catch (Exception ex)
             {
                 Close();
+                LogWriter _log = new LogWriter(_config);
                 _log.LogError("Error in AddDynamicParam: " + ex.ToString());
             }
+        }
+        public void AddOutputParam(string paramName, object paramValue)
+        {
+            if (!string.IsNullOrEmpty(paramName) && paramValue != null && _command != null)
+            {
+                SqlParameter sqlParam = new SqlParameter();
+                sqlParam.ParameterName = paramName;
+                sqlParam.SqlDbType = DbType.Get(paramValue);
+                sqlParam.Direction = ParameterDirection.Output;
+                _command.Parameters.Add(sqlParam);
+            }
+        }
+        public object GetOutputParam(string paramName)
+        {
+            return _command.Parameters[$"{paramName}"].Value;
         }
         public void OnlyExecute()
         {
@@ -84,6 +107,7 @@ namespace DataAccess
             }
             catch (Exception ex)
             {
+                LogWriter _log = new LogWriter(_config);
                 _log.LogError("Error in OnlyExecute: " + ex.ToString());
             }
             finally
@@ -91,7 +115,26 @@ namespace DataAccess
                 _connection.Close();
             }
         }
-
+        public object ExecuteScalar()
+        {
+            return _command.ExecuteScalar();
+        }
+        public void ExecuteReader()
+        {
+            try
+            {
+                _command.ExecuteReader();
+            }
+            catch (Exception ex)
+            {
+                LogWriter _log = new LogWriter(_config);
+                _log.LogError("Error in ExecuteReader: " + ex.ToString());
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
         public DataSet GetDataSet()
         {
             DataSet ds = new DataSet();
@@ -117,6 +160,8 @@ namespace DataAccess
             }
             catch (Exception ex)
             {
+                LogWriter _log = new LogWriter(_config);
+
                 _log.LogError("Error in GetDataSet: " + ex.ToString());
                 if (ds.Tables.Count > 0)
                 {
@@ -151,6 +196,8 @@ namespace DataAccess
             }
             catch (Exception ex)
             {
+                LogWriter _log = new LogWriter(_config);
+
                 _log.LogError("Error in GetDataTable: " + ex.ToString());
                 DtError(ref dt, ex.ToString());
             }
@@ -161,6 +208,76 @@ namespace DataAccess
             }
             return dt;
         }
+        public GenericResponse GetDefault()
+        {
+            DataTable dt = new DataTable();
+            var _response = new GenericResponse();
+            if (_command != null)
+            {
+                using (SqlDataAdapter dataAdapter = new SqlDataAdapter(_command))
+                {
+                    dataAdapter.Fill(dt);
+                    if (DataHelper.DataTableIsNull(dt))
+                    {
+                        _response.Create(code: "0", "La transacción no devolvio respuesta");
+                    }
+                    else
+                    {
+                        _response = DataHelper.BindData<GenericResponse>(dt);
+                    }
+                }
+            }
+            return _response;
+        }
+        public GenericResponse GetDataTableAsync()
+        {
+            DataTable dt = new DataTable();
+            var _response = new GenericResponse();
+            if (_command != null)
+            {
+                using (SqlDataAdapter dataAdapter = new SqlDataAdapter(_command))
+                {
+                    dataAdapter.Fill(dt);
+                    if (DataHelper.DataTableIsNull(dt))
+                    {
+                        _response.Create(code: "0", "La transacción no devolvio respuesta");
+                        //DtWarning(ref dt);
+                    }
+                    else
+                    {
+                        _response.Create(code: "1", payload: DataHelper.DataTableToJSON(dt));
+                    }
+                }
+            }
+            return _response;
+        }
+        public GenericResponse GetDataSetAsync()
+        {
+            DataSet ds = new DataSet();
+            var _response = new GenericResponse();
+            if (_command != null)
+            {
+                using (SqlDataAdapter dataAdapter = new SqlDataAdapter(_command))
+                {
+                    dataAdapter.Fill(ds);
+                    if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
+                    {
+                        if (ds.Tables.Count > 0)
+                        {
+                            ds = new DataSet();
+                        }
+                        _response.Create(code: "0", "La transacción no devolvio respuesta");
+                    }
+                    else
+                    {
+                        _response.Create(code: "1", payload: DataHelper.DataSetToJSON(ds));
+                    }
+                }
+            }
+            return _response;
+        }
+
+
         //If error exists
         public void Close()
         {
@@ -171,9 +288,15 @@ namespace DataAccess
                     _connection.Close();
                     _connection.Dispose();
                 }
+                if (_command != null)
+                {
+                    _command.Dispose();
+                    _connection.Close();
+                }
             }
             catch (Exception ex)
             {
+                LogWriter _log = new LogWriter(_config);
                 _log.LogError("Error in Close: " + ex.ToString());
             }
         }

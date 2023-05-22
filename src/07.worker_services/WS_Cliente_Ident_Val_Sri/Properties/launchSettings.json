@@ -1,0 +1,11 @@
+﻿{
+  "profiles": {
+    "WS_Cliente_Ident_Val_Sri": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

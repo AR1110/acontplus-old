@@ -1,8 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Threading.Tasks;
 
 namespace DataAccess
 {
@@ -35,70 +32,6 @@ namespace DataAccess
                 _ = ex.Message;
             }
             return dt;
-        }
-        public async Task<DataSet> GetDataSetAsync(string spName, Dictionary<string, object> parameters = null)
-        {
-            DataSet ds = null;
-            try
-            {
-                DbAccess db = new DbAccess(_config);
-                await db.SPExecute(spName);
-                if (parameters != null)
-                {
-                    foreach (var item in parameters)
-                    {
-                        db.AddDynamicParam(item.Key, item.Value);
-                    }
-                }
-                ds = db.GetDataSet();
-            }
-            catch (Exception ex)
-            {
-                _ = ex.Message;
-            }
-            return ds;
-        }
-        public async Task<DataTable> ExecTranAsync(string spName, Dictionary<string, object> parameters)
-        {
-            DataTable dt = null;
-            try
-            {
-                DbAccess db = new DbAccess(_config);
-                await db.SPExecute(spName);
-                if (parameters != null)
-                {
-                    foreach (var item in parameters)
-                    {
-                        db.AddDynamicParam(item.Key, item.Value);
-                    }
-                }
-                dt = db.GetDataTable();
-            }
-            catch (Exception ex)
-            {
-                _ = ex.Message;
-            }
-            return dt;
-        }
-        public async Task OnlyExecuteAsync(string spName, Dictionary<string, object> parameters = null)
-        {
-            try
-            {
-                DbAccess db = new DbAccess(_config);
-                await db.SPExecute(spName);
-                if (parameters != null)
-                {
-                    foreach (var item in parameters)
-                    {
-                        db.AddDynamicParam(item.Key, item.Value);
-                    }
-                }
-                db.OnlyExecute();
-            }
-            catch (Exception ex)
-            {
-                _ = ex.Message;
-            }
         }
     }
 }

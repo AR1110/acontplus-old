@@ -1,0 +1,88 @@
+<div class="modal-header">
+    <h5 class="modal-title"><i class="fa fa-tags"></i> Dato adicional del artículo</h5>
+    <button type="button" class="close" ng-click="closeModal()">&times;</button>
+</div>
+
+<div class="modal-body">
+    <h5><b>Código: {{articulo.codigo || articulo.codigoPrincipal}}</b></h5> 
+    <h5><b>Artículo: {{articulo.descripcion}}</b></h5>
+      <h5><b>Cantidad: {{articulo.cantidad}}</b></h5>
+    <div class="table-responsive">
+        @* <table class="table table-sm">
+        <thead>
+        <tr>
+        <th ng-repeat="column in etiquetas">{{column.descripcion}}</th>
+        <th>
+        <button class="btn btn-info btn-sm" ng-click="addRow()">
+        <i class="fa fa-plus fa-fw"></i>
+        </button>
+        </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="item in data">
+        <td ng-repeat="column in etiquetas">
+        <input type="text" ng-model="item[column.codigo]" class="form-control border-select">
+        </td>
+        <td>
+        <button class="btn btn-danger btn-sm" ng-click="removeRow(item)">
+        <i class="ti-trash"></i>
+        </button>
+        </td>
+        </tr>
+        </tbody>
+        </table> *@
+
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th ng-repeat="column in etiquetas" ng-dblclick="updateNameColumn($index, column)">
+                        <span uib-tooltip="Haz doble click para editar el nombre de la columna!">{{column}}</span>
+                    </th>
+                    <th>
+                        <button class="btn btn-info btn-xs" uib-tooltip="Añadir fila." ng-click="addRow()">
+                            <i class="mdi mdi-playlist-plus"></i>
+                        </button>
+                        <button class="btn btn-secondary btn-sm" uib-tooltip="Añadir Columna." ng-click="addColumn()">
+                            <i class="fas fa-plus fa-xs"></i>
+                        </button>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in data">
+                    <td ng-repeat="column in etiquetas">
+                        <input type="text" ng-model="item.adicionales[column]" onClick="this.select();" ng-disabled="item.estado===2"
+                            class="form-control border-select">
+                    </td>
+                    <td>
+                        <button tabindex="-1" type="button" ng-disabled="item.estado===2" class="btn btn-danger btn-xs" uib-tooltip="Eliminar fila."
+                            ng-click="removeRow(item)">
+                            <i class="ti-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td ng-repeat="column in etiquetas">
+                        <button class="btn btn-danger btn-xs" tabindex="-1" uib-tooltip="Eliminar columna"
+                            ng-click="removeColumn(column)">
+                            <i class="ti-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-success" ng-click="save()">
+        <i class="ti-save"></i> Guardar
+    </button>
+    <button type="button" class="btn btn-dark" ng-click="closeModal()">
+        &times; Cerrar
+    </button>
+</div>

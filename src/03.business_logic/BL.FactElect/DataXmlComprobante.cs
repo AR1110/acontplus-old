@@ -117,7 +117,7 @@ namespace BL.FactElect
             infoFac.fechaEmision = nodeInfoFactura.SelectSingleNode("fechaEmision").InnerText;
             infoFac.dirEstablecimiento = (nodeInfoFactura.SelectSingleNode("dirEstablecimiento") == null) ? "" : nodeInfoFactura.SelectSingleNode("dirEstablecimiento").InnerText;
             infoFac.contribuyenteEspecial = (nodeInfoFactura.SelectSingleNode("contribuyenteEspecial") == null) ? "" : nodeInfoFactura.SelectSingleNode("contribuyenteEspecial").InnerText;
-            infoFac.obligadoContabilidad = nodeInfoFactura.SelectSingleNode("obligadoContabilidad").InnerText;
+            infoFac.obligadoContabilidad = (nodeInfoFactura.SelectSingleNode("obligadoContabilidad") == null) ? "" : nodeInfoFactura.SelectSingleNode("obligadoContabilidad").InnerText;
             infoFac.tipoIdentificacionComprador = nodeInfoFactura.SelectSingleNode("tipoIdentificacionComprador").InnerText;
             infoFac.razonSocialComprador = nodeInfoFactura.SelectSingleNode("razonSocialComprador").InnerText;
             infoFac.identificacionComprador = nodeInfoFactura.SelectSingleNode("identificacionComprador").InnerText;
@@ -184,15 +184,15 @@ namespace BL.FactElect
             int idDetalle = 0;
             foreach (XmlNode item in details)
             {
-                Detalle detail = new Detalle(); 
+                Detalle detail = new Detalle();
                 detail.idDetalle = idDetalle;
                 if (comp.codDoc == "01")
                 {
-                    detail.codigoPrincipal = item.SelectSingleNode("codigoPrincipal").InnerText;
+                    detail.codigoPrincipal = (item.SelectSingleNode("codigoPrincipal") == null) ? "" : item.SelectSingleNode("codigoPrincipal").InnerText;
                 }
                 else
                 {
-                    detail.codigoPrincipal = item.SelectSingleNode("codigoInterno").InnerText;
+                    detail.codigoPrincipal = (item.SelectSingleNode("codigoInterno") == null) ? "" : item.SelectSingleNode("codigoInterno").InnerText;
                 }
                 detail.codigoAuxiliar = (item.SelectSingleNode("codigoAuxiliar") == null) ? "" : item.SelectSingleNode("codigoAuxiliar").InnerText;
                 detail.descripcion = item.SelectSingleNode("descripcion").InnerText;

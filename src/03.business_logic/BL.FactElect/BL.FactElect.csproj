@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\01.common\Helpers\Helpers.csproj" />
     <ProjectReference Include="..\..\02.domain\Domain.FactElect\Domain.FactElect.csproj" />
+    <ProjectReference Include="..\..\02.domain\Domain\Domain.csproj" />
   </ItemGroup>
 
 </Project>

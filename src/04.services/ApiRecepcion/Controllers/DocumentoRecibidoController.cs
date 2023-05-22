@@ -1,55 +1,58 @@
 ﻿using ApiRecepcion.Utils;
+using BL.FactElect;
 using BL.Recepcion;
 using Common.Logs;
-using Helpers;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System.Xml;
 using DataAccess;
-using BL.FactElect;
+using Domain.Dtos;
 using Domain.FactElect;
+using Helpers;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Data;
 using System.Text;
+using System.Xml;
 
 namespace ApiRecepcion.Controllers
 {
-    [Authorize]
+
     [Route("api/[controller]")]
     [ApiController]
     public class DocumentoRecibidoController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public DocumentoRecibidoController(IConfiguration configuration) => (_configuration) = (configuration);
+        private readonly DbAccess _db;
+        private readonly FileTxt _txtComp;
+        public DocumentoRecibidoController(IConfiguration configuration, FileTxt txtComp)
+        {
+            _configuration = configuration;
+            _db = new DbAccess(_configuration);
+            _txtComp = txtComp;
+        }
 
         [HttpGet("Get/{json}")]
         public async Task<IActionResult> Get(string json)
         {
             //var correlationId = HttpContext.Request.Headers["X-IdUsuarioRol"].ToString();
-
             LogWriter _logs = new LogWriter(_configuration);
             GenericResponse _response = new GenericResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                DAO _dao = new DAO(_configuration);
-                Dictionary<string, object> parameters = new Dictionary<string, object>
-                {
-                    {"idRol", idUsuarioRol },
-                    { "json", SqlValidation.ValidateSqlString(json) }
-                };
-                return Ok(await _dao.GetDataSet("Recepcion.Documento_Get", parameters));
+                await _db.SPExecute("Recepcion.Documento_Get");
+                _db.AddDynamicParam("idRol", idUsuarioRol);
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)
             {
                 _logs.LogError("Error al obtener los documentos recibidos: " + ex.ToString());
-                return new BadRequestObjectResult(new
-                {
-                    code = 0,
-                    message = "Error al obtener los documentos recibidos"
-                });
+                _response.Create(code: "0", message: "Error al obtener los documentos recibidos");
             }
-
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
 
         [HttpGet("GetId/{id}")]
@@ -83,17 +86,14 @@ namespace ApiRecepcion.Controllers
                     }
                     else
                     {
-                        Dictionary<string, object> parametersTemp = new Dictionary<string, object>
-                        {
-                            { "idRol", idUsuarioRol },
-                            { "idDocumento", id },
-                            { "jsonData", JsonConvert.SerializeObject(ceXml.detalles) },
-                            { "impuestos", JsonConvert.SerializeObject(ceXml.impuestos) }
-                        };
                         if (ceXml.codDoc == "01" || ceXml.codDoc == "04")
                         {
-                            DAO _dao = new DAO(_configuration);
-                            _dao.OnlyExec("Recepcion.Doc_Detail_Temp_Insert_All", parametersTemp);
+                            await _db.SPExecute("Recepcion.Doc_Detail_Temp_Insert_All");
+                            _db.AddDynamicParam("idRol", idUsuarioRol);
+                            _db.AddDynamicParam("idDocumento", id);
+                            _db.AddDynamicParam("jsonData", JsonConvert.SerializeObject(ceXml.detalles));
+                            _db.AddDynamicParam("impuestos", JsonConvert.SerializeObject(ceXml.impuestos));
+                            _db.OnlyExecute();
                         }
                         _response.payload = ceXml;
                     }
@@ -209,12 +209,12 @@ namespace ApiRecepcion.Controllers
 
         //    }
         //}
-        [HttpPost("{jsonData}")]
-        public async Task<IActionResult> Post(string jsonData, IFormFile file)
+        [HttpPost("Read")]
+        public async Task<IActionResult> Post(IFormFile file)
         {
             LogWriter _logs = new LogWriter(_configuration);
             GenericResponse _response = new GenericResponse();
-            DAO _dao = new DAO(_configuration);
+
             if (file.ContentType != "text/plain")
             {
                 _response.Create("0", "Formato de archivo no soportado");
@@ -222,21 +222,36 @@ namespace ApiRecepcion.Controllers
             }
             try
             {
-                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-
                 string path = _configuration.GetSection("ImportacionTxt").Value;
-                FileData.SaveFile(path, file);
-                FileTxt txtComp = new FileTxt();
+                FileData.SaveFile(path, file); 
                 DataTable dt = new DataTable("Comprobantes");
-                if (txtComp.GetDocs(FileData.GetFileByte(file), ref dt))
+                dt = await _txtComp.GetDocs(FileData.GetFileByte(file));
+                if (!DataHelper.DataTableIsNull(dt))
                 {
-                    Dictionary<string, object> parameters = new Dictionary<string, object>
+                    await _db.SPExecute("Recepcion.Documento_Check_Existence");
+                    _db.AddDynamicParam("json", JsonConvert.SerializeObject(dt));
+                    var dtExistent = _db.GetDataTable();
+                    if (dtExistent.Columns.Contains("code") && dtExistent.Rows[0].Field<string>("code") != "-1")
                     {
-                        { "idRol", idUsuarioRol},
-                        { "jsonData", jsonData },
-                        { "json", DataHelper.DataTableToJSON(dt) }
-                    };
-                    _response = await _dao.Default("Recepcion.Documento_Insert", parameters);
+                        _response.Create(code: "1", payload: DataHelper.DataTableToJSON(dt));
+                    }
+                    else
+                    {
+                        if (dt.Rows.Count == dtExistent.Rows.Count)
+                        {
+                            _response.Create("0", "Los registros que intenta importar ya se encuentran registrados, intente con otro archivo!");
+                        }
+                        else
+                        {
+                            var diff = (from row1 in dt.AsEnumerable()
+                                        join row2 in dtExistent.AsEnumerable() on new { Column1 = row1["claveAcceso"]} equals new { Column1 = row2["claveAcceso"] } into gj
+                                        from subRow2 in gj.DefaultIfEmpty()
+                                        where subRow2 == null
+                                        select row1).ToList();
+                            DataTable filteredDataTable = diff.CopyToDataTable();
+                            _response.Create(code: "1", payload: DataHelper.DataTableToJSON(filteredDataTable));
+                        }
+                    }
                 }
                 else
                 {
@@ -248,6 +263,61 @@ namespace ApiRecepcion.Controllers
                 _logs.LogError("Error al importar el archivo: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al importar el archivo");
             }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
+        }
+
+        [HttpPost("Post")]
+        public async Task<IActionResult> Post(RecepcionDto data)
+        {
+            LogWriter _logs = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+
+                await _db.SPExecute("Recepcion.Documento_Insert");
+                _db.AddDynamicParam("idRol", idUsuarioRol);
+                _db.AddDynamicParam("jsonData", SqlValidation.ValidateSqlString(data.jsonData));
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(data.json));
+                _response = _db.GetDefault();
+            }
+            catch (Exception ex)
+            {
+                _logs.LogError("Error al importar el archivo: " + ex.ToString());
+                _response.Create(code: "0", message: "Error al importar el archivo");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
+        }
+        [HttpPut("Migrate")]
+        public async Task<IActionResult> Migrate(RequestApiDto parameters)
+        {
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                await _db.SPExecute("Recepcion.Documento_Migrate");
+                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+                _db.AddDynamicParam("json", DataHelper.SerializeDictionary(parameters.data));
+                _response = _db.GetDefault();
+            }
+            catch (Exception ex)
+            {
+                LogWriter _logs = new LogWriter(_configuration);
+                _logs.LogError("Error al importar el archivo: " + ex.ToString());
+                _response.Create(code: "0", message: "Error al importar el archivo");
+            }
+            finally
+            {
+                _db.Close();
+            }
             return Ok(_response);
         }
 
@@ -256,25 +326,24 @@ namespace ApiRecepcion.Controllers
         {
             LogWriter _logs = new LogWriter(_configuration);
             GenericResponse _response = new GenericResponse();
-            DAO _dao = new DAO(_configuration);
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-
-                Dictionary<string, object> parameters = new Dictionary<string, object>
-                {
-                    { "idRol", idUsuarioRol },
-                    { "idDocumento", id },
-                    { "tipo", 1 },
-                    { "xmlDoc", "" } //no aplica -> lo procesa el worker
-                };
-
-                _response = await _dao.Default("Recepcion.Documento_Update", parameters);
+                await _db.SPExecute("Recepcion.Documento_Update");
+                _db.AddDynamicParam("idRol", idUsuarioRol);
+                _db.AddDynamicParam("idDocumento", id);
+                _db.AddDynamicParam("tipo", 1);
+                _db.AddDynamicParam("xmlDoc", "");
+                _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
                 _logs.LogError("Error al descargar el archivo xml: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al descargar el archivo xml");
+            }
+            finally
+            {
+                _db.Close();
             }
             return Ok(_response);
         }
@@ -284,7 +353,7 @@ namespace ApiRecepcion.Controllers
         {
             LogWriter _logs = new LogWriter(_configuration);
             GenericResponse _response = new GenericResponse();
-            DAO _dao = new DAO(_configuration);
+
             if (file.ContentType != "text/plain")
             {
                 _response.Create("0", "Formato de archivo no soportado");
@@ -305,21 +374,21 @@ namespace ApiRecepcion.Controllers
                 XmlNode node = xmlComp.GetElementsByTagName("infoTributaria")[0];
                 string claveAccesoXml = node.SelectSingleNode("claveAcceso").InnerText;
                 string codDoc = node.SelectSingleNode("codDoc").InnerText;
-
-                Dictionary<string, object> parameters = new Dictionary<string, object>
-                {
-                    { "idRol", idUsuarioRol },
-                    { "idDocumento", id },
-                    { "tipo", 2 },
-                    { "xmlDoc", xmlDocSri.OuterXml }
-                };
-
-                _response = await _dao.Default("Recepcion.Documento_Update", parameters);
+                await _db.SPExecute("Recepcion.Documento_Update");
+                _db.AddDynamicParam("idRol", idUsuarioRol);
+                _db.AddDynamicParam("idDocumento", id);
+                _db.AddDynamicParam("tipo", 2);
+                _db.AddDynamicParam("xmlDoc", xmlDocSri.OuterXml);
+                _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
                 _logs.LogError("Error al importar el archivo: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al importar el archivo");
+            }
+            finally
+            {
+                _db.Close();
             }
             return Ok(_response);
         }
@@ -333,19 +402,19 @@ namespace ApiRecepcion.Controllers
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-
-                DAO _dao = new DAO(_configuration);
-                Dictionary<string, object> parameters = new Dictionary<string, object>
-                {
-                    { "idRol", idUsuarioRol },
-                    { "idDocumento", id }
-                };
-                _response = await _dao.Default("Recepcion.Documento_Delete", parameters);
+                await _db.SPExecute("Recepcion.Documento_Delete");
+                _db.AddDynamicParam("idRol", idUsuarioRol);
+                _db.AddDynamicParam("idDocumento", id);
+                _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
                 _logs.LogError("Error al eliminar el archivo: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar el archivo");
+            }
+            finally
+            {
+                _db.Close();
             }
             return Ok(_response);
         }

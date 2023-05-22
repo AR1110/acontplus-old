@@ -1,18 +1,11 @@
 ﻿
-using Helpers;
 using Domain.Dtos;
-using Domain.Models;
 using Domain.Models.Almacen;
-using Domain.Models.Compras;
-using Domain.ViewModels;
 using Domain.ViewModels.Almacen;
-using Domain.ViewModels.Compras;
-using System;
-using System.Collections.Generic;
+using Helpers;
+using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Almacen
 {
@@ -105,7 +98,7 @@ namespace DataAccess.Almacen
             }
             finally
             {
-                
+
             }
             return _response;
 
@@ -160,7 +153,7 @@ namespace DataAccess.Almacen
             }
             finally
             {
-                
+
             }
             return _response;
 
@@ -214,7 +207,7 @@ namespace DataAccess.Almacen
             }
             return _response;
         }
-       
+
 
     }
 }

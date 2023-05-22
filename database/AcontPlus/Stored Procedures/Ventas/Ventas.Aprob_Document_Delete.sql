@@ -48,12 +48,38 @@ BEGIN
 			SELECT @uniqueId,@idUsuario,dbo.ufnGetDateEcuador()
 
 			UPDATE Ventas.Aprob_Document SET codEstado = @codEstado WHERE idAprob_Document = @id
+			UPDATE infoAdd  SET estado = 1
+			FROM Compra.InfoAdicional infoAdd
+			INNER JOIN Ventas.HistoryInfoAdicional h WITH(NOLOCK) ON h.idInfoAdicional = infoAdd.idInfoAdicional
+			WHERE h.codDoc ='APR' AND h.idDocumento = @id
 
 			IF @docOrigen = 'NE'
 				BEGIN
-					UPDATE ne SET ne.idEstadoPago = @idEstadoDocumento
-					FROM dbo.NotaEntrega ne WITH(NOLOCK)
-				    JOIN (SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt WHERE dt.uniqueId = @uniqueId) dt ON dt.idDocumento = ne.idNotaEntrega
+					
+					DECLARE @idDocumento AS INT
+
+					DECLARE cursor_inventory CURSOR LOCAL FOR
+					SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt
+				    WHERE dt.uniqueId = @uniqueId
+
+					
+					UPDATE ne SET ne.idEstadoPago = @idEstadoDocumento FROM dbo.NotaEntrega ne WITH(NOLOCK) JOIN (SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt WHERE dt.uniqueId = @uniqueId) dt ON dt.idDocumento = ne.idNotaEntrega
+
+
+					OPEN cursor_inventory
+
+						FETCH NEXT FROM cursor_inventory INTO @idDocumento
+
+						WHILE @@FETCH_STATUS = 0
+							BEGIN
+								--tipo transaccion  salidas
+								--tipo documento  NotaEntrega
+								EXEC Inventario.Transaccion_Update 'S','NE',@idDocumento,1
+								FETCH NEXT FROM cursor_inventory INTO @idDocumento
+							END
+					CLOSE cursor_inventory
+					DEALLOCATE cursor_inventory 
+
 				END 
 
 			IF @docOrigen = 'PR'

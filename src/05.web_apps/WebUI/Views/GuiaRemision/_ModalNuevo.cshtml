@@ -94,9 +94,10 @@
                             </div>
                         </script>
                         <div class="input-group-append">
-                            <button class="btn btn-outline-secondary btn-sm" tabindex="-1" type="button" ng-click="$ctrl.openModalTransportistaNew()"><i class="fa fa-plus fa-xs"></i></button>
+                            <button class="btn btn-outline-secondary btn-sm" tabindex="-1" type="button" btn-transportista result-modal="$ctrl.resultModalTransportista(result)"><i class="fa fa-plus fa-xs"></i></button>
+
                             <button class="btn btn-outline-secondary btn-sm" tabindex="-1" type="button" ng-if="$ctrl.transportista.idTransportista>0"
-                                ng-click="$ctrl.openModalTransportistaUpdate()" >
+                                btn-transportista result-modal="$ctrl.resultModalTransportista(result)" params="$ctrl.transportista" >
                                 <i class="fas fa-pencil-alt fa-xs"></i>
                             </button>                                                                                          
                         </div>
@@ -129,10 +130,10 @@
                             </div>
                         </script>
                         <div class="input-group-append">
-                            <button type="button" class="btn btn-outline-secondary btn-sm" ng-click="$ctrl.openModalVehiculoNew()" tabindex="-1" >
+                            <button type="button" class="btn btn-outline-secondary btn-sm"  btn-vehiculo result-modal="resultModalVehiculo(result)" tabindex="-1" >
                                 <i class="fa fa-plus fa-xs"></i>
                             </button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm" ng-click="$ctrl.openModalVehiculoEditar()" ng-if="$ctrl.vehiculo.idVehiculo>0" tabindex="-1">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" ng-if="$ctrl.vehiculo.idVehiculo>0"  btn-vehiculo result-modal="$ctrl.resultModalVehiculo(result)" params="$ctrl.vehiculo" tabindex="-1">
                                 <i class="fas fa-pencil-alt fa-xs"></i>
                             </button>                                  
                         </div>
@@ -228,8 +229,8 @@
                 </div>
             </div>   
         </div>
-        
-                        
+
+
         <div class="row justify-content-between">
             <div class="col-lg-6">
                 <div class="form-group">

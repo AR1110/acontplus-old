@@ -1,4 +1,5 @@
 ﻿using Domain.FactElect;
+using Helpers;
 using Microsoft.Extensions.Configuration;
 using System.Text;
 using System.Xml;
@@ -106,6 +107,7 @@ namespace BL.FactElect
                              </soapenv:Body>
                              </soapenv:Envelope>", Convert.ToBase64String(Encoding.UTF8.GetBytes(xmlSigned)));
 
+
                 using (HttpClient sriService = new HttpClient(new HttpClientHandler() { UseDefaultCredentials = true }))
                 {
                     using (HttpResponseMessage response = await sriService.PostAsync(url, new StringContent(xml, Encoding.UTF8, "text/xml")))
@@ -119,32 +121,40 @@ namespace BL.FactElect
                         }
                     }
                 }
-                //OBTIENE DATO DEL XML RESPONSE                    
-                XmlDocument xdoc = new XmlDocument();
-                xdoc.LoadXml(_response.xmlSri);
-
-                XmlNodeList xEstado = xdoc.GetElementsByTagName("estado");
-                _response.estado = xEstado[0] != null ? xEstado[0].InnerText : string.Empty;
-
-                XmlNodeList identificador = xdoc.GetElementsByTagName("identificador");
-                _response.identificador = identificador[0] != null ? identificador[0].InnerText : string.Empty;
-
-                if (_response.estado == "DEVUELTA")
+                if (DataHelper.IsXml(_response.xmlSri))
                 {
-                    xEstado = xdoc.GetElementsByTagName("mensaje");
-                    XmlNodeList nodos = ((XmlElement)xEstado[0]).ChildNodes;
-                    foreach (XmlElement nodo in nodos)
+                    //OBTIENE DATO DEL XML RESPONSE                    
+                    XmlDocument xdoc = new XmlDocument();
+                    xdoc.LoadXml(_response.xmlSri);
+
+                    XmlNodeList xEstado = xdoc.GetElementsByTagName("estado");
+                    _response.estado = xEstado[0] != null ? xEstado[0].InnerText : string.Empty;
+
+                    XmlNodeList identificador = xdoc.GetElementsByTagName("identificador");
+                    _response.identificador = identificador[0] != null ? identificador[0].InnerText : string.Empty;
+
+                    if (_response.estado == "DEVUELTA")
                     {
-                        if (nodo.Name == "identificador") { _response.identificador = nodo.InnerText; }
-                        if (nodo.Name == "mensaje") { _response.message = nodo.InnerText; }
-                        if (nodo.Name == "informacionAdicional") { _response.informacionAdicional = nodo.InnerText; }
-                        if (nodo.Name == "tipo") { _response.tipo = nodo.InnerText; }
+                        xEstado = xdoc.GetElementsByTagName("mensaje");
+                        XmlNodeList nodos = ((XmlElement)xEstado[0]).ChildNodes;
+                        foreach (XmlElement nodo in nodos)
+                        {
+                            if (nodo.Name == "identificador") { _response.identificador = nodo.InnerText; }
+                            if (nodo.Name == "mensaje") { _response.message = nodo.InnerText; }
+                            if (nodo.Name == "informacionAdicional") { _response.informacionAdicional = nodo.InnerText; }
+                            if (nodo.Name == "tipo") { _response.tipo = nodo.InnerText; }
+                        }
                     }
                 }
+                else
+                {
+                    _response.estado = "ERROR";
+                    _response.message = "SRI no se encuentra en línea";
+                }
+
             }
             catch (Exception ex)
             {
-                _ = ex.Message;
                 _response.estado = "ERROR";
                 _response.message = "SRI no se encuentra en línea";
             }

@@ -1,14 +1,9 @@
-﻿using Helpers;
-using Domain.Models;
-using Domain.Models.Ventas;
-using Domain.ViewModels.Ventas;
+﻿using Domain.ViewModels.Ventas;
+using Helpers;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Ventas
 {
@@ -25,8 +20,8 @@ namespace DataAccess.Ventas
             _gr = new GenericResponse();
         }
 
-     
-     
+
+
         public async Task<GenericResponse> InsertAsync(int idRol, ProformaViewModel data)
         {
             try
@@ -100,6 +95,6 @@ namespace DataAccess.Ventas
             }
             return _gr;
         }
-       
+
     }
 }

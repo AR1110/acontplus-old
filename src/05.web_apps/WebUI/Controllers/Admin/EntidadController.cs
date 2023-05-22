@@ -1,6 +1,5 @@
 ﻿using DataAccess;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 
 namespace WebUI.Controllers
 {
@@ -8,34 +7,33 @@ namespace WebUI.Controllers
     {
         private readonly IConfiguration _configuration;
 
-        readonly EntidadDao _e;        
+        readonly EntidadDao _e;
         public EntidadController(IConfiguration configuration)
         {
             _configuration = configuration;
             _e = new EntidadDao(_configuration);
         }
         // GET: Entidad
-        [Authorize]
+
         public IActionResult Index()
         {
-            ViewData["idRol"] = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
             return View();
         }
 
         public async Task<IActionResult> OptionEntidad()
         {
-           int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
-           var res = await _e.OptionAsync(idRol);
-           return Ok(res);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var res = await _e.OptionAsync(idRol);
+            return Ok(res);
         }
-       
+
 
         //OTHER METHODS
         public async Task<IActionResult> GetAll()
         {
-           int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var response = await _e.OptionAsync(idRol);
-           return Ok(response);
+            return Ok(response);
         }
     }
 }

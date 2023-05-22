@@ -1,6 +1,4 @@
 ﻿using Domain.Models.Compras;
-using Domain.ViewModels.Ventas;
-using System.Collections.Generic;
 
 namespace Domain.ViewModels.Compras
 {
@@ -8,7 +6,8 @@ namespace Domain.ViewModels.Compras
     {
         public FacturaCompra factura { get; set; }
         public List<FacturaCompraDetalle> detalle { get; set; }
-        public List<ManejoArticuloDetalleViewModel> manejoArticuloDetalle { get; set; }
+     //   public List<ManejoArticuloDetalleViewModel> manejoArticuloDetalle { get; set; }
+        public string artInfoAdicionales { get; set; }  
         public string nroDocumento { get; set; }
         public string nombreFiscal { get; set; }
         public string nroRetencion { get; set; }

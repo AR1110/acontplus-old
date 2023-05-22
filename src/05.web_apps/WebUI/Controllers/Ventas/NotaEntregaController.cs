@@ -1,94 +1,51 @@
-﻿using WebUI.ApiClient;
-using DataAccess.Ventas;
-using WebUI.Utils;
-using Domain.Models;
-using Domain.ViewModels;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Helpers;
+﻿using Common.Logs;
 using DataAccess;
+using Domain.ViewModels;
+using Helpers;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace WebUI.Controllers.Ventas
 {
     public class NotaEntregaController : Controller
     {
-        private IConfiguration _config;
-        private readonly IHttpContextAccessor _httpContextAccessor; ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
-        private DataAccessObject _dao;
-        private readonly int _idRol;
-        GenericResponse _gr = new();
-        private NotaEntregaDao _ne;
-
-        public NotaEntregaController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        private IConfiguration _configuration;
+        public NotaEntregaController(IConfiguration configuration)
         {
-            _config = configuration;           
-            _dao = new DataAccessObject(_config);
-            _ne = new NotaEntregaDao(_config);
-            _httpContextAccessor = httpContextAccessor;
-            _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            _configuration = configuration;
         }
-                
-        [Authorize]
         public IActionResult Index()
         {
-            ViewData["idRol"] = _idRol;
             return View();
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
-        {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
-            parameters.Add("json", SqlValidation.ValidateSqlString(json));
-            return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Ventas.NotaEntrega_Get", parameters)));
-        }
        
+
         [HttpGet]
         public async Task<IActionResult> GetId(int id)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
-            parameters.Add("id", id);
-            return Ok(DbResponse.SPDataSet(await _dao.GetDataSetAsync("Ventas.NotaEntrega_GetId", parameters)));
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Ventas.NotaEntrega_GetId");
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("id", id);
+                _response = _db.GetDataSetAsync();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error in GetId: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al Obtener los datos");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
 
         }
-
-        [HttpPost]
-        public async Task<IActionResult> Insert([FromBody] NotaEntregaViewModel data)
-        {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
-            parameters.Add("jsonNotaEntrega", JsonConvert.SerializeObject(data.notaEntrega));
-            parameters.Add("jsonDetalle", JsonConvert.SerializeObject(data.detalle));
-            parameters.Add("jsonManejoArticulo", JsonConvert.SerializeObject(data.manejoArticulo));
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Ventas.NotaEntrega_Insert", parameters)));
-
-        }
-
-        [HttpPut]
-        public async Task<IActionResult> Update(int id, [FromBody] NotaEntregaViewModel data)
-        {
-
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
-            parameters.Add("id", id);
-            parameters.Add("jsonNotaEntrega", JsonConvert.SerializeObject(data.notaEntrega));
-            parameters.Add("jsonDetalle", JsonConvert.SerializeObject(data.detalle));
-            parameters.Add("jsonManejoArticulo", JsonConvert.SerializeObject(data.manejoArticulo));
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Ventas.NotaEntrega_Update", parameters)));
-
-        }
-
-        [HttpDelete]
-        public async Task<IActionResult> Delete(int id)
-        {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
-            parameters.Add("id", id);
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Ventas.NotaEntrega_Delete", parameters)));                       
-
-        }
+        
     }
 }

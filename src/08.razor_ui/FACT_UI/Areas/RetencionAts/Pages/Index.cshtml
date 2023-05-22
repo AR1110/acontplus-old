@@ -5,6 +5,7 @@
     ViewData["Title"] = "Index";
     Layout = "_Layout";
 }
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 <div ng-controller="retencionAtsCtrl">
     <div class="row page-titles">
@@ -137,5 +138,5 @@
 </div>
 
 @section Scripts {
-    <script src="~/js/controllers/factElect/retencionAtsCtrl.min.js" asp-append-version="true"></script>
+    <script src="~/js/factElect/controllers/retencionAtsCtrl.min.js" asp-append-version="true"></script>
 }

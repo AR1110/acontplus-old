@@ -1,6 +1,5 @@
 ﻿using DataAccess;
 using Helpers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Admin
@@ -17,7 +16,7 @@ namespace WebUI.Controllers.Admin
             _cpe = new ContraPartidaEfDao(_configuration);
         }
 
-        [Authorize]
+
         public IActionResult Index()
         {
             return View();
@@ -25,7 +24,7 @@ namespace WebUI.Controllers.Admin
 
         public async Task<IActionResult> ReadContraPartidaEntidadFinanciera(int idContraPartida)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _cpe.ReadContraPartidaEFAsync(idRol, idContraPartida);
             return Ok(_gr);
         }

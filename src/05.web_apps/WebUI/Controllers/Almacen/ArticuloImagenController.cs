@@ -37,29 +37,29 @@ namespace WebUI.Controllers.Almacen
         //        list.Add(i);
         //    };
 
-        //    int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+        //    int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
         //    var res = await _ai.UploadImagen(idRol, list, idArticulo);
         //    return Ok(res);
         //}
 
         [HttpPost]
         public async Task<IActionResult> UploadImagen(int idArticulo, [FromBody] List<ArticuloImagen> list)
-        {           
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+        {
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _ai.UploadImagen(idRol, list, idArticulo);
             return Ok(res);
         }
 
         public async Task<IActionResult> GetArticuloImagen(int idArticulo)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _ai.GetImagenAsync(idRol, idArticulo);
             return Ok(res);
         }
 
         public async Task<IActionResult> ArticuloImagenGetAll()
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _ai.ArticuloImagenGetAllAsync(idRol);
             return Ok(res);
         }

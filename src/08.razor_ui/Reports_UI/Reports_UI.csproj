@@ -8,7 +8,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Areas\ReporteVenta\**" />
+    <Content Remove="Areas\ReporteVenta\**" />
+    <EmbeddedResource Remove="Areas\ReporteVenta\**" />
+    <None Remove="Areas\ReporteVenta\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Areas\ReporteCompra\Pages\Shared\" />
   </ItemGroup>
 
 

@@ -1,11 +1,11 @@
-﻿using System.ServiceProcess;
-using System.Timers;
-using System.Configuration;
-using Logs;
-using System.Data;
-using System.Threading.Tasks;
+﻿using Logs;
 using System;
+using System.Configuration;
+using System.Data;
 using System.Security.Cryptography.X509Certificates;
+using System.ServiceProcess;
+using System.Threading.Tasks;
+using System.Timers;
 
 namespace SignerWS
 {
@@ -65,7 +65,7 @@ namespace SignerWS
                 }
                 catch (Exception ex)
                 {
-                    LogWritter.LogError(_path, "Error al firmar los docs: " + " - " + ex.Message + "Docs: " + DataHelperNS.DataTableToJSON(dt));
+                    LogWritter.LogError(_path, "Error al firmar los docs: " + " - " + ex.ToString());
                 }
                 finally
                 {
@@ -110,7 +110,7 @@ namespace SignerWS
                         else
                         {
                             _dataAccess.UpdateError(dataRow.Field<long>("idDocumentoElectronico"), 0, "Error al firmar el xml del comprobante");
-                            LogWritter.LogWarning(_path, "Error al firmar el xml del comprobante: " + Convert.ToString(dataRow.Field<long>("idDocumentoElectronico")) + "- Data Doc: " + DataHelperNS.DataSetToJSON(ds));
+                            LogWritter.LogWarning(_path, "Error al firmar el xml del comprobante: " + Convert.ToString(dataRow.Field<long>("idDocumentoElectronico")) + "- Data Doc");
                         }
                     }
                 }
@@ -118,7 +118,7 @@ namespace SignerWS
             catch (Exception ex)
             {
                 _dataAccess.UpdateError(dataRow.Field<long>("idDocumentoElectronico"), 0, Convert.ToString(dataRow.Field<long>("idDocumentoElectronico")) + " - " + ex.Message);
-                LogWritter.LogError(_path, "Error al crear el xml del comprobante: " + Convert.ToString(dataRow.Field<long>("idDocumentoElectronico")) + " - " + ex.Message + "- Data Doc: " + DataHelperNS.DataSetToJSON(ds));
+                LogWritter.LogError(_path, "Error al crear el xml del comprobante: " + Convert.ToString(dataRow.Field<long>("idDocumentoElectronico")) + " - " + ex.Message + "- Data Doc");
             }
         }
     }

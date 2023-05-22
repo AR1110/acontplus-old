@@ -1,45 +1,42 @@
-﻿using DataAccess.Logistica;
+﻿using Common.Logs;
+using DataAccess;
+using DataAccess.Logistica;
 using Domain.Models;
 using Domain.ViewModels.Logistica;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using DataAccess;
 using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Logistica
 {
     public class GuiaRemisionController : Controller
     {
-        private readonly IHttpContextAccessor _httpContextAccessor; ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
+        ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
-        private readonly int _idRol;
+
         private GenericResponse _gr = new();
         private GuiaRemisionDao _guideR;
-        private IConfiguration _config;
+        private IConfiguration _configuration;
 
-                
-        public GuiaRemisionController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+
+        public GuiaRemisionController(IConfiguration configuration)
         {
-            _config = configuration;
-            _dao = new DataAccessObject(_config);
-            _guideR = new GuiaRemisionDao(_config);
-            _httpContextAccessor = httpContextAccessor;
-            _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);            
+            _configuration = configuration;
+            _dao = new DataAccessObject(_configuration);
+            _guideR = new GuiaRemisionDao(_configuration);
         }
 
 
-        [Authorize]
+
         public IActionResult Index()
         {
-            ViewData["idRol"] = _idRol;
             return View();
         }
 
         [HttpGet]
         public async Task<IActionResult> Get(string json)
-        {            
+        {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", SqlValidation.ValidateSqlString(json));
             return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Logistica.GuiaRemision_Get", parameters)));
         }
@@ -47,30 +44,46 @@ namespace WebUI.Controllers.Logistica
         [HttpGet]
         public async Task<IActionResult> GetId(int id)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("id", id);
-            return Ok(DbResponse.SPDataSet(await _dao.GetDataSetAsync("Logistica.GuiaRemision_Get_Id", parameters)));
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Logistica.GuiaRemision_Get_Id");
+                _db.AddDynamicParam("id", id);
+                _response = _db.GetDataSetAsync();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error in GetId: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al Obtener los datos");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
 
         [HttpPost]
         public async Task<IActionResult> Insert([FromBody] GuiaRemisionViewModel data)
         {
-            var res = await _guideR.InsertAsync(_idRol, data);
+            var res = await _guideR.InsertAsync(Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value), data);
             return Ok(res);
         }
-        
+
         [HttpPut]
         public async Task<IActionResult> Update(int id, [FromBody] GuiaRemisionViewModel data)
         {
-            _gr = await _guideR.UpdateAsync(_idRol, id, data);
+            _gr = await _guideR.UpdateAsync(Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value), id, data);
             return Ok(_gr);
         }
-         
+
         [HttpDelete]
-        public async Task<IActionResult> Delete(int id)  
+        public async Task<IActionResult> Delete(int id)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("id", id);
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Logistica.GuiaRemision_Delete", parameters)));
         }

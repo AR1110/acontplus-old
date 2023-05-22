@@ -1,6 +1,5 @@
 ﻿using DataAccess.Asignaciones;
 using Domain.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Admin
@@ -15,7 +14,7 @@ namespace WebUI.Controllers.Admin
             _asignB = new AsignacionBodegaDao(_configuration);
         }
 
-        [Authorize]
+
         public IActionResult Index()
         {
             return View();
@@ -29,21 +28,21 @@ namespace WebUI.Controllers.Admin
         }
         */
         public async Task<IActionResult> Get(string json)
-        {            
+        {
             return Ok(await _asignB.GetAsync(json));
         }
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] AsignacionBodega data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             return Ok(await _asignB.InsertAsync(idRol, data));
         }
 
         [HttpPut]
         public async Task<IActionResult> Put(int id)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             return Ok(await _asignB.UpdateAsync(idRol, id));
         }
 

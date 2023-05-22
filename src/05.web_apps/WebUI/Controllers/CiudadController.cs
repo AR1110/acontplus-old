@@ -11,17 +11,17 @@ namespace WebUI.Controllers
         private CiudadDao _c;
         public CiudadController(IConfiguration configuration)
         {
-            _configuration= configuration;
+            _configuration = configuration;
             _c = new CiudadDao(_configuration);
         }
         public IActionResult Index()
         {
-            return View(); 
+            return View();
         }
 
         public IActionResult ReadCiudadProvincia()
         {
-            _gr = _c.ReadCiudad(); 
+            _gr = _c.ReadCiudad();
             return Ok(_gr);
         }
     }

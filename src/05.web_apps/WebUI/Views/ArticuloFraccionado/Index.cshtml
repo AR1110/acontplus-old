@@ -13,7 +13,8 @@
                     <li class="breadcrumb-item"><a href="javascript:void(0)">Almacen</a></li>
                     <li class="breadcrumb-item active">Articulo Fraccionable</li>
                 </ol>-->
-                <button type="button" class="btn btn-info m-l-15" ng-if="$ctrl.accion.crear" ng-click="$ctrl.openModal()"><i class="fa fa-plus-circle"></i> Nuevo</button>
+                <button type="button" class="btn btn-info m-l-15" ng-if="accion.crear" ng-click="openModal()"><i
+                        class="fa fa-plus-circle"></i> Nuevo</button>
             </div>
         </div>
     </div>
@@ -24,11 +25,12 @@
                 <div class="md-toolbar-tools">
 
                     <div class="col-lg-9 col-md-9 col-sm-1">
-                       
+
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
                         <form class="form-material">
-                            <input type="text" class="form-control" ng-model="$ctrl.buscarText"  placeholder="Buscar Articulo" />
+                            <input type="text" class="form-control" ng-model="buscarText"
+                                placeholder="Buscar Articulo" />
                         </form>
                     </div>
                 </div>
@@ -39,7 +41,7 @@
                         <table class="table table-condensed">
                             <thead>
                                 <tr>
-                                    <th ng-if="$ctrl.accion.editar || $ctrl.accion.eliminar">Op.</th>
+                                    <th ng-if="accion.editar || accion.eliminar">Op.</th>
                                     <th>N°</th>
                                     <th>Articulo</th>
                                     <th>Conversión</th>
@@ -50,28 +52,31 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="af in $ctrl.articuloFraccionados | filter: $ctrl.buscarText">
-                                    <td ng-if="$ctrl.accion.editar || $ctrl.accion.eliminar">
+                                <tr ng-repeat="af in articuloFraccionados | filter: buscarText">
+                                    <td ng-if="accion.editar || accion.eliminar">
                                         <div class="row justify-content-center">
-                                            <button type="button" class="btn btn-info btn-sm" ng-if="$ctrl.accion.editar" ng-click="$ctrl.openModal(af)"><i class="ti-pencil"></i></button>
-                                            <button type="button" class="btn btn-danger btn-sm ml-1" ng-if="$ctrl.accion.eliminar" ng-click="$ctrl.askToDelete(af)"><i class="ti-trash"></i></button>
-                                        </div>                                      
+                                            <button type="button" class="btn btn-info btn-sm" ng-if="accion.editar"
+                                                ng-click="openModal(af)"><i class="ti-pencil"></i></button>
+                                            <button type="button" class="btn btn-danger btn-sm ml-1"
+                                                ng-if="accion.eliminar" ng-click="askToDelete(af)"><i
+                                                    class="ti-trash"></i></button>
+                                        </div>
                                     </td>
-                                    <td>{{$index+1}}</td>                                     
-                                    <td ><b class="text-primary">{{af.articulo}}</b></td>
-                                    <td >{{af.conversion}}</td>
+                                    <td>{{$index+1}}</td>
+                                    <td><b class="text-primary">{{af.articulo}}</b></td>
+                                    <td>{{af.conversion}}</td>
                                     <td>${{af.precioCostoFraccionado}}</td>
-                                    <td >{{af.medida}}</td>
+                                    <td>{{af.medida}}</td>
                                     <td>
                                         <span>
                                             {{af.fraccionado.gestionVenta?'Venta':'Compra'}}
                                         </span>
                                     </td>
                                     <td ng-bind-html="af.estado | estadoPrimario"></td>
-                                    
+
                                 </tr>
-                                <tr class="text-center" ng-show="$ctrl.articuloFraccionados.length===0">
-                                   <td colspan="7">No hay registros :)</td> 
+                                <tr class="text-center" ng-show="articuloFraccionados.length===0">
+                                    <td colspan="7">No hay registros :)</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -82,8 +87,8 @@
     </div>
 </div>
 
-@section Scripts{    
-    <script type="module" src="~/js/controllers/almacen/articuloFraccionableCtrl.min.js" asp-append-version="true"></script>
+@section Scripts{
+    <script src="~/js/inventario/controllers/articuloFraccionableCtrl.min.js" asp-append-version="true"></script>
 }
 
 

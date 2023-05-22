@@ -46,6 +46,7 @@ BEGIN
 	--==============Parametros para el Area de Inventario==============
 	DECLARE @inventory AS VARCHAR(5)
 
+
 	BEGIN TRY 
 		
 		----======================================Recuperar datos de las Tablas===========================================================
@@ -53,7 +54,7 @@ BEGIN
 
 		SELECT TOP 1 @idUsuario = idUsuario, @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
-		SELECT TOP 1 @inventory = llevaInventario FROM Config.GestionSistema WITH (NOLOCK) WHERE idEntidad = @idEntidad
+		SELECT TOP 1 @inventory =  JSON_VALUE(dbo.f_sanitize_json(jsonConfig),'$.llevaInventario') FROM Config.Sistema WHERE idEntidad = @idEntidad AND codConfig = 'CI' 
 
 		SELECT TOP 1 @uniqueId = uniqueId FROM Compra.Documento_Ingreso WITH (NOLOCK) WHERE idDocumentoIngreso = @idDocumentoIngreso
 		
@@ -69,7 +70,7 @@ BEGIN
 				RETURN 
 			END 
 
-		IF @codPago != 'PE'
+		IF @codPago = 'PP' AND @codPago = 'PA'
 			BEGIN 
 				SELECT '0' code,'El Documento tiene un proceso contable no puede ser editado' as 'message'
 				RETURN  
@@ -83,17 +84,52 @@ BEGIN
 
 			UPDATE Compra.Documento_Ingreso_Taxes SET estado = 0 WHERE idDocumentoIngreso = @idDocumentoIngreso
 
+			UPDATE  Compra.InfoAdicional SET estado = 0 WHERE  uniqueId = @uniqueId
 
 			--==============================================================Inventario============================================================================================
 			IF @inventory = 'SI'
 				BEGIN 
 					
-					INSERT INTO Inventario.ControlStock
-						  (idTipoDocumento,idDocumento,idArticulo,idBodega)
-					SELECT idTipoDocumento = 1,d.idDocumentoIngreso,d.idArticulo,d.idBodega 
-					FROM Compra.Documento_Ingreso_Detail d WITH (NOLOCK)
-					INNER JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = d.idArticulo
-					WHERE d.idDocumentoIngreso = @idDocumentoIngreso AND ar.llevaInventario = 1
+					DECLARE @tblDetails AS TABLE (
+							 idArticulo INT NOT NULL
+							,idBodega   INT NOT NULL
+					)
+
+					EXEC Inventario.Transaccion_Update 'E','IV',@idDocumentoIngreso,0
+
+					INSERT INTO @tblDetails(idArticulo,idBodega)
+					SELECT dd.idArticulo,dd.idBodega 
+					FROM Compra.Documento_Ingreso_Detail dd WITH (NOLOCK) 
+					INNER JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = dd.idArticulo
+					WHERE dd.idDocumentoIngreso = @idDocumentoIngreso AND ar.llevaInventario = 1
+
+					IF EXISTS (SELECT 1 FROM @tblDetails td INNER JOIN Articulo a WITH (NOLOCK) ON td.idArticulo = a.idArticulo WHERE a.llevaInventario = 1)
+						BEGIN 
+							DECLARE @idArticulo INT
+							DECLARE @idBodega INT
+							DECLARE @cantidad NUMERIC(18,2)
+							DECLARE @precioCosto NUMERIC(18,5)
+							DECLARE @precioVenta NUMERIC(18,5) 
+
+							DECLARE cursor_inventory CURSOR LOCAL FOR
+							SELECT td.idArticulo, idBodega
+							FROM @tblDetails td 
+
+							OPEN cursor_inventory
+
+							FETCH NEXT FROM cursor_inventory INTO @idArticulo, @idBodega
+
+							WHILE @@FETCH_STATUS = 0
+							BEGIN
+								--tipo transaccion 2 salidas
+								--tipo documento 1 factura electronica
+								EXEC Inventario.Stock_Update @idArticulo, @idBodega
+								FETCH NEXT FROM cursor_inventory INTO @idArticulo, @idBodega
+							END
+							CLOSE cursor_inventory
+							DEALLOCATE cursor_inventory  
+						END
+
 				END 
 
 			 --===========================================================Contabilidad=================================================================================================

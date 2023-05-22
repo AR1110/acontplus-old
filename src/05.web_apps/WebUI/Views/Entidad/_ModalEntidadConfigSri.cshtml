@@ -1,23 +1,23 @@
 <form autocomplete="off">
     <div class="modal-header">
         <h6 class="modal-title">Configuración SRI</h6>
-        <button type="button" ng-click="$ctrl.closeModal()" class="close">&times;</button>
+        <button type="button" ng-click="closeModal()" class="close">&times;</button>
     </div>
 
     <div class="modal-body">
         <div class="row">
             <div class="col-md-4 col-xs-6 b-r"> <strong>RUC</strong>
                 <br>
-                <p class="text-muted">{{$ctrl.data.ruc}}</p>
+                <p class="text-muted">{{data.ruc}}</p>
             </div>
             <div class="col-md-4 col-xs-6 b-r"> <strong>Razon Social</strong>
                 <br>
-                <p class="text-muted">{{$ctrl._params.razonSocial}}</p>
+                <p class="text-muted">{{_params.razonSocial}}</p>
             </div>
             <div class="col-md-4 col-xs-6 b-r"> <strong>Nombre Comercial</strong>
                 <br>
-                <p class="text-muted">{{$ctrl._params.nombreComercial}}</p>
-            </div>           
+                <p class="text-muted">{{_params.nombreComercial}}</p>
+            </div>
         </div>
         <hr>
 
@@ -25,42 +25,47 @@
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="form-group">
                     <label for="">Contribuyente <span class="text-danger">*</span></label>
-                    <select class="form-control border-select" ng-model="$ctrl.data.idSubContribuyente" ng-change="$ctrl.onChangeSubContribuyente()"
-                            ng-options="sc.subContribuyente.idSubContribuyente as sc.subContribuyente.descripcion group by sc.tipoContribuyente.descripcion for sc in $ctrl.subContribuyentes ">
+                    <select class="form-control border-select" ng-model="data.idSubContribuyente"
+                        ng-change="onChangeSubContribuyente()"
+                        ng-options="sc.subContribuyente.idSubContribuyente as sc.subContribuyente.descripcion group by sc.tipoContribuyente.descripcion for sc in subContribuyentes ">
                     </select>
                 </div>
-            </div>           
+            </div>
         </div>
 
         <div class="row">
             <div class="co-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <div class="form-group">
                     <label for="nroContribuyente">Nro. Contribuyente: </label>
-                    <input type="text" class="form-control border-select" maxlength="3" ng-model="$ctrl.data.nroContribuyente" valid-number id="nroContribuyente" placeholder="000" />
-                </div>           
+                    <input type="text" class="form-control border-select" maxlength="3" ng-model="data.nroContribuyente"
+                        valid-number id="nroContribuyente" placeholder="000" />
+                </div>
             </div>
             <div class="co-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <div class="form-group">
                     <label for="anioFiscal"> Año Fiscal : <span class="text-danger">*</span> </label>
-                    <select class="form-control" ng-model="$ctrl.data.idAnioFiscal">
-                        <option ng-value="af.idAnioFiscal" ng-repeat="af in $ctrl.anioFiscales">{{af.descripcion}}</option>
-                    </select>                                   
+                    <select class="form-control" ng-model="data.idAnioFiscal">
+                        <option ng-value="af.idAnioFiscal" ng-repeat="af in anioFiscales">{{af.descripcion}}</option>
+                    </select>
                 </div>
-            </div>                
+            </div>
         </div>
 
         <div class="row">
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                <md-switch ng-model="$ctrl.data.actividad" ng-repeat="item in $ctrl.biocombustibles" aria-label="Hidro Carburos" ng-true-value="'HB'" ng-false-value="'null'" class="md-primary">    
-                {{item.concepto}}
+                <md-switch ng-model="data.actividad" ng-repeat="item in biocombustibles" aria-label="Hidro Carburos"
+                    ng-true-value="'HB'" ng-false-value="'null'" class="md-primary">
+                    {{item.concepto}}
                 </md-switch>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                 <md-switch ng-model="$ctrl.data.obligadoLlevarContabilidad" aria-label="obligadoLlevarContabilidad" class="md-primary">    
-                    Obligado llevar Contabilidad: <span class="badge badge-{{$ctrl.data.obligadoLlevarContabilidad?'success':'warning'}}">
-                            {{$ctrl.data.obligadoLlevarContabilidad?'SI':'NO'}}
-                        </span>
-                </md-switch> 
+                <md-switch ng-model="data.obligadoLlevarContabilidad" aria-label="obligadoLlevarContabilidad"
+                    class="md-primary">
+                    Obligado llevar Contabilidad: <span
+                        class="badge badge-{{data.obligadoLlevarContabilidad?'success':'warning'}}">
+                        {{data.obligadoLlevarContabilidad?'SI':'NO'}}
+                    </span>
+                </md-switch>
             </div>
         </div>
 
@@ -73,16 +78,18 @@
                             <th>Descripción</th>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="item in $ctrl.regimenes">
+                            <tr ng-repeat="item in regimenes">
                                 <td width="100">
-                                    <md-switch ng-model="item.estado" aria-label="Regimenes" ng-change="$ctrl.validarRetencionRegimen(item)">
+                                    <md-switch ng-model="item.estado" aria-label="Regimenes"
+                                        ng-change="validarRetencionRegimen(item)">
                                         {{item.normativa}}
                                     </md-switch>
                                 </td>
                                 <td width="300">
                                     <div class="form-group" ng-if="item.codNormativa=='AR'">
                                         <label for=""></label>
-                                         <input type="text" ng-model="item.descripcion" ng-disabled="!item.estado" touppercase class="form-control border-select">
+                                        <input type="text" ng-model="item.descripcion" ng-disabled="!item.estado"
+                                            touppercase class="form-control border-select">
                                     </div>
                                     <div class="form-group" ng-if="item.codNormativa=='R'">
                                         <label for=""></label>
@@ -97,14 +104,14 @@
             </div>
         </div>
 
-        
+
     </div>
 
     <div class="modal-footer">
-        <button type="button" class="btn btn-success" ng-click="$ctrl.saveConfigSri()">
+        <button type="button" class="btn btn-success" ng-click="saveConfigSri()">
             <i class="ti-save"></i>
             Guardar
         </button>
-        <button type="button" ng-click="$ctrl.closeModal()" class="btn btn-dark">&times; Cerrar</button>
+        <button type="button" ng-click="closeModal()" class="btn btn-dark">&times; Cerrar</button>
     </div>
-</form>   
+</form>

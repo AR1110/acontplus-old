@@ -1,13 +1,7 @@
 ﻿using DataAccess;
 using Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers
 {
@@ -17,7 +11,7 @@ namespace WebUI.Controllers
         private readonly IConfiguration _config;
         private readonly string _connectionStrings = string.Empty;
         GenericResponse _gr = new();
-        private  TipoIvaDao _ti;
+        private TipoIvaDao _ti;
 
         public TipoIvaController(IConfiguration config)
         {
@@ -25,14 +19,14 @@ namespace WebUI.Controllers
             _ti = new TipoIvaDao(_config);
         }
 
-        [Authorize]
+
         public IActionResult Index()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]TipoIva data)
+        public async Task<IActionResult> Post([FromBody] TipoIva data)
         {
             var res = await _ti.CreateTipoIvaAsync(data);
             return Ok(res);
@@ -44,13 +38,13 @@ namespace WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Put([FromBody]TipoIva data)
+        public async Task<IActionResult> Put([FromBody] TipoIva data)
         {
             var res = await _ti.UpdateTipoIvaAsync(data);
             return Ok(res);
         }
 
-        
+
         public async Task<IActionResult> Delete(int idTipoIva)
         {
             var res = await _ti.DeleteTipoIvaAsync(idTipoIva);

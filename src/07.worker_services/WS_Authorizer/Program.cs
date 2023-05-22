@@ -2,7 +2,7 @@ using BL.FactElect;
 using WS_Authorizer;
 string _env = string.Empty;
 #if DEBUG
-    _env = "Development";
+_env = "Development";
 #else
     _env = "Production";
 #endif

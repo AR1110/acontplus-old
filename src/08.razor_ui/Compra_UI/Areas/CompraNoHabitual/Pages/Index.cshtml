@@ -1,9 +1,10 @@
 ﻿@page
 @model Compra_UI.CompraNoHabitual.Pages.IndexModel
 @{
-    ViewData["title"] = "Index";
+    ViewData["Title"] = "Index";
     Layout = "_Layout";
 }
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 <div ng-controller="compraNoHabitualCtrl">
     <div class="row page-titles">
@@ -30,12 +31,22 @@
                         <div class="md-toolbar-tools">
 
                             <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                                <button type="button" class="btn btn-info" ng-click="openModalFiltro()"><i class=" fas fa-filter"></i> Filtrar</button>
+                                <button type="button" class="btn btn-info" ng-click="openModalFiltro()"><i
+                                        class=" fas fa-filter"></i> Filtrar</button>
                             </div>
                             <div class="col-lg-6 col"></div>
                             <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
                                 <form class="form-material">
-                                    <input type="text" class="form-control" ng-keyup="filterLocalLCompras()" ng-model="txtFilter" placeholder="Buscar">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" ng-keyup="filterLocalLCompras()"
+                                            ng-model="txtFilter" placeholder="Buscar">
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-outline-secondary btn-xs"
+                                                ng-click="getComprasNoHabitual()">
+                                                <i class="fas fa-redo fa-xs"></i>
+                                            </button>
+                                        </div>
+                                    </div>
                                 </form>
                             </div>
                         </div>
@@ -59,25 +70,29 @@
                                     <td md-cell>
                                         <md-menu>
                                             <md-button aria-label="Open demo menu" class="md-icon-button"
-                                                       ng-click="$mdMenu.open($event)">
+                                                ng-click="$mdMenu.open($event)">
                                                 <icon class="mdi mdi-menu"></icon>
                                             </md-button>
                                             <md-menu-content class="md-dense">
                                                 <md-menu-item>
                                                     <md-button ng-click="openModalDetalle(item)">
-                                                        <span md-menu-align-target><i class="ti-menu"></i> Detalle</span>
+                                                        <span md-menu-align-target><i class="ti-menu"></i>
+                                                            Detalle</span>
                                                     </md-button>
                                                 </md-menu-item>
 
                                                 <md-menu-item>
                                                     <md-button ng-click="openModalEditar(item)">
-                                                        <span md-menu-align-target><i class="ti-pencil"></i> Editar</span>
+                                                        <span md-menu-align-target><i class="ti-pencil"></i>
+                                                            Editar</span>
                                                     </md-button>
                                                 </md-menu-item>
 
                                                 <md-menu-item>
                                                     <md-button ng-click="askToDelete(item)">
-                                                        <span md-menu-align-target><icon class="ti-na"></icon> Anular</span>
+                                                        <span md-menu-align-target>
+                                                            <icon class="ti-na"></icon> Anular
+                                                        </span>
                                                     </md-button>
                                                 </md-menu-item>
 
@@ -85,7 +100,7 @@
                                         </md-menu>
                                     </td>
                                     <td md-cell>{{item.serieComprobante}}</td>
-                                    <td md-cell>{{item.fechaEmision|date: 'dd/MM/yyyy'}}</td>
+                                    <td md-cell>{{item.fechaEmision}}</td>
                                     <td md-cell>{{item.nombreFiscal}}</td>
                                     <td md-cell>${{item.importeTotal}}</td>
                                     <td md-cell>{{item.estado}}</td>
@@ -98,8 +113,8 @@
                             <tfoot md-foot>
                                 <tr md-row>
                                     <td md-cell colspan="2">{{liquidacionesCompra.length}} Registros</td>
-                                    <td md-cell colspan="3"><span class="font-weight-bold">Total: </span></td>
-                                    <td md-cell><span class="font-weight-bold">${{total}}</span></td>
+                                    <td md-cell colspan="2"><span class="font-weight-bold">Total:</span></td>
+                                    <td md-cell><span class="font-weight-bold">{{importeTotal}}</span></td>
                                     <td md-cell colspan="3"></td>
                                 </tr>
                             </tfoot>
@@ -115,7 +130,10 @@
 </div>
 
 @section Scripts{
-    <script src="~/js/components/mdAutocompleteProveedor.min.js" asp-append-version="true"></script>
-    <script src="~/js/controllers/compras/compraNoHabitualCtrl.js" asp-append-version="true"></script>
+
+    <script src="~/js/common/components/mdAutocompleteProveedor.min.js" asp-append-version="true"></script>
+    <script src="~/js/compras/directives/compraDirective.min.js" asp-append-version="true"></script>
+    <script src="~/js/compras/services/compraNoHabitualService.js" asp-append-version="true"></script>
+    <script src="~/js/compras/controllers/compraNoHabitualCtrl.js" asp-append-version="true"></script>
 
 }

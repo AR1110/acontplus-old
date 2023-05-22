@@ -1,15 +1,11 @@
-﻿using Domain.Models;
-using Domain.Models.InfoAdicional;
+﻿using Domain.Models.InfoAdicional;
 using Domain.Models.Logistica;
 using Domain.ViewModels.Logistica;
 using Helpers;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Threading.Tasks;
 
 namespace DataAccess.Logistica
 {
@@ -195,6 +191,6 @@ namespace DataAccess.Logistica
 
             }
             return _gr;
-        }       
+        }
     }
 }

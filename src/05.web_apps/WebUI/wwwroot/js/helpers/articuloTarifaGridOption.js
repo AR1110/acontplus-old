@@ -1,52 +1,52 @@
+import {
+    CalculoTarifaHelper
+} from './calculoTarifaHelper.min.js?v=0.3';
 
+export class ArticuloTarifaGridOption {
 
-import {CalculoTarifaHelper} from './calculoTarifaHelper.min.js?v=0.1';
-
-export  class ArticuloTarifaGridOption{  
-     
-    constructor(_form){   
-        this.form   = _form;   
-        this.config = {};        
+    constructor(_form) {
+        this.form = _form;
+        this.config = {};
         this.precioCosto = 0;
         this.porcentajeIva = 0;
     }
 
     /**
-      * @param {{}} config
-      */
-    set setConfigDecimal(config){
+     * @param {{}} config
+     */
+    set setConfigDecimal(config) {
         this.config = config;
     }
 
     /**
-      * @param {any} precioCosto
-      */
-    set setPrecioCosto(precioCosto){        
+     * @param {any} precioCosto
+     */
+    set setPrecioCosto(precioCosto) {
         this.precioCosto = precioCosto;
     }
 
 
-   
-    get getPrecioCosto(){
+
+    get getPrecioCosto() {
         return this.precioCosto;
     }
 
     /**
-      * @param {number} porcentajeIva
-      */
-    set setPorcentajeIva(porcentajeIva){
+     * @param {number} porcentajeIva
+     */
+    set setPorcentajeIva(porcentajeIva) {
         this.porcentajeIva = porcentajeIva;
     }
 
-    get getPorcentajeIva(){
+    get getPorcentajeIva() {
         return this.porcentajeIva;
     }
 
-    checkPrecioCosto(){   
-        return !([null, undefined, "", 0].includes(this.getPrecioCosto));        
+    checkPrecioCosto() {
+        return !([null, undefined, "", 0].includes(this.getPrecioCosto));
     }
 
-    getTarifaGrid($scope, $interval){
+    getTarifaGrid($scope, $interval) {
         this.$scope = $scope;
         this.$interval = $interval;
 
@@ -56,24 +56,23 @@ export  class ArticuloTarifaGridOption{
             enableFiltering: false,
             enableRowHashing: false,
             enableCellEdit: false,
-            cellEditableCondition: ()=>{                                
+            cellEditableCondition: () => {
                 return this.checkPrecioCosto();
-            },                                  
+            },
             appScopeProvider: this,
             onRegisterApi: this.registerGridApi,
-            columnDefs:this.getColumnDefs()
+            columnDefs: this.getColumnDefs()
         };
         return this.gridOptions;
     }
 
     //Definimos los nombres de la columna de Tarifa 
-    getColumnDefs =()=>{    
-        return [
-            {
+    getColumnDefs = () => {
+        return [{
                 name: 'idTarifa',
                 field: 'idTarifa',
                 visible: false,
-            }, 
+            },
             {
                 name: 'tarifa',
                 field: 'tarifa',
@@ -92,46 +91,46 @@ export  class ArticuloTarifaGridOption{
             {
                 name: 'precioVenta',
                 field: 'precioVenta',
-                enableCellEditOnFocus: true,  
-                enableCellEdit: true,    
-                allowCellFocus: true,          
-                type: 'number',                
+                enableCellEditOnFocus: true,
+                enableCellEdit: true,
+                allowCellFocus: true,
+                type: 'number',
                 width: '15%',
                 minWidth: 100
             },
             {
                 name: 'precioConIva',
                 field: 'precioConIva',
-                enableCellEditOnFocus: true,   
-                enableCellEdit: true,  
-                allowCellFocus: true,               
-                type: 'number',                
+                enableCellEditOnFocus: true,
+                enableCellEdit: true,
+                allowCellFocus: true,
+                type: 'number',
                 width: '15%',
                 minWidth: 100
             },
             {
                 name: 'porcentajeUtilidad',
-                field: 'porcentajeUtilidad',                
+                field: 'porcentajeUtilidad',
                 type: 'number',
-                enableCellEditOnFocus: true, 
-                enableCellEdit: true,  
-                allowCellFocus: true,                 
+                enableCellEditOnFocus: true,
+                enableCellEdit: true,
+                allowCellFocus: true,
                 width: '18%',
                 minWidth: 100
             },
 
             {
                 name: 'Utilidad',
-                field: 'ganancia',             
+                field: 'ganancia',
                 type: 'number',
-                enableCellEditOnFocus: true,                
+                enableCellEditOnFocus: true,
                 width: '10%',
                 minWidth: 100
             },
-            { 
-                name: 'P. precioPredeterminado', 
-                field: 'precioPredeterminado', 
-                visible: false 
+            {
+                name: 'P. precioPredeterminado',
+                field: 'precioPredeterminado',
+                visible: false
             },
             {
                 name: 'Estado',
@@ -156,19 +155,19 @@ export  class ArticuloTarifaGridOption{
 
     registerGridApi(gridApi) {
         this.grdApi = gridApi;
-        let _self = this.appScopeProvider;        
-      
+        let _self = this.appScopeProvider;
+
         if (this.gridApi) {
             _self.$interval(() => {
                 this.gridApi.core.handleWindowResize();
                 this.gridApi.grid.refresh();
             }, 5);
         }
-        
+
         gridApi.edit.on.afterCellEdit(_self.$scope, _self.afterCellEdit);
     }
 
-    afterCellEdit(rowEntity, colDef, newValue, oldValue){
+    afterCellEdit(rowEntity, colDef, newValue, oldValue) {
         const _self = this.grid.appScope; //Get Scope         
         const index = _self.gridOptions.data.indexOf(rowEntity); //Obtenemos indice 
 
@@ -178,22 +177,41 @@ export  class ArticuloTarifaGridOption{
         let ganancia = 0;
 
         //Validacion de Campos 
-        if ([null, undefined, "", 0].includes(_self.getPrecioCosto) || isNaN(_self.precioCosto)){
+        if ([null, undefined, "", 0].includes(_self.getPrecioCosto) || isNaN(_self.precioCosto)) {
             toastr.warning('Ingrese el Precio de Costo');
             return
         }
-                      
-        if (colDef.field === "precioVenta" && newValue === undefined || newValue === null) {
-            rowEntity.precioVenta = oldValue;
+
+
+        if (colDef.field === "precioVenta") {
+            if ([null, undefined].includes(newValue)) {
+                rowEntity.precioVenta = oldValue;
+            }
+            if (rowEntity.precioVenta > 0) {
+
+                if (rowEntity.precioVenta < _self.precioCosto) {
+                    rowEntity[colDef.field] = oldValue;
+                }
+            }
         }
 
-        if (colDef.field === "precioConIva" && newValue === undefined || newValue === null) {
-            rowEntity.precioConIva = oldValue;
+
+        if (colDef.field === "precioConIva") {
+            if ([null, undefined].includes(newValue)) {
+                rowEntity.precioConIva = oldValue;
+            }
+
+            if (rowEntity.precioConIva > 0) {
+                if (rowEntity.precioConIva < _self.precioCosto) {
+                    rowEntity.precioConIva = oldValue;
+                }
+            }
         }
 
         if (colDef.field === "porcentajeUtilidad" && newValue === undefined || newValue === null) {
             rowEntity.porcentajeUtilidad = oldValue;
         }
+
 
 
         //Calculos 
@@ -202,9 +220,9 @@ export  class ArticuloTarifaGridOption{
                 precioConIva = CalculoTarifaHelper.calcularPrecioConIva(rowEntity.precioVenta, rowEntity.porcentajeIva);
                 porcentajeUtilidad = CalculoTarifaHelper.campoPorcentajeUtilidad(_self.getPrecioCosto, rowEntity.precioVenta);
 
-                _self.gridOptions.data[index].precioVenta = _self.form.roundNumber(rowEntity.precioVenta, _self.config.nroPrecio);                                
+                _self.gridOptions.data[index].precioVenta = _self.form.roundNumber(rowEntity.precioVenta, _self.config.nroPrecio);
                 _self.gridOptions.data[index].precioConIva = _self.form.roundNumber(precioConIva, _self.config.nroPrecio);
-                _self.gridOptions.data[index].porcentajeUtilidad = _self.form.roundNumber(porcentajeUtilidad, 5); 
+                _self.gridOptions.data[index].porcentajeUtilidad = _self.form.roundNumber(porcentajeUtilidad, 5);
 
                 break;
 
@@ -220,7 +238,7 @@ export  class ArticuloTarifaGridOption{
             case "porcentajeUtilidad":
                 precioVenta = CalculoTarifaHelper.calcularPorcentajeUtilidad(_self.getPrecioCosto, rowEntity.porcentajeUtilidad);
                 precioConIva = CalculoTarifaHelper.calcularPrecioConIva(precioVenta, rowEntity.porcentajeIva);
-                
+
                 _self.gridOptions.data[index].precioVenta = _self.form.roundNumber(precioVenta, _self.config.nroPrecio);
                 _self.gridOptions.data[index].precioConIva = _self.form.roundNumber(precioConIva, _self.config.nroPrecio);
                 break;
@@ -229,70 +247,72 @@ export  class ArticuloTarifaGridOption{
         //alexis ramirez
         ganancia = rowEntity.precioVenta - _self.getPrecioCosto;
         _self.gridOptions.data[index].ganancia = _self.form.roundNumber(ganancia, 5);
-    
+
     }
 
-    getTarifaGanacia(precioVenta, precioCosto){         
-        return precioVenta - precioCosto;        
+    getTarifaGanacia(precioVenta, precioCosto) {
+        return precioVenta - precioCosto;
     }
 
     /**
-      * @param {any} precioCosto
-      */
-    recalculateTarifaAdd(){
-        
+     * @param {any} precioCosto
+     */
+    recalculateTarifaAdd() {
+
         if ([null, undefined, ""].includes(this.getPrecioCosto) || isNaN(this.getPrecioCosto)) {
             toastr.warning('Ingrese un número válido');
             return
-        }   
-        if(this.getPrecioCosto ===0){
+        }
+        if (this.getPrecioCosto === 0) {
             toastr.warning('El valor mínimo en el precio de costo es 0.01');
-            return            
-        }        
-        
+            return
+        }
+
         //this.tarifaInstance.setPrecioCosto = this.data.precioCosto; 
         try {
-            angular.forEach(this.gridOptions.data, (val, index) => {                
+            angular.forEach(this.gridOptions.data, (val, index) => {
                 this.gridOptions.data[index].porcentajeIva = this.getPorcentajeIva;
-                
-                let precioVenta = CalculoTarifaHelper.calcularPrecioVenta(val.precioConIva, val.porcentajeIva);            
+
+                let precioVenta = CalculoTarifaHelper.calcularPrecioVenta(val.precioConIva, val.porcentajeIva);
                 this.gridOptions.data[index].precioVenta = this.form.roundNumber(precioVenta, this.config.nroPrecio);
 
-                let precioConIva = CalculoTarifaHelper.calcularPrecioConIva(val.precioVenta, val.porcentajeIva);           
+                let precioConIva = CalculoTarifaHelper.calcularPrecioConIva(val.precioVenta, val.porcentajeIva);
                 this.gridOptions.data[index].precioConIva = this.form.roundNumber(precioConIva, this.config.nroPrecio);
 
 
                 let porcentajeUtilidad = CalculoTarifaHelper.campoPorcentajeUtilidad(this.getPrecioCosto, precioVenta);
-                this.gridOptions.data[index].porcentajeUtilidad = this.form.roundNumber(porcentajeUtilidad, 5);   
-                
+                this.gridOptions.data[index].porcentajeUtilidad = this.form.roundNumber(porcentajeUtilidad, 5);
+
                 let ganancia = this.getTarifaGanacia(val.precioVenta, this.getPrecioCosto)
                 this.gridOptions.data[index].ganancia = this.form.roundNumber(ganancia, 5);
             })
-        } catch (error) {        
+        } catch (error) {
             toastr.error(error)
         }
-        
+
     }
 
-    recalculateTarifaUpdate(opcionCalculate){
+    recalculateTarifaUpdate(opcionCalculate) {
         if ([null, undefined, 0].includes(this.getPrecioCosto) || isNaN(this.getPrecioCosto)) {
             toastr.warning('Ingrese un número válido');
-            return          
+            return
         }
 
-        if(this.getPrecioCosto ===0){
+        if (this.getPrecioCosto === 0) {
             toastr.warning('El valor mínimo en el precio de costo es 0.01');
-            return            
-        } 
+            return
+        }
 
-        
+
         try {
-            
+
             angular.forEach(this.gridOptions.data, (val, index) => {
-                let precioConIva = 0, porcentajeUtilidad = 0, ganancia = 0;
+                let precioConIva = 0,
+                    porcentajeUtilidad = 0,
+                    ganancia = 0;
 
                 let precioVenta = CalculoTarifaHelper.calcularPorcentajeUtilidad(this.getPrecioCosto, val.porcentajeUtilidad)
-                
+
                 if (opcionCalculate === "optionPorcentaje") {
                     this.gridOptions.data[index].precioVenta = this.form.roundNumber(precioVenta, this.config.nroPrecio);
 
@@ -302,15 +322,15 @@ export  class ArticuloTarifaGridOption{
 
                 if (opcionCalculate === "optionPvp") {
                     porcentajeUtilidad = CalculoTarifaHelper.campoPorcentajeUtilidad(this.getPrecioCosto, val.precioVenta);
-                    this.gridOptions.data[index].porcentajeUtilidad = this.form.roundNumber(porcentajeUtilidad, 5);                    
-                } 
-                
+                    this.gridOptions.data[index].porcentajeUtilidad = this.form.roundNumber(porcentajeUtilidad, 5);
+                }
+
                 ganancia = this.getTarifaGanacia(val.precioVenta, this.getPrecioCosto)
                 this.gridOptions.data[index].ganancia = this.form.roundNumber(ganancia, 5);
             })
-            
+
         } catch (error) {
             toastr.error(error);
-        }                                    
+        }
     }
 }

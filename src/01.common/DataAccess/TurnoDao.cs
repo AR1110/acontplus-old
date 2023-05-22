@@ -3,16 +3,12 @@ using Domain.ViewModels;
 using Helpers;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DataAccess
 {
-    public class TurnoDao 
+    public class TurnoDao
     {
         private readonly IConfiguration _config;
         protected GenericResponse _gr;
@@ -50,7 +46,7 @@ namespace DataAccess
                                 _gr.titleSms = reader.GetString(3);
                             }
                         }
-                        
+
                     }
                 }
             }
@@ -89,7 +85,7 @@ namespace DataAccess
                                 _gr.titleSms = reader.GetString(3);
                             }
                         }
-                        
+
                     }
                 }
             }
@@ -139,7 +135,7 @@ namespace DataAccess
                                 }
                             }
                         }
-                        
+
                     }
                 }
                 _gr.data = listar;
@@ -175,7 +171,7 @@ namespace DataAccess
                                 _gr.titleSms = reader.GetString(3);
                             }
                         }
-                        
+
                     }
                 }
             }
@@ -219,7 +215,7 @@ namespace DataAccess
                                 }
                             }
                         }
-                        
+
                     }
                 }
 

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
   <AutoRefresh>0</AutoRefresh>
   <DataSources>
@@ -7,6 +7,7 @@
         <DataProvider>System.Data.DataSet</DataProvider>
         <ConnectString>/* Local Connection */</ConnectString>
       </ConnectionProperties>
+      <rd:SecurityType>None</rd:SecurityType>
       <rd:DataSourceID>7a5c6a14-50e3-4eab-a4b1-a041ff3ce4b5</rd:DataSourceID>
     </DataSource>
   </DataSources>
@@ -2376,7 +2377,7 @@
             <Top>3.17183cm</Top>
             <Left>0.17401cm</Left>
             <Height>2.4cm</Height>
-            <Width>34.02955cm</Width>
+            <Width>34.02956cm</Width>
             <ZIndex>7</ZIndex>
             <Style>
               <Border>
@@ -2406,13 +2407,13 @@
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
-      <Prompt>ReportParameter1</Prompt>
+      <Prompt>logo</Prompt>
     </ReportParameter>
     <ReportParameter Name="mimeType">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
-      <Prompt>ReportParameter1</Prompt>
+      <Prompt>mimeType</Prompt>
     </ReportParameter>
   </ReportParameters>
   <ReportParametersLayout>

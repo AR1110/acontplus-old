@@ -1,3 +1,5 @@
+
+USE [AcontPlus]
 -- ================================================
 -- Template generated from Template Explorer using:
 -- Create Procedure (New Menu).SQL
@@ -28,9 +30,59 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	DECLARE @idEntidad INT
+	DECLARE @idPolitica INT 	
+	DECLARE @jsonConfigDecimal AS VARCHAR(MAX)
+	DECLARE @jsonConfigVentas AS VARCHAR(MAX)
+	
+	DECLARE @configVentas AS TABLE (
+		idCliente        INT NULL
+	   ,idArticulo       INT NULL
+	   ,searchCode       BIT NOT NULL
+	   ,printerAutomatic BIT NOT NULL
+	   ,payAutomatic     BIT NOT NULL
+	)
 
-	SELECT @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
+	DECLARE @configDecimal AS TABLE (
+		nroPrecio INT NOT NULL
+	   ,nroCantidad INT NOT NULL
+	   ,nroIva INT NOT NULL
+	   ,nroDescuentoDetalle INT NOT NULL
+	   ,nroTotalDetalle INT NOT NULL
+	   ,nroTotalSubTotal INT NOT NULL
+	   ,nroDescuento INT NOT NULL
+	   ,nroIce INT NOT NULL
+	   ,importeTotal INT NOT NULL
+	)
 
+	SELECT @idEntidad = idEntidad, @idPolitica = idRol FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol	
+
+	SELECT TOP 1 @jsonConfigVentas = jsonConfig FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CV'
+
+	SELECT TOP 1 @jsonConfigDecimal = jsonConfig FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CD'
+
+	INSERT INTO @configVentas (idCliente,idArticulo,searchCode,printerAutomatic,payAutomatic)
+						SELECT idCliente,idArticulo,searchCode,printerAutomatic,payAutomatic
+						FROM OPENJSON(@jsonConfigVentas)
+						WITH (idCliente        INT '$.idCliente'
+							 ,idArticulo       INT '$.idArticulo'
+							 ,searchCode       BIT '$.searchCode'
+							 ,printerAutomatic BIT '$.printerAutomatic'
+							 ,payAutomatic     BIT '$.payAutomatic') as dt
+	
+	INSERT INTO @configDecimal(nroPrecio,nroCantidad,nroIva,nroDescuentoDetalle ,nroTotalDetalle,nroTotalSubTotal,nroDescuento,nroIce,importeTotal)
+						SELECT nroPrecio,nroCantidad,nroIva,nroDescuentoDetalle ,nroTotalDetalle,nroTotalSubTotal,nroDescuento,nroIce,importeTotal
+						FROM OPENJSON(@jsonConfigDecimal)
+						WITH (codTransaccion      VARCHAR(5) '$.codTransaccion'
+							 ,nroPrecio                  INT '$.nroPrecio'
+							 ,nroCantidad                INT '$.nroCantidad'
+							 ,nroIva                     INT '$.nroIva'
+							 ,nroDescuentoDetalle        INT '$.nroDescuentoDetalle'
+							 ,nroTotalDetalle            INT '$.nroTotalDetalle'
+							 ,nroTotalSubTotal           INT '$.nroTotalSubTotal'
+							 ,nroDescuento               INT '$.nroDescuento'
+							 ,nroIce                     INT '$.nroIce'
+							 ,importeTotal               INT '$.importeTotal') as dt
+					   WHERE dt.codTransaccion = 'V'
 
 	SELECT 
 		es.codEstab_Asig
@@ -52,7 +104,8 @@ BEGIN
 	   ,nroTotalSubTotal
 	   ,nroDescuento
 	   ,nroIce
-	FROM Config.CantidadDecimal WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codTransaccion = 'V'
+	   ,importeTotal
+	FROM @configDecimal
 
 	SELECT 
 		porcentajeIva
@@ -91,9 +144,8 @@ BEGIN
 		a.idArticulo
 	   ,a.codigo
 	   ,a.descripcion
-	FROM Config.GestionSistema gs WITH (NOLOCK)
+	FROM @configVentas gs 
 	INNER JOIN Articulo a WITH (NOLOCK) ON a.idArticulo = gs.idArticulo
-	WHERE gs.idEntidad = @idEntidad
 
 	SELECT 
 		cl.idCliente
@@ -102,8 +154,24 @@ BEGIN
 	   ,cl.nombreFiscal
 	   ,cl.direccion
 	   ,cl.correo
-	FROM Config.GestionSistema gs WITH (NOLOCK)
+	FROM @configVentas gs
 	INNER JOIN dbo.Cliente cl WITH (NOLOCK) ON cl.idCliente = gs.idCliente
-	WHERE gs.idEntidad = @idEntidad
+
+
+	SELECT 
+	 searchCode,
+	 printerAutomatic,
+	 payAutomatic
+	FROM @configVentas gs
+
+	--Permisos 
+	SELECT 
+	 jsonPermission
+	FROM Config.UserPermission WHERE idUsuarioRol = @idRol AND codModule='V'
+
+	SELECT a.leer, a.crear, a.editar FROM Acceso a
+	INNER JOIN SubMenu sm WITH(NOLOCK) ON sm.idSubMenu = a.idSubMenu
+	WHERE sm.codTemp ='ART' AND a.idPolitica = @idPolitica
+
 END
 GO

@@ -78,7 +78,7 @@ class AlmacenImportacionCtrl{
      * @returns true/false
      */
      hiddenColumn(col){
-        return ["idArticulo", "idMedida", "idSubFamilia", "idTipoIva", "codigo"].includes(col);        
+        return ["idArticulo", "idMedida", "idSubFamilia", "idTipoIva"].includes(col);        
     }
 
     editColumn(event, item, column) {        

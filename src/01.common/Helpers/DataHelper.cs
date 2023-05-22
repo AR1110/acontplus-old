@@ -1,10 +1,8 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Data;
-using System.IO;
-using System.Net;
+using System.Text.Json;
+using System.Xml;
 
 namespace Helpers
 {
@@ -167,6 +165,28 @@ namespace Helpers
         {
             DataTable dt = (DataTable)JsonConvert.DeserializeObject(json, (typeof(DataTable)));
             return dt;
+        }
+
+        public static bool IsXml(string input)
+        {
+            try
+            {
+                XmlDocument xmlDoc = new XmlDocument();
+                xmlDoc.LoadXml(input);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        public static string SerializeDictionary(Dictionary<string, object> data)
+        {
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true // Optional: makes the output formatted for readability
+            };
+            return System.Text.Json.JsonSerializer.Serialize(data, options);
         }
     }
 }

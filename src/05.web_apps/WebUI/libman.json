@@ -135,7 +135,7 @@
       "destination": "wwwroot/lib/angular-filter/"
     },
     {
-      "library": "microsoft-signalr@7.0.3",
+      "library": "microsoft-signalr@7.0.5",
       "destination": "wwwroot/lib/microsoft-signalr/"
     },
     {
@@ -149,6 +149,24 @@
     {
       "library": "angular-media-queries@0.6.1",
       "destination": "wwwroot/lib/angular-media-queries/"
+    },
+    {
+      "library": "tabulator@5.4.4",
+      "destination": "wwwroot/lib/tabulator/"
+    },
+    {
+      "library": "socket.io@4.6.1",
+      "destination": "wwwroot/lib/socket.io/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "UAParser.js@1.0.35",
+      "destination": "wwwroot/lib/UAParser.js/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "axios@1.4.0",
+      "destination": "wwwroot/lib/axios/"
     }
   ]
 }

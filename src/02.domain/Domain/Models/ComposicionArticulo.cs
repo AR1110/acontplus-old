@@ -13,7 +13,7 @@ namespace Domain.Models
         public int cantidadDetalle { get; set; }
     }
 
-    
+
     public class ComposicionArticuloOperaciones
     {
 

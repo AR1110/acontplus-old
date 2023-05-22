@@ -1,0 +1,44 @@
+﻿@page
+@model FACT_UI.Areas.Factura.Pages.IndexModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "_Layout";
+}
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<div ng-controller="facturaCtrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h5 class="text-themecolor">Factura Refactorización</h5>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+
+                <button type="button" ng-click="openModalInvoiceNew()"
+                    class="btn btn-info d-block d-lg-inline-block m-l-15">
+                    <i class="fa fa-plus-circle"></i> Nuevo
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+
+    <!-- Va en principal-->
+    <script src="~/js/common/services/apiErrorHandler.min.js" asp-append-version="true"></script>
+    <script src="~/js/common/utils/utils.js" asp-append-version="true"></script>
+    <!-- Va en principal-->
+
+    <script src="~/js/factElect/mappers/factElectMapper.min.js" asp-append-version="true"></script>
+    <script src="~/js/factElect/repositories/factElectRepository.min.js" asp-append-version="true"></script>
+
+    <script src="~/js/factElect/shared/factElectService.min.js" asp-append-version="true"></script>
+    <script src="~/js/factElect/services/facturaService.min.js" asp-append-version="true"></script>
+    <script src="~/js/factElect/services/clienteService.min.js" asp-append-version="true"></script>
+
+    <script src="~/js/factElect/controllers/facturaCtrl.min.js" asp-append-version="true"></script>
+
+    <script src="~/js/factElect/shared/factElectDirective.min.js" asp-append-version="true"></script>
+}

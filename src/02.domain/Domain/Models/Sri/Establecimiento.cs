@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Domain.Models.Sri
+﻿namespace Domain.Models.Sri
 {
     public class EstablecimientoSri
     {
@@ -26,6 +20,6 @@ namespace Domain.Models.Sri
 
     public class EstablecimientoParams
     {
-          public string json { get; set; }
+        public string json { get; set; }
     }
 }

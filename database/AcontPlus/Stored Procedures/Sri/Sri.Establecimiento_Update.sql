@@ -1,3 +1,5 @@
+USE [AcontPlus]
+GO 
 -- ================================================
 -- Template generated from Template Explorer using:
 -- Create Procedure (New Menu).SQL
@@ -38,36 +40,44 @@ BEGIN
     DECLARE @obligadoContabilidad VARCHAR(5) 
     DECLARE @nombreComercial VARCHAR(150) 
     DECLARE @dirEstablecimiento VARCHAR(300) 
+    DECLARE @telefono VARCHAR(300) 
     DECLARE @contribuyenteRimpe VARCHAR(150) 
-
-	SELECT @idEntidad = idEntidad  FROM App.UsuarioRol WHERE idUsuarioRol = @idRol
-
-	SELECT @ruc = ruc FROM dbo.Entidad WHERE idEntidad = @idEntidad
+	DECLARE @correo VARCHAR(300)
 
 	BEGIN TRY 
+
+		SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
+
+		SELECT TOP 1 @ruc = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
+
+		SELECT 
+			 @canton                = canton
+			,@actividad             = actividad
+			,@agenteRetencion       = agenteRetencion
+			,@contribuyente         = contribuyente
+			,@contribuyenteEspecial = contribuyenteEspecial
+			,@obligadoContabilidad  = obligadoContabilidad
+			,@nombreComercial       = nombreComercial
+			,@dirEstablecimiento    = dirEstablecimiento
+			,@telefono              = telefono
+			,@contribuyenteRimpe    = contribuyenteRimpe
+			,@correo                = correo
+		FROM OPENJSON (@json)
+		WITH (
+				 canton                VARCHAR(10) '$.canton'
+				,actividad             VARCHAR(5)  '$.actividad'
+				,agenteRetencion       VARCHAR(150)'$.agenteRetencion'
+				,contribuyente         VARCHAR(5)  '$.contribuyente'
+				,contribuyenteEspecial VARCHAR(10) '$.contribuyenteEspecial'
+				,obligadoContabilidad  VARCHAR(5)  '$.obligadoContabilidad'
+				,nombreComercial       VARCHAR(150)'$.nombreComercial'
+				,dirEstablecimiento    VARCHAR(300)'$.dirEstablecimiento'
+				,telefono              VARCHAR(300)'$.telefono'
+				,contribuyenteRimpe    VARCHAR(150)'$.contribuyenteRimpe'
+				,correo                VARCHAR(300) '$.correo'
+			 )
+
 		BEGIN TRAN 
-			SELECT 
-					 @canton                = canton
-					,@actividad             = actividad
-					,@agenteRetencion       = agenteRetencion
-					,@contribuyente         = contribuyente
-					,@contribuyenteEspecial = contribuyenteEspecial
-					,@obligadoContabilidad  = obligadoContabilidad
-					,@nombreComercial       = nombreComercial
-					,@dirEstablecimiento    = dirEstablecimiento
-					,@contribuyenteRimpe    = contribuyenteRimpe
-			FROM OPENJSON (@json)
-			WITH (
-					 canton                VARCHAR(10) '$.canton'
-					,actividad             VARCHAR(5)  '$.actividad'
-					,agenteRetencion       VARCHAR(150)'$.agenteRetencion'
-					,contribuyente         VARCHAR(5)  '$.contribuyente'
-					,contribuyenteEspecial VARCHAR(10) '$.contribuyenteEspecial'
-					,obligadoContabilidad  VARCHAR(5)  '$.obligadoContabilidad'
-					,nombreComercial       VARCHAR(150)'$.nombreComercial'
-					,dirEstablecimiento    VARCHAR(300)'$.dirEstablecimiento'
-					,contribuyenteRimpe    VARCHAR(150)'$.contribuyenteRimpe'
-				 )
 
 			UPDATE Sri.Establecimiento SET
 				canton                = @canton
@@ -78,7 +88,9 @@ BEGIN
 			   ,obligadoContabilidad  = @obligadoContabilidad
 			   ,nombreComercial       = @nombreComercial
 			   ,dirEstablecimiento    = @dirEstablecimiento
+			   ,telefono              = @telefono
 			   ,contribuyenteRimpe    = @contribuyenteRimpe
+			   ,correo                = @correo
 			WHERE idEstablecimiento = @id
 		COMMIT TRAN 
 		SELECT '1'code,'Actualizado Correctamente' as 'message'

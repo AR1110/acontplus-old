@@ -1,23 +1,25 @@
-﻿using Helpers;
+﻿using Common.Logs;
 using DataAccess;
-using Microsoft.AspNetCore.Authorization;
+using Helpers;
 using Microsoft.AspNetCore.Mvc;
-using Domain.Models;
 
 namespace WebUI.Controllers.Restaurant
 {
-    [Authorize]
+
     public class ConfigTpvController : Controller
     {
         private readonly IConfiguration _config;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly int _idRol;
-        public ConfigTpvController(IConfiguration config,
-                                    IHttpContextAccessor httpContextAccessor)
+
+
+        private readonly LogWriter _log;
+        private readonly DbAccess _db;
+        public ConfigTpvController(IConfiguration config)
         {
             _config = config;
-            _httpContextAccessor = httpContextAccessor;
-            _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+
+
+            _log = new LogWriter(_config);
+            _db = new DbAccess(_config);
         }
         public IActionResult Index()
         {
@@ -26,37 +28,89 @@ namespace WebUI.Controllers.Restaurant
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            DataAccessObject _dao = new DataAccessObject(_config);
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
-            return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Restaurant.ConfigTpv_Get", parameters)));
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Restaurant.ConfigTpv_Get");
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _response = _db.GetDataTableAsync();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error in Get: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al obtener los datos");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
         [HttpPost]
         public async Task<IActionResult> Post(string json)
         {
-            DataAccessObject _dao = new DataAccessObject(_config);
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
-            parameters.Add("json", SqlValidation.ValidateSqlString(json));
-            return Ok(DbResponse.SPDefault(await _dao.ExecTranAsync("Restaurant.ConfigTpv_Insert", parameters)));
+            var _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Restaurant.ConfigTpv_Insert");
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDefault();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error while saving config tpv: \n" + ex.ToString());
+                _response.Create(code: "0", "Error al guardar la configuración");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
         [HttpPut]
         public async Task<IActionResult> Put(string json)
         {
-            DataAccessObject _dao = new DataAccessObject(_config);
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
-            parameters.Add("json", SqlValidation.ValidateSqlString(json));
-            return Ok(DbResponse.SPDefault(await _dao.ExecTranAsync("Restaurant.ConfigTpv_Update", parameters)));
+            var _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Restaurant.ConfigTpv_Update");
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDefault();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error while updating config tpv: \n" + ex.ToString());
+                _response.Create(code: "0", "Error al actualizar la configuración");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            DataAccessObject _dao = new DataAccessObject(_config);
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
-            parameters.Add("id", id);
-            return Ok(DbResponse.SPDefault(await _dao.ExecTranAsync("Restaurant.ConfigTpv_Delete", parameters)));
+            var _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Restaurant.ConfigTpv_Delete");
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("id", id);
+                _response = _db.GetDefault();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error while updating config tpv: \n" + ex.ToString());
+                _response.Create(code: "0", "Error al actualizar la configuración");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
     }
 }

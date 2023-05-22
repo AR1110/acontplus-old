@@ -1,6 +1,5 @@
 ﻿using Domain.Models.Compras;
 using Domain.Models.InfoAdicional;
-using System.Collections.Generic;
 
 namespace Domain.ViewModels.Compras
 {

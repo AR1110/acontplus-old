@@ -9,8 +9,7 @@ export class ModalModuloImportacionCrtl{
         this._form             = _form;
         this._params = _params; 
 
-        // this.tituloImportacion = this._params.tituloImportacion;
-        // this.tipoImportacion = this._params.tipoImportacion;
+       
         this.codImportacion;
         this.importacionModulos = []
         this.searchTerm = '';
@@ -27,24 +26,6 @@ export class ModalModuloImportacionCrtl{
         }]
         
 
-        let columnsArticulo = {
-            codigo: "",
-            descripcion:"",
-            codSubFamilia:"",
-            codIva:"",
-            codMedida:"",
-            codMarca:"",
-            codModelo:"",
-            precioCosto:0,
-            llevaInventario:false,
-            codBarras:"",
-            stock:0,	
-            PVP1:0,
-            PVP2:0,
-            PVP3:0,
-            PVP4:0,
-            PVP5:0
-        }
     }
 
     $onInit(){
@@ -63,25 +44,7 @@ export class ModalModuloImportacionCrtl{
         $event.stopPropagation();        
     }
 
-    // showMessage(){
-    //     const Toast = Swal.mixin({
-    //         toast: true,
-    //         position: 'top-end',
-    //         showConfirmButton: false,
-    //         timer: 3000,
-    //         timerProgressBar: true,
-    //         didOpen: (toast) => {
-    //           toast.addEventListener('mouseenter', Swal.stopTimer)
-    //           toast.addEventListener('mouseleave', Swal.resumeTimer)
-    //         }
-    //       })
-          
-    //       Toast.fire({
-    //         icon: 'info',
-    //         title:'Info.',
-    //         html: 'Recuerde que los campos en el excel tiene que tener al menos un dato.'
-    //       })
-    // }
+  
 
 
     convertToExcel(){     
@@ -134,6 +97,7 @@ export class ModalModuloImportacionCrtl{
         })                              
     }
 
+    
 
     validateExcel(){                            
         let mappedArrayFiles = this.tempArrayFiles.map(row=>{              
@@ -250,8 +214,9 @@ export class ModalModuloImportacionCrtl{
 
     removeAccents(text){              
         text = text || "";
-        return this._form.removeAccents(text);
+        return text;
     }
+
 
     generateIdUnique(text){     
         text = text || "";   
@@ -268,39 +233,3 @@ export class ModalModuloImportacionCrtl{
 
 
 
-
-
-// for(let col of columns){
-//     if(typeof item[col]==='string'){                                
-//         item[col] = this.removeAccents(item[col])
-//     }                                                          
-    
-//     if(col==='codigo' && ["", null, undefined].includes(item[col])){
-//         item[col] = this.generateCode(item['descripcion'])
-//     }
-
-
-//     /**
-//      * Para campos numeros 
-//      */
-//     if(!isNaN(parseFloat(item[col]))){
-//         item[col] = parseFloat(item[col])
-//     }
-
-
-
-//     /**
-//      * Para validar el precio de Costo del Articulo 
-//      */
-    
-
-
-
-
-//     //Validacion de datos de los clientes y proveedores
-//     if(this.codImportacion==="CL" || this.codImportacion==="PR"){
-
-//     }
-
-
-// } 

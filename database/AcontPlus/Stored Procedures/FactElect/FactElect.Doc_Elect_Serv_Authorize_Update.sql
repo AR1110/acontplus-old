@@ -37,26 +37,28 @@ BEGIN
 	DECLARE @idDocumento INT
 	DECLARE @receptor VARCHAR(300)
 	,@versionComp VARCHAR(5)
+	,@numeroIdentificacion VARCHAR(25)
+	,@idEntidad INT
+	,@ruc VARCHAR(15) --ENTIDAD
+	,@codEstab VARCHAR(50)
 
-	SELECT @codDoc = codDoc, @idDocumento = idDocumento, @versionComp = versionComp FROM dbo.DocumentoElectronico WHERE idDocumentoElectronico = @id
+	SELECT @codDoc = codDoc, @idDocumento = idDocumento, @versionComp = versionComp, @idEntidad = idEntidad FROM dbo.DocumentoElectronico  WITH (NOLOCK) WHERE idDocumentoElectronico = @id
 
 	SET @dateAuth = (SELECT CONVERT(datetime2(0), @dateAutorized))
 	
+	SET @ruc = (SELECT ruc FROM Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad)
+
 	BEGIN TRY 
 		BEGIN TRAN 
 
 			IF @codEstado = 4
 				BEGIN
-
-					UPDATE dbo.DocumentoElectronico SET 
-						codEstado = @codEstado
-					   ,fechaAutorizacion =  @dateAuth
-					   ,xmlSri = @xmlSri
-					WHERE idDocumentoElectronico = @id
-
 					IF @codDoc = '01'
 						BEGIN 
-							SELECT @receptor = cl.correo FROM Factura f INNER JOIN dbo.Cliente cl ON cl.idCliente = f.idCliente WHERE f.idFactura = @idDocumento
+							SELECT @receptor = cl.correo, @numeroIdentificacion = cL.numeroIdentificacion, @codEstab = pe.codEstab FROM Factura f  WITH (NOLOCK)
+													INNER JOIN dbo.Cliente cl  WITH (NOLOCK) ON cl.idCliente = f.idCliente
+													INNER JOIN dbo.PuntoEmision pe  WITH (NOLOCK)  ON f.idPuntoEmision = pe.idPuntoEmision
+													WHERE f.idFactura = @idDocumento
 
 							UPDATE Factura SET 
 								 fechaAutorizacion = @dateAuth
@@ -66,7 +68,11 @@ BEGIN
 
 					IF @codDoc = '03'
 						BEGIN
-							SELECT @receptor = pr.correo FROM dbo.LiquidacionCompra lc INNER JOIN dbo.Proveedor pr ON pr.idProveedor = lc.idProveedor WHERE lc.idLiquidacionCompra = @idDocumento
+							SELECT @receptor = pr.correo, @numeroIdentificacion = pr.numeroIdentificacion, @codEstab = pe.codEstab
+							FROM dbo.LiquidacionCompra lc  WITH (NOLOCK) 
+							INNER JOIN dbo.Proveedor pr  WITH (NOLOCK) ON pr.idProveedor = lc.idProveedor
+							INNER JOIN dbo.PuntoEmision pe WITH (NOLOCK) ON lc.idPuntoEmision = pe.idPuntoEmision
+							WHERE lc.idLiquidacionCompra = @idDocumento
 
 							UPDATE LiquidacionCompra SET 
 								 fechaAutorizacion = @dateAuth
@@ -77,7 +83,10 @@ BEGIN
 					IF @codDoc = '04'
 						BEGIN
 							
-							SELECT @receptor = cl.correo FROM NotaCredito nc INNER JOIN dbo.Cliente cl ON cl.idCliente = nc.idCliente WHERE nc.idNotaCredito = @idDocumento
+							SELECT @receptor = cl.correo, @numeroIdentificacion = cl.numeroIdentificacion, @codEstab = pe.codEstab FROM NotaCredito nc  WITH (NOLOCK)
+							INNER JOIN dbo.Cliente cl  WITH (NOLOCK) ON cl.idCliente = nc.idCliente
+							INNER JOIN dbo.PuntoEmision pe WITH (NOLOCK) ON nc.idPuntoEmision = pe.idPuntoEmision
+							WHERE nc.idNotaCredito = @idDocumento
 
 							UPDATE NotaCredito SET 
 									 fechaAutorizacion = @dateAuth
@@ -88,7 +97,11 @@ BEGIN
 			 
 					IF @codDoc = '06'
 						BEGIN 
-							SELECT @receptor = cl.correo FROM GuiaRemision gr INNER JOIN dbo.Cliente cl ON cl.idCliente = gr.idCliente WHERE gr.idGuiaRemision = @idDocumento
+							SELECT @receptor = cl.correo, @numeroIdentificacion = cl.numeroIdentificacion, @codEstab = pe.codEstab
+							FROM GuiaRemision gr  WITH (NOLOCK)
+							INNER JOIN dbo.Cliente cl  WITH (NOLOCK) ON cl.idCliente = gr.idCliente 
+							INNER JOIN dbo.PuntoEmision pe WITH (NOLOCK) ON gr.idPuntoEmision = pe.idPuntoEmision
+							WHERE gr.idGuiaRemision = @idDocumento
 
 							UPDATE GuiaRemision SET 
 								 fechaAutorizacion = @dateAuth
@@ -101,7 +114,9 @@ BEGIN
 						BEGIN
 							IF @versionComp = '1.0.0'
 								BEGIN
-									SELECT @receptor = pr.correo FROM dbo.RetencionCompra rc INNER JOIN dbo.Proveedor pr ON pr.idProveedor = rc.idProveedor WHERE rc.idRetencionCompra = @idDocumento
+									SELECT @receptor = pr.correo FROM dbo.RetencionCompra rc  WITH (NOLOCK) 
+									INNER JOIN dbo.Proveedor pr  WITH (NOLOCK) ON pr.idProveedor = rc.idProveedor  
+									WHERE rc.idRetencionCompra = @idDocumento
 
 									UPDATE RetencionCompra SET 
 										 fechaAutorizacionSri = @dateAuth
@@ -111,16 +126,23 @@ BEGIN
 
 							IF @versionComp = '2.0.0'
 								BEGIN
-									SELECT @receptor = pr.correo FROM FactElect.RetencionAts rc INNER JOIN dbo.Proveedor pr ON pr.idProveedor = rc.idProveedor WHERE rc.idRetencionAts = @idDocumento
-
-									--UPDATE RetencionCompra SET 
-									--	 fechaAutorizacionSri = @dateAuth
-									--	,autorizada = 1
-									--WHERE idRetencionCompra = @idDocumento AND estado = 1
+									SELECT @receptor = pr.correo, @numeroIdentificacion = pr.numeroIdentificacion, @codEstab = rc.codEstab
+									FROM FactElect.RetencionAts rc  WITH (NOLOCK)
+									INNER JOIN dbo.Proveedor pr  WITH (NOLOCK) ON pr.idProveedor = rc.idProveedor
+									WHERE rc.idRetencionAts = @idDocumento
 								END
 						END
 
-					IF @receptor IS NOT NULL
+					UPDATE dbo.DocumentoElectronico SET
+						codEstado = @codEstado
+					   ,fechaAutorizacion =  @dateAuth
+					   ,xmlSri = @xmlSri
+					   ,ruc = @ruc
+					   ,numeroIdentificacion = @numeroIdentificacion
+					   ,codEstab = @codEstab
+					WHERE idDocumentoElectronico = @id
+
+					IF LEN(@receptor) > 7
 						BEGIN
 							INSERT INTO FactElect.NotificacionTributaria (idDocumentoElectronico,receptor,fechaRegistro,estado)
 							SELECT @id,REPLACE(@receptor,';',','),dbo.ufnGetDateEcuador(),'NE'

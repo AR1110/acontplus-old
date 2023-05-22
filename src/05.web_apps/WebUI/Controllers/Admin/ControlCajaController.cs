@@ -1,19 +1,7 @@
-﻿using WebUI.ApiClient;
-using WebUI.Utils;
+﻿using DataAccess;
 using Domain.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.StaticFiles;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using DataAccess.GestionFinanciera;
-using Microsoft.Extensions.Hosting;
-using DataAccess;
 using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Admin
 {
@@ -21,20 +9,20 @@ namespace WebUI.Controllers.Admin
     {
         // GET: Articulo
         private readonly IConfiguration _configuration;
-        private readonly IHttpContextAccessor _httpContextAccessor; ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
+        ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
-        private readonly int _idRol;
+
         GenericResponse _gr = new();
 
-        public ControlCajaController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public ControlCajaController(IConfiguration configuration)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
-            _httpContextAccessor = httpContextAccessor;
-            _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+
+
         }
 
-        [Authorize]
+
         public IActionResult Index()
         {
             return View();
@@ -44,7 +32,7 @@ namespace WebUI.Controllers.Admin
         public async Task<IActionResult> Get(string json)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", SqlValidation.ValidateSqlString(json));
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Administrador.ControlCaja_Get", parameters)));
         }
@@ -53,7 +41,7 @@ namespace WebUI.Controllers.Admin
         public async Task<IActionResult> Insert([FromBody] ControlCaja data)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("idCaja", data.idCaja);
             parameters.Add("idEntidadFinanciera", data.idEntidadFinanciera);
             parameters.Add("concepto", data.concepto ?? "");
@@ -62,7 +50,7 @@ namespace WebUI.Controllers.Admin
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update(int id,[FromBody] ControlCaja data)
+        public async Task<IActionResult> Update(int id, [FromBody] ControlCaja data)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("id", id);

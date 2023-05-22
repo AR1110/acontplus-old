@@ -1,5 +1,4 @@
 ﻿using DataAccess.Asignaciones;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Asignacion
@@ -13,7 +12,7 @@ namespace WebUI.Controllers.Asignacion
             _config = config;
             _gAsig = new GestionAsignacionesDao(_config);
         }
-        [Authorize]
+
         public IActionResult Index()
         {
             return View();
@@ -22,7 +21,7 @@ namespace WebUI.Controllers.Asignacion
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             return Ok(await _gAsig.GetAsync(idRol, json));
         }
 

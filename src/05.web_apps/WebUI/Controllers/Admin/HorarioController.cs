@@ -1,12 +1,6 @@
 ﻿using DataAccess;
-using Domain.Models;
 using Helpers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers.Admin
 {
@@ -23,7 +17,7 @@ namespace WebUI.Controllers.Admin
             _h = new HorarioDao(_config);
         }
 
-        [Authorize]
+
         public IActionResult Index()
         {
             return View();
@@ -31,7 +25,7 @@ namespace WebUI.Controllers.Admin
 
         public async Task<IActionResult> GetByIdTurno(int idTurno)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _h.ReadHorarioAsync(idRol, idTurno);
             return Ok(res);
         }

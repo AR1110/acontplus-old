@@ -34,8 +34,10 @@
         <div class="col-xl-5 col-lg-5 col-md-5 col-sm-5 col-12">
             <div class="form-group">
                 <label>Nro. Documento:</label>
-                <h5> {{selected[0].comprobante}} {{infoTributaria.estab}} - {{infoTributaria.ptoEmi}}
-                    - {{infoTributaria.secuencial}}</h5>
+                <h5>
+                    {{selected[0].comprobante}} {{infoTributaria.estab}} - {{infoTributaria.ptoEmi}}
+                    - {{infoTributaria.secuencial}}
+                </h5>
             </div>
             <div class="form-group">
                 <label>Ruc:</label>
@@ -146,7 +148,6 @@
             </div>
         </div>
     </div>-->
-
     <!--<div class="row">
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <button class="btn btn-info btn-sm" ng-click="askToAddCustomDetails($event)">
@@ -284,34 +285,44 @@
                 <button class="btn btn-success btn-sm" ng-click="addCustomDetail($event)">
                     <icon class="ti-plus"></icon> Agregar
                 </button>
-                <button class="btn btn-warning btn-sm" ng-click="cancelCustomDetails()">&times;
-                    Cancelar</button>
+                <button class="btn btn-warning btn-sm" ng-click="cancelCustomDetails()">
+                    &times;
+                    Cancelar
+                </button>
             </div>
         </div>
     </ng-form>
     <div class="row">
-        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+        @*<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+        <div class="form-group">
+        <label for="estabFilter">Estab.:</label>
+        <select class="form-control border-select" id="estabFilter" ng-model="selectedEstab.codEstab"
+        ng-change="filterBodega()">
+        <option ng-value="item.codEstab" ng-repeat="item in establecimientos">{{item.nombreComercial}}</option>
+        </select>
+        </div>
+        </div>*@
+        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
             <div class="row justify-content-start">
-                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                     <div class="form-group">
                         <label for="idBodega">Aplicar Bodega para todos:</label>
                         <select id="idBodega" class="form-control" ng-model="comprobanteForm.idBodega"
-                                ng-change="addBodega(comprobanteForm.idBodega)" required>
-                            <option>Seleccione una bodega</option>
-                            <option value="{{item.idBodega}}" ng-repeat="item in bodegas"
-                                    ng-selected="item.idBodega == comprobanteForm.idBodega">
+                            ng-change="addBodega()" required>
+                            <option></option>
+                            <option ng-value="item.idBodega" ng-repeat="item in bodegasFiltered">
                                 {{item.descripcion}}
                             </option>
                         </select>
                     </div>
                 </div>
 
-                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                     <div class="form-group">
                         <label for="sizeAll">Aplicar Medida para todos</label>
                         <select class="form-control" ng-model="articleSize" ng-change="updateSizeArticles(articleSize)">
                             <option ng-value="size.idMedida" ng-repeat="size in medidas"
-                                    ng-selected="size.idMedida == articleSize">
+                                ng-selected="size.idMedida == articleSize">
                                 {{size.descripcion}}
                             </option>
                         </select>
@@ -319,12 +330,13 @@
                 </div>
             </div>
         </div>
-        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
             <div class="row justify-content-end">
-                <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                     <div class="form-group">
-                        <button type="button" class="btn btn-danger mt-4" ng-click="exportToExcel()">
-                            <i class="fas fa-file-excel"></i> Exportar
+                        <button type="button" ng-if="selected[0].complete" class="btn btn-success btn-lg mt-4"
+                            ng-click="exportToExcel()">
+                            <i class="fas fa-file-excel"></i> Exportar Articulos
                         </button>
                     </div>
                 </div>
@@ -376,6 +388,17 @@
                             ng-click="askToDeleteStok(item)" aria-label="Stock" title="Eliminar del stock">
                             <md-icon md-font-set="md" class="text-danger">delete_forever</md-icon>
                         </md-button>
+
+                        <md-button ng-if="item.idArticulo > 0" class="md-icon-button md-primary" btn-article-add-update params="item" result-modal="resultModalArticleEdit(result)" aria-label="Editar Artículo" title="Editar Artículo">
+                            <md-icon md-font-set="md">edit_forever</md-icon>
+                        </md-button>
+
+                        <md-button ng-if="item.idArticulo > 0 && item.datosAdicionales && selected[0].codDoc=='01'"
+                            class="md-icon-button md-primary" btn-data-adicional-articulo entity="item" get-data-etiqueta="resultModalDatoAdicional(item)" datos-adicionales="datosAdicionalesArticulo" cod-doc="selected[0].codDoc"
+                            aria-label="Datos Adicionales" title="Datos Adicionales">
+                            @* <md-icon md-font-set="md">pen-plus_forever</md-icon> *@
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>Añadir/Editar datos adicionales</title><path d="M20.7,7C20.4,7.4 20,7.7 20,8C20,8.3 20.3,8.6 20.6,9C21.1,9.5 21.6,9.9 21.5,10.4C21.5,10.9 21,11.4 20.5,11.9L16.4,16L15,14.7L19.2,10.5L18.2,9.5L16.8,10.9L13,7.1L17,3.3C17.4,2.9 18,2.9 18.4,3.3L20.7,5.6C21.1,6 21.1,6.7 20.7,7M3,17.2L12.6,7.6L16.3,11.4L6.8,21H3V17.2M7,2V5H10V7H7V10H5V7H2V5H5V2H7Z" /></svg>
+                        </md-button>
                     </td>
                     <td class="text-center">{{item.cantidad}}</td>
                     <td class="text-center">{{item.codigoPrincipal}}</td>
@@ -385,7 +408,8 @@
                         <div style="position:relative; min-width:100px;">
                             <select class="form-control" ng-model="item.idMedida" ng-change="updateArticleTemp(item)">
                                 <option ng-value="size.idMedida" ng-repeat="size in medidas">
-                                    {{size.descripcion}}</option>
+                                    {{size.descripcion}}
+                                </option>
                             </select>
                         </div>
                     </td>
@@ -464,7 +488,7 @@
                         </tr>
                         <tr>
                             <td class="text-right"><strong>Descuento</strong></td>
-                            <td class="text-right">{{totalTaxesRide.descuento | currency}}</td> 
+                            <td class="text-right">{{totalTaxesRide.descuento | currency}}</td>
                         </tr>
                         <tr>
                             <td class="text-right"><strong>ICE</strong></td>
@@ -509,7 +533,8 @@
     </div>
 </div>
 <div class="modal-footer">
-    <button type="submit" class="btn btn-success" ng-if="!selected[0].complete" ng-click="askToSave()" title="Guardar Detalle">
+    <button type="submit" class="btn btn-success" ng-if="!selected[0].complete" ng-click="askToSave()"
+        title="Guardar Detalle">
         <icon class="ti-save"></icon> Guardar Detalle
     </button>
     <button class="btn btn-dark" ng-click="closeMainModal()">

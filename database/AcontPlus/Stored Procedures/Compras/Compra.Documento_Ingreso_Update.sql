@@ -29,6 +29,7 @@ CREATE PROCEDURE Compra.Documento_Ingreso_Update
    ,@comprobante AS VARCHAR(MAX)
    ,@detalles AS VARCHAR(MAX)
    ,@impuestos AS VARCHAR(MAX)
+   ,@artInfoAdicionales VARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -41,6 +42,14 @@ BEGIN
 
 	--===========Datos para la validacion de informacion===============
 	DECLARE @uniqueId AS VARCHAR(20)
+	DECLARE @fechaEmision AS DATETIME
+	
+--	DECLARE @currentDate DATETIME = dbo.ufnGetDateEcuador()
+	DECLARE @fechaEmisionModificada  DATETIME --fecha emision modificada front-end
+	DECLARE @fechaEmisionDocCreado DATETIME;  -- Fecha emision del documento 
+	DECLARE @fechaEmisionTemp DATETIME 
+	
+	DECLARE @hora DATETIME
 
 	--==============Parametros para el area de contabilidad============
 	DECLARE @idEstadoPago AS INT
@@ -74,6 +83,7 @@ BEGIN
         ,descuento NUMERIC (18,5)  NOT NULL
         ,precioTotalSinImpuesto NUMERIC (18,5)  NOT NULL
         ,codigoPorcentaje VARCHAR(5) NOT NULL
+		,estado BIT NULL
 	)
 
 	DECLARE @taxes AS TABLE(
@@ -85,15 +95,61 @@ BEGIN
         ,valor NUMERIC(18,5) NOT NULL
 	)
 
+	--Etiquetas
+	DECLARE @artInfoAdicional AS TABLE (
+		idInfoAdicional INT NOT NULL
+		,idArticulo INT  NOT NULL		
+		,idEtiqueta INT  NOT NULL
+		,jsonAdicional NVARCHAR(MAX)  NULL
+		
+	)
+
+	SELECT 
+		@hora =CAST(dbo.ufnGetDateEcuador() AS time)
+		,@fechaEmisionDocCreado = fechaEmision
+	FROM Compra.Documento_Ingreso WHERE idDocumentoIngreso = @idDocumentoIngreso
+
+	SELECT 		 
+		@fechaEmisionModificada = fechaEmision
+	FROM OPENJSON(@comprobante)
+	WITH(fechaEmision DATETIME '$.fechaEmision')
+	
+	--SELECT '0'code, CAST(@fechaEmisionTemp as varchar(60)) as 'message'
+	--RETURN 
+
 	BEGIN TRY 
+		IF CAST(@fechaEmisionModificada AS DATE) <> CAST(@fechaEmisionDocCreado AS DATE)
+			BEGIN 
+				IF CAST(@fechaEmisionModificada AS DATE) > CAST(dbo.ufnGetDateEcuador() AS DATE)
+					BEGIN 
+						SELECT '0'code, 'La fecha de emisión del documento no puede ser posterior a la fecha actual.' as 'message'
+						RETURN 
+					END
+					
+				IF CAST(@fechaEmisionModificada AS DATE) < CAST(dbo.ufnGetDateEcuador() AS DATE)
+					BEGIN 
+						SET @fechaEmisionTemp = DATEADD(dd, DATEDIFF(dd, 0, @fechaEmisionModificada), 0)
+					END
+				ELSE
+					BEGIN 
+						SET @fechaEmisionTemp = dbo.ufnGetDateEcuador();
+					END 
+
+				--IF CONVERT(DATE, @fechaEmisionToCompare) = CONVERT(DATE, dbo.ufnGetDateEcuador())
+
+			END 
+		ELSE 
+			BEGIN 
+				SET @fechaEmisionTemp = @fechaEmisionDocCreado
+			END 					
 
 		INSERT INTO @document 
 		      (idDocumentoIngreso,idProveedor,fechaEmision,totalSinImpuestos,importeTotal,inventory)
-		SELECT @idDocumentoIngreso,idProveedor,fechaEmision,totalSinImpuestos,importeTotal,inventory
+		SELECT @idDocumentoIngreso,idProveedor, @fechaEmisionTemp,totalSinImpuestos,importeTotal,inventory
 		FROM OPENJSON(@comprobante)
 		WITH (
 		      idProveedor INT '$.idProveedor' 
-			 ,fechaEmision DATETIME '$.fechaEmision'
+			-- ,fechaEmision DATETIME '$.fechaEmision'
 			 ,totalSinImpuestos NUMERIC (18,5) '$.totalSinImpuestos'
 			 ,importeTotal NUMERIC (18,5) '$.importeTotal'
 			 ,inventory VARCHAR(5) '$.inventory'
@@ -131,7 +187,20 @@ BEGIN
                ,valor NUMERIC(18,5) '$.valor'
 			 ) as dt
 
+
+		----------------------------------Datos Adicionales ---------------------------------------------
+		INSERT INTO @artInfoAdicional  (idInfoAdicional, idArticulo, idEtiqueta, jsonAdicional)
+		SELECT idInfoAdicional, idArticulo, idEtiqueta, jsonAdicional
+		FROM OPENJSON(@artInfoAdicionales) WITH (
+		  idInfoAdicional INT,
+		  idArticulo int,
+		  idEtiqueta int,
+		  jsonAdicional nvarchar(max) '$.jsonAdicional' AS JSON		
+		) 
+
 		----======================================Recuperar datos de las Tablas===========================================================
+		SELECT @fechaEmision = fechaEmision FROM @document
+
 		SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
 		SELECT TOP 1 @uniqueId =  uniqueId FROM Compra.Documento_Ingreso WITH (NOLOCK) WHERE idDocumentoIngreso = @idDocumentoIngreso 
@@ -153,7 +222,8 @@ BEGIN
 
 		IF @codPago != 'PE'
 			BEGIN 
-				SELECT '0' code,'El Documento tiene un proceso contable no puede ser editado' as 'message'
+				--SELECT '0' code,'El Documento tiene un proceso contable no puede ser editado' as 'message'
+				SELECT '0'code, 'Ya se ha realizado el cobro de algunas de las cuotas correspondientes a este documento.' as 'message'
 				RETURN  
 			END 
 
@@ -208,17 +278,59 @@ BEGIN
 			FROM @taxes
 
 			
-			
+			---------------------------------SRTART Insert o Update Etiqueta -------------------------------
+			UPDATE Compra.InfoAdicional SET estado = 0 WHERE uniqueId = @uniqueId AND estado = 1
+			UPDATE  infoAdd SET infoAdd.idEtiqueta =  temp.idEtiqueta, infoAdd.jsonAdicional = temp.jsonAdicional, infoAdd.estado = 1 
+			FROM  Compra.InfoAdicional infoAdd WITH(NOLOCK) 
+			INNER JOIN @artInfoAdicional temp ON temp.idInfoAdicional = infoAdd.idInfoAdicional
+
+			INSERT INTO  Compra.InfoAdicional (uniqueId, idArticulo, idEtiqueta, jsonAdicional, fechaRegistro)
+			SELECT @uniqueId, idArticulo, idEtiqueta, jsonAdicional, dbo.ufnGetDateEcuador() FROM @artInfoAdicional WHERE idInfoAdicional = 0 
+
+			DELETE FROM Compra.InfoAdicional 
+			WHERE estado = 0  AND uniqueId = @uniqueId
+			---------------------------------END Insert o Update Etiqueta -------------------------------
+
+
 			--==============================================================Inventario============================================================================================
 			IF @inventory = 'SI'
 				BEGIN 
-					
-					INSERT INTO Inventario.ControlStock
-						  (idTipoDocumento,idDocumento,idArticulo,idBodega)
-					SELECT idTipoDocumento = 1,d.idDocumentoIngreso,d.idArticulo,d.idBodega 
-					FROM Compra.Documento_Ingreso_Detail d WITH (NOLOCK)
-					INNER JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = d.idArticulo
-					WHERE d.idDocumentoIngreso = @idDocumentoIngreso AND ar.llevaInventario = 1
+
+					EXEC Inventario.Transaccion_Delete 'E','IV',@idDocumentoIngreso
+
+					IF EXISTS (SELECT 1 FROM Compra.Documento_Ingreso_Detail dd WITH (NOLOCK) INNER JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = dd.idArticulo WHERE dd.idDocumentoIngreso = @idDocumentoIngreso AND  ar.llevaInventario = 1)
+						BEGIN 
+							DECLARE @idArticulo INT
+							DECLARE @idBodega INT
+							DECLARE @idMedida INT
+							DECLARE @idTarifa INT
+							DECLARE @cantidad NUMERIC(18,2)
+							DECLARE @precioUnitario NUMERIC(18,5)
+							DECLARE @precioCosto NUMERIC(18,5) 
+							DECLARE @total AS NUMERIC(18,5)
+							DECLARE @estado BIT 
+
+							DECLARE cursor_inventory CURSOR LOCAL FOR
+							SELECT dd.idArticulo,dd.idBodega,dd.idMedida,NULL,dd.cantidad,dd.precioUnitario - dd.descuento,dd.precioUnitario - dd.descuento,dd.precioTotalSinImpuesto,dd.estado
+							FROM Compra.Documento_Ingreso_Detail dd WITH (NOLOCK)
+							INNER JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = dd.idArticulo
+							WHERE dd.idDocumentoIngreso = @idDocumentoIngreso AND ar.llevaInventario = 1
+
+							OPEN cursor_inventory
+
+							FETCH NEXT FROM cursor_inventory INTO @idArticulo,@idBodega,@idMedida,@idTarifa,@cantidad,@precioUnitario,@precioCosto,@total,@estado
+
+							WHILE @@FETCH_STATUS = 0
+								BEGIN
+									--tipo transaccion Entrada
+									--tipo documento Ingresos Varios 
+									EXEC Inventario.Transaccion_Insert 'E','IV', @fechaEmision, @idDocumentoIngreso,  @idArticulo, @idBodega ,@idMedida,@idTarifa,@cantidad, @precioUnitario,@precioCosto,@total, @idUsuario,@estado
+									FETCH NEXT FROM cursor_inventory INTO @idArticulo,@idBodega,@idMedida,@idTarifa,@cantidad,@precioUnitario,@precioCosto,@total,@estado
+									
+								END
+							CLOSE cursor_inventory
+							DEALLOCATE cursor_inventory  
+						END
 				END 
 
 			 DELETE FROM Compra.Documento_Ingreso_Detail WHERE estado = 0 AND idDocumentoIngreso = @idDocumentoIngreso

@@ -1,13 +1,10 @@
 ﻿using Domain.Models;
-using Newtonsoft.Json;
-using System;
-using System.Data;
-using System.Data.SqlClient;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using Domain.ViewModels;
 using Helpers;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using System.Data;
+using System.Data.SqlClient;
 
 namespace DataAccess
 {

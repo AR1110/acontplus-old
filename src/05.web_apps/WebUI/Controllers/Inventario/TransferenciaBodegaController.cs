@@ -1,9 +1,9 @@
-﻿using Helpers;
+﻿using Common.Logs;
 using DataAccess;
-using Domain.Models.Inventario;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Domain.Models;
+using Domain.Models.Inventario;
+using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Inventario
 {
@@ -11,20 +11,20 @@ namespace WebUI.Controllers.Inventario
     {
         // GET: Articulo
         private readonly IConfiguration _configuration;
-        private readonly IHttpContextAccessor _httpContextAccessor; ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
+        ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
-        private readonly int _idRol;
 
-        public TransferenciaBodegaController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+
+        public TransferenciaBodegaController(IConfiguration configuration)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
-            _httpContextAccessor = httpContextAccessor;
-            _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+
+
 
         }
 
-        [Authorize]
+
         public IActionResult Index()
         {
             return View();
@@ -33,7 +33,7 @@ namespace WebUI.Controllers.Inventario
         public async Task<IActionResult> Get(string json)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", SqlValidation.ValidateSqlString(json));
             return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Inventario.TransferenciaBodega_Get", parameters)));
         }
@@ -41,16 +41,32 @@ namespace WebUI.Controllers.Inventario
         [HttpGet]
         public async Task<IActionResult> GetId(int id)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("id", id);
-            return Ok(DbResponse.SPDataSet(await _dao.GetDataSetAsync("Inventario.TransferenciaBodega_Get_Id", parameters)));
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Inventario.TransferenciaBodega_Get_Id");
+                _db.AddDynamicParam("id", id);
+                _response = _db.GetDataSetAsync();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error in GetId: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al Obtener los datos");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
 
         [HttpPost]
         public async Task<IActionResult> Insert([FromBody] TransferenciaBodegaParams data)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("jsonHeader", data.header);
             parameters.Add("jsonDetalle", data.detail);
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Inventario.TransferenciaBodega_Insert", parameters)));
@@ -60,7 +76,7 @@ namespace WebUI.Controllers.Inventario
         public async Task<IActionResult> Update(int id, [FromBody] TransferenciaBodegaParams data)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("jsonHeader", data.header);
             parameters.Add("jsonDetalle", data.detail);
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Inventario.TransferenciaBodega_Update", parameters)));
@@ -69,7 +85,7 @@ namespace WebUI.Controllers.Inventario
         public async Task<IActionResult> Delete(int id)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("id", id);
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Inventario.TransferenciaBodega_Delete", parameters)));
         }

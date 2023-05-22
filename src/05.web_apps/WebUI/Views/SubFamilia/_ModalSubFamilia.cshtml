@@ -1,6 +1,6 @@
 <div class="modal-header">
-    <h5 class="modal-title">{{$ctrl.tipoRegistro===1?'Nuevo':'Editar'}} Sub Familia</h5>
-    <button type="button" class="close" ng-click="$ctrl.closeModal()" aria-label="Close">
+    <h5 class="modal-title">{{tipoRegistro===1?'Nuevo':'Editar'}} Sub Familia</h5>
+    <button type="button" class="close" ng-click="closeModal()" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
@@ -10,10 +10,11 @@
             <div class="form-group">
                 <label for=""> Familia: </label>
                 <div class="input-group">
-                    <select class="form-control border-select" ng-model="$ctrl.familia" ng-options="f as f.descripcion for f in  $ctrl.familias track by f.idFamilia"></select>
+                    <select class="form-control border-select" ng-model="data.idFamilia">
+                        <option ng-value="item.idFamilia" ng-repeat="item in familias">{{item.descripcion}}</option>
+                    </select>
                     <div class="input-group-append">
-                        <button class="btn btn-outline-secondary btn-sm"
-                                ng-click="$ctrl.openModalFamilia()" tabindex="-1">
+                        <button class="btn btn-outline-secondary btn-sm" btn-add-update-familia results tabindex="-1">
                             <i class="fa fa-plus fa-xs"></i>
                         </button>
                     </div>
@@ -24,32 +25,32 @@
     <div class="row">
         <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <label for="">Subfamilia: </label>
-            <input type="text" ng-model="$ctrl.data.descripcion" ng-keyup="$ctrl.generateCodigo()" touppercase class="form-control border-select" placeholder="Ej: Redes">
+            <input type="text" ng-model="data.descripcion" ng-keyup="generateCodigo()" touppercase class="form-control border-select" placeholder="Ej: Redes">
         </div>
     </div>
     <div class="row">
         <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <label for="">Siglas: </label>
             <div class="controls">
-                <input type="text" ng-model="$ctrl.data.siglas" touppercase class="form-control border-select" placeholder="Ej: R">
+                <input type="text" ng-model="data.siglas" touppercase class="form-control border-select" placeholder="Ej: R">
             </div>
         </div>
     </div>
     <div class="row">
         <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <label for=""> Monto Objetivo: <span class="text-danger"> *</span></label>
-            <input type="text" ng-model="$ctrl.data.montoObjetivo" class="form-control border-select" valid-number maxlength="50" placeholder="0.00">
+            <input type="text" ng-model="data.montoObjetivo" class="form-control border-select" valid-number maxlength="50" placeholder="0.00">
         </div>
     </div>
-    <div ng-if="$ctrl.tipoRegistro==2 && $ctrl.showStatus">
+    <div ng-if="tipoRegistro==2 && showStatus">
         <label for="">Estado: </label>
-        <md-radio-group ng-model="$ctrl.data.estado">
+        <md-radio-group ng-model="data.estado">
             <md-radio-button class="md-primary" ng-value="true">Activo</md-radio-button>
             <md-radio-button ng-value="false">Inactivo</md-radio-button>
         </md-radio-group>
     </div>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-success" ng-click="$ctrl.saveAndUpdate()">{{$ctrl.tipoRegistro===1?'Guardar':'Actualizar'}}</button>
-    <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">&times; Cerrar</button>
+    <button type="button" class="btn btn-success" ng-click="saveAndUpdate()">{{tipoRegistro===1?'Guardar':'Actualizar'}}</button>
+    <button type="button" class="btn btn-dark" ng-click="closeModal()">&times; Cerrar</button>
 </div> 

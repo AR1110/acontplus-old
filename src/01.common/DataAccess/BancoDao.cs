@@ -1,11 +1,8 @@
 ﻿using Domain.Models;
 using Helpers;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Threading.Tasks;
 
 namespace DataAccess
 {
@@ -152,7 +149,7 @@ namespace DataAccess
                         _gr.message = reader.GetString(2);
                         _gr.titleSms = reader.GetString(3);
                     }
-                }   
+                }
             }
             catch (Exception ex)
             {
@@ -200,7 +197,7 @@ namespace DataAccess
             }
             finally
             {
-                
+
             }
             return _gr;
         }

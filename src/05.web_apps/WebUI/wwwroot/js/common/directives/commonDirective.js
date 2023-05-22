@@ -1,0 +1,665 @@
+(function(){
+
+    'use strict';
+
+    
+    app.directive('shouldFocus', function () {
+        return {
+            restrict: 'A',
+            link: function (scope, element, attrs) {
+                scope.$watch(attrs.shouldFocus, function (newVal, oldVal) {
+                    if (newVal && element.prop("class").indexOf("active")) {
+                        var par = element.parent("ul");
+                        var cellHeight = element.children().innerHeight();
+                        var maxHeight = par.height();
+                        var startIndex = Math.floor(maxHeight / cellHeight);
+
+                        if (scope.$index > startIndex) {
+                            var scroll = (scope.$index - startIndex) * cellHeight;
+                            par.scrollTop(scroll);
+                        }
+                        if (scope.$index === 0) {
+                            par.scrollTop(0);
+                        }
+                    }
+                });
+            }
+        }
+    })
+    //Para Doble scroll en los documentos
+    app.directive('master', function () { //declaration
+        function link(scope, element, attrs) {
+            scope.$watch(function () {
+                scope.duelScroll = {
+                    width: element[0].offsetWidth + 'px'
+                };
+            });
+        }
+        return {
+            restrict: 'AE',
+            link: link
+        };
+    })
+
+
+
+
+    app.directive('decimal', function () {
+        return {
+            require: 'ngModel',
+            restrict: 'A',
+            link: function (scope, element, attr, ctrl) {
+                function inputValue(val) {
+                    if (val) {
+                        var digits = val.replace(/[^0-9.]/g, '');
+
+                        if (digits.split('.').length > 2) {
+                            digits = digits.substring(0, digits.length - 1);
+                        }
+                        if (digits !== val) {
+                            ctrl.$setViewValue(digits);
+                            ctrl.$render();
+                        }
+                        return parseFloat(digits);
+                    }
+                    return "";
+                }
+                ctrl.$parsers.push(inputValue);
+            }
+        };
+    });
+
+    //Directiva para numeros enteros y decimales 
+    app.directive('validNumber', function () {
+        return {
+            require: '?ngModel',
+            link: function (scope, element, attrs, ngModelCtrl) {
+                if (!ngModelCtrl) {
+                    return;
+                }
+
+                ngModelCtrl.$parsers.push(function (val) {
+                    if (angular.isUndefined(val)) {
+                        val = '';
+                    }
+
+                    let clean = val.replace(/[^-0-9\.]/g, '');
+                    let negativeCheck = clean.split('-');
+                    let decimalCheck = clean.split('.');
+                    if (!angular.isUndefined(negativeCheck[1])) {
+                        negativeCheck[1] = negativeCheck[1].slice(0, negativeCheck[1].length);
+                        clean = negativeCheck[0] + '-' + negativeCheck[1];
+                        if (negativeCheck[0].length > 0) {
+                            clean = negativeCheck[0];
+                        }
+
+                    }
+
+                    if (!angular.isUndefined(decimalCheck[1])) {
+                        decimalCheck[1] = decimalCheck[1].slice(0, 5);
+                        clean = decimalCheck[0] + '.' + decimalCheck[1];
+                    }
+
+                    if (val !== clean) {
+                        ngModelCtrl.$setViewValue(clean);
+                        ngModelCtrl.$render();
+                    }
+                    return clean;
+                });
+
+                element.bind('keypress', function (event) {
+                    if (event.keyCode === 32) {
+                        event.preventDefault();
+                    }
+                });
+            }
+        };
+    });
+
+    //DIRECTIVA PARA ENTRADA DE LETRAS MAYUSCULAS
+    app.directive('touppercase', function () {
+        let flag = false;
+        let teclaAnterior = "";
+        return {
+            require: 'ngModel',
+            restrict: 'A',
+            link: function (scope, element, attrs, modelCtrl) {
+
+
+
+                element.on("keydown", event => {
+                    teclaAnterior = teclaAnterior + " " + event.keyCode;
+                    var arregloTA = teclaAnterior.split(" ");
+                    if (event.keyCode == 32 && arregloTA[arregloTA.length - 2] == 32) {
+                        event.preventDefault();
+                    }
+                })
+
+                function removeAccents(input) {
+
+                    let inputText = input.replace(/[\n\r]+/g, ' ') || " ";
+                    // inputText = inputText.normalize('NFD')
+                    //     .replace(/([^n\u0300-\u036f]|n(?!\u0303(?![\u0300-\u036f])))[\u0300-\u036f]+/gi, "$1").normalize();
+                    // inputText = inputText.replace(/[`#$^*Ç¨_|+\=?'´",<>\{\}\[\]\\]/gi, '').trim()
+                    modelCtrl.$setViewValue(inputText);
+                    modelCtrl.$render();
+                    return inputText.toUpperCase();
+                }
+
+
+                modelCtrl.$parsers.push(removeAccents);
+                element.css("text-transform", "uppercase");
+            }
+        };
+    });
+
+    //DIRECTIVA PARA ENTRADA DE LETRAS MINUSCULAS
+    app.directive('tolowercase', function () {
+        return {
+            require: 'ngModel',
+            link: function (scope, element, attrs, modelCtrl) {
+                modelCtrl.$parsers.push(function (input) {
+                    return input ? input.toLowerCase() : "";
+                });
+                element.css("text-transform", "lowercase");
+            }
+        };
+    });
+
+    //Directiva que permite entrada de solo Letras en input 
+    app.directive('validLetra', function () {
+        return {
+            require: 'ngModel',
+            link: function (scope, element, attrs, ngModelCtrl) {
+                element.bind('keypress', function (e) {
+                    let key = e.keyCode || e.which;
+                    let tecla = String.fromCharCode(key).toLowerCase();
+                    let letras = " áéíóúabcdefghijklmnñopqrstuvwxyz";
+                    let especiales = [8, 37, 39, 46, 58, 60];
+                    let tecla_especial = false
+
+                    for (let i in especiales) {
+                        if (key == especiales[i]) {
+                            tecla_especial = true;
+                            break;
+                        }
+                    }
+
+                    if (letras.indexOf(tecla) == -1 && !tecla_especial) {
+                        return false;
+                    }
+                });
+
+            }
+        };
+    })
+
+    //Validar Email
+    app.directive('validateEmail', function () {
+        let EMAIL_REGEXP = /^[a-z0-9]+(\.[a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9]+)*(\.[a-z]{2,4})$/;
+        return {
+            link: function (scope, elem) {
+                elem.on("keyup", function () {
+                    let isMatchRegex = EMAIL_REGEXP.test(elem.val());
+                    if (isMatchRegex && elem.hasClass('is-invalid')) {
+                        elem.addClass('is-valid');
+                        elem.removeClass('is-invalid');
+                        scope.formValid = 1;
+                        // isMatchRegex == false
+                    } else if (!isMatchRegex && !elem.hasClass('is-invalid')) {
+                        elem.removeClass('is-valid');
+                        elem.addClass('is-invalid');
+                        scope.formValid = 0;
+                    } else if (elem.val() == '') {
+                        elem.removeClass('is-invalid');
+                        elem.removeClass('is-valid');
+                    }
+                });
+            }
+        }
+    });
+
+
+    //Focus Input
+    app.directive('autoFocus', function () {
+        return {
+            restrict: 'A',
+            link: function (scope, element, attrs) {
+                element.focus();
+            }
+        };
+    });
+
+    app.directive('focusSearchArticulo', function ($timeout, $parse) {
+        return {
+            link: function (scope, element, attrs) {
+                element.bind('click', function (e) {
+                    $timeout(() => {
+                        element.focus();
+                    })
+                })
+            }
+        }
+    })
+
+    app.directive('tooltip', function () {
+        return {
+            restrict: 'A',
+            link: function (scope, element, attrs) {
+                $(element).hover(function () {
+                    // on mouseenter
+                    $(element).tooltip('show');
+                }, function () {
+                    // on mouseleave
+                    $(element).tooltip('hide');
+                });
+            }
+        };
+    });
+
+    //keyboard disable
+    app.directive('keyboardDisable', function () {
+        return function (scope, elem, attr) {
+            elem.on('keydown', function (e) {
+                if (e.which === 9) {
+                    return false;
+                }
+            })
+        }
+    })
+
+    app.directive('inputFocus', function ($timeout) {
+        return {
+            restrict: 'AC',
+            link: function (_scope, _element) {
+                $timeout(function () {
+                    _element[0].focus();
+                }, 0);
+            }
+        }
+    });
+    
+    app.directive('ngEnter', function () {
+        return function (scope, element, attrs) {
+            element.bind("keydown keypress", function (event) {
+                if (event.which === 13) {
+                    scope.$apply(function () {
+                        scope.$eval(attrs.ngEnter);
+                    });
+    
+                    event.preventDefault();
+                }
+            })
+        }
+    })
+    
+    app.directive('stopEvent', function () {
+        return {
+            restrict: 'A',
+            link: function (scope, element, attr) {
+                element.bind('click', function (e) {
+                    e.stopPropagation();
+                });
+            }
+        };
+    });
+    
+    
+    //Permiso Update Artcicle
+    app.directive('updateArticle', function ($rootScope) {
+        return {
+    
+            link: function (scope, element, attrs) {
+    
+                if (!$rootScope.articlePermission.leer) {
+                    element[0].style.display = 'none';
+                }
+    
+                if (!$rootScope.articlePermission.editar) {
+                    element[0].style.display = 'none';
+                }
+            },
+        }
+    })
+    
+    app.directive('estabStock', function (mainService, $compile, $timeout) {
+        return {
+            restrict: 'A',
+            scope: {
+                article: "=",
+                placement: "@"
+            },
+            link: function (scope, element) {
+                var popoverOptions = {
+                    title: '<i class="mdi mdi-information-outline"></i> Bodega-Stock',
+                    content: function () {
+                        var popoverContent = ` <div class="table-responsive">
+                                                <table class="table table-sm">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Estab.</th>
+                                                            <th>Bodega</th>
+                                                            <th>Stock</th>
+                                                            <th>Ub.                                                       
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody ng-repeat="s in branchs" class="small">
+                                                        <tr ng-repeat="ub in s.warehouses">
+                                                            <td ng-if="$first" rowspan="2">{{s.branchOffice}}</td>
+                                                            <td>{{ub.bodega}}</td>
+                                                            <td>{{ub.stock}}</td>
+                                                            <td>{{ub.ubicacion}}</td>
+                                                        <tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>   
+                                             `;
+    
+                        mainService.getData('get', '/Articulo/GetId?id=' + scope.article.idArticulo).then(response => {
+                            const results = JSON.parse(response.payload) || [];
+    
+                            scope.branchs = results[4].map(val => {
+                                val.warehouses = JSON.parse(val.warehouses)
+                                return val;
+                            })
+                            
+                        })
+    
+                        // Compile the popover content with the scope
+                        let compiledContent = $compile(popoverContent)(scope);
+                        scope.$apply();
+                        return compiledContent;
+    
+                    },
+                    placement: scope.placement || 'bottom',
+                    trigger: 'outsideClick',
+                    html: true,
+                    customClass: 'zindex'
+                    // container: 'body'
+                };
+    
+    
+                // // Initialize the popover using element.popover()
+                $(element).popover(popoverOptions);
+    
+                // // Open popover on element click
+                element.on('mouseover', function (event) {
+                    $(element).popover('show');
+                });
+    
+                // // Close popover on outside click
+                $(document).on('mouseover', function (event) {
+                    if (!$(element).is(event.target) && !$(element).has(event.target).length && $('.popover').has(event.target).length === 0) {
+                        $(element).popover('hide');
+                    }
+                });
+    
+                // Clean up the popover when the directive is destroyed
+                // scope.$on('$destroy', function () {
+                //     $(element).popover('destroy');
+                // });
+            }
+        };
+    })
+    
+  
+    
+    
+    app.directive('totalesVentaView', function ($rootScope, $timeout) {
+        return {
+            restrict: 'A',
+            link: function (scope, element, attrs) {
+                scope.$watch(attrs.totalesVentaView, function (obj) {
+                    if (typeof obj === 'object' && !obj.additional.totalesVenta.view) {
+                        // Aquí puedes aplicar la lógica de la directiva cuando el objeto tenga un valor
+                        // Por ejemplo, mostrar el elemento, modificar su estilo, etc.
+                        element.remove();
+                    }
+                });
+    
+                // element.remove();
+            }
+        };
+    })
+    
+
+
+
+    /**
+     * ====================================START DIRECTIVES SALES=============================
+     */ 
+    app.directive('btnCliente', function(modalService, nombreModalVenta){
+        return {
+            restrict: 'A',
+            scope: {
+                resultModal: '&',
+                params: '='
+            },
+            link: function(scope, element, att){
+                element.on('click', async function(ev){
+
+                    let {fileCtrl, controllers, templates} = nombreModalVenta.CLIENTE;
+                    let ctrl = (await import(fileCtrl))[controllers['M']];
+                    let template = templates['M'];
+                    
+                    let modalRef = modalService.openModalCustom({
+                        controller: ctrl,
+                        template,
+                        size: 'xl',
+                        params: scope.params || {},
+                    })
+
+                    modalRef.result.then(result => {
+                        if(typeof result === 'object'){
+                            scope.resultModal({
+                                result
+                            })
+                        }
+                    })
+                    
+                })            
+            }
+        }
+    })
+
+
+    app.directive('dateRangeFilter', function(){
+        return {            
+            template: ` <div class="form-group">
+            <label>Rango de Fechas: </label>
+            <input date-range-picker class="form-control date-picker" type="text"
+                   ng-model="dateRangePicker.date" picker="dateRangePicker.picker"
+                   picker-classes="extra-class-names" min="'2014-02-23'" max="dateRangePicker.maxDate"
+                   options="dateRangePicker.options" options="{locale: {separator: " :"}}" />
+        </div>`,
+            restrict: 'E',
+            replace: true,
+            scope: {
+                currentDate: '=',
+                startDate:'=',
+                endDate:'=',
+                resultRangeDate: '&',
+            },
+            link: function(scope, $element, $attrs, form) {
+                let thisMoment = moment(new Date()) 
+                scope.startDate = thisMoment;
+                scope.endDate = thisMoment;            
+                scope.dateRangePicker = {
+                    date: {
+                        startDate: thisMoment,
+                        endDate: thisMoment,
+                    },
+                    picker: null,
+                    options: {
+                        pickerClasses: 'custom-display', //angular-daterangepicker extra
+                        buttonClasses: 'btn',
+                        applyButtonClasses: 'btn-success',
+                        cancelButtonClasses: 'btn-danger',
+                        locale: {
+                            applyLabel: "Aplicar",
+                            cancelLabel: 'Cancelar',
+                            customRangeLabel: 'Rango Personalizado',
+                            separator: ' - ',
+                            format: "YYYY-MM-DD", //will give you 2017-01-06
+                            //format: "D-MMM-YY", //will give you 6-Jan-17
+                            //format: "D-MMMM-YY", //will give you 6-January-17
+                        },
+                        ranges: {
+                            'Hoy': [moment(), moment()],
+                            'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                            'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
+                            'Ultimos 15 Días': [moment().subtract(14, 'days'), moment()],
+                            'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
+                            'Este Mes': [moment().startOf('month'), moment().endOf('month')],
+                        },
+                        eventHandlers: {
+                            'apply.daterangepicker': function (event, picker) {
+
+                                scope.startDate = scope.dateRangePicker.date.startDate
+                                scope.endDate = scope.dateRangePicker.date.endDate;
+                                
+                                scope.resultRangeDate({
+                                    result: {
+                                        startDate: scope.startDate,
+                                        endDate: scope.endDate
+                                    }
+                                })
+                                // $scope.getComprobantes()
+                                // console.log('applied')
+                            }
+                        }
+                    }
+                };               
+            }
+        };
+
+    })
+
+
+    /**
+     * ---------------------------------------
+     */
+    
+    app.directive('btnTransportista', function(modalService, nombreModalLogistica){
+        return {
+            restrict: 'A',
+            scope: {
+                params:'=',
+                resultModal: '&',
+            },
+            link: function(scope, element, att){
+                element.on('click', async function () {
+                     
+                    let fileCtrl = nombreModalLogistica.TRANSPORTISTA.fileCtrl;
+                    let ctrl = nombreModalLogistica.TRANSPORTISTA.controllers['M'];
+                    let template = nombreModalLogistica.TRANSPORTISTA.templates['M'];
+                    let controller = (await import(fileCtrl))[ctrl];
+
+
+                    const modalDialogRef = modalService.openModalCustom({
+                        controller,
+                        template,
+                        size: 'md',
+                        params: scope.params || {},
+                    })       
+                          
+                    modalDialogRef.result.then(result=>{
+                        if(typeof result==="object"){
+                            scope.resultModal({
+                                result
+                            })
+                        }
+                    })
+                });
+            }
+        }
+    })
+
+    app.directive('btnVehiculo', function(modalService, nombreModalLogistica){
+        return {
+            restrict: 'A',
+            scope: {
+                params:'=',
+                resultModal: '&',
+            },
+            link: function(scope, element, att){
+                element.on('click', async function () {
+                     
+                    let fileCtrl = nombreModalLogistica.VEHICULO.fileCtrl;
+                    let ctrl = nombreModalLogistica.VEHICULO.controllers['M'];
+                    let template = nombreModalLogistica.VEHICULO.templates['M'];
+                    let controller = (await import(fileCtrl))[ctrl];
+                    console.log(template)
+
+                    const modalDialogRef = modalService.openModalCustom({
+                        controller,
+                        template,
+                        size: 'md',
+                        params: scope.params || {},
+                    })       
+                          
+                    modalDialogRef.result.then(result=>{
+                        if(typeof result==="object"){
+                            scope.resultModal({
+                                result
+                            })
+                        }
+                    })
+                });
+            }
+        }
+    })
+
+
+    /**
+     * -------------------------------SEND DOCS. BY WHATSAPP-----------------------
+     * 
+     */
+    app.directive('btnSendToWhatsApp', function(modalService, nombreModal){
+        return {
+            restrict: 'A',
+            scope: {
+                params:'=',
+                resultModal: '&',
+                hasPermission: '=',
+                typeSend: '=',
+            },
+            link: function(scope, element, att){
+                element.on('click', async function () {
+                     console.log('click')
+                    // let fileCtrl = nombreModalLogistica.VEHICULO.fileCtrl;
+                    // let ctrl = nombreModalLogistica.VEHICULO.controllers['M'];
+                    // let template = nombreModalLogistica.VEHICULO.templates['M'];
+                    const {
+                        MODAL_SEND_WHATSAPP_CTRL,
+                        MODAL_SEND_WHATSAPP_CSHTML
+                    } = nombreModal.common;
+                    const {
+                        ModalWhatsAppCtrl
+                    } = await import(MODAL_SEND_WHATSAPP_CTRL);
+                    // console.log(template)
+
+                    scope.params.type = scope.typeSend;
+                    scope.params.hasPermissions = scope.hasPermissions
+                    const modalDialogRef = modalService.openModalCustom({
+                        controller: ModalWhatsAppCtrl,
+                        template: MODAL_SEND_WHATSAPP_CSHTML,
+                        size: 'md',
+                        params: scope.params || {},
+                        isRenderRazorPartial: true,
+                    })       
+                          
+                    modalDialogRef.result.then(result=>{
+                        if(typeof result==="object"){
+                            scope.resultModal({
+                                result
+                            })
+                        }
+                    })
+                });
+            }
+        }
+    })
+
+})(window.angular)

@@ -1,5 +1,5 @@
 
-import './modalCompraBaseCtrl.js'
+import './modalCompraBaseCtrl.min.js?v=0.50'
 
 class ModalFacturaCtrl extends window.modalCompraBaseCtrl {
     
@@ -194,22 +194,50 @@ class ModalFacturaCtrl extends window.modalCompraBaseCtrl {
 
 export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
 
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'storageService', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario']
+    static $inject = [
+        '$scope', 
+        '$timeout', 
+        '$uibModalInstance', 
+        'storageService', 
+        'mainService', 
+        'commonService', 
+        'facturaCompraService',
+        'modalService', 
+        'nombreModal', 
+        'toastService', 
+        'formulario'
+    ]
     
-    constructor($scope, $timeout, $uibModalInstance, _storageSvc, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS){
+    constructor(
+        $scope, 
+        $timeout, 
+        $uibModalInstance, 
+        _storageSvc, 
+        _mS, 
+        _commonSvc, 
+        factCompraSvc,
+        _modalSvc, 
+        _nombreModalConst, 
+        _tS, 
+        _fS
+    ){
         super({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS});
         
         this._storageSvc = _storageSvc;
+        this.factCompraSvc = factCompraSvc;
 
         this.searchProveedorOptions = {}
         this.searchProveedorOptions.showBtnNew = true;
         this.searchProveedorOptions.showBtnList = true;   
+
+        this.datosAdicionalesArticulo = []
         
         this.data.fechaEmision = new Date();
 
         this.CELL_TEMPLATE_OPTION = `<a  ng-click="grid.appScope.$ctrl.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
-                           <a  ng-click="grid.appScope.$ctrl.openModalArticleEdit(row.entity)" style="cursor:pointer;" class="btn btn-success btn-xs text-white" title = "Editar Articulo" ><i class="fa fa-edit"></i></a >                                  
-                           <a  ng-click="grid.appScope.$ctrl.abrirModalDatoAdicional(row.entity)" style="cursor:pointer;" ng-show='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar Dato Adicional al Articulo" > <i class="fas fa-tags"></i></a >                                  
+                           <a  ng-click="grid.appScope.$ctrl.openModalArticleEdit(row.entity)" style="cursor:pointer;" class="btn btn-success btn-xs text-white" title = "Editar Articulo" ><i class="fa fa-edit"></i></a >   
+
+                           <a  btn-data-adicional-articulo entity="row.entity" datos-adicionales="grid.appScope.$ctrl.datosAdicionalesArticulo" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar Dato Adicional al Articulo" > <i class="fas fa-tags"></i></a >                                  
                         `;
     
         this.CAMPOS = ["codEstab", "idSustentoTributario", "idCategoriaCompra", "idProveedor", "puntoEmision", "nroDoc", "nroAutorizacion", "idTiempoCredito", "fechaEmision", "fechaVencimiento", "validFechaVcto", "gridOptions", "gridOptionsBodega"];
@@ -292,16 +320,17 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
 
     async onSave(){
         try {
-            showLoader();
+            
             let textAccion = 'Guardar';  
 
             if(!this.isValidaForm(textAccion)) return
 
-            if(this.data.nroAutorizacion.length>10){
+            if(this.data.nroAutorizacion.length>10){                
                 this._tS.toastr('warning', 'Número de Autorización tiene que tener 10 dígitos')
                 return
             }
 
+            showLoader();
             this.nroDocumentoSecuencial = await this._commonSvc.generarNroDocumentoCompra({
                 puntoEmision: this.data.puntoEmision,
                 nroDocumento: this.data.nroDocumento,
@@ -312,58 +341,53 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
             hideLoader();
             if(!this.nroDocumentoSecuencial) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE"
 
-             
-            const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                  confirmButton: 'btn btn-success',
-                  cancelButton: 'btn btn-danger ml-2'
-                },
-                buttonsStyling: false
-            })
-              
-            let {isConfirmed} = await swalWithBootstrapButtons.fire({
+            
+            let {isConfirmed} = await Swal.fire({
                 title: '<small>Guardar Factura Compra</small>',
                 html: `<small>Esta Ud. seguro de ${textAccion} este Documento <b> Nro. ${this.nroDocumentoSecuencial}</b></small>?`,
                 icon: 'warning',
                 showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
                 confirmButtonText: 'Si, guardar!',
                 cancelButtonText: 'No, cancelar!',
-                reverseButtons: false,
                 allowOutsideClick:false,
                 allowEscapeKey:false
-            })       
-           
-            
-            if(!isConfirmed) return
+            })
 
-            showLoader();
-            this.data.idProveedor = this.proveedor.idProveedor                                          
-            
-             //Tarifa Aplicada al Documento
-            this.data.tarifa = this.actividadTipoIva.tarifa;
-            
+            if(isConfirmed){
+                showLoader();                
+                this.data.tarifa = this.actividadTipoIva.tarifa;
+               
+    
+                const query = this.factCompraSvc.queryMapper({
+                    data: this.data,
+                    proveedor: this.proveedor,
+                    details: this.gridOptions.data,
+                    datosAdicionalesArticulo: this.datosAdicionalesArticulo
+                })
 
-            const data = {
-                factura: this.data,
-                detalle: this.trimDetail(),
-                manejoArticuloDetalle: this.datosAdicionalesArticulo || []
+                this.factCompraSvc.save(query).then(response=>{
+                    if(response.code==='0'){ 
+                        hideLoader();                            
+                       this._fS.sweetAlert('warning', response.message, response.titleSms);   
+                    }
+    
+                    if (response.code == "1") {   
+                        hideLoader();                                
+                       this._fS.sweetAlert('success', response.message, response.titleSms, 1000);   
+                       
+                       this.$uibModalInstance.close(response)
+                    }     
+                }).catch(error => {
+                    hideLoader();
+                    console.log(error)
+                })                        
+
             }
-
-            await this._mS.getData('post', '/FacturaCompra/Post', data).then(response=>{
-                if(response.code==='0'){                    
-                    this._fS.sweetAlert('warning', response.message, response.titleSms);   
-                }
-
-                if (response.code == "1") {                                  
-                    this._fS.sweetAlert('success', response.message, response.titleSms, 1000);   
-                    
-                    this.$uibModalInstance.close(response)
-                }     
-            })                        
         } catch (error) {
+            hideLoader();
             console.log(error)
-        }finally{
-            hideLoader()
         }
     }
 
@@ -452,10 +476,36 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
 
 export class ModalFacturaEditarCtrl extends ModalFacturaCtrl{
 
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario', 'params']
+    static $inject = [
+        '$scope', 
+        '$timeout', 
+        '$uibModalInstance', 
+        'mainService', 
+        'commonService', 
+        'facturaCompraService',
+        'modalService', 
+        'nombreModal', 
+        'toastService', 
+        'formulario', 
+        'params'
+    ]
     
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS, _params){
+    constructor(
+        $scope, 
+        $timeout, 
+        $uibModalInstance, 
+        _mS, 
+        _commonSvc, 
+        factCompraSvc,
+        _modalSvc, 
+        _nombreModalConst, 
+        _tS, 
+        _fS, 
+        _params
+    ){
         super({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS});
+        
+        this.factCompraSvc = factCompraSvc;
         
         this.searchProveedorOptions = {}
         this.searchProveedorOptions.showBtnNew = true;
@@ -465,19 +515,19 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl{
         this.data.fechaEmision = new Date();
 
         this.CELL_TEMPLATE_OPTION = `<a  ng-click="grid.appScope.$ctrl.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
-                           <a  ng-click="grid.appScope.$ctrl.openModalArticleEdit(row.entity)" style="cursor:pointer;" class="btn btn-success btn-xs text-white" title = "Editar Articulo" ><i class="fa fa-edit"></i></a >                                  
-                           <a  ng-click="grid.appScope.$ctrl.abrirModalDatoAdicional(row.entity)" style="cursor:pointer;" ng-show='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar Dato Adicional al Articulo" > <i class="fas fa-tags"></i></a >                                  
-                        `;
+        <a  ng-click="grid.appScope.$ctrl.openModalArticleEdit(row.entity)" style="cursor:pointer;" class="btn btn-success btn-xs text-white" title = "Editar Articulo" ><i class="fa fa-edit"></i></a >                                  
+        <a  btn-data-adicional-articulo entity="row.entity" datos-adicionales="grid.appScope.$ctrl.datosAdicionalesArticulo" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar Dato Adicional al Articulo" > <i class="fas fa-tags"></i></a >                                  
+    `;
     
         this.CAMPOS = ["codEstab", "idSustentoTributario", "idCategoriaCompra", "idProveedor", "puntoEmision", "nroDoc", "nroAutorizacion", "idTiempoCredito", "fechaEmision", "fechaVencimiento", "validFechaVcto", "gridOptions", "gridOptionsBodega"];
         let {TIPO_REGISTRO, data} = _params;        
         let {dataDocumento, proveedor, detalleDocumento, datosAdicionalesArticulo} = data;
-        console.log(data)
+        
         this.dataDocumento = dataDocumento;
         this.proveedor = proveedor;
         this.detalleDocumento = detalleDocumento;
-        this.datosAdicionalesArticulo = datosAdicionalesArticulo;
 
+        this.datosAdicionalesArticulo = datosAdicionalesArticulo || [];        
         
         this.TIPO_REGISTRO = TIPO_REGISTRO;
     }
@@ -577,57 +627,52 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl{
                 return
             }
 
-             
-            const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                  confirmButton: 'btn btn-success',
-                  cancelButton: 'btn btn-danger ml-2'
-                },
-                buttonsStyling: false
-            })
-              
-            let {isConfirmed} = await swalWithBootstrapButtons.fire({
+            let {isConfirmed} = await Swal.fire({
                 title: '<small>Actualizar Factura Compra</small>',
-                html: `<small>Esta Ud. seguro de ${textAccion} este Documento ahora</small>?`,
+                html: `<small>Esta Ud. seguro de ${textAccion} este Documento</small>?`,
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: `Si, ${textAccion}`,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, guardar!',
                 cancelButtonText: 'No, cancelar!',
-                reverseButtons: false,
                 allowOutsideClick:false,
                 allowEscapeKey:false
-            })       
-           
-            
-            if(!isConfirmed) return
+            })
 
-            showLoader();
-            this.data.idProveedor = this.proveedor.idProveedor                                          
+            if(isConfirmed){
+                showLoader();                
+                this.data.tarifa = this.actividadTipoIva.tarifa;
+               
     
-             //Tarifa Aplicada al Documento
-            this.data.tarifa = this.actividadTipoIva.tarifa;
-            
-            const data = {
-                factura: this.data,
-                detalle: this.trimDetail(),
-                manejoArticuloDetalle: this.datosAdicionalesArticulo
-            }
+                const query = this.factCompraSvc.queryMapper({
+                    data: this.data,
+                    proveedor: this.proveedor,
+                    details: this.gridOptions.data,
+                    datosAdicionalesArticulo: this.datosAdicionalesArticulo
+                })
 
-            await this._mS.getData('put', '/FacturaCompra/Put?id=' + this.data.idFacturaCompra, data).then(response=>{
-                if(response.code==='0'){                    
-                    this._fS.sweetAlert('warning', response.message, response.titleSms);   
-                }
+                this.factCompraSvc.update(this.data.idFacturaCompra, query).then(response=>{
+                    if(response.code==='0'){ 
+                        hideLoader();                            
+                       this._fS.sweetAlert('warning', response.message, response.titleSms);   
+                    }
+    
+                    if (response.code == "1") {   
+                        hideLoader();                                
+                       this._fS.sweetAlert('success', response.message, response.titleSms, 1000);   
+                       
+                       this.$uibModalInstance.close(response)
+                    }     
+                }).catch(error => {
+                    hideLoader();
+                    console.log(error)
+                })                        
 
-                if (response.code == "1") {                                  
-                    this._fS.sweetAlert('success', response.message, response.titleSms, 1000);   
-                    
-                    this.$uibModalInstance.close(response)
-                }     
-            })                        
+            }                        
         } catch (error) {
-            console.log(error)
-        }finally{
             hideLoader()
+            console.log(error)
         }
     }
 

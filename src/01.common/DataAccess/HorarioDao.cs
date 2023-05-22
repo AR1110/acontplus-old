@@ -2,17 +2,12 @@
 using Domain.ViewModels;
 using Helpers;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DataAccess
 {
-    public class HorarioDao 
+    public class HorarioDao
     {
         private readonly IConfiguration _config;
         protected GenericResponse _gr;

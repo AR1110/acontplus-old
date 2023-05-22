@@ -5,20 +5,22 @@
     </h5>
     <button class="close" ng-click="$ctrl.closeModal()">&times;</button>
 </div>
-<div class="modal-body ">  
-                
+<div class="modal-body ">
+
     <div class="list-group list-group-horizontal" id="paymentStep">
-        <a href="javscript:void(0)" ng-click="$ctrl.paymentStepUno()" class="list-group-item list-group-item-action disabled">
+        <a href="javscript:void(0)" ng-click="$ctrl.paymentStepUno()"
+            class="list-group-item list-group-item-action disabled">
             <div>Paso 1</div>
             <span>Seleccionar Documentos</span>
         </a>
-        <a href="javascript:void(0)" ng-click="$ctrl.paymentStepDos()" class="list-group-item list-group-item-action disabled">
+        <a href="javascript:void(0)" ng-click="$ctrl.paymentStepDos()"
+            class="list-group-item list-group-item-action disabled">
             <div>Paso 2</div>
             <span>Cuotas</span>
-        </a>                                       
-    </div>                   
-    <hr>  
-    <div class="row">                        
+        </a>
+    </div>
+    <hr>
+    <div class="row">
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
             <small class="text-muted">Cliente: </small>
             <h6>{{$ctrl.data.razonSocialComprador}}</h6>
@@ -28,36 +30,36 @@
             <h6>{{$ctrl.data.identificacionComprador}}</h6>
         </div>
         @* <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-            <small class="text-muted">Dirección: </small>
-            <h6>{{$ctrl.data.direccion}}</h6>
+        <small class="text-muted">Dirección: </small>
+        <h6>{{$ctrl.data.direccion}}</h6>
         </div>
         <div class="col-lg-3 col-md-2 col-sm-6 col-xs-12">
-            <div class="form-group">
-                <small class="text-muted">Correo: </small>
-                <h6 ng-repeat="correo in $ctrl.cliente.correos">{{correo.text}}</h6>
-            </div>                            
+        <div class="form-group">
+        <small class="text-muted">Correo: </small>
+        <h6 ng-repeat="correo in $ctrl.cliente.correos">{{correo.text}}</h6>
+        </div>
         </div> *@
     </div>
     <md-divider></md-divider>
-    <div class="tab-content" id="nav-tabContent"> 
-        <div class="tab-pane fade show active" id="content-list-documento"  role="tabpanel" style="display: block;" >
-            <div class="mb-2">                                                         
-                <!------------------------------->                          
-            </div>                            
+    <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="content-list-documento" role="tabpanel" style="display: block;">
+            <div class="mb-2">
+                <!------------------------------->
+            </div>
         </div>
         <div class="tab-pane fade fade show" id="content-cuotas" role="tabpanel" style="display: none;">
             <div class="row">
                 <div class="col-xl-9 col-lg-9 col-md-9 col-sm-12 col-xs-12 border-right">
                     <div class="row">
                         <div class="col-6 mt-4">
-                            <h5 class="card-title">Cuotas a Cobrar </h5>                                        
+                            <h5 class="card-title">Cuotas a Cobrar </h5>
                         </div>
                         <div class="col-6 align-self-center display-6 text-right">
                             <button type="button" class="btn btn-warning" ng-click="$ctrl.openModalFormaCobro()">
                                 <i class="ti-plus"></i> Nuevo Cobro
                             </button>
-                        </div>                
-                    </div>  
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-lg-12">
                             <!--Cuotas de Documento-->
@@ -74,10 +76,13 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr ng-repeat-start="item in $ctrl.selectedDocumentos" ng-click="$ctrl.step.expandDetalle(item)" class="table-success">
+                                        <tr ng-repeat-start="item in $ctrl.selectedDocumentos"
+                                            ng-click="$ctrl.step.expandDetalle(item)" class="table-success">
                                             <td>
-                                                <span ng-if="item.showCuota"><i class="fas fa-caret-square-down"></i></span>
-                                                <span ng-if="!item.showCuota"><i class="fas fa-caret-square-right"></i></span>
+                                                <span ng-if="item.showCuota"><i
+                                                        class="fas fa-caret-square-down"></i></span>
+                                                <span ng-if="!item.showCuota"><i
+                                                        class="fas fa-caret-square-right"></i></span>
                                             </td>
                                             <td>{{$index+1}}</td>
                                             <td>{{item.nroDocumento}}</td>
@@ -107,17 +112,26 @@
                                                             <tbody>
                                                                 <tr ng-repeat="c in item.cuotas">
                                                                     <td>{{c.nroCuota}}</td>
-                                                                    <td class="txt-oflo">{{c.cxc.cuota|currency:'$'}}</td>
-                                                                    <td class="text-muted">{{c.abono|currency:'$' }}</td>
+                                                                    <td class="txt-oflo">{{c.cxc.cuota|currency:'$'}}
+                                                                    </td>
+                                                                    <td class="text-muted">{{c.abono|currency:'$' }}
+                                                                    </td>
                                                                     <td>{{c.abonoPosfechado|currency:'$'}}</td>
                                                                     <td>{{c.saldo |currency:'$' }}</td>
                                                                     <td>{{c.diasMoraView}}</td>
                                                                     <td>{{c.totalMasInteres|currency:'$'}}</td>
                                                                     <td>{{c.cxc.fechaVencimiento}}</td>
-                                                                    <td width="130px"><code>{{c.estadoFinanciero}}</code></td>
+                                                                    <td width="130px">
+                                                                        <code>{{c.estadoFinanciero}}</code></td>
                                                                     <td>
-                                                                        <a uib-popover-template="'viewPopoverAbonoCuota'" ng-show="(c.abono>0||c.abonoPosfechado>0) && c.cuotaAfectado" popover-trigger="'outsideClick'" popover-placement="top" href="javascript:void(0)" class="text-dark ">
-                                                                            <i ng-click="$ctrl.viewCuotaAbono(c)" class="ti-eye"></i>
+                                                                        <a uib-popover-template="'viewPopoverAbonoCuota'"
+                                                                            ng-show="(c.abono>0||c.abonoPosfechado>0) && c.cuotaAfectado"
+                                                                            popover-trigger="'outsideClick'"
+                                                                            popover-placement="top"
+                                                                            href="javascript:void(0)"
+                                                                            class="text-dark ">
+                                                                            <i ng-click="$ctrl.viewCuotaAbono(c)"
+                                                                                class="ti-eye"></i>
                                                                         </a>
                                                                     </td>
                                                                 </tr>
@@ -129,7 +143,7 @@
                                         </tr>
                                     </tbody>
                                 </table>
-                            </div>                                             
+                            </div>
                         </div>
 
                         <div class="col-lg-12">
@@ -141,7 +155,7 @@
                                         <tr>
                                             <th>N°</th>
                                             <th>F. Emisión</th>
-                                            <th>Sub Entidad</th>                
+                                            <th>Sub Entidad</th>
                                             <th>Valor</th>
                                             <th>Tipo Documento</th>
                                             <th>Número</th>
@@ -152,14 +166,17 @@
                                     <tbody>
                                         <tr ng-repeat="item in $ctrl.abonoEntidadesFinancieras">
                                             <td>{{$index+1}}</td>
-                                            <td>{{item.fechaEmision|date:'MM/dd/yyyy  h:mma'}}</td>
-                                            <td><sup>{{item.posFechado?'*':''}}</sup> <span>{{item.subEntidad}}</span></td>                
+                                            <td>{{item.fechaEmision|date:'dd/MM/yyyy h:mma'}}</td>
+                                            <td><sup>{{item.posFechado?'*':''}}</sup> <span>{{item.subEntidad}}</span>
+                                            </td>
                                             <td>{{item.abono|currency:'$'}}</td>
                                             <td>{{item.tipoDocumento}}</td>
                                             <td>{{item.nro}}</td>
                                             <td>{{item.valor|currency:'$'}}</td>
                                             <td>
-                                                <button class="btn btn-danger btn-sm" ng-click="$ctrl.askToDeleteAbono(item)"><i class="ti-trash"></i></button>
+                                                <button class="btn btn-danger btn-sm"
+                                                    ng-click="$ctrl.askToDeleteAbono(item)"><i
+                                                        class="ti-trash"></i></button>
                                             </td>
 
                                         </tr>
@@ -170,7 +187,7 @@
                                 </table>
                             </div>
                         </div>
-                    </div>                                
+                    </div>
                 </div>
 
                 <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-xs-12">
@@ -192,7 +209,8 @@
                                         <span>Abono Anterior</span>
                                     </div>
                                     <div class="col-5 py-2">
-                                        :<span class="font-medium">{{$ctrl.data.totalAbonoAnterior | currency:'$'}}</span>
+                                        :<span class="font-medium">{{$ctrl.data.totalAbonoAnterior |
+                                            currency:'$'}}</span>
                                     </div>
                                 </div>
 
@@ -238,7 +256,7 @@
                                         </span>
                                     </div>
                                 </div>
-                                
+
                                 <div class="row bg-dark text-white">
                                     <div class="col-7 py-2">
                                         <span>Cambio</span>
@@ -249,17 +267,17 @@
                                         </span>
                                     </div>
                                 </div>
-                            </div>                                        
-                        </div>                                   
-                    </div>                  
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>                            
-        </div>                      
-    </div>                                      
+            </div>
+        </div>
+    </div>
 </div>
-<div class="modal-footer">                                 
-    <button class="btn btn-success" ng-click="$ctrl.onSave()"> Guardar</button> 
-    <button class="btn btn-dark" ng-click="$ctrl.closeModal()">&times; Cerrar</button>                              
+<div class="modal-footer">
+    <button class="btn btn-success" ng-click="$ctrl.onSave()"> Guardar</button>
+    <button class="btn btn-dark" ng-click="$ctrl.closeModal()">&times; Cerrar</button>
 </div>
 
 <script type="text/ng-template" id="viewPopoverAbonoCuota">

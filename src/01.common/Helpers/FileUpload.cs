@@ -1,48 +1,20 @@
-﻿using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Helpers
+﻿namespace Helpers
 {
     public class FileUpload
     {
-        private IConfiguration _configuration;
-        private readonly string _path = "";
-
-        public FileUpload(IConfiguration configuration)
+        public async Task<bool> Upload(string _path, string fileName, byte[] content)
         {
-            _configuration = configuration;
-            _path = _configuration.GetSection("FactElectCerts").Value;
-        }
-
-
-        public bool Upload(string fileName, byte[] content, ref string msg)
-        {
-            try
+            string path = Path.Combine(_path, fileName);
+            if (File.Exists(path))
             {
-                string path = Path.Combine(_path, fileName);
-                if (File.Exists(path))
-                {
-                    msg = "Archivo ya existe";
-                    return false;
-                }
-                File.WriteAllBytes(path, content);
-
-                if (File.Exists(path))
-                {
-                    msg = "Archivo guardado exitosamente";
-                }
+                File.Delete(path);
+            }
+            await File.WriteAllBytesAsync(path, content);
+            if (File.Exists(path))
+            {
                 return true;
             }
-            catch (Exception ex)
-            {
-                msg = ex.Message;
-                return false;
-            }
-
+            return false;
         }
     }
 }

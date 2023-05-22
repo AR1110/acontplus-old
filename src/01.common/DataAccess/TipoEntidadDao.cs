@@ -1,17 +1,12 @@
 ﻿using Domain.Models;
 using Helpers;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
 
 namespace DataAccess
 {
-    public class TipoEntidadDao 
+    public class TipoEntidadDao
     {
         private readonly IConfiguration _config;
         protected GenericResponse _gr;

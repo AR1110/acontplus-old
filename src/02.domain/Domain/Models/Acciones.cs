@@ -1,5 +1,5 @@
 ﻿namespace Domain.Models
-{ 
+{
     public class Acciones
     {
         public int idAcciones { get; set; }

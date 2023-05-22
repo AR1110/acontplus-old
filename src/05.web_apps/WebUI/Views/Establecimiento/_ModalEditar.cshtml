@@ -93,9 +93,42 @@
                 </div>            
             </div>
         </div>
+
+        <div class="row">
+            <div class="col-xl-6 col-md-6 col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label>Email: <span class="text-danger">*</span>
+                        <span tooltip-placement="top"
+                            uib-tooltip="Haz doble 'Click' sobre el correo para editar">
+                            <i class="fas fa-info-circle"></i>
+                        </span>
+                    </label>
+                    <md-chips ng-model="$ctrl.correos" md-add-on-blur="true"
+                        ng-keyup="$ctrl.onKeyupEmail($event)"
+                        md-transform-chip="$ctrl.transformChipEmail($chip)" md-removable="true"
+                        md-enable-chip-edit="true" placeholder="Ej: maxi@gmail.com"
+                        input-aria-label="Correos"></md-chips>
+                    <small></small>
+                </div>
+            </div>
+            <div class="col-xl-6 col-md-6 col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label>Telefono: <span class="text-danger">*</span>
+                        <span tooltip-placement="top"
+                            uib-tooltip="Haz doble 'Click' sobre el número de telefono para editar">
+                            <i class="fas fa-info-circle"></i>
+                        </span>
+                    </label>
+                    <md-chips ng-model="$ctrl.telefonos" md-add-on-blur="true"
+                        md-transform-chip="$ctrl.transformChip($chip)" md-removable="true"
+                        md-enable-chip-edit="true" placeholder="Ej: 0959889744"
+                        input-aria-label="Número de teléfonos"></md-chips>
+                </div>
+            </div>
+        </div>
         
         <div class="row">
-            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <div class="form-group">
                     <label for="cantones">Cantón: <span class="text-danger">*</span> </label>                    
                     <input type="text" 
@@ -109,15 +142,15 @@
                     <span ng-if="$ctrl.loadingSearch"> <i class="fas fa-sync-alt fa-xs"></i> Loading...</span>
                     <small class="text-danger ml-5" ng-if="$ctrl.noResults">No se encontraron resultados</small>
                 </div>
-            </div>       
-            <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-xs-12">
+            </div>  
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <div class="form-group">
                     <label for="direccion">Dirección <span class="text-danger">*</span> </label>
                     <textarea class="form-control border-select" touppercase ng-model="$ctrl.data.dirEstablecimiento" rows="2"></textarea>
-                </div>
-            </div> 
+                </div>  
+            </div>             
         </div> 
-
     </div>
 
        

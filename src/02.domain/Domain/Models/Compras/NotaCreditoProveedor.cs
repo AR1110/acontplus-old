@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Domain.Models.Compras
+﻿namespace Domain.Models.Compras
 {
     public class NotaCreditoProveedor
     {
@@ -37,7 +31,7 @@ namespace Domain.Models.Compras
         public decimal recargo { get; set; }
         public decimal transporte { get; set; }
         public decimal total { get; set; }
-       
+
         public string observacion { get; set; }
 
         public decimal tarifa { get; set; }

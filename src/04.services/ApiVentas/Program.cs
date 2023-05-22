@@ -1,3 +1,7 @@
+using BL.JwtAuthenticationManger;
+using Helpers;
+using System.Reflection;
+
 namespace ApiVentas
 {
     public class Program
@@ -9,25 +13,37 @@ namespace ApiVentas
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddCustomJwtAuthentication();
+
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+
+            builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
+            ConfigHelper.AddJsonFiles(builder.Configuration);
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+            app.UseRouting();
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
+
             app.UseAuthorization();
 
+            app.UseMiddleware<JWTMiddleware>();
 
-            app.MapControllers();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapGet("/", async context =>
+                {
+                    string projectName = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
+                    await context.Response.WriteAsync($"{projectName} is running at {string.Join(", ", app.Urls)}");
+                });
+            });
+
+            app.MapControllers().RequireAuthorization();
 
             app.Run();
         }

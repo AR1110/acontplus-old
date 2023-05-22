@@ -8,6 +8,6 @@ namespace Domain.ViewModels.Almacen
         public int totalRecords { get; set; }
         public string nombreMarca { get; set; }
 
-        
+
     }
 }

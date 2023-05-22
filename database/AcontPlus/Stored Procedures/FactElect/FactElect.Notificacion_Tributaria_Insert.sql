@@ -14,7 +14,7 @@ BEGIN
 	SET LANGUAGE SPANISH;
 	
 	DECLARE @idDocumentoElectronico BIGINT;
-	DECLARE @receptor NVARCHAR(150);
+	DECLARE @receptor NVARCHAR(MAX);
 	DECLARE @estado VARCHAR(3);
 
 

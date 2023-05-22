@@ -1,5 +1,4 @@
 ﻿using Domain.Models.Compras;
-using System.Collections.Generic;
 
 namespace Domain.ViewModels.Compras
 {

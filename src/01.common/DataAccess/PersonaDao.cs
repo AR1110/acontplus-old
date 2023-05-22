@@ -1,15 +1,12 @@
 ﻿using Domain.Models;
 using Helpers;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Threading.Tasks;
 
 namespace DataAccess
 {
-    public class PersonaDao 
+    public class PersonaDao
     {
         private readonly IConfiguration _config;
         protected GenericResponse _gr;
@@ -129,7 +126,7 @@ namespace DataAccess
             return _gr;
 
         }
-        
+
         public async Task<GenericResponse> SearchPersonaAsync(int idRol, HelpersResponse data)
         {
             var listar = new List<PersonaOperaciones>();

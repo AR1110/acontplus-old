@@ -12,14 +12,15 @@
 
 	<ItemGroup>
 		<None Remove="favicon.ico" />
+		<None Remove="Logos\descarga.jpg" />
+		<None Remove="Logos\logosal.jpg" />
 		<None Remove="Reports\AperturaCaja.rdl" />
+		<None Remove="Reports\Blank.rdl" />
 		<None Remove="Reports\FacturaInyeccion.rdl" />
 		<None Remove="Reports\FacturaMatricial.rdl" />
-		<None Remove="Reports\FacturaTermica.rdl" />
 		<None Remove="Reports\MovimientoCaja.rdl" />
 		<None Remove="Reports\NotaEntregaInyeccion.rdl" />
 		<None Remove="Reports\NotaEntregaMatricial.rdl" />
-		<None Remove="Reports\NotaEntregaTermica.rdl" />
 		<None Remove="Reports\ProformaInyeccion.rdl" />
 		<None Remove="Reports\Test.rdlc" />
 		<None Remove="Reports\TicketTpv.rdl" />
@@ -27,16 +28,22 @@
 
 	<ItemGroup>
 		<Content Include="favicon.ico" />
+		<Content Include="Logos\descarga.jpg">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Logos\logosal.jpg">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
 		<Content Include="Reports\AperturaCaja.rdl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Reports\Blank.rdl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 		<Content Include="Reports\FacturaInyeccion.rdl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 		<Content Include="Reports\FacturaMatricial.rdl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
-		<Content Include="Reports\FacturaTermica.rdl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 		<Content Include="Reports\MovimientoCaja.rdl">
@@ -46,9 +53,6 @@
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 		<Content Include="Reports\NotaEntregaMatricial.rdl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
-		<Content Include="Reports\NotaEntregaTermica.rdl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 		<Content Include="Reports\ProformaInyeccion.rdl">
@@ -68,7 +72,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\03.business_logic\BL.Print\BL.Print.csproj" />
-		<ProjectReference Include="..\..\03.business_logic\BL.Reports\BL.Reports.csproj" />
 	</ItemGroup>
 
 	<PropertyGroup>

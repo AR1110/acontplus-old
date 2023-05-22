@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["title"]="Pagos";
+    ViewData["title"] = "Pagos";
 }
 
 
@@ -11,93 +11,100 @@
         <div class="col-md-7 align-self-center text-right">
             <div class="d-flex justify-content-end align-items-center">
                 @* <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
-                    <li class="breadcrumb-item"><a href="javascript:void(0)">Tesorería</a></li>
-                    <li class="breadcrumb-item active">Pagos</li>
+                <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
+                <li class="breadcrumb-item"><a href="javascript:void(0)">Tesorería</a></li>
+                <li class="breadcrumb-item active">Pagos</li>
                 </ol> *@
-                @* <button type="button" class="btn btn-info m-l-15" ng-if="accion.crear" ng-click="newPayment()"><i class="fa fa-plus-circle"></i> Nuevo</button> *@
+                @* <button type="button" class="btn btn-info m-l-15" ng-if="accion.crear" ng-click="newPayment()"><i
+                class="fa fa-plus-circle"></i> Nuevo</button> *@
             </div>
         </div>
     </div>
 
     @await Html.PartialAsync("_ModalPagoFiltro.cshtml")
 
-    <div class="row">
-        <div class="card">
-            <div class="card-body">
-                <div class="row justify-content-between">
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                        <button type="button" class="btn btn-info" ng-click="openModalPagoFiltro()"><i class="fas fa-filter"></i> Filtro</button>
-                    </div>
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                        <form class="form-material">
-                            <div class="input-group">
-                                <input type="text" class="form-control" ng-model="buscar" placeholder="Buscar Pagos">
-                                <div class="input-group-append">
-                                    <button class="btn btn-outline-secondary">
-                                        <i class="fas fa-redo"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>                
-            </div>
 
-            <div class="card-body">
-                <md-table-container style="max-height: 400px;">
-                    <table md-table>
-                        <thead fix-head md-head md-order="options.order"  md-on-reorder="pagos">
-                            <tr md-row>
-                                <th md-column ng-if="accion.historialFinanciero || accion.eliminar || accion.reporte">Op.</th> 
-                                <th md-column>N°</th>
-                                <th md-column >N°. Doc. </th>
-                                <th md-column>F. Emision</th>                                
-                                <th md-column >Proveedor</th>
-                                <th md-column >Total</th>
-                                <th md-column>Estado</th>
-                                <th md-column>Usuario</th>
-                            </tr>
-                        </thead>
-                        <tbody md-body>
-                            <tr md-row ng-repeat="p in pagos | filter: buscar  | orderBy: options.order" ng-class="p.color">
-                                <td md-cell ng-if="accion.historialFinanciero || accion.eliminar || accion.reporte">
-                                    <div class="dropdown h-2">
-                                        <button class="btn btn-default " type="button" id="dropdownMenu" data-toggle="dropdown" data-boundary="viewport" aria-haspopup="true" aria-expanded="false">
-                                        <i class="fa fa-bars"></i>
-                                        </button>
-                                        <div class="dropdown-menu"  aria-labelledby="dropdownMenu">
-                                        <button class="dropdown-item" type="button" ng-if="accion.historialFinanciero" ng-click="openModalHistorialPago(p)"><i class="ti-menu"></i> Detalle</button>
-                                        <button class="dropdown-item" type="button" ng-if="accion.eliminar"  ng-click="askToCancel(p)">&times; Anular</button>                            
-                                        <button class="dropdown-item" type="button" ng-if="accion.reporte" ng-click="getReport(p)"><i class="ti-file"></i> PDF</button>                                            
-                                        </div>
-                                    </div>                                                     
-                                </td>
-                                <td md-cell>{{$index+1}}</td>
-                                <td md-cell>{{p.nroDoc}}</td>
-                                <td md-cell>{{p.fechaRegistro}}</td>                                
-                                <td md-cell>{{p.persona|uppercase}}</td>
-                                <td md-cell>${{p.total}}</td>
-                                <td md-cell>{{p.estado}}</td>
-                                <td md-cell>{{p.usuario}}</td>
-                            </tr>
-                            <tr ng-if="pagos.length===0" class="text-center">
-                               <td colspan="9">No hay registro en esta tabla.</td> 
-                            </tr>                            
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td></td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </md-table-container>   
+    <div class="card">
+        <div class="card-body">
+            <div class="row justify-content-between">
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                    <button type="button" class="btn btn-info" ng-click="openModalPagoFiltro()"><i
+                            class="fas fa-filter"></i> Filtro</button>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                    <form class="form-material">
+                        <div class="input-group">
+                            <input type="text" class="form-control" ng-model="buscar" placeholder="Buscar Pagos">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary">
+                                    <i class="fas fa-redo"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-        
-    </div>      
+
+        <div class="card-body">
+            <md-table-container style="max-height: 400px;">
+                <table md-table>
+                    <thead fix-head md-head md-order="options.order" md-on-reorder="pagos">
+                        <tr md-row>
+                            <th md-column ng-if="accion.historialFinanciero || accion.eliminar || accion.reporte">Op.
+                            </th>
+                            <th md-column>N°</th>
+                            <th md-column>N°. Doc. </th>
+                            <th md-column>F. Emision</th>
+                            <th md-column>Proveedor</th>
+                            <th md-column>Total</th>
+                            <th md-column>Estado</th>
+                            <th md-column>Usuario</th>
+                        </tr>
+                    </thead>
+                    <tbody md-body>
+                        <tr md-row ng-repeat="p in pagos | filter: buscar  | orderBy: options.order" ng-class="p.color">
+                            <td md-cell ng-if="accion.historialFinanciero || accion.eliminar || accion.reporte">
+                                <div class="dropdown h-2">
+                                    <button class="btn btn-default " type="button" id="dropdownMenu"
+                                        data-toggle="dropdown" data-boundary="viewport" aria-haspopup="true"
+                                        aria-expanded="false">
+                                        <i class="fa fa-bars"></i>
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenu">
+                                        <button class="dropdown-item" type="button" ng-if="accion.historialFinanciero"
+                                            ng-click="openModalHistorialPago(p)"><i class="ti-menu"></i>
+                                            Detalle</button>
+                                        <button class="dropdown-item" type="button" ng-if="accion.eliminar"
+                                            ng-click="askToCancel(p)">&times; Anular</button>
+                                        <button class="dropdown-item" type="button" ng-if="accion.reporte"
+                                            ng-click="getReport(p)"><i class="ti-file"></i> PDF</button>
+                                    </div>
+                                </div>
+                            </td>
+                            <td md-cell>{{$index+1}}</td>
+                            <td md-cell>{{p.nroDoc}}</td>
+                            <td md-cell>{{p.fechaRegistro}}</td>
+                            <td md-cell>{{p.persona|uppercase}}</td>
+                            <td md-cell>${{p.total}}</td>
+                            <td md-cell>{{p.estado}}</td>
+                            <td md-cell>{{p.usuario}}</td>
+                        </tr>
+                        <tr ng-if="pagos.length===0" class="text-center">
+                            <td colspan="9">No hay registro en esta tabla.</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </md-table-container>
+        </div>
+    </div>
 </div>
-@section Scripts{ 
+@section Scripts{
     <script src="~/js/controllers/financiera/pagoCtrl.min.js" asp-append-version="true"></script>
 }
 

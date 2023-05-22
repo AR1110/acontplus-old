@@ -31,24 +31,27 @@ BEGIN
 	SET LANGUAGE SPANISH;
 	DECLARE @typeList INT = 0
 	DECLARE @idEntidad INT
-	
+	DECLARE @jsonConfig AS VARCHAR(MAX)
 
 	SELECT @typeList = typeList FROM OPENJSON(@json) WITH(typeList INT '$.typeList')
 
 	SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
-	IF @typeList = 1 
+	SELECT TOP 1 @jsonConfig = jsonConfig FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CD'
+
+
+	IF @typeList = 1
 		BEGIN
 
 			DECLARE @sql AS NVARCHAR(MAX) = 'SELECT TOP (100)
 												 di.idDocumentoIngreso
 												,serieComprobante = es.estab+''-''+pt.ptoEmi+''-''+Helper.F_Auto_Sequential(di.secuencial)
-												,fechaEmision     = FORMAT(di.fechaEmision,''yyyy-MM-dd'')
+												,fechaEmision     = FORMAT(di.fechaEmision, ''dd/MM/yyyy HH:mm'')
 												,nombreFiscal     = pr.nombreFiscal
 												,importeTotal     = di.importeTotal
 												,estado           = IIF(di.estado = 0, ''Anulado'',''Activo'')
 												,usuario          = us.nombreUsuario
-												,colorRow         = IIF(di.estado = 0, ''rojo'','''')
+												,colorRow         = IIF(di.estado = 0, ''table-danger'','''')
 											 FROM Compra.Documento_Ingreso  di WITH (NOLOCK)
 											 INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = di.idEstablecimiento
 											 INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision    = di.idPuntoEmision
@@ -159,13 +162,23 @@ BEGIN
 
 
 			--==============================Configuracion Decimal============================================================== 
-			SELECT nroPrecio, nroCantidad, nroIva, nroDescuentoDetalle, nroTotalDetalle, nroTotalSubTotal, nroDescuento, nroIce
-			FROM Config.CantidadDecimal WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codTransaccion = 'C'
+			SELECT nroPrecio,nroCantidad,nroIva,nroDescuentoDetalle ,nroTotalDetalle,nroTotalSubTotal,nroDescuento,nroIce
+			FROM OPENJSON(@jsonConfig)
+			WITH (codTransaccion VARCHAR(5) '$.codTransaccion'
+				,nroPrecio              INT '$.nroPrecio'
+				,nroCantidad            INT '$.nroCantidad'
+				,nroIva                 INT '$.nroIva'
+				,nroDescuentoDetalle    INT '$.nroDescuentoDetalle'
+				,nroTotalDetalle        INT '$.nroTotalDetalle'
+				,nroTotalSubTotal       INT '$.nroTotalSubTotal'
+				,nroDescuento           INT '$.nroDescuento'
+				,nroIce                 INT '$.nroIce') as dt
+			 WHERE dt.codTransaccion = 'C'
 
 
 			--=============================Impuestos===========================================================================
 			SELECT codImpuesto = codImpuesto, codigoPorcentaje = codigo, descripcion = 'Iva '+descripcion,tarifa = porcentaje 
-			FROM sri.TarifaImpuesto WHERE estado = 1 AND codImpuesto = 2
+			FROM sri.TarifaImpuesto WITH (NOLOCK) WHERE estado = 1 AND codImpuesto = 2
 
 			--============================Impuestos por tipo de Actividad======================================================
 			SELECT ea.codEstab,codigoPorcentaje = ae.codTarifaImpuesto,tarifa = ae.porcentaje
@@ -175,7 +188,7 @@ BEGIN
 			WHERE idUsuarioRol = @idUsuarioRol
 
 			--===============================Inventario========================================================================
-			SELECT TOP 1 inventory =  llevaInventario FROM Config.GestionSistema WITH (NOLOCK) WHERE idEntidad = @idEntidad
+			SELECT TOP 1 inventory = JSON_VALUE(dbo.f_sanitize_json(jsonConfig),'$.llevaInventario') FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CI'
 	END 
 
 	IF @typeList = 3
@@ -207,7 +220,6 @@ BEGIN
 			DECLARE @subTotalNetoNoObjetoIva AS NUMERIC(18,5)
 			DECLARE @iva AS NUMERIC(18,5)
 			DECLARE @decuento AS NUMERIC(18,5)
-
 			DECLARE @taxes AS TABLE (
 				 descuento NUMERIC(18,5) NOT NULL
 				,codigoPorcentaje VARCHAR(5) NOT NULL
@@ -275,7 +287,8 @@ BEGIN
 			WHERE di.idDocumentoIngreso = @idDocumentoIngreso
 
 			SELECT	
-				 dt.idDocumentoIngresoDetail
+				 idDetalle = dt.idDocumentoIngresoDetail 
+				,dt.idDocumentoIngresoDetail
 				,dt.idArticulo
 				,dt.idMedida
 				,dt.idBodega
@@ -294,8 +307,10 @@ BEGIN
 				,total = dt.precioTotalSinImpuesto
 				,dt.codigoPorcentaje
 				,tarifa = ti.porcentaje
+				,ar.datosAdicionales
 			FROM Compra.Documento_Ingreso_Detail dt WITH (NOLOCK)
 			INNER JOIN Sri.TarifaImpuesto ti WITH (NOLOCK) ON ti.codigo = dt.codigoPorcentaje
+			INNER JOIN Articulo ar WITH(NOLOCK) ON ar.idArticulo = dt.idArticulo
 			WHERE dt.idDocumentoIngreso = @idDocumentoIngreso
 
 			SELECT tx.* 
@@ -311,8 +326,18 @@ BEGIN
 
 
 			--==============================Configuracion Decimal============================================================== 
-			SELECT nroPrecio, nroCantidad, nroIva, nroDescuentoDetalle, nroTotalDetalle, nroTotalSubTotal, nroDescuento, nroIce
-			FROM Config.CantidadDecimal WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codTransaccion = 'C'
+			SELECT nroPrecio,nroCantidad,nroIva,nroDescuentoDetalle ,nroTotalDetalle,nroTotalSubTotal,nroDescuento,nroIce
+			FROM OPENJSON(@jsonConfig)
+			WITH (codTransaccion VARCHAR(5) '$.codTransaccion'
+				,nroPrecio              INT '$.nroPrecio'
+				,nroCantidad            INT '$.nroCantidad'
+				,nroIva                 INT '$.nroIva'
+				,nroDescuentoDetalle    INT '$.nroDescuentoDetalle'
+				,nroTotalDetalle        INT '$.nroTotalDetalle'
+				,nroTotalSubTotal       INT '$.nroTotalSubTotal'
+				,nroDescuento           INT '$.nroDescuento'
+				,nroIce                 INT '$.nroIce') as dt
+			 WHERE dt.codTransaccion = 'C'
 
 
 			--=============================Impuestos===========================================================================
@@ -320,8 +345,11 @@ BEGIN
 			FROM sri.TarifaImpuesto WHERE estado = 1 AND codImpuesto = 2
 
 			--===============================Inventario========================================================================
-			SELECT TOP 1 inventory =  llevaInventario FROM Config.GestionSistema WITH (NOLOCK) WHERE idEntidad = @idEntidad
+			SELECT TOP 1 inventory = JSON_VALUE(dbo.f_sanitize_json(jsonConfig),'$.llevaInventario') FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CI'
 
+			--=============================Datos Adicionales===================================================================
+			SELECT * FROM Compra.InfoAdicional 
+				    WHERE uniqueId = (SELECT uniqueId FROM Compra.Documento_Ingreso WHERE idDocumentoIngreso = @idDocumentoIngreso)
 		END 
 END
 GO

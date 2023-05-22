@@ -15,7 +15,7 @@
         typeahead-no-results="proveedorFiltro.noResults"
         typeahead-template-url="proveedorAutocompleteFiltro.html"
         typeahead-editable="false"
-        typeahead-on-select="selectProveedorFiltro($item)" /> 
+        typeahead-on-select="selectProveedorFiltro($item)" onclick="this.select();" /> 
 
         <script type="text/ng-template" id="proveedorAutocompleteFiltro.html">
             <div class="autocomplete-suggestion-uib-typeahead">               

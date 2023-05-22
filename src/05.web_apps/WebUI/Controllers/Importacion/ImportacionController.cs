@@ -1,8 +1,7 @@
 ﻿using DataAccess;
 using Domain.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Importacion
 {
@@ -10,21 +9,21 @@ namespace WebUI.Controllers.Importacion
     {
         // GET: Articulo
         private readonly IConfiguration _configuration;
-        private readonly IHttpContextAccessor _httpContextAccessor; ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
+        ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
-        private readonly int _idRol;
+
         GenericResponse _gr = new();
 
-        public ImportacionController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public ImportacionController(IConfiguration configuration)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
-            _httpContextAccessor = httpContextAccessor;
-            _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+
+
 
         }
 
-        [Authorize]
+
         public IActionResult Index()
         {
             return View();
@@ -42,18 +41,18 @@ namespace WebUI.Controllers.Importacion
         public async Task<IActionResult> GetValidation(string codImportacion, [FromBody] ImportacionParams data)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("codImportacion", codImportacion);
             parameters.Add("json", data.jsonParams);
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Importaciones.Valid_Datos_Get", parameters)));
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> Post(string codImportacion, [FromBody] ImportacionParams data)
         {
             string storedProcedure = DataHelper.StoredProcedureDynamic(codImportacion);
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", data.jsonParams);
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync(storedProcedure + "_Insert", parameters)));
         }

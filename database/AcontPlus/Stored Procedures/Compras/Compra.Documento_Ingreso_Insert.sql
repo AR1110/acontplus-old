@@ -29,6 +29,7 @@ CREATE PROCEDURE Compra.Documento_Ingreso_Insert
    ,@comprobante AS VARCHAR(MAX)
    ,@detalles AS VARCHAR(MAX)
    ,@impuestos AS VARCHAR(MAX)
+   ,@artInfoAdicionales VARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -50,6 +51,13 @@ BEGIN
 	--==============Parametros para el Area de Inventario==============
 	DECLARE @inventory AS VARCHAR(5)
 	DECLARE @serieComprobante AS VARCHAR(20)
+	DECLARE @fechaEmision AS DATETIME
+	
+	--======================Fecha Emision===============================
+	DECLARE @fechaEmisionActual AS DATETIME = CAST(dbo.ufnGetDateEcuador() AS DATE) --Fecha Actual	
+	DECLARE @fechaEmisionModificada AS DATETIME --fecha emision  front-end
+	DEClARE @fechaEmisionTemp AS DATETIME 
+	DECLARE @hora AS DATETIME = CAST(dbo.ufnGetDateEcuador() AS TIME)
 
 	--==============Parametros para el area de contabilidad============
 	DECLARE @idEstadoPago AS INT
@@ -93,18 +101,61 @@ BEGIN
         ,valor NUMERIC(18,5) NOT NULL
 	)
 
+	 
+	DECLARE @artInfoAdicional AS TABLE (
+		idArticulo INT  NOT NULL		
+		,idEtiqueta INT  NOT NULL
+		,jsonAdicional NVARCHAR(MAX)  NULL
+		
+	)
+	 
+	 --SELECT '0'code, 'message' = CAST(@artInfoAdicionales AS VARCHAR(MAX))
+		--return
 	BEGIN TRY
+		SELECT @fechaEmisionModificada = fechaEmision FROM OPENJSON(@comprobante) WITH(fechaEmision DATETIME '$.fechaEmision')	
+		
+		IF CAST(@fechaEmisionModificada AS DATE) > @fechaEmisionActual
+			BEGIN 
+				SELECT '0'code, 'La fecha de emisión del documento no puede ser posterior a la fecha actual.' as 'message'
+				RETURN 
+			END
+					
+		IF CAST(@fechaEmisionModificada AS DATE) < @fechaEmisionActual
+			BEGIN 
+				SET @fechaEmisionTemp = DATEADD(dd, DATEDIFF(dd, 0, @fechaEmisionModificada), 0)
+			END
+		ELSE
+			BEGIN 
+				SET @fechaEmisionTemp = dbo.ufnGetDateEcuador();
+			END 
+
+		--IF @fechaEmisionModificada > dbo.ufnGetDateEcuador()
+		--	BEGIN 
+		--		SELECT '0'code, 'La fecha de emisión del documento no puede ser posterior a la fecha actual.' as 'message'
+		--		RETURN 
+		--	END
+
+		--IF @fechaEmisionModificada < dbo.ufnGetDateEcuador()
+		--	BEGIN 
+		--		SET @fechaEmisionTemp = DATEADD(dd, DATEDIFF(dd, 0, @fechaEmisionModificada), 0)
+		--	END
+		--ELSE
+		--	BEGIN 
+		--		SET @fechaEmisionTemp =CAST(CAST(@fechaEmisionModificada AS DATE) AS datetime)  + @hora
+		--	END
+		
+		
 
 		INSERT INTO @document 
 		      (idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,fechaEmision,totalSinImpuestos,importeTotal,inventory)
-		SELECT idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,fechaEmision,totalSinImpuestos,importeTotal,inventory
+		SELECT idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,@fechaEmisionTemp,totalSinImpuestos,importeTotal,inventory
 		FROM OPENJSON(@comprobante)
 		WITH (idEstablecimiento INT '$.idEstablecimiento' 
 			 ,idPuntoEmision INT '$.idPuntoEmision'
 			 ,idProveedor INT '$.idProveedor' 
 			 ,estab VARCHAR(5) '$.estab' 
 			 ,ptoEmi VARCHAR(5) '$.ptoEmi' 
-			 ,fechaEmision DATETIME '$.fechaEmision'
+		     --,fechaEmision VARCHAR(150) '$.fechaEmision'
 			 ,totalSinImpuestos NUMERIC (18,5) '$.totalSinImpuestos'
 			 ,importeTotal NUMERIC (18,5) '$.importeTotal'
 			 ,inventory VARCHAR(5) '$.inventory'
@@ -143,10 +194,19 @@ BEGIN
 			 ) as dt
 
 		
+		INSERT INTO @artInfoAdicional  (idArticulo, idEtiqueta, jsonAdicional)
+		SELECT idArticulo, idEtiqueta, jsonAdicional
+		FROM OPENJSON(@artInfoAdicionales) WITH (
+		  idArticulo int,
+		  idEtiqueta int,
+		  jsonAdicional nvarchar(max) '$.jsonAdicional' AS JSON		
+		) 
+		
+		
 		----======================================Recuperar datos de las Tablas===========================================================
 		SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
-		SELECT @idPuntoEmision = idPuntoEmision,@inventory = inventory FROM @document
+		SELECT TOP 1 @idPuntoEmision = idPuntoEmision,@inventory = inventory,@fechaEmision = fechaEmision FROM @document
 		
 		SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PE'
 
@@ -205,18 +265,50 @@ BEGIN
                    (idDocumentoIngreso,idArticulo,codigo,codigoPorcentaje,tarifa,baseImponible,valor)
 			SELECT @idDocumentoIngreso,idArticulo,codigo,codigoPorcentaje,tarifa,baseImponible,valor
 			FROM @taxes
+
+			---Datos Adicionales de articulo (etiquetas)
+			IF EXISTS (SELECT 1 FROM @artInfoAdicional WHERE JSON_QUERY(jsonAdicional, '$') IS NOT NULL)
+				BEGIN
+					INSERT INTO Compra.InfoAdicional(uniqueId, idArticulo, idEtiqueta, jsonAdicional, fechaRegistro)
+					SELECT @uniqueId, idArticulo, idEtiqueta, jsonAdicional, dbo.ufnGetDateEcuador() FROM @artInfoAdicional
+				END
+			
 			
 			--==============================================================Inventario============================================================================================
 			IF @inventory = 'SI'
-				BEGIN 
-					
-					INSERT INTO Inventario.ControlStock
-						  (idTipoDocumento,idDocumento,idArticulo,idBodega)
-					SELECT idTipoDocumento = 1,d.idDocumentoIngreso,d.idArticulo,d.idBodega 
-					FROM Compra.Documento_Ingreso_Detail d WITH (NOLOCK)
-					INNER JOIN dbo.Articulo a WITH (NOLOCK) ON a.idArticulo = d.idArticulo
-					WHERE d.idDocumentoIngreso = @idDocumentoIngreso AND a.llevaInventario = 1
-				END 
+				BEGIN
+					IF EXISTS (SELECT 1 FROM @detail td INNER JOIN Articulo a WITH (NOLOCK) ON td.idArticulo = a.idArticulo WHERE a.llevaInventario = 1)
+						BEGIN 
+							DECLARE @idArticulo INT
+							DECLARE @idBodega INT
+							DECLARE @idMedida INT
+							DECLARE @idTarifa INT = NULL
+							DECLARE @cantidad NUMERIC(18,2)
+							DECLARE @precioUnitario NUMERIC(18,5)
+							DECLARE @precioCosto NUMERIC(18,5) 
+							DECLARE @total AS NUMERIC(18,5)
+
+							DECLARE cursor_inventory CURSOR LOCAL FOR
+							SELECT td.idArticulo, idBodega,td.idMedida,NULL,cantidad,td.precioUnitario - td.descuento,td.precioUnitario - td.descuento,td.precioTotalSinImpuesto
+							FROM @detail td 
+							INNER JOIN Articulo a WITH (NOLOCK) ON td.idArticulo = a.idArticulo 
+							WHERE a.llevaInventario = 1
+
+							OPEN cursor_inventory
+
+							FETCH NEXT FROM cursor_inventory INTO @idArticulo,@idBodega,@idMedida,@idTarifa,@cantidad,@precioUnitario,@precioCosto,@total
+							
+							WHILE @@FETCH_STATUS = 0
+							BEGIN
+								--tipo transaccion Entradas
+								--tipo documento Liquidacion Compra
+								EXEC Inventario.Transaccion_Insert 'E', 'IV', @fechaEmision, @idDocumentoIngreso,  @idArticulo, @idBodega ,@idMedida,@idTarifa,@cantidad,@precioUnitario,@precioCosto,@total, @idUsuario
+								FETCH NEXT FROM cursor_inventory INTO @idArticulo,@idBodega,@idMedida, @idTarifa,@cantidad,@precioUnitario,@precioCosto,@total
+							END
+							CLOSE cursor_inventory
+							DEALLOCATE cursor_inventory     
+						END
+				END
 
 			--===========================================================Contabilidad=================================================================================================
 			
@@ -233,11 +325,33 @@ BEGIN
 	END TRY 
 
 	BEGIN CATCH 
-		SELECT '0' code, 'Error en base de datos: ' + ERROR_MESSAGE() as 'message'
-		IF (@@TRANCOUNT > 0)
-			ROLLBACK TRAN
-		INSERT INTO ErroresSistema([token],[method],[errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [errorDate], [idUsuario])
-		VALUES (NEWID(), 'DocumentoIngreso/Post', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
+		IF @@TRANCOUNT > 0 
+		BEGIN
+			ROLLBACK TRAN; 
+		END
+		SELECT '0'code,'Info: Error en el procedimiento : ' + ERROR_MESSAGE() as 'message'
+		INSERT INTO ErroresSistema
+								   (token
+								   ,method
+								   ,errorNumber
+								   ,errorSeverity 
+								   ,errorState
+								   ,errorProcedure
+								   ,errorLine
+								   ,errorMessage
+								   ,errorDate
+								   ,idUsuario)
+							VALUES
+									(NEWID()
+									,'/ComprasHabituales/Insert'
+									,ERROR_NUMBER()
+									,ERROR_SEVERITY()
+									,ERROR_STATE()
+									,ERROR_PROCEDURE()
+									,ERROR_LINE()
+									,ERROR_MESSAGE()
+									,GETDATE()
+									,@idUsuario)
 	END CATCH
 END
 GO

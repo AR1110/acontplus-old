@@ -46,6 +46,7 @@ BEGIN
     DECLARE @idImpresora INT
 	DECLARE @ruc VARCHAR(15)
 	DECLARE @rdlcProps VARCHAR(MAX)
+	DECLARE @rdlcParams VARCHAR(MAX)
 	DECLARE @dataSources VARCHAR(MAX)
     DECLARE @estab VARCHAR(5)
 	DECLARE @invoice VARCHAR(15) = 'Factura'
@@ -151,34 +152,81 @@ BEGIN
 		--		SELECT '0'code,'No tienes configurado una impresora' as 'message'
 		--		RETURN 
 		--	END
-			SELECT TOP 1 @urlPrinter = ipMaquina
+		SELECT TOP 1 @urlPrinter = ipMaquina
 		FROM ApiPrinter.Config_Document cd WITH (NOLOCK)
 		INNER JOIN ApiPrinter.Impresora      i WITH (NOLOCK) ON i.idImpresora      = cd.idImpresora
 		INNER JOIN ApiPrinter.TipoImpresora ti WITH (NOLOCK) ON ti.idTipoImpresora = i.idTipoImpresora
 		WHERE  cd.codDoc = @codDoc
 		AND i.codEstab = @codEstab 
-		  AND cd.estado = 1  
-	SET @rdlcProps = (SELECT
-			 i.nombreImpresora printerName
-			,i.nombreEquipo computerName
-			,ti.descripcion
-			,ti.isThermal
-			,ti.formato
-			,ti.deviceInfo
-			,cd.copyPrint
-			,i.ipMaquina
-			,rdlcName = CASE @codDoc WHEN 'FV' THEN @invoice+ti.descripcion+'.rdl' 
+		AND cd.estado = 1  
+		
+	DECLARE @totalThermalPrinters INT
+	,@totalInyectionPrinters INT
+	,@hasParams BIT = 0
+
+	SELECT @totalThermalPrinters = (SELECT COUNT(*) FROM v_Impresora ii  WHERE  ii.idImpresora = i.idImpresora AND ii.codImpresora = 'TE')  
+	,@totalInyectionPrinters = (SELECT COUNT(*) FROM v_Impresora ii  WHERE  ii.idImpresora = i.idImpresora AND ii.codImpresora = 'AT')  
+	FROM ApiPrinter.Config_Document cd WITH (NOLOCK)
+	INNER JOIN v_Impresora  i WITH (NOLOCK) ON i.idImpresora = cd.idImpresora
+	 WHERE  cd.codDoc = @codDoc
+	AND i.codEstab = @codEstab 
+	AND cd.estado = 1 
+
+	IF (@totalThermalPrinters = 0 AND @totalInyectionPrinters > 0)
+		BEGIN 
+			IF EXISTS (SELECT 1 FROM Config.Estab_Logo WHERE codEstab = @codEstab)		
+				BEGIN
+					SET @hasParams = 1
+					SET @rdlcParams = (SELECT logo = nombreImagen, mimeType FROM Config.Estab_Logo WHERE codEstab = @codEstab FOR JSON PATH)
+				END
+			ELSE
+				BEGIN
+					SET @rdlcParams = 'undefined'
+				END
+		END
+
+	IF (@totalThermalPrinters > 0 AND @totalInyectionPrinters > 0)
+		BEGIN 
+			IF EXISTS (SELECT 1 FROM Config.Estab_Logo WHERE codEstab = @codEstab)		
+				BEGIN
+					SET @hasParams = 1
+					SET @rdlcParams = (SELECT logo = nombreImagen, mimeType FROM Config.Estab_Logo WHERE codEstab = @codEstab FOR JSON PATH)
+				END
+			ELSE
+				BEGIN
+					SET @rdlcParams = 'undefined'
+				END
+		END
+	--IF (@totalThermalPrinters > 0 AND @totalAnothers = 0)
+	--	BEGIN
+	--		SET @rdlcParams = 'undefined' 
+	--	END
+
+		SET @rdlcProps = (
+							SELECT
+								i.nombreImpresora printerName
+								,i.nombreEquipo computerName
+								,ti.descripcion
+								,ti.isThermal
+								,ti.formato
+								,ti.deviceInfo
+								,cd.copyPrint
+								,i.ipMaquina
+								,rdlcName = CASE @codDoc WHEN 'FV' THEN @invoice+ti.descripcion+'.rdl' 
 		                                                 WHEN 'NE' THEN @note+ti.descripcion+'.rdl'
 														 WHEN 'PR' THEN 'Proforma' + ti.descripcion +'.rdl'
 														 END
-		FROM ApiPrinter.Config_Document cd WITH (NOLOCK)
-		INNER JOIN ApiPrinter.Impresora      i WITH (NOLOCK) ON i.idImpresora      = cd.idImpresora
-		INNER JOIN ApiPrinter.TipoImpresora ti WITH (NOLOCK) ON ti.idTipoImpresora = i.idTipoImpresora
-		WHERE  cd.codDoc = @codDoc
-		AND i.codEstab = @codEstab 
+								--,hasParams = CAST(CASE WHEN ti.codigo = 'AT' THEN 1 ELSE 0 END AS BIT)
+								,hasParams = @hasParams
+ 								FROM ApiPrinter.Config_Document cd WITH (NOLOCK)
+								INNER JOIN ApiPrinter.Impresora      i WITH (NOLOCK) ON i.idImpresora      = cd.idImpresora
+								INNER JOIN ApiPrinter.TipoImpresora ti WITH (NOLOCK) ON ti.idTipoImpresora = i.idTipoImpresora
+								WHERE  cd.codDoc = @codDoc
+								AND i.codEstab = @codEstab 
+								AND cd.estado = 1 FOR JSON PATH
+							 )
 
-		AND cd.estado = 1 FOR JSON PATH)
-
+	
 		SELECT  @dataSources = dataSources FROM ApiPrinter.Document_Data(@idDocument,@idTipoDocumento,@codDoc)
 
 		--SET @rdlcProps = (SELECT rdlcName = CASE @codDoc WHEN 'FV' THEN @invoice+@printer+'.rdl' 
@@ -192,6 +240,9 @@ BEGIN
 		--						,deviceInfo = @deviceInfo
 		--				  FOR JSON PATH
 		--				  ) 
-		SELECT '1' code, payload = (SELECT 'http://' + @urlPrinter urlPrinter,  @rdlcProps rdlcProps, @dataSources dataSources FOR JSON PATH)
+
+
+		SELECT '1' code, payload = (SELECT 'http://' + @urlPrinter urlPrinter,  @rdlcProps rdlcProps, @dataSources dataSources, @rdlcParams rdlcParams 
+		FOR JSON PATH)
 END
 GO

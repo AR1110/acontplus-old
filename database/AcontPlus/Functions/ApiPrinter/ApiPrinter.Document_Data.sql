@@ -53,7 +53,7 @@ BEGIN
 	INNER JOIN dbo.ComprobanteIngreso ci WITH (NOLOCK) ON ci.idComprobanteIngreso = cd.idComprobanteIngreso
 	INNER JOIN dbo.Cobro               c WITH (NOLOCK) ON c.idComprobanteIngreso  = ci.idComprobanteIngreso
 	INNER JOIN dbo.EntidadFinanciera  ef WITH (NOLOCK) ON ef.idEntidadFinanciera  = c.idEntidadFinanciera
-	WHERE cd.idTipoDocumento = @idTipoDocumento AND cd.idComprobante = @idDocument 
+	WHERE cd.idTipoDocumento = @idTipoDocumento AND cd.idComprobante = @idDocument AND ci.estado = 1
 
 	IF @codDoc = 'FV'
 		BEGIN
@@ -70,20 +70,20 @@ BEGIN
 						,fechaVencimiento = CONVERT(NVARCHAR,FORMAT(f.fechaVencimiento, 'dd/MM/yyyy'))   
 						,tipoDoc = 'FACTURA DE VENTA'
 						,razonSocial = e.razonSocial
-						,nombreComercial = s.nombreComercial
+						,nombreComercial = REPLACE(s.nombreComercial   , '&', '%26')   
 						,ruc = e.ruc
-						,telefonoEntidad = e.telefono 
-						,emailEntidad = e.email 
-						,dirMatriz = e.direccion 
+						,telefonoEntidad = ISNULL(s.telefono , 'S/N')
+						,emailEntidad = s.correo
+						,dirMatriz = REPLACE(ISNULL(s.dirEstablecimiento, 'S/N'), '&', '%26') 
 						,s.dirEstablecimiento
 						,s.contribuyenteEspecial 
 						,s.obligadoContabilidad
 						,labelObligadoContabilidad = 'Obligado Contabilidad: ' + s.obligadoContabilidad
 						,labelAgenteRetencion = ISNULL('AGENTE DE RETENCION RESOLUCION NRO: '+s.agenteRetencion,'') 
 						,s.agenteRetencion 
-						,razonSocialComprador = cl.nombreFiscal  
+						,razonSocialComprador = REPLACE(cl.nombreFiscal  , '&', '%26')  
 						,nroIdentificacion = cl.numeroIdentificacion
-						,direccionComprador = cl.direccion 
+						,direccionComprador = REPLACE(cl.direccion  , '&', '%26')   
 						,subTotalNetoIva = CAST(f.subTotalNetoIva as numeric(15,2))
 						,subTotalIva12 = CAST(f.subTotalIva as numeric(15,2))
 						,subTotalNoObjetoIva = CAST(f.subTotalNoObjetoIva as numeric(15,2))
@@ -106,7 +106,7 @@ BEGIN
 						,usuario = u.nombreUsuario
 						,pago = ISNULL(@pago,0)
 						,cambio = ISNULL(@cambio,0)
-						,formaPago = IIF(@formaPago Is NULL,'Cobro:','Cobro:'+@formaPago)
+						,formaPago = IIF(@formaPago Is NULL,'Cobro:','Cobro:'+ SUBSTRING(@formaPago,0, 9))
 					FROM dbo.Factura f WITH (NOLOCK)
 					INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK)  ON pe.idPuntoEmision = f.idPuntoEmision 
 					INNER JOIN Sri.Establecimiento s  WITH (NOLOCK)  ON s.codEstab        = pe.codEstab
@@ -144,20 +144,20 @@ BEGIN
 							,labelNroDoc = 'NOTA DE ENTREGA Nro. '  
 							,tipoDoc = 'NOTA DE ENTREGA'
 							,razonSocial = e.razonSocial
-							,nombreComercial = s.nombreComercial
+							,nombreComercial = REPLACE(s.nombreComercial   , '&', '%26')   
 							,ruc = e.ruc
 							,direccion = e.direccion 
-							,email = e.email 
-							,telefonoEntidad = ISNULL(e.telefono, 'SN') 
+							,email = s.correo 
+							,telefonoEntidad = ISNULL(s.telefono, 'SN') 
 							,fechaEmision = CONVERT(NVARCHAR, FORMAT(ne.fechaEmision, 'dd/MM/yyyy hh:mm')) 
 							,fechaVencimiento = CONVERT(NVARCHAR, FORMAT(ne.fechaVencimiento, 'dd/MM/yyyy hh:mm')) 
 							,s.dirEstablecimiento  
 							,s.contribuyenteEspecial
 						    ,s.obligadoContabilidad
 
-							,cliente = cl.nombreFiscal 
+							,cliente = REPLACE(cl.nombreFiscal   , '&', '%26')  
 							,nroIdentificacion = cl.numeroIdentificacion
-							,direccionCliente = cl.direccion
+							,direccionCliente = REPLACE(cl.direccion   , '&', '%26')  
 							,correoCliente = REPLACE(ISNULL(cl.correo , 'S/N'),';',',')
 							,telefonoCliente = REPLACE(ISNULL(cl.telefono, 'S/N'),';',',')
 							,ciudad = c.descripcion 
@@ -180,7 +180,7 @@ BEGIN
 							,usuario = u.nombreUsuario
 							,pago = ISNULL(@pago,0)
 							,cambio = ISNULL(@cambio,0)
-							,formaPago = IIF(@formaPago Is NULL,'Cobro:','Cobro:'+@formaPago)
+							,formaPago = IIF(@formaPago Is NULL,'Cobro:','Cobro:'+  SUBSTRING(@formaPago,0, 9))
 						FROM dbo.NotaEntrega ne WITH (NOLOCK)
 						INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision = ne.idPuntoEmision 
 						INNER JOIN Sri.Establecimiento  s WITH (NOLOCK) ON s.codEstab        = pe.codEstab
@@ -193,7 +193,7 @@ BEGIN
 			SET @detail = (SELECT 
 							 codigo = a.codigo
 							,cantidad = CAST(ned.cantidad AS numeric(15,2))
-							,descripcion = ned.descripcion 
+							,descripcion = REPLACE(ned.descripcion, '#', '%23')
 							,precioUnitario = CAST(ned.precioVenta AS numeric(15,2))
 							,valorDescuento = CAST(ned.valorDescuento AS numeric(15,2))
 							,precioTotal = CAST(ned.total AS numeric(15,2)) 
@@ -215,20 +215,22 @@ BEGIN
 								,tipoDoc = UPPER(td.descripcion)+':'
 								,fechaEmision = dbo.AFTConvertDate(pr.fechaEmision)+dbo.AFTConvertHora(pr.fechaEmision)
 								,razonSocial = LTRIM(RTRIM(e.razonSocial)) 
-								,nombreComercial = s.nombreComercial
+								,nombreComercial = REPLACE(s.nombreComercial   , '&', '%26')   
 								,ruc = e.ruc
 								,direccionEntidad = e.direccion
-								,telefonoEntidad = e.telefono  
-								,emailEntidad = e.email 	
-								,razonSocialCliente = cl.nombreFiscal
+								,telefonoEntidad = ISNULL(s.telefono, 'S/N')  
+								,emailEntidad = s.correo 	
+								,razonSocialCliente = REPLACE(cl.nombreFiscal   , '&', '%26')   
 								,nroIdentificacion = cl.numeroIdentificacion 
-								,direccionCliente = ISNULL(cl.direccion, '')
+								,direccionCliente = REPLACE(ISNULL(cl.direccion, ''), '&', '%26')   
 								,correoCliente = ISNULL(cl.correo, '')
 
+								,s.dirEstablecimiento
 								,s.contribuyenteEspecial 
 						        ,s.obligadoContabilidad
 								,labelObligadoContabilidad = 'Obligado Contabilidad: ' + s.obligadoContabilidad
 								,labelAgenteRetencion = ISNULL('AGENTE DE RETENCION RESOLUCION NRO: '+s.agenteRetencion,'') 
+								,s.agenteRetencion
 								,regimen = UPPER(s.contribuyenteRimpe)
 								,telefonoCliente = ISNULL(cl.telefono, '')
 								,ciudadCliente = ISNULL(c.descripcion, 'S/N')
@@ -264,7 +266,7 @@ BEGIN
 			 SET @detail = (SELECT 
 								 codigo = a.codigo
 								,cantidad = CAST(prd.cantidad as numeric(15,2)) 
-								,descripcion = prd.descripcion 
+								,descripcion = REPLACE(prd.descripcion, '#', '%23')
 								,precioUnitario = CAST(prd.precioUnitario as numeric(15,2))
 								,precioTotal = CAST(prd.total as numeric(15,2))
 								,valorDescuento =  CAST(prd.valorDescuento as numeric(15,2)) 

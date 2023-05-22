@@ -25,7 +25,7 @@
     public class HelpersResponse
     {
         public string numeroIdentificacion { get; set; }
-        public string tipoValidacion { get; set; } 
+        public string tipoValidacion { get; set; }
 
     }
 }

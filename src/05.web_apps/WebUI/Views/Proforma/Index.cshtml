@@ -48,7 +48,7 @@
                         </thead>
                         
                         <tbody md-body>
-                            <tr md-row ng-repeat="p in proformas">
+                            <tr md-row ng-repeat="p in proformas" ng-class="p.rowColor">
                                 <td md-cell>                                    
                                     <md-menu>
                                         <md-button aria-label="Open demo menu" class="md-icon-button"
@@ -69,7 +69,7 @@
                                             </md-menu-item> 
 
                                             
-                                            <md-menu-item ng-if="accion.anular">                                                                                        
+                                            <md-menu-item ng-if="accion.anular && !p.esAnulado">                                                                                        
                                                 <md-button   ng-click="askToDelete(p)">
                                                     <span md-menu-align-target><i class="mdi mdi-block-helper"></i> Anular</span>
                                                 </md-button>
@@ -98,6 +98,14 @@
                                             <md-menu-item ng-if="accion.enviarCorreo">                                                                                      
                                                 <md-button ng-click="askToSendEmail(p)">
                                                     <span md-menu-align-target><i class="far fa-envelope"></i> Enviar Correo</span>
+                                                </md-button>
+                                            </md-menu-item>
+
+                                            <md-menu-item>
+                                                <md-button uib-tooltip="Enviar por Whatsapp" tooltip-placement="top" btn-send-to-whats-app params="p" has-permission="hasPermissions" type-send="typeSend"  >
+                                                    <span md-menu-align-target>
+                                                        <i class="mdi mdi-whatsapp"></i> Enviar por Whatsapp
+                                                    </span>
                                                 </md-button>
                                             </md-menu-item>
                                         </md-menu-content>
@@ -134,6 +142,7 @@
 </div>
 
 @section Scripts{ 
-    <script src="~/js/services/storageService.min.js" asp-append-version="true"></script>                         
-    <script src="~/js/controllers/ventas/proformaCtrl.js" asp-append-version="true"></script>             
+    <script src="~/js/services/storageService.min.js" asp-append-version="true"></script>  
+    <script src="~/js/ventas/services/proformaService.min.js" asp-append-version="true"></script>                         
+    <script src="~/js/ventas/controllers/proformaCtrl.js" asp-append-version="true"></script>             
 }

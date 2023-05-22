@@ -1,14 +1,10 @@
-﻿using Domain.Models;
-using Domain.Models.GestionTributaria;
+﻿using Domain.Models.GestionTributaria;
 using Domain.ViewModels.GestionTributaria;
 using Helpers;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Threading.Tasks;
 
 namespace DataAccess.GestionTributaria
 {
@@ -114,7 +110,7 @@ namespace DataAccess.GestionTributaria
             finally
             {
 
-                
+
             }
             return _gr;
         }
@@ -151,7 +147,7 @@ namespace DataAccess.GestionTributaria
             finally
             {
 
-                
+
             }
             return _gr;
         }
@@ -184,7 +180,7 @@ namespace DataAccess.GestionTributaria
             }
             finally
             {
-                
+
             }
             return _gr;
         }
@@ -213,7 +209,7 @@ namespace DataAccess.GestionTributaria
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _gr.id = "0";
                 _gr.message = ex.Message;

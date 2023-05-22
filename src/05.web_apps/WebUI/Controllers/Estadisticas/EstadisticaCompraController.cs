@@ -1,5 +1,4 @@
 ﻿using DataAccess.Estadisticas;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Estadisticas
@@ -13,12 +12,12 @@ namespace WebUI.Controllers.Estadisticas
             _configuration = configuration;
             _ec = new EstadisticaCompraDao(_configuration);
         }
-        [Authorize]
+
         public IActionResult Index()
         {
             return View();
         }
 
-        public async Task<IActionResult> Get(string json) => Ok(await _ec.GetAsync(json));       
+        public async Task<IActionResult> Get(string json) => Ok(await _ec.GetAsync(json));
     }
 }

@@ -1,6 +1,7 @@
-﻿using DataAccess;
-using Helpers;
+﻿using Helpers;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using System.Security.Cryptography;
 
 namespace WebUI.Controllers
 {
@@ -8,7 +9,7 @@ namespace WebUI.Controllers
     {
         private readonly IConfiguration _config;
         private readonly string _connectionStrings = string.Empty;
-        GenericResponse _gr = new(); 
+        GenericResponse _gr = new();
         public TestController(IConfiguration config)
         {
             _config = config;
@@ -26,12 +27,42 @@ namespace WebUI.Controllers
         //    return Ok(response);
         //}
         [HttpPost]
-        public void EncryptText()
+        public async Task<IActionResult> EncryptText()
         {
             string textToEncrypt = "";
             textToEncrypt = Request.Form["txtToEncrypt"].ToString();
             var encrypted = Encryption.EncryptString(_config.GetSection("keyEncrypt").Value, textToEncrypt);
-            Console.WriteLine(encrypted);
+
+            var client = new HttpClient(new HttpClientHandler()
+            {
+
+                AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip,
+                Credentials = CredentialCache.DefaultCredentials,
+                UseDefaultCredentials = true
+
+            })
+            { Timeout = TimeSpan.FromSeconds(90) };
+
+            var request = new HttpRequestMessage(HttpMethod.Get, _config.GetSection("urlSriCatastro").Value + "2200386874001");
+            client.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Encoding", "gzip, deflate");
+            client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:19.0) Gecko/20100101 Firefox/19.0");
+            client.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Charset", "ISO-8859-1");
+            var response = await client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            client.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "text/html,application/xhtml+xml,application/xml");
+
+            Console.WriteLine(await response.Content.ReadAsStringAsync());
+            return Ok(encrypted);
+        }
+        [HttpPost]
+        public IActionResult GenerateRandomKey()
+        {
+            var key = new byte[32];
+            using (var generator = RandomNumberGenerator.Create())
+            {
+                generator.GetBytes(key);
+            }
+            return Ok(Convert.ToBase64String(key));
         }
         //public IActionResult GetPrinter()
         //{
@@ -64,7 +95,7 @@ namespace WebUI.Controllers
         //    {
         //        LogWritter.LogError("C:\\Printer\\Csharp", "0", ex.Message);
         //    }
-           
+
         //}
     }
 }

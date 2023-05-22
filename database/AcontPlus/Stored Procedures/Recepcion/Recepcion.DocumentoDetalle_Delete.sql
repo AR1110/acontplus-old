@@ -22,27 +22,61 @@ GO
 IF OBJECT_ID(N'Recepcion.DocumentoDetalle_Delete', N'P') IS NOT NULL
 DROP PROCEDURE Recepcion.DocumentoDetalle_Delete 
 GO
-CREATE PROCEDURE Recepcion.DocumentoDetalle_Delete	@idUsuarioRol INT
-,@id INT 
+CREATE PROCEDURE Recepcion.DocumentoDetalle_Delete	@idUsuarioRol INT,@id INT 
 AS
 BEGIN
 	SET NOCOUNT ON; 
-	DECLARE @idUsuario INT
-	,@idDocumento INT 
+	DECLARE @idEntidad AS INT
+	DECLARE @idUsuario AS INT
+	DECLARE @idDocumento AS INT 
+	DECLARE @idArticulo AS INT 
+	DECLARE @idBodega AS INT 
+	DECLARE @inventory AS VARCHAR(5)
 
-	SET @idDocumento = (SELECT idDocumento FROM Recepcion.DocumentoDetalle WHERE idDocumentoDetalle = @id)
 	BEGIN TRY
+		
+		SELECT TOP 1 @idDocumento = idDocumento, @idArticulo = idArticulo, @idBodega = idBodega FROM Recepcion.DocumentoDetalle WITH (NOLOCK) WHERE idDocumentoDetalle = @id
+
+		SELECT TOP 1 @idUsuario = idUsuario, @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
+
+		SELECT TOP 1 @inventory = JSON_VALUE(dbo.f_sanitize_json(jsonConfig),'$.llevaInventario') FROM Config.Sistema WHERE idEntidad = @idEntidad AND codConfig = 'CI'
+
+
 		BEGIN TRAN
+
 			DELETE FROM Recepcion.Doc_Detalle_Impuesto WHERE idDocumentoDetalle = @id
+			
 			DELETE FROM Recepcion.DocumentoDetalle WHERE idDocumentoDetalle = @id
 			
 			IF NOT EXISTS(SELECT 1 FROM Recepcion.DocumentoDetalle WHERE idDocumento = @idDocumento)
 				BEGIN
 					UPDATE Recepcion.DocumentoRecibido SET complete = 0 WHERE idDocumento = @idDocumento
 				END
-			SELECT '1' code, 'Articulo eliminado exitosamente del stock' as 'message'
-		COMMIT TRAN 
+
+			IF @inventory = 'SI'
+				BEGIN
+					DECLARE @codDoc AS VARCHAR(2)
+					DECLARE @codDocInv VARCHAR(2)
+					DECLARE @idTipoDocumento INT
+					DECLARE @idTipoTransaccion INT
+
+					SELECT TOP 1 @codDoc = codDoc FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE idDocumento = @idDocumento
+
+					SELECT @codDocInv =  CASE WHEN @codDoc = '01' THEN 'FE' WHEN @codDoc = '04' THEN 'NC' END
+
+					SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo  = @codDocInv
+
+					SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo  = 'E'
+
+					UPDATE Inventario.Transaccion SET estado = 0 WHERE idDocumento = @idDocumento AND idTipoDocumento = @idTipoDocumento AND idTipoTransaccion = @idTipoTransaccion AND idArticulo = @idArticulo
+					
+					EXEC Inventario.Stock_Update @idArticulo, @idBodega
+				END 
+
+		COMMIT TRAN
+		SELECT '1' code, 'Articulo eliminado exitosamente del stock' as 'message'
 	END TRY
+
 	BEGIN CATCH
 		SELECT '0' code, 'Error en base de datos: ' + ERROR_MESSAGE() as 'message'
 		IF (@@TRANCOUNT > 0)

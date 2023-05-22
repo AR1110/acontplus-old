@@ -1,9 +1,8 @@
-﻿using Helpers;
-using DataAccess;
+﻿using DataAccess;
 using DataAccess.Tesoreria;
 using Domain.Models;
 using Domain.ViewModels.Tesoreria;
-using Microsoft.AspNetCore.Authorization;
+using Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -13,22 +12,22 @@ namespace WebUI.Controllers.GestionFinanciera
     {
         private ComprobanteIngresoDao _ci;
         private readonly IConfiguration _configuration;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+
         private DataAccessObject _dao;
-        private readonly int _idRol;
+
         private EstadoFinancieroDao _ef;
 
-        public ComprobanteIngresoController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public ComprobanteIngresoController(IConfiguration configuration)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
             _ef = new EstadoFinancieroDao(_configuration);
             _ci = new ComprobanteIngresoDao(_configuration);
-            _httpContextAccessor = httpContextAccessor;
-            _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+
+
         }
 
-        [Authorize]
+
         public IActionResult Index()
         {
             return View();
@@ -39,7 +38,7 @@ namespace WebUI.Controllers.GestionFinanciera
         public async Task<IActionResult> Get(string json)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", SqlValidation.ValidateSqlString(json));
             return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("GestFinanc.ComprobanteIngreso_Get", parameters)));
         }
@@ -49,7 +48,7 @@ namespace WebUI.Controllers.GestionFinanciera
         {
             GenericResponse _response = new GenericResponse();
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("idTipoDocumento", idTipoDocumento);
             parameters.Add("idComprobante", idComprobante);
             parameters.Add("idCliente", data.comprobanteIngreso.idCliente);
@@ -61,7 +60,7 @@ namespace WebUI.Controllers.GestionFinanciera
             _response = DbResponse.SPDefault(await _dao.GetDataTableAsync("GestFinanc.ComprobanteIngreso_Insert", parameters));
             if (_response.code == "1")
             {
-                _ef.Update(_idRol, _response.payload);
+                _ef.Update(Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value), _response.payload);
             }
             return Ok(_response);
         }
@@ -70,7 +69,7 @@ namespace WebUI.Controllers.GestionFinanciera
         [HttpPost]
         public async Task<IActionResult> PostFast(int idTipoDoc, int idComprobante, [FromBody] ComprobanteIngresoViewModel data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _ci.PostFastAsync(idRol, idTipoDoc, idComprobante, data);
             return Ok(res);
 
@@ -81,13 +80,13 @@ namespace WebUI.Controllers.GestionFinanciera
         {
             GenericResponse _response = new GenericResponse();
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("id", idComprobanteIngreso);
             parameters.Add("observacion", observacion);
             _response = DbResponse.SPDefault(await _dao.GetDataTableAsync("GestFinanc.ComprobanteIngreso_Delete", parameters));
             if (_response.id == "1")
             {
-                _ef.Update(_idRol, _response.payload);
+                _ef.Update(Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value), _response.payload);
             }
             return Ok(_response);
         }
@@ -96,7 +95,7 @@ namespace WebUI.Controllers.GestionFinanciera
 
         public async Task<IActionResult> GetByDocument(int idTipoDocumento, int idComprobante)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _ci.GetByDocumentAsync(idRol, idTipoDocumento, idComprobante);
             return Ok(res);
 

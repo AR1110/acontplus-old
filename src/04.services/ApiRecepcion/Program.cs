@@ -1,5 +1,7 @@
 using BL.JwtAuthenticationManger;
+using BL.Recepcion;
 using Helpers;
+using System.Reflection;
 
 namespace ApiRecepcion
 {
@@ -17,7 +19,6 @@ namespace ApiRecepcion
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
 
             //builder.Services.AddTransient<IConfiguration>(config =>
             //{
@@ -30,19 +31,11 @@ namespace ApiRecepcion
             builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
             ConfigHelper.AddJsonFiles(builder.Configuration);
 
-            var app = builder.Build();
+            builder.Services.AddScoped<FileTxt>();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
-            else
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+            var app = builder.Build();
+            
+            app.UseRouting();
 
             //app.UseCors();
 
@@ -52,7 +45,16 @@ namespace ApiRecepcion
 
             app.UseMiddleware<JWTMiddleware>();
 
-            app.MapControllers();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapGet("/", async context =>
+                {
+                    string projectName = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
+                    await context.Response.WriteAsync($"{projectName} is running at {string.Join(", ", app.Urls)}");
+                });
+            });
+
+            app.MapControllers().RequireAuthorization();
 
             app.Run();
         }

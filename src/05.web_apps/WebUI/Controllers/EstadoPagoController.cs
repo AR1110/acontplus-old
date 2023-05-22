@@ -1,5 +1,4 @@
 ﻿using DataAccess;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers
@@ -7,14 +6,14 @@ namespace WebUI.Controllers
     public class EstadoPagoController : Controller
     {
         private readonly IConfiguration _configuration;
-        private EstadoDocumentoDao _eDoc;   
+        private EstadoDocumentoDao _eDoc;
         public EstadoPagoController(IConfiguration configuration)
         {
             _configuration = configuration;
             _eDoc = new EstadoDocumentoDao(_configuration);
         }
 
-        [Authorize]
+
         public ActionResult Index()
         {
             return View();
@@ -26,19 +25,19 @@ namespace WebUI.Controllers
 
         //public async Task<IActionResult> Post(EstadoPago data)
         //{
-        //    int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+        //    int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
         //    var response = await new EstadoPagoDao().InsertAsync(idRol, data);
         //    return Ok(response);
         //}
         //public async Task<IActionResult> Put(int id, EstadoPago data)
         //{
-        //    int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+        //    int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
         //    var response = await new EstadoPagoDao().UpdateAsync(idRol, id, data);
         //    return Ok(response);
         //}
         //public async Task<IActionResult> Delete(int id)
         //{
-        //    int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+        //    int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
         //    var response = await new EstadoPagoDao().DeleteAsync(idRol, id);
         //    return Ok(response);
         //}

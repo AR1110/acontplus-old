@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using DataAccess.Almacen;
+﻿using DataAccess.Almacen;
 using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers
 {
@@ -18,7 +17,7 @@ namespace WebUI.Controllers
         }
         // GET: PvPArticulo
 
-        [Authorize]
+
         public IActionResult Index()
         {
             return View();
@@ -28,7 +27,7 @@ namespace WebUI.Controllers
 
         public async Task<IActionResult> GetTarifaPrecio()
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _pvp.GetTarifaPrecioAsync(idRol);
             return Ok(res);
         }
@@ -37,7 +36,7 @@ namespace WebUI.Controllers
         //Listar Pvp articulos por idARticulo 
         public async Task<IActionResult> GetId(int idArticulo)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _pvp.GetIdAsync(idRol, idArticulo);
             return Ok(res);
         }
@@ -46,7 +45,7 @@ namespace WebUI.Controllers
         //Listar Tarifa para Articulo Fraccionado 
         public async Task<IActionResult> ListArticuloTarifa(int idArticulo)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _pvp.ListArticuloTarifaAsync(idRol, idArticulo);
             return Ok(_gr);
         }
@@ -55,7 +54,7 @@ namespace WebUI.Controllers
         //Get Pvp para venta 
         public async Task<IActionResult> GetPvPForSale(int idArticulo, string tipo)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _pvp.GetForPvPAsync(idRol, idArticulo, tipo);
             return Ok(res);
         }

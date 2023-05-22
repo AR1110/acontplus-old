@@ -1,5 +1,4 @@
 ﻿using DataAccess;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.GestionDocumento
@@ -13,7 +12,7 @@ namespace WebUI.Controllers.GestionDocumento
             _configuration = configuration;
             _eDoc = new EstadoDocumentoDao(_configuration);
         }
-        [Authorize]
+
         public IActionResult Index()
         {
             return View();

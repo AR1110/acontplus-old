@@ -1,12 +1,7 @@
 ﻿using DataAccess;
 using Domain.Models;
 using Helpers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers
 {
@@ -24,7 +19,7 @@ namespace WebUI.Controllers
             _tp = new TipoClienteProveedorDao(_config);
         }
 
-        [Authorize]
+
         public IActionResult Index()
         {
             return View();
@@ -40,7 +35,7 @@ namespace WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Get(int pageIndex, int pageSize, [FromBody] HelpersResponse data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _tp.ReadTipoClienteProveedor(idRol, pageIndex, pageSize, data);
             return Ok(_gr);
         }

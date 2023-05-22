@@ -12,20 +12,19 @@ GO
 IF OBJECT_ID(N'FactElect.RetencionAts_Cancel', N'P') IS NOT NULL
 DROP PROCEDURE FactElect.RetencionAts_Cancel 
 GO
-CREATE PROCEDURE FactElect.RetencionAts_Cancel @idUsuarioRol INT
-,@id INT 
+CREATE PROCEDURE FactElect.RetencionAts_Cancel @idRol INT,@id INT 
 AS
 BEGIN
 	SET NOCOUNT ON; 
 	DECLARE @idUsuario INT
 	,@idRetencionAts INT
-	SELECT @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol
+	SELECT @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idRol
 	SET @idRetencionAts = (select idDocumento from DocumentoElectronico with (nolock) where idDocumentoElectronico = @id)
 	BEGIN TRY
 		BEGIN TRAN 
 			
 			UPDATE FactElect.RetencionAts SET anuladaSri = 1 WHERE idRetencionAts = @idRetencionAts
-			
+			UPDATE FactElect.RetAtsDocSustento SET estado = 0 WHERE idRetencionAts = @idRetencionAts
 			--ANULA EN FACTURA
 			UPDATE fc SET fc.retencion = 0
 			FROM FacturaCompra fc

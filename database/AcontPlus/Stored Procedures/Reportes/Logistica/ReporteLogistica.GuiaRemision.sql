@@ -43,7 +43,7 @@ BEGIN
 	DECLARE @telefono VARCHAR(50) 
 	DECLARE @subject VARCHAR(100)
 	DECLARE @email VARCHAR(50) = 'envio.comprobantes@acontplus.com.ec'
-	DECLARE @password VARCHAR(50) = 'rmdodmyvosnwxzwt'
+	DECLARE @password VARCHAR(50) = 'rovsnbdgalpwbnfx'
 	DECLARE @nameDoc VARCHAR(150)
 	DECLARE @dataMail VARCHAR(MAX)
 	DECLARE @cc VARCHAR(100)

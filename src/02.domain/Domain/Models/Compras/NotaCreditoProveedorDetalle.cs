@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Domain.Models.Compras
+﻿namespace Domain.Models.Compras
 {
     public class NotaCreditoProveedorDetalle
     {
@@ -14,6 +8,7 @@ namespace Domain.Models.Compras
         public int idArticulo { get; set; }
         public long idTipoIva { get; set; }
         public long idMedida { get; set; }
+        public string codigoPorcentaje { get; set; }
         public decimal cantidad { get; set; }
         public string descripcion { get; set; }
         public string nota { get; set; }

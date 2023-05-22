@@ -1,9 +1,7 @@
-﻿using Helpers;
+﻿using Common.Logs;
 using DataAccess;
-using Domain;
 using Domain.Models;
-using Domain.Models.ConfigEmpresa;
-using Microsoft.AspNetCore.Http;
+using Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -14,16 +12,16 @@ namespace WebUI.Controllers.Config
     public class EntidadConfigSriController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        
+
+
         private DataAccessObject _dao;
         private readonly ILogger<EntidadConfigSriController> _logger;
-        public EntidadConfigSriController(ILogger<EntidadConfigSriController> logger, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public EntidadConfigSriController(ILogger<EntidadConfigSriController> logger, IConfiguration configuration)
         {
             _logger = logger;
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
-            _httpContextAccessor = httpContextAccessor;
+
         }
 
 
@@ -31,9 +29,25 @@ namespace WebUI.Controllers.Config
         [Route("Get/{json}")]
         public async Task<IActionResult> Get(string json)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("json", SqlValidation.ValidateSqlString(json));
-            return Ok(DbResponse.SPDataSet(await _dao.GetDataSetAsync("Config.Sri_Get", parameters)));
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Config.Sri_Get");
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDataSetAsync();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error in Get: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al Obtener los datos");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
 
         [HttpPut]
@@ -46,7 +60,7 @@ namespace WebUI.Controllers.Config
             parameters.Add("id", id);
             parameters.Add("idAnioFiscal", config.idAnioFiscal);
             parameters.Add("idSubContribuyente", config.idSubContribuyente);
-            parameters.Add("nroContribuyente", config.nroContribuyente??"");
+            parameters.Add("nroContribuyente", config.nroContribuyente ?? "");
             parameters.Add("obligadoLlevarContabilidad", config.obligadoLlevarContabilidad);
             parameters.Add("actividad", config.actividad ?? "");
             parameters.Add("jsonNormativa", data.jsonDetail);

@@ -30,7 +30,7 @@ BEGIN
 	SET NOCOUNT ON;
 	DECLARE @idEntidad INT
 
-	SELECT @idEntidad = idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @idRol
+	SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 
 	SELECT 
 		gs.idGestionSistema
@@ -38,6 +38,9 @@ BEGIN
 	   ,gs.idTipoIva
 	   ,gs.idArticulo
 	   ,gs.idMetodoValoracion
+	   ,gs.searchCode
+	   ,gs.printerAutomatic
+	   ,gs.payAutomatic
 	   ,llevaInventario = IIF(gs.llevaInventario = 'SI',CAST(1 AS BIT),CAST(0 AS BIT))
 	   ,customerDefault = IIF(gs.idCliente IS NULL ,CAST(0 AS BIT),CAST(1 AS BIT))
 	   ,taxesDefault =    IIF(gs.idTipoIva IS NULL ,CAST(0 AS BIT),CAST(1 AS BIT))

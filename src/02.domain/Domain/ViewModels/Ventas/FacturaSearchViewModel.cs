@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Domain.ViewModels
+﻿namespace Domain.ViewModels
 {
     public class FacturaSearchViewModel
     {

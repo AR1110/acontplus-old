@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using Common.Logs;
+﻿using Common.Logs;
 using DataAccess;
 using Domain.Auth.Dtos;
 using Domain.Auth.Models;
@@ -10,6 +9,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using WebUI.ApiClient;
 
 namespace WebUI.Controllers
@@ -19,7 +19,6 @@ namespace WebUI.Controllers
     {
 
         private readonly IConfiguration _config;
-        private readonly string _connectionStrings = string.Empty;
         GenericResponse _gr = new();
         private LoginDao _l;
 
@@ -58,11 +57,18 @@ namespace WebUI.Controllers
                     loginDataDto.role = loginData.role;
                     loginDataDto.razonSocial = loginData.entidad;
                     loginDataDto.ruc = loginData.ruc ?? "";
+                    loginDataDto.urlGateway = _config.GetSection("UrlApis").GetSection("UrlGateway").Value;
+                    Console.WriteLine(loginDataDto.urlGateway);
+                    var urlService = _config.GetSection("UrlApis").GetSection("UrlGateway").Value;
+                    var _authService = await new ApiServer(urlService).PostAsync<AuthResponse>("account", loginDataDto);
 
-                    var urlService = _config.GetSection("UrlApis").GetSection("ApiGateway").Value;
-                    var _authService = await new ApiServer(urlService).PostAsync<AuthResponse>("api/account", loginDataDto);
+
+                    if (_authService.jwtToken == null)
+                    {
+                        _gr.Create(code: "0", message: "Error al iniciar session");
+                        return Ok(_gr);
+                    }
                     loginData.jwtToken = _authService.jwtToken;
-
                     //for more information review https://docs.microsoft.com/en-us/aspnet/core/security/authentication/cookie?view=aspnetcore-6.0
 
                     var claims = new List<Claim>
@@ -100,10 +106,10 @@ namespace WebUI.Controllers
                         // The full path or absolute URI to be used as an http 
                         // redirect response value.
                     };
-                    await HttpContext.SignInAsync(
-                                CookieAuthenticationDefaults.AuthenticationScheme,
-                                new ClaimsPrincipal(claimsIdentity),
-                                authProperties);
+                    //await HttpContext.SignInAsync(
+                    //            CookieAuthenticationDefaults.AuthenticationScheme,
+                    //            new ClaimsPrincipal(claimsIdentity),
+                    //            authProperties);
                     //saveLoginLocation(u.idRol);
 
                 }
@@ -119,17 +125,22 @@ namespace WebUI.Controllers
                 });
             }
         }
-        public async Task<IActionResult> Logout()
+        //public async Task<IActionResult> Logout()
+        //{
+        //    await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        //    HttpContext.User = null;
+        //    return Redirect("/");
+        //}
+
+        public IActionResult Logout()
         {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            HttpContext.User = null;
-            return Redirect("/");
+            return Redirect("/Login/Index");
         }
 
         //Gestiones Especiales
         //public async Task<IActionResult> ListSucursalAccesso()
         //{
-        //    int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+        //    int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
         //    _gr = await _l.ListSucursalAccessAsync(idRol);
         //    return Ok(_gr);
         //}

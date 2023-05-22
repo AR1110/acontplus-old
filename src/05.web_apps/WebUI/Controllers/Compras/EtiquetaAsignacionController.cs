@@ -17,14 +17,14 @@
 
 //        public async Task<IActionResult> Get()
 //        {
-//            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+//            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
 //            var res = await _ea.GetAsync(idRol);
 //            return Ok(res);
 //        }
 
 //        public async Task<IActionResult> GetEtiquetaAsigId(int idEtiqueta)
 //        {
-//            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+//            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
 //            var res = await _ea.GetIdAsync(idRol, idEtiqueta);
 //            return Ok(res); 
 //        }

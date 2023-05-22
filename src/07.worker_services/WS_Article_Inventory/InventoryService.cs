@@ -24,7 +24,7 @@ namespace WS_Article_Inventory
             return _dbAccess.GetDataTable();
         }
 
-        public async Task<bool> Update(int idControlStock, int idArticulo , decimal stock)
+        public async Task<bool> Update(int idControlStock, int idArticulo, decimal stock)
         {
             try
             {
@@ -41,7 +41,7 @@ namespace WS_Article_Inventory
                 _ = ex.Message;
                 return false;
             }
-           
+
         }
 
     }

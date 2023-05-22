@@ -10,7 +10,7 @@ namespace Recepcion_UI.Areas.DocumentoRecibido.Pages
         public IndexModel(IConfiguration configuration)
         {
             _configuration = configuration;
-            _apiGateway = _configuration.GetSection("UrlApis").GetSection("ApiGateway").Value;
+            _apiGateway = _configuration.GetSection("UrlApis").GetSection("UrlGateway").Value;
         }
         public void OnGet()
         {

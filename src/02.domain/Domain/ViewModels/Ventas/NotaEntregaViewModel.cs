@@ -1,10 +1,5 @@
 ﻿using Domain.Models;
 using Domain.Models.Compras;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domain.ViewModels
 {
@@ -12,7 +7,8 @@ namespace Domain.ViewModels
     {
         public NotaEntrega notaEntrega { get; set; }
         public List<NotaEntregaDetalle> detalle { get; set; }
-        public List<ManejoArticulo> manejoArticulo { get; set; }
+      //  public List<ManejoArticulo> manejoArticulo { get; set; }
+        public string infoAdicionalArticulo { get; set; }
         public int totalRecords { get; set; }
         public string nroDocumento { get; set; }
         public string nombreFiscal { get; set; }

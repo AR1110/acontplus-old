@@ -1,8 +1,6 @@
 ﻿using DataAccess;
 using Helpers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace WebUI.Controllers
 {
@@ -19,7 +17,7 @@ namespace WebUI.Controllers
             _gNumDoc = new GenerarNroDoc(_config);
         }
 
-        [Authorize]
+
         public IActionResult Index()
         {
             return View();

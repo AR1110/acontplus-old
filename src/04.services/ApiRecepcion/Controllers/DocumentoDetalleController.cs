@@ -12,9 +12,11 @@ namespace ApiRecepcion.Controllers
     public class DocumentoDetalleController : ControllerBase
     {
         private readonly IConfiguration _config;
+        private readonly DbAccess _db;
         public DocumentoDetalleController(IConfiguration config)
         {
             _config = config;
+            _db = new DbAccess(_config);
         }
         // GET: api/<DocumentoDetalleController>
         [HttpGet]
@@ -33,22 +35,25 @@ namespace ApiRecepcion.Controllers
         // POST api/<DocumentoDetalleController>
         [HttpPost("{idDocumento}/{idArticulo}")]
         public async Task<IActionResult> Post(int idDocumento, int idArticulo)
-        {   
+        {
             LogWriter _log = new LogWriter(_config);
             GenericResponse _response = new GenericResponse();
             try
             {
-                Dictionary<string, object> _params = new Dictionary<string, object>();
-                _params["idUsuarioRol"] = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                _params["idDocumento"] = idDocumento;
-                _params["idArticulo"] = idArticulo;
-                DAO _dao = new DAO(_config);
-                _response = await _dao.Default("Recepcion.DocumentoDetalle_Insert", _params);
+                await _db.SPExecute("Recepcion.DocumentoDetalle_Insert");
+                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("idDocumento", idDocumento);
+                _db.AddDynamicParam("idArticulo", idArticulo);
+                _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
                 _log.LogError("Error on DocumentoDetalle/Post: " + idDocumento.ToString() + "-> \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al guardar el detalle");
+            }
+            finally
+            {
+                _db.Close();
             }
             return Ok(_response);
         }
@@ -67,16 +72,19 @@ namespace ApiRecepcion.Controllers
             GenericResponse _response = new GenericResponse();
             try
             {
-                Dictionary<string, object> _params = new Dictionary<string, object>();
-                _params["idUsuarioRol"] = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                _params["id"] = id;
-                DAO _dao = new DAO(_config);
-                _response = await _dao.Default("Recepcion.DocumentoDetalle_Delete", _params);
+                await _db.SPExecute("Recepcion.DocumentoDetalle_Delete");
+                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("id", id);
+                _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
                 _log.LogError("Error on DocumentoDetalle/Delete: " + id.ToString() + "-> \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar el articulo del stock");
+            }
+            finally
+            {
+                _db.Close();
             }
             return Ok(_response);
         }

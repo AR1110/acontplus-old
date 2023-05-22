@@ -1,10 +1,10 @@
-﻿using Domain.Models;
+﻿using Common.Logs;
 using DataAccess;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using DataAccess.Almacen;
+using Domain.Models;
 using Domain.ViewModels.Almacen;
 using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers
 {
@@ -12,25 +12,28 @@ namespace WebUI.Controllers
     {
         // GET: Articulo
         private readonly IConfiguration _configuration;
-        private readonly IHttpContextAccessor _httpContextAccessor; ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
+        ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
-        private readonly int _idRol;
+
         GenericResponse _gr = new();
         private ArticuloDao _a;
+        //private readonly LogWriter _log;
+        private readonly DbAccess _db;
 
-        public ArticuloController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public ArticuloController(IConfiguration configuration)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
-            _httpContextAccessor = httpContextAccessor;
-            _idRol = Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+
+
             _a = new ArticuloDao(_configuration);
+            //_log = new LogWriter(_configuration);
+            _db = new DbAccess(_configuration);
         }
 
-        [Authorize]
+
         public IActionResult Index()
         {
-            ViewData["idRol"] = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
             return View();
         }
 
@@ -43,7 +46,7 @@ namespace WebUI.Controllers
         public async Task<IActionResult> Get(string json)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", SqlValidation.ValidateSqlString(json));
             return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Almacen.Articulo_Get", parameters)));
         }
@@ -51,39 +54,103 @@ namespace WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetId(int id)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("id", id);
-            return Ok(DbResponse.SPDataSet(await _dao.GetDataSetAsync("Almacen.Articulo_Get_Id", parameters)));
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Almacen.Articulo_Get_Id");
+                _db.AddDynamicParam("id", id);
+                _response = _db.GetDataSetAsync();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error in articulo getId: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al Obtener los datos del articulo");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
 
         [HttpGet]
         //Get Data Articulo para Ventas 
         public async Task<IActionResult> GetIdBySale(string json)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
-            parameters.Add("json", SqlValidation.ValidateSqlString(json));
-            return Ok(DbResponse.SPDataSet(await _dao.GetDataSetAsync("Almacen.Articulo_Get_Id_By_Sale", parameters)));
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Almacen.Articulo_Get_Id_By_Sale");
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDataSetAsync();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error in articulo GetIdBySale: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al Obtener los datos del articulo");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
 
-        
+
         [HttpGet]
         //Get Data Articulo for Purchase=Compras    
         public async Task<IActionResult> GetIdByPurchase(string json)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
-            parameters.Add("json", SqlValidation.ValidateSqlString(json));
-            return Ok(DbResponse.SPDataSet(await _dao.GetDataSetAsync("Almacen.Articulo_Get_Id_By_Purchase", parameters)));
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Almacen.Articulo_Get_Id_By_Purchase");
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDataSetAsync();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error in articulo GetIdByPurchase: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al Obtener los datos del articulo");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
 
         [HttpGet]
         public async Task<IActionResult> Search(string json)
-        {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
-            parameters.Add("json", SqlValidation.ValidateSqlString(json));
-            return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Almacen.Articulo_Get_Search", parameters)));
+        {            
+            LogWriter _log = new LogWriter(_configuration);
+            var _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Almacen.Articulo_Get_Search");
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDataTableAsync();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error while search articles: \n" + ex.ToString());
+                _response.Create(code: "0", "Error al buscar articulo");
+            }
+            finally
+            {
+                _db.Close();
+            }
+
+            return Ok(_response);
         }
 
         [HttpGet]
@@ -91,7 +158,7 @@ namespace WebUI.Controllers
         public async Task<IActionResult> List(string json)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", SqlValidation.ValidateSqlString(json));
             return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Almacen.Articulo_Get_List_Info", parameters)));
         }
@@ -100,17 +167,33 @@ namespace WebUI.Controllers
         //Get Data Articulo para Ventas 
         public async Task<IActionResult> GetFormData(string json)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
-            parameters.Add("json", SqlValidation.ValidateSqlString(json));
-            return Ok(DbResponse.SPDataSet(await _dao.GetDataSetAsync("Almacen.Articulo_Get_Data_Form", parameters)));
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Almacen.Articulo_Get_Data_Form");
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDataTableAsync();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error in articulo GetFormData: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al Obtener los datos del articulo");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
         }
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ArticuloParams data)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("jsonArticulo", data.jsonArticulo);
             parameters.Add("json", data.jsonpvp);
             parameters.Add("idBodega", data.idBodega);
@@ -122,7 +205,7 @@ namespace WebUI.Controllers
         public async Task<IActionResult> Put(int idArticulo, [FromBody] ArticuloParams data)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("id", idArticulo);
             parameters.Add("jsonArticulo", data.jsonArticulo);
             parameters.Add("json", data.jsonpvp);
@@ -133,7 +216,7 @@ namespace WebUI.Controllers
         public async Task<IActionResult> Delete(int idArticulo)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", _idRol);
+            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("id", idArticulo);
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Almacen.Articulo_Delete", parameters)));
         }
@@ -142,7 +225,7 @@ namespace WebUI.Controllers
         //Buscar Articulo por descripcion o por còdigo
         public async Task<IActionResult> SearchArticuloFilter(string busqueda, bool condicion)
         {
-            _gr = await _a.SearchFilterAsync(_idRol, busqueda, condicion);
+            _gr = await _a.SearchFilterAsync(Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value), busqueda, condicion);
             return Ok(_gr);
         }
 
@@ -152,13 +235,13 @@ namespace WebUI.Controllers
         //Historial de Compras o Ventas del articulo.
         public async Task<IActionResult> HistoryEntradaArticulo(int idArticulo)
         {
-            _gr = await _a.HistoryEntradaAsync(_idRol, idArticulo);
+            _gr = await _a.HistoryEntradaAsync(Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value), idArticulo);
             return Ok(_gr);
         }
 
         public async Task<IActionResult> SearchFilterFracc(string busqueda)
         {
-            var res = await _a.SearchFilterFraccAsync(_idRol, busqueda);
+            var res = await _a.SearchFilterFraccAsync(Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value), busqueda);
             return Ok(res);
         }
 

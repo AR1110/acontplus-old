@@ -13,7 +13,7 @@ namespace AdminUI.Controllers
         private AsignacionService _aS;
         public AsignacionController(ILogger<AsignacionController> logger, IConfiguration config)
         {
-            _config= config;
+            _config = config;
             _aS = new AsignacionService(_config);
             _logger = logger;
         }

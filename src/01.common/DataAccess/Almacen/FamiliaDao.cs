@@ -1,16 +1,9 @@
 ﻿
-using Helpers;
-using Domain.Models;
 using Domain.Models.Almacen;
-using Domain.ViewModels.Almacen;
-using System;
-using System.Collections.Generic;
+using Helpers;
+using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
-using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Almacen
 {
@@ -62,7 +55,7 @@ namespace DataAccess.Almacen
             finally
             {
 
-                
+
             }
             return _response;
         }

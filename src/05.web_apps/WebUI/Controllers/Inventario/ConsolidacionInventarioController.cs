@@ -1,16 +1,7 @@
-﻿using WebUI.ApiClient;
-using DataAccess.Inventario;
-using WebUI.Utils;
-using Domain.Models;
+﻿using DataAccess.Inventario;
 using Domain.ViewModels.Inventario;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.StaticFiles;
-using System;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Inventario
 {
@@ -24,8 +15,8 @@ namespace WebUI.Controllers.Inventario
             _config = config;
             _cinv = new ConsolidacionInventarioDao(_config);
         }
-     
-        [Authorize]
+
+
         public IActionResult Index()
         {
             return View();
@@ -34,14 +25,14 @@ namespace WebUI.Controllers.Inventario
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ConsolidacionInventarioViewModel data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _cinv.InsertAsync(idRol, data);
             return Ok(res);
         }
 
         public async Task<IActionResult> Get(string json)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _cinv.GetAsync(idRol, json);
             return Ok(res);
         }
@@ -50,7 +41,7 @@ namespace WebUI.Controllers.Inventario
         [HttpPut]
         public async Task<IActionResult> Put(int id, [FromBody] ConsolidacionInventarioViewModel data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _cinv.UpdateAsync(idRol, id, data);
             return Ok(res);
         }
@@ -58,13 +49,13 @@ namespace WebUI.Controllers.Inventario
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _cinv.DeleteAsync(idRol, id);
             return Ok(res);
         }
 
         public async Task<IActionResult> GetId(int id)
-        {            
+        {
             var res = await _cinv.GetIdAsync(id);
             return Ok(res);
         }

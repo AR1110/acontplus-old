@@ -1,14 +1,9 @@
-﻿using Common.Logs;
-using Domain.Config.Dtos;
-using Domain.Dtos;
+﻿using Domain.Dtos;
 using Helpers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Reporting.NETCore;
 using Newtonsoft.Json;
 using System.Data;
-using System.Diagnostics;
-using System.Drawing.Imaging;
-using System.Drawing.Printing;
 
 namespace BL.Reports
 {
@@ -19,7 +14,7 @@ namespace BL.Reports
         {
             _configuration = configuration;
         }
-        public byte[] ByteReport(DataSet dsParams, DataSet ds)
+        public byte[] ByteReport(DataSet dsParams, DataSet ds, bool fromService = false)
         {
             using (LocalReport lr = new LocalReport())
             {
@@ -28,7 +23,30 @@ namespace BL.Reports
 
                 if (ds.Tables[0].Rows.Count > 0)
                 {
-                    lr.ReportPath = _configuration.GetSection("dirReports").Value + dsParams.Tables[0].Rows[0]["reportPath"].ToString();
+                    if (fromService)
+                    {
+                        //lr.ReportPath = _configuration.GetSection("dirReports").Value + dsParams.Tables[0].Rows[0]["reportPath"].ToString();
+                        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(_configuration.GetSection("dirReports").Value + dsParams.Tables[0].Rows[0]["reportPath"].ToString()));
+                    }
+                    else
+                    {
+                        //lr.ReportPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, dsParams.Tables[0].Rows[0]["reportPath"].ToString());
+                        var paths = dsParams.Tables[0].Rows[0].Field<string>("reportPath").Split("/");
+                        paths = paths.Where(s => !string.IsNullOrEmpty(s)).ToArray();
+
+                        switch (paths.Length)
+                        {
+                            case 1:
+                                lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", paths[0])));
+                                break;
+                            case 2:
+                                lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", paths[0], paths[1])));
+                                break;
+                            default:
+                                lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(_configuration.GetSection("dirReports").Value + dsParams.Tables[0].Rows[0].Field<string>("reportPath")));
+                                break;
+                        }
+                    }
                 }
                 else
                 {
@@ -62,7 +80,7 @@ namespace BL.Reports
                         {
                             if (Convert.ToBoolean(item["isByte"]))
                             {
-                                lr.SetParameters(new[] { new ReportParameter(item["paramName"].ToString(), Helpers.FileExtensions.GetBase64FromByte((byte[])item["paramByte"])) });
+                                lr.SetParameters(new[] { new ReportParameter(item["paramName"].ToString(), FileExtensions.GetBase64FromByte((byte[])item["paramByte"])) });
                             }
                             else
                             {
@@ -75,19 +93,33 @@ namespace BL.Reports
                 return lr.Render(dsParams.Tables[0].Rows[0]["format"].ToString(), null, out _, out _, out _, out _, out _);
             }
         }
-
-        public byte[] ByteReportDynamic(ApiReportParamsDto parameters, ref string mimeType, ref string fileName)
+        public byte[] ByteReportDynamic(dynamic data, ref string mimeType, ref string fileName)
         {
-            string format = "";
-            string mimeTypeImg = "";
+            ApiReportParamsDto parameters = RdlcHelpers.ConverToModelReportParams(data);
+            string format = "", mimeTypeImg = "";
             using (LocalReport lr = new LocalReport())
             {
                 foreach (var item in parameters.rdlcParams)
                 {
                     if (item.Key == "reportPath")
                     {
-                        lr.ReportPath = _configuration.GetSection("dirReports").Value + item.Value.ToString();
+                        //lr.ReportPath = _configuration.GetSection("dirReports").Value + item.Value.ToString();
+                        //var paths = item.Value.ToString().Split("/");
+                        //paths = paths.Where(s => !string.IsNullOrEmpty(s)).ToArray();
 
+                        //switch (paths.Length)
+                        //{
+                        //    case 1:
+                        //        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", paths[0])));
+                        //        break;
+                        //    case 2:
+                        //        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", paths[0], paths[1])));
+                        //        break;
+                        //    default:
+                        //        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(_configuration.GetSection("dirReports").Value + item.Value.ToString()));
+                        //        break;
+                        //}
+                        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(_configuration.GetSection("dirReports").Value + item.Value.ToString()));
                     }
                     if (item.Key == "format")
                     {
@@ -132,114 +164,5 @@ namespace BL.Reports
                 return lr.Render(format, null, out mimeType, out _, out _, out _, out _);
             }
         }
-        public static bool DynamicPrint(ApiPrintRequestDto parameters, string printerName)
-        {
-            var streams = new List<Stream>();
-            try
-            {
-
-                using (LocalReport lr = new LocalReport())
-                {
-                    string format = string.Empty;
-                    string deviceInfo = string.Empty;
-                    foreach (var props in parameters.rdlcProps)
-                    {
-                        foreach (var item in props)
-                        {
-                            if (item.Key == "rdlcName")
-                            {
-                                lr.ReportPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", item.Value); ;
-                            }
-                            if (item.Key == "formato")
-                            {
-                                format = item.Value;
-                            }
-                            if (item.Key == "deviceInfo")
-                            {
-                                deviceInfo = item.Value;
-                            }
-                        }
-                    }
-                    if (parameters.dataSources != null)
-                    {
-                        foreach (var item in parameters.dataSources)
-                        {
-                            lr.DataSources.Add(new ReportDataSource(item.Key, DataHelper.JsonToDataTable(JsonConvert.SerializeObject(item.Value))));
-                        }
-                    }
-
-                    if (parameters.rdlcParams != null)
-                    {
-                        int index = 0;
-                        ReportParameter[] rp = new ReportParameter[parameters.rdlcParams.Keys.Count];
-                        foreach (var item in parameters.rdlcParams)
-                        {
-                            rp[index++] = new ReportParameter(item.Key, item.Value);
-                        }
-                        lr.SetParameters(rp);
-                    }
-
-                    lr.Render(format, deviceInfo, (name, fileNameExtension, encoding, mimeType, willSeek) =>
-                    {
-                        var stream = new MemoryStream();
-                        streams.Add(stream);
-                        return stream;
-                    }, out _);
-
-                    foreach (Stream stream in streams)
-                        stream.Position = 0;
-
-                    if (streams == null || streams.Count == 0)
-                    {
-                        throw new Exception("Error: no stream to print.");
-                    }
-
-                    PrintDocument printDoc = new PrintDocument();
-                    printDoc.PrinterSettings.PrinterName = printerName;
-                    PrinterSettings pageSettings = new PrinterSettings();
-                    pageSettings.PrinterName = printerName;
-                    printDoc.DefaultPageSettings = pageSettings.DefaultPageSettings;
-
-                    int currentIndex = 0;
-                    if (printDoc.PrinterSettings.IsValid)
-                    {
-                        printDoc.PrintPage += (sender, e) =>
-                        {
-                            Metafile pageImage = new Metafile(streams[currentIndex]);
-                            e.Graphics.DrawImage(
-                                pageImage, e.PageBounds);
-                            currentIndex++;
-                            e.HasMorePages = (currentIndex < streams.Count);
-                        };
-                        printDoc.EndPrint += (sender, e) =>
-                        {
-                            if (streams != null)
-                            {
-                                foreach (Stream item in streams)
-                                {
-                                    item.Close();
-                                }
-                                streams.Clear();
-                            }
-                        };
-                        //int milliseconds = 3000;
-                        //Thread.Sleep(milliseconds);
-                        printDoc.Print();
-                        return true;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                var appLog = new EventLog("Application");
-                var eventSource = "PrintServer";
-                appLog.Source = EventsLogs.CreateEventSource(eventSource);
-                appLog.WriteEntry(ex.StackTrace, EventLogEntryType.Error);
-                return false;
-            }
-            return false;
-        }
-
     }
-
 }

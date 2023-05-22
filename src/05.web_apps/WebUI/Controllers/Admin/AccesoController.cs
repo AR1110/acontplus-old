@@ -1,7 +1,6 @@
-﻿using Domain.Models;
+﻿using DataAccess.Administracion;
+using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using DataAccess.Administracion;
 
 namespace WebUI.Controllers
 {
@@ -15,7 +14,7 @@ namespace WebUI.Controllers
             _a = new AccesoDao(_configuration);
         }
         // GET: Acceso
-        [Authorize]
+
         public IActionResult Index()
         {
             return View();
@@ -23,7 +22,7 @@ namespace WebUI.Controllers
 
         public async Task<IActionResult> Get(int idPolitica)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _a.GetByPoliticaAsync(idRol, idPolitica);
             return Ok(res);
         }
@@ -31,14 +30,14 @@ namespace WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Put([FromBody] List<Acceso> data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _a.UpdateAsync(idRol, data);
             return Ok(res);
         }
 
         public async Task<IActionResult> GetAccesoBySubMenu(int idSubMenu)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idRol").Value);
+            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _a.GetByAccessAsync(idRol, idSubMenu);
             return Ok(res);
         }

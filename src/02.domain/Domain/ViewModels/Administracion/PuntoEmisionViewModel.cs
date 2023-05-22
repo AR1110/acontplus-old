@@ -1,11 +1,4 @@
-﻿using Domain.Models.Sri;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Domain.ViewModels.Administracion
+﻿namespace Domain.ViewModels.Administracion
 {
     public class PuntoEmisionViewModel
     {

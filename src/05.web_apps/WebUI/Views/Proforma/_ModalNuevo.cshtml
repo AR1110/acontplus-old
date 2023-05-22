@@ -28,7 +28,7 @@
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-xs-12">
                 <div class="form-group">
                     <label for="fechaEmision">Fecha Emisión: <span class="text-danger">*</span> </label>
-                    <input type="date" name="fechaEmision" id="fechaEmision" class="form-control border-select" ng-model="$ctrl.data.fechaEmision">
+                    <input type="date" name="fechaEmision" id="fechaEmision" class="form-control border-select" ng-model="$ctrl.data.fechaEmision" ng-disabled="!$ctrl.ventaComprobantePermission.fechaEmision.update">
                 </div>                
             </div>
         </div>
@@ -81,17 +81,28 @@
 
         <div class="row">
             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                <div class="row justify-content-between">
-                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                        <label for="">Buscar Articulo</label>             
+                <div class="row">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <label for="">Buscar por Artículo</label>             
                         <md-autocomplete-articulo-component 
                             tipo-doc="$ctrl.TIPO_DOC_PR"
                             abrir-modal-articulo="$ctrl.abrirModalArticulo(item)"
                             get-data-articulo="$ctrl.getDataIdArticulo(item)"
                             set-item-articulo-en-detalle="$ctrl.setItemArticuloEnDetalle(item)"
-                            scope-parent="scopeParent">
+                            scope-parent="scopeParent" id-bodega="$ctrl.idBodega">
                         </md-autocomplete-articulo-component>            
                     </div>
+
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label for="searchBarcode">Buscar por Código</label>
+                            <articulo-search-barcode 
+                                tipo-doc="$ctrl.TIPO_DOC_PR"                          
+                                set-item-articulo-en-detalle="$ctrl.setItemArticuloEnDetalle(item)"
+                            ></articulo-search-barcode>                                                                           
+                        </div>
+                    </div>
+
                 </div>
             </div>
             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
@@ -113,7 +124,7 @@
                                     <i class="fas fa-info-circle fa-xs"></i>
                                 </span>                                                                
                             </label>
-                            <select id="tarifas" class="form-control border-select" ng-model="$ctrl.idTarifa" ng-change="$ctrl.askToChangeTariga()">
+                            <select id="tarifas" class="form-control border-select" ng-model="$ctrl.idTarifa" ng-change="$ctrl.askToChangeTariga()" ng-disabled="!$ctrl.ventaComprobantePermission.tarifa.update">
                                 <option ng-value="item.idTarifa" ng-repeat="item in $ctrl.tarifas">
                                     {{item.descripcion}}
                                 </option>
@@ -245,7 +256,7 @@
                         <div class="form-group">
                             <label>% Descuento</label>
                             <div class="input-group">
-                                <input ng-model="$ctrl.data.porcentajeDescuento" ng-disabled="$ctrl.gridOptions.data.length==0" 
+                                <input ng-model="$ctrl.data.porcentajeDescuento" ng-disabled="!$ctrl.ventaComprobantePermission.porcentajeDescuento.update || $ctrl.gridOptions.data.length==0" 
                                 decimal class="form-control" />
                                 <div class="input-group-append">
                                     <button type="button" class="btn btn-secondary btn-sm" ng-click="$ctrl.calcularPorcentajeDescuento()">
@@ -260,7 +271,7 @@
                         <div class="form-group">
                             <label>Descuento</label>
                             <div class="input-group">
-                                <input ng-model="$ctrl.data.totalDescuento" id="totalDescuento" ng-disabled="$ctrl.gridOptions.data.length==0" decimal  placeholder="0.00" class="form-control" />
+                                <input ng-model="$ctrl.data.totalDescuento" id="totalDescuento" ng-disabled="!$ctrl.ventaComprobantePermission.descuento.update || $ctrl.gridOptions.data.length==0" decimal  placeholder="0.00" class="form-control" />
                                 <div class="input-group-append">
                                     <button type="button" class="btn btn-secondary btn-sm" ng-click="$ctrl.calcularDescuento()">
                                         <i class="fa fa-calculator fa-xs"></i>
@@ -306,7 +317,12 @@
 
                             <tr>
                                 <td class="left">
-                                    <strong class="text-dark">IVA {{$ctrl.actividadTipoIva.tarifa}}%</strong>
+                                    @* <strong class="text-dark">IVA {{$ctrl.actividadTipoIva.tarifa}}%</strong> *@
+                                     <select style="width: 150px;" name="impuestoTarifa" id="impuestoTarifa" ng-model="$ctrl.data.tarifa" class="form-control form-control-sm border-select" ng-change="$ctrl.recalculateImpuestoTarifa()">
+                                        <option ng-value="item.tarifa" ng-repeat="item in $ctrl.impuestoTarifas">
+                                            {{item.descripcion}}
+                                        </option>
+                                    </select>
                                 </td>
                                 <td class="right">${{$ctrl.data.iva}}</td>
                             </tr>

@@ -9,6 +9,7 @@
   <ItemGroup>
     <None Remove="Logos\logoAcontPlus.jpg" />
     <None Remove="Templates\EmailTemplate.html" />
+    <None Remove="Templates\EmailTemplate_Trib.html" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,10 +19,14 @@
     <Content Include="Templates\EmailTemplate.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Templates\EmailTemplate_Trib.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Nustache" Version="1.16.0.10" />
+    <PackageReference Include="MailKit" Version="4.0.0" />
+    <PackageReference Include="Scriban" Version="5.7.0" />
   </ItemGroup>
 
   <ItemGroup>

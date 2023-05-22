@@ -1,8 +1,6 @@
-using WebUI.Services;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
-using WebUI.Hubs;
+using BL.JwtAuthenticationManger;
 using Helpers;
+using WebUI.Hubs;
 
 namespace testWebApi
 {
@@ -22,6 +20,8 @@ namespace testWebApi
             //}
 
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddCustomJwtAuthentication();
 
             builder.Services.AddCors(options =>
             {
@@ -45,57 +45,57 @@ namespace testWebApi
             builder.Services.AddMvc();
 
             //autenticacion global //https://learn.microsoft.com/en-us/aspnet/core/security/authorization/secure-data?view=aspnetcore-6.0
-            builder.Services.AddAuthorization(options =>
-            {
-                options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
-            });
+            //builder.Services.AddAuthorization(options =>
+            //{
+            //    options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+            //});
 
             //for more information review https://docs.microsoft.com/en-us/aspnet/core/security/authentication/cookie?view=aspnetcore-6.0
-            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(options =>
-                {
-                    options.ExpireTimeSpan = TimeSpan.FromDays(1);
-                    options.SlidingExpiration = true;
-                    options.LoginPath = "/Login/Index";
-                    options.AccessDeniedPath = "/denied";
-                    options.Events = new CookieAuthenticationEvents()
-                    {
-                        OnSigningIn = async context =>
-                        {
-                            //var principal = context.Principal;
-                            //if (principal.HasClaim(c=>c.Type == ClaimTypes.NameIdentifier))
-                            //{
-                            //    if (principal.Claims.FirstOrDefault(c=>c.Type == ClaimTypes.NameIdentifier).Value=="root")
-                            //    {
-                            //        var claimsIdentity = principal.Identity as ClaimsIdentity;
-                            //        claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, "Admin"));
-                            //    }
-                            //}
-                            //context.Properties.ExpiresUtc = DateTimeOffset.Now.AddHours(1);
-                            //context.CookieOptions.Expires = context.Properties.ExpiresUtc?.ToUniversalTime();
-                            await Task.CompletedTask;
-                        },
-                        OnSignedIn = async context =>
-                        {
-                            await Task.CompletedTask;
-                        },
-                        OnValidatePrincipal = async context =>
-                        {
-                            await Task.CompletedTask;
-                        }
-                    };
-                    options.EventsType = typeof(CustomCookieAuthenticationEvents);
-                });
+            //builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            //    .AddCookie(options =>
+            //    {
+            //        options.ExpireTimeSpan = TimeSpan.FromDays(1);
+            //        options.SlidingExpiration = true;
+            //        options.LoginPath = "/Login/Index";
+            //        options.AccessDeniedPath = "/denied";
+            //        options.Events = new CookieAuthenticationEvents()
+            //        {
+            //            OnSigningIn = async context =>
+            //            {
+            //                //var principal = context.Principal;
+            //                //if (principal.HasClaim(c=>c.Type == ClaimTypes.NameIdentifier))
+            //                //{
+            //                //    if (principal.Claims.FirstOrDefault(c=>c.Type == ClaimTypes.NameIdentifier).Value=="root")
+            //                //    {
+            //                //        var claimsIdentity = principal.Identity as ClaimsIdentity;
+            //                //        claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, "Admin"));
+            //                //    }
+            //                //}
+            //                //context.Properties.ExpiresUtc = DateTimeOffset.Now.AddHours(1);
+            //                //context.CookieOptions.Expires = context.Properties.ExpiresUtc?.ToUniversalTime();
+            //                await Task.CompletedTask;
+            //            },
+            //            OnSignedIn = async context =>
+            //            {
+            //                await Task.CompletedTask;
+            //            },
+            //            OnValidatePrincipal = async context =>
+            //            {
+            //                await Task.CompletedTask;
+            //            }
+            //        };
+            //        options.EventsType = typeof(CustomCookieAuthenticationEvents);
+            //    });
 
             //prevenir ataques
-            builder.Services.AddAntiforgery(options =>
-            {
-                options.Cookie.SameSite = SameSiteMode.Strict;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-                options.Cookie.HttpOnly = true;
-            });
+            //builder.Services.AddAntiforgery(options =>
+            //{
+            //    options.Cookie.SameSite = SameSiteMode.Strict;
+            //    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            //    options.Cookie.HttpOnly = true;
+            //});
 
-            builder.Services.AddScoped<CustomCookieAuthenticationEvents>();
+            //builder.Services.AddScoped<CustomCookieAuthenticationEvents>();
 
             //builder.Services.AddTransient<IConfiguration>(sp =>
             //{
@@ -104,7 +104,7 @@ namespace testWebApi
             //    return configurationBuilder.Build();
             //});
 
-            builder.Services.AddHttpContextAccessor();
+            //builder.Services.AddHttpContextAccessor();
 
             builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
             ConfigHelper.AddJsonFiles(builder.Configuration);
@@ -130,15 +130,18 @@ namespace testWebApi
 
             app.UseRouting();
 
-
             app.UseCors();
 
             app.UseAuthentication(); //added manually
 
             app.UseAuthorization();
 
+            //app.MapControllers().RequireAuthorization(); ONLY FOR API
 
-            app.UseCookiePolicy(cookiePolicyOptions);
+            app.UseMiddleware<JWTMiddleware>();
+
+            //app.UseCookiePolicy(cookiePolicyOptions);
+
 
 
             app.MapControllerRoute(

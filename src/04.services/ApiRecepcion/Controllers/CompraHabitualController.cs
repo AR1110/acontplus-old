@@ -1,0 +1,115 @@
+﻿using Common.Logs;
+using DataAccess;
+using Helpers;
+using Microsoft.AspNetCore.Mvc;
+
+namespace ApiRecepcion.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class CompraHabitualController : ControllerBase
+    {
+        private readonly IConfiguration _configuration;
+        public CompraHabitualController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+        [HttpGet("Get")]
+        public async Task<IActionResult> Get(string json)
+        {
+            DbAccess _db = new DbAccess(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Recepcion.CompraHabitual_Get");
+                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("json", json);
+                _response = _db.GetDataTableAsync();
+            }
+            catch (Exception ex)
+            {
+                _response.Create(code: "0", message: "Error al guardar");
+                LogWriter _log = new LogWriter(_configuration);
+                _log.LogError("Error on Get compra habitual: \n" + ex.ToString());
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
+        }
+        [HttpPost("Post")]
+        public async Task<IActionResult> Post(string json)
+        {
+            DbAccess _db = new DbAccess(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Recepcion.CompraHabitual_Insert");
+                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("json", json);
+                _response = _db.GetDefault();
+            }
+            catch (Exception ex)
+            {
+                _response.Create(code: "0", message: "Error al guardar");
+                LogWriter _log = new LogWriter(_configuration);
+                _log.LogError("Error on Post compra habitual: \n" + ex.ToString());
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
+        }
+        [HttpPut("Put")]
+        public async Task<IActionResult> Put(int id, string json)
+        {
+            DbAccess _db = new DbAccess(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Recepcion.CompraHabitual_Update");
+                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("id", id);
+                _db.AddDynamicParam("json", json);
+                _response = _db.GetDefault();
+            }
+            catch (Exception ex)
+            {
+                _response.Create(code: "0", message: "Error al guardar");
+                LogWriter _log = new LogWriter(_configuration);
+                _log.LogError("Error on Put compra habitual: \n" + ex.ToString());
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
+        }
+        [HttpDelete("Delete")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            DbAccess _db = new DbAccess(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Recepcion.CompraHabitual_Delete");
+                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("id", id);
+                _response = _db.GetDefault();
+            }
+            catch (Exception ex)
+            {
+                _response.Create(code: "0", message: "Error al guardar");
+                LogWriter _log = new LogWriter(_configuration);
+                _log.LogError("Error on Delete compra habitual: \n" + ex.ToString());
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
+        }
+    }
+}

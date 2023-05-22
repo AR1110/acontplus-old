@@ -1,50 +1,73 @@
+import {
+    ModalBaseCtrl
+} from "./modalBaseCtrl.js?v=0.91";
 
+class ModalFacturaCtrl extends ModalBaseCtrl {
 
-import { ModalBaseCtrl } from "./modalBaseCtrl.js?v=0.50";
+    constructor({
+        $scope,
+        $timeout,
+        $uibModalInstance,
+        _mS,
+        _commonSvc,
+        _modalSvc,
+        _nombreModalConst,
+        _fS,
+        _tS
+    }) {
+        super({
+            _mS,
+            _commonSvc,
+            _modalSvc,
+            _nombreModalConst,
+            _tS,
+        })
 
-class ModalFacturaCtrl extends ModalBaseCtrl{
-    
-    constructor({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS}){
-        super({_mS, _commonSvc, _modalSvc, _nombreModalConst,  _tS,})
-       
         const self = this;
 
         this.$scope = $scope;
-       
+
         this.$timeout = $timeout;
-       
+
         this.$uibModalInstance = $uibModalInstance;
-       
+
         this._fS = _fS;
 
         this.TIPO_DOC_FV = _commonSvc.tipoDoc['FV']
-        this.CAMPOS = ["idSucursal", "idCliente", "idPuntoEmision", "fechaEmision", "fechaVencimiento", "validFechaVcto", "gridOptions", "gridOptionsBodega"];  
+        this.CAMPOS = ["idSucursal", "idCliente", "idPuntoEmision", "fechaEmision", "fechaVencimiento", "validFechaVcto", "gridOptions", "gridOptionsBodega"];
 
         this.datosAdicionalesArticulo = [];
         this.infoAdicionalDocumento = [];
         this.cliente = {};
-        
+
         this.gridOptions = {
             enableColumnMenus: false,
             enableColumnReordering: true,
-            showGridFooter: false,           
+            showGridFooter: false,
         }
 
-        this.gridOptions.onRegisterApi = function (gridApi) {  
-            self.$scope.gridApi = gridApi;  
+        this.gridOptions.onRegisterApi = function (gridApi) {
+            self.$scope.gridApi = gridApi;
             if (self.$scope.gridApi) {
                 self.$timeout(() => {
                     self.$scope.gridApi.core.handleWindowResize();
                     self.$scope.gridApi.grid.refresh();
                 }, 5);
-            }   
-            
-            
-            gridApi.grid.element.on('keyup', function (ev) {            
-                if(ev.which == 13 || ev.keyCode=='13'){
-                    self.setFocusArticulo();
+            }
+
+
+            gridApi.grid.element.on('keyup', function (ev) {
+                if (ev.which == 13 || ev.keyCode == '13') {
+
+
+                    if (self.isSearchBarcode == 1) {
+                        self.setFocusInputBarcode();
+                    } else {
+                        self.setFocusArticulo();
+                    }
+
                     $scope.gridApi.grid.cellNav.clearFocus();
-                // ev.stopPropagation();   
+                    // ev.stopPropagation();   
                 }
             })
 
@@ -52,203 +75,237 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
                 //Validar campos
                 if ([null, "", undefined].includes(rowEntity[colDef.field])) {
                     rowEntity[colDef.field] = oldValue;
-                }       
-                
-                const objCalculo = self.uiGridInvoice.calculoColDef(rowEntity, oldValue)             
+                }
+
+                //Validacion de numeros negativos
+                if (['cantidad', 'precioUnitario', 'precioConIva', 'valorDescuento', 'porcentajeDescuento'].includes(colDef.field) && newValue < 0) {
+
+                    rowEntity[colDef.field] = oldValue;
+                }
+
+                if (colDef.field === 'cantidad' && rowEntity[colDef.field] === 0) {
+                    rowEntity[colDef.field] = 1;
+                }
+
+                const objCalculo = self.uiGridInvoice.calculoColDef(rowEntity, oldValue)
                 objCalculo[colDef.field] && objCalculo[colDef.field]();
                 objCalculo["calculoTotalDetalle"]();
-                self.data = Object.assign(self.data, self.uiGridInvoice.getTotales()); 
-                
+                self.data = Object.assign(self.data, self.uiGridInvoice.getTotales());
+
             })
         }
+
+
+
+        setTimeout(() => {
+            $("#clienteSearchInvoice").on('keyup', e => {
+                let keyCode = e.keyCode || e.which;
+                if (this.cliente.idCliente > 0 && keyCode === 13) {
+                    $("#btnSaveAndUpdateDocument").focus();
+                }
+            })
+        }, 500)
+
     }
 
     /**
      * 
      * @param {*} entity Datos del Articulo 
      */
-    async deleteRow(entity){
+    async deleteRow(entity) {
         let isConfirmed = await this.uiGridInvoice.deleteRow(entity);
 
-        if(isConfirmed && entity.datosAdicionales){
-            this.datosAdicionalesArticulo = this.datosAdicionalesArticulo.filter(val => val.idArticulo !== entity.idArticulo);            
-        }      
+        if (isConfirmed && entity.datosAdicionales) {
+            this.datosAdicionalesArticulo = this.datosAdicionalesArticulo.filter(val => val.idArticulo !== entity.idArticulo);
+            this.historyDatosAdicionales = this.historyDatosAdicionales.filter(val => val.idArticulo !== entity.idArticulo);
+        }
 
         this.data = Object.assign(this.data, this.uiGridInvoice.getTotales());
-        this.$scope.$apply();        
+        this.counterGridOptions();
+        this.$scope.$apply();
     }
 
 
-
-    trimDetailDoc(){
-        let tempDetails = [];
-        let orderIndex = 1;
-        							 						
-        for(let item of this.gridOptions.data){
-            tempDetails.push({
-                orderIndex: orderIndex++,
-                idFacturaDetalle: item.idFacturaDetalle || 0,
-                idArticulo: item.idArticulo,
-                idTarifa: item.idTarifa,
-                idBodega: item.idBodega,
-                idMedida: item.idMedida,
-                idPresentacion: item.idPresentacion || 0,
-                idTipoIva: item.idTipoIva,
-                tarifa: item.tarifa,
-                codigoPorcentaje: item.codigoPorcentaje,
-                ice: item.ice,
-                descripcion: item.descripcion,
-                cantidad: item.cantidad,
-                precioCostoNeto: item.precioCostoNeto,
-                precioUnitario: item.precioUnitario,
-                precioVenta: item.precioUnitario,
-                precioConIva: item.precioConIva,
-                valorDescuento: item.valorDescuento,
-                precioTotalSinImpuesto: item.precioTotalSinImpuesto || 0,
-                porcentajeDescuento: item.porcentajeDescuento,
-                total: item.total,
-                nota: item.nota,
-            })
-        }
-        return tempDetails;
-    }
-
-
-    async setItemArticuloEnDetalle(dataArticulo){        
+    async setItemArticuloEnDetalle(dataArticulo) {
         try {
             const self = this;
-                 
+
             this.dataArticulo = dataArticulo;
 
-            self.addRow();        
-            
-            const {articulo, medidas, datosAdicionales} = self.dataArticulo;        
-            let index  = self.gridOptions.data.findIndex(value => value.idArticulo === 0); 
-            let entity = self.gridOptions.data[index]; 
-        
-            let dataMedida = medidas[0];
-         
-                
-            entity.idArticulo           = articulo.idArticulo;
-            entity.codigo               = articulo.codigoArticulo;                
-            entity.descripcion          = articulo.descripcion;  
-            entity.idTipoIva            = articulo.idTipoIva;                          
-            entity.codigoPorcentaje     = articulo.codigoPorcentaje;
-            entity.tarifa               = articulo.tarifa;
-            // entity.nombreTipoIva        = articulo.nombreTipoIva;
-            entity.ice                  = articulo.valorIce;
-            entity.idBodega             = self.idBodega ? self.idBodega : 0;
-            entity.llevaInventario      = articulo.llevaInventario;
-            entity.datosAdicionales     = articulo.datosAdicionales;
-            entity.productoFraccionable = articulo.productoFraccionable;
-            entity.medidas              = medidas; //Lista Medida 
-            entity.idMedida             = dataMedida.idMedida; //Medida por defecto 
-            entity.adicional            = datosAdicionales; //
+            const {
+                articulo,
+                medidas,
+                datosAdicionalesArticulo
+            } = self.dataArticulo;
 
-        
-            entity.articuloTarifas      = JSON.parse(dataMedida.tarifas);
-            let tarifa                  = entity.articuloTarifas.find(item=>item.idTarifa===self.idTarifa);                                      
-            entity.idTarifa             = self.idTarifa;  
-            entity.precioUnitario       = self._fS.roundNumber(tarifa.precioVenta, self.decimal.nroPrecio);                
-            entity.precioConIva         = self._fS.roundNumber(tarifa.precioConIva, self.decimal.nroPrecio);
-            
-            
-            const objCalculo            = self.uiGridInvoice.calculoColDef(entity, 0);             
-            
+
+            let dataMedida = medidas[0];
+
+            let index = 0;
+
+            if ([null, undefined].includes(this.indexRow)) {
+                self.addRow();
+                index = this.gridOptions.data.findIndex(value => value.idArticulo === 0);
+            } else {
+                index = this.indexRow;
+            }
+
+            let entity = self.gridOptions.data[index];
+
+
+            entity.idArticulo = articulo.idArticulo;
+            entity.codigo = articulo.codigoArticulo;
+            entity.descripcion = articulo.descripcion;
+
+
+            //Aplica a establecimiento que llevan actividad de Tipo Alojamiento
+            if (this.actividadTipoIva.codigoPorcentaje === '8' && articulo.codigoPorcentaje === '2') {
+
+                let dataImpuestoTarifa = this.tipoIvas.find(item => item.codigoPorcentaje === this.actividadTipoIva.codigoPorcentaje);
+                entity.idTipoIva = dataImpuestoTarifa.idTipoIva;
+                entity.codigoPorcentaje = dataImpuestoTarifa.codigoPorcentaje;
+                entity.tarifa = dataImpuestoTarifa.tarifa;
+
+            } else {
+                entity.idTipoIva = articulo.idTipoIva;
+                entity.codigoPorcentaje = articulo.codigoPorcentaje;
+                entity.tarifa = articulo.tarifa;
+
+            }
+
+
+            // entity.nombreTipoIva        = articulo.nombreTipoIva;
+            entity.ice = articulo.valorIce;
+            entity.idBodega = self.idBodega ? self.idBodega : 0;
+            entity.llevaInventario = articulo.llevaInventario;
+            entity.datosAdicionales = articulo.datosAdicionales;
+            entity.productoFraccionable = articulo.productoFraccionable;
+            entity.medidas = medidas; //Lista Medida 
+            entity.idMedida = dataMedida.idMedida; //Medida por defecto 
+
+            // if(!(entity.idFacturaDetalle > 0)){
+                entity.datosAdicionalesArticulo = datosAdicionalesArticulo; //
+            //}
+
+
+            entity.articuloTarifas = JSON.parse(dataMedida.tarifas);
+            let tarifa = entity.articuloTarifas.find(item => item.idTarifa === self.idTarifa);
+            entity.idTarifa = self.idTarifa;
+            entity.precioUnitario = self._fS.roundNumber(tarifa.precioVenta, self.decimal.nroPrecio);
+            entity.precioConIva = self._fS.roundNumber(tarifa.precioConIva, self.decimal.nroPrecio);
+
+
+            const objCalculo = self.uiGridInvoice.calculoColDef(entity, 0);
+
             objCalculo["precioUnitario"] && objCalculo["precioUnitario"]();
-            
+
             objCalculo["calculoTotalDetalle"]();
-            
-            self.data = Object.assign(self.data, self.uiGridInvoice.getTotales()); 
+
+            self.data = Object.assign(self.data, self.uiGridInvoice.getTotales());
+
+            this.indexRow = index;
 
             this.focusColumnCantidad();
+     
 
-
-            this.indexRow = this.gridOptions.data.findIndex(val => val.idArticulo === this.dataArticulo.articulo.idArticulo);           
-
-          
         } catch (error) {
-            console.log(error)            
+            console.log(error)
         }
     }
 
-    addItem(){
+    addItem() {
         const self = this;
-        self.addRow();        
-        
-        const {articulo, medidas, datosAdicionales} = self.dataArticulo;        
-        let index  = self.gridOptions.data.findIndex(value => value.idArticulo === 0); 
-        let entity = self.gridOptions.data[index]; 
-    
+        self.addRow();
+
+        const {
+            articulo,
+            medidas,
+            datosAdicionalesArticulo
+        } = self.dataArticulo;
+        let index = self.gridOptions.data.findIndex(value => value.idArticulo === 0);
+        let entity = self.gridOptions.data[index];
+
         let dataMedida = medidas[0];
-            
-        entity.idArticulo           = articulo.idArticulo;
-        entity.codigo               = articulo.codigoArticulo;                
-        entity.descripcion          = articulo.descripcion;  
-        entity.idTipoIva            = articulo.idTipoIva;  
 
-        entity.codigoPorcentaje     = articulo.codigoPorcentaje;
-        entity.tarifa               = articulo.tarifa;
+        entity.idArticulo = articulo.idArticulo;
+        entity.codigo = articulo.codigoArticulo;
+        entity.descripcion = articulo.descripcion;
+        entity.idTipoIva = articulo.idTipoIva;
+
+        entity.codigoPorcentaje = articulo.codigoPorcentaje;
+        entity.tarifa = articulo.tarifa;
+
         // entity.nombreTipoIva        = articulo.nombreTipoIva;
-        entity.ice                  = articulo.valorIce;
-        entity.idBodega             = self.idBodega ? self.idBodega : 0;
-        entity.llevaInventario      = articulo.llevaInventario;
-        entity.datosAdicionales     = articulo.datosAdicionales;
+        entity.ice = articulo.valorIce;
+        entity.idBodega = self.idBodega ? self.idBodega : 0;
+        entity.llevaInventario = articulo.llevaInventario;
+        entity.datosAdicionales = articulo.datosAdicionales;
         entity.productoFraccionable = articulo.productoFraccionable;
-        entity.medidas              = medidas; //Lista Medida 
-        entity.idMedida             = dataMedida.idMedida; //Medida por defecto 
-        entity.adicional            = datosAdicionales; //
+        entity.medidas = medidas; //Lista Medida 
+        entity.idMedida = dataMedida.idMedida; //Medida por defecto 
+       
+        entity.datosAdicionalesArticulo = datosAdicionalesArticulo; //
 
-    
-        entity.articuloTarifas      = JSON.parse(dataMedida.tarifas);
-        let tarifa                  = entity.articuloTarifas.find(item=>item.idTarifa===self.idTarifa);                                      
-        entity.idTarifa             = self.idTarifa;  
-        entity.precioUnitario       = self._fS.roundNumber(tarifa.precioVenta, self.decimal.nroPrecio);                
-        entity.precioConIva         = self._fS.roundNumber(tarifa.precioConIva, self.decimal.nroPrecio);
-        
-        
-        const objCalculo            = self.uiGridInvoice.calculoColDef(entity, 0);             
-        
+
+        entity.articuloTarifas = JSON.parse(dataMedida.tarifas);
+        let tarifa = entity.articuloTarifas.find(item => item.idTarifa === self.idTarifa);
+        entity.idTarifa = self.idTarifa;
+        entity.precioUnitario = self._fS.roundNumber(tarifa.precioVenta, self.decimal.nroPrecio);
+        entity.precioConIva = self._fS.roundNumber(tarifa.precioConIva, self.decimal.nroPrecio);
+
+
+        const objCalculo = self.uiGridInvoice.calculoColDef(entity, 0);
+
         objCalculo["precioUnitario"] && objCalculo["precioUnitario"]();
-        
+
         objCalculo["calculoTotalDetalle"]();
-        
-        self.data = Object.assign(self.data, self.uiGridInvoice.getTotales()); 
+
+        self.data = Object.assign(self.data, self.uiGridInvoice.getTotales());
 
         this.focusColumnCantidad();
-        
-       
+
+
     }
 
 
-    openModalDatoAdicionalArticulo(rowEntity, isView){
+    openModalDatoAdicionalArticulo(rowEntity, isView) {
         let params = {
             rowEntity,
             isView,
             tipoDoc: this.TIPO_DOC_FV,
             idComprobante: this.data.idFactura,
             articuloManejos: this.datosAdicionalesArticulo
-        }    
+        }
         this.openModalDatoAdicionalArticuloParam(params)
     }
 
 
-    calcularPorcentajeDescuento() {
-        let porcentajeDescuento = this.data.porcentajeDescuento;
+    resultModalAdicional(result) {
+        let {entity, historyDatosAdicionales} = result;
+        this.historyDatosAdicionales = historyDatosAdicionales;
+    }
 
-        if(typeof this.data.porcentajeDescuento !=="number" || this.data.porcentajeDescuento === ""){
+    calcularPorcentajeDescuento() {
+
+        if (!this.ventaComprobantePermission.porcentajeDescuento.update) {
+            this.data.porcentajeDescuento = 0;
+            this._tS.toastr('warning', 'No tienes permiso para realizar esta acción');
+            return
+        }
+
+        if (typeof this.data.porcentajeDescuento !== "number" || this.data.porcentajeDescuento === "") {
             this._tS.toastr('warning', 'Ingrese un Número Válido');
             return
         }
 
-        if( this.data.porcentajeDescuento <=100 ){
+        if (this.data.porcentajeDescuento <= 100) {
             //redondeo del numero porcentaje 
             // this.data.porcentajeDescuento = this._fS.roundNumber(this.data.porcentajeDescuento, this.decimal.nroTotalSubTotal)            
-            this.setPorcentajeDescuentoAll(this.data.porcentajeDescuento); 
-            
-            console.log(porcentajeDescuento)
-            
-        }else{
+            this.setPorcentajeDescuentoAll(this.data.porcentajeDescuento);
+
+
+
+        } else {
             this.toast.toastr('warning', 'El Porcentaje de Descuento tiene que ser menor o igual a 100');
         }
     }
@@ -256,75 +313,113 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
     //Calcular Porcentaje  Descuento 
     calcularDescuento() {
         try {
+            if (!this.ventaComprobantePermission.descuento.update) {
+                this.data.descuento = 0;
+                this._tS.toastr('warning', 'No tienes permiso para realizar esta acción');
+                return
+            }
+
             let valor = this.data.totalDescuento || 0;
             this.data.totalDescuento = Number(valor)
-            
-            if(typeof this.data.totalDescuento!=='number' || this.data.totalDescuento === ""){
+
+            if (typeof this.data.totalDescuento !== 'number' || this.data.totalDescuento === "") {
                 this._tS.toastr('warning', 'Ingrese un númeto válido', 'Valor Descuento');
                 return
             }
-    
+
             if (this.data.totalDescuento <= this.uiGridInvoice.getSubTotalSinImpuesto()) {
-                let porcentajeDescuento = (this.data.totalDescuento * 100) / this.uiGridInvoice.getSubTotalSinImpuesto() || 0;               
+                let porcentajeDescuento = (this.data.totalDescuento * 100) / this.uiGridInvoice.getSubTotalSinImpuesto() || 0;
                 this.data.porcentajeDescuento = this._fS.roundNumber(porcentajeDescuento, this.decimal.nroDescuentoDetalle);
-                this.setPorcentajeDescuentoAll(this.data.porcentajeDescuento)            
-            }else{
+                this.setPorcentajeDescuentoAll(this.data.porcentajeDescuento)
+            } else {
                 this._tS.toastr('warning', 'El Valor Descuento no puede ser mayor al total');
-            }  
+            }
         } catch (error) {
             console.log("CALCULO DE TOTAL DESCUENTO", error)
-        }            
+        }
     }
 
 
-    async closeModal(){
 
-        if(this.TIPO_REGISTRO==='NUEVO' && this.gridOptions.data.length>0){
+    recalculateImpuestoTarifa() {
+        try {
+            this.uiGridInvoice.actividadTipoIva = this.impuestoTarifas.find(item => item.tarifa === this.data.tarifa);
+            this.data = Object.assign(this.data, this.uiGridInvoice.getTotales());
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+
+    async closeModal() {
+
+        if (this.TIPO_REGISTRO === 'NUEVO' && this.gridOptions.data.length > 0) {
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
-                  confirmButton: 'btn btn-success',
-                  denyButton:'btn btn-info ml-2',
-                  cancelButton: 'btn btn-danger ml-2'
+                    confirmButton: 'btn btn-success',
+                    denyButton: 'btn btn-info ml-2',
+                    cancelButton: 'btn btn-danger ml-2'
                 },
                 buttonsStyling: false
             })
-            
+
             swalWithBootstrapButtons.fire({
                 title: 'Salir ?',
                 html: "<small>Tienes un documento en proceso, desea salir ahora?</small>",
                 icon: 'warning',
                 showCancelButton: true,
-                showConfirmButton:true,
-                showDenyButton:true,
+                showConfirmButton: true,
+                showDenyButton: true,
                 confirmButtonText: 'Apartar',
                 denyButtonText: 'Si, salir',
                 cancelButtonText: 'No, cancelar!',
-                focusDeny:true,
+                focusDeny: true,
                 reverseButtons: false
-            }).then(result=>{
+            }).then(result => {
 
-                if(result.isConfirmed){
+                if (result.isConfirmed) {
                     this.askToSaveStorage();
                 }
 
-                if(result.isDenied){
+                if (result.isDenied) {
                     this.$uibModalInstance.close();
                 }
-                
+
             })
-            return 
+            return
         }
-        this.$uibModalInstance.close();        
+        this.$uibModalInstance.close();
     }
 
 
-    async askToSaveStorage(){
+    async askToSaveStorage() {
         try {
             await this._storageSvc.askToSaveDetailDoc("invoiceDetail", this.gridOptions.data);
-            this.$uibModalInstance.close(); 
+            this.$uibModalInstance.close();
         } catch (error) {
             console.log(error)
-        }             
+        }
+    }
+
+
+    swalDataInvalidCustomer(item) {
+
+        Swal.fire({
+            icon: 'warning',
+            title: 'Datos Incorrectos',
+            html: 'Número de identificación inválido, desea editar?',
+            showConfirmButton: true,
+            showCancelButton: true,
+            confirmButtonText: 'Editar',
+            cancelButtonText: 'Cancelar'
+        }).then(async result => {
+            if (result.isConfirmed) {
+                this.cliente = item;
+                await this.openModalClienteUpdate();
+                this.cliente = {}
+            }
+        })
+
     }
 
 
@@ -332,101 +427,186 @@ class ModalFacturaCtrl extends ModalBaseCtrl{
 }
 
 
-export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params', 'storageService']
+export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
+    static $inject = [
+        '$scope', 
+        '$timeout', 
+        '$uibModalInstance', 
+        'mainService', 
+        'commonService', 
+        'facturaService',
+        'modalService', 
+        'nombreModal', 
+        'formulario', 
+        'toastService', 
+        'params', 
+        'storageService'
+    ]
 
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params, _storageSvc){
-        super({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS})
+    constructor(
+        $scope, 
+        $timeout, 
+        $uibModalInstance, 
+        _mS, 
+        _commonSvc, 
+        facturaSvc,
+        _modalSvc, 
+        _nombreModalConst, 
+        _fS, 
+        _tS, 
+        _params, 
+        _storageSvc
+    ) {
+        super({
+            $scope,
+            $timeout,
+            $uibModalInstance,
+            _mS,
+            _commonSvc,
+            _modalSvc,
+            _nombreModalConst,
+            _fS,
+            _tS
+        })
         const self = this;
+
+        this.facturaSvc = facturaSvc;
 
         this._params = _params;
         this._storageSvc = _storageSvc;
 
-        let {TIPO_REGISTRO} = _params;  
-    
+        let {
+            TIPO_REGISTRO
+        } = _params;
+
+        this.historyDatosAdicionales = [];
+
 
         this.TIPO_REGISTRO = TIPO_REGISTRO;
-        
-        this.CELL_TEMPLATE_OPTION = `<a  ng-click="grid.appScope.$ctrl.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
 
-        <a  ng-click="grid.appScope.$ctrl.openModalArticle(row.entity, 2)" id="btnEditArticuloDetalle" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >
+        this.CELL_TEMPLATE_OPTION = `<a  ng-click="grid.appScope.$ctrl.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a> 
 
-        <a  ng-click="grid.appScope.$ctrl.openModalDatoAdicionalArticulo(row.entity, false)" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;  
+        <a  update-article  ng-click="grid.appScope.$ctrl.openModalArticle(row.entity, 2)" id="btnEditArticuloDetalle" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >
+
+       <view-kardex params="row.entity"></view-kardex>
+
+        <a  btn-dato-adicional-articulo-fact-elect entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' history-datos-adicionales="grid.appScope.$ctrl.historyDatosAdicionales" result-modal-adicional="grid.appScope.$ctrl.resultModalAdicional(result)" class= "btn btn-warning btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
 
         this.isDefaultArticle = true;
-    }
-    
-    async $onInit(){
-        try { 
-            showLoader();
-                           
-            let resultsDataForm = this._params.dataForm;          
-           
 
-            let {UiGridOptions} = await import('./../factElect/uiGridOptions.min.js' + CHANGE_VERSION());
-          
+        $uibModalInstance.rendered.then(() => {
+
+            $("#btnNewCustomerDocument").on('blur', this.onBlurBtnNewCustomerInvoice)
+        })
+
+    }
+
+    async $onInit() {
+        try {
+            showLoader();
+
+            let resultsDataForm = this._params.dataForm;
+
+            let {
+                UiGridOptions
+            } = await import('./../factElect/uiGridOptions.min.js' + CHANGE_VERSION());
+
             this.establecimientos = resultsDataForm[0];
 
-            if(this.establecimientos.length>0){
+            if (this.establecimientos.length > 0) {
 
-                
-                let dataEstab = this.establecimientos[0];                    
+
+                let dataEstab = this.establecimientos[0];
                 let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
-                
+
                 //informacion de establecimiento y ptoEmision en Encabezado                              
-
-
-
                 this.data.codEstab = dataEstab.codEstab;
                 this.cloneCodEstab = dataEstab.codEstab;
 
                 this.puntosEmisiones = resultsDataFormEstab[0];
 
-                if(this.puntosEmisiones.length>0){
-                    this.data.idPuntoEmision = this.puntosEmisiones[0].idPuntoEmision;                               
+                if (this.puntosEmisiones.length > 0) {
+                    this.data.idPuntoEmision = this.puntosEmisiones[0].idPuntoEmision;
                 }
-                
-                
-                this.bodegas       = resultsDataFormEstab[1];                
-                this.idBodega      = this.bodegas.length>0?this.bodegas[0].idBodega:0;
+
+
+                this.bodegas = resultsDataFormEstab[1];
+                this.idBodega = this.bodegas.length > 0 ? this.bodegas[0].idBodega : 0;
                 this.cloneIdBodega = this.idBodega;
 
+
+                this.impuestoTarifas = resultsDataFormEstab[2]; //Impuesto tarifas dependiendo el tipo Actividad
                 this.actividadTipoIva = resultsDataFormEstab[2][0];
+                this.data.tarifa = this.actividadTipoIva.tarifa;
+                // this.codigoPorcentaje = this.actividadTipoIva.codigoPorcentaje
+                this.disabledImpuestoTarifa = this.actividadTipoIva.codigoPorcentaje == '2'
 
                 this.setDataInfoEstab(this.establecimientos, this.puntosEmisiones);
-                
-            }else{
-                this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
+
+            } else {
+                this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');
             }
 
 
-            this.decimal = resultsDataForm[1][0]
+            this.decimal = resultsDataForm[1][0];
+         
             this.configDetalle = resultsDataForm[2][0]
-            
-            this.tipoIvas = resultsDataForm[3];
-            this.tarifas  = resultsDataForm[4];
 
-            this.idTarifa = this.tarifas.length>0?this.tarifas[0].idTarifa:0;
+            this.tipoIvas = resultsDataForm[3];
+
+            this.tarifas = resultsDataForm[4];
+            this.idTarifa = this.tarifas.length > 0 ? this.tarifas[0].idTarifa : 0;
             this.cloneIdTarifa = this.idTarifa;
 
             this.tiempoCreditos = resultsDataForm[5];
-            this.data.idTiempoCredito = this.tiempoCreditos.length>0?this.tiempoCreditos[0].idTiempoCredito:0;
-           
+            this.data.idTiempoCredito = this.tiempoCreditos.length > 0 ? this.tiempoCreditos[0].idTiempoCredito : 0;
 
-          
+
+
             //7 cliente 
-            if(resultsDataForm[7].length>0){
+            if (resultsDataForm[7].length > 0) {
                 this.cliente = resultsDataForm[7][0];
             }
 
-            
-           
+            //Permisos             
+            let userPermission = resultsDataForm[9];
+            this.ventaPermission = JSON.parse(userPermission[0].jsonPermission);
+
+            //Comprobante 
+            this.ventaComprobantePermission = Object.freeze(this.ventaPermission.comprobante);
+
+            //Detalle 
+            this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
+
+            //Articulo 
+
+            if (resultsDataForm[8].length > 0) {
+                let {
+                    searchCode,
+                    printerAutomatic,
+                    payAutomatic
+                } = resultsDataForm[8][0];
+                this.isSearchBarcode = searchCode;
+                this.printerAutomatic = printerAutomatic;
+                this.payAutomatic = payAutomatic;
+
+                this.$uibModalInstance.rendered.then(result => {
+                    if (this.isSearchBarcode == 1) {
+                        $("#inputBarcode").focus();
+                    } else {
+                        $("#custom-template-md-autocomplete-articulo").focus();
+                    }
+                })
+            }
+
+
+
             this.data.fechaEmision = new Date();
             this.getFechaVencimiento();
 
-            this.setColumnDefs();            
-           
-            this.uiGridInvoice =  new UiGridOptions({
+            this.setColumnDefs('12%');
+
+            this.uiGridInvoice = new UiGridOptions({
                 $scope: this.$scope,
                 gridOptions: this.gridOptions,
                 _fS: this._fS,
@@ -436,30 +616,30 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
             })
 
             this.uiGridInvoice.setInitiload({
-                bodegas: this.bodegas,                 
-                tipoIvas: this.tipoIvas, 
-                decimal: this.decimal, 
+                bodegas: this.bodegas,
+                tipoIvas: this.tipoIvas,
+                decimal: this.decimal,
                 actividadTipoIva: this.actividadTipoIva
             })
 
             this.uiGridInvoice.idTarifa = this.idTarifa;
-            
 
-            
-            if(Object.keys(this._storageSvc.getObject("invoiceDetail")).length>0){
-                this._storageSvc.restoreInvoiceDetail("invoiceDetail").then(result=>{
-                    if(result.isConfirmed){
-                        this.gridOptions.data = JSON.parse(result.dataInvoiceDetail[result.value]);                           
+
+
+            if (Object.keys(this._storageSvc.getObject("invoiceDetail")).length > 0) {
+                this._storageSvc.restoreInvoiceDetail("invoiceDetail").then(result => {
+                    if (result.isConfirmed) {
+                        this.gridOptions.data = JSON.parse(result.dataInvoiceDetail[result.value]);
                         delete result.dataInvoiceDetail[result.value];
-                                        
-                        this._storageSvc.setObject("invoiceDetail", result.dataInvoiceDetail) 
-                                                                                       
-                        this.data = Object.assign(this.data, this.uiGridInvoice.getTotales());  
+
+                        this._storageSvc.setObject("invoiceDetail", result.dataInvoiceDetail)
+
+                        this.data = Object.assign(this.data, this.uiGridInvoice.getTotales());
                     }
 
                 })
             }
-            
+
             hideLoader();
             this.$scope.$apply();
 
@@ -467,16 +647,21 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
             hideLoader();
             console.error(error)
 
-        }finally{
+        } finally {
 
-        
+
         }
     }
 
-    
 
-    async onSelectedClienteChange(item){
+
+    async onSelectedClienteChange(item) {
         try {
+            if (!item.validationSri && ['R', 'C'].includes(item.tipoIdentificacion)) {
+                this.swalDataInvalidCustomer(item);
+                return
+            }
+
 
             let dataCliente = await this.getClienteById(item);
             this.cliente = dataCliente;
@@ -487,22 +672,24 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
                 this.getFechaVencimiento(new Date());
             }
             this.$scope.$apply();
-            
+
         } catch (error) {
-            this.cliente = {};            
+            this.cliente = {};
             console.log('ERROR AL OBTENER DATOS DEL CLIENTE', error)
             this.$scope.$apply();
         }
     }
 
-    async onSave(){                        
-        try {            
-            
-            
-            if(!this.isValidaForm()) return
-        
-            if(this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total>50 ){
-                this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')           
+    
+
+    async onSave() {
+        try {
+
+
+            if (!this.isValidaForm()) return
+
+            if (this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total > 50) {
+                this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')
                 return
             }
 
@@ -511,158 +698,221 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl{
             showLoader();
             this.nroDocumentoSecuencial = await this._commonSvc.generarNroDocumentoVenta({
                 idPuntoEmision: this.data.idPuntoEmision,
-                codigoDocumento: this.TIPO_DOC_FV.codigo,                
-            })                           
-            hideLoader();
-            
-            if(!this.nroDocumentoSecuencial) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE"
-
-            let textAccion = 'Guardar';   
-            const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                  confirmButton: 'btn btn-success',
-                  cancelButton: 'btn btn-danger ml-2'
-                },
-                buttonsStyling: false
+                codigoDocumento: this.TIPO_DOC_FV.codigo,
             })
-              
-            swalWithBootstrapButtons.fire({
+            hideLoader();
+
+            if (!this.nroDocumentoSecuencial) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE"
+
+            let textAccion = 'Guardar';
+
+            let {isConfirmed} = await Swal.fire({
                 title: '<small>Guardar Factura</small>',
-                html: `<small>Esta Ud. seguro de ${textAccion} este <b> Factura de Venta</b> N° ${this.nroDocumentoSecuencial}</small>?`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Si, guardar!',
-                cancelButtonText: 'No, cancelar!',
-                reverseButtons: false,
-                allowOutsideClick:false,
-                allowEscapeKey:false
-            }).then(response=>{
+                  html: `<small>Esta Ud. seguro de ${textAccion} este <b> Factura de Venta</b> N° ${this.nroDocumentoSecuencial}</small>?`,
+                  icon: 'warning',
+                  showCancelButton: true,
+                  confirmButtonColor: '#3085d6',
+                  cancelButtonColor: '#d33',
+                  confirmButtonText: 'Si, guardar!',
+                  cancelButtonText: 'No, cancelar!',                
+                  allowOutsideClick: false,
+                  allowEscapeKey: true
+            })
+  
+            if(isConfirmed){
+                showLoader();
 
-                if(response.isConfirmed){
-
-                    showLoader();
-                    let factura = Object.assign({}, this.data);
-                    factura.idCliente      = this.cliente.idCliente;              
-                    factura.fechaEmision   = this._fS.formatDateTimeZone(this.data.fechaEmision);
-                    factura.fechaVencimiento = this._fS.formatDateTimeZone(this.data.fechaVencimiento);
-
-                    //Tarifa Aplicada al Documento
-                    factura.tarifa = this.actividadTipoIva.tarifa;
-                
-                    
-
-                    const data = {
-                        factura: JSON.stringify(factura),
-                        detalle: JSON.stringify(this.trimDetailDoc()),
-                        adicional: JSON.stringify(this.infoAdicionalDocumento || []),
-                        manejoArticulo: JSON.stringify(this.datosAdicionalesArticulo)
+                 //Tarifa Aplicada al Documento
+                 this.data.tarifa = this.actividadTipoIva.tarifa;
+                //Mappeamos todo el objecto necesario para guardar factura.
+                let params = this.facturaSvc.queryMapper({
+                    data: this.data, 
+                    cliente: this.cliente,
+                    detalles: this.gridOptions.data, 
+                    infoAdicionalDocumento: this.infoAdicionalDocumento,
+                    historyDatosAdicionales: this.historyDatosAdicionales
+                })
+  
+                this.facturaSvc.save(params).then(response=>{
+                    hideLoader();
+                    if (response.code === '0') {
+                        this._fS.sweetAlert('warning', response.message, response.titleSms);
+                        return
                     }
-                
+                    if (response.code === "1") {                        
+                        this._fS.sweetAlert('success', 'Registrado Correctamente', response.titleSms, 1000);
 
-                    this._mS.getData('post', '/FacturaVenta/Insert', data).then(response=>{
-                        if(response.code==='0'){    
-                            hideLoader();                
-                            this._fS.sweetAlert('warning', response.message, response.titleSms);                    
+                        let mainData = {
+                            isRegister: true,
+                            printerAutomatic: this.printerAutomatic,
+                            payAutomatic: this.payAutomatic,
+                            data: response.dataResponse,
+                            TIPO_DOC: this.TIPO_DOC_FV
                         }
-                        if(response.code==="1"){
-                            hideLoader();
-                            this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
-                            
-                            let data = JSON.parse(response.payload)[0];
-                            
-                            let mainData = {
-                                isRegister: true,
-                                data: {
-                                    ...data,
-                                    nroDocumento: data.estab + data.ptoEmi + data.secuencial,
-                                    esContado: data.gestion, 
-                                },
-                                TIPO_DOC: this.TIPO_DOC_FV                                             
-                            }
 
-                            this.$uibModalInstance.close(mainData)
-                                                          
-                        }
-                    })
-                }
+                        this.$uibModalInstance.close(mainData)
 
-            }) 
-            
-                                                
-        } catch (error) {            
+                    }
+                }).catch(error => {
+                      hideLoader();
+                      console.log(error);
+                })
+            }
+
+        } catch (error) {
+            hideLoader();
             console.log(error)
-        }finally{
-            
-        }     
+        }
     }
 }
 
 
-export class ModalFacturaEditarCtrl extends ModalFacturaCtrl{
+export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
 
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params']
+    static $inject = [
+        '$scope', 
+        '$timeout', 
+        '$uibModalInstance', 
+        'facturaService', 
+        'mainService', 
+        'commonService', 
+        'modalService', 
+        'nombreModal', 
+        'formulario', 
+        'toastService', 
+        'params'
+    ]
 
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params){
-        super({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS})
-        const self = this;
+    constructor($scope, $timeout, $uibModalInstance, facturaSvc, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params) {
+        super({
+            $scope,
+            $timeout,
+            $uibModalInstance,
+            _mS,
+            _commonSvc,
+            _modalSvc,
+            _nombreModalConst,
+            _fS,
+            _tS
+        })
 
-                
-        let {TIPO_REGISTRO, data} = _params;        
+        this.facturaSvc = facturaSvc;
+
+        this.historyDatosAdicionales = [];
+        this.datosAdicionalesArticulo = [];
+
+        let {
+            TIPO_REGISTRO,
+            data
+        } = _params;
         this.TIPO_REGISTRO = TIPO_REGISTRO;
         this.CELL_TEMPLATE_OPTION = `<a  ng-click="grid.appScope.$ctrl.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
 
-        <a  ng-click="grid.appScope.$ctrl.openModalArticle(row.entity)" id="btnEditArticuloDetalle" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >
-
-        <a  ng-click="grid.appScope.$ctrl.openModalDatoAdicionalArticulo(row.entity, false)" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
-
-        let {dataDocumento, cliente, detalleDocumento, infoAdicionalDocumento, actividadTipoIva } = data;
-        this.dataDocumento          = dataDocumento;
-        this.cliente                = cliente;
-        this.detalleDocumento       = detalleDocumento;
-        this.infoAdicionalDocumento = infoAdicionalDocumento;
-        this.actividadTipoIva       = actividadTipoIva;
+        <a  update-article ng-click="grid.appScope.$ctrl.openModalArticle(row.entity)" id="btnEditArticuloDetalle" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >
         
+        <view-kardex params="row.entity"></view-kardex>
+
+        <a  btn-dato-adicional-articulo-fact-elect entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' history-datos-adicionales="grid.appScope.$ctrl.historyDatosAdicionales" result-modal-adicional="grid.appScope.$ctrl.resultModalAdicional(result)" datos-adicionales="grid.appScope.$ctrl.datosAdicionalesArticulo" class= "btn btn-warning btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
+
+        let {
+            dataDocumento,
+            cliente,
+            detalleDocumento,
+            infoAdicionalDocumento,
+            actividadTipoIva,
+            datosAdicionalesArticulo
+        } = data;
+        this.dataDocumento = dataDocumento;
+        this.cliente = cliente;
+        this.detalleDocumento = detalleDocumento;
+        this.infoAdicionalDocumento = infoAdicionalDocumento;
+        this.actividadTipoIva = actividadTipoIva;
+        this.datosAdicionalesArticulo = datosAdicionalesArticulo || [];
+
+        this.historyDatosAdicionales = this.datosAdicionalesArticulo.map(item=>({
+            idArticulo: item.idArticulo,
+            idInfoAdicional: item.idInfoAdicional,
+            selected: true,
+        }))
+
+        this.data.tarifa = this.actividadTipoIva.tarifa;
+        this.disabledImpuestoTarifa = this.actividadTipoIva.codigoPorcentaje == '2'
+
+        $uibModalInstance.rendered.then(() => {
+
+            $("#btnNewCustomerDocument").on('blur', this.onBlurBtnNewCustomerInvoice)
+        })
     }
 
-    async $onInit(){
+    async $onInit() {
         try {
             showLoader();
-            let resultsDataForm = await this.initiload();            
-            let {UiGridOptions} = await import('./../factElect/uiGridOptions.min.js' + CHANGE_VERSION());
-           
+            let resultsDataForm = await this.initiload();
+            let {
+                UiGridOptions
+            } = await import('./../factElect/uiGridOptions.min.js' + CHANGE_VERSION());
+
             this.establecimientos = resultsDataForm[0];
-            
-            if(this.establecimientos.length>0){
 
-                let dataEstab = this.establecimientos.find(item=>item.codEstab===this.dataDocumento.codEstab)             
+            if (this.establecimientos.length > 0) {
 
-                let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);               
-                this.puntosEmisiones = resultsDataFormEstab[0];                
+                let dataEstab = this.establecimientos.find(item => item.codEstab === this.dataDocumento.codEstab)
 
-                this.bodegas       = resultsDataFormEstab[1];                
-                this.idBodega      = this.bodegas.length>0?this.bodegas[0].idBodega:0;
+                let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
+                this.puntosEmisiones = resultsDataFormEstab[0];
+
+                this.bodegas = resultsDataFormEstab[1];
+                this.idBodega = this.bodegas.length > 0 ? this.bodegas[0].idBodega : 0;
                 this.cloneIdBodega = this.idBodega;
+
+                this.impuestoTarifas = resultsDataFormEstab[2]; //Impuesto tarifas dependiendo el tipo Actividad
 
                 // this.actividadTipoIva = resultsDataFormEstab[2][0]
 
-            }else{
-                this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
+            } else {
+                this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');
             }
 
 
             this.decimal = resultsDataForm[1][0];
             this.configDetalle = resultsDataForm[2][0]
             this.tipoIvas = resultsDataForm[3];
-            this.tarifas  = resultsDataForm[4];
+            this.tarifas = resultsDataForm[4];
 
-            this.idTarifa = this.tarifas.length>0?this.tarifas[0].idTarifa:0;
+            this.idTarifa = this.tarifas.length > 0 ? this.tarifas[0].idTarifa : 0;
             this.cloneIdTarifa = this.idTarifa;
 
             this.tiempoCreditos = resultsDataForm[5];
-           
-            this.setColumnDefs();            
-           
-            this.uiGridInvoice =  new UiGridOptions({
+
+            //Configuracion de Codigo Barra 
+            if (resultsDataForm[8].length > 0) {
+                let {
+                    searchCode,
+                    printerAutomatic,
+                    payAutomatic
+                } = resultsDataForm[8][0];
+                this.isSearchBarcode = searchCode;
+
+                this.$uibModalInstance.rendered.then(result => {
+                    if (this.isSearchBarcode == 1) {
+                        $("#inputBarcode").focus();
+                    } else {
+                        $("#custom-template-md-autocomplete-articulo").focus();
+                    }
+                })
+            }
+
+            //Permisos             
+            let userPermission = resultsDataForm[9];
+            this.ventaPermission = JSON.parse(userPermission[0].jsonPermission);
+
+            this.ventaComprobantePermission = Object.freeze(this.ventaPermission.comprobante);
+            this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
+
+
+            this.setColumnDefs('12%');
+
+            this.uiGridInvoice = new UiGridOptions({
                 $scope: this.$scope,
                 gridOptions: this.gridOptions,
                 _fS: this._fS,
@@ -672,69 +922,79 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl{
             })
 
             this.uiGridInvoice.setInitiload({
-                bodegas: this.bodegas,                 
-                tipoIvas: this.tipoIvas, 
-                decimal: this.decimal, 
+                bodegas: this.bodegas,
+                tipoIvas: this.tipoIvas,
+                decimal: this.decimal,
                 actividadTipoIva: this.actividadTipoIva
             })
 
             this.uiGridInvoice.idTarifa = this.idTarifa;
-            
+
             //Cargamos los Datos 
             this.data = this.dataDocumento;
             this.nroDocSecuencial = this.data.nroDocSecuencial;
-            this.gridOptions.data = this.detalleDocumento;            
+            this.gridOptions.data = this.detalleDocumento;
 
             this.fechaEmisionEscrita = this._fS.getFechaEscrita(this.data.fechaEmision);
             this.fechaVencimientoEscrita = this._fS.getFechaEscrita(this.data.fechaVencimiento);
-            
-            this.$scope.$apply();            
+
+            this.setDataInfoEstab(this.establecimientos, this.puntosEmisiones);
+
+            this.$scope.$apply();
 
         } catch (error) {
-            
+
             console.log(error)
 
-        }finally{
+        } finally {
 
             hideLoader();
         }
     }
 
-    async onSelectedClienteChange(item){
+    async onSelectedClienteChange(item) {
         try {
 
+            if (!item.validationSri && ['R', 'C'].includes(item.tipoIdentificacion)) {
+                this.swalDataInvalidCustomer(item);
+                return
+            }
+
+
             let dataCliente = await this.getClienteById(item);
-            this.cliente = dataCliente;           
+            this.cliente = dataCliente;
             this.$scope.$apply();
-            
+
         } catch (error) {
-            this.cliente = {};            
+            this.cliente = {};
             console.log('ERROR AL OBTENER DATOS DEL CLIENTE', error)
             this.$scope.$apply();
         }
     }
 
-    async onSave(){                        
-        try {                        
-            if(!this.isValidaForm()) return
-        
-            if(this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total>50 ){
-                this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')           
+    async onSave() {
+        try {
+            if (!this.isValidaForm()) return
+
+            if (this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total > 50) {
+                this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')
                 return
             }
 
-            this.validarDatosAdicionales("idFacturaDetalle");                    
+            this.validarDatosAdicionales("idFacturaDetalle");
 
-            let textAccion = 'Actualizar';   
+            let textAccion = 'Actualizar';
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
-                  confirmButton: 'btn btn-success',
-                  cancelButton: 'btn btn-danger ml-2'
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger ml-2'
                 },
                 buttonsStyling: false
             })
-              
-            let {isConfirmed} = await swalWithBootstrapButtons.fire({
+
+            let {
+                isConfirmed
+            } = await swalWithBootstrapButtons.fire({
                 title: '<small>Actualizar Factura</small>',
                 html: `<small>Esta Ud. seguro de ${textAccion} este <b> Factura de Venta</b> N° ${this.nroDocSecuencial}</small>?`,
                 icon: 'warning',
@@ -742,50 +1002,53 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl{
                 confirmButtonText: 'Si, actualizar!',
                 cancelButtonText: 'No, cancelar!',
                 reverseButtons: false,
-                allowOutsideClick:false,
-                allowEscapeKey:false
-            })       
-           
-            
-            if(!isConfirmed) return
+                allowOutsideClick: false,
+                allowEscapeKey: false
+            })
 
-            showLoader();
-            let factura = Object.assign({}, this.data);
-            factura.idCliente      = this.cliente.idCliente;              
-            factura.fechaEmision   = this._fS.formatDateTimeZone(this.data.fechaEmision);
-            factura.fechaVencimiento = this._fS.formatDateTimeZone(this.data.fechaVencimiento);
-        
-            let data = {
-                factura: JSON.stringify(factura),
-                detalle: JSON.stringify(this.trimDetailDoc()),
-                adicional: JSON.stringify(this.infoAdicionalDocumento || []),
-                manejoArticulo: JSON.stringify(this.datosAdicionalesArticulo)
+
+            if (isConfirmed) {
+                showLoader();
+                //Mappeamos todo el objecto necesario para guardar factura.
+                 //Tarifa Aplicada al Documento
+                 this.data.tarifa = this.actividadTipoIva.tarifa;
+                let params = this.facturaSvc.queryMapper({
+                    data: this.data, 
+                    cliente: this.cliente,
+                    detalles: this.gridOptions.data, 
+                    infoAdicionalDocumento: this.infoAdicionalDocumento,
+                    historyDatosAdicionales: this.historyDatosAdicionales
+                })
+  
+                this.facturaSvc.update(this.data.idFactura, params).then(response=>{
+                    hideLoader();
+                    if (response.code === '0') {
+                        this._fS.sweetAlert('warning', response.message, response.titleSms);
+                        return
+                    }
+                    if (response.code === "1") {                        
+                        this._fS.sweetAlert('success', 'Registrado Correctamente', response.titleSms, 1000);
+                        this.isUpdate = true;
+                       // this.$uibModalInstance.close(mainData)
+
+                    }
+                }).catch(error => {
+                      hideLoader();
+                      console.log(error);
+                })
             }
 
-            await this._mS.getData('put', '/FacturaVenta/Update?id=' + this.data.idFactura, data).then(response=>{
-                if(response.code==='0'){                    
-                    this._fS.sweetAlert('warning', response.message, response.titleSms);                    
-                }
-                if(response.code==="1"){
-                    this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
-                    // let data = JSON.parse(response.payload)[0];                   
-                    // this.$uibModalInstance.close(data) 
-                    this.isUpdate = true;                                      
-                }
-            })
-                                                
-        } catch (error) {            
-            console.log(error)
-        }finally{
+        } catch (error) {
             hideLoader();
-        }     
+            console.log(error)
+        }
     }
 
-    closeModal(){
+    closeModal() {
         let obj = {
             isUpdate: this.isUpdate
         }
-      
+
         this.$uibModalInstance.close(obj);
     }
 }
@@ -793,69 +1056,87 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl{
 
 
 
-export class ModalFacturaDetalleCtrl extends ModalFacturaCtrl{
+export class ModalFacturaDetalleCtrl extends ModalFacturaCtrl {
 
     static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params']
 
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params){
-        super({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS})
+    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params) {
+        super({
+            $scope,
+            $timeout,
+            $uibModalInstance,
+            _mS,
+            _commonSvc,
+            _modalSvc,
+            _nombreModalConst,
+            _fS,
+            _tS
+        })
         const self = this;
 
         this.CELL_TEMPLATE_OPTION = `
         <a  ng-click="grid.appScope.$ctrl.openModalDatoAdicionalArticle(row.entity)" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
 
-         
+
         this.gridOptions = {
             enableColumnMenus: false,
             enableColumnReordering: true,
-            showGridFooter: false,           
+            showGridFooter: false,
         }
 
-        let {dataDocumento, cliente, detalleDocumento, infoAdicionalDocumento, actividadTipoIva } = _params.data;
-        this.dataDocumento          = dataDocumento;
-        this.cliente                = cliente;
-        this.detalleDocumento       = detalleDocumento;
+        let {
+            dataDocumento,
+            cliente,
+            detalleDocumento,
+            infoAdicionalDocumento,
+            actividadTipoIva
+        } = _params.data;
+        this.dataDocumento = dataDocumento;
+        this.cliente = cliente;
+        this.detalleDocumento = detalleDocumento;
         this.infoAdicionalDocumento = infoAdicionalDocumento;
         this.actividadTipoIva = actividadTipoIva;
 
     }
 
-    async $onInit(){
+    async $onInit() {
         try {
             showLoader();
-            let resultsDataForm = await this.initiload();            
-            let {UiGridOptions} = await import('./../factElect/uiGridOptions.min.js' + CHANGE_VERSION());
-           
+            let resultsDataForm = await this.initiload();
+            let {
+                UiGridOptions
+            } = await import('./../factElect/uiGridOptions.min.js' + CHANGE_VERSION());
+
             this.establecimientos = resultsDataForm[0];
-            
-            if(this.establecimientos.length>0){
 
-                let dataEstab = this.establecimientos.find(item=>item.codEstab===this.dataDocumento.codEstab)             
+            if (this.establecimientos.length > 0) {
 
-                let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);               
-                this.puntosEmisiones = resultsDataFormEstab[0];                
+                let dataEstab = this.establecimientos.find(item => item.codEstab === this.dataDocumento.codEstab)
 
-                this.bodegas       = resultsDataFormEstab[1];                
-                this.idBodega      = this.bodegas.length>0?this.bodegas[0].idBodega:0;
-                this.cloneIdBodega = this.idBodega;                
-            }else{
-                this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
+                let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
+                this.puntosEmisiones = resultsDataFormEstab[0];
+
+                this.bodegas = resultsDataFormEstab[1];
+                this.idBodega = this.bodegas.length > 0 ? this.bodegas[0].idBodega : 0;
+                this.cloneIdBodega = this.idBodega;
+            } else {
+                this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');
             }
 
 
             this.decimal = resultsDataForm[1];
             this.configDetalle = resultsDataForm[2][0]
             this.tipoIvas = resultsDataForm[3];
-            this.tarifas  = resultsDataForm[4];
+            this.tarifas = resultsDataForm[4];
 
-            this.idTarifa = this.tarifas.length>0?this.tarifas[0].idTarifa:0;
+            this.idTarifa = this.tarifas.length > 0 ? this.tarifas[0].idTarifa : 0;
             this.cloneIdTarifa = this.idTarifa;
 
             this.tiempoCreditos = resultsDataForm[5];
-           
-            this.setColumnDefsVista();            
-           
-            this.uiGridInvoice =  new UiGridOptions({
+
+            this.setColumnDefsVista();
+
+            this.uiGridInvoice = new UiGridOptions({
                 $scope: this.$scope,
                 gridOptions: this.gridOptions,
                 _fS: this._fS,
@@ -865,29 +1146,29 @@ export class ModalFacturaDetalleCtrl extends ModalFacturaCtrl{
             })
 
             this.uiGridInvoice.setInitiload({
-                bodegas: this.bodegas,                 
-                tipoIvas: this.tipoIvas, 
-                decimal: this.decimal, 
+                bodegas: this.bodegas,
+                tipoIvas: this.tipoIvas,
+                decimal: this.decimal,
                 actividadTipoIva: this.actividadTipoIva
             })
 
             this.uiGridInvoice.idTarifa = this.idTarifa;
-            
+
             //Cargamos los Datos 
             this.data = this.dataDocumento;
             this.nroDocSecuencial = this.data.nroDocSecuencial;
-            this.gridOptions.data = this.detalleDocumento;            
+            this.gridOptions.data = this.detalleDocumento;
 
             this.fechaEmisionEscrita = this._fS.getFechaEscrita(this.data.fechaEmision);
             this.fechaVencimientoEscrita = this._fS.getFechaEscrita(this.data.fechaVencimiento);
-            
-            this.$scope.$apply();            
+
+            this.$scope.$apply();
 
         } catch (error) {
-            
+
             console.log(error)
 
-        }finally{
+        } finally {
 
             hideLoader();
         }
@@ -896,67 +1177,150 @@ export class ModalFacturaDetalleCtrl extends ModalFacturaCtrl{
 
 
 
-export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl{
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params']
+export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
+    static $inject = [
+        '$scope', 
+        '$timeout', 
+        '$uibModalInstance', 
+        'mainService', 
+        'commonService', 
+        'facturaService',
+        'modalService', 
+        'nombreModal', 
+        'formulario', 
+        'toastService', 
+        'params'
+    ]
 
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params){
-        super({$scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS})
-        const self = this;
+    constructor(
+        $scope, 
+        $timeout, 
+        $uibModalInstance, 
+        _mS, 
+        _commonSvc, 
+        facturaSvc,
+        _modalSvc,
+        _nombreModalConst, 
+        _fS, 
+        _tS, 
+        _params
+    ) {
+        super({
+            $scope,
+            $timeout,
+            $uibModalInstance,
+            _mS,
+            _commonSvc,
+            _modalSvc,
+            _nombreModalConst,
+            _fS,
+            _tS
+        })
 
-                
-        let {TIPO_REGISTRO, data} = _params;        
+        this.historyDatosAdicionales = [];
+
+        this.facturaSvc = facturaSvc;
+        let {
+            TIPO_REGISTRO,
+            data
+        } = _params;
         this.TIPO_REGISTRO = TIPO_REGISTRO;
         this.CELL_TEMPLATE_OPTION = `<a  ng-click="grid.appScope.$ctrl.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
 
-        <a  ng-click="grid.appScope.$ctrl.openModalArticle(row.entity)" id="btnEditArticuloDetalle" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >
+        <a  update-article  ng-click="grid.appScope.$ctrl.openModalArticle(row.entity)" id="btnEditArticuloDetalle" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >
 
-        <a  ng-click="grid.appScope.$ctrl.openModalDatoAdicionalArticulo(row.entity, false)" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
+        <view-kardex params="row.entity"></view-kardex>
 
-        let {dataDocumento, cliente, detalleDocumento, infoAdicionalDocumento } = data;
-        this.dataDocumento          = dataDocumento;
-        this.cliente                = cliente;
-        this.detalleDocumento       = detalleDocumento;
+        <a  btn-dato-adicional-articulo-fact-elect entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' history-datos-adicionales="grid.appScope.$ctrl.historyDatosAdicionales" result-modal-adicional="grid.appScope.$ctrl.resultModalAdicional(result)" class= "btn btn-warning btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
+
+        let {
+            dataDocumento,
+            cliente,
+            detalleDocumento,
+            infoAdicionalDocumento
+        } = data;
+        this.dataDocumento = dataDocumento;
+        this.cliente = cliente;
+        this.detalleDocumento = detalleDocumento;
         this.infoAdicionalDocumento = infoAdicionalDocumento;
+
+        $uibModalInstance.rendered.then(() => {
+
+            $("#btnNewCustomerDocument").on('blur', this.onBlurBtnNewCustomerInvoice)
+        })
     }
 
-    async $onInit(){
+    async $onInit() {
         try {
             showLoader();
-            let resultsDataForm = await this.initiload();            
-            let {UiGridOptions} = await import('./../factElect/uiGridOptions.min.js' + CHANGE_VERSION());
-           
+            let resultsDataForm = await this.initiload();
+            let {
+                UiGridOptions
+            } = await import('./../factElect/uiGridOptions.min.js' + CHANGE_VERSION());
+
             this.establecimientos = resultsDataForm[0];
-            
-            if(this.establecimientos.length>0){
 
-                let dataEstab = this.establecimientos.find(item=>item.codEstab===this.dataDocumento.codEstab)             
+            if (this.establecimientos.length > 0) {
 
-                let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);               
-                this.puntosEmisiones = resultsDataFormEstab[0];                
+                let dataEstab = this.establecimientos.find(item => item.codEstab === this.dataDocumento.codEstab)
 
-                this.bodegas       = resultsDataFormEstab[1];                
-                this.idBodega      = this.bodegas.length>0?this.bodegas[0].idBodega:0;
+                let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
+                this.puntosEmisiones = resultsDataFormEstab[0];
+
+                this.bodegas = resultsDataFormEstab[1];
+                this.idBodega = this.bodegas.length > 0 ? this.bodegas[0].idBodega : 0;
                 this.cloneIdBodega = this.idBodega;
 
-                this.actividadTipoIva = resultsDataFormEstab[2][0]                
-            }else{
-                this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');            
+                this.impuestoTarifas = resultsDataFormEstab[2]; //Impuesto tarifas dependiendo el tipo Actividad
+                this.actividadTipoIva = resultsDataFormEstab[2][0];
+                this.data.tarifa = this.actividadTipoIva.tarifa;
+                this.disabledImpuestoTarifa = this.actividadTipoIva.codigoPorcentaje == '2';
+
+            } else {
+                this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');
             }
 
 
             this.decimal = resultsDataForm[1][0];
             this.configDetalle = resultsDataForm[2][0]
             this.tipoIvas = resultsDataForm[3];
-            this.tarifas  = resultsDataForm[4];
+            this.tarifas = resultsDataForm[4];
 
-            this.idTarifa = this.tarifas.length>0?this.tarifas[0].idTarifa:0;
+            this.idTarifa = this.tarifas.length > 0 ? this.tarifas[0].idTarifa : 0;
             this.cloneIdTarifa = this.idTarifa;
 
             this.tiempoCreditos = resultsDataForm[5];
-           
-            this.setColumnDefs();            
-           
-            this.uiGridInvoice =  new UiGridOptions({
+
+            if (resultsDataForm[8].length > 0) {
+                let {
+                    searchCode,
+                    printerAutomatic,
+                    payAutomatic
+                } = resultsDataForm[8][0];
+                this.isSearchBarcode = searchCode;
+                this.printerAutomatic = printerAutomatic;
+                this.payAutomatic = payAutomatic;
+
+                this.$uibModalInstance.rendered.then(result => {
+                    if (this.isSearchBarcode == 1) {
+                        $("#inputBarcode").focus();
+                    } else {
+                        $("#custom-template-md-autocomplete-articulo").focus();
+                    }
+                })
+            }
+
+            //Permisos             
+            let userPermission = resultsDataForm[9];
+            this.ventaPermission = JSON.parse(userPermission[0].jsonPermission);
+
+            this.ventaComprobantePermission = Object.freeze(this.ventaPermission.comprobante);
+            this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
+
+
+            this.setColumnDefs('12%');
+
+            this.uiGridInvoice = new UiGridOptions({
                 $scope: this.$scope,
                 gridOptions: this.gridOptions,
                 _fS: this._fS,
@@ -966,38 +1330,44 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl{
             })
 
             this.uiGridInvoice.setInitiload({
-                bodegas: this.bodegas,                 
-                tipoIvas: this.tipoIvas, 
-                decimal: this.decimal, 
+                bodegas: this.bodegas,
+                tipoIvas: this.tipoIvas,
+                decimal: this.decimal,
                 actividadTipoIva: this.actividadTipoIva
             })
 
             this.uiGridInvoice.idTarifa = this.idTarifa;
-            
+
             //Cargamos los Datos 
             this.data = this.dataDocumento;
             this.nroDocSecuencial = this.data.nroDocSecuencial;
             this.cloneCodEstab = this.data.codEstab;
-            this.gridOptions.data = this.detalleDocumento;            
+            this.gridOptions.data = this.detalleDocumento;
 
             this.fechaEmisionEscrita = this._fS.getFechaEscrita(this.data.fechaEmision);
             this.fechaVencimientoEscrita = this._fS.getFechaEscrita(this.data.fechaVencimiento);
-            
+
             this.setDataInfoEstab(this.establecimientos, this.puntosEmisiones);
-            this.$scope.$apply();            
+            this.$scope.$apply();
 
         } catch (error) {
-            
+
             console.log(error)
 
-        }finally{
+        } finally {
 
             hideLoader();
         }
     }
 
-    async onSelectedClienteChange(item){
+    async onSelectedClienteChange(item) {
         try {
+
+            if (!item.validationSri && ['R', 'C'].includes(item.tipoIdentificacion)) {
+                this.swalDataInvalidCustomer(item);
+                return
+            }
+
 
             let dataCliente = await this.getClienteById(item);
             this.cliente = dataCliente;
@@ -1008,117 +1378,128 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl{
                 this.getFechaVencimiento(new Date());
             }
             this.$scope.$apply();
-            
+
         } catch (error) {
-            this.cliente = {};            
+            this.cliente = {};
             console.log('ERROR AL OBTENER DATOS DEL CLIENTE', error)
             this.$scope.$apply();
         }
     }
 
-    async onSave(){                        
-        try {                        
-            if(!this.isValidaForm()) return
-        
-            if(this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total>50 ){
-                this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')           
+    async onSave() {
+        try {
+            if (!this.isValidaForm()) return
+
+            if (this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total > 50) {
+                this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')
                 return
             }
 
-            this.validarDatosAdicionales("idFacturaDetalle");                    
-
-            let textAccion = 'Guardar';   
-            const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                  confirmButton: 'btn btn-success',
-                  cancelButton: 'btn btn-danger ml-2'
-                },
-                buttonsStyling: false
-            })
-              
-            let {isConfirmed} = await swalWithBootstrapButtons.fire({
-                title: '<small>Guardar Factura</small>',
-                html: `<small>Esta Ud. seguro de ${textAccion} este <b> Factura de Venta</b> N° ${this.nroDocSecuencial}</small>?`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Si, guardar!',
-                cancelButtonText: 'No, cancelar!',
-                reverseButtons: false,
-                allowOutsideClick:false,
-                allowEscapeKey:false
-            })       
-           
-            
-            if(!isConfirmed) return
+            this.validarDatosAdicionales("idFacturaDetalle");
 
             showLoader();
-            let factura = Object.assign({}, this.data);
-            factura.idCliente      = this.cliente.idCliente;              
-            factura.fechaEmision   = this._fS.formatDateTimeZone(this.data.fechaEmision);
-            factura.fechaVencimiento = this._fS.formatDateTimeZone(this.data.fechaVencimiento);
-        
-            //Tarifa Aplicada al Documento
-            factura.tarifa = this.actividadTipoIva.tarifa;
+            this.nroDocumentoSecuencial = await this._commonSvc.generarNroDocumentoVenta({
+                idPuntoEmision: this.data.idPuntoEmision,
+                codigoDocumento: this.TIPO_DOC_FV.codigo,
+            })
+            hideLoader();
 
-            const data = {
-                factura: JSON.stringify(factura),
-                detalle: JSON.stringify(this.trimDetailDoc()),
-                adicional: JSON.stringify(this.infoAdicionalDocumento || []),
-                manejoArticulo: JSON.stringify(this.datosAdicionalesArticulo)
+            if (!this.nroDocumentoSecuencial) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE"
+
+            let textAccion = 'Guardar';
+            
+            let {isConfirmed} = await Swal.fire({
+              title: '<small>Guardar Factura</small>',
+                html: `<small>Esta Ud. seguro de ${textAccion} este <b> Factura de Venta</b> N° ${this.nroDocumentoSecuencial}</small>?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, guardar!',
+                cancelButtonText: 'No, cancelar!',                
+                allowOutsideClick: false,
+                allowEscapeKey: true
+            })
+
+            if(isConfirmed){
+                showLoader();
+
+                 //Tarifa Aplicada al Documento
+                 this.data.tarifa = this.actividadTipoIva.tarifa;
+                //Mappeamos todo el objecto necesario para guardar factura.
+                let params = this.facturaSvc.queryMapper({
+                    data: this.data, 
+                    cliente: this.cliente,
+                    detalles: this.gridOptions.data, 
+                    infoAdicionalDocumento: this.infoAdicionalDocumento,
+                    historyDatosAdicionales: this.historyDatosAdicionales
+                })
+  
+                this.facturaSvc.save(params).then(response=>{
+                    hideLoader();
+                    if (response.code === '0') {
+                        this._fS.sweetAlert('warning', response.message, response.titleSms);
+                        return
+                    }
+                    if (response.code === "1") {                        
+                        this._fS.sweetAlert('success', 'Registrado Correctamente', response.titleSms, 1000);
+
+                        let mainData = {
+                            isRegister: true,
+                            printerAutomatic: this.printerAutomatic,
+                            payAutomatic: this.payAutomatic,
+                            data: response.dataResponse,
+                            TIPO_DOC: this.TIPO_DOC_FV
+                        }
+
+                        this.$uibModalInstance.close(mainData)
+
+                    }
+                }).catch(error => {
+                      hideLoader();
+                      console.log(error);
+                })
             }
 
-            await this._mS.getData('post', '/FacturaVenta/Insert', data).then(response=>{
-                if(response.code==='0'){                    
-                    this._fS.sweetAlert('warning', response.message, response.titleSms);                    
-                }
-                if(response.code==="1"){
-                    this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
-                    
-                    let data = JSON.parse(response.payload)[0];
-                    
-                    let mainData = {                        
-                        data: {
-                            ...data,
-                            nroDocumento: data.estab + data.ptoEmi + data.secuencial,
-                            esContado: data.gestion, 
-                        },
-                        TIPO_DOC: this.TIPO_DOC_FV                                             
-                    }
-                    
-                    this.$uibModalInstance.close(mainData)
-                                                                          
-                }
-            })
-                                                
-        } catch (error) {            
-            console.log(error)
-        }finally{
+        } catch (error) {
             hideLoader();
-        }     
+            console.log(error)
+        }  
     }
-    
+
 }
 
 
 
-export class ModalFacturaDividirCtrl{
-    
+export class ModalFacturaDividirCtrl {
+
 }
 
 
 
-export class ModalFacturaFiltroCtrl extends ModalBaseCtrl{
+export class ModalFacturaFiltroCtrl extends ModalBaseCtrl {
 
-    static $inject = ['$scope', '$uibModalInstance', 'mainService', 'commonService', 'formulario', 'toastService', 'params']
+    static $inject = ['$scope', '$uibModalInstance', 'mainService', 'commonService', 'formulario', 'toastService', 'params', 'decodeToken']
 
-    constructor($scope, $uibModalInstance, _mS, _commonSvc, _fS, _tS, _params){
-        super({_mS, _commonSvc, _tS})
+    constructor($scope, $uibModalInstance, _mS, _commonSvc, _fS, _tS, _params, decodeToken) {
+        super({
+            _mS,
+            _commonSvc,
+            _tS
+        })
 
         this.$scope = $scope;
         this.$uibModalInstance = $uibModalInstance;
         this._fS = _fS;
 
-        let {dataSearch, clienteFiltro, usuarioSearchFiltro, mes} = _params;
+        this.idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
+
+        let {
+            dataSearch,
+            clienteFiltro,
+            usuarioSearchFiltro,
+            mes
+        } = _params;
 
         this.dataSearch = dataSearch || {};
         this.clienteFiltro = clienteFiltro || {}
@@ -1129,74 +1510,77 @@ export class ModalFacturaFiltroCtrl extends ModalBaseCtrl{
 
     }
 
-    async $onInit(){
+    async $onInit() {
         try {
             showLoader();
             let resultsDataForm = await this.initiload();
-            this.estadoDocumentos = await this._commonSvc.getEstadoDocByCodDoc('FV');    
-            
+            this.estadoDocumentos = await this._commonSvc.getEstadoDocByCodDoc('FV');
+
             this.establecimientos = resultsDataForm[0];
             // this.dataSearch.codEstab = this.establecimientos.length>0? this.establecimientos[0].codEstab: 0;
-            
+
             this.$scope.$apply();
         } catch (error) {
             console.log(error)
-        } finally{
+        } finally {
             hideLoader();
         }
     }
 
-    onKeyupClienteSearchFiltro(){
-        if(!this.clienteFiltro.nombreFiscal){
+    onKeyupClienteSearchFiltro() {
+        if (!this.clienteFiltro.nombreFiscal) {
             this.clienteFiltro = {};
             this.dataSearch.byCliente = 0;
         }
     }
 
-    selectedClienteSearchFiltro(item){
+    selectedClienteSearchFiltro(item) {
         this.clienteFiltro.nombreFiscal = item.nombreFiscal;
         this.dataSearch.byCliente = item.idCliente;
     }
 
     //---------------Fecha------------
-    onChangeFechaFiltro(){
+    onChangeFechaFiltro() {
         this.mes = new Date().getMonth() + 1;
         this.dataSearch.tipoFecha = 'FE' //Por Defecto por fecha Emisión de la Factura Venta 
         this.getFechaInicioFinFilter(this.mes)
     }
 
-    getFechaInicioFinFilter(mes){
-        let { fechaInicio, fechaFin } = this._fS.getFechaInicioFinFilter(mes);
+    getFechaInicioFinFilter(mes) {
+        let {
+            fechaInicio,
+            fechaFin
+        } = this._fS.getFechaInicioFinFilter(mes);
         this.dataSearch.fechaInicio = fechaInicio;
         this.dataSearch.fechaFin = fechaFin;
     }
 
 
     //---------------Usuario--------------------    
-    usuarioSearchDynamic(textSearch){
+    usuarioSearchDynamic(textSearch) {
         return this._commonSvc.usuarioSearch({
-            idRol: document.getElementById('idRol').value,
+            idRol: this.idUsuarioRol,
             busqueda: textSearch
         })
     }
 
-    onKeyupUsuarioSearchFiltro(){
-        if(this.usuarioSearchFiltro.nombreCompleto==='' || this.usuarioSearchFiltro.nombreCompleto===null || this.usuarioSearchFiltro.nombreCompleto===undefined){
+    onKeyupUsuarioSearchFiltro() {
+        if (this.usuarioSearchFiltro.nombreCompleto === '' || this.usuarioSearchFiltro.nombreCompleto === null || this.usuarioSearchFiltro.nombreCompleto === undefined) {
             this.usuarioSearchFiltro = {};
             this.dataSearch.byUsuario = 0;
         }
     }
 
-    selectedUsuarioSearchFiltro(item){
+    selectedUsuarioSearchFiltro(item) {
         this.usuarioSearchFiltro.nombreCompleto = item.nombreCompleto;
-        this.dataSearch.byUsuario = item.idUsuario;        
+        this.dataSearch.byUsuario = item.idUsuario;
     }
 
 
 
-    getSearch(){
+    getSearch() {
         let titutoToast = "Búsqueda";
-        if (!this.dataSearch.codEstab || this.dataSearch.codEstab===0) {
+        if (!this.dataSearch.codEstab || this.dataSearch.codEstab === 0) {
             this._tS.toastr('warning', 'Por favor seleccione una Sucursal', titutoToast);
             return;
         }
@@ -1209,11 +1593,11 @@ export class ModalFacturaFiltroCtrl extends ModalBaseCtrl{
         }
 
         if (this.dataSearch.checkBoxUsuario) {
-            if (!this.dataSearch.byUsuario || this.dataSearch.byUsuario===0) {
+            if (!this.dataSearch.byUsuario || this.dataSearch.byUsuario === 0) {
                 this._tS.toastr('warning', '   Ingrese el Usuario', titutoToast);
                 return
             }
-        }     
+        }
 
 
         if (this.dataSearch.checkBoxEstado) {
@@ -1229,7 +1613,7 @@ export class ModalFacturaFiltroCtrl extends ModalBaseCtrl{
                 return
             }
 
-            if(!this.dataSearch.fechaInicio instanceof Date && !isNaN(this.dataSearch.fechaInicio)){
+            if (!this.dataSearch.fechaInicio instanceof Date && !isNaN(this.dataSearch.fechaInicio)) {
                 this._tS.toastr('warning', 'Ingrese una Fecha Válida');
                 return
             }
@@ -1239,7 +1623,7 @@ export class ModalFacturaFiltroCtrl extends ModalBaseCtrl{
                 return
             }
 
-            if(!this.dataSearch.fechaFin instanceof Date && !isNaN(this.dataSearch.fechaFin)){
+            if (!this.dataSearch.fechaFin instanceof Date && !isNaN(this.dataSearch.fechaFin)) {
                 this._tS.toastr('warning', 'Ingrese una Fecha Válida');
                 return
             }
@@ -1250,8 +1634,8 @@ export class ModalFacturaFiltroCtrl extends ModalBaseCtrl{
             }
         }
 
-         
-        
+
+
         this.$uibModalInstance.close({
             dataSearch: this.dataSearch,
             clienteFiltro: this.clienteFiltro,
@@ -1261,13 +1645,13 @@ export class ModalFacturaFiltroCtrl extends ModalBaseCtrl{
         });
     }
 
-    closeModal(){
+    closeModal() {
         this.$uibModalInstance.close({
             dataSearch: this.dataSearch,
             clienteFiltro: this.clienteFiltro,
             usuarioSearchFiltro: this.usuarioSearchFiltro,
             mes: this.mes,
             isSearch: false
-        });       
+        });
     }
 }

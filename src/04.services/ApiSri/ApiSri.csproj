@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\01.common\Common.Logs\Common.Logs.csproj" />
+    <ProjectReference Include="..\..\02.domain\Domain\Domain.csproj" />
+    <ProjectReference Include="..\..\03.business_logic\BL.FactElect\BL.FactElect.csproj" />
+    <ProjectReference Include="..\..\03.business_logic\BL.JwtAuthenticationManger\BL.JwtAuthenticationManger.csproj" />
+  </ItemGroup>
+
+</Project>

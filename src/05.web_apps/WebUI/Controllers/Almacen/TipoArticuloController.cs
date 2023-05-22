@@ -1,8 +1,6 @@
-﻿using Domain.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using DataAccess;
+﻿using DataAccess;
 using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers
 {
@@ -20,7 +18,7 @@ namespace WebUI.Controllers
             ta = new TipoArticuloDao(_config);
         }
 
-        [Authorize]
+
         public IActionResult Index()
         {
             return View();

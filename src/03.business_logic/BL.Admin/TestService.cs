@@ -16,7 +16,7 @@ namespace BL.Admin.Data
         {
             try
             {
-                DbAccess adb  = new DbAccess(_config);
+                DbAccess adb = new DbAccess(_config);
                 await adb.SPExecute("Config.Suscripcion_Get");
                 adb.AddDynamicParam("@json", json);
                 //adb.ReadAsync(getData, ref respDb);

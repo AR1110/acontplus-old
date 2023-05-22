@@ -41,7 +41,7 @@
                     <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-xs-12">
                         <div class="form-group">
                             <label for="nroAutorización">Nro. Autorización <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control border-select" ng-model="$ctrl.data.nroAutho" decimal>
+                            <input type="text" class="form-control border-select" ng-model="$ctrl.data.nroAutho" valid-number>
                             <small class="text-danger">{{$ctrl.data.nroAutho?$ctrl.data.nroAutho.length:0}} Números</small>
                         </div>                                              
                     </div>
@@ -104,7 +104,7 @@
                     abrir-modal-articulo="$ctrl.abrirModalArticulo(item)"
                     get-data-articulo="$ctrl.getDataIdArticulo(item)"
                     set-item-articulo-en-detalle="$ctrl.setItemArticuloEnDetalle(item)"
-                    scope-parent="$scope">
+                    scope-parent="$scope" id-bodega="$ctrl.idBodega">
                 </md-autocomplete-articulo-component> 
             </div>
             <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
