@@ -1497,7 +1497,23 @@
         "Put",
         "Delete"
       ],
-      "UpstreamPathTemplate": "/api/CuentaPorCobrar/{everything}"
+      "UpstreamPathTemplate": "/api/CuentaPorCobrar{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 8099
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Catalogo{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [ "Get" ],
+      "UpstreamPathTemplate": "/api/Catalogo{everything}"
     }
   ]
 }
