@@ -15,7 +15,7 @@
             A: 'A',
         }
 
-        $scope.typeSend = 'DN';
+        $scope.typeSend = 'GenericFile';
 
         $scope.jsonPermission = {}
 

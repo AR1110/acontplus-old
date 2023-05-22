@@ -133,6 +133,42 @@
             })
         }
 
+        service.search = function(query){
+            if(!query){
+                throw new Error('No se ha proporcionado ningun parámetro')
+            }
+            if(!query.hasOwnProperty('textSearch')){
+                throw new Error(`La propiedad "textSearch" no se ha proporcionado`)
+            }
+
+            return mS.getData('get', url + 'Search?json=' + JSON.stringify(query), null, true).then(response => {
+                if(response.code==='0'){
+                    throw response;
+                }
+                if(response.code==='1'){
+                    let clientes = JSON.parse(response.payload)[0] || {};
+                    return clientes.map(item=>{
+                        return {
+                            idCliente: item.idCliente,
+                            nombreFiscal: item.nombreFiscal,
+                            nombreComercial: item.nombreComercial,
+                            numeroIdentificacion: item.numeroIdentificacion,
+                            direccion: item.direccion,
+                            correo: item.correo,
+                            idTiempoCredito: item.idTiempoCredito,
+                            diasCredito: item.diasCredito,
+                            nombreCompleto: item.nombreCompleto,
+                            placa: item.placa,
+                            validationSri: item.validationSri,
+                            tipoIdentificacion: item.tipoIdentificacion
+                        }
+                    })
+                }
+
+                console.log(response)
+            })
+        }
+
         
 
 

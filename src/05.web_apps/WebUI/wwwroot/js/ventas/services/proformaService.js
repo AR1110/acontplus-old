@@ -18,23 +18,29 @@
                 }
                 if(response.code==="1"){
                     let proformas = JSON.parse(response.payload) || [];
+                    console.log(proformas)
                     return proformas.map(item =>{
                         return {
+                            entidad: item.entidad,
                             codEstab: item.codEstab,
                             idProforma: item.idProforma,
+                            idDocumento: item.idDocumento,
                             idTipoDocumento: item.idTipoDocumento,
                             idCliente: item.idCliente,
+                            nombreComercial: item.nombreComercial,
+                            telefonoEstablecimiento: item.telefonoEstablecimiento,
                             correo: item.correo,
                             fechaEmision: item.fechaEmision,
                             total: item.total,
                             nroDocumento: item.nroDocumento,
                             nombreFiscal: item.nombreFiscal,
                             nroIdentificacion: item.nroIdentificacion,
+                            telefono: item.telefono,
                             usuario: item.usuario,
                             estadoDoc: item.estadoDoc,
                             codDoc: item.codDoc,
                             rowColor: item.rowColor,
-                            esAnulado: item.codDoc==='A',
+                            codEstado: item.codEstado,
                         }
                     })
                 }

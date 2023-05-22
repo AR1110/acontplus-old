@@ -11,7 +11,7 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, proformaSvc, _modalSvc, 
     // } else { 
     //     $scope.accion = accion[0];
     // }
-
+    $scope.typeSend = 'GenericFile';
 
     const TIPO_DOC_PR = _commonSvc.tipoDoc['PR'];
     const PERMISSION_KEY_ACTIONS = {
