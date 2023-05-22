@@ -1504,7 +1504,7 @@
         "AuthenticationProviderKey": "Bearer"
       },
       "DownstreamHostAndPorts": [
-        {
+        { 
           "Host": "localhost",
           "Port": 44320
         }
@@ -1537,6 +1537,7 @@
         "Delete"
       ],
       "UpstreamPathTemplate": "/api/CuentaPorCobrar/{everything}"
-    }    
+    }
   ]
 }
+     
