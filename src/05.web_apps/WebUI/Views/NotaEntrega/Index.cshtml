@@ -143,6 +143,14 @@
                                                         </md-button>
                                                     </md-menu-item>
 
+                                                    <md-menu-item>
+                                                        <md-button uib-tooltip="Enviar por Whatsapp" tooltip-placement="top" btn-send-to-whats-app params="ne" has-permission="hasPermissions" type-send="typeSend"  >
+                                                            <span md-menu-align-target>
+                                                                <i class="mdi mdi-whatsapp"></i> Enviar por Whatsapp
+                                                            </span>
+                                                        </md-button>
+                                                    </md-menu-item>
+
 
                                                     <md-menu-item ng-if="accion.reporte">
                                                         <md-button ng-click="getReport(ne)">
