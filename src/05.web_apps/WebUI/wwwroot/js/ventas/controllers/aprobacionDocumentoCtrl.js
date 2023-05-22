@@ -5,6 +5,7 @@
     //Variable servicios
     let mS = {};
     let tS = {};
+    let commonSvc = {};
     let notaEntregaSvc = {};
     let proformaSvc = {};
     let facturaSvc = {};
@@ -21,6 +22,7 @@
 
         //Injection Services
         mS             = $injector.get('mainService');
+        commonSvc      = $injector.get('commonService');
         tS             = $injector.get('toastService');
         notaEntregaSvc = $injector.get('notaEntregaService');
         proformaSvc    = $injector.get('proformaService');
@@ -188,7 +190,7 @@
         }
 
         $scope.infoAdicionalDocumento = [];
-
+        $scope.historialVentas = [];
         
         // Step Uno
         $scope.stepUno = function () {
@@ -332,6 +334,562 @@
             } catch (error) {
                 console.log(error)
             }
+        }
+
+        $scope.getNotaEntregas = function() {
+            try {              
+                $scope.documentos = [];
+                notaEntregaSvc.getAll($scope.dataSearch).then(async response=>{
+                    $scope.gridOptions.columnDefs = [{
+                        name: 'Nro. Doc',
+                        field: 'nroDocumento'
+                    },
+                    {
+                        name: 'F. Emisión',
+                        field: 'fechaEmision'
+                    },
+                    {
+                        name: 'F. Vcto',
+                        field: 'fechaVencimiento'
+                    },
+                    {
+                        name: 'Cliente',
+                        field: 'nombreFiscal',
+                        cellTemplate: `<div class="grid-tooltip"  tooltip-placement="left" uib-tooltip="{{row.entity.nombreFiscal }}">
+                            <div class="ui-grid-cell-contents">
+                            {{ COL_FIELD }}
+                            </div>
+                        </div>`
+                    },
+                    {
+                        name: 'Total',
+                        field: 'total',
+                        cellTemplate: ` <div class="grid-tooltip"><div class="ui-grid-cell-contents">$ {{ COL_FIELD }}</div></div>`,
+                        aggregationType: self.uiGridConstants.aggregationTypes.sum,
+                        customTreeAggregationFinalizerFn: function (aggregation) {
+                            aggregation.rendered = aggregation.value;
+                        },
+                        aggregationLabel: "Total: ",
+                        aggregationHideLabel: true,
+                        footerCellFilter: 'number:2',
+                    },
+                    {
+                        name: 'Estado',
+                        field: 'estadoFinanciero'
+                    },
+                    {
+                        name: 'Usuario',
+                        field: 'usuario'
+                    },
+                ];
+    
+                $scope.documentos = response;
+                await $scope.setDataGridOptionsChildren();
+    
+                }).catch(error => {
+                    console.log(error);
+                })                    
+            } catch (error) {
+                console.log(error);
+            }       
+        }
+    
+    
+        $scope.getProformas = function() {
+            try {                
+                proformaSvc.getAll($scope.dataSearch).then(async response => {             
+                    $scope.gridOptions.columnDefs = [{
+                            name: 'Nro. Doc',
+                            field: 'nroDocumento'
+                        },
+                        {
+                            name: 'F. Emisión',
+                            field: 'fechaEmision'
+                        },
+                        {
+                            name: 'F. Vcto',
+                            field: 'fechaVencimiento',
+                            visible: false
+                        },
+                        {
+                            name: 'Cliente',
+                            field: 'nombreFiscal',
+                            cellTemplate: `<div class="grid-tooltip"  tooltip-placement="left" uib-tooltip="{{row.entity.nombreFiscal }}">
+                        <div class="ui-grid-cell-contents">
+                          {{ COL_FIELD }}
+                        </div>
+                      </div>`
+                        },
+                        {
+                            name: 'Total',
+                            field: 'total',
+                            cellTemplate: ` <div class="grid-tooltip"><div class="ui-grid-cell-contents">$ {{ COL_FIELD }}</div></div>`,
+                            aggregationType: self.uiGridConstants.aggregationTypes.sum,
+                            customTreeAggregationFinalizerFn: function (aggregation) {
+                                aggregation.rendered = aggregation.value;
+                            },
+                            aggregationLabel: "Total: ",
+                            aggregationHideLabel: true,
+                            footerCellFilter: 'number:2',
+                        },
+                        {
+                            name: 'Estado',
+                            field: 'estadoDoc',
+                            visible: true
+                        },
+                        {
+                            name: 'Usuario',
+                            field: 'usuario'
+                        },
+                    ];
+        
+                    this.documentos = response;
+                    await this.setDataGridOptionsChildren();
+        
+                    Swal.close();
+                }).catch(error => {
+                    Swal.close();
+                    console.log(error)
+                })       
+            } catch (error) {
+                Swal.close();
+                console.log(error);        
+            }
+        }
+    
+    
+        $scope.setDataGridOptionsChildren = async function() {
+            let tempHistorialInfoAdicional = []; //Datos Adicionales de NotaEntrega
+            let tempInfoAdicionalDocumento = []; //
+    
+            for (let item of $scope.documentos) {
+               
+                item.subGridOptions = $scope.columnDefsSubGridOptions();    
+    
+                //Obtenemos detalle de Nota de Entrega || Porforma
+                let {detalleDocumento, datosAdicionalesArticulo, infoAdicionalDocumento} = await self.commonSvc.getDataTipoDocVenta({
+                    id: item.idDocumento,
+                    codigoDocumento: $scope.docOrigen.codigo
+                })
+                item.subGridOptions.data = detalleDocumento;
+    
+                //Historial Ventas de Nota Entrega 
+                tempHistorialInfoAdicional.push(datosAdicionalesArticulo);
+                tempInfoAdicionalDocumento.push(infoAdicionalDocumento)
+            }
+    
+            $scope.gridOptions.data = $scope.documentos;
+            $scope.historialVentas = tempHistorialInfoAdicional.flat();
+            $scope.infoAdicionalDocumento = tempInfoAdicionalDocumento.flat();
+          
+            if ($scope.documentos.length === 0) {
+                tS.toastr('info', 'No se encontraron los Documentos');
+            }
+    
+        }
+    
+        $scope.columnDefsSubGridOptions = function () {            
+            return {
+                showColumnFooter: true,
+                columnDefs: [{
+                        name: 'Cód.',
+                        field: 'codigo',
+                        width: '8%',
+                        minWidth: '100'
+                    },
+                    {
+                        name: 'Descripción',
+                        field: 'descripcion',
+                        cellTooltip: (row) => row.entity.descripcion,
+                        width: '25%',
+                        minWidth: '100'
+                    },
+                    {
+                        name: 'Cant.',
+                        field: 'cantidad',
+                        width: '6%',
+                        minWidth: '50',
+                        aggregationType: uiGridConstants.aggregationTypes.sum,
+                        customTreeAggregationFinalizerFn: function (aggregation) {
+                            aggregation.rendered = aggregation.value;
+                        },
+                        aggregationHideLabel: true,
+                        footerCellFilter: `number:${$scope.decimal.nroCantidad}`,
+                    },
+                    {
+                        name: 'Medida',
+                        field: 'idMedida',
+                        cellFilter: 'mapMedida:row.entity.medidas',
+                        editableCellTemplate: 'ui-grid/dropdownEditor',
+                        enableCellEdit: true,
+                        enableCellEditOnFocus: true,
+                        editDropdownOptionsFunction: function (rowEntity, colDef) {
+                            return rowEntity.medidas.map(function (val) {
+                                return {
+                                    id: val.idMedida,
+                                    value: val.descripcion
+                                }
+                            })
+    
+                        },
+                        type: 'number',
+                        width: '8%',
+                        minWidth: '100'
+                    },
+                    {
+                        name: 'IVA',
+                        field: 'tipoIva',
+                        width: '8%',
+                        minWidth: '100'
+                    },
+                    {
+                        name: 'Tarifa',
+                        field: 'idTarifa',
+                        width: '12%',
+                        minWidth: '100',
+                        cellFilter: 'mapTarifa:row.entity.articuloTarifas',
+                        editableCellTemplate: 'ui-grid/dropdownEditor',
+                        editDropdownOptionsFunction: function (rowEntity, colDef) {
+                            return rowEntity.articuloTarifas.map(val => ({
+                                id: val.idTarifa,
+                                value: val.tarifa + ' - $' + val.precioConIva
+                            }))
+                        }
+                    },
+                    {
+                        name: 'Precio U.',
+                        field: 'precioUnitario',
+                        width: '8%',
+                        minWidth: '100',
+                        aggregationType: uiGridConstants.aggregationTypes.sum,
+                        customTreeAggregationFinalizerFn: function (aggregation) {
+                            aggregation.rendered = aggregation.value;
+                        },
+                        aggregationHideLabel: true,
+                        footerCellFilter: `number:${$scope.decimal.nroPrecio}`,
+                    },
+                    {
+                        name: 'P. Iva',
+                        field: 'precioConIva',
+                        width: '7%',
+                        minWidth: '100',
+                        aggregationType: uiGridConstants.aggregationTypes.sum,
+                        customTreeAggregationFinalizerFn: function (aggregation) {
+                            aggregation.rendered = aggregation.value;
+                        },
+                        aggregationHideLabel: true,
+                        footerCellFilter: `number:${$scope.decimal.nroPrecio}`,
+                    },
+                    {
+                        name: '%',
+                        field: 'porcentajeDescuento',
+                        width: '6%',
+                        minWidth: '100',
+                    },
+                    {
+                        name: 'dsto.',
+                        field: 'valorDescuento',
+                        width: '6%',
+                        minWidth: '100',
+                        aggregationType: uiGridConstants.aggregationTypes.sum,
+                        customTreeAggregationFinalizerFn: function (aggregation) {
+                            aggregation.rendered = aggregation.value;
+                        },
+                        aggregationHideLabel: true,
+                        footerCellFilter: `number:${$scope.decimal.nroDescuento}`,
+                    },
+                    {
+                        name: 'T. Dsto.',
+                        field: 'totalDescuento',
+                        width: '7%',
+                        minWidth: '100',
+                        aggregationType: uiGridConstants.aggregationTypes.sum,
+                        customTreeAggregationFinalizerFn: function (aggregation) {
+                            aggregation.rendered = aggregation.value;
+                        },
+                        aggregationHideLabel: true,
+                        footerCellFilter: `number:${$scope.decimal.nroDescuentoDetalle}`
+                    },
+                    {
+                        name: 'Total',
+                        field: 'total',
+                        width: '5%',
+                        minWidth: '100',
+                        aggregationType: uiGridConstants.aggregationTypes.sum,
+                        customTreeAggregationFinalizerFn: function (aggregation) {
+                            aggregation.rendered = aggregation.value;
+                        },
+                        aggregationHideLabel: true,
+                        footerCellFilter: `number:${$scope.decimal.nroTotalDetalle}`
+                    },
+                ]
+            }
+        }
+
+
+        $scope.columnDefsInvoice = function() {
+            // let defaultPermission = Object.freeze({
+            //     tarifa: {
+            //         update: true
+            //     },
+            //     medida: {
+            //         update: true
+            //     },
+            //     tipoIva: {
+            //         update: true
+            //     },
+            //     porcentajeDescuento: {
+            //         update: true
+            //     },
+            //     descuento: {
+            //         update: true
+            //     },
+            //     precioUnitario: {
+            //         update: true
+            //     },
+            //     precioConIva: {
+            //         update: true
+            //     },
+            // })
+    
+            // const ventaDetailPermission = this.ventaDetailPermission || defaultPermission;
+            
+            $scope.gridOptionsDetalle.columnDefs = [{
+                    name: 'N°',
+                    field: 'n',
+                    enableCellEdit: false,
+                    allowCellFocus: false,
+                    width: '5%',
+                    minWidth: '50'
+                },
+                {
+                    name: 'cód.',
+                    field: 'codigo',
+                    enableCellEdit: false,
+                    allowCellFocus: false,
+                    width: '8%',
+                    minWidth: '100'
+                },
+                {
+                    name: 'idArticulo',
+                    field: 'idArticulo',
+                    visible: false
+                },
+                {
+                    name: "Descripción",
+                    field: "descripcion",
+                    enableCellEdit: true,
+                    enableCellEditOnFocus: true,
+                    cellEditableCondition: function (scope) {
+                        return scope.row.entity.llevaInventario !== true;
+                    },
+                    cellTooltip: function (row) {
+                        return row.entity.descripcion;
+                    },
+                    width: '25%',
+                    minWidth: '100'
+                },
+                {
+                    name: 'Cant.',
+                    field: 'cantidad',
+                    enableCellEditOnFocus: true,
+                    min: 1,
+                    type: 'number',
+                    width: '6%',
+                    minWidth: '50'
+                },
+                {
+                    name: 'Medida',
+                    field: 'idMedida',
+                    cellFilter: 'mapMedida:row.entity.medidas',
+                    editableCellTemplate: 'ui-grid/dropdownEditor',
+                    enableCellEdit: true,
+                    enableCellEditOnFocus: true,
+                    editDropdownOptionsFunction: function (rowEntity, colDef) {
+                        return rowEntity.medidas.map(function (val) {
+                            return {
+                                id: val.idMedida,
+                                value: val.descripcion
+                            }
+                        })
+    
+                    },
+                    type: 'number',
+                    width: '8%',
+                    minWidth: '100'
+                },
+                {
+                    name: 'codigoTipoIva',
+                    field: 'codigoTipoIva',
+                    enableCellEdit: false,
+                    width: '8%',
+                    visible: false
+                },
+                {
+                    name: 'I.V.A',
+                    field: 'idTipoIva',
+                    width: '8%',
+                    minWidth: '100',
+                    type: 'number',
+                    editableCellTemplate: 'ui-grid/dropdownEditor',
+                    cellFilter: 'cellFilterTipoIva:this',
+                    editDropdownValueLabel: 'descripcion',
+                    editDropdownIdLabel: 'idTipoIva',
+                    enableCellEdit: true,
+                    allowCellFocus: true,
+                    enableCellEditOnFocus: true,
+                    //    visible: config.porcentajeIva
+                },
+                {
+                    name: 'tarifas',
+                    field: 'articuloTarifas',
+                    visible: false
+                },
+                {
+                    name: 'Tarifa',
+                    field: 'idTarifa',
+                    width: '12%',
+                    minWidth: '100',
+                    cellFilter: 'mapTarifa:row.entity.articuloTarifas',
+                    editableCellTemplate: 'ui-grid/dropdownEditor',
+                    enableCellEdit: true,
+                    enableCellEditOnFocus: true,
+                    editDropdownOptionsFunction: (rowEntity, colDef) => {
+                        return rowEntity.articuloTarifas.map(val => ({
+                            id: val.idTarifa,
+                            value: val.tarifa + ' - $' + val.precioConIva
+                        }))
+                    },
+                },
+                {
+                    name: 'Precio U.',
+                    field: 'precioUnitario',
+                    enableCellEditOnFocus: true,
+                    enableColumnMenu: false,
+                    type: 'number',
+                    width: '8%',
+                    minWidth: '100',
+                    // cellFilter: "currency:'$'",
+                },
+                {
+                    name: 'P. Iva',
+                    field: 'precioConIva',
+                    min: 0,
+                    type: 'number',
+                    enableCellEdit: true,
+                    allowCellFocus: true,
+                    enableCellEditOnFocus: true,
+                    width: '7%',
+                    minWidth: '100',
+                    // cellFilter: "currency:'$'",
+                },
+                {
+                    name: '%',
+                    field: 'porcentajeDescuento',
+                    enableCellEdit: true,
+                    allowCellFocus: true,
+                    enableCellEditOnFocus: true,
+                    min: 0,
+                    width: '6%',
+                    minWidth: '100',
+                    // cellFilter: "currency:'%'",
+                    visible: this.configDetalle.porcentajeDescuento || false,
+                    type: 'number',
+                    /*cellFilter: "limitTo:3",*/
+                },
+                {
+                    name: 'dsto.',
+                    field: 'valorDescuento',
+                    enableCellEdit: true,
+                    enableCellEditOnFocus: true,
+                    min: 0,
+                    type: 'number',
+                    width: '6%',
+                    minWidth: '100',
+                    // cellFilter: "currency:'$'",
+                    visible: this.configDetalle.descuento || false
+                },
+                {
+                    name: 'T. Dsto.',
+                    field: 'totalDescuento',
+                    enableCellEdit: false,
+                    allowCellFocus: false,
+                    min: 0,
+                    type: 'number',
+                    width: '7%',
+                    minWidth: '100',
+                    // cellFilter: "currency:'$'",
+                    visible: this.configDetalle.totalDescuento || false
+                },
+                {
+                    name: 'sub Total',
+                    field: 'subTotal',
+                    enableCellEdit: false,
+                    type: 'number',
+                    width: '7%',
+                    minWidth: '100',
+                    visible: false,
+                    // cellFilter: "currency:'$'",
+                },
+                {
+                    name: 'Total',
+                    field: 'total',
+                    enableCellEdit: false,
+                    allowCellFocus: false,
+                    type: 'number',
+                    width: '5%',
+                    minWidth: '100',
+                    visible: true,
+                },
+                {
+                    name: 'Ice',
+                    field: 'ice',
+                    enableCellEdit: false,
+                    allowCellFocus: false,
+                    type: 'number',
+                    width: '6%',
+                    minWidth: '100',
+                    // cellFilter: "currency:'$'",
+                    visible: this.configDetalle.ice || false
+                },
+                {
+                    name: 'Nota',
+                    field: 'nota',
+                    enableCellEdit: true,
+                    enableCellEditOnFocus: true,
+                    type: 'string',
+                    width: '15%',
+                    minWidth: '100'
+                },
+                {
+                    name: 'bodega',
+                    field: 'idBodega',
+                    editableCellTemplate: 'ui-grid/dropdownEditor',
+                    cellFilter: 'cellFilterBodega:this',
+                    editDropdownValueLabel: 'descripcion',
+                    editDropdownIdLabel: 'idBodega',
+                    enableCellEdit: true,
+                    enableCellEditOnFocus: true,
+                    type: 'number',
+                    width: '11%',
+                    minWidth: '100'
+                },
+                {
+                    name: 'llevaInventario',
+                    field: 'llevaInventario',
+                    visible: false
+                },
+                {
+                    name: 'datosAdicionales',
+                    field: 'datosAdicionales',
+                    visible: false
+                },
+            ]
+    
+            let indexTipoIva = this.gridOptionsDetailDocument.columnDefs.findIndex(item => item.field === 'idTipoIva');
+            let indexBodega = this.gridOptionsDetailDocument.columnDefs.findIndex(item => item.field === 'idBodega');
+            this.gridOptionsDetailDocument.columnDefs[indexTipoIva].editDropdownOptionsArray = this.tipoIvas;
+            this.gridOptionsDetailDocument.columnDefs[indexBodega].editDropdownOptionsArray = this.bodegas;
         }
 
 

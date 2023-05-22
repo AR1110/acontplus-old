@@ -1,20 +1,15 @@
 ﻿@{
-    ViewData["Title"] = "Aprob. Comprobante";
+    ViewData["Title"] = "Aprob. Documento";
 }
 
-<div ng-controller="aprobComprobanteCtrl">
+<div ng-controller="aprobacionDocumentoCtrl">
     <div class="row page-titles">
         <div class="col-md-5 align-self-center">
-            <h5 class="text-themecolor">Aprob. Comprobante</h5>
+            <h5 class="text-themecolor">Aprobación Documento</h5>
         </div>
          <div class="col-md-7 align-self-center text-right">
-            <div class="d-flex justify-content-end align-items-center">
-                <!--<ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/Home/Index">Inicio</a></li>
-                    <li class="breadcrumb-item"><a href="javascript:void(0)">Almacen</a></li>
-                    <li class="breadcrumb-item active">Articulo Fraccionable</li>
-                </ol>-->
-                <button type="button" class="btn btn-info" ng-click="askToOpenModalOption()"><i class="ti-plus"></i> Nuevo</button>                
+            <div class="d-flex justify-content-end align-items-center">           
+                <button type="button" class="btn btn-info" ng-if="accion.crear" ng-click="askToOpenModalOption()"><i class="ti-plus"></i> Nuevo</button>                
             </div>
         </div>         
     </div>
@@ -151,6 +146,8 @@
     
     <!--Se usa para guardar aprobacion del documento FV-->
     <script src="~/js/factElect/services/facturaService.min.js" asp-append-version="true"></script>
-    <script src="~/js/ventas/services/aprobacionDocService.js" asp-append-version="true"></script>    
-    <script src="~/js/ventas/controllers/aprobDocumentCtrl.min.js" asp-append-version="true"></script>
+   
+    <script src="~/js/ventas/services/aprobacionDocService.js" asp-append-version="true"></script>   
+
+    <script src="~/js/ventas/controllers/aprobacionDocumentoCtrl.min.js" asp-append-version="true"></script>
 }
