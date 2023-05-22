@@ -1,21 +1,9 @@
-﻿using DataAccess;
-using Helpers;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace AcontPlus.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IConfiguration _config;
-
-        GenericResponse _gr = new();
-        private DashboardDao _d;
-        public HomeController(IConfiguration config)
-        {
-            _config = config;
-            _d = new DashboardDao(_config);
-        }
-
         public IActionResult Index()
         {
             return View();
@@ -33,13 +21,6 @@ namespace AcontPlus.Controllers
             ViewBag.Message = "Your contact page.";
 
             return View();
-        }
-
-        public async Task<IActionResult> ReadGestionCantidad()
-        {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-            _gr = await _d.GetAsync(idRol);
-            return Ok(_gr);
         }
 
         public IActionResult BackendAlive()

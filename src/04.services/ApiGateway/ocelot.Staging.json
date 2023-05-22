@@ -974,7 +974,7 @@
         }
       ],
       "DownstreamPathTemplate": "/api/Cliente{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Get",
         "Post",
@@ -1363,7 +1363,7 @@
         }
       ],
       "DownstreamPathTemplate": "/api/PrecioMasivo{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Get",
         "Post"
@@ -1405,7 +1405,7 @@
         }
       ],
       "DownstreamPathTemplate": "/api/Proforma{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Get",
         "Post",
@@ -1422,12 +1422,12 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7079
+          "Host": "205.209.99.71",
+          "Port": 8005
         }
       ],
       "DownstreamPathTemplate": "/api/Transportista{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Get",
         "Post",
@@ -1444,12 +1444,12 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 44395
+          "Host": "205.209.99.71",
+          "Port": 8005
         }
       ],
       "DownstreamPathTemplate": "/api/Vehiculo{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Get",
         "Post",
@@ -1467,6 +1467,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "205.209.99.71",
+<<<<<<< HEAD
           "Port": 8099
         }
       ],
@@ -1479,6 +1480,17 @@
         "Delete"
       ],
       "UpstreamPathTemplate": "/api/CuentaPorCobrar/{everything}"
+=======
+          "Port": 8091
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Dashboard{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "UpstreamPathTemplate": "/api/Dashboard{everything}"
+>>>>>>> origin/ivan_work
     }
   ]
 }

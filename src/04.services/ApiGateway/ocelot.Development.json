@@ -1505,6 +1505,7 @@
       },
       "DownstreamHostAndPorts": [
         {
+<<<<<<< HEAD
           "Host": "205.209.99.71",
           "Port": 8099
         }
@@ -1518,6 +1519,18 @@
         "Delete"
       ],
       "UpstreamPathTemplate": "/api/CuentaPorCobrar/{everything}"
+=======
+          "Host": "localhost",
+          "Port": 44320
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Dashboard{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "UpstreamPathTemplate": "/api/Dashboard{everything}"
+>>>>>>> origin/ivan_work
     }
   ]
 }

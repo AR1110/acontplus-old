@@ -9,12 +9,13 @@ function homeCtrl($scope, mS, $interval) {
 
 
     $scope.init = () => {
-        mS.getData('get', '/Home/ReadGestionCantidad').then(function (response) {
+        mS.getData('get', 'Dashboard/', null, true).then(function (response) {
             if (response.id == 0) {
                 toast.toastr('warning', response.message, response.titleSms);
                 return
             }
-            $scope.cantidad = response.data;
+            let tempArray = JSON.parse(response.payload)[0]
+            $scope.cantidad = tempArray[0];
         })
     }
 
@@ -24,7 +25,7 @@ function homeCtrl($scope, mS, $interval) {
     $scope.docs = []
     function getDocs() {
         try {
-            mS.getData('GET', 'DocumentoElectronico?json=' + JSON.stringify({ tipo: 3 }), null, true).then(
+            mS.getData('GET', 'DocumentoElectronico/?json=' + JSON.stringify({ tipo: 3 }), null, true).then(
                 response => {
                     if (response.code == '1') {
                         $scope.docs = JSON.parse(response.payload)[0]
