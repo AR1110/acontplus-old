@@ -1,0 +1,97 @@
+USE [AcontPlus]
+GO 
+-- ================================================
+-- Template generated from Template Explorer using:
+-- Create Procedure (New Menu).SQL
+--
+-- Use the Specify Values for Template Parameters 
+-- command (Ctrl-Shift-M) to fill in the parameter 
+-- values below.
+--
+-- This block of comments will not be included in
+-- the definition of the procedure.
+-- ================================================
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+IF OBJECT_ID(N'Contabilidad.CuentaPorCobrar_Update_Status', N'P') IS NOT NULL
+DROP PROCEDURE Contabilidad.CuentaPorCobrar_Update_Status
+GO
+CREATE PROCEDURE Contabilidad.CuentaPorCobrar_Update_Status @codDoc VARCHAR(5),@idComprobante INT
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+	DECLARE @importeTotal AS NUMERIC (18,5) 
+	DECLARE @abono AS NUMERIC(18,5)
+	DECLARE @idEstadoPago AS INT
+	DECLARE @residuo AS NUMERIC(18,5)
+	DECLARE @idTipoDocumento AS INT 
+	DECLARE @posfechado NUMERIC(18,5)
+	
+	SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo = @codDoc
+
+	SELECT @posfechado = SUM(cd.abono) 
+	FROM dbo.CobroDetalle             cd WITH (NOLOCK)
+	INNER JOIN dbo.CuotaXCobrar       cc WITH (NOLOCK) ON cc.idCuotaXCobrar       = cd.idCuotaXCobrar
+	INNER JOIN dbo.Cobro              co WITH (NOLOCK) ON co.idCobro              = cd.idCobro
+	INNER JOIN dbo.ComprobanteIngreso ci WITH (NOLOCK) ON ci.idComprobanteIngreso = co.idComprobanteIngreso
+	WHERE cc.idComprobante = @idComprobante AND cc.idTipoDocumento = @idTipoDocumento AND co.cobro = 0 AND ci.estado = 1
+
+	SELECT @abono =  SUM(abono) FROM dbo.CuotaXCobrar WITH (NOLOCK) WHERE idTipoDocumento = @idTipoDocumento AND idComprobante = @idComprobante AND estado = 1
+
+	IF @codDoc = 'FV'
+		BEGIN
+			SELECT TOP 1 @importeTotal = total FROM dbo.Factura WITH (NOLOCK) WHERE idFactura = @idComprobante
+		END
+		
+	IF @codDoc = 'NE'
+		BEGIN
+			SELECT TOP 1 @importeTotal = total FROM dbo.NotaEntrega WITH (NOLOCK) WHERE idNotaEntrega = @idComprobante
+		END 
+
+
+	SELECT @residuo = ISNULL(@importeTotal,0) - ISNULL(@abono,0)
+
+	IF ISNULL(@posfechado,0) > 0
+		BEGIN
+			SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PFC'
+		END
+
+	IF ISNULL(@posfechado,0) <= 0
+		BEGIN 
+			IF @residuo = 0  
+				BEGIN
+					SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'CBR'
+				END 
+
+			IF @residuo > 0 
+				BEGIN
+					SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PP'
+				END
+
+			IF ISNULL(@abono,0) = 0 
+				BEGIN
+					SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PE'
+				END 
+		END
+
+	IF @codDoc = 'FV'
+		BEGIN
+			UPDATE dbo.Factura SET idEstadoPago = @idEstadoPago, abono = ISNULL(@abono,0)  WHERE idFactura = @idComprobante
+		END
+		
+	IF @codDoc = 'NE'
+		BEGIN
+			UPDATE dbo.NotaEntrega SET idEstadoPago = @idEstadoPago, abono = ISNULL(@abono,0) WHERE idNotaEntrega = @idComprobante
+		END 
+
+END
+GO

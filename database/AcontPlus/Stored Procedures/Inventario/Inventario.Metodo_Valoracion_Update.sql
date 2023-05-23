@@ -64,7 +64,7 @@ BEGIN
 				BEGIN
 					 UPDATE Inventario.Transaccion SET precioCosto = @precioTransaccion WHERE idTransaccion = @idTransaccion
 
-					 UPDATE dbo.Articulo SET precioCosto = @precioCostoActual WHERE idArticulo = @idArticulo
+					 UPDATE dbo.Articulo SET precioCosto = @precioCostoActual, fechaModificacion = dbo.ufngetDateEcuador() WHERE idArticulo = @idArticulo
 
 					 UPDATE dbo.ArticuloPvP SET porcentajeUtilidad = ((precioVenta / @precioCostoActual) * 100) - 100 WHERE idArticulo = @idArticulo
 				END 

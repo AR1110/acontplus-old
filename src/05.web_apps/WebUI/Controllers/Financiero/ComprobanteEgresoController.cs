@@ -46,7 +46,7 @@ namespace WebUI.Controllers.GestionFinanciera
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] PagoDto data)
+        public async Task<IActionResult> Post([FromBody] PagoCobroDto data)
         {
             GenericResponse _response = new GenericResponse();
             Dictionary<string, object> parameters = new Dictionary<string, object>();
