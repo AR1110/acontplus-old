@@ -2,6 +2,110 @@
 
     'use strict';
 
+    app.factory('ventaService', function($injector){
+        let service = {};
+        let mS = $injector.get('mainService');
+
+        /**
+         * 
+         * @param {object} query  
+         * @returns array
+         */
+        service.getDataForm = function(query) {
+            return mS.getData('get', 'CatalogoVenta/?json=' + JSON.stringify(query), null, true).then(response => {
+                if(response.code==='0'){
+                    throw response;
+                }
+                if(response.code==='1'){
+                    let payload = JSON.parse(response.payload);
+
+                    let estabs      = payload[0];
+                    let ptosEmision = payload[1];
+                    let bodegas     = payload[2];
+                    let configVenta = payload[3][0]
+                    let decimal     =  JSON.parse(payload[4][0].jsonConfig)
+                    let configDetalle         = payload[5][0]; 
+                    let tipoIvas              = payload[6];
+                    let tarifas = payload[7];
+                    let tiempoCreditos = payload[8];
+                    let articuloPredeterminado = payload[9][0]
+                    let clientePredeterminado = payload[10][0];                    
+                    let permisonVenta = JSON.parse(payload[11][0].jsonPermission);
+                    let permisoArticulo =payload[12][0];
+
+
+                    let estabsMapper = estabs.map(item=>({
+                        codEstab_Asig: item.codEstab_Asig,
+                        codEstab: item.codEstab,
+                        predeterminado: item.predeterminado,
+                        nombreComercial: item.nombreComercial,   
+                        tarifasImpuestos: JSON.parse(item.tarifasImpuestos)                     
+                    }))
+
+                    let ptosEmisionMapper = ptosEmision.map(item => ({
+                        codEstab_Asig: item.codEstab_Asig,
+                        idPuntoEmision: item.idPuntoEmision,
+                        ptoEmi: item.ptoEmi,
+                        predeterminado: item.predeterminado,
+                    }))
+
+                    let configVentaMapper = {
+                        idCliente: configVenta.idCliente | 0,
+                        searchCode: configVenta.searchCode | false,
+                        printerAutomatic: configVenta.printerAutomatic | false,
+                        payAutomatic: configVenta.payAutomatic | true,
+                    }
+
+                    let decimalMapper  = {                        
+                        nroPrecio: decimal.nroPrecio || 3,
+                        nroCantidad: decimal.nroCantidad || 3,
+                        nroIva: decimal.nroIva || 3,
+                        nroDescuentoDetalle: decimal.nroDescuentoDetalle || 3,
+                        nroTotalDetalle: decimal.nroTotalDetalle || 3,
+                        nroTotalSubTotal: decimal.nroTotalSubTotal || 3,
+                        nroDescuento: decimal.nroDescuento || 3,
+                        nroIce: decimal.nroIce || 3,
+                        importeTotal: decimal.importeTotal || 3,
+                    }
+
+                    let tipoIvasMapper = tipoIvas.map(item=>({
+                            idTipoIva: item.idTipoIva,
+                            descripcion: item.descripcion,
+                            tarifa: item.tarifa,
+                            codigoPorcentaje: item.codigoPorcentaje,
+                        }))
+
+                    let tiempoCreditosMapper = tiempoCreditos.map(item => ({
+                        idTiempoCredito: item.idTiempoCredito,
+                        descripcion: item.descripcion,
+                        diasCredito: item.diasCredito,
+                        numeroCuota: item.numeroCuota,
+                    }))
+
+                    console.log(payload)
+                    return {
+                        establecimientos: estabsMapper,
+                        ptosEmision: ptosEmisionMapper, 
+                        bodegas,
+                        configVenta: configVentaMapper,
+                        decimal: decimalMapper,
+                        configDetalle,
+                        tipoIvas: tipoIvasMapper,
+                        tarifas,
+                        tiempoCreditos: tiempoCreditosMapper,
+                        articuloPredeterminado,
+                        clientePredeterminado,
+                        permisonVenta,
+                        permisoArticulo
+                    }
+                   
+                }
+            })
+        }
+        return service;
+    })
+
+
     //---------------------------------Cliente------------------------------------------
     app.factory('clienteService', function($injector){
         let url = 'Cliente/';

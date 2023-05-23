@@ -168,8 +168,19 @@ app.constant('nombreModalCompra', {
         templates: {
             D:'~/Areas/FacturaCompra/Pages/Shared/_ModalDetalle.cshtml'
         }
-    }
-   
+    },
+    PROVEEDOR: {
+        fileCtrl: '/js/modal/common/modalClienteProveedorCtrl.min.js' + CHANGE_VERSION(),
+        // fileCtrl: '/js/ventas/modals/modalClienteCtrl.js',
+        controllers: {
+            M: 'ModalProveedorCtrl',
+            L: 'ModalProveedorListaCtrl'
+        } ,
+        templates: {
+            M: 'Proveedor/_ModalNuevoProveedor.cshtml',
+            L: 'Proveedor/_ModalProveedorLista.cshtml'
+        } 
+    },
 })
 
 app.constant('nombreModalLogistica', {

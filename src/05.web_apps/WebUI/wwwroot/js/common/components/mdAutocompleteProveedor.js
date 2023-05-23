@@ -1,9 +1,9 @@
 class MdAutocompleteProveedor {
-    static $inject = ['commonService', 'modalService', 'nombreModal']
-    constructor(_commonSvc, _modalSvc, _nombreModal) {
+    static $inject = ['commonService', 'modalService', 'nombreModalCompra']
+    constructor(_commonSvc, _modalSvc, nombreModalCompra) {
         this._commonSvc = _commonSvc;
         this._modalSvc = _modalSvc;
-        this._nombreModal = _nombreModal;
+        this.nombreModalCompra = nombreModalCompra;
         this.search = this.search || {};
     }
 
@@ -64,16 +64,14 @@ class MdAutocompleteProveedor {
     }
 
     async abrirModalProveedor(item) {
-        const {
-            MODAL_CTRL,
-            MODAL_NUEVO_CSHTML
-        } = this._nombreModal.proveedor
-        const {
-            ModalProveedorCtrl
-        } = await import('./../modal/' + MODAL_CTRL);
+        let fileCtrl = this.nombreModalCompra.PROVEEDOR.fileCtrl;
+        let ctrl = this.nombreModalCompra.PROVEEDOR.controllers['M'];
+        let template = this.nombreModalCompra.PROVEEDOR.templates['M'];
+        
+        let controller = (await import(fileCtrl))[ctrl]
         const modalRef = this._modalSvc.openModalCustom({
-            controller: ModalProveedorCtrl,
-            template: 'Proveedor/' + MODAL_NUEVO_CSHTML,
+            controller ,
+            template,
             size: 'xl',
             params: item
         })
@@ -86,16 +84,14 @@ class MdAutocompleteProveedor {
 
     //Comunicación con el Controlador shared/proveedor/proveedorModalCtrl 
     abrirModalProveedorLista = async () => {
-        const {
-            MODAL_CTRL,
-            MODAL_LISTA_CSHTML
-        } = this._nombreModal.proveedor;
-        const {
-            ModalProveedorListaCtrl
-        } = await import('./../modal/' + MODAL_CTRL)
+        let fileCtrl = this.nombreModalCompra.PROVEEDOR.fileCtrl;
+        let ctrl = this.nombreModalCompra.PROVEEDOR.controllers['L'];
+        let template = this.nombreModalCompra.PROVEEDOR.templates['L'];
+        
+        let controller = (await import(fileCtrl))[ctrl]
         const modalRef = this._modalSvc.openModalCustom({
-            controller: ModalProveedorListaCtrl,
-            template: 'Proveedor/' + MODAL_LISTA_CSHTML,
+            controller,
+            template,
             size: 'xl',
             //windowClass: 'uibModalFullScreen'            
         })

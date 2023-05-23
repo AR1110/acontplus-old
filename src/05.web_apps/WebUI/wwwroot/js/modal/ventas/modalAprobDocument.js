@@ -525,7 +525,7 @@ export class ModalSelectDocumentoCtrl extends ModalBaseCtrl {
             },
             expandableRowHeight: 150,
             isRowSelectable: function (row) {
-                if (["AC", "PE"].includes(row.entity.codDoc)) {
+                if (["AC", "PE"].includes(row.entity.codEstado)) {
                     return true;
                 } else {
                     return false;
@@ -1500,11 +1500,19 @@ export class ModalSelectDocumentoCtrl extends ModalBaseCtrl {
                 }
 
                 let infoAdicional = this.infoAdicionalDocumento.filter(item => {
-                    return this.selectedDocuments.some(docs => docs.idComprobante===item.idDocumento)
+                    if(item){
+                        return this.selectedDocuments.some(docs => docs.idComprobante===item.idDocumento)
+                    }else{
+                        return false;
+                    }
                 })
 
                 let historialVenta = this.historialVentas.filter(item => {
-                    return this.selectedDocuments.some(docs => docs.idNotaEntrega===item.idDocumento)
+                    if(item){
+                        return this.selectedDocuments.some(docs => docs.idNotaEntrega===item.idDocumento)
+                    }else{
+                        return false;
+                    }
                 })
 
                 

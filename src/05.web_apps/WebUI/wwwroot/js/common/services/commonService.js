@@ -158,6 +158,7 @@ export class CommonService {
         });
     }
 
+    //En uso 
     getEstabAsign(json = {}) {
         return this.mS.getData('get', '/EstabAsig/Get?json=' + JSON.stringify(json)).then(response => {
             if (response.code === "0") {
@@ -167,6 +168,7 @@ export class CommonService {
         })
     }
 
+    //En uso en Aprob. Documento 
     getDataFormEstabAsig(json = {}) {
         return this.mS.getData('get', '/EstabAsig/GetDataForm?json=' + JSON.stringify(json)).then(response => {
 
@@ -714,9 +716,9 @@ export class CommonService {
     }
 
 
-    //--------------------------------------METODOS RELACIONADOS AL TIPO DOCUMENTO---------------------------
+    //-----------------------------METODOS RELACIONADOS AL TIPO DOCUMENTO---------------------------
 
-
+    //Eliminar mas Adelante 
     getDataFormVenta() {
         return this.mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response => {
             if (response.code === '0') {
@@ -725,6 +727,9 @@ export class CommonService {
             return JSON.parse(response.payload)
         })
     }
+
+    
+
 
     async generarNroDocumento({
         puntoEmision,

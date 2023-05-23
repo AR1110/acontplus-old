@@ -2,6 +2,9 @@
 
     'use strict';
 
+    //Variables Constantes
+    const URL_TEMPLATE = 'AprobDocument/'
+    
     //Variable servicios
     let mS = {};
     let tS = {};
@@ -9,9 +12,26 @@
     let notaEntregaSvc = {};
     let proformaSvc = {};
     let facturaSvc = {};
+    let ventaSvc = {} ;
+    let gridOptionsSvc = {} ;
 
-    //Variables Constantes
-    const URL_TEMPLATE = 'AprobDocument/'
+   
+	let mainDataForm = {};
+
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    })
+
+
+    
 
 
     app.controller('aprobacionDocumentoCtrl', aprobacionDocumentoCtrl);
@@ -23,21 +43,25 @@
         //Injection Services
         mS             = $injector.get('mainService');
         commonSvc      = $injector.get('commonService');
-        tS             = $injector.get('toastService');
+        ventaSvc       = $injector.get('ventaService');
         notaEntregaSvc = $injector.get('notaEntregaService');
         proformaSvc    = $injector.get('proformaService');
         facturaSvc     = $injector.get('facturaService');
+        tS             = $injector.get('toastService');
+        gridOptionsSvc = $injector.get('gridOptionsService');
 
 
         let OPTION_APROBACION = Object.freeze({
             0:  Object.freeze({
                 docOrigen: {
                     codigo: 'NE',
-                    descripcion: 'Nota de Entrega'
+                    descripcion: 'Nota de Entrega',
+                    codDoc: '',
                 },
                 docDestino: {
                     codigo: 'FV',
-                    descripcion: 'Factura'
+                    descripcion: 'Factura',
+                    codDoc: '01',
                 }                
             }),
             1:  Object.freeze({
@@ -47,7 +71,8 @@
                 },
                 docDestino: {
                     codigo: 'FV',
-                    descripcion: 'Factura'
+                    descripcion: 'Factura',
+                    codDoc: '01',
                 }                
             }),  
             2:  Object.freeze({
@@ -110,6 +135,26 @@
             }
         }
 
+        $scope.initiload = function () {
+			try {
+				ventaSvc
+					.getDataForm({typeList: 1})
+					.then((response) => {
+                        console.log(response);
+						mainDataForm = response;
+						
+					})
+					.catch((errorResponse) => {
+						console.log(errorResponse);
+					});
+			} catch (error) {
+				console.log(error);
+			}
+		};
+
+		$scope.initiload();
+
+
     }
 
 
@@ -135,19 +180,20 @@
         $scope.docOrigen = docOrigen;
         $scope.docDestino = docDestino;
 
-        $scope.cliente = {};
+        //-----------------Filters----------------------
         $scope.dataSearch = {
             fechaInicio: new Date(),
             fechaFin: new Date(),
+            checkBoxDefault: false,
+            checkBoxCliente: true,
+            checkBoxEstado: true
         };
-
-
-        $scope.gridOptionsDetalle = {};
 
         $scope.selectedDocuments = [];
 
 
         $scope.gridOptionsSelectedDocs = {
+            enableColumnMenus: false,
             enableFiltering: true,
             enableSorting: true,
             enableGridMenu: true,
@@ -163,11 +209,7 @@
             },
             expandableRowHeight: 150,
             isRowSelectable: function (row) {
-                if (["AC", "PE"].includes(row.entity.codDoc)) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return ["AC", "PE"].includes(row.entity.codEstado);
             }
         }
 
@@ -185,9 +227,56 @@
             gridApi.selection.on.rowSelectionChangedBatch($scope, function () {})
         }
 
+        //------------------Documento Destino----------------------------------------------------
+        /**
+		 * Define los datos generales del comprobante
+		 */
+        $scope.establecimientos = [];
+        $scope.impuestosTarifas = []
+        $scope.ptosEmision = [];
 
-        //GridOptions Invoice 
+		$scope.data = {
+			codEstab: 0,
+			idTiempoCredito: 0,
+			fechaEmision: new Date(),
+			fechaVencimiento: new Date(),
+			subTotalSinImpuestos: 0,
+			iva: 0,
+			subTotalIva: 0,
+			subTotalIvaCero: 0,
+			subTotalExentoIva: 0,
+			subTotalNoObjetoIva: 0,
+			subTotalNetoIva: 0,
+			subTotalNetoExentoIva: 0,
+			subTotalNetoNoObjetoIva: 0,
+			totalIce: 0,
+			irbpnr: 0,
+			propina: 0,
+			transporte: 0,
+			recargo: 0,
+			porcentajeDescuento: 0,
+			totalDescuento: 0,
+			total: 0
+		};
+
+		$scope.cliente = {
+			idCliente: 0,
+			nombreComercial: null,
+			nombreFiscal: null,
+			numeroIndentificacion: null,
+		};
+
+
+		$scope.dataClone = {};
+		$scope.dataClone.fechaEmision = new Date();
+		$scope.dataClone.porcentajeDescuento = 0;
+		$scope.dataClone.totalDescuento = 0;
+
+
+
+        //Detalle de los documentos seleccionados
         $scope.gridOptionsDetalle = {
+            enableColumnMenus: false,
             enableSorting: true,
             suppressMultiSort: true,
         }
@@ -203,12 +292,16 @@
             $("#step a:first-child").addClass('active');
             $("#step a:last-child").removeClass('active');
 
-            const stepDocOrigen = document.getElementById("stepDocOrigen");
-            const stepDocDestino = document.getElementById("stepDocDestino");
+            $uibModalInstance.rendered.then(()=>{
+                const stepDocOrigen = document.getElementById("stepDocOrigen");
+                const stepDocDestino = document.getElementById("stepDocDestino");
+                stepDocOrigen.style.display = "block";
+                stepDocDestino.style.display = "none";
 
-            stepDocOrigen.style.display = "block";
-            stepDocDestino.style.display = "none";
+            })
         }
+
+
 
 
         $scope.stepDos = function() {
@@ -223,6 +316,8 @@
                     tS.toastr('warning', 'Seleccione al menos un Documento', 'Siguiente', 'toast-bottom-center');
                     return
                 }
+
+                $scope.columnDefsInvoice();
 
                 showLoader();
                 //UNIMOS TODOS LOS DETALLES DEL COMPROBANTE
@@ -268,6 +363,12 @@
                     return item;
                 })
 
+                $scope.data = Object.assign($scope.data, gridOptionsSvc.calculoTotales({
+					items: $scope.gridOptionsDetalle.data,
+					decimal: $scope.decimal,
+					dataTarifaImpuesto: $scope.dataTarifaImpuesto
+				}))
+
                 //Creamos objeto GridOptions para calculos de totales y subtotales             
                 // this.uiGridInvoice = new UiGridOptions({
                 //     $scope: this.$scope,
@@ -307,11 +408,121 @@
             }
         }
 
+        // $scope.getDataImpuestoTarifa = function () {
+		// 	let actividadEstabImpuesto = $scope.impuestosTarifas.find(item => item.codigoPorcentaje === $scope.data.impuestoTarifa.codigoPorcentaje);
+		// 	$scope.data.impuestoTarifa.codigoPorcentaje = actividadEstabImpuesto.codigoPorcentaje;
+		// 	$scope.data.impuestoTarifa.tarifa = actividadEstabImpuesto.tarifa;
+		// 	return actividadEstabImpuesto;
+		// }
 
-        //============================================Filtros==============================
+        //Inicio 
+        $scope.initiload = function() {
+            try {
+                let  {establecimientos,ptosEmision, bodegas, configVenta, decimal, configDetalle, tipoIvas, tarifas, tiempoCreditos, articuloPredeterminado, clientePredeterminado, permisonVenta, permisoArticulo }= mainDataForm;
+
+                /**
+                 * Establecimiento 
+                 * Impuesto Tarifa 
+                 */
+                
+                let dataEstab = establecimientos.find(item=>(item.predeterminado))
+
+                $scope.establecimientos = establecimientos;
+                $scope.data.codEstab = dataEstab.codEstab;
+                $scope.dataSearch.codEstab = $scope.data.codEstab; //Filtro
+                $scope.dataClone.codEstab =$scope.data.codEstab;
+
+                 
+                $scope.tarifasImpuestos  = dataEstab.tarifasImpuestos;
+                $scope.dataTarifaImpuesto = $scope.tarifasImpuestos[0];
+                
+                console.log($scope.dataTarifaImpuesto)
+
+                //===========Puntos Emisiones================================================
+                $scope.tempPuntosEmision = ptosEmision;
+                $scope.ptosEmision = $scope.tempPuntosEmision.filter(item=>item.codEstab_Asig===dataEstab.codEstab_Asig);
+                let dataPtoEmi = $scope.ptosEmision.find(item=>(item.predeterminado))
+                $scope.data.idPuntoEmision = dataPtoEmi.idPuntoEmision;
+
+                //============Bodegas============================================================
+                $scope.tempBodegas = bodegas;
+                
+                $scope.bodegas = $scope.tempBodegas.filter(item=>item.codEstab_Asig===dataEstab.codEstab_Asig);
+                let dataBodega = $scope.bodegas.find(item=>(item.predeterminado))
+                $scope.idBodega = dataBodega.idBodega;
+                $scope.dataClone.idBodega = $scope.idBodega;
+               
+                //Decimal 
+                $scope.decimal = decimal;
+
+                //Config. Detalle (Mostrar/Ocultar Columnas)
+                $scope.configDetalle = configDetalle;
+                $scope.tipoIvas = tipoIvas;
+                $scope.stepUno()
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        $scope.initiload();
+
+
+        //============================================ Filtros==============================
+        $scope.isValidFilter = function() {
+            if(!$scope.dataSearch.codEstab){
+                tS.toastr('warning', 'Seleccione el Establecimiento');
+                return
+            }
+            if(!$scope.cliente.idCliente>0){
+                tS.toastr('warning', 'Seleccione el cliente');
+                return
+            }
+            if(!$scope.dataSearch.fechaInicio || !$scope.dataSearch.fechaFin){
+                tS.toastr('warning', 'Seleccione rango de fecha')
+                return
+            }
+            return true;
+        }
+
+        $scope.askToChangeEstabFilter = function(){
+            try {
+                Swal.fire({
+                    title: 'Cambiar Establecimiento?',
+                    text: "Se revertiran los documentos seleccionados en caso de existir!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Si, cambiar!',
+                    cancelButtonText: 'No, cancelar!',
+                  }).then((result) => {
+                    if (result.isConfirmed) {
+                        $scope.gridOptionsDetalle.data = [];   
+                        $scope.gridOptionsSelectedDocs.data = [];
+
+                        let dataEstab = $scope.establecimientos.find(item=>item.codEstab===$scope.dataSearch.codEstab);
+
+                        $scope.ptosEmision = $scope.tempPuntosEmision.filter(item=>item.codEstab_Asig===dataEstab.codEstab_Asig);
+
+                        let dataPtoEmi = $scope.ptosEmision.find(item=>(item.predeterminado))
+                        $scope.data.idPuntoEmision = dataPtoEmi.idPuntoEmision;
+
+                        if($scope.isValidFilter()){
+                            $scope.getDocumentos();
+                        }
+                        $scope.dataClone.codEstab = $scope.dataSearch.codEstab;
+                    }else{
+                        $scope.dataSearch.codEstab = $scope.dataClone.codEstab;
+                        $scope.$apply();
+                    }
+                  })
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
         $scope.resultDateRange = function(item){
-            $scope.getDocumentos();
-            if($scope.cliente.idCliente>0){
+            if($scope.isValidFilter()){
                 $scope.getDocumentos();
             }
         }
@@ -330,20 +541,26 @@
         }
 
         $scope.selectedClienteSearch = function(item) {
-            console.log(item)
-            if(!$scope.dataSearch.fechaInicio || !$scope.dataSearch.fechaFin){
-                tS.toastr('warning', 'Seleccione rango de fecha')
-            }
-            if(item.idCliente>0){
-                $scope.dataSearch.byCliente = item.idCliente;
+            $scope.cliente = item;
+            if($scope.isValidFilter()){
                 $scope.getDocumentos();
-            }           
+            }          
+        }
+
+        $scope.refresh = function(){
+            let selectedDocuments = $scope.gridApi.selection.getSelectedRows() || []
+            if(selectedDocuments.length>0){
+                tS.toastr('warning', 'Tienes documentos seleccionados')
+                return
+            }
+            $scope.getDocumentos();
         }
 
 
         $scope.getDocumentos = function(){
             try {
                 $scope.documentos = [];
+                $scope.dataSearch.byCliente = $scope.cliente.idCliente;
                 if ($scope.docOrigen.codigo === 'NE') {
                     $scope.getNotaEntregas();
                 }
@@ -358,10 +575,12 @@
         }
 
         $scope.getNotaEntregas = function() {
-            try {              
+            try {   
+                showLoader();           
                 $scope.documentos = [];
+                $scope.dataSearch.typeList = 2;
                 notaEntregaSvc.getAll($scope.dataSearch).then(async response=>{
-                    $scope.gridOptions.columnDefs = [{
+                    $scope.gridOptionsSelectedDocs.columnDefs = [{
                         name: 'Nro. Doc',
                         field: 'nroDocumento'
                     },
@@ -386,7 +605,7 @@
                         name: 'Total',
                         field: 'total',
                         cellTemplate: ` <div class="grid-tooltip"><div class="ui-grid-cell-contents">$ {{ COL_FIELD }}</div></div>`,
-                        aggregationType: self.uiGridConstants.aggregationTypes.sum,
+                        aggregationType: uiGridConstants.aggregationTypes.sum,
                         customTreeAggregationFinalizerFn: function (aggregation) {
                             aggregation.rendered = aggregation.value;
                         },
@@ -408,9 +627,11 @@
                 await $scope.setDataGridOptionsChildren();
     
                 }).catch(error => {
+                    hideLoader();
                     console.log(error);
                 })                    
             } catch (error) {
+                hideLoader();
                 console.log(error);
             }       
         }
@@ -488,7 +709,7 @@
                 item.subGridOptions = $scope.columnDefsSubGridOptions();    
     
                 //Obtenemos detalle de Nota de Entrega || Porforma
-                let {detalleDocumento, datosAdicionalesArticulo, infoAdicionalDocumento} = await self.commonSvc.getDataTipoDocVenta({
+                let {detalleDocumento, datosAdicionalesArticulo, infoAdicionalDocumento} = await commonSvc.getDataTipoDocVenta({
                     id: item.idDocumento,
                     codigoDocumento: $scope.docOrigen.codigo
                 })
@@ -499,10 +720,11 @@
                 tempInfoAdicionalDocumento.push(infoAdicionalDocumento)
             }
     
-            $scope.gridOptions.data = $scope.documentos;
+            $scope.gridOptionsSelectedDocs.data = $scope.documentos;
             $scope.historialVentas = tempHistorialInfoAdicional.flat();
             $scope.infoAdicionalDocumento = tempInfoAdicionalDocumento.flat();
-          
+            
+            hideLoader();
             if ($scope.documentos.length === 0) {
                 tS.toastr('info', 'No se encontraron los Documentos');
             }
@@ -511,6 +733,7 @@
     
         $scope.columnDefsSubGridOptions = function () {            
             return {
+                enableColumnMenus: false,
                 showColumnFooter: true,
                 columnDefs: [{
                         name: 'Cód.',
@@ -649,32 +872,6 @@
 
 
         $scope.columnDefsInvoice = function() {
-            // let defaultPermission = Object.freeze({
-            //     tarifa: {
-            //         update: true
-            //     },
-            //     medida: {
-            //         update: true
-            //     },
-            //     tipoIva: {
-            //         update: true
-            //     },
-            //     porcentajeDescuento: {
-            //         update: true
-            //     },
-            //     descuento: {
-            //         update: true
-            //     },
-            //     precioUnitario: {
-            //         update: true
-            //     },
-            //     precioConIva: {
-            //         update: true
-            //     },
-            // })
-    
-            // const ventaDetailPermission = this.ventaDetailPermission || defaultPermission;
-            
             $scope.gridOptionsDetalle.columnDefs = [{
                     name: 'N°',
                     field: 'n',
@@ -699,11 +896,8 @@
                 {
                     name: "Descripción",
                     field: "descripcion",
-                    enableCellEdit: true,
-                    enableCellEditOnFocus: true,
-                    cellEditableCondition: function (scope) {
-                        return scope.row.entity.llevaInventario !== true;
-                    },
+                    enableCellEdit: false,
+                    enableCellEditOnFocus: false,
                     cellTooltip: function (row) {
                         return row.entity.descripcion;
                     },
@@ -713,7 +907,7 @@
                 {
                     name: 'Cant.',
                     field: 'cantidad',
-                    enableCellEditOnFocus: true,
+                    enableCellEditOnFocus: false,
                     min: 1,
                     type: 'number',
                     width: '6%',
@@ -724,8 +918,8 @@
                     field: 'idMedida',
                     cellFilter: 'mapMedida:row.entity.medidas',
                     editableCellTemplate: 'ui-grid/dropdownEditor',
-                    enableCellEdit: true,
-                    enableCellEditOnFocus: true,
+                    enableCellEdit: false,
+                    enableCellEditOnFocus: false,
                     editDropdownOptionsFunction: function (rowEntity, colDef) {
                         return rowEntity.medidas.map(function (val) {
                             return {
@@ -814,7 +1008,7 @@
                     width: '6%',
                     minWidth: '100',
                     // cellFilter: "currency:'%'",
-                    visible: this.configDetalle.porcentajeDescuento || false,
+                    visible: $scope.configDetalle.porcentajeDescuento || false,
                     type: 'number',
                     /*cellFilter: "limitTo:3",*/
                 },
@@ -828,7 +1022,7 @@
                     width: '6%',
                     minWidth: '100',
                     // cellFilter: "currency:'$'",
-                    visible: this.configDetalle.descuento || false
+                    visible: $scope.configDetalle.descuento || false
                 },
                 {
                     name: 'T. Dsto.',
@@ -840,7 +1034,7 @@
                     width: '7%',
                     minWidth: '100',
                     // cellFilter: "currency:'$'",
-                    visible: this.configDetalle.totalDescuento || false
+                    visible: $scope.configDetalle.totalDescuento || false
                 },
                 {
                     name: 'sub Total',
@@ -871,7 +1065,7 @@
                     width: '6%',
                     minWidth: '100',
                     // cellFilter: "currency:'$'",
-                    visible: this.configDetalle.ice || false
+                    visible: $scope.configDetalle.ice || false
                 },
                 {
                     name: 'Nota',
@@ -907,13 +1101,195 @@
                 },
             ]
     
-            let indexTipoIva = this.gridOptionsDetailDocument.columnDefs.findIndex(item => item.field === 'idTipoIva');
-            let indexBodega = this.gridOptionsDetailDocument.columnDefs.findIndex(item => item.field === 'idBodega');
-            this.gridOptionsDetailDocument.columnDefs[indexTipoIva].editDropdownOptionsArray = this.tipoIvas;
-            this.gridOptionsDetailDocument.columnDefs[indexBodega].editDropdownOptionsArray = this.bodegas;
+            $scope.setWarehouseAndIVA();
         }
 
 
+
+        /**
+         * ==========================DOCUMENTO DESTINO===================================== 
+         * 
+         */
+        /**
+		 * Agregamos lista de tipos IVA y bodegas en sus respectivas columnas
+		 */
+		$scope.setWarehouseAndIVA = function () {
+			let indexTipoIva = $scope.gridOptionsDetalle.columnDefs.findIndex(item => item.field === 'idTipoIva');
+			let indexBodega = $scope.gridOptionsDetalle.columnDefs.findIndex(item => item.field === 'idBodega');
+
+			$scope.gridOptionsDetalle.columnDefs[indexTipoIva].editDropdownOptionsArray = $scope.tipoIvas;
+			$scope.gridOptionsDetalle.columnDefs[indexBodega].editDropdownOptionsArray = $scope.bodegas;
+		}
+        
+        $scope.onChangeEstab = function() {
+            try {
+                Swal.fire({
+                    title: 'Cambiar Establecimiento?',
+                    text: "Se cambiará puntos de Emisión y la bodega en el detalle!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Si, cambiar!',
+                    cancelButtonText: 'No, cancelar!',
+                  }).then((result) => {
+                    if (result.isConfirmed) {
+                      
+                        let dataEstab = $scope.establecimientos.find(item=>item.codEstab===$scope.data.codEstab);
+
+                        if(!$scope.tempPuntosEmision.some(item=>item.codEstab_Asig===dataEstab.codEstab_Asig)){
+                            tS.toastr('info', 'No tienes Puntos de Emisión asignado a este establecimiento');
+                            $scope.data.codEstab = $scope.dataClone.codEstab;
+                            $scope.$apply();
+                            return
+                        }
+                        if(!$scope.tempBodegas.some(item=>item.codEstab_Asig===dataEstab.codEstab_Asig)){
+                            tS.toastr('info', 'No tienes bodegas asignado a este establecimiento');
+                            $scope.data.codEstab = $scope.dataClone.codEstab;
+                            $scope.$apply();
+                            return
+                        }
+
+                        //Impuesto Tarifa
+                        $scope.tarifasImpuestos  = dataEstab.tarifasImpuestos;
+                        $scope.dataTarifaImpuesto = $scope.tarifasImpuestos[0];
+
+                        //Puntos de Emision 
+                        $scope.ptosEmision = $scope.tempPuntosEmision.filter(item=>item.codEstab_Asig===dataEstab.codEstab_Asig);
+
+                        let dataPtoEmi = $scope.ptosEmision.find(item=>(item.predeterminado))
+                        $scope.data.idPuntoEmision = dataPtoEmi.idPuntoEmision;
+
+                        //Bodegas 
+                        $scope.bodegas = $scope.tempBodegas.filter(item=>item.codEstab_Asig===dataEstab.codEstab_Asig);
+                      
+                        let dataBodega = $scope.bodegas.find(item=>(item.predeterminado));
+                        $scope.idBodega = dataBodega.idBodega;
+
+                        $scope.dataClone.codEstab = $scope.data.codEstab;
+                    }else{
+                        $scope.data.codEstab = $scope.dataClone.codEstab;
+                        $scope.$apply();
+                    }
+                  })
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+
+        $scope.askToSaveDoc = async function(){
+            try {
+                if(!$scope.data.codEstab){
+                    tS.taostr('warning', 'Seleccione el establecimiento')
+                    return
+                }
+                if(!$scope.data.idPuntoEmision){
+                    tS.taostr('warning', 'Seleccione el establecimiento')
+                    return
+                }
+
+                let {isConfirmed} = await Swal.fire({
+                    //title: 'Are you sure?',
+                    text: "Está seguro de guardar el Documento de Aprobación Documnento!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Si, guardar!',
+                    cancelButtonText: 'No, cancelar!'
+                })
+
+                if(isConfirmed){
+                    
+                    let comprobante = {
+                        ...$scope.data,
+                        codDoc: $scope.docDestino,
+                        idCliente: $scope.cliente.idCliente,
+                        fechaEmision: fS.formatDateTimeZone(this.data.fechaEmision),
+                        docOrigen: $scope.codigo,
+                        total: $scope.selectedDocuments.map(item => item.total).reduce((prev, acc) => prev + acc, 0)
+                    }
+
+                    //Tarifa Aplicada al Documento
+                    //jsonHeader.tarifa = this.actividadTipoIva.tarifa;
+
+                    let tempDetail = [];
+                    let orderIndex = 1;
+                    for (let item of $scope.gridOptionsDetalle.data) {
+
+                        let precioTotalSinImpuesto = (item.precioUnitario - item.valorDescuento) * item.cantidad;
+                        let obj = {
+                            orderIndex: orderIndex ++,
+                            idAprob_Document_Detailt: 0,
+                            idTarifa: item.idTarifa,
+                            idArticulo: item.idArticulo,
+                            idTipoIva: item.idTipoIva,
+                            idMedida: item.idMedida,
+                            cantidad: item.cantidad,
+                            descripcion: item.descripcion,
+                            precioUnitario: item.precioUnitario,
+                            precioConIva: item.precioConIva,
+                            valorDescuento: item.valorDescuento,
+                            descuento: item.valorDescuento,
+                            precioTotalSinImpuesto: fS.roundNumber(precioTotalSinImpuesto, $scope.decimal.nroTotalDetalle),
+                            baseImponible:  fS.roundNumber(precioTotalSinImpuesto, $scope.decimal.nroTotalDetalle),
+                            codigoPorcentaje: item.codigoPorcentaje,
+                            tarifa: item.tarifa
+                        }
+                        tempDetail.push(obj);
+                    }
+
+                    let infoAdicional = $scope.infoAdicionalDocumento.filter(item => {
+                        if(item){
+                            return $scope.selectedDocuments.some(docs => docs.idComprobante===item.idDocumento)
+                        }else{
+                            return false;
+                        }
+                    })
+
+                    let historialVenta = $scope.historialVentas.filter(item => {
+                        if(item){
+                            return $scope.selectedDocuments.some(docs => docs.idNotaEntrega===item.idDocumento)
+                        }else{
+                            return false;
+                        }
+                    })
+
+                
+
+                    const data = {
+                        comprobante: JSON.stringify(comprobante),
+                        detalle: JSON.stringify(tempDetail),
+                        historial: JSON.stringify($scope.selectedDocuments.map(item => ({
+                            idDocumento: item.idNotaEntrega || item.idProforma,
+                            serie: item.nroDocumento,
+                        }))),
+                        infoAdicional: JSON.stringify(infoAdicional),
+                        historialVenta: JSON.stringify(historialVenta),
+                    }
+
+                    aprobacionDocSvc.save(data).then(response => {
+                        hideLoader();
+                        if (response.code === "0") {
+                            Swa
+                            fS.sweetAlert('warning', response.message);
+                        }
+                        if (response.code === '1') {
+                            hideLoader();
+                            fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                            $uibModalInstance.close(response);
+                        }
+                    }).catch(error => {
+                        hideLoader();
+                        console.log(error)
+                    })
+                }
+                
+            } catch (error) {
+                console.log(error);
+            }
+        }
 
         $scope.closeModal = function() {
             $uibModalInstance.close();
