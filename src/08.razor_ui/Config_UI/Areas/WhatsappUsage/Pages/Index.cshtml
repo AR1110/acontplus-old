@@ -1,0 +1,71 @@
+﻿@page
+@model Config_UI.Areas.WhatsappUsage.Pages.IndexModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Index";
+    Layout = "_Layout";
+}
+<div ng-controller="whatsappUsageCtrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h5 class="text-themecolor">Uso de Whatsapp</h5>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row" ng-show="usages.length > 0">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                    <div class="form-group">
+                        <input type="text" class="search form-control" onclick="this.select()" ng-model="search"
+                            placeholder="Buscar">
+                    </div>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Entidad</th>
+                            <th>Fecha Inicio</th>
+                            <th>Fecha Fin</th>
+                            <th>Usados</th>
+                            <th>Limite</th>
+                            <th>Ilimitado</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in usages | filter: search track by $index">
+                            <td>{{item.razonSocial}}</td>
+                            <td>{{item.fechaInicio | date: 'dd/MM/yyyy'}}</td>
+                            <td>{{item.fechaFin | date: 'dd/MM/yyyy'}}</td>
+                            <td>
+                                <input type="number" id="{{item.idWhatsappUsage}}-used" class="form-control"
+                                    ng-model="item.used" ng-blur="save(item)" min="0">
+                            </td>
+                            <td>
+                                <input type="number" id="{{item.idWhatsappUsage}}-limite" class="form-control"
+                                    ng-model="item.limite" ng-blur="save(item)" min="0">
+                            </td>
+                            <td>
+                                <md-switch class="md-primary" ng-model="item.ilimitado" ng-change="save(item)"
+                                    aria-label="Ilimitado {{item.ilimitado}}">
+                                </md-switch>
+                            </td>
+                            <td>
+                                <md-switch class="md-primary" ng-model="item.estado" ng-change="save(item)"
+                                    aria-label="Estado {{item.estado}}">
+                                </md-switch>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="~/js/config/controllers/whatsappUsageCtrl.js" asp-append-version="true"></script>
+}

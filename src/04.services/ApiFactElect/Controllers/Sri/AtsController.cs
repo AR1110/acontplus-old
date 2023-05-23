@@ -59,22 +59,29 @@ namespace ApiFactElect.Controllers.Sri
             GenericResponse _response = new GenericResponse();
             try
             {
-                await _db.SPExecute("ASPAtsGetData");
+                await _db.SPExecute("ASPAtsGetData", true);
                 _db.AddDynamicParam("idRol", idRol);
                 _db.AddDynamicParam("json", json);
                 var ds = _db.GetDataSet();
-                byte[] xmlAts = null;
-                if (_atsXml.Create(ref ds, ref xmlAts))
+                if (!ds.Tables[0].Columns.Contains("code"))
                 {
-                    string fileName = "ATS_" + ds.Tables[0].Rows[0]["IdInformante"].ToString()
-                    + "_" + ds.Tables[0].Rows[0]["numEstabRuc"].ToString()
-                    + "_" + ds.Tables[0].Rows[0]["anio"].ToString() + "_"
-                    + ds.Tables[0].Rows[0]["mes"].ToString();
-                    return File(xmlAts, "text/xml", fileName + ".xml");
+                    byte[] xmlAts = null;
+                    if (_atsXml.Create(ref ds, ref xmlAts))
+                    {
+                        string fileName = "ATS_" + ds.Tables[0].Rows[0]["IdInformante"].ToString()
+                        + "_" + ds.Tables[0].Rows[0]["numEstabRuc"].ToString()
+                        + "_" + ds.Tables[0].Rows[0]["anio"].ToString() + "_"
+                        + ds.Tables[0].Rows[0]["mes"].ToString();
+                        return File(xmlAts, "text/xml", fileName + ".xml");
+                    }
+                    else
+                    {
+                        _response.Create("0", "No se pudo generar el ats");
+                    }
                 }
                 else
                 {
-                    _response.Create("0", "No se pudo generar el ats");
+                    _response.Create("0", ds.Tables[0].Rows[0].Field<string>("message"));
                 }
             }
             catch (Exception ex)

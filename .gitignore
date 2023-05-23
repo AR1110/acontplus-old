@@ -367,3 +367,6 @@
 /src/03.business_logic/BL.PdfReports/obj
 /src/03.business_logic/BL.ExcelReports/bin/Release/net6.0
 /src/03.business_logic/BL.PdfReports/bin/Release/net6.0
+/src/08.razor_ui/Config_UI/bin/Debug/net6.0
+/src/08.razor_ui/Config_UI/obj
+/src/08.razor_ui/Config_UI/bin/Release/net6.0

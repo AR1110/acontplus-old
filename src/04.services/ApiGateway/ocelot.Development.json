@@ -1204,9 +1204,24 @@
       ],
       "DownstreamPathTemplate": "/api/Catalogo{everything}",
       "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [ "Get"],
+      "UpstreamHttpMethod": [ "Get" ],
       "UpstreamPathTemplate": "/api/Catalogo{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7074
+        }
+      ],
+      "DownstreamPathTemplate": "/api/WhatsappUsage{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "UpstreamPathTemplate": "/api/WhatsappUsage{everything}"
     }
-
   ]
 }
