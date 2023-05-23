@@ -1,0 +1,20 @@
+USE [AcontPlus]
+GO 
+
+IF OBJECT_ID(N'Contabilidad.CuotaPorCobrar', N'U') IS NOT NULL
+DROP TABLE Contabilidad.CuotaPorCobrar 
+GO
+CREATE TABLE Contabilidad.CuotaPorCobrar
+(
+	 idCuotaPorPagar INT PRIMARY KEY IDENTITY(1,1) NOT NULL
+	,idCuentaPorPagar INT FOREIGN KEY REFERENCES Contabilidad.CuentaPorPagar(idCuentaPorPagar) NOT NULL
+	,idEstadoPago INT FOREIGN KEY REFERENCES dbo.EstadoPago(idEstadoPago) NOT NULL 
+	,nroCuota INT NOT NULL
+	,fechaVencimiento DATETIME NOT NULL
+	,cuota NUMERIC(18,5) NOT NULL
+	
+	,abono NUMERIC(18,5) DEFAULT 0 NOT NULL
+	,saldo AS CAST(cuota - abono AS NUMERIC(18,5))
+	,entrada BIT NULL
+	,estado BIT DEFAULT 1 
+)

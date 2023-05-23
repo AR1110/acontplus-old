@@ -1619,22 +1619,43 @@ export class ModalCobroDocumentoCtrl extends ModalCobroCtrl{
             if(isConfirmed){
                 
                 showLoader();
-                let comprobanteIngreso = {
+                let comprobante = {
                     codEstab: this.data.codEstab,
-                    idCliente: this.data.idCliente,                
+                    idCliente: this.data.idCliente,   
+                    numeroIdentificacion : this.data.numeroIdentificacion,
+                    nombreFiscal : this.data.nombreFiscal,             
                     total: this.abonoEntidadesFinancieras.map(val=>val.valor).reduce((acc, curr)=>acc + curr, 0),
                     abono: this.abonoEntidadesFinancieras.map(val=>val.abono).reduce((acc, curr)=>acc + curr, 0)
                 }
 
+                let historialCobros = [];
+
+                for(let item of this.selectedDocumentos){
+                    let totalAbono = this.cuotasAfectados.filter(pd =>pd.cobroDetalle.idCuotaXCobrar===item.idCuotaXCobrar)
+                                                        .map(fpd=>fpd.cobroDetalle.abono).reduce((prev, curr)=>prev + curr, 0);
+                    if(totalAbono > 0){
+                        historialPagos.push({
+                            idTipoDocumento: item.idTipoDocumento,
+                            idComprobante: item.idDocumento,                           
+                            abono: totalAbono
+                        })
+                    }else break;
+                }
+
                 let data = {
-                    comprobanteIngreso,
+                    comprobante,
                     cobros: this.abonoEntidadesFinancieras,
-                    cobroDetalles: this.cuotasAfectados
+                    cobroDetalles: this.cuotasAfectados.map(item=>({
+                        idCuotaXCobrar: item.cobroDetalle.idCuotaXCobrar,
+                        abono: item.cobroDetalle.abono,
+                        secuencial: item.secuencial
+                    })),
+                    historial: historialCobros
                 }
 
 
                 
-                let url = `/ComprobanteIngreso/Insert?idTipoDocumento=${this.TIPO_DOC.idTipoDocumento}&idComprobante=${this.data.id}`;
+                let url = `/ComprobanteIngreso/Insert`;
                 await this._mS.getData('post', url, data).then(response => {
                     if (response.code === "0") {                        
                         this._fS.sweetAlert('warning', response.message, response.titleSms);                                    

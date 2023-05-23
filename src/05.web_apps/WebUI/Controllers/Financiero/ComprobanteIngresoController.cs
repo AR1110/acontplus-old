@@ -1,5 +1,6 @@
 ﻿using DataAccess;
 using DataAccess.Tesoreria;
+using Domain.Dtos.Contabilidad;
 using Domain.Models;
 using Domain.ViewModels.Tesoreria;
 using Helpers;
@@ -44,62 +45,31 @@ namespace WebUI.Controllers.GestionFinanciera
         }
 
         [HttpPost]
-        public async Task<IActionResult> Insert(int idTipoDocumento, int idComprobante, [FromBody] ComprobanteIngresoViewModel data)
+        public async Task<IActionResult> Insert([FromBody] PagoCobroDto data)
         {
             GenericResponse _response = new GenericResponse();
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("idTipoDocumento", idTipoDocumento);
-            parameters.Add("idComprobante", idComprobante);
-            parameters.Add("idCliente", data.comprobanteIngreso.idCliente);
-            parameters.Add("codEstab", data.comprobanteIngreso.codEstab);
-            parameters.Add("total", data.comprobanteIngreso.total);
-            parameters.Add("abono", data.comprobanteIngreso.abono);
-            parameters.Add("jsonCobro", JsonConvert.SerializeObject(data.cobros));
-            parameters.Add("jsonCobroDetalle", JsonConvert.SerializeObject(data.cobroDetalles));
+            parameters.Add("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+            parameters.Add("comprobante", SqlValidation.ValidateSqlString(data.comprobante));
+            parameters.Add("cobros", SqlValidation.ValidateSqlString(data.pago));
+            parameters.Add("cobroDetalle", SqlValidation.ValidateSqlString(data.pagoDetalle));
+            parameters.Add("historial", SqlValidation.ValidateSqlString(data.historial));
             _response = DbResponse.SPDefault(await _dao.GetDataTableAsync("GestFinanc.ComprobanteIngreso_Insert", parameters));
-            if (_response.code == "1")
-            {
-                _ef.Update(Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value), _response.payload);
-            }
             return Ok(_response);
         }
 
-        //Cunado se realiza cobro rapido 
-        [HttpPost]
-        public async Task<IActionResult> PostFast(int idTipoDoc, int idComprobante, [FromBody] ComprobanteIngresoViewModel data)
-        {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-            var res = await _ci.PostFastAsync(idRol, idTipoDoc, idComprobante, data);
-            return Ok(res);
-
-        }
-
-
-        public async Task<IActionResult> Anular(int idComprobanteIngreso, string observacion)
+        [HttpDelete]
+        public async Task<IActionResult> Cancel(int id, string observacion)
         {
             GenericResponse _response = new GenericResponse();
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("id", idComprobanteIngreso);
+            parameters.Add("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+            parameters.Add("idComprobanteIngreso", id);
             parameters.Add("observacion", observacion);
             _response = DbResponse.SPDefault(await _dao.GetDataTableAsync("GestFinanc.ComprobanteIngreso_Delete", parameters));
-            if (_response.id == "1")
-            {
-                _ef.Update(Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value), _response.payload);
-            }
             return Ok(_response);
         }
 
-
-
-        public async Task<IActionResult> GetByDocument(int idTipoDocumento, int idComprobante)
-        {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-            var res = await _ci.GetByDocumentAsync(idRol, idTipoDocumento, idComprobante);
-            return Ok(res);
-
-        }
 
     }
 }
