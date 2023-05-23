@@ -17,20 +17,28 @@
                 }
                 if(response.code==="1"){
                     let notaEntregas = JSON.parse(response.payload) || []
+                    console.log(notaEntregas)
                     return notaEntregas.map(item=>{
                         return {
+                            comprobante: 'Nota de Entrega',
+                            idDocumento: item.idDocumento,
                             idNotaEntrega: item.idNotaEntrega,
                             idTipoDocumento: item.idTipoDocumento,
                             idTiempoCredito: item.idTiempoCredito,
                             idCliente: item.idCliente,
                             codEstab: item.codEstab,
+                            telefonoEstablecimiento: item.telefonoEstablecimiento,
+                            entidad: item.entidad,
+                            nombreComercial: item.nombreComercial,
                             fechaEmision: item.fechaEmision,
                             fechaVencimiento: item.fechaVencimiento,
                             total: item.total,
-                            nroDocumento: item.nroDocumento,
+                            nroDocumento: item.nroDocumento, //eliminar mas adelante
+                            serieComprobante: item.nroDocumento,
                             nombreFiscal: item.nombreFiscal,
                             identificacionComprador: item.identificacionComprador,
                             correo: item.correo,
+                            telefono: item.telefono,
                             estadoFinanciero: item.estadoFinanciero,
                             codDoc: item.codDoc,
                             abono: item.abono,
@@ -38,9 +46,9 @@
                             posfechado: item.posfechado,
                             style: item.style,
                             usuario: item.usuario,
-                            codigoDoc: item.codigoDoc,
+                            codEstado: item.codEstado,
                             credito: item.credito,
-                            nroIdentificacion: item.nroIdentificacion
+                            nroIdentificacion: item.nroIdentificacion,
                         }
                     })
                 }

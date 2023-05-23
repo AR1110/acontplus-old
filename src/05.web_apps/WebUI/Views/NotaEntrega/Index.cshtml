@@ -81,7 +81,7 @@
 
                                                     <md-menu-item ng-if="accion.editar">
                                                         <md-button ng-click="openModalEdit(ne)"
-                                                            ng-disabled="ne.codDoc==='A'">
+                                                            ng-disabled="ne.codEstado==='A'">
                                                             <span md-menu-align-target><i class="ti-pencil"></i>
                                                                 Editar</span>
                                                         </md-button>
@@ -89,7 +89,7 @@
 
                                                     <md-menu-item ng-if="accion.anular">
                                                         <md-button ng-click="askToDelete(ne)"
-                                                            ng-disabled="ne.codDoc==='A'">
+                                                            ng-disabled="ne.codEstado==='A'">
                                                             <span md-menu-align-target><i class="ti-close"></i>
                                                                 Anular</span>
                                                         </md-button>
@@ -102,9 +102,9 @@
                                                         </md-button>
                                                     </md-menu-item>
 
-                                                    <md-menu-item ng-if="(accion.cobroPago && ne.codDoc==='PE') || (accion.cobroPago && ne.codDoc==='PP')">
+                                                    <md-menu-item ng-if="(accion.cobroPago && ne.codEstado==='PE') || (accion.cobroPago && ne.codEstado==='PP')">
                                                         <md-button ng-click="opcionCobro(ne)"
-                                                            ng-disabled="ne.codDoc==='A' || ne.cobro || ne.gestion">
+                                                            ng-disabled="ne.codEstado==='A' || ne.cobro || ne.gestion">
                                                             <span md-menu-align-target><i class="ti-shortcode"></i>
                                                                 Cobro</span>
                                                         </md-button>
@@ -140,6 +140,14 @@
                                                             ng-disabled="ne.gestion">
                                                             <span md-menu-align-target><i class="far fa-envelope"></i>
                                                                 Enviar Correo</span>
+                                                        </md-button>
+                                                    </md-menu-item>
+
+                                                    <md-menu-item>
+                                                        <md-button uib-tooltip="Enviar por Whatsapp" tooltip-placement="top" btn-send-to-whats-app params="ne" has-permission="hasPermissions" type-send="typeSend"  >
+                                                            <span md-menu-align-target>
+                                                                <i class="mdi mdi-whatsapp"></i> Enviar por Whatsapp
+                                                            </span>
                                                         </md-button>
                                                     </md-menu-item>
 

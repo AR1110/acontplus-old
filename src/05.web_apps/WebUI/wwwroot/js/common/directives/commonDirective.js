@@ -611,4 +611,55 @@
         }
     })
 
+
+    /**
+     * -------------------------------SEND DOCS. BY WHATSAPP-----------------------
+     * 
+     */
+    app.directive('btnSendToWhatsApp', function(modalService, nombreModal){
+        return {
+            restrict: 'A',
+            scope: {
+                params:'=',
+                resultModal: '&',
+                hasPermission: '=',
+                typeSend: '=',
+            },
+            link: function(scope, element, att){
+                element.on('click', async function () {
+                     console.log('click')
+                    // let fileCtrl = nombreModalLogistica.VEHICULO.fileCtrl;
+                    // let ctrl = nombreModalLogistica.VEHICULO.controllers['M'];
+                    // let template = nombreModalLogistica.VEHICULO.templates['M'];
+                    const {
+                        MODAL_SEND_WHATSAPP_CTRL,
+                        MODAL_SEND_WHATSAPP_CSHTML
+                    } = nombreModal.common;
+                    const {
+                        ModalWhatsAppCtrl
+                    } = await import(MODAL_SEND_WHATSAPP_CTRL);
+                    // console.log(template)
+
+                    scope.params.type = scope.typeSend;
+                    scope.params.hasPermissions = scope.hasPermissions
+                    const modalDialogRef = modalService.openModalCustom({
+                        controller: ModalWhatsAppCtrl,
+                        template: MODAL_SEND_WHATSAPP_CSHTML,
+                        size: 'md',
+                        params: scope.params || {},
+                        isRenderRazorPartial: true,
+                    })       
+                          
+                    modalDialogRef.result.then(result=>{
+                        if(typeof result==="object"){
+                            scope.resultModal({
+                                result
+                            })
+                        }
+                    })
+                });
+            }
+        }
+    })
+
 })(window.angular)

@@ -11,7 +11,7 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, proformaSvc, _modalSvc, 
     // } else { 
     //     $scope.accion = accion[0];
     // }
-
+    $scope.typeSend = 'GenericFile';
 
     const TIPO_DOC_PR = _commonSvc.tipoDoc['PR'];
     const PERMISSION_KEY_ACTIONS = {
@@ -328,7 +328,7 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, proformaSvc, _modalSvc, 
                 isConfirmed
             } = await swalWithBootstrapButtons.fire({
                 title: '<small>Anular Proforma?</small>',
-                html: `<small>Esta Ud. seguro/a de anular este Documento <b>N° ${item.nroDocumento}</b></small>?`,
+                html: `<small>Esta Ud. seguro/a de anular este Documento <b>N° ${item.serieComprobante}</b></small>?`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Si, anular!',
@@ -375,9 +375,9 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, proformaSvc, _modalSvc, 
         try {
             let params = {
                 TYPE_NOTIFICATION: 'N',
-                serie: item.nroDocumento,
+                serie: item.serieComprobante,
                 correo: item.correo,
-                subject: 'Documento Proforma - Acontplus N°: ' + item.nroDocumento,
+                subject: 'Documento Proforma - Acontplus N°: ' + item.serieComprobante,
                 json: {
                     hasFile: true,
                     isReport: "SI",
@@ -418,7 +418,7 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, proformaSvc, _modalSvc, 
 
     $scope.print = function (item) {
         let parameters = {
-            idDocument: item.idProforma,
+            idDocument: item.idDocument,
             idTipoDocumento: item.idTipoDocumento,
             codEstab: item.codEstab,
             codDoc: TIPO_DOC_PR.codigo,
@@ -439,7 +439,7 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, proformaSvc, _modalSvc, 
         let format = 'pdf';
 
         let dataParms = {
-            id: item.idProforma,
+            id: item.idDocumento,
         }
 
 
