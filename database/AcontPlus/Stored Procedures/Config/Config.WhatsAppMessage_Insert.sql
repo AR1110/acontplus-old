@@ -37,7 +37,7 @@ BEGIN
 	declare @os VARCHAR(300)
 	
 	declare @browserName VARCHAR(300)
-		declare @osName VARCHAR(300)
+	declare @osName VARCHAR(300)
 
 
 	INSERT INTO @tbl(browser, os, emisor, receptor, mensaje, totalMensajes, params)
@@ -61,6 +61,13 @@ BEGIN
 		BEGIN TRAN
 			INSERT INTO Config.WhatsappMessage(idUsuarioRol, browser, os, emisor, receptor, mensaje, totalMensajes, params)
 			SELECT @idUsuarioRol, @browserName, @osName, emisor, receptor, mensaje,totalMensajes, params FROM @tbl
+			
+			UPDATE Config.WhatsappUsage SET used = used + (SELECT totalMensajes FROM @tbl) WHERE ruc = (SELECT ruc FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol AND ilimitado = 0)
+			
+			IF EXISTS(SELECT 1 FROM Config.WhatsappUsage  WHERE ruc = (SELECT ruc FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol) AND limite = used AND ilimitado = 0)
+				BEGIN
+					UPDATE Config.WhatsappUsage SET fechaFin = dbo.ufnGetDateEcuador(), estado = 0 WHERE ruc = (SELECT ruc FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol)
+				END
 
 			--UPDATE Config.WhatsAppSession SET estado = 0 WHERE idUsuarioRol = @idUsuarioRol AND idSession != @idSession
 

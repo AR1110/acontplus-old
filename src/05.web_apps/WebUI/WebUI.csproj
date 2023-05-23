@@ -1166,7 +1166,7 @@
 
 	<ItemGroup>
 		<Content Update="appsettings.json">
-		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</Content>
 		<Content Update="libman.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -4103,22 +4103,25 @@
 			<TreatAsUsed>true</TreatAsUsed>
 		</ProjectReference>
 		<ProjectReference Include="..\..\08.razor_ui\Compra_UI\Compra_UI.csproj">
-		  <TreatAsUsed>true</TreatAsUsed>
+			<TreatAsUsed>true</TreatAsUsed>
+		</ProjectReference>
+		<ProjectReference Include="..\..\08.razor_ui\Config_UI\Config_UI.csproj">
+			<TreatAsUsed>true</TreatAsUsed>
 		</ProjectReference>
 		<ProjectReference Include="..\..\08.razor_ui\Contabilidad_UI\Contabilidad_UI.csproj">
-		  <TreatAsUsed>true</TreatAsUsed>
+			<TreatAsUsed>true</TreatAsUsed>
 		</ProjectReference>
 		<ProjectReference Include="..\..\08.razor_ui\FACT_UI\FACT_UI.csproj">
-		  <TreatAsUsed>true</TreatAsUsed>
+			<TreatAsUsed>true</TreatAsUsed>
 		</ProjectReference>
 		<ProjectReference Include="..\..\08.razor_ui\Inventario_UI\Inventario_UI.csproj">
 			<TreatAsUsed>true</TreatAsUsed>
 		</ProjectReference>
 		<ProjectReference Include="..\..\08.razor_ui\Recepcion_UI\Recepcion_UI.csproj">
-		  <TreatAsUsed>true</TreatAsUsed>
+			<TreatAsUsed>true</TreatAsUsed>
 		</ProjectReference>
 		<ProjectReference Include="..\..\08.razor_ui\Reports_UI\Reports_UI.csproj">
-		  <TreatAsUsed>true</TreatAsUsed>
+			<TreatAsUsed>true</TreatAsUsed>
 		</ProjectReference>
 	</ItemGroup>
 

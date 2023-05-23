@@ -1514,6 +1514,22 @@
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Get" ],
       "UpstreamPathTemplate": "/api/Catalogo{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 8098
+        }
+      ],
+      "DownstreamPathTemplate": "/api/WhatsappUsage{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "UpstreamPathTemplate": "/api/WhatsappUsage{everything}"
     }
   ]
 }
