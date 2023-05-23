@@ -46,10 +46,13 @@ BEGIN
 			ELSE
 				BEGIN
 					DECLARE @message VARCHAR(100)
-					,@totalUsed INT
-					SET @totalUsed = (SELECT used FROM WhatsappUsage WHERE ruc = @ruc AND ilimitado = 0)
-					IF (@totalUsed) < 25
-						SET @message = 'Le quedan ' + CONVERT(VARCHAR, @totalUsed) + 'disponibles de su paquete contratado'
+					,@limite INT = 0
+					,@totalUsed INT = 0
+					,@availables INT = 0
+					SELECT @totalUsed = used, @limite = limite FROM WhatsappUsage WHERE ruc = @ruc AND ilimitado = 0
+					SET @availables = (@limite - @totalUsed)
+					IF (@availables) < 25
+						SET @message = 'Le quedan ' + CONVERT(VARCHAR, @availables) + ' mensajes de whatsapp disponibles de su paquete contratado'
 
 					SELECT '1' code, @message as 'message'
 				END

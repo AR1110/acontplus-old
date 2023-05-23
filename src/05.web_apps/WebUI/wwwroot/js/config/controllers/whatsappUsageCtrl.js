@@ -6,6 +6,9 @@
     whatsappUsageCtrl.$inject = ['$scope', 'mainService', 'toastService']
 
     function whatsappUsageCtrl($scope, _mS, _tS) {
+        
+        _mS.detectDevice()
+
         $scope.usages = []
         $scope.usage = {}
 
@@ -28,14 +31,22 @@
             })
         }
         $scope.initialLoad()
-        
+
         $scope.save = (item) => {
             showLoader()
             let method, url
             if (!item.ruc) {
+                if (item.limite < 1) {
+                    _tS.toastr('warning', 'El limite debe ser mayor a 1')
+                    return
+                }
                 method = "POST"
                 url = "WhatsappUsage"
             } else {
+                if (item.limite < 1) {
+                    _tS.toastr('warning', 'El limite debe ser mayor a 1')
+                    return
+                }
                 method = "PUT"
                 url = 'WhatsappUsage/?id=' + item.idWhatsappUsage
             }

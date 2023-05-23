@@ -353,7 +353,7 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
         })
     }
 
-    let totalMessages = 0
+    let totalMessages = 1
 
     function sendSms(message) {
 
@@ -369,7 +369,7 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
                 let response = await http.post(`/send/message`, payload)
                 //this.sendMessageReset();
                 resolve(response.data.message)
-                //totalMessages++
+                totalMessages++
             } catch (error) {
                 if (error.response) {
                     reject(error.response.data.message)
@@ -679,10 +679,7 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
         mS.getData('post', 'WhatsappMessage/Post', { data: data }, true).then(response => {
             if (response.code == '1') {
                 //console.log(response.message)
-                Swal.fire({
-                    title: "Enviado correctamente",
-                    icon: "info"
-                })
+                tS.toastr("info", response.message)
             }
         }).catch(err => {
             console.log(err)

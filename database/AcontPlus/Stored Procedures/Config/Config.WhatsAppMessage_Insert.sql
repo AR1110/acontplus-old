@@ -62,9 +62,9 @@ BEGIN
 			INSERT INTO Config.WhatsappMessage(idUsuarioRol, browser, os, emisor, receptor, mensaje, totalMensajes, params)
 			SELECT @idUsuarioRol, @browserName, @osName, emisor, receptor, mensaje,totalMensajes, params FROM @tbl
 			
-			UPDATE Config.WhatsappUsage SET used = used + (SELECT totalMensajes FROM @tbl) WHERE ruc = (SELECT ruc FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol)
+			UPDATE Config.WhatsappUsage SET used = used + (SELECT totalMensajes FROM @tbl) WHERE ruc = (SELECT ruc FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol AND ilimitado = 0)
 			
-			IF (SELECT SUM(totalMensajes) FROM Config.WhatsappMessage WHERE idUsuarioRol = @idUsuarioRol) = (SELECT limite FROM Config.WhatsappUsage  WHERE ruc = (SELECT ruc FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol))
+			IF EXISTS(SELECT 1 FROM Config.WhatsappUsage  WHERE ruc = (SELECT ruc FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol) AND limite = used AND ilimitado = 0)
 				BEGIN
 					UPDATE Config.WhatsappUsage SET fechaFin = dbo.ufnGetDateEcuador(), estado = 0 WHERE ruc = (SELECT ruc FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol)
 				END
