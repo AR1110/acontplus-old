@@ -53,6 +53,7 @@ BEGIN
 	SET @sql = 'SELECT a.idArticulo
 				,codigo
 				,codigoAuxiliar
+				,codigoBarra
 				,descripcion
 				,stock
 				,precioCosto

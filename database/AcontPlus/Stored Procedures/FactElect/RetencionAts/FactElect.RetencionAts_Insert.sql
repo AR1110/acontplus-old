@@ -215,14 +215,14 @@ BEGIN
 					RETURN
 				END
 
+	IF EXISTS (SELECT 1 FROM FactElect.RetAtsDocSustento rds WITH(NOLOCK)
+						INNER JOIN @tblDocs t ON LTRIM(RTRIM(rds.numDocSustento)) = LTRIM(RTRIM(t.numDocSustento)))
+		BEGIN
+			SELECT '0' code, 'Este documento de sustento ya pertenece a una retención' as 'message'
+			RETURN
+		END
 
-
-	BEGIN TRY
-		BEGIN TRAN
-			
-			
-
-			DECLARE @idRetencionAts INT
+	DECLARE @idRetencionAts INT
 			,@ambiente nvarchar(1)
 			,@tipoEmision TINYINT
 			,@idEntidad INT 
@@ -242,7 +242,6 @@ BEGIN
  			,@idUsuario = idUsuario
 			FROM App.UsuarioRol WHERE idUsuarioRol = @idRol
  
-			
 			SET @ruc = (SELECT RUC FROM Entidad WHERE idEntidad = @idEntidad)
 
 			SELECT TOP 1  @idPuntoEmision = idPuntoEmision, @ambiente = ambiente FROM PuntoEmision p INNER JOIN @tblInfoCompRet t ON p.codEstab = t.codEstab
@@ -263,10 +262,7 @@ BEGIN
 			AND td.codigoSri = '07'
 			
 			SET @fechaEmision = (SELECT fechaEmision FROM @tblInfoCompRet)
-			
- 
-
- 
+	
 			SELECT @claveAcceso = dbo.ufnGeneraClaveAcceso(dbo.AFTDeleteCero(estab)   
 			 ,'07'
 												   ,CAST(@ambiente as nvarchar)
@@ -286,6 +282,10 @@ BEGIN
 					SELECT '0' as code, 'Error al generar clave acceso ' as 'message' 
 					RETURN
 				END
+
+	BEGIN TRY
+		BEGIN TRAN
+			
 
 			INSERT INTO FactElect.RetencionAts(ambiente, tipoEmision, codEstab, claveAcceso,
 			codDoc, estab, ptoEmi, secuencial, fechaEmision, contribuyentEspecial, obligadoContabilidad
@@ -382,8 +382,6 @@ BEGIN
 			INNER JOIN dbo.TipoDocumento td ON cd.idTipoDocumento = td.idTipoDocumento
 			WHERE cd.idPuntoEmision = @idPuntoEmision 
 			AND td.codigoSri = '07'
-
-
 			SELECT '1' code, 'Retencion generada con exito'  as 'message'
 		COMMIT TRAN
 	END TRY

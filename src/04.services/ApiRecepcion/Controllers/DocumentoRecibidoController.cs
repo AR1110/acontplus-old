@@ -231,7 +231,7 @@ namespace ApiRecepcion.Controllers
                     await _db.SPExecute("Recepcion.Documento_Check_Existence");
                     _db.AddDynamicParam("json", JsonConvert.SerializeObject(dt));
                     var dtExistent = _db.GetDataTable();
-                    if (dtExistent.Columns.Contains("code") && dtExistent.Rows[0].Field<string>("code") != "-1")
+                    if (dtExistent.Columns.Contains("code") && dtExistent.Rows[0].Field<string>("code") == "-1")
                     {
                         _response.Create(code: "1", payload: DataHelper.DataTableToJSON(dt));
                     }

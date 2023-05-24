@@ -136,7 +136,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BL.ExcelReports", "03.busin
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiLogistica", "04.services\ApiLogistica\ApiLogistica.csproj", "{2ECAE4BB-E460-40F3-882E-66BD4A5C298C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Config_UI", "08.razor_ui\Config_UI\Config_UI.csproj", "{4ADD0185-510B-46E3-988B-1F9CBCC9E580}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Config_UI", "08.razor_ui\Config_UI\Config_UI.csproj", "{4ADD0185-510B-46E3-988B-1F9CBCC9E580}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ventas_UI", "08.razor_ui\Ventas_UI\Ventas_UI.csproj", "{A8DE3BEE-69F2-4DE3-B43C-6C0C33D09E52}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -346,6 +348,10 @@ Global
 		{4ADD0185-510B-46E3-988B-1F9CBCC9E580}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4ADD0185-510B-46E3-988B-1F9CBCC9E580}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4ADD0185-510B-46E3-988B-1F9CBCC9E580}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8DE3BEE-69F2-4DE3-B43C-6C0C33D09E52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8DE3BEE-69F2-4DE3-B43C-6C0C33D09E52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8DE3BEE-69F2-4DE3-B43C-6C0C33D09E52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8DE3BEE-69F2-4DE3-B43C-6C0C33D09E52}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -402,6 +408,7 @@ Global
 		{091F1951-6C69-43CC-B60A-009D8DA14951} = {691582CC-73A1-4AEB-BF9B-B8427408966B}
 		{2ECAE4BB-E460-40F3-882E-66BD4A5C298C} = {E643720B-EDD4-43FF-80CF-2040B07B6D3C}
 		{4ADD0185-510B-46E3-988B-1F9CBCC9E580} = {79F40397-A77A-42D3-9A26-12016AC04CB9}
+		{A8DE3BEE-69F2-4DE3-B43C-6C0C33D09E52} = {79F40397-A77A-42D3-9A26-12016AC04CB9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BA9DF437-2C4E-4B51-A33F-8A6B93E9A018}
