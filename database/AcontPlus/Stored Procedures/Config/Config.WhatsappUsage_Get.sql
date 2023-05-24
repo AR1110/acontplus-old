@@ -40,7 +40,7 @@ BEGIN
 			SET @ruc = (SELECT ruc FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
 			IF EXISTS (SELECT 1 FROM Config.WhatsappUsage WHERE ruc = @ruc AND estado = 0)
 				BEGIN
-					SELECT '0' code, 'Usted no posee habilitada la opcion de envios por whatsapp, comuniquese con el administrador del sistema' as 'message'
+					SELECT '0' code, 'El envío de comprobantes por whatsapp esta bloqueado, para activarlo debe adquirir un plan, comuníquese con ACONTPLUS WEB al número 0991686066 para activarlo.' as 'message'
 					RETURN
 				END
 			ELSE

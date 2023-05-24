@@ -71,7 +71,7 @@ BEGIN
 
 			--UPDATE Config.WhatsAppSession SET estado = 0 WHERE idUsuarioRol = @idUsuarioRol AND idSession != @idSession
 
- 			SELECT '1' code, 'Exitos' as 'message'--, (SELECT idSession id FROM Config.WhatsAppSession WHERE idSession = @idSession for json path) as payload
+ 			SELECT '1' code, 'El mensaje se envio correctamente' as 'message'--, (SELECT idSession id FROM Config.WhatsAppSession WHERE idSession = @idSession for json path) as payload
 		COMMIT TRAN
 	END TRY
 	BEGIN CATCH
