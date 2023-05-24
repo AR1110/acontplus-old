@@ -4123,6 +4123,7 @@
 		<ProjectReference Include="..\..\08.razor_ui\Reports_UI\Reports_UI.csproj">
 			<TreatAsUsed>true</TreatAsUsed>
 		</ProjectReference>
+		<ProjectReference Include="..\..\08.razor_ui\Ventas_UI\Ventas_UI.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

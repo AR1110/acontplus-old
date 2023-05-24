@@ -16,6 +16,7 @@
     ]
 
     function retencionAtsCtrl($scope, mS, _commonSvc, tS, $element, $cookies, uuid2, $window, FileSaver, Blob) {
+        mS.detectDevice()
         /**Initial Load */
         $scope.genericAnswer = [{ codigo: 'SI' }, { codigo: 'NO' }]
 
@@ -42,7 +43,6 @@
         $scope.establecimientos = []
         $scope.puntosEmisionTemp = []
 
-        mS.detectDevice()
 
         function formatDateTimeZone(fecha) {
             const formatDateMoment = moment.tz(fecha, "America/Guayaquil")
@@ -107,9 +107,6 @@
                             }
                             $scope.docSustento.pagoLocExt = '01'
                         }
-                        if (!$scope.isMobile) {
-                            document.getElementById('menu_toggle').click();
-                        };
                     }, error => {
                         console.log(error)
                     }
@@ -1592,9 +1589,10 @@
             return true
         }
 
-
+        $scope.blockButton = false
         $scope.save = () => {
             try {
+                $scope.blockButton = true
                 $scope.removeCookies()
                 showLoader()
                 if (!$scope.validateSave()) {
@@ -1626,9 +1624,11 @@
                 mS.getData(method, url, data).then(
                     response => {
                         if (response.code == '0') {
+                            $scope.blockButton = false
                             tS.toastr('warning', response.message)
                         }
                         if (response.code == '1') {
+                            $scope.blockButton = false
                             tS.toastr('success', response.message)
                             $scope.infoCompRet = {}
                             $scope.docsAdded = []
@@ -1649,6 +1649,7 @@
                         hideLoader()
                     }
                 ).catch(error => {
+                    $scope.blockButton = false
                     hideLoader()
                     console.log(error)
                 })
