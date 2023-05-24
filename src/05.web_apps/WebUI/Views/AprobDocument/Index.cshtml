@@ -38,7 +38,7 @@
             </div>
         </div>
 
-            
+
         <div class="card-body">
             <div id="upperScroll" style="overflow-x:scroll; overflow-y: hidden; max-height:20px; width:100%">
                 <div name="innerScroll" ng-style="duelScroll" style="height:20px;"></div>
@@ -51,13 +51,14 @@
                             <tr md-row>
                                 <th md-column><span>Op</span></th>
                                 <th md-column><span>N°</span></th>
+                                <th md-column><span>Doc. Origen/Destino</span></th>
                                 <th md-column><span>Nro. Doc</span></th>
                                 <th md-column><span>F. Emisión</span></th>
                                 <th md-column><span>Identificación</span></th>
                                 <th md-column><span>Razon Social Comprador</span></th>
                                 <th md-column><span>Total</span></th>
                                 <th md-column><span>Estado</span></th>
-                              
+
                             </tr>
                         </thead>
                         <tbody md-body>
@@ -74,27 +75,27 @@
                                                     <span md-menu-align-target><i class="ti-menu"></i> Detalle</span>
                                                 </md-button>
                                             </md-menu-item> 
-                                           
+
                                             <md-menu-item ng-if="showBtnEditar(item)">                                                                                        
                                                 <md-button ng-click="openModalEdit(item)">
                                                     <span md-menu-align-target><i class="ti-pencil"></i> Editar</span>
                                                 </md-button>
                                             </md-menu-item> 
 
-                                            
+
                                             <md-menu-item ng-if="showBtnDelete(item)">                                                                                        
                                                 <md-button ng-click="askToDelete(item)">
                                                     <span md-menu-align-target><i class="ti-na"></i> Anular</span>
                                                 </md-button>
                                             </md-menu-item>                                          
-                                            
+
                                             <md-menu-item ng-if="showBtnApprove(item)">                                            
                                                 <md-button ng-click="approveDocument(item)">
                                                     <span md-menu-align-target><i class="mdi mdi-file-check"></i> Aprobar</span>
                                                 </md-button>
                                             </md-menu-item> 
 
-                                                                                    
+
                                             <md-menu-item  ng-if="accion.reporte">                                                                                        
                                                 <md-button ng-click="getReport(item)">
                                                     <span md-menu-align-target><i class=" ti-file"></i> PDF</span>
@@ -104,6 +105,11 @@
                                     </md-menu>                                    
                                 </td>
                                 <td md-cell>{{$index+1}}</td>
+                                <td md-cell>                                    
+                                    <span class="text-info">{{item.docOrigenDesc}}</span></br>
+                                    <i class="fas fa-caret-down fa-xs"></i></br>
+                                    <span class="text-success">{{item.docDestinoDesc}}</span>
+                                </td>
                                 <td md-cell>{{item.serie}}</td>
                                 <td md-cell>{{item.fechaEmision}}</td>
                                 <td md-cell>{{item.identificacionComprador}}</td>
@@ -120,7 +126,7 @@
                         <tfoot md-foot fixed-tfoot>
                             <tr md-row>
                                 <td md-cell colspan="2"><span class="font-weight-bold">{{aprobComprobantes.length}} Documentos</span></td>
-                                <td md-cell colspan="3"></td>
+                                <td md-cell colspan="4"></td>
                                 <td md-cell colspan="1"><span class="font-weight-bold">Total</span></td>
                                 <td md-cell><span class="font-weight-bold">{{total}}</span></td>  
                                 <td md-cell></td>                             
@@ -136,20 +142,20 @@
 
 @section Scripts{
 
-    <!--Se usa para gestion de datos adicionales-->
-    <script src="~/js/factElect/directives/factElectDirective.min.js" asp-append-version="true"></script>
+                    <!--Se usa para gestion de datos adicionales-->
+                    <script src="~/js/factElect/directives/factElectDirective.min.js" asp-append-version="true"></script>
 
-    <!--Se usa para listar documentos de nota emtrega-->
-    <script src="~/js/ventas/services/notaEntregaService.min.js" asp-append-version="true"></script>
-      <!--Se usa para listar documentos de proformas-->
-    <script src="~/js/ventas/services/proformaService.min.js" asp-append-version="true"></script>
-    
-    <!--Se usa para guardar aprobacion del documento FV-->
-    <script src="~/js/factElect/services/facturaService.min.js" asp-append-version="true"></script>
-   
-    <script src="~/js/ventas/services/aprobacionDocService.js" asp-append-version="true"></script>   
+                    <!--Se usa para listar documentos de nota emtrega-->
+                    <script src="~/js/ventas/services/notaEntregaService.min.js" asp-append-version="true"></script>
+                      <!--Se usa para listar documentos de proformas-->
+                    <script src="~/js/ventas/services/proformaService.min.js" asp-append-version="true"></script>
 
-    <script src="~/js/common/services/gridOptionsService.js" asp-append-version="true"></script>   
-    
-    <script src="~/js/ventas/controllers/aprobacionDocumentoCtrl.min.js" asp-append-version="true"></script>
+                    <!--Se usa para guardar aprobacion del documento FV-->
+                    <script src="~/js/factElect/services/facturaService.min.js" asp-append-version="true"></script>
+
+                    <script src="~/js/ventas/services/aprobacionDocService.js" asp-append-version="true"></script>   
+
+                    <script src="~/js/common/services/gridOptionsService.js" asp-append-version="true"></script>    
+
+                    <script src="~/js/ventas/controllers/aprobacionDocumentoCtrl.min.js" asp-append-version="true"></script>
 }

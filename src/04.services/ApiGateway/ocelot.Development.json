@@ -1202,10 +1202,10 @@
           "Port": 7079
         }
       ],
-      "DownstreamPathTemplate": "/api/Catalogo{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamPathTemplate": "/api/CatalogoVenta{everything}",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get" ],
-      "UpstreamPathTemplate": "/api/Catalogo{everything}"
+      "UpstreamPathTemplate": "/api/CatalogoVenta{everything}"
     },
     {
       "AuthenticationOptions": {

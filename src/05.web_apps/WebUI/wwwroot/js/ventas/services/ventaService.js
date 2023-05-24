@@ -30,7 +30,7 @@
                     let tiempoCreditos = payload[8];
                     let articuloPredeterminado = payload[9][0]
                     let clientePredeterminado = payload[10][0];                    
-                    let permisonVenta = JSON.parse(payload[11][0].jsonPermission);
+                    let permisoVenta = JSON.parse(payload[11][0].jsonPermission);
                     let permisoArticulo =payload[12][0];
 
 
@@ -95,7 +95,7 @@
                         tiempoCreditos: tiempoCreditosMapper,
                         articuloPredeterminado,
                         clientePredeterminado,
-                        permisonVenta,
+                        permisoVenta,
                         permisoArticulo
                     }
                    

@@ -4,17 +4,18 @@
 
     //Variables Constantes
     const URL_TEMPLATE = 'AprobDocument/'
-    
+
     //Variable servicios
     let mS = {};
     let tS = {};
+    let fS = {};
     let commonSvc = {};
+    let aprobacionDocSvc = {};
     let notaEntregaSvc = {};
     let proformaSvc = {};
     let facturaSvc = {};
     let ventaSvc = {} ;
     let gridOptionsSvc = {} ;
-
    
 	let mainDataForm = {};
 
@@ -22,17 +23,13 @@
         toast: true,
         position: 'top-end',
         showConfirmButton: false,
-        timer: 3000,
+        timer: 1000,
         timerProgressBar: true,
         didOpen: (toast) => {
           toast.addEventListener('mouseenter', Swal.stopTimer)
           toast.addEventListener('mouseleave', Swal.resumeTimer)
         }
     })
-
-
-    
-
 
     app.controller('aprobacionDocumentoCtrl', aprobacionDocumentoCtrl);
 
@@ -43,46 +40,47 @@
         //Injection Services
         mS             = $injector.get('mainService');
         commonSvc      = $injector.get('commonService');
+        aprobacionDocSvc = $injector.get('aprobacionDocService');        
         ventaSvc       = $injector.get('ventaService');
         notaEntregaSvc = $injector.get('notaEntregaService');
         proformaSvc    = $injector.get('proformaService');
         facturaSvc     = $injector.get('facturaService');
         tS             = $injector.get('toastService');
+        fS             = $injector.get('formulario');
         gridOptionsSvc = $injector.get('gridOptionsService');
+
+        $scope.dataSearch = {}
 
 
         let OPTION_APROBACION = Object.freeze({
             0:  Object.freeze({
                 docOrigen: {
-                    codigo: 'NE',
                     descripcion: 'Nota de Entrega',
-                    codDoc: '',
+                    codDoc: 'NE',
                 },
                 docDestino: {
-                    codigo: 'FV',
                     descripcion: 'Factura',
                     codDoc: '01',
                 }                
             }),
             1:  Object.freeze({
                 docOrigen: {
-                    codigo: 'PR',
-                    descripcion: 'Proforma'
+                    descripcion: 'Proforma',
+                    codDoc: 'PR'
                 },
                 docDestino: {
-                    codigo: 'FV',
                     descripcion: 'Factura',
                     codDoc: '01',
                 }                
             }),  
             2:  Object.freeze({
                 docOrigen: {
-                    codigo: 'PR',
-                    descripcion: 'Proforma'
+                    descripcion: 'Proforma',
+                    codDoc: 'PR',
                 },
                 docDestino: {
-                    codigo: 'NE',
-                    descripcion: 'Nota de Entrega'
+                    descripcion: 'Nota de Entrega',
+                    codDoc: 'NE',
                 }                
             })          
         });
@@ -127,6 +125,12 @@
                             params: OPTION_APROBACION[result.value]
                         })
 
+                        modalRef.result.then(result => {
+                            if(typeof result==='object'){
+                                $scope.getAprobComprobantes();
+                            }
+                        })
+
                     }
                 })
                 
@@ -135,18 +139,52 @@
             }
         }
 
+        $scope.getAprobComprobantes = function() {
+            try {
+                showLoader();
+                $scope.aprobComprobantes = [];
+    
+                if ($scope.dataSearch.checkBoxCliente ||
+                    $scope.dataSearch.checkBoxFecha ||
+                    $scope.dataSearch.checkBoxUsuario ||
+                    $scope.dataSearch.checkBoxEstado) {
+                    $scope.dataSearch.checkBoxDefault = false
+                } else {
+                    $scope.dataSearch.checkBoxDefault = true;
+                }
+    
+                $scope.aprobComprobantes = [];
+                
+                aprobacionDocSvc.getAll($scope.dataSearch).then(response => {
+                    hideLoader();
+                    $scope.aprobComprobantes = response;
+                    let total = $scope.aprobComprobantes.map(item => item.total).reduce((prev, acc) => prev + acc, 0)
+                    $scope.total = fS.roundNumber(total, 2)
+                    hideLoader();
+                    
+                }).catch(error=>{
+                    hideLoader();
+                    console.log(error)
+                })
+            } catch (error) {
+               hideLoader();
+                console.log(error)
+    
+            }
+        }
+
+
+
         $scope.initiload = function () {
 			try {
-				ventaSvc
-					.getDataForm({typeList: 1})
-					.then((response) => {
-                        console.log(response);
-						mainDataForm = response;
-						
-					})
-					.catch((errorResponse) => {
-						console.log(errorResponse);
-					});
+				ventaSvc.getDataForm({typeList: 1}).then((response) => {                    
+                    mainDataForm = response;
+                    
+                    $scope.dataSearch.codEstab = mainDataForm.establecimientos[0].codEstab;                    
+                    $scope.getAprobComprobantes();						
+                }).catch((errorResponse) => {
+                    console.log(errorResponse);
+                });
 			} catch (error) {
 				console.log(error);
 			}
@@ -155,8 +193,19 @@
 		$scope.initiload();
 
 
-    }
+        $scope.showBtnApprove = (item) => {
+            return !['APR', 'A'].includes(item.codEstado)
+        }
+    
+        $scope.showBtnEditar = (item) => {
+            return !['APR', 'A'].includes(item.codEstado)
+        }
+    
+        $scope.showBtnDelete = (item) => {
+            return !['APR', 'A'].includes(item.codEstado)
+        }
 
+    }
 
 
     /**
@@ -217,20 +266,13 @@
         $scope.gridOptionsSelectedDocs.onRegisterApi = function (gridApi) {
             $scope.gridApi = gridApi;
             $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.OPTIONS);
-
-
             gridApi.selection.on.rowSelectionChanged($scope, (row) => {
                 //------
             })
-
-
             gridApi.selection.on.rowSelectionChangedBatch($scope, function () {})
         }
 
-        //------------------Documento Destino----------------------------------------------------
-        /**
-		 * Define los datos generales del comprobante
-		 */
+        //------------------Documento Destino----------------------------------------      
         $scope.establecimientos = [];
         $scope.impuestosTarifas = []
         $scope.ptosEmision = [];
@@ -271,9 +313,7 @@
 		$scope.dataClone.fechaEmision = new Date();
 		$scope.dataClone.porcentajeDescuento = 0;
 		$scope.dataClone.totalDescuento = 0;
-
-
-
+        
         //Detalle de los documentos seleccionados
         $scope.gridOptionsDetalle = {
             enableColumnMenus: false,
@@ -284,7 +324,7 @@
         $scope.infoAdicionalDocumento = [];
         $scope.historialVentas = [];
         
-        // Step Uno
+        // Step Uno -> Documento Origen 
         $scope.stepUno = function () {
             $scope.footerActionStepUno = true;
             $scope.footerActionStepDos = false;
@@ -302,8 +342,7 @@
         }
 
 
-
-
+        //Step Dos -> Documento Destino 
         $scope.stepDos = function() {
             try {
                 if (!$scope.cliente.idCliente > 0) {
@@ -421,8 +460,7 @@
                 let  {establecimientos,ptosEmision, bodegas, configVenta, decimal, configDetalle, tipoIvas, tarifas, tiempoCreditos, articuloPredeterminado, clientePredeterminado, permisonVenta, permisoArticulo }= mainDataForm;
 
                 /**
-                 * Establecimiento 
-                 * Impuesto Tarifa 
+                 * Establecimiento - Impuesto Tarifa 
                  */
                 
                 let dataEstab = establecimientos.find(item=>(item.predeterminado))
@@ -438,13 +476,13 @@
                 
                 console.log($scope.dataTarifaImpuesto)
 
-                //===========Puntos Emisiones================================================
+                //===========Puntos Emisiones==============================================
                 $scope.tempPuntosEmision = ptosEmision;
                 $scope.ptosEmision = $scope.tempPuntosEmision.filter(item=>item.codEstab_Asig===dataEstab.codEstab_Asig);
                 let dataPtoEmi = $scope.ptosEmision.find(item=>(item.predeterminado))
                 $scope.data.idPuntoEmision = dataPtoEmi.idPuntoEmision;
 
-                //============Bodegas============================================================
+                //============Bodegas=======================================================
                 $scope.tempBodegas = bodegas;
                 
                 $scope.bodegas = $scope.tempBodegas.filter(item=>item.codEstab_Asig===dataEstab.codEstab_Asig);
@@ -455,7 +493,7 @@
                 //Decimal 
                 $scope.decimal = decimal;
 
-                //Config. Detalle (Mostrar/Ocultar Columnas)
+                //Config. Detalle (Mostrar/Ocultar Columnas de talle)
                 $scope.configDetalle = configDetalle;
                 $scope.tipoIvas = tipoIvas;
                 $scope.stepUno()
@@ -561,11 +599,11 @@
             try {
                 $scope.documentos = [];
                 $scope.dataSearch.byCliente = $scope.cliente.idCliente;
-                if ($scope.docOrigen.codigo === 'NE') {
+                if ($scope.docOrigen.codDoc === 'NE') {
                     $scope.getNotaEntregas();
                 }
     
-                if ($scope.docOrigen.codigo === 'PR') {
+                if ($scope.docOrigen.codDoc === 'PR') {
                     $scope.getProformas();
                 }
 
@@ -580,6 +618,7 @@
                 $scope.documentos = [];
                 $scope.dataSearch.typeList = 2;
                 notaEntregaSvc.getAll($scope.dataSearch).then(async response=>{
+                
                     $scope.gridOptionsSelectedDocs.columnDefs = [{
                         name: 'Nro. Doc',
                         field: 'nroDocumento'
@@ -638,9 +677,12 @@
     
     
         $scope.getProformas = function() {
-            try {                
+            try {   
+                showLoader();           
+                $scope.documentos = [];
+                $scope.dataSearch.typeList = 2;             
                 proformaSvc.getAll($scope.dataSearch).then(async response => {             
-                    $scope.gridOptions.columnDefs = [{
+                    $scope.gridOptionsSelectedDocs.columnDefs = [{
                             name: 'Nro. Doc',
                             field: 'nroDocumento'
                         },
@@ -666,7 +708,7 @@
                             name: 'Total',
                             field: 'total',
                             cellTemplate: ` <div class="grid-tooltip"><div class="ui-grid-cell-contents">$ {{ COL_FIELD }}</div></div>`,
-                            aggregationType: self.uiGridConstants.aggregationTypes.sum,
+                            aggregationType: uiGridConstants.aggregationTypes.sum,
                             customTreeAggregationFinalizerFn: function (aggregation) {
                                 aggregation.rendered = aggregation.value;
                             },
@@ -687,14 +729,12 @@
         
                     this.documentos = response;
                     await this.setDataGridOptionsChildren();
-        
-                    Swal.close();
                 }).catch(error => {
-                    Swal.close();
+                    hideLoader();
                     console.log(error)
                 })       
             } catch (error) {
-                Swal.close();
+                hideLoader();
                 console.log(error);        
             }
         }
@@ -711,7 +751,7 @@
                 //Obtenemos detalle de Nota de Entrega || Porforma
                 let {detalleDocumento, datosAdicionalesArticulo, infoAdicionalDocumento} = await commonSvc.getDataTipoDocVenta({
                     id: item.idDocumento,
-                    codigoDocumento: $scope.docOrigen.codigo
+                    codigoDocumento: $scope.docOrigen.codDoc
                 })
                 item.subGridOptions.data = detalleDocumento;
     
@@ -1201,13 +1241,15 @@
                 })
 
                 if(isConfirmed){
-                    
+                    showLoader();
                     let comprobante = {
                         ...$scope.data,
-                        codDoc: $scope.docDestino,
+                        codigoPorcentaje: $scope.dataTarifaImpuesto.codigoPorcentaje,
+                        codDoc: $scope.docDestino.codDoc,
                         idCliente: $scope.cliente.idCliente,
                         fechaEmision: fS.formatDateTimeZone(this.data.fechaEmision),
-                        docOrigen: $scope.codigo,
+                        docOrigen: $scope.docOrigen.codDoc,
+                        docDestino: $scope.docDestino.codDoc,
                         total: $scope.selectedDocuments.map(item => item.total).reduce((prev, acc) => prev + acc, 0)
                     }
 
@@ -1272,12 +1314,17 @@
                     aprobacionDocSvc.save(data).then(response => {
                         hideLoader();
                         if (response.code === "0") {
-                            Swa
-                            fS.sweetAlert('warning', response.message);
+                            Toast.fire({
+                                icon:'warning',
+                                html: `${response.message}`
+                            })                            
                         }
                         if (response.code === '1') {
                             hideLoader();
-                            fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                            Toast.fire({
+                                icon:'success',
+                                html: `${response.message}`
+                            })   
                             $uibModalInstance.close(response);
                         }
                     }).catch(error => {

@@ -17,12 +17,17 @@
                     }
                     if(response.code==="1"){
                         let aprobComprobantes = JSON.parse(response.payload) || [];
+                        console.log(aprobComprobantes)
                         return aprobComprobantes.map(item => {
                             return {
                                 idAprob_Document: item.idAprob_Document,
                                 uniqueId: item.uniqueId,
+                                docOrigen: item.docOrigen,
+                                codDoc: item.codDoc,
+                                docOrigenDesc: item.docOrigenDesc,
+                                docDestinoDesc: item.docDestinoDesc,
                                 fechaEmision: item.fechaEmision,
-                                serie: item.serie,
+                                serie: item.serie,                                
                                 serieComprobante: item.serie,
                                 identificacionComprador: item.identificacionComprador,
                                 razonSocialComprador: item.razonSocialComprador,
@@ -30,7 +35,7 @@
                                 codEstado: item.codEstado,
                                 estado: item.estado,
                                 colorFila: item.colorFila,
-                            }
+                            } 
                         })
                     
                     }

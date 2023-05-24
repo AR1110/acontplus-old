@@ -26,15 +26,23 @@
                     
                     return facturas.map(item=>{
                         return {
+                            codigoTipoDoc:'FV',
+                            comprobante: 'Factura',
+                            idDocumento: item.idDocumento,
                             idFactura:item.idFactura,
                             idTipoDocumento:item.idTipoDocumento,
                             idTiempoCredito:item.idTiempoCredito,
                             idCliente:item.idCliente,
                             codEstab:item.codEstab,
+                            telefonoEstablecimiento: item.telefonoEstablecimiento,
+                            entidad: item.razonSocial,
+                            nombreComercial: item.nombreComercial,
                             fechaEmision:item.fechaEmision,
                             fechaVencimiento:item.fechaVencimiento,
                             total:item.total,
                             nroFactura: item.nroFactura,
+                            serieComprobante: item.nroFactura,
+                            telefono: item.telefono,
                             nombreFiscal: item.nombreFiscal,
                             correos: item.correos,
                             identificacionComprador: item.identificacionComprador,
@@ -53,6 +61,7 @@
                             nroRetencion: item.nroRetencion,
                             nroIdentificacion: item.nroIdentificacion,
                             anulada: item.anulada,
+                            codEstado: item.codEstado
                         }
                     })
                 }

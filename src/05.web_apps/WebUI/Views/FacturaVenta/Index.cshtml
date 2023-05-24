@@ -161,7 +161,7 @@
                                                         </md-button>
                                                     </md-menu-item>
 
-                                                    <md-menu-item ng-if="(accion.cobroPago && item.codDoc==='PP') || (accion.cobroPago && item.codDoc==='PE')">
+                                                    <md-menu-item ng-if="(accion.cobroPago && item.codEstado==='PP') || (accion.cobroPago && item.codEstado==='PE')">
                                                         <md-button ng-click="opcionCobro(item)"
                                                             ng-disabled="item.gestionFinanciera">
                                                             <span md-menu-align-target><i

@@ -53,6 +53,14 @@ BEGIN
 	DECLARE @sql NVARCHAR(MAX) = 'SELECT TOP 50 
 										 idAprob_Document        = ad.idAprob_Document
 										,uniqueId                = ad.uniqueId
+										,ad.docOrigen  
+										,ad.codDoc
+										,docOrigenDesc           = CASE ad.docOrigen WHEN ''PR'' THEN ''Proforma''
+																				  WHEN ''NE'' THEN ''Nota Entrega''
+																				   ELSE '''' END
+										,docDestinoDesc          = CASE ad.codDoc WHEN ''01'' THEN ''Factura''
+																				  WHEN ''NE'' THEN ''Nota Entrega''
+																				  ELSE '''' END
 										,fechaEmision            = CONVERT(NVARCHAR,FORMAT(ad.fechaEmision, ''dd/MM/yyyy HH:mm''))
 										,serie                   = ad.estab+''-''+ad.ptoEmi+''-''+Helper.F_Auto_Sequential(ad.secuencial)
 										,identificacionComprador = ad.identificacionComprador
