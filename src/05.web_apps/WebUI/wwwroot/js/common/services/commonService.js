@@ -497,7 +497,7 @@ export class CommonService {
             .then(
                 response => {
                     const results = JSON.parse(response.payload);
-                    console.log(results);
+                    
                     return {
                         subFamilias: results[0],
                         familias: results[1],
