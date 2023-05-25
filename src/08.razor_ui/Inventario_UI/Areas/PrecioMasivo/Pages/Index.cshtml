@@ -135,8 +135,12 @@
             </div>
             <hr>
             <div class="row" ng-if="articles.length > 0">
-                <div class="col-4">
-                    <button type="button" class="btn btn-success" ng-click="saveAll()"><i class="fa fa-save"></i> Guardar Todo</button>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                    <button type="button" class="btn btn-success btn-lg" ng-click="askToSave()"><i
+                            class="fa fa-save"></i> Guardar Todo</button>
+                            <button class="btn btn-warning btn-lg" ng-click="refresh()">
+                        <i class="fa fa-close"></i> Cancelar
+                    </button>
                 </div>
             </div>
             <!--

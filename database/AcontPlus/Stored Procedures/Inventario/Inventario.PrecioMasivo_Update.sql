@@ -27,31 +27,71 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	DECLARE @idUsuario INT
+	,@articles VARCHAR(MAX)
+	DECLARE @tbl AS TABLE (
+		tipo INT,
+		articles VARCHAR(MAX)
+	)
+	INSERT INTO @tbl(tipo, articles)
+	SELECT tipo, articles FROM OPENJSON (@json) WITH (
+													tipo INT '$.tipo',
+													articles VARCHAR(MAX) '$.articles'
+												)
+	SET @articles = (SELECT articles FROM @tbl)
+
 	SET @idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
 	BEGIN TRY
 		BEGIN TRAN
-			UPDATE tbl SET tbl.precioVenta = t.precioVenta
-						,tbl.precioConIva = t.precioConIva
-						,tbl.porcentajeUtilidad = t.porcentajeUtilidad
-						,tbl.estado = t.estadoTarifa
-			FROM ArticuloPvp tbl WITH (NOLOCK)
-			JOIN (
-					SELECT idArticulo
-					,idTarifa
-					,precioVenta
-					,precioConIva
-					,porcentajeUtilidad
-					,estadoTarifa
-					FROM OPENJSON (@json) WITH (
-													idArticulo INT '$.idArticulo',
-													idTarifa INT '$.idTarifa',
-													precioVenta NUMERIC(18,5) '$.precioVenta',
-													precioConIva NUMERIC(18,5) '$.precioConIva',
-													porcentajeUtilidad NUMERIC(18,5) '$.porcentajeUtilidad',
-													estadoTarifa BIT '$.estadoTarifa'
-												)
+			IF EXISTS (SELECT 1 FROM @tbl WHERE tipo = 1)
+				BEGIN
+					UPDATE tbl SET tbl.precioVenta = t.precioVenta
+								,tbl.precioConIva = t.precioConIva
+								,tbl.porcentajeUtilidad = t.porcentajeUtilidad
+								,tbl.estado = t.estadoTarifa
+					FROM ArticuloPvp tbl WITH (NOLOCK)
+					JOIN (
+							SELECT idArticulo
+							,idTarifa
+							,precioVenta
+							,precioConIva
+							,porcentajeUtilidad
+							,estadoTarifa
+							FROM OPENJSON (@json) WITH (
+															idArticulo INT '$.idArticulo',
+															idTarifa INT '$.idTarifa',
+															precioVenta NUMERIC(18,5) '$.precioVenta',
+															precioConIva NUMERIC(18,5) '$.precioConIva',
+															porcentajeUtilidad NUMERIC(18,5) '$.porcentajeUtilidad',
+															estadoTarifa BIT '$.estadoTarifa'
+														)
 				
-			) as t ON tbl.idArticulo = t.idArticulo AND tbl.idTarifa = t.idTarifa
+					) as t ON tbl.idArticulo = t.idArticulo AND tbl.idTarifa = t.idTarifa
+			END
+		ELSE
+			BEGIN
+				UPDATE tbl SET tbl.precioVenta = t.precioVenta
+								,tbl.precioConIva = t.precioConIva
+								,tbl.porcentajeUtilidad = t.porcentajeUtilidad
+								,tbl.estado = t.estadoTarifa
+					FROM ArticuloPvp tbl WITH (ROWLOCK)
+					JOIN (
+							SELECT idArticulo
+							,idTarifa
+							,precioVenta
+							,precioConIva
+							,porcentajeUtilidad
+							,estadoTarifa
+							FROM OPENJSON (@articles) WITH (
+															idArticulo INT '$.idArticulo',
+															idTarifa INT '$.idTarifa',
+															precioVenta NUMERIC(18,5) '$.precioVenta',
+															precioConIva NUMERIC(18,5) '$.precioConIva',
+															porcentajeUtilidad NUMERIC(18,5) '$.porcentajeUtilidad',
+															estadoTarifa BIT '$.estado'
+														)
+				
+					) as t ON tbl.idArticulo = t.idArticulo AND tbl.idTarifa = t.idTarifa
+			END
 
 			IF @@ROWCOUNT > 0
 				SELECT '1' code, 'Actualización exitosa' as 'message'

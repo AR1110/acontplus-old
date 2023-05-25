@@ -10,10 +10,11 @@
         'pricingUtils',
         'formulario',
         '$interval',
-        '$log'
+        '$log',
+        '$window'
     ]
 
-    function precioMasivoCtrl($scope, _mS, _tS, _commonSvc, _articleSvc, _pricingUtils, _form, $interval, $log) {
+    function precioMasivoCtrl($scope, _mS, _tS, _commonSvc, _articleSvc, _pricingUtils, _form, $interval, $log, $window) {
         _mS.detectDevice()
 
         $scope.catalogs = [
@@ -151,6 +152,7 @@
             },
             enableColumnMenus: false,
             enableSorting: false,
+            suppressMultiSort: false,
             enableFiltering: false,
             enableRowHashing: false,
             enableCellEdit: false,
@@ -377,9 +379,31 @@
             })
         }
 
+        $scope.askToSave = () => {
+            Swal.fire({
+                title: 'Aviso',
+                html: `Esta seguro de actualizar los <b>${$scope.gridOptions.data.length}</b> articulos?, esto no se podra revertir!`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si',
+                cancelButtonText: 'No',
+                allowOutsideClick: false
+            }).then((result) => {
+                if (result.value) {
+                    $scope.saveAll()
+                }
+            })
+        }
+
         $scope.saveAll = () => {
             showLoader()
-            _mS.getData('PUT', 'PrecioMasivo/', {data: { tipo: 2, articles: $scope.gridOptions.data } }, true).then(
+            let data = {
+                tipo: 2,
+                articles: JSON.stringify($scope.gridOptions.data)
+            }
+            _mS.getData('PUT', 'PrecioMasivo/', { data: data }, true).then(
                 response => {
                     if (response.code == "0") {
                         _tS.toastr("warning", response.message)
@@ -387,10 +411,16 @@
                     if (response.code == "1") {
                         _tS.toastr("info", response.message)
                     }
+                    hideLoader()
                 }
             ).catch(error => {
                 hideLoader()
+                $log.error(error)
             })
+        }
+
+        $scope.refresh = () => {
+            $window.location.href = '/PrecioMasivo/Index';
         }
 
     }
