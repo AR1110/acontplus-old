@@ -28,7 +28,7 @@
             byCliente: 0
         }
         $scope.moreSearchOptions = false;
-        
+        $scope.dataSearch.verDetalleDoc = false;
         $scope.total = 0;
         $scope.abono = 0;
         $scope.saldo = 0;
@@ -90,6 +90,7 @@
         $scope.onKeyupClienteSearchFiltro = function(){
             if(!$scope.modelTextSearch)            {
                 $scope.dataSearch.byCliente = 0;
+                $scope.dataSearch.verDetalleDoc = false;
             }
         }
 
@@ -142,6 +143,10 @@
 
         $scope.search = function(){
             if(!$scope.isValidForm()) return;
+            Toast.fire({
+                icon:'warning', 
+                html:'No Disponible',
+            });
         }
 
         $scope.exportToExcel = function(){
@@ -169,8 +174,11 @@
                 byEstado: $scope.dataSearch.byEstado,
                 fechaInicio: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
                 fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
-                verDetalleDoc: true
+                verDetalleDoc: $scope.dataSearch.byCliente>0?false: $scope.dataSearch.verDetalleDoc
             }       
+            console.log($scope.dataSearch.byCliente)
+            console.log($scope.dataSearch.verDetalleDoc)
+            console.log(dataParams)
             const parameters = {
                 hasService: false,
                 hasIdUsuarioRol: true,
