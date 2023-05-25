@@ -11,7 +11,13 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<Nullable>disable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<RazorCompileOnPublish>false</RazorCompileOnPublish>
+		<SatelliteResourceLanguages>en-Us;es-Es</SatelliteResourceLanguages>
 	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.16" />
+	</ItemGroup>
 
 	<ItemGroup Label="Global-Tool Watch">
 		<Watch Include="..\..\08.razor_ui\Recepcion_UI\**\*.cshtml" />
@@ -1166,6 +1172,9 @@
 	<ItemGroup>
 		<Content Update="appsettings.json">
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Areas\Restaurante\Pages\Index.cshtml">
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</Content>
 		<Content Update="libman.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -4126,6 +4135,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Folder Include="Pages\Shared\" />
 		<Folder Include="wwwroot\lib\angular-daterangepicker\" />
 	</ItemGroup>
 
