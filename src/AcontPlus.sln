@@ -138,7 +138,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiLogistica", "04.services
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Config_UI", "08.razor_ui\Config_UI\Config_UI.csproj", "{4ADD0185-510B-46E3-988B-1F9CBCC9E580}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ventas_UI", "08.razor_ui\Ventas_UI\Ventas_UI.csproj", "{A8DE3BEE-69F2-4DE3-B43C-6C0C33D09E52}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ventas_UI", "08.razor_ui\Ventas_UI\Ventas_UI.csproj", "{A8DE3BEE-69F2-4DE3-B43C-6C0C33D09E52}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

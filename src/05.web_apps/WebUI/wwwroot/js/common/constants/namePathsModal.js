@@ -456,23 +456,23 @@ app.constant('nombreModal', {
         MODAL_FILE_CTRL: 'modal/inventario/modalConsolidacionInventarioCtrl.js' + CHANGE_VERSION(),
         MODAL_NUEVO: {
             controller: 'ModalConsolidacionNuevoCtrl',
-            template: 'ConsolidacionInventario/_ModalNuevo.cshtml'
+            template: '~/Areas/Consolidacion/Pages/Shared/_ModalNuevo.cshtml'
         },
         MODAL_EDITAR: {
             controller: 'ModalConsolidacionEditarCtrl',
-            template: 'ConsolidacionInventario/_ModalEditar.cshtml'
+            template: '~/Areas/Consolidacion/Pages/Shared/_ModalEditar.cshtml'
         },
         MODAL_DETALLE: {
             controller: 'ModalConsolidacionDetalleCtrl',
-            template: 'ConsolidacionInventario/_ModalDetalle.cshtml'
+            template: '~/Areas/Consolidacion/Pages/Shared/_ModalDetalle.cshtml'
         },
         MODAL_FILTRO: {
             controller: 'ModalConsolidacionFiltroCtrl',
-            template: 'ConsolidacionInventario/_ModalFiltro.cshtml'
+            template: '~/Areas/Consolidacion/Pages/Shared/_ModalFiltro.cshtml'
         },
         MODAL_CONSOL_IMPORT: {
             controller: 'ModalConsolidacionImportacionCtrl',
-            template: 'ConsolidacionInventario/_ModalConsolidacionImportacion.cshtml'
+            template: '~/Areas/Consolidacion/Pages/Shared/_ModalConsolidacionImportacion.cshtml'
         }
     },
     cuota_venta: {
