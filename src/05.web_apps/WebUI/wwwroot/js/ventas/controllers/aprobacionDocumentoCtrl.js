@@ -3,7 +3,7 @@
     'use strict';
 
     //Variables Constantes
-    const URL_TEMPLATE = 'AprobDocument/'
+    const URL_TEMPLATE = '~/Areas/AprobacionDocumento/Pages/Shared/'
 
     //Variable servicios
     let mS = {};
@@ -131,7 +131,8 @@
                             template: URL_TEMPLATE + '_ModalSelectDocumento.cshtml',
                             size: 'xl',
                             windowClass: 'uibModalFullScreen',
-                            params: OPTION_APROBACION[result.value]
+                            params: OPTION_APROBACION[result.value],
+                            isRenderRazorPartial: true
                         })
 
                         modalRef.result.then(result => {
@@ -301,6 +302,11 @@
             return !['APR', 'A'].includes(item.codEstado)
         }
 
+        /**
+         * =========Detalle Documento Aprobacion 
+         * @param {*} item 
+         */
+
         $scope.openModalDetalle = function(item) {
             try {
                 showLoader();
@@ -315,7 +321,8 @@
                             docOrigenDesc: item.docOrigenDesc,
                             docDestinoDesc: item.docDestinoDesc,
                             data: response
-                        }
+                        },
+                        isRenderRazorPartial: true
                     })
                 }).catch(error=>{
                     hideLoader();
@@ -328,16 +335,38 @@
         }
 
 
-        $scope.openModalEdit = async (item) => {
+        /**
+         * =========Editar Documento Aprobacion 
+         * @param {*} item 
+         */
+        $scope.openModalEdit = function (item) {
             try {
-                modalSvc.openModalCustom({
-                    controller: 'ModalAprobDocEditarCtrl',
-                    template: URL_TEMPLATE + '_ModalSelectDocumento.cshtml',
-                    size: 'xl',
-                    windowClass: 'uibModalFullScreen',
-                    params: {}
-                })
+                try {
+                    showLoader();
+                    aprobacionDocSvc.findById(item.idAprob_Document).then(response=>{    
+                        hideLoader();             
+                        modalSvc.openModalCustom({
+                            controller: 'ModalAprobDocEditarCtrl',
+                            template: URL_TEMPLATE + '_ModalEditar.cshtml',
+                            size: 'xl',
+                            windowClass: 'uibModalFullScreen',
+                            params: {
+                                docOrigenDesc: item.docOrigenDesc,
+                                docDestinoDesc: item.docDestinoDesc,
+                                data: response
+                            },
+                            isRenderRazorPartial: true
+                        })
+                    }).catch(error=>{
+                        hideLoader();
+                        console.log(error)
+                    })
+                } catch (error) {
+                    hideLoader();
+                    console.log(error)
+                }              
             } catch (error) {
+                hideLoader();
                 console.log(error)
             }
         }
@@ -1597,7 +1626,7 @@
         $scope.docDestinoDesc = docDestinoDesc
         
         $scope.data = comprobante;
-        $scope.data.fechaEmision = new Date($scope.data.fechaEmision)
+        $scope.data.fechaEmision = fS.formatDate($scope.data.fechaEmision)
         $scope.cliente = cliente;
         $scope.dataDisabled = {
             isDisabledSucursal: true,
@@ -1897,10 +1926,360 @@
                         showCancelButton: false,                       
                     })
             } catch (error) {
-                
+                console.log(error)
             }
         }
 
+        $scope.closeModal = function() {
+            $uibModalInstance.close()
+        }
+    }
+
+
+    /**
+     * =========================MODAL-EDITAR-APROBACION DOCUMENTO 
+     */
+
+    app.controller('ModalAprobDocEditarCtrl', ModalAprobDocEditarCtrl);
+
+    ModalAprobDocEditarCtrl.$inject = ['$scope', '$uibModalInstance', '$timeout', 'params']
+
+    function ModalAprobDocEditarCtrl($scope, $uibModalInstance, $timeout, params) {
+        let {docOrigenDesc, docDestinoDesc, data} = params
+        let {comprobante, cliente, detalles, historial, infoAdicionalDocumento, datosAdicionalesArticulo} = data;
+      
+        $scope.docOrigenDesc = docOrigenDesc;
+        $scope.docDestinoDesc = docDestinoDesc
+        
+        $scope.data = comprobante;
+        $scope.data.fechaEmision = fS.formatDate($scope.data.fechaEmision)
+        $scope.cliente = cliente;
+        $scope.dataDisabled = {
+            isDisabledSucursal: true,
+            isDisabledPuntoEmision: true
+        }
+
+        $scope.datosAdicionalesArticulo = datosAdicionalesArticulo || [];
+        $scope.historyDatosAdicionales = datosAdicionalesArticulo.map(item=>({
+            idArticulo: item.idArticulo,
+            idInfoAdicional: item.idInfoAdicional,
+            selected: true,
+        }))
+
+
+         //GridOptions Invoice 
+        $scope.gridOptionsDetalle = {
+            enableColumnMenus: false,
+            enableColumnReordering: true,
+            showGridFooter: false,
+        }
+        $scope.gridOptionsDetalle.onRegisterApi = function (gridApi) {
+            $scope.gridApi = gridApi;
+            if ($scope.gridApi) {
+                $timeout(() => {
+                    $scope.gridApi.core.handleWindowResize();
+                    $scope.gridApi.grid.refresh();
+                }, 5);
+            }
+
+            gridApi.edit.on.afterCellEdit($scope, (rowEntity, colDef, newValue, oldValue) => {
+                //Validar campos
+                if ([null, "", undefined].includes(rowEntity[colDef.field])) {
+                    rowEntity[colDef.field] = oldValue;
+                }
+
+                // const objCalculo = self.uiGridInvoice.calculoColDef(rowEntity, oldValue)
+                // objCalculo[colDef.field] && objCalculo[colDef.field]();
+                // objCalculo["calculoTotalDetalle"]();
+                // self.data = Object.assign(self.data, self.uiGridInvoice.getTotales());
+
+            })
+        }
+        
+        
+
+        initiload();
+
+        async function  initiload() {
+            try {
+                showLoader();
+                let  {establecimientos,ptosEmision, bodegas, configVenta, decimal, configDetalle, tipoIvas, tarifas, tiempoCreditos, articuloPredeterminado, clientePredeterminado, permisoVenta, permisoArticulo }= mainDataForm;
+
+                /**
+                 * Establecimiento - Impuesto Tarifa 
+                 */
+                console.log(establecimientos)
+                console.log($scope.data)
+                let dataEstab = establecimientos.find(item=>(item.estab === $scope.data.estab))
+
+                $scope.establecimientos = establecimientos;
+                $scope.data.codEstab = dataEstab.codEstab;
+                 
+                $scope.tarifasImpuestos  = dataEstab.tarifasImpuestos;
+                $scope.dataTarifaImpuesto = $scope.tarifasImpuestos.find(item=>item.codigoPorcentaje ===$scope.data.codigoPorcentaje)
+
+                //===========Puntos Emisiones==============================================
+                $scope.ptosEmision = ptosEmision.filter(item=>item.idPuntoEmision===$scope.data.idPuntoEmision);             
+
+                //============Bodegas=======================================================
+                $scope.tempBodegas = bodegas;
+                
+                $scope.bodegas = bodegas.filter(item=>item.codEstab_Asig===dataEstab.codEstab_Asig);
+                let dataBodega = $scope.bodegas.find(item=>(item.predeterminado))
+                $scope.idBodega = dataBodega.idBodega;
+               
+                //Decimal 
+                $scope.decimal = decimal;
+
+                //Config. Detalle (Mostrar/Ocultar Columnas de talle)
+                $scope.configDetalle = configDetalle;
+                $scope.tipoIvas = tipoIvas;
+
+                //Permisos para detalle y documento 
+                let {detail, comprobante} = permisoVenta;
+                $scope.permisoDetalle = Object.freeze(detail);
+                $scope.permisoComprobante = Object.freeze(comprobante);
+
+                
+                setColumnDefs();
+                $scope.gridOptionsDetalle.data = await aprobacionDocSvc.detalleMapperFrom({
+                    detalles, 
+                    fS, 
+                    decimal, 
+                    findForSale: articuloSvc.findForSale
+                })
+                
+                $scope.data = Object.assign($scope.data, gridOptionsSvc.calculoTotales({
+					items: $scope.gridOptionsDetalle.data,
+					decimal: $scope.decimal,
+					dataTarifaImpuesto: $scope.dataTarifaImpuesto
+				}))
+                hideLoader();
+            } catch (error) {
+                hideLoader();
+                console.log(error);
+            }
+        }
+
+        function setColumnDefs() {        
+            let defaultPermission = Object.freeze({
+                tarifa: {
+                    update: true
+                },
+                medida: {
+                    update: true
+                },
+                tipoIva: {
+                    update: true
+                },
+                porcentajeDescuento: {
+                    update: true
+                },
+                descuento: {
+                    update: true
+                },
+                precioUnitario: {
+                    update: true
+                },
+                precioConIva: {
+                    update: true
+                },
+            })
+    
+            const ventaDetailPermission = $scope.permisoVenta || defaultPermission;
+    
+            $scope.gridOptionsDetalle.columnDefs = [{
+                    name: 'Op.',
+                    enableCellEdit: false,
+                    width: '5%',
+                    minWidth: '100',
+                    cellTemplate: `
+                    <button type="button" ng-click="grid.appScope.askToDeleteArticle(row)" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                    <button type="button" ng-if="articlePermission.editar" class= "btn btn-success btn-xs text-white" ng-click="grid.appScope.openModalArticulo(row.entity)" title = "Editar Articulo" >
+                        <i class="fa fa-edit"></i>
+                    </button > 
+                    <a  btn-dato-adicional-articulo-fact-elect entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' history-datos-adicionales="grid.appScope.historyDatosAdicionales" result-modal-adicional="grid.appScope.resultModalAdicional(result)" datos-adicionales="grid.appScope.datosAdicionalesArticulo" class= "btn btn-warning btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`
+                },
+                {
+                    name: 'Cód.',
+                    field: 'codigo',
+                    width: '8%',
+                    minWidth: '100',
+                    enableCellEdit: false,
+                },
+                {
+                    name: 'Descripción',
+                    field: 'descripcion',
+                    enableCellEdit: true,
+                    allowCellFocus: true,
+                    enableCellEditOnFocus: true,
+                    cellEditableCondition: (scope) => scope.row.entity.llevaInventario !== true,
+                    cellTooltip: (row) => row.entity.descripcion,
+                    width: '25%',
+                    minWidth: '100'
+                },
+                {
+                    name: 'Cant.',
+                    field: 'cantidad',
+                    enableCellEdit: true,
+                    allowCellFocus: true,
+                    enableCellEditOnFocus: true,
+                    width: '6%',
+                    minWidth: '50',
+                },
+                {
+                    name: 'Medida',
+                    field: 'idMedida',
+                     enableCellEdit: ventaDetailPermission.medida.update,
+                    enableCellEditOnFocus: ventaDetailPermission.medida.update,
+                    allowCellFocus: ventaDetailPermission.medida.update,
+                    cellFilter: 'mapMedida:row.entity.medidas',
+                    editableCellTemplate: 'ui-grid/dropdownEditor',
+                    editDropdownOptionsFunction: (rowEntity, colDef) => rowEntity.medidas.map(val => ({
+                        id: val.idMedida,
+                        value: val.descripcion
+                    })),
+                    type: 'number',
+                    width: '8%',
+                    minWidth: '100'
+                },
+                {
+                    name: 'I.V.A',
+                    field: 'idTipoIva',
+                    editableCellTemplate: 'ui-grid/dropdownEditor',
+                    cellFilter: 'cellFilterTipoIva:this',
+                    editDropdownValueLabel: 'descripcion',
+                    editDropdownIdLabel: 'idTipoIva',
+                    enableCellEdit: ventaDetailPermission.tipoIva.update,
+                    allowCellFocus: ventaDetailPermission.tipoIva.update,
+                    enableCellEditOnFocus: ventaDetailPermission.tipoIva.update,
+                    type: 'number',
+                    width: '8%',
+                    minWidth: '100',
+                    //    visible: config.porcentajeIva
+                },
+                {
+                    name: 'Tarifa',
+                    field: 'idTarifa',
+                    cellFilter: 'mapTarifa:row.entity.articuloTarifas',
+                    editableCellTemplate: 'ui-grid/dropdownEditor',
+                    editDropdownOptionsFunction: (rowEntity, colDef) => {
+                        return rowEntity.articuloTarifas.map(val => ({
+                            id: val.idTarifa,
+                            value: val.tarifa + ' - $' + val.precioConIva
+                        }))
+                    },
+                    enableCellEdit: ventaDetailPermission.tarifa.update,
+                    enableCellEditOnFocus: ventaDetailPermission.tarifa.update,
+                    allowCellFocus: ventaDetailPermission.tarifa.update,
+                    type: 'number',
+                    width: '12%',
+                    minWidth: '100',
+                },
+                {
+                    name: 'Precio U.',
+                    field: 'precioUnitario',
+                    enableCellEdit: true,
+                    allowCellFocus: true,
+                    enableCellEditOnFocus: true,
+                    type: 'number',
+                    width: '8%',
+                    minWidth: '100',
+                    cellEditableCondition: function (scope) {
+                        return scope.row.entity.llevaInventario ? ventaDetailPermission.precioUnitario.update : true;
+                    },
+                },
+                {
+                    name: 'P. Iva',
+                    field: 'precioConIva',
+                    enableCellEdit: true,
+                    allowCellFocus: true,
+                    enableCellEditOnFocus: true,
+                    type: 'number',
+                    width: '7%',
+                    minWidth: '100',
+                    cellEditableCondition: function (scope) {
+                        return scope.row.entity.llevaInventario ? ventaDetailPermission.precioConIva.update : true;
+                    },
+                },
+                {
+                    name: '%',
+                    field: 'porcentajeDescuento',              
+                    enableCellEdit: ventaDetailPermission.porcentajeDescuento.update,
+                    allowCellFocus: ventaDetailPermission.porcentajeDescuento.update,
+                    enableCellEditOnFocus: ventaDetailPermission.porcentajeDescuento.update,
+                    type: 'number',
+                    width: '6%',
+                    minWidth: '100',
+                    visible: $scope.configDetalle.porcentajeDescuento || false,
+                },
+                {
+                    name: 'dsto.',
+                    field: 'valorDescuento',
+                    enableCellEdit: ventaDetailPermission.descuento.update,
+                    enableCellEditOnFocus: ventaDetailPermission.descuento.update,
+                    allowCellFocus: ventaDetailPermission.descuento.update,
+                    type: 'number',
+                    width: '6%',
+                    minWidth: '100',
+                    visible: $scope.configDetalle.descuento || false
+                },
+                {
+                    name: 'T. Dsto.',
+                    field: 'totalDescuento',
+                    enableCellEdit: false,
+                    allowCellFocus: false,
+                    enableCellEditOnFocus: false,
+                    type: 'number',
+                    width: '7%',
+                    minWidth: '100',
+                    visible: $scope.configDetalle.totalDescuento || false
+                },
+                {
+                    name: 'Total',
+                    field: 'total',
+                    enableCellEdit: false,
+                    allowCellFocus: false,
+                    enableCellEditOnFocus: false,
+                    type: 'number',
+                    width: '5%',
+                    minWidth: '100'
+                },
+                // {
+                //     name: 'Nota',
+                //     field: 'nota',
+                //     enableCellEdit: true,
+                //     allowCellFocus: true,
+                //     enableCellEditOnFocus: true,
+                //     type: 'string',
+                //     width: '15%',
+                //     minWidth:'100'
+                // },
+                // {
+                //     name: 'bodega',
+                //     field: 'idBodega',   
+                //     enableCellEdit: true,
+                //     allowCellFocus: true,
+                //     enableCellEditOnFocus: true,                 
+                //     editableCellTemplate: 'ui-grid/dropdownEditor',
+                //     cellFilter: 'cellFilterBodega:this',
+                //     editDropdownValueLabel: 'descripcion',
+                //     editDropdownIdLabel: 'idBodega',                
+                //     type: 'number',
+                //     width: '11%',
+                //     minWidth:'100'
+                // }, 
+            ]
+    
+            let indexTipoIva = $scope.gridOptionsDetalle.columnDefs.findIndex(item => item.field === 'idTipoIva');
+            // let indexBodega  = this.gridOptionsDetailDocument.columnDefs.findIndex(item=>item.field==='idBodega');
+            $scope.gridOptionsDetalle.columnDefs[indexTipoIva].editDropdownOptionsArray = $scope.tipoIvas;
+            // this.gridOptionsDetailDocument.columnDefs[indexBodega].editDropdownOptionsArray = this.bodegas;             
+        }
+        
+       
         $scope.closeModal = function() {
             $uibModalInstance.close()
         }

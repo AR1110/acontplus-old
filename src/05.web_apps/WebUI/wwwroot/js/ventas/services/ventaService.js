@@ -83,7 +83,7 @@
                         numeroCuota: item.numeroCuota,
                     }))
 
-                    console.log(payload)
+                    
                     return {
                         establecimientos: estabsMapper,
                         ptosEmision: ptosEmisionMapper, 
@@ -268,9 +268,7 @@
                             tipoIdentificacion: item.tipoIdentificacion
                         }
                     })
-                }
-
-                console.log(response)
+                }                
             })
         }
 
