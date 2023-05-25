@@ -325,7 +325,7 @@
             const parameters = {
                 reportParams: JSON.stringify({
                     codEstab: $scope.dataSearch.codEstab,
-                    hasParams: true,
+                    hasParams: false,
                     codigo: dataReporte.codigoReporte,
                     format: $scope.dataSearch.byTipoFormato,
                     aditionalParams: []

@@ -75,28 +75,32 @@
 
                 <div class="row" ng-if="dataSearch.checkBoxFecha">
                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                        <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin" result-change=""></date-range-filter>
+                        <div class="form-group">
+                            <label for="">Rango de Fechas</label>
+                            <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
+                                end-date="dataSearch.fechaFin" result-change=""></date-range-filter>
+                        </div>
                     </div>
                     @* <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                        <div class="form-group">
-                            <label class="control-label">Mes: </label>
-                            <select ng-model="mes" class="form-control" ng-change="getFechaInicioFinFilter(mes)">
-                                <option ng-value="m.numero" ng-repeat="m in meses">{{m.nombre}}</option>
-                            </select>
-                        </div>
+                    <div class="form-group">
+                    <label class="control-label">Mes: </label>
+                    <select ng-model="mes" class="form-control" ng-change="getFechaInicioFinFilter(mes)">
+                    <option ng-value="m.numero" ng-repeat="m in meses">{{m.nombre}}</option>
+                    </select>
+                    </div>
                     </div>
                     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                        <div class="form-group">
-                            <label>Fecha Inicio:</label>
-                            <input type="date" class="form-control" name="fechaInicio"
-                                ng-model="dataSearch.fechaInicio" />
-                        </div>
+                    <div class="form-group">
+                    <label>Fecha Inicio:</label>
+                    <input type="date" class="form-control" name="fechaInicio"
+                    ng-model="dataSearch.fechaInicio" />
+                    </div>
                     </div>
                     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                        <div class="form-group">
-                            <label>Fecha Fin:</label>
-                            <input type="date" class="form-control" name="facheFin" ng-model="dataSearch.fechaFin" />
-                        </div>
+                    <div class="form-group">
+                    <label>Fecha Fin:</label>
+                    <input type="date" class="form-control" name="facheFin" ng-model="dataSearch.fechaFin" />
+                    </div>
                     </div> *@
                 </div>
                 <div class="row">

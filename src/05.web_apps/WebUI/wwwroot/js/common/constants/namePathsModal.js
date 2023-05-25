@@ -128,7 +128,8 @@ app.constant('nombreModalVenta', {
             MADF: 'ModalApproveDocCtrl', //Modal Aprobacion Documento Factura
             MAD:'ModalApproveDocDetalleCtrl',
             MF_NE: 'ModalNotaEntregaFiltroCtrl',
-            MF_PR:'ModalProformaFiltroCtrl'    
+            MF_PR:'ModalProformaFiltroCtrl',
+            MFA: '' //Modal Aprob. Comprobante Ctrl    
         },
         templates:{
             MSD:'AprobDocument/_ModalSelectDocument.cshtml',
@@ -168,8 +169,19 @@ app.constant('nombreModalCompra', {
         templates: {
             D:'~/Areas/FacturaCompra/Pages/Shared/_ModalDetalle.cshtml'
         }
-    }
-   
+    },
+    PROVEEDOR: {
+        fileCtrl: '/js/modal/common/modalClienteProveedorCtrl.min.js' + CHANGE_VERSION(),
+        // fileCtrl: '/js/ventas/modals/modalClienteCtrl.js',
+        controllers: {
+            M: 'ModalProveedorCtrl',
+            L: 'ModalProveedorListaCtrl'
+        } ,
+        templates: {
+            M: 'Proveedor/_ModalNuevoProveedor.cshtml',
+            L: 'Proveedor/_ModalProveedorLista.cshtml'
+        } 
+    },
 })
 
 app.constant('nombreModalLogistica', {

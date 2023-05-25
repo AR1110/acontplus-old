@@ -43,6 +43,7 @@ BEGIN
 	DECLARE @idPuntoEmision INT
 	DECLARE @uniqueId VARCHAR(150) = NEWID()
 	DECLARE @docOrigen VARCHAR(5)
+	DECLARE @docDestino VARCHAR(5)
 	DECLARE @idEstadoDocumento INT
 	DECLARE @codigoPorcentaje INT = 2
 
@@ -69,6 +70,7 @@ BEGIN
 		,importeTotal NUMERIC(18,5) NOT NULL
 		,codigoPorcentaje INT NOT NULL
 		,docOrigen VARCHAR(15) NOT NULL
+		,docDestino VARCHAR(15) NOT NULL
 		,observacion VARCHAR(300) NULL
 	)
 
@@ -110,8 +112,8 @@ BEGIN
 	BEGIN TRY 
 		
 		INSERT INTO @tbComprobante
-		      (idCliente,idPuntoEmision,fechaEmision,codDoc,totalSinImpuestos,totalDescuento,totalConImpuestos,propina,importeTotal,codigoPorcentaje,docOrigen,observacion)
-		SELECT idCliente,idPuntoEmision,fechaEmision,codDoc,totalSinImpuestos,totalDescuento,totalConImpuestos,propina,importeTotal,codigoPorcentaje,docOrigen,observacion
+		      (idCliente,idPuntoEmision,fechaEmision,codDoc,totalSinImpuestos,totalDescuento,totalConImpuestos,propina,importeTotal,codigoPorcentaje,docOrigen, docDestino, observacion)
+		SELECT idCliente,idPuntoEmision,fechaEmision,codDoc,totalSinImpuestos,totalDescuento,totalConImpuestos,propina,importeTotal,codigoPorcentaje,docOrigen, docDestino, observacion
 		FROM OPENJSON(@comprobante)
 		WITH (
 				idCliente                   INT '$.idCliente' 
@@ -129,6 +131,7 @@ BEGIN
 			   ,importeTotal      NUMERIC(18,5) '$.total'
 			   ,codigoPorcentaje            INT '$.codigoPorcentaje' 
 			   ,docOrigen           VARCHAR(15) '$.docOrigen'
+			   ,docDestino          VARCHAR(15) '$.docDestino'
 			   ,observacion        VARCHAR(300) '$.observacion'
 		     )
 
@@ -172,6 +175,7 @@ BEGIN
 		SELECT TOP 1 @ruc = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
 
 		SELECT @docOrigen = docOrigen FROM @tbComprobante
+		SELECT @docDestino = docDestino FROM @tbComprobante
 
 		SELECT	
 			@idPuntoEmision          = dt.idPuntoEmision 
@@ -187,7 +191,9 @@ BEGIN
 		
 		SELECT @secuencial =  COUNT(*)+1 FROM Ventas.Aprob_Document WHERE idPuntoEmision = @idPuntoEmision
 
-		SELECT @claveAcceso = dbo.ufnGeneraClaveAcceso(dbo.AFTDeleteCero(@estab)
+		IF @docDestino = '01'
+			BEGIN
+				SET @claveAcceso = dbo.ufnGeneraClaveAcceso(dbo.AFTDeleteCero(@estab)
 													   ,@codDoc
 													   ,@ambiente
 													   ,@tipoEmision
@@ -195,6 +201,12 @@ BEGIN
 													   ,@ruc
 													   ,@estab+@ptoEmi
 													   ,dbo.AFTAutoComplete(@secuencial))
+			END 
+		ELSE
+			BEGIN
+				SET @claveAcceso='000000'
+			END 
+		
 		-- ========================= VALIDADACIONES =====================================================	
 
 		IF (SELECT COUNT(*) FROM @tbComprobante) = 0 
@@ -211,7 +223,7 @@ BEGIN
 
 		IF (SELECT COUNT(*) FROM @tbDetalle) = 0 
 			BEGIN
-				SELECT '0'code,'Erro en la informacion del detalle' as 'message'
+				SELECT '0'code,'Error en la informacion del detalle' as 'message'
 				RETURN
 			END 
 

@@ -208,14 +208,15 @@
          * @param {*} object 
          * @returns object
          */
-        service.calculoTotales = function({items, decimal, actividadEstabImpuesto}){
+        service.calculoTotales = function({items, decimal, dataTarifaImpuesto}){
           
             let CODIGO_PORCENTAJE_IVA_CERO = '0', CODIGO_PORCENTAJE_IVA_EXENTO = '7', CODIGO_PORCENTAJE_IVA_NO_OBJETO ='6';
 
             const obj = {
                 getSubTotalSinImpuesto: function(){
                     let total = items.map(val=>val.subTotal).reduce((acc, curr)=> acc + curr, 0);            
-                    return fS.roundNumber(total, decimal.nroTotalSubTotal);
+                    // return fS.roundNumber(total, decimal.nroTotalSubTotal);
+                    return total;
                 },
 
                 getTotalIva: function(codigoPorcentaje) {
@@ -236,7 +237,8 @@
 
                 //Get Total Ice 
                 getTotalIce: function() {
-                    let total = items.map(val=>val.totalIce).reduce((acc, curr)=>acc + curr, 0);
+                    console.log(items)
+                    let total = items.map(val=>val.ice).reduce((acc, curr)=>acc + curr, 0);
                     return fS.roundNumber(total, decimal.nroTotalSubTotal)
                 },
 
@@ -273,12 +275,12 @@
             };
 
             
-            let [subTotalIva, subTotalNetoIva]                 = obj.getTotalIva(actividadEstabImpuesto.codigoPorcentaje);
+            let [subTotalIva, subTotalNetoIva]                 = obj.getTotalIva(dataTarifaImpuesto.codigoPorcentaje);
             let [subTotalIvaCero, subTotalNetoIvaCero]         = obj.getTotalIva(CODIGO_PORCENTAJE_IVA_CERO);
             let [subTotalExentoIva, subTotalNetoExentoIva]     = obj.getTotalIva(CODIGO_PORCENTAJE_IVA_EXENTO);
             let [subTotalNoObjetoIva, subTotalNetoNoObjetoIva] = obj.getTotalIva(CODIGO_PORCENTAJE_IVA_NO_OBJETO);
             
-            let iva = subTotalNetoIva * actividadEstabImpuesto.tarifa / 100;                
+            let iva = subTotalNetoIva * dataTarifaImpuesto.tarifa / 100;                
           
             let total = iva + obj.getTotalDetalle();
 

@@ -35,7 +35,7 @@ function facturaVentaCtrl(
     //     $scope.accion = accion[0]; 
     // }
 
-    $scope.typeSend = 'GenericFile';
+    $scope.typeSend = 'SRI';
 
 
     const TIPO_DOC_FV = _commonSvc.tipoDoc['FV'];

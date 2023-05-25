@@ -17,7 +17,7 @@
                 }
                 if(response.code==="1"){
                     let notaEntregas = JSON.parse(response.payload) || []
-                    console.log(notaEntregas)
+                    
                     return notaEntregas.map(item=>{
                         return {
                             comprobante: 'Nota de Entrega',

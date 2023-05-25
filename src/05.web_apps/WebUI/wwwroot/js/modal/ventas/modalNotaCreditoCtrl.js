@@ -459,7 +459,7 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl {
             }
 
 
-            this._mS.getData('get', '/FacturaVenta/Get?json=' + JSON.stringify(json)).then(response => {
+            this._mS.getData('get', 'Factura/Get?json=' + JSON.stringify(json), null, true).then(response => {
                 if (response.code === "0") {
                     console.warn(response)
                 }

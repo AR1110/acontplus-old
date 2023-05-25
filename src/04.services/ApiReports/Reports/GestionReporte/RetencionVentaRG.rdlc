@@ -193,21 +193,6 @@
     <ReportSection>
       <Body>
         <ReportItems>
-          <Image Name="logo">
-            <Source>Database</Source>
-            <Value>=Parameters!logo.Value</Value>
-            <MIMEType>=Parameters!mimeType.Value</MIMEType>
-            <Sizing>FitProportional</Sizing>
-            <Top>0.12862cm</Top>
-            <Left>0.20047cm</Left>
-            <Height>1.8532cm</Height>
-            <Width>7.67191cm</Width>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-            </Style>
-          </Image>
           <Textbox Name="Textbox1">
             <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
@@ -231,7 +216,6 @@
             <Left>17.40786cm</Left>
             <Height>0.6cm</Height>
             <Width>7.13021cm</Width>
-            <ZIndex>1</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -266,7 +250,7 @@
             <Left>17.40786cm</Left>
             <Height>0.46771cm</Height>
             <Width>7.13021cm</Width>
-            <ZIndex>2</ZIndex>
+            <ZIndex>1</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -301,7 +285,7 @@
             <Left>17.40786cm</Left>
             <Height>0.46771cm</Height>
             <Width>7.13021cm</Width>
-            <ZIndex>3</ZIndex>
+            <ZIndex>2</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -337,7 +321,7 @@
             <Left>17.40786cm</Left>
             <Height>0.6cm</Height>
             <Width>7.13021cm</Width>
-            <ZIndex>4</ZIndex>
+            <ZIndex>3</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -372,7 +356,7 @@
             <Left>18.05168cm</Left>
             <Height>0.41479cm</Height>
             <Width>3.16146cm</Width>
-            <ZIndex>5</ZIndex>
+            <ZIndex>4</ZIndex>
             <Style>
               <Border />
               <VerticalAlign>Middle</VerticalAlign>
@@ -405,7 +389,7 @@
             <Left>21.24842cm</Left>
             <Height>0.41479cm</Height>
             <Width>3.63361cm</Width>
-            <ZIndex>6</ZIndex>
+            <ZIndex>5</ZIndex>
             <Style>
               <Border />
               <VerticalAlign>Middle</VerticalAlign>
@@ -4167,7 +4151,7 @@
             <Left>0.37238cm</Left>
             <Height>3cm</Height>
             <Width>45.384cm</Width>
-            <ZIndex>7</ZIndex>
+            <ZIndex>6</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -4911,7 +4895,7 @@
             <Left>0.37238cm</Left>
             <Height>1.8cm</Height>
             <Width>9.36027cm</Width>
-            <ZIndex>8</ZIndex>
+            <ZIndex>7</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -5041,36 +5025,10 @@
       </Page>
     </ReportSection>
   </ReportSections>
-  <ReportParameters>
-    <ReportParameter Name="logo">
-      <DataType>String</DataType>
-      <Nullable>true</Nullable>
-      <AllowBlank>true</AllowBlank>
-      <Prompt>ReportParameter1</Prompt>
-    </ReportParameter>
-    <ReportParameter Name="mimeType">
-      <DataType>String</DataType>
-      <Nullable>true</Nullable>
-      <AllowBlank>true</AllowBlank>
-      <Prompt>ReportParameter1</Prompt>
-    </ReportParameter>
-  </ReportParameters>
   <ReportParametersLayout>
     <GridLayoutDefinition>
       <NumberOfColumns>4</NumberOfColumns>
       <NumberOfRows>2</NumberOfRows>
-      <CellDefinitions>
-        <CellDefinition>
-          <ColumnIndex>0</ColumnIndex>
-          <RowIndex>0</RowIndex>
-          <ParameterName>logo</ParameterName>
-        </CellDefinition>
-        <CellDefinition>
-          <ColumnIndex>1</ColumnIndex>
-          <RowIndex>0</RowIndex>
-          <ParameterName>mimeType</ParameterName>
-        </CellDefinition>
-      </CellDefinitions>
     </GridLayoutDefinition>
   </ReportParametersLayout>
   <Code>Dim GroupCounter as Integer=0

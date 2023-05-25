@@ -464,15 +464,13 @@
     })
 
 
-    app.directive('dateRangeFilter', function () {
+    app.directive('dateRangeFilter', function (formulario) {
         return {
-            template: ` <div class="form-group">
-            <label>Rango de Fechas: </label>
-            <input date-range-picker class="form-control date-picker" type="text"
+            template: `<div><input date-range-picker class="form-control date-picker" type="text"
                    ng-model="dateRangePicker.date" picker="dateRangePicker.picker"
                    picker-classes="extra-class-names" min="'2014-02-23'" max="dateRangePicker.maxDate"
                    options="dateRangePicker.options" options="{locale: {separator: " :"}}" />
-        </div>`,
+       </div>`,
             restrict: 'E',
             replace: true,
             scope: {
@@ -628,6 +626,15 @@
             link: function (scope, element, att) {
                 element.on('click', function () {
                     console.log('click')
+                    /**
+                     * Eliminar mas adelante en cuanto se corrija el codDoc en las opciones de factura venta
+                     */
+                    let params = Object.assign({}, scope.params);
+                    if(params.hasOwnProperty('codigoTipoDoc')){
+                        params.codDoc = '01';
+                    }
+                    //===================================
+
                     mainService.getData('GET', 'WhatsappUsage/?json=' + JSON.stringify({ tipo: 2, idEntidad: 0 }), null, true).then(
                         async response => {
                             if (response.code == '0') {
@@ -654,13 +661,13 @@
                                     } = await import(MODAL_SEND_WHATSAPP_CTRL);
                                     // console.log(template)
 
-                                    scope.params.type = scope.typeSend;
-                                    scope.params.hasPermissions = scope.hasPermissions
+                                    params.type = scope.typeSend;
+                                    params.hasPermissions = scope.hasPermissions
                                     const modalDialogRef = modalService.openModalCustom({
                                         controller: ModalWhatsAppCtrl,
                                         template: MODAL_SEND_WHATSAPP_CSHTML,
                                         size: 'md',
-                                        params: scope.params || {},
+                                        params: params || {},
                                         isRenderRazorPartial: true,
                                     })
 

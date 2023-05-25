@@ -1,102 +1,99 @@
-<form >    
-    <div class="modal-header bg-info text-white">
-        <h5 class="modal-title"><i class="icons-File-Edit "></i> Detalle Aprobación Factura</h5>
-        <button type="button" class="close" ng-click="$ctrl.closeModal()">&times;</button>
+    <div class="modal-header">
+        <h5 class="modal-title"><i class="ti-file"></i> Detalle Aprobación Documento: {{docOrigenDesc}} <i class="mdi mdi-arrow-right"></i> {{docDestinoDesc}}</h5>
+        <span>
+            <i ng-click="showHistorialDocumento()" class="fas fa-info-circle"></i>
+        </span>
     </div>
 
     <div class="modal-body">
         <div class="row">
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
                 <div class="form-group">
-                    <label for="sucursal">Sucursal: <span class="text-danger">*</span></label>
-                    <select class="form-control" ng-model="$ctrl.data.codEstab" disabled>
-                        <option ng-value="item.codEstab" ng-repeat="item in $ctrl.establecimientos">{{item.nombreComercial}}</option>
+                    <label for="sucursal">Sucursal: </label>
+                    <select class="form-control" ng-model="data.codEstab" disabled>
+                        <option ng-value="item.codEstab" ng-repeat="item in establecimientos">{{item.nombreComercial}}</option>
                     </select>
                 </div>
             </div>                
 
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
                 <div class="form-group">                        
-                    <label>Punto Emisión <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" ng-value="$ctrl.data.ptoEmi" disabled>
-                    @* <select class="form-control" ng-model="$ctrl.data.idPuntoEmision" ng-disabled="$ctrl.dataDisabled.isDisabledPuntoEmision" >
-                        <option ng-value="item.idPuntoEmision" ng-repeat="item in $ctrl.puntosEmision">{{item.ptoEmi}}</option>
+                    <label>Punto Emisión </label>
+                    <input type="text" class="form-control" ng-value="data.ptoEmi" disabled>
+                @* <select class="form-control" ng-model="data.idPuntoEmision" ng-disabled="dataDisabled.isDisabledPuntoEmision" >
+                        <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">{{item.ptoEmi}}</option>
                     </select> *@
                 </div>
             </div>
 
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
                 <div class="form-group">
-                    <label>Fecha Emisión: <span class="text-danger">*</span> </label>
-                    <input type="date" name="fechaEmision" class="form-control" ng-model="$ctrl.data.fechaEmision" disabled>
-                    <small class="text-info">{{$ctrl.fechaEmisionEscrita}}</small>
+                    <label>Fecha Emisión:  </label>
+                    <input type="date" name="fechaEmision" class="form-control" ng-model="data.fechaEmision" disabled>
                 </div>                    
             </div>
         </div>
-
         <div class="row">
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
                 <div class="form-group">
-                    <label for="">Cliente: <span class="text-danger">*</span></label>
-                    <input type="text" name="" id="" class="form-control" ng-model="$ctrl.data.cliente" disabled>
+                    <label for="">Cliente: </label>
+                    <input type="text" name="" id="" class="form-control" ng-model="cliente.nombreFiscal" disabled>
                 </div>
             </div>
 
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
                 <div class="form-group">
                     <label for="" class="">Nro. Identificación:</label>
-                    <input type="text" id="" class="form-control" disabled ng-value="$ctrl.data.identificacionComprador" placeholder="...">
+                    <input type="text" id="" class="form-control" disabled ng-value="cliente.numeroIdentificacion" placeholder="...">
                 </div>
             </div>
 
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
                 <div class="form-group">
                     <label for="address" class="">Dirección:</label>
-                    <input type="text" id="address" class="form-control" disabled ng-model="$ctrl.data.direccion">
+                    <input type="text" id="address" class="form-control" disabled ng-model="cliente.direccion">
                 </div>                    
             </div>
         </div>        
 
-        <div class="row mt-2">
-            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div ui-grid="$ctrl.gridOptionsDetailDocument"                                  
-                    ui-grid-edit
-                    ui-grid-resize-columns
-                    ui-grid-cellNav
-                    ui-grid-auto-resize
-                    ui-grid-validate
-                    ui-grid-save-state class="grid">
-                </div>
-            </div>
+        
+        <div ui-grid="gridOptionsDetalle"                                  
+            ui-grid-edit
+            ui-grid-resize-columns
+            ui-grid-cellNav
+            ui-grid-auto-resize
+            ui-grid-validate
+            ui-grid-save-state class="grid">
         </div>
+        
 
          <div class="row mt-3">
             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                <div class="row  border border-secondary-1 ml-0" ng-if="$ctrl.data.showSubtotales">
+                <div class="row  border border-secondary-1 ml-0" ng-if="data.showSubtotales">
                     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                         <div class="table-responsive">
                             <table class="table table-clear table-sm">
                                 <tbody>
                                     <tr>
                                         <td class="left">
-                                            <strong>SubTotal  {{$ctrl.actividadTipoIva.tarifa}}%</strong>
+                                            <strong>SubTotal {{dataTarifaImpuesto.descripcion}}</strong>
                                         </td>
                                         <td class="right">
-                                            <strong>${{$ctrl.data.subTotalIva}}</strong>
+                                            <strong>${{data.subTotalIva}}</strong>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="left">
                                             <strong>SubTotal IVA 0</strong>
                                         </td>
-                                        <td class="right">${{$ctrl.data.subTotalIvaCero}}</td>
+                                        <td class="right">${{data.subTotalIvaCero}}</td>
                                     </tr>
                                     <tr>
                                         <td class="left">
                                             <strong>SubTotal Exento IVA</strong>
                                         </td>
                                         <td class="right">
-                                            <strong>${{$ctrl.data.subTotalExentoIva}}</strong>
+                                            <strong>${{data.subTotalExentoIva}}</strong>
                                         </td>
                                     </tr>
                                     <tr>
@@ -104,7 +101,7 @@
                                             <strong>SubTotal no Objeto IVA</strong>
                                         </td>
                                         <td class="right">
-                                            <strong>${{$ctrl.data.subTotalNoObjetoIva}}</strong>
+                                            <strong>${{data.subTotalNoObjetoIva}}</strong>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -120,7 +117,7 @@
                                             <strong>SubTotal Neto IVA</strong>
                                         </td>
                                         <td class="right">
-                                            <strong>${{$ctrl.data.subTotalNetoIva}}</strong>
+                                            <strong>${{data.subTotalNetoIva}}</strong>
                                         </td>
                                     </tr>
                                     <tr>
@@ -128,7 +125,7 @@
                                             <strong>SubTotal Neto IVA 0</strong>
                                         </td>
                                         <td class="right">
-                                            <strong>${{$ctrl.data.subTotalNetoIvaCero}}</strong>
+                                            <strong>${{data.subTotalNetoIvaCero}}</strong>
                                         </td>
                                     </tr>
                                     <tr>
@@ -136,7 +133,7 @@
                                             <strong>SubTotal Neto Exento IVA</strong>
                                         </td>
                                         <td class="right">
-                                            <strong>${{$ctrl.data.subTotalNetoExentoIva}}</strong>
+                                            <strong>${{data.subTotalNetoExentoIva}}</strong>
                                         </td>
                                     </tr>
                                     <tr>
@@ -144,7 +141,7 @@
                                             <strong>SubTotal Neto no Objeto IVA</strong>
                                         </td>
                                         <td class="right">
-                                            <strong>${{$ctrl.data.subTotalNetoNoObjetoIva}}</strong>
+                                            <strong>${{data.subTotalNetoNoObjetoIva}}</strong>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -160,7 +157,7 @@
                                             <strong>ICE</strong>
                                         </td>
                                         <td class="right">
-                                            <strong>${{$ctrl.data.totalIce}}</strong>
+                                            <strong>${{data.totalIce}}</strong>
                                         </td>
                                     </tr>
                                     <tr>
@@ -168,7 +165,7 @@
                                             <strong>IRBPNR</strong>
                                         </td>
                                         <td class="right">
-                                            <strong>${{$ctrl.data.irbpnr}}</strong>
+                                            <strong>${{data.irbpnr}}</strong>
                                         </td>
                                     </tr>
                                     <tr>
@@ -176,7 +173,7 @@
                                             <strong>Propina</strong>
                                         </td>
                                         <td class="right">
-                                            <strong>${{$ctrl.data.propina}}</strong>
+                                            <strong>${{data.propina}}</strong>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -184,17 +181,17 @@
                         </div>
                     </div>
                 </div>
-                <div class="row mt-1  border border-secondary-1 ml-0" ng-if="$ctrl.data.showSubtotales">
+                <div class="row mt-1  border border-secondary-1 ml-0" ng-if="data.showSubtotales">
                     <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12 col-xs-12">
                         <div class="form-group">
                             <label>% Descuento</label>
                             <div class="input-group">
-                                <input ng-model="$ctrl.data.porcentajeDescuento" disabled  class="form-control" />
+                                <input ng-model="data.porcentajeDescuento" disabled  class="form-control" />
                                 <div class="input-group-append">
                                     <button type="button" class="btn btn-secondary btn-sm" disabled><i class="fa fa-calculator fa-xs"></i></button>                                            
                                 </div>
                             </div>
-                            
+
                         </div>
                     </div>
 
@@ -202,7 +199,7 @@
                         <div class="form-group">
                             <label>Descuento</label>
                             <div class="input-group">
-                                <input ng-model="$ctrl.data.totalDescuento" disabled placeholder="0.00" class="form-control" />
+                                <input ng-model="data.totalDescuento" disabled placeholder="0.00" class="form-control" />
                                 <div class="input-group-append">
                                     <button type="button" class="btn btn-secondary btn-sm" disabled><i class="fa fa-calculator fa-xs"></i></button>
                                 </div>
@@ -213,21 +210,21 @@
                     <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12 col-xs-12">
                         <div class="form-group">
                             <label>Transporte</label>
-                            <input type="text" ng-model="$ctrl.data.transporte" disabled class="form-control" placeholder="0.00" />
+                            <input type="text" ng-model="data.transporte" disabled class="form-control" placeholder="0.00" />
                         </div>
                     </div>
 
                     <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12 col-xs-12">
                         <div class="form-group">
                             <label>Rercargo</label>
-                            <input type="text" decimal disabled ng-model="$ctrl.data.recargo" class="form-control" placeholder="0.00" />
+                            <input type="text" decimal disabled ng-model="data.recargo" class="form-control" placeholder="0.00" />
                         </div>
                     </div>
 
                     <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-xs-12">
                         <div class="form-group">
                             <label>Observacion</label>
-                            <textarea class="form-control border-select" ng-model="$ctrl.data.observacion" disabled placeholder="..."></textarea>
+                            <textarea class="form-control border-select" ng-model="data.observacion" disabled placeholder="..."></textarea>
                         </div>
                     </div>
                 </div>
@@ -241,16 +238,16 @@
                                     <strong>SubTotal sin Impuesto</strong>
                                 </td>
                                 <td class="right">
-                                    <strong>${{$ctrl.data.subTotalSinImpuestos}}</strong>
+                                    <strong>${{data.subTotalSinImpuestos}}</strong>
                                 </td>
                             </tr>
 
                             <tr>
                                 <td class="left">
-                                    <strong> IVA {{$ctrl.actividadTipoIva.tarifa}}%</strong>
+                                    <strong> {{dataTarifaImpuesto.descripcion}}</strong>
                                 </td>
                                 <td class="right">
-                                    <strong>${{$ctrl.data.iva}}</strong>
+                                    <strong>${{data.iva}}</strong>
                                 </td>
                             </tr>
 
@@ -259,7 +256,7 @@
                                     <strong>Descuento</strong>
                                 </td>
                                 <td class="right">
-                                    <strong>${{$ctrl.data.totalDescuento}}</strong>
+                                    <strong>${{data.totalDescuento}}</strong>
                                 </td>
                             </tr>
 
@@ -268,7 +265,7 @@
                                     <h3><strong>Total</strong></h3>
                                 </td>
                                 <td class="right">
-                                    <h3><strong>${{$ctrl.data.total}}</strong></h3>
+                                    <h3><strong>${{data.total}}</strong></h3>
                                 </td>
                             </tr>
                         </tbody>
@@ -279,17 +276,15 @@
 
     </div>   
 
-    
+
 
     <div class="modal-footer">
         <div class="icheck-success icheck-inline">
-            <input type="checkbox" ng-model="$ctrl.data.showSubtotales" id="showSubTotales" />
+            <input type="checkbox" ng-model="data.showSubtotales" id="showSubTotales" />
             <label for="showSubTotales">Mas datos</label>
         </div>
-    
-        <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">
+
+        <button type="button" class="btn btn-dark" ng-click="closeModal()">
             &times; Cerrar
         </button>
     </div>
-
-</form>
