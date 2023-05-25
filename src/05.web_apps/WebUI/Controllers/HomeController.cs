@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AcontPlus.Controllers
 {
@@ -27,7 +28,7 @@ namespace AcontPlus.Controllers
         {
             return Ok();
         }
-
+        [AllowAnonymous]
         public PartialViewResult RenderView(string name)
         {
             return PartialView(name);
