@@ -146,7 +146,7 @@
                                                 <span ng-if="group.display"><i class="fas fa-caret-square-down"></i></span>
                                                 <span ng-if="!group.display"><i class="fas fa-caret-square-right"></i></span>
                                             </td>
-                                            <td md-cell colspan="3">{{group.codDoc}} - {{group.serieComprobante}}</td>
+                                            <td md-cell colspan="3">{{group.tipoDoc}} - {{group.serieComprobante}}</td>
                                             <td md-cell colspan="2">
                                                 <strong>${{group.importeTotal}}</strong>
                                             </td>
@@ -162,7 +162,7 @@
                                             <td md-cell>{{cuota.cuota}}</td>
                                             <td md-cell>{{cuota.abono}}</td>
                                             <td md-cell>{{cuota.saldo}}</td>
-                                            <td md-cell>{{cuota.descripcion}}</td>
+                                            <td md-cell>{{cuota.estado}}</td>
                                         </tr>
                                     </tbody>
                                 </table>

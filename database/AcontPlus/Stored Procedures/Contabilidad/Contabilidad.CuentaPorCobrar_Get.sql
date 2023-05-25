@@ -149,12 +149,19 @@ BEGIN
 						  ,fv.abono
 						  ,fv.saldo
 						  ,ep.descripcion
-						  ,cuotas = (SELECT * FROM dbo.CuotaXCobrar cc WHERE cc.idComprobante = fv.idFactura AND cc.idTipoDocumento = fv.idTipoDocumento AND cc.estado = 1 FOR JSON PATH)
-					FROM dbo.Factura fv WITH (NOLOCK) 
-					INNER JOIN dbo.PuntoEmision pt WITH (NOLOCK) ON pt.idPuntoEmision = fv.idPuntoEmision
-					INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON  es.codEstab = pt.codEstab
-					INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = fv.idEstadoPago
+						  ,cuotas = (SELECT cc.idTipoDocumento,idDocumento = cc.idComprobante,cc.idCuotaXCobrar,cc.cuota,cc.abono ,estado = ep.descripcion
+						             FROM dbo.CuotaXCobrar cc
+									 INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cc.idEstadoPago
+						             WHERE cc.idComprobante   = fv.idFactura 
+									   AND cc.idTipoDocumento = fv.idTipoDocumento 
+									   AND cc.estado          = 1 FOR JSON PATH
+									 )
+					FROM dbo.Factura               fv WITH (NOLOCK) 
+					INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision = fv.idPuntoEmision
+					INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pt.codEstab
+					INNER JOIN dbo.EstadoPago      ep WITH (NOLOCK) ON ep.idEstadoPago   = fv.idEstadoPago
 					WHERE fv.idCliente = @idCliente AND ep.codigo IN ('PP','PE')
+
 
 					INSERT INTO @tbDocuments (idTipoDocumento,idDocumento,serieComprobante,tipoDoc,fechaEmision,fechaVencimiento,importeTotal,abono,saldo,estado,cuotas)
 					SELECT ne.idTipoDocumento
@@ -167,11 +174,17 @@ BEGIN
 						  ,ne.abono
 						  ,ne.saldo
 						  ,ep.descripcion
-						  ,cuotas = (SELECT * FROM dbo.CuotaXCobrar cc WHERE cc.idComprobante = ne.idNotaEntrega AND cc.idTipoDocumento = ne.idTipoDocumento AND cc.estado = 1 FOR JSON PATH)
-					FROM dbo.NotaEntrega ne WITH (NOLOCK) 
-					INNER JOIN dbo.PuntoEmision pt WITH (NOLOCK) ON pt.idPuntoEmision = ne.idPuntoEmision
-					INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON  es.codEstab = pt.codEstab
-					INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = ne.idEstadoPago
+						  ,cuotas = (SELECT cc.idTipoDocumento,idDocumento = cc.idComprobante,cc.idCuotaXCobrar,cc.cuota,cc.abono ,estado = ep.descripcion
+						             FROM dbo.CuotaXCobrar cc
+									 INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cc.idEstadoPago
+						             WHERE cc.idComprobante   = ne.idNotaEntrega 
+									   AND cc.idTipoDocumento = ne.idTipoDocumento 
+									   AND cc.estado          = 1 FOR JSON PATH
+									 )
+					FROM dbo.NotaEntrega           ne WITH (NOLOCK) 
+					INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision = ne.idPuntoEmision
+					INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON  es.codEstab      = pt.codEstab
+					INNER JOIN dbo.EstadoPago      ep WITH (NOLOCK) ON ep.idEstadoPago   = ne.idEstadoPago
 					WHERE ne.idCliente = @idCliente AND ep.codigo IN ('PP','PE')
 				END 
 
@@ -192,11 +205,17 @@ BEGIN
 								  ,fv.abono
 								  ,fv.saldo
 								  ,ep.descripcion
-								  ,cuotas = (SELECT * FROM dbo.CuotaXCobrar cc WHERE cc.idComprobante = fv.idFactura AND cc.idTipoDocumento = fv.idTipoDocumento AND cc.estado = 1 FOR JSON PATH)
+								  ,cuotas = (SELECT cc.idTipoDocumento,idDocumento = cc.idComprobante,cc.idCuotaXCobrar,cc.cuota,cc.abono ,estado = ep.descripcion
+											 FROM dbo.CuotaXCobrar cc
+									         INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cc.idEstadoPago
+						                     WHERE cc.idComprobante  = fv.idFactura 
+									         AND cc.idTipoDocumento = fv.idTipoDocumento 
+									         AND cc.estado          = 1 FOR JSON PATH
+									        )
 							FROM dbo.Factura fv WITH (NOLOCK) 
-							INNER JOIN dbo.PuntoEmision pt WITH (NOLOCK) ON pt.idPuntoEmision = fv.idPuntoEmision
-							INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON  es.codEstab = pt.codEstab
-							INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = fv.idEstadoPago
+							INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision = fv.idPuntoEmision
+							INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON  es.codEstab      = pt.codEstab
+							INNER JOIN dbo.EstadoPago      ep WITH (NOLOCK) ON ep.idEstadoPago   = fv.idEstadoPago
 							WHERE fv.idFactura = @idDocumento AND ep.codigo IN ('PP','PE') 
 						END 
 
@@ -213,11 +232,16 @@ BEGIN
 								  ,ne.abono
 								  ,ne.saldo
 								  ,ep.descripcion
-								  ,cuotas = (SELECT * FROM dbo.CuotaXCobrar cc WHERE cc.idComprobante = ne.idNotaEntrega AND cc.idTipoDocumento = ne.idTipoDocumento AND cc.estado = 1 FOR JSON PATH)
-							FROM dbo.NotaEntrega ne WITH (NOLOCK) 
-							INNER JOIN dbo.PuntoEmision pt WITH (NOLOCK) ON pt.idPuntoEmision = ne.idPuntoEmision
-							INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON  es.codEstab = pt.codEstab
-							INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = ne.idEstadoPago
+								  ,cuotas = (SELECT cc.idTipoDocumento,idDocumento = cc.idComprobante,cc.idCuotaXCobrar,cc.cuota,cc.abono ,estado = ep.descripcion
+											 FROM dbo.CuotaXCobrar cc
+									         INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cc.idEstadoPago
+						                     WHERE cc.idComprobante = ne.idNotaEntrega 
+									           AND cc.idTipoDocumento = ne.idTipoDocumento 
+									           AND cc.estado = 1 FOR JSON PATH)
+							FROM dbo.NotaEntrega           ne WITH (NOLOCK) 
+							INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision = ne.idPuntoEmision
+							INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON  es.codEstab      = pt.codEstab
+							INNER JOIN dbo.EstadoPago      ep WITH (NOLOCK) ON ep.idEstadoPago   = ne.idEstadoPago
 							WHERE ne.idNotaEntrega = @idDocumento AND ep.codigo IN ('PP','PE')
 						END 
 				END 
