@@ -216,7 +216,9 @@ BEGIN
 				END
 
 	IF EXISTS (SELECT 1 FROM FactElect.RetAtsDocSustento rds WITH(NOLOCK)
-						INNER JOIN @tblDocs t ON LTRIM(RTRIM(rds.numDocSustento)) = LTRIM(RTRIM(t.numDocSustento)))
+						INNER JOIN @tblDocs t ON LTRIM(RTRIM(rds.numDocSustento)) = LTRIM(RTRIM(t.numDocSustento)) 
+						INNER JOIN FactElect.RetencionAts ret ON rds.idRetencionAts = ret.idRetencionats 
+						WHERE codEstab = (SELECT codEstab FROM @tblInfoCompRet))
 		BEGIN
 			SELECT '0' code, 'Este documento de sustento ya pertenece a una retención' as 'message'
 			RETURN
