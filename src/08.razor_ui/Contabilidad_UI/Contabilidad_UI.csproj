@@ -11,6 +11,10 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Areas\CuentaPorCobrar\Pages\Shared\" />
+  </ItemGroup>
+
 
 
 </Project>

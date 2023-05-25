@@ -9,6 +9,7 @@ facturaVentaCtrl.$inject = [
     'facturaService',
     'modalService',
     'nombreModal',
+    'nombreModalContabilidad',
     'toastService',
     'formulario'    
 ]
@@ -22,6 +23,7 @@ function facturaVentaCtrl(
     facturaSvc, 
     _modalSvc, 
     _nombreModalConst, 
+    nombreModalContabilidad,
     _tS, 
     _fS    
 ) {
@@ -569,20 +571,21 @@ function facturaVentaCtrl(
      * @param {object} params 
      */
     $scope.openModalRapido = async (params) => {
-
-        let {
-            MODAL_FILE_CTRL,
-            MODAL_COBRO_RAPIDO
-        } = _nombreModalConst.cobro;
-        let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_COBRO_RAPIDO['controller']];
-        let template = MODAL_COBRO_RAPIDO['template'];
-
-        $scope.openModalCobro({
-            controller,
-            template,
-            params
-        })
-
+        try {
+            let fileCtrl = nombreModalContabilidad.COBRO.fileCtrl;
+            let ctrl = nombreModalContabilidad.COBRO.controllers['CR'];
+            let template = nombreModalContabilidad.COBRO.templates['CR']; 
+            let controller = (await import(fileCtrl))[ctrl];
+            
+            $scope.openModalCobro({
+                controller,
+                template,
+                params,                
+            })
+        } catch (error) {
+            console.log(error)
+        }
+        
     }
 
     /**
@@ -601,7 +604,8 @@ function facturaVentaCtrl(
             template,
             size,
             params,
-            keyboard: true
+            keyboard: true,
+            isRenderRazorPartial: true
         })
 
         $modalRef.result.then(result => {

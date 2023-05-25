@@ -134,7 +134,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BL.PdfReports", "03.busines
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BL.ExcelReports", "03.business_logic\BL.ExcelReports\BL.ExcelReports.csproj", "{091F1951-6C69-43CC-B60A-009D8DA14951}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiLogistica", "04.services\ApiLogistica\ApiLogistica.csproj", "{2ECAE4BB-E460-40F3-882E-66BD4A5C298C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiLogistica", "04.services\ApiLogistica\ApiLogistica.csproj", "{2ECAE4BB-E460-40F3-882E-66BD4A5C298C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

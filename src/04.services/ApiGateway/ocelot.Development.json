@@ -1182,8 +1182,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8099
+          "Host": "localhost",
+          "Port": 52813
         }
       ],
       "DownstreamPathTemplate": "/api/CuentaPorCobrar{everything}",
@@ -1191,6 +1191,24 @@
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "UpstreamPathTemplate": "/api/CuentaPorCobrar{everything}"
     },
+
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 52813
+        }
+      ],
+      "DownstreamPathTemplate": "/api/ComprobanteIngreso{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "UpstreamPathTemplate": "/api/ComprobanteIngreso{everything}"
+    },
+
     {
       "AuthenticationOptions": {
         "AllowedScopes": [],
@@ -1204,7 +1222,7 @@
       ],
       "DownstreamPathTemplate": "/api/Catalogo{everything}",
       "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [ "Get"],
+      "UpstreamHttpMethod": [ "Get" ],
       "UpstreamPathTemplate": "/api/Catalogo{everything}"
     }
 
