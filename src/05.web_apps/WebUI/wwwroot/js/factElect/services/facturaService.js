@@ -75,9 +75,9 @@
                 }
                 if(response.code==="1"){
                     let dataRepository = JSON.parse(response.payload)[0];
+                    console.log(dataRepository)
                     let dataResponse = {
-                        ...dataRepository,
-                        nroDocumento: dataRepository.estab + dataRepository.ptoEmi + dataRepository.secuencial,
+                        ...dataRepository,                        
                         esContado: dataRepository.gestion,
                     }
                     return {                        
