@@ -14,11 +14,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\01.common\Helpers\Helpers.csproj" />
+	  <Compile Remove="Models\Reports\**" />
+	  <EmbeddedResource Remove="Models\Reports\**" />
+	  <None Remove="Models\Reports\**" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Models\Reports\" />
+	  <ProjectReference Include="..\..\01.common\Helpers\Helpers.csproj" />
 	</ItemGroup>
 
 </Project>

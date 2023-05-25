@@ -1,5 +1,6 @@
 ﻿using Common.Logs;
 using DataAccess;
+using Domain.Dtos;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
 
@@ -45,7 +46,7 @@ namespace ApiRecepcion.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(string json)
+        public async Task<IActionResult> Post([FromBody] RequestApiDto parameters)
         {
             LogWriter _logs = new LogWriter(_configuration);
             GenericResponse _response = new GenericResponse();
@@ -54,7 +55,7 @@ namespace ApiRecepcion.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Recepcion.Doc_Detail_Temp_Insert");
                 _db.AddDynamicParam("idRol", idUsuarioRol);
-                _db.AddDynamicParam("jsonData", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("jsonData", SqlValidation.ValidateSqlString(DataHelper.SerializeDictionary(parameters.data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -70,7 +71,7 @@ namespace ApiRecepcion.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Put(string json)
+        public async Task<IActionResult> Put([FromBody] RequestApiDto parameters)
         {
             LogWriter _logs = new LogWriter(_configuration);
             GenericResponse _response = new GenericResponse();
@@ -79,7 +80,7 @@ namespace ApiRecepcion.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Recepcion.Doc_Detail_Temp_Update");
                 _db.AddDynamicParam("idRol", idUsuarioRol);
-                _db.AddDynamicParam("jsonData", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("jsonData", SqlValidation.ValidateSqlString(DataHelper.SerializeDictionary(parameters.data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

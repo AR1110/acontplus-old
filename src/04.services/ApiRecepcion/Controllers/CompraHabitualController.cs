@@ -1,5 +1,6 @@
 ﻿using Common.Logs;
 using DataAccess;
+using Domain.Dtos;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
 
@@ -39,7 +40,7 @@ namespace ApiRecepcion.Controllers
             return Ok(_response);
         }
         [HttpPost("Post")]
-        public async Task<IActionResult> Post(string json)
+        public async Task<IActionResult> Post([FromBody] RequestApiDto parameters)
         {
             DbAccess _db = new DbAccess(_configuration);
             GenericResponse _response = new GenericResponse();
@@ -47,7 +48,7 @@ namespace ApiRecepcion.Controllers
             {
                 await _db.SPExecute("Recepcion.CompraHabitual_Insert");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", json);
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(DataHelper.SerializeDictionary(parameters.data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

@@ -1,10 +1,10 @@
-﻿using Domain.Dtos;
+﻿using Domain.Models;
 
 namespace BL.Reports
 {
     public static class ReportError
     {
-        public static FileModelDto ReportNotFound(FileModelDto file)
+        public static FileModel ReportNotFound(FileModel file)
         {
             string errorFilePath = "C:\\Acontplus\\Services\\ApiReports\\Reports\\NotFound.pdf";
             byte[] bytes = File.ReadAllBytes(errorFilePath);

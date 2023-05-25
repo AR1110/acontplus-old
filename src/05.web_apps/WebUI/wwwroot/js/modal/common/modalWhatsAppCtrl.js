@@ -678,9 +678,9 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
         }
         mS.getData('post', 'WhatsappMessage/Post', { data: data }, true).then(response => {
             if (response.code == '1') {
-                console.log(response.message)
+                //console.log(response.message)
+                tS.toastr("info", response.message)
             }
-            tS.toastr('success', 'Mensaje enviado exitosamente')
         }).catch(err => {
             console.log(err)
         })

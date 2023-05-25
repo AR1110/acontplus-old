@@ -1,8 +1,8 @@
-(function(){
+(function () {
 
     'use strict';
 
-    
+
     app.directive('shouldFocus', function () {
         return {
             restrict: 'A',
@@ -278,7 +278,7 @@
             }
         }
     });
-    
+
     app.directive('ngEnter', function () {
         return function (scope, element, attrs) {
             element.bind("keydown keypress", function (event) {
@@ -286,13 +286,13 @@
                     scope.$apply(function () {
                         scope.$eval(attrs.ngEnter);
                     });
-    
+
                     event.preventDefault();
                 }
             })
         }
     })
-    
+
     app.directive('stopEvent', function () {
         return {
             restrict: 'A',
@@ -303,25 +303,25 @@
             }
         };
     });
-    
-    
+
+
     //Permiso Update Artcicle
     app.directive('updateArticle', function ($rootScope) {
         return {
-    
+
             link: function (scope, element, attrs) {
-    
+
                 if (!$rootScope.articlePermission.leer) {
                     element[0].style.display = 'none';
                 }
-    
+
                 if (!$rootScope.articlePermission.editar) {
                     element[0].style.display = 'none';
                 }
             },
         }
     })
-    
+
     app.directive('estabStock', function (mainService, $compile, $timeout) {
         return {
             restrict: 'A',
@@ -355,22 +355,22 @@
                                                 </table>
                                             </div>   
                                              `;
-    
+
                         mainService.getData('get', '/Articulo/GetId?id=' + scope.article.idArticulo).then(response => {
                             const results = JSON.parse(response.payload) || [];
-    
+
                             scope.branchs = results[4].map(val => {
                                 val.warehouses = JSON.parse(val.warehouses)
                                 return val;
                             })
-                            
+
                         })
-    
+
                         // Compile the popover content with the scope
                         let compiledContent = $compile(popoverContent)(scope);
                         scope.$apply();
                         return compiledContent;
-    
+
                     },
                     placement: scope.placement || 'bottom',
                     trigger: 'outsideClick',
@@ -378,23 +378,23 @@
                     customClass: 'zindex'
                     // container: 'body'
                 };
-    
-    
+
+
                 // // Initialize the popover using element.popover()
                 $(element).popover(popoverOptions);
-    
+
                 // // Open popover on element click
                 element.on('mouseover', function (event) {
                     $(element).popover('show');
                 });
-    
+
                 // // Close popover on outside click
                 $(document).on('mouseover', function (event) {
                     if (!$(element).is(event.target) && !$(element).has(event.target).length && $('.popover').has(event.target).length === 0) {
                         $(element).popover('hide');
                     }
                 });
-    
+
                 // Clean up the popover when the directive is destroyed
                 // scope.$on('$destroy', function () {
                 //     $(element).popover('destroy');
@@ -402,10 +402,10 @@
             }
         };
     })
-    
-  
-    
-    
+
+
+
+
     app.directive('totalesVentaView', function ($rootScope, $timeout) {
         return {
             restrict: 'A',
@@ -417,32 +417,32 @@
                         element.remove();
                     }
                 });
-    
+
                 // element.remove();
             }
         };
     })
-    
+
 
 
 
     /**
      * ====================================START DIRECTIVES SALES=============================
-     */ 
-    app.directive('btnCliente', function(modalService, nombreModalVenta){
+     */
+    app.directive('btnCliente', function (modalService, nombreModalVenta) {
         return {
             restrict: 'A',
             scope: {
                 resultModal: '&',
                 params: '='
             },
-            link: function(scope, element, att){
-                element.on('click', async function(ev){
+            link: function (scope, element, att) {
+                element.on('click', async function (ev) {
 
-                    let {fileCtrl, controllers, templates} = nombreModalVenta.CLIENTE;
+                    let { fileCtrl, controllers, templates } = nombreModalVenta.CLIENTE;
                     let ctrl = (await import(fileCtrl))[controllers['M']];
                     let template = templates['M'];
-                    
+
                     let modalRef = modalService.openModalCustom({
                         controller: ctrl,
                         template,
@@ -451,21 +451,21 @@
                     })
 
                     modalRef.result.then(result => {
-                        if(typeof result === 'object'){
+                        if (typeof result === 'object') {
                             scope.resultModal({
                                 result
                             })
                         }
                     })
-                    
-                })            
+
+                })
             }
         }
     })
 
 
-    app.directive('dateRangeFilter', function(){
-        return {            
+    app.directive('dateRangeFilter', function () {
+        return {
             template: ` <div class="form-group">
             <label>Rango de Fechas: </label>
             <input date-range-picker class="form-control date-picker" type="text"
@@ -477,14 +477,14 @@
             replace: true,
             scope: {
                 currentDate: '=',
-                startDate:'=',
-                endDate:'=',
+                startDate: '=',
+                endDate: '=',
                 resultRangeDate: '&',
             },
-            link: function(scope, $element, $attrs, form) {
-                let thisMoment = moment(new Date()) 
+            link: function (scope, $element, $attrs, form) {
+                let thisMoment = moment(new Date())
                 scope.startDate = thisMoment;
-                scope.endDate = thisMoment;            
+                scope.endDate = thisMoment;
                 scope.dateRangePicker = {
                     date: {
                         startDate: thisMoment,
@@ -518,7 +518,7 @@
 
                                 scope.startDate = scope.dateRangePicker.date.startDate
                                 scope.endDate = scope.dateRangePicker.date.endDate;
-                                
+
                                 scope.resultRangeDate({
                                     result: {
                                         startDate: scope.startDate,
@@ -530,7 +530,7 @@
                             }
                         }
                     }
-                };               
+                };
             }
         };
 
@@ -540,17 +540,17 @@
     /**
      * ---------------------------------------
      */
-    
-    app.directive('btnTransportista', function(modalService, nombreModalLogistica){
+
+    app.directive('btnTransportista', function (modalService, nombreModalLogistica) {
         return {
             restrict: 'A',
             scope: {
-                params:'=',
+                params: '=',
                 resultModal: '&',
             },
-            link: function(scope, element, att){
+            link: function (scope, element, att) {
                 element.on('click', async function () {
-                     
+
                     let fileCtrl = nombreModalLogistica.TRANSPORTISTA.fileCtrl;
                     let ctrl = nombreModalLogistica.TRANSPORTISTA.controllers['M'];
                     let template = nombreModalLogistica.TRANSPORTISTA.templates['M'];
@@ -562,10 +562,10 @@
                         template,
                         size: 'md',
                         params: scope.params || {},
-                    })       
-                          
-                    modalDialogRef.result.then(result=>{
-                        if(typeof result==="object"){
+                    })
+
+                    modalDialogRef.result.then(result => {
+                        if (typeof result === "object") {
                             scope.resultModal({
                                 result
                             })
@@ -576,16 +576,16 @@
         }
     })
 
-    app.directive('btnVehiculo', function(modalService, nombreModalLogistica){
+    app.directive('btnVehiculo', function (modalService, nombreModalLogistica) {
         return {
             restrict: 'A',
             scope: {
-                params:'=',
+                params: '=',
                 resultModal: '&',
             },
-            link: function(scope, element, att){
+            link: function (scope, element, att) {
                 element.on('click', async function () {
-                     
+
                     let fileCtrl = nombreModalLogistica.VEHICULO.fileCtrl;
                     let ctrl = nombreModalLogistica.VEHICULO.controllers['M'];
                     let template = nombreModalLogistica.VEHICULO.templates['M'];
@@ -597,10 +597,10 @@
                         template,
                         size: 'md',
                         params: scope.params || {},
-                    })       
-                          
-                    modalDialogRef.result.then(result=>{
-                        if(typeof result==="object"){
+                    })
+
+                    modalDialogRef.result.then(result => {
+                        if (typeof result === "object") {
                             scope.resultModal({
                                 result
                             })
@@ -616,50 +616,72 @@
      * -------------------------------SEND DOCS. BY WHATSAPP-----------------------
      * 
      */
-    app.directive('btnSendToWhatsApp', function(modalService, nombreModal){
+    app.directive('btnSendToWhatsApp', ['modalService', 'nombreModal', 'mainService', 'toastService', function (modalService, nombreModal, mainService, toastService) {
         return {
             restrict: 'A',
             scope: {
-                params:'=',
+                params: '=',
                 resultModal: '&',
                 hasPermission: '=',
                 typeSend: '=',
             },
-            link: function(scope, element, att){
-                element.on('click', async function () {
-                     console.log('click')
-                    // let fileCtrl = nombreModalLogistica.VEHICULO.fileCtrl;
-                    // let ctrl = nombreModalLogistica.VEHICULO.controllers['M'];
-                    // let template = nombreModalLogistica.VEHICULO.templates['M'];
-                    const {
-                        MODAL_SEND_WHATSAPP_CTRL,
-                        MODAL_SEND_WHATSAPP_CSHTML
-                    } = nombreModal.common;
-                    const {
-                        ModalWhatsAppCtrl
-                    } = await import(MODAL_SEND_WHATSAPP_CTRL);
-                    // console.log(template)
+            link: function (scope, element, att) {
+                element.on('click', function () {
+                    console.log('click')
+                    mainService.getData('GET', 'WhatsappUsage/?json=' + JSON.stringify({ tipo: 2, idEntidad: 0 }), null, true).then(
+                        async response => {
+                            if (response.code == '0') {
+                                toastService.toastr('warning', response.message)
+                            }
+                            if (response.code == '1') {
+                                let tempArray = JSON.parse(response.payload)
+                                if (tempArray[0][0].code == '0') {
+                                    toastService.toastr('warning', tempArray[0][0].message)
 
-                    scope.params.type = scope.typeSend;
-                    scope.params.hasPermissions = scope.hasPermissions
-                    const modalDialogRef = modalService.openModalCustom({
-                        controller: ModalWhatsAppCtrl,
-                        template: MODAL_SEND_WHATSAPP_CSHTML,
-                        size: 'md',
-                        params: scope.params || {},
-                        isRenderRazorPartial: true,
-                    })       
-                          
-                    modalDialogRef.result.then(result=>{
-                        if(typeof result==="object"){
-                            scope.resultModal({
-                                result
-                            })
+                                } else {
+                                    if (tempArray[0][0].message) {
+                                        toastService.toastr('info', tempArray[0][0].message)
+                                    }
+                                    // let fileCtrl = nombreModalLogistica.VEHICULO.fileCtrl;
+                                    // let ctrl = nombreModalLogistica.VEHICULO.controllers['M'];
+                                    // let template = nombreModalLogistica.VEHICULO.templates['M'];
+                                    const {
+                                        MODAL_SEND_WHATSAPP_CTRL,
+                                        MODAL_SEND_WHATSAPP_CSHTML
+                                    } = nombreModal.common;
+                                    const {
+                                        ModalWhatsAppCtrl
+                                    } = await import(MODAL_SEND_WHATSAPP_CTRL);
+                                    // console.log(template)
+
+                                    scope.params.type = scope.typeSend;
+                                    scope.params.hasPermissions = scope.hasPermissions
+                                    const modalDialogRef = modalService.openModalCustom({
+                                        controller: ModalWhatsAppCtrl,
+                                        template: MODAL_SEND_WHATSAPP_CSHTML,
+                                        size: 'md',
+                                        params: scope.params || {},
+                                        isRenderRazorPartial: true,
+                                    })
+
+                                    modalDialogRef.result.then(result => {
+                                        if (typeof result === "object") {
+                                            scope.resultModal({
+                                                result
+                                            })
+                                        }
+                                    })
+                                }
+                            }
+                            hideLoader()
                         }
+                    ).catch(error => {
+                        hideLoader()
+                        console.log(error)
                     })
                 });
             }
         }
-    })
+    }])
 
 })(window.angular)

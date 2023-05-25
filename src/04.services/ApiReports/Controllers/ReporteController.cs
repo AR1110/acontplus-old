@@ -3,6 +3,7 @@ using BL.Reports;
 using Common.Logs;
 using DataAccess;
 using Domain.Dtos;
+using Domain.Models;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
@@ -29,7 +30,7 @@ namespace ApiReports.Controllers
             LogWriter _log = new LogWriter(_configuration);
             Request.Headers.TryGetValue("Authorization", out StringValues headerValues);
             string jsonWebToken = headerValues.FirstOrDefault();
-            FileModelDto _response = new FileModelDto();
+            FileModel _response = new FileModel();
             string mimeType = string.Empty;
             string fileName = string.Empty;
             try
@@ -88,7 +89,7 @@ namespace ApiReports.Controllers
             LogWriter _log = new LogWriter(_configuration);
             Request.Headers.TryGetValue("Authorization", out StringValues headerValues);
             string jsonWebToken = headerValues.FirstOrDefault();
-            FileModelDto _response = new FileModelDto();
+            FileModel _response = new FileModel();
             string mimeType = string.Empty;
             string fileName = string.Empty;
             try
@@ -129,7 +130,7 @@ namespace ApiReports.Controllers
         {
             LogWriter _log = new LogWriter(_configuration);
             DbAccess _db = new DbAccess(_configuration);
-            FileModelDto _response = new FileModelDto();
+            FileModel _response = new FileModel();
             string mimeType = string.Empty, fileName = string.Empty;
             try
             {

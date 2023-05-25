@@ -25,7 +25,7 @@ namespace DataAccess
                 _command.CommandType = CommandType.Text;
             }
         }
-        public async Task SPExecute(string spName)
+        public async Task SPExecute(string spName, bool notimeout = false)
         {
             try
             {
@@ -33,6 +33,7 @@ namespace DataAccess
                 {
                     await _connection.OpenAsync();
                     _command = new SqlCommand(spName, _connection);
+                    if (notimeout) { _command.CommandTimeout = 0; }
                     _command.CommandType = CommandType.StoredProcedure;
                 }
             }

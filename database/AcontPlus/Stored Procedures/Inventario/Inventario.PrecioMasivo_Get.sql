@@ -53,6 +53,7 @@ BEGIN
 	SET @sql = 'SELECT a.idArticulo
 				,codigo
 				,codigoAuxiliar
+				,codigoBarra
 				,descripcion
 				,stock
 				,precioCosto
@@ -159,6 +160,7 @@ BEGIN
 				BEGIN
 					SET @sql = @sql + 'AND idArticulo IN (SELECT idArticulo FROM v_InventarioTransaccion WHERE nroDocumento = @nroDocumento) '
 				END
+		SET @sql = @sql + 'ORDER BY a.fechaModificacion DESC '
 		EXEC sp_executesql @sql, @params
 							   ,@idEntidad = @idEntidad
 							   ,@idTarifa = @idTarifa

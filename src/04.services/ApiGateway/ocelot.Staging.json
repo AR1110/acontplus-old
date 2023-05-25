@@ -189,14 +189,16 @@
           "Port": 8096
         }
       ],
-      "DownstreamPathTemplate": "/api/Doc_Rec_DetailTemp/{everything}",
+      "DownstreamPathTemplate": "/api/Doc_Rec_DetailTemp{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Get",
+        "Post",
+        "Put",
         "Delete",
         "Options"
       ],
-      "UpstreamPathTemplate": "/api/Doc_Rec_DetailTemp/{everything}"
+      "UpstreamPathTemplate": "/api/Doc_Rec_DetailTemp{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -210,32 +212,12 @@
           "Port": 8096
         }
       ],
-      "DownstreamPathTemplate": "/api/Doc_Rec_DetailTemp?json={json}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Post",
-        "Put"
-      ],
-      "UpstreamPathTemplate": "/api/Doc_Rec_DetailTemp?json={json}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "205.209.99.71",
-          "Port": 8096
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Articulo?json={json}",
+      "DownstreamPathTemplate": "/api/Articulo{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Get"
       ],
-      "UpstreamPathTemplate": "/api/Recepcion/Articulo?json={json}"
+      "UpstreamPathTemplate": "/api/Recepcion/Articulo{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -1514,6 +1496,22 @@
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Get" ],
       "UpstreamPathTemplate": "/api/Catalogo{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 8098
+        }
+      ],
+      "DownstreamPathTemplate": "/api/WhatsappUsage{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "UpstreamPathTemplate": "/api/WhatsappUsage{everything}"
     }
   ]
 }
