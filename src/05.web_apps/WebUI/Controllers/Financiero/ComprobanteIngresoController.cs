@@ -44,20 +44,6 @@ namespace WebUI.Controllers.GestionFinanciera
             return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("GestFinanc.ComprobanteIngreso_Get", parameters)));
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Insert([FromBody] PagoCobroDto data)
-        {
-            GenericResponse _response = new GenericResponse();
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("comprobante", SqlValidation.ValidateSqlString(data.comprobante));
-            parameters.Add("cobros", SqlValidation.ValidateSqlString(data.pago));
-            parameters.Add("cobroDetalle", SqlValidation.ValidateSqlString(data.pagoDetalle));
-            parameters.Add("historial", SqlValidation.ValidateSqlString(data.historial));
-            _response = DbResponse.SPDefault(await _dao.GetDataTableAsync("GestFinanc.ComprobanteIngreso_Insert", parameters));
-            return Ok(_response);
-        }
-
         [HttpDelete]
         public async Task<IActionResult> Cancel(int id, string observacion)
         {

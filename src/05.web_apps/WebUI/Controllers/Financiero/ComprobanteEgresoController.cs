@@ -46,14 +46,14 @@ namespace WebUI.Controllers.GestionFinanciera
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] PagoCobroDto data)
+        public async Task<IActionResult> Post([FromBody] CobroPagoDto data)
         {
             GenericResponse _response = new GenericResponse();
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("comprobante", SqlValidation.ValidateSqlString(data.comprobante));
-            parameters.Add("pagos", SqlValidation.ValidateSqlString(data.pago));
-            parameters.Add("pagoDetalle", SqlValidation.ValidateSqlString(data.pagoDetalle));
+            parameters.Add("pagos", SqlValidation.ValidateSqlString(data.cobrosPagos));
+            parameters.Add("pagoDetalle", SqlValidation.ValidateSqlString(data.detalles));
             parameters.Add("historial", SqlValidation.ValidateSqlString(data.historial));
             _response = DbResponse.SPDefault(await _dao.GetDataTableAsync("GestFinanc.ComprobanteEgreso_Insert", parameters));
             return Ok(_response);

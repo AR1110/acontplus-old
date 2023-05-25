@@ -205,6 +205,18 @@ app.constant('nombreModalLogistica', {
     }  
 })
 
+app.constant('nombreModalContabilidad', {
+    COBRO: {
+        fileCtrl: '/js/contabilidad/modals/modalCobroCtrl.js' + CHANGE_VERSION(),
+        controllers: {
+            CR: 'ModalCobroRapidoCtrl' //Modal - Cobro Rapido 
+        },
+        templates: {
+            CR: '~/Areas/CuentaPorCobrar/Pages/Shared/_ModalCobroRapido.cshtml'
+        }
+    }
+})
+
 
 
 app.constant('nombreModal', {
