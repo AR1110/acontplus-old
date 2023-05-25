@@ -74,6 +74,8 @@ BEGIN
 								  FROM Ventas.Aprob_Document ad
 								  INNER JOIN dbo.EstadoPago ep ON ep.codigo = ad.codEstado
 								  INNER JOIN dbo.Cliente cl ON cl.idCliente = ad.idCliente
+								  INNER JOIN PuntoEmision pe WITH(NOLOCK) ON pe.idPuntoEmision = ad.idPuntoEmision
+								  INNER JOIN Sri.Establecimiento es WITH(NOLOCK) ON es.codEstab = pe.codEstab 
 								  WHERE ad.idEntidad = @idEntidad '
 
 	SELECT @idEntidad = idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol
@@ -88,8 +90,8 @@ BEGIN
 		,@byCliente       = byCliente
 		,@codEstado       = byEstado
 		,@byUsuario       = byUsuario
-		,@dateStart       = fechaInicio
-		,@dateEnd         = fechaFin
+		,@dateStart       = CONVERT(DATETIME, fechaInicio, 105)
+		,@dateEnd         = CONVERT(DATETIME, fechaFin, 105)
 		,@tipoFecha       = tipoFecha
 	FROM OPENJSON(@json) 
 	WITH(checkBoxFecha   BIT         '$.checkBoxFecha'
@@ -101,13 +103,15 @@ BEGIN
 		,byCliente       INT         '$.byCliente'
 		,byEstado        VARCHAR(5)  '$.byEstado'
 		,byUsuario       INT         '$.byUsuario'
-		,fechaInicio     DATETIME    '$.fechaInicio'
-		,fechaFin        DATETIME    '$.fechaFin'
+		,fechaInicio     VARCHAR(50) '$.fechaInicio'
+		,fechaFin        VARCHAR(50)   '$.fechaFin'
 		,tipoFecha       VARCHAR(50) '$.tipoFecha')
 
 
 	BEGIN TRY
 		--------------------------------------------BUSQUEDA INDIVIDUAL POR PARAMETRO-------------------------------------------------------------------
+		SET @sql = @sql + ' AND es.codEstab = @codEstab '
+
 		IF @checkBoxCliente = 1
 			BEGIN
 				SET @sql = @sql + ' AND ad.idCliente = @idCliente '
@@ -116,6 +120,11 @@ BEGIN
 		IF @checkBoxEstado = 1
 			BEGIN
 				 SET @sql = @sql + ' AND ad.codEstado = @codEstado'
+			END
+
+		ELSE
+			BEGIN
+				SET @sql = @sql + ' AND ad.codEstado NOT IN(''A'')'
 			END
 
 		IF @checkBoxUsuario = 1

@@ -50,6 +50,7 @@ BEGIN
 				ea.codEstab,
 				e.nombreComercial,
 				ea.predeterminado,
+				e.estab,
 				tarifasImpuestos = (
 					SELECT
 						'IVA ' + descripcion AS descripcion,

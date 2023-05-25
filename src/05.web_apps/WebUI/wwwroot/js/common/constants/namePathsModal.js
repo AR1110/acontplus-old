@@ -128,7 +128,8 @@ app.constant('nombreModalVenta', {
             MADF: 'ModalApproveDocCtrl', //Modal Aprobacion Documento Factura
             MAD:'ModalApproveDocDetalleCtrl',
             MF_NE: 'ModalNotaEntregaFiltroCtrl',
-            MF_PR:'ModalProformaFiltroCtrl'    
+            MF_PR:'ModalProformaFiltroCtrl',
+            MFA: '' //Modal Aprob. Comprobante Ctrl    
         },
         templates:{
             MSD:'AprobDocument/_ModalSelectDocument.cshtml',

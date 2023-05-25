@@ -199,8 +199,10 @@
                     let medidasMapper = medidas.map(item=>({
                         idMedida: item.idMedida,
                         descripcion: item.descripcion,
-                        precioCosto: item.precioCosto
+                        precioCosto: item.precioCosto,
+                        tarifas: JSON.parse(item.tarifas)
                     }))
+                    
 
                     let etiquetasMapper = etiquetas.map(item => ({
                         idEtiqueta: item.idEtiqueta,

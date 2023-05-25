@@ -1,0 +1,238 @@
+@page
+@model Ventas_UI.Areas.AprobacionDocumento.Pages.Index
+@{
+    ViewBag.title = "Reporte Inventario";
+    Layout = "_Layout";
+}
+
+<div ng-controller="aprobacionDocumentoCtrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h5 class="text-themecolor">Aprobación Documento</h5>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+                <button type="button" class="btn btn-info" ng-if="accion.crear" ng-click="askToOpenModalOption()"><i
+                        class="ti-plus"></i> Nuevo</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+
+        <div class="card-body">
+            <div class="row">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
+                    <div class="form-gorup">
+                        <span for="establecimiento">Establecimiento</span>
+                        <select name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab"
+                            class="form-control  border-select" ng-change="getAprobComprobantes()">
+                            <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
+                                {{item.nombreComercial}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
+                    <div class="form-group">
+                        <span for="">Rango de Fechas</span>
+                        <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
+                            end-date="dataSearch.fechaFin"
+                            result-range-date="resultRangeFilter(result)"></date-range-filter>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
+                    <div class="form-group">
+                        <span for="clienteFiltro">Cliente</span>
+                        <input type="text" id="clienteSearchFiltro" autocomplete="off" name="clienteSearchFiltro"
+                            class="form-control border-select" placeholder="Ingrese C.I o Nombre Fiscal"
+                            ng-model="modelTextSearch" typeahead-wait-ms="10" ng-keyup="onKeyupClienteSearchFiltro()"
+                            uib-typeahead="a as a.nombreFiscal for a in clienteSearch($viewValue)"
+                            typeahead-loading="clienteFiltro.loading" typeahead-no-results="clienteFiltro.noResults"
+                            typeahead-template-url="clienteSearchFiltro.html" typeahead-editable="false"
+                            typeahead-on-select="selectedClienteSearchFiltro($item)" onClick="select();" />
+
+                        <script type="text/ng-template" id="clienteSearchFiltro.html">
+                                <div class="autocomplete-suggestion-uib-typeahead">
+                                    <span class="item-title">
+                                        <b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}
+                                    </span>
+                                </div>
+                            </script>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
+                    <button type="button" class="btn btn-info btm-sm mt-4" data-toggle="button" data-more="#sh"
+                        aria-pressed="false" ng-click="onClickBtnMore()">
+                        <span class="text"><i class="ti-plus" aria-hidden="true"></i> Más</span>
+                        <span class="text-active"><i class="ti-minus" aria-hidden="true"></i> Menos</span>
+                    </button>
+                    <button type="button" class="btn btn-success btm-sm mt-4" ng-click="getAprobComprobantes()">
+                        <i class="fas fa-redo"></i> Recargar
+                    </button>
+                </div>
+            </div>
+
+            <div class="row" ng-if="moreSearchOptions">
+
+                <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-xs-12">
+                    <div class="form-group">
+                        <span for="usuario">Usuario</span>
+                        <input type="text" class="form-control border-select" ng-model="nombreCompleto"
+                            ng-keyup="onKeyupUsuarioSearch()"
+                            uib-typeahead="u as u.nombreCompleto for u in usuarioSearch($viewValue)"
+                            typeahead-editable="false" placeholder="Buscar Usuario" autocomplete="off"
+                            typeahead-template-url="usuarioSearchTemplate.html"
+                            typeahead-no-results="usuarioSearch.noResults"
+                            typeahead-on-select="selectedUsuarioSearch($item)">
+
+                        <script type="text/ng-template" id="usuarioSearchTemplate.html">
+                                <div class="autocomplete-suggestion-uib-typeahead">
+                                    <span class="item-title">
+                                        {{match.model.nombreCompleto}}</b>
+                                    </span>
+                                </div>
+                            </script>
+                    </div>
+                </div>
+                <div class="col-xl-3">
+                    <div class="form-group">
+                        <span>Estado:</span>
+                        <select id="estadoDocumentos" class="form-control" ng-model="dataSearch.byEstado"
+                            ng-change="getAprobComprobantes()">
+                            <option value="">Todos</option>
+                            <option ng-value="item.codigo" ng-repeat="item in estadoDocumentos">
+                                {{item.descripcion}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-xl-3">
+                    <div class="form-group">
+                        <span>Buscar</span>
+                        <input type="text" class="form-control border-select" ng-change="searchFilterLocal()"
+                            ng-model="dataSearch.bySearch" placeholder="Ej: 001-002">
+                    </div>
+                </div>
+            </div>
+
+
+
+            <md-table-container style=" max-height: 400px;">
+                <table resize master md-table>
+                    <thead md-trim-column-names fix-head md-head>
+                        <tr md-row>
+                            <th md-column><span>Op</span></th>
+                            <th md-column><span>N°</span></th>
+                            <th md-column><span>Doc. Origen/Destino</span></th>
+                            <th md-column><span>Nro. Doc</span></th>
+                            <th md-column><span>F. Emisión</span></th>
+                            <th md-column><span>Identificación</span></th>
+                            <th md-column><span>Razon Social Comprador</span></th>
+                            <th md-column><span>Total</span></th>
+                            <th md-column><span>Estado</span></th>
+
+                        </tr>
+                    </thead>
+                    <tbody md-body>
+                        <tr md-row ng-repeat="item in aprobComprobantes track by $index" ng-class="item.colorFila">
+                            <td md-cell>
+                                <md-menu>
+                                    <md-button aria-label="Open demo menu" class="md-icon-button"
+                                        ng-click="$mdMenu.open($event)">
+                                        <icon class="mdi mdi-menu"></icon>
+                                    </md-button>
+                                    <md-menu-content class="md-dense">
+                                        <md-menu-item>
+                                            <md-button ng-click="openModalDetalle(item)">
+                                                <span md-menu-align-target><i class="ti-menu"></i> Detalle</span>
+                                            </md-button>
+                                        </md-menu-item>
+
+                                        <md-menu-item ng-if="showBtnEditar(item)">
+                                            <md-button ng-click="openModalEdit(item)">
+                                                <span md-menu-align-target><i class="ti-pencil"></i> Editar</span>
+                                            </md-button>
+                                        </md-menu-item>
+
+
+                                        <md-menu-item ng-if="showBtnDelete(item)">
+                                            <md-button ng-click="askToDelete(item)">
+                                                <span md-menu-align-target><i class="ti-na"></i> Anular</span>
+                                            </md-button>
+                                        </md-menu-item>
+
+                                        <md-menu-item ng-if="showBtnApprove(item)">
+                                            <md-button ng-click="approveDocument(item)">
+                                                <span md-menu-align-target><i class="mdi mdi-file-check"></i>
+                                                    Aprobar</span>
+                                            </md-button>
+                                        </md-menu-item>
+
+
+                                        <md-menu-item ng-if="accion.reporte">
+                                            <md-button ng-click="getReport(item)">
+                                                <span md-menu-align-target><i class=" ti-file"></i> PDF</span>
+                                            </md-button>
+                                        </md-menu-item>
+                                    </md-menu-content>
+                                </md-menu>
+                            </td>
+
+                            <td md-cell>{{$index+1}}</td>
+                            <td md-cell>
+                                <span class="text-info">{{item.docOrigenDesc}}</span></br>
+                                <i class="fas fa-caret-down fa-xs"></i></br>
+                                <span class="text-success">{{item.docDestinoDesc}}</span>
+                            </td>
+                            <td md-cell>{{item.serie}}</td>
+                            <td md-cell>{{item.fechaEmision}}</td>
+                            <td md-cell>{{item.identificacionComprador}}</td>
+                            <td md-cell>{{item.razonSocialComprador}}</td>
+                            <td md-cell>${{item.total}}</td>
+                            <td md-cell>{{item.estado}}</td>
+                        </tr>
+                        <tr ng-show="aprobComprobantes.length==0" class="text-center">
+                            <td colspan="8">
+                                No hay registros en esta tabla :)
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot md-foot fixed-tfoot>
+                        <tr md-row>
+                            <td md-cell colspan="2"><span class="font-weight-bold">{{aprobComprobantes.length}}
+                                    Documentos</span></td>
+                            <td md-cell colspan="4"></td>
+                            <td md-cell colspan="1"><span class="font-weight-bold">Total</span></td>
+                            <td md-cell><span class="font-weight-bold">{{total}}</span></td>
+                            <td md-cell></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </md-table-container>
+        </div>
+    </div>
+
+</div>
+
+
+
+@section Scripts{
+
+    <!--Se usa para gestion de datos adicionales-->
+    <script src="~/js/factElect/directives/factElectDirective.min.js" asp-append-version="true"></script>
+
+    <!--Se usa para listar documentos de nota emtrega-->
+    <script src="~/js/ventas/services/notaEntregaService.min.js" asp-append-version="true"></script>
+    <!--Se usa para listar documentos de proformas-->
+    <script src="~/js/ventas/services/proformaService.min.js" asp-append-version="true"></script>
+
+    <!--Se usa para guardar aprobacion del documento FV-->
+    <script src="~/js/factElect/services/facturaService.min.js" asp-append-version="true"></script>
+
+    <script src="~/js/ventas/services/aprobacionDocService.js" asp-append-version="true"></script>
+
+    <script src="~/js/common/services/gridOptionsService.js" asp-append-version="true"></script>
+
+    <script src="~/js/ventas/controllers/aprobacionDocumentoCtrl.min.js" asp-append-version="true"></script>
+}

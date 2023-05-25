@@ -1,24 +1,23 @@
-
-
 <div class="modal-header">
-    <h5 class="modal-title"><i class=" fas fa-exchange-alt"></i> Aprobación de Doc: {{docOrigen.descripcion}} a {{docDestino.descripcion}}</h5>
+    <h5 class="modal-title"><i class=" fas fa-exchange-alt"></i> Aprobación de Doc: {{docOrigen.descripcion}} a
+        {{docDestino.descripcion}}</h5>
     <button class="close" ng-click="closeModal()">&times;</button>
 </div>
 
-<div class="modal-body">  
-    
+<div class="modal-body">
+
     <!--Tab-->
     <div class="list-group list-group-horizontal" id="step">
         <a href="javascript:void(0)" ng-click="stepUno()" class="list-group-item list-group-item-action active">
             <div>Paso 1 </div>
             <span>Seleccionar Documentos</span>
         </a>
-            <a href="javascript:void(0)" ng-click="stepDos()" class="list-group-item list-group-item-action">
+        <a href="javascript:void(0)" ng-click="stepDos()" class="list-group-item list-group-item-action">
             <div>Paso 2 </div>
             <span>{{docDestino.descripcion}}</span>
         </a>
     </div>
-   
+
 
     <div class="tab-content">
         <div class="tab-pane fade show active" id="stepDocOrigen" role="tabpanel">
@@ -28,8 +27,10 @@
                         <div class="row justify-content-start">
                             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-xs-12">
                                 <div class="form-group">
-                                    <label for="establecimiento">Establecimiento: <span class="text-danger">*</span></label>
-                                    <select class="form-control border-select" ng-model="dataSearch.codEstab" ng-change="askToChangeEstabFilter()">
+                                    <label for="establecimiento">Establecimiento: <span
+                                            class="text-danger">*</span></label>
+                                    <select class="form-control border-select" ng-model="dataSearch.codEstab"
+                                        ng-change="askToChangeEstabFilter()">
                                         <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
                                             {{item.nombreComercial}}
                                         </option>
@@ -37,24 +38,23 @@
                                 </div>
                             </div>
                             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                  <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin" result-range-date="resultDateRange(result)"></date-range-filter>                                           
+                                <div class="form-group">
+                                    <label for="">Rango de fechas:</label>
+                                    <date-range-filter current-date="dataSearch.fechaInicio"
+                                        start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin"
+                                        result-range-date="resultDateRange(result)"></date-range-filter>
+                                </div>
                             </div>
-                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-xs-12">                                
+                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-xs-12">
                                 <div class="form-group">
                                     <label for="">Cliente: <span class="text-danger">*</span></label>
                                     <div class="input-group">
-                                        <input  type="text" 
-                                            id="clienteSearch"
-                                            autocomplete="off"
-                                            name="clienteSearch"
-                                            class="form-control border-select"
-                                            placeholder="Ingrese C.I o Nombre Fiscal"
-                                            ng-model="cliente.nombreComercial"
-                                            typeahead-wait-ms="10"
+                                        <input type="text" id="clienteSearch" autocomplete="off" name="clienteSearch"
+                                            class="form-control border-select" placeholder="Ingrese C.I o Nombre Fiscal"
+                                            ng-model="cliente.nombreComercial" typeahead-wait-ms="10"
                                             ng-keyup="onKeyupClienteSearch()"
                                             uib-typeahead="a as a.nombreComercial for a in clienteSearch($viewValue)"
-                                            typeahead-loading="cliente.loading"
-                                            typeahead-no-results="cliente.noResults"
+                                            typeahead-loading="cliente.loading" typeahead-no-results="cliente.noResults"
                                             typeahead-template-url="clienteSearchTemplate.html"
                                             typeahead-editable="false"
                                             typeahead-on-select="selectedClienteSearch($item)" onClick="select();" />
@@ -67,32 +67,27 @@
                                             </div>
                                         </script>
                                         <div class="input-group-append">
-                                           <md-button class="md-icon-button" ng-click="refresh()" aria-label="Stock"
-                                                    title="Actualizar">
+                                            <md-button class="md-icon-button" ng-click="refresh()" aria-label="Stock"
+                                                title="Actualizar">
                                                 <md-icon md-font-set="md" class="text-info">sync</md-icon>
                                             </md-button>
                                         </div>
-                                    </div>  
+                                    </div>
                                 </div>
-                                                                                                 
-                            </div>                                                                       
+
+                            </div>
                         </div>
                     </form>
-                    <hr>  
-                    
-                    <div ui-grid="gridOptionsSelectedDocs" ng-if="gridOptionsSelectedDocs.data.length>0"                                 
-                        ui-grid-auto-resize  
-                        ui-grid-resize-columns
-                        ui-grid-tree-view                       
-                        ui-grid-pinning 
-                        ui-grid-expandable 
-                        ui-grid-selection 
-                        class="grid">
+                    <hr>
+
+                    <div ui-grid="gridOptionsSelectedDocs" ng-if="gridOptionsSelectedDocs.data.length>0"
+                        ui-grid-auto-resize ui-grid-resize-columns ui-grid-tree-view ui-grid-pinning ui-grid-expandable
+                        ui-grid-selection class="grid">
                     </div>
-                    
+
                     @* <div class="icheck-info">
-                        <input type="checkbox" id="groupByArticle" ng-model="groupByArticle">
-                        <label for="groupByArticle">Agrupar Articulo</label>
+                    <input type="checkbox" id="groupByArticle" ng-model="groupByArticle">
+                    <label for="groupByArticle">Agrupar Articulo</label>
                     </div> *@
                 </div>
             </div>
@@ -107,16 +102,19 @@
                             <div class="form-group">
                                 <label for="establecimientoDestino">Estab.: <span class="text-danger">*</span></label>
                                 <select class="form-control" ng-model="data.codEstab" ng-change="onChangeEstab()">
-                                    <option ng-value="item.codEstab" ng-repeat="item in establecimientos">{{item.nombreComercial}}</option>
+                                    <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
+                                        {{item.nombreComercial}}</option>
                                 </select>
                             </div>
-                        </div>                
+                        </div>
 
                         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                            <div class="form-group">                        
+                            <div class="form-group">
                                 <label>Punto Emisión <span class="text-danger">*</span></label>
-                                <select class="form-control" ng-model="data.idPuntoEmision" ng-change="onChangePuntoEmision()">
-                                    <option ng-value="item.idPuntoEmision" ng-repeat="item in ptosEmision">{{item.ptoEmi}}</option>
+                                <select class="form-control" ng-model="data.idPuntoEmision"
+                                    ng-change="onChangePuntoEmision()">
+                                    <option ng-value="item.idPuntoEmision" ng-repeat="item in ptosEmision">
+                                        {{item.ptoEmi}}</option>
                                 </select>
                             </div>
                         </div>
@@ -124,9 +122,10 @@
                         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
                             <div class="form-group">
                                 <label>Fecha Emisión: <span class="text-danger">*</span> </label>
-                                <input type="date" name="fechaEmision" class="form-control" ng-model="data.fechaEmision">
+                                <input type="date" name="fechaEmision" class="form-control"
+                                    ng-model="data.fechaEmision">
                                 <small class="text-info">{{fechaEmisionEscrita}}</small>
-                            </div>                    
+                            </div>
                         </div>
                     </div>
 
@@ -134,33 +133,33 @@
                         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
                             <div class="form-group">
                                 <label for="">Cliente: <span class="text-danger">*</span></label>
-                                <input type="text" name="" id="" class="form-control" ng-model="cliente.nombreFiscal" disabled>
+                                <input type="text" name="" id="" class="form-control" ng-model="cliente.nombreFiscal"
+                                    disabled>
                             </div>
                         </div>
 
                         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
                             <div class="form-group">
                                 <label for="" class="">Nro. Identificación:</label>
-                                <input type="text" id="" class="form-control" disabled ng-value="cliente.numeroIdentificacion" placeholder="...">
+                                <input type="text" id="" class="form-control" disabled
+                                    ng-value="cliente.numeroIdentificacion" placeholder="...">
                             </div>
                         </div>
 
                         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
                             <div class="form-group">
                                 <label for="address" class="">Dirección:</label>
-                                <input type="text" id="address" class="form-control" disabled ng-model="cliente.direccion">
-                            </div>                    
+                                <input type="text" id="address" class="form-control" disabled
+                                    ng-model="cliente.direccion">
+                            </div>
                         </div>
                     </div>
 
-                    <div ui-grid="gridOptionsDetalle"                                  
-                        ui-grid-auto-resize
-                        ui-grid-resize-columns                                     
-                        ui-grid-pinning                                 
+                    <div ui-grid="gridOptionsDetalle" ui-grid-auto-resize ui-grid-resize-columns ui-grid-pinning
                         class="grid">
                     </div>
 
-                    
+
                     <!--Subtotales-->
                     <div class="row mt-3">
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
@@ -281,12 +280,13 @@
                                     <div class="form-group">
                                         <label>% Descuento</label>
                                         <div class="input-group">
-                                            <input ng-model="data.porcentajeDescuento" disabled  class="form-control" />
+                                            <input ng-model="data.porcentajeDescuento" disabled class="form-control" />
                                             <div class="input-group-append">
-                                                <button type="button" class="btn btn-secondary btn-sm" disabled><i class="fa fa-calculator fa-xs"></i></button>                                            
+                                                <button type="button" class="btn btn-secondary btn-sm" disabled><i
+                                                        class="fa fa-calculator fa-xs"></i></button>
                                             </div>
                                         </div>
-                                        
+
                                     </div>
                                 </div>
 
@@ -294,32 +294,37 @@
                                     <div class="form-group">
                                         <label>Descuento</label>
                                         <div class="input-group">
-                                            <input ng-model="data.totalDescuento" disabled placeholder="0.00" class="form-control" />
+                                            <input ng-model="data.totalDescuento" disabled placeholder="0.00"
+                                                class="form-control" />
                                             <div class="input-group-append">
-                                                <button type="button" class="btn btn-secondary btn-sm" disabled><i class="fa fa-calculator fa-xs"></i></button>
+                                                <button type="button" class="btn btn-secondary btn-sm" disabled><i
+                                                        class="fa fa-calculator fa-xs"></i></button>
                                             </div>
-                                        </div>                                    
+                                        </div>
                                     </div>
                                 </div>
 
                                 <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12 col-xs-12">
                                     <div class="form-group">
                                         <label>Transporte</label>
-                                        <input type="text" ng-model="data.transporte" disabled class="form-control" placeholder="0.00" />
+                                        <input type="text" ng-model="data.transporte" disabled class="form-control"
+                                            placeholder="0.00" />
                                     </div>
                                 </div>
 
                                 <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12 col-xs-12">
                                     <div class="form-group">
                                         <label>Rercargo</label>
-                                        <input type="text" decimal disabled ng-model="data.recargo" class="form-control" placeholder="0.00" />
+                                        <input type="text" decimal disabled ng-model="data.recargo" class="form-control"
+                                            placeholder="0.00" />
                                     </div>
                                 </div>
 
                                 <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-xs-12">
                                     <div class="form-group">
                                         <label>Observacion</label>
-                                        <textarea class="form-control border-select" ng-model="data.observacion" placeholder="..."></textarea>
+                                        <textarea class="form-control border-select" ng-model="data.observacion"
+                                            placeholder="..."></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -365,7 +370,7 @@
                                         </tr>
                                     </tbody>
                                 </table>
-                            </div>                   
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -379,7 +384,7 @@
     <div ng-if="footerActionStepUno">
         <button class="btn btn-info" ng-click="stepDos()"><i class=" fas fa-angle-right"></i> Siguiente</button>
         <button class="btn btn-dark" ng-click="closeModal()">&times; Cerrar</button>
-    </div> 
+    </div>
 
     <div ng-if="footerActionStepDos">
         <div class="icheck-success icheck-inline">

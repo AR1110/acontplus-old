@@ -38,7 +38,8 @@
                         codEstab_Asig: item.codEstab_Asig,
                         codEstab: item.codEstab,
                         predeterminado: item.predeterminado,
-                        nombreComercial: item.nombreComercial,   
+                        nombreComercial: item.nombreComercial,
+                        estab: item.estab,   
                         tarifasImpuestos: JSON.parse(item.tarifasImpuestos)                     
                     }))
 
