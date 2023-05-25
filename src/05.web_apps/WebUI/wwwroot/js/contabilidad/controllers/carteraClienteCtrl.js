@@ -4,9 +4,9 @@
 
     app.controller('carteraClienteCtrl', carteraClienteCtrl);
 
-    carteraClienteCtrl.$inject = ['$scope', 'commonService', 'mainService', 'formulario']
+    carteraClienteCtrl.$inject = ['$scope', 'commonService', 'mainService', 'clienteService', 'formulario']
 
-    function carteraClienteCtrl($scope, commonSvc, mS, fS) {
+    function carteraClienteCtrl($scope, commonSvc, mS, clienteSvc, fS) {
         
         const Toast = Swal.mixin({
             toast: true,
@@ -95,8 +95,7 @@
         }
 
         $scope.selectedClienteSearchFiltro = function(item) {
-            $scope.dataSearch.byCliente =item.idCliente;
-            $scope.getAprobComprobantes();
+            $scope.dataSearch.byCliente =item.idCliente;            
         }
 
         $scope.onClickBtnMore = function() {

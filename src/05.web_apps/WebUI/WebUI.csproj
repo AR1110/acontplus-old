@@ -678,7 +678,6 @@
 		<None Include="wwwroot\js\controllers\ventas\retencionVentaCtrl.js" />
 		<None Include="wwwroot\js\controllers\ventas\retencionVentaCtrl.min.js" />
 		<None Include="wwwroot\js\controllers\ventas\ventaCtrl.js" />
-		<None Include="wwwroot\js\env.js" />
 		<None Include="wwwroot\js\services\formularioService.js" />
 		<None Include="wwwroot\js\services\formularioService.min.js" />
 		<None Include="wwwroot\js\services\tesoreria\pagoService.js" />
