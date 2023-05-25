@@ -104,6 +104,7 @@ function facturaVentaCtrl(
             $scope.facturas = [];
             facturaSvc.getAll($scope.dataSearch).then(response=>{
                 $scope.facturas = response;
+                
                 $scope.cloneFacturas = JSON.parse(JSON.stringify($scope.facturas));
                 $scope.getTotales();
                 hideLoader();
@@ -137,18 +138,19 @@ function facturaVentaCtrl(
 
     $scope.validateOperationPrintAndPayment = (result) => {
         //Verificamos 
-        $scope.isRegister = result.isRegister;
-        $scope.isPrintDocument = result.printerAutomatic;
+        let {isRegister, data} = result;
+        $scope.isRegister = isRegister;
+        $scope.isPrintDocument = data.printerAutomatic;
 
         $scope.parametersPrint = {
             ...result.data,
-            idDocument: result.data.id,
+            idDocument: data.id,
             codigo: 'RFPT',
         }
 
-
-        if (result.payAutomatic) {
-            if (result.data.esContado) {
+console.log(data, 'FACTURA---------------------')
+        if (data.payAutomatic) {
+            if (data.esContado) {
                 $scope.openModalRapido(result)
             } else {
                 $scope.openModalCobroDocumento(result)
@@ -156,7 +158,7 @@ function facturaVentaCtrl(
             return
         }
 
-        if (result.printerAutomatic) {
+        if (data.printerAutomatic) {
             _commonSvc.getPrinter(JSON.stringify($scope.parametersPrint))
         }
 
@@ -549,19 +551,22 @@ function facturaVentaCtrl(
 
 
     $scope.openModalCobroDocumento = async (params) => {
-        let {
-            MODAL_FILE_CTRL,
-            MODAL_COBRO_DOCUMENTO
-        } = _nombreModalConst.cobro;
-        let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_COBRO_DOCUMENTO['controller']];
-        let template = MODAL_COBRO_DOCUMENTO['template'];
+        try {
+            let fileCtrl = nombreModalContabilidad.COBRO.fileCtrl;
+            let ctrl = nombreModalContabilidad.COBRO.controllers['CL'];
+            let template = nombreModalContabilidad.COBRO.templates['CL']; 
+            let controller = (await import(fileCtrl))[ctrl];
 
-        $scope.openModalCobro({
-            controller,
-            template,
-            params,
-            size: 'xl'
-        })
+            $scope.openModalCobro({
+                controller,
+                template,
+                params,
+                size: 'xl',
+             //   windowClass: 'uibModalFullScreen'
+            })
+        } catch (error) {
+            console.log(error)
+        }
     }
 
 
@@ -597,14 +602,17 @@ function facturaVentaCtrl(
         controller,
         template,
         size = 'lg',
-        params
+        params,
+        windowClass
     }) => {
+        console.log(size)
         let $modalRef = _modalSvc.openModalCustom({
             controller,
             template,
             size,
             params,
             keyboard: true,
+            windowClass,
             isRenderRazorPartial: true
         })
 
