@@ -1168,6 +1168,9 @@
 		<Content Update="appsettings.json">
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</Content>
+		<Content Update="Areas\Restaurante\Pages\Index.cshtml">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 		<Content Update="libman.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
@@ -4147,6 +4150,11 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="..\..\00.shared_settings\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Compile Update="Areas\Restaurante\Pages\Index.cshtml.cs">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Compile>
 	</ItemGroup>
 
 </Project>
