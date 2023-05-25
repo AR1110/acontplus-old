@@ -19,7 +19,7 @@ namespace testWebApi
             //    mvcBuilder.AddRazorRuntimeCompilation();
             //}
 
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
             builder.Services.AddCustomJwtAuthentication();
 
