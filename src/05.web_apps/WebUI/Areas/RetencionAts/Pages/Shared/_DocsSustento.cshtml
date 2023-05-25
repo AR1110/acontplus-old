@@ -1,0 +1,264 @@
+﻿<div class="card ">
+    <div class="card-body border border-info rounded">
+        <h5 class="card-title">Documento Sustento</h5>
+        <div class="row">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                <div class="form-group">
+                    <label for="codDocSustento">Documento Sustento:</label>
+                    <select id="codDocSustento" class="form-control" ng-model="docSustento.codDocSustento"
+                        ng-change="selectSutento(docSustento.codDocSustento)">
+                        <option>::seleccione::</option>
+                        <option ng-value="item.codDocSustento" ng-repeat="item in documentos">{{item.codDocSustento}} -
+                            {{item.descripcion}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                <div class="form-group">
+                    <label for="codSustento">Sustento Tributario:</label>
+                    <select id="codSustento" class="form-control" ng-model="docSustento.codSustento"
+                        ng-disabled="sustentosFiltered.length==0">
+                        <option value="0">::seleccione::</option>
+                        <option ng-value="item.codSustento" ng-repeat="item in sustentosFiltered">
+                            {{item.codSustento}} - {{item.descripcion}}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
+                <div class="form-group">
+                    <label for="numDocSustento">N° Doc. Sustento:</label>
+                    <input type="text" class="form-control" id="numDocSustento" onclick="this.select()"
+                        ng-model="docSustento.numDocSustento" maxlength="15">
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-12">
+                <div class="form-group">
+                    <label for="fechaEmisionDocSustento">Fecha Emisión Doc. Sustento:</label>
+                    <input type="date" id="fechaEmisionDocSustento" class="form-control"
+                        ng-model="docSustento.fechaEmisionDocSustento" />
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-12">
+                <div class="form-group">
+                    <label for="fechaRegistroContable">Fecha Registro Contable:</label>
+                    <input type="date" id="fechaRegistroContable" class="form-control"
+                        ng-model="docSustento.fechaRegistroContable" />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
+                <div class="form-group">
+                    <label for="numAutDocSustento">N° Autorización:</label>
+                    <input type="text" name="numAutDocSustento" id="numAutDocSustento" class="form-control"
+                        onclick="this.select()" ng-model="docSustento.numAutDocSustento" maxlength="49" />
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-6">
+                <div class="form-group">
+                    <label for="pagoLocExt">Pago Local Exterior:</label>
+                    <select id="pagoLocExt" class="form-control" ng-model="docSustento.pagoLocExt"
+                        ng-change="enableControls(docSustento.pagoLocExt)" required>
+                        <option>::seleccione::</option>
+                        <option ng-value="item.pagoLocExt" ng-repeat="item in tiposPago">{{item.pagoLocExt}} -
+                            {{item.descripcion}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-6">
+                <div class="form-group">
+                    <label for="tipoRegi">Regimen Fiscal:</label>
+                    <select id="tipoRegi" class="form-control" ng-model="docSustento.tipoRegi"
+                        ng-change="getCountries(docSustento.tipoRegi)" ng-disabled="isPagoResidente">
+                        <option>::seleccione::</option>
+                        <option ng-value="item.tipoRegi" ng-repeat="item in tiposRegimenFE">{{item.tipoRegi}} -
+                            {{item.descripcion}}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+                <div class="form-group">
+                    <label for="paisEfecPago">Pais Efec. Pago:</label>
+                    <select id="paisEfecPago" class="form-control" ng-model="docSustento.paisEfecPago"
+                        ng-disabled="isPagoResidente">
+                        <option>::seleccione::</option>
+                        <option ng-value="item.codigo" ng-repeat="item in countries">{{item.codigo}} -
+                            {{item.descripcion}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+                <div class="form-group">
+                    <label for="aplicConvDobTrib">Convenio Doble Tributación:</label>
+                    <select id="aplicConvDobTrib" class="form-control" ng-model="docSustento.aplicConvDobTrib"
+                        ng-disabled="isPagoResidente">
+                        <option>::seleccione::</option>
+                        <option ng-value="item.codigo" ng-repeat="item in genericAnswer">{{item.codigo}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+                <div class="form-group">
+                    <label for="pagExtSujRetNorLeg">Pago al Exterior Sujeto a Retención:</label>
+                    <select id="pagExtSujRetNorLeg" class="form-control" ng-model="docSustento.pagExtSujRetNorLeg"
+                        ng-disabled="isPagoResidente || docSustento.aplicConvDobTrib=='SI'">
+                        <option>::seleccione::</option>
+                        <option ng-value="item.codigo" ng-repeat="item in genericAnswer">{{item.codigo}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+                <div class="form-group">
+                    <label for="pagoRegFis">Pago Regimen Fiscal:</label>
+                    <select id="pagoRegFis" class="form-control" ng-model="docSustento.pagoRegFis"
+                        ng-disabled="isPagoResidente">
+                        <option>::seleccione::</option>
+                        <option ng-value="item.codigo" ng-repeat="item in genericAnswer">{{item.codigo}}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-12">
+                <div class="table-responsive" ng-if="tempTaxes.length > 0">
+                    <table class="table">
+                        <caption>Impuestos del Documento</caption>
+                        <thead>
+                            <tr>
+                                <th>Impuesto</th>
+                                <th>Porcentaje</th>
+                                <th>Base Imponible</th>
+                                <th>Tarifa</th>
+                                <th>Valor Impuesto</th>
+                                <th>Opc.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="tax in tempTaxes">
+                                <td>{{tax.impuesto}}</td>
+                                <td>{{tax.porcentaje}}</td>
+                                <td>{{tax.baseImponible | currency}}</td>
+                                <td>{{tax.tarifa}}</td>
+                                <td>{{tax.valorImpuesto | currency}}</td>
+                                <td>
+                                    <button class="btn btn-danger btn-sm" ng-click="removeTaxTemp($index)"><i
+                                            class="ti-trash"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
+                <button type="button" id="btnAddDocSust" class="btn  btn-success btn-sm" ng-click="addDocSustento(true)"
+                    title="Click para agregar documento de sustento"><i class="ti-plus"></i> Agregar Doc. de
+                    Sustento</button>
+                <button type="button" id="btnEditDocSust" class="btn  btn-success btn-sm" ng-click="updateDocSustento()"
+                    title="Click para guardar documento de sustento" style="display:none;"><i class="ti-save"></i>
+                    Guardar Doc. de
+                    Sustento</button>
+            </div>
+        </div>
+        <hr>
+        <!-- <div class="row" ng-repeat="item in docsAdded" ng-if="docsAdded.length > 0">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card body">
+                        <h5 class="card-title">{{item.numDocSustento}}</h5>
+
+        @await Html.PartialAsync("_ImpuestosDocSustento")
+
+        @await Html.PartialAsync("_Retenciones")
+
+        @await Html.PartialAsync("_Pagos")
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-warning btn-sm" ng-click="editDocSust($index)" title="Editar datos"><i
+                                class="ti-pencil"></i></button>
+                        <button class="btn btn-danger btn-sm" ng-click="deleteDocSust($index)"
+                            ng-if="item.idRetAtsDocSustento == 0"><i class="ti-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>-->
+        <div class="table-responsive" ng-if="docsAdded.length > 0">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>N° Doc.</th>
+                        <th>Documento</th>
+                        <th>Sustento</th>
+                        <th>Fecha Emisión</th>
+                        <th>Importe Total</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody dir-paginate="item in docsAdded|orderBy:sortKey:reverse|filter:''|itemsPerPage:10">
+                    <tr ng-class-even="'even'" ng-class-odd="'odd'">
+                        <td>
+                            <button type="button" ng-click="expanded = !expanded" class="btn btn-info btn-sm"
+                                title="Mostrar detalles">
+                                <span ng-bind="expanded ? '-' : '+'"></span>
+                            </button>
+                        </td>
+                        <td>{{item.numDocSustento}}</td>
+                        <td>{{item.docSustento}}</td>
+                        <td>{{item.sustento}}</td>
+                        <td>{{item.fechaEmisionDocSustento | date: 'dd/MM/yyyy'}}</td>
+                        <td>{{item.importeTotal | currency}}</td>
+                        <td>
+                            <button type="button" class="btn btn-info btn-sm"
+                                ng-click="docPreview(item)" title="Ver Documento de Sustento"><i
+                                    class="fa fa-eye"></i></button>
+                            <button class="btn btn-warning btn-sm" ng-click="editDocSust($index)"
+                                title="Editar datos"><i class="ti-pencil"></i></button>
+                            <button class="btn btn-danger btn-sm" ng-click="deleteDocSust($index)"
+                                ng-if="item.idRetAtsDocSustento == 0"><i class="ti-trash"></i></button>
+                        </td>
+                    </tr>
+                    <tr class="sub" ng-show="expanded">
+                        <td>
+                        </td>
+                        <td colspan="5">
+                            @await Html.PartialAsync("_ImpuestosDocSustento")
+
+                            @await Html.PartialAsync("_Retenciones")
+
+                            @await Html.PartialAsync("_Pagos")
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <hr>
+
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(function () {
+            $('body').on('click', '.CX span', function () {
+                //When Click On + sign
+                if ($(this).text() == '+') {
+                    $(this).text('-');
+                }
+                else {
+                    $(this).text('+');
+                }
+                $(this).closest('tr') // row of + sign
+                    .next('tr') // next row of + sign
+                    .toggle(); // if show then hide else show
+            });
+        });
+    </script>
+}

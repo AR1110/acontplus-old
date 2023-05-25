@@ -21,7 +21,7 @@
 
 	<ItemGroup Label="Global-Tool Watch">
 		<Watch Include="..\..\08.razor_ui\Recepcion_UI\**\*.cshtml" />
-		<Watch Include="..\..\08.razor_ui\Reports_UI\**\*.cshtml" />
+		<Watch Include="..\..\08.razor_ui\WebUI\**\*.cshtml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -4107,31 +4107,6 @@
 		<ProjectReference Include="..\..\01.common\DataAccess\DataAccess.csproj" />
 		<ProjectReference Include="..\..\02.domain\Domain.Auth\Domain.Auth.csproj" />
 		<ProjectReference Include="..\..\03.business_logic\BL.JwtAuthenticationManger\BL.JwtAuthenticationManger.csproj" />
-		<ProjectReference Include="..\..\08.razor_ui\Common_UI\Common_UI.csproj">
-			<TreatAsUsed>true</TreatAsUsed>
-		</ProjectReference>
-		<ProjectReference Include="..\..\08.razor_ui\Compra_UI\Compra_UI.csproj">
-			<TreatAsUsed>true</TreatAsUsed>
-		</ProjectReference>
-		<ProjectReference Include="..\..\08.razor_ui\Config_UI\Config_UI.csproj">
-			<TreatAsUsed>true</TreatAsUsed>
-		</ProjectReference>
-		<ProjectReference Include="..\..\08.razor_ui\Contabilidad_UI\Contabilidad_UI.csproj">
-			<TreatAsUsed>true</TreatAsUsed>
-		</ProjectReference>
-		<ProjectReference Include="..\..\08.razor_ui\FACT_UI\FACT_UI.csproj">
-			<TreatAsUsed>true</TreatAsUsed>
-		</ProjectReference>
-		<ProjectReference Include="..\..\08.razor_ui\Inventario_UI\Inventario_UI.csproj">
-			<TreatAsUsed>true</TreatAsUsed>
-		</ProjectReference>
-		<ProjectReference Include="..\..\08.razor_ui\Recepcion_UI\Recepcion_UI.csproj">
-			<TreatAsUsed>true</TreatAsUsed>
-		</ProjectReference>
-		<ProjectReference Include="..\..\08.razor_ui\Reports_UI\Reports_UI.csproj">
-			<TreatAsUsed>true</TreatAsUsed>
-		</ProjectReference>
-		<ProjectReference Include="..\..\08.razor_ui\Ventas_UI\Ventas_UI.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

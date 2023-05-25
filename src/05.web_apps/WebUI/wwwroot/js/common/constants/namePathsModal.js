@@ -472,7 +472,7 @@ app.constant('nombreModal', {
         MODAL_FILE_CTRL: 'modal/inventario/modalConsolidacionInventarioCtrl.js' + CHANGE_VERSION(),
         MODAL_NUEVO: {
             controller: 'ModalConsolidacionNuevoCtrl',
-            template: '~/Areas/Consolidacion/Pages/Shared/_ModalNuevo.cshtml'
+            template: '/Consolidacion/Pages/Shared/_ModalNuevo.cshtml'
         },
         MODAL_EDITAR: {
             controller: 'ModalConsolidacionEditarCtrl',
