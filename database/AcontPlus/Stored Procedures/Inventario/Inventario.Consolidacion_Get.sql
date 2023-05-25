@@ -29,7 +29,40 @@ BEGIN
 			SELECT * FROM Familia WHERE idEntidad = @idEntidad
 			RETURN
 		END
-	
+	IF (@tipo = 3)
+		BEGIN
+			
+		SELECT 
+		     idConsolidacionInventario = ci.idConsolidacionInventario
+			,fechaEmision = CAST(ci.fechaEmision AS date)
+			,observacion  = ISNULL(ci.observacion,'Ninguna') 
+			,total        = ci.total
+			,idPuntoEmision = ci.idPuntoEmision
+			,codEstab       = es.codEstab
+		FROM dbo.ConsolidacionInventario ci
+		INNER JOIN dbo.PuntoEmision pe ON pe.idPuntoEmision = ci.idPuntoEmision
+		INNER JOIN Sri.Establecimiento es ON es.codEstab = pe.codEstab
+		WHERE ci.idConsolidacionInventario = @id
+
+		SELECT 
+			 idConsolidacionInventarioDetalle = cid.idConsolidacionInventarioDetalle
+			,idBodega = cid.idBodega
+			,idArticulo = cid.idArticulo
+			,idMedida = cid.idMedida
+			,descripcion = cid.descripcion
+			,cantidad = cid.cantidad
+			,precioCosto = cid.precioCosto
+			,precioActual = cid.precioActual
+			,codigo = a.codigo
+			,codigoTipoIva = ti.codigo
+			,nombreTipoIva = ti.descripcion
+			,stock = a.stock
+		FROM ConsolidacionInventarioDetalle cid 
+		INNER JOIN Articulo a ON a.idArticulo = cid.idArticulo
+		INNER JOIN Medida m ON m.idMedida = a.idMedida
+		INNER JOIN TipoIva ti ON ti.idTipoIva = a.idTipoIva
+		--WHERE cid.idConsolidacionInventario = @id AND cid.estado = 1
+		END
 
 	SELECT
 	     idConsolidacionInventario = ci.idConsolidacionInventario

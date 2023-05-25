@@ -164,6 +164,7 @@ function consolidacionInvCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nomb
             template,
             size,
             params,
+            isRenderRazorPartial : true,
             windowClass:'uibModalFullScreen'
         }).result.then(result=>{
             console.log('test')
