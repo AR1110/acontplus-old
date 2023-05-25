@@ -1509,9 +1509,25 @@
         }
       ],
       "DownstreamPathTemplate": "/api/WhatsappUsage{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "UpstreamPathTemplate": "/api/WhatsappUsage{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 8003
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Consolidacion{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "UpstreamPathTemplate": "/api/Consolidacion{everything}"
     }
   ]
 }
