@@ -1,0 +1,56 @@
+﻿<div id="modalNewManual" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <form ng-submit="post()">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="mdi mdi-list-box"></i> Importación Manual de Documentos</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="form-group">
+                                <label for="claveAcceso">Clave Acceso:</label>
+                                <input type="text" class="form-control" onclick="this.select()" min="49" maxlength="49"
+                                       ng-model="mainform.claveAcceso" ng-blur="checkExistenceXml(mainform.claveAcceso)">
+                            </div>
+                            <div class="form-group">
+                                <button type="button" class="btn btn-info btn-sm" ng-click="addClaveAcceso()">
+                                    <i class="fa fa-plus-circle"></i> Añadir
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive" ng-if="compToImport.length > 0">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Clave Acceso</th>
+                                    <th>Opciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="item in compToImport">
+                                    <td>{{item.claveAcceso}}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-sm"
+                                                ng-click="removeClaveAcceso($index)">
+                                            <i class="ti-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success btn-sm">
+                        <i class="ti-save"></i>
+                        Guardar
+                    </button>
+                    <button type="button" class="btn btn-dark btn-sm" data-dismiss="modal">&times; Cerrar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
