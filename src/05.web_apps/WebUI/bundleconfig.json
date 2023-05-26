@@ -292,5 +292,11 @@
     "inputFiles": [
       "wwwroot/js/controllers/ventas/notaEntregaCtrl.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/inventario/consolidacionInvCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/inventario/consolidacionInvCtrl.js"
+    ]
   }
 ]

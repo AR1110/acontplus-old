@@ -155,122 +155,7 @@ class ModalConsolidacionCtrl extends ModalBaseCtrl {
         return true;
 
     }
-
-
-
-
-
-
 }
-
-
-
-
-export class ModalConsolidacionNuevoCtrl extends ModalConsolidacionCtrl {
-
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'storageService', 'uiGridConstants', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario', 'params'];
-
-    constructor($scope, $timeout, $uibModalInstance, _storageSvc, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreConst, _tS, _fS, _params) {
-        super({
-            $scope,
-            $timeout,
-            $uibModalInstance,
-            uiGridConstants,
-            _mS,
-            _commonSvc,
-            _modalSvc,
-            _nombreConst,
-            _tS,
-            _fS,
-            _params
-        })
-
-        this._storageSvc = _storageSvc;
-
-        let {
-            TIPO_REGISTRO
-        } = _params;
-
-        this.TIPO_REGISTRO = TIPO_REGISTRO;
-
-        this.data.fechaEmision = new Date();
-        this.data.total = 0;
-
-    }
-
-
-    async $onInit() {
-
-        try {
-            showLoader();
-            let resultsDataForm = await this.initiload();
-
-
-            this.establecimientos = resultsDataForm[0];
-
-            if (this.establecimientos.length > 0) {
-
-                let dataEstab = this.establecimientos[0];
-
-                let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
-
-                this.data.codEstab = dataEstab.codEstab;
-                this.cloneCodEstab = dataEstab.codEstab;
-
-                this.puntosEmision = resultsDataFormEstab[0];
-
-                if (this.puntosEmision.length > 0) {
-                    this.data.idPuntoEmision = this.puntosEmision[0].idPuntoEmision;
-                } else {
-
-                }
-
-                this.bodegas = resultsDataFormEstab[1];
-                this.idBodega = this.bodegas.length > 0 ? this.bodegas[0].idBodega : 0;
-                this.cloneIdBodega = this.idBodega;
-
-            } else {
-                this._tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');
-            }
-
-
-            this.decimal = resultsDataForm[1][0];
-
-
-            this.setColumnDefs();
-
-
-            if (Object.keys(this._storageSvc.getObject("consolidacionDetail")).length > 0) {
-                this._storageSvc.restoreInvoiceDetail("consolidacionDetail").then(result => {
-                    if (result.isConfirmed) {
-                        this.gridOptions.data = JSON.parse(result.dataInvoiceDetail[result.value]);
-                        delete result.dataInvoiceDetail[result.value];
-
-                        this._storageSvc.setObject("consolidacionDetail", result.dataInvoiceDetail)
-                    }
-
-                })
-            }
-
-            this.$scope.$apply();
-
-        } catch (error) {
-
-            console.log(error)
-
-        } finally {
-
-            hideLoader();
-        }
-    }
-
-
-
-}
-
-
-
-
 
 export class ModalConsolidacionImportacionCtrl extends ModalBaseCtrl {
     static $inject = ['$scope', '$timeout', '$uibModalInstance', 'uiGridConstants', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario', 'params'];
@@ -537,22 +422,12 @@ export class ModalConsolidacionImportacionCtrl extends ModalBaseCtrl {
                     this.$onInit();
                 }
             })
-
-
         } catch (error) {
             console.trace(error)
         }
-
-
-
-
     }
 
 }
-
-
-
-
 export class ModalConsolidacionEditarCtrl extends ModalConsolidacionCtrl {
 
     static $inject = ['$scope', '$timeout', '$uibModalInstance', 'uiGridConstants', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario', 'params'];
@@ -636,8 +511,6 @@ export class ModalConsolidacionEditarCtrl extends ModalConsolidacionCtrl {
         }
     }
 
-
-
     async onSave() {
 
         try {
@@ -697,9 +570,6 @@ export class ModalConsolidacionEditarCtrl extends ModalConsolidacionCtrl {
             hideLoader();
         }
     }
-
-
-
 }
 
 
@@ -737,9 +607,6 @@ export class ModalConsolidacionDetalleCtrl extends ModalConsolidacionCtrl {
         this.TIPO_REGISTRO = TIPO_REGISTRO;
         this.data = dataDocumento;
         this.detalleDocumento = detalleDocumento;
-
-
-
     }
 
 
@@ -786,35 +653,5 @@ export class ModalConsolidacionDetalleCtrl extends ModalConsolidacionCtrl {
 
             hideLoader();
         }
-    }
-}
-
-
-
-
-export class ModalConsolidacionFiltroCtrl extends ModalBaseCtrl {
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'toastService', 'formulario', 'params']
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _tS, _fS, _params) {
-        super({
-            $scope,
-            $timeout,
-            $uibModalInstance,
-            _mS,
-            _commonSvc,
-            _tS,
-            _fS,
-            _params
-        })
-
-    }
-
-
-    $onInit() {
-        console.log(this)
-    }
-
-
-    closeModal() {
-        this.$uibModalInstance.close()
     }
 }
