@@ -6,8 +6,12 @@ class CobroService {
     constructor(tS, mS){
         this.tS = tS;
         this.mS = mS;
-        this.cobroDetalle = [];
+        this.cobrosDetalle = [];
         this.historialCobros = []
+        this.valorAbono = 0;
+
+        this.esAbonoPosfechado = false;
+        this.indexDatoCobro = 0;
 
         this.url = 'Comprobante/'
     }
@@ -110,168 +114,128 @@ class CobroService {
     }
 
 
-    // set setValorAbono(valorAbono){
-    //     this.valorAbono = valorAbono;
-    // }
-
-    // get valorAbono(){
-    //     return this.valorAbono;
-    // }
-
-    // agregarFormaCobro(secuencial, isPosFechado){
+//     /**
+//      * 
+//      * @param {number} secuencial 
+//      * @param {boolean} isPosFechado 
+//      * @param {Array} selectedDocumentos [{ cuotas: []}]
+//      * @returns 
+//      */
+//     agregarFormaCobro(secuencial, isPosFechado, selectedDocumentos){
         
-    //     let valorAbono = 0;
+//         let valorAbono = 0;
         
-    //     for (let i = 0; i < this.selectedDocumentos.length; i++) {
-            
-    //         for (let val of this.selectedDocumentos[i].cuotas) {
+//         for(let selectedItem of selectedDocumentos){
+//             for (let dataCuota of selectedItem.cuotas) {
+//                 valorAbono = this.valorAbono; //valor que se Ingresa manualmente 
 
-    //             valorAbono = ModalCobroCtrl.getValorAbono //Recuperamos el valor del Pago   
-               
-    //             if (valorAbono === 0) return
+//                 if (valorAbono === 0) return
                 
-    //             if ((val.cxc.cuota === val.saldo) && (val.abono === 0 || val.abonoPosfechado === 0)) {
+//                 if ((dataCuota.cuota === dataCuota.saldo) && (dataCuota.abono === 0 || val.abonoPosfechado === 0)) {
                     
-    //                 this.ningunAbono(val, valorAbono, secuencial, isPosFechado);
+//                     this.ningunAbono(dataCuota, valorAbono, secuencial, isPosFechado);
 
-    //             } else if (val.cxc.cuota !== val.saldo && val.saldo > 0) {
+//                 } else if (dataCuota.cuota !== dataCuota.saldo && dataCuota.saldo > 0) {
 
-    //                 this.tieneAbono(val, valorAbono, secuencial, isPosFechado);
+//                     this.tieneAbono(dataCuota, valorAbono, secuencial, isPosFechado);
 
-    //             }
+//                 }
 
-    //             val.cxc.cuota        = this._fS.roundNumber(val.cxc.cuota, this.NUM_MAX_ROUND);
-    //             val.abono            = this._fS.roundNumber(val.abono, this.NUM_MAX_ROUND);
-    //             val.abonoPosfechado  = this._fS.roundNumber(val.abonoPosfechado, this.NUM_MAX_ROUND);
-    //             val.saldo            = this.verificarEstadoSaldo(val) //Verificamos el saldo de la Cuota 
-    //             val.estadoFinanciero = this.verificarEstadoPago(val);
-    //             val.cuotaAfectado    = true;
-    //         }
-    //     }
-    // }
-
-    /**
-     * 
-     * @param {number} secuencial 
-     * @param {boolean} isPosFechado 
-     * @param {Array} selectedDocumentos [{ cuotas: []}]
-     * @returns 
-     */
-    agregarFormaCobro(secuencial, isPosFechado, selectedDocumentos){
-        
-        let valorAbono = 0;
-        
-        for(let selectedItem of selectedDocumentos){
-            for (let dataCuota of selectedItem.cuotas) {
-                valorAbono = this.valorAbono; //valor que se Ingresa manualmente 
-
-                if (valorAbono === 0) return
-                
-                if ((dataCuota.cuota === dataCuota.saldo) && (dataCuota.abono === 0 || val.abonoPosfechado === 0)) {
-                    
-                    this.ningunAbono(dataCuota, valorAbono, secuencial, isPosFechado);
-
-                } else if (dataCuota.cuota !== dataCuota.saldo && dataCuota.saldo > 0) {
-
-                    this.tieneAbono(dataCuota, valorAbono, secuencial, isPosFechado);
-
-                }
-
-                // val.cxc.cuota        = this._fS.roundNumber(val.cxc.cuota, this.NUM_MAX_ROUND);
-                // val.abono            = this._fS.roundNumber(val.abono, this.NUM_MAX_ROUND);
-                // val.abonoPosfechado  = this._fS.roundNumber(val.abonoPosfechado, this.NUM_MAX_ROUND);
-                // val.saldo            = this.verificarEstadoSaldo(val) //Verificamos el saldo de la Cuota 
-                // val.estadoFinanciero = this.verificarEstadoPago(val);
-                // val.cuotaAfectado    = true;
-            }
-        }               
-    }
+//                 // val.cxc.cuota        = this._fS.roundNumber(val.cxc.cuota, this.NUM_MAX_ROUND);
+//                 // val.abono            = this._fS.roundNumber(val.abono, this.NUM_MAX_ROUND);
+//                 // val.abonoPosfechado  = this._fS.roundNumber(val.abonoPosfechado, this.NUM_MAX_ROUND);
+//                 // val.saldo            = this.verificarEstadoSaldo(val) //Verificamos el saldo de la Cuota 
+//                 // val.estadoFinanciero = this.verificarEstadoPago(val);
+//                 // val.cuotaAfectado    = true;
+//             }
+//         }               
+//     }
 
     
-//     //Si la cuota no tiene ningun abono 
-    ningunAbono(val, valorAbono, secuencial, isPosFechado) {
+// //     //Si la cuota no tiene ningun abono 
+//     ningunAbono(val, valorAbono, secuencial, isPosFechado) {
 
-        if (val.saldo >= valorAbono) {
+//         if (val.saldo >= valorAbono) {
 
-            val.abono           = isPosFechado ? 0 : valorAbono;
-            val.abonoPosfechado = isPosFechado ? valorAbono : 0;
-            val.saldo           = val.saldo - valorAbono;
+//             val.abono           = isPosFechado ? 0 : valorAbono;
+//             val.abonoPosfechado = isPosFechado ? valorAbono : 0;
+//             val.saldo           = val.saldo - valorAbono;
 
-            this.setValorAbono = 0; //Set valor Abono en 0
+//             this.setValorAbono = 0; //Set valor Abono en 0
 
-            this.setCobroCuota(val, valorAbono, secuencial, isPosFechado);
+//             this.setCobroCuota(val, valorAbono, secuencial, isPosFechado);
 
-        } else if (val.saldo <= valorAbono) {
+//         } else if (val.saldo <= valorAbono) {
 
-            val.abono = isPosFechado ? 0 : val.cuota;
-            val.abonoPosfechado = isPosFechado ? val.cuota : 0;
-            val.saldo = valorAbono -= val.saldo;
+//             val.abono = isPosFechado ? 0 : val.cuota;
+//             val.abonoPosfechado = isPosFechado ? val.cuota : 0;
+//             val.saldo = valorAbono -= val.saldo;
 
-            this.setValorAbono = valorAbono; //Set valor Abono restante
-            this.setCobroCuota(val, val.cuota, secuencial, isPosFechado);
-        }
-    }
+//             this.setValorAbono = valorAbono; //Set valor Abono restante
+//             this.setCobroCuota(val, val.cuota, secuencial, isPosFechado);
+//         }
+//     }
 
 
 
-    tieneAbono(val, valorAbono, secuencial, isPosFechado) {
-        let resultAbono = 0;
+//     tieneAbono(val, valorAbono, secuencial, isPosFechado) {
+//         let resultAbono = 0;
 
-        //si el valor abono es menor al saldo 
-        if (val.saldo >= valorAbono) {
-            if (isPosFechado) {
-                val.abonoPosfechado = valorAbono + val.abonoPosfechado;
-            } else {
-                val.abono = valorAbono + val.abono;
-            }
-            val.saldo = val.saldo - valorAbono;
+//         //si el valor abono es menor al saldo 
+//         if (val.saldo >= valorAbono) {
+//             if (isPosFechado) {
+//                 val.abonoPosfechado = valorAbono + val.abonoPosfechado;
+//             } else {
+//                 val.abono = valorAbono + val.abono;
+//             }
+//             val.saldo = val.saldo - valorAbono;
 
-            this.setValorAbono = 0; //Set valor Abono en 0
-            this.setCobroCuota(val, valorAbono, secuencial, isPosFechado);
+//             this.setValorAbono = 0; //Set valor Abono en 0
+//             this.setCobroCuota(val, valorAbono, secuencial, isPosFechado);
 
-        } else if (val.saldo <= valorAbono) { //si el valor abono es mayor al saldo 
-            if (isPosFechado) {
-                val.abonoPosfechado = val.abonoPosfechado + val.saldo;
-            } else {
-                val.abono = val.abono + val.saldo;
-            }
+//         } else if (val.saldo <= valorAbono) { //si el valor abono es mayor al saldo 
+//             if (isPosFechado) {
+//                 val.abonoPosfechado = val.abonoPosfechado + val.saldo;
+//             } else {
+//                 val.abono = val.abono + val.saldo;
+//             }
 
-            resultAbono = valorAbono -= val.saldo;
-            valorAbono = resultAbono; // redondear mas adelante 
+//             resultAbono = valorAbono -= val.saldo;
+//             valorAbono = resultAbono; // redondear mas adelante 
            
-            this.setValorAbono = valorAbono //Set valor Abono en 0
-            this.setCobroCuota(val, val.saldo, secuencial, isPosFechado);
-        }
-    }
+//             this.setValorAbono = valorAbono //Set valor Abono en 0
+//             this.setCobroCuota(val, val.saldo, secuencial, isPosFechado);
+//         }
+//     }
 
 
-    setCobroCuota(val, valor, secuencial, isPosfechado) {            
+//     setCobroCuota(val, valor, secuencial, isPosfechado) {            
         
-        if (val.cuota !== 0) {
-            this.cobroDetalle.push({
-                idDocumento: val.idDocumento,
-                idTipoDocumento: val.idTipoDocumento,
-                idCuotaXCobrar: val.idCuotaXCobrar,
-                abono: valor,            
-               // cuota: this._fS.roundNumber(val.cxc.cuota, this.NUM_MAX_ROUND),
-                saldo: this.verificarEstadoSaldo(val),
-                isPosfechado,
-                secuencial
-            });
-        }
-    }
+//         if (val.cuota !== 0) {
+//             this.cobroDetalle.push({
+//                 idDocumento: val.idDocumento,
+//                 idTipoDocumento: val.idTipoDocumento,
+//                 idCuotaXCobrar: val.idCuotaXCobrar,
+//                 abono: valor,            
+//                // cuota: this._fS.roundNumber(val.cxc.cuota, this.NUM_MAX_ROUND),
+//                 saldo: this.verificarEstadoSaldo(val),
+//                 isPosfechado,
+//                 secuencial
+//             });
+//         }
+//     }
 
         
-    verificarEstadoSaldo(val) {
+//     verificarEstadoSaldo(val) {
         
-        let total = val.abono + val.abonoPosfechado;
+//         let total = val.abono + val.abonoPosfechado;
 
-        if(total === val.cuota){
-            return 0;
-        }
+//         if(total === val.cuota){
+//             return 0;
+//         }
 
-        return  total;
-    }
+//         return  total;
+//     }
 
     /**
      * 
@@ -290,6 +254,157 @@ class CobroService {
             }else break;
         }
     }
+
+
+    //--------------
+    addFormaCobro(){
+                   
+        for(let group of this.selectedDocumentos){
+             
+            this.group = group;
+         
+            for(let item of group.cuotas){
+                
+                item.abonoPosfechado = 0;
+                
+                if(typeof this.valorAbono !=='number' || this.valorAbonoFormaPago===0) return;
+
+                //Si la cuota no tiene ningún abono
+                if((item.cuota ===item.saldo)  && (item.abono === 0 || item.abonoPosfechado === 0)){
+                   
+                    this.cuotaSinAbono(item)
+
+                } else if(item.cuota !== item.saldo && item.saldo > 0) {
+
+                    this.cuotaConAbono(item)
+                }
+              
+
+                item.cuota = this.fS.roundNumber(item.cuota, 5);
+                item.abono = this.fS.roundNumber(item.abono, 5);
+                item.abonoPosfechado = this.fS.roundNumber(item.abonoPosfechado, 5);
+                item.saldo = this.getValorSaldo(item) //Verificamos el saldo de la Cuota 
+                item.descripcion = this.getEstadoCuota(item);
+
+                item.esCuotaAfectada = true; //
+            }
+        }
+    }
+
+
+     /**
+         * 
+         * @param {object} item 
+         */
+    cuotaSinAbono(item){
+
+        if(item.saldo >= this.valorAbono){
+
+            //Si el Abono pago no es Posfechado
+            item.abono = this.esAbonoPosfechado ? 0: this.valorAbono;
+
+            //Si el abono pago es posfechado
+            item.abonoPosfechado =  this.esAbonoPosfechado ? this.valorAbono : 0;
+            item.saldo = item.saldo - this.valorAbono;
+
+            this.addCobroDetalle(item, this.valorAbono)
+            this.valorAbono = 0;
+
+        }else if(item.saldo <= this.valorAbono) {
+
+            //Si el Abono pago no es Posfechado
+            item.abono = this.esAbonoPosfechado ? 0 : item.cuota;
+            
+            //Si el abono pago es posfechado
+            item.abonoPosfechado = this.esAbonoPosfechado ? item.cuota : 0; 
+
+            item.saldo = this.valorAbono -= item.saldo;
+
+            this.addCobroDetalle(item, item.cuota)
+        }
+
+    }
+
+     /**
+     * 
+     * @param {object} item 
+     */
+    cuotaConAbono(item){
+
+        if (item.saldo >= this.valorAbono) {
+            
+            if (this.esAbonoPosfechado) {
+                item.abonoPosfechado = this.valorAbono + item.abonoPosfechado;
+            } else {
+                item.abono = this.valorAbono + item.abono;
+            }
+
+            item.saldo = item.saldo - this.valorAbono;
+            this.addCobroDetalle(item, this.valorAbono);
+            this.valorAbono = 0;
+    
+           
+        } else if (item.saldo <= this.valorAbono) {
+           
+            if (this.esAbonoPosfechado) {
+                item.abonoPosfechado = item.abonoPosfechado + item.saldo;
+            } else {
+                item.abono = item.abono + item.saldo;
+            }
+            
+            let resultValorAbono = this.valorAbono -= item.saldo;
+            this.valorAbono = this.fS.roundNumber(resultValorAbono, 5);
+            
+            this.addCobroDetalle(item, item.saldo);
+        }
+    }
+
+
+    /**
+     * 
+     * @param {object} item 
+     * @param {number} abono 
+     * @returns void
+     */
+    addCobroDetalle(item, abono){
+        if(item.cuota==0) return;
+
+        this.cobrosDetalle.push({
+            idDocumento: this.group.idDocumento, //Cambia mas adelante por idCuentaPorCobrar
+            idTipoDocumento: this.group.idTipoDocumento, //Cambia mas adelante por idCuentaPorCobrar
+            idCuotaXCobrar: item.idCuotaXCobrar,
+            abono: this.fS.roundNumber(abono, 5),
+            cuota: this.fS.roundNumber(item.cuota, 5),
+         //   saldo: this.getValorSaldo(item),
+            secuencial: this.indexDatoCobro
+        })
+
+    }
+
+    /**
+     * 
+     * @param {object} item item cuota  
+     * @returns number
+     */
+    getValorSaldo(item) {
+        let total = item.abono + item.abonoPosfechado;
+        return this.fS.roundNumber(total, 5) === this.fS.roundNumber(item.cuota, 5) ? 0 : this.fS.roundNumber(item.saldo, 5);
+    }
+
+
+/**
+     * 
+     * @param {object} item  cuota
+     * @returns {string} estado 
+     */
+    getEstadoCuota(item) {
+        let estado = '';
+        if (item.cuota === (item.abono + item.abonoPosfechado)) estado = 'COBRADA'
+        if (item.saldo > 0) estado = "PENDIENTE PARCIAL";
+        if (item.cuota === item.saldo) estado = "PENDIENTE";
+        return estado
+    }
+
 
     save(data){
         return this.mS.getData('post', this.url + 'Insert', {data : data}, true)
@@ -582,6 +697,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, modalSvc, 
     $scope.data.totalSaldo = 0
     $scope.data.valorCambio = 0; 
 
+    $scope.indexDatoCobro = 0;
 
     $scope.datosCobro = [];        
     $scope.cobrosDetalle = [];
@@ -639,6 +755,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, modalSvc, 
                 $scope.selectedDocumentos =     JSON.parse(JSON.stringify(selectedDocumentos));        
                 $scope.cloneSelectedDocumentos = JSON.parse(JSON.stringify($scope.selectedDocumentos));
             
+                console.log($scope.selectedDocumentos)
 
                 //Comprobante 
                 $scope.comprobante = mainDataRepository[6][0];
@@ -703,20 +820,60 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, modalSvc, 
             let template = nombreModalContabilidad.COBRO.templates['MFC']; 
             let controller = (await import(fileCtrl))[ctrl];
 
-            modalSvc.openModalCustom({            
+            let modalRef = modalSvc.openModalCustom({            
                 controller,
                 template,
                 size:'lg',
                 params: {
                     dataFormaCobro,
-                    cobro: $scope.cobro
+                   comprobante: $scope.comprobante
                 },
                 isRenderRazorPartial: true
+            })
+
+            modalRef.result.then(result=>{
+                if(typeof result==='object') {
+                    try {
+                        let {isPosFechado, valorAbono} = result;
+                        cobroSvc.indexDatoCobro    = $scope.datosCobro.length + 1;
+                        cobroSvc.esAbonoPosfechado   = isPosFechado;
+                        cobroSvc.valorAbono = valorAbono;
+                        
+                       
+                        
+                        //--------agregando abono ---
+                        cobroSvc.addFormaCobro();
+
+                        $scope.cobrosDetalle = cobroSvc.cobrosDetalle;
+
+                        let abonoCuota  = $scope.cobrosDetalle.filter(item=>item.secuencial===cobroSvc.indexDatoCobro)
+                                                            .reduce((prev, curr) => prev + curr.abono, 0)
+                        $scope.addDatosPago(result, abonoCuota);
+                    
+                        $scope.calculoTotales();
+                        fS.sweetAlert('success', 'Agregado Correctamente', '', 1000);
+                    } catch (error) {
+                        Swal.fire({
+                            icon: 'error',
+                            html:`<small>Algo salio mal: ${error}</small>`
+                        })
+                        console.log(error);
+                    }
+                }
             })
             
         } catch (error) {
             console.log(error)
         }
+    }
+
+     //-----------------------------------Datos Pago---------------------
+     $scope.addDatosPago = function(obj, abonoCuota)  {
+        $scope.datosPago.push({ 
+            ...obj,
+            abonoCuota,
+            secuencial: $scope.indexDatoPago
+        })
     }
 
     $scope.closeModal = function(){
