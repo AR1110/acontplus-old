@@ -144,11 +144,11 @@ function facturaVentaCtrl(
 
         $scope.parametersPrint = {
             ...result.data,
-            idDocument: data.id,
+            idDocument: data.idDocumento,
             codigo: 'RFPT',
         }
 
-console.log(data, 'FACTURA---------------------')
+ 
         if (data.payAutomatic) {
             if (data.esContado) {
                 $scope.openModalRapido(result)
@@ -529,15 +529,8 @@ console.log(data, 'FACTURA---------------------')
         let params = {
             data: {
                 ...item,
-                id: item.idFactura,
-                codEstab: item.codEstab,
-                nroFactura: item.nroFactura,
-                esContado: item.tipo,
-                razonSocialComprador: item.nombreFiscal,
-                identificacionComprador: item.nroIdentificacion,
-                nroDocumento: item.nroFactura,
-            },
-            TIPO_DOC: TIPO_DOC_FV
+                idDocumento: item.idDocumento,
+            }
         }
 
         if (params.data.esContado) {
@@ -754,7 +747,7 @@ console.log(data, 'FACTURA---------------------')
 
     $scope.print = function (item) {
         let parameters = {
-            idDocument: item.idFactura,
+            idDocument: item.idDocumento,
             idTipoDocumento: item.idTipoDocumento,
             codEstab: item.codEstab,
             codDoc: TIPO_DOC_FV.codigo,

@@ -1,8 +1,18 @@
 app.controller('cobroCtrl', cobroCtrl);
 
-cobroCtrl.$inject = ['$scope', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'decodeToken']
+cobroCtrl.$inject = [
+    '$scope', 
+    'mainService', 
+    'commonService', 
+    'modalService', 
+    'nombreModal',
+    'nombreModalContabilidad' ,
+    'formulario', 
+    'toastService', 
+    'decodeToken'
+]
 
-function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form, _tS, decodeToken) {
+function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, nombreModalContabilidad, _form, _tS, decodeToken) {
 
     // let accion = JSON.parse(localStorage.getItem("accion"));  
     // if(accion===null){
@@ -26,6 +36,28 @@ function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form,
         pageIndex: 1,
         pageSize: 1000
     }
+
+    
+    $scope.openModalCobroLote = async function() {
+        try {
+            let fileCtrl = nombreModalContabilidad.COBRO.fileCtrl;
+            let ctrl = nombreModalContabilidad.COBRO.controllers['CL'];
+            let template = nombreModalContabilidad.COBRO.templates['CL']; 
+            let controller = (await import(fileCtrl))[ctrl];
+
+            let modalRef = _modalSvc.openModalCustom({
+                controller,
+                template,
+                params: {
+                },
+                size:'xl',
+                isRenderRazorPartial: true
+            })           
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
 
 
 
@@ -66,26 +98,6 @@ function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form,
 
 
 
-
-    $scope.openModalCobroLote = async () => {
-
-        let {
-            MODAL_FILE_CTRL,
-            MODAL_COBRO_LOTE
-        } = _nombreModalConst.cobro;
-        let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_COBRO_LOTE['controller']];
-        let template = MODAL_COBRO_LOTE['template'];
-
-        let params = {
-            TIPO_REGISTRO: 'NUEVO'
-        }
-
-        $scope.openModalParam({
-            controller,
-            template,
-            params
-        })
-    }
 
 
 

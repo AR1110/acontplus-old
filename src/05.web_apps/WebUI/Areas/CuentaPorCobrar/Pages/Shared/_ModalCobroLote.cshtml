@@ -13,7 +13,7 @@
 <form autocomplete="off">
     <div class="modal-header">
         <h5 class="modal-title">Nuevo Cobro</h5>
-        <button class="close" ng-click="$ctrl.closeModal()">&times;</button>
+        <button class="close" ng-click="closeModal()">&times;</button>
     </div>
     <div class="modal-body">
         <!--Tab-->
@@ -22,7 +22,7 @@
                 <div>Paso 1 </div>
                 <span>Seleccionar Documentos</span>
             </a>
-            <a href="javascript:void(0)" ng-click="$ctrl.paymentStepDos()" class="list-group-item list-group-item-action">
+            <a href="javascript:void(0)" ng-click="stepCuotaPaymentLote()" class="list-group-item list-group-item-action">
                 <div>Paso 2 </div>
                 <span>Cuotas</span>
             </a>
@@ -35,8 +35,8 @@
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
                         <div class="form-group">
                             <label for="establecimiento">Estab.: <span class="text-danger">*</span></label>
-                            <select name="establecimiento" id="establecimiento" class="form-control border-select" ng-model="$ctrl.data.codEstab" ng-change="$ctrl.onChangeEstablecimiento()">
-                                <option ng-value="item.codEstab" ng-repeat="item in $ctrl.establecimientos">
+                            <select name="establecimiento" id="establecimiento" class="form-control border-select" ng-model="dataSearch.codEstab" ng-change="onChangeEstablecimiento()">
+                                <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
                                     {{item.nombreComercial}}
                                 </option>
                             </select>
@@ -44,25 +44,49 @@
                     </div>
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
                         <div class="form-group">
-                            <label for="cliente">Cliente: <span class="text-danger">*</span></label>
+                            <label for="">Cliente: <span class="text-danger">*</span></label>
                             <div class="input-group">
-                                @await Html.PartialAsync("~/Views/Cliente/_UibModalClienteSearchFilter.cshtml")
+                                <input type="text" id="clienteSearch" autocomplete="off" name="clienteSearch"
+                                    class="form-control border-select" placeholder="Ingrese C.I o Nombre Fiscal"
+                                    ng-model="modelTextSearch" typeahead-wait-ms="10"
+                                    ng-keyup="onKeyupClienteSearch()"
+                                    uib-typeahead="a as a.nombreComercial for a in clienteSearch($viewValue)"
+                                    typeahead-loading="cliente.loading" 
+                                    typeahead-no-results="cliente.noResults"
+                                    typeahead-template-url="clienteSearchTemplate.html"
+                                    typeahead-editable="false"
+                                    typeahead-on-select="selectedClienteSearch($item)" onClick="select();" />
+
+                                <script type="text/ng-template" id="clienteSearchTemplate.html">
+                                    <div class="autocomplete-suggestion-uib-typeahead">
+                                        <span class="item-title">
+                                            <b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}
+                                        </span>
+                                    </div>
+                                </script>
                                 <div class="input-group-append">
-                                    <button type="button" class="btn btn-outline-secondary btn-sm" ng-click="$ctrl.getTipoDocumentos()">
-                                        <i class="fas fa-redo fa-xs"></i>
-                                    </button>
+                                    <md-button class="md-icon-button" ng-click="refreshDocs()" aria-label="Stock"
+                                        title="Actualizar">
+                                        <md-icon md-font-set="md" class="text-info">sync</md-icon>
+                                    </md-button>
                                 </div>
                             </div>
-                            <span class="ml-5" ng-if="$ctrl.clienteFiltro.loading"> <i class="fas fa-sync-alt fa-xs"></i> Loading...</span>
-                            <small class="text-danger ml-5" ng-if="$ctrl.clienteFiltro.noResults">No se encontraron resultados</small>
                         </div>
                     </div>
                 </div>
                
 
-                <md-table-container style=" max-height: 400px;" ng-show="$ctrl.tipoDocumentos.length>0">
-                    <table md-table md-row-select="$ctrl.options.rowSelection" multiple="{{$ctrl.options.multiSelect}}" ng-model="$ctrl.selectedDocumentos">
+                <md-table-container style=" max-height: 400px;" ng-show="tipoDocumentos.length>0">
+                    <table md-table md-row-select="options.rowSelection" multiple="{{options.multiSelect}}" ng-model="selectedDocumentos">
                         <thead md-head>
+                            <tr class="border-bottom">
+                                <th md-column colspan="3"></span></th>
+                                <th md-column><i>Total:</span></th>
+                                <th md-column md-numeric><i>{{data.importeTotal}}</span></th>
+                                <th md-column md-numeric><i>{{data.totalAbonoAnterior}}</span></th>
+                                <th md-column md-numeric><i>{{data.totalSaldo}}</span></th>
+                                <th md-column md-numeric><span></span></th>
+                            </tr>
                             <tr md-row>
                                 @*<th md-column><span>N°</span></th>*@
                                 <th md-column><span>N°. Doc.</span></th>
@@ -79,19 +103,20 @@
                         <tbody md-body id="body-cobro">
                             <tr style="cursor: pointer;"
                                 md-row md-select="item"
-                                md-on-select="$ctrl.getCuotaByTypeDocument"
+                                md-on-select="onSelectDoc"
+                                md-on-deselect="onDesSelectDoc"
                                 md-auto-select="true"
                                 ng-disabled="item.hasEntrada"
-                                ng-repeat="item in $ctrl.tipoDocumentos ">
+                                ng-repeat="item in tipoDocumentos ">
                                 @*<td md-cell>{{$index+1}}</td>*@
-                                <td md-cell>{{item.nroDocumento}}</td>
-                                <td md-cell>{{item.tipoDocumento}}</td>
+                                <td md-cell>{{item.serieComprobante}}</td>
+                                <td md-cell>{{item.tipoDoc}}</td>
                                 <td md-cell>{{item.fechaEmision}}</td>
                                 <td md-cell>{{item.fechaVencimiento}}</td>
-                                <td md-cell>${{item.total}}</td>
+                                <td md-cell>${{item.importeTotal}}</td>
                                 <td md-cell>${{item.abono}}</td>
                                 <td md-cell>${{item.saldo}}</td>
-                                <td md-cell ng-style="{background:item.codigoColor, color:'white '}">{{item.estadoDoc}}</td>
+                                <td md-cell>{{item.estado}}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -154,7 +179,7 @@
                                         </tr>
                                         <tr md-row ng-repeat-end ng-repeat="cuota in group.cuotas" ng-show="group.display">
                                             <td md-cell>
-                                                <button class="btn btn-secondary btn-xs" ng-if="cuota.esCuotaAfectada" ng-click="showPagoDetalle(cuota)">
+                                                <button class="btn btn-secondary btn-xs" ng-if="cuota.esCuotaAfectada" ng-click="showCobroDetalle(cuota)">
                                                     <i class="ti-eye"></i>
                                                 </button>
                                             </td>
@@ -189,7 +214,7 @@
                                         </tr>
                                     </thead>
                                     <tbody md-body>
-                                        <tr md-row ng-repeat-start="item in datosPago">
+                                        <tr md-row ng-repeat-start="item in datosCobro">
                                             <td md-cell>
                                                 <button class="btn btn-danger btn-xs" ng-click="askToDeleteDatoPago(item)">
                                                     <i class="mdi mdi-delete"></i>
@@ -202,7 +227,7 @@
                                             <td md-cell>{{item.tipoDocumento}}</td>
                                             <td md-cell>{{item.nro}}</td>
                                             <td md-cell>{{item.abonoCuota | currency}}</td>
-                                            <td md-cell ng-click="displayInfoDatosPago(item)">
+                                            <td md-cell ng-click="displayInfoDatosCobro(item)">
                                                 <span ng-if="item.display"><i class="fas fa-caret-square-down"></i></span>
                                                 <span ng-if="!item.display"><i class="fas fa-caret-square-right"></i></span>
                                             </td>
@@ -304,18 +329,18 @@
     </div>
     <div class="modal-footer">
         <div ng-if="isPaymentLote">
-            <div ng-show="$ctrl.footerActionStepUno">
-                <button type="button" class="btn btn-info" ng-click="$ctrl.paymentStepDos()"><i class=" fas fa-angle-right"></i> Siguiente</button>
-                <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">&times; Cerrar</button>
+            <div ng-show="footerActionStepUno">
+                <button type="button" class="btn btn-info" ng-click="stepCuotaPaymentLote()"><i class=" fas fa-angle-right"></i> Siguiente</button>
+                <button type="button" class="btn btn-dark" ng-click="closeModal()">&times; Cerrar</button>
             </div>
-            <div ng-show="$ctrl.footerActionStepDos">
-                <button type="button" class="btn btn-info" ng-click="$ctrl.paymentStepUno()"><i class=" fas fa-angle-left"></i> Atras</button>
-                <button type="button" class="btn btn-success" ng-click="$ctrl.onSave()"> <i class="ti-save"></i> Guardar</button>
+            <div ng-show="footerActionStepDos">
+                <button type="button" class="btn btn-info" ng-click="stepSelectDocPaymentLote()"><i class=" fas fa-angle-left"></i> Atras</button>
+                <button type="button" class="btn btn-success" ng-click="save()"> <i class="ti-save"></i> Guardar</button>
             </div>
         </div>
 
         <div ng-if="isPaymentDocument">
-            <button type="button" class="btn btn-success" ng-click="onSave()"> <i class="ti-save"></i> Guardar</button>
+            <button type="button" class="btn btn-success" ng-click="save()"> <i class="ti-save"></i> Guardar</button>
             <button type="button" class="btn btn-dark" ng-click="closeModal()"> &times; Cerrar</button>
         </div>
 
