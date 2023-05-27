@@ -273,32 +273,83 @@
 
             }
 
-            $scope.askToNewImport = () => {
-                if ($scope.establecimientos.length > 1) {
-                    Swal.fire({
-                        title: 'Estab.: ' + $scope.estabToWork,
-                        text: "Esta seguro de realizar una nueva importación de comprobantes en este establecimiento?",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Si, Proceder',
-                        cancelButtonText: 'No, cancelar'
-                    }).then(result => {
-                        if (result.isConfirmed) {
-                            $scope.newImport();
+            $scope.selectImport = async () => {
+                const inputOptions = new Promise((resolve) => {
+                    setTimeout(() => {
+                        resolve({
+                            '1': 'Automatica',
+                            '2': 'Manual'
+                        })
+                    }, 1000)
+                })
+
+                const { value: tipo } = await Swal.fire({
+                    title: 'Tipo de Importación',
+                    input: 'radio',
+                    inputOptions: inputOptions,
+                    inputValidator: (value) => {
+                        if (!value) {
+                            return 'Debe seleccionar una opción!'
                         }
-                    })
+                    }
+                })
+                return tipo
+            }
+            $scope.tipoImportacion = 0
+            $scope.askToNewImport = async () => {
+                if ($scope.establecimientos.length > 1) {
+                    $scope.tipoImportacion = await $scope.selectImport()
+                    if ($scope.tipoImportacion) {
+                        Swal.fire({
+                            title: 'Estab.: ' + $scope.estabToWork,
+                            text: "Esta seguro de realizar una nueva importación de comprobantes en este establecimiento?",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Si, Proceder',
+                            cancelButtonText: 'No, cancelar'
+                        }).then(result => {
+                            if (result.isConfirmed) {
+                                $scope.newImport($scope.tipoImportacion)
+                            }
+                        })
+                    }
+
                 } else {
-                    $scope.newImport();
+                    $scope.tipoImportacion = await $scope.selectImport()
+                    $scope.newImport($scope.tipoImportacion)
                 }
             }
 
-            $scope.newImport = function () {
-                tS.toastr('warning', 'Recuerde no haber modificado el archivo de texto descargado del SRI')
-                $('#newImportModal').modal('show')
+            $scope.newImport = (tipo) => {
+                if (tipo == 1) {
+                    tS.toastr('warning', 'Recuerde no haber modificado el archivo de texto descargado del SRI')
+                    $('#newImportModal').modal('show')
+                } else {
+                    $('#modalNewManual').modal('show')
+                }
             }
-
+            $scope.mainform = {}
+            $scope.addClaveAcceso = () => {
+                if (!$scope.mainform.claveAcceso) {
+                    tS.toastr("warning", "La clave de acceso no es correcta")
+                    return
+                }
+                if ($scope.mainform.claveAcceso.length != 49) {
+                    tS.toastr("warning", "La clave de acceso debe poseer 49 digitos")
+                    return
+                }
+                if ($scope.compToImport.some(x => x.claveAcceso == $scope.mainform.claveAcceso)) {
+                    tS.toastr("warning", "La clave de acceso ya existe")
+                    return
+                }
+                $scope.compToImport.push({ claveAcceso: $scope.mainform.claveAcceso })
+                $scope.mainform.claveAcceso = ''
+            }
+            $scope.removeClaveAcceso = (item) => {
+                $scope.compToImport.splice(item, 1)
+            }
             //Read File tXT 
             $scope.readFileTxt = function () {
                 try {
@@ -362,15 +413,37 @@
 
             }
 
+            $scope.checkExistenceXml = (item) => {
+                if (!item) {
+                    tS.toastr('warning', 'Clave de acceso incorrecta')
+                    return
+                }
+                showLoader();
+                mS.getData('post', 'DocumentoRecibido/CheckExistenceXml/?claveAcceso=' + item, null, true).then(
+                    response => {
+                        if (response.estado != "AUTORIZADO") {
+                            $scope.mainform.claveAcceso = ''
+                            tS.toastr('warning', response.message);
+                        } else {
+                            tS.toastr('info', 'Validacion exitosa');
+                        }
+                        hideLoader()
+                    }
+                ).catch(error => {
+                    hideLoader();
+                    console.log(error);
+                })
+            }
+
             //Guardar Documentos importados
             $scope.post = function () {
 
                 let data = {
-                    jsonData: JSON.stringify({ codEstab: $scope.query.codEstab }),
-                    json: JSON.stringify($scope.compToImport)
+                    codEstab: $scope.query.codEstab,
+                    comprobantes: $scope.compToImport
                 }
                 showLoader();
-                mS.getData('post', _urlService + 'DocumentoRecibido/Post', data).then(
+                mS.getData('post', 'DocumentoRecibido/Post', { data: data }, true).then(
                     response => {
                         if (response.code == 0) {
                             hideLoader()
@@ -378,7 +451,12 @@
                         }
                         if (response.code == 1) {
                             $scope.getComprobantes()
-                            $("#compFounded").modal('hide');
+                            if ($scope.tipoImportacion == 1) {
+                                $("#compFounded").modal('hide')
+                            } else {
+                                $("#modalNewManual").modal('hide')
+                            }
+
                             tS.toastr('success', response.message)
                             hideLoader();
                         }
@@ -2155,6 +2233,9 @@
             $('#compFounded').on('hidden.bs.modal', () => {
                 $scope.compToImport = []
                 $scope.compFounded = []
+            })
+            $('#modalNewManual').on('hidden.bs.modal', () => {
+                $scope.compToImport = []
             })
             $('#migrateEstabModal').on('hidden.bs.modal', () => {
                 $scope.comprobantesTempToMigrate = []

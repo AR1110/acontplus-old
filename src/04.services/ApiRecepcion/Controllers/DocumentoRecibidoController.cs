@@ -271,7 +271,7 @@ namespace ApiRecepcion.Controllers
         }
 
         [HttpPost("Post")]
-        public async Task<IActionResult> Post(RecepcionDto data)
+        public async Task<IActionResult> Post(RequestApiDto parameters)
         {
             LogWriter _logs = new LogWriter(_configuration);
             GenericResponse _response = new GenericResponse();
@@ -280,15 +280,40 @@ namespace ApiRecepcion.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
 
                 await _db.SPExecute("Recepcion.Documento_Insert");
-                _db.AddDynamicParam("idRol", idUsuarioRol);
-                _db.AddDynamicParam("jsonData", SqlValidation.ValidateSqlString(data.jsonData));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(data.json));
+                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+                //_db.AddDynamicParam("jsonData", SqlValidation.ValidateSqlString(data.jsonData));
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(DataHelper.SerializeDictionary(parameters.data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
                 _logs.LogError("Error al importar el archivo: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al importar el archivo");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
+        }
+
+        [HttpPost("CheckExistenceXml")]
+        public async Task<IActionResult> CheckExistenceXml(string claveAcceso)
+        {
+            LogWriter _logs = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+
+                WebServiceSri _sri = new WebServiceSri(_configuration);
+                var response = await _sri.CheckExistence(claveAcceso, "https://cel.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantesOffline?wsdl");
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logs.LogError("Error al verificar la clave acceso en el sri: " + ex.ToString());
+                _response.Create(code: "0", message: "Error al verificar la clave acceso en el sri");
             }
             finally
             {
