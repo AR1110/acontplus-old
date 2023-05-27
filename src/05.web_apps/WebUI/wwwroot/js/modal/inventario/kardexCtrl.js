@@ -20,7 +20,7 @@ export class KardexCtrl {
             let heightBrowser = $(window).height();
             let widthBrowser = $(window).width();
 
-            if (this.kardexs.length > 0) {
+            if (this.kardexs  && this.kardexs.length > 0) {
                 if (widthBrowser < 1280 || widthBrowser < 1024) {
                     this.tableTabulatorKardex.options.columns[0].frozen = false;
                     this.tableTabulatorKardex.options.columns[0].widthGrow = 0;
@@ -505,6 +505,7 @@ export class ModalKardexCtrl extends KardexCtrl {
     }
 
     closeModal() {
+        thia.kardexs = [];
         this.$uibModalInstance.close()
     }
 }
