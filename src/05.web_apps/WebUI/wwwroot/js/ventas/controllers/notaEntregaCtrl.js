@@ -4,9 +4,20 @@
 
     app.controller('notaEntregaCtrl', notaEntregaCtrl);
 
-    notaEntregaCtrl.$inject = ['$scope', '$filter', 'mainService', 'notaEntregaService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario'];
+    notaEntregaCtrl.$inject = [
+        '$scope', 
+        '$filter', 
+        'mainService', 
+        'notaEntregaService', 
+        'commonService', 
+        'modalService', 
+        'nombreModal', 
+        'nombreModalContabilidad',
+        'toastService', 
+        'formulario'
+    ];
 
-    function notaEntregaCtrl($scope, $filter, _mS, notaEntregaSvc, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS) {
+    function notaEntregaCtrl($scope, $filter, _mS, notaEntregaSvc, _commonSvc, _modalSvc, _nombreModalConst, nombreModalContabilidad, _tS, _fS) {
         'use strict';
 
         const TIPO_DOC_NE = _commonSvc.tipoDoc['NE'];
@@ -65,6 +76,7 @@
 
                 showLoader();
                 $scope.notaEntregas = [];
+                $scope.getTotales();
 
                 notaEntregaSvc.getAll($scope.dataSearch).then(response => {
                     hideLoader();
@@ -73,8 +85,7 @@
                     $scope.getTotales();
                     
                 }).catch(error => {
-                    hideLoader();
-                    $scope.getTotales();
+                    hideLoader();                    
                     console.log(error)
                 })
 
@@ -148,20 +159,20 @@
 
 
         $scope.validateOperationPrintAndPayment = (result) => {
-            //Verificamos 
             
-            $scope.isRegister = result.isRegister;
-
-            $scope.isPrintDocument = result.printerAutomatic;
+            let{isRegister, data} = result;
+            
+            $scope.isRegister = isRegister;
+            $scope.isPrintDocument = data.printerAutomatic;
 
             $scope.parametersPrint = {
-                ...result.data,
-                idDocument: result.data.id,
-                codigo: result.TIPO_DOC.codigo === "FV" ? 'RFPT' : 'RNEPT',
+                ...data,
+                idDocument: data.idDocumento,
+                codigo: data.codDocs === "FV" ? 'RFPT' : 'RNEPT',
             }
 
-            if (result.payAutomatic) {
-                if (result.data.esContado) {
+            if (data.payAutomatic) {
+                if (data.esContado) {
                     $scope.openModalRapido(result)
                 } else {
                     $scope.openModalCobroDocumento(result)
@@ -169,7 +180,7 @@
                 return
             }
 
-            if (result.printerAutomatic) {
+            if (data.printerAutomatic) {
                 _commonSvc.getPrinter(JSON.stringify($scope.parametersPrint))
             }
 
@@ -442,17 +453,10 @@
             }
 
             let params = {
-                data: {
-                    ...item,
-                    id: item.idNotaEntrega,
-                    codEstab: item.codEstab,
-                    esContado: item.credito,
-                    razonSocialComprador: item.nombreFiscal,
-                },
-                TIPO_DOC: TIPO_DOC_NE
+                data: item
             }
 
-            if (params.data.esContado) {
+            if (item.tiempoCredito) {
                 $scope.openModalRapido(params);
             } else {
                 $scope.openModalCobroDocumento(params)
@@ -463,16 +467,22 @@
 
 
         $scope.openModalCobroDocumento = async (params) => {
-            let { MODAL_FILE_CTRL, MODAL_COBRO_DOCUMENTO } = _nombreModalConst.cobro;
-            let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_COBRO_DOCUMENTO['controller']];
-            let template = MODAL_COBRO_DOCUMENTO['template'];
-
-            $scope.openModalCobro({
-                controller,
-                template,
-                params,
-                size: 'xl'
-            })
+            try {
+                let fileCtrl = nombreModalContabilidad.COBRO.fileCtrl;
+                let ctrl = nombreModalContabilidad.COBRO.controllers['CL'];
+                let template = nombreModalContabilidad.COBRO.templates['CL']; 
+                let controller = (await import(fileCtrl))[ctrl];
+    
+                $scope.openModalCobro({
+                    controller,
+                    template,
+                    params,
+                    size: 'xl',
+                 //   windowClass: 'uibModalFullScreen'
+                })
+            } catch (error) {
+                console.log(error)
+            }
         }
 
 
@@ -483,15 +493,20 @@
          */
         $scope.openModalRapido = async (params) => {
 
-            let { MODAL_FILE_CTRL, MODAL_COBRO_RAPIDO } = _nombreModalConst.cobro;
-            let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_COBRO_RAPIDO['controller']];
-            let template = MODAL_COBRO_RAPIDO['template'];
-
-            $scope.openModalCobro({
-                controller,
-                template,
-                params
-            })
+            try {
+                let fileCtrl = nombreModalContabilidad.COBRO.fileCtrl;
+                let ctrl = nombreModalContabilidad.COBRO.controllers['CR'];
+                let template = nombreModalContabilidad.COBRO.templates['CR']; 
+                let controller = (await import(fileCtrl))[ctrl];
+                
+                $scope.openModalCobro({
+                    controller,
+                    template,
+                    params,                
+                })
+            } catch (error) {
+                console.log(error)
+            }
 
         }
 
@@ -505,7 +520,8 @@
                 controller,
                 template,
                 size,
-                params
+                params,
+                isRenderRazorPartial: true
             })
 
             $modalRef.result.then(result => {
@@ -631,7 +647,7 @@
         $scope.print = function (item) {
             let parameters = {
                 isPrint: 1,
-                idDocument: item.idNotaEntrega,
+                idDocument: item.idDocumento,
                 idTipoDocumento: item.idTipoDocumento,
                 codEstab: item.codEstab,
                 codDoc: TIPO_DOC_NE.codigo,

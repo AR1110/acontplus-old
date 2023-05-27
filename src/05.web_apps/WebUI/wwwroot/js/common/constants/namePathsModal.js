@@ -211,12 +211,14 @@ app.constant('nombreModalContabilidad', {
         controllers: {
             CR: 'ModalCobroRapidoCtrl', //Modal - Cobro Rapido 
             CL: 'ModalCobroLoteCtrl', //Cobro Lote
-            MFC: 'ModalFormaCobroCtrl'
+            MFC: 'ModalFormaCobroCtrl',
+            CD: 'ModalCobroDetalleCtrl'
         },
         templates: {
             CR: '~/Areas/CuentaPorCobrar/Pages/Shared/_ModalCobroRapido.cshtml',
             CL: '~/Areas/CuentaPorCobrar/Pages/Shared/_ModalCobroLote.cshtml',
             MFC: '~/Areas/CuentaPorCobrar/Pages/Shared/_ModalFormaCobro.cshtml',
+            CD: '~/Areas/CuentaPorCobrar/Pages/Shared/_ModalCobroDetalle.cshtml',
         }
     }
 })

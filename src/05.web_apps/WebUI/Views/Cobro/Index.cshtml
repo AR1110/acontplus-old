@@ -67,7 +67,7 @@
                                                     <i class="fa fa-bars"></i>
                                                 </button>
                                                 <div class="dropdown-menu"  aria-labelledby="dropdownMenu">
-                                                    <button class="dropdown-item" type="button" ng-if="accion.leer" ng-click="openModalHistorialCobro(c)"><i class="ti-menu"></i> Detalle</button>                                                        
+                                                    <button class="dropdown-item" type="button" ng-if="accion.leer" ng-click="openModalCobroDetalle(c)"><i class="ti-menu"></i> Detalle</button>                                                        
                                                     <button class="dropdown-item" type="button" ng-if="accion.anular" ng-disabled="c.color==='table-danger'" ng-click="askToDelete(c)"><i class="ti-na"></i> Anular</button>                                                                                                                                            
                                                     <button class="dropdown-item" type="button" ng-if="accion.reporte" ng-click="getReport(c)"><i class="ti-file"></i> Reporte</button>                                                               
                                                 </div>

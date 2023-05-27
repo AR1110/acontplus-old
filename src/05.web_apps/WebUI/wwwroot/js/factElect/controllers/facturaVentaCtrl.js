@@ -143,7 +143,7 @@ function facturaVentaCtrl(
         $scope.isPrintDocument = data.printerAutomatic;
 
         $scope.parametersPrint = {
-            ...result.data,
+            ...data,
             idDocument: data.idDocumento,
             codigo: 'RFPT',
         }
@@ -528,12 +528,11 @@ function facturaVentaCtrl(
 
         let params = {
             data: {
-                ...item,
-                idDocumento: item.idDocumento,
+                ...item
             }
         }
 
-        if (params.data.esContado) {
+        if (item.tiempoCredito) {
             $scope.openModalRapido(params);
         } else {
             $scope.openModalCobroDocumento(params)
@@ -598,7 +597,7 @@ function facturaVentaCtrl(
         params,
         windowClass
     }) => {
-        console.log(size)
+      
         let $modalRef = _modalSvc.openModalCustom({
             controller,
             template,
