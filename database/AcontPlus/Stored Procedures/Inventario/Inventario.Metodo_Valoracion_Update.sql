@@ -58,9 +58,9 @@ BEGIN
 
 			SELECT TOP 1 @precioTransaccion = precioUnitario FROM Inventario.Transaccion WITH (NOLOCK) WHERE idTransaccion = @idTransaccion
 			
-			SELECT  @porcetanje =  (@precioCosto - @precioCostoActual)/@precioCosto * 100
+			SELECT  @porcetanje =  @precioCosto / 2 
 
-			IF @porcetanje <=  50 
+			IF @precioCostoActual >= @porcetanje 
 				BEGIN
 					 UPDATE Inventario.Transaccion SET precioCosto = @precioTransaccion WHERE idTransaccion = @idTransaccion
 

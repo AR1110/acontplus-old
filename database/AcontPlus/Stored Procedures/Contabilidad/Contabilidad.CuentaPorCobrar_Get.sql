@@ -135,8 +135,8 @@ BEGIN
 			SELECT TOP 1 @numeroIdentificacion = numeroIdentificacion, @nombreFiscal = nombreFiscal FROM dbo.Cliente WITH (NOLOCK) WHERE idCliente = @idCliente
 
 
-			-- ====================================== DOCUMENTOS CON CUOTAS PARA LOS COBROS ==================================================================
-			IF ISNULL(@credito,0) <> 1
+			-- ====================================== DOCUMENTOS CON CUOTAS PARA LOS COBROS   ==================================================================
+			IF ISNULL(@credito,1) != 0
 				BEGIN 
 					INSERT INTO @tbDocuments (idTipoDocumento,idDocumento,serieComprobante,tipoDoc,fechaEmision,fechaVencimiento,importeTotal,abono,saldo,estado,cuotas)
 					SELECT fv.idTipoDocumento
@@ -149,7 +149,7 @@ BEGIN
 						  ,fv.abono
 						  ,fv.saldo
 						  ,ep.descripcion
-						  ,cuotas = (SELECT cc.idTipoDocumento,idDocumento = cc.idComprobante,cc.idCuotaXCobrar,cc.cuota,cc.abono ,estado = ep.descripcion
+						  ,cuotas = (SELECT cc.idTipoDocumento,idDocumento = cc.idComprobante,cc.idCuotaXCobrar,cc.nroCuota,cc.cuota,cc.abono,cc.saldo,estado = ep.descripcion
 						             FROM dbo.CuotaXCobrar cc
 									 INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cc.idEstadoPago
 						             WHERE cc.idComprobante   = fv.idFactura 
@@ -160,7 +160,7 @@ BEGIN
 					INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision = fv.idPuntoEmision
 					INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pt.codEstab
 					INNER JOIN dbo.EstadoPago      ep WITH (NOLOCK) ON ep.idEstadoPago   = fv.idEstadoPago
-					WHERE fv.idCliente = @idCliente AND ep.codigo IN ('PP','PE')
+					WHERE fv.idCliente = @idCliente AND ep.codigo IN ('PP','PE') AND es.codEstab = @codEstab 
 
 
 					INSERT INTO @tbDocuments (idTipoDocumento,idDocumento,serieComprobante,tipoDoc,fechaEmision,fechaVencimiento,importeTotal,abono,saldo,estado,cuotas)
@@ -174,7 +174,7 @@ BEGIN
 						  ,ne.abono
 						  ,ne.saldo
 						  ,ep.descripcion
-						  ,cuotas = (SELECT cc.idTipoDocumento,idDocumento = cc.idComprobante,cc.idCuotaXCobrar,cc.cuota,cc.abono ,estado = ep.descripcion
+						  ,cuotas = (SELECT cc.idTipoDocumento,idDocumento = cc.idComprobante,cc.idCuotaXCobrar,cc.nroCuota,cc.cuota,cc.abono,cc.saldo,estado = ep.descripcion
 						             FROM dbo.CuotaXCobrar cc
 									 INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cc.idEstadoPago
 						             WHERE cc.idComprobante   = ne.idNotaEntrega 
@@ -185,12 +185,12 @@ BEGIN
 					INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision = ne.idPuntoEmision
 					INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON  es.codEstab      = pt.codEstab
 					INNER JOIN dbo.EstadoPago      ep WITH (NOLOCK) ON ep.idEstadoPago   = ne.idEstadoPago
-					WHERE ne.idCliente = @idCliente AND ep.codigo IN ('PP','PE')
+					WHERE ne.idCliente = @idCliente AND ep.codigo IN ('PP','PE') AND es.codEstab = @codEstab 
 				END 
 
-			-- ============================= Datos para pagar un documento a credito ====================================================
+			-- ====================================== DATOS PARA PAGAR UN DOCUMENTO A CREDITO ==================================================================
 
-			ELSE IF @credito = 1
+		    IF @credito = 0
 				BEGIN
 					IF @codDoc = 'FV'
 						BEGIN 
@@ -205,12 +205,12 @@ BEGIN
 								  ,fv.abono
 								  ,fv.saldo
 								  ,ep.descripcion
-								  ,cuotas = (SELECT cc.idTipoDocumento,idDocumento = cc.idComprobante,cc.idCuotaXCobrar,cc.cuota,cc.abono ,estado = ep.descripcion
+								  ,cuotas = (SELECT cc.idTipoDocumento,idDocumento = cc.idComprobante,cc.idCuotaXCobrar,cc.nroCuota,cc.cuota,cc.abono,cc.saldo,estado = ep.descripcion
 											 FROM dbo.CuotaXCobrar cc
 									         INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cc.idEstadoPago
-						                     WHERE cc.idComprobante  = fv.idFactura 
-									         AND cc.idTipoDocumento = fv.idTipoDocumento 
-									         AND cc.estado          = 1 FOR JSON PATH
+						                     WHERE cc.idComprobante   = fv.idFactura 
+									           AND cc.idTipoDocumento = fv.idTipoDocumento 
+									           AND cc.estado          = 1 FOR JSON PATH
 									        )
 							FROM dbo.Factura fv WITH (NOLOCK) 
 							INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision = fv.idPuntoEmision
@@ -232,7 +232,7 @@ BEGIN
 								  ,ne.abono
 								  ,ne.saldo
 								  ,ep.descripcion
-								  ,cuotas = (SELECT cc.idTipoDocumento,idDocumento = cc.idComprobante,cc.idCuotaXCobrar,cc.cuota,cc.abono ,estado = ep.descripcion
+								  ,cuotas = (SELECT cc.idTipoDocumento,idDocumento = cc.idComprobante,cc.idCuotaXCobrar,cc.nroCuota,cc.cuota,cc.abono,cc.saldo,estado = ep.descripcion
 											 FROM dbo.CuotaXCobrar cc
 									         INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cc.idEstadoPago
 						                     WHERE cc.idComprobante = ne.idNotaEntrega 
@@ -246,8 +246,7 @@ BEGIN
 						END 
 				END 
 
-
-			-- ====================== Documentos para aplicar a cobros ===========================================
+			-- ====================== DOCUMENTOS PARA APLICAR A COBROS ===========================================
 
 			INSERT INTO @cobroDocuments (idComprobante,codDoc,codMov)
 			SELECT c.idComprobante,td.codigoSri,td.codigo 
@@ -320,7 +319,7 @@ BEGIN
 
 			SELECT idDocumento,idTipoDocumento,serieComprobante,saldo,codDoc,nroDoc FROM @documents 
 
-			SELECT idTipoDocumento ,idDocumento ,serieComprobante,tipoDoc,fechaEmision,fechaVencimiento,importeTotal,abono,saldo,estado,cuotas FROM @tbDocuments
+			SELECT idTipoDocumento ,idDocumento ,serieComprobante,tipoDoc,fechaEmision = FORMAT(fechaEmision,'MM/dd/yyyy'),fechaVencimiento = FORMAT(fechaVencimiento,'MM/dd/yyyy'),importeTotal,abono,saldo,estado,cuotas,estado FROM @tbDocuments
 
 			SELECT total = SUM(importeTotal) , saldo = SUM(saldo), abono = SUM(abono), idCliente = @idCliente , numeroIdentificacion = @numeroIdentificacion , nombreFiscal = @nombreFiscal , codEstab = @codEstab FROM @tbDocuments
 		END 

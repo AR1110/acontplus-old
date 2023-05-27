@@ -493,10 +493,7 @@
 //     }   
     
     
-//     deleteDocSeleted(item) {
-//         let index = this.selectedDocumentos.indexOf(item);
-//         this.selectedDocumentos.splice(index, 1);
-//     }
+
 
 
 //     paymentStepUno=function(){

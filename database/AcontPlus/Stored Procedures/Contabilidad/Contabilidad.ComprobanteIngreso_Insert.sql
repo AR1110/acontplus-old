@@ -20,10 +20,10 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
-	DECLARE @comprobante VARCHAR(MAX)
-	DECLARE @cobros VARCHAR(MAX)
-	DECLARE @cobroDetalle VARCHAR(MAX)
-	DECLARE @historial VARCHAR(MAX)
+	DECLARE @comprobante NVARCHAR(MAX)
+	DECLARE @cobros NVARCHAR(MAX)
+	DECLARE @cobroDetalle NVARCHAR(MAX)
+	DECLARE @historial NVARCHAR(MAX)
 
 	DECLARE @idComprobanteIngreso AS INT 
 	DECLARE @codEstab AS VARCHAR(50)
@@ -81,15 +81,15 @@ BEGIN
 		
   	    --====================================obtener Datos de los Json============================================
 		SELECT @comprobante = comprobante,@cobros = cobros,@cobroDetalle= cobroDetalle,@historial = historial FROM OPENJSON(@json) 
-		WITH (comprobante  NVARCHAR(MAX) '$.comprobante'  AS JSON
-		     ,cobros       NVARCHAR(MAX) '$.cobros'       AS JSON
-		     ,cobroDetalle NVARCHAR(MAX) '$.cobroDetalle' AS JSON
-		     ,historial    NVARCHAR(MAX) '$.historial'    AS JSON
+		WITH (comprobante  NVARCHAR(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS '$.comprobante'   AS JSON
+		     ,cobros       NVARCHAR(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS '$.cobros'        AS JSON
+		     ,cobroDetalle NVARCHAR(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS '$.cobroDetalle'  AS JSON
+		     ,historial    NVARCHAR(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS '$.historial'     AS JSON
 		     ) as dt 
 
 
-		SELECT '0'code,'el json: '+ISNULL(@historial,'Sin Dato') as 'message'
-		RETURN 
+		--SELECT '0'code,'el json: '+ISNULL(@cobros,'Sin Dato') as 'message'
+		--RETURN 
 		INSERT INTO @documento(idTipoPersona,idCliente,total,abono,codEstab,nroIdentificacion,nombreFiscal)
 		SELECT idTipoPersona = (SELECT TOP 1 idTipoPersona FROM TipoPersona tp WITH (NOLOCK) WHERE tp.codigo = 'CL')
 		     ,idCliente,total,abono,codEstab,nroIdentificacion,nombreFiscal
@@ -157,6 +157,8 @@ BEGIN
 
 		
 		--======================================Obteniendo variables ============================================================
+
+		SELECT @codEstab = codEstab FROM @documento 
 
 		SELECT @secuencial = COUNT(*)+1 FROM dbo.ComprobanteIngreso WITH(NOLOCK) WHERE codEstab = @codEstab
 

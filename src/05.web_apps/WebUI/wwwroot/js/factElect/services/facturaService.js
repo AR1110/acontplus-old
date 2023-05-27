@@ -23,7 +23,6 @@
                 if(response.code==="1"){
                     
                     let facturas = JSON.parse(response.payload) || [];
-                    
                     return facturas.map(item=>{
                         return {
                             codigoTipoDoc:'FV',
@@ -54,6 +53,7 @@
                             abono: item.abono,
                             saldo: item.saldo,
                             posfechado: item.posfechado,
+                            tiempoCredito: item.tiempoCredito, 
                             style: item.style,
                             usuario: item.usuario,
                             nroNotaCredito: item.nroNotaCredito,
