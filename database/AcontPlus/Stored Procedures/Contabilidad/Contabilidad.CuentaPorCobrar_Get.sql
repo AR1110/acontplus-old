@@ -40,53 +40,6 @@ BEGIN
 
 	SELECT TOP 1 @codDoc = codigo FROM dbo.TipoDocumento WITH (NOLOCK) WHERE idTipoDocumento = @idTipoDocumento
 	
-	-- ============================= Datos para cobros rapidos ==================================================================
-
-	IF @tipo = 2
-		BEGIN
-			
-			SELECT idEntidadFinanciera,descripcion,detalle,codigo FROM dbo.EntidadFinanciera WITH (NOLOCK) WHERE estado = 1
-
-			SELECT idEntidadFinanciera,idSubEntidadFinanciera,descripcion,codigo,interes,controlCaja FROM dbo.SubEntidadFinanciera WHERE idEntidad = 9 AND estado = 1 
-
-			SELECT idBanco,descripcion,codigo FROM dbo.Banco WITH (NOLOCK) WHERE estado = 1
-
-			SELECT cd.idCiudad,provincia = pr.descripcion ,cd.descripcion,pr.codigo FROM dbo.Provincia pr WITH (NOLOCK)
-			INNER JOIN dbo.Ciudad cd WITH (NOLOCK) ON cd.idProvincia = pr.idProvincia WHERE cd.estado = 1
-
-			SELECT idTipoDocumento,idDocumento = idComprobante,idCuotaXCobrar,cuota,mora,abono,saldo FROM dbo.CuotaXCobrar WHERE idTipoDocumento = @idTipoDocumento AND idComprobante = @idDocumento AND estado = 1
-
-			IF @codDoc = 'FV'
-				BEGIN
-					SELECT 
-					     fe.idTipoDocumento
-						,idDocumento = fe.idFactura
-						,pe.codEstab
-						,fe.idCliente
-						,cl.numeroIdentificacion
-						,cl.nombreFiscal
-						,fe.abono
-						,fe.saldo
-						,importeTotal = fe.total
-						,fechaEmision =  FORMAT(fe.fechaEmision,'MM/dd/yyyy')
-						,serieComprobante = es.estab + '-' + pe.ptoEmi + '-' + [Helper].[F_Auto_Sequential](fe.nroFactura) 
-					FROM dbo.Factura               fe WITH (NOLOCK)
-					INNER JOIN dbo.Cliente         cl WITH (NOLOCK) ON cl.idCliente      = fe.idCliente
-					INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision = fe.idPuntoEmision
-					INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pe.codEstab
-					WHERE idFactura = @idDocumento
-				END 
-
-			IF @codDoc = 'NE'
-				BEGIN
-					SELECT pe.codEstab,ne.idCliente,cl.numeroIdentificacion,cl.nombreFiscal,ne.saldo
-					FROM dbo.NotaEntrega        ne WITH (NOLOCK)
-					INNER JOIN dbo.Cliente      cl WITH (NOLOCK) ON cl.idCliente      = ne.idCliente
-					INNER JOIN dbo.PuntoEmision pe WITH (NOLOCK) ON pe.idPuntoEmision = ne.idPuntoEmision
-					WHERE ne.idNotaEntrega = @idDocumento
-				END 
-		END 
-
 	-- ============================= Datos para cobros por lotes ================================================================ 
 	IF @tipo = 3
 		BEGIN
@@ -95,7 +48,8 @@ BEGIN
 			DECLARE @nombreFiscal AS VARCHAR(100)
 			DECLARE @numeroIdentificacion AS VARCHAR(15)
 			DECLARE @identificacionReceptor AS VARCHAR(50)
-			DECLARE @credito AS BIT
+			DECLARE @tiempoCredito AS BIT
+			
 
 			DECLARE @tbDocuments AS TABLE (
 			      id AS cast(idTipoDocumento as varchar) + cast(idDocumento as varchar) UNIQUE
@@ -109,7 +63,7 @@ BEGIN
 				 ,abono NUMERIC(18,5) NOT NULL
 				 ,saldo NUMERIC(18,5) NOT NULL
 				 ,estado VARCHAR(15) NOT NULL
-				 ,cuotas VARCHAR(MAX) NOT NULL
+				 ,cuotas VARCHAR(MAX) NULL
 			)
 
 			DECLARE @cobroDocuments AS TABLE 
@@ -130,13 +84,14 @@ BEGIN
 
 			SELECT TOP 1 @identificacionReceptor = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
 
-			SELECT @idCliente = idCliente, @codEstab = codEstab, @credito = credito FROM OPENJSON(@json) WITH (idCliente INT '$.idCliente', codEstab VARCHAR(50) '$.codEstab', credito BIT '$.credito')
+			SELECT @idCliente = idCliente, @codEstab = codEstab, @tiempoCredito = credito FROM OPENJSON(@json) WITH (idCliente INT '$.idCliente', codEstab VARCHAR(50) '$.codEstab', credito BIT '$.credito')
 
 			SELECT TOP 1 @numeroIdentificacion = numeroIdentificacion, @nombreFiscal = nombreFiscal FROM dbo.Cliente WITH (NOLOCK) WHERE idCliente = @idCliente
 
 
 			-- ====================================== DOCUMENTOS CON CUOTAS PARA LOS COBROS   ==================================================================
-			IF ISNULL(@credito,1) != 0
+			
+			IF @tiempoCredito IS NULL
 				BEGIN 
 					INSERT INTO @tbDocuments (idTipoDocumento,idDocumento,serieComprobante,tipoDoc,fechaEmision,fechaVencimiento,importeTotal,abono,saldo,estado,cuotas)
 					SELECT fv.idTipoDocumento
@@ -190,7 +145,7 @@ BEGIN
 
 			-- ====================================== DATOS PARA PAGAR UN DOCUMENTO A CREDITO ==================================================================
 
-		    IF @credito = 0
+		    IF @tiempoCredito = 0 OR @tiempoCredito = 1
 				BEGIN
 					IF @codDoc = 'FV'
 						BEGIN 
@@ -246,67 +201,77 @@ BEGIN
 						END 
 				END 
 
-			-- ====================== DOCUMENTOS PARA APLICAR A COBROS ===========================================
+			-- ====================== DOCUMENTOS PARA APLICAR A COBROS POR LOTES Y CREDITO ===========================================
+			
+			IF @tiempoCredito = 0 
+				BEGIN
+					INSERT INTO @cobroDocuments (idComprobante,codDoc,codMov)
+				    SELECT c.idComprobante,td.codigoSri,td.codigo 
+			        FROM dbo.Cobro c WITH (NOLOCK)
+					INNER JOIN dbo.TipoDocumento     td  WITH (NOLOCK) ON td.idTipoDocumento      = c.idTipoDocumento
+					INNER JOIN dbo.EntidadFinanciera ef  WITH (NOLOCK) ON ef.idEntidadFinanciera  = c.idEntidadFinanciera
+					INNER JOIN dbo.ComprobanteIngreso ci WITH (NOLOCK) ON ci.idComprobanteIngreso = c.idComprobanteIngreso
+					WHERE ef.codigo = 'DOC' 
+					  AND ci.estado = 1
+					  AND ci.idEntidad = @idEntidad
 
-			INSERT INTO @cobroDocuments (idComprobante,codDoc,codMov)
-			SELECT c.idComprobante,td.codigoSri,td.codigo 
-			FROM dbo.Cobro c WITH (NOLOCK)
-			INNER JOIN dbo.TipoDocumento     td  WITH (NOLOCK) ON td.idTipoDocumento      = c.idTipoDocumento
-			INNER JOIN dbo.EntidadFinanciera ef  WITH (NOLOCK) ON ef.idEntidadFinanciera  = c.idEntidadFinanciera
-			INNER JOIN dbo.ComprobanteIngreso ci WITH (NOLOCK) ON ci.idComprobanteIngreso = c.idComprobanteIngreso
-			WHERE ef.codigo = 'DOC' 
-			  AND ci.estado = 1
-			  AND ci.idEntidad = @idEntidad
-
-			INSERT INTO @documents (idDocumento,idTipoDocumento,serieComprobante,saldo,codDoc,nroDoc)
-			SELECT 
-				 d.idDocRelacionado
-				,idTipoDocumento = (SELECT TOP 1 td.idTipoDocumento FROM dbo.TipoDocumento td WITH (NOLOCK) WHERE td.codigoSri = '07')
-				,dr.serieComprobante
-				,saldo = d.valorRetenido
-				,codDoc = 'Retención Version:'+dr.versionComp
-				,nroDoc = ''
-			FROM factelect.DocRelacionado d WITH (NOLOCK)
-			INNER JOIN Recepcion.DocumentoRecibido dr WITH (NOLOCK) ON dr.idDocumento = d.idDocumentoRecibido
-			WHERE dr.codDoc = '07' 
-			  AND dr.identificacionReceptor = @identificacionReceptor 
-			  AND dr.rucEmisor = @numeroIdentificacion 
-			  AND d.estado = 'PE'
-			  AND d.idDocRelacionado NOT IN (SELECT c.idComprobante FROM @cobroDocuments c WHERE c.codDoc = '07')
-
-
-			INSERT INTO @documents (idDocumento,idTipoDocumento,serieComprobante,saldo,codDoc,nroDoc)
-			SELECT 
-				 de.idDocumentoElectronico
-				,idTipoDocumento = (SELECT TOP 1 td.idTipoDocumento FROM dbo.TipoDocumento td WITH (NOLOCK) WHERE td.codigoSri = '04')
-				,serieComprobante = de.numEstab+'-'+de.ptoEmision+'-'+Helper.F_Auto_Sequential(de.nroDocumento)
-				,saldo = (SELECT TOP 1 nc.total FROM dbo.NotaCredito nc WITH (NOLOCK) WHERE nc.idNotaCredito = de.idDocumento)
-				,codDoc = 'Nota de Crédito Version: '+de.versionComp
-				,nroDoc = ''
-			FROM dbo.DocumentoElectronico de
-			WHERE de.codDoc = '04'
-			  AND de.codEstado = 4
-			  AND de.idEntidad = @idEntidad
-			  AND de.idContribuyente = @idCliente
-			  AND de.idDocumentoElectronico NOT IN (SELECT c.idComprobante FROM @cobroDocuments c WHERE c.codDoc = '04')
-
-			INSERT INTO @documents (idDocumento,idTipoDocumento,serieComprobante,saldo,codDoc,nroDoc)
-			SELECT 
-				 a.idAnticipo as idComprobante
-				,a.idTipoDocumento as idTipoDocumento
-				,td.codigo+'-'+es.estab+'-'+dbo.AFTAutoComplete(a.nroDoc) as nroDocumento
-				,a.valor
-				,td.codigo as tipoDocumento
-				,''
-			FROM Anticipo a
-			INNER JOIN Sri.Establecimiento es ON es.codEstab = a.codEstab
-			INNER JOIN TipoDocumento td ON td.idTipoDocumento = a.idTipoDocumento
-			WHERE a.idCliente =  @idCliente 
-			  AND a.estado = 1 
-			  AND a.idAnticipo NOT IN (SELECT t.idComprobante FROM @cobroDocuments t WHERE t.codMov = 'A')
+					INSERT INTO @documents (idDocumento,idTipoDocumento,serieComprobante,saldo,codDoc,nroDoc)
+					SELECT 
+						 d.idDocRelacionado
+						,idTipoDocumento = (SELECT TOP 1 td.idTipoDocumento FROM dbo.TipoDocumento td WITH (NOLOCK) WHERE td.codigoSri = '07')
+						,dr.serieComprobante
+						,saldo = d.valorRetenido
+						,codDoc = 'Retención Version:'+dr.versionComp
+						,nroDoc = ''
+					FROM factelect.DocRelacionado d WITH (NOLOCK)
+					INNER JOIN Recepcion.DocumentoRecibido dr WITH (NOLOCK) ON dr.idDocumento = d.idDocumentoRecibido
+					WHERE dr.codDoc = '07' 
+					  AND dr.identificacionReceptor = @identificacionReceptor 
+					  AND dr.rucEmisor = @numeroIdentificacion 
+					  AND d.estado = 'PE'
+					  AND d.idDocRelacionado NOT IN (SELECT c.idComprobante FROM @cobroDocuments c WHERE c.codDoc = '07')
 
 
+					INSERT INTO @documents (idDocumento,idTipoDocumento,serieComprobante,saldo,codDoc,nroDoc)
+					SELECT 
+						 de.idDocumentoElectronico
+						,idTipoDocumento = (SELECT TOP 1 td.idTipoDocumento FROM dbo.TipoDocumento td WITH (NOLOCK) WHERE td.codigoSri = '04')
+						,serieComprobante = de.numEstab+'-'+de.ptoEmision+'-'+Helper.F_Auto_Sequential(de.nroDocumento)
+						,saldo = (SELECT TOP 1 nc.total FROM dbo.NotaCredito nc WITH (NOLOCK) WHERE nc.idNotaCredito = de.idDocumento)
+						,codDoc = 'Nota de Crédito Version: '+de.versionComp
+						,nroDoc = ''
+					FROM dbo.DocumentoElectronico de
+					WHERE de.codDoc = '04'
+					  AND de.codEstado = 4
+					  AND de.idEntidad = @idEntidad
+					  AND de.idContribuyente = @idCliente
+					  AND de.idDocumentoElectronico NOT IN (SELECT c.idComprobante FROM @cobroDocuments c WHERE c.codDoc = '04')
+
+					INSERT INTO @documents (idDocumento,idTipoDocumento,serieComprobante,saldo,codDoc,nroDoc)
+					SELECT 
+						 a.idAnticipo as idComprobante
+						,a.idTipoDocumento as idTipoDocumento
+						,td.codigo+'-'+es.estab+'-'+dbo.AFTAutoComplete(a.nroDoc) as nroDocumento
+						,a.valor
+						,td.codigo as tipoDocumento
+						,''
+					FROM Anticipo a
+					INNER JOIN Sri.Establecimiento es ON es.codEstab = a.codEstab
+					INNER JOIN TipoDocumento td ON td.idTipoDocumento = a.idTipoDocumento
+					WHERE a.idCliente =  @idCliente 
+					  AND a.estado = 1 
+					  AND a.idAnticipo NOT IN (SELECT t.idComprobante FROM @cobroDocuments t WHERE t.codMov = 'A')
+				END 
+			
 			-- ==================================== PAYLOAD ================================================================================
+
+			IF @tiempoCredito = 1 
+				BEGIN
+					DECLARE @fechaEmision AS DATE
+					DECLARE @serieComprobante AS VARCHAR(20)
+
+					SELECT @fechaEmision = fechaEmision, @serieComprobante = serieComprobante FROM @tbDocuments 
+				END 
 
 			SELECT idEntidadFinanciera,descripcion,detalle,codigo FROM dbo.EntidadFinanciera WITH (NOLOCK) WHERE estado = 1
 
@@ -321,7 +286,16 @@ BEGIN
 
 			SELECT idTipoDocumento ,idDocumento ,serieComprobante,tipoDoc,fechaEmision = FORMAT(fechaEmision,'MM/dd/yyyy'),fechaVencimiento = FORMAT(fechaVencimiento,'MM/dd/yyyy'),importeTotal,abono,saldo,estado,cuotas,estado FROM @tbDocuments
 
-			SELECT total = SUM(importeTotal) , saldo = SUM(saldo), abono = SUM(abono), idCliente = @idCliente , numeroIdentificacion = @numeroIdentificacion , nombreFiscal = @nombreFiscal , codEstab = @codEstab FROM @tbDocuments
+			SELECT importeTotal         = SUM(importeTotal) 
+			      ,saldo                = SUM(saldo)
+				  ,abono                = SUM(abono)
+				  ,idCliente            = @idCliente
+				  ,numeroIdentificacion = @numeroIdentificacion
+				  ,nombreFiscal         = @nombreFiscal
+				  ,codEstab             = @codEstab 
+				  ,fechaEmision         = FORMAT(@fechaEmision,'MM/dd/yyyy')
+				  ,serieComprobante     = @serieComprobante
+			FROM @tbDocuments
 		END 
 
 	

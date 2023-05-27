@@ -48,8 +48,7 @@
                             estadoFinanciero: item.estadoFinanciero,
                             estadoSri: item.estadoSri,
                             claveAcceso: item.claveAcceso,
-                            codDoc: item.codDoc,
-                            tipo: item.tipo,
+                            codDoc: item.codDoc,                            
                             abono: item.abono,
                             saldo: item.saldo,
                             posfechado: item.posfechado,
@@ -61,7 +60,8 @@
                             nroRetencion: item.nroRetencion,
                             nroIdentificacion: item.nroIdentificacion,
                             anulada: item.anulada,
-                            codEstado: item.codEstado
+                            codEstado: item.codEstado,
+                            esContado: item.tiempoCredito
                         }
                     })
                 }

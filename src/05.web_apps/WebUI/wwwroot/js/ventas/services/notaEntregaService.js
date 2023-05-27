@@ -47,7 +47,7 @@
                             style: item.style,
                             usuario: item.usuario,
                             codEstado: item.codEstado,
-                            credito: item.credito,
+                            tiempoCredito: item.tiempoCredito,
                             nroIdentificacion: item.nroIdentificacion,
                         }
                     })

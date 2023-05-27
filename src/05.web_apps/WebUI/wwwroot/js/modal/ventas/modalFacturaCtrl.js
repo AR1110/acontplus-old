@@ -1441,12 +1441,10 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
                     if (response.code === "1") {                        
                         this._fS.sweetAlert('success', 'Registrado Correctamente', response.titleSms, 1000);
 
+                        
                         let mainData = {
-                            isRegister: true,
-                            printerAutomatic: this.printerAutomatic,
-                            payAutomatic: this.payAutomatic,
-                            data: response.dataResponse,
-                            TIPO_DOC: this.TIPO_DOC_FV
+                            isRegister: true,                            
+                            data: response.dataResponse
                         }
 
                         this.$uibModalInstance.close(mainData)

@@ -88,8 +88,7 @@ BEGIN
 		     ) as dt 
 
 
-		--SELECT '0'code,'el json: '+ISNULL(@cobros,'Sin Dato') as 'message'
-		--RETURN 
+
 		INSERT INTO @documento(idTipoPersona,idCliente,total,abono,codEstab,nroIdentificacion,nombreFiscal)
 		SELECT idTipoPersona = (SELECT TOP 1 idTipoPersona FROM TipoPersona tp WITH (NOLOCK) WHERE tp.codigo = 'CL')
 		     ,idCliente,total,abono,codEstab,nroIdentificacion,nombreFiscal
@@ -142,7 +141,7 @@ BEGIN
 			 ,valor        NUMERIC(15,5) '$.valor' 
 			 ,posfechado             BIT '$.posfechado'
 			 ,secuencial             INT '$.secuencial'
-			 ,infoCobro     VARCHAR(MAX) '$.infoCobro'
+			 ,infoCobro    NVARCHAR(MAX) '$.infoCobro'
 			 ,abono        NUMERIC(15,5) '$.abono'
 			 ,controlCaja            BIT '$.controlCaja')
 		AS dt

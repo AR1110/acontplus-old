@@ -234,6 +234,7 @@ BEGIN
 							  WHERE ar.idEntidad = @idEntidad 
 							    AND ar.llevaInventario = 1 
 								AND ar.estado = 1
+								AND ar.idArticulo NOT IN (SELECT s.idArticulo FROM Inventario.Stock s WITH (NOLOCK) INNER JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = s.idArticulo WHERE ar.idEntidad = @idEntidad )
 
 			INSERT INTO Importaciones.Historial(idUsuario,idEntidad,modulo,cantidad,fechaRegistro)
 			SELECT @idUsuario,@idEntidad,'/Almacen/Articulo',@count,dbo.ufnGetDateEcuador()

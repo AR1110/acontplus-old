@@ -52,7 +52,12 @@ function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, nombre
                 },
                 size:'xl',
                 isRenderRazorPartial: true
-            })           
+            })  
+            modalRef.result.then(result=>{
+                if(typeof result==='object'){
+                    $scope.getCobros();
+                }
+            })         
         } catch (error) {
             console.log(error)
         }
@@ -346,39 +351,7 @@ function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, nombre
         }
     }
 
-    $scope.openModalEditar = async (item) => {
-        try {
-            showLoader();
-            let {
-                MODAL_FILE_CTRL,
-                MODAL_EDITAR
-            } = _nombreModalConst.factura_compra;
-            let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_EDITAR['controller']];
-            let template = MODAL_EDITAR['template'];
-
-            let response = await _commonSvc.getDataTipoDocCompra({
-                id: item.idFacturaCompra,
-                codigoDocumento: TIPO_DOC.codigo
-            })
-
-            if (!response.isComplete) return
-
-            let params = {
-                TIPO_REGISTRO: 'EDITAR',
-                data: response
-            }
-
-            $scope.openModalParam({
-                controller,
-                template,
-                params
-            })
-        } catch (error) {
-            console.log(error)
-        } finally {
-            hideLoader();
-        }
-    }
+   
 
     $scope.openModalParam = async ({
         controller,
@@ -435,31 +408,63 @@ function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, nombre
             });
         }
     }
+
+
     //----------------------------Detalle Comprobante Ingreso ---------------------
-    $scope.openModalHistorialCobro = (item) => {
+    $scope.openModalCobroDetalle = async function (item) {
         try {
             showLoader();
-            _mS.getData('get', `/Cobro/GetByComprobante?idComprobanteIngreso=${item.idComprobanteIngreso}`).then(response => {
-                if (response.code === null || response.code === undefined) {
-                    console.log(response)
-                    hideLoader()
-                }
-                if (response.id === "0") {
-                    hideLoader();
-                    form.sweetAlert('warning', response.message, response.titleSms)
-                }
-                if (response.id === "1") {
-                    $scope.data = item;
-                    $scope.comprobanteIngresos = response.data.map($scope.getCobroDetalle);
-                    hideLoader();
-                    $("#modalHistorialCobro").modal('show');
-                }
-            });
+            let fileCtrl = nombreModalContabilidad.COBRO.fileCtrl;
+            let ctrl = nombreModalContabilidad.COBRO.controllers['CD'];
+            let template = nombreModalContabilidad.COBRO.templates['CD']; 
+            let controller = (await import(fileCtrl))[ctrl];
+            let query = {
+                tipo:2,
+                idComprobanteIngreso: item.idComprobanteIngreso
+            }
+            _mS.getData('get', 'ComprobanteIngreso/?json='  + JSON.stringify(query),null,true).then(response=>{
+                hideLoader();
+                console.log(response)
+            }).catch(error=>{
+                hideLoader();
+                console.log(error)
+            })
+
+            let modalRef = _modalSvc.openModalCustom({
+                controller,
+                template,
+                params: {
+                },
+                size:'xl',
+                isRenderRazorPartial: true
+            })                 
         } catch (error) {
+            hideLoader();
             console.log(error)
-        } finally {
-            hideLoader()
         }
+        // try {
+        //     showLoader();
+        //     _mS.getData('get', `/Cobro/GetByComprobante?idComprobanteIngreso=${item.idComprobanteIngreso}`).then(response => {
+        //         if (response.code === null || response.code === undefined) {
+        //             console.log(response)
+        //             hideLoader()
+        //         }
+        //         if (response.id === "0") {
+        //             hideLoader();
+        //             form.sweetAlert('warning', response.message, response.titleSms)
+        //         }
+        //         if (response.id === "1") {
+        //             $scope.data = item;
+        //             $scope.comprobanteIngresos = response.data.map($scope.getCobroDetalle);
+        //             hideLoader();
+        //             $("#modalHistorialCobro").modal('show');
+        //         }
+        //     });
+        // } catch (error) {
+        //     console.log(error)
+        // } finally {
+        //     hideLoader()
+        // }
     };
 
     $scope.getCobroDetalle = (data) => {
