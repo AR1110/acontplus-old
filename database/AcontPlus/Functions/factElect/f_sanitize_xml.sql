@@ -35,7 +35,10 @@ BEGIN
 
 	-- Add the T-SQL statements to compute the return value here
 	SET @sanitizedXml = 
-
+REPLACE(
+REPLACE(
+REPLACE(
+REPLACE(
 REPLACE(
 	REPLACE(
 		REPLACE(
@@ -61,6 +64,10 @@ REPLACE(
 			,'<?xml version=''1.0'' encoding=''UTF-8'' standalone=''no''?>', '')
 		,'<?xml version="1.0" encoding="us-ascii" standalone="no"?>', '')
 		,'<?xml version="1.0" encoding="ISO-8859-1"?>', '')
+		,'<![CDATA[<?xml version="1.0" encoding="UTF-8" ?>', '')
+		,']]>', '')
+	,'<?xml version="1.0" encoding="UTF-8" ?>', '')
+	,'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>', '')
 	-- Return the result of the function
 	RETURN @sanitizedXml
 

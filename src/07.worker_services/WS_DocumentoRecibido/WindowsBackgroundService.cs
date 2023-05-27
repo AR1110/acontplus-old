@@ -128,7 +128,17 @@ namespace WS_DocumentoRecibido
                             break;
                     }
                     _log.LogInfo("Xml Doc Downloaded: " + dr["claveAcceso"].ToString());
-                    await _docService.Update(Convert.ToInt32(dr["idDocumento"]), "DE", codDoc, versionComp, fechaEmision, nodeAuth.OuterXml);
+
+                    XmlDocument xmlTosave = new XmlDocument();
+                    xmlTosave.LoadXml(nodeAuth.OuterXml);
+
+                    var declarations = xmlTosave.ChildNodes.OfType<XmlNode>()
+                    .Where(x => x.NodeType == XmlNodeType.XmlDeclaration)
+                    .ToList();
+
+                    declarations.ForEach(x => xmlTosave.RemoveChild(x));
+
+                    await _docService.Update(Convert.ToInt32(dr["idDocumento"]), "DE", codDoc, versionComp, fechaEmision, xmlTosave.OuterXml);
                 }
                 else
                 {
