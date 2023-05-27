@@ -120,6 +120,13 @@ export class ModalCuotaNuevoCtrl extends ModalBaseCtrl{
     }
 
 
+    formatDateFecha(fecha){
+        const fechaCadena = fecha;
+        const formatoEntrada = "DD/MM/YYYY HH:mm";
+        const fechaReal = moment(fechaCadena, formatoEntrada).toDate();
+
+        return fechaReal;
+    }
 
     crearCuota() {
         let data = {
@@ -128,7 +135,7 @@ export class ModalCuotaNuevoCtrl extends ModalBaseCtrl{
                 idTipoDocumento: this.TIPO_DOC.idTipoDocumento,
             },
             idTiempoCredito: this.data.idTiempoCredito,
-            fechaEmision:  new Date(this.data.fechaEmision.split('/').reverse()),
+            fechaEmision: this.formatDateFecha(this.data.fechaEmision),
             total: this.data.total
         };
 
