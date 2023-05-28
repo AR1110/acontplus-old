@@ -277,9 +277,9 @@ app.factory('toastService', function () {
 });
 
 app.factory('modalService', modalService);
-modalService.$inject = ['$uibModal'];
+modalService.$inject = ['$uibModal', '$mdDialog'];
 
-function modalService($uibModal) {
+function modalService($uibModal,  $mdDialog) {
     return {
         openModal: function (controller, template, size, params, animation = true, windowClass = null, props = {}) {
             return $uibModal.open({
@@ -387,6 +387,22 @@ function modalService($uibModal) {
                     }
                 }
             });
+        },
+
+        openMdDialog: function ({controller, templateUrl, targetEvent, clickOutsideToClose=false, fullscreen=true, params}) {
+            return  $mdDialog.show({
+                controller,
+                templateUrl: `/Home/RenderView?name=~/Views/${templateUrl}`,
+                // Appending dialog to document.body to cover sidenav in docs app
+                // Modal dialogs should fully cover application to prevent interaction outside of dialog
+                parent: angular.element(document.body),
+                targetEvent,
+                clickOutsideToClose, 
+                fullscreen,    
+                locals: {
+                    params
+                }               
+            })
         },
         modalOptions: {}
     }
