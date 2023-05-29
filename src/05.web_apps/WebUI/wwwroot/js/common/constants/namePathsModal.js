@@ -208,17 +208,20 @@ app.constant('nombreModalLogistica', {
 app.constant('nombreModalContabilidad', {
     COBRO: {
         fileCtrl: '/js/contabilidad/modals/modalCobroCtrl.min.js' + CHANGE_VERSION(),
+        fileCuotaCtrl: '/js/contabilidad/modals/modalCuotaCtrl.min.js' + CHANGE_VERSION(),
         controllers: {
             CR: 'ModalCobroRapidoCtrl', //Modal - Cobro Rapido 
             CL: 'ModalCobroLoteCtrl', //Cobro Lote
             MFC: 'ModalFormaCobroCtrl',
-            CD: 'ModalCobroDetalleCtrl'
+            CD: 'ModalCobroDetalleCtrl',
+            MC: 'ModalCuotaCtrl'
         },
         templates: {
             CR: '~/Areas/CuentaPorCobrar/Pages/Shared/_ModalCobroRapido.cshtml',
             CL: '~/Areas/CuentaPorCobrar/Pages/Shared/_ModalCobroLote.cshtml',
             MFC: '~/Areas/CuentaPorCobrar/Pages/Shared/_ModalFormaCobro.cshtml',
             CD: '~/Areas/CuentaPorCobrar/Pages/Shared/_ModalCobroDetalle.cshtml',
+            MC: '~/Areas/CuentaPorCobrar/Pages/Shared/_ModalCuota.cshtml',
         }
     }
 })
