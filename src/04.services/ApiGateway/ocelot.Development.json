@@ -1208,6 +1208,22 @@
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "UpstreamPathTemplate": "/api/Consolidacion{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 44354
+        }
+      ],
+      "DownstreamPathTemplate": "/api/TipoEntidad{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "UpstreamPathTemplate": "/api/TipoEntidad{everything}"
     }
   ]
 }

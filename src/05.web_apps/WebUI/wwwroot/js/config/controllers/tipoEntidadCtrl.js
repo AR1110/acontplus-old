@@ -24,6 +24,11 @@
                     params: params || {}
                 });
                 
+                modalRef.then(result => {
+                    if(typeof result==='object'){
+                        $scope.initiLoad();
+                    }
+                })
             } catch (error) {
                 console.log(error);
             }
@@ -32,15 +37,14 @@
         $scope.initiLoad = function () {
             try {
                 showLoader();
-                mS.getData('get', '/TipoEntidad/Get?pageIndex=' + $scope.dataSearch.pageIndex + '&pageSize=' + $scope.dataSearch.pageSize).then(response => {
+                mS.getData('get', 'TipoEntidad/?json=' + JSON.stringify($scope.dataSearch), null, true).then(response => {
                     hideLoader();
-                    if (response.id == "0") {
+                    if (response.code == "0") {
                         console.log(response)
-                        return
                     }
-                    if(response.id == "1") {
-                        $scope.tipoEntidades = response.data;
-                        $scope.totalRecords = response.data[0].totalRecords;
+                    if(response.code == "1") {
+                        $scope.tipoEntidades = JSON.parse(response.payload)
+                        $scope.totalRecords = $scope.tipoEntidades[0].totalRecords;
                     }
                 }).catch(error => {
                     hideLoader();
@@ -53,10 +57,11 @@
 
         $scope.initiLoad();
 
-                $scope.askToDelete = idTipoEntidad => {
+        
+        $scope.askToDelete =  function(item) {
             Swal.fire({
                 icon: 'warning',
-                html: `<small>Esta seguro/a de eliminar este T. Entidad ahora?</small>`,
+                html: `<small>Esta seguro/a de eliminar este Tipo Entidad ahora?</small>`,
                 showConfirmButton: true,
                 confirmButtonText: 'Si, eliminar',
                 showCancelButton: true,
@@ -64,16 +69,19 @@
                 allowOutsideClick: false
             }).then(result => {
                 if (result.value) {
-                    mS.getData('post', '/TipoEntidad/Delete?idEntidad=' + idTipoEntidad).then(response => {
-                        if (response.id == "0") {
-                            toast.toastr('warning', response.message, response.titleSms);
-                            return
+                    showLoader();
+                    mS.getData('delete', 'TipoEntidad/id=' + item.idTipoEntidad, null, true).then(response => {
+                        hideLoader();
+                        if (response.code == "0") {
+                            tS.toastr('warning', response.message, response.titleSms);
                         }
-                        if (response.id == "1") {
-                            toast.toastr('warning', response.message, response.titleSms);
-                            $scope.get();
-                            return
+                        if (response.code == "1") {
+                            tS.toastr('warning', response.message, response.titleSms);
+                            $scope.initiLoad();
                         }
+                    }).catch(error =>{
+                        hideLoader();
+                        console.log(error)
                     })
                 }
             })
@@ -115,18 +123,21 @@
                 }
                 showLoader();
                 console.log($scope.data)
-                let url = $scope.tipoRegistro == 1 ? '/TipoEntidad/Post' : '/TipoEntidad/Put';
-                mS.getData('post', url, $scope.data).then(response => {
+                let url = $scope.tipoRegistro == 1 ? 'TipoEntidad/Insert' : 'TipoEntidad/Update/' + $scope.data.idTipoEntidad;
+                let method = $scope.tipoRegistro == 1 ? 'post':'put';
+                mS.getData(method, url + '?json=' + JSON.stringify($scope.data), null, true).then(response => {
                     hideLoader();
-                    if (response.id == "0") {
+                    if (response.code == "0") {
                         tS.toastr('warning', response.message, response.titleSms);
                         return
                     }
-                    if (response.id == "1") {
+                    if (response.code == "1") {
                         tS.toastr('success', response.message, response.titleSms);
                         $mdDialog.hide(response)
-                        return
                     }
+                }).catch(error=>{
+                    hideLoader();
+                    console.log(error)
                 })
             } catch (error) {
                 hideLoader()
