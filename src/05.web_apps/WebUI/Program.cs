@@ -35,7 +35,7 @@ namespace testWebApi
             });
 
             // Add services to the container.
-            builder.Services.AddRazorPages();//.AddRazorRuntimeCompilation();
+            builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
             //SignalR
             builder.Services.AddSignalR();
 
