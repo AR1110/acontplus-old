@@ -132,6 +132,16 @@
             })
         }
 
+        service.delete = function(id){
+            return mS.getData('delete', url + 'Delete/' + id, null, true)
+            .then(response => {
+                return response;
+            }).catch(error=>{
+                console.log('Error delete Aprob. Docs service', error);
+                throw error;
+            })
+        }
+
         /**
          * 
          * @param {object} params_objecr(detalles, fS(formularioSvc), decimal, findForPurchase 
@@ -168,6 +178,36 @@
             return detalles;
         }
 
+
+        service.addRow = function() {
+            return {
+                idAprob_Document_Detailt: 0,
+                idFacturaDetalle: 0,
+                n: 1,
+                codigo: "",
+                idArticulo: 0,
+                descripcion: "",
+                cantidad: 1,
+                nombreMedida: "",
+                codigoPorcentaje: "",
+                tarifa: 0,
+                nombreTipoIva: "",
+                articuloTarifas: [],
+                idTarifa: 0,
+                precioUnitario: 0,
+                precioConIva: 0,
+                porcentajeDescuento: 0,
+                valorDescuento: 0,
+                totalDescuento: 0,
+                ice: 0,
+                idBodega: 0,
+                subTotal: 0,
+                total: 0,
+                nota: "S/N",
+                llevaInventario: false,
+                datosAdicionales: false
+            }        
+        }
         
 
         return service;
