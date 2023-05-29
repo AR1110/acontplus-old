@@ -6,6 +6,7 @@
     let bodegas = []
     let subfamilias = []
     let config = {}
+
     app.controller('consolidacionInvCtrl', consolidacionInvCtrl);
 
     consolidacionInvCtrl.$inject = ['$scope', '$filter', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario']
@@ -290,6 +291,7 @@
             showGridFooter: true,
             enableCellEdit: false,
         }
+
         $scope.setColumnDefs = () => {
             $scope.gridOptions.columnDefs = [{
                 name: 'Op.',
@@ -297,8 +299,8 @@
                 width: '7%',
                 minWidth: '100',
                 cellTemplate: `
-                            <a  ng-click="grid.appScope.$ctrl.deleteRow(row)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
-                            <a  ng-click="grid.appScope.$ctrl.openModalArticuloEditar(row.entity)" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >
+                            <a  ng-click="grid.appScope.deleteRow(row)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
+                            <a  ng-click="grid.appScope.openModalArticuloEditar(row.entity)" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >
                             `,
             },
             {
@@ -456,7 +458,7 @@
                 enableColumnMenu: false,
                 editableCellTemplate: 'ui-grid/dropdownEditor',
                 cellFilter: 'cellFilterBodega:this',
-                editDropdownValueLabel: 'descripcion',
+                editDropdownValueLabel: 'bodega',
                 editDropdownIdLabel: 'idBodega',
                 enableCellEdit: true,
                 enableCellEditOnFocus: true,
@@ -470,7 +472,7 @@
 
         }
 
-       
+
         $scope.initiload = () => {
             try {
                 showLoader();
@@ -529,8 +531,6 @@
                     $scope.gridApi.grid.refresh();
                 }, 5);
             }
-
-
             gridApi.grid.element.on('keyup', function (ev) {
                 if (ev.which == 13 || ev.keyCode == '13') {
                     $scope.setFocusArticulo();
@@ -538,10 +538,7 @@
                     // ev.stopPropagation();   
                 }
             })
-
             gridApi.edit.on.afterCellEdit($scope, (rowEntity, colDef, newValue, oldValue) => {
-
-
                 //Validar campos                 
                 if (rowEntity[colDef.field] === "" || rowEntity[colDef.field] === undefined || rowEntity[colDef.field] === null) {
                     rowEntity[colDef.field] = oldValue;
@@ -577,13 +574,13 @@
             $scope.data.total = _fS.roundNumber(total, $scope.decimal.nroTotalSubTotal)
         }
 
-        $scope.setFocusArticulo = ()=> {
+        $scope.setFocusArticulo = () => {
             setTimeout(function () {
                 document.querySelector('#custom-template-md-autocomplete-articulo').focus();
             }, 100);
         }
 
-        $scope.onChangeEstablecimiento = ()=> {
+        $scope.onChangeEstablecimiento = async () => {
             try {
 
                 const swalWithBootstrapButtons = Swal.mixin({
@@ -635,8 +632,6 @@
                 for (let item of $scope.gridOptions.data) {
                     item.idBodega = $scope.idBodega;
                 }
-
-                $scope.$apply();
             } catch (error) {
                 console.trace(error)
             }
@@ -668,12 +663,12 @@
             }
         }
 
-
         $scope.setItemArticuloEnDetalle = (item) => {
             try {
-                let {
-                    articulo
-                } = item;
+                let tempArray = JSON.parse(item.payload) || []
+                let articulo = tempArray[0][0]
+                let medidas = tempArray[5]
+                console.log(medidas)
 
                 if (!articulo.llevaInventario) {
                     Swal.fire({
@@ -694,7 +689,7 @@
                     $scope.addRow();
                     $scope.indexRow = $scope.gridOptions.data.findIndex(value => value.idArticulo === 0);
                     entity = $scope.gridOptions.data[$scope.indexRow];
-                    $scope.addItem(entity, item); // item row
+                    $scope.addItem(entity, articulo, medidas); // item row
                 }
                 $scope.countEnum();
                 $scope.setTotalColumn(entity);
@@ -724,12 +719,7 @@
             })
         }
 
-        $scope.addItem = (entity, item) => {
-            let {
-                articulo,
-                medidas
-            } = item;
-            let dataMedida = medidas[0];
+        $scope.addItem = (entity, articulo, medidas) => {
             entity.codigo = articulo.codigoArticulo;
             entity.idArticulo = articulo.idArticulo;
             entity.descripcion = articulo.descripcion;
@@ -737,13 +727,13 @@
             entity.porcentajeTipoIva = articulo.porcentajeTipoIva;
             entity.nombreTipoIva = articulo.nombreTipoIva;
             entity.stock = articulo.stock;
-            entity.precioCosto = _fS.roundNumber(dataMedida.precioCosto, $scope.decimal.nroPrecio)
-            entity.precioActual = _fS.roundNumber(dataMedida.precioCosto, $scope.decimal.nroPrecio)
-            entity.total = _fS.roundNumber(dataMedida.precioCosto, $scope.decimal.nroPrecio)
+            entity.precioCosto = _fS.roundNumber(medidas[0].precioCosto, $scope.decimal.nroPrecio)
+            entity.precioActual = _fS.roundNumber(medidas[0].precioCosto, $scope.decimal.nroPrecio)
+            entity.total = _fS.roundNumber(medidas[0].precioCosto, $scope.decimal.nroPrecio)
             entity.idBodega = $scope.idBodega ? $scope.idBodega : 0;
             entity.llevaInventario = articulo.llevaInventario;
             entity.medidas = medidas; //Lista Medida 
-            entity.idMedida = dataMedida.idMedida; //Medida por defecto                                                                    
+            entity.idMedida = medidas[0].idMedida; //Medida por defecto                                                                    
         }
 
 
@@ -802,9 +792,6 @@
             $scope.$broadcast("editArticulo", item)
         }
 
-
-
-
         $scope.consolidacionArticuloImport = async () => {
             try {
 
@@ -844,9 +831,30 @@
         $scope.onSave = async () => {
 
             try {
-                let tituloModal = "Guardar";
+                if (!$scope.data.codEstab) {
+                    _tS.toastr('warning', 'Seleccione el Establecimiento', tituloModal);
+                    return
+                }
 
-                if (!$scope.validForm(tituloModal)) return
+                if (!($scope.data.idPuntoEmision)) {
+                    _tS.toastr('warning', 'Seleccione el Punto de Emisión', tituloModal);
+                    return
+                }
+
+                if (!($scope.data.fechaEmision)) {
+                    _tS.toastr('warning', 'Ingrese la Fecha de Emisión', tituloModal);
+                    return
+                }
+
+                if ($scope.gridOptions.data.length === 0) {
+                    _tS.toastr('warning', 'Al menos ingrese un Articulo en el Detalle', tituloModal);
+                    return
+                }
+
+                if ($scope.gridOptions.data.some(item => (!(item.idBodega > 0)))) {
+                    _tS.toastr('warning', 'Agregue  bodega a los artículos');
+                    return
+                }
 
                 showLoader();
                 $scope.nroDocumentoSecuencial = await _commonSvc.generarNroDocumentoCompra({
@@ -890,7 +898,7 @@
                         detalle: $scope.gridOptions.data
                     }
 
-                    await _mS.getData('post', '/ConsolidacionInventario/Post', data).then(response => {
+                    await _mS.getData('post', 'Consolidacion/', { data: data }, true).then(response => {
                         if (response.code === '0') {
                             _fS.sweetAlert('warning', response.message, response.titleSms);
                         }
@@ -960,39 +968,6 @@
             } catch (error) {
                 console.log(error)
             }
-        }
-
-        /**
-         * 
-         * @param {*} tituloModal 
-         * @returns true | false
-         */
-        function validForm(tituloModal) {
-            if (!$scope.data.codEstab) {
-                _tS.toastr('warning', 'Seleccione el Establecimiento', tituloModal);
-                return
-            }
-
-            if (!($scope.data.idPuntoEmision)) {
-                _tS.toastr('warning', 'Seleccione el Punto de Emisión', tituloModal);
-                return
-            }
-
-            if (!($scope.data.fechaEmision)) {
-                _tS.toastr('warning', 'Ingrese la Fecha de Emisión', tituloModal);
-                return
-            }
-
-            if ($scope.gridOptions.data.length === 0) {
-                _tS.toastr('warning', 'Al menos ingrese un Articulo en el Detalle', tituloModal);
-                return
-            }
-
-            if ($scope.gridOptions.data.some(item => (!(item.idBodega > 0)))) {
-                _tS.toastr('warning', 'Agregue  bodega a los artículos');
-                return
-            }
-
         }
     }
     let tipoIvas = []
@@ -1078,7 +1053,7 @@
             width: '15%',
             minWidth: '100',
             editableCellTemplate: 'ui-grid/dropdownEditor',
-            cellFilter: 'mapBodega:grid.appScope.$ctrl.bodegas',
+            cellFilter: 'mapBodega:grid.appScope.bodegas',
             editDropdownValueLabel: 'descripcion',
             editDropdownIdLabel: 'idBodega',
         },
@@ -1301,8 +1276,8 @@
                 width: '7%',
                 minWidth: '100',
                 cellTemplate: `
-                            <a  ng-click="grid.appScope.$ctrl.deleteRow(row)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
-                            <a  ng-click="grid.appScope.$ctrl.openModalArticuloEditar(row.entity)" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >
+                            <a  ng-click="grid.appScope.deleteRow(row)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
+                            <a  ng-click="grid.appScope.openModalArticuloEditar(row.entity)" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >
                             `,
             },
             {
@@ -1785,7 +1760,7 @@
                 enableFiltering: false,
                 enableColumnMenu: false,
                 editableCellTemplate: 'ui-grid/dropdownEditor',
-                cellFilter: 'mapBodega:grid.appScope.$ctrl.bodegas',
+                cellFilter: 'mapBodega:grid.appScope.bodegas',
                 editDropdownValueLabel: 'descripcion',
                 editDropdownIdLabel: 'idBodega',
                 enableCellEdit: false,

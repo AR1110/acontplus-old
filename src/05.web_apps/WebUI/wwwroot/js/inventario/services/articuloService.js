@@ -3,7 +3,7 @@
 
     'use strict';
 
-    app.factory('articuloService', function(mainService){
+    app.factory('articuloService', ['mainService', function(mainService){
 
         let url = 'Articulo/';
 
@@ -305,10 +305,22 @@
                     }                 
                 }
             })
-        }            
+        }
+
+         service.getId = (id) => {
+           return mainService.getData("GET", url + "GetId/" + id, null, true).then(
+                 response => {
+                     if (response.code == "0") {
+                         throw response
+                     }
+                     if (response.code == "1") {
+                         return response
+                     }
+                 })
+         }
         
         return service;
 
-    })
+    }])
 
 })(window.angular)
