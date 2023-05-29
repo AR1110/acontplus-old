@@ -1,30 +1,30 @@
 export class CommonService {
     static $inject = [
-        "$rootScope", 
-        "$http", 
-        "mainService", 
-        "FileSaver", 
-        "formulario", 
-        "modalService", 
-        "nombreModal", 
-        "nombreModalFactElect", 
-        "nombreModalVenta", 
-        "nombreModalInventario", 
+        "$rootScope",
+        "$http",
+        "mainService",
+        "FileSaver",
+        "formulario",
+        "modalService",
+        "nombreModal",
+        "nombreModalFactElect",
+        "nombreModalVenta",
+        "nombreModalInventario",
         "nombreModalCompra",
         "articuloService"
     ];
 
     constructor(
-        $rootScope, 
-        $http, 
-        mS, 
-        FileSaver, 
-        form, 
-        _modalSvc, 
-        _nombreModalConst, 
-        nombreModalFactElect, 
-        nombreModalVenta, 
-        nombreModalInventario, 
+        $rootScope,
+        $http,
+        mS,
+        FileSaver,
+        form,
+        _modalSvc,
+        _nombreModalConst,
+        nombreModalFactElect,
+        nombreModalVenta,
+        nombreModalInventario,
         nombreModalCompra,
         articuloSvc
     ) {
@@ -255,8 +255,8 @@ export class CommonService {
 
     getEstadoDocByCodDoc(codDoc) {
         return this.$http.get("/EstadoDocumento/Get?json=" + JSON.stringify({
-                codDoc
-            }))
+            codDoc
+        }))
             .then(({
                 data: response
             }) => response.data || []);
@@ -497,7 +497,7 @@ export class CommonService {
             .then(
                 response => {
                     const results = JSON.parse(response.payload);
-                    
+
                     return {
                         subFamilias: results[0],
                         familias: results[1],
@@ -728,7 +728,7 @@ export class CommonService {
         })
     }
 
-    
+
 
 
     async generarNroDocumento({
@@ -770,11 +770,11 @@ export class CommonService {
 
             this.articuloSvc.findForPurchase({
                 idArticulo: item.idArticulo
-            }).then(response => {                  
+            }).then(response => {
                 item.medidas = response.medidas
                 item.etiquetas = response.etiquetas;
             })
-           
+
             let subTotal = item.cantidad * item.precioUnitario;
             let totalDescuento = item.cantidad * item.valorDescuento;
 
@@ -812,7 +812,7 @@ export class CommonService {
         }
 
         switch (codigoDocumento) {
-            case "FC":        
+            case "FC":
                 await this.mS.getData('get', `IngresoFacturaCompra/GetId?id=${id}`, null, true).then(response => {
 
                     if (response.code == "0") {
@@ -825,13 +825,13 @@ export class CommonService {
                         dataDocumento = dataMain[0][0];
                         dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision);
                         dataDocumento.fechaVencimiento = this.form.formatDate(dataDocumento.fechaVencimiento)
-                        
+
                         proveedor = dataMain[1][0];
-                        
+
                         detalleDocumento = this.setUiGridDetalleCompra(dataMain[2])
 
-                        
-                        datosAdicionales = dataMain[3].map(item=>{
+
+                        datosAdicionales = dataMain[3].map(item => {
                             return {
                                 idArticulo: item.idArticulo,
                                 idEtiqueta: item.idEtiqueta,
@@ -840,7 +840,7 @@ export class CommonService {
                                 estado: item.estado,
                             }
                         })
-                        
+
                         datosAdicionalesArticulo = datosAdicionales
 
                         isComplete = true;
@@ -1000,7 +1000,7 @@ export class CommonService {
                     idArticulo: item.idArticulo,
                 }
                 this.articuloSvc.findForSale(query).then(response => {
-                    let  {articulo, medidas, datosAdicionalesArticulo} = response;
+                    let { articulo, medidas, datosAdicionalesArticulo } = response;
                     item.medidas = medidas;
                     item.datosAdicionalesArticulo = datosAdicionalesArticulo;
 
@@ -1010,7 +1010,7 @@ export class CommonService {
                     console.log(err);
                 })
 
-              
+
                 let subTotal = item.cantidad * item[nombrePrecio] || 0;
                 let totalDescuento = item.cantidad * item.valorDescuento || 0;
 
@@ -1048,10 +1048,10 @@ export class CommonService {
                     }
                     if (response.id === "1") {
                         let dataMain = JSON.parse(response.payload);
-                        
+
                         let detalle = dataMain[2];
                         dataDocumento = dataMain[0][0];
-                        
+
                         dataDocumento.nroDocSecuencial = `${dataDocumento.estab}-${dataDocumento.ptoEmi}-${dataDocumento.secuencial}`;
 
                         dataDocumento.ptoEmi = `${dataDocumento.estab}-${dataDocumento.ptoEmi}`
@@ -1061,16 +1061,16 @@ export class CommonService {
 
                         cliente = dataMain[1][0];
                         detalleDocumento = this.getDetalleVenta(detalle, 'precioUnitario');
-                      
+
                         infoAdicionalDocumento = dataMain[3];
-                      
+
                         actividadTipoIva = {
                             tarifa: dataDocumento.tarifa,
                             codigoPorcentaje: dataDocumento.codigoPorcentaje
                         }
 
                         //----------------------Datos Adicionales del Articulo-----------------
-                        datosAdicionalesArticulo = dataMain[4].map(item=>({
+                        datosAdicionalesArticulo = dataMain[4].map(item => ({
                             idDocumento: item.idDocumento,
                             idHistoryInfoAdicional: item.idHistoryInfoAdicional,
                             idArticulo: item.idArticulo,
@@ -1109,11 +1109,11 @@ export class CommonService {
 
                         cliente = dataMain[1][0];
                         detalleDocumento = this.getDetalleVenta(detalle, 'precioUnitario');
-                        
+
                         infoAdicionalDocumento = dataMain[3];
 
                         //----------------------Datos Adicionales del Articulo-----------------
-                        datosAdicionalesArticulo = dataMain[4].map(item=>({
+                        datosAdicionalesArticulo = dataMain[4].map(item => ({
                             idDocumento: item.idDocumento,
                             idHistoryInfoAdicional: item.idHistoryInfoAdicional,
                             idArticulo: item.idArticulo,
@@ -1221,14 +1221,14 @@ export class CommonService {
                 });
                 break;
         }
-console.log(datosAdicionalesArticulo)
+        console.log(datosAdicionalesArticulo)
         return {
             cliente,
             dataTipoDocumento,
             dataDocumento,
             factura,
             detalleDocumento,
-            infoAdicionalDocumento,            
+            infoAdicionalDocumento,
             actividadTipoIva,
             datosAdicionalesArticulo,
             isComplete,
@@ -1307,7 +1307,7 @@ console.log(datosAdicionalesArticulo)
             dataDocumento = {},
             detalleDocumento = [];
 
-        await this.mS.getData('get', '/ConsolidacionInventario/GetId?id=' + id).then(response => {
+        await this.mS.getData('get', 'Consolidacion/?json=' + JSON.stringify({ tipo: 3, id: id }), null, true).then(response => {
 
             if (response.code === '0') {
                 this.form.sweetAlert('warning', response.message)
@@ -1780,7 +1780,7 @@ console.log(datosAdicionalesArticulo)
             let templates = {};
             let fileCtrl = '';
             let ctrl;
-    
+
             switch (codigoDocumento) {
                 case "FE":
 
@@ -1791,11 +1791,11 @@ console.log(datosAdicionalesArticulo)
                         })
                     }
                     if (codTransaccion == 'S') {
-                        
+
                         fileCtrl = this.nombreModalFactElect.FACTURA.fileCtrl;
                         ctrl = this.nombreModalFactElect.FACTURA.controllers['D']
                         template = this.nombreModalFactElect.FACTURA.templates['D']
-    
+
                         controller = (await import(fileCtrl))[ctrl];
 
                         response = await this.getDataTipoDocVenta({
@@ -1852,7 +1852,7 @@ console.log(datosAdicionalesArticulo)
 
                     break
 
-                
+
                 case "FF":
                     fileCtrl = this.nombreModalCompra.FACTURA_FISICA.fileCtrl;
                     ctrl = this.nombreModalCompra.FACTURA_FISICA.controllers['D']
@@ -1860,7 +1860,7 @@ console.log(datosAdicionalesArticulo)
                     controller = (await import(fileCtrl))[ctrl];
                     response = await this.getDataTipoDocCompra({
                         id,
-                        codigoDocumento:'FC'
+                        codigoDocumento: 'FC'
                     })
 
                     params = {
@@ -1949,7 +1949,7 @@ console.log(datosAdicionalesArticulo)
                     template = this.nombreModalFactElect.FACTURA.templates['D']
 
                     controller = (await import(fileCtrl))[ctrl];
-                   
+
 
                     response = await this.getDataTipoDocVenta({
                         id,
@@ -2057,9 +2057,9 @@ console.log(datosAdicionalesArticulo)
 
                     break
 
-                    default:
-                        console.log(`Detalle del Documento No definido: ${codigoDocumento}`);
-                        throw 'Detalle del Documento No definido'
+                default:
+                    console.log(`Detalle del Documento No definido: ${codigoDocumento}`);
+                    throw 'Detalle del Documento No definido'
             }
 
 

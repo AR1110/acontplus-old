@@ -26,12 +26,28 @@
 
 	<ItemGroup>
 		<Compile Remove="Views\ComprobanteImportacion\**" />
+		<Compile Remove="wwwroot\js\controllers\almacen\**" />
+		<Compile Remove="wwwroot\js\controllers\config\**" />
+		<Compile Remove="wwwroot\js\controllers\ingresos\**" />
+		<Compile Remove="wwwroot\js\controllers\ventas\**" />
 		<Compile Remove="wwwroot\lib\angular-toastr\**" />
 		<Content Remove="Views\ComprobanteImportacion\**" />
+		<Content Remove="wwwroot\js\controllers\almacen\**" />
+		<Content Remove="wwwroot\js\controllers\config\**" />
+		<Content Remove="wwwroot\js\controllers\ingresos\**" />
+		<Content Remove="wwwroot\js\controllers\ventas\**" />
 		<Content Remove="wwwroot\lib\angular-toastr\**" />
 		<EmbeddedResource Remove="Views\ComprobanteImportacion\**" />
+		<EmbeddedResource Remove="wwwroot\js\controllers\almacen\**" />
+		<EmbeddedResource Remove="wwwroot\js\controllers\config\**" />
+		<EmbeddedResource Remove="wwwroot\js\controllers\ingresos\**" />
+		<EmbeddedResource Remove="wwwroot\js\controllers\ventas\**" />
 		<EmbeddedResource Remove="wwwroot\lib\angular-toastr\**" />
 		<None Remove="Views\ComprobanteImportacion\**" />
+		<None Remove="wwwroot\js\controllers\almacen\**" />
+		<None Remove="wwwroot\js\controllers\config\**" />
+		<None Remove="wwwroot\js\controllers\ingresos\**" />
+		<None Remove="wwwroot\js\controllers\ventas\**" />
 		<None Remove="wwwroot\lib\angular-toastr\**" />
 	</ItemGroup>
 
@@ -590,43 +606,6 @@
 		<None Include="wwwroot\js\controllers\admin\turnoCtrl.min.js" />
 		<None Include="wwwroot\js\controllers\admin\usuarioCtrl.js" />
 		<None Include="wwwroot\js\controllers\admin\usuarioCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\almacen\articuloCodigoBarraCtrl.js" />
-		<None Include="wwwroot\js\controllers\almacen\articuloCodigoBarraCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\almacen\articuloComposicionCtrl.js" />
-		<None Include="wwwroot\js\controllers\almacen\articuloComposicionCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\almacen\articuloCtrl.js" />
-		<None Include="wwwroot\js\controllers\almacen\articuloFraccionableCtrl.js" />
-		<None Include="wwwroot\js\controllers\almacen\articuloFraccionableCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\almacen\articuloPvpCtrl.js" />
-		<None Include="wwwroot\js\controllers\almacen\articuloPvpCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\almacen\articuloUbicacionCtrl.js" />
-		<None Include="wwwroot\js\controllers\almacen\articuloUbicacionCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\almacen\familiaCtrl.js" />
-		<None Include="wwwroot\js\controllers\almacen\familiaCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\almacen\impuestoArticuloCtrl.js" />
-		<None Include="wwwroot\js\controllers\almacen\impuestoArticuloCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\almacen\marcaCtrl.js" />
-		<None Include="wwwroot\js\controllers\almacen\marcaCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\almacen\medidaCtrl.js" />
-		<None Include="wwwroot\js\controllers\almacen\medidaCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\almacen\modeloCtrl.js" />
-		<None Include="wwwroot\js\controllers\almacen\modeloCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\almacen\subFamiliaCtrl.js" />
-		<None Include="wwwroot\js\controllers\almacen\subFamiliaCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\almacen\tarifaCtrl.js" />
-		<None Include="wwwroot\js\controllers\almacen\tarifaCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\config\configContribuyenteCtrl.js" />
-		<None Include="wwwroot\js\controllers\config\configContribuyenteCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\config\configDocCtrl.js" />
-		<None Include="wwwroot\js\controllers\config\configDocCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\config\configGeneralCtrl.js" />
-		<None Include="wwwroot\js\controllers\config\configGeneralCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\config\configMoraCtrl.js" />
-		<None Include="wwwroot\js\controllers\config\configMoraCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\config\configTributariaCtrl.js" />
-		<None Include="wwwroot\js\controllers\config\configTributariaCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\entidadLogoCtrl.js" />
-		<None Include="wwwroot\js\controllers\entidadLogoCtrl.min.js" />
 		<None Include="wwwroot\js\controllers\financiera\chequeCtrl.js" />
 		<None Include="wwwroot\js\controllers\financiera\chequeCtrl.min.js" />
 		<None Include="wwwroot\js\controllers\financiera\cobroCtrl.js" />
@@ -638,24 +617,12 @@
 		<None Include="wwwroot\js\controllers\financiera\subEntidadFinancieraCtrl.min.js" />
 		<None Include="wwwroot\js\controllers\financiera\tiempoCreditoCtrl.js" />
 		<None Include="wwwroot\js\controllers\financiera\tiempoCreditoCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\ingresos\categoriaCompraCtrl.js" />
-		<None Include="wwwroot\js\controllers\ingresos\categoriaCompraCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\ingresos\notaVentaCtrl.js" />
-		<None Include="wwwroot\js\controllers\ingresos\notaVentaCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\ingresos\retencionCompraCtrl.js" />
-		<None Include="wwwroot\js\controllers\ingresos\retencionCompraCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\ingresos\tipoEntidadCtrl.js" />
-		<None Include="wwwroot\js\controllers\ingresos\tipoEntidadCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\inventario\consolidacionInvCtrl.js" />
-		<None Include="wwwroot\js\controllers\inventario\consolidacionInvCtrl.min.js" />
+		<None Include="wwwroot\js\inventario\controllers\consolidacionInvCtrl.js" />
+		<None Include="wwwroot\js\inventario\controllers\consolidacionInvCtrl.min.js" />
 		<None Include="wwwroot\js\controllers\layoutCtrl.js" />
 		<None Include="wwwroot\js\controllers\loginCtrl.js" />
 		<None Include="wwwroot\js\controllers\logistica\guiaRemisionCtrl.js" />
 		<None Include="wwwroot\js\controllers\logistica\guiaRemisionCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\loteCtrl.js" />
-		<None Include="wwwroot\js\controllers\loteCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\menuCtrl.js" />
-		<None Include="wwwroot\js\controllers\menuCtrl.min.js" />
 		<None Include="wwwroot\js\controllers\sri\impuestoCtrl.js" />
 		<None Include="wwwroot\js\controllers\sri\retencionIvaCtrl.js" />
 		<None Include="wwwroot\js\controllers\sri\retencionIvaCtrl.min.js" />
@@ -669,21 +636,6 @@
 		<None Include="wwwroot\js\controllers\sri\tipoImpuestoCtrl.min.js" />
 		<None Include="wwwroot\js\controllers\sri\tipoIvaCtrl.js" />
 		<None Include="wwwroot\js\controllers\sri\tipoIvaCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\tipoClienteProveedorCtrl.js" />
-		<None Include="wwwroot\js\controllers\tipoClienteProveedorCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\ventas\clienteCtrl.js" />
-		<None Include="wwwroot\js\controllers\ventas\clienteCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\ventas\empleadoCtrl.js" />
-		<None Include="wwwroot\js\controllers\ventas\empleadoCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\ventas\facturaVentaCtrl.js" />
-		<None Include="wwwroot\js\controllers\ventas\notaCreditoClienteCtrl.js" />
-		<None Include="wwwroot\js\controllers\ventas\notaCreditoClienteCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\ventas\notaEntregaCtrl.js" />
-		<None Include="wwwroot\js\controllers\ventas\proformaCtrl.js" />
-		<None Include="wwwroot\js\controllers\ventas\proformaCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\ventas\retencionVentaCtrl.js" />
-		<None Include="wwwroot\js\controllers\ventas\retencionVentaCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\ventas\ventaCtrl.js" />
 		<None Include="wwwroot\js\services\formularioService.js" />
 		<None Include="wwwroot\js\services\formularioService.min.js" />
 		<None Include="wwwroot\js\services\tesoreria\pagoService.js" />
@@ -2125,10 +2077,6 @@
 			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 		</Content>
-		<Content Update="wwwroot\js\controllers\almacen\articuloCtrl.min.js">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
 		<Content Update="wwwroot\js\controllers\recepcion\documentoRecibidoCtrl.js">
 			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
@@ -2194,14 +2142,6 @@
 			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 		</Content>
 		<Content Update="wwwroot\js\controllers\compras\retencionCompraCtrl.min.js">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
-		<Content Update="wwwroot\js\controllers\config\menuCtrl.js">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
-		<Content Update="wwwroot\js\controllers\config\menuCtrl.min.js">
 			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 		</Content>
@@ -2314,14 +2254,6 @@
 			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 		</Content>
 		<Content Update="wwwroot\js\controllers\sri\atsCtrl.min.js">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
-		<Content Update="wwwroot\js\controllers\ventas\consultarPrecioCtrl.js">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
-		<Content Update="wwwroot\js\controllers\ventas\consultarPrecioCtrl.min.js">
 			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 		</Content>
