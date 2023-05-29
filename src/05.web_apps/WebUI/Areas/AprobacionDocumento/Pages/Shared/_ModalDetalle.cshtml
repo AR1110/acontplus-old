@@ -9,7 +9,7 @@
         <div class="row">
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
                 <div class="form-group">
-                    <label for="sucursal">Sucursal: </label>
+                    <label for="establecimiento">Establecimiento: </label>
                     <select class="form-control" ng-model="data.codEstab" disabled>
                         <option ng-value="item.codEstab" ng-repeat="item in establecimientos">{{item.nombreComercial}}</option>
                     </select>
@@ -56,7 +56,7 @@
             </div>
         </div>        
 
-        
+
         <div ui-grid="gridOptionsDetalle"                                  
             ui-grid-edit
             ui-grid-resize-columns
@@ -65,7 +65,7 @@
             ui-grid-validate
             ui-grid-save-state class="grid">
         </div>
-        
+
 
          <div class="row mt-3">
             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">

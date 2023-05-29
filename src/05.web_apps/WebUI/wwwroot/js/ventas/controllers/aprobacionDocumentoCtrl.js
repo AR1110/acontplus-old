@@ -41,18 +41,18 @@
     function aprobacionDocumentoCtrl($scope, $filter, $injector, modalSvc, nombreModalVenta, decodeToken) {
 
         //Injection Services
-        mS = $injector.get('mainService');
-        commonSvc = $injector.get('commonService');
-        clienteSvc = $injector.get('clienteService');
+        mS               = $injector.get('mainService');
+        commonSvc        = $injector.get('commonService');
+        clienteSvc       = $injector.get('clienteService');
         aprobacionDocSvc = $injector.get('aprobacionDocService');
-        ventaSvc = $injector.get('ventaService');
-        notaEntregaSvc = $injector.get('notaEntregaService');
-        proformaSvc = $injector.get('proformaService');
-        articuloSvc = $injector.get('articuloService');
-        facturaSvc = $injector.get('facturaService');
-        tS = $injector.get('toastService');
-        fS = $injector.get('formulario');
-        gridOptionsSvc = $injector.get('gridOptionsService');
+        ventaSvc         = $injector.get('ventaService');
+        notaEntregaSvc   = $injector.get('notaEntregaService');
+        proformaSvc      = $injector.get('proformaService');
+        articuloSvc      = $injector.get('articuloService');
+        facturaSvc       = $injector.get('facturaService');
+        tS               = $injector.get('toastService');
+        fS               = $injector.get('formulario');
+        gridOptionsSvc   = $injector.get('gridOptionsService');
 
         idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
 
@@ -181,16 +181,21 @@
         }
 
         $scope.usuarioSearch = function (textSearch) {
-            let query = {
-                idRol: idUsuarioRol,
-                busqueda: textSearch
-            }
-
-            if (query.busqueda.length > 2) {
-                return commonSvc.usuarioSearch(query)
-                    .catch(error => {
-                        console.log(error);
-                    })
+            try {
+                let query = {
+                    idRol: idUsuarioRol,
+                    busqueda: textSearch
+                }
+    
+                if (query.busqueda.length > 2) {
+                    return commonSvc.usuarioSearch(query)
+                        .catch(error => {
+                            console.log(error);
+                            throw error;
+                        })
+                }
+            } catch (error) {
+                console.log(error);
             }
         }
 
@@ -240,10 +245,11 @@
                     fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin)
                 }
 
-                console.log(dataSearch)
+                 
                 $scope.aprobComprobantes = [];
                 $scope.cloneAproComprobantes = [];
                 $scope.calculoColumnTotal();
+
                 aprobacionDocSvc.getAll(dataSearch).then(response => {
                     hideLoader();
                     $scope.aprobComprobantes = response;
@@ -389,7 +395,7 @@
 
         $scope.askToDelete = async (item) => {
             try {
-                Swal.fire({
+                let {isConfirmed} = await Swal.fire({
                     title: 'Anular Aprobación?',
                     html: `<small>Esta seguro de Anular este Documento Nro. <b>${item.serieComprobante}</b>!</small>`,
                     icon: 'warning',
@@ -398,30 +404,30 @@
                     cancelButtonColor: '#d33',
                     confirmButtonText: 'Si, eliminar!',
                     cancelButtonText: 'No, cancelar!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        showLoader();
-                        aprobacionDocSvc.delete(item.idAprob_Document).then(response => {
-                            hideLoader();
-                            if (response.code === '0') {
-                                Toast.fire({
-                                    icon: 'warning',
-                                    html: response.message
-                                })
-                            }
-                            if (response.code === '1') {
-                                Toast.fire({
-                                    icon: 'successs',
-                                    html: response.message
-                                })
-                                $scope.aprobComprobantes();
-                            }
-                        }).catch(error => {
-                            hideLoader();
-                            console.log(error);
-                        })
-                    }
                 })
+
+                if (isConfirmed) {
+                    showLoader();
+                    aprobacionDocSvc.delete(item.idAprob_Document).then(response => {
+                        hideLoader();
+                        if (response.code === '0') {
+                            Toast.fire({
+                                icon: 'warning',
+                                html: response.message
+                            })
+                        }
+                        if (response.code === '1') {
+                            Toast.fire({
+                                icon: 'successs',
+                                html: response.message
+                            })
+                            $scope.aprobComprobantes();
+                        }
+                    }).catch(error => {
+                        hideLoader();
+                        console.log(error);
+                    })
+                }
             } catch (error) {
                 hideLoader();
                 console.log(error)
@@ -435,11 +441,12 @@
          */
         $scope.getReport = function (item) {
             try {
-
+                
                 let format = 'pdf';
                 let dataParms = {
                     id: item.idAprob_Document,
                     codEstab: item.codEstab,
+                    docDestino: item.docDestino,
                     codigo: 'RAC',
                     format,
                 }
@@ -457,17 +464,13 @@
             }
         }
 
-
-
-
-
-
     }
+
 
 
     /**
      * 
-     * _------------------Modal para seleccionar los documentos 
+     * _------------------Modal para seleccionar los documentos ----------------------
      * 
      */
     app.controller('ModalSelectDocCtrl', ModalSelectDocCtrl);
@@ -788,9 +791,9 @@
             return true;
         }
 
-        $scope.askToChangeEstabFilter = function () {
+        $scope.askToChangeEstabFilter = async function () {
             try {
-                Swal.fire({
+                let {isConfirmed} = await Swal.fire({
                     title: 'Cambiar Establecimiento?',
                     text: "Se revertiran los documentos seleccionados en caso de existir!",
                     icon: 'warning',
@@ -799,27 +802,28 @@
                     cancelButtonColor: '#d33',
                     confirmButtonText: 'Si, cambiar!',
                     cancelButtonText: 'No, cancelar!',
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $scope.gridOptionsDetalle.data = [];
-                        $scope.gridOptionsSelectedDocs.data = [];
-
-                        let dataEstab = $scope.establecimientos.find(item => item.codEstab === $scope.dataSearch.codEstab);
-
-                        $scope.ptosEmision = $scope.tempPuntosEmision.filter(item => item.codEstab_Asig === dataEstab.codEstab_Asig);
-
-                        let dataPtoEmi = $scope.ptosEmision.find(item => (item.predeterminado))
-                        $scope.data.idPuntoEmision = dataPtoEmi.idPuntoEmision;
-
-                        if ($scope.isValidFilter()) {
-                            $scope.getDocumentos();
-                        }
-                        $scope.dataClone.codEstab = $scope.dataSearch.codEstab;
-                    } else {
-                        $scope.dataSearch.codEstab = $scope.dataClone.codEstab;
-                        $scope.$apply();
-                    }
                 })
+                                
+                if (isConfirmed) {
+                    $scope.gridOptionsDetalle.data = [];
+                    $scope.gridOptionsSelectedDocs.data = [];
+
+                    let dataEstab = $scope.establecimientos.find(item => item.codEstab === $scope.dataSearch.codEstab);
+
+                    $scope.ptosEmision = $scope.tempPuntosEmision.filter(item => item.codEstab_Asig === dataEstab.codEstab_Asig);
+
+                    let dataPtoEmi = $scope.ptosEmision.find(item => (item.predeterminado))
+                    $scope.data.idPuntoEmision = dataPtoEmi.idPuntoEmision;
+
+                    $scope.dataClone.codEstab = $scope.dataSearch.codEstab;
+                    if ($scope.isValidFilter()) {
+                        $scope.getDocumentos();
+                    }
+                } else {
+                    $scope.dataSearch.codEstab = $scope.dataClone.codEstab;
+                    $scope.$apply();
+                }
+                
             } catch (error) {
                 console.log(error);
             }
@@ -852,7 +856,8 @@
         }
 
         $scope.refresh = function () {
-            let selectedDocuments = $scope.gridApi.selection.getSelectedRows() || []
+            
+            let selectedDocuments = $scope.gridApi && $scope.gridApi.selection.getSelectedRows() || []
             if (selectedDocuments.length > 0) {
                 tS.toastr('warning', 'Tienes documentos seleccionados')
                 return
@@ -1427,9 +1432,9 @@
             $scope.gridOptionsDetalle.columnDefs[indexBodega].editDropdownOptionsArray = $scope.bodegas;
         }
 
-        $scope.onChangeEstab = function () {
+        $scope.onChangeEstab = async function () {
             try {
-                Swal.fire({
+                let {isConfirmed} = await Swal.fire({
                     title: 'Cambiar Establecimiento?',
                     text: "Se cambiará puntos de Emisión y la bodega en el detalle!",
                     icon: 'warning',
@@ -1438,46 +1443,47 @@
                     cancelButtonColor: '#d33',
                     confirmButtonText: 'Si, cambiar!',
                     cancelButtonText: 'No, cancelar!',
-                }).then((result) => {
-                    if (result.isConfirmed) {
+                })
+                                
+                if (isConfirmed) {
 
-                        let dataEstab = $scope.establecimientos.find(item => item.codEstab === $scope.data.codEstab);
+                    let dataEstab = $scope.establecimientos.find(item => item.codEstab === $scope.data.codEstab);
 
-                        if (!$scope.tempPuntosEmision.some(item => item.codEstab_Asig === dataEstab.codEstab_Asig)) {
-                            tS.toastr('info', 'No tienes Puntos de Emisión asignado a este establecimiento');
-                            $scope.data.codEstab = $scope.dataClone.codEstab;
-                            $scope.$apply();
-                            return
-                        }
-                        if (!$scope.tempBodegas.some(item => item.codEstab_Asig === dataEstab.codEstab_Asig)) {
-                            tS.toastr('info', 'No tienes bodegas asignado a este establecimiento');
-                            $scope.data.codEstab = $scope.dataClone.codEstab;
-                            $scope.$apply();
-                            return
-                        }
-
-                        //Impuesto Tarifa
-                        $scope.tarifasImpuestos = dataEstab.tarifasImpuestos;
-                        $scope.dataTarifaImpuesto = $scope.tarifasImpuestos[0];
-
-                        //Puntos de Emision 
-                        $scope.ptosEmision = $scope.tempPuntosEmision.filter(item => item.codEstab_Asig === dataEstab.codEstab_Asig);
-
-                        let dataPtoEmi = $scope.ptosEmision.find(item => (item.predeterminado))
-                        $scope.data.idPuntoEmision = dataPtoEmi.idPuntoEmision;
-
-                        //Bodegas 
-                        $scope.bodegas = $scope.tempBodegas.filter(item => item.codEstab_Asig === dataEstab.codEstab_Asig);
-
-                        let dataBodega = $scope.bodegas.find(item => (item.predeterminado));
-                        $scope.idBodega = dataBodega.idBodega;
-
-                        $scope.dataClone.codEstab = $scope.data.codEstab;
-                    } else {
+                    if (!$scope.tempPuntosEmision.some(item => item.codEstab_Asig === dataEstab.codEstab_Asig)) {
+                        tS.toastr('info', 'No tienes Puntos de Emisión asignado a este establecimiento');
                         $scope.data.codEstab = $scope.dataClone.codEstab;
                         $scope.$apply();
+                        return
                     }
-                })
+                    if (!$scope.tempBodegas.some(item => item.codEstab_Asig === dataEstab.codEstab_Asig)) {
+                        tS.toastr('info', 'No tienes bodegas asignado a este establecimiento');
+                        $scope.data.codEstab = $scope.dataClone.codEstab;
+                        $scope.$apply();
+                        return
+                    }
+
+                    //Impuesto Tarifa
+                    $scope.tarifasImpuestos = dataEstab.tarifasImpuestos;
+                    $scope.dataTarifaImpuesto = $scope.tarifasImpuestos[0];
+
+                    //Puntos de Emision 
+                    $scope.ptosEmision = $scope.tempPuntosEmision.filter(item => item.codEstab_Asig === dataEstab.codEstab_Asig);
+
+                    let dataPtoEmi = $scope.ptosEmision.find(item => (item.predeterminado))
+                    $scope.data.idPuntoEmision = dataPtoEmi.idPuntoEmision;
+
+                    //Bodegas 
+                    $scope.bodegas = $scope.tempBodegas.filter(item => item.codEstab_Asig === dataEstab.codEstab_Asig);
+
+                    let dataBodega = $scope.bodegas.find(item => (item.predeterminado));
+                    $scope.idBodega = dataBodega.idBodega;
+
+                    $scope.dataClone.codEstab = $scope.data.codEstab;
+                } else {
+                    $scope.data.codEstab = $scope.dataClone.codEstab;
+                    $scope.$apply();
+                }
+                
             } catch (error) {
                 console.log(error);
             }
@@ -1570,8 +1576,8 @@
                         comprobante: JSON.stringify(comprobante),
                         detalle: JSON.stringify(tempDetail),
                         historial: JSON.stringify($scope.selectedDocuments.map(item => ({
-                            idDocumento: item.idNotaEntrega || item.idProforma,
-                            serie: item.nroDocumento,
+                            idDocumento: item.idDocumento,
+                            serie: item.serieComprobante,
                         }))),
                         infoAdicional: JSON.stringify(infoAdicional),
                         historialVenta: JSON.stringify(historialVenta),
@@ -1662,8 +1668,6 @@
                 /**
                  * Establecimiento - Impuesto Tarifa 
                  */
-                console.log(establecimientos)
-                console.log($scope.data)
                 let dataEstab = establecimientos.find(item => (item.estab === $scope.data.estab))
 
                 $scope.establecimientos = establecimientos;
@@ -1687,6 +1691,8 @@
 
                 //Config. Detalle (Mostrar/Ocultar Columnas de talle)
                 $scope.configDetalle = configDetalle;
+
+                //Tipo Ivas
                 $scope.tipoIvas = tipoIvas;
 
 
@@ -1936,6 +1942,7 @@
     }
 
 
+
     /**
      * =========================MODAL-EDITAR-APROBACION DOCUMENTO 
      */
@@ -1945,15 +1952,24 @@
     ModalAprobDocEditarCtrl.$inject = ['$scope', '$uibModalInstance', '$timeout', 'params']
 
     function ModalAprobDocEditarCtrl($scope, $uibModalInstance, $timeout, params) {
+
         let { docOrigenDesc, docDestinoDesc, data } = params
         let { comprobante, cliente, detalles, historial, infoAdicionalDocumento, datosAdicionalesArticulo } = data;
 
         $scope.docOrigenDesc = docOrigenDesc;
-        $scope.docDestinoDesc = docDestinoDesc
+        $scope.docDestinoDesc = docDestinoDesc;
+
+        //params to MdAutocomplete to search article
+        $scope.tipoDoc = {
+            codigo: 'NE'
+        }
 
         $scope.data = comprobante;
         $scope.data.fechaEmision = fS.formatDate($scope.data.fechaEmision)
         $scope.cliente = cliente;
+       
+        $scope.dataClone = {};
+
         $scope.dataDisabled = {
             isDisabledSucursal: true,
             isDisabledPuntoEmision: true
@@ -1988,19 +2004,27 @@
                     rowEntity[colDef.field] = oldValue;
                 }
 
-                // const objCalculo = self.uiGridInvoice.calculoColDef(rowEntity, oldValue)
-                // objCalculo[colDef.field] && objCalculo[colDef.field]();
-                // objCalculo["calculoTotalDetalle"]();
-                // self.data = Object.assign(self.data, self.uiGridInvoice.getTotales());
+                
+				//Validacion de numeros negativos
+				if (['cantidad', 'precioUnitario', 'precioConIva', 'valorDescuento', 'porcentajeDescuento'].includes(colDef.field) && newValue < 0) {
+
+					rowEntity[colDef.field] = oldValue;
+				}
+
+				if (colDef.field === 'cantidad' && rowEntity[colDef.field] === 0) {
+					rowEntity[colDef.field] = 1;
+				}
+
+				$scope.setCalculoTotales(colDef.field, rowEntity, oldValue);
 
             })
         }
 
 
 
-        initiload();
+       
 
-        async function initiload() {
+        $scope.initiload = async function() {
             try {
                 showLoader();
                 let { establecimientos, ptosEmision, bodegas, configVenta, decimal, configDetalle, tipoIvas, tarifas, tiempoCreditos, articuloPredeterminado, clientePredeterminado, permisoVenta, permisoArticulo } = mainDataForm;
@@ -2008,8 +2032,6 @@
                 /**
                  * Establecimiento - Impuesto Tarifa 
                  */
-                console.log(establecimientos)
-                console.log($scope.data)
                 let dataEstab = establecimientos.find(item => (item.estab === $scope.data.estab))
 
                 $scope.establecimientos = establecimientos;
@@ -2026,15 +2048,22 @@
 
                 $scope.bodegas = bodegas.filter(item => item.codEstab_Asig === dataEstab.codEstab_Asig);
                 let dataBodega = $scope.bodegas.find(item => (item.predeterminado))
-                $scope.idBodega = dataBodega.idBodega;
+                $scope.data.idBodega = dataBodega.idBodega;
 
                 //Decimal 
                 $scope.decimal = decimal;
 
                 //Config. Detalle (Mostrar/Ocultar Columnas de talle)
                 $scope.configDetalle = configDetalle;
+                
+                //Tipo Ivas 
                 $scope.tipoIvas = tipoIvas;
 
+                //Tarifas(PVP1, PVP2)
+                $scope.tarifas = tarifas;
+                $scope.data.idTarifa = $scope.tarifas.length > 0 ? $scope.tarifas[0].idTarifa : 0;
+                $scope.dataClone.idTarifa = $scope.data.idTarifa;
+                console.log($scope.tarifas)
                 //Permisos para detalle y documento 
                 let { detail, comprobante } = permisoVenta;
                 $scope.permisoDetalle = Object.freeze(detail);
@@ -2060,6 +2089,8 @@
                 console.log(error);
             }
         }
+
+        $scope.initiload();
 
         function setColumnDefs() {
             let defaultPermission = Object.freeze({
@@ -2094,12 +2125,14 @@
                 width: '5%',
                 minWidth: '100',
                 cellTemplate: `
-                    <button type="button" ng-click="grid.appScope.askToDeleteArticle(row)" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada">
+                    <button type="button" ng-click="grid.appScope.askToDeleteRow(row.entity)" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada">
                         <i class="fa fa-trash"></i>
                     </button>
-                    <button type="button" ng-if="articlePermission.editar" class= "btn btn-success btn-xs text-white" ng-click="grid.appScope.openModalArticulo(row.entity)" title = "Editar Articulo" >
+
+                    <button type="button"  update-article class= "btn btn-success btn-xs text-white" ng-click="grid.appScope.openModalArticulo(row.entity)" title = "Editar Articulo" >
                         <i class="fa fa-edit"></i>
                     </button > 
+
                     <a  btn-dato-adicional-articulo-fact-elect entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' history-datos-adicionales="grid.appScope.historyDatosAdicionales" result-modal-adicional="grid.appScope.resultModalAdicional(result)" datos-adicionales="grid.appScope.datosAdicionalesArticulo" class= "btn btn-warning btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`
             },
             {
@@ -2278,6 +2311,365 @@
             $scope.gridOptionsDetalle.columnDefs[indexTipoIva].editDropdownOptionsArray = $scope.tipoIvas;
             // this.gridOptionsDetailDocument.columnDefs[indexBodega].editDropdownOptionsArray = this.bodegas;             
         }
+
+
+        $scope.onChangeTarifaGeneral = async function () {            
+			if (!$scope.permisoComprobante.tarifa.update) {
+				$scope.data.idTarifa = $scope.dataClone.idTarifa;
+				tS.toastr('warning', 'No tienes permiso para realizar esta acción');
+				return
+			}
+
+			let tarifa = $scope.tarifas.find(item => item.idTarifa === $scope.data.idTarifa);
+			let {
+				isConfirmed
+			} = await Swal.fire({
+				html: `<small>¿Esta seguro de aplicar este tarifa: <b>${tarifa.descripcion}</b> en los precios de venta en todo el Documento?</small>`,
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#3085d6',
+				confirmButtonText: `Sí, cambiar!`,
+				cancelButtonText: 'No, cancelar!',
+				allowOutsideClick: false,
+			})
+
+			if (isConfirmed) {
+
+				$scope.dataClone.idTarifa = $scope.data.idTarifa;
+
+				if ($scope.gridOptionsDetalle.data.length === 0) return
+
+				if (gridOptionsSvc.setTarifaInDetail(
+                    $scope.gridOptionsDetalle, 
+                    $scope.data.idTarifa, 
+                    $scope.decimal, 
+                    gridOptionsSvc.calculoColDef
+                    )
+                ) {
+					$scope.recalculateTotalsSimple();
+				}
+				$scope.$apply();
+
+			} else {
+				$scope.data.idTarifa = $scope.dataClone.idTarifa;
+				$scope.$apply();
+			}
+		}
+
+
+        //Indice del detalle documento 
+        $scope.indexRowDetalle =null;
+
+        //Recibe datos de buscador articulo cuando seleccionan articulo
+        $scope.setItemArticuloEnDetalle = function(dataArticulo) {
+
+            try {
+               console.log($scope.indexRowDetalle)
+                const {articulo, medidas, datosAdicionalesArticulo } = dataArticulo;
+                let dataMedida = medidas[0];
+
+                if([null, undefined].includes($scope.indexRowDetalle)){
+                    $scope.gridOptionsDetalle.data.push(aprobacionDocSvc.addRow());
+                    $scope.indexRowDetalle = $scope.gridOptionsDetalle.data.findIndex(value => value.idArticulo === 0);
+
+                }
+
+                let entity =  $scope.gridOptionsDetalle.data[$scope.indexRowDetalle];
+
+                entity.idArticulo = articulo.idArticulo;
+                entity.codigo = articulo.codigoArticulo;
+                entity.descripcion = articulo.descripcion;
+
+
+                //Aplica a establecimiento que llevan actividad de Tipo Alojamiento
+                if ($scope.dataTarifaImpuesto.codigoPorcentaje === '8' && articulo.codigoPorcentaje === '2') {
+
+                    let dataImpuestoTarifa = $scope.tipoIvas.find(item => item.codigoPorcentaje === $scope.dataTarifaImpuesto.codigoPorcentaje);
+                    entity.idTipoIva = dataImpuestoTarifa.idTipoIva;
+                    entity.codigoPorcentaje = dataImpuestoTarifa.codigoPorcentaje;
+                    entity.tarifa = dataImpuestoTarifa.tarifa;
+
+                } else {
+                    entity.idTipoIva = articulo.idTipoIva;
+                    entity.codigoPorcentaje = articulo.codigoPorcentaje;
+                    entity.tarifa = articulo.tarifa;
+
+                }
+
+                // entity.nombreTipoIva        = articulo.nombreTipoIva;
+                entity.ice = articulo.valorIce;
+                entity.idBodega = $scope.data.idBodega > 0 ? $scope.data.idBodega : 0;
+                entity.llevaInventario = articulo.llevaInventario;
+                entity.datosAdicionales = articulo.datosAdicionales;
+                entity.productoFraccionable = articulo.productoFraccionable;
+                entity.medidas = medidas; //Lista Medida 
+                entity.idMedida = dataMedida.idMedida; //Medida por defecto 
+                
+                //Datos Adicionales 
+                entity.datosAdicionalesArticulo = datosAdicionalesArticulo; //
+
+                entity.articuloTarifas = JSON.parse(dataMedida.tarifas);
+                let tarifa = entity.articuloTarifas.find(item => item.idTarifa === $scope.data.idTarifa);
+                entity.idTarifa = $scope.data.idTarifa;
+                entity.precioUnitario = fS.roundNumber(tarifa.precioVenta, $scope.decimal.nroPrecio);
+                entity.precioConIva = fS.roundNumber(tarifa.precioConIva, $scope.decimal.nroPrecio);
+
+                $scope.setCalculoTotales('precioUnitario', entity, 0);
+
+                // const objCalculo = self.uiGridInvoice.calculoColDef(entity, 0);
+
+                // objCalculo["precioUnitario"] && objCalculo["precioUnitario"]();
+
+                // objCalculo["calculoTotalDetalle"]();
+
+                // self.data = Object.assign(self.data, self.uiGridInvoice.getTotales());
+
+                $scope.focusColumnCantidad(articulo);
+    
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+
+        /**
+		 * 
+		 * @param {*} colField nombre de la columnas 
+		 * @param {*} rowEntity datos del item 
+		 * @param {*} oldValue valor anterior de la columna
+		 */
+		$scope.setCalculoTotales = function (colField, rowEntity, oldValue) {
+
+            //calculoColDef recibbe params obj: {rowEntity, oldValue, decimal, idTarifa, columnDefs}
+			let objCalculo = gridOptionsSvc.calculoColDef({
+				rowEntity,
+				oldValue,
+				decimal: $scope.decimal,
+				idTarifa: $scope.data.idTarifa,
+				columnDefs: $scope.gridOptionsDetalle.columnDefs
+			});
+
+			objCalculo[colField] && objCalculo[colField]();
+
+			objCalculo["calculoTotalDetalle"]();
+			$scope.recalculateTotalsSimple();
+		}
+
+
+		/**
+		 * Calculamos todos los totales y subtotales del comprobantes 
+		 */
+		$scope.recalculateTotalsSimple = function () {
+			
+            $scope.data = Object.assign($scope.data, gridOptionsSvc.calculoTotales({
+                items: $scope.gridOptionsDetalle.data,
+                decimal: $scope.decimal,
+                dataTarifaImpuesto: $scope.dataTarifaImpuesto
+            }))
+
+			$scope.dataClone.porcentajeDescuento = $scope.data.porcentajeDescuento;
+			$scope.dataClone.totalDescuento = $scope.data.totalDescuento;
+		}
+
+        $scope.focusColumnCantidad = function(articulo) {
+            let index = 0;
+            if (articulo.llevaInventario) {
+                index = $scope.gridOptionsDetalle.columnDefs.findIndex(item => item.field === 'cantidad')
+            } else {
+                index = $scope.gridOptionsDetalle.columnDefs.findIndex(item => item.field === 'descripcion')
+            }       
+            
+            $scope.gridApi.cellNav.scrollToFocus(
+                $scope.gridOptionsDetalle.data[0],
+                $scope.gridOptionsDetalle.columnDefs[2]
+            )
+    
+            $timeout(() => {
+                $scope.gridApi.cellNav.scrollToFocus(
+                    $scope.gridOptionsDetalle.data[$scope.indexRowDetalle],
+                    $scope.gridOptionsDetalle.columnDefs[index]
+                );
+                $scope.indexRowDetalle = null;
+            }, 30)
+        }
+        
+
+        $scope.askToDeleteRow = async function(rowEntity) {            
+            try {
+                $scope.indexRowDetalle = null;
+                let isConfirmed = await gridOptionsSvc.askToDeleteItem(rowEntity);        
+    
+                if(isConfirmed) {
+                    let index = $scope.gridOptionsDetalle.data.indexOf(rowEntity);
+					$scope.gridOptionsDetalle.data.splice(index, 1);
+                    //Recalculamos los totales 
+                    $scope.setCalculoTotales("cantidad", rowEntity, 0);
+                    $scope.$apply();
+                }
+        
+                if (isConfirmed && rowEntity.datosAdicionales) {
+                    $scope.datosAdicionalesArticulo = $scope.datosAdicionalesArticulo.filter(val => val.idArticulo !== rowEntity.idArticulo);
+                    $scope.historyDatosAdicionales = $scope.historyDatosAdicionales.filter(val => val.idArticulo !== rowEntity.idArticulo);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        $scope.openModalArticulo = function(item) {
+            $scope.indexRowDetalle = $scope.gridOptionsDetalle.data.indexOf(item);
+            $scope.gridApi.cellNav.scrollToFocus(
+                $scope.gridOptionsDetalle.data[0],
+                $scope.gridOptionsDetalle.columnDefs[1]
+            )
+            $scope.$broadcast("editArticulo", item)
+        }
+
+        
+        $scope.resultModalAdicional = function(result) {
+            let {entity, historyDatosAdicionales} = result;
+            $scope.historyDatosAdicionales = historyDatosAdicionales;
+        }
+
+
+        $scope.askToSave = function() {
+            try { 
+                
+                if (!$scope.data.codEstab) {
+                    tS.toastr('warning','Seleccione el Establecimiento')                  
+                    return
+                }
+    
+                if (!($scope.cliente.idCliente>0)) {
+                    tS.toastr('warning','Seleccione el Cliente')                                                   
+                    return
+                }
+    
+                if (!($scope.data.idPuntoEmision>0)) {
+                    tS.toastr('warning', 'Seleccione el Punto de Emisión')                                     
+                    return
+                }
+    
+                if (!$scope.data.fechaEmision) {
+                    tS.toastr('warning', 'Ingrese la Fecha de Emisión')                                         
+                    return
+                }
+                if (!fS.isValidDate($scope.data.fechaEmision)) {
+                    tS.toastr('warning', 'Ingrese la fecha de emisióm correctamente')                                         
+                    return
+                }
+                  
+                Swal.fire({
+                    // title: 'Are you sure?',
+                    html: `<small>Esta Ud. seguro de <b>${actualizar}</b> este Aprobación Documento <b>N° ${$scope.data.serieComprobante}</b></small>?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Si, actualizar!',
+                    cancelButtonText: 'No, cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                                             
+                    }
+                })
+                
+                  
+                
+                console.log()
+                // const swalWithBootstrapButtons = Swal.mixin({
+                //     customClass: {
+                //         confirmButton: 'btn btn-success',
+                //         cancelButton: 'btn btn-danger m-l-5'
+                //     },
+                //     buttonsStyling: false
+                // })
+    
+                // const {
+                //     isConfirmed
+                // } = await swalWithBootstrapButtons.fire({
+                //     html: `<small>Esta Ud. seguro de <b>${textAccion}</b> este Aprobación <b>N° ${this.data.serie}</b></small>?`,
+                //     icon: 'warning',
+                //     showCancelButton: true,
+                //     confirmButtonText: `<small><i class='ti-pencil'></i> Sí, ${textAccion}!</small>`,
+                //     cancelButtonText: '<small>&times; No, cancelar!</small>',
+                //     reverseButtons: false,
+                //     allowOutsideClick: false,
+                //     focusConfirm: true
+                // })
+    
+    
+                // if (isConfirmed) {
+                //     showLoader();
+    
+                //     const jsonHeader = {
+                //         ...this.data,
+                //         totalSinImpuestos: this.data.subTotalSinImpuestos,
+                //         totalConImpuestos: this.data.total,
+                //         importeTotal: this.data.total,
+                //         fechaEmision: this._fS.formatDateTimeZone(this.data.fechaEmision, "YYYY-MM-DD h:mm A"),
+                //     }
+    
+                //     //Tarifa Aplicada al Documento
+                //     jsonHeader.tarifa = this.uiGridInvoice.actividadTipoIva.tarifa;
+                //     jsonHeader.codigoPorcentaje = this.uiGridInvoice.actividadTipoIva.codigoPorcentaje;
+    
+                //     let tempDetail = [];
+                //     let orderIndex = 1;
+                //     for (let item of this.gridOptionsDetailDocument.data) {
+                //         const precioTotalSinImpuesto = (item.precioUnitario - item.valorDescuento) * item.cantidad;
+                //         const obj = {
+                //             orderIndex: orderIndex++,
+                //             idAprob_Document_Detailt: item.idAprob_Document_Detailt,
+                //             idTarifa: item.idTarifa,
+                //             idArticulo: item.idArticulo,
+                //             idTipoIva: item.idTipoIva,
+                //             idMedida: item.idMedida,
+                //             cantidad: item.cantidad,
+                //             descripcion: item.descripcion,
+                //             precioUnitario: item.precioUnitario,
+                //             precioConIva: item.precioConIva,
+                //             valorDescuento: item.valorDescuento,
+                //             descuento: item.valorDescuento,
+                //             precioTotalSinImpuesto: this._fS.roundNumber(precioTotalSinImpuesto, this.decimal.nroTotalDetalle),
+                //             baseImponible: this._fS.roundNumber(precioTotalSinImpuesto, this.decimal.nroTotalDetalle),
+                //             nota: item.nota,
+                //             codigoPorcentaje: item.codigoPorcentaje,
+                //             tarifa: item.tarifa
+                //         }
+                //         tempDetail.push(obj);
+                //     }
+    
+                //     const data = {
+                //         comprobante: JSON.stringify(jsonHeader),
+                //         detalle: JSON.stringify(tempDetail),
+                //         historialVenta: JSON.stringify(this.historyDatosAdicionales)
+                //     }
+                //     console.log(this.TIPO_DOC_FV)
+    
+                //     this.aprobacionDocSvc.update(this.data.idAprob_Document, data).then(response => {
+                //         if (response.code === "0") {
+                //             hideLoader();
+                //             this._fS.sweetAlert('warning', response.message);
+                //         }
+                //         if (response.code === '1') {
+                //             hideLoader();
+                //             this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                //             this.$uibModalInstance.close(response);
+                //         }
+                //     }).catch(error => {
+                //         hideLoader();
+                //         console.log(error)
+                //     })
+                // }
+            } catch (error) {
+                hideLoader();
+                console.trace(error)
+            }
+        }
+    
+
+
 
 
         $scope.closeModal = function () {

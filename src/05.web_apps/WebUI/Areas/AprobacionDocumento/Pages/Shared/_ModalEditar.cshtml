@@ -63,9 +63,8 @@
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <label for="">Buscar Articulo</label>             
                     <md-autocomplete-articulo-component 
-                        tipo-doc="TIPO_DOC"
-                        abrir-modal-articulo="abrirModalArticulo(item)"
-                        get-data-articulo="getDataIdArticulo(item)"
+                        tipo-doc="tipoDoc"
+                        id-bodega="data.idBodega"
                         set-item-articulo-en-detalle="setItemArticuloEnDetalle(item)">
                     </md-autocomplete-articulo-component>            
                 </div>
@@ -80,7 +79,7 @@
                                 <i class="fas fa-info-circle fa-xs"></i>
                             </span>                                                                
                         </label>
-                        <select id="idTarifa" class="form-control border-select" ng-model="idTarifa" ng-change="seleccionarTarifa()">
+                        <select id="idTarifa" class="form-control border-select" ng-model="data.idTarifa" ng-change="onChangeTarifaGeneral()">
                             <option ng-value="item.idTarifa" ng-repeat="item in tarifas">{{item.descripcion}}</option>
                         </select>
                     </div>
@@ -109,7 +108,7 @@
                             <tbody>
                                 <tr>
                                     <td class="left">
-                                        <strong>SubTotal  {{actividadTipoIva.tarifa}}%</strong>
+                                        <strong>SubTotal {{dataTarifaImpuesto.descripcion}}</strong>
                                     </td>
                                     <td class="right">
                                         <strong>${{data.subTotalIva}}</strong>
@@ -277,7 +276,7 @@
 
                         <tr>
                             <td class="left">
-                                <strong> IVA {{actividadTipoIva.tarifa}}%</strong>
+                                <strong>{{dataTarifaImpuesto.descripcion}}</strong>
                             </td>
                             <td class="right">
                                 <strong>${{data.iva}}</strong>
@@ -317,7 +316,7 @@
         <label for="showSubTotales">Mas datos</label>
     </div>
 
-    <button type="submit" class="btn btn-success">
+    <button type="button" class="btn btn-success" ng-click="askToSave()">
         <i class="ti-pencil"></i> Actualizar
     </button>
     <button type="button" class="btn btn-dark" ng-click="closeModal()">

@@ -398,6 +398,17 @@
             return new Date(anio, mes, 0).getDate();
         }
 
+        formSvc.isValidDate = (dateString) => {
+            const date = new Date(dateString);
+          
+            // Comprobar si la fecha es válida y si el año tiene cuatro dígitos
+            return (
+              Object.prototype.toString.call(date) === '[object Date]' &&
+              !isNaN(date) &&
+              date.getFullYear().toString().length === 4
+            );
+          };
+
         return formSvc;
 
 

@@ -144,14 +144,14 @@ function ModalDatoAdicionalArticuloCtrl($scope, mS, $uibModalInstance, params){
     //Nuevo Dato Adicional
     $scope.addRow = function() {  
         let cantidad = parseInt($scope.articulo.cantidad);     
-        if($scope.data.length === cantidad){
-            Swal.fire({
-                title: 'Datos Adicionales',
-                icon:'warning',
-                html: `El número de datos adicionales proporcionados no debe exceder la cantidad de artículo: <b>${$scope.articulo.descripcion}</b>!`
-            })
-            return
-        }        
+        // if($scope.data.length === cantidad){
+        //     Swal.fire({
+        //         title: 'Datos Adicionales',
+        //         icon:'warning',
+        //         html: `El número de datos adicionales proporcionados no debe exceder la cantidad de artículo: <b>${$scope.articulo.descripcion}</b>!`
+        //     })
+        //     return
+        // }        
         $scope.data.push({
             idArticulo: $scope.articulo.idArticulo,
             idEtiqueta: $scope.articulo.etiquetas[0].idEtiqueta,

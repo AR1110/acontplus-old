@@ -22,7 +22,7 @@
          * @param {string || number} oldValue valor numero o string 
          * @returns object 
          */
-        service.calculoColDef = function({rowEntity, oldValue, decimal, data, columnDefs}){            
+        service.calculoColDef = function({rowEntity, oldValue, decimal, idTarifa, columnDefs}){            
             
             let dataTipoIva = columnDefs.find(item=>item.field==='idTipoIva').editDropdownOptionsArray
                                         .find(item=>item.idTipoIva===rowEntity.idTipoIva);
@@ -41,11 +41,11 @@
                     let dataMedida = rowEntity.medidas.find(val => val.idMedida === rowEntity.idMedida);
                     
                     let articuloTarifas = JSON.parse(dataMedida.tarifas);                
-                    let tarifa = articuloTarifas.find(item=>item.idTarifa=== data.idTarifa);
+                    let tarifa = articuloTarifas.find(item=>item.idTarifa=== idTarifa);
                
     
                     rowEntity.articuloTarifas     = articuloTarifas;          
-                    rowEntity.idTarifa            = data.idTarifa
+                    rowEntity.idTarifa            = idTarifa
                     rowEntity.precioUnitario      = fS.roundNumber(tarifa.precioVenta, decimal.nroPrecio);
                     rowEntity.precioConIva        = fS.roundNumber(tarifa.precioConIva, decimal.nroPrecio);
                     rowEntity.porcentajeDescuento = 0;
@@ -325,8 +325,8 @@
                     html: `<small>Esta Ud. seguro de eliminar este Artículo <b>${rowEntity.descripcion}</b></small>?`,
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonText: `<small><i class='ti-trash'></i> Sí, eliminar!</small>`,
-                    cancelButtonText: '<small>&times; No, cancelar!</small>',
+                    confirmButtonText: `Si!</small>`,
+                    cancelButtonText: 'No!</small>',
                     reverseButtons: false,
                     allowOutsideClick: false,
                     focusConfirm: true
@@ -378,18 +378,19 @@
          * @param {*} idTarifa 
          * @param {*} decimal 
          */
-        service.setTarifaInDetail = function(gridOptions, data, decimal, callback) {
+        service.setTarifaInDetail = function(gridOptions, idTarifa, decimal, callback) {
          
             try {            
                 for(let rowEntity of gridOptions.data){
                    
-                    let tarifa = rowEntity.articuloTarifas.find(item=>item.idTarifa===data.idTarifa);     
-    
+                    let tarifa = rowEntity.articuloTarifas.find(item=>item.idTarifa===idTarifa);     
+
+                    console.log(tarifa);
                     let precioConIva             = pricingUtils.calcularPrecioConIva(tarifa.precioVenta, rowEntity.tarifa);
                     let precioConIvaConDescuento = pricingUtils.getPrecioIvaConDescuento(precioConIva, rowEntity.porcentajeDescuento);
                     let valorDescuento           = pricingUtils.getValorDescuento(tarifa.precioVenta, rowEntity.porcentajeDescuento);
                     
-                    rowEntity.idTarifa           = data.idTarifa;
+                    rowEntity.idTarifa           = idTarifa;
                     rowEntity.precioUnitario     = fS.roundNumber(tarifa.precioVenta, decimal.nroPrecio);
                     rowEntity.precioConIva       = fS.roundNumber(precioConIvaConDescuento, decimal.nroPrecio);
                     rowEntity.valorDescuento     = fS.roundNumber(valorDescuento, decimal.nroDescuentoDetalle);
@@ -399,7 +400,7 @@
                         rowEntity, 
                         oldValue:0, 
                         decimal, 
-                        data, 
+                        idTarifa, 
                         columnDefs: gridOptions.columnDefs
                     });
         
