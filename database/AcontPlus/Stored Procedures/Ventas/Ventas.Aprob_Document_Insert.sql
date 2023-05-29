@@ -85,7 +85,6 @@ BEGIN
 		,precioUnitario NUMERIC(18,5) NOT NULL
 		,descuento NUMERIC(18,5) NOT NULL
 		,precioTotalSinImpuesto NUMERIC(18,5) NOT NULL
-	--	,codigo INT NOT NULL
 		,codigoPorcentaje INT NOT NULL
 		,tarifa NUMERIC(18,5) NOT NULL
 		,baseImponible NUMERIC(18,5) NOT NULL
@@ -120,14 +119,10 @@ BEGIN
 			   ,idPuntoEmision              INT '$.idPuntoEmision' 
 			   ,fechaEmision       VARCHAR(300) '$.fechaEmision'
 			   ,codDoc               VARCHAR(5) '$.codDoc'
-			 --  ,totalSinImpuestos NUMERIC(18,5) '$.totalSinImpuestos' 
 			   ,totalSinImpuestos NUMERIC(18,5) '$.subTotalSinImpuestos' 
-			 
 			   ,totalDescuento    NUMERIC(18,5) '$.totalDescuento'
-			 --  ,totalConImpuestos NUMERIC(18,5) '$.totalConImpuestos' 
 			   ,totalConImpuestos NUMERIC(18,5) '$.total' 
 			   ,propina           NUMERIC(18,5) '$.propina'
-			--   ,importeTotal      NUMERIC(18,5) '$.importeTotal'
 			   ,importeTotal      NUMERIC(18,5) '$.total'
 			   ,codigoPorcentaje            INT '$.codigoPorcentaje' 
 			   ,docOrigen           VARCHAR(15) '$.docOrigen'
@@ -136,11 +131,11 @@ BEGIN
 		     )
 
 		INSERT INTO @tbDetalle 
-			  (orderIndex, idTarifa,idArticulo,idMedida, idTipoIva, cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,
-			  --codigo,
+			  (orderIndex, idTarifa,idArticulo,idMedida,idTipoIva, cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,
+			  
 			  codigoPorcentaje,tarifa,baseImponible)
-		SELECT orderIndex, idTarifa,idArticulo,idMedida, idTipoIva, cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,
-		--codigo,
+		SELECT orderIndex, idTarifa,idArticulo,idMedida,idTipoIva,cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,
+		
 		codigoPorcentaje,tarifa,baseImponible
 		FROM OPENJSON(@detalle)
 		WITH (
@@ -154,7 +149,6 @@ BEGIN
 		       ,precioUnitario         NUMERIC(18,5) '$.precioUnitario' 
 		       ,descuento              NUMERIC(18,5) '$.descuento'
 		       ,precioTotalSinImpuesto NUMERIC(18,5) '$.precioTotalSinImpuesto' 
-		    --   ,codigo                           INT '$.codigo' 
 		       ,codigoPorcentaje                 INT '$.codigoPorcentaje'
 		       ,tarifa                 NUMERIC(18,5) '$.tarifa'
 		       ,baseImponible          NUMERIC(18,5) '$.baseImponible'
@@ -174,8 +168,7 @@ BEGIN
 
 		SELECT TOP 1 @ruc = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
 
-		SELECT @docOrigen = docOrigen FROM @tbComprobante
-		SELECT @docDestino = docDestino FROM @tbComprobante
+		SELECT @docOrigen = docOrigen , @docDestino = docDestino FROM @tbComprobante
 
 		SELECT	
 			@idPuntoEmision          = dt.idPuntoEmision 
@@ -204,7 +197,9 @@ BEGIN
 			END 
 		ELSE
 			BEGIN
-				SET @claveAcceso='000000'
+				SET @claveAcceso= NEWID()
+
+				SET @codDoc = 'NE'
 			END 
 		
 		-- ========================= VALIDADACIONES =====================================================	

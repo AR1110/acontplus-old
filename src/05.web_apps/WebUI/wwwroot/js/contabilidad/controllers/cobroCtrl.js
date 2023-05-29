@@ -415,125 +415,34 @@
         }
 
 
-        $scope.openModalCobroDetalle = function() {
-            var position = _mdPanel.newPanelPosition()
-                .absolute()
-                .center();
-          
-            var config = {
-              attachTo: angular.element(document.body),
-              controller: PanelDialogCtrl,
-              controllerAs: 'ctrl',
-              disableParentScroll: this.disableParentScroll,
-              templateUrl: 'panel.tmpl.html',
-              hasBackdrop: true,
-              panelClass: 'demo-dialog-example',
-              position: position,
-              trapFocus: true,
-              zIndex: 150,
-              clickOutsideToClose: true,
-              escapeToClose: true,
-              focusOnOpen: true
-            };
-          
-            this._mdPanel.open(config);
-          };
-
 
         //----------------------------Detalle Comprobante Ingreso ---------------------
         $scope.openModalCobroDetalle = async function (ev, item) {
             try {
-                showLoader();
-                // let fileCtrl = nombreModalContabilidad.COBRO.fileCtrl;
-                // let ctrl = nombreModalContabilidad.COBRO.controllers['CD'];
-                let template = nombreModalContabilidad.COBRO.templates['CD']; 
-                // let controller = (await import(fileCtrl))[ctrl];
-                let query = {
-                    tipo:2,
-                    idComprobanteIngreso: item.idComprobanteIngreso
-                }
-                
+                // showLoader();
+                let fileCtrl = nombreModalContabilidad.COBRO.fileCtrl;
+                let ctrl = nombreModalContabilidad.COBRO.controllers['CD'];
+                let templateUrl = nombreModalContabilidad.COBRO.templates['CD']; 
+                let controller = (await import(fileCtrl))[ctrl];                
+              
                 let config = {
-                    controller: 'ModalCobroDetalleCtrl',
-                    templateUrl: `/Home/RenderView?name=${template}`,
+                    controller,
+                    templateUrl,
                     // Appending dialog to document.body to cover sidenav in docs app
                     // Modal dialogs should fully cover application to prevent interaction outside of dialog
                     parent: angular.element(document.body),
                     targetEvent: ev,
                     clickOutsideToClose: false, 
                     fullscreen: true,    
-                    locals: {}               
-                    }
-               
+                    params: Object.assign({}, item)                                     
+                }
 
-           
-                _mS.getData('get', 'ComprobanteIngreso/?json='  + JSON.stringify(query),null,true).then(response=>{
-                    hideLoader();
-                    let mainDataRepository = JSON.parse(response.payload);
-                    let params = {
-                        comprobante: mainDataRepository[0][0],
-                        cobros: mainDataRepository[1],
-                        cobroDetalles: mainDataRepository[2]
-                    }
-                    config.locals.params = params;
-                    $mdDialog.show(config).then(function (answer) {
-                        $scope.status = 'You said the information was "' + answer + '".';
-                      }, function () {
-                        $scope.status = 'You cancelled the dialog.';
-                      });
-                 
-                }).catch(error=>{
-                    hideLoader();
-                    console.log(error)
-                })
-
-                               
+                _modalSvc.openMdDialog(config)              
             } catch (error) {
                 hideLoader();
                 console.log(error)
-            }
-            // try {
-            //     showLoader();
-            //     _mS.getData('get', `/Cobro/GetByComprobante?idComprobanteIngreso=${item.idComprobanteIngreso}`).then(response => {
-            //         if (response.code === null || response.code === undefined) {
-            //             console.log(response)
-            //             hideLoader()
-            //         }
-            //         if (response.id === "0") {
-            //             hideLoader();
-            //             form.sweetAlert('warning', response.message, response.titleSms)
-            //         }
-            //         if (response.id === "1") {
-            //             $scope.data = item;
-            //             $scope.comprobanteIngresos = response.data.map($scope.getCobroDetalle);
-            //             hideLoader();
-            //             $("#modalHistorialCobro").modal('show');
-            //         }
-            //     });
-            // } catch (error) {
-            //     console.log(error)
-            // } finally {
-            //     hideLoader()
-            // }
+            }           
         };
-
-        $scope.getCobroDetalle = (data) => {
-            data.showDetalle = !data.showDetalle;
-            _mS.getData('get', `/CobroDetalle/GetByCobro?idCobro=${data.cobro.idCobro}`).then(response => {
-                if (response.id === "0") {
-                    Swal.fire({
-                        title: `<small>${response.titleSms}</small>`,
-                        icon: 'warning',
-                        html: `<small>${response.message}</small>`
-                    });
-                };
-                data.cobroDetalles = response.data;
-            });
-            return data;
-        }
-
-
-
 
 
         //Reporte 
@@ -557,77 +466,6 @@
             })
         }
 
-
-
-
-        
-
-
-
-
     }
-
-
-    app.controller('ModalCobroDetalleCtrl', ModalCobroDetalleCtrl);
-
-    ModalCobroDetalleCtrl.$inject=['$scope', '$mdDialog', 'params'];
-
-    function ModalCobroDetalleCtrl($scope, $mdDialog, params) {
-       
-        let {comprobante, cobros, cobroDetalles} = params;
-        $scope.comprobante = comprobante;
-        console.log(comprobante)
-        $scope.cobros = cobros;
-        for(let item of cobros) {
-            item.infoCobro = JSON.parse(item.infoCobro)
-            item.cobroDetalles = cobroDetalles.filter(itemDetalle=>itemDetalle.idCobro===item.idCobro);            
-        }
-    
-        $scope.expandDetalle = (data) => {
-            data.showDetalle = !data.showDetalle;
-        }
-
-        $scope.showInfo = function (item) {
-            let info = item[0] || {};
-           
-            Swal.fire({
-                icon: 'info',
-                html:`<div class="table-responsive">
-                <table class="table table-hover table-borderless table-sm">
-                    <tbody>
-                        <tr>
-                            <td><b>Número:</b></td>
-                            <td>${info.nro || '...'}</td>
-                        </tr>
-                        <tr>
-                            <td><b>Referencia:</b></td>
-                            <td>${info.referencia || '...'}</td>
-                        </tr>
-                        <tr>
-                            <td><b>Lote:</b></td>
-                            <td>${info.lote || '...'}</td>
-                        </tr>
-                        <tr>
-                            <td><b>Aprobación:</b></td>
-                            <td>${info.aprobacion || '...'}</td>
-                        </tr>                       
-                    </tbody>
-                </table>
-            </div>`
-            })
-
-        }
-
-         
-      
-        $scope.closeDialog = function () {
-            $mdDialog.cancel();
-        };
-      
-          
-
-    }
-
-
 
 })(window.angular)
