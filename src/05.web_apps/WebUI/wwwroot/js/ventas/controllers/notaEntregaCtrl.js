@@ -595,49 +595,33 @@
 
 
 
-        $scope.openModalHistorialCobro = async (item) => {
+        $scope.openModalHistorialCobro = async (ev, item) => {
             try {
-                let { MODAL_FILE_HISTORIAL_COBRO, MODAL_HISTORIAL_COBRO } = _nombreModalConst.cobro;
-                let controller = (await import('./../../' + MODAL_FILE_HISTORIAL_COBRO))[MODAL_HISTORIAL_COBRO['controller']];
-                let template = MODAL_HISTORIAL_COBRO['template'];
-                let params = {}
-
-
-                await _mS.getData('get', `/ComprobanteIngreso/GetByDocument?idTipoDocumento=${TIPO_DOC_NE.idTipoDocumento}&idComprobante=${item.idNotaEntrega}`).then(response => {
-                    if (response.id === null) {
-                        _fS.sweetAlert('error', "Ups! algo salio mal <i class='far fa-frown'></i>!", response.titleSms);
-                        return
-                    }
-                    if (response.id == "0") {
-                        _fS.sweetAlert('warning', response.message, response.titleSms);
-                        throw response
-                    }
-
-                    if (response.id === "1") {
-                        params = {
-                            historialCobros: response.data,
-                            data: {
-                                ...item,
-                                id: item.idNotaEntrega,
-                                codEstab: item.codEstab,
-                                esContado: item.credito,
-                                razonSocialComprador: item.nombreFiscal,
-                            },
-                            TIPO_DOC: TIPO_DOC_NE
-                        }
-                    }
-                })
-
-                let $modalRef = _modalSvc.openModalCustom({
+                if(['PE'].includes(item.codEstado)) return
+                
+                // showLoader();
+                let fileCtrl = nombreModalContabilidad.COBRO.fileCtrl;
+                let ctrl = nombreModalContabilidad.COBRO.controllers['CD'];
+                let templateUrl = nombreModalContabilidad.COBRO.templates['CD']; 
+                let controller = (await import(fileCtrl))[ctrl];                
+                
+                let config = {
                     controller,
-                    template,
-                    size: 'xl',
-                    params
-                })
+                    templateUrl,
+                    // Appending dialog to document.body to cover sidenav in docs app
+                    // Modal dialogs should fully cover application to prevent interaction outside of dialog
+                    parent: angular.element(document.body),
+                    targetEvent: ev,
+                    clickOutsideToClose: false, 
+                    fullscreen: true,    
+                    params: Object.assign({}, item)                                     
+                }
+    
+                _modalSvc.openMdDialog(config)              
             } catch (error) {
+                hideLoader();
                 console.log(error)
             }
-
 
         }
 

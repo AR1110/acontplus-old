@@ -308,7 +308,8 @@ class CobroService{
 export {
     ModalCobroRapidoCtrl,
     ModalCobroLoteCtrl,
-    ModalFormaCobroCtrl
+    ModalFormaCobroCtrl,
+    ModalCobroDetalleCtrl
 }
 
 
@@ -1523,5 +1524,194 @@ function ModalFormaCobroCtrl ($scope, $uibModalInstance, fS, tS, params){
 
 
 
+}
+
+
+
+
+//======================================================DETALLE COBRO====================================
+ModalCobroDetalleCtrl.$inject = ['$scope', '$mdDialog', 'mainService', 'toastService', 'formulario', 'params']
+
+function ModalCobroDetalleCtrl($scope, $mdDialog, mS, tS, fS, params){
+    let cobroSvc = new CobroService(tS, mS, fS);
+    
+    $scope.showDetalleCompIngreso = false;
+    $scope.showDetalleCompIngresoByDoc = false;
+
+    $scope.comprobante = {};
+    $scope.cobros = [];
+    $scope.cobroDetalles = [];
+
+    
+    initialLoad();
+    function initialLoad(){
+        try {
+            showLoader();
+            if(params && params.idComprobanteIngreso > 0){
+                $scope.showDetalleCompIngreso = true;
+                let query = {
+                    tipo:2,
+                    idComprobanteIngreso: params.idComprobanteIngreso
+                }
+                mS.getData('get', 'ComprobanteIngreso/?json='  + JSON.stringify(query),null,true).then(response=>{
+                    hideLoader();
+                    if(response.code==='0'){
+                        throw response;
+                    }
+                    let mainDataRepository = JSON.parse(response.payload);
+                
+                    $scope.comprobante  = mainDataRepository[0][0],
+                    $scope.cobros = mainDataRepository[1],
+                    $scope.cobroDetalles = mainDataRepository[2]
+                  
+                    for(let item of $scope.cobros) {
+                        item.infoCobro = JSON.parse(item.infoCobro)
+                        item.cobroDetalles = $scope.cobroDetalles.filter(itemDetalle=>itemDetalle.idCobro===item.idCobro);    
+                        item.showInfoCobro = item.codPago!=='EFE'        
+                    }
+                }).catch(error=>{
+                    hideLoader();
+                    console.log(error)
+                })
+            }else if (params && params.idDocumento > 0){        
+                $scope.showDetalleCompIngresoByDoc = true;
+        
+                let query = {
+                    tipo:3,
+                    idTipoDocumento: params.idTipoDocumento,
+                    idDocumento: params.idDocumento
+                }              
+                mS.getData('get', 'ComprobanteIngreso/?json='  + JSON.stringify(query),null,true).then(response=>{
+                    hideLoader();
+                    if(response.code==='0'){
+                        throw response;
+                    }
+        
+                    let mainDataRepository = JSON.parse(response.payload);
+                    $scope.comprobante = mainDataRepository[0][0];
+                    let comprobanteIngresos = mainDataRepository[1];
+                  
+                    let cobros = mainDataRepository[2];
+                    $scope.cobroDetalles = mainDataRepository[3];
+
+                   
+
+                    for(let item of $scope.cobros) {
+                        item.infoCobro = JSON.parse(item.infoCobro)
+                        item.cobroDetalles = $scope.cobroDetalles.filter(itemDetalle=>itemDetalle.idCobro===item.idCobro);    
+                          
+                    }
+
+                    $scope.comprobanteIngresos = comprobanteIngresos.map(item=>{
+                        item.cobros = cobros.filter(cc=>cc.idComprobanteIngreso===item.idComprobanteIngreso)
+                                            .map(cobro=>{
+                                                cobro.infoCobro = JSON.parse(cobro.infoCobro)                                              
+                                                cobro.showInfoCobro = cobro.codPago!=='EFE'                                                     
+                                                return cobro;
+                                            })
+                        return item;
+                    })
+
+                    console.log($scope.comprobanteIngresos)
+
+                            
+                }).catch(error=>{
+                    hideLoader();
+                    console.log(error)
+                })
+            }
+        } catch (error) {
+            hideLoader();
+            console.log(error)
+        }
+    }
+    // let {comprobante, cobros, cobroDetalles} = params;
+    // $scope.comprobante = comprobante;
+    
+    // $scope.cobros = cobros;
+   
+
+    $scope.expandDetalle = (data) => {
+        data.showDetalle = !data.showDetalle;
+    }
+
+    $scope.showInfo = function (item) {
+        let info = item.infoCobro && item.infoCobro[0] || {};
+       
+        Swal.fire({
+            icon: 'info',
+            html:`<div class="table-responsive">
+            <table class="table table-hover table-borderless table-sm">
+                <tbody>
+                    <tr>
+                        <td><b>Número:</b></td>
+                        <td>${info.nro || '...'}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Referencia:</b></td>
+                        <td>${info.referencia || '...'}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Lote:</b></td>
+                        <td>${info.lote || '...'}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Aprobación:</b></td>
+                        <td>${info.aprobacion || '...'}</td>
+                    </tr>                       
+                </tbody>
+            </table>
+        </div>`
+        })
+
+    }
+
+    $scope.showCuotas = function (data) {   
+        let cobroDetalles = $scope.cobroDetalles.filter(item=>item.idCobro ===data.idCobro) ;
+    
+       let html = `<div class="table-responsive">
+                    <table class="table table-hover table-bordered table-sm">
+                        <thead>
+                            <tr>
+                                <th><small>N°</small></th>                              
+                                <th><small>Nro. Cuota</small></th>                              
+                                <th><small>Fecha Vcto.</small></th>
+                                <th><small>Cuota</small></th>
+                                <th><small>Abono</small></th>
+                                <th><small>Saldo</small></th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+                        let index = 1;
+       for(let itemDetalle of cobroDetalles){
+            html+=` <tr>
+                        <td>${index++}</td>
+                        <td>${itemDetalle.nroCuota}</td>
+                        <td>${itemDetalle.fechaVencimiento}</td>
+                        <td>$${itemDetalle.cuota}</td>
+                        <td>$${itemDetalle.abono}</td>
+                        <td>$${itemDetalle.saldo}</td>
+                    </tr>
+                `
+       }
+       html+='</tbody></table></div>'
+        Swal.fire({
+            title: '<small>Detalle Cobro</small>',
+            icon: 'info',
+            html,
+            with: 700
+        })
+
+    }
+
+
+    
+
+     
+  
+    $scope.closeDialog = function () {
+        $mdDialog.cancel();
+    };
 }
 
