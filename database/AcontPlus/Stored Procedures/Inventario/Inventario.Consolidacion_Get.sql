@@ -21,9 +21,10 @@ BEGIN
 	SET LANGUAGE SPANISH;
 	DECLARE  @idEntidad INT
 	,@tipo INT
+	,@id INT
 	SET @idEntidad = (SELECT idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
 
-	SELECT @tipo = tipo FROM OPENJSON (@json) WITH (tipo INT '$.tipo')
+	SELECT @tipo = tipo, @id = id FROM OPENJSON (@json) WITH (tipo INT '$.tipo', id INT '$.id')
 	IF @tipo = 1
 		BEGIN
 			SELECT * FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @idUsuarioRol ORDER BY defaultEstab DESC
@@ -57,37 +58,36 @@ BEGIN
 
 	IF (@tipo = 3)
 		BEGIN
-			
-		SELECT 
-		     idConsolidacionInventario = ci.idConsolidacionInventario
-			,fechaEmision = CAST(ci.fechaEmision AS date)
-			,observacion  = ISNULL(ci.observacion,'Ninguna') 
-			,total        = ci.total
-			,idPuntoEmision = ci.idPuntoEmision
-			,codEstab       = es.codEstab
-		FROM dbo.ConsolidacionInventario ci
-		INNER JOIN dbo.PuntoEmision pe ON pe.idPuntoEmision = ci.idPuntoEmision
-		INNER JOIN Sri.Establecimiento es ON es.codEstab = pe.codEstab
-		--WHERE ci.idConsolidacionInventario = @id
+			SELECT 
+				 idConsolidacionInventario = ci.idConsolidacionInventario
+				,fechaEmision = CAST(ci.fechaEmision AS date)
+				,observacion  = ISNULL(ci.observacion,'Ninguna') 
+				,total        = ci.total
+				,idPuntoEmision = ci.idPuntoEmision
+				,codEstab       = es.codEstab
+			FROM dbo.ConsolidacionInventario ci
+			INNER JOIN dbo.PuntoEmision pe ON pe.idPuntoEmision = ci.idPuntoEmision
+			INNER JOIN Sri.Establecimiento es ON es.codEstab = pe.codEstab
+			WHERE ci.idConsolidacionInventario = @id
 
-		SELECT 
-			 idConsolidacionInventarioDetalle = cid.idConsolidacionInventarioDetalle
-			,idBodega = cid.idBodega
-			,idArticulo = cid.idArticulo
-			,idMedida = cid.idMedida
-			,descripcion = cid.descripcion
-			,cantidad = cid.cantidad
-			,precioCosto = cid.precioCosto
-			,precioActual = cid.precioActual
-			,codigo = a.codigo
-			,codigoTipoIva = ti.codigo
-			,nombreTipoIva = ti.descripcion
-			,stock = a.stock
-		FROM ConsolidacionInventarioDetalle cid WITH(NOLOCK) 
-		INNER JOIN Articulo a WITH(NOLOCK) ON a.idArticulo = cid.idArticulo
-		INNER JOIN Medida m WITH(NOLOCK) ON m.idMedida = a.idMedida
-		INNER JOIN TipoIva ti WITH(NOLOCK) ON ti.idTipoIva = a.idTipoIva
-		--WHERE cid.idConsolidacionInventario = @id AND cid.estado = 1
+			SELECT 
+				 idConsolidacionInventarioDetalle = cid.idConsolidacionInventarioDetalle
+				,idBodega = cid.idBodega
+				,idArticulo = cid.idArticulo
+				,idMedida = cid.idMedida
+				,descripcion = cid.descripcion
+				,cantidad = cid.cantidad
+				,precioCosto = cid.precioCosto
+				,precioActual = cid.precioActual
+				,codigo = a.codigo
+				,codigoTipoIva = ti.codigo
+				,nombreTipoIva = ti.descripcion
+				,stock = a.stock
+			FROM ConsolidacionInventarioDetalle cid WITH(NOLOCK) 
+			INNER JOIN Articulo a WITH(NOLOCK) ON a.idArticulo = cid.idArticulo
+			INNER JOIN Medida m WITH(NOLOCK) ON m.idMedida = a.idMedida
+			INNER JOIN TipoIva ti WITH(NOLOCK) ON ti.idTipoIva = a.idTipoIva
+			WHERE cid.idConsolidacionInventario = @id AND cid.estado = 1
 		END
  
 END

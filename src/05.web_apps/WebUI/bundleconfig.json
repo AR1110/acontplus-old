@@ -298,5 +298,11 @@
     "inputFiles": [
       "wwwroot/js/controllers/inventario/consolidacionInvCtrl.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/common/services/commonService.min.js",
+    "inputFiles": [
+      "wwwroot/js/common/services/commonService.js"
+    ]
   }
 ]
