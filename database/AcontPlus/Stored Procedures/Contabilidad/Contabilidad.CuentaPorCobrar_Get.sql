@@ -53,18 +53,55 @@ BEGIN
 
 			-- ==================== TRAER LAS CUOTA DIRECTAMENTE SI NO TIENE CONFIGURACION =================================
 
-			 
+			 IF @codDoc = 'FV'
+				BEGIN
+					SELECT TOP 1 cl.numeroIdentificacion
+							    ,cl.nombreFiscal
+								,fechaEmision = FORMAT(fe.fechaEmision,'dd/MM/yyyy')
+								,serieComprobante = es.estab + '-' + pt.ptoEmi + '-' + Helper.F_Auto_Sequential(fe.nroFactura) 
+								,importeTotal = fe.total
+								,fe.idTiempoCredito
+								,codEstado = ep.codigo 
+								,config = CAST(IIF(ISNULL(@porcentaje,0) > 0,1,0) AS bit)
+					FROM dbo.Factura               fe WITH (NOLOCK)
+					INNER JOIN dbo.Cliente         cl WITH (NOLOCK) ON cl.idCliente      = fe.idCliente 
+					INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision = fe.idPuntoEmision
+					INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pt.codEstab
+					INNER JOIN dbo.EstadoPago      ep WITH (NOLOCK) ON ep.idEstadoPago   = fe.idEstadoPago
+					WHERE fe.idFactura = @idDocumento
+				END 
+
+			IF @codDoc = 'NE'
+				BEGIN
+					SELECT TOP 1 cl.numeroIdentificacion
+							    ,cl.nombreFiscal
+								,fechaEmision = FORMAT(ne.fechaEmision,'dd/MM/yyyy')
+								,serieComprobante = es.estab + '-' + pt.ptoEmi + '-' + Helper.F_Auto_Sequential(ne.nroDocumento) 
+								,importeTotal = ne.total
+								,ne.idTiempoCredito
+								,codEstado = ep.codigo 
+								,config = CAST(IIF(ISNULL(@porcentaje,0) > 0,1,0) AS bit)
+					FROM dbo.NotaEntrega           ne WITH (NOLOCK)
+					INNER JOIN dbo.Cliente         cl WITH (NOLOCK) ON cl.idCliente      = ne.idCliente 
+					INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision = ne.idPuntoEmision
+					INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pt.codEstab
+					INNER JOIN dbo.EstadoPago      ep WITH (NOLOCK) ON ep.idEstadoPago   = ne.idEstadoPago
+					WHERE ne.idNotaEntrega = @idDocumento
+				END 
 			
+			SELECT idTiempoCredito,descripcion,diasCredito,numeroCuota,tiempoCredito = tipo FROM dbo.TiempoCredito WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 AND gestion = 1
+
 			IF ISNULL(@porcentaje,0) = 0 
 				BEGIN
 					SELECT cx.idCuotaXCobrar
-					      ,cx.nroCuota
+					      ,fechaVencimiento = FORMAT(cx.fechaVencimiento,'MM/dd/yyyy')
+						  ,cx.nroCuota
 						  ,cx.cuota
 						  ,cx.mora
 						  ,cx.abono
 						  ,cx.saldo
 						  ,cx.diasMora
-						  ,ep.descripcion
+						  ,estado = ep.descripcion
 						  ,ep.codigo
 					FROM dbo.CuotaXCobrar     cx WITH (NOLOCK)
 					INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago
@@ -99,13 +136,14 @@ BEGIN
 					IF @creditoContado = 1
 						BEGIN
 							SELECT cx.idCuotaXCobrar
+								  ,fechaVencimiento = FORMAT(cx.fechaVencimiento,'MM/dd/yyyy')
 								  ,cx.nroCuota
 								  ,cx.cuota
 								  ,cx.mora
 								  ,cx.abono
 								  ,cx.saldo
 								  ,cx.diasMora
-								  ,ep.descripcion
+								  ,estado = ep.descripcion
 								  ,ep.codigo
 							FROM dbo.CuotaXCobrar     cx WITH (NOLOCK)
 							INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago
@@ -121,13 +159,14 @@ BEGIN
 							IF @codEstado = 'CBR'
 								BEGIN
 									SELECT cx.idCuotaXCobrar
+										  ,fechaVencimiento = FORMAT(cx.fechaVencimiento,'MM/dd/yyyy')
 										  ,cx.nroCuota
 										  ,cx.cuota
 										  ,cx.mora
 										  ,cx.abono
 										  ,cx.saldo
 										  ,cx.diasMora
-										  ,ep.descripcion
+										  ,estado = ep.descripcion
 										  ,ep.codigo
 									FROM dbo.CuotaXCobrar     cx WITH (NOLOCK)
 									INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago
@@ -176,7 +215,7 @@ BEGIN
 										  ,mora     = IIF(diasMora <= 0,0,mora)
 										  ,abono 
 										  ,saldo    = CAST(cuota + IIF(diasMora <= 0,0,mora) AS numeric(18,5))
-										  ,fechaVencimiento
+										  ,fechaVencimiento =  FORMAT(fechaVencimiento,'MM/dd/yyyy')
 										  ,fechaGracia
 										  ,estado 
 										  ,codEstado 

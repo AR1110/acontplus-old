@@ -1,0 +1,158 @@
+
+<div class="modal-header">
+    <h5 class="modal-title"><i class="fa fa-cog"></i> Cuotas</h5>
+    <button type="button" class="close" ng-click="closeModal()">&times;</button>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-xs-12 b-r">
+            <strong>Cliente:</strong>
+            <br>                        
+            <p class="text-muted">{{comprobante.nombreFiscal}}</p>
+        </div>
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-xs-12 b-r">
+            <strong>Nro. Documento:</strong>
+            <br>
+            <p class="text-muted">{{comprobante.serieComprobante}}</p>
+        </div>
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-xs-12 b-r">
+            <strong>Fecha Emisión:</strong>
+            <br>
+            <p class="text-muted">{{comprobante.fechaEmisionFormat}}</p>
+        </div>
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-xs-12 b-r">
+            <strong>Total:</strong>
+            <h4>${{comprobante.importeTotal}}</h4>
+        </div>
+    </div>
+    <md-divider></md-divider>
+    <div class="row justify-content-between mt-2">
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-12">
+            <div class="form-group">
+                <label>Tiempo Crédito</label>
+                <div class="input-group">                                
+                    <select ng-disabled = "comprobante.codEstado!='PE'" 
+                            class="form-control border-select" 
+                            ng-model="comprobante.idTiempoCredito" 
+                            ng-change="askToChangeCreditTime()">
+                            <option ng-value="item.idTiempoCredito" ng-repeat="item in tiempoCreditos">{{item.descripcion}}</option>
+                    </select>
+                    <div class="input-group-append">                        
+                        <button ng-disabled = "comprobante.codEstado!='PE'" type="button" ng-click="askToChangeCreditTime()" class="btn btn-outline-secondary btn-sm">
+                            <i class=" fas fa-redo fa-xs"></i>
+                        </button>
+                        @* <button type="button" ng-click="openModalTiempoCredito()" class="btn btn-outline-secondary btn-sm">
+                            <i class="fa fa-plus fa-xs"></i>
+                        </button> *@
+                    </div>
+                </div>                            
+            </div>
+        </div>
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-612col-xs-12">
+            <label>Configurar Fecha: <code>dd/MM/yyyy</code></label>
+            <div class="input-group">
+                <input ng-disabled = "comprobante.codEstado!='PE'" type="date" ng-model="comprobante.configFecha" class="form-control border-select" aria-label="Config. Fecha Vencimiento">
+                <div class="input-group-append">
+                    <button type="button" ng-disabled="comprobante.codEstado !=='PE'" ng-click="getConfigFechaCuota(true)" class="btn btn-info" uib-tooltip="">
+                        <i class="mdi mdi-update"></i> Fin Mes
+                    </button>
+                    <button type="button" ng-disabled="comprobante.codEstado !=='PE'" ng-click="getConfigFechaCuota(false)" class="btn btn-success" uib-tooltip='El día tiene que ser menor a 28 días'>
+                        <i class="mdi mdi-av-timer"></i> Mismo Dia
+                    </button>                  
+                </div>
+            </div>
+        </div>
+    </div>
+    
+     <md-table-responsive>
+        <table md-table>
+            <thead md-head>
+                <tr md-row>                 
+                    <th md-column>Nro. Cuota</th>                    
+                    <th md-column>Cuota</th>                    
+                    <th md-column ng-if="showColumns">Interes</th> 
+                    <th md-column ng-if="showColumns">Dias Mora</th>
+                    <th md-column ng-if="showColumns">Mora</th>
+                    <th md-column>Abono</th>
+                    <th md-column>Saldo</th>
+                    <th md-column>Fecha Vencimiento</th>
+                    <th md-column>Estado</th>                   
+                    @* <th md-column colspan="2" class="text-center"><span>F. Vencimiento</span></th> *@
+                </tr>
+            </thead>
+            <tbody md-body>
+                <tr md-row ng-repeat="item in cuotas">
+                    <td md-cell>{{item.nroCuota}}</td>
+                    <td md-cell>
+                         <!--Input Entrada-->
+                        <input type="text" 
+                               ng-if="item.nroCuota==='E'"
+                               valid-number 
+                               ng-model="item.cuota" 
+                               id="valorEntrada" 
+                               ng-blur="setValorEntrada(item.cuota)" 
+                               class="form-control border-select" />
+                                
+                        <!--Input Cuota -->
+                        <input type="text" 
+                                ng-if="item.nroCuota!=='E'" 
+                                id="setValcuota{{item.idCuotaXCobrar}}" 
+                                valid-number 
+                                ng-blur="setValorCuota(item)" 
+                                ng-model="item.cuota" 
+                                class="form-control border-select" />
+                    </td>
+                    <td md-cell ng-if="showColumns">{{item.interes}}</td>
+                    <td md-cell ng-if="showColumns">{{item.diasMora}}</td>
+                    <td md-cell ng-if="showColumns">{{item.mora}}</td>
+                    <td md-cell>{{item.abono}}</td>
+                    <td md-cell>{{item.saldo}}</td>
+                    <td md-cell>
+                        <span ng-if="item.nroCuota=='E'" uib-popover-html="'getFechaEscritaCuota(item.fechaVencimiento)'"  popover-trigger="'focus'" class="ml-1">{{item.fechaVencimiento}}</span>
+                        
+                        <input type="date" uib-popover-html="'getFechaEscritaCuota(item.fechaVencimiento)'"  popover-trigger="'focus'"
+                               min="2020-01-01" 
+                               max="2030-12-31" 
+                               id="fechaVencimiento{{item.idCuotaXCobrar}}" 
+                               ng-if="item.nroCuota!=='E'" 
+                               ng-model="item.fechaVencimiento" 
+                               ng-change="setFechaVencimientoCuota(item)" 
+                               class="form-control border-select" required />
+                        <small class="invalid-feedback">Fecha Vcto. no válida </small>
+                    </td>
+                    <td md-cell>{{item.estado}}</td>
+                    @* <td md-cell width="100">{{c.nroCuota}}</td>
+                    <td md-cell width="100">
+                       
+                    </td>
+                    <td md-cell width="100">
+                        <span ng-if="c.nroCuota=='E'" class="ml-1">{{c.cxc.fechaVencimiento | date:'dd/MM/yyyy'}}</span>
+                        
+                        <input type="date" min="2020-01-01" max="2030-12-31" id="fechaVencimiento{{c.cxc.idCuotaXCobrar}}" ng-if="c.nroCuota!=='E'" ng-model="c.cxc.fechaVencimiento" ng-change="$ctrl.setFechaVencimientoCuota(c)" class="form-control border-select" required />
+                        <small class="invalid-feedback">Fecha Vcto. no válida </small>
+                    </td>
+                    <td md-cell width="100">
+                        {{$ctrl.getFechaEscritaCuota(c.cxc)}}
+                    </td> *@
+                </tr>  
+                <tr md-row>
+                    <td md-cell class="text-right">
+                        <h5><strong>Total Cuota: </strong></h5>
+                        <h5><strong>Diferencia: </strong></h5>
+                    </td>
+                    <td md-cell align="left">
+                        <h4>${{totalCuota}}</h4>
+                        <h4 class="text-danger">${{totalDiferencia}}</h4>
+                    </td>
+                    <td md-cell></td>
+                    <td md-cell></td>
+                </tr>                               
+            </tbody>
+        </table>
+    </md-table-responsive>
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-success" ng-click="onSave()"><i class="ti-save"></i> Guardar</button>
+    <button type="button" class="btn btn-dark" ng-click="closeModal()">&times; Cerrar</button>
+</div>
