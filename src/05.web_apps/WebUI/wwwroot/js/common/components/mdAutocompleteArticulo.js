@@ -86,9 +86,12 @@ class BaseSearchArticulo {
             this.getDataArticuloParaVenta()
         }
 
-        if (['FC', 'IB', 'LC', 'NCP', 'OC', 'CIV', 'TRA', 'GR'].includes(this.tipoDoc.codigo)) {
+        if (['FC', 'IB', 'LC', 'NCP', 'OC', 'TRA', 'GR'].includes(this.tipoDoc.codigo)) {
             this.getDataArticuloParaCompra();
         }
+         if (['CIV'].includes(this.tipoDoc.codigo)) {
+             this.getId()
+         }
     }
 
 
@@ -160,7 +163,23 @@ class BaseSearchArticulo {
         }
     }
 
-
+     async getId() {
+         try {
+             showLoader();
+             this.dataArticulo.idBodega = this.idBodega;
+             this.articuloSvc.getId(this.dataArticulo.idArticulo).then(response => {
+                 hideLoader();
+                 this.setItemArticuloEnDetalle({
+                     item: response
+                 })
+             }).catch(error => {
+                 hideLoader();
+                 console.log(error);
+             })
+         } catch (e) {
+             console.log(e)
+         }
+     }
 
 }
 

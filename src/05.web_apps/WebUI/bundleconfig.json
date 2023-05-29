@@ -304,5 +304,23 @@
     "inputFiles": [
       "wwwroot/js/common/services/commonService.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/common/components/mdAutocompleteArticulo.min.js",
+    "inputFiles": [
+      "wwwroot/js/common/components/mdAutocompleteArticulo.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/inventario/services/articuloService.min.js",
+    "inputFiles": [
+      "wwwroot/js/inventario/services/articuloService.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/inventario/controllers/consolidacionInvCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/inventario/controllers/consolidacionInvCtrl.js"
+    ]
   }
 ]
