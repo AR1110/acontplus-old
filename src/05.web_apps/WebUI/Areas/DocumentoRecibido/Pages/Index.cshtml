@@ -2,10 +2,19 @@
 @model Recepcion_UI.Areas.DocumentoRecibido.Pages.IndexModel
 @{
     ViewData["Title"] = "Index";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "_Layout";
 }
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+<style>
+    .inputdemoInlineForm .demo-inline-form-container {
+        padding: 16px;
+    }
 
+        .inputdemoInlineForm .demo-inline-form-container .demo-radio-button-label {
+            margin: 18px 16px;
+            padding-top: 6px;
+        }
+</style>
 <div ng-controller="documentoRecibidoCtrl">
     <div class="row page-titles">
         <div class="col-md-5 align-self-center">
@@ -17,34 +26,35 @@
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="card">
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
-                            <md-card-action>
-                                <md-button class="md-raised md-primary" ng-click="askToNewImport()">
-                                    <icon class="ti-upload"></icon> Nueva
-                                    Importación
-                                </md-button>
-                            </md-card-action>
-                        </div>
-                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
-                            <label>Documentos: </label>
+                    <div section layout="row" layout-wrap>
+                        <md-input-container>
+                            <md-button class="md-raised md-primary" ng-click="askToNewImport(1)">
+                                <icon class="ti-cloud"></icon> Importación Automatica
+                            </md-button>
+                        </md-input-container>
+                        <md-input-container>
+                            <md-button class="md-raised md-accent text-white" ng-click="askToNewImport(2)">
+                                <icon class="fa fa-keyboard"></icon> Importación Manual
+                            </md-button>
+                        </md-input-container>
+                        <md-input-container flex-gt-sm="20">
+                            <label for="documentos">Comprobantes</label>
                             <md-select ng-model="doc" ng-change="getDocs(doc)">
-                                <md-option><em>Seleccione un documento</em></md-option>
                                 <md-option ng-repeat="doc in tiposDocumento" ng-value="doc">
                                     {{doc.descripcion}}
                                 </md-option>
                             </md-select>
-                        </div>
-                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
-                            <md-input-container>
-                                <label>Buscar: </label>
-                                <input type="text" ng-model="search" ng-keyup="onKeyupSearchFilter()">
-                            </md-input-container>
+                        </md-input-container>
+                        <md-input-container flex-gt-sm="30">
+                            <label for="search">Buscar:</label>
+                            <input type="text" ng-model="search" ng-keyup="onKeyupSearchFilter()">
+                        </md-input-container>
+                        <md-input-container>
                             <md-button class="md-icon-button" ng-click="refresh()" aria-label="Stock"
                                        title="Actualizar">
                                 <md-icon md-font-set="md" class="text-info">sync</md-icon>
                             </md-button>
-                        </div>
+                        </md-input-container>
                     </div>
                     <div class="row">
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
@@ -71,7 +81,9 @@
                     </div>
                     <div class="row" ng-if="establecimientos.length > 1">
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
-                            <button class="btn btn-info" ng-click="openMigrate()"><i class="fa-solid fa-file-export"></i> Migrar Comprobantes</button>
+                            <button class="btn btn-info" ng-click="openMigrate()">
+                                <i class="fa-solid fa-file-export"></i> Migrar Comprobantes
+                            </button>
                         </div>
                     </div>
                     <div class="table-responsive" style="max-height: 400px;">
@@ -114,8 +126,8 @@
                             </tbody>
                         </table>
                         @*<md-table-pagination md-limit="query.limit" md-limit-options="pages" md-page="query.page"
-                            md-total="{{totalRecords}}" md-on-paginate="getComprobantes" md-page-select>
-                            </md-table-pagination>*@
+                        md-total="{{totalRecords}}" md-on-paginate="getComprobantes" md-page-select>
+                        </md-table-pagination>*@
                     </div>
 
                 </div>

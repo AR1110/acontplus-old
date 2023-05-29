@@ -11,7 +11,10 @@
             'toastService',
             'modalService',
             'nombreModal',
-            'uuid2'
+            'uuid2',
+            '$timeout',
+            '$q',
+            'Upload'
         ];
 
         function documentoRecibidoCtrl(
@@ -22,7 +25,10 @@
             tS,
             modalService,
             nameModalConst,
-            uuid2
+            uuid2,
+            $timeout,
+            $q,
+            Upload
         ) {
 
             'use strict';
@@ -296,29 +302,28 @@
                 return tipo
             }
             $scope.tipoImportacion = 0
-            $scope.askToNewImport = async () => {
+            $scope.askToNewImport = (item) => {
                 if ($scope.establecimientos.length > 1) {
-                    $scope.tipoImportacion = await $scope.selectImport()
-                    if ($scope.tipoImportacion) {
-                        Swal.fire({
-                            title: 'Estab.: ' + $scope.estabToWork,
-                            text: "Esta seguro de realizar una nueva importación de comprobantes en este establecimiento?",
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#3085d6',
-                            cancelButtonColor: '#d33',
-                            confirmButtonText: 'Si, Proceder',
-                            cancelButtonText: 'No, cancelar'
-                        }).then(result => {
-                            if (result.isConfirmed) {
-                                $scope.newImport($scope.tipoImportacion)
-                            }
-                        })
-                    }
+                    //$scope.tipoImportacion = await $scope.selectImport()
+
+                    Swal.fire({
+                        title: 'Estab.: ' + $scope.estabToWork,
+                        text: "Esta seguro de realizar una nueva importación de comprobantes en este establecimiento?",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Si, Proceder',
+                        cancelButtonText: 'No, cancelar'
+                    }).then(result => {
+                        if (result.isConfirmed) {
+                            $scope.newImport(item)
+                        }
+                    })
 
                 } else {
-                    $scope.tipoImportacion = await $scope.selectImport()
-                    $scope.newImport($scope.tipoImportacion)
+                    //$scope.tipoImportacion = await $scope.selectImport()
+                    $scope.newImport(item)
                 }
             }
 
@@ -331,7 +336,18 @@
                 }
             }
             $scope.mainform = {}
-            $scope.addClaveAcceso = () => {
+            $scope.mainform.option = false
+            $scope.log = ''
+            $scope.$watch('files', function () {
+                $scope.uploadXml($scope.files);
+            });
+            $scope.$watch('file', function () {
+                console.log("file single")
+                if ($scope.file != null) {
+                    $scope.files = [$scope.file];
+                }
+            });
+            $scope.addClaveAcceso = async () => {
                 if (!$scope.mainform.claveAcceso) {
                     tS.toastr("warning", "La clave de acceso no es correcta")
                     return
@@ -344,12 +360,97 @@
                     tS.toastr("warning", "La clave de acceso ya existe")
                     return
                 }
+                if (!await $scope.checkExistenceXml($scope.mainform.claveAcceso)) {
+                    return
+                }
                 $scope.compToImport.push({ claveAcceso: $scope.mainform.claveAcceso })
                 $scope.mainform.claveAcceso = ''
+                $scope.$apply()
             }
             $scope.removeClaveAcceso = (item) => {
                 $scope.compToImport.splice(item, 1)
             }
+            $scope.removeFile = (item) => {
+                $scope.files.splice(item, 1)
+            }
+            $scope.uploadXml = function (files) {
+                var uploadPromises = [];
+                angular.forEach(files, function (file) {
+                    var uploadPromise = Upload.upload({
+                        url: _urlService + 'DocumentoRecibido/UploadXml/?json=' + JSON.stringify({ codEstab: $scope.query.codEstab }), // Reemplaza con la URL de tu backend donde manejarás la carga de archivos
+                        data: { file: file }
+                    }).then(function (response) {
+                        // Maneja la respuesta del backend aquí
+                        if (response.data) {
+                            if (response.data.code == "0") {
+                                tS.toastr("warning", response.data.message)
+                            }
+                            if (response.data.code == "1") {
+                                tS.toastr("success", response.data.message)
+                            }
+                        }
+                        //console.log('Archivo cargado exitosamente:', response.data);
+                    }, function (error) {
+                        // Maneja el error de carga aquí
+                        tS.toastr("danger", "Error al cargar el archivo: " + error)
+                        //console.log('Error al cargar el archivo:', error);
+                    });
+                    uploadPromises.push(uploadPromise);
+                });
+
+                $q.all(uploadPromises)
+                    .then(function () {
+                        // Todas las peticiones se han completado con éxito
+                        //tS.toastr("info", "Todas las peticiones se han completado")
+                        console.log('Todas las peticiones se han completado');
+                    })
+                    .catch(function (error) {
+                        // Al menos una de las peticiones ha fallado
+                        tS.toastr("danger", "Al menos una de las peticiones ha fallado")
+                        console.log('Al menos una de las peticiones ha fallado:', error);
+                    });
+            };
+            // $scope.uploadXml = async (files) => {
+            //     try {
+            //         showLoader()
+            //         if (files && files.length) {
+            //             for (var i = 0; i < files.length; i++) {
+            //                 var file = files[i];
+            //                 if (!file.$error) {
+            //                     await mS.getDataFile('DocumentoRecibido/UploadXml/?json=' + JSON.stringify({ codEstab: $scope.query.codEstab }), file, null, true).then(
+            //                         response => {
+            //                             if (response.code == 0) {
+            //                                 tS.toastr('warning', response.message)
+            //                             }
+            //                             if (response.code == 1) {
+            //                                 tS.toastr('success', response.message)
+            //                                 $timeout(function () {
+            //                                     $scope.log = 'file: ' +
+            //                                         response.config.data.file.name +
+            //                                         ', Response: ' + JSON.stringify(response.data) +
+            //                                         '\n' + $scope.log;
+            //                                 })
+            //                             }
+            //                         }, null, (evt) => {
+            //                             var progressPercentage = parseInt(100.0 *
+            //                                 evt.loaded / evt.total);
+            //                             $scope.log = 'progress: ' + progressPercentage +
+            //                                 '% ' + evt.config.data.file.name + '\n' +
+            //                                 $scope.log;
+            //                         }
+            //                     ).catch(error => {
+            //                         console.log(error)
+            //                     })
+            //                 }
+            //             }
+            //         }
+            //     } catch (error) {
+            //         console.log(error)
+            //     } finally {
+            //         hideLoader()
+            //     }
+            // }
+
             //Read File tXT 
             $scope.readFileTxt = function () {
                 try {
@@ -412,20 +513,30 @@
                 }
 
             }
-
-            $scope.checkExistenceXml = (item) => {
+            $scope.claveAccesoIsValid = false
+            $scope.checkExistenceXml = async (item) => {
                 if (!item) {
                     tS.toastr('warning', 'Clave de acceso incorrecta')
                     return
                 }
+                if (item.length != 49) {
+                    tS.toastr('warning', 'La Clave de acceso debe poseer 49 digitos')
+                    return
+                }
+                $scope.claveAccesoIsValid = false
                 showLoader();
-                mS.getData('post', 'DocumentoRecibido/CheckExistenceXml/?claveAcceso=' + item, null, true).then(
+                await mS.getData('post', 'DocumentoRecibido/CheckExistenceXml/?claveAcceso=' + item, null, true).then(
                     response => {
                         if (response.estado != "AUTORIZADO") {
-                            $scope.mainform.claveAcceso = ''
-                            tS.toastr('warning', response.message);
+                            if (response.message) {
+                                tS.toastr('warning', response.message)
+                            } else {
+                                tS.toastr("warning", "Clave de acceso no existe en el SRI")
+                            }
                         } else {
-                            tS.toastr('info', 'Validacion exitosa');
+                            $scope.claveAccesoIsValid = true
+                            hideLoader()
+                            tS.toastr('info', 'Validacion exitosa')
                         }
                         hideLoader()
                     }
@@ -433,6 +544,7 @@
                     hideLoader();
                     console.log(error);
                 })
+                return $scope.claveAccesoIsValid
             }
 
             //Guardar Documentos importados
@@ -2236,6 +2348,7 @@
             })
             $('#modalNewManual').on('hidden.bs.modal', () => {
                 $scope.compToImport = []
+                $scope.files = []
             })
             $('#migrateEstabModal').on('hidden.bs.modal', () => {
                 $scope.comprobantesTempToMigrate = []
