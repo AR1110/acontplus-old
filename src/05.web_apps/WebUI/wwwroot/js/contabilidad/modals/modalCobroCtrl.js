@@ -697,6 +697,9 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc
             }
             cobroSvc.getCuotas(query).then(response=>{
                 hideLoader();
+                if(response.code ==="0"){
+                    throw response;
+                }
                 let mainDataRepository = JSON.parse(response.payload);
                 initDataForm(mainDataRepository);
 
@@ -854,11 +857,14 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc
 
             showLoader();
             cobroSvc.getCuotas(query).then(response=>{
+                if(response.code==='0'){
+                    throw response;
+                }
                 hideLoader();
                 let mainDataRepository = JSON.parse(response.payload);
-                initDataForm(mainDataRepository);
-
                 let tipoDocumentos = mainDataRepository[5];
+
+                
                 if(tipoDocumentos.length==0){
                     Swal.fire({ 
                         icon: 'info', 
@@ -866,6 +872,8 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc
                     })
                     throw 'No se encontraron los documentos de este cliente'
                 }
+                initDataForm(mainDataRepository);
+
 
                 //documentos.cuotas 
                 $scope.tipoDocumentos = mainDataRepository[5].map(item=>({

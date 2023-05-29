@@ -1,7 +1,7 @@
 @page
 @model WebUI.Areas.AprobacionDocumento.Pages.Index
 @{
-    ViewBag.title = "Reporte Inventario";
+    ViewBag.title = "Aprob. Documento";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -181,9 +181,7 @@
 
                             <td md-cell>{{$index+1}}</td>
                             <td md-cell>
-                                <span class="text-info">{{item.docOrigenDesc}}</span><br>
-                                <i class="fas fa-caret-down fa-xs"></i><br>
-                                <span class="text-success">{{item.docDestinoDesc}}</span>
+                                <span>{{item.docOrigenDesc}} / {{item.docDestinoDesc}} </span>
                             </td>
                             <td md-cell>{{item.serie}}</td>
                             <td md-cell>{{item.fechaEmision}}</td>
@@ -222,20 +220,20 @@
 
 @section Scripts{
 
-    <!--Se usa para gestion de datos adicionales-->
-    <script src="~/js/factElect/directives/factElectDirective.min.js" asp-append-version="true"></script>
+                <!--Se usa para gestion de datos adicionales-->
+                <script src="~/js/factElect/directives/factElectDirective.min.js" asp-append-version="true"></script>
 
-    <!--Se usa para listar documentos de nota emtrega-->
-    <script src="~/js/ventas/services/notaEntregaService.min.js" asp-append-version="true"></script>
-    <!--Se usa para listar documentos de proformas-->
-    <script src="~/js/ventas/services/proformaService.min.js" asp-append-version="true"></script>
+                <!--Se usa para listar documentos de nota emtrega-->
+                <script src="~/js/ventas/services/notaEntregaService.min.js" asp-append-version="true"></script>
+                <!--Se usa para listar documentos de proformas-->
+                <script src="~/js/ventas/services/proformaService.min.js" asp-append-version="true"></script>
 
-    <!--Se usa para guardar aprobacion del documento FV-->
-    <script src="~/js/factElect/services/facturaService.min.js" asp-append-version="true"></script>
+                <!--Se usa para guardar aprobacion del documento FV-->
+                <script src="~/js/factElect/services/facturaService.min.js" asp-append-version="true"></script>
 
-    <script src="~/js/ventas/services/aprobacionDocService.js" asp-append-version="true"></script>
+                <script src="~/js/ventas/services/aprobacionDocService.js" asp-append-version="true"></script>
 
-    <script src="~/js/common/services/gridOptionsService.js" asp-append-version="true"></script>
+                <script src="~/js/common/services/gridOptionsService.js" asp-append-version="true"></script>
 
-    <script src="~/js/ventas/controllers/aprobacionDocumentoCtrl.min.js" asp-append-version="true"></script>
+                <script src="~/js/ventas/controllers/aprobacionDocumentoCtrl.min.js" asp-append-version="true"></script>
 }

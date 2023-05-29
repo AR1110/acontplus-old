@@ -56,11 +56,13 @@ BEGIN
 										,ad.docOrigen  
 										,ad.codDoc
 										,docOrigenDesc           = CASE ad.docOrigen WHEN ''PR'' THEN ''Proforma''
-																				  WHEN ''NE'' THEN ''Nota Entrega''
-																				   ELSE '''' END
+																				     WHEN ''NE'' THEN ''Nota Entrega''
+																				     ELSE '''' 
+																   END
 										,docDestinoDesc          = CASE ad.codDoc WHEN ''01'' THEN ''Factura''
 																				  WHEN ''NE'' THEN ''Nota Entrega''
-																				  ELSE '''' END
+																				  ELSE '''' 
+																   END
 										,fechaEmision            = CONVERT(NVARCHAR,FORMAT(ad.fechaEmision, ''dd/MM/yyyy HH:mm''))
 										,serie                   = ad.estab+''-''+ad.ptoEmi+''-''+Helper.F_Auto_Sequential(ad.secuencial)
 										,identificacionComprador = ad.identificacionComprador
@@ -68,9 +70,10 @@ BEGIN
 										,total                   = ad.importeTotal
 										,codEstado               = ad.codEstado
 										,estado			         = ep.descripcion
-										,colorFila               = CASE ad.codEstado WHEN ''A'' THEN ''table-danger'' 
+										,colorFila               = CASE ad.codEstado WHEN ''A''    THEN ''table-danger'' 
 																					 WHEN ''APR'' THEN  ''table-success''
-																					 ELSE '''' END 
+																					 ELSE ''''
+																   END 
 								  FROM Ventas.Aprob_Document ad
 								  INNER JOIN dbo.EstadoPago ep ON ep.codigo = ad.codEstado
 								  INNER JOIN dbo.Cliente cl ON cl.idCliente = ad.idCliente
