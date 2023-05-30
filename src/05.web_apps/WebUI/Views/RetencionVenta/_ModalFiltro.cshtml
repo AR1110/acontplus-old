@@ -40,7 +40,7 @@
                 <hr>
 
                 <div class="row">
-                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label for="sucursalFilter">Estab.</label>
                             <select class="form-control border-select" ng-model="dataSearch.codEstab">
@@ -48,7 +48,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" ng-if="dataSearch.checkBoxCliente">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-12" ng-if="dataSearch.checkBoxCliente">
                         @await Html.PartialAsync("~/Views/Cliente/_ClienteAutocompleteFiltro.cshtml")                                                                                                                       
                     </div>
                 </div>

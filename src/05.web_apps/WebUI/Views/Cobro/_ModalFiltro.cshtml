@@ -12,32 +12,32 @@
                            
 
                 <div class="row justify-content-between">
-                    <div class="col-xl-2 col-lg-2 col-md-4 col-sm-12 col-xs-12">
+                    <div class="col-xl-2 col-lg-2 col-md-4 col-sm-12 col-12">
                         <div class="icheck-peterriver">
                             <input type="checkbox" ng-model="dataSearch.checkBoxFecha" ng-change="onChangeFechaFiltro()" id="checkBoxFechaFiltro">
                             <label for="checkBoxFechaFiltro">Fecha</label>
                         </div>
                     </div>
-                    <div class="col-xl-2 col-lg-2 col-md-4 col-sm-12 col-xs-12">
+                    <div class="col-xl-2 col-lg-2 col-md-4 col-sm-12 col-12">
                         <div class="icheck-peterriver">
                             <input type="checkbox" ng-model="dataSearch.checkBoxPersona" id="checkBoxPersonaFiltro" ng-disabled="dataSearch.checkBoxDocumento">
                             <label for="checkBoxPersonaFiltro">Persona</label>
                         </div>
                     </div>
-                    <div class="col-xl-2 col-lg-2 col-md-4 col-sm-12 col-xs-12">
+                    <div class="col-xl-2 col-lg-2 col-md-4 col-sm-12 col-12">
                         <div class="icheck-peterriver">
                             <input type="checkbox" ng-model="dataSearch.checkBoxUsuario" id="checkBoxUsuarioFiltro">
                             <label for="checkBoxUsuarioFiltro">Usuario</label>
                         </div>
                     </div>
-                    <div class="col-xl-2 col-lg-2 col-md-4 col-sm-12 col-xs-12">
+                    <div class="col-xl-2 col-lg-2 col-md-4 col-sm-12 col-12">
                         <div class="icheck-peterriver">
                             <input type="checkbox" ng-model="dataSearch.checkBoxEstado" id="checkBoxEstadoFiltro">
                             <label for="checkBoxEstadoFiltro">Estado</label>
                         </div>
                     </div>
 
-                    <div class="col-xl-2 col-lg-2 col-md-4 col-sm-12 col-xs-12">
+                    <div class="col-xl-2 col-lg-2 col-md-4 col-sm-12 col-12">
                         <div class="icheck-peterriver">
                             <input type="checkbox" ng-model="dataSearch.checkBoxDocumento" ng-change="onChangeDocumentoFiltro()" id="checkBoxDocumentoFiltro">
                             <label for="checkBoxDocumentoFiltro">Documento</label>
@@ -47,7 +47,7 @@
                 <hr> 
 
                  <div class="row">
-                    <div class="colxl-6 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                    <div class="colxl-6 col-lg-4 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label for="establecimiento" >Estab.:</label>                            
                             <select name="establecimiento" id="establecimiento" class="form-control" ng-model="dataSearch.codEstab">
@@ -61,7 +61,7 @@
             
                 <!--Fecha -->
                 <div class="row" ng-if="dataSearch.checkBoxFecha">                        
-                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
                         <div class="form-group">
                             <label class="control-label">Mes: </label>
                             <select ng-model="mes" class="form-control" ng-change="getFechaInicioFinFilter(mes)">
@@ -69,13 +69,13 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
                         <div class="form-group">
                             <label>Fecha Inicio:</label>
                             <input type="date" class="form-control" name="fechaInicio" ng-model="dataSearch.fechaInicio"/>
                         </div>
                     </div>
-                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
                         <div class="form-group">
                             <label>Fecha Fin:</label>
                             <input type="date" class="form-control" name="facheFin" ng-model="dataSearch.fechaFin"/>
@@ -85,7 +85,7 @@
 
                 <!--TIPO PERSONA-->
                 <div class="row">
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-xs-12 col-sm-12" ng-if="dataSearch.checkBoxPersona">
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-12 col-sm-12" ng-if="dataSearch.checkBoxPersona">
                         <div class="form-group">
                             <label for="">Persona (Cliente/Empleado)</label>
                             <select class="form-control" ng-model="dataSearch.byTipoPersona">
@@ -94,7 +94,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-xl-8 col-lg-8 col-md-6 col-xs-12 col-sm-12" ng-if="dataSearch.checkBoxPersona">                                                                        
+                    <div class="col-xl-8 col-lg-8 col-md-6 col-12 col-sm-12" ng-if="dataSearch.checkBoxPersona">                                                                        
                         <div class="form-group" ng-show="dataSearch.byTipoPersona===1">
                             <label for="">Cliente</label>
                             <input type="text"
@@ -181,7 +181,7 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-12">
                         <div class="form-group">
                             <label for="">Buscar</label>
                             <input type="text" class="form-control border-select" ng-model="dataSearch.txtFiltroDocumento" placeholder="Buscar Documento">
@@ -190,7 +190,7 @@
                 </div> 
 
                 <div class="row" ng-if="dataSearch.checkBoxDocumento">
-                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-12">
                         <div class="table-reponsive" ng-if="dataSearch.tipoDocumento==='FV'">
                             <table class="table table-sm">
                                 <thead>

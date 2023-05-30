@@ -12,13 +12,13 @@
                 </div>
                 <div class="card-body shadow">
                     <div class="row">
-                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                             <div class="form-group">
                                 <label for="">Descripción</label><br>
                                 <span class="text-muted">{{$ctrl.data.descripcion}}</span>
                             </div>
                         </div>
-                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                             <div class="form-group">
                                 <label for="">SubFamilia</label>
                                 <select class="form-control border-select" disabled ng-model="$ctrl.data.idSubFamilia" ng-change="$ctrl.getArticuloCodigo()"
@@ -29,19 +29,19 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
                             <div class="form-group">
                                 <label for="">Código</label>
                                 <input type="text" class="form-control" ng-model="$ctrl.data.codigo" disabled>
                             </div>
                         </div>
-                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
                             <div class="form-group">
                                 <label for="">Código Aux:</label>
                                 <input type="text" class="form-control" ng-model="$ctrl.data.codigoAuxiliar" disabled>
                             </div>
                         </div>
-                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
                             <div class="form-group">
                                 <label for="">Código de Barra:</label>
                                 <input type="text" class="form-control" ng-model="$ctrl.data.codigoBarra" disabled>
@@ -50,7 +50,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                             <div class="form-group">
                                 <label for="">Tipo Artículo: </label>
                                 <select class="form-control" ng-model="$ctrl.data.idTipoArticulo" disabled>
@@ -58,7 +58,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                             <div class="form-group">
                                 <label for="">Medida</label>
                                 <select class="form-control"  ng-model="$ctrl.data.idMedida" disabled>
@@ -69,7 +69,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                             <div class="form-group">
                                 <label>Adicionales: </label>
                                 <div class="icheck-primary">
@@ -78,7 +78,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                             <div class="form-group">
                                 <label for="">Fraccionable: </label>
                                 <div class="icheck-primary">
@@ -87,7 +87,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                             <div class="form-group">
                                 <label for="">Llevar Inventario: </label>
                                 <div class="icheck-primary">
@@ -99,7 +99,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                             <div class="form-group">
                                 <label for="">Tipo Iva</label>
                                 <select class="form-control" ng-model="$ctrl.data.idTipoIva" disabled>
@@ -108,13 +108,13 @@
                             </div>
                             
                         </div>
-                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                             <div class="form-group">
                                 <label for="">Precio Costo</label>
                                 <input type="text" ng-model="$ctrl.data.precioCosto" class="form-control" disabled>
                             </div>
                         </div>
-                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                             <div class="form-group">
                                 <label for="">Estado: </label>
                                 <div class="icheck-primary">
@@ -126,7 +126,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12" ng-if="$ctrl.data.datosAdicionales">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" ng-if="$ctrl.data.datosAdicionales">
                             <div class="form-group">
                                 <label>Actividades: </label>
                                 <select ng-model="$ctrl.data.idActividad" disabled class="form-control">
@@ -138,7 +138,7 @@
                     <hr>
                 
                     <div class="row">
-                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                        <div class="col-lg-4 col-md-4 col-sm-6 col-12">
                             <div class="form-group">
                                 <label for="">Marca: </label>                            
                                 <select class="form-control" disabled ng-model="$ctrl.data.idMarca">
@@ -147,7 +147,7 @@
                             </div> 
                         </div>
 
-                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                        <div class="col-lg-4 col-md-4 col-sm-6 col-12">
                             <div class="form-group">
                                 <label for="">Modelo: </label>                           
                                 <select class="form-control" disabled ng-model="$ctrl.data.idModelo"
@@ -156,7 +156,7 @@
                             </div>
                         </div>
 
-                        <div class=" col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                        <div class=" col-lg-4 col-md-4 col-sm-6 col-12">
                             <div class="form-group">
                                 <label for="">ICE: </label>
                                 <select class="form-control" disabled ng-model="$ctrl.data.idTipoIce">
@@ -166,21 +166,21 @@
                         </div>                      
                     </div>
                     <div class="row">
-                        <div class="col-lg-4 col-md-3 col-sm-12 col-xs-12">
+                        <div class="col-lg-4 col-md-3 col-sm-12 col-12">
                             <div class="form-group">
                                 <label>Stock Mínimo: </label>
                                 <input type="text" class="form-control" disabled value="1" ng-model="$ctrl.data.stockMinimo" valid-number placeholder="0">
                             </div>
                         </div>
 
-                        <div class="col-lg-4 col-md-3 col-sm-12 col-xs-12">
+                        <div class="col-lg-4 col-md-3 col-sm-12 col-12">
                             <div class="form-group">
                                 <label for="">Stock Máximo: </label>
                                 <input type="text" class="form-control" disabled value="2" ng-model="$ctrl.data.stockMaximo" valid-number placeholder="0">
                             </div>
                         </div>
 
-                        <div class="col-lg-4 col-md-3 col-sm-12 col-xs-12">
+                        <div class="col-lg-4 col-md-3 col-sm-12 col-12">
                             <div class="form-group">
                                 <label for="">Observación: </label>
                                 <textarea name="textarea" ng-model="$ctrl.data.observaciones" disabled class="form-control"></textarea>

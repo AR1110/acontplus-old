@@ -5,7 +5,7 @@
 <div class="modal-body">   
     <div class="row justify-content-between">
 
-        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-xs-12">
+        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
             <div class="form-group">
                 <label for="">Estab.:</label>                
                 <select name="" id="" class="form-control" ng-model="$ctrl.data.codEstab">
@@ -16,7 +16,7 @@
             </div>            
         </div>
         
-        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-xs-12">
+        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
             <div class="form-group">                
                 <label for="" class="control-label">Caja: <span class="text-danger">*</span></label>
                 <select class="form-control border-select" ng-model="$ctrl.data.idCaja">
@@ -25,7 +25,7 @@
             </div>
         </div>
 
-        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-xs-12">
+        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
             <div class="form-group">                
                 <label for="" class="control-label">Tipo Documento:<span class="text-danger">*</span></label>
                 <div class="icheck-info" ng-repeat="item in $ctrl.tipoDocumentos">
@@ -37,7 +37,7 @@
     </div>
 
     <div class="row">       
-        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
             <div class="form-group">
                 <label for="" class="control-label">Entidad Financiera <span class="text-danger">*</span></label>
                 <select class="form-control border-select" ng-model="$ctrl.data.idEntidadFinanciera" ng-change="$ctrl.getSubEntidadByEntidadFinanciera()">
@@ -46,7 +46,7 @@
             </div>
         </div>
 
-        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
             <div class="form-group" ng-if="$ctrl.data.idEntidadFinanciera>0">
                 <label for="" class="control-label">Sub Entidad Financiera</label>
                 <select class="form-control border-select" ng-model="$ctrl.data.idSubEntidadFinanciera">
@@ -58,7 +58,7 @@
 
    
     <div class="row">
-        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
             <div class="form-group">
                 <label for="" class="control-label">Empleado <span class="text-danger">*</span></label>
                 <input type="text"
@@ -85,7 +85,7 @@
                 <small ng-show="$ctrl.data.noResults" class="text-danger">No se encontraron los resultados</small>
             </div>
         </div>
-        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
             <div class="form-group">
                 <label for="" class="control-label">Valor <span class="text-danger">*</span></label>
                 <input type="text" decimal ng-model="$ctrl.data.valor" class="form-control border-select" placeholder="0.00">
@@ -94,7 +94,7 @@
     </div>
 
     <div class="row">
-        <div class="col-xl-12 col-lg-12 col-md-12 col-sm 12 col-xs-12">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm 12 col-12">
             <div class="form-group">
                 <label for="" class="control-label">Observación <span class="text-danger">*</span></label>
                 <textarea class="form-control border-select" ng-model="$ctrl.data.observaciones" touppercase></textarea>

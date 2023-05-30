@@ -4,7 +4,7 @@
 </div>
 <div class="modal-body">
     <div class="row">
-        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="form-group">
                 <label for="">Tipo Identificación <span class="text-danger">*</span> </label>
                 <div class="form-group">
@@ -14,7 +14,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="form-group">
                 <label for="">{{$ctrl.data.identificacion}}: <span class="text-danger">*</span></label>
                 <input type="text" ng-model="$ctrl.data.nroIdentificacion" class="form-control border-select">
@@ -22,13 +22,13 @@
         </div>
         
         
-        <div ng-if="$ctrl.tipoRegistro===1" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div ng-if="$ctrl.tipoRegistro===1" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="form-group">
                 <label for="">Nombre: <span class="text-danger">*</span></label>
                 <input type="text" ng-model="$ctrl.data.nombre" touppercase class="form-control border-select">
             </div>
         </div>
-        <div ng-if="$ctrl.tipoRegistro===1" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div ng-if="$ctrl.tipoRegistro===1" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="form-group">
                 <label for=""> Apellido: <span class="text-danger">*</span></label>
                 <input type="text" ng-model="$ctrl.data.apellido" class="form-control border-select">                
@@ -37,14 +37,14 @@
         
 
         
-        <div ng-if="$ctrl.tipoRegistro===2" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div ng-if="$ctrl.tipoRegistro===2" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="form-group">
                 <label for=""> Nombre Completo: <span class="text-danger">*</span></label>
                 <input type="text" ng-model="$ctrl.data.nombreCompleto" class="form-control border-select">                
             </div>
         </div>            
         
-        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12" ng-if="$ctrl.tipoRegistro===2">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" ng-if="$ctrl.tipoRegistro===2">
             <div class="form-group">
                 <label for="">Estado</label>
                 <md-radio-group ng-model="$ctrl.data.estado" aria-labelledby="estado">

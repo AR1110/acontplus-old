@@ -6,19 +6,19 @@
             </div>
             <div class="modal-body">
                 <div class="row justify-content-between">
-                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                         <div class="icheck-info">
                             <input type="checkbox" id="checkBoxFecha" ng-model="$ctrl.dataSearchAnticipo.checkBoxFecha"  ng-change="$ctrl.onChangeFechaFilter()">
                             <label for="checkBoxFecha">Fecha</label>
                         </div>                        
                     </div>
-                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                         <div class="icheck-info">
                             <input type="checkbox" id="checkBoxCliente" ng-model="$ctrl.dataSearchAnticipo.checkBoxCliente" >
                             <label for="checkBoxCliente">Cliente</label>
                         </div>
                     </div>
-                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                         <div class="icheck-info">
                             <input type="checkbox" id="checkBoxEstado" ng-model="$ctrl.dataSearchAnticipo.checkBoxEstado">
                             <label for="checkBoxEstado">Estado</label>
@@ -28,7 +28,7 @@
                 <hr>
 
                 <div class="row">
-                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label for="">Estab.:</label>
                             <select name="" id="" class="form-control" ng-model="$ctrl.dataSearchAnticipo.codEstab">
@@ -66,7 +66,7 @@
                 </div>
 
                 <div class="row" >
-                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12" ng-if="$ctrl.dataSearchAnticipo.checkBoxCliente">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12" ng-if="$ctrl.dataSearchAnticipo.checkBoxCliente">
                         <div class="form-group">
                             <label for="clientePersonalizado">Cliente</label>
                             <input type="text" id="autocompleteCliente"
@@ -94,7 +94,7 @@
                         </div>
 
                     </div>
-                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12" ng-if="$ctrl.dataSearchAnticipo.checkBoxEstado">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12" ng-if="$ctrl.dataSearchAnticipo.checkBoxEstado">
                         <div class="form-group">
                             <label>Estado:</label>                            
                             <select class="form-control" ng-model="$ctrl.dataSearchAnticipo.byEstado">

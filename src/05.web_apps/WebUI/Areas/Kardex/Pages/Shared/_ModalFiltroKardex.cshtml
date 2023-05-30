@@ -6,21 +6,21 @@
 
 <div class="modal-body">
     <div class="row justify-content-between">
-        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+        <div class="col-lg-3 col-md-3 col-sm-12 col-12">
             <div class="icheck-info">
                 <input type="checkbox" ng-change="$ctrl.onChangeFechaFiltro()" ng-model="$ctrl.dataSearch.checkBoxFecha" id="checkBoxFechaFiltro">
                 <label for="checkBoxFechaFiltro">Fecha</label>
             </div>
         </div>
 
-        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+        <div class="col-lg-3 col-md-3 col-sm-12 col-12">
             <div class="icheck-info">
                 <input type="checkbox" ng-model="$ctrl.dataSearch.checkBoxBodega" id="checkBoxBodegaFiltro">
                 <label for="checkBoxBodegaFiltro">Bodega</label>
             </div>
         </div>
 
-        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+        <div class="col-lg-3 col-md-3 col-sm-12 col-12">
             <div class="icheck-info">
                 <input type="checkbox" ng-model="$ctrl.dataSearch.checkBoxMovement" id="checkBoxMovement">
                 <label for="checkBoxMovement">Movimiento</label>
@@ -29,13 +29,13 @@
     </div>
 
     <div class="row justify-content-between">
-        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" ng-if="$ctrl.dataSearch.checkBoxBodega">
+        <div class="col-lg-6 col-md-6 col-sm-12 col-12" ng-if="$ctrl.dataSearch.checkBoxBodega">
             <div class="icheck-info">
                 <input type="checkbox" ng-model="$ctrl.dataSearch.checkBoxUltimaConsolidacion" ng-change="$ctrl.onChangeUltimaConsolidacion()" id="checkBoxUltimaConsolidacion">
                 <label for="checkBoxUltimaConsolidacion">Buscar a partir de la ultima consolidación  </label>
             </div>
         </div>
-        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
             <div class="icheck-info">
                 <input type="checkbox" ng-model="$ctrl.dataSearch.checkBoxConsolidacion" ng-change="$ctrl.onChangecheckBoxConsolidacionInventario()" id="checkBoxConsolidacionInventario">
                 <label for="checkBoxConsolidacionInventario">Buscar consolidaciones de Inventario  </label>
@@ -45,7 +45,7 @@
     <hr>
 
     <div class="row">
-        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+        <div class="col-lg-4 col-md-4 col-sm-12 col-12">
             <div class="form-group">
                 <label for="">Establecimiento</label>
                 <select class="form-control border-select" ng-model="$ctrl.dataSearch.codEstab" ng-change="$ctrl.getBodegas()">
@@ -53,7 +53,7 @@
                 </select>
             </div>
         </div>
-        <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+        <div class="col-lg-8 col-md-8 col-sm-12 col-12">
             <div class="form-group">
                 <label for="articuloFiltro">Articulo</label>
                 <input type="text" id="articuloSearchFiltro"
@@ -109,7 +109,7 @@
     </div>
 
     <div class="row">
-        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12" ng-if="$ctrl.dataSearch.checkBoxBodega">
+        <div class="col-lg-4 col-md-4 col-sm-6 col-12" ng-if="$ctrl.dataSearch.checkBoxBodega">
             <div class="form-group">
                 <label for="bodega">Bodega</label>
                 <select class="form-control border-select" ng-model="$ctrl.dataSearch.byBodega">
@@ -118,7 +118,7 @@
             </div>
         </div>
 
-        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12" ng-if="$ctrl.dataSearch.checkBoxMovement">
+        <div class="col-lg-4 col-md-4 col-sm-6 col-12" ng-if="$ctrl.dataSearch.checkBoxMovement">
             <div class="form-group">
                 <label for="bodega">Movimiento</label>
                 <select class="form-control border-select" ng-model="$ctrl.dataSearch.movement">

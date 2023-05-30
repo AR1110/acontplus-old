@@ -22,7 +22,7 @@
 
         <div class="card-body">
             <div class="row">
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <div class="form-gorup">
                         <span for="establecimiento">Establecimiento</span>
                         <select name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab"
@@ -33,7 +33,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <span for="">Rango de Fechas</span>
                         <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
@@ -41,7 +41,7 @@
                             result-range-date="resultRangeFilter(result)"></date-range-filter>
                     </div>
                 </div>
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <span for="clienteFiltro">Cliente</span>
                         <input type="text" id="clienteSearchFiltro" autocomplete="off" name="clienteSearchFiltro"
@@ -61,7 +61,7 @@
                             </script>
                     </div>
                 </div>
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <button type="button" class="btn btn-info btm-sm mt-4" data-toggle="button" data-more="#sh"
                         aria-pressed="false" ng-click="onClickBtnMore()">
                         <span class="text"><i class="ti-plus" aria-hidden="true"></i> Más</span>
@@ -75,7 +75,7 @@
 
             <div class="row" ng-if="moreSearchOptions">
 
-                <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-xs-12">
+                <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
                     <div class="form-group">
                         <span for="usuario">Usuario</span>
                         <input type="text" class="form-control border-select" ng-model="nombreCompleto"

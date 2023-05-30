@@ -5,29 +5,29 @@
 
 <div class="modal-body">
     <div class="row">
-        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-xs-12 b-r">
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12 b-r">
             <strong>Proveedor:</strong>
             <br>                        
             <p class="text-muted">{{$ctrl.proveedor.nombreFiscal}}</p>
         </div>
-        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-xs-12 b-r">
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12 b-r">
             <strong>Nro. Documento:</strong>
             <br>
             <p class="text-muted">{{$ctrl.dataTipoDocumento.nroDocumento}}</p>
         </div>
-        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-xs-12 b-r">
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12 b-r">
             <strong>Fecha Emisión:</strong>
             <br>
             <p class="text-muted">{{$ctrl.dataTipoDocumento.fechaEmision | date:'dd/MM/yyyy'}}</p>
         </div>
-        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-xs-12 b-r">
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12 b-r">
             <strong>Total:</strong>
             <h4>${{$ctrl.dataTipoDocumento.total}}</h4>
         </div>
     </div>
     <md-divider></md-divider>
     <div class="row justify-content-between mt-2">
-        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-12">
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
             <div class="form-group">
                 <label>Tiempo Crédito</label>
                 <div class="input-group">                                
@@ -45,7 +45,7 @@
                 </div>                            
             </div>
         </div>
-        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-12">
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
             <label>Configurar Fecha: <code>dd/MM/yyyy</code></label>
             <div class="input-group">
                 <input type="date" ng-model="$ctrl.data.configFecha" class="form-control" aria-label="Config. Fecha Vencimiento">

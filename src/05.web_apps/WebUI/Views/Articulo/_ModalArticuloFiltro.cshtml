@@ -5,28 +5,28 @@
 </div>
 <div class="modal-body">
     <div class="row justify-content-between">
-        <div class="col-lg-2 col-md-2 col-sm-4 col-xs-12">
+        <div class="col-lg-2 col-md-2 col-sm-4 col-12">
             <div class="icheck-info">
                 <input type="checkbox" ng-model="$ctrl.dataSearch.checkBoxSubFamilia" id="checkBoxSubFamilia">
                 <label for="checkBoxSubFamilia">SubFamilia</label>
             </div>
         </div>
 
-        <div class="col-lg-2 col-md-2 col-sm-4 col-xs-12">
+        <div class="col-lg-2 col-md-2 col-sm-4 col-12">
             <div class="icheck-info">
                 <input type="checkbox" ng-model="$ctrl.dataSearch.checkBoxMedida" id="checkBoxMedida">
                 <label for="checkBoxMedida">Medida</label>
             </div>
         </div>
 
-        <div class="col-lg-2 col-md-2 col-sm-4 col-xs-12">
+        <div class="col-lg-2 col-md-2 col-sm-4 col-12">
             <div class="icheck-info">
                 <input type="checkbox" ng-model="$ctrl.dataSearch.checkBoxMarca" id="checkBoxMarca">
                 <label for="checkBoxMarca">Marca</label>
             </div>
         </div>
 
-        <div class="col-lg-2 col-md-2 col-sm-4 col-xs-12">
+        <div class="col-lg-2 col-md-2 col-sm-4 col-12">
             <div class="icheck-info">
                 <input type="checkbox" ng-model="$ctrl.dataSearch.checkBoxModelo" id="checkBoxModelo">
                 <label for="checkBoxModelo">Modelo</label>
@@ -35,25 +35,25 @@
 
     </div>
     <div class="row justify-content-between">
-        <div class="col-lg-2 col-md-2 col-sm-4 col-xs-12">
+        <div class="col-lg-2 col-md-2 col-sm-4 col-12">
             <div class="icheck-info">
                 <input type="checkbox" ng-model="$ctrl.dataSearch.checkBoxTipoIva" id="checkBoxTipoIva">
                 <label for="checkBoxTipoIva">Tipo Iva</label>
             </div>
         </div>
-        <div class="col-lg-2 col-md-2 col-sm-4 col-xs-12">
+        <div class="col-lg-2 col-md-2 col-sm-4 col-12">
             <div class="icheck-info">
                 <input type="checkbox" ng-model="$ctrl.dataSearch.checkBoxStock" id="checkBoxStock">
                 <label for="checkBoxStock">Stock</label>
             </div>
         </div>
-        <div class="col-lg-2 col-md-2 col-sm-4 col-xs-12">
+        <div class="col-lg-2 col-md-2 col-sm-4 col-12">
             <div class="icheck-info">
                 <input type="checkbox" ng-model="$ctrl.dataSearch.checkBoxFraccionado" id="checkBoxFraccionado">
                 <label for="checkBoxFraccionado">Fraccionado</label>
             </div>                        
         </div>
-        <div class="col-lg-2 col-md-2 col-sm-4 col-xs-12">
+        <div class="col-lg-2 col-md-2 col-sm-4 col-12">
             <div class="icheck-info">
                 <input type="checkbox" ng-model="$ctrl.dataSearch.checkBoxInventario" id="checkBoxInventario">
                 <label for="checkBoxInventario">Inventario</label>
@@ -64,7 +64,7 @@
     <hr>
 
     <div class="row">
-        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" ng-if="$ctrl.dataSearch.checkBoxSubFamilia">
+        <div class="col-lg-6 col-md-6 col-sm-6 col-12" ng-if="$ctrl.dataSearch.checkBoxSubFamilia">
             <div class="form-group">
                 <label for="">SubFamilia</label>
                     <select class="form-control border-select" ng-model="$ctrl.dataSearch.bySubFamilia" 
@@ -72,7 +72,7 @@
                     </select>                          
             </div>
         </div>
-        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" ng-if="$ctrl.dataSearch.checkBoxMedida">
+        <div class="col-lg-6 col-md-6 col-sm-6 col-12" ng-if="$ctrl.dataSearch.checkBoxMedida">
             <div class="form-group">
                 <label for="">Medida</label>
                 <select ng-model="$ctrl.dataSearch.byMedida" class="form-control">
@@ -83,7 +83,7 @@
     </div>
 
     <div class="row">
-        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" ng-if="$ctrl.dataSearch.checkBoxMarca">
+        <div class="col-lg-6 col-md-6 col-sm-6 col-12" ng-if="$ctrl.dataSearch.checkBoxMarca">
             <div class="form-group">
                 <label for="">Marca</label>
                 <select ng-model="$ctrl.dataSearch.byMarca" class="form-control">
@@ -91,7 +91,7 @@
                 </select>
             </div>
         </div>
-        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" ng-if="$ctrl.dataSearch.checkBoxModelo">
+        <div class="col-lg-6 col-md-6 col-sm-6 col-12" ng-if="$ctrl.dataSearch.checkBoxModelo">
             <div class="form-group">
                 <label for="">Modelo</label>                
                 <select class="form-control border-select" ng-model="$ctrl.dataSearch.byModelo"
@@ -102,7 +102,7 @@
     </div>
 
     <div class="row">
-        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" ng-if="$ctrl.dataSearch.checkBoxTipoIva">
+        <div class="col-lg-6 col-md-6 col-sm-6 col-12" ng-if="$ctrl.dataSearch.checkBoxTipoIva">
             <div class="form-group">
                 <label for="">Tipo Iva</label>
                 <select ng-model="$ctrl.dataSearch.byTipoIva" class="form-control">
@@ -110,7 +110,7 @@
                 </select>
             </div>
         </div>
-        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" ng-if="$ctrl.dataSearch.checkBoxStock">
+        <div class="col-lg-6 col-md-6 col-sm-6 col-12" ng-if="$ctrl.dataSearch.checkBoxStock">
             <div class="form-group">
                 <label for="opcion">Opción</label>
                 <select class="form-control" ng-model="$ctrl.dataSearch.byStock">                                

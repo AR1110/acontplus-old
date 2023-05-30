@@ -8,7 +8,7 @@
             <div class="modal-body">
 
                 <div class="row justify-content-between">
-                    @* <div class="col-xl-2 col-lg-2 col-md-3 col-sm-6 col-xs-12">
+                    @* <div class="col-xl-2 col-lg-2 col-md-3 col-sm-6 col-12">
                     <div class="icheck-info">
                     <input type="checkbox" ng-model="dataSearch.checkboxSucursalFiltro"
                     ng-change="onChangeCheckboxSucursal()" name="checkboxSucursalFiltro" id="checkboxSucursalFiltro"
@@ -17,7 +17,7 @@
                     </div>
                     </div>
 
-                    <div class="col-xl-2 col-lg-2 col-md-3 col-sm-6 col-xs-12"
+                    <div class="col-xl-2 col-lg-2 col-md-3 col-sm-6 col-12"
                     ng-if="dataSearch.checkboxSucursalFiltro">
                     <div class="icheck-info">
                     <input type="checkbox" ng-model="dataSearch.checkboxBodegaFiltro"
@@ -27,7 +27,7 @@
                     </div>
                     </div> *@
 
-                    <div class="col-xl-2 col-lg-2 col-md-3 col-sm-6 col-xs-12">
+                    <div class="col-xl-2 col-lg-2 col-md-3 col-sm-6 col-12">
                         <div class="icheck-info">
                             <input type="checkbox" ng-model="dataSearch.chkProveedor" class="form-control"
                                 name="chkProveedor" id="chkProveedor">
@@ -43,14 +43,14 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-xl-2 col-lg-2 col-md-3 col-sm-6 col-xs-12" ng-show="!dataSearch.chkProveedor">
+                    <div class="col-xl-2 col-lg-2 col-md-3 col-sm-6 col-12" ng-show="!dataSearch.chkProveedor">
                         <div class="icheck-info">
                             <input type="checkbox" ng-model="dataSearch.checkboxSubFamiliaFiltro" class="form-control"
                                 name="checkboxSubFamiliaFiltro" id="checkboxSubFamiliaFiltro">
                             <label for="checkboxSubFamiliaFiltro">SubFamilia</label>
                         </div>
                     </div> @*
-                    <div class="col-xl-2 col-lg-2 col-md-3 col-sm-6 col-xs-12">
+                    <div class="col-xl-2 col-lg-2 col-md-3 col-sm-6 col-12">
                     <div class="icheck-info">
                     <input type="checkbox" ng-model="dataSearch.checkboxStockFiltro" class="form-control"
                     name="checkboxStockFiltro" id="checkboxStockFiltro">
@@ -59,7 +59,7 @@
                     </div>*@
                 </div>
                 @* <div class="row">
-                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12" ng-if="dataSearch.checkboxSucursalFiltro">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12" ng-if="dataSearch.checkboxSucursalFiltro">
                 <div class="form-group">
                 <label>Establecimiento:</label>
                 <select ng-model="dataSearch.codEstab" ng-change="getAsignaciones()" class="form-control">
@@ -67,7 +67,7 @@
                 </select>
                 </div>
                 </div>
-                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12" ng-if="dataSearch.checkboxBodegaFiltro">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12" ng-if="dataSearch.checkboxBodegaFiltro">
                 <div class="form-group">
                 <label>Bodega:</label>
                 <select ng-model="dataSearch.byBodega" class="form-control">
@@ -78,7 +78,7 @@
                 </div> *@
 
                 <div class="row">
-                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12"
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12"
                         ng-if="(!dataSearch.chkProveedor && dataSearch.checkboxSubFamiliaFiltro)">
                         <div class="form-group">
                             <label for="">SubFamilia</label>
@@ -87,7 +87,7 @@
                             </select>
                         </div>
                     </div>
-                    @*<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12" ng-if="dataSearch.checkboxStockFiltro">
+                    @*<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12" ng-if="dataSearch.checkboxStockFiltro">
                     <div class="form-group">
                     <label for="stock">Stock</label>
                     <select class="form-control" ng-model="dataSearch.byStock">
@@ -102,7 +102,7 @@
                 </div>
 
                 <div class="row justify-content-between">
-                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
                         <div class="form-group">
                             <label for="ordenar">Ordenar por:</label>
                             <select class="form-control" ng-model="dataSearch.byOrderCampo">
@@ -114,7 +114,7 @@
                         </div>
                     </div>
 
-                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
                         <div class="icheck-info mt-3">
                             <input type="radio" ng-model="dataSearch.byOrder" value='ASC' name="radioByOrder"
                                 id="byOrderAsc">
@@ -127,7 +127,7 @@
                         </div>
                     </div>
 
-                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-4 col-xs-12">
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-4 col-12">
                         <div class="form-group">
                             <label for="tipoFormato">Tipo Formato</label>
                             <div class="icheck-info">

@@ -99,20 +99,20 @@
                             <div class="modal-body">
 
                                 <div class="row">
-                                    <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="form-group col-lg-12 col-md-12 col-sm-12 col-12">
                                         <label for="telefono">Descripción: <span class="text-danger">*</span></label>
                                         <input type="text" ng-model="data.descripcion" class="form-control" ng-keyup="obtenerTresLetras(data)" placeholder="Ej: Local">
                                     </div>
-                                    <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="form-group col-lg-12 col-md-12 col-sm-12 col-12">
                                         <label for="codigo">Código: <span class="text-danger">*</span></label>
                                         <input type="text" ng-model="data.codigo" touppercase ng-disabled="data.descripcion==undefined || tipo==2" class="form-control" placeholder="Ej: LO">
                                     </div>
-                                    <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="form-group col-lg-12 col-md-12 col-sm-12 col-12">
                                         <label>Tipo: <span class="text-danger">*</span></label>
                                         <select class="form-control" ng-model="tipoPersona" ng-options="tp as tp.descripcion for tp in tipoPersonas track by tp.idTipoPersona">
                                         </select>
                                     </div>
-                                    <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12"ng-show="tipo==2">
+                                    <div class="form-group col-lg-12 col-md-12 col-sm-12 col-12"ng-show="tipo==2">
                                         <label for="">Estado: </label>
                                         <md-radio-group ng-model="data.estado">
                                             <md-radio-button ng-value="true">Activo</md-radio-button>

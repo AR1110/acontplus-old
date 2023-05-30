@@ -25,7 +25,7 @@
                 <div class="card-body shadow">
                     <form>
                         <div class="row justify-content-start">
-                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
                                 <div class="form-group">
                                     <label for="establecimiento">Establecimiento: <span
                                             class="text-danger">*</span></label>
@@ -37,7 +37,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
                                 <div class="form-group">
                                     <label for="">Rango de fechas:</label>
                                     <date-range-filter current-date="dataSearch.fechaInicio"
@@ -45,7 +45,7 @@
                                         result-range-date="resultDateRange(result)"></date-range-filter>
                                 </div>
                             </div>
-                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
                                 <div class="form-group">
                                     <label for="">Cliente: <span class="text-danger">*</span></label>
                                     <div class="input-group">
@@ -98,7 +98,7 @@
                 <div class="card-body shadow">
 
                     <div class="row">
-                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                             <div class="form-group">
                                 <label for="establecimientoDestino">Estab.: <span class="text-danger">*</span></label>
                                 <select class="form-control" ng-model="data.codEstab" ng-change="onChangeEstab()">
@@ -108,7 +108,7 @@
                             </div>
                         </div>
 
-                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                             <div class="form-group">
                                 <label>Punto Emisión <span class="text-danger">*</span></label>
                                 <select class="form-control" ng-model="data.idPuntoEmision"
@@ -119,7 +119,7 @@
                             </div>
                         </div>
 
-                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                             <div class="form-group">
                                 <label>Fecha Emisión: <span class="text-danger">*</span> </label>
                                 <input type="date" name="fechaEmision" class="form-control"
@@ -130,7 +130,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                             <div class="form-group">
                                 <label for="">Cliente: <span class="text-danger">*</span></label>
                                 <input type="text" name="" id="" class="form-control" ng-model="cliente.nombreFiscal"
@@ -138,7 +138,7 @@
                             </div>
                         </div>
 
-                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                             <div class="form-group">
                                 <label for="" class="">Nro. Identificación:</label>
                                 <input type="text" id="" class="form-control" disabled
@@ -146,7 +146,7 @@
                             </div>
                         </div>
 
-                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                             <div class="form-group">
                                 <label for="address" class="">Dirección:</label>
                                 <input type="text" id="address" class="form-control" disabled
@@ -162,9 +162,9 @@
 
                     <!--Subtotales-->
                     <div class="row mt-3">
-                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                        <div class="col-lg-9 col-md-9 col-sm-12 col-12">
                             <div class="row  border border-secondary-1 ml-0" ng-if="data.showSubtotales">
-                                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                <div class="col-lg-4 col-md-4 col-sm-12 col-12">
                                     <div class="table-responsive">
                                         <table class="table table-clear table-sm">
                                             <tbody>
@@ -202,7 +202,7 @@
                                         </table>
                                     </div>
                                 </div>
-                                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                <div class="col-lg-4 col-md-4 col-sm-12 col-12">
                                     <div class="table-responsive">
                                         <table class="table table-clear table-sm">
                                             <tbody>
@@ -242,7 +242,7 @@
                                         </table>
                                     </div>
                                 </div>
-                                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                <div class="col-lg-4 col-md-4 col-sm-12 col-12">
                                     <div class="table-responsive">
                                         <table class="table table-clear table-sm">
                                             <tbody>
@@ -276,7 +276,7 @@
                                 </div>
                             </div>
                             <div class="row mt-1  border border-secondary-1 ml-0" ng-if="data.showSubtotales">
-                                <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12 col-xs-12">
+                                <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12 col-12">
                                     <div class="form-group">
                                         <label>% Descuento</label>
                                         <div class="input-group">
@@ -290,7 +290,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12 col-xs-12">
+                                <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12 col-12">
                                     <div class="form-group">
                                         <label>Descuento</label>
                                         <div class="input-group">
@@ -304,7 +304,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12 col-xs-12">
+                                <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12 col-12">
                                     <div class="form-group">
                                         <label>Transporte</label>
                                         <input type="text" ng-model="data.transporte" disabled class="form-control"
@@ -312,7 +312,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12 col-xs-12">
+                                <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12 col-12">
                                     <div class="form-group">
                                         <label>Rercargo</label>
                                         <input type="text" decimal disabled ng-model="data.recargo" class="form-control"
@@ -320,7 +320,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                                <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
                                     <div class="form-group">
                                         <label>Observacion</label>
                                         <textarea class="form-control border-select" ng-model="data.observacion"
@@ -329,7 +329,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 ml-auto">
+                        <div class="col-lg-3 col-md-3 col-sm-6 col-12 ml-auto">
                             <div class="table-responsive border border-secondary-1">
                                 <table class="table table-clear table-sm">
                                     <tbody>

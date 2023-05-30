@@ -24,7 +24,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                             <div class="form-gorup">
                                 <span for="establecimiento">Establecimiento</span>
                                 <select name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab"
@@ -35,7 +35,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                             <div class="form-group">
                                 <span for="">Rango de Fechas</span>
                                 <date-range-filter current-date="dataSearch.fechaInicio"
@@ -43,7 +43,7 @@
                                     result-range-date="resultRangeFilter(result)"></date-range-filter>
                             </div>
                         </div>
-                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                             <div class="form-group">
                                 <span for="clienteFiltro">Cliente</span>
                                 <input type="text" id="clienteSearchFiltro" autocomplete="off"
@@ -66,7 +66,7 @@
                             </div>
                         </div>
 
-                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                             <div class="btn-group mt-4" role="group" aria-label="Basic example">
                                 <button type="button" class="btn btn-warning btm-sm" data-toggle="button"
                                     data-more="#sh" aria-pressed="false" ng-click="onClickBtnMore()">
@@ -105,7 +105,7 @@
 
                     <div class="row justify-content-between" ng-if="moreSearchOptions">
 
-                        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <div class="col-lg-3 col-md-3 col-sm-6 col-12">
                             <div class="form-group">
                                 <span>Estado:</span>
                                 <select class="form-control" ng-model="dataSearch.byEstado">

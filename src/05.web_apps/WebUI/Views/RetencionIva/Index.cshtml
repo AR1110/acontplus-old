@@ -94,23 +94,23 @@
                         </div>
                         <div class="modal-body">
                             <div class="row">
-                                <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group col-lg-12 col-md-12 col-sm-12 col-12">
                                     <label for="">Descripción: <span class="text-danger">*</span> </label>
                                     <div class="controls">
                                         <input type="text" class="form-control" ng-model="data.descripcion" ng-change="obtenerTresLetras(data)" placeholder="" />
                                     </div>
                                 </div>
-                                <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group col-lg-12 col-md-12 col-sm-12 col-12">
                                     <label for="">Código: </label>
                                     <input type="text" class="form-control" ng-disabled="data.descripcion==undefined||type==2" ng-model="data.codigo"  placeholder="" />
                                 </div>
-                                <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group col-lg-12 col-md-12 col-sm-12 col-12">
                                     <label for="codigo">Porcentaje: <span class="text-danger">*</span></label>
                                     <div class="form-group">
                                         <input type="text" class="form-control" ng-model="data.porcentaje" valid-number>
                                     </div>
                                 </div>
-                                <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12" ng-show="type==2">
+                                <div class="form-group col-lg-12 col-md-12 col-sm-12 col-12" ng-show="type==2">
                                     <label for="">Estado: </label>
                                     <md-radio-group ng-model="data.estado">
                                         <md-radio-button ng-value="true">Activo</md-radio-button>

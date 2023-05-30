@@ -5,7 +5,7 @@
     </div> 
     <div class="modal-body">
         <div class="row">
-            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="establecimiento">Estab.: <span class="text-danger">*</span></label>
                     <select name="establecimiento" id="establecimiento" class="form-control border-select" ng-model="data.codEstab" disabled>
@@ -16,7 +16,7 @@
                 </div>            
             </div>
             
-            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-xs-12">                
+            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">                
                 <div class="form-group">
                     <label for="puntoEmision">Punto Emisión: <span class="text-danger">*</span></label>
                     <select id="puntoEmision" name="puntoEmision" class="form-control border-select" ng-model="data.idPuntoEmision" disabled>
@@ -27,14 +27,14 @@
                 </div> 
             </div> 
 
-            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-xs-12">   
+            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">   
                 <div class="form-group">
                     <label for="fechaEmision">Fecha Emisión <span class="text-danger">*</span></label>
                     <input type="date" name="fechaEmision" ng-disabled="disabledInputFechaEmision" ng-model="data.fechaEmision" class="form-control border-select">
                 </div>
             </div>
 
-            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="observacion">Observación</label>
                     <input type="text" name="observacion" placeholder="..." ng-model="data.observacion" class="form-control border-select">
@@ -43,7 +43,7 @@
         </div>
 
         <div class="row justify-content-between">
-            <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
+            <div class="col-lg-5 col-md-5 col-sm-12 col-12">
                 <label for="">Buscar Articulo</label>  
                 <md-autocomplete-articulo-component 
                     tipo-doc="TIPO_DOC"
@@ -53,7 +53,7 @@
                     scope-parent="$scope">
                 </md-autocomplete-articulo-component> 
             </div>
-            <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+            <div class="col-lg-2 col-md-2 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="bodegas">Bodega</label>
                     <select name="bodegas" id="bodegas" class="form-control border-select" ng-model="idBodega" ng-change="askToChangeBodega()">

@@ -16,7 +16,7 @@
     <div class="card">
         <div class="card-body">
             <div class="row">
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <small for="estab" class="text-muted">Establecimiento</small>
                     <select class="form-control form-control-sm border-select" name="estab" id="estab" ng-model="dataSearch.codEstab" ng-change="getCuentasPorPagar()">
                         <option value="ALL">Todos</option>
@@ -24,7 +24,7 @@
                     </select>                    
                 </div>
 
-                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                     <small class="text-muted">Proveedor</small>
                     <div class="input-group input-group-sm mb-3">
                         <input  type="text" 
@@ -62,7 +62,7 @@
                     </div>       
                 </div>
 
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <small for="tipoDocumento" class="text-muted">Tipo Documento</small>
                     <select name="tipoDoc" id="tipoDoc" class="form-control form-control-sm border-select" ng-model="dataSearch.codDoc" ng-change="getCuentasPorPagar()">
                             <option value="ALL">Todos</option>
@@ -72,7 +72,7 @@
                         </select>                   
                 </div>
 
-                <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-xs-12">
+                <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                     <small class="text-muted" for="estado">Estado</small>
                     <select name="estadoDoc" id="estadoDoc" ng-model="dataSearch.codEstado" class="form-control form-control-sm border-select" ng-change="getCuentasPorPagar()">
                         <option value="ALL">Todos</option>
@@ -86,7 +86,7 @@
             </div>
 
             <div class="row justify-content-between">
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <small class="text-muted">Rango de Fechas: </small>
                     <input  class="form-control form-control-sm date-picker" type="text"
                             ng-model="dateRangePicker.date" picker="dateRangePicker.picker"
@@ -94,7 +94,7 @@
                             date-range-picker 
                             options="dateRangePicker.options" />
                 </div> 
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">   
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">   
                                      
                 </div>               
             </div>
@@ -105,12 +105,12 @@
     <div class="card">
         <div class="card-body">
             <div class="row justify-content-between">                   
-                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12">
                     <button type="button" class="btn btn-info btn-block" ng-click="openModalPagoLote()">
                         <i class="ti-layers"></i>  Pago Lote
                     </button>
                 </div>
-                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-xs-12">                    
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12">                    
                     <form class="form-material">
                         <div class="input-group input-group-sm mb-3">
                             <input type="text" class="form-control border-select"  placeholder="Buscar Cuentas por pagar">

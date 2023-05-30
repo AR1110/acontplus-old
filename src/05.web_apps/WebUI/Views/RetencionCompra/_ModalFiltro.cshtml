@@ -7,27 +7,27 @@
             </div>
             <div class="modal-body">
                 <div class="row justify-content-between">
-                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-xs-12">
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-12">
                         <div class="icheck-info">
                             <input type="checkbox" ng-model="dataSearch.checkBoxFecha" ng-change="onChangeFechaFilter()" id="checkBoxFechaFilter">
                             <label for="checkBoxFechaFilter">Fecha</label>
                         </div>
                     </div>
-                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-xs-12">
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-12">
                         <div class="icheck-info">
                             <input type="checkbox" ng-model="dataSearch.checkBoxProveedor" ng-change="onChangeProveedorFiltro()" id="checkBoxProveedorFilter">
                             <label for="checkBoxProveedorFilter">Proveedor</label>
                         </div>
                     </div>
 
-                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-xs-12">
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-12">
                         <div class="icheck-info">
                             <input type="checkbox" ng-model="dataSearch.checkBoxUsuario" ng-change="onChangeUsuarioFiltro()" id="checkBoxUsuarioFilter">
                             <label for="checkBoxUsuarioFilter">Usuario</label>
                         </div>
                     </div>
 
-                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-xs-12">
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-12">
                         <div class="icheck-info">
                             <input type="checkbox" ng-model="dataSearch.checkBoxEstado" id="checkBoxEstadoFilter">
                             <label for="checkBoxEstadoFilter">Estado</label>
@@ -72,7 +72,7 @@
                 </div>
 
                 <div class="row" ng-if="dataSearch.checkBoxProveedor">
-                    <div class="col-xl-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="col-xl-12 col-md-12 col-sm-12 col-12">
                         <div class="form-group">
                                 <label class="control-label">Proveedor:</label>
                                 <input  type="text"                                                                           
@@ -102,13 +102,13 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-xl-8 col-lg-8 col-md-8 col-sm-6 col-xs-12" ng-if="dataSearch.checkBoxUsuario">
+                    <div class="col-xl-8 col-lg-8 col-md-8 col-sm-6 col-12" ng-if="dataSearch.checkBoxUsuario">
                         <div class="form-group">
                             <label>Usuario:</label>
                             @await Html.PartialAsync("~/Views/Usuario/_UsuarioSearchFilter.cshtml")                           
                         </div>
                     </div>
-                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-12" ng-if="dataSearch.checkBoxEstado">
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12" ng-if="dataSearch.checkBoxEstado">
                         <div class="form-group">
                             <label>Estado:</label>                            
                             <select class="form-control" ng-model="dataSearch.byEstado">
