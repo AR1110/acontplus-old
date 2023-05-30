@@ -60,8 +60,10 @@ BEGIN
 		cl.nombreFiscal,
 		cl.numeroIdentificacion,
 		direccion = ISNULL(cl.direccion,'')
+		,tipoIdentificacion = ti.codigo 
 	FROM Ventas.Aprob_Document aprob_doc
 	INNER JOIN Cliente cl WITH(NOLOCK) ON cl.idCliente = aprob_doc.idCliente
+	LEFT JOIN TipoIdentificacion ti WITH(NOLOCK) ON ti.idTipoIdentificacion = cl.idTipoIdentificacion
 	WHERE aprob_doc.idAprob_Document = @id;
 
 	SELECT 

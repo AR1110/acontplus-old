@@ -31,7 +31,8 @@
                 'cantidad': function(){                     
     
                     if(rowEntity.cantidad===oldValue) return
-    
+
+                    
                     rowEntity.cantidad = fS.roundNumber(rowEntity.cantidad, decimal.nroCantidad);
                     
                 },
@@ -237,7 +238,7 @@
 
                 //Get Total Ice 
                 getTotalIce: function() {
-                    console.log(items)
+                    
                     let total = items.map(val=>val.ice).reduce((acc, curr)=>acc + curr, 0);
                     return fS.roundNumber(total, decimal.nroTotalSubTotal)
                 },
@@ -385,7 +386,7 @@
                    
                     let tarifa = rowEntity.articuloTarifas.find(item=>item.idTarifa===idTarifa);     
 
-                    console.log(tarifa);
+                    
                     let precioConIva             = pricingUtils.calcularPrecioConIva(tarifa.precioVenta, rowEntity.tarifa);
                     let precioConIvaConDescuento = pricingUtils.getPrecioIvaConDescuento(precioConIva, rowEntity.porcentajeDescuento);
                     let valorDescuento           = pricingUtils.getValorDescuento(tarifa.precioVenta, rowEntity.porcentajeDescuento);

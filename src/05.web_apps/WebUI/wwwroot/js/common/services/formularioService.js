@@ -340,6 +340,16 @@
             return fechaVencimiento;
         };
 
+        formSvc.sumarDiasAFecha = function(fecha, dia){
+            let fechaVencimiento = new Date(fecha);
+            fechaVencimiento.setDate(fechaVencimiento.getDate() + dia);
+            return {
+                fechaVencimiento,
+                fechaEmisionEscrita: formSvc.getFechaEscrita(fecha),
+                fechaVencimientoEscrita: formSvc.getFechaEscrita(fechaVencimiento)
+            }
+        }
+
 
         /**
          * 
