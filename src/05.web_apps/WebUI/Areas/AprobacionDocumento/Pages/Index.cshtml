@@ -163,7 +163,7 @@
                                         </md-menu-item>
 
                                         <md-menu-item ng-if="showBtnApprove(item)">
-                                            <md-button ng-click="approveDocument(item)">
+                                            <md-button ng-click="openModalAprobarDoc(item)">
                                                 <span md-menu-align-target><i class="mdi mdi-file-check"></i>
                                                     Aprobar</span>
                                             </md-button>
@@ -220,20 +220,20 @@
 
 @section Scripts{
 
-        <!--Se usa para gestion de datos adicionales-->
-        <script src="~/js/factElect/directives/factElectDirective.min.js" asp-append-version="true"></script>
+    <!--Se usa para gestion de datos adicionales-->
+    <script src="~/js/factElect/directives/factElectDirective.min.js" asp-append-version="true"></script>
 
-        <!--Se usa para listar documentos de nota emtrega-->
-        <script src="~/js/ventas/services/notaEntregaService.min.js" asp-append-version="true"></script>
-        <!--Se usa para listar documentos de proformas-->
-        <script src="~/js/ventas/services/proformaService.min.js" asp-append-version="true"></script>
+    <!--Se usa para listar documentos de nota emtrega-->
+    <script src="~/js/ventas/services/notaEntregaService.min.js" asp-append-version="true"></script>
+    <!--Se usa para listar documentos de proformas-->
+    <script src="~/js/ventas/services/proformaService.min.js" asp-append-version="true"></script>
 
-        <!--Se usa para guardar aprobacion del documento FV-->
-        <script src="~/js/factElect/services/facturaService.min.js" asp-append-version="true"></script>
+    <!--Se usa para guardar aprobacion del documento FV-->
+    <script src="~/js/factElect/services/facturaService.min.js" asp-append-version="true"></script>
 
-        <script src="~/js/ventas/services/aprobacionDocService.min.js" asp-append-version="true"></script>
+    <script src="~/js/ventas/services/aprobacionDocService.min.js" asp-append-version="true"></script>
 
-        <script src="~/js/common/services/gridOptionsService.min.js" asp-append-version="true"></script>
+    <script src="~/js/common/services/gridOptionsService.min.js" asp-append-version="true"></script>
 
-        <script src="~/js/ventas/controllers/aprobacionDocumentoCtrl.min.js" asp-append-version="true"></script>
+    <script src="~/js/ventas/controllers/aprobacionDocumentoCtrl.min.js" asp-append-version="true"></script>
 }

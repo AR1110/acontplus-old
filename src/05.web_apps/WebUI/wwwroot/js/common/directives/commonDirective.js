@@ -691,4 +691,48 @@
         }
     }])
 
+
+    app.directive('openModalAdditionalDataDocument', function (modalService, nombreModal) {
+        return {
+            restrict: 'A',
+            scope: {
+                datosAdicionales: '=',
+                isView: '=',
+                getDataAdditionalDocument: '&'
+            },
+            link: function (scope, element, attrs) {
+    
+                element.on('click', async function (event) {
+                    let {
+                        MODAL_INFO_ADICIONAL_TIPO_DOC_CTRL,
+                        MODAL_INFO_ADICIONAL_TIPO_DOC_CSHTML
+                    } = nombreModal.common;
+                    let {
+                        InfoAdicionalTipoDocCtrl
+                    } = await import('./../../modal/' + MODAL_INFO_ADICIONAL_TIPO_DOC_CTRL);
+    
+                    let params = {
+                        isView: scope.isView,
+                        infoAdicionalDocumento: scope.datosAdicionales
+                    }
+                    let modalRef = modalService.openModalCustom({
+                        controller: InfoAdicionalTipoDocCtrl,
+                        template: 'Shared/Common/' + MODAL_INFO_ADICIONAL_TIPO_DOC_CSHTML,
+                        size: 'md',
+                        params
+                    })
+    
+                    modalRef.result.then(function (result) {
+                        if (typeof result === 'object') {
+                            scope.getDataAdditionalDocument({
+                                result
+                            })
+                        }
+                    })
+                })
+    
+            }
+        }
+    })
+
 })(window.angular)

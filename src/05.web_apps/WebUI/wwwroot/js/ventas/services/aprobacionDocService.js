@@ -6,6 +6,7 @@
     app.factory('aprobacionDocService', function($injector){
         let url = 'AprobacionDocumento/';
         let mS = $injector.get('mainService');
+        let fS = $injector.get('formulario');
         let service = {}
 
         service.getAll = function(query){
@@ -17,13 +18,14 @@
                     }
                     if(response.code==="1"){
                         let aprobComprobantes = JSON.parse(response.payload) || [];
-                        console.log(aprobComprobantes)
+                        
                         return aprobComprobantes.map(item => {
                             return {
                                 idAprob_Document: item.idAprob_Document,
                                 uniqueId: item.uniqueId,
                                 docOrigen: item.docOrigen,
                                 codDoc: item.codDoc,
+                                docDestino: item.codDoc,
                                 docOrigenDesc: item.docOrigenDesc,
                                 docDestinoDesc: item.docDestinoDesc,
                                 fechaEmision: item.fechaEmision,
@@ -69,6 +71,7 @@
                         serieComprobante: compRepository.serieComprobante,
                         identificacionComprador: compRepository.identificacionComprador,
                         codDoc: compRepository.codDoc,
+                        docDestino: compRepository.codDoc,
                         docOrigen: compRepository.docOrigen,
                         fechaEmision: compRepository.fechaEmision,
                         observacion: compRepository.observacion,
@@ -142,12 +145,42 @@
             })
         }
 
+        service.detalleMapperTo = function(detalles, decimal){
+            let tempDetail = [];
+            let orderIndex = 1;
+            for (let item of detalles) {
+
+                let precioTotalSinImpuesto = (item.precioUnitario - item.valorDescuento) * item.cantidad;
+                let obj = {
+                    orderIndex: orderIndex++,
+                    idAprob_Document_Detailt: item.idAprob_Document_Detailt || 0,
+                    idTarifa: item.idTarifa,
+                    idArticulo: item.idArticulo,
+                    idTipoIva: item.idTipoIva,
+                    idMedida: item.idMedida,
+                    cantidad: item.cantidad,
+                    descripcion: item.descripcion,
+                    precioUnitario: item.precioUnitario,
+                    precioConIva: item.precioConIva,
+                    valorDescuento: item.valorDescuento,
+                    descuento: item.valorDescuento,
+                    precioTotalSinImpuesto: fS.roundNumber(precioTotalSinImpuesto, decimal.nroTotalDetalle),
+                    baseImponible: fS.roundNumber(precioTotalSinImpuesto, decimal.nroTotalDetalle),
+                    nota: item.nota,
+                    codigoPorcentaje: item.codigoPorcentaje,
+                    tarifa: item.tarifa
+                }
+                tempDetail.push(obj);
+            }
+            return tempDetail;
+        }
+
         /**
          * 
          * @param {object} params_objecr(detalles, fS(formularioSvc), decimal, findForPurchase 
          * @returns detalles []
          */
-        service.detalleMapperFrom = function({detalles, fS, decimal, findForSale}) {
+        service.detalleMapperFrom = function({detalles, fS, decimal, idBodega, findForSale}) {
             let enumeracion = 1;
                 for (let item of detalles) {                    
                     item.enumeracion = enumeracion++;
@@ -165,7 +198,7 @@
                     item.total = fS.roundNumber(item.precioTotalSinImpuesto, decimal.nroTotalDetalle);
         
                     findForSale({idArticulo: item.idArticulo}).then(response => {
-                        console.log(response);
+                        
                         let  {articulo, medidas, datosAdicionalesArticulo} = response;
                         item.medidas = medidas;
                         item.datosAdicionalesArticulo = datosAdicionalesArticulo;
@@ -173,8 +206,10 @@
                         let dataMedida = medidas.find(m => m.idMedida === item.idMedida) || {};
                         item.articuloTarifas = JSON.parse(dataMedida.tarifas);
                     })
+
+                    item.idBodega = idBodega
                 }
-                console.log(detalles)
+                
             return detalles;
         }
 
