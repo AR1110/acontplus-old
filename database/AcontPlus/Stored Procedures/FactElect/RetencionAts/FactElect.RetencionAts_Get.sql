@@ -80,7 +80,9 @@ BEGIN
 		IF EXISTS(SELECT 1 FROM @params WHERE tipo = 2)
 		BEGIN
 			DECLARE @idRetencionATS INT
-			SET @idRetencionATS = (SELECT idDocumento FROM DocumentoElectronico WITH (NOLOCK)  WHERE idDocumentoElectronico = (SELECT TOP 1 idDoc FROM @params))
+			,@codEstab VARCHAR(50)
+
+			SELECT @idRetencionATS = idDocumento, @codEstab = codEstab FROM DocumentoElectronico WITH (NOLOCK)  WHERE idDocumentoElectronico = (SELECT TOP 1 idDoc FROM @params)
 			
 			--INFO RETENCION
 			SELECT ra.*, s.descripcion subContribuyente FROM FactElect.RetencionAts ra WITH (NOLOCK) 
@@ -90,10 +92,12 @@ BEGIN
 			
 			--DOCUMENTOS DE SUSTENTOS
 			SELECT rads.*
-			,idDocumento =  ISNULL((SELECT TOP 1 fc.idFacturaCompra FROM FacturaCompra fc 
-			WHERE REPLACE(puntoEmision,'-','')+Helper.F_Auto_Sequential(nroDocumento) = rads.numDocSustento), 0)
+			,idDocumento =  ISNULL((SELECT TOP 1 idDocumento FROM Recepcion.DocumentoRecibido dr WHERE dr.claveAcceso = rads.numAutDocSustento AND dr.codEstab = @codEstab ),(SELECT TOP 1 fc.idFacturaCompra FROM FacturaCompra fc 
+																	WHERE REPLACE(puntoEmision,'-','')+Helper.F_Auto_Sequential(nroDocumento) = rads.numDocSustento))
 			,isAutomatic = ISNULL((SELECT TOP 1 fc.isAutomatic FROM FacturaCompra fc 
-			WHERE REPLACE(puntoEmision,'-','')+Helper.F_Auto_Sequential(nroDocumento) = rads.numDocSustento), 0)
+																WHERE REPLACE(puntoEmision,'-','')+Helper.F_Auto_Sequential(nroDocumento) = rads.numDocSustento), 
+																1
+																)
 			FROM FactElect.RetAtsDocSustento rads 
 			WHERE idRetencionAts = @idRetencionATS
 

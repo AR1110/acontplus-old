@@ -1,8 +1,20 @@
-<form autocomplete="off" ng-submit="onSave()">                                         
+<style>
+    .grid-articles {
+        width: 100%;
+        height: 600px;
+    }
+
+    .ui-grid,
+    .ui-grid-viewport {
+        width: 100% !important;
+        height: 600px !important;
+    }
+</style>
+<form autocomplete="off" ng-submit="onSave()">
     <div class="modal-header bg-info text-white">
         <h5 class="modal-title">Editar Consolidación Inventario</h5>
-        <button type="button" class="close" ng-click="closeModal()">&times;</button>      
-    </div> 
+        <button type="button" class="close" ng-click="closeModal()">&times;</button>
+    </div>
     <div class="modal-body">
         <div class="row">
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
@@ -13,10 +25,10 @@
                             {{item.nombreComercial}}
                         </option>
                     </select>
-                </div>            
+                </div>
             </div>
-            
-            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">                
+
+            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="puntoEmision">Punto Emisión: <span class="text-danger">*</span></label>
                     <select id="puntoEmision" name="puntoEmision" class="form-control border-select" ng-model="data.idPuntoEmision" disabled>
@@ -24,71 +36,69 @@
                             {{item.ptoEmi}}
                         </option>
                     </select>
-                </div> 
-            </div> 
+                </div>
+            </div>
 
-            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">   
+            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="fechaEmision">Fecha Emisión <span class="text-danger">*</span></label>
                     <input type="date" name="fechaEmision" ng-disabled="disabledInputFechaEmision" ng-model="data.fechaEmision" class="form-control border-select">
                 </div>
             </div>
 
-            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-                <div class="form-group">
-                    <label for="observacion">Observación</label>
-                    <input type="text" name="observacion" placeholder="..." ng-model="data.observacion" class="form-control border-select">
-                </div>
-            </div>                                   
+            <div class="form-group">
+                <label for="bodegas">Bodega</label>
+                <select name="bodegas" id="bodegas" class="form-control border-select" ng-model="idBodega" ng-change="askToChangeBodega()">
+                    <option ng-value="item.idBodega" ng-repeat="item in bodegas">{{item.bodega}}</option>
+                </select>
+            </div>
         </div>
 
-        <div class="row justify-content-between">
+        <div class="row">
             <div class="col-lg-5 col-md-5 col-sm-12 col-12">
-                <label for="">Buscar Articulo</label>  
-                <md-autocomplete-articulo-component 
-                    tipo-doc="TIPO_DOC"
-                    abrir-modal-articulo="abrirModalArticulo(item)"
-                    get-data-articulo="getDataIdArticulo(item)"
-                    set-item-articulo-en-detalle="setItemArticuloEnDetalle(item)"
-                    scope-parent="$scope">
-                </md-autocomplete-articulo-component> 
+                <md-autocomplete-articulo-component tipo-doc="TIPO_DOC"
+                                                    placeholder="'Buscar Articulo'"
+                                                    abrir-modal-articulo="abrirModalArticulo(item)"
+                                                    get-data-articulo="getDataIdArticulo(item)"
+                                                    set-item-articulo-en-detalle="setItemArticuloEnDetalle(item)"
+                                                    scope-parent="$scope">
+                </md-autocomplete-articulo-component>
             </div>
-            <div class="col-lg-2 col-md-2 col-sm-12 col-12">
-                <div class="form-group">
-                    <label for="bodegas">Bodega</label>
-                    <select name="bodegas" id="bodegas" class="form-control border-select" ng-model="idBodega" ng-change="askToChangeBodega()">
-                        <option ng-value="item.idBodega" ng-repeat="item in bodegas">{{item.descripcion}}</option>
-                    </select>
-                </div>                               
-            </div>   
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+                <button type="button" class="btn btn-outline-info btn-lg" ng-click="advancedSearch($event)"><i class="ti-search"></i> Busqueda Avanzada</button>
+            </div>
         </div>
 
 
         <div id="grid" ui-grid="gridOptions"
-            ui-grid-edit
-            ui-grid-resize-columns
-            ui-grid-cellNav
-            ui-grid-auto-resize
-            class="grid">
-        </div>                            
+             ui-grid-edit
+             ui-grid-resize-columns
+             ui-grid-cellNav
+             ui-grid-auto-resize
+             class="grid">
+        </div>
 
         <!--Sub Totales -->
         <div class="row justify-content-between mt-2">
-            <div class="col-lg-2"></div>
+            <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-8">
+                <div class="form-group">
+                    <textarea class="form-control" placeholder="Observación" ng-model="data.observacion"></textarea>
+                </div>
+            </div>
             <div class="col-lg-2">
                 <div class="text-right">
                     <h4><strong>Total: ${{data.total}}</strong></h4>
-                </div>                        
+                </div>
             </div>
         </div>
-        
+
 
     </div>
-    <div class="modal-footer">                 
+    <div class="modal-footer">
         <button type="submit" class="btn btn-success">
             <i class="ti-pencil"></i> Actualizar
         </button>
         <button type="button" class="btn btn-dark" ng-click="closeModal()">&times; Cerrar</button>
     </div>
-       
+
 </form>

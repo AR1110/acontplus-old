@@ -200,6 +200,7 @@ class MdArticuloCtrl extends BaseSearchArticulo {
         })
 
         this.articuloSvc = articuloSvc;
+        this.placeholder = this.placeholder || "Buscar articulo"
 
         this.nombreModalInventario = nombreModalInventario;
 
@@ -403,6 +404,7 @@ app.component('mdAutocompleteArticuloComponent', {
     //controllerAs: '$ctrl',
     bindings: {
         tipoDoc: '=',
+        placeholder: '=',
         // abrirModalArticulo: '&',
         // getDataArticulo:'&',
         setItemArticuloEnDetalle: '&',
