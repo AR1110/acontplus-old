@@ -6,19 +6,19 @@
             </div>
             <div class="modal-body">
                 <div class="row justify-content-between">                    
-                    <div class="col-xl-4 col-lg 4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="col-xl-4 col-lg 4 col-md-4 col-sm-6 col-12">
                         <div class="icheck-info">
                             <input type="checkbox" ng-model="$ctrl.dataSearch.checkBoxFecha" ng-change="$ctrl.onChangeFechaFilterMovimientoCaja()" id="checkboxFechaFilterMC" name="checkboxFecha">
                             <label for="checkboxFechaFilterMC">Fecha</label>
                         </div>
                     </div>
-                    <div class="col-xl-4 col-lg 4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="col-xl-4 col-lg 4 col-md-4 col-sm-6 col-12">
                         <div class="icheck-info">
                             <input type="checkbox" ng-model="$ctrl.dataSearch.checkBoxEmpleado" id="checkboxEmpleadoFilterMC" >
                             <label for="checkboxEmpleadoFilterMC">Empleado</label>
                         </div>
                     </div>
-                    <div class="col-xl-4 col-lg 4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="col-xl-4 col-lg 4 col-md-4 col-sm-6 col-12">
                         <div class="icheck-info">
                             <input type="checkbox" ng-model="$ctrl.dataSearch.checkBoxEstado" id="checkboxEstadoFilterMC" >
                             <label for="checkboxEstadoFilterMC">Estado</label>
@@ -28,7 +28,7 @@
                 <hr>
 
                 <div class="row">
-                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label for="">Estab.:</label>
                             <select name="" id="" class="form-control" ng-model="$ctrl.dataSearch.codEstab">
@@ -65,7 +65,7 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12" ng-if="$ctrl.dataSearch.checkBoxEmpleado">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12" ng-if="$ctrl.dataSearch.checkBoxEmpleado">
                         <div class="form-group">
                             <label for="filterEmpleado">Empleado</label>
                             <input type="text"
@@ -93,7 +93,7 @@
                         </div>
                     </div>
 
-                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12" ng-if="$ctrl.dataSearch.checkBoxEstado">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12" ng-if="$ctrl.dataSearch.checkBoxEstado">
                         <div class="form-group">
                             <label>Estado:</label>                            
                             <select class="form-control" ng-model="$ctrl.dataSearch.byEstado">

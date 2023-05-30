@@ -117,13 +117,13 @@
                         </div>
                         <div class="modal-body">
                             <div class="row">
-                                <div class="form-group col-lg-4 col-md-4 col-sm-12 col-xs-12 border-right">
+                                <div class="form-group col-lg-4 col-md-4 col-sm-12 col-12 border-right">
                                     <label for="">De Contribuyente Empresa: <span class="text-danger">*</span> </label>
                                     <select class="form-control border-select" ng-model="data.idSubContribuyenteEmpresa" required="required"
                                             ng-options="sc.subContribuyente.idSubContribuyente as sc.subContribuyente.descripcion group by sc.tipoContribuyente.descripcion for sc in subContribuyentes ">
                                     </select>
                                 </div>
-                                <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+                                <div class="col-lg-2 col-md-2 col-sm-12 col-12">
                                     <div class="form-group text-center ml-4 mt-0">
                                         <label>RENTA</label>
                                         <md-switch ng-model="data.renta" aria-label="iva"  class="md-primary">
@@ -132,7 +132,7 @@
                                     </div>
                                     
                                 </div>
-                                <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+                                <div class="col-lg-2 col-md-2 col-sm-12 col-12">
                                     <div class="form-group text-center ml-4 mt-0">
                                         <label>IVA</label>
                                         <md-switch ng-model="data.iva" aria-label="iva">
@@ -140,7 +140,7 @@
                                         </md-switch>
                                     </div>
                                 </div>
-                                <div class="form-group col-lg-4 col-md-4 col-sm-12 col-xs-12 border-left">
+                                <div class="form-group col-lg-4 col-md-4 col-sm-12 col-12 border-left">
                                     <label for="">A Contribuyente Proveedor: <span class="text-danger">*</span> </label>
                                     <select class="form-control border-select" ng-model="data.idSubContribuyenteProveedor" required="required"
                                             ng-options="sc.subContribuyente.idSubContribuyente as sc.subContribuyente.descripcion group by sc.tipoContribuyente.descripcion for sc in subContribuyentes ">

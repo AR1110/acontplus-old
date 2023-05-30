@@ -23,7 +23,7 @@
 <div class="modal-body">   
     <div class="row">
        
-        <div class="col-xl-4 col-lg-4 col-md-12 col-xs-12">
+        <div class="col-xl-4 col-lg-4 col-md-12 col-12">
             <div class="card">
                
                 <div class="card-body shadow">                    
@@ -67,57 +67,57 @@
         </div>
         <!-- Column -->
         <!-- Column -->
-        <div class="col-xl-8 col-lg-8 col-md-12 col-xs-12">
+        <div class="col-xl-8 col-lg-8 col-md-12 col-12">
             <md-content>
                 <md-tabs class="md-primary" md-center-tabs md-dynamic-height="">
                     <md-tab label="DATOS">
                         <md-content class="md-padding">
                             <div class="row">
-                                <div class="col-md-12 col-xs-12 b-r"> <strong>RUC</strong>
+                                <div class="col-md-12 col-12 b-r"> <strong>RUC</strong>
                                     <br>
                                     <p class="text-muted">{{$ctrl.data.ruc}}</p>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-6 col-xs-12 b-r"> <strong>Npmbre Comercial</strong>
+                                <div class="col-md-6 col-12 b-r"> <strong>Npmbre Comercial</strong>
                                     <br>
                                     <p class="text-muted">{{$ctrl.data.nombreComercial}}</p>
                                 </div>
-                                <div class="col-md-6 col-xs-12 b-r"> <strong>Nro. Establecimiento</strong>
+                                <div class="col-md-6 col-12 b-r"> <strong>Nro. Establecimiento</strong>
                                     <br>
                                     <p class="text-muted">{{$ctrl.data.estab}}</p>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-6  col-xs-12 b-r"> <strong>Tipo Contribuyente</strong><br>
+                                <div class="col-md-6  col-12 b-r"> <strong>Tipo Contribuyente</strong><br>
                                     <span class="text-muted" uib-tooltip="{{$ctrl.data.contribuyenteRimpe}}" tooltip-placement="bottom">
                                         {{$ctrl.tipoContribuyente}}
                                     </span>                                                                                                         
                                 </div>
                                 
-                                <div class="col-md-6 col-xs-12 b-r"> <strong>Actividad</strong><br>
+                                <div class="col-md-6 col-12 b-r"> <strong>Actividad</strong><br>
                                     <p class="text-muted">{{$ctrl.actividadEconomica}}</p>
                                 </div>                                                                                   
                             </div>    
 
                             <div class="row">
-                                <div class="col-md-6 col-xs-12 b-r"> <strong>Agente Retención</strong>
+                                <div class="col-md-6 col-12 b-r"> <strong>Agente Retención</strong>
                                     <br>
                                     <p class="text-muted">{{$ctrl.data.agenteRetencion}}</p>
                                 </div> 
 
-                                <div class="col-md-6 col-xs-12 b-r"> <strong>Obliga llevar contabilidad</strong>
+                                <div class="col-md-6 col-12 b-r"> <strong>Obliga llevar contabilidad</strong>
                                     <br>
                                     <p class="text-muted">{{$ctrl.data.obligadoContabilidad}}</p>
                                 </div>                                                                    
                             </div>      
 
                             <div class="row">
-                                <div class="col-md-6 col-xs-12 b-r"> <strong>Cantón</strong>
+                                <div class="col-md-6 col-12 b-r"> <strong>Cantón</strong>
                                     <br>
                                     <p class="text-muted">{{$ctrl.canton}}</p>
                                 </div>
-                                <div class="col-md-6 col-xs-12 b-r"> <strong>Ubicacion</strong>
+                                <div class="col-md-6 col-12 b-r"> <strong>Ubicacion</strong>
                                     <br>
                                     <p class="text-muted">{{$ctrl.data.dirEstablecimiento}}</p>
                                 </div>                               
@@ -128,7 +128,7 @@
                     <md-tab label="FACT. ELECTRÓNICA">
                         <md-content class="md-padding">
                             <div class="row justify-content-between">
-                                <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                                <div class="col-lg-4 col-md-6 col-sm-12 col-12">
                                     <label id="autorizacionComprobante">Autorización Comprobante</label>                            
                                     <md-radio-group ng-model="$ctrl.dataFactElect.isAutomatic" ng-change="$ctrl.configSaveFactElect()" aria-labelledby="autorizacionComprobante">
                                         <md-radio-button ng-value="0" class="md-primary">Manual</md-radio-button>

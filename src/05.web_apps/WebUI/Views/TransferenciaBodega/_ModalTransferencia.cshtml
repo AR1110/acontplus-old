@@ -6,7 +6,7 @@
     <div class="row">
         <div class="col-lg-5 col-md-5 col-sm-5">
             <div class="row justify-content-between">
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <label for="">Sucursal Origen</label>
                         {{sucursalOrigen}}
@@ -14,7 +14,7 @@
                         </select>                           
                     </div>                    
                 </div>
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <label for="">Bodega Origen: <span class="text-danger">*</span> </label>
                         <select class="form-control border-select" ng-model="data.idBodegaOrigen">
@@ -33,14 +33,14 @@
         </div>
         <div class="col-lg-5 col-md-5 col-sm-5">
             <div class="row justify-content-between">
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <label for="">Sucursal Destino</label>
                         <select class="form-control" ng-model="sucursalDestino" ng-change="getDestinoBodegas()" ng-options="item as item.nombreComercial for item in destinoSucursales track by item.idSucursal">                               
                         </select>
                     </div>
                 </div>
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <label for="">Bodega Destino: <span class="text-danger">*</span> </label>
                         <select class="form-control border-select" ng-model="data.idBodegaDestino">
@@ -55,7 +55,7 @@
     </div> 
             
     <div class="row">
-        <div class="col-lg-3 col-md-4 col-sm-12 col-xs-12">
+        <div class="col-lg-3 col-md-4 col-sm-12 col-12">
             <div class="form-group">
                 <label for="">Punto Emision</label>                        
                 <select class="form-control border-select" ng-model="data.idPuntoEmision">
@@ -65,14 +65,14 @@
                 </select>
             </div>
         </div>
-        <div class="col-lg-3 col-md-4 col-sm-12 col-xs-12">
+        <div class="col-lg-3 col-md-4 col-sm-12 col-12">
             <div class="form-group">
                 <label for="fechaEmision">Fecha Emisión</label>
                 <input type="date" ng-model="data.fechaEmision" class="form-control border-select" ng-requerid="true">                        
             </div>
         </div>
 
-        <div class="col-lg-6 col-md-4 col-sm-12 col-xs-12">
+        <div class="col-lg-6 col-md-4 col-sm-12 col-12">
             <div class="form-group">
                 <label for="observación">Observación</label>
                 <textarea ng-model="data.observacion" class="form-control border-select" cols="20" rows="2"></textarea>

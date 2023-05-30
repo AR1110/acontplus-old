@@ -7,7 +7,7 @@
     </div>
     <div class="modal-body">
         <div class="row">
-            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="establecimiento">Estab.: <span class="text-danger">*</span></label>
                     <select name="establecimiento" id="establecimiento" class="form-control border-select"
@@ -18,7 +18,7 @@
                     </select>
                 </div>
             </div>
-            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="puntoEmision">Punto Emisión: <span class="text-danger">*</span></label>
                     <select name="puntoEmision" id="puntoEmision" class="form-control border-select"
@@ -28,7 +28,7 @@
                     </select>
                 </div>
             </div>
-            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="">Fecha Emisión <span class="text-danger">*</span></label>
                     <input type="date" ng-model="$ctrl.data.fechaEmision" class="form-control border-select">
@@ -37,7 +37,7 @@
         </div>
 
         <div class="row">
-            <div class="co-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+            <div class="co-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="">Cliente: <span class="text-danger">*</span></label>
                     <div class="input-group">
@@ -58,7 +58,7 @@
                 </div>
             </div>
 
-            <div class="co-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+            <div class="co-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="nroIndentificacion" class="">Nro. Identificación:</label>
                     <input type="text" name="nroIndentificacion" id="nroIndentificacion" class="form-control" readonly
@@ -66,7 +66,7 @@
                 </div>
             </div>
 
-            <div class="co-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+            <div class="co-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="Facturas"><code>{{$ctrl.facturas.length}}</code> Facturas</label>
                     <input type="text" class="form-control border-select" ng-disabled="!($ctrl.cliente.idCliente>0)"
@@ -83,9 +83,9 @@
         </div>
 
         <div class="row">
-            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                 <div class="row justify-content-between">
-                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                         <label for="">Buscar Articulo</label>
                         <md-autocomplete-articulo-component tipo-doc="$ctrl.TIPO_DOC"
                             abrir-modal-articulo="$ctrl.abrirModalArticulo(item)"
@@ -96,9 +96,9 @@
                     </div>
                 </div>
             </div>
-            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                 <div class="row justify-content-end">
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label for="bodegas">Bodega</label>
                             <select name="bodegas" id="bodegas" class="form-control border-select"
@@ -109,7 +109,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label for="tarifas">Tarifa:
                                 <span tooltip-placement="top"
@@ -134,9 +134,9 @@
         </div>
 
         <div class="row">
-            <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12">
                 <div class="row mt-2" ng-if="$ctrl.showSubtotales">
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                         <div class="table-responsive">
                             <table class="table table-clear table-sm">
                                 <tbody>
@@ -173,7 +173,7 @@
                         </div>
                     </div>
 
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                         <div class="table-responsive">
                             <table class="table table-clear table-sm">
                                 <tbody>
@@ -209,7 +209,7 @@
                         </div>
                     </div>
 
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                         <div class="table-responsive">
                             <table class="table table-clear table-sm">
                                 <tbody>
@@ -240,7 +240,7 @@
                 </div>
                 <md-divider></md-divider>
                 <div class="row mt-2" ng-if="$ctrl.showSubtotales">
-                    <div class="col-lg-2 col-md-6 col-sm-12 col-xs-12">
+                    <div class="col-lg-2 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label>% Descuento</label>
                             <div class="input-group">
@@ -256,7 +256,7 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-2 col-md-6 col-sm-12 col-xs-12">
+                    <div class="col-lg-2 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label>Descuento</label>
                             <div class="input-group">
@@ -273,7 +273,7 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-2 col-md-6 col-sm-12 col-xs-12">
+                    <div class="col-lg-2 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label>Transporte</label>
                             <input type="text" decimal ng-model="$ctrl.data.transporte"
@@ -281,7 +281,7 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-2 col-md-6 col-sm-12 col-xs-12">
+                    <div class="col-lg-2 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label>Rercargo</label>
                             <input type="text" decimal ng-model="$ctrl.data.recargo" class="form-control border-select"
@@ -299,7 +299,7 @@
                 </div>
             </div>
 
-            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                 <div class="table-responsive mt-2">
                     <table class="table table-clear table-sm">
                         <tbody>

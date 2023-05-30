@@ -125,13 +125,13 @@
 
                     <div class="col-md-4 col-sm-12 col-xs-4">
                         <div class="form-group row">
-                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-12">
                                 <label>Bodega: </label>
                                 <select class="form-control border-select" ng-model="bodega" ng-change="seleccionarBodega(bodega.idBodega)"
                                         ng-options="b as b.descripcion for b in bodegas track by b.idBodega">
                                 </select>
                             </div>
-                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-12">
                                 <label>Decimal: </label>
                                 <select class="form-control border-select" ng-model="decimal" ng-options="d as d for d in [2,3,4,5]" ng-change="aplicarDecimal(decimal)">
                                 </select>
@@ -144,7 +144,7 @@
                 <div class="row">
                     <!--/span-->
                     @*ui-grid-pinning*@
-                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-12">
                         <div class="table-responsive">
                             <div id="grid" ui-grid="gridOptionsDetalleCompra"
                                  ui-grid-edit

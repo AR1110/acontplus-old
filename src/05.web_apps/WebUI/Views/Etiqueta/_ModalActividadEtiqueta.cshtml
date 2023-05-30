@@ -6,21 +6,21 @@
 
     <div class="modal-body">
         <div class="row">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="">Descripción</label>
                     <input type="text" touppercase ng-model="$ctrl.data.descripcion" 
                            ng-keyup="$ctrl.onKeyupDescripcion()" class="form-control border-select">
                 </div>                
             </div>
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-12">
                  <div class="form-group">
                     <label for="">Código</label>
                     <input type="text" touppercase ng-model="$ctrl.data.codigo" ng-disabled="$ctrl.tipoRegistro===2" class="form-control border-select">
                 </div>
             </div>
 
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-12">
                 <div ng-if="$ctrl.tipoRegistro==2">
                     <label for="">Estado: </label>
                     <md-radio-group ng-model="$ctrl.data.estado">

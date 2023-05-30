@@ -38,7 +38,7 @@
     <hr>
 
     <div class="row">
-        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
             <div class="form-group">
                 <label for="sucursalFilter">Estab.:</label>
                 <select class="form-control border-select" ng-model="$ctrl.dataSearch.codEstab">
@@ -46,7 +46,7 @@
                 </select>
             </div> 
         </div>
-        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" ng-show="$ctrl.dataSearch.checkBoxCustomer">
+        <div class="col-lg-6 col-md-6 col-sm-12 col-12" ng-show="$ctrl.dataSearch.checkBoxCustomer">
             <div class="form-group">
                 <label for="cliente">Cliente</label>
                 @await Html.PartialAsync("~/Views/Cliente/_UibModalClienteSearchFilter.cshtml") 

@@ -9,7 +9,7 @@
             <span class="text-danger">*</span><span>Son campos requeridos</span>
         </div>
         <div class="row">
-            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="nombreComercial">Nombre Comercial <span class="text-danger">*</span></label>
                     <input type="text" class="form-control border-select" touppercase ng-model="$ctrl.data.nombreComercial" placeholder="">
@@ -18,13 +18,13 @@
         </div>
 
         <div class="row">
-            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="numEstab">Nro. Establecimiento: <span class="text-danger">*</span></label>
                     <input type="text" class="form-control border-select" valid-number mask="999" ng-model="$ctrl.data.estab" disabled placeholder="000">
                 </div>
             </div>
-            <div class="col-xl-8 co-lg-8 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-xl-8 co-lg-8 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="contribuyente">Tipo Contribuyente: <span class="text-danger">*</span> </label>
                     <div class="input-group">
@@ -44,7 +44,7 @@
         </div>
 
         <div class="row">
-            <div class="col-xl-4 co-lg-4 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-xl-4 co-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="agenteRetencion">Agente Retención: </label>
                     <select name="agenteRetencion" id="agenteRetencion" class="form-control border-select" ng-model="$ctrl.data.agenteRetencion" ng-disabled="$ctrl.isDisabledAgenteRetencion">    
@@ -55,14 +55,14 @@
                     </select>
                 </div>                
             </div> 
-            <div class="col-xl-4 co-lg-4 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-xl-4 co-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="contribuyenteEspecial">Contribuyente Especial: </label>
                     <input type="text" class="form-control border-select" valid-number mask="999" ng-model="$ctrl.data.contribuyenteEspecial" placeholder="">
                 </div>                
             </div>
 
-            <div class="col-xl-4 co-lg-4 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-xl-4 co-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <span for="obligadoContabilidad">Obligado llevar Contabilidad</s>
                     <md-switch ng-model="$ctrl.data.obligadoContabilidad" ng-true-value="'SI'" ng-false-value="'NO'" aria-label="Obligado Contabilidad">
@@ -95,7 +95,7 @@
         </div>
 
         <div class="row">
-            <div class="col-xl-6 col-md-6 col-sm-6 col-xs-12">
+            <div class="col-xl-6 col-md-6 col-sm-6 col-12">
                 <div class="form-group">
                     <label>Email: <span class="text-danger">*</span>
                         <span tooltip-placement="top"
@@ -111,7 +111,7 @@
                     <small></small>
                 </div>
             </div>
-            <div class="col-xl-6 col-md-6 col-sm-6 col-xs-12">
+            <div class="col-xl-6 col-md-6 col-sm-6 col-12">
                 <div class="form-group">
                     <label>Telefono: <span class="text-danger">*</span>
                         <span tooltip-placement="top"
@@ -128,7 +128,7 @@
         </div>
         
         <div class="row">
-            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="cantones">Cantón: <span class="text-danger">*</span> </label>                    
                     <input type="text" 
@@ -144,7 +144,7 @@
                 </div>
             </div>  
 
-            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="direccion">Dirección <span class="text-danger">*</span> </label>
                     <textarea class="form-control border-select" touppercase ng-model="$ctrl.data.dirEstablecimiento" rows="2"></textarea>

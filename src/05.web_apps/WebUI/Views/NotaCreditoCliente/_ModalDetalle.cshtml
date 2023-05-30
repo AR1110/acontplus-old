@@ -7,7 +7,7 @@
     </div>
     <div class="modal-body">
         <div class="row">
-            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="establecimiento">Estab.: <span class="text-danger">*</span></label>
                     <select name="establecimiento" id="establecimiento" class="form-control border-select" ng-model="$ctrl.data.codEstab" disabled>
@@ -17,7 +17,7 @@
                     </select>
                 </div>            
             </div>
-            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="puntoEmision">Punto Emisión: <span class="text-danger">*</span></label>
                     <select name="puntoEmision" id="puntoEmision" class="form-control border-select" ng-model="$ctrl.data.idPuntoEmision" disabled>
@@ -25,7 +25,7 @@
                     </select>
                 </div>
             </div>
-            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="">Fecha Emisión <span class="text-danger">*</span></label>
                     <input type="date" ng-model="$ctrl.data.fechaEmision" disabled class="form-control border-select">
@@ -34,21 +34,21 @@
         </div>
 
         <div class="row">
-            <div class="co-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">            
+            <div class="co-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">            
                 <div class="form-group">
                     <label for="">Cliente: <span class="text-danger">*</span></label>
                     <input type="text" ng-value="$ctrl.cliente.nombreFiscal" class="form form-control" disabled>                    
                 </div>                       
             </div>
 
-            <div class="co-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+            <div class="co-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="nroIndentificacion" class="">Nro. Identificación:</label>
                     <input type="text" name="nroIndentificacion" id="nroIndentificacion" class="form-control" readonly ng-value="$ctrl.cliente.numeroIdentificacion" placeholder="..." />
                 </div>
             </div>
 
-            <div class="co-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+            <div class="co-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     @* <label for="Facturas"><code>{{$ctrl.facturas.length}}</code> Facturas</label>                    
                     <input type="text" class="form-control border-select" 
@@ -79,9 +79,9 @@
         </div> 
 
         <div class="row">
-            <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12">
                 <div class="row mt-2" ng-if="$ctrl.showSubtotales">
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                         <div class="table-responsive">
                             <table class="table table-clear table-sm">
                                 <tbody>
@@ -117,7 +117,7 @@
                         </div>             
                     </div>
 
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                         <div class="table-responsive">
                             <table class="table table-clear table-sm">
                                 <tbody>
@@ -153,7 +153,7 @@
                         </div> 
                     </div>
 
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                         <div class="table-responsive">
                             <table class="table table-clear table-sm">
                                 <tbody>
@@ -184,7 +184,7 @@
                 </div>
                 <md-divider></md-divider>
                 <div class="row mt-2" ng-if="$ctrl.showSubtotales">
-                    <div class="col-lg-2 col-md-6 col-sm-12 col-xs-12">
+                    <div class="col-lg-2 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label>% Descuento</label>
                             <div class="input-group">
@@ -199,7 +199,7 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-2 col-md-6 col-sm-12 col-xs-12">
+                    <div class="col-lg-2 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label>Descuento</label>
                             <div class="input-group">
@@ -213,14 +213,14 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-2 col-md-6 col-sm-12 col-xs-12">
+                    <div class="col-lg-2 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label>Transporte</label>
                             <input type="text" decimal ng-model="$ctrl.data.transporte" disabled class="form-control border-select" placeholder="0.00" />
                         </div>
                     </div>
 
-                    <div class="col-lg-2 col-md-6 col-sm-12 col-xs-12">
+                    <div class="col-lg-2 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label>Rercargo</label>
                             <input type="text" decimal ng-model="$ctrl.data.recargo" disabled class="form-control border-select" placeholder="0.00" />
@@ -236,7 +236,7 @@
                 </div> 
             </div>
 
-            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">             
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">             
                 <div class="table-responsive mt-2">
                     <table class="table table-clear table-sm">
                         <tbody>

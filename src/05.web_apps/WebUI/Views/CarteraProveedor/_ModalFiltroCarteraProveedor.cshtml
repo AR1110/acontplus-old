@@ -7,20 +7,20 @@
             </div>
             <div class="modal-body">
                 <div class="row justify-content-between">                   
-                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-xs-12">
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-12">
                         <div class="icheck-info">
                             <input type="checkbox" ng-model="dataSearch.checkBoxProveedor" id="checkBoxProveedorFiltro">
                             <label for="checkBoxProveedorFiltro">Proveedor</label>
                         </div>
                     </div>
-                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-xs-12">
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-12">
                         <div class="icheck-info">
                             <input type="checkbox" ng-model="dataSearch.checkBoxFecha" ng-change="onChangeFecha()" id="checkBoxFechaFiltro">
                             <label for="checkBoxFechaFiltro">Fecha</label>
                         </div>
                     </div>
 
-                    <div class="col-xl-2 col-lg-2 col-md-3 col-sm-6 col-xs-12">
+                    <div class="col-xl-2 col-lg-2 col-md-3 col-sm-6 col-12">
                         <div class="icheck-info">
                             <input type="checkbox" ng-model="dataSearch.checkBoxEstado" id="checkBoxEstadoFiltro">
                             <label for="checkBoxEstadoFiltro">Estado</label>
@@ -30,7 +30,7 @@
                 <hr>
 
                 <div class="row">
-                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label for="filtroSucursal">Sucursal</label>
                             <select class="form-control" ng-model="dataSearch.codEstab">
@@ -38,7 +38,7 @@
                             </select>
                         </div>
                     </div>                    
-                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" ng-show="dataSearch.checkBoxProveedor">                        
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-12" ng-show="dataSearch.checkBoxProveedor">                        
                         @await Html.PartialAsync("~/Views/Proveedor/_ProveedorAutocompleteFiltro.cshtml")                        
                     </div>
                 </div>

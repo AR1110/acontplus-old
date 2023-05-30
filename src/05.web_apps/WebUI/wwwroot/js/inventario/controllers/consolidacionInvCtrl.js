@@ -279,8 +279,15 @@
         $scope.data.fechaEmision = new Date()
         $scope.data.total = 0
         $scope.uiGridConstants = uiGridConstants;
-
         $scope.TIPO_DOC = _commonSvc.tipoDoc['CIV'];
+
+        $scope.catalogs = [
+            { code: 1, description: 'Articulo' },
+            { code: 3, description: 'Subfamilias' },
+            { code: 4, description: 'Proveedor' },
+            { code: 5, description: 'N° Documento' }
+        ]
+
 
         $scope.gridOptions = {
             enableColumnMenus: false,

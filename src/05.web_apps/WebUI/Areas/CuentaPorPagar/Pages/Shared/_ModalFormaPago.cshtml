@@ -13,7 +13,7 @@
                 <div class="card border border-info mt-2">
                     <div class="card-body" ng-if="item.codigo==='TAR'">
                         <div class="row">
-                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
                                 <div class="form-group">
                                     <label class="text-muted">SubEntidad Financiera: <span class="text-danger">*</span></label>
                                     <select class="form-control border-select" ng-model="data.idSubEntidadFinanciera">
@@ -22,14 +22,14 @@
                                 </div>
                             </div>
 
-                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
                                 <div class="form-group">
                                     <label class="text-muted">Fecha Emisión: <span class="text-danger">*</span></label>
                                     <input type="date" ng-model="data.fechaEmision" class="form-control border-select">
                                 </div>
                             </div>
 
-                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
                                 <div class="form-group">
                                     <label class="text-danger">Valor Abono: <span class="text-danger">*</span> </label>
                                     <input type="text" ng-model="data.valorAbono" ng-enter="addFormaPago()" class="form-control border-select" onClick="select()" decimal placeholder="0.00" />
@@ -38,14 +38,14 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
                                 <div class="form-group">
                                     <label class="text-muted">Número <span class="text-danger">*</span></label>
                                     <input type="text" ng-model="data.nro" class="form-control border-select" />
                                 </div>
                             </div>
 
-                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
                                 <div class="form-group">
                                     <label for="ciudad">Ciudad: <span class="text-danger">*</span></label>
                                     <select class="form-control border-select" ng-model="data.idCiudad">
@@ -56,7 +56,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
                                 <div class="form-group">
                                     <label for="Referencia">Referencia: <span class="text-danger">*</span></label>
                                     <input type="text" ng-model="data.referencia" class="form-control border-select" />
@@ -65,14 +65,14 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                                 <div class="form-group">
                                     <label class="text-muted">Aprobación <span class="text-danger">*</span></label>
                                     <input type="text" ng-model="data.aprobacion" class="form-control border-select" />
                                 </div>
                             </div>
 
-                            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                                 <div class="form-group">
                                     <label for="lote">Lote: <span class="text-danger">*</span> </label>
                                     <input type="text" ng-model="data.lote" class="form-control border-select" />
@@ -85,7 +85,7 @@
                     <!--EFECTIVO-->
                     <div class="card-body" ng-if="item.codigo=='EFE'">
                         <div class="row">
-                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label class="text-muted">SubEntidad Financiera: <span class="text-danger">*</span></label>
                                     <select class="form-control border-select" ng-model="data.idSubEntidadFinanciera">
@@ -96,13 +96,13 @@
                                 </div>
                             </div>
 
-                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label class="text-muted">Fecha Emisión: <span class="text-danger">*</span></label>
                                     <input type="date" ng-model="data.fechaEmision" class="form-control border-select">
                                 </div>
                             </div>
-                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                            <div class="col-lg-4 col-md-4 col-sm-12 col-12">
                                 <div class="form-group">
                                     <label class="text-danger">Valor Abono *</label>
                                     <input type="text" ng-model="data.valorAbono" ng-enter="addFormaPago()" class="form-control border-select" decimal
@@ -115,7 +115,7 @@
 
                     <div class="card-body" ng-if="item.codigo==='TRA'">
                         <div class="row">
-                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label class="text-muted">SubEntidad Financiera: <span class="text-danger">*</span></label>
                                     <select class="form-control border-select" ng-model="data.idSubEntidadFinanciera">
@@ -126,13 +126,13 @@
                                 </div>
                             </div>
 
-                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label class="text-muted">Fecha Emisión: <span class="text-danger">*</span></label>
                                     <input type="date" ng-model="data.fechaEmision" class="form-control border-select">
                                 </div>
                             </div>
-                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                            <div class="col-lg-4 col-md-4 col-sm-12 col-12">
                                 <div class="form-group">
                                     <label class="text-danger">Valor Abono *</label>
                                     <input type="text" ng-model="data.valorAbono" ng-enter="addFormaPago()" class="form-control border-select" decimal placeholder="0.00" />
@@ -141,7 +141,7 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                                 <div class="form-group">
                                     <label class="text-muted">Banco: <span class="text-danger">*</span></label>
                                     <select class="form-control border-select" ng-model="data.idBanco">
@@ -151,7 +151,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                                 <div class="form-group">
                                     <label class="text-muted">Número <span class="text-danger">*</span></label>
                                     <input type="text" ng-model="data.nro" class="form-control border-select" />
@@ -163,7 +163,7 @@
                     <!--CHEQUE-->
                     <div class="card-body" ng-if="item.codigo=='CHE'">
                         <div class="row">
-                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label class="text-muted">SubEntidad Financiera: <span class="text-danger">*</span></label>
                                     <select class="form-control border-select" ng-model="data.idSubEntidadFinanciera">
@@ -173,13 +173,13 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label class="text-muted">Fecha Emisión: <span class="text-danger">*</span></label>
                                     <input type="date" ng-model="data.fechaEmision" class="form-control border-select">
                                 </div>
                             </div>
-                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                            <div class="col-lg-4 col-md-4 col-sm-12 col-12">
                                 <div class="form-group">
                                     <label class="text-danger">Valor Abono *</label>
                                     <input type="text" ng-model="data.valorAbono" ng-enter="addFormaPago()" class="form-control border-select" decimal placeholder="0.00" />
@@ -188,7 +188,7 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                            <div class="col-lg-4 col-md-4 col-sm-12 col-12">
                                 <div class="form-group">
                                     <label class="text-muted">Ciudad</label>
                                     <select class="form-control border-select" ng-model="data.idCiudad">
@@ -197,7 +197,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                            <div class="col-lg-4 col-md-4 col-sm-12 col-12">
                                 <div class="form-group">
                                     <label class="text-muted">Banco: <span class="text-danger">*</span></label>
                                     <select class="form-control" ng-model="data.idBanco">
@@ -207,7 +207,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                            <div class="col-lg-4 col-md-4 col-sm-12 col-12">
                                 <div class="form-group">
                                     <label class="text-muted">Número: <span class="text-danger">*</span></label>
                                     <input type="text" ng-model="data.nro" class="form-control border-select" />
@@ -216,14 +216,14 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-xs-12">
+                            <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-12">
                                 <div class="form-group">
                                     <label for="">Dirigido a:</label>
                                     <input type="text" class="form-control border-select" ng-model="data.referencia">
                                 </div>
                             </div>
 
-                            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">                             
+                            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">                             
                                 <div class="form-group">
                                     <label class="text-muted">PosFechado</label>
                                     <div class="icheck-primary">

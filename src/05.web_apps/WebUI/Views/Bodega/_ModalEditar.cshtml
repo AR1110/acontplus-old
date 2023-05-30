@@ -8,7 +8,7 @@
     </div>
     <div class="modal-body">
         <div class="row">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="">Sucursal: <span class="text-danger">*</span> </label>
                     <select class="form-control border-select" ng-model="$ctrl.data.codEstab" disabled>
@@ -19,28 +19,28 @@
                 </div>
             </div>
             
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="">Descripción: <span class="text-danger">*</span> </label>
                     <input type="text" ng-model="$ctrl.data.descripcion" touppercase class="form-control border-select" placeholder="BODEGA PRINCIPAL">
                 </div>
             </div>
 
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="telefono">Teléfono </label>
                     <input type="text" ng-model="$ctrl.data.telefono" class="form-control border-select" valid-number placeholder="0959889748">
                 </div>
             </div>
 
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="direccion">Dirección </label>
                     <textarea name="textarea" ng-model="$ctrl.data.direccion" touppercase class="form-control border-select" placeholder="AV. 09 DE OCTUBRE"></textarea>
                 </div>
             </div>
 
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" ng-if="$ctrl.showEstado">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-12" ng-if="$ctrl.showEstado">
                 <div class="form-group">
                     <label for="">Estado: </label>
                     <md-radio-group ng-model="$ctrl.data.estado">
