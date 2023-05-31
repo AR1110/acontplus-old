@@ -30,25 +30,31 @@ BEGIN
 
 	IF @codConfig = 'cv'
 		BEGIN
-			SELECT dt.*
-			      ,idSistema = @idSistema
+			SELECT idSistema = @idSistema
+				  ,customerDefault  = IIF(dt.idCliente IS NULL ,CAST(0 AS BIT),CAST(1 AS BIT))
 				  ,cl.nombreFiscal
 				  ,cl.numeroIdentificacion
+				  ,articleDefault   = IIF(dt.idArticulo IS NULL,CAST(0 AS BIT),CAST(1 AS BIT))
 				  ,ar.descripcion
 				  ,ar.codigo
-				  ,customerDefault = IIF(dt.idCliente IS NULL ,CAST(0 AS BIT),CAST(1 AS BIT))
-	              ,articleDefault  = IIF(dt.idArticulo IS NULL,CAST(0 AS BIT),CAST(1 AS BIT))
-				  ,configDeuda     = IIF(dt.porcentajeInteres IS NULL,CAST(0 AS BIT),CAST(1 AS BIT))
-				  ,dt.diasGracia     
-				  ,dt.porcentajeInteres     
+				  ,dt.searchCode                  
+				  ,dt.printerAutomatic           
+				  ,dt.payAutomatic
+				  ,dt.configDeuda     
+				  ,dt.configPorcentaje 
+				  ,dt.porcentajeInteres
+				  ,dt.precioFijo
 			FROM OPENJSON(@jsonConfig)
-			WITH (idCliente        INT '$.idCliente'
-			    ,idArticulo        INT '$.idArticulo'
-				,searchCode        BIT '$.searchCode'
-				,printerAutomatic  BIT '$.printerAutomatic'
-				,payAutomatic      BIT '$.payAutomatic'
-				,diasGracia        INT '$.diasGracia'
-				,porcentajeInteres NUMERIC(18,5) '$.porcentajeInteres') as dt
+			WITH (idCliente                  INT '$.idCliente'
+			    ,idArticulo                  INT '$.idArticulo'
+				,searchCode                  BIT '$.searchCode'
+				,printerAutomatic            BIT '$.printerAutomatic'
+				,payAutomatic                BIT '$.payAutomatic'
+				,configDeuda                 BIT '$.configInteres'
+				,configPorcentaje     VARCHAR(5) '$.infoInteres.tipo'
+				,porcentajeInteres NUMERIC(18,5) '$.infoInteres.porcentajeInteres'
+				,precioFijo        NUMERIC(18,5) '$.infoInteres.precioFijo'
+				) as dt
 			LEFT JOIN dbo.Cliente  cl WITH (NOLOCK) ON cl.idCliente  = dt.idCliente
 			LEFT JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = dt.idArticulo
 		END 

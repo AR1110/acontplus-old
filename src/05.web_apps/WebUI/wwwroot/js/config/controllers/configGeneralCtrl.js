@@ -40,6 +40,7 @@
                                 $scope.gestionSistema = JSON.parse(response.payload)[0][0];
                                 $scope.searchText = $scope.gestionSistema.nombreFiscal;
                                 $scope.searchTextArticle = $scope.gestionSistema.descripcion;
+                                // $scope.gestionSistema.configPorcentaje = 'PI'
                                 break;
                         
                             case 'CI':
@@ -67,6 +68,19 @@
             } catch (error) {
                 hideLoader();
                 console.log(error)
+            }
+        }
+
+        $scope.configPorcentajePI = true;
+        $scope.configPorcentajePF = false;
+        $scope.onChangeConfigPorcentaje = function(){
+            if($scope.gestionSistema.configPorcentaje=='PI'){
+                $scope.configPorcentajePI = true;
+                $scope.configPorcentajePF = false;
+            }
+            if($scope.gestionSistema.configPorcentaje=='PF'){
+                $scope.configPorcentajePI = false;
+                $scope.configPorcentajePF = true;
             }
         }
 
@@ -142,33 +156,45 @@
                         jsonConfig.idArticulo = undefined;
                     }
 
-                    
+                  
                     if($scope.gestionSistema.configDeuda ){
-                        if (!($scope.gestionSistema.porcentajeInteres > 0)){
-                            tS.toastr('warning', 'Ingrese un porcentaje de interes')
+                        if(!$scope.gestionSistema.configPorcentaje){
+                            tS.toastr('warning', ' Seleccione la opcion');
                             return
-                        }else{
-                            jsonConfig.porcentajeInteres =  $scope.gestionSistema.porcentajeInteres;                            
                         }
 
-                        if (!($scope.gestionSistema.diasGracia > 0)){
-                            tS.toastr('warning', 'Ingrese los días de gracia')
-                            return
-                        }else{
-                            jsonConfig.diasGracia =  $scope.gestionSistema.diasGracia;                            
-                        }
+                        switch($scope.gestionSistema.configPorcentaje){
+                            case 'PI':                             
+                                if(!($scope.gestionSistema.porcentajeInteres>0)){
+                                    tS.toastr('warning', ' Ingrese el valor de porcentaje interes');
+                                    return
+                                }
 
+                                break
+                            case 'PF':
+                                if(!($scope.gestionSistema.precioFijo>0)){
+                                    tS.toastr('warning', ' Ingrese el valor de precio Fijo');
+                                    return
+                                }
+                                break
+                        }
                     }else{
                         $scope.gestionSistema.porcentajeInteres = undefined;
                         $scope.gestionSistema.diasGracia = undefined;
                     }
+
+
                 
                     jsonConfig.searchCode = $scope.gestionSistema.searchCode;
                     jsonConfig.printerAutomatic = $scope.gestionSistema.printerAutomatic;
                     jsonConfig.payAutomatic = $scope.gestionSistema.payAutomatic;
-                    jsonConfig.porcentajeInteres = $scope.gestionSistema.porcentajeInteres;
-                    jsonConfig.diasGracia = $scope.gestionSistema.diasGracia;
-                   
+                    jsonConfig.configInteres = $scope.gestionSistema.configDeuda;
+                    jsonConfig.infoInteres = {
+                            tipo: $scope.gestionSistema.configPorcentaje,
+                            porcentajeInteres: $scope.gestionSistema.configPorcentaje=='PF'? undefined: $scope.gestionSistema.porcentajeInteres,
+                            precioFijo: $scope.gestionSistema.configPorcentaje=='PI'? undefined: $scope.gestionSistema.precioFijo,
+                            diasGracia: $scope.gestionSistema.diasGracia
+                        },
                     data = {
                         idSistema: $scope.gestionSistema.idSistema, 
                         jsonConfig

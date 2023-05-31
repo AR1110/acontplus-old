@@ -79,7 +79,53 @@ BEGIN
 			,@cuota        = @importeTotal /numeroCuota
 		FROM dbo.TiempoCredito WITH (NOLOCK) WHERE idTiempoCredito = @idTiempoCredito
 
-		SELECT @fechaVencimiento = DATEADD(DAY,@diasCredito,@fechaEmision) 
+		--===============================Calculo de cuota con entrada=================================================
+		IF @entrada = 1
+			BEGIN
+				SET @countFechas = 0
+
+				WHILE @count <= @nroCuota
+					BEGIN
+						INSERT INTO @cuotas(fechaVencimiento,nroCuota,cuota,entrada)
+						SELECT
+								fechaVencimiento = CASE WHEN @count = 0 THEN @fechaEmision ELSE DATEADD(DAY,@countFechas,@fechaEmision)END 
+							,nroCuota         = @count
+						    ,cuota            = CASE WHEN @count = 0 THEN 0 ELSE @cuota END 
+								,entrada         = CASE WHEN @count = 0 THEN CAST(1 AS BIT )  ELSE CAST(0 AS BIT ) END
+							
+						SET @countFechas += @tiempoCuotas
+						SET @count +=  1;
+					END 
+			END 
+		--=============================================================================================================================
+
+		--=============================================Calculo de cuota sin entrada====================================================
+		ELSE IF @entrada = 0 
+			BEGIN
+				SET @countFechas = @tiempoCuotas
+
+				WHILE @count < @nroCuota
+					BEGIN
+						INSERT INTO @cuotas(fechaVencimiento,nroCuota,cuota,entrada)
+						SELECT
+								fechaVencimiento = DATEADD(DAY,@countFechas,@fechaEmision) 
+							,nroCuota         = @count+1  
+							,cuota            = @cuota 
+							,entrada          = CAST(0 AS BIT)
+
+						SET @countFechas += @tiempoCuotas
+						SET @count +=  1;
+					END 
+			END 
+
+		SELECT TOP 1  @fechaVencimiento = MAX(fechaVencimiento) FROM @cuotas
+
+
+		IF (SELECT COUNT(*) FROM @cuotas) = 0
+			BEGIN
+				SELECT '0' code,'Error al generar las cuotas' as 'message'
+                RETURN
+			END 
 
 		IF @codPago != 'PE'
 			BEGIN
@@ -88,51 +134,7 @@ BEGIN
 			END
 
 		BEGIN TRAN 
-			--===============================Calculo de cuota con entrada=================================================
-			IF @entrada = 1
-				BEGIN
-					SET @countFechas = 0
-
-					WHILE @count <= @nroCuota
-						BEGIN
-							INSERT INTO @cuotas(fechaVencimiento,nroCuota,cuota,entrada)
-							SELECT
-								 fechaVencimiento = CASE WHEN @count = 0 THEN @fechaEmision ELSE DATEADD(DAY,@countFechas,@fechaEmision)END 
-								,nroCuota         = @count
-						        ,cuota            = CASE WHEN @count = 0 THEN 0 ELSE @cuota END 
-								 ,entrada         = CASE WHEN @count = 0 THEN CAST(1 AS BIT )  ELSE CAST(0 AS BIT ) END
-							
-							SET @countFechas += @tiempoCuotas
-							SET @count +=  1;
-						END 
-				END 
-			--=============================================================================================================================
-
-			--=============================================Calculo de cuota sin entrada====================================================
-			ELSE IF @entrada = 0 
-				BEGIN
-					SET @countFechas = @tiempoCuotas
-
-					WHILE @count < @nroCuota
-						BEGIN
-							INSERT INTO @cuotas(fechaVencimiento,nroCuota,cuota,entrada)
-							SELECT
-								 fechaVencimiento = DATEADD(DAY,@countFechas,@fechaEmision) 
-								,nroCuota         = @count+1  
-								,cuota            = @cuota 
-								,entrada          = CAST(0 AS BIT)
-
-							SET @countFechas += @tiempoCuotas
-							SET @count +=  1;
-						END 
-				END 
-
-			 IF (SELECT COUNT(*) FROM @cuotas) = 0
-					BEGIN
-						SELECT '0' code,'Error al generar las cuotas' as 'message'
-						ROLLBACK TRAN 
-                        RETURN
-					END 
+			
 
 			UPDATE Contabilidad.CuotaPorPagar SET estado = 0 WHERE idCuentaPorPagar = @idCuentaPorPagar
 
@@ -150,8 +152,8 @@ BEGIN
 								,c.saldo
 								,ep.descripcion
 								,ep.codigo
-							FROM Contabilidad.CuotaPorPagar c 
-							INNER JOIN dbo.EstadoPago ep ON ep.idEstadoPago = c.idEstadoPago
+							FROM Contabilidad.CuotaPorPagar c WITH (NOLOCK) 
+							INNER JOIN dbo.EstadoPago      ep WITH (NOLOCK) ON ep.idEstadoPago = c.idEstadoPago
 							WHERE c.idCuentaPorPagar = @idCuentaPorPagar	
 							  AND c.estado = 1 
 			                FOR JSON PATH)
@@ -166,8 +168,8 @@ BEGIN
 			BEGIN
 				ROLLBACK TRAN; 
 			END
-			SELECT '0' code,'Info: Error en el procedimiento: '+ERROR_MESSAGE() as 'message'
-			INSERT INTO ErroresSistema
+		SELECT '0' code,'Info: Error en el procedimiento: '+ERROR_MESSAGE() as 'message'
+		INSERT INTO ErroresSistema
 							 (token
 							 ,method
 							 ,errorNumber
