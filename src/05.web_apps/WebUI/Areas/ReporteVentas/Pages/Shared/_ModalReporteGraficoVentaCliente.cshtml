@@ -8,21 +8,21 @@
             </div>
             <div class="modal-body">
                 <div class="row justify-content-between">
-                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-12">
                         <div class="icheck-info">
                             <input type="checkbox" ng-model="dataSearch.checkboxSucursalRG" id="checkboxSucursalRG" name="checkboxSucursalRG">
                             <label for="checkboxSucursalRG">Sucursal</label>
                         </div>
 
                     </div>
-                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12" ng-if="dataSearch.checkboxSucursalRG">
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-12" ng-if="dataSearch.checkboxSucursalRG">
                         <div class="icheck-info">
                             <input type="checkbox" ng-model="dataSearch.checkboxPtoEmisionRG" id="checkboxPtoEmisionRG" name="checkboxPtoEmisionRG">
                             <label for="checkboxPtoEmisionRG">Punto Emisión</label>
                         </div>
                     </div>
 
-                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-12">
                         <div class="icheck-info">
                             <input type="checkbox" ng-model="dataSearch.checkboxTipoDocRG" id="checkboxTipoDocRG" name="checkboxTipoDocRG">
                             <label for="checkboxTipoDocRG">Tipo Documento</label>
@@ -32,7 +32,7 @@
                 <hr>
 
                 <div class="row">
-                    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-xs-12">
+                    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12">
                         <div class="form-group">
                             <label for="periodo">Periodo</label>
                             <select ng-model="dataSearch.byAnio" class="form-control">
@@ -40,14 +40,14 @@
                             </select>
                         </div>
                     </div> 
-                    <div class="col-lg-10 col-md-10 col-sm-6 col-xs-12">
+                    <div class="col-lg-10 col-md-10 col-sm-6 col-12">
                         @await Html.PartialAsync("~/Views/Cliente/_ClienteAutocompleteFiltro.cshtml")
                     </div>
                 </div>
 
                 <div class="row">   
                                        
-                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-12" ng-if="dataSearch.checkboxSucursalRG">
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12" ng-if="dataSearch.checkboxSucursalRG">
                         <div class="form-group">
                             <label for="sucursal">Sucursal</label>
                             <select class="form-control border-select" ng-model="dataSearch.codEstab" ng-change="getAsignaciones()">
@@ -56,7 +56,7 @@
                         </div>
                     </div>
 
-                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-12" ng-if="dataSearch.checkboxPtoEmisionRG">
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12" ng-if="dataSearch.checkboxPtoEmisionRG">
                         <div class="form-group">
                             <label for="puntoEmision">Punto Emisión</label>
                             <select class="form-control border-select" ng-model="dataSearch.byPuntoEmisionRG">
@@ -65,7 +65,7 @@
                         </div>
                     </div>
 
-                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-xs-12" ng-if="dataSearch.checkboxTipoDocRG">
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12" ng-if="dataSearch.checkboxTipoDocRG">
                         <div class="form-group">
                             <label for="sucursal">Tipo Documento</label>
                             <select ng-model="dataSearch.byTipoDocRG" class="form-control">

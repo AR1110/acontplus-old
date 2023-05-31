@@ -6,7 +6,7 @@
 </div>
 <div class="modal-body">
     <div class="row">
-        <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group col-lg-12 col-md-12 col-sm-12 col-12">
             <label for=""> Marca: </label>           
             <div class="input-group">             
                 <select class="form-control border-select" ng-model="data.idMarca">
@@ -21,14 +21,14 @@
         </div>
     </div>
     <div class="row">
-        <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group col-lg-12 col-md-12 col-sm-12 col-12">
             <label for="">Descripción: <span class="text-danger">*</span> </label>           
             <input type="text" ng-model="data.descripcion" class="form-control border-select" placeholder="Ej: L1702">
             
         </div>
     </div>
     <div class="row" ng-if="tipoRegistro==2 && showStatus">
-        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-12">
             <label>Estado</label>
             <md-radio-group ng-model="data.estado">
                 <md-radio-button class="md-primary" ng-value="true">Activo</md-radio-button>

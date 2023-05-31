@@ -29,7 +29,7 @@
                 <hr/>
 
                 <div class="row">
-                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                         <div class="form-group">
                             <label for="periodo">Periodo</label>
                             <select ng-model="dataSearch.byAnio" class="form-control">
@@ -39,7 +39,7 @@
                     </div>                                    
                 </div>   
                 <div class="row">
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12" ng-if="dataSearch.checkboxSucursalFG">
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12" ng-if="dataSearch.checkboxSucursalFG">
                         <div class="form-group">
                             <label for="sucursal">Sucursal</label>
                             <select ng-model="dataSearch.codEstab" class="form-control" ng-change="getAsignaciones()">
@@ -47,7 +47,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12" ng-if="dataSearch.checkboxSucursalFG && dataSearch.checkboxPtoEmisionFG">
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12" ng-if="dataSearch.checkboxSucursalFG && dataSearch.checkboxPtoEmisionFG">
                         <div class="form-group">
                             <label for="sucursal">Punto Emisión</label>
                             <select ng-model="dataSearch.byPtoEmisionRG" class="form-control">
@@ -56,7 +56,7 @@
                         </div>
                     </div>
 
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12" ng-if="dataSearch.checkboxTipoDocRG">
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12" ng-if="dataSearch.checkboxTipoDocRG">
                         <div class="form-group">
                             <label for="tipoDocumento">Tipo Documento</label>
                             <select ng-model="dataSearch.byTipoDocRG" class="form-control">

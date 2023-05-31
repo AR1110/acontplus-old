@@ -7,19 +7,19 @@
             </div>
             <div class="modal-body">
                 <div class="row justify-content-between">
-                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12">
                         <div class="icheck-info">
                             <input type="checkbox" ng-model="dataSearch.checkboxSucursalFiltro" ng-change="onChangeSucursal()" name="checkboxSucursalFiltro" id="checkboxSucursalFiltro">
                             <label for="checkboxSucursalFiltro">Sucursal</label>
                         </div>
                     </div>
-                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-xs-12" ng-if="dataSearch.checkboxSucursalFiltro">
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12" ng-if="dataSearch.checkboxSucursalFiltro">
                         <div class="icheck-info">
                             <input type="checkbox" ng-model="dataSearch.checkboxPuntoEmisionFiltro" name="checkboxPuntoEmisionFiltro" id="checkboxPuntoEmisionFiltro">
                             <label for="checkboxPuntoEmisionFiltro">Punto Emisión</label>
                         </div>
                     </div>
-                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12">
                         <div class="icheck-info">
                             <input type="checkbox" ng-change="onChangeCheckboxTipoDocFiltro()" ng-model="dataSearch.checkboxTipoDocFiltro" name="checkboxTipoDocFiltro" id="checkboxTipoDocFiltro">
                             <label for="checkboxTipoDocFiltro">Tipo Documento</label>
@@ -28,12 +28,12 @@
                 </div>  
                 <hr/>
                 <div class="row">
-                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                         @await Html.PartialAsync("~/Views/Cliente/_ClienteAutocompleteFiltro.cshtml")
                     </div>
                 </div>          
                 <div class="row">                   
-                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12" ng-if="dataSearch.checkboxSucursalFiltro">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12" ng-if="dataSearch.checkboxSucursalFiltro">
                         <div class="form-group">
                             <label for="sucursal">Sucursal</label>
                             <select class="form-control border-select" ng-model="dataSearch.codEstab" ng-change="getAsignaciones()">
@@ -42,7 +42,7 @@
                         </div>
                     </div>
 
-                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12" ng-if="dataSearch.checkboxPuntoEmisionFiltro">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12" ng-if="dataSearch.checkboxPuntoEmisionFiltro">
                         <div class="form-group">
                             <label for="puntoEmision">Punto Emisión</label>
                             <select class="form-control border-select" ng-model="dataSearch.byPuntoEmision">
@@ -76,7 +76,7 @@
                 </div>
 
                 <div class="row justify-content-between">
-                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12" ng-if="dataSearch.checkboxTipoDocFiltro">
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-12" ng-if="dataSearch.checkboxTipoDocFiltro">
                         <div class="form-group">
                             <label for="tipoDoc">Tipo Documento</label>
                             <select class="form-control" ng-model="dataSearch.byTipoDoc">
@@ -84,7 +84,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-12">
                         <div class="form-group">
                             <label for="tipoDoc">Campo Ordenar</label>
                             <select class="form-control" ng-model="dataSearch.byOrderCampo">
@@ -92,7 +92,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">                       
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-12">                       
                         <div class="icheck-info mt-3">
                             <input type="radio" ng-model="dataSearch.byOrder" value='ASC' name="radioByOrder" id="byOrderAsc">
                             <label for="byOrderAsc">Ascendente</label>
@@ -102,7 +102,7 @@
                             <label for="byOrderDesc">Descendente</label>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-12">
                         <div class="form-group">
                             <label for="tipoFormato">Tipo Formato</label>
                             <div class="icheck-info">

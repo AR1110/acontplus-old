@@ -7,20 +7,20 @@
 
 <div class="modal-body">
     <div class="row">
-        <div class="co-xl-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="co-xl-12 col-md-12 col-sm-12 col-12">
             <div class="form-group">
                 <label for="">Descripción <span class="text-danger">*</span></label>
                 <input type="text" ng-keyup="$ctrl.obtenerCodigo()" touppercase class="form-control border-select" ng-model="$ctrl.data.descripcion">
             </div>
         </div>
-        <div class="co-xl-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="co-xl-12 col-md-12 col-sm-12 col-12">
             <div class="form-group">
                 <label for="">Código</label>
                 <input type="text" class="form-control border-select" touppercase ng-disabled="$ctrl.tipoRegistro===2" ng-model="$ctrl.data.codigo">
             </div>
         </div>
 
-        <div class="co-xl-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="co-xl-12 col-md-12 col-sm-12 col-12">
 
             <div class="form-group" ng-if="$ctrl.tipoRegistro ===2">
                 <label for="">Estado</label>

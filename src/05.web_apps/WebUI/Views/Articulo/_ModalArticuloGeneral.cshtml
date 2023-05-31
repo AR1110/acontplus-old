@@ -3,12 +3,12 @@
         <h4 class="modal-title" >Lista de Articulos</h4>
         <button type="button" class="close" ng-click="$ctrl.closeModal()" >&times;</button>
         @* <input type="text" id="buscarArticuloG" ng-model="$ctrl.seachTextArticulo" autocomplete="off"
-            ng-change="$ctrl.consultarPrecioText()" name="inputSearchArticuloGeneral" class="form-control border-select col-lg-5 col-md-5 col-sm-12 col-xs-12" placeholder="Ingrese la Descripcion o Código del Articulo" /> *@
+            ng-change="$ctrl.consultarPrecioText()" name="inputSearchArticuloGeneral" class="form-control border-select col-lg-5 col-md-5 col-sm-12 col-12" placeholder="Ingrese la Descripcion o Código del Articulo" /> *@
     </div>
     
     <div class="modal-body">
         <div class="row justify-content-between">
-            <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12">
+            <div class="col-lg-2 col-md-2 col-sm-6 col-12">
                 <div class="form-group"> 
                     <label for=""></label>                
                     <button type="button" class="btn btn-info mt-4" ng-click="$ctrl.openModalFiltro()">
@@ -17,9 +17,9 @@
                 </div>
             </div>
             
-            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+            <div class="col-lg-6 col-md-6 col-sm-6 col-12">
                 <div class="row">
-                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                         <div class="form-group">
                             <label for="inputTextSearch">Buscar Artículo</label>
                             <input type="text" id="inputTextSearch" class="form-control border-select" ng-model="$ctrl.dataSearch.busqueda"
@@ -29,7 +29,7 @@
                         </div>                                                                
                     </div>
 
-                    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-xs-12">
+                    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
                         <div class="form-group">
                             <label for="">Buscar por:</label>
                             <select class="form-control border-select" ng-model="$ctrl.dataSearch.byColumn" ng-change="$ctrl.querySearchArticulo()">
@@ -40,7 +40,7 @@
                         </div>
                     </div>
 
-                    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-xs-12">
+                    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
                         <div class="form-group">
                             <label for="opcion">Opción</label>
                             <select class="form-control border-select" ng-model="$ctrl.dataSearch.stock" ng-change="$ctrl.querySearchArticulo()">                                        

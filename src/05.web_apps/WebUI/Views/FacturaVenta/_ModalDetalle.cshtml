@@ -16,7 +16,7 @@
 
     <div class="modal-body">
         <div class="row" ng-if="$ctrl.showHeaderInvoice">
-            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="establecimiento">Estab.: </label>
                     <select name="establecimiento" id="establecimiento" class="form-control border-select" disabled ng-model="$ctrl.data.codEstab">
@@ -27,28 +27,28 @@
                 </div>
             </div>
 
-            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-xs-12">
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
                 <div class="form-group">
                     <label for="">Cliente: </label>                    
                     <input type="text" ng-value="$ctrl.cliente.nombreFiscal" class="form-control" disabled>
                 </div>
             </div>
 
-            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-xs-12">
+            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
                 <div class="form-group">
                     <label for="nroIndentificacion" class="">Nro. Identificación:</label>
                     <input type="text" name="nroIndentificacion" id="nroIndentificacion" class="form-control" disabled ng-value="$ctrl.cliente.numeroIdentificacion" placeholder="..." />
                 </div>
             </div>
 
-            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-xs-12">
+            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
                 <div class="form-group">
                     <label for="address" class="">Dirección:</label>
                     <input type="text" name="address" id="address" class="form-control" disabled ng-model="$ctrl.cliente.direccion" />
                 </div>
             </div>
 
-            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-xs-12">
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
                 <div class="form-group">
                     <label for="email" class="">Correo:</label>
                     <input type="text" name="email" id="email" class="form-control" disabled ng-model="$ctrl.cliente.correo">                     
@@ -57,14 +57,14 @@
         </div>   
 
         <div class="row" ng-if="$ctrl.showHeaderInvoice">
-            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-xs-12">
+            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
                 <div class="form-group">
                     <label for="puntoEmision">Punto Emisión: </label>
                     <input type="text" ng-value="$ctrl.dataDocumento.ptoEmi" class="form-control" disabled>                  
                 </div>
             </div>
 
-            <div class="col-xl-3 col-xl-3 col-lg-3 col-md-6 col-sm-6 col-xs-12">
+            <div class="col-xl-3 col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
                 <div class="form-group">
                     <label for="tiempoCredito">Tiempo Crédito: </label>
                     <div class="input-group">
@@ -80,7 +80,7 @@
                 </div>
             </div>
 
-             <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-xs-12">
+             <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
                 <div class="form-group">
                     <label for="fechaEmision">Fecha Emisión: </label>
                     <input type="date" name="fechaEmision" id="fechaEmision" class="form-control border-select" ng-model="$ctrl.data.fechaEmision" disabled/>
@@ -88,7 +88,7 @@
                 </div>
             </div>
 
-            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-xs-12">
+            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
                 <div class="form-group">
                     <label for="fechaVencimiento">Fecha Vencimiento:</label>
                     <input type="date" name="fechaVencimiento" id="fechaVencimiento" class="form-control" disabled ng-model="$ctrl.data.fechaVencimiento" />
@@ -96,7 +96,7 @@
                 </div>
             </div>
 
-            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="empleado">Empleado</label>
                     <input type="text" name="empleado" id="empleado" class="form-control " ng-value="$ctrl.cliente.empleado"  disabled />
@@ -112,9 +112,9 @@
         </div>  
 
         <div class="row">
-            <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12">
                 <div class="row mt-2" ng-if="$ctrl.showSubtotales">
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                         <div class="table-responsive">
                             <table class="table table-clear table-sm">
                                 <tbody>
@@ -150,7 +150,7 @@
                         </div>             
                     </div>
 
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                         <div class="table-responsive">
                             <table class="table table-clear table-sm">
                                 <tbody>
@@ -186,7 +186,7 @@
                         </div> 
                     </div>
 
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                         <div class="table-responsive">
                             <table class="table table-clear table-sm">
                                 <tbody>
@@ -217,7 +217,7 @@
                 </div>
                 <md-divider></md-divider>
                 <div class="row mt-2" ng-if="$ctrl.showSubtotales">
-                    <div class="col-lg-2 col-md-6 col-sm-12 col-xs-12">
+                    <div class="col-lg-2 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label>% Descuento</label>
                             <div class="input-group">
@@ -232,7 +232,7 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-2 col-md-6 col-sm-12 col-xs-12">
+                    <div class="col-lg-2 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label>Descuento</label>
                             <div class="input-group">
@@ -246,14 +246,14 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-2 col-md-6 col-sm-12 col-xs-12">
+                    <div class="col-lg-2 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label>Transporte</label>
                             <input type="text" decimal ng-model="$ctrl.data.transporte" class="form-control border-select" disabled placeholder="0.00" />
                         </div>
                     </div>
 
-                    <div class="col-lg-2 col-md-6 col-sm-12 col-xs-12">
+                    <div class="col-lg-2 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label>Rercargo</label>
                             <input type="text" decimal ng-model="$ctrl.data.recargo" class="form-control border-select" disabled placeholder="0.00" />
@@ -269,7 +269,7 @@
                 </div> 
             </div>
 
-            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">             
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">             
                 <div class="table-responsive mt-2">
                     <table class="table table-clear table-sm">
                         <tbody>

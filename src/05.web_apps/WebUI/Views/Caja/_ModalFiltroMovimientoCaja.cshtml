@@ -6,14 +6,14 @@
 <div class="modal-body">
     <div class="row justify-content-between">
 
-        <div class="col-xl-5 col-lg-5 col-md-5 col-sm-12 col-xs-12">
+        <div class="col-xl-5 col-lg-5 col-md-5 col-sm-12 col-12">
             <div class="icheck-info">
                 <input type="checkbox" id="fechaMovimientoCaja" ng-model="$ctrl.dataSearch.checkBoxDate" ng-change="$ctrl.onChangeFechaFiltro()">
                 <label for="fechaMovimientoCaja">Fecha</label>
             </div>            
         </div>
 
-        <div class="col-xl-5 col-lg-5 col-md-5 col-sm-12 col-xs-12">
+        <div class="col-xl-5 col-lg-5 col-md-5 col-sm-12 col-12">
             <div class="icheck-info">
                 <input type="checkbox" id="estadoMovimientoCaja" ng-model="$ctrl.dataSearch.checkBoxStatus">
                 <label for="estadoMovimientoCaja">Estado</label>
@@ -23,7 +23,7 @@
     <hr>
 
     <div class="row" ng-if="$ctrl.dataSearch.checkBoxDate">
-        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
             <div class="form-group">
                 <label class="control-label">Mes: </label>
                 <select ng-model="$ctrl.dataSearch.mes " class="form-control" ng-change="$ctrl.getFechaInicioFinFilter($ctrl.dataSearch.mes )">
@@ -34,14 +34,14 @@
             </div>
         </div>
 
-        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
             <div class="form-group">
                 <label>Fecha Inicio:</label>
                 <input type="date" class="form-control" ng-model="$ctrl.dataSearch.dateStart"/>
             </div>
         </div>
 
-        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
             <div class="form-group">
                 <label>Fecha Fin:</label>
                 <input type="date" class="form-control" ng-model="$ctrl.dataSearch.dateEnd" />
@@ -50,7 +50,7 @@
     </div>
 
     <div class="row" ng-if="$ctrl.dataSearch.checkBoxStatus">
-        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="form-group">
                 <label for="">Estado</label>
                 <select name="" id="" class="form-control border-select" ng-model="$ctrl.dataSearch.statusMovement">

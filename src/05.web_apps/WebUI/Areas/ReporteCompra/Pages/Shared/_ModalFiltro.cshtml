@@ -6,7 +6,7 @@
 <div class="modal-body">
     
     <div class="row">
-        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+        <div class="col-lg-4 col-md-4 col-sm-6 col-12">
             <div class="form-group">
                 <label for="tipoDocumento">Tipo Documento</label>
                 <select class="form-control" ng-model="dataSearch.tipoDoc" ng-change="onChangeTipoReporte()">
@@ -14,22 +14,22 @@
                 </select>
             </div>
         </div>
-        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+        <div class="col-lg-4 col-md-4 col-sm-6 col-12">
             
         </div>
-        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12" ng-if="dataSearch.tipoDoc==='LC' || dataSearch.tipoDoc=='RC' || dataSearch.tipoDoc==='IB' || dataSearch.tipoDoc==='OC'">
+        <div class="col-lg-4 col-md-4 col-sm-6 col-12" ng-if="dataSearch.tipoDoc==='LC' || dataSearch.tipoDoc=='RC' || dataSearch.tipoDoc==='IB' || dataSearch.tipoDoc==='OC'">
             
         </div>
     </div>
 
     <div class="row">
-        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="col-lg-3 col-md-3 col-sm-6 col-12">
             <div class="icheck-info">
                 <input type="checkbox" ng-change="onChangeSucursalFiltro()" ng-model="dataSearch.checkboxSucursalFiltro" name="checkboxSucursalFiltro" id="checkboxSucursalFiltro">
                 <label for="checkboxSucursalFiltro">Estab.:</label>
             </div>
         </div>
-        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="col-lg-3 col-md-3 col-sm-6 col-12">
             <div class="icheck-info">
                 <input type="checkbox" ng-model="dataSearch.checkboxPuntoEmisionFiltro"
                 ng-disabled="!dataSearch.checkboxSucursalFiltro || dataSearch.tipoDoc==='FC' || dataSearch.tipoDoc=='NCP'"
@@ -37,13 +37,13 @@
                 <label for="checkboxPuntoEmisionFiltro">Punto Emisión</label>
             </div>
         </div>
-        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="col-lg-3 col-md-3 col-sm-6 col-12">
             <div class="icheck-info">
                 <input type="checkbox" ng-model="dataSearch.checkboxProveedorFiltro" name="checkboxProveedorFiltro" id="checkboxProveedorFiltro">
                 <label for="checkboxProveedorFiltro">Proveedor</label>
             </div>
         </div>
-        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="col-lg-3 col-md-3 col-sm-6 col-12">
             <div class="icheck-info">
                 <input type="checkbox" ng-model="dataSearch.checkboxUsuarioFiltro" name="checkboxUsuarioFiltro" id="checkboxUsuarioFiltro">
                 <label for="checkboxUsuarioFiltro">Usuario</label>
@@ -54,26 +54,26 @@
     
     
     <div class="row">                   
-        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12" ng-if="dataSearch.tipoDoc==='FC'">
+        <div class="col-lg-3 col-md-3 col-sm-6 col-12" ng-if="dataSearch.tipoDoc==='FC'">
             <div class="icheck-info">
                 <input type="checkbox" ng-model="dataSearch.checkboxCategoriaFiltro" name="checkboxCategoriaFiltro" id="checkboxCategoriaFiltro">
                 <label for="checkboxCategoriaFiltro">Categoria</label>
             </div>
         </div>                                  
-        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="col-lg-3 col-md-3 col-sm-6 col-12">
             <div class="icheck-info">
                 <input type="checkbox" ng-model="dataSearch.checkboxEstadoFiltro" name="checkboxEstadoFiltro" id="checkboxEstadoFiltro">
                 <label for="checkboxEstadoFiltro">Estado</label>
             </div>
         </div>  
 
-        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12" ng-if="dataSearch.tipoDoc==='FC'">
+        <div class="col-lg-3 col-md-3 col-sm-3 col-12" ng-if="dataSearch.tipoDoc==='FC'">
             <div class="icheck-info">
                 <input type="checkbox" ng-model="dataSearch.checkboxRetencionFiltro" name="checkboxRetencionFiltro" id="checkboxRetencionFiltro">
                 <label for="checkboxRetencionFiltro">Retención</label>
             </div>
         </div>
-        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12" ng-if="dataSearch.tipoDoc==='FC'">
+        <div class="col-lg-3 col-md-3 col-sm-3 col-12" ng-if="dataSearch.tipoDoc==='FC'">
             <div class="icheck-info">
                 <input type="checkbox" ng-model="dataSearch.checkboxDevolucionFiltro" name="checkboxDevolucionFiltro" id="checkboxDevolucionFiltro">
                 <label for="checkboxDevolucionFiltro">Devolución</label>
@@ -82,7 +82,7 @@
     </div>
 
     <div class="row">                    
-        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+        <div class="col-lg-3 col-md-3 col-sm-3 col-12">
             <div class="icheck-info">
                 <input type="radio" ng-model="dataSearch.radioFechaFiltro" ng-value="true" name="radioFechaFiltro" id="radioFechaFiltro">
                 <label for="radioFechaFiltro">Fecha</label>
@@ -96,7 +96,7 @@
     <hr>
 
     <div class="row">
-        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" ng-if="dataSearch.checkboxSucursalFiltro ">
+        <div class="col-lg-6 col-md-6 col-sm-6 col-12" ng-if="dataSearch.checkboxSucursalFiltro ">
             <div class="form-group">
                 <label for="sucursal">Estab.:</label>
                 <select class="form-control" ng-model="dataSearch.codEstab" ng-change="getAsignacionByRol()">
@@ -104,7 +104,7 @@
                 </select>
             </div>
         </div>
-        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" ng-if="dataSearch.checkboxSucursalFiltro && dataSearch.checkboxPuntoEmisionFiltro" >
+        <div class="col-lg-6 col-md-6 col-sm-6 col-12" ng-if="dataSearch.checkboxSucursalFiltro && dataSearch.checkboxPuntoEmisionFiltro" >
             <div class="form-group" ng-if="dataSearch.tipoDoc==='LC' || dataSearch.tipoDoc=='RC' || dataSearch.tipoDoc==='IB' || dataSearch.tipoDoc==='OC'">
                 <label for="sucursal">Punto Emisión</label>
                 <select class="form-control" ng-model="dataSearch.byPuntoEmision">
@@ -115,7 +115,7 @@
     </div>
 
     <div class="row">
-        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" ng-show="dataSearch.checkboxProveedorFiltro">
+        <div class="col-lg-6 col-md-6 col-sm-12 col-12" ng-show="dataSearch.checkboxProveedorFiltro">
             <div class="form-group">
                 <label for="labelProvPersonalizado">Proveedor</label>
                 <input  type="text" 
@@ -145,7 +145,7 @@
             </div>
         </div>
 
-        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" ng-show="dataSearch.checkboxUsuarioFiltro">
+        <div class="col-lg-6 col-md-6 col-sm-12 col-12" ng-show="dataSearch.checkboxUsuarioFiltro">
             <div class="form-group">
                 <label>Usuario:</label>
                 @await Html.PartialAsync("~/Views/Usuario/_UsuarioSearchFilter.cshtml")
@@ -177,7 +177,7 @@
     </div>
 
     <div class="row">
-        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12" ng-if="dataSearch.checkboxCategoriaFiltro">
+        <div class="col-lg-3 col-md-3 col-sm-12 col-12" ng-if="dataSearch.checkboxCategoriaFiltro">
             <div class="form-group">
                 <label for="categoria">Categoria</label>
                 <select class="form-control" ng-model="dataSearch.byCategoria">
@@ -186,7 +186,7 @@
             </div>
         </div>
         
-        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12" ng-show="dataSearch.checkboxEstadoFiltro">
+        <div class="col-lg-3 col-md-3 col-sm-12 col-12" ng-show="dataSearch.checkboxEstadoFiltro">
             <div class="form-group">
                 <label>Estado:</label>                            
                 <select class="form-control" ng-model="dataSearch.byEstado">
@@ -197,7 +197,7 @@
             </div>
         </div>
 
-        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12" ng-if="dataSearch.checkboxRetencionFiltro">
+        <div class="col-lg-3 col-md-3 col-sm-6 col-12" ng-if="dataSearch.checkboxRetencionFiltro">
             <div class="icheck-info  mt-3">
                 <input type="radio" ng-model="dataSearch.retencion" ng-value="true" name="checkboxRetencionFiltro" id="checkboxConRetencionFiltro">
                 <label for="checkboxConRetencionFiltro">Con Retención</label>
@@ -207,7 +207,7 @@
                 <label for="checkboxSinRetencionFiltro">Sin Retención</label>
             </div>  
         </div>
-        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12" ng-if="dataSearch.checkboxDevolucionFiltro">
+        <div class="col-lg-3 col-md-3 col-sm-6 col-12" ng-if="dataSearch.checkboxDevolucionFiltro">
             <div class="icheck-info  mt-3">
                 <input type="radio" ng-model="dataSearch.notaCredito" ng-value="true" name="checkboxDevolucionFiltro" id="checkboxConDevolucionFiltro">
                 <label for="checkboxConDevolucionFiltro">Con Devolución</label>
@@ -220,7 +220,7 @@
     </div>
 
     <div class="row justify-content-between" >                
-        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="col-lg-3 col-md-3 col-sm-6 col-12">
             <div class="form-group">
                 <label for="">Ordenar por</label>
                 <select class="form-control" ng-model="dataSearch.byOrderCampo">
@@ -242,7 +242,7 @@
                 </select>
             </div>                        
         </div>
-        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">                       
+        <div class="col-lg-3 col-md-3 col-sm-6 col-12">                       
             <div class="icheck-info mt-3">
                 <input type="radio" ng-model="dataSearch.byOrder" value='ASC' name="radioByOrder" id="byOrderAsc">
                 <label for="byOrderAsc">Ascendente</label>
@@ -253,7 +253,7 @@
             </div>
         </div>
         
-        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-4 col-xs-12">
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-4 col-12">
             <div class="form-group">
                 <label for="tipoFormato">Tipo Formato</label>
                 <div class="icheck-info">

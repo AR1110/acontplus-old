@@ -5,7 +5,7 @@
     </div>
     <div class="modal-body">
         <div class="row">
-            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label class="form-control-label">Buscar Articulo</label><br>
                     <span class="text-muted" ng-if="$ctrl.tipoRegistro==2">{{$ctrl.data.articulo}}</span>
@@ -30,19 +30,19 @@
 
                 </div>
             </div>
-            <div class="col-lg-2 col-md-2 col-sm-4 col-xs-12" ng-if="$ctrl.data.idArticulo>0">
+            <div class="col-lg-2 col-md-2 col-sm-4 col-12" ng-if="$ctrl.data.idArticulo>0">
                 <div class="form-group">
                     <label class="form-control-label">Precio Costo:</label><br>
                     <span class="text-muted">${{$ctrl.data.precioCosto}}</span>
                 </div>
             </div>
-            <div class="col-lg-2 col-md-2 col-sm-4 col-xs-12" ng-show="$ctrl.data.idArticulo>0">
+            <div class="col-lg-2 col-md-2 col-sm-4 col-12" ng-show="$ctrl.data.idArticulo>0">
                 <div class="form-group">
                     <label class="form-control-label">Código:</label><br>
                     <span class="text-muted">{{$ctrl.data.codigo}}</span>
                 </div>
             </div>
-            <div class="col-lg-2 col-md-2 col-sm-4 col-xs-12" ng-show="$ctrl.data.idArticulo>0">
+            <div class="col-lg-2 col-md-2 col-sm-4 col-12" ng-show="$ctrl.data.idArticulo>0">
                 <div class="form-group">
                     <label class="form-cntrol-label">Medida principal:</label><br>
                     <span class="text-muted">{{$ctrl.data.nombreMedida}}</span>
@@ -51,14 +51,14 @@
         </div>
         <md-divider></md-divider>
         <div class="row mt-2">
-            <div class="col-lg-3 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-lg-3 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label class="form-control-label">Conversión: <span class="text-danger">*</span></label>
                     <input type="text" id="conversion" class="form-control border-select"
                         ng-model="$ctrl.data.conversion" valid-number placeholder="0.00">
                 </div>
             </div>
-            <div class="col-lg-3 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-lg-3 col-md-6 col-sm-12 col-12">
                 <label for="">Medida</label>
                 <div class="input-group">
                     <select class="form-control border-select" ng-model="$ctrl.data.idMedida">
@@ -70,7 +70,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-lg-3 col-md-6 col-sm-12 col-12">
                 <div class="form-group" ng-if="$ctrl.tipoRegistro==1">
                     <label>Precio U./Fraccionable <span class="text-danger">*</span></label>
                     <input type="text" class="form-control border-select" ng-model="$ctrl.data.precioCostoFraccionado"
@@ -83,7 +83,7 @@
                         ng-keyup="$ctrl.recalculateTarifaAdd()" decimal placeholder="0.00">
                 </div>
             </div>
-            <div class="col-lg-3 col-md-6 col-sm-12 col-xs-12">
+            <div class="col-lg-3 col-md-6 col-sm-12 col-12">
                 <div class="form-group text-center ">
                     <label>Para Venta:</label>
                     <div class="icheck-primary">
