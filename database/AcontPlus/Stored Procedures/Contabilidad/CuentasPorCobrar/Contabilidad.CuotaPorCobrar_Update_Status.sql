@@ -20,10 +20,10 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-IF OBJECT_ID(N'Contabilidad.CuotaPorCobrar_Update', N'P') IS NOT NULL
-DROP PROCEDURE Contabilidad.CuotaPorCobrar_Update
+IF OBJECT_ID(N'Contabilidad.CuotaPorCobrar_Update_Status', N'P') IS NOT NULL
+DROP PROCEDURE Contabilidad.CuotaPorCobrar_Update_Status
 GO
-CREATE PROCEDURE Contabilidad.CuotaPorCobrar_Update @idCuotaPorCobrar AS INT
+CREATE PROCEDURE Contabilidad.CuotaPorCobrar_Update_Status @idCuotaPorCobrar AS INT
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from

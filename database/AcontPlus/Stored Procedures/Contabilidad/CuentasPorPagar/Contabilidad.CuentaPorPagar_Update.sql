@@ -45,13 +45,21 @@ BEGIN
 	)
 
 	BEGIN TRY 
-		
+
+		INSERT INTO @cuotas (idCuotaPorPagar,fechaVencimiento,cuota)
+		SELECT idCuotaPorPagar,fechaVencimiento,cuota
+		FROM OPENJSON(@json) WITH (idCuotaPorPagar INT '$.idCuotaPorPagar',fechaVencimiento DATE '$.fechaVencimiento', cuota NUMERIC(18,5) '$.cuota')
+
+
+		SELECT @fechaVencimiento =  MAX(fechaVencimiento) FROM @cuotas 
+
 		SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
 		SELECT TOP 1 @idEstadoPago = idEstadoPago FROM Contabilidad.CuentaPorPagar WITH (NOLOCK) WHERE idCuentaPorPagar = @idCuentaPorPagar
 
 		SELECT TOP 1 @codPago = codigo FROM dbo.EstadoPago WITH (NOLOCK) WHERE idEstadoPago = @idEstadoPago
 		
+
 		IF @codPago != 'PE'
 			BEGIN
 				SELECT '0' code,'No puedes editar esta Cuenta tiene abonos realizados.' as 'message'
@@ -59,11 +67,6 @@ BEGIN
 			END
 
 		BEGIN TRAN 
-			INSERT INTO @cuotas (idCuotaPorPagar,fechaVencimiento,cuota)
-			SELECT idCuotaPorPagar,fechaVencimiento,cuota
-			FROM OPENJSON(@json) WITH (idCuotaPorPagar INT '$.idCuotaPorPagar',fechaVencimiento DATE '$.fechaVencimiento', cuota NUMERIC(18,5) '$.cuota')
-
-			SELECT @fechaVencimiento =  MAX(fechaVencimiento) FROM @cuotas 
 
 			UPDATE xc SET 
 				 xc.fechaVencimiento = c.fechaVencimiento

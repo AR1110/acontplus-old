@@ -1,6 +1,6 @@
 
 <div class="modal-header">
-    <h5 class="modal-title"><i class="fa fa-cog"></i> Cuotas</h5>
+    <h5 class="modal-title"><i class="far fa-money-bill-alt"></i> Cuotas</h5>
     <button type="button" class="close" ng-click="closeModal()">&times;</button>
 </div>
 <div class="modal-body">
@@ -70,9 +70,10 @@
                 <tr md-row>                 
                     <th md-column>Nro. Cuota</th>                    
                     <th md-column>Cuota</th>                    
-                    <th md-column ng-if="showColumns">Interes</th> 
-                    <th md-column ng-if="showColumns">Dias Mora</th>
-                    <th md-column ng-if="showColumns">Mora</th>
+                    <th md-column ng-if="showColumnPrecioFijo">Valor Mora</th> 
+                    <th md-column ng-if="showColumnPorcentajeInteres">Interes</th> 
+                    <th md-column ng-if="showColumnPorcentajeInteres">Dias Mora</th>
+                    <th md-column ng-if="showColumnPorcentajeInteres">Mora</th>
                     <th md-column>Abono</th>
                     <th md-column>Saldo</th>
                     <th md-column>Fecha Vencimiento</th>
@@ -102,9 +103,10 @@
                                 ng-model="item.cuota" 
                                 class="form-control border-select" />
                     </td>
-                    <td md-cell ng-if="showColumns">{{item.interes}}</td>
-                    <td md-cell ng-if="showColumns">{{item.diasMora}}</td>
-                    <td md-cell ng-if="showColumns">{{item.mora}}</td>
+                    <td md-cell ng-if="showColumnPrecioFijo">{{item.precioFijo}}</td>
+                    <td md-cell ng-if="showColumnPorcentajeInteres">{{item.interes}}</td>
+                    <td md-cell ng-if="showColumnPorcentajeInteres">{{item.diasMora}}</td>
+                    <td md-cell ng-if="showColumnPorcentajeInteres">{{item.mora}}</td>
                     <td md-cell>{{item.abono}}</td>
                     <td md-cell>{{item.saldo}}</td>
                     <td md-cell>
