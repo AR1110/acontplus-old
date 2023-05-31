@@ -553,7 +553,7 @@ app.filter('cellFilterBodega', () => {
 
         if (typeof map !== "undefined") {
             for (let value of map) {
-                result[value.idBodega] = value.descripcion
+                result[value.idBodega] = value[valueField]
             }
         }
 

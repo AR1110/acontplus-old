@@ -322,5 +322,11 @@
     "inputFiles": [
       "wwwroot/js/inventario/controllers/consolidacionInvCtrl.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/contabilidad/controllers/cuentaPorCobrar.min.js",
+    "inputFiles": [
+      "wwwroot/js/contabilidad/controllers/cuentaPorCobrar.js"
+    ]
   }
 ]
