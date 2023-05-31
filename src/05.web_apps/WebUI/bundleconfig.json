@@ -328,5 +328,11 @@
     "inputFiles": [
       "wwwroot/js/contabilidad/controllers/cuentaPorCobrar.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/inventario/controllers/precioMasivoCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/inventario/controllers/precioMasivoCtrl.js"
+    ]
   }
 ]

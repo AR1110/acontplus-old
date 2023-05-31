@@ -11,10 +11,12 @@
         'formulario',
         '$interval',
         '$log',
-        '$window'
+        '$window',
+        'modalService',
+        'uiGridConstants'
     ]
 
-    function precioMasivoCtrl($scope, _mS, _tS, _commonSvc, _articleSvc, _pricingUtils, _form, $interval, $log, $window) {
+    function precioMasivoCtrl($scope, _mS, _tS, _commonSvc, _articleSvc, _pricingUtils, _form, $interval, $log, $window, _modalSvc, uiGridConstants) {
         _mS.detectDevice()
 
         $scope.catalogs = [
@@ -43,136 +45,160 @@
             left: 0
         };
 
-        $scope.gridOptions = {}
+        $scope.articlesToSave = []
 
-        $scope.getColumnDefs = () => {
-            return [{
-                name: 'idTarifa',
-                field: 'idTarifa',
-                visible: false,
-            },
-            {
-                name: 'tarifa',
-                field: 'tarifa',
-                enableCellEdit: false,
-                width: '15%',
-                minWidth: 100
-            },
-            {
-                name: 'Tipo Iva',
-                field: 'porcentajeIva',
-                type: 'number',
-                enableCellEdit: false,
-                width: '5%',
-                minWidth: 100
-            },
-            {
-                name: 'precioCosto',
-                field: 'precioCosto',
-                enableCellEditOnFocus: false,
-                enableCellEdit: false,
-                allowCellFocus: true,
-                type: 'number',
-                width: '15%',
-                minWidth: 100
-            },
-            {
-                name: 'precioVenta',
-                field: 'precioVenta',
-                enableCellEditOnFocus: true,
-                enableCellEdit: true,
-                allowCellFocus: true,
-                type: 'number',
-                width: '15%',
-                minWidth: 100
-            },
-            {
-                name: 'precioConIva',
-                field: 'precioConIva',
-                enableCellEditOnFocus: true,
-                enableCellEdit: true,
-                allowCellFocus: true,
-                type: 'number',
-                width: '15%',
-                minWidth: 100
-            },
-            {
-                name: 'porcentajeUtilidad',
-                field: 'porcentajeUtilidad',
-                type: 'number',
-                enableCellEditOnFocus: true,
-                enableCellEdit: true,
-                allowCellFocus: true,
-                width: '18%',
-                minWidth: 100
-            },
+        $scope.gridOptions = {
+            enableColumnMenus: false,
+            showColumnFooter: false,
+            showGridFooter: true,
+            enableCellEdit: false,
+        }
+        $scope.setColumnDefs = () => {
+            $scope.gridOptions.columnDefs = [
+                {
+                    name: 'Op',
+                    enableCellEdit: false,
+                    width: '5%',
+                    minWidth: '10',
+                    cellTemplate: `<button type="button" class="btn btn-warning btn-sm" btn-article-add-update params="row.entity" result-modal="grid.appScope.resultModalArticleEdit(result)"><i class="ti-pencil"><i></button>`,
+                },
+                {
+                    name: 'Articulo',
+                    field: 'descripcion',
+                    visible: true,
+                    width: '20%',
+                    minWidth: 100
+                },
+                {
+                    name: 'idTarifa',
+                    field: 'idTarifa',
+                    visible: false,
+                },
+                {
+                    name: 'tarifa',
+                    field: 'tarifa',
+                    enableCellEdit: false,
+                    width: '8%',
+                    minWidth: 100
+                },
+                {
+                    name: 'Tipo Iva',
+                    field: 'porcentajeIva',
+                    type: 'number',
+                    enableCellEdit: false,
+                    width: '3%',
+                    minWidth: 100
+                },
+                {
+                    name: 'precioCosto',
+                    field: 'precioCosto',
+                    enableCellEditOnFocus: false,
+                    enableCellEdit: false,
+                    allowCellFocus: true,
+                    type: 'number',
+                    width: '10%',
+                    minWidth: 100
+                },
+                {
+                    name: 'precioVenta',
+                    cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                        return "";
+                    },
+                    field: 'precioVenta',
+                    enableCellEditOnFocus: true,
+                    enableCellEdit: true,
+                    allowCellFocus: true,
+                    type: 'number',
+                    width: '12%',
+                    minWidth: 100
+                },
+                {
+                    name: 'precioConIva',
+                    cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                        return "";
+                    },
+                    field: 'precioConIva',
+                    enableCellEditOnFocus: true,
+                    enableCellEdit: true,
+                    allowCellFocus: true,
+                    type: 'number',
+                    width: '12%',
+                    minWidth: 100
+                },
+                {
+                    name: '% utilidad',
+                    cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                        return "";
+                    },
+                    field: 'porcentajeUtilidad',
+                    type: 'number',
+                    enableCellEditOnFocus: true,
+                    enableCellEdit: true,
+                    allowCellFocus: true,
+                    width: '10%',
+                    minWidth: 100
+                },
 
-            {
-                name: 'Utilidad',
-                field: 'ganancia',
-                type: 'number',
-                enableCellEditOnFocus: true,
-                width: '10%',
-                minWidth: 100
-            },
-            {
-                name: 'P. precioPredeterminado',
-                field: 'precioPredeterminado',
-                visible: false
-            },
-            {
-                name: 'Estado',
-                field: 'predeterminadaVal',
-                enableCellEdit: false,
-                type: 'checkbox',
-                //cellTemplate: '<div class="text-center"><input type="checkbox"' +
-                //    'name="radio" value="radio" ng-click="grid.appScope.updateDefault(row.entity)"/></div>', //'<md-switch style="display:inline" title="Actualizar estado" aria-label="Predeterminado" ng-click="grid.appScope.updateDefault(row)"></md-switch>',
+                {
+                    name: 'Utilidad',
+                    cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                        return "";
+                    },
+                    field: 'ganancia',
+                    type: 'number',
+                    enableCellEditOnFocus: true,
+                    width: '8%',
+                    minWidth: 100
+                },
+                {
+                    name: 'P. precioPredeterminado',
+                    field: 'precioPredeterminado',
+                    visible: false
+                },
+                {
+                    name: 'Estado',
+                    field: 'predeterminadaVal',
+                    enableCellEdit: false,
+                    type: 'checkbox',
+                    //cellTemplate: '<div class="text-center"><input type="checkbox"' +
+                    //    'name="radio" value="radio" ng-click="grid.appScope.updateDefault(row.entity)"/></div>', //'<md-switch style="display:inline" title="Actualizar estado" aria-label="Predeterminado" ng-click="grid.appScope.updateDefault(row)"></md-switch>',
 
-                width: '15%',
-                minWidth: 100,
-                cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
-                    if (row.entity.estado) {
-                        row.entity.predeterminadaVal = 'activo'
-                        return 'blue'
+                    width: '10%',
+                    minWidth: 100,
+                    cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                        if (row.entity.estado) {
+                            row.entity.predeterminadaVal = 'activo'
+                            return 'blue'
+                        }
                     }
                 }
-            }
             ]
         }
 
-        $scope.gridOptions = {
-            customScroller: function myScrolling(uiGridViewport, scrollHandler) {
-                uiGridViewport.on('scroll', function myScrollingOverride(event) {
-                    $scope.scroll.top = uiGridViewport[0].scrollTop;
-                    $scope.scroll.left = uiGridViewport[0].scrollLeft;
-
-                    // You should always pass the event to the callback since ui-grid needs it
-                    scrollHandler(event);
-                });
-            },
-            enableColumnMenus: false,
-            enableSorting: false,
-            suppressMultiSort: false,
-            enableFiltering: false,
-            enableRowHashing: false,
-            enableCellEdit: false,
-            onRegisterApi: registerGridApi,
-            columnDefs: $scope.getColumnDefs()
-        }
-
-        function registerGridApi(gridApi) {
+        $scope.gridOptions.onRegisterApi = (gridApi) => {
+            $scope.gridApi = gridApi
             if (gridApi) {
                 $interval(() => {
                     gridApi.core.handleWindowResize()
                     gridApi.grid.refresh()
                 }, 5)
             }
-            console.log("on register api")
             gridApi.edit.on.afterCellEdit($scope, afterCellEdit)
         }
         function afterCellEdit(rowEntity, colDef, newValue, oldValue) {
             let msg = 'after cell edit ready '
             $log.info(msg)
+            colDef.cellClass = function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                row.entity.dirty = row.entity.dirty || {}
+                if (rowEntity.id === row.entity.id && newValue !== oldValue) {
+                    rowEntity.dirty[col.displayName] = true;
+                }
+                if (row.entity.dirty[col.displayName])
+                    return "modifiedCell";
+                return "";
+            };
+
+            $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.COLUMN);
 
             const index = $scope.gridOptions.data.indexOf(rowEntity) //Obtenemos indice 
 
@@ -181,25 +207,16 @@
             let porcentajeUtilidad = 0
             let ganancia = 0
 
-            //Validacion de Campos 
-            // if ([null, undefined, "", 0].includes(rowEntity.precioCosto) || isNaN($scope.precioCosto)) {
-            //     toastr.warning('Ingrese el Precio de Costo')
-            //     return
-            // }
-
-
             if (colDef.field === "precioVenta") {
                 if ([null, undefined].includes(newValue)) {
                     rowEntity.precioVenta = oldValue
                 }
                 if (rowEntity.precioVenta > 0) {
-
                     if (rowEntity.precioVenta < rowEntity.precioCosto) {
                         rowEntity[colDef.field] = oldValue
                     }
                 }
             }
-
 
             if (colDef.field === "precioConIva") {
                 if ([null, undefined].includes(newValue)) {
@@ -226,6 +243,9 @@
                     $scope.gridOptions.data[index].precioVenta = _form.roundNumber(rowEntity.precioVenta, $scope.config.nroPrecio)
                     $scope.gridOptions.data[index].precioConIva = _form.roundNumber(precioConIva, $scope.config.nroPrecio)
                     $scope.gridOptions.data[index].porcentajeUtilidad = _form.roundNumber(porcentajeUtilidad, 5)
+                    if (rowEntity.precioVenta != oldValue) {
+                        $scope.gridOptions.data[index].modified = true
+                    }
 
                     break
 
@@ -236,7 +256,9 @@
                     $scope.gridOptions.data[index].precioConIva = _form.roundNumber(rowEntity.precioConIva, $scope.config.nroPrecio)
                     $scope.gridOptions.data[index].precioVenta = _form.roundNumber(precioVenta, $scope.config.nroPrecio)
                     $scope.gridOptions.data[index].porcentajeUtilidad = _form.roundNumber(porcentajeUtilidad, 5)
-
+                    if (rowEntity.precioConIva != oldValue) {
+                        $scope.gridOptions.data[index].modified = true
+                    }
                     break
                 case "porcentajeUtilidad":
                     precioVenta = _pricingUtils.calcularPorcentajeUtilidad(rowEntity.precioCosto, rowEntity.porcentajeUtilidad)
@@ -244,15 +266,33 @@
 
                     $scope.gridOptions.data[index].precioVenta = _form.roundNumber(precioVenta, $scope.config.nroPrecio)
                     $scope.gridOptions.data[index].precioConIva = _form.roundNumber(precioConIva, $scope.config.nroPrecio)
+                    if (rowEntity.porcentajeUtilidad != oldValue) {
+                        $scope.gridOptions.data[index].modified = true
+                    }
                     break
             }
             ganancia = rowEntity.precioVenta - rowEntity.precioCosto
             //$scope.update(rowEntity)
             $scope.gridOptions.data[index].ganancia = _form.roundNumber(ganancia, 5)
+
+            for (const d of $scope.gridOptions.data) {
+                if (d.modified) {
+                    if (!$scope.articlesToSave.some(x => x.idArticulo == d.idArticulo)) {
+                        $scope.articlesToSave.push(d)
+                    } else {
+                        let articleFounded = $scope.articlesToSave.find(x => x.idArticulo == d.idArticulo)
+                        articleFounded.precioVenta = d.precioVenta
+                        articleFounded.precioConIva = d.precioConIva
+                        articleFounded.porcentajeUtilidad = d.porcentajeUtilidad
+                    }
+                }
+            }
+            if ($scope.articlesToSave.length > 50) {
+                _tS.toastr("info", "Existen más de 50 articulos modificados, le recomendamos guardar los cambios")
+            }
+           
         }
-
-
-
+        $scope.setColumnDefs()
 
         $scope.initialLoad = () => {
             // _commonSvc.getEstabAsign().then(
@@ -285,6 +325,10 @@
         }
         $scope.initialLoad()
 
+        $scope.resultModalArticleEdit = (result) => {
+            console.log(result)
+        }
+
         let isTriggered = false
 
         $scope.onChangeTarifa = () => {
@@ -309,12 +353,30 @@
             $scope.mainForm.idArticulo = item.idArticulo
             $scope.getArticles()
         }
+        $scope.articlesBackup = []
+
+        $scope.fillGrid = (articles) => {
+            $scope.gridOptions.data = articles.map(item => {
+                item.descripcion = item.descripcion
+                item.tarifa = item.tarifa
+                item.precioCosto = item.precioCosto
+                item.precioVenta = item.precioVenta
+                item.precioConIva = item.precioConIva
+                item.porcentajeUtilidad = item.porcentajeUtilidad
+                item.porcentajeIva = item.iva
+                item.ganancia = _form.roundNumber((Number(item.precioVenta) - item.precioCosto), $scope.config.nroPrecio)
+                item.estado = item.estadoTarifa
+                item.modified = false
+                return item
+            })
+        }
 
         $scope.getArticles = () => {
             showLoader()
             $scope.search = ''
             isTriggered = false
             $scope.articles = []
+            $scope.articlesBackup = []
             $scope.mainForm.tipo = 2
             _mS.getData('get', 'PrecioMasivo/?json=' + JSON.stringify($scope.mainForm), null, true).then(
                 response => {
@@ -325,17 +387,8 @@
                         isTriggered = true
                         let temp = JSON.parse(response.payload)
                         $scope.articles = temp[0]
-                        $scope.gridOptions.data = $scope.articles.map(item => {
-                            item.tarifa = item.descripcion
-                            item.precioCosto = item.precioCosto
-                            item.precioVenta = item.precioVenta
-                            item.precioConIva = item.precioConIva
-                            item.porcentajeUtilidad = item.porcentajeUtilidad
-                            item.porcentajeIva = item.iva
-                            item.ganancia = _form.roundNumber((Number(item.precioVenta) - item.precioCosto), $scope.config.nroPrecio)
-                            item.estado = item.estadoTarifa
-                            return item
-                        })
+                        $scope.articlesBackup = JSON.parse(JSON.stringify(temp[0]))
+                        $scope.fillGrid(temp[0])
                     }
                     hideLoader()
                 }
@@ -344,7 +397,27 @@
                 console.log(error)
             })
         }
+        $scope.rollbackChanges = async () => {
+            let { isConfirmed } = await Swal.fire({
+                html: `<small>Esta seguro de revertir los cambios!</small>`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, proceder!',
+                cancelButtonText: 'No, cancelar'
+            })
+            if (isConfirmed) {
+                $scope.articlesToSave = []
+                $scope.articles = []
+                $scope.articles = JSON.parse(JSON.stringify($scope.articlesBackup))
+                $scope.gridOptions.data = []
+                $scope.gridApi.core.refresh();
 
+                $scope.setColumnDefs()
+                $scope.fillGrid($scope.articles)
+            } 
+        }
         $scope.update = (item, option = null) => {
             // if (option == 1) {
             //     item.precioConIva = _form.roundNumber(_pricingUtils.calcularPrecioConIva(item.precioVenta, item.iva), $scope.config.nroPrecio)
@@ -379,44 +452,66 @@
             })
         }
 
-        $scope.askToSave = () => {
-            Swal.fire({
-                title: 'Aviso',
-                html: `Esta seguro de actualizar los <b>${$scope.gridOptions.data.length}</b> articulos?, esto no se podra revertir!`,
+        $scope.save = async () => {
+            if ($scope.articlesToSave.length == 0) {
+                _tS.toastr("warning", "Usted no poseen ningun articulo modificado")
+                return
+            }
+            let message
+            message = `<table class="table table-bordered">
+                            <thead>
+                                <tr class="small">
+                                    <th>Código</th>
+                                    <th>Descripción</th>
+                                    <th>P. Venta</th>
+                                    <th>P. Con Iva</th>
+                                </tr>
+                            </thead>
+                            <tbody>`
+            for (const art of $scope.articlesToSave) {
+                message += `<tr class="small">
+                                <td>${art.codigo}</td>
+                                <td>${art.descripcion}</td>
+                                <td>${art.precioVenta}</td>
+                                <td>${art.precioConIva}</td>
+                            </tr>`
+            }
+            message += `</tbody></table>`
+            let { isConfirmed } = await Swal.fire({
+                title: 'Esta seguro de actualizar el precio de los siguientes articulos?',
+                html:message,
+                //html: `Esta seguro de actualizar los <b>${$scope.articlesToSave.length}</b> articulos modificados?, esto no se podra revertir!`,
+                width: '800px',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Si',
-                cancelButtonText: 'No',
+                confirmButtonText: 'Si, Proceder',
+                cancelButtonText: 'No, Cancelar',
                 allowOutsideClick: false
-            }).then((result) => {
-                if (result.value) {
-                    $scope.saveAll()
-                }
             })
-        }
-
-        $scope.saveAll = () => {
-            showLoader()
-            let data = {
-                tipo: 2,
-                articles: JSON.stringify($scope.gridOptions.data)
-            }
-            _mS.getData('PUT', 'PrecioMasivo/', { data: data }, true).then(
-                response => {
-                    if (response.code == "0") {
-                        _tS.toastr("warning", response.message)
+            if (isConfirmed) {
+                showLoader()
+                let data = {
+                    tipo: 2,
+                    articles: JSON.stringify($scope.articlesToSave)
+                }
+                _mS.getData('PUT', 'PrecioMasivo/', { data: data }, true).then(
+                    response => {
+                        if (response.code == "0") {
+                            _tS.toastr("warning", response.message)
+                        }
+                        if (response.code == "1") {
+                            $scope.articlesToSave = []
+                            _tS.toastr("info", response.message)
+                        }
+                        hideLoader()
                     }
-                    if (response.code == "1") {
-                        _tS.toastr("info", response.message)
-                    }
+                ).catch(error => {
                     hideLoader()
-                }
-            ).catch(error => {
-                hideLoader()
-                $log.error(error)
-            })
+                    $log.error(error)
+                })
+            }
         }
 
         $scope.refresh = () => {
