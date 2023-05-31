@@ -1,5 +1,8 @@
-﻿@{
-    ViewData["title"] = "Transportista";
+@page
+@model WebUI.Areas.Transportista.Pages.Index
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div ng-controller="transportistaCtrl">
@@ -9,8 +12,9 @@
         </div>
         <div class="col-md-7 align-self-center text-right">
             <div class="d-flex justify-content-end align-items-center">
-                <button type="button" class="btn btn-info m-l-15" ng-if="accion.crear" btn-transportista result-modal="resultModal(result)"> <i class="ti-plus"></i> Nuevo</button>
-            </div>            
+                <button type="button" class="btn btn-info m-l-15" ng-if="accion.crear" btn-transportista
+                    result-modal="resultModal(result)"> <i class="ti-plus"></i> Nuevo</button>
+            </div>
         </div>
     </div>
 
@@ -20,7 +24,8 @@
                 <md-toolbar class="md-table-toolbar md-default">
                     <div class="md-toolbar-tools">
                         <div class="col-lg-9 col-md-9 col-sm-1">
-                            @* <button type="button" class="btn btn-info" ng-click="openModalFiltro()"><i class="fa fa-filter"></i> Filtrar</button>                 *@
+                            @* <button type="button" class="btn btn-info" ng-click="openModalFiltro()"><i class="fa
+                            fa-filter"></i> Filtrar</button> *@
                         </div>
                         <div class="col-lg-3 col-md-3 col-sm-12 col-12">
                             <form class="form-material">
@@ -28,9 +33,9 @@
                             </form>
                         </div>
                     </div>
-                </md-toolbar>  
-      
-                <md-divider></md-divider>   
+                </md-toolbar>
+
+                <md-divider></md-divider>
                 <md-table-container>
                     <table md-table>
                         <thead md-head>
@@ -44,8 +49,10 @@
                         <tbody md-body>
                             <tr md-row ng-repeat="t in transportistas">
                                 <td md-cell>
-                                    <button class="btn btn-info btn-xs"  btn-transportista result-modal="resultModal(result)" params="t"><i class="ti-pencil"></i></button>
-                                    <button class="btn btn-danger btn-xs" ng-if="accion.eliminar" ng-click="askToDelete(t)"><i class="ti-trash"></i></button>                                    
+                                    <button class="btn btn-info btn-xs" btn-transportista
+                                        result-modal="resultModal(result)" params="t"><i class="ti-pencil"></i></button>
+                                    <button class="btn btn-danger btn-xs" ng-if="accion.eliminar"
+                                        ng-click="askToDelete(t)"><i class="ti-trash"></i></button>
                                 </td>
                                 <td md-cell>{{$index+1}}</td>
                                 <td md-cell>{{t.nroIdentificacion}}</td>
@@ -53,10 +60,10 @@
                             </tr>
                         </tbody>
                     </table>
-                </md-table-container>                
+                </md-table-container>
             </div>
         </div>
-    </div>       
+    </div>
 
 </div>
 

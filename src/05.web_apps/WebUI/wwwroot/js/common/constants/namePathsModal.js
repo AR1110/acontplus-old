@@ -191,7 +191,7 @@ app.constant('nombreModalLogistica', {
             M: 'ModalTransportistaCtrl'
         },
         templates: {
-            M: 'Transportista/_ModalAddUpdate.cshtml'
+            M: '~/Areas/Transportista/Pages/Shared/_ModalAddUpdate.cshtml'
         }
     }  ,
     VEHICULO: {
@@ -200,7 +200,7 @@ app.constant('nombreModalLogistica', {
             M: 'ModalVehiculoCtrl'
         },
         templates: {
-            M: 'Vehiculo/_ModalAddUpdate.cshtml'
+            M: '~/Areas/Vehiculo/Pages/Shared/_ModalAddUpdate.cshtml'
         }
     }  
 })

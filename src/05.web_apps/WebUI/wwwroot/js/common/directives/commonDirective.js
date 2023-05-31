@@ -560,6 +560,7 @@
                         template,
                         size: 'md',
                         params: scope.params || {},
+                        isRenderRazorPartial: true
                     })
 
                     modalDialogRef.result.then(result => {
@@ -588,13 +589,14 @@
                     let ctrl = nombreModalLogistica.VEHICULO.controllers['M'];
                     let template = nombreModalLogistica.VEHICULO.templates['M'];
                     let controller = (await import(fileCtrl))[ctrl];
-                    console.log(template)
+                  
 
                     const modalDialogRef = modalService.openModalCustom({
                         controller,
                         template,
                         size: 'md',
                         params: scope.params || {},
+                        isRenderRazorPartial: true
                     })
 
                     modalDialogRef.result.then(result => {
