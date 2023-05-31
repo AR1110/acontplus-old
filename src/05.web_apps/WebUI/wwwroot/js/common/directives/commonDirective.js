@@ -466,7 +466,7 @@
 
     app.directive('dateRangeFilter', function (formulario) {
         return {
-            template: `<div><input date-range-picker class="form-control date-picker" type="text"
+            template: `<div><input date-range-picker class="form-control date-picker border-select" type="text"
                    ng-model="dateRangePicker.date" picker="dateRangePicker.picker"
                    picker-classes="extra-class-names" min="'2014-02-23'" max="dateRangePicker.maxDate"
                    options="dateRangePicker.options" options="{locale: {separator: " :"}}" />
