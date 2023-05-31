@@ -1451,14 +1451,31 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8099
+          "Host": "localhost",
+          "Port": 52813
         }
       ],
-      "DownstreamPathTemplate": "/api/Catalogo{everything}",
+      "DownstreamPathTemplate": "/api/ComprobanteIngreso{everything}",
       "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "UpstreamPathTemplate": "/api/ComprobanteIngreso{everything}"
+    },
+
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7079
+        }
+      ],
+      "DownstreamPathTemplate": "/api/CatalogoVenta{everything}",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get" ],
-      "UpstreamPathTemplate": "/api/Catalogo{everything}"
+      "UpstreamPathTemplate": "/api/CatalogoVenta{everything}"
     },
     {
       "AuthenticationOptions": {

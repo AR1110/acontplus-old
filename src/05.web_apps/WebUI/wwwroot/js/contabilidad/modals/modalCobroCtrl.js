@@ -1207,8 +1207,8 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc
                         cobroSvc.cobrosDetalle= [];
                         $scope.cobrosDetalle = [];
 
-                        cobroSvc.selectedDocumentos = []
-                        $scope.selectedDocumentos = [];
+                        // cobroSvc.selectedDocumentos = []
+                        // $scope.selectedDocumentos = [];
                     
 
                         let index = $scope.datosCobro.indexOf(item);

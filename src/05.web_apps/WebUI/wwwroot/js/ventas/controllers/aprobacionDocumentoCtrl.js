@@ -222,7 +222,7 @@
         //=====================Eend Filters=======================
 
         $scope.calculoColumnTotal = function () {
-            let total = $scope.aprobComprobantes.map(item => item.total).reduce((prev, acc) => prev + acc, 0)
+            let total = $scope.aprobComprobantes.reduce((prev, acc) => prev + acc.total, 0)
             $scope.total = fS.roundNumber(total, 2)
         }
 
@@ -280,6 +280,7 @@
                     $scope.dataSearch.codEstab = $scope.establecimientos[0].codEstab;
                     $scope.getAprobComprobantes();
                 }).catch((errorResponse) => {
+                    hideLoader();
                     console.log(errorResponse);
                 });
 
@@ -607,6 +608,8 @@
                 const stepDocDestino = document.getElementById("stepDocDestino");
                 stepDocOrigen.style.display = "block";
                 stepDocDestino.style.display = "none";
+
+                $("#clienteSearch").focus();
 
             })
         }
@@ -1478,7 +1481,7 @@
                     tS.taostr('warning', 'Seleccione el establecimiento')
                     return
                 }
-                if (!$scope.data.idPuntoEmision) {
+                if (!($scope.data.idPuntoEmision>0)) {
                     tS.taostr('warning', 'Seleccione el establecimiento')
                     return
                 }
@@ -1504,7 +1507,7 @@
                         fechaEmision: fS.formatDateTimeZone(this.data.fechaEmision),
                         docOrigen: $scope.docOrigen.codDoc,
                         docDestino: $scope.docDestino.codDoc,
-                        total: $scope.selectedDocuments.map(item => item.total).reduce((prev, acc) => prev + acc, 0)
+                        total: $scope.selectedDocuments.reduce((prev, acc) => prev + acc.total, 0)
                     }
 
                     //Tarifa Aplicada al Documento
