@@ -128,7 +128,7 @@ namespace ApiCompras.Controllers
             return Ok(_response);
         }
 
-        [HttpPut("Delete/{id}")]
+        [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             GenericResponse _response = new GenericResponse();
