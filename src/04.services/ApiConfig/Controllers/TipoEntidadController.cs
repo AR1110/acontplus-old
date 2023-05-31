@@ -114,5 +114,28 @@ namespace ApiConfig.Controllers
             }
             return Ok(_response);
         }
+
+        //Definir correctamente mas adelante
+        [HttpGet("ListForSelect")]
+        public async Task<IActionResult> ListForSelect(int id)
+        {
+            DbAccess _db = new DbAccess(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Config.TipoEntidad_For_Select");
+                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));                
+                _response = _db.GetDataTableAsync();
+
+
+            }
+            catch (Exception ex)
+            {
+                LogWriter _log = new LogWriter(_configuration);
+                _log.LogError("Error al lista tipo entidad para el formulario: \n" + ex.ToString());
+                _response.Create("0", "Error al lista tipo entidad para el formulario");
+            }
+            return Ok(_response);
+        }
     }
 }
