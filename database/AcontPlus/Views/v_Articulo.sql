@@ -17,13 +17,17 @@ SELECT  a.idArticulo
 	,subFamilia  =  sf.descripcion 
 	,marca       =  m.descripcion 
 	,medida		 = me.descripcion 
-	,a.estado 
+	,a.estado
+	,a.idTipoIva
 	,ti.porcentaje
+	,ti.descripcion tipoIva
 	,a.llevaInventario
 	,a.idFamilia
 	,a.idSubFamilia
 	,a.precioCosto
 	,a.fechaModificacion
+	,a.idMedida
+	,a.productoFraccionable fraccionado
 FROM dbo.Articulo a WITH(NOLOCK)
 INNER JOIN dbo.TipoIva    ti WITH(NOLOCK) ON ti.idTipoIva    = a.idTipoIva 
 LEFT JOIN dbo.SubFamilia sf WITH(NOLOCK) ON sf.idSubFamilia = a.idSubFamilia

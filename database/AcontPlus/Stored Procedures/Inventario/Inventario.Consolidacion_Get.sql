@@ -22,9 +22,62 @@ BEGIN
 	DECLARE  @idEntidad INT
 	,@tipo INT
 	,@id INT
-	SET @idEntidad = (SELECT idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
+	,@opcion INT
+	,@idArticulo INT 
+	,@rucProveedor VARCHAR(25)
+	,@idSubFamilia INT
+	,@nroDocumento VARCHAR(25)
+	,@sql NVARCHAR(MAX) 
+	,@params NVARCHAR(MAX)
 
-	SELECT @tipo = tipo, @id = id FROM OPENJSON (@json) WITH (tipo INT '$.tipo', id INT '$.id')
+	SET @idEntidad = (SELECT idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
+	
+	SET @params = '@idEntidad INT,
+				   @idArticulo INT,
+				   @rucProveedor VARCHAR(25),
+				   @idSubFamilia INT,
+				   @nroDocumento VARCHAR(25) '
+
+	SET @sql = 'SELECT a.idArticulo
+				,codigo
+				,codigoAuxiliar
+				,codigoBarra
+				,descripcion
+				,stock
+				,precioCosto
+				,estado
+				,iva
+				,cantidad = 1
+				,llevaInventario
+				,ISNULL(idMedida,0) idMedida
+				,ISNULL(a.medida, ''SIN MEDIDA'') medida
+				,ISNULL(tipoIva, ''SIN IVA'') AS nombreTipoIva
+				,a.fraccionado
+				,CASE WHEN a.fraccionado = 1 THEN (SELECT af.idMedida, m.descripcion, af.precioCostoFraccionado precioCosto FROM ArticuloFraccionado af WITH (NOLOCK) 
+																												   INNER JOIN Medida m WITH (NOLOCK) ON af.idMedida = m.idMedida WHERE af.idArticulo = a.idArticulo FOR JSON PATH)
+				ELSE ''[]'' END medidas
+				FROM v_Articulo a 
+				WHERE a.estado = 1 
+				AND a.idEntidad = @idEntidad
+				AND a.llevaInventario = 1 '
+
+
+	SELECT @tipo = tipo
+	,@id = id
+	,@opcion = opcion 
+	,@idArticulo = idArticulo
+	,@rucProveedor = rucProveedor
+	,@idSubFamilia = idSubFamilia
+	,@nroDocumento = nroDocumento
+	FROM OPENJSON (@json) WITH (
+								tipo INT '$.tipo', 
+								id INT '$.id',
+								opcion INT '$.opcion', 
+								idArticulo INT '$.idArticulo',
+								rucProveedor VARCHAR(25) '$.rucProveedor',
+								idSubFamilia INT '$.idSubFamilia',
+								nroDocumento INT '$.nroDocumento'
+								)
 	IF @tipo = 1
 		BEGIN
 			SELECT * FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @idUsuarioRol ORDER BY defaultEstab DESC
@@ -83,11 +136,43 @@ BEGIN
 				,codigoTipoIva = ti.codigo
 				,nombreTipoIva = ti.descripcion
 				,stock = a.stock
+				,a.fraccionado
+				,m.descripcion medida
+				,total = (cantidad * cid.precioActual)
+				,medidasTemp = (CASE WHEN a.fraccionado = 1 THEN (SELECT af.idMedida, m.descripcion, af.precioCostoFraccionado precioCosto FROM ArticuloFraccionado af WITH (NOLOCK) 
+																												   INNER JOIN Medida m WITH (NOLOCK) ON af.idMedida = m.idMedida WHERE af.idArticulo = a.idArticulo FOR JSON PATH) ELSE '[]' END)
 			FROM ConsolidacionInventarioDetalle cid WITH(NOLOCK) 
-			INNER JOIN Articulo a WITH(NOLOCK) ON a.idArticulo = cid.idArticulo
+			INNER JOIN v_Articulo a WITH(NOLOCK) ON a.idArticulo = cid.idArticulo
 			INNER JOIN Medida m WITH(NOLOCK) ON m.idMedida = a.idMedida
 			INNER JOIN TipoIva ti WITH(NOLOCK) ON ti.idTipoIva = a.idTipoIva
 			WHERE cid.idConsolidacionInventario = @id AND cid.estado = 1
+		END
+
+	IF (@tipo = 4)
+		BEGIN
+			IF (@opcion = 1)
+				BEGIN 
+					SET @sql = @sql + 'AND a.idArticulo = @idArticulo '
+				END
+			IF (@opcion = 3)
+				BEGIN
+					SET @sql = @sql + 'AND a.idSubFamilia = @idSubFamilia '
+				END
+			IF (@opcion = 4)
+				BEGIN
+					SET @sql = @sql + 'AND idArticulo IN (SELECT idArticulo FROM v_InventarioTransaccion WHERE rucClienteProveedor = @rucProveedor) '
+				END
+			IF (@opcion = 5)
+				BEGIN
+					SET @sql = @sql + 'AND idArticulo IN (SELECT idArticulo FROM v_InventarioTransaccion WHERE nroDocumento = @nroDocumento) '
+				END
+		SET @sql = @sql + 'ORDER BY a.fechaModificacion DESC '
+		EXEC sp_executesql @sql, @params
+							   ,@idEntidad = @idEntidad 
+							   ,@idArticulo = @idArticulo
+							   ,@idSubFamilia = @idSubFamilia
+							   ,@rucProveedor = @rucProveedor
+							   ,@nroDocumento = @nroDocumento
 		END
  
 END

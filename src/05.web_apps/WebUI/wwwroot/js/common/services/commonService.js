@@ -1315,31 +1315,10 @@ export class CommonService {
             }
             if (response.code === '1') {
                 let dataMain = JSON.parse(response.payload);
-
                 dataDocumento = dataMain[0][0];
                 dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision)
-
-
-                detalleDocumento = dataMain[1].map((item, index) => {
-                    let json = {
-                        idArticulo: item.idArticulo
-                    }
-
-                    //Obtenemos medidas y etiquetas 
-                    this.getDataArticuloParaCompra({
-                        json
-                    }).then(response => {
-                        let results = JSON.parse(response.payload);
-                        item.medidas = results[1]
-                    })
-
-                    item.num = index + 1;
-                    item.total = item.cantidad * item.precioActual;
-
-                    return item;
-                })
+                detalleDocumento = dataMain[1]
                 isComplete = true;
-
             }
         })
 

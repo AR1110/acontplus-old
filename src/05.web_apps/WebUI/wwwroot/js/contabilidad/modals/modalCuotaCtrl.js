@@ -10,7 +10,8 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, tS, fS, params){
 
     $scope.tiempoCreditos = [];
     $scope.cuotas = [];
-    $scope.showColumns = false;
+    $scope.showColumnPorcentajeInteres = false;
+    $scope.showColumnPrecioFijo = false;
     $scope.codEstado = null;
     $scope.cloneIdTiempoCredito = 0;
     $scope.totalCuota = 0;
@@ -38,8 +39,10 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, tS, fS, params){
                     $scope.comprobante.fechaEmisionFormat =  moment( $scope.comprobante.fechaEmision).format('DD-MM-YYYY');
                     $scope.comprobante.configFecha =  $scope.comprobante.fechaEmision;
                     $scope.cloneIdTiempoCredito = $scope.comprobante.idTiempoCredito;
-                    $scope.showColumns = $scope.comprobante.config || false;
+                    $scope.showColumnPorcentajeInteres = $scope.comprobante.tipoConfig ==='PI';
+                    $scope.showColumnPrecioFijo = $scope.comprobante.tipoConfig ==='PF';
 
+                    console.log($scope.comprobante)
                     $scope.totalCuota = $scope.comprobante.importeTotal;
 
                     $scope.tiempoCreditos = mainDataRepository[1];
@@ -119,19 +122,29 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, tS, fS, params){
             idDocumento,
             idTipoDocumento,
             idTiempoCredito: $scope.comprobante.idTiempoCredito,
-            fechaEmision: fS.formatDateTimeZone($scope.comprobante.fechaEmision),
-            total: $scope.comprobante.importeTotal
+            fechaEmision: fS.formatDateTimeZone($scope.comprobante.fechaEmision, "YYYY-MM-DD HH:mm:ss A"),
+            codEstado: $scope.comprobante.codEstado,
+            importeTotal: $scope.comprobante.importeTotal
         };
 
-        mS.getData('post', '/CuotaXCobrar/Post', query).then(response => {
+        showLoader();
+        mS.getData('post', 'CuentaPorCobrar/Insert/Cuota', {data: query},  true).then(response => {
+            hideLoader();
+            console.log(response)
             if (response.code === "0") {
                 fS.sweetAlert('warning', response.message);                                                       
             }
-            if (response.code == "1") {
-                
-                fS.sweetAlert('success', response.message, response.titleSms, 1000);                   
-                $uibModalInstance.close(response)                                                    
+            if (response.code == "1") {                
+                fS.sweetAlert('success', response.message, response.titleSms, 1000);  
+                let tempCuotas = JSON.parse(response.payload) || [];                
+                $scope.cuotas = tempCuotas.map(item=>({
+                    ...item,
+                    fechaVencimiento: new Date(item.fechaVencimiento)
+                }))                                                               
             }
+        }).catch(error=>{
+            hideLoader();
+            console.log(error)
         })
     }
 
@@ -377,7 +390,7 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, tS, fS, params){
                     return {
                         idCuotaXCobrar: val.idCuotaXCobrar,
                         cuota: Number(val.cuota),
-                        fechaVencimiento: fS.formatDateTimeZone(val.fechaVencimiento),
+                        fechaVencimiento: fS.formatDateTimeZone(val.fechaVencimiento, "YYYY-MM-DD HH:mm:ss A"),
                         nroCuota: val.nroCuota
                     }
                 })
