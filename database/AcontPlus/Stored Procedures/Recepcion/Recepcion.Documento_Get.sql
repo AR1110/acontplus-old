@@ -137,6 +137,7 @@ BEGIN
 			FROM FactElect.RetAtsDocSustento retDoc
 			INNER JOIN FactElect.RetencionAts rAts ON rAts.idRetencionAts = retDoc.idRetencionAts
 			WHERE retDoc.numAutDocSustento = @claveAcceso
+			AND rAts.anuladaSri = 0
 			RETURN
 		END
 
