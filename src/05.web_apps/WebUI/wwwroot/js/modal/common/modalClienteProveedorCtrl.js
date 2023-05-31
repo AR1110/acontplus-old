@@ -32,7 +32,15 @@ export class ModalBaseCtrl {
             }).then(response => response.data),
             this._mS.getData('get', '/SubContribuyente/OptionSubContribuyente').then(response => response.data),
             this._mS.getData('get', '/TipoClienteProveedor/TipoClienteProveedorSelect?tipoValidacion=' + tipoClienteProveedor).then(response => response.data),
-            this._mS.getData('get', '/TipoEntidad/TipoEntidadSelect').then(response => response.data),
+            this._mS.getData('get', 'TipoEntidad/ListForSelect', null, true).then(response => {
+                if(response.code=='0'){
+                    console.log(response)
+                    return [];
+                }
+                if(response.code==='1'){
+                    return JSON.parse(response.payload) || [];
+                }                
+            }),
             this._mS.getData('get', '/Ciudad/ReadCiudadProvincia').then(response => response.data),
             this._mS.getData('get', '/TiempoCredito/OptionTiempoCredito?gestion=' + esCredito).then(response => response.data),
             // this._mS.getData('get', '/Empresa/Get?json=' + JSON.stringify({ typeList: 2 })).then(response => JSON.parse(response.data)),

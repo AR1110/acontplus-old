@@ -1,6 +1,7 @@
 ﻿(function(){
     'use strict';
-
+    
+    const URL_TEMPLATE = '~/Areas/TipoEntidad/Pages/Shared/'
     let mS = {};
     let tS = {}
     app.controller('tipoEntidadCtrl', tipoEntidadCtrl);
@@ -20,7 +21,7 @@
             try {
                 let modalRef = modalSvc.openMdDialog({
                     controller: ModalCtrl,
-                    templateUrl: 'TipoEntidad/_ModalAddUpdate.cshtml',
+                    templateUrl: URL_TEMPLATE + '_ModalAddUpdate.cshtml',
                     params: params || {}
                 });
                 
@@ -70,13 +71,13 @@
             }).then(result => {
                 if (result.value) {
                     showLoader();
-                    mS.getData('delete', 'TipoEntidad/id=' + item.idTipoEntidad, null, true).then(response => {
+                    mS.getData('delete', 'TipoEntidad/Delete/' + item.idTipoEntidad, null, true).then(response => {
                         hideLoader();
                         if (response.code == "0") {
                             tS.toastr('warning', response.message, response.titleSms);
                         }
                         if (response.code == "1") {
-                            tS.toastr('warning', response.message, response.titleSms);
+                            tS.toastr('success', response.message, response.titleSms);
                             $scope.initiLoad();
                         }
                     }).catch(error =>{
@@ -122,10 +123,11 @@
                     return
                 }
                 showLoader();
-                console.log($scope.data)
+                
                 let url = $scope.tipoRegistro == 1 ? 'TipoEntidad/Insert' : 'TipoEntidad/Update/' + $scope.data.idTipoEntidad;
                 let method = $scope.tipoRegistro == 1 ? 'post':'put';
                 mS.getData(method, url + '?json=' + JSON.stringify($scope.data), null, true).then(response => {
+                    
                     hideLoader();
                     if (response.code == "0") {
                         tS.toastr('warning', response.message, response.titleSms);
