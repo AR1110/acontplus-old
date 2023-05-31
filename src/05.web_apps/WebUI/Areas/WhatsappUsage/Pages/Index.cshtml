@@ -25,6 +25,7 @@
                 <table class="table">
                     <thead>
                         <tr>
+                            <th style="vertical-align: middle">Ruc</th>
                             <th style="vertical-align: middle">Entidad</th>
                             <th style="vertical-align: middle">Fecha Inicio</th>
                             <th style="vertical-align: middle">Fecha Fin</th>
@@ -36,6 +37,7 @@
                     </thead>
                     <tbody>
                         <tr ng-repeat="item in usages | filter: search track by $index">
+                            <td style="vertical-align: middle">{{item.ruc}}</td>
                             <td style="vertical-align: middle">{{item.razonSocial}}</td>
                             <td style="vertical-align: middle">{{item.fechaInicio | date: 'dd/MM/yyyy'}}</td>
                             <td style="vertical-align: middle">{{item.fechaFin | date: 'dd/MM/yyyy'}}</td>

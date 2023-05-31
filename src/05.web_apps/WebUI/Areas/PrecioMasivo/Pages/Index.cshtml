@@ -16,6 +16,22 @@
         width: 100% !important;
         height: 500px !important;
     }
+    #grid-articles .ui-grid-header-cell .ui-grid-cell-contents {
+        text-align: center;
+    }
+
+    .modifiedCell {
+        background-color: #FF9999 !important;
+        color: #000 !important;
+    }
+    .printSelection {
+        width: 600px;
+        margin-top: 10px;
+    }
+
+    .highlight {
+        background-color: #b3c4c7 !important;
+    }
 </style>
 <div ng-controller="precioMasivoCtrl">
     <div class="row page-titles">
@@ -126,17 +142,22 @@
                             placeholder="Buscar artículo">
                     </div>
                 </div>
+                <div class="col-6">
+                    <div class="form-group">
+                        <button type="button" class="btn btn-outline-primary" ng-click="rollbackChanges()"><i class="ti-control-backward"></i> Deshacer Cambios</button>
+                    </div>
+                </div>
             </div>
             <div class="row" ng-show="articles.length > 0">
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                    <div ui-grid="gridOptions" ui-grid-edit ui-grid-resize-columns ui-grid-cellNav ui-grid-auto-resize
+                    <div ui-grid="gridOptions" ui-grid-edit ui-grid-auto-resize ui-grid-resize-columns ui-grid-cellNav
                         class="grid-articles"></div>
                 </div>
             </div>
             <hr>
-            <div class="row" ng-if="articles.length > 0">
+            <div class="row" ng-if="articlesToSave.length > 0">
                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                    <button type="button" class="btn btn-success btn-lg" ng-click="askToSave()"><i
+                    <button type="button" class="btn btn-success btn-lg" ng-click="save()"><i
                             class="fa fa-save"></i> Guardar Todo</button>
                             <button class="btn btn-warning btn-lg" ng-click="refresh()">
                         <i class="fa fa-close"></i> Cancelar

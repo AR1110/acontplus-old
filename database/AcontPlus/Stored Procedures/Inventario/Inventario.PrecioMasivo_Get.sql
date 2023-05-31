@@ -1,3 +1,4 @@
+use AcontPlus
 -- ================================================
 -- Template generated from Template Explorer using:
 -- Create Procedure (New Menu).SQL
@@ -76,6 +77,9 @@ BEGIN
 				,estadoTarifa = ISNULL((SELECT TOP 1 ap.estado FROM v_ArticuloPvp ap
 														WHERE ap.idArticulo = a.idArticulo 
 														AND ap.idTarifa = @idTarifa), 0)
+				,tarifa = ISNULL((SELECT TOP 1 ap.tarifa FROM v_ArticuloPvp ap
+														WHERE ap.idArticulo = a.idArticulo 
+														AND ap.idTarifa = @idTarifa), '''')
 				--,pvp1 = ISNULL((SELECT TOP 1 ap.precioVenta FROM v_ArticuloPvp ap
 				--										WHERE ap.idArticulo = a.idArticulo 
 				--										AND ap.codTarifa = ''1''), 0)
