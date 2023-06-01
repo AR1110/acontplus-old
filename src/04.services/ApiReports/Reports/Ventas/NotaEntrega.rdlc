@@ -255,9 +255,9 @@
             <MIMEType>=Parameters!mimeType.Value</MIMEType>
             <Sizing>FitProportional</Sizing>
             <Top>0.23495cm</Top>
-            <Left>0.31433cm</Left>
+            <Left>1.18746cm</Left>
             <Height>2.89437cm</Height>
-            <Width>9.01417cm</Width>
+            <Width>7.24146cm</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1225,10 +1225,13 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
+                  <Width>0.94883cm</Width>
+                </TablixColumn>
+                <TablixColumn>
                   <Width>1.41344cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>10.34282cm</Width>
+                  <Width>9.40928cm</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1.4548cm</Width>
@@ -1250,6 +1253,41 @@
                 <TablixRow>
                   <Height>0.6cm</Height>
                   <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox13">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>N°</Value>
+                                  <Style>
+                                    <FontSize>6pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox13</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
                     <TablixCell>
                       <CellContents>
                         <Textbox Name="Textbox50">
@@ -1502,6 +1540,40 @@
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
+                        <Textbox Name="Textbox29">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=RowNumber(Nothing)</Value>
+                                  <Style>
+                                    <FontSize>6pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox29</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
                         <Textbox Name="codigo">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -1751,6 +1823,7 @@
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
+                <TablixMember />
               </TablixMembers>
             </TablixColumnHierarchy>
             <TablixRowHierarchy>
@@ -1767,7 +1840,7 @@
             <Top>8.12364cm</Top>
             <Left>0.31433cm</Left>
             <Height>1.2cm</Height>
-            <Width>19.07447cm</Width>
+            <Width>19.08979cm</Width>
             <ZIndex>5</ZIndex>
             <Style>
               <Border>
@@ -2877,10 +2950,10 @@
         <Height>5.81785in</Height>
         <Style />
       </Body>
-      <Width>7.73808in</Width>
+      <Width>7.63942in</Width>
       <Page>
         <PageHeight>29.7cm</PageHeight>
-        <PageWidth>21cm</PageWidth>
+        <PageWidth>20cm</PageWidth>
         <LeftMargin>0.25cm</LeftMargin>
         <RightMargin>0.25cm</RightMargin>
         <TopMargin>0.25cm</TopMargin>

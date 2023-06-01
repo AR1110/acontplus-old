@@ -36,9 +36,9 @@
 
     app.controller('aprobacionDocumentoCtrl', aprobacionDocumentoCtrl);
 
-    aprobacionDocumentoCtrl.$inject = ['$scope', '$filter', '$injector', 'modalService', 'nombreModalVenta', 'decodeToken'];
+    aprobacionDocumentoCtrl.$inject = ['$scope', '$filter', '$injector', 'modalService', 'decodeToken'];
 
-    function aprobacionDocumentoCtrl($scope, $filter, $injector, modalSvc, nombreModalVenta, decodeToken) {
+    function aprobacionDocumentoCtrl($scope, $filter, $injector, modalSvc, decodeToken) {
 
         //Injection Services
         mS               = $injector.get('mainService');
@@ -454,23 +454,46 @@
         $scope.getReport = function (item) {
             try {
                 
+                let codigo = null;
+                if(item.docDestino==='01'){
+                    codigo ='RAC'
+                }
+                if(item.docDestino==='NE'){
+                    codigo='P-NE'
+                }
+                
                 let format = 'pdf';
                 let dataParms = {
-                    id: item.idAprob_Document,
+                    id: item.idAprob_Document,    
                     codEstab: item.codEstab,
-                    docDestino: item.docDestino,
-                    codigo: 'RAC',
-                    format,
+                    codDoc: item.docDestino,
+                    codigo,
+                    format,                                    
                 }
 
                 const parameters = {
+                    hasService: true,
+                    reportParams: JSON.stringify({
+                        hasParams: true,
+                        codigo,
+                        codEstab: item.codEstab,
+                        format,
+                        aditionalParams: []
+                    }),
                     dataParams: JSON.stringify(dataParms)
                 }
 
-                commonSvc.getReportDynamic({
-                    parameters,
-                    format
-                })
+                if(item.docDestino==='NE'){
+                    commonSvc.getReport({
+                        parameters,
+                        formatType: format
+                    })
+                }else{
+                    commonSvc.getReportDynamic({
+                        parameters,
+                        format
+                    })
+                }
             } catch (error) {
                 console.log(error)
             }

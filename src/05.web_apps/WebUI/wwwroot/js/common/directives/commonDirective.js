@@ -645,11 +645,11 @@
                             if (response.code == '1') {
                                 let tempArray = JSON.parse(response.payload)
                                 if (tempArray[0][0].code == '0') {
-                                    toastService.toastr('warning', tempArray[0][0].message)
+                                    Swal.fire({ title: 'Aviso', text: tempArray[0][0].message, icon: 'warning' })
 
                                 } else {
                                     if (tempArray[0][0].message) {
-                                        toastService.toastr('info', tempArray[0][0].message)
+                                        Swal.fire({ title: 'Aviso', text: tempArray[0][0].message, icon: 'info' })
                                     }
                                     // let fileCtrl = nombreModalLogistica.VEHICULO.fileCtrl;
                                     // let ctrl = nombreModalLogistica.VEHICULO.controllers['M'];

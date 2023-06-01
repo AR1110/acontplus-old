@@ -53,6 +53,7 @@ BEGIN
 	DECLARE @sql NVARCHAR(MAX) = 'SELECT TOP 50 
 										 idAprob_Document        = ad.idAprob_Document
 										,uniqueId                = ad.uniqueId
+										,es.codEstab
 										,ad.docOrigen  
 										,ad.codDoc
 										,docOrigenDesc           = CASE ad.docOrigen WHEN ''PR'' THEN ''Proforma''

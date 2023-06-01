@@ -23,6 +23,7 @@
                             return {
                                 idAprob_Document: item.idAprob_Document,
                                 uniqueId: item.uniqueId,
+                                codEstab: item.codEstab,
                                 docOrigen: item.docOrigen,
                                 codDoc: item.codDoc,
                                 docDestino: item.codDoc,
