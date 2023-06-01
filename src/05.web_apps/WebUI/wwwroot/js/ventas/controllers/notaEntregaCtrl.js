@@ -552,61 +552,21 @@
                 let template = nombreModalContabilidad.COBRO.templates['MC']; 
                 let controller = (await import(fileCtrl))[ctrl];
                 
-                _modalSvc.openModalCustom({
+                let modalRef = _modalSvc.openModalCustom({
                     controller,
                     template,
                     size: 'xl',
                     params: item,
                     isRenderRazorPartial: true
                 })
-                
+                modalRef.result.then(result=>{
+                    if(typeof result==='object' && result.isReload){
+                        $scope.getNotaEntregas();
+                    }
+                })
             } catch (error) {
                 console.log(error)
-            }
-            // try {
-            //     let { MODAL_FILE_CUOTA, MODAL_CUOTA_VENTA } = _nombreModalConst.cobro;
-            //     let controller = (await import('./../../' + MODAL_FILE_CUOTA))[MODAL_CUOTA_VENTA['controller']];
-            //     let template = MODAL_CUOTA_VENTA['template'];
-
-            //     let params = {}
-
-            //     let response = await _mS.getData('get', `/CuotaXCobrar/GetByDocument?idComprobante=${item.idNotaEntrega}&idTipoDoc=${TIPO_DOC_NE.idTipoDocumento}`)
-
-            //     if (response.id === "0") {
-            //         _fS.sweetAlert('warning', response.message, response.titleSms)
-            //         return
-            //     }
-
-            //     if (response.id === "1") {
-            //         params = {
-            //             cuotas: response.data,
-            //             data: {
-            //                 ...item,
-            //                 id: item.idNotaEntrega,
-            //                 codEstab: item.codEstab,
-            //                 esContado: item.credito,
-            //                 razonSocialComprador: item.nombreFiscal,
-            //             },
-            //             TIPO_DOC: TIPO_DOC_NE
-            //         }
-            //     }
-
-
-            //     let $modalRef = _modalSvc.openModalCustom({
-            //         controller,
-            //         template,
-            //         size: 'xl',
-            //         params
-            //     })
-
-            //     $modalRef.result.then(result => {
-            //         if (typeof result === 'object') {
-            //             $scope.getNotaEntregas();
-            //         }
-            //     })
-            // } catch (error) {
-            //     console.log(error)
-            // }
+            }           
         }
 
 

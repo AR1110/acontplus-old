@@ -11,17 +11,16 @@ namespace ApiContabilidad.Controllers
     public class CuentaPorCobrarController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly DbAccess _dbAccess;
         public CuentaPorCobrarController(IConfiguration configuration)
         {
             _configuration = configuration;
-            _dbAccess = new DbAccess(_configuration);
         }
 
         // GET: api/<CuentaPorCobrarController>
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
+            DbAccess _dbAccess = new DbAccess(_configuration);
             LogWriter _log = new LogWriter(_configuration);
             GenericResponse _response = new GenericResponse();
             try
@@ -47,6 +46,7 @@ namespace ApiContabilidad.Controllers
         [HttpPost("Insert/Cuota")]
         public async Task<IActionResult> Insert([FromBody] RequestApiDto paremeter)
         {
+            DbAccess _dbAccess = new DbAccess(_configuration);
             LogWriter _log = new LogWriter(_configuration);
             GenericResponse _response = new GenericResponse();
             try
@@ -72,11 +72,12 @@ namespace ApiContabilidad.Controllers
         [HttpPut("Update/Cuota")]
         public async Task<IActionResult> Update([FromBody] RequestApiDto paremeter)
         {
+            DbAccess _dbAccess = new DbAccess(_configuration);
             LogWriter _log = new LogWriter(_configuration);
             GenericResponse _response = new GenericResponse();
             try
             {
-                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value); await _dbAccess.SPExecute("Contabilidad.CuentaPorPagar_Update");
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _dbAccess.SPExecute("Contabilidad.CuotaPorCobrar_Update");
                 _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _dbAccess.AddDynamicParam("json", DataHelper.SerializeDictionary(paremeter.data));

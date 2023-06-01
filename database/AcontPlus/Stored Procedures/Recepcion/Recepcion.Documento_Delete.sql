@@ -30,8 +30,12 @@ BEGIN
 			 END
 	BEGIN TRY
 		BEGIN TRAN
+				
+			 DELETE FROM FactElect.DocRelacionado WHERE idDocumentoRecibido = @idDocumento
+
 			 DELETE FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento
-			SELECT '1' code, 'Eliminado Exitosamente' as 'message'
+
+			 SELECT '1' code, 'Eliminado Exitosamente' as 'message'
 		COMMIT TRAN
 	END TRY
 	BEGIN CATCH

@@ -36,6 +36,11 @@ BEGIN
 	DECLARE @idTipoDocumento INT 
 	DECLARE @idDocumento INT
 	DECLARE @cuotas VARCHAR(MAX)
+	
+	-- ============== PAYLOAD =====================
+	DECLARE @payload AS VARCHAR(MAX)
+
+
 	DECLARE @tbCuotas AS TABLE (
 		idCuotaXCobrar INT UNIQUE NOT NULL
 	   ,fechaVencimiento DATETIME NOT NULL
@@ -100,8 +105,24 @@ BEGIN
 					UPDATE dbo.NotaEntrega SET fechaVencimiento = @fechaVencimiento WHERE idNotaEntrega = @idDocumento
 				END 
 
+			SET @payload = (SELECT cx.idCuotaXCobrar
+			                      ,cx.nroCuota
+								  ,interes = 0
+								  ,cx.cuota
+								  ,cx.diasMora
+								  ,cx.abono
+								  ,cx.saldo
+								  ,fechaVencimiento = FORMAT(cx.fechaVencimiento,'MM/dd/yyyy')
+				                  ,fechaGracia      = FORMAT(cx.fechaVencimiento,'MM/dd/yyyy')
+								  ,estado           = ep.descripcion
+								  ,codEstado        = ep.codigo
+			                FROM dbo.CuotaXCobrar     cx WITH (NOLOCK)
+							INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago
+							WHERE cx.idTipoDocumento = @idTipoDocumento AND cx.idComprobante = @idDocumento AND cx.estado = 1
+						   FOR JSON PATH)
+
 		COMMIT TRAN 
-		SELECT '1'code,'Actualizado Correctamente' as 'message'
+		SELECT '1'code,'Actualizado Correctamente' as 'message', @payload as payload
 	END TRY 
 
 	BEGIN CATCH 

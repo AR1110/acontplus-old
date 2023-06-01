@@ -17,6 +17,8 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, tS, fS, params){
     $scope.totalCuota = 0;
     $scope.totalDiferencia = 0;
 
+    $scope.isReload = false;
+
     initiload();
     function initiload(){
         try {
@@ -74,7 +76,7 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, tS, fS, params){
     }
 
     $scope.getFechaEscritaCuota = function(item) {        
-        if (!item.fechaVencimiento) {
+        if (item.fechaVencimiento) {
             return item.fechaVencimiento.toLocaleDateString("es-ES", { year: 'numeric', month: 'long', day: 'numeric' });
         }            
     }
@@ -104,7 +106,7 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, tS, fS, params){
             })
 
             if(isConfirmed){
-                crearCuota();
+                $scope.crearCuota();
                 $scope.cloneIdTiempoCredito = $scope.comprobante.idTiempoCredito;
                 $scope.$apply()
             }else{
@@ -117,7 +119,7 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, tS, fS, params){
         }        
     }
 
-    function crearCuota() {
+    $scope.crearCuota = function() {
         let query = {
             idDocumento,
             idTipoDocumento,
@@ -134,7 +136,8 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, tS, fS, params){
             if (response.code === "0") {
                 fS.sweetAlert('warning', response.message);                                                       
             }
-            if (response.code == "1") {                
+            if (response.code == "1") { 
+                $scope.isReload = true;               
                 fS.sweetAlert('success', response.message, response.titleSms, 1000);  
                 let tempCuotas = JSON.parse(response.payload) || [];                
                 $scope.cuotas = tempCuotas.map(item=>({
@@ -386,24 +389,37 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, tS, fS, params){
             if(isConfirmed){
                 showLoader();
 
-                let cuotas =  $scope.cuotas.map(val => {
-                    return {
-                        idCuotaXCobrar: val.idCuotaXCobrar,
-                        cuota: Number(val.cuota),
-                        fechaVencimiento: fS.formatDateTimeZone(val.fechaVencimiento, "YYYY-MM-DD HH:mm:ss A"),
-                        nroCuota: val.nroCuota
-                    }
-                })
+                let cuotas =  $scope.cuotas.map(val => ({
+                    idCuotaXCobrar: val.idCuotaXCobrar,
+                    cuota: Number(val.cuota),
+                    fechaVencimiento: fS.formatDateTimeZone(val.fechaVencimiento, "YYYY-MM-DD HH:mm:ss A"),
+                    diasMora: 0,
+                    mora: 0                    
+                }))
+                let query = {
+                    idTipoDocumento,
+                    idDocumento,
+                    codEstab: $scope.comprobante.codEstab,
+                    cuotas
+                }
 
-                mS.getData('post', `/CuotaXCobrar/Put?idComprobante=${idDocumento}&idTipDoc=${idTipoDocumento}`, cuotas).then(response => {
+                mS.getData('put', 'CuentaPorCobrar/Update/Cuota', {data: query},  true).then(response => {
                     hideLoader();
                     if (response.code === "0") {
                         fS.sweetAlert('warning', response.message, response.titleSms);                                           
                     }
-                    if (response.code === "1") {
+                    if (response.code === "1") {                        
                         fS.sweetAlert('success', response.message, response.titleSms, 1000);                                                               
-                        $uibModalInstance.close(response)
+                        $scope.isReload = true;
+                        let tempCuotas = JSON.parse(response.payload) || [];                
+                        $scope.cuotas = tempCuotas.map(item=>({
+                            ...item,
+                            fechaVencimiento: new Date(item.fechaVencimiento)
+                        })) 
                     }
+                }).catch(error=>{
+                    hideLoader();
+                    console.log(error)
                 })
             }
             
@@ -417,6 +433,9 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, tS, fS, params){
 
 
     $scope.closeModal = function(){
-        $uibModalInstance.close();
+        let isReload = $scope.isReload;
+        $uibModalInstance.close({
+            isReload
+        });
     }
 }

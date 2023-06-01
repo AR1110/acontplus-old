@@ -41,11 +41,11 @@ BEGIN
 	SELECT TOP 1 @codDoc = codigo FROM dbo.TipoDocumento WITH (NOLOCK) WHERE idTipoDocumento = @idTipoDocumento
 	
 	-- ============================= Datos de las cuotas para los documentos ===============================================================
-	IF @tipo = 2 
+	IF @tipo = 2
 		BEGIN
 			
 			-- ==== PARAMETER CONFIG ==========
-			DECLARE @configInteres BIT
+			DECLARE @configInteres AS BIT
 			DECLARE @porcentaje AS NUMERIC(18,5)
 			DECLARE @precioFijo AS NUMERIC(18,5)
 			DECLARE @tipoConfig AS VARCHAR(5)
@@ -54,7 +54,7 @@ BEGIN
 			DECLARE @creditoContado BIT
 			DECLARE @codEstado VARCHAR(5)
 
-			DECLARE @tbCuotas AS TABLE (
+			DECLARE @tbCuotasInteres AS TABLE (
 				 idCuotaXCobrar INT UNIQUE NOT NULL
 				,nroCuota INT NOT NULL
 				,cuota NUMERIC(15,5) NOT NULL
@@ -62,7 +62,6 @@ BEGIN
 				,interes NUMERIC(15,5) NOT NULL
 				,mora NUMERIC(15,5) NOT NULL
 				,fechaVencimiento DATE NOT NULL
-				,fechaGracia DATE NOT NULL
 				,diasMora INT NOT NULL
 				,estado VARCHAR(150) NOT NULL
 				,codEstado VARCHAR(5) NOT NULL
@@ -74,26 +73,6 @@ BEGIN
 				  ,@precioFijo    = JSON_VALUE(dbo.f_sanitize_json(jsonConfig),'$.infoInteres.precioFijo') 
 			FROM config.sistema WITH (NOLOCK) WHERE codConfig = 'CV' AND idEntidad = @idEntidad
 
-			-- ==================== OBTERNER COUTOS CUANDO NO EXISTE NINGUNA CONFIGURACION ===========================
-			IF ISNULL(@configInteres,0) = 0 
-				BEGIN
-					INSERT INTO @tbCuotas (idCuotaXCobrar,nroCuota,cuota,abono,fechaVencimiento,fechaGracia,diasMora,interes,mora,estado,codEstado)
-					SELECT cx.idCuotaXCobrar
-						  ,cx.nroCuota
-						  ,cx.cuota
-						  ,cx.abono
-						  ,fechaVencimiento 
-						  ,fechaVencimiento
-						  ,cx.diasMora
-						  ,0
-						  ,0
-						  ,estado = ep.descripcion
-						  ,ep.codigo
-					FROM dbo.CuotaXCobrar     cx WITH (NOLOCK)
-					INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago
-					WHERE idComprobante = @idDocumento AND idTipoDocumento = @idTipoDocumento
-				END
-				
 			-- ==================== PROCESO PAR CUANDO ESTE ACTIVADO LA CONFIGURACION =================================
 			IF @configInteres = 1
 				BEGIN
@@ -116,77 +95,34 @@ BEGIN
 							WHERE ne.idNotaEntrega = @idDocumento
 						END 
 
-					-- ===================== si el documento es al contado no realiza este proceso ==================================
-					
-					IF @creditoContado = 1
-						BEGIN
-							INSERT INTO @tbCuotas (idCuotaXCobrar,nroCuota,cuota,abono,fechaVencimiento,fechaGracia,diasMora,interes,mora,estado,codEstado)
-							SELECT cx.idCuotaXCobrar
-								  ,cx.nroCuota
-								  ,cx.cuota
-								  ,cx.abono
-								  ,fechaVencimiento 
-								  ,fechaVencimiento
-								  ,cx.diasMora
-								  ,0
-								  ,0
-								  ,estado = ep.descripcion
-								  ,ep.codigo
-							FROM dbo.CuotaXCobrar     cx WITH (NOLOCK)
-							INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago
-							WHERE idComprobante = @idDocumento AND idTipoDocumento = @idTipoDocumento
-						END 
-
 					-- ========================== documentos a credito ==================================================================================
 					IF @creditoContado = 0 
-
 						BEGIN
-						
-							-- ================ Si el documento a credio se encuentra cobrado retorna la informacion sin calculo =========================
-							IF @codEstado = 'CBR'
-								BEGIN
-									INSERT INTO @tbCuotas (idCuotaXCobrar,nroCuota,cuota,abono,fechaVencimiento,fechaGracia,diasMora,interes,mora,estado,codEstado)
-									SELECT cx.idCuotaXCobrar
-										  ,cx.nroCuota
-										  ,cx.cuota
-										  ,cx.abono
-										  ,fechaVencimiento 
-										  ,fechaVencimiento
-										  ,cx.diasMora
-										  ,0
-										  ,cx.mora
-										  ,estado = ep.descripcion
-										  ,ep.codigo
-									FROM dbo.CuotaXCobrar     cx WITH (NOLOCK)
-									INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago
-									WHERE idComprobante = @idDocumento AND idTipoDocumento = @idTipoDocumento
-								END
-
 							-- === Calculo para sacar el interes de las cuotas segun su configuracion --------------------------------------
 							IF @codEstado != 'CBR'
 								BEGIN
-
-									INSERT INTO @tbCuotas (idCuotaXCobrar,nroCuota,cuota,abono,fechaVencimiento,fechaGracia,diasMora,interes,mora,estado,codEstado)
-									SELECT cx.idCuotaXCobrar
-										  ,cx.nroCuota
-										  ,cx.cuota
-										  ,cx.abono
-										  ,fechaVencimiento = cx.fechaVencimiento
-										  ,fechaVencimiento
-										  ,diasMora         = CASE WHEN ep.codigo != 'CBR' THEN DATEDIFF(DAY,cx.fechaVencimiento,GETDATE()) ELSE 0 END 
-										  ,interes          = CASE WHEN ep.codigo != 'CBR' THEN cx.cuota * @porcentaje  / 100 ELSE 0 END  
-										  ,mora             = CASE WHEN ep.codigo != 'CBR' THEN cx.cuota * @porcentaje  / 100 * DATEDIFF(DAY,cx.fechaVencimiento,GETDATE()) ELSE 0 END  
-									      ,ep.descripcion
-										  ,ep.codigo
-									FROM dbo.CuotaXCobrar cx WITH (NOLOCK)
-									INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago 
-									WHERE cx.idComprobante = @idDocumento AND cx.idTipoDocumento = @idTipoDocumento AND cx.estado = 1
-
+									IF @tipoConfig = 'PI' OR @tipoConfig = 'PF'
+										BEGIN 
+											INSERT INTO @tbCuotasInteres(idCuotaXCobrar,nroCuota,cuota,abono,fechaVencimiento,diasMora,interes,mora,estado,codEstado)
+											SELECT cx.idCuotaXCobrar
+												  ,cx.nroCuota
+												  ,cx.cuota
+												  ,cx.abono
+												  ,fechaVencimiento = cx.fechaVencimiento
+												  ,diasMora         = CASE WHEN ep.codigo != 'CBR' THEN DATEDIFF(DAY,cx.fechaVencimiento,GETDATE()) ELSE 0 END 
+												  ,interes          = CASE WHEN ep.codigo != 'CBR' THEN cx.cuota * @porcentaje  / 100 ELSE 0 END  
+												  ,mora             = CASE WHEN ep.codigo != 'CBR' THEN cx.cuota * @porcentaje  / 100 * DATEDIFF(DAY,cx.fechaVencimiento,GETDATE()) ELSE 0 END  
+												  ,ep.descripcion
+												  ,ep.codigo
+											FROM dbo.CuotaXCobrar     cx WITH (NOLOCK)
+											INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago 
+											WHERE cx.idComprobante = @idDocumento AND cx.idTipoDocumento = @idTipoDocumento AND cx.estado = 1
+										END 
 								END 
-
 						END 
 				END 
 
+			
 			-- ==================== PAYLOAD ===========================================================================
 			IF @codDoc = 'FV'
 				BEGIN
@@ -216,8 +152,8 @@ BEGIN
 								,importeTotal     = ne.total
 								,ne.idTiempoCredito
 								,codEstado        = ep.codigo 
-								,config = ISNULL(@configInteres,0) 
-								,tipoConfig      = @tipoConfig
+								,config           = ISNULL(@configInteres,0) 
+								,tipoConfig       = @tipoConfig
 					FROM dbo.NotaEntrega           ne WITH (NOLOCK)
 					INNER JOIN dbo.Cliente         cl WITH (NOLOCK) ON cl.idCliente      = ne.idCliente 
 					INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision = ne.idPuntoEmision
@@ -228,23 +164,26 @@ BEGIN
 			
 			SELECT idTiempoCredito,descripcion,diasCredito,numeroCuota,tiempoCredito = tipo FROM dbo.TiempoCredito WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 AND gestion = 1
 
-			SELECT idCuotaXCobrar 
-				  ,nroCuota 
-				  ,cuota 
-				  ,interes
-				  ,diasMora         = IIF(diasMora <= 0,0,diasMora)
-				  ,mora             = IIF(diasMora <= 0,0,mora)
-				  ,abono 
-				  ,saldo            = CAST(cuota + IIF(diasMora <= 0,0,mora) AS numeric(18,5))
-				  ,fechaVencimiento = FORMAT(fechaVencimiento,'MM/dd/yyyy')
-				  ,fechaGracia      = FORMAT(fechaGracia,'MM/dd/yyyy')
-				  ,estado 
-				  ,codEstado 
-			FROM @tbCuotas
-			ORDER BY nroCuota ASC
-	  
-		END 
+			SELECT cx.idCuotaXCobrar
+			      ,cx.nroCuota
+				  ,cx.cuota
+				  ,interes = 0
+				  ,cx.diasMora
+				  ,cx.mora
+				  ,cx.abono
+				  ,cx.saldo
+				  ,fechaVencimiento = FORMAT(cx.fechaVencimiento,'MM/dd/yyyy')
+				  ,estado = ep.descripcion
+				  ,codEstado = ep.codigo
+			FROM dbo.CuotaXCobrar     cx WITH (NOLOCK)
+			INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago
+			WHERE cx.idTipoDocumento = @idTipoDocumento AND  cx.idComprobante = @idDocumento AND cx.estado = 1
+			ORDER BY cx.nroCuota ASC
 
+			SELECT * FROM @tbCuotasInteres 
+
+		END 
+	
 	-- ============================= Datos para cobros rapidos,lotes,credito ================================================================ 
 	IF @tipo = 3
 		BEGIN
@@ -533,7 +472,7 @@ BEGIN
 				  ,fechaEmision         = FORMAT(@fechaEmision,'MM/dd/yyyy')
 				  ,serieComprobante     = @serieComprobante
 			FROM @tbDocuments
-		END 
+		END
 
 END
 GO

@@ -92,7 +92,7 @@
                                ng-model="item.cuota" 
                                id="valorEntrada" 
                                ng-blur="setValorEntrada(item.cuota)" 
-                               class="form-control border-select" />
+                               class="form-control border-select text-center" />
                                 
                         <!--Input Cuota -->
                         <input type="text" 
@@ -101,7 +101,7 @@
                                 valid-number 
                                 ng-blur="setValorCuota(item)" 
                                 ng-model="item.cuota" 
-                                class="form-control border-select" />
+                                class="form-control border-select text-center" />
                     </td>
                     <td md-cell ng-if="showColumnPrecioFijo">{{item.precioFijo}}</td>
                     <td md-cell ng-if="showColumnPorcentajeInteres">{{item.interes}}</td>
@@ -112,7 +112,7 @@
                     <td md-cell>
                         <span ng-if="item.nroCuota=='E'" uib-popover-html="'getFechaEscritaCuota(item.fechaVencimiento)'"  popover-trigger="'focus'" class="ml-1">{{item.fechaVencimiento}}</span>
                         
-                        <input type="date" uib-popover-html="'getFechaEscritaCuota(item.fechaVencimiento)'"  popover-trigger="'focus'"
+                        <input type="date" uib-popover-html="getFechaEscritaCuota(item)"  popover-trigger="'focus'"
                                min="2020-01-01" 
                                max="2030-12-31" 
                                id="fechaVencimiento{{item.idCuotaXCobrar}}" 
@@ -139,15 +139,21 @@
                 </tr>  
                 <tr md-row>
                     <td md-cell class="text-right">
-                        <h5><strong>Total Cuota: </strong></h5>
-                        <h5><strong>Diferencia: </strong></h5>
+                        <h6><strong>Total Cuota: </strong></h5>
+                        <h6><strong>Diferencia: </strong></h5>
                     </td>
-                    <td md-cell align="left">
-                        <h4>${{totalCuota}}</h4>
-                        <h4 class="text-danger">${{totalDiferencia}}</h4>
+                    <td md-cell align="text-left">
+                        <h6>${{totalCuota}}</h4>
+                        <h6 class="text-danger">${{totalDiferencia}}</h4>
                     </td>
-                    <td md-cell></td>
-                    <td md-cell></td>
+                    <td md-cell ng-if="showColumnPrecioFijo"></td>
+                    <td md-cell ng-if="showColumnPorcentajeInteres"></td>                    
+                    <td md-cell ng-if="showColumnPorcentajeInteres"></td>                    
+                    <td md-cell ng-if="showColumnPorcentajeInteres"></td>                    
+                    <td md-cell></td>                    
+                    <td md-cell></td>                    
+                    <td md-cell></td>                    
+                    <td md-cell></td>                    
                 </tr>                               
             </tbody>
         </table>

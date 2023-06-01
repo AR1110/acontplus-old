@@ -66,7 +66,7 @@ BEGIN
 
 
 	BEGIN TRY 
-		
+
 		SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
 		SELECT @fechaEmision    = CONVERT(DATETIME,fechaEmision,121)
@@ -74,6 +74,7 @@ BEGIN
 			  ,@idDocumento     = idDocumento
 			  ,@idTiempoCredito = idTiempoCredito
 			  ,@codEstado       = codEstado 
+			  ,@importeTotal    = importeTotal
 		FROM OPENJSON(@json) WITH (fechaEmision NVARCHAR(150) '$.fechaEmision'
 		                          ,idTipoDocumento        INT '$.idTipoDocumento'
 							      ,idDocumento            INT '$.idDocumento'
@@ -82,6 +83,8 @@ BEGIN
 								  ,importeTotal NUMERIC(18,5) '$.importeTotal') as dt
 
 		SELECT TOP 1 @codDoc = codigo FROM dbo.TipoDocumento WITH (NOLOCK) WHERE idTipoDocumento = @idTipoDocumento
+
+		SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PE'
 
 		SELECT TOP 1
 			 @nroCuota     = numeroCuota
@@ -146,7 +149,7 @@ BEGIN
 
 		BEGIN TRAN 
 			
-			UPDATE dbo.CuotaXCobrar SET estado = 1 WHERE idTipoDocumento = @idTipoDocumento AND idComprobante = @idDocumento
+			UPDATE dbo.CuotaXCobrar SET estado = 0 WHERE idTipoDocumento = @idTipoDocumento AND idComprobante = @idDocumento
 
 			IF @codDoc = 'FV'
 				BEGIN
@@ -158,12 +161,13 @@ BEGIN
 					UPDATE dbo.NotaEntrega SET fechaVencimiento = @fechaVencimiento, idTiempoCredito = @idTiempoCredito WHERE idNotaEntrega = @idDocumento
 				END
 
-			INSERT INTO dbo.CuotaXCobrar (idTipoDocumento,idComprobante,idEstadoPago,nroCuota,cuota,entrada)
-			                      SELECT @idTipoDocumento,@idDocumento,@idEstadoPago,nroCuota,cuota,entrada FROM @cuotas
+			INSERT INTO dbo.CuotaXCobrar (idTipoDocumento,idComprobante,idEstadoPago,fechaVencimiento,nroCuota,cuota,entrada)
+			                      SELECT @idTipoDocumento,@idDocumento,@idEstadoPago,fechaVencimiento,nroCuota,cuota,entrada FROM @cuotas
 			
 			SET @payload = (SELECT cx.idCuotaXCobrar
 			                      ,cx.nroCuota
 								  ,interes = 0
+								  ,cx.cuota
 								  ,cx.diasMora
 								  ,cx.abono
 								  ,cx.saldo
@@ -171,8 +175,9 @@ BEGIN
 				                  ,fechaGracia      = FORMAT(cx.fechaVencimiento,'MM/dd/yyyy')
 								  ,estado           = ep.descripcion
 								  ,codEstado        = ep.codigo
-			                FROM dbo.CuotaXCobra cx WITH (NOLOCK)
+			                FROM dbo.CuotaXCobrar     cx WITH (NOLOCK)
 							INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago
+							WHERE cx.idTipoDocumento = @idTipoDocumento AND cx.idComprobante = @idDocumento AND cx.estado = 1
 						   FOR JSON PATH)
 
 		COMMIT TRAN 
