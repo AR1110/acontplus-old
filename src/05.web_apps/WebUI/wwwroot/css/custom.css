@@ -1,10 +1,10 @@
-﻿#sidebarnav {
+﻿/* #sidebarnav {
     position: fixed;
     top: 50px;
     bottom: 0;
     overflow-x: hidden!important;
     overflow-y: scroll;
-}
+} */
 
 .swall-overlay {
     z-index: 100005;

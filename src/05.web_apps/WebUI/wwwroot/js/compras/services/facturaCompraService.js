@@ -58,7 +58,7 @@
         }
 
         service.delete = function(id){
-            return mS.getData('delete', url + id, null, true).then(response=>{
+            return mS.getData('delete', url + 'Delete/' + id, null, true).then(response=>{
                 return response;
             })            
         }
