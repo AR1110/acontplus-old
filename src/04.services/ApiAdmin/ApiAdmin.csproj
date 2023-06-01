@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
@@ -13,6 +13,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\01.common\DataAccess\DataAccess.csproj" />
     <ProjectReference Include="..\..\02.domain\Domain.Admin\Domain.Admin.csproj" />
+    <ProjectReference Include="..\..\03.business_logic\BL.Admin\BL.Admin.csproj" />
+    <ProjectReference Include="..\..\03.business_logic\BL.JwtAuthenticationManger\BL.JwtAuthenticationManger.csproj" />
   </ItemGroup>
 
 </Project>
