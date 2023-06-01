@@ -120,6 +120,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BL.ExcelReports", "03.busin
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiLogistica", "04.services\ApiLogistica\ApiLogistica.csproj", "{2ECAE4BB-E460-40F3-882E-66BD4A5C298C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiAdmin", "04.services\ApiAdmin\ApiAdmin.csproj", "{DAB7CF10-86D3-4283-AC60-9F078A246524}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -296,6 +298,10 @@ Global
 		{2ECAE4BB-E460-40F3-882E-66BD4A5C298C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2ECAE4BB-E460-40F3-882E-66BD4A5C298C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2ECAE4BB-E460-40F3-882E-66BD4A5C298C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DAB7CF10-86D3-4283-AC60-9F078A246524}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAB7CF10-86D3-4283-AC60-9F078A246524}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAB7CF10-86D3-4283-AC60-9F078A246524}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAB7CF10-86D3-4283-AC60-9F078A246524}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -344,6 +350,7 @@ Global
 		{2CBD8CCB-01CB-430D-B507-949BA8EE222A} = {691582CC-73A1-4AEB-BF9B-B8427408966B}
 		{091F1951-6C69-43CC-B60A-009D8DA14951} = {691582CC-73A1-4AEB-BF9B-B8427408966B}
 		{2ECAE4BB-E460-40F3-882E-66BD4A5C298C} = {E643720B-EDD4-43FF-80CF-2040B07B6D3C}
+		{DAB7CF10-86D3-4283-AC60-9F078A246524} = {E643720B-EDD4-43FF-80CF-2040B07B6D3C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BA9DF437-2C4E-4B51-A33F-8A6B93E9A018}
