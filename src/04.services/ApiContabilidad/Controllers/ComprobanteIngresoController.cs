@@ -71,8 +71,8 @@ namespace ApiContabilidad.Controllers
             return Ok(_response);
         }
 
-        [HttpPut("Cancel/{id}")]
-        public async Task<IActionResult> Cancel(int id, string observacion)
+        [HttpPut("Cancel")]
+        public async Task<IActionResult> Cancel([FromBody] RequestApiDto paremeter)
         {
             LogWriter _log = new LogWriter(_configuration);
             GenericResponse _response = new GenericResponse();
@@ -81,9 +81,8 @@ namespace ApiContabilidad.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _dbAccess.SPExecute("Contabilidad.ComprobanteIngreso_Update_Cancel");
                 _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _dbAccess.AddDynamicParam("idComprobanteIngreso", id);
-                _dbAccess.AddDynamicParam("observacion", observacion);
-                _response = _dbAccess.GetDataSetAsync();
+                _dbAccess.AddDynamicParam("json", DataHelper.SerializeDictionary(paremeter.data));
+                _response = _dbAccess.GetDefault();
             }
             catch (Exception ex)
             {

@@ -42,7 +42,7 @@ BEGIN
 			RETURN
 		END
 
-	SELECT @idEntidad = idEntidad FROM AFTDataRol(@idRol)
+	SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 	
 	IF (SELECT LEN(RTRIM(LTRIM(tipo)))  FROM @tmp) > 0
 		BEGIN

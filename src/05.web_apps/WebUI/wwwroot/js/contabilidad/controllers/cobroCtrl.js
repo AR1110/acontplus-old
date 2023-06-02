@@ -39,7 +39,8 @@
 
         $scope.dataSearch = {
             pageIndex: 1,
-            pageSize: 1000
+            pageSize: 1000,
+            tipo: 1
         }
 
         
@@ -77,14 +78,14 @@
             try {
                 showLoader();
                 $scope.cobros = [];
-                _mS.getData('get', '/ComprobanteIngreso/Get?json=' + JSON.stringify($scope.dataSearch)).then(response => {
+                _mS.getData('get', 'ComprobanteIngreso/?json=' + JSON.stringify($scope.dataSearch), null, true).then(response => {
                     if (response.code === "0") {
                         hideLoader();
                         console.warn(response)
                     }
                     if (response.id === "1") {
                         hideLoader();
-                        $scope.cobros = JSON.parse(response.payload) || [];
+                        $scope.cobros = JSON.parse(response.payload)[0] || [];
                     }
 
                 }).catch(error => {
@@ -402,15 +403,24 @@
             })
 
             if (isConfirmed) {
-                _mS.getData('delete', `/ComprobanteIngreso/Anular?idComprobanteIngreso=${item.idComprobanteIngreso}&observacion=${value}`).then(response => {
-                    if (response.id == "0") {
+                let data = {
+                    idComprobanteIngreso: item.idComprobanteIngreso,
+                    observacion: value
+                }
+                showLoader();
+                _mS.getData('put', `ComprobanteIngreso/Cancel`, {data}, true).then(response => {
+                    hideLoader();
+                    if (response.code == "0") {
                         _tS.toastr('warning', response.message, response.titleSms);
                     }
-                    if (response.id == "1") {
+                    if (response.code == "1") {
                         _tS.toastr('success', response.message, response.titleSms);
                         $scope.getCobros();
                     }
-                });
+                }).catch(error=>{
+                    hideLoader();
+                    console.log(error)
+                })
             }
         }
 

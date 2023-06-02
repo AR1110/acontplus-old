@@ -244,7 +244,7 @@ BEGIN
 				FETCH NEXT FROM cursor_Cuotas INTO @idCuotaXCobrar
 					WHILE @@FETCH_STATUS = 0
 						BEGIN
-							EXEC Contabilidad.CuotaPorCobrar_Update @idCuotaXCobrar
+							EXEC Contabilidad.CuotaPorCobrar_Update_Status @idCuotaXCobrar
 							FETCH NEXT FROM cursor_Cuotas INTO @idCuotaXCobrar
 						END
 				CLOSE cursor_Cuotas
