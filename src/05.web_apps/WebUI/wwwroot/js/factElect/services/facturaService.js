@@ -78,7 +78,7 @@
                     console.log(dataRepository)
                     let dataResponse = {
                         ...dataRepository,                        
-                        esContado: dataRepository.gestion,
+                        esContado: dataRepository.tiempoCredito,
                     }
                     return {                        
                         dataResponse,
