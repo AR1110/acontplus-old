@@ -1,3 +1,5 @@
+USE [AcontPlus]
+GO 
 -- ================================================
 -- Template generated from Template Explorer using:
 -- Create Procedure (New Menu).SQL
@@ -21,7 +23,7 @@ GO
 IF OBJECT_ID(N'Contabilidad.ComprobanteIngreso_Update_Cancel', N'P') IS NOT NULL
 DROP PROCEDURE Contabilidad.ComprobanteIngreso_Update_Cancel
 GO
-CREATE PROCEDURE Contabilidad.ComprobanteIngreso_Update_Cancel @idUsuarioRol INT ,@idComprobanteIngreso INT, @observacion VARCHAR(300)
+CREATE PROCEDURE Contabilidad.ComprobanteIngreso_Update_Cancel @idUsuarioRol INT ,@json VARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -31,12 +33,16 @@ BEGIN
 	DECLARE @idCuotaXCobrar INT
 	DECLARE @codDoc VARCHAR(5)
 	DECLARE @idComprobante INT
+	DECLARE @idComprobanteIngreso INT
+	DECLARE @observacion VARCHAR(300)
 
 	BEGIN TRY 
-			
+		
+		SELECT @idComprobanteIngreso = idComprobanteIngreso, @observacion = observacion FROM OPENJSON(@json) WITH (idComprobanteIngreso INT '$.idComprobanteIngreso',observacion VARCHAR(500) '$.observacion')
+
 		SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
-		IF EXISTS (SELECT 1 FROM ComprobanteIngreso WHERE idComprobanteIngreso = @idComprobanteIngreso  AND estado = 0)
+		IF EXISTS (SELECT 1 FROM ComprobanteIngreso WITH (NOLOCK) WHERE idComprobanteIngreso = @idComprobanteIngreso  AND estado = 0)
 			BEGIN
 				SELECT '0'code,'El Comprobante de Ingreso ya se encuentra anulado' as 'message'
 				RETURN 
@@ -55,7 +61,7 @@ BEGIN
 				FETCH NEXT FROM cursor_Cuotas INTO @idCuotaXCobrar
 					WHILE @@FETCH_STATUS = 0
 						BEGIN
-							EXEC Contabilidad.CuotaPorCobrar_Update @idCuotaXCobrar
+							EXEC Contabilidad.CuotaPorCobrar_Update_Status @idCuotaXCobrar
 							FETCH NEXT FROM cursor_Cuotas INTO @idCuotaXCobrar
 						END
 				CLOSE cursor_Cuotas

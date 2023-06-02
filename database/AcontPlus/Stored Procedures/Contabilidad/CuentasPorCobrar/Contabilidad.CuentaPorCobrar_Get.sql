@@ -33,14 +33,14 @@ BEGIN
 	DECLARE @idTipoDocumento AS INT 
 	DECLARE @codDoc AS VARCHAR(5)
 
-
 	SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
 	SELECT @tipo = tipo,@idTipoDocumento = idTipoDocumento, @idDocumento = idDocumento FROM OPENJSON(@json) WITH (tipo INT '$.tipo',idDocumento INT '$.idDocumento', idTipoDocumento INT '$.idTipoDocumento')
 
 	SELECT TOP 1 @codDoc = codigo FROM dbo.TipoDocumento WITH (NOLOCK) WHERE idTipoDocumento = @idTipoDocumento
 	
-	-- ============================= Datos de las cuotas para los documentos ===============================================================
+
+	-- ============================= Gestios de cuotas en los Documwentos ===============================================================
 	IF @tipo = 2
 		BEGIN
 			
@@ -110,8 +110,8 @@ BEGIN
 												  ,cx.abono
 												  ,fechaVencimiento = cx.fechaVencimiento
 												  ,diasMora         = CASE WHEN ep.codigo != 'CBR' THEN DATEDIFF(DAY,cx.fechaVencimiento,GETDATE()) ELSE 0 END 
-												  ,interes          = CASE WHEN ep.codigo != 'CBR' THEN cx.cuota * @porcentaje  / 100 ELSE 0 END  
-												  ,mora             = CASE WHEN ep.codigo != 'CBR' THEN cx.cuota * @porcentaje  / 100 * DATEDIFF(DAY,cx.fechaVencimiento,GETDATE()) ELSE 0 END  
+												  ,interes          = CASE WHEN ep.codigo != 'CBR' THEN cx.saldo * @porcentaje  / 100 ELSE 0 END  
+												  ,mora             = CASE WHEN ep.codigo != 'CBR' THEN cx.saldo * @porcentaje  / 100 * DATEDIFF(DAY,cx.fechaVencimiento,GETDATE()) ELSE 0 END  
 												  ,ep.descripcion
 												  ,ep.codigo
 											FROM dbo.CuotaXCobrar     cx WITH (NOLOCK)
@@ -206,7 +206,7 @@ BEGIN
 				 ,importeTotal NUMERIC(18,5) NOT NULL
 				 ,abono NUMERIC(18,5) NOT NULL
 				 ,saldo NUMERIC(18,5) NOT NULL
-				 ,estado VARCHAR(15) NOT NULL
+				 ,estado VARCHAR(100) NOT NULL
 				 ,cuotas VARCHAR(MAX) NULL
 			)
 
@@ -233,8 +233,7 @@ BEGIN
 			SELECT TOP 1 @numeroIdentificacion = numeroIdentificacion, @nombreFiscal = nombreFiscal FROM dbo.Cliente WITH (NOLOCK) WHERE idCliente = @idCliente
 
 
-			-- ====================================== DOCUMENTOS CON CUOTAS PARA LOS COBROS   ==================================================================
-			
+			-- ====================================== Datos por lote se trae por cliente y establecimiento   ==================================================================
 			IF @tiempoCredito IS NULL
 				BEGIN 
 					INSERT INTO @tbDocuments (idTipoDocumento,idDocumento,serieComprobante,tipoDoc,fechaEmision,fechaVencimiento,importeTotal,abono,saldo,estado,cuotas)
@@ -303,8 +302,7 @@ BEGIN
 					WHERE ne.idCliente = @idCliente AND ep.codigo IN ('PP','PE') AND es.codEstab = @codEstab 
 				END 
 
-			-- ====================================== DATOS PARA PAGAR UN DOCUMENTO A CREDITO ==================================================================
-
+			-- ====================================== Documento a credito o contado  ==================================================================
 		    IF @tiempoCredito = 0 OR @tiempoCredito = 1
 				BEGIN
 					IF @codDoc = 'FV'
@@ -377,8 +375,7 @@ BEGIN
 						END 
 				END 
 
-			-- ====================== DOCUMENTOS PARA APLICAR A COBROS POR LOTES Y CREDITO ===========================================
-			
+			-- ====================== Documetos Emitidos o recibidos para plicar a cobros  ===========================================
 			IF @tiempoCredito = 0 
 				BEGIN
 					INSERT INTO @cobroDocuments (idComprobante,codDoc,codMov)
@@ -440,8 +437,7 @@ BEGIN
 				END 
 			
 			-- ==================================== PAYLOAD ================================================================================
-
-			IF @tiempoCredito = 1 
+			IF @tiempoCredito = 1 OR @tiempoCredito = 0
 				BEGIN
 					DECLARE @fechaEmision AS DATE
 					DECLARE @serieComprobante AS VARCHAR(20)
@@ -451,12 +447,11 @@ BEGIN
 
 			SELECT idEntidadFinanciera,descripcion,detalle,codigo FROM dbo.EntidadFinanciera WITH (NOLOCK) WHERE estado = 1
 
-			SELECT idEntidadFinanciera,idSubEntidadFinanciera,descripcion,codigo,interes,controlCaja FROM dbo.SubEntidadFinanciera WHERE idEntidad = 9 AND estado = 1 
+			SELECT idEntidadFinanciera,idSubEntidadFinanciera,descripcion,codigo,interes,controlCaja FROM dbo.SubEntidadFinanciera WHERE idEntidad = @idEntidad AND estado = 1 
 
 			SELECT idBanco,descripcion,codigo FROM dbo.Banco WITH (NOLOCK) WHERE estado = 1
 
-			SELECT cd.idCiudad,provincia = pr.descripcion ,cd.descripcion,pr.codigo FROM dbo.Provincia pr WITH (NOLOCK)
-			INNER JOIN dbo.Ciudad cd WITH (NOLOCK) ON cd.idProvincia = pr.idProvincia WHERE cd.estado = 1
+			SELECT cd.idCiudad,provincia = pr.descripcion ,cd.descripcion,pr.codigo FROM dbo.Provincia pr WITH (NOLOCK) INNER JOIN dbo.Ciudad cd WITH (NOLOCK) ON cd.idProvincia = pr.idProvincia WHERE cd.estado = 1
 
 			SELECT idDocumento,idTipoDocumento,serieComprobante,saldo,codDoc,nroDoc FROM @documents 
 
