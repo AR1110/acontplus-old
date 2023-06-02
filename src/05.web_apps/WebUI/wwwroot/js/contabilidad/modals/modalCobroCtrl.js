@@ -1565,7 +1565,7 @@ function ModalCobroDetalleCtrl($scope, $mdDialog, mS, tS, fS, params){
                     $scope.cobroDetalles = mainDataRepository[2]
                   
                     for(let item of $scope.cobros) {
-                        item.infoCobro = JSON.parse(item.infoCobro)
+                        item.infoCobro = JSON.parse(item.infoCobro)[0]
                         item.cobroDetalles = $scope.cobroDetalles.filter(itemDetalle=>itemDetalle.idCobro===item.idCobro);    
                         item.showInfoCobro = item.codPago!=='EFE'        
                     }
@@ -1636,7 +1636,7 @@ function ModalCobroDetalleCtrl($scope, $mdDialog, mS, tS, fS, params){
     }
 
     $scope.showInfo = function (item) {
-        let info = item.infoCobro && item.infoCobro[0] || {};
+        let info = item.infoCobro || {};
        
         Swal.fire({
             icon: 'info',

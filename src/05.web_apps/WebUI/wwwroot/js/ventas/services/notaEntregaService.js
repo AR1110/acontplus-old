@@ -48,6 +48,7 @@
                             usuario: item.usuario,
                             codEstado: item.codEstado,
                             tiempoCredito: item.tiempoCredito,
+                            esContado: item.tiempoCredito,
                             nroIdentificacion: item.nroIdentificacion,
                         }
                     })
@@ -115,7 +116,7 @@
                   
                     let dataResponse = {
                         ...dataRepository,                         
-                        esContado: dataRepository.gestion,
+                        esContado: dataRepository.tiempoCredito,
                     }
           
                     return {                        
