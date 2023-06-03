@@ -134,7 +134,7 @@ BEGIN
 								,fe.idTiempoCredito
 								,codEstado        = ep.codigo 
 								,config           = ISNULL(@configInteres,0)
-								,tipoConfig      = @tipoConfig
+								,tipoConfig       = @tipoConfig
 					FROM dbo.Factura               fe WITH (NOLOCK)
 					INNER JOIN dbo.Cliente         cl WITH (NOLOCK) ON cl.idCliente      = fe.idCliente 
 					INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision = fe.idPuntoEmision
@@ -193,8 +193,9 @@ BEGIN
 			DECLARE @numeroIdentificacion AS VARCHAR(15)
 			DECLARE @identificacionReceptor AS VARCHAR(50)
 			DECLARE @tiempoCredito AS BIT
+			DECLARE @fechaEmision AS DATE
+			DECLARE @serieComprobante AS VARCHAR(20)
 			
-
 			DECLARE @tbDocuments AS TABLE (
 			      id AS cast(idTipoDocumento as varchar) + cast(idDocumento as varchar) UNIQUE
 				 ,idTipoDocumento INT NOT NULL
@@ -210,7 +211,7 @@ BEGIN
 				 ,cuotas VARCHAR(MAX) NULL
 			)
 
-			DECLARE @cobroDocuments AS TABLE 
+			DECLARE @cobroDocuments AS TABLE
 			(
 				idComprobante INT 
 			   ,codDoc VARCHAR(5)
@@ -260,7 +261,9 @@ BEGIN
 									 INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cc.idEstadoPago
 						             WHERE cc.idComprobante   = fv.idFactura 
 									   AND cc.idTipoDocumento = fv.idTipoDocumento 
-									   AND cc.estado          = 1 FOR JSON PATH
+									   AND cc.estado          = 1 
+									   AND ep.codigo         IN ('PE','PP')
+									   FOR JSON PATH
 									 )
 					FROM dbo.Factura               fv WITH (NOLOCK) 
 					INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision = fv.idPuntoEmision
@@ -293,7 +296,9 @@ BEGIN
 									 INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cc.idEstadoPago
 						             WHERE cc.idComprobante   = ne.idNotaEntrega 
 									   AND cc.idTipoDocumento = ne.idTipoDocumento 
-									   AND cc.estado          = 1 FOR JSON PATH
+									   AND cc.estado          = 1 
+									   AND ep.codigo         IN ('PE','PP')
+									   FOR JSON PATH
 									 )
 					FROM dbo.NotaEntrega           ne WITH (NOLOCK) 
 					INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision = ne.idPuntoEmision
@@ -330,11 +335,13 @@ BEGIN
 												INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cc.idEstadoPago
 												WHERE cc.idComprobante   = fv.idFactura 
 												 AND cc.idTipoDocumento  = fv.idTipoDocumento 
-												 AND cc.estado           = 1 FOR JSON PATH
+												 AND cc.estado           = 1 
+												 AND ep.codigo          IN ('PE','PP')
+												 FOR JSON PATH
 									        )
 							FROM dbo.Factura fv WITH (NOLOCK) 
 							INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision = fv.idPuntoEmision
-							INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON  es.codEstab      = pt.codEstab
+							INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pt.codEstab
 							INNER JOIN dbo.EstadoPago      ep WITH (NOLOCK) ON ep.idEstadoPago   = fv.idEstadoPago
 							WHERE fv.idFactura = @idDocumento AND ep.codigo IN ('PP','PE') 
 						END 
@@ -365,7 +372,9 @@ BEGIN
 												INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cc.idEstadoPago
 												WHERE cc.idComprobante = ne.idNotaEntrega 
 												 AND cc.idTipoDocumento = ne.idTipoDocumento 
-												 AND cc.estado = 1 FOR JSON PATH
+												 AND cc.estado = 1
+												 AND ep.codigo IN ('PE','PP')
+												 FOR JSON PATH
 											 )
 							FROM dbo.NotaEntrega           ne WITH (NOLOCK) 
 							INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision = ne.idPuntoEmision
@@ -375,7 +384,7 @@ BEGIN
 						END 
 				END 
 
-			-- ====================== Documetos Emitidos o recibidos para plicar a cobros  ===========================================
+			-- ====================== Documetos Emitidos o recibidos para plicar a cobros ; si el documento es a credito ===========================================
 			IF @tiempoCredito = 0 
 				BEGIN
 					INSERT INTO @cobroDocuments (idComprobante,codDoc,codMov)
@@ -439,9 +448,6 @@ BEGIN
 			-- ==================================== PAYLOAD ================================================================================
 			IF @tiempoCredito = 1 OR @tiempoCredito = 0
 				BEGIN
-					DECLARE @fechaEmision AS DATE
-					DECLARE @serieComprobante AS VARCHAR(20)
-
 					SELECT @fechaEmision = fechaEmision, @serieComprobante = serieComprobante FROM @tbDocuments 
 				END 
 
