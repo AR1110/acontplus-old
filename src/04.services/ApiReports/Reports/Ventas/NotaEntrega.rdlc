@@ -626,7 +626,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>NOTA DE ENTREGA</Value>
+                        <Value>=First(Fields!tipoDoc.Value, "NotaEntregaDs")</Value>
                         <Style>
                           <FontSize>11pt</FontSize>
                           <FontWeight>Bold</FontWeight>

@@ -23,7 +23,7 @@ GO
 IF OBJECT_ID(N'Ventas.Aprob_Document_Delete', N'P') IS NOT NULL
 DROP PROCEDURE Ventas.Aprob_Document_Delete 
 GO
-CREATE PROCEDURE Ventas.Aprob_Document_Delete @idRol INT, @id INT
+CREATE PROCEDURE Ventas.Aprob_Document_Delete @idUsuarioRol INT, @id INT
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -36,7 +36,7 @@ BEGIN
 	DECLARE @uniqueId VARCHAR(150)
 
 	BEGIN TRY 
-		SELECT @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idRol
+		SELECT @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol
 
 		SELECT @docOrigen = docOrigen,@uniqueId = uniqueId FROM Ventas.Aprob_Document WHERE idAprob_Document = @id
 

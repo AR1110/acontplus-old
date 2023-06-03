@@ -1056,7 +1056,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>PREFACTURA</Value>
+                        <Value>PRE FACTURA</Value>
                         <Style>
                           <FontFamily>Arial</FontFamily>
                           <FontSize>11pt</FontSize>

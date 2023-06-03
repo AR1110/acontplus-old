@@ -3,6 +3,7 @@
     public class NotaEntrega
     {
         public long idNotaEntrega { get; set; }
+        public string uniqueId { get; set; } //cuando es aprobacion documento 
         public int idCliente { get; set; }
         public string codEstab { get; set; }
         public int idPuntoEmision { get; set; }
