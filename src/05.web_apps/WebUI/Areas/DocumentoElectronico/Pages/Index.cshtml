@@ -26,7 +26,7 @@
                             <div class="form-group">
                                 <label for="establecimiento">Establecimiento: </label>
                                 <select name="establecimiento" id="establecimiento" class="form-control border-select"
-                                        ng-model="codEstab_Asig" ng-change="onchangeEstablecimiento()">
+                                    ng-model="codEstab_Asig" ng-change="onchangeEstablecimiento()">
                                     <option value="">Todos</option>
                                     <option ng-value="item.codEstab_Asig" ng-repeat="item in establecimientos">
                                         {{item.nombreComercial}}
@@ -38,7 +38,7 @@
                             <div class="form-group">
                                 <label for="puntoEmision">Punto Emisión: </label>
                                 <select name="puntoEmision" id="puntoEmision" class="form-control border-select"
-                                        ng-model="dataSearch.ptoEmi" ng-change="onchangePuntoEmision()">
+                                    ng-model="dataSearch.ptoEmi" ng-change="onchangePuntoEmision()">
                                     <option value="">Todos</option>
                                     <option ng-value="item.ptoEmi" ng-repeat="item in puntosEmision">
                                         {{item.ptoEmi}}
@@ -51,9 +51,9 @@
                             <div class="form-group">
                                 <label>Rango de Fechas: </label>
                                 <input date-range-picker class="form-control date-picker" type="text"
-                                       ng-model="dateRangePicker.date" picker="dateRangePicker.picker"
-                                       picker-classes="extra-class-names" min="'2014-02-23'" max="dateRangePicker.maxDate"
-                                       options="dateRangePicker.options" options="{locale: {separator: " :"}}" />
+                                    ng-model="dateRangePicker.date" picker="dateRangePicker.picker"
+                                    picker-classes="extra-class-names" min="'2014-02-23'" max="dateRangePicker.maxDate"
+                                    options="dateRangePicker.options" options="{locale: {separator: " :"}}" />
                             </div>
                         </div>
 
@@ -61,7 +61,7 @@
                             <div class="form-group">
                                 <label for="">Tipo Documento</label>
                                 <select class="form-control b-0" ng-model="dataSearch.codDoc"
-                                        ng-change="onSelectTipoDoc()">
+                                    ng-change="onSelectTipoDoc()">
                                     <option value="">Todos</option>
                                     <option ng-value="item.codigoSri" ng-repeat="item in tiposDocumento">
                                         {{item.descripcion}}
@@ -74,7 +74,7 @@
                                 <label for="">Estado</label>
 
                                 <select name="codEstado" id="codEstado" class="form-control border-select"
-                                        ng-model="dataSearch.codEstado" ng-change="onChangeEstado()">
+                                    ng-model="dataSearch.codEstado" ng-change="onChangeEstado()">
                                     <option value="">Todos</option>
                                     <option ng-value="item.codigo" ng-repeat="item in estadoServicios">
                                         {{item.descripcion}}
@@ -91,13 +91,13 @@
                                 <label for="customer-provider">Cliente/Proveedor</label>
                                 <div class="input-group">
                                     <input type="text" id="customer-provider-search" autocomplete="off"
-                                           name="customer-provider-search" class="form-control border-select"
-                                           placeholder="Ingrese C.I o Nombre Fiscal" ng-model="modelCustomerProvider"
-                                           ng-keyup="onKeyupCustomerProvider()"
-                                           uib-typeahead="item as item.nameCustomerProvider for item in searchCustomerProvider($viewValue)"
-                                           typeahead-template-url="customerProviderTemplate.html" typeahead-min-length="1"
-                                           typeahead-editable="false"
-                                           typeahead-on-select="onSelectedCustomerProvider($item)" onClick="select();" />
+                                        name="customer-provider-search" class="form-control border-select"
+                                        placeholder="Ingrese C.I o Nombre Fiscal" ng-model="modelCustomerProvider"
+                                        ng-keyup="onKeyupCustomerProvider()"
+                                        uib-typeahead="item as item.nameCustomerProvider for item in searchCustomerProvider($viewValue)"
+                                        typeahead-template-url="customerProviderTemplate.html" typeahead-min-length="1"
+                                        typeahead-editable="false"
+                                        typeahead-on-select="onSelectedCustomerProvider($item)" onClick="select();" />
 
                                     <script type="text/ng-template" id="customerProviderTemplate.html">
                                         <div class="autocomplete-suggestion-uib-typeahead">
@@ -108,7 +108,7 @@
                                     </script>
                                     <div class="input-group-append">
                                         <button type="button" class=" btn btn-secondary btn-xs"
-                                                ng-click="clearSearchCustomer()">
+                                            ng-click="clearSearchCustomer()">
                                             &times;
                                         </button>
                                     </div>
@@ -121,12 +121,12 @@
                                 <label for="customer-provider">Usuario</label>
                                 <div class="input-group">
                                     <input type="text" id="customer-provider-search" autocomplete="off"
-                                           name="customer-provider-search" class="form-control border-select"
-                                           placeholder="Ingrese C.I o Nombre Fiscal" ng-model="modelUser"
-                                           uib-typeahead="item as item.nombreCompleto for item in searchUser($viewValue)"
-                                           typeahead-template-url="UserTemplate.html" typeahead-min-length="1"
-                                           typeahead-editable="true" typeahead-on-select="onSelectedUser($item)"
-                                           onClick="select();" />
+                                        name="customer-provider-search" class="form-control border-select"
+                                        placeholder="Ingrese C.I o Nombre Fiscal" ng-model="modelUser"
+                                        uib-typeahead="item as item.nombreCompleto for item in searchUser($viewValue)"
+                                        typeahead-template-url="UserTemplate.html" typeahead-min-length="1"
+                                        typeahead-editable="true" typeahead-on-select="onSelectedUser($item)"
+                                        onClick="select();" />
 
                                     <script type="text/ng-template" id="UserTemplate.html">
                                         <div class="autocomplete-suggestion-uib-typeahead">
@@ -137,7 +137,7 @@
                                     </script>
                                     <div class="input-group-append">
                                         <button type="button" class=" btn btn-secondary btn-xs"
-                                                ng-click="clearUserSearch()">
+                                            ng-click="clearUserSearch()">
                                             &times;
                                         </button>
                                     </div>
@@ -145,10 +145,12 @@
 
                             </div>
                         </div>
-                        
+
                         @* ng-click="loginWhatsapp()" *@
                         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12" ng-if="hasPermissions">
-                            <button class="btn btn-success" btn-send-to-whats-app params="paramsToWhatsapp" has-permission="hasPermissions" type-send="typeSend"><i class="mdi mdi-whatsapp"></i> Login WhatssApp</button>
+                            <button class="btn btn-success" btn-send-to-whats-app params="paramsToWhatsapp"
+                                has-permission="hasPermissions" type-send="typeSend"><i class="mdi mdi-whatsapp"></i>
+                                Login WhatssApp</button>
                         </div>
 
                     </div>
@@ -156,13 +158,13 @@
                     <div class="row justify-content-between">
                         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                             <button type="button" class="btn btn-success" uib-tooltip="Autorizar Comprobantes"
-                                    tooltip-placement="top" ng-if="selectedComprobantes.length>0"
-                                    ng-click="getAuthorizate()">
+                                tooltip-placement="top" ng-if="selectedComprobantes.length>0"
+                                ng-click="getAuthorizate()">
                                 <i class="mdi mdi-file-lock"></i> Autorizar
                             </button>
 
                             <button type="button" class="btn btn-warning" uib-tooltip="Correo Comprobantes"
-                                    tooltip-placement="top" ng-click="estadoCorreoComprobantes()">
+                                tooltip-placement="top" ng-click="estadoCorreoComprobantes()">
                                 <i class="mdi mdi-contact-mail"></i> Correo
                             </button>
                         </div>
@@ -171,10 +173,10 @@
                             <div class="form-material">
                                 <div class="input-group">
                                     <input type="text" class="form-control" ng-model="textSearch"
-                                           placeholder="Buscar Comprobante">
+                                        placeholder="Buscar Comprobante">
                                     <div class="input-group-append">
                                         <button type="button" class="btn btn-secondary btn-sm"
-                                                ng-click="getComprobantes()">
+                                            ng-click="getComprobantes()">
                                             <i class="fas fa-redo"></i>
                                         </button>
                                     </div>
@@ -209,19 +211,19 @@
                                 <td md-cell>
                                     <md-menu>
                                         <md-button aria-label="Open demo menu" class="md-icon-button"
-                                                   ng-click="$mdMenu.open($event)">
+                                            ng-click="$mdMenu.open($event)">
                                             <icon class="mdi mdi-menu"></icon>
                                         </md-button>
                                         <md-menu-content class="md-dense">
                                             <md-menu-item ng-if="(item.codDoc=='07') && (item.codEstado != 4)">
                                                 <md-button ng-click="edit(item)" uib-tooltip="Editar el Documento"
-                                                           tooltip-placement="top">
+                                                    tooltip-placement="top">
                                                     <span md-menu-align-target><i class="ti-eye"></i> Editar</span>
                                                 </md-button>
                                             </md-menu-item>
                                             <md-menu-item ng-if="item.codEstado == 4">
                                                 <md-button ng-click="askToCancel(item)"
-                                                           uib-tooltip="Anular el Documento" tooltip-placement="top">
+                                                    uib-tooltip="Anular el Documento" tooltip-placement="top">
                                                     <span md-menu-align-target><i class="ti-close"></i> Anular</span>
                                                 </md-button>
                                             </md-menu-item>
@@ -236,14 +238,14 @@
 
                                             <md-menu-item>
                                                 <md-button ng-click="getReport(item)" uib-tooltip="Ver PDF"
-                                                           tooltip-placement="top">
+                                                    tooltip-placement="top">
                                                     <span md-menu-align-target><i class="ti-file"></i> PDF</span>
                                                 </md-button>
                                             </md-menu-item>
 
                                             <md-menu-item ng-if="(item.codEstado==5 || item.codEstado==0)">
                                                 <md-button uib-tooltip="Errorres del comprobante"
-                                                           tooltip-placement="top" ng-click="getError(item)">
+                                                    tooltip-placement="top" ng-click="getError(item)">
                                                     <span md-menu-align-target>
                                                         <i class="mdi mdi-close-network"></i> Error
                                                     </span>
@@ -254,7 +256,7 @@
                                             <!--Update Xml-->
                                             <md-menu-item ng-if="showBtnUpdateXml(item)">
                                                 <md-button uib-tooltip="Actualizar el XML" tooltip-placement="top"
-                                                           ng-click="updateXml(item)">
+                                                    ng-click="updateXml(item)">
                                                     <span md-menu-align-target>
                                                         <i class="mdi mdi-clipboard-flow"></i> Actualizar XML
                                                     </span>
@@ -262,7 +264,7 @@
                                             </md-menu-item>
 
                                             <md-menu-item>
-                                                <md-button ng-click="openModalSendMail(item)">
+                                                <md-button btn-send-to-email params="item" type-send="typeSendMail">
                                                     <span md-menu-align-target>
                                                         <i class="mdi mdi-email-outline"></i>
                                                         Enviar Correo
@@ -279,17 +281,19 @@
                                                 </md-button>
                                             </md-menu-item>
 
-@* ng-click="openModalSendWhatsapp(item)" *@
+                                            @* ng-click="openModalSendWhatsapp(item)" *@
                                             <md-menu-item ng-if="item.codEstado==4">
-                                                <md-button uib-tooltip="Enviar por Whatsapp" tooltip-placement="top" btn-send-to-whats-app params="item" has-permission="hasPermissions" type-send="typeSend"  >
+                                                <md-button uib-tooltip="Enviar por Whatsapp" tooltip-placement="top"
+                                                    btn-send-to-whats-app params="item" has-permission="hasPermissions"
+                                                    type-send="typeSend">
                                                     <span md-menu-align-target>
                                                         <i class="mdi mdi-whatsapp"></i> Enviar por Whatsapp
                                                     </span>
                                                 </md-button>
                                             </md-menu-item>
                                             <md-menu-item ng-if="item.codEstado==4">
-                                                <md-button uib-tooltip="Descargar Xml"
-                                                           tooltip-placement="top" ng-click="downloadXml(item)">
+                                                <md-button uib-tooltip="Descargar Xml" tooltip-placement="top"
+                                                    ng-click="downloadXml(item)">
                                                     <span md-menu-align-target>
                                                         <i class="mdi mdi-file-xml"></i> Descargar Xml
                                                     </span>

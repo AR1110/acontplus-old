@@ -8,6 +8,18 @@ const CHANGE_VERSION = (largo = 50) => {
     return '?v=' + codigo;
 }
 
+app.constant('nombreModalCommon', {
+    MAIL: {
+        fileCtrl: '/js/common/modals/modalMailCtrl.js' + CHANGE_VERSION(),
+        controllers: {
+            ME: 'SendMailCtrl'
+        },
+        templates: {
+            ME:'Shared/Common/_ModalSendMail.cshtml',
+        },
+    }
+})
+
 app.constant('nombreModalConfig', {
     TIEMPO_CREDITO: {
         fileCtrl: '/js/config/modals/modalTiempoCreditoCtrl.js' + CHANGE_VERSION(),
@@ -123,23 +135,19 @@ app.constant('nombreModalVenta', {
         } 
     },
     APROB_COMPROBANTE:{
-        fileCtrl: '/js/modal/ventas/modalAprobDocument.js' + CHANGE_VERSION(),
+        fileCtrl: '',
         controllers: {            
-            MSD:'ModalSelectDocumentoCtrl',
-            MADE:'ModalApproveDocEditCtrl',
-            MADF: 'ModalApproveDocCtrl', //Modal Aprobacion Documento Factura
-            MAD:'ModalApproveDocDetalleCtrl',
-            MF_NE: 'ModalNotaEntregaFiltroCtrl',
-            MF_PR:'ModalProformaFiltroCtrl',
+            MSD:' ',
+            MADE:' ',
+            MADF: ' ', //Modal Aprobacion Documento Factura
+            MAD:' ',
             MFA: '' //Modal Aprob. Comprobante Ctrl    
         },
         templates:{
-            MSD:'AprobDocument/_ModalSelectDocument.cshtml',
-            MADE:'AprobDocument/_ModalAprobDocumentEdit.cshtml',
-            MADF:'AprobDocument/_ModalApproveDocument.cshtml',
-            MADD:'AprobDocument/_ModalAprobDocumentDetalle.cshtml', 
-            MF_NE: 'AprobDocument/_ModalNotaEntregaFiltro.cshtml',
-            MF_PR:'AprobDocument/_ModalProformaFiltro.cshtml'           
+            MSD:' ',
+            MADE:' ',
+            MADF:' ',
+            MADD:' '      
         }
     },
     PROFORMA: {
@@ -231,37 +239,6 @@ app.constant('nombreModalContabilidad', {
 
 
 app.constant('nombreModal', {
-    aprob_comp: {
-        MODAL_FILE_CTRL: 'modal/ventas/modalAprobDocument.js' + CHANGE_VERSION(),
-        MODAL_APPROVE_DOC: {
-            controller: 'ModalApproveDocCtrl',
-            template: 'AprobDocument/_ModalApproveDocument.cshtml'
-        },
-        MODAL_SELECT_DOC: {
-            controller: 'ModalSelectDocumentoCtrl',
-            template: 'AprobDocument/_ModalSelectDocument.cshtml',
-        },
-        MODAL_APROB_DOC_EDIT: {
-            controller: 'ModalApproveDocEditCtrl',
-            template: 'AprobDocument/_ModalAprobDocumentEdit.cshtml'
-        },
-        MODAL_APROB_DOC_DETALLE: {
-            controller: 'ModalApproveDocDetalleCtrl',
-            template: 'AprobDocument/_ModalAprobDocumentDetalle.cshtml'
-        },
-        MODAL_FILTRO: {
-            controller: 'ModalApproveDocFiltroCtrl',
-            template: 'AprobDocument/_ModalFiltro.cshtml'
-        },
-        MODAL_FILTRO_NE: {
-            controller: 'ModalNotaEntregaFiltroCtrl',
-            template: 'AprobDocument/_ModalNotaEntregaFiltro.cshtml'
-        },
-        MODAL_FILTRO_PR: {
-            controller: 'ModalProformaFiltroCtrl',
-            template: 'AprobDocument/_ModalProformaFiltro.cshtml'
-        }
-    },
     caja: {
         MODAL_CTRL: 'admin/modalCajaCtrl.js' + CHANGE_VERSION(),
         MODAL_CAJA_CSHTML: 'Caja/_ModalCaja.cshtml',
@@ -273,12 +250,6 @@ app.constant('nombreModal', {
     common: {
         MODAL_INFO_ADICIONAL_TIPO_DOC_CTRL: 'common/modalInfoAdicionalTipoDocCtrl.min.js' + CHANGE_VERSION(),
         MODAL_INFO_ADICIONAL_TIPO_DOC_CSHTML: '_ModalInfoAdicionalTipoDoc.cshtml',
-        MODAL_DATO_ADICIONAL_VENTA_ARTICULO_CTRL: 'common/modalDatoAdicionalVentaArticuloCtrl.js' + CHANGE_VERSION(),
-        MODAL_DATO_ADICIONAL_VENTA_ARTICULO_CSHTML: 'Common/_ModalDatoAdicionalVentaArticulo.cshtml',
-        MODAL_DATO_ADICIONAL_COMPRA_ARTICULO_CTRL: 'common/modalDatoAdicionalCompraArticuloCtrl.min.js' + CHANGE_VERSION(),
-        MODAL_DATO_ADICIONAL_COMPRA_ARTICULO_CSHTML: 'Common/_ModalDatoAdicionalCompraArticulo.cshtml',
-        MODAL_HISTORIAL_CONVERSION_DOC_CTRL: 'common/modalHistorialConversionDocCtrl.min.js' + CHANGE_VERSION(),
-        MODAL_HISTORIAL_CONVERSION_DOC_VENTA_CSHTML: '_ModalHistorialConversionDocVenta.cshtml',
 
         MODAL_MODULO_IMPORTACION_CTRL: 'common/modalModuloImportacionCtrl.js' + CHANGE_VERSION(),
         MODAL_MODULO_IMPORTACION_CSHTML: 'Common/_ModalModuloImportacion.cshtml',
@@ -286,8 +257,7 @@ app.constant('nombreModal', {
         MODAL_COMPROBANTE_ERROR_CTRL: 'common/modalComprobanteErrorCtrl.js' + CHANGE_VERSION(),
         MODAL_COMPROBANTE_ERROR_CSHTML: 'Common/_ModalComprobanteError.cshtml',
 
-        MODAL_SEND_MAIL_CTRL: 'common/modalSendMailCtrl.js' + CHANGE_VERSION(),
-        MODAL_SEND_MAIL_CSHTML: 'Common/_ModalSendMail.cshtml',
+        MODAL_SEND_MAIL_CTRL: '/js/common/modals/modalMailCtrl.js' + CHANGE_VERSION(),
         MODAL_STATUS_MAIL_CSHTML: '~/Areas/DocumentoElectronico/Pages/Shared/_ModalStatusEmail.cshtml',
 
         MODAL_SEND_WHATSAPP_CTRL: '/js/modal/common/ModalWhatsAppCtrl.js' + CHANGE_VERSION(),
@@ -425,37 +395,6 @@ app.constant('nombreModal', {
         MODAL_CTRL: 'modalCargoCtrl.min.js' + CHANGE_VERSION(),
         MODAL_CSHTML: '_ModalCargo.cshtml'
     },
-    cobro: {
-        MODAL_FILE_CTRL: 'modal/financiera/cobro/modalCobroCtrl.js' + CHANGE_VERSION(),
-        MODAL_FILE_FORMA_COBRO: 'modal/financiera/modalFormaCobroPagoCtrl.js' + CHANGE_VERSION(),
-        MODAL_FILE_CUOTA: 'modal/financiera/cobro/modalCuotaCtrl.js' + CHANGE_VERSION(),
-        MODAL_FILE_HISTORIAL_COBRO: 'modal/financiera/cobro/modalCobroHistorialCtrl.js' + CHANGE_VERSION(),
-        MODAL_COBRO_LOTE: {
-            controller: 'ModalCobroLoteCtrl',
-            template: 'Cobro/_ModalCobroLote.cshtml'
-        },
-        MODAL_COBRO_RAPIDO: {
-            controller: 'ModalCobroRapidoCtrl',
-            template: 'Cobro/_ModalCobroRapido.cshtml'
-        },
-        MODAL_COBRO_DOCUMENTO: {
-            controller: 'ModalCobroDocumentoCtrl',
-            template: 'Cobro/_ModalCobroDocumento.cshtml'
-        },
-        MODAL_HISTORIAL_COBRO: {
-            controller: 'ModalCobroHistorialCtrl',
-            template: 'Cobro/_ModalCobroHistorial.cshtml'
-        },
-        MODAL_FORMA_COBRO: {
-            controller: 'ModalFormaCobroCtrl',
-            template: 'Cobro/_ModalFormaCobro.cshtml'
-        },
-        MODAL_CUOTA_VENTA: {
-            controller: 'ModalCuotaNuevoCtrl',
-            template: 'Cobro/_ModalCuotaVenta.cshtml'
-        }
-    },
-
     compra_no_habitual: {
         MODAL_FILE_PATH: 'modal/compras/modalCompraNoHabitualCtrl.min.js' + CHANGE_VERSION(),
         MODAL_NUEVO: {
@@ -496,17 +435,6 @@ app.constant('nombreModal', {
         MODAL_CONSOL_IMPORT: {
             controller: 'ModalConsolidacionImportacionCtrl',
             template: '~/Areas/Consolidacion/Pages/Shared/_ModalConsolidacionImportacion.cshtml'
-        }
-    },
-    cuota_venta: {
-        MODAL_FILE_CTRL: 'modal/compras/modalCuotaCtrl.js',
-        MODAL_NUEVO: {
-            controller: 'ModalCuotaNuevoCtrl',
-            template: 'Shared/Venta/_CuotaVenta.cshtml',
-        },
-        MODAL_DETALLE: {
-            controller: 'ModalCuotaDetalle.cshtml',
-            template: 'Shared/Venta/_CuotaDetalle.cshtml',
         }
     },
     cuota_compra: {
@@ -847,19 +775,6 @@ app.constant('nombreModal', {
         }
     },
 
-    transportista: {
-        MODAL_CTRL: 'modalTransportistaCtrl.min.js' + CHANGE_VERSION(),
-        MODAL_CSHTML: '_ModalTransportista.cshtml',
-        MODAL_LISTA: '_ModalProveedorLista.cshtml',
-        MODAL_NUEVO: {
-            controller: 'ModalTransportistaCtrl',
-            template: 'Transportista/_ModalTransportista.cshtml'
-        },
-        MODAL_EDITAR: {
-            controller: 'ModalTransportistaCtrl',
-            template: 'Transportista/_ModalTransportista.cshtml'
-        }
-    },
     transferencia_bodega: {
         MODAL_FILE_CTRL: 'modal/inventario/modalTransferenciaBodegaCtrl.js' + CHANGE_VERSION(),
         MODAL_NUEVO: {
@@ -878,10 +793,6 @@ app.constant('nombreModal', {
             controller: 'ModalTransferenciaBodegaFiltroCtrl',
             template: 'TransferenciaBodega/_ModalFiltro.cshtml'
         },
-    },
-    tiempo_credito: {
-        MODAL_CTRL: 'modalTiempoCreditoCtrl.min.js' + CHANGE_VERSION(),
-        MODAL_CSHTML: '_ModalTiempoCredito.cshtml'
     },
     user: {
         MODAL_CTRL: 'modal/admin/modalUserCtrl.js' + CHANGE_VERSION(),
@@ -904,14 +815,6 @@ app.constant('nombreModal', {
         MODAL_USER_CONFIG: {
             controller: 'ModalConfigUserCtrl',
             template: 'Usuario/_ModalUserConfig.cshtml'
-        }
-    },
-    vehiculo: {
-        MODAL_CTRL: 'modalVehiculoCtrl.min.js' + CHANGE_VERSION(),
-        MODAL_CSHTML: '_ModalVehiculo.cshtml',
-        MODAL_NUEVO: {
-            controller: 'ModalVehiculoCtrl',
-            template: 'Vehiculo/_ModalVehiculo.cshtml'
         }
     }
 })

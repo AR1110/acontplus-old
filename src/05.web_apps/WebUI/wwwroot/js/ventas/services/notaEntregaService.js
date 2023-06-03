@@ -1,5 +1,4 @@
-(function(e) {
-    console.log(e)
+(function(e) { 
     'use strict';
 
     app.factory('notaEntregaService', function($injector) {

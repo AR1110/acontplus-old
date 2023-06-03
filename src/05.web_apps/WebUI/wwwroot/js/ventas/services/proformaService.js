@@ -17,8 +17,7 @@
                     throw response;
                 }
                 if(response.code==="1"){
-                    let proformas = JSON.parse(response.payload) || [];
-                    console.log(proformas)
+                    let proformas = JSON.parse(response.payload) || []; 
                     return proformas.map(item =>{
                         return {
                             comprobante: 'Proforma',
@@ -47,7 +46,7 @@
                     })
                 }
             }).catch(error =>{
-                console.log('Error al obtener datos->proforma service', error)
+                console.log('obtener datos->proforma service', error)
                 throw error;
             })
         }
