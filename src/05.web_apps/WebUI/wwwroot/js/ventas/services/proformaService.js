@@ -52,10 +52,18 @@
         }
 
         service.queryMapper = function({data, cliente, detalles}){
+            let formattedDateForInsert = null;
+            if (moment(data.fechaEmision).isBefore(new Date(), 'day')) {
+                formattedDateForInsert =  moment(data.fechaEmision).startOf('day').toDate();
+            }else{
+                formattedDateForInsert = data.fechaEmision
+            } 
+
             let proforma = Object.assign({}, data);
+             
             //Tarifa Aplicada al Documento
             proforma.idCliente = cliente.idCliente;
-            proforma.fechaEmision = fS.formatDateTimeZone(data.fechaEmision)
+            proforma.fechaEmision = fS.formatDateTimeZone(formattedDateForInsert)
             // this.data.tarifa = this.actividadTipoIva.tarifa;            
     
             return {

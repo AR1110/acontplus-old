@@ -429,14 +429,9 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
 
             if (resultsDataForm[8].length > 0) {
                 let {
-                    searchCode,
-                    printerAutomatic,
-                    payAutomatic
-                } = resultsDataForm[8][0];
+                    searchCode } = resultsDataForm[8][0];
                 console.log(resultsDataForm[8])
                 this.isSearchBarcode = searchCode;
-                this.printerAutomatic = printerAutomatic;
-                this.payAutomatic = payAutomatic;
 
                 this.$uibModalInstance.rendered.then(result => {
                     if (this.isSearchBarcode == 1) {
@@ -591,11 +586,8 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
                             this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
                             
                             let mainData = {
-                                isRegister: true,
-                                printerAutomatic: this.printerAutomatic,
-                                payAutomatic: this.payAutomatic,
-                                data: response.dataResponse,
-                                TIPO_DOC: this.TIPO_DOC_NE
+                                isRegister: true,                                                                
+                                data: response.dataResponse
                             }
 
                             this.$uibModalInstance.close(mainData)
@@ -689,10 +681,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
     
                             let mainData = {
                                 isRegister: true,
-                                printerAutomatic: this.printerAutomatic,
-                                payAutomatic: this.payAutomatic,
                                 data: response.dataResponse,
-                                TIPO_DOC: this.TIPO_DOC_FV
                             }
     
                             this.$uibModalInstance.close(mainData)
@@ -1324,13 +1313,8 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
             if (resultsDataForm[8].length > 0) {
 
                 let {
-                    searchCode,
-                    printerAutomatic,
-                    payAutomatic
-                } = resultsDataForm[8][0];
+                    searchCode} = resultsDataForm[8][0];
                 this.isSearchBarcode = searchCode;
-                this.printerAutomatic = printerAutomatic;
-                this.payAutomatic = payAutomatic;
 
 
 
@@ -1373,6 +1357,8 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
 
             //Cargamos los Datos 
             this.data = this.dataDocumento;
+            this.data.fechaEmision = new Date();
+            this.getFechaVencimiento();
             this.nroDocSecuencial = this.data.nroDocSecuencial;
             this.cloneCodEstab = this.data.codEstab;
             this.gridOptions.data = this.detalleDocumento;
@@ -1489,11 +1475,8 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
                         this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
                         
                         let mainData = {
-                            isRegister: true,
-                            printerAutomatic: this.printerAutomatic,
-                            payAutomatic: this.payAutomatic,
+                            isRegister: true,                          
                             data: response.dataResponse,
-                            TIPO_DOC: this.TIPO_DOC_NE
                         }
 
                         this.$uibModalInstance.close(mainData)
@@ -1585,11 +1568,8 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
                         this._fS.sweetAlert('success', 'Registrado Correctamente', response.titleSms, 1000);
 
                         let mainData = {
-                            isRegister: true,
-                            printerAutomatic: this.printerAutomatic,
-                            payAutomatic: this.payAutomatic,
+                            isRegister: true,                         
                             data: response.dataResponse,
-                            TIPO_DOC: this.TIPO_DOC_FV
                         }
 
                         this.$uibModalInstance.close(mainData)

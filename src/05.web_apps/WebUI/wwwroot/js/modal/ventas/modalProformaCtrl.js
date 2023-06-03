@@ -1083,6 +1083,7 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl {
 
             //Cargamos los Datos 
             this.data = this.dataDocumento;
+            this.data.fechaEmision = new Date();
             this.nroDocSecuencial = this.data.nroDocSecuencial;
             this.cloneCodEstab = this.data.codEstab;
 

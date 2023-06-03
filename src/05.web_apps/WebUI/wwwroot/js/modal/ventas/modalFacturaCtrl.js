@@ -1290,13 +1290,8 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
 
             if (resultsDataForm[8].length > 0) {
                 let {
-                    searchCode,
-                    printerAutomatic,
-                    payAutomatic
-                } = resultsDataForm[8][0];
+                    searchCode} = resultsDataForm[8][0];
                 this.isSearchBarcode = searchCode;
-                this.printerAutomatic = printerAutomatic;
-                this.payAutomatic = payAutomatic;
 
                 this.$uibModalInstance.rendered.then(result => {
                     if (this.isSearchBarcode == 1) {
@@ -1337,12 +1332,14 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
 
             //Cargamos los Datos 
             this.data = this.dataDocumento;
+            this.data.fechaEmision = new Date();
+            this.getFechaVencimiento();
             this.nroDocSecuencial = this.data.nroDocSecuencial;
             this.cloneCodEstab = this.data.codEstab;
             this.gridOptions.data = this.detalleDocumento;
 
-            this.fechaEmisionEscrita = this._fS.getFechaEscrita(this.data.fechaEmision);
-            this.fechaVencimientoEscrita = this._fS.getFechaEscrita(this.data.fechaVencimiento);
+            // this.fechaEmisionEscrita = this._fS.getFechaEscrita(this.data.fechaEmision);
+            // this.fechaVencimientoEscrita = this._fS.getFechaEscrita(this.data.fechaVencimiento);
 
             this.setDataInfoEstab(this.establecimientos, this.puntosEmisiones);
             this.$scope.$apply();
@@ -1441,6 +1438,7 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
                     if (response.code === "1") {                        
                         this._fS.sweetAlert('success', 'Registrado Correctamente', response.titleSms, 1000);
 
+                        
                         
                         let mainData = {
                             isRegister: true,                            
