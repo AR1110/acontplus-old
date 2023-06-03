@@ -1,8 +1,17 @@
 app.controller('proformaCtrl', proformaCtrl);
 
-proformaCtrl.$inject = ['$scope', '$filter', 'mainService', 'commonService', 'proformaService', 'modalService', 'nombreModalVenta', 'nombreModal', 'toastService', 'formulario']
+proformaCtrl.$inject = [
+    '$scope', 
+    '$filter', 
+    'commonService', 
+    'proformaService', 
+    'clienteService',
+    'modalService', 
+    'nombreModalVenta',  
+    'formulario'
+]
 
-function proformaCtrl($scope, $filter, _mS, _commonSvc, proformaSvc, _modalSvc, nombreModalVenta, _nombreModalConst, _tS, _fS) {
+function proformaCtrl($scope, $filter, commonSvc, proformaSvc, clienteSvc, modalSvc, nombreModalVenta, fS) {
 
     // let accion = JSON.parse(localStorage.getItem("accion"));
     // if (accion === null) {
@@ -14,7 +23,7 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, proformaSvc, _modalSvc, 
     $scope.typeSend = 'GenericFile';
     $scope.typeSendToMail = 'N'
 
-    const TIPO_DOC_PR = _commonSvc.tipoDoc['PR'];
+    const TIPO_DOC_PR = commonSvc.tipoDoc['PR'];
     const PERMISSION_KEY_ACTIONS = {
         E: 'E',
         A: 'A',
@@ -27,20 +36,92 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, proformaSvc, _modalSvc, 
 
     $scope.jsonPermission = {}
 
+    $scope.moreSearchOptions = false;
     $scope.dataSearch = {
         pageIndex: 1,
-        pageSize: 10000
+        pageSize: 10000,
+        checkBoxFecha: false,
+    }
+    $scope.proformas = [];
+
+    
+    //========================Start Filters=================
+
+    $scope.resultRangeFilter = function (item) {
+        $scope.dataSearch.checkBoxFecha = true;
+        $scope.dataSearch.fechaInicio = item.startDate,
+        $scope.dataSearch.fechaFin = item.endDate
+        $scope.getProformas();
     }
 
-    $scope.clienteFiltro = {}
-    $scope.usuarioSearchFiltro = {};
-    $scope.mes = new Date().getMonth() + 1;
-    $scope.proformas = [];
+    $scope.clienteSearch = function (textSearch) {
+        let query = {
+            textSearch
+        }
+
+        if (textSearch.length > 2) {
+            return clienteSvc.search(query).catch(error => {
+                console.log(error)
+            })
+        }
+    }
+
+    $scope.onKeyupClienteSearchFiltro = function () {
+        if (!$scope.modelTextSearch) {
+            $scope.dataSearch.byCliente = 0;
+        }
+    }
+
+    $scope.selectedClienteSearchFiltro = function (item) {
+        $scope.dataSearch.byCliente = item.idCliente;
+        $scope.getProformas();
+    }
+
+    $scope.usuarioSearch = function (textSearch) {
+        try {
+            let query = {
+                idRol: idUsuarioRol,
+                busqueda: textSearch
+            }
+
+            if (query.busqueda.length > 2) {
+                return commonSvc.usuarioSearch(query)
+                    .catch(error => {
+                        console.log(error);
+                        throw error;
+                    })
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    $scope.onKeyupUsuarioSearch = function () {
+        if (!$scope.modelNombreCompleto) {
+            $scope.dataSearch.byUsuario = 0;
+        }
+    }
+
+    $scope.selectedUsuarioSearch = function (item) {
+        $scope.dataSearch.byUsuario = item.idUsuario;
+    }
+
+    $scope.onClickBtnMore = function () {
+        $scope.moreSearchOptions = !$scope.moreSearchOptions;
+    }
+
+    $scope.searchFilterLocal = function () {
+        let aprobComprobantes = JSON.parse(JSON.stringify($scope.cloneAproComprobantes));
+        $scope.aprobComprobantes = $filter("filter")(aprobComprobantes, $scope.dataSearch.bySearch);
+        $scope.calculoColumnTotal();
+    }
+
+    //=====================Eend Filters=======================
 
 
     $scope.sumarColumnaTotal = function () {
         let total = $scope.proformas.map(val => val.total).reduce((acc, curr) => acc + curr, 0);
-        return _fS.roundNumber(total, 5);
+        return fS.roundNumber(total, 5);
     }
 
 
@@ -49,16 +130,23 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, proformaSvc, _modalSvc, 
 
         try {
             showLoader();
-            if ($scope.dataSearch.checkBoxCliente ||
-                $scope.dataSearch.checkBoxFecha ||
-                $scope.dataSearch.checkBoxUsuario) {
-                $scope.dataSearch.checkBoxDefault = false
-            } else {
-                $scope.dataSearch.checkBoxDefault = true;
-            }
             $scope.proformas = [];
             $scope.total = $scope.sumarColumnaTotal();
-            proformaSvc.getAll($scope.dataSearch).then(response => {
+
+            let dataSearch = {
+                codEstab: $scope.dataSearch.codEstab,
+                checkBoxFecha: $scope.dataSearch.checkBoxFecha,
+                checkBoxCliente: $scope.dataSearch.byCliente > 0,
+                byCliente: $scope.dataSearch.byCliente,
+                checkBoxUsuario: $scope.dataSearch.byUsuario > 0,
+                byUsuario: $scope.dataSearch.byUsuario,
+                checkBoxEstado: $scope.dataSearch.byEstado ? true : false,
+                byEstado: $scope.dataSearch.byEstado,
+                fechaInicio: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
+                fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin)
+            }
+           
+            proformaSvc.getAll(dataSearch).then(response => {
                 hideLoader();
                 $scope.proformas = response;
                 $scope.cloneProformas = JSON.parse(JSON.stringify($scope.proformas));
@@ -69,7 +157,7 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, proformaSvc, _modalSvc, 
                 console.log(error)
             })
 
-            _commonSvc.getDataFormVenta().then(result => {
+            commonSvc.getDataFormVenta().then(result => {
                 $scope.jsonPermission = JSON.parse(result[9][0].jsonPermission)
             })
 
@@ -83,7 +171,7 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, proformaSvc, _modalSvc, 
 
 
     $scope.initiload = () => {
-        _commonSvc.getEstabAsign().then(response => {
+        commonSvc.getEstabAsign().then(response => {
             $scope.establecimientos = response;
             let codEstab = $scope.establecimientos.length > 0 ? $scope.establecimientos[0].codEstab : 0;
             $scope.dataSearch.codEstab = codEstab;
@@ -128,7 +216,7 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, proformaSvc, _modalSvc, 
                 mes: $scope.mes
             }
     
-            let modalRef = _modalSvc.openModalCustom({
+            let modalRef = modalSvc.openModalCustom({
                 controller,
                 template,
                 params,
@@ -171,7 +259,7 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, proformaSvc, _modalSvc, 
             template = nombreModalVenta.PROFORMA.templates['MD'];
             controller = (await import(fileCtrl))[ctrl];
 
-            let response = await _commonSvc.getDataTipoDocVenta({
+            let response = await commonSvc.getDataTipoDocVenta({
                 id: item.idProforma,
                 codigoDocumento: TIPO_DOC_PR.codigo
             })
@@ -196,9 +284,9 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, proformaSvc, _modalSvc, 
     $scope.openModalEdit = async (item) => {
         try {
 
-            let result = await _commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.E);
+            let result = await commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.E);
             if (result.code === "2") {
-                _commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.E);
+                commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.E);
                 return
             }
 
@@ -207,7 +295,7 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, proformaSvc, _modalSvc, 
             template = nombreModalVenta.PROFORMA.templates['ME'];
             controller = (await import(fileCtrl))[ctrl];
 
-            let response = await _commonSvc.getDataTipoDocVenta({
+            let response = await commonSvc.getDataTipoDocVenta({
                 id: item.idProforma,
                 codigoDocumento: TIPO_DOC_PR.codigo
             })
@@ -219,7 +307,7 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, proformaSvc, _modalSvc, 
                 data: response
             }
 
-            _modalSvc.openModalCustom({
+            modalSvc.openModalCustom({
                 controller,
                 template,
                 size: 'xl',
@@ -233,7 +321,7 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, proformaSvc, _modalSvc, 
                         additional
                     } = $scope.jsonPermission;
                     if (typeof $scope.jsonPermission === 'object' && additional.requestAuthorizationKey.requestKey) {
-                        _commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.E);
+                        commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.E);
                     }
 
                     $scope.getProformas();
@@ -254,7 +342,7 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, proformaSvc, _modalSvc, 
             template = nombreModalVenta.PROFORMA.templates['MDUPLICATE'];
             controller = (await import(fileCtrl))[ctrl];
 
-            let response = await _commonSvc.getDataTipoDocVenta({
+            let response = await commonSvc.getDataTipoDocVenta({
                 id: item.idProforma,
                 codigoDocumento: TIPO_DOC_PR.codigo
             })
@@ -287,7 +375,7 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, proformaSvc, _modalSvc, 
         params
     }) => {
 
-        _modalSvc.openModalCustom({
+        modalSvc.openModalCustom({
             controller,
             template,
             size,
@@ -305,14 +393,14 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, proformaSvc, _modalSvc, 
     $scope.askToDelete = async (item) => {
         try {
             if (item.anulada) {
-                _fS.sweetAlert('warning', 'El documento ya se encuentra anulada');
+                fS.sweetAlert('warning', 'El documento ya se encuentra anulada');
                 return
             }
 
 
-            let result = await _commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.A);
+            let result = await commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.A);
             if (result.code === "2") {
-                _commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.A);
+                commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.A);
                 return
             }
 
@@ -341,10 +429,10 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, proformaSvc, _modalSvc, 
                 proformaSvc.delete(item.idProforma).then(response => {
                     hideLoader();                    
                     if (response.code === "0") {                        
-                        _fS.sweetAlert('warning', response.message, response.titleSms);
+                        fS.sweetAlert('warning', response.message, response.titleSms);
                     }
                     if (response.code === "1") {                        
-                        _fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                        fS.sweetAlert('success', response.message, response.titleSms, 1000);
 
 
                         //Una vez actualizado el documento 
@@ -352,7 +440,7 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, proformaSvc, _modalSvc, 
                             additional
                         } = $scope.jsonPermission;
                         if (typeof $scope.jsonPermission === 'object' && additional.requestAuthorizationKey.requestKey) {
-                            _commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.A);
+                            commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.A);
                         }
 
                         $scope.getProformas();
@@ -406,7 +494,7 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, proformaSvc, _modalSvc, 
             codigo: 'RNEPT'
         }
 
-        _commonSvc.askToPrint({
+        commonSvc.askToPrint({
             parameters: JSON.stringify(parameters)
         })
 
@@ -436,7 +524,7 @@ function proformaCtrl($scope, $filter, _mS, _commonSvc, proformaSvc, _modalSvc, 
             dataParams: JSON.stringify(dataParms)
         }
 
-        _commonSvc.getReport({
+        commonSvc.getReport({
             parameters,
             formatType: format
         })

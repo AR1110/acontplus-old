@@ -153,7 +153,7 @@
 
         $scope.resultRangeFilter = function (item) {
             $scope.dataSearch.fechaInicio = item.startDate,
-                $scope.dataSearch.fechaFin = item.endDate
+            $scope.dataSearch.fechaFin = item.endDate
             $scope.getAprobComprobantes();
         }
 
@@ -201,12 +201,12 @@
 
         $scope.onKeyupUsuarioSearch = function () {
             if (!$scope.modelNombreCompleto) {
-                $scope.dataSearch.byEstado = 0;
+                $scope.dataSearch.byUsuario = 0;
             }
         }
 
         $scope.selectedUsuarioSearch = function (item) {
-            $scope.dataSearch.byEstado = item.idUsuario;
+            $scope.dataSearch.byUsuario = item.idUsuario;
         }
 
         $scope.onClickBtnMore = function () {

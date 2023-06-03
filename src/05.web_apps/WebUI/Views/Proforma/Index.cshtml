@@ -18,142 +18,220 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="card">
-                <md-toolbar class="md-table-toolbar md-default">
-                    <div class="md-toolbar-tools">
-                        <div class="col-lg-9 col-md-9 col-sm-12 col-12">
-                            <button type="button" class="btn btn-info" ng-click="openModalFiltro()"><i
-                                    class=" fas fa-filter"></i> Filtrar</button>
-                            <button class="btn  waves-effect waves-light btn-secondary" ng-click="getProformas()"><i
-                                    class=" fas fa-sync"></i></button>
-                        </div>
-                        <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-                            <form class="form-material">
-                                <input type="text" class="form-control" ng-model="dataSearch.bySearch"
-                                    ng-keyup="searchLocalProforma()" placeholder="Buscar Proforma">
-                            </form>
-                        </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                    <div class="form-gorup">
+                        <span for="establecimiento">Establecimiento</span>
+                        <select name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab"
+                            class="form-control  border-select" ng-change="getProformas()">
+                            <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
+                                {{item.nombreComercial}}
+                            </option>
+                        </select>
                     </div>
-                </md-toolbar>
-                <md-table-container style="max-height: 400px;">
-                    <table resize md-table>
-                        <thead fix-head md-head md-trim-column-names>
-                            <tr md-row>
-                                <th md-column></th>
-                                <th md-column>N°</th>
-                                <th md-column>Nro. Doc</th>
-                                <th md-column>Fecha Emisión</th>
-                                <th md-column>Cliente</th>
-                                <th md-column>Total</th>
-                                <th md-column>Estado Doc.</th>
-                                <th md-column>Usuario</th>
-                            </tr>
-                        </thead>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span for="">Rango de Fechas</span>
+                        <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
+                            end-date="dataSearch.fechaFin"
+                            result-range-date="resultRangeFilter(result)"></date-range-filter>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span for="clienteFiltro">Cliente</span>
+                        <input type="text" id="clienteSearchFiltro" autocomplete="off" name="clienteSearchFiltro"
+                            class="form-control border-select" placeholder="Ingrese C.I o Nombre Fiscal"
+                            ng-model="modelTextSearch" typeahead-wait-ms="10" ng-keyup="onKeyupClienteSearchFiltro()"
+                            uib-typeahead="a as a.nombreFiscal for a in clienteSearch($viewValue)"
+                            typeahead-loading="clienteFiltro.loading" typeahead-no-results="clienteFiltro.noResults"
+                            typeahead-template-url="clienteSearchFiltro.html" typeahead-editable="false"
+                            typeahead-on-select="selectedClienteSearchFiltro($item)" onClick="select();" />
 
-                        <tbody md-body>
-                            <tr md-row ng-repeat="p in proformas" ng-class="p.rowColor">
-                                <td md-cell>
-                                    <md-menu>
-                                        <md-button aria-label="Open demo menu" class="md-icon-button"
-                                            ng-click="$mdMenu.open($event)">
-                                            <icon class="mdi mdi-menu"></icon>
-                                        </md-button>
-                                        <md-menu-content class="md-dense">
-                                            <md-menu-item>
-                                                <md-button ng-click="openModalDetalle(p)">
-                                                    <span md-menu-align-target><i class="ti-menu"></i> Detalle</span>
-                                                </md-button>
-                                            </md-menu-item>
-
-                                            <md-menu-item ng-if="accion.editar">
-                                                <md-button ng-click="openModalEdit(p)">
-                                                    <span md-menu-align-target><i class="ti-pencil"></i> Editar</span>
-                                                </md-button>
-                                            </md-menu-item>
-
-
-                                            <md-menu-item ng-if="accion.anular && !p.esAnulado">
-                                                <md-button ng-click="askToDelete(p)">
-                                                    <span md-menu-align-target><i class="mdi mdi-block-helper"></i>
-                                                        Anular</span>
-                                                </md-button>
-                                            </md-menu-item>
-
-                                            <md-menu-item>
-                                                <md-button ng-click="openModalDuplicate(p)">
-                                                    <span md-menu-align-target><i class="ti-files"></i> Duplicar</span>
-                                                </md-button>
-                                            </md-menu-item>
-
-                                            <md-menu-item ng-if="accion.reporte">
-                                                <md-button ng-click="getReport(p)">
-                                                    <span md-menu-align-target><i class=" ti-file"></i> PDF</span>
-                                                </md-button>
-                                            </md-menu-item>
-
-                                            <md-menu-item>
-                                                <md-button ng-click="print(p)">
-                                                    <span md-menu-align-target>
-                                                        <icon class="mdi mdi-cloud-print-outline"></icon> Impresión
-                                                    </span>
-                                                </md-button>
-                                            </md-menu-item>
-
-                                            <md-menu-item ng-if="accion.enviarCorreo">
-                                                <md-button btn-send-to-email params="p" type-send="typeSendToMail"
-                                                    get-param-to-send-mail="getParamToSendMail(params)">
-                                                    <span md-menu-align-target><i class="far fa-envelope"></i> Enviar
-                                                        Correo</span>
-                                                </md-button>
-                                            </md-menu-item>
-
-                                            <md-menu-item>
-                                                <md-button uib-tooltip="Enviar por Whatsapp" tooltip-placement="top"
-                                                    btn-send-to-whats-app params="p" has-permission="hasPermissions"
-                                                    type-send="typeSend">
-                                                    <span md-menu-align-target>
-                                                        <i class="mdi mdi-whatsapp"></i> Enviar por Whatsapp
-                                                    </span>
-                                                </md-button>
-                                            </md-menu-item>
-                                        </md-menu-content>
-                                    </md-menu>
-                                </td>
-                                <td md-cell>{{$index+1}}</td>
-                                <td md-cell>{{p.nroDocumento}}</td>
-                                <td md-cell>{{p.fechaEmision}}</td>
-                                <td md-cell>
-                                    <span data-toggle="tooltip" data-placement="top" tooltip title=""
-                                        data-original-title="{{p.nroIdentificacion}}">{{p.nombreFiscal}}
+                        <script type="text/ng-template" id="clienteSearchFiltro.html">
+                                <div class="autocomplete-suggestion-uib-typeahead">
+                                    <span class="item-title">
+                                        <b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}
                                     </span>
-                                </td>
-                                <td md-cell>${{p.total}}</td>
-                                <td md-cell>{{p.estadoDoc}}</td>
-                                <td md-cell>{{p.usuario}}</td>
-                            </tr>
-                            <tr class="text-center" ng-show="proformas.length==0">
-                                <td colspan="8">No hay registros en esta tabla</td>
-                            </tr>
-                        </tbody>
-                        <tfoot md-foot>
-                            <tr md-row>
-                                <td md-cell colspan="5"><span class="font-weight-bold">Total:</span></td>
-                                <td md-cell><span class="font-weight-bold">{{total}}</span></td>
-                                <td md-cell></td>
-                                <td md-cell></td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </md-table-container>
+                                </div>
+                            </script>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                    <button type="button" class="btn btn-info btm-sm mt-4" data-toggle="button" data-more="#sh"
+                        aria-pressed="false" ng-click="onClickBtnMore()">
+                        <span class="text"><i class="ti-plus" aria-hidden="true"></i> Más</span>
+                        <span class="text-active"><i class="ti-minus" aria-hidden="true"></i> Menos</span>
+                    </button>
+                    <button type="button" class="btn btn-success btm-sm mt-4" ng-click="getProformas()">
+                        <i class="fas fa-redo"></i> Recargar
+                    </button>
+                </div>
             </div>
+
+            <div class="row justify-content-between" ng-if="moreSearchOptions">
+
+                <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span for="usuario">Usuario</span>
+                        <input type="text" class="form-control border-select" ng-model="nombreCompleto"
+                            ng-keyup="onKeyupUsuarioSearch()"
+                            uib-typeahead="u as u.nombreCompleto for u in usuarioSearch($viewValue)"
+                            typeahead-editable="false" placeholder="Buscar Usuario" autocomplete="off"
+                            typeahead-template-url="usuarioSearchTemplate.html"
+                            typeahead-no-results="usuarioSearch.noResults"
+                            typeahead-on-select="selectedUsuarioSearch($item)">
+
+                        <script type="text/ng-template" id="usuarioSearchTemplate.html">
+                                <div class="autocomplete-suggestion-uib-typeahead">
+                                    <span class="item-title">
+                                        {{match.model.nombreCompleto}}
+                                    </span>
+                                </div>
+                            </script>
+                    </div>
+                </div>
+                @* <div class="col-xl-3">
+                <div class="form-group">
+                <span>Estado:</span>
+                <select id="estadoDocumentos" class="form-control" ng-model="dataSearch.byEstado"
+                ng-change="getAprobComprobantes()">
+                <option value="">Todos</option>
+                <option ng-value="item.codigo" ng-repeat="item in estadoDocumentos">
+                {{item.descripcion}}
+                </option>
+                </select>
+                </div>
+                </div> *@
+                <div class="col-xl-3">
+                    <div class="form-group">
+                        <span>Buscar</span>
+                        <input type="text" class="form-control border-select" ng-change="searchFilterLocal()"
+                            ng-model="dataSearch.bySearch" placeholder="Ej: 001-002">
+                    </div>
+                </div>
+            </div>
+            <md-table-container style="max-height: 400px;">
+                <table resize md-table>
+                    <thead fix-head md-head md-trim-column-names>
+                        <tr md-row>
+                            <th md-column></th>
+                            <th md-column>N°</th>
+                            <th md-column>Nro. Doc</th>
+                            <th md-column>Fecha Emisión</th>
+                            <th md-column>Cliente</th>
+                            <th md-column>Total</th>
+                            <th md-column>Estado Doc.</th>
+                            <th md-column>Usuario</th>
+                        </tr>
+                    </thead>
+
+                    <tbody md-body>
+                        <tr md-row ng-repeat="p in proformas" ng-class="p.rowColor">
+                            <td md-cell>
+                                <md-menu>
+                                    <md-button aria-label="Open demo menu" class="md-icon-button"
+                                        ng-click="$mdMenu.open($event)">
+                                        <icon class="mdi mdi-menu"></icon>
+                                    </md-button>
+                                    <md-menu-content class="md-dense">
+                                        <md-menu-item>
+                                            <md-button ng-click="openModalDetalle(p)">
+                                                <span md-menu-align-target><i class="ti-menu"></i> Detalle</span>
+                                            </md-button>
+                                        </md-menu-item>
+
+                                        <md-menu-item ng-if="accion.editar">
+                                            <md-button ng-click="openModalEdit(p)">
+                                                <span md-menu-align-target><i class="ti-pencil"></i> Editar</span>
+                                            </md-button>
+                                        </md-menu-item>
+
+
+                                        <md-menu-item ng-if="accion.anular && !p.esAnulado">
+                                            <md-button ng-click="askToDelete(p)">
+                                                <span md-menu-align-target><i class="mdi mdi-block-helper"></i>
+                                                    Anular</span>
+                                            </md-button>
+                                        </md-menu-item>
+
+                                        <md-menu-item>
+                                            <md-button ng-click="openModalDuplicate(p)">
+                                                <span md-menu-align-target><i class="ti-files"></i> Duplicar</span>
+                                            </md-button>
+                                        </md-menu-item>
+
+                                        <md-menu-item ng-if="accion.reporte">
+                                            <md-button ng-click="getReport(p)">
+                                                <span md-menu-align-target><i class=" ti-file"></i> PDF</span>
+                                            </md-button>
+                                        </md-menu-item>
+
+                                        <md-menu-item>
+                                            <md-button ng-click="print(p)">
+                                                <span md-menu-align-target>
+                                                    <icon class="mdi mdi-cloud-print-outline"></icon> Impresión
+                                                </span>
+                                            </md-button>
+                                        </md-menu-item>
+
+                                        <md-menu-item ng-if="accion.enviarCorreo">
+                                            <md-button btn-send-to-email params="p" type-send="typeSendToMail"
+                                                get-param-to-send-mail="getParamToSendMail(params)">
+                                                <span md-menu-align-target><i class="far fa-envelope"></i> Enviar
+                                                    Correo</span>
+                                            </md-button>
+                                        </md-menu-item>
+
+                                        <md-menu-item>
+                                            <md-button uib-tooltip="Enviar por Whatsapp" tooltip-placement="top"
+                                                btn-send-to-whats-app params="p" has-permission="hasPermissions"
+                                                type-send="typeSend">
+                                                <span md-menu-align-target>
+                                                    <i class="mdi mdi-whatsapp"></i> Enviar por Whatsapp
+                                                </span>
+                                            </md-button>
+                                        </md-menu-item>
+                                    </md-menu-content>
+                                </md-menu>
+                            </td>
+                            <td md-cell>{{$index+1}}</td>
+                            <td md-cell>{{p.nroDocumento}}</td>
+                            <td md-cell>{{p.fechaEmision}}</td>
+                            <td md-cell>
+                                <span data-toggle="tooltip" data-placement="top" tooltip title=""
+                                    data-original-title="{{p.nroIdentificacion}}">{{p.nombreFiscal}}
+                                </span>
+                            </td>
+                            <td md-cell>${{p.total}}</td>
+                            <td md-cell>{{p.estadoDoc}}</td>
+                            <td md-cell>{{p.usuario}}</td>
+                        </tr>
+                        <tr class="text-center" ng-show="proformas.length==0">
+                            <td colspan="8">No hay registros en esta tabla</td>
+                        </tr>
+                    </tbody>
+                    <tfoot md-foot>
+                        <tr md-row>
+                            <td md-cell colspan="5"><span class="font-weight-bold">Total:</span></td>
+                            <td md-cell><span class="font-weight-bold">{{total}}</span></td>
+                            <td md-cell></td>
+                            <td md-cell></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </md-table-container>
         </div>
     </div>
+
 </div>
 
 @section Scripts{
     <script src="~/js/services/storageService.min.js" asp-append-version="true"></script>
     <script src="~/js/ventas/services/proformaService.min.js" asp-append-version="true"></script>
-    <script src="~/js/ventas/controllers/proformaCtrl.js" asp-append-version="true"></script>
+    <script src="~/js/ventas/controllers/proformaCtrl.min.js" asp-append-version="true"></script>
 }
