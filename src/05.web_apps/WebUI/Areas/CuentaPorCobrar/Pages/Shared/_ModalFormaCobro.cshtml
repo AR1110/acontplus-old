@@ -48,12 +48,10 @@
                             <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
                                 <div class="form-group">
                                     <label for="ciudad">Ciudad: <span class="text-danger">*</span></label>
-                                    <select class="form-control border-select" ng-model="data.idCiudad">
-                                        <option ng-value="item.idCiudad" ng-repeat="item in ciudades">
-                                            {{item.descripcion}}
-                                        </option>
-                                    </select>
-                                </div>
+                                    <select class="form-control border-select" ng-model="cobro.idCiudad" id="ciudad"
+                                            ng-options="cp.idCiudad as cp.descripcion group by cp.provincia for cp in ciudades">
+                                    </select>                                   
+                                </div> 
                             </div>
 
                             <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
@@ -191,9 +189,9 @@
                             <div class="col-lg-4 col-md-4 col-sm-12 col-12">
                                 <div class="form-group">
                                     <label class="text-muted">Ciudad</label>
-                                    <select class="form-control border-select" ng-model="data.idCiudad">
-                                        <option ng-value="item.idCiudad" ng-repeat="item in ciudades">{{item.descripcion}}</option>
-                                    </select>
+                                    <select class="form-control border-select" ng-model="cobro.idCiudad" id="ciudad"
+                                        ng-options="cp.idCiudad as cp.descripcion group by cp.provincia for cp in ciudades">
+                                    </select>  
                                 </div>
                             </div>
 
