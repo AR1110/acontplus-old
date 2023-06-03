@@ -161,7 +161,8 @@
                                                         </md-button>
                                                     </md-menu-item>
 
-                                                    <md-menu-item ng-if="(accion.cobroPago && item.codEstado==='PP') || (accion.cobroPago && item.codEstado==='PE')">
+                                                    <md-menu-item
+                                                        ng-if="(accion.cobroPago && item.codEstado==='PP') || (accion.cobroPago && item.codEstado==='PE')">
                                                         <md-button ng-click="opcionCobro(item)"
                                                             ng-disabled="item.gestionFinanciera">
                                                             <span md-menu-align-target><i
@@ -190,7 +191,7 @@
                                                                     class="fa fa-file-pdf fa-xs"></i> PDF</span>
                                                         </md-button>
                                                     </md-menu-item>
-                                                   
+
                                                     <md-menu-item>
                                                         <md-button ng-click="print(item)">
                                                             <span md-menu-align-target> <i
@@ -198,14 +199,16 @@
                                                         </md-button>
                                                     </md-menu-item>
 
-                                                     <md-menu-item>
-                                                        <md-button uib-tooltip="Enviar por Whatsapp" tooltip-placement="top" btn-send-to-whats-app params="item" has-permission="hasPermissions" type-send="typeSend"  >
+                                                    <md-menu-item>
+                                                        <md-button uib-tooltip="Enviar por Whatsapp"
+                                                            tooltip-placement="top" btn-send-to-whats-app params="item"
+                                                            has-permission="hasPermissions" type-send="typeSend">
                                                             <span md-menu-align-target>
                                                                 <i class="mdi mdi-whatsapp"></i> Enviar por Whatsapp
                                                             </span>
                                                         </md-button>
                                                     </md-menu-item>
-                                                    
+
                                                 </md-menu-content>
                                             </md-menu>
                                         </td>

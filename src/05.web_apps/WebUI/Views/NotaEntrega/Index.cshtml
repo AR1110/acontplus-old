@@ -102,7 +102,8 @@
                                                         </md-button>
                                                     </md-menu-item>
 
-                                                    <md-menu-item ng-if="(accion.cobroPago && ne.codEstado==='PE') || (accion.cobroPago && ne.codEstado==='PP')">
+                                                    <md-menu-item
+                                                        ng-if="(accion.cobroPago && ne.codEstado==='PE') || (accion.cobroPago && ne.codEstado==='PP')">
                                                         <md-button ng-click="opcionCobro(ne)"
                                                             ng-disabled="ne.codEstado==='A' || ne.cobro || ne.gestion">
                                                             <span md-menu-align-target><i class="ti-shortcode"></i>
@@ -136,15 +137,18 @@
                                                     </md-menu-item>
 
                                                     <md-menu-item ng-if="accion.enviarCorreo">
-                                                        <md-button ng-click="askToSendEmail(ne)"
-                                                            ng-disabled="ne.gestion">
+                                                        <md-button btn-send-to-email params="ne"
+                                                            type-send="typeSendToMail"
+                                                            get-param-to-send-mail="getParamToSendMail(params)">
                                                             <span md-menu-align-target><i class="far fa-envelope"></i>
                                                                 Enviar Correo</span>
                                                         </md-button>
                                                     </md-menu-item>
 
                                                     <md-menu-item>
-                                                        <md-button uib-tooltip="Enviar por Whatsapp" tooltip-placement="top" btn-send-to-whats-app params="ne" has-permission="hasPermissions" type-send="typeSend"  >
+                                                        <md-button uib-tooltip="Enviar por Whatsapp"
+                                                            tooltip-placement="top" btn-send-to-whats-app params="ne"
+                                                            has-permission="hasPermissions" type-send="typeSend">
                                                             <span md-menu-align-target>
                                                                 <i class="mdi mdi-whatsapp"></i> Enviar por Whatsapp
                                                             </span>

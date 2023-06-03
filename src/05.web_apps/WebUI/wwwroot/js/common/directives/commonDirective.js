@@ -611,6 +611,47 @@
         }
     })
 
+    /**
+     * 
+     * ==========================SEND DOCS. BY EMAIL ========================= 
+     * 
+     * 
+     */
+    app.directive('btnSendToEmail', function(modalService, nombreModalCommon){
+        return {
+            restrict: 'A',
+            scope: {
+                params: '=',
+                resultModal: '&',
+                typeSend: '=',
+                getParamToSendMail: '&' //funcion que arma parametro necesario para el envio de correo
+            },
+            link: function(scope, element, att){
+                element.on('click', async function(){
+                    
+                    let fileCtrl = nombreModalCommon.MAIL.fileCtrl;
+                    let ctrl = nombreModalCommon.MAIL.controllers['ME'];
+                    let template = nombreModalCommon.MAIL.templates['ME'];
+                    let controller = (await import(fileCtrl))[ctrl];
+                    
+                    let params = scope.getParamToSendMail({
+                        params: scope.params
+                    }) || scope.params;
+
+                    modalService.openModalCustom({
+                        controller,
+                        template,
+                        size: 'md',
+                        params: {
+                            ...params,
+                            typeSend: scope.typeSend
+                        }
+                    })
+
+                })
+            }
+        }
+    })
 
     /**
      * -------------------------------SEND DOCS. BY WHATSAPP-----------------------
