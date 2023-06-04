@@ -447,7 +447,8 @@
                         controller: ctrl,
                         template,
                         size: 'xl',
-                        params: scope.params || {},
+                        params: Object.assign({}, scope.params) || {},
+                        isRenderRazorPartial: true
                     })
 
                     modalRef.result.then(result => {
@@ -459,6 +460,177 @@
                     })
 
                 })
+            }
+        }
+    })
+
+    app.directive('btnClienteLista', function (modalService, nombreModalVenta) {
+        return {
+            restrict: 'A',
+            scope: {
+                resultModal: '&',
+                params: '='
+            },
+            link: function (scope, element, att) {
+                element.on('click', async function (ev) {
+
+                    let { fileCtrl, controllers, templates } = nombreModalVenta.CLIENTE;
+                    let ctrl = (await import(fileCtrl))[controllers['ML']];
+                    let template = templates['ML'];
+
+                    let modalRef = modalService.openModalCustom({
+                        controller: ctrl,
+                        template,
+                        size: 'xl',
+                        params: Object.assign({}, scope.params) || {},
+                        isRenderRazorPartial: true
+                    })
+
+                    modalRef.result.then(result => {
+                        if (typeof result === 'object') {
+                            scope.resultModal({
+                                result
+                            })
+                        }
+                    })
+
+                })
+            }
+        }
+    })
+
+    app.directive('clienteInfoPopover', function () {
+        return {
+            restrict: 'A',
+            scope: {
+                customer: '=',
+                popoverPlacement: '@'
+            },
+            link: function (scope, element, attrs) {
+                element.popover({
+                    title: '<i class="text-info fas fa-info"></i> Información Cliente',
+                    content: `<div>
+                                <span><b>Nombre Fiscal:</b> ${scope.customer.nombreFiscal}</span><br>
+                                <span><b>Nombre Comercial:</b> ${scope.customer.nombreComercial}</span><br>
+                                <span><b>Correo:</b> ${scope.customer.correo || ''}</span><br>
+                                <span><b>Teléfono:</b> ${scope.customer.telefono || ''}</span><br>
+                                <span><b>Dirección:</b> ${scope.customer.direccion || ''}</span>
+                            </div>`,
+                    placement: scope.popoverPlacement,
+                    trigger: 'outisideclick',
+                    html: true
+                });
+            }
+        };
+    });
+
+    app.directive('btnEmpresa', function (modalService, nombreModalVenta) {
+        return {
+            restrict: 'A',
+            scope: {
+                params: '=',
+                resultModal: '&',
+            },
+            link: function (scope, element, attrs) {
+    
+                element.on('click', async function (event) {
+                    let fileCtrl = nombreModalVenta.EMPRESA.fileCtrl;
+                    let ctrl = nombreModalVenta.EMPRESA.controller 
+                    let template = nombreModalVenta.EMPRESA.template 
+                    let controller = (await import(fileCtrl))[ctrl];
+
+
+                    
+                    const modalDialogRef = modalService.openModalCustom({
+                        controller,
+                        template,
+                        size: 'md',
+                        params: Object.assign({}, scope.params) || {},                        
+                    })
+
+                    modalDialogRef.result.then(result => {
+                        if (typeof result === "object") {
+                            scope.resultModal({
+                                result
+                            })
+                        }
+                    })
+                })
+    
+            }
+        }
+    })
+    
+    
+    app.directive('btnEmpleado', function (modalService, nombreModalVenta) {
+        return {
+            restrict: 'A',
+            scope: {
+                params: '=',
+                resultModal: '&',
+            },
+            link: function (scope, element, attrs) {
+    
+                element.on('click', async function (event) {
+                    let fileCtrl = nombreModalVenta.EMPLEADO.fileCtrl;
+                    let ctrl = nombreModalVenta.EMPLEADO.controller 
+                    let template = nombreModalVenta.EMPLEADO.template 
+                    let controller = (await import(fileCtrl))[ctrl];
+
+
+                    const modalDialogRef = modalService.openModalCustom({
+                        controller,
+                        template,
+                        size: 'md',
+                        params: Object.assign({}, scope.params) || {},                                               
+                    })
+
+                    modalDialogRef.result.then(result => {
+                        if (typeof result === "object") {
+                            scope.resultModal({
+                                result
+                            })
+                        }
+                    })
+                })
+    
+            }
+        }
+    })
+    
+    
+    app.directive('btnCargo', function (modalService, nombreModalVenta) {
+        return {
+            restrict: 'A',
+            scope: {
+                params: '=',
+                resultModal: '&',
+            },
+            link: function (scope, element, attrs) {
+    
+                element.on('click', async function (event) {
+                    let fileCtrl = nombreModalVenta.CARGO.fileCtrl;
+                    let ctrl = nombreModalVenta.CARGO.controller 
+                    let template = nombreModalVenta.CARGO.template 
+                    let controller = (await import(fileCtrl))[ctrl];
+
+
+                    const modalDialogRef = modalService.openModalCustom({
+                        controller,
+                        template,
+                        size: 'md',
+                        params: Object.assign({}, scope.params) || {},                                              
+                    })
+
+                    modalDialogRef.result.then(result => {
+                        if (typeof result === "object") {
+                            scope.resultModal({
+                                result
+                            })
+                        }
+                    })
+                })
+    
             }
         }
     })

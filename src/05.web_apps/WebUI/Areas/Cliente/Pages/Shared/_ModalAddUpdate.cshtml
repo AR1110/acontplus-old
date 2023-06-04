@@ -1,7 +1,7 @@
 <form autocomplete="off">
     <div class="modal-header">
-        <h5 class="modal-title">{{$ctrl.tipoRegistro===1?'Nuevo':'Editar'}} Cliente</h5>
-        <button type="button" class="close" ng-click="$ctrl.closeModal()">&times;</button>
+        <h5 class="modal-title">{{titleModal}}</h5>
+        <button type="button" class="close" ng-click="closeModal()">&times;</button>
     </div>
 
     <div class="modal-body">
@@ -19,39 +19,39 @@
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <select class="form-control border-select"
-                                                ng-model="$ctrl.data.idTipoIdentificacion"
-                                                ng-change="$ctrl.onChangeTipoIdentificacion()" name="tipoDocumento"
-                                                ng-model="$ctrl.data.idTipoIdentificacion"
-                                                ng-disabled="$ctrl.isDisableSelectIdentificacion">
+                                                ng-model="data.idTipoIdentificacion"
+                                                ng-change="onChangeTipoIdentificacion()" name="tipoDocumento"
+                                                ng-model="data.idTipoIdentificacion"
+                                                ng-disabled="isDisableSelectIdentificacion">
                                                 <option ng-value="ti.idTipoIdentificacion"
-                                                    ng-repeat="ti in $ctrl.tipoIdentificaciones">{{ti.identificacion}}
+                                                    ng-repeat="ti in tiposIdentificacion">{{ti.descripcion}}
                                                 </option>
                                             </select>
                                         </div>
                                         <input type="text" class="form-control border-select"
                                             name="numeroIdentificacion" id="numeroIdentificacion"
-                                            ng-if="$ctrl.data.codigoIdentificacion!=='P'" ng-class="$ctrl.typeNotify"
-                                            ng-model="$ctrl.data.numeroIdentificacion"
-                                            ng-keyup="$ctrl.validarNumeroIdentificacion()"
-                                            ng-disabled="$ctrl.isDisableInputIdentificacion" valid-number
+                                            ng-if="data.codigoIdentificacion!=='P'" ng-class="typeNotify"
+                                            ng-model="data.numeroIdentificacion"
+                                            ng-keyup="validarNumeroIdentificacion()"
+                                            ng-disabled="isDisableInputIdentificacion" valid-number
                                             placeholder="Ej: 2105234568">
 
                                         <input type="text" class="form-control border-select"
-                                            ng-if="$ctrl.data.codigoIdentificacion=='P'" name="pasaporte"
-                                            ng-model="$ctrl.data.numeroIdentificacion"
-                                            ng-disabled="$ctrl.isDisableInputIdentificacion" placeholder="Ej: EH123457">
+                                            ng-if="data.codigoIdentificacion=='P'" name="pasaporte"
+                                            ng-model="data.numeroIdentificacion"
+                                            ng-disabled="isDisableInputIdentificacion" placeholder="Ej: EH123457">
 
                                         @* <div class="input-group-append">
-                                        <div ng-if="$ctrl.data.codigoIdentificacion!=='P'" class="input-group-text"
+                                        <div ng-if="data.codigoIdentificacion!=='P'" class="input-group-text"
                                         uib-tooltip="Validar Nro. Identificación" tooltip-placement="top">
                                         <input type="checkbox" aria-label="validationRucSRI"
-                                        ng-change="$ctrl.onChangeValidateIdentificacionSRI()"
-                                        ng-model="$ctrl.validationIdentificacionSri">
+                                        ng-change="onChangeValidateIdentificacionSRI()"
+                                        ng-model="validationIdentificacionSri">
                                         </div>
                                         </div> *@
 
-                                        <small class="invalid-feedback text-right">{{$ctrl.message}} </small>
-                                        <small class="valid-feedback text-right">{{$ctrl.message}} </small>
+                                        <small class="invalid-feedback text-right">{{message}} </small>
+                                        <small class="valid-feedback text-right">{{message}} </small>
                                     </div>
                                 </div>
                             </div>
@@ -59,9 +59,9 @@
                                 <div class="form-group">
                                     <label>Nombre Fiscal: <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control border-select" name="nombreFiscal"
-                                        id="nombreComercial" ng-keyup="$ctrl.copiarNombreComercial()" touppercase
-                                        autocomplete="off" ng-model="$ctrl.data.nombreFiscal"
-                                        ng-disabled="$ctrl.data.validationSri" placeholder="Ej: TECNOMEGA" />
+                                        id="nombreComercial" ng-keyup="copiarNombreComercial()" touppercase
+                                        autocomplete="off" ng-model="data.nombreFiscal" ng-disabled="data.validationSri"
+                                        placeholder="Ej: TECNOMEGA" />
                                 </div>
                             </div>
                         </div>
@@ -71,10 +71,10 @@
                                 <div class="form-group">
                                     <label>Dirección</label>
                                     @* <textarea class="form-control border-select" touppercase
-                                    ng-model="$ctrl.data.direccion"
+                                    ng-model="data.direccion"
                                     rows="0" placeholder="Av. 09 de Octubre..."></textarea> *@
-                                    <input type="text" class="form-control border-select"
-                                        ng-model="$ctrl.data.direccion" touppercase placeholder="AV. 09 DE OCTUBRE...">
+                                    <input type="text" class="form-control border-select" ng-model="data.direccion"
+                                        touppercase placeholder="AV. 09 DE OCTUBRE...">
                                 </div>
                             </div>
                         </div>
@@ -88,9 +88,8 @@
                                             <i class="fas fa-info-circle"></i>
                                         </span>
                                     </label>
-                                    <md-chips ng-model="$ctrl.correos" md-add-on-blur="true"
-                                        ng-keyup="$ctrl.onKeyupEmail($event)"
-                                        md-transform-chip="$ctrl.transformChipEmail($chip)" md-removable="true"
+                                    <md-chips ng-model="correos" md-add-on-blur="true" ng-keyup="onKeyupEmail($event)"
+                                        md-transform-chip="transformChipEmail($chip)" md-removable="true"
                                         md-enable-chip-edit="true" placeholder="Ej: maxi@gmail.com"
                                         input-aria-label="Correos" tabindex="-1"></md-chips>
                                     <small></small>
@@ -104,8 +103,8 @@
                                             <i class="fas fa-info-circle"></i>
                                         </span>
                                     </label>
-                                    <md-chips ng-model="$ctrl.telefonos" md-add-on-blur="true"
-                                        md-transform-chip="$ctrl.transformChipTelefono($chip)" md-removable="true"
+                                    <md-chips ng-model="telefonos" md-add-on-blur="true"
+                                        md-transform-chip="transformChipTelefono($chip)" md-removable="true"
                                         md-enable-chip-edit="true" placeholder="Ej: 0959889744"
                                         input-aria-label="Número de teléfonos" tabindex="-1"></md-chips>
                                 </div>
@@ -114,11 +113,11 @@
 
 
 
-                        <div class="row" ng-if="$ctrl.showEstado">
+                        <div class="row" ng-if="showEstado">
                             <div class="col-lg-4 col-md-6 col-sm-12 col-12">
                                 <div class="form-group">
                                     <label for="">Estado</label>
-                                    <md-radio-group ng-model="$ctrl.data.estado" tabindex="-1">
+                                    <md-radio-group ng-model="data.estado" tabindex="-1">
                                         <md-radio-button ng-value="true">Activo</md-radio-button>
                                         <md-radio-button ng-value="false">Inactivo</md-radio-button>
                                     </md-radio-group>
@@ -139,18 +138,27 @@
                         <div class="row">
                             <div class="col-lg-4 col-md-4 col-sm-12 col-12">
                                 <div class="form-group">
-                                    <label>Nombre Comercial <span class="text-danger">*</span></label>
+                                    <label>Nombre Comercial: </label>
                                     <input type="text" class="form-control border-select" autocomplete="off"
-                                        ng-model="$ctrl.data.nombreComercial" touppercase placeholder="Ej: TECNOMEGA" />
+                                        ng-model="data.nombreComercial" touppercase placeholder="Ej: TECNOMEGA" />
                                 </div>
                             </div>
 
                             <div class="col-lg-4 col-md-4 col-sm-12 col-12">
                                 <div class="form-group">
-                                    <label>Contribuyente <span class="text-danger">*</span></label>
-                                    <select class="form-control border-select" ng-model="$ctrl.data.idSubContribuyente"
-                                        required="required"
-                                        ng-options="sc.subContribuyente.idSubContribuyente as sc.subContribuyente.descripcion group by sc.tipoContribuyente.descripcion for sc in $ctrl.subContribuyentes ">
+                                    <label>Contribuyente: </label>
+                                    @* <select class="form-control border-select" ng-model="data.idSubContribuyente"
+                                    required="required"
+                                    ng-options="sc.subContribuyente.idSubContribuyente as
+                                    sc.subContribuyente.descripcion group by sc.tipoContribuyente.descripcion for sc in
+                                    subContribuyentes ">
+                                    </select> *@
+                                    <select name="tipoContribuyente" id="tipoContribuyente"
+                                        ng-model="data.idSubContribuyente" class="form-control border-select">
+                                        <option ng-value="item.idSubContribuyente"
+                                            ng-repeat="item in tipoContribuyentes">
+                                            {{item.descripcion}}
+                                        </option>
                                     </select>
                                 </div>
                             </div>
@@ -159,14 +167,14 @@
                                 <div class="form-group">
                                     <label>Tiempo de Credito </label>
                                     <div class="input-group">
-                                        <select class="form-control border-select"
-                                            ng-model="$ctrl.data.idTiempoCredito">
-                                            <option ng-value="item.idTiempoCredito"
-                                                ng-repeat="item in $ctrl.tiempoCreditos">{{item.descripcion}}</option>
+                                        <select class="form-control border-select" ng-model="data.idTiempoCredito">
+                                            <option ng-value="item.idTiempoCredito" ng-repeat="item in tiempoCreditos">
+                                                {{item.descripcion}}</option>
                                         </select>
                                         <div class="input-group-append">
                                             <button type="button" class="btn btn-outline-secondary btn-sm"
-                                                ng-click="getTiempoCredito()"><i class="fa fa-sync fa-xs"></i></button>
+                                                ng-click="refreshTiempoCredito()"><i
+                                                    class="fa fa-sync fa-xs"></i></button>
                                         </div>
                                     </div>
                                 </div>
@@ -178,8 +186,9 @@
                             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label>Ciudad: </label>
-                                    <select class="form-control border-select" ng-model="$ctrl.data.idCiudad"
-                                        ng-options="cp.idCiudad as cp.descripcion group by cp.provincia.descripcion for cp in $ctrl.ciudadPronvincias">
+                                    <select class="form-control border-select" ng-model="data.idCiudad"
+                                        ng-options="cp.idCiudad as cp.ciudad group by cp.provincia for cp in ciudades">
+                                        <option value=""></option>
                                     </select>
                                 </div>
                             </div>
@@ -187,10 +196,9 @@
                             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label>Tipo Cliente: </label>
-                                    <select class="form-control border-select"
-                                        ng-model="$ctrl.data.idTipoClienteProveedor">
-                                        <option ng-value="item.idTipoClienteProveedor"
-                                            ng-repeat="item in $ctrl.tipoClientes">{{item.descripcion}}</option>
+                                    <select class="form-control border-select" ng-model="data.idTipoClienteProveedor">
+                                        <option ng-value="item.idTipoClienteProveedor" ng-repeat="item in tiposCliente">
+                                            {{item.descripcion}}</option>
                                     </select>
                                 </div>
                             </div>
@@ -199,14 +207,14 @@
                                 <div class="form-group">
                                     <label for="">Empresa</label>
                                     <div class="input-group">
-                                        <select ng-model="$ctrl.data.idEmpresa" class="form-control border-select">
+                                        <select ng-model="data.idEmpresa" class="form-control border-select">
                                             <option ng-value=""></option>
-                                            <option ng-value="item.idEmpresa" ng-repeat="item in $ctrl.empresas">
+                                            <option ng-value="item.idEmpresa" ng-repeat="item in empresas">
                                                 {{item.razonSocial}}</option>
                                         </select>
                                         <div class="input-group-append">
                                             <button type="button" tabindex="-1" class="btn btn-outline-secondary btn-sm"
-                                                ng-click="$ctrl.openModalEmpresa()"><i
+                                                btn-empresa result-modal="resultModalEmpresa(result)"><i
                                                     class="fa fa-plus fa-xs"></i></button>
                                         </div>
                                     </div>
@@ -221,15 +229,13 @@
                                     <div class="input-group">
                                         <input type="text" id="clienteAutocomplete" autocomplete="off"
                                             name="empleadoAutocomplete" class="form-control border-select"
-                                            placeholder="Buscar Empleado" ng-model="$ctrl.selectedEmpleado"
-                                            ng-keyup="$ctrl.onKeyupSearchEmpleado(selectedEmpleado)"
-                                            uib-typeahead="a as a.nombreCompleto for a in $ctrl.searchEmpleadoFilter($viewValue)"
-                                            typeahead-loading="loadingLocations"
-                                            typeahead-no-results="$ctrl.data.noResults"
+                                            placeholder="Buscar Empleado" ng-model="selectedEmpleado"
+                                            ng-keyup="onKeyupSearchEmpleado(selectedEmpleado)"
+                                            uib-typeahead="a as a.nombreCompleto for a in searchEmpleadoFilter($viewValue)"
+                                            typeahead-loading="loadingLocations" typeahead-no-results="data.noResults"
                                             typeahead-template-url="autocompleteEmpleado.html"
                                             typeahead-editable="false"
-                                            typeahead-on-select="$ctrl.selectedEmpleadoChange($item)"
-                                            onClick="select();" />
+                                            typeahead-on-select="selectedEmpleadoChange($item)" onClick="select();" />
 
                                         <script type="text/ng-template" id="autocompleteEmpleado.html">
                                                     <div class="autocomplete-suggestion-cliente">
@@ -240,11 +246,11 @@
                                                 </script>
                                         <div class="input-group-append">
                                             <button type="button" tabindex="-1" class="btn btn-outline-secondary btn-sm"
-                                                ng-click="$ctrl.openModalEmpleado()"><i
+                                                btn-empleado result-modal="resultModalEmpleado(result)"><i
                                                     class="fa fa-plus fa-xs"></i></button>
                                         </div>
                                     </div>
-                                    <small class="text-danger" ng-show="$ctrl.data.noResults">No se encontraron los
+                                    <small class="text-danger" ng-show="data.noResults">No se encontraron los
                                         resultados</small>
                                 </div>
                             </div>
@@ -253,14 +259,14 @@
                                 <div class="form-group">
                                     <label for="">Cargo</label>
                                     <div class="input-group">
-                                        <select ng-model="$ctrl.data.idCargo" class="form-control border-select">
+                                        <select ng-model="data.idCargo" class="form-control border-select">
                                             <option ng-value=""></option>
-                                            <option ng-value="item.idCargo" ng-repeat="item in $ctrl.cargos">
+                                            <option ng-value="item.idCargo" ng-repeat="item in cargos">
                                                 {{item.descripcion}}</option>
                                         </select>
                                         <div class="input-group-append">
                                             <button type="button" tabindex="-1" class="btn btn-outline-secondary btn-sm"
-                                                ng-click="$ctrl.openModalCargo()"><i
+                                                btn-cargo result-modal="resultModalCargo(result)"><i
                                                     class="fa fa-plus fa-xs"></i></button>
                                         </div>
                                     </div>
@@ -270,7 +276,7 @@
                             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="">Observación</label>
-                                    <textarea class="form-control border-select" touppercase ng-model="$ctrl.data.nota"
+                                    <textarea class="form-control border-select" touppercase ng-model="data.nota"
                                         placeholder="...">
 
                                     </textarea>
@@ -286,7 +292,7 @@
                                             uib-tooltip="Haz doble 'Click' sobre el placa para editar">
                                             <i class="fas fa-info-circle"></i>
                                         </span></label>
-                                    <md-chips ng-model="$ctrl.placas" md-removable="true" md-enable-chip-edit="true"
+                                    <md-chips ng-model="placas" md-removable="true" md-enable-chip-edit="true"
                                         md-add-on-blur="true" placeholder="Ej: AAC-0123 "
                                         input-aria-label="Placas"></md-chips>
                                 </div>
@@ -296,13 +302,13 @@
                                 <div class="form-group">
                                     <label for="barcode"> Código de Barras:</label>
                                     <button type="button" class="btn btn-info btn-sm"
-                                        ng-click="$ctrl.getBarcode($ctrl.data.numeroIdentificacion)"><i
-                                            class="fa fa-barcode"></i> Generar</button>
+                                        ng-click="getBarcode(data.numeroIdentificacion)"><i class="fa fa-barcode"></i>
+                                        Generar</button>
                                     <img id="barcode" src="" alt="" style="display: none;">
                                 </div>
                                 <div class="card border border-success" id="cardBusiness" style="max-width: 18rem;">
                                     <div class="card-body">
-                                        <h5 class="card-title text-center">{{$ctrl.data.nombreFiscal}}</h5>
+                                        <h5 class="card-title text-center">{{data.nombreFiscal}}</h5>
                                         <div class="row">
                                             <div class="col-md-12 ">
                                                 @* <label for="identificacion">N° Identificación:</label> *@
@@ -310,18 +316,18 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-12 text-center">
-                                                <h5 style="align-content: center;">{{$ctrl.data.numeroIdentificacion}}
+                                                <h5 style="align-content: center;">{{data.numeroIdentificacion}}
                                                 </h5>
-                                                <img id="barcode" src="{{$ctrl.data.barcodeCard}}" alt="">
+                                                <img id="barcode" src="{{data.barcodeCard}}" alt="">
                                                 <br>
                                                 <h6> <small>&copy; Acontplus</small></h6>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <button class="btn btn-success btn-sm" ng-if="$ctrl.data.barcodeGenerated"
-                                    ng-click="$ctrl.exportTpvCard($ctrl.data.numeroIdentificacion)"><i
-                                        class="ti-share"></i> Compartir Tarjeta</button>
+                                <button class="btn btn-success btn-sm" ng-if="data.barcodeGenerated"
+                                    ng-click="exportTpvCard(data.numeroIdentificacion)"><i class="ti-share"></i>
+                                    Compartir Tarjeta</button>
                             </div>
                         </div>
                     </div>
@@ -330,11 +336,11 @@
         </uib-tabset>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-success" ng-click="$ctrl.saveUpdateCliente()">
-            <i class="ti-{{$ctrl.tipoRegistro===1?'save':'pencil'}}"></i>
-            {{$ctrl.tipoRegistro===1?'Guardar':'Actualizar'}}
+        <button type="button" class="btn btn-success" ng-click="save()">
+            <i ng-class="iconBtnSaveModal"></i>
+            {{textBtnSaveModal}}
         </button>
-        <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">
+        <button type="button" class="btn btn-dark" ng-click="closeModal()">
             &times; Cerrar
         </button>
     </div>

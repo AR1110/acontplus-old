@@ -430,7 +430,11 @@
               !isNaN(date) &&
               date.getFullYear().toString().length === 4
             );
-          };
+        };
+
+        formSvc.isEmail = function (value) {
+            return /^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i.test(value);
+        };
 
         return formSvc;
 

@@ -34,6 +34,18 @@ BEGIN
 	SELECT c.idCiudad, ciudad = c.descripcion, c.codigo, c.estado, c.idProvincia, provincia = pr.descripcion
 	FROM Ciudad c
 	INNER JOIN Provincia pr ON pr.idProvincia = c.idProvincia
-	
+	 
+
+	SELECT t_cp.idTipoClienteProveedor, t_cp.descripcion, t_cp.codigo FROM TipoClienteProveedor t_cp WITH(NOLOCK) 
+	                                                               INNER JOIN TipoPersona tp WITH(NOLOCK) ON t_cp.idTipoPersona =tp.idTipoPersona 
+																   WHERE tp.codigo='CL';
+
+	SELECT idEmpresa,ruc,nombreComercial,razonSocial,estado FROM Administrador.Empresa WITH(NOLOCK)
+	                                                        WHERE idEntidad = @idEntidad AND estado = 1
+															ORDER BY idEmpresa DESC
+															
+	SELECT idCargo,codigo,descripcion,estado FROM Administrador.Cargo 
+											 WHERE idEntidad = @idEntidad AND estado = 1
+											 ORDER BY idCargo DESC
 END
 GO

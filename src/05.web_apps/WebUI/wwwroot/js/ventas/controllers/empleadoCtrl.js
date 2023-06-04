@@ -1,15 +1,9 @@
 ﻿
 app.controller('empleadoCtrl', empleadoCtrl);
-empleadoCtrl.$inject = ['$scope', 'mainService', 'modalService', 'nombreModal', 'toastService','formulario'];
+empleadoCtrl.$inject = ['$scope', 'mainService', 'toastService'];
 
-function empleadoCtrl($scope, mS, _modalSvc, _nombreModal, toast, form) {
-    // let accion = JSON.parse(localStorage.getItem("accion"));
-    // if(accion===null){
-    //     location.href = "/Home/Index";
-    // }else{
-    //     $scope.accion = accion[0];
-    // }
-    
+function empleadoCtrl($scope, mS, toast, ) {
+  
     $scope.empleados = [];
 
     //Paginacion 
@@ -19,22 +13,10 @@ function empleadoCtrl($scope, mS, _modalSvc, _nombreModal, toast, form) {
     $scope.pageSize = 10;
     $scope.recordsQuantity = [5, 10, 25, 50]
 
-    $scope.openModalAddUpdate = async(params)=>{
-        const {MODAL_CTRL, MODAL_CSHTML} = _nombreModal.empleado;
-        const {ModalEmpleadoCtrl} = await import('./../../modal/' + MODAL_CTRL);
-
-        const _modalRef = _modalSvc.openModalCustom({
-            controller: ModalEmpleadoCtrl,
-            template: 'Empleado/' + MODAL_CSHTML,
-            size:'md',
-            params
-        })
-
-        _modalRef.result.then(response=>{
-            if(typeof response==='object'){
-                $scope.getEmpleados();
-            }
-        })
+    $scope.resultModal = function(params){
+        if(typeof response==='object'){
+            $scope.getEmpleados();
+        }        
     }
     
 
