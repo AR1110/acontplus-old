@@ -52,12 +52,14 @@
             showColumnFooter: false,
             showGridFooter: true,
             enableCellEdit: false,
+            enableFiltering: true,
         }
         $scope.setColumnDefs = () => {
             $scope.gridOptions.columnDefs = [
                 {
                     name: 'Op',
                     enableCellEdit: false,
+                    enableFiltering: false,
                     width: '5%',
                     minWidth: '10',
                     cellTemplate: `<button type="button" class="btn btn-warning btn-sm" btn-article-add-update params="row.entity" result-modal="grid.appScope.resultModalArticleEdit(result)"><i class="ti-pencil"><i></button>`,
@@ -67,7 +69,7 @@
                     field: 'descripcion',
                     visible: true,
                     width: '20%',
-                    minWidth: 100
+                    minWidth: 100,
                 },
                 {
                     name: 'idTarifa',
@@ -78,6 +80,7 @@
                     name: 'tarifa',
                     field: 'tarifa',
                     enableCellEdit: false,
+                    enableFiltering: false,
                     width: '8%',
                     minWidth: 100
                 },
@@ -86,6 +89,7 @@
                     field: 'porcentajeIva',
                     type: 'number',
                     enableCellEdit: false,
+                    enableFiltering: false,
                     width: '3%',
                     minWidth: 100
                 },
@@ -95,6 +99,7 @@
                     enableCellEditOnFocus: false,
                     enableCellEdit: false,
                     allowCellFocus: true,
+                    enableFiltering: false,
                     type: 'number',
                     width: '10%',
                     minWidth: 100
@@ -106,6 +111,7 @@
                     },
                     field: 'precioVenta',
                     enableCellEditOnFocus: true,
+                    enableFiltering: false,
                     enableCellEdit: true,
                     allowCellFocus: true,
                     type: 'number',
@@ -119,6 +125,7 @@
                     },
                     field: 'precioConIva',
                     enableCellEditOnFocus: true,
+                    enableFiltering: false,
                     enableCellEdit: true,
                     allowCellFocus: true,
                     type: 'number',
@@ -133,6 +140,7 @@
                     field: 'porcentajeUtilidad',
                     type: 'number',
                     enableCellEditOnFocus: true,
+                    enableFiltering: false,
                     enableCellEdit: true,
                     allowCellFocus: true,
                     width: '10%',
@@ -147,6 +155,7 @@
                     field: 'ganancia',
                     type: 'number',
                     enableCellEditOnFocus: true,
+                    enableFiltering: false,
                     width: '8%',
                     minWidth: 100
                 },
@@ -159,6 +168,7 @@
                     name: 'Estado',
                     field: 'predeterminadaVal',
                     enableCellEdit: false,
+                    enableFiltering: false,
                     type: 'checkbox',
                     //cellTemplate: '<div class="text-center"><input type="checkbox"' +
                     //    'name="radio" value="radio" ng-click="grid.appScope.updateDefault(row.entity)"/></div>', //'<md-switch style="display:inline" title="Actualizar estado" aria-label="Predeterminado" ng-click="grid.appScope.updateDefault(row)"></md-switch>',
