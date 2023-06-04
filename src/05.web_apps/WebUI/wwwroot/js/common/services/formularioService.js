@@ -212,16 +212,29 @@
 
 
 
+        formSvc.asignarFechaEmision = function(fechaEmision, fechaActual) {
+            let fechaEmisionToInsert;          
+            if (moment(fechaEmision).isBefore(fechaActual, 'day')) {
+                fechaEmisionToInsert = moment(fechaEmision).startOf('day').toDate();
+            } else {
+                fechaEmisionToInsert = moment().toDate(); // Esto asume que tienes una función ufnGetDateEcuador() que devuelve la fecha actual en Ecuador
+            }
+          
+            return fechaEmisionToInsert;
+        }
+          
         /**
          * 
          * @param {Date} fecha
          * @param {format} format "YYYY-MM-DD HH:mm:ss" 
          * @returns date
          */
+        //Eliminar mas adelante
         formSvc.formatDateTimeZone = (fecha, format = "DD-MM-YYYY h:mm A") => {
             const formatDateMoment = moment.tz(fecha, "America/Guayaquil")
             return formatDateMoment.format(format);
         }
+        
 
         /**
          * 
@@ -232,7 +245,7 @@
             if (!this.isDateValid(dateString)) {
                 throw new Error("La fecha es inválida");
             }
-            return moment(dateString).format('YYYY-MM-DD HH:mm:ss A')
+            return moment(dateString).tz('America/Guayaquil').format('YYYY-MM-DD HH:mm:ss A')
         }
 
         formSvc.isDateValid = function (dateString) {
@@ -417,7 +430,11 @@
               !isNaN(date) &&
               date.getFullYear().toString().length === 4
             );
-          };
+        };
+
+        formSvc.isEmail = function (value) {
+            return /^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i.test(value);
+        };
 
         return formSvc;
 

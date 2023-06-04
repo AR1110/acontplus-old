@@ -111,6 +111,7 @@
     app.factory('clienteService', function($injector){
         let url = 'Cliente/';
         let mS = $injector.get('mainService');
+        let fS = $injector.get('formulario');
 
         let service = {};
 
@@ -123,12 +124,15 @@
                         }
                         if(response.code==='1'){
                             let mainDataRepository = JSON.parse(response.payload)
-                            
+                            console.log(mainDataRepository)
                             return {
                                 tipoIdentificacion: mainDataRepository[0],
                                 tipoContribuyentes: mainDataRepository[1],
                                 tiempoCreditos: mainDataRepository[2],
-                                ciudades: mainDataRepository[3]
+                                ciudades: mainDataRepository[3],                            
+                                tiposCliente: mainDataRepository[4],
+                                empresas: mainDataRepository[5],
+                                cargos: mainDataRepository[6],
                             }
                         }
                     }).catch(response=>{
@@ -321,19 +325,19 @@
             }
 
             if (data.correos.length > 0) {
-                if (!data.correos.every(item => validationsUtils.isEmail(item))) {
+                if (!data.correos.every(item => fS.isEmail(item))) {
                     tS.toastr('warning', 'Verifique que los correos  esten ingresado correctamente');
                     return
                 }
             }
 
-            if (!data.idTiempoCredito) {
+            if (!(data.idTiempoCredito>0)) {
                 tS.toastr('warning', 'Seleccione el Tiempo Credito');
                 return
             }
 
 
-            data.direccion = data.direccion ? validationsUtils.letterInline(data.direccion) : "";
+            data.direccion = data.direccion ? fS.letterInline(data.direccion) : "";
             data.telefono = data.telefonos.length > 0 ? data.telefonos.join(';') : "";
             data.correo = data.correos.length > 0 ? data.correos.join(';') : "";
             data.placa = data.placas.length > 0 ? data.placas.join(';') : "";
@@ -345,22 +349,40 @@
         
 
         service.checkClientByIdentification = function (query, codigoIdentificacion, callback) {
-            clienteRepository.checkClientByIdentification(query).then(response => {
-                if (response.code == "0") {
+            mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+                if (response.code === '0') {
                     callback(codigoIdentificacion)
+                    // return response;
                 }
-                if (response.code == "1") {
+                if(response.code==="1"){
+                    
+                    let clienteRepository = JSON.parse(response.payload)[0]
+
+                    // return {
+                    //     idCliente: clienteRepository.idCliente,
+                    //     numeroIdentificacion: clienteRepository.numeroIdentificacion,
+                    //     nombreFiscal: clienteRepository.nombreFiscal,
+                    //     direccion: clienteRepository.direccion,
+                    //     telefono: clienteRepository.telefono,
+                    //     correo: clienteRepository.correo,
+                    //     estado: clienteRepository.estado,
+                    //     consumidorFinal: clienteRepository.consumidorFinal,
+                    //     totalRecords: clienteRepository.totalRecords,
+                    //     validationSri: clienteRepository.validationSri,
+                    //     tipoIdentificacion: clienteRepository.tipoIdentificacion,
+                    //     esConsumidorFinal: clienteRepository.tipoIdentificacion=='CF',
+                    // }
                     Swal.fire({
                         title: `Cliente Registrado`,
                         html: `
                                 <small><strong>Nro. Identificación</strong></small>
                                 <br>
-                                <p class="text-muted small">${response.numeroIdentificacion}</p>
+                                <p class="text-muted small">${clienteRepository.numeroIdentificacion}</p>
                                 <small><strong>Nombre Fiscal</strong></small> <br>
-                                <p class="text-muted small">${response.nombreFiscal}</p>
-    
+                                <p class="text-muted small">${clienteRepository.nombreFiscal}</p>
+
                                 <small><strong>Nombre Comercial</strong></small> <br>
-                                <p class="text-muted small">${response.nombreComercial}</p>
+                                <p class="text-muted small">${clienteRepository.nombreComercial}</p>
                             `,
                         icon: 'info',
                         showCloseButton: true,
@@ -375,32 +397,31 @@
                             callback(codigoIdentificacion);
                         }
                     })
-                }
-
-            }).catch(errorResponse => {
-                let error = apiErrorHandler.handle(errorResponse);
-                throw new Error(error.message);
-            })
-        }
-
-        service.checkClientSRIByCedula = function (identificacion) {
-            return clienteRepository.checkClientSRIByCedula(identificacion)
+                }                
+            }).catch(error => {
+                console.log(error);
+                throw error;
+            })           
         }
 
         service.checkClientSRIByRUC = function (identificacion) {
-            return clienteRepository.checkClientSRIByRUC(identificacion)
+            return mS.getData('get', 'Consultas/GetRucSRI?Ruc=' + identificacion, null, true)
+        }
+
+        service.checkClientSRIByCedula = function (identificacion) {
+            return mS.getData('get', 'Consultas/GetCedulaSri?Ruc=' + identificacion, null, true)
         }
 
 
         service.onKeyupEmail = function (item) {
             let textChip = item.target.value || "";
-            textChip = validationsUtils.removeAccents(textChip);
+            textChip = fS.removeAccents(textChip);
             item.target.value = textChip.toLowerCase();
         }
 
         service.transformChipEmail = function (item) {
             let textChip = item || "";
-            textChip = validationsUtils.removeAccents(textChip);
+            textChip = fS.removeAccents(textChip);
             item = textChip.toLowerCase();
         }
 

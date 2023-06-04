@@ -624,39 +624,26 @@
         }
 
 
-        $scope.askToSendEmail = async (item) => {
-            try {
-                let params = {
-                    TYPE_NOTIFICATION: 'N',
-                    serie: item.serieComprobante,
-                    correo: item.correo,
-                    subject: 'Documento Nota Entrega - Acontplus N°: ' + item.serieComprobante,
-                    json: {
-                        hasFile: true,
-                        isReport: "SI",
-                        reportParams: {
-                            hasParams: true,
-                            codEstab: item.codEstab,
-                            codigo: "RNE",
-                            format: "pdf"
-                        },
-                        spParams: {
-                            id: item.idDocumento
-                        }
+        $scope.typeSendToMail = 'N'
+        $scope.getParamToSendMail = function(item){
+            return {
+                TYPE_NOTIFICATION: 'N',
+                serieComprobante: item.serieComprobante,
+                correo: item.correo,
+                subject: 'Documento Nota Entrega - Acontplus N°: ' + item.serieComprobante,
+                json: {
+                    hasFile: true,
+                    isReport: "SI",
+                    reportParams: {
+                        hasParams: true,
+                        codEstab: item.codEstab,
+                        codigo: "RNE",
+                        format: "pdf"
+                    },
+                    spParams: {
+                        id: item.idDocumento
                     }
                 }
-
-
-                const { MODAL_SEND_MAIL_CTRL, MODAL_SEND_MAIL_CSHTML } = _nombreModalConst.common;
-                const { SendMailCtrl } = await import('./../../modal/' + MODAL_SEND_MAIL_CTRL);
-                _modalSvc.openModalCustom({
-                    controller: SendMailCtrl,
-                    template: 'Shared/' + MODAL_SEND_MAIL_CSHTML,
-                    size: 'md',
-                    params
-                })
-            } catch (error) {
-                console.error(error)
             }
         }
 

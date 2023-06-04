@@ -153,7 +153,7 @@
 
         $scope.resultRangeFilter = function (item) {
             $scope.dataSearch.fechaInicio = item.startDate,
-                $scope.dataSearch.fechaFin = item.endDate
+            $scope.dataSearch.fechaFin = item.endDate
             $scope.getAprobComprobantes();
         }
 
@@ -201,12 +201,12 @@
 
         $scope.onKeyupUsuarioSearch = function () {
             if (!$scope.modelNombreCompleto) {
-                $scope.dataSearch.byEstado = 0;
+                $scope.dataSearch.byUsuario = 0;
             }
         }
 
         $scope.selectedUsuarioSearch = function (item) {
-            $scope.dataSearch.byEstado = item.idUsuario;
+            $scope.dataSearch.byUsuario = item.idUsuario;
         }
 
         $scope.onClickBtnMore = function () {
@@ -351,7 +351,7 @@
                 showLoader();
                 aprobacionDocSvc.findById(item.idAprob_Document).then(response => {
                     hideLoader();
-                    modalSvc.openModalCustom({
+                    let modalRef = modalSvc.openModalCustom({
                         controller: 'ModalAprobDocEditarCtrl',
                         template: URL_TEMPLATE + '_ModalEditar.cshtml',
                         size: 'xl',
@@ -362,6 +362,11 @@
                             data: response
                         },
                         isRenderRazorPartial: true
+                    })
+                    modalRef.result.then(result => {
+                        if(typeof result ==='object'){
+                            $scope.getAprobComprobantes();
+                        }
                     })
                 }).catch(error => {
                     hideLoader();
@@ -381,7 +386,7 @@
                 showLoader();
                 aprobacionDocSvc.findById(item.idAprob_Document).then(response => {
                     hideLoader();
-                    modalSvc.openModalCustom({
+                    let modalRef = modalSvc.openModalCustom({
                         controller: 'ModalApproveDocCtrl',
                         template: URL_TEMPLATE + '_ModalAprobacionDocumento.cshtml',
                         size: 'xl',
@@ -392,6 +397,11 @@
                             data: response
                         },
                         isRenderRazorPartial: true
+                    })
+                    modalRef.result.then(result => {
+                        if(typeof result ==='object'){
+                            $scope.getAprobComprobantes();
+                        }
                     })
                 }).catch(error => {
                     hideLoader();
@@ -423,16 +433,10 @@
                     aprobacionDocSvc.delete(item.idAprob_Document).then(response => {
                         hideLoader();
                         if (response.code === '0') {
-                            Toast.fire({
-                                icon: 'warning',
-                                html: response.message
-                            })
+                            fS.sweetAlert('warning', response.message);
                         }
                         if (response.code === '1') {
-                            Toast.fire({
-                                icon: 'successs',
-                                html: response.message
-                            })
+                            fS.sweetAlert('success', response.message);
                             $scope.aprobComprobantes();
                         }
                     }).catch(error => {
@@ -838,6 +842,10 @@
         }
 
         $scope.resultDateRange = function (item) {
+            $scope.dataSearch.checkBoxFecha = true;
+            $scope.dataSearch.fechaInicio = item.startDate,
+            $scope.dataSearch.fechaFin = item.endDate
+
             if ($scope.isValidFilter()) {
                 $scope.getDocumentos();
             }
@@ -896,6 +904,7 @@
                 showLoader();
                 $scope.documentos = [];
                 $scope.dataSearch.typeList = 2;
+               
                 notaEntregaSvc.getAll($scope.dataSearch).then(async response => {
 
                     $scope.gridOptionsSelectedDocs.columnDefs = [{
@@ -959,8 +968,16 @@
             try {
                 showLoader();
                 $scope.documentos = [];
-                $scope.dataSearch.typeList = 2;
-                proformaSvc.getAll($scope.dataSearch).then(async response => {
+                let dataSearch = {
+                    codEstab: $scope.dataSearch.codEstab,
+                    checkBoxFecha: $scope.dataSearch.checkBoxFecha,
+                    checkBoxCliente: $scope.dataSearch.byCliente > 0,
+                    byCliente: $scope.dataSearch.byCliente,
+                    fechaInicio: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
+                    fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
+                    typeList : 2
+                }
+                proformaSvc.getAll(dataSearch).then(async response => {
                     $scope.gridOptionsSelectedDocs.columnDefs = [{
                         name: 'Nro. Doc',
                         field: 'nroDocumento'
@@ -3369,7 +3386,7 @@
 
                 const nroDocumentoSecuencial = await commonSvc.generarNroDocumentoVenta({
                     idPuntoEmision: $scope.data.idPuntoEmision,
-                    codigoDocumento: $scope.data.docDestino,
+                    codigoDocumento: $scope.data.docDestino=='01'? 'FV': $scope.data.docDestino,
                 })
     
                 if (!nroDocumentoSecuencial) throw 'Nro. secuencial no se generó';

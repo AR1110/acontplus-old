@@ -91,35 +91,26 @@
 
                         <div class="input-group-append">
 
+
                             <button type="button" class="btn btn-outline-secondary btn-xs border-select"
-                                id="btnNewCustomerDocument" ng-click="$ctrl.openModalClienteNew()"> <i
-                                    class="fa fa-plus fa-xs"></i>
+                                id="btnNewCustomerDocument" btn-cliente
+                                result-modal="$ctrl.onSelectedClienteChange(result)"> <i class="fa fa-plus fa-xs"></i>
                             </button>
 
                             <button type="button" class="btn btn-outline-secondary btn-xs"
-                                ng-if="$ctrl.cliente.idCliente>0" ng-click="$ctrl.openModalClienteUpdate()"
+                                ng-if="$ctrl.cliente.idCliente>0" btn-cliente
+                                result-modal="$ctrl.onSelectedClienteChange(result)" params="$ctrl.cliente"
                                 tabindex="-1"><i class="fa fa-edit fa-xs"></i>
                             </button>
-                            <button type="button" class="btn btn-outline-secondary btn-xs"
-                                ng-click="$ctrl.openModalClienteLista()" tabindex="-1"><i
+                            <button type="button" class="btn btn-outline-secondary btn-xs" btn-cliente-lista
+                                result-modal="$ctrl.onSelectedClienteChange(result)" tabindex="-1"><i
                                     class="fa fa-search fa-xs"></i>
                             </button>
 
-                            <button type="button" uib-popover-template="$ctrl.popoverCliente.templateUrl"
-                                popover-class="custom-popover-info-cliente" popover-placement="right"
-                                popover-title="Info." class="btn btn-outline-secondary btn-xs"
-                                ng-if="$ctrl.cliente.idCliente>0" tabindex="-1"><i class="fa fa-info fa-xs"></i>
+                            <button type="button" cliente-info-popover customer="$ctrl.cliente" popover-placement='top'
+                                class="btn btn-outline-secondary btn-xs" ng-if="$ctrl.cliente.idCliente>0"
+                                tabindex="-1"><i class="fa fa-info fa-xs"></i>
                             </button>
-                            <script type="text/ng-template" id="infoCliente.html">
-                                <div>
-                                    <span><b>Nombre Fiscal:</b> {{$ctrl.cliente.nombreFiscal}}</span><br>
-                                    <span><b>Nombre Comercial:</b> {{$ctrl.cliente.nombreComercial}}</span><br>
-                                    <span><b>Correo:</b> {{$ctrl.cliente.correo}}</span><br>
-                                    <span><b>Teléfono:</b> {{$ctrl.cliente.telefono}}</span><br>
-                                    <span><b>Dirección:</b> {{$ctrl.cliente.direccion}}</span>
-
-                                </div>
-                            </script>
                         </div>
                     </div>
                 </div>

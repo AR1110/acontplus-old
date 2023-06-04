@@ -43,6 +43,8 @@
             tipo: 1
         }
 
+        $scope.typeSend = 'GenericFile';
+
         
         $scope.openModalCobroLote = async function() {
             try {
@@ -85,7 +87,12 @@
                     }
                     if (response.id === "1") {
                         hideLoader();
-                        $scope.cobros = JSON.parse(response.payload)[0] || [];
+                        let tempCobros = JSON.parse(response.payload)[0] || [];
+                        $scope.cobros = tempCobros.map(item=>({ 
+                            ...item,
+                            codDoc: 'CI',
+                            esAnulado: item.color==='table-danger'
+                        }))
                     }
 
                 }).catch(error => {
@@ -474,6 +481,29 @@
                 parameters,
                 formatType
             })
+        }
+
+        $scope.typeSend = 'N';
+        $scope.getParamToSendMail = function(item){
+            return {
+                codDoc: 'CI',
+                serieComprobante: item.nroDoc,
+                correo: item.correo,
+                subject: 'Pago - Acontplus N°: ' + item.nroDoc,
+                json: {
+                    hasFile: true,
+                    isReport: "SI",
+                    reportParams: {
+                        hasParams: true,
+                        codEstab: item.codEstab,
+                        codigo: "RCINGR",
+                        format: "pdf"
+                    },
+                    spParams: {
+                        id: item.idComprobanteIngreso
+                    }
+                }
+            }
         }
 
     }
