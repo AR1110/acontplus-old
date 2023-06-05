@@ -37,6 +37,10 @@ namespace ApiInventory.Controllers
                 _log.LogError("Error al listar etiquetas: \n" + ex.ToString());
                 _response.Create("0", "Error al listar etiquetas");
             }
+            finally
+            {
+                _db.Close();
+            }
             return Ok(_response);
         }
 
@@ -58,6 +62,10 @@ namespace ApiInventory.Controllers
             {
                 _log.LogError("Error al crear etiquetas: \n" + ex.ToString());
                 _response.Create("0", "Error al crear etiquetas");
+            }
+            finally
+            {
+                _db.Close();
             }
             return Ok(_response);
         }
@@ -83,6 +91,10 @@ namespace ApiInventory.Controllers
                 _log.LogError("Error al actualizar etiquetas: \n" + ex.ToString());
                 _response.Create("0", "Error al actualizar etiquetas");
             }
+            finally
+            {
+                _db.Close();
+            }
             return Ok(_response);
         }
 
@@ -105,6 +117,10 @@ namespace ApiInventory.Controllers
             {
                 _log.LogError("Error al eliminar etiquetas: \n" + ex.ToString());
                 _response.Create("0", "Error al eliminar etiquetas");
+            }
+            finally
+            {
+                _db.Close();
             }
             return Ok(_response);
         }
