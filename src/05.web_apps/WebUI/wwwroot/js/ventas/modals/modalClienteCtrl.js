@@ -57,17 +57,14 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                 $scope.tiposCliente = tiposCliente;
                 $scope.empresas = empresas;
                 $scope.cargos = cargos;
-                console.log(empresas)
+                
                 if ($scope.tipoRegistro ===1) {
                     $scope.data.idTipoIdentificacion = $scope.tiposIdentificacion[0].idTipoIdentificacion;
                     $scope.data.codigoIdentificacion = $scope.tiposIdentificacion[0].codigo;
 
                     $scope.data.idTiempoCredito = $scope.tiempoCreditos.length > 0 ? $scope.tiempoCreditos[0].idTiempoCredito : 0
                 }
-
-                console.log($scope.tiposIdentificacion)
-                console.log($scope.tipoContribuyentes)
-                console.log($scope.ciudades)
+ 
             }).catch(error => {
                 console.log(error);
             })
@@ -387,7 +384,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
 
             if (!clienteSvc.validateForm(params)) return
 
-            console.log(params)
+            
             showLoader();
 
 

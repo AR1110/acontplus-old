@@ -210,6 +210,11 @@ app.constant('nombreModalCompra', {
 })
 
 app.constant('nombreModalLogistica', {
+    GUIA_REMISION: {
+        fileCtrl: '/js/logistica/modals/guiaRemisionDetalleCtrl.min.js' + CHANGE_VERSION(),
+        controller: 'GuiaRemisionDetalleCtrl',
+        template: '~/Areas/GuiaRemision/Pages/Shared/_ModalDetalle.cshtml'
+    },
     TRANSPORTISTA: {
         fileCtrl: '/js/logistica/modals/modalTransportistaCtrl.js' + CHANGE_VERSION(),
         controllers: {
@@ -501,27 +506,7 @@ app.constant('nombreModal', {
             controller: 'ModalFacturaFiltroCtrl',
             template: 'FacturaVenta/_ModalFiltro.cshtml'
         }
-    },
-    guia_remision: {
-        MODAL_FILE_CTRL: 'modal/logistica/modalGuiaRemisionCtrl.js' + CHANGE_VERSION(),
-        MODAL_NUEVO: {
-            controller: 'ModalGuiaRemisionNuevoCtrl',
-            template: 'GuiaRemision/_ModalNuevo.cshtml'
-        },
-        MODAL_DETALLE: {
-            controller: 'ModalGuiaRemisionDetalleCtrl',
-            template: 'GuiaRemision/_ModalDetalle.cshtml'
-        },
-        MODAL_EDITAR: {
-            controller: 'ModalGuiaRemisionEditarCtrl',
-            template: 'GuiaRemision/_ModalEditar.cshtml'
-        },
-        MODAL_FILTRO: {
-            controller: 'ModalGuiaRemisionFiltroCtrl',
-            template: 'GuiaRemision/_ModalFiltro.cshtml'
-        }
-    },
-
+    },   
     impuesto_renta: {
         MODAL_FILE_CTRL: 'modal/sri/modalImpuestoRentaCtrl.js' + CHANGE_VERSION(),
         MODAL_NUEVO: {

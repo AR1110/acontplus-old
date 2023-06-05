@@ -11,6 +11,7 @@ export class CommonService {
         "nombreModalVenta",
         "nombreModalInventario",
         "nombreModalCompra",
+        "nombreModalLogistica",
         "articuloService"
     ];
 
@@ -26,6 +27,7 @@ export class CommonService {
         nombreModalVenta,
         nombreModalInventario,
         nombreModalCompra,
+        nombreModalLogistica,
         articuloSvc
     ) {
         this.$rootScope = $rootScope;
@@ -40,6 +42,7 @@ export class CommonService {
         this.nombreModalVenta = nombreModalVenta;
         this.nombreModalInventario = nombreModalInventario;
         this.nombreModalCompra = nombreModalCompra;
+        this.nombreModalLogistica = nombreModalLogistica;
         this.articuloSvc = articuloSvc;
 
         // this.$http.get('/TipoDocumento/GetAll').then(({data:response})=>{
@@ -1221,7 +1224,7 @@ export class CommonService {
                 });
                 break;
         }
-        console.log(datosAdicionalesArticulo)
+        
         return {
             cliente,
             dataTipoDocumento,
@@ -1254,8 +1257,8 @@ export class CommonService {
 
         if (!id) throw "ID DOCUMENTO INVÁLIDO";
 
-        await this.mS.getData('get', '/GuiaRemision/GetId?id=' + id).then(response => {
-
+        await this.mS.getData('get', 'GuiaRemision/GetId/' + id, null, true).then(response => {
+            
             if (response.code == "0") {
                 this.form.sweetAlert('warning', response.message)
                 throw response.message
@@ -1385,42 +1388,7 @@ export class CommonService {
         }
     }
 
-
-
-
-    //--------------------------------------HISTORIAL DE CONVERSIÓN DEL DOCUMENTO VENTA---------------------
-    async getHistorialConversionDocVenta({
-        idComprobante,
-        codigoDocumento
-    }) {
-        const tipoDoc = this.tipoDoc[codigoDocumento];
-        let historialConversiones = [],
-            isComplete = false;
-
-        await this.$http.get(`/ConvertDocument/GetInformacionDoc?idTipoDoc=${tipoDoc.idTipoDocumento}&idDoc=${idComprobante}`)
-            .then(({
-                data: response
-            }) => {
-                if (response.id === null) {
-                    toastr.info(`No se encontró documentos vinculados a esta ${tipoDoc.descripcion}`, '', {
-                        positionClass: 'toast-bottom-center',
-                        timeOut: 900,
-                    })
-                }
-                if (response.id === '0') {
-                    toastr.warning(response.message, response.titleSms)
-                }
-                if (response.id === '1') {
-                    isComplete = true;
-                    historialConversiones = JSON.parse(response.data) || []
-                }
-            })
-        return {
-            isComplete,
-            historialConversiones
-        }
-    }
-
+   
     //--------------------------------------------------REPORTE----------------------------------
     async getReport({
         method = "post",
@@ -1908,7 +1876,8 @@ export class CommonService {
         id,
         codigoDocumento,
         size,
-        windowClass = "uibModalFullScreen"
+        windowClass = "uibModalFullScreen",
+        isRenderRazorPartial=false,
     }) {
         try {
             let controller = null,
@@ -1918,7 +1887,7 @@ export class CommonService {
                 isComplete = false;
             let fileCtrl = null;
             let ctrl;
-            let isRenderRazorPartial = false;
+            
 
             switch (codigoDocumento) {
                 case "FV":
@@ -2036,11 +2005,24 @@ export class CommonService {
 
                     break
 
+                case "GR":
+                    
+                    fileCtrl = this.nombreModalLogistica.GUIA_REMISION.fileCtrl;
+                    ctrl = this.nombreModalLogistica.GUIA_REMISION.controller;
+                    template = this.nombreModalLogistica.GUIA_REMISION.template;
+
+                    controller = (await import(fileCtrl))[ctrl];
+
+                    response = await this.getDataGuiaRemision(id);
+                    params = response;
+                    break
+
                 default:
                     console.log(`Detalle del Documento No definido: ${codigoDocumento}`);
                     throw 'Detalle del Documento No definido'
             }
 
+             
 
 
             this._modalSvc.openModalCustom({
@@ -2115,8 +2097,7 @@ export class CommonService {
                     motivo: result.value,
                     codigoAccion
                 });
-                this.mS.getData('post', 'Solicitud/Post/' + jsonParams, null, true).then(response => {
-                    console.log(response)
+                this.mS.getData('post', 'Solicitud/Post/' + jsonParams, null, true).then(response => {                    
                     if (response.code === "0") {
                         this.form.sweetAlert('warning', response.message)
                     }
