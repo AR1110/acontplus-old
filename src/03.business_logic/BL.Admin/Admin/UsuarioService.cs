@@ -32,30 +32,6 @@ namespace BL.Admin.Data
             return _response;
         }
 
-        public async Task<GenericResponse> PostAsync(Usuario data)
-        {
-            DataTable dt = new();
-            try
-            {
-                DbAccess adb = new DbAccess(_config);
-                await adb.SPExecute("App.Usuario_Insert");
-                adb.AddParameter("@nombre", SqlDbType.NVarChar, data.nombre);
-                adb.AddParameter("@apellido", SqlDbType.NVarChar, data.apellido);
-                adb.AddParameter("@nombreUsuario", SqlDbType.NVarChar, data.nombreUsuario);
-                adb.AddParameter("@contrasena", SqlDbType.NVarChar, data.contrasena);
-                adb.AddParameter("@nroIdentificacion", SqlDbType.NVarChar, data.nroIdentificacion);
-                adb.AddParameter("@correo", SqlDbType.NVarChar, data.correo);
-                dt = adb.GetDataTable();
-                _response.Create(code: "0", message: "OK", payload: DataHelper.DataTableToJSON(dt));
-            }
-            catch (Exception ex)
-            {
-                _response.Create(code: "-1", message: "Error en el servidor: " + ex.Message);
-            }
-            return _response;
-        }
-
-
         public async Task<GenericResponse> PutAsync(string id, Usuario data)
         {
             DataTable dt = new DataTable();
