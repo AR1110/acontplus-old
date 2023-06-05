@@ -115,6 +115,10 @@ namespace ApiRecepcion.Controllers
                     message = "Error al obtener los datos del comprobante"
                 });
             }
+            finally
+            {
+                _db.Close();
+            }
 
         }
         [HttpGet("Preview/{id}")]
@@ -160,6 +164,10 @@ namespace ApiRecepcion.Controllers
             {
                 _logs.LogError("Error getting data of doc: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener los datos del comprobante");
+            }
+            finally
+            {
+                _db.Close();
             }
             return Ok(_response);
         }
