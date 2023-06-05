@@ -173,6 +173,7 @@ BEGIN
 			--Envio por correo de comprobante Ingreso
 			IF @codDoc='CI'
 				BEGIN
+					SET @template = 'EmailCompIngreso.html'
 					SET @body = (SELECT cliente     = ci.nombreFiscal, 
 						   documento    = @serieComprobante,
 					       fechaEmision = dbo.AFTConvertDate(ci.fechaRegistro)+''''+ dbo.AFTConvertHora(ci.fechaRegistro),
