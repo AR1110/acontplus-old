@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["title"] ="Configuración General";
+    ViewData["title"] = "Configuración General";
 }
 
 <div ng-controller="configGeneralCtrl">
@@ -7,16 +7,16 @@
         <div class="col-md-5 align-self-center">
             <h4 class="text-themecolor">Configuración General</h4>
         </div>
-         <div class="col-md-7 align-self-center text-right">
-            <div class="d-flex justify-content-end align-items-center">                
-                
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+
             </div>
         </div>
     </div>
 
     <div class="row">
         <div class="col-12 mb-4">
-            <div >
+            <div>
                 <md-content>
                     <md-tabs class="md-primary" md-center-tabs md-dynamic-height="">
 
@@ -26,21 +26,20 @@
                                     <div class="col-8 mx-auto">
                                         <div class="card shadow border">
                                             <div class="card-body">
-                                                
+
                                                 <div class="row justify-content-between">
                                                     <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                                                         <div class="icheck-success">
-                                                            <input type="checkbox" name="cliente" id="cliente" ng-model="gestionSistema.customerDefault">
+                                                            <input type="checkbox" name="cliente" id="cliente"
+                                                                ng-model="gestionSistema.customerDefault">
                                                             <label for="cliente">Cliente</label>
-                                                        </div>     
+                                                        </div>
                                                     </div>
 
                                                     <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                                                         <div ng-if="gestionSistema.customerDefault">
-                                                            <md-autocomplete 
-                                                                md-input-name="autocompleteField"
-                                                                md-input-minlength="1"
-                                                                md-input-maxlength="2000"
+                                                            <md-autocomplete md-input-name="autocompleteField"
+                                                                md-input-minlength="1" md-input-maxlength="2000"
                                                                 md-no-cache="false"
                                                                 md-search-text-change="searchTextChange(searchText)"
                                                                 md-search-text="searchText"
@@ -48,46 +47,47 @@
                                                                 md-items="item in searchCustomer(searchText)"
                                                                 md-item-text="item.nombreFiscal"
                                                                 md-escape-options="clear"
-                                                                placeholder="Ej: Jorge Ramirez"
-                                                                md-clear-button="false"
+                                                                placeholder="Ej: Jorge Ramirez" md-clear-button="false"
                                                                 input-aria-describedby="Buscar Cliente">
                                                                 <md-item-template>
-                                                                    <span md-highlight-text="searchText">{{item.nombreFiscal}}</span>
-                                                                </md-item-template>                                                           
+                                                                    <span
+                                                                        md-highlight-text="searchText">{{item.nombreFiscal}}</span>
+                                                                </md-item-template>
                                                             </md-autocomplete>
-                                                        </div>                  
+                                                        </div>
                                                     </div>
-                                                </div> 
+                                                </div>
 
                                                 <hr>
 
                                                 <div class="row justify-content-between">
                                                     <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                                                         <div class="icheck-success">
-                                                            <input type="checkbox" name="articuloDefect" id="articuloDefect" ng-model="gestionSistema.articleDefault">
+                                                            <input type="checkbox" name="articuloDefect"
+                                                                id="articuloDefect"
+                                                                ng-model="gestionSistema.articleDefault">
                                                             <label for="articuloDefect">Artículo</label>
-                                                        </div>     
+                                                        </div>
                                                     </div>
 
                                                     <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                                                         <div ng-if="gestionSistema.articleDefault">
-                                                            <md-autocomplete class="md-block mr-10" 
-                                                                md-input-name="autocompleteField"
-                                                                md-min-length="3"
+                                                            <md-autocomplete class="md-block mr-10"
+                                                                md-input-name="autocompleteField" md-min-length="3"
                                                                 md-no-cache="false"
                                                                 md-search-text-change="searchTextChangeArticle(searchTextArticle)"
                                                                 md-search-text="searchTextArticle"
                                                                 md-selected-item-change="selectedItemChangeArticle(item)"
                                                                 md-items="item in searchArticle(searchTextArticle)"
                                                                 md-item-text="item.descripcion"
-                                                                md-escape-options="clear"
-                                                                placeholder="Ej: Mouse..."
+                                                                md-escape-options="clear" placeholder="Ej: Mouse..."
                                                                 md-clear-button="false"
                                                                 input-aria-describedby="Buscar Artículo">
                                                                 <md-item-template>
-                                                                    <span md-highlight-text="searchTextArticle">{{item.descripcion}}</span>
-                                                                </md-item-template>  
-                                                            </md-autocomplete>                                                                                                            
+                                                                    <span
+                                                                        md-highlight-text="searchTextArticle">{{item.descripcion}}</span>
+                                                                </md-item-template>
+                                                            </md-autocomplete>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -97,75 +97,109 @@
                                                 <div class="row justify-content-between">
                                                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                         <div class="icheck-success">
-                                                            <input type="checkbox" name="searchBarcode" id="searchBarcode" ng-model="gestionSistema.searchCode">
-                                                            <label for="searchBarcode">Búsqueda de artículo por <code>Código de Barra</code> en venta</label>
-                                                        </div>     
+                                                            <input type="checkbox" name="searchBarcode"
+                                                                id="searchBarcode" ng-model="gestionSistema.searchCode">
+                                                            <label for="searchBarcode">Búsqueda de artículo por
+                                                                <code>Código de Barra</code> en venta</label>
+                                                        </div>
                                                     </div>
 
-                                                </div>    
+                                                </div>
 
-                                                <hr>    
+                                                <hr>
 
                                                 <div class="row">
                                                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                                         <div class="icheck-success">
-                                                            <input type="checkbox" name="printerAutomatic " id="printerAutomatic " ng-model="gestionSistema.printerAutomatic ">
-                                                            <label for="printerAutomatic ">Impresión automática en Ventas</label>
-                                                        </div>  
+                                                            <input type="checkbox" name="printerAutomatic "
+                                                                id="printerAutomatic "
+                                                                ng-model="gestionSistema.printerAutomatic ">
+                                                            <label for="printerAutomatic ">Impresión automática en
+                                                                Ventas</label>
+                                                        </div>
                                                     </div>
-                                                  
-                                                </div>     
+
+                                                </div>
 
                                                 <hr>
                                                 <div class="row">
                                                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                                         <div class="icheck-success">
-                                                            <input type="checkbox" name="payAutomatic " id="payAutomatic " ng-model="gestionSistema.payAutomatic ">
-                                                            <label for="payAutomatic ">Cobro rápido automático en Ventas</label>
-                                                        </div>  
+                                                            <input type="checkbox" name="payAutomatic "
+                                                                id="payAutomatic "
+                                                                ng-model="gestionSistema.payAutomatic ">
+                                                            <label for="payAutomatic ">Cobro rápido automático en
+                                                                Ventas</label>
+                                                        </div>
                                                     </div>
-                                                </div>    
+                                                </div>
 
-                                                 <hr>
+                                                <hr>
                                                 <div class="row justify-content-between">
                                                     <div class="col-xl-5 col-lg-5 col-md-6 col-sm-12 col-12">
                                                         <div class="icheck-success">
-                                                            <input type="checkbox" name="configDeuda" id="configDeuda" ng-model="gestionSistema.configDeuda">
+                                                            <input type="checkbox" name="configDeuda" id="configDeuda"
+                                                                ng-model="gestionSistema.configDeuda">
                                                             <label for="configDeuda">Crédito Vencido de Clientes</label>
-                                                        </div>  
+                                                        </div>
                                                     </div>
-                                                    <div class="col-xl-5 col-lg-5 col-md-6 col-sm-12 col-12" ng-if="gestionSistema.configDeuda">
+                                                    <div class="col-xl-5 col-lg-5 col-md-6 col-sm-12 col-12"
+                                                        ng-if="gestionSistema.configDeuda">
                                                         <div class="form-group">
-                                                            <md-radio-group ng-model="gestionSistema.configPorcentaje" ng-change="onChangeConfigPorcentaje()" aria-labelledby=""  >
-                                                                <md-radio-button value="PI" class="md-primary d-inline p-2">Con Interes</md-radio-button>
-                                                                <md-radio-button value="PF" class="d-inline p-2">Precio fijo</md-radio-button>                                                           
+                                                            <md-radio-group ng-model="gestionSistema.configPorcentaje"
+                                                                ng-change="onChangeConfigPorcentaje()"
+                                                                aria-labelledby="">
+                                                                <md-radio-button value="PI"
+                                                                    class="md-primary d-inline p-2">Con
+                                                                    Interes</md-radio-button>
+                                                                <md-radio-button value="PF" class="d-inline p-2">Precio
+                                                                    fijo</md-radio-button>
                                                             </md-radio-group>
                                                         </div>
-                                                        
-                                                        
+
+
                                                         <div class="form-group" ng-if="configPorcentajePI">
                                                             <label for="dias">Porcentaje de Interes</label>
-                                                            <input type="text" name="porcentaje" id="porcentaje" valid-number class="form-control border-select" placeholder="20%" ng-model="gestionSistema.porcentajeInteres">
+                                                            <input type="text" name="porcentaje" id="porcentaje"
+                                                                valid-number class="form-control border-select"
+                                                                placeholder="20%"
+                                                                ng-model="gestionSistema.porcentajeInteres">
                                                         </div>
 
                                                         <div class="form-group" ng-if="configPorcentajePF">
                                                             <label for="dias">Precio Fijo</label>
-                                                            <input type="text" name="precioFijo" id="precioFijo" valid-number class="form-control border-select" placeholder="15 dolares" ng-model="gestionSistema.precioFijo">
+                                                            <input type="text" name="precioFijo" id="precioFijo"
+                                                                valid-number class="form-control border-select"
+                                                                placeholder="15 dolares"
+                                                                ng-model="gestionSistema.precioFijo">
                                                         </div>
-                                                    </div>                                                   
+                                                    </div>
                                                 </div>
 
-                                                <hr>                                                                                      
+                                                <hr>
+                                                <div class="row">
+                                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                                        <div class="icheck-success">
+                                                            <input type="checkbox" name="multipleVendedor"
+                                                                id="multipleVendedor"
+                                                                ng-model="gestionSistema.multipleVendedor">
+                                                            <label for="multipleVendedor">Múltiples vendedores</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <hr>
                                             </div>
 
                                             <div class="card-footer">
-                                                <button type="button" class="btn btn-success float-right" ng-click="save()">
+                                                <button type="button" class="btn btn-success float-right"
+                                                    ng-click="save()">
                                                     <i class="ti-save"></i> Guardar
                                                 </button>
                                             </div>
                                         </div>
                                     </div>
-                                </div>                         
+                                </div>
                             </md-content>
                         </md-tab>
 
@@ -178,29 +212,37 @@
                                                 <div class="row justify-content-between">
                                                     <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                                                         <div class="icheck-success">
-                                                            <input type="checkbox" name="llevaInventario" id="llevaInventario" ng-model="gestionInventario.llevaInventario">
+                                                            <input type="checkbox" name="llevaInventario"
+                                                                id="llevaInventario"
+                                                                ng-model="gestionInventario.llevaInventario">
                                                             <label for="llevaInventario">Control Inventario</label>
-                                                        </div>     
+                                                        </div>
                                                     </div>
 
                                                     <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
-                                                        <div class="form-group" ng-if="gestionInventario.llevaInventario">
-                                                            <select name="metodoValoracion" id="metodoValoracion" class="form-control border-select" ng-model="gestionInventario.idMetodoValoracion">
-                                                                <option ng-value="item.idMetodoValoracion" ng-repeat="item in valoracionMetodos">{{item.descripcion}}</option>
+                                                        <div class="form-group"
+                                                            ng-if="gestionInventario.llevaInventario">
+                                                            <select name="metodoValoracion" id="metodoValoracion"
+                                                                class="form-control border-select"
+                                                                ng-model="gestionInventario.idMetodoValoracion">
+                                                                <option ng-value="item.idMetodoValoracion"
+                                                                    ng-repeat="item in valoracionMetodos">
+                                                                    {{item.descripcion}}</option>
                                                             </select>
                                                         </div>
                                                     </div>
-                                                </div>                                                                                     
+                                                </div>
                                             </div>
 
                                             <div class="card-footer">
-                                                <button type="button" class="btn btn-success float-right" ng-click="save()">
+                                                <button type="button" class="btn btn-success float-right"
+                                                    ng-click="save()">
                                                     <i class="ti-save"></i> Guardar
                                                 </button>
                                             </div>
                                         </div>
                                     </div>
-                                </div>                         
+                                </div>
                             </md-content>
                         </md-tab>
 
@@ -210,7 +252,7 @@
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                                         <div class="card">
                                             <div class="card-header bg-success">
-                                                <h6 class="m-b-0 text-white">VENTAS</h6>     
+                                                <h6 class="m-b-0 text-white">VENTAS</h6>
                                             </div>
                                             <div class="card-body shadow">
                                                 <div class="row pb-1">
@@ -219,12 +261,14 @@
                                                             <div class="col-6 py-2">
                                                                 <span>Precio</span>
                                                             </div>
-                                                            
+
                                                             <div class="col-6 py-2 text-truncate">
-                                                                 <select class="form-control border-select" ng-model="decimalVenta.nroPrecio">
-                                                                    <option ng-value="decimal" ng-repeat="decimal in decimales">
+                                                                <select class="form-control border-select"
+                                                                    ng-model="decimalVenta.nroPrecio">
+                                                                    <option ng-value="decimal"
+                                                                        ng-repeat="decimal in decimales">
                                                                         {{decimal}}
-                                                                    </option>                                    
+                                                                    </option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -233,10 +277,12 @@
                                                                 <span>Cantidad</span>
                                                             </div>
                                                             <div class="col-6 py-2 text-truncate">
-                                                                 <select class="form-control border-select" ng-model="decimalVenta.nroCantidad">
-                                                                    <option ng-value="decimal" ng-repeat="decimal in decimales">
+                                                                <select class="form-control border-select"
+                                                                    ng-model="decimalVenta.nroCantidad">
+                                                                    <option ng-value="decimal"
+                                                                        ng-repeat="decimal in decimales">
                                                                         {{decimal}}
-                                                                    </option>                                    
+                                                                    </option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -245,10 +291,12 @@
                                                                 <span>IVA</span>
                                                             </div>
                                                             <div class="col-6 py-2 text-truncate">
-                                                                 <select class="form-control border-select" ng-model="decimalVenta.nroIva">
-                                                                    <option ng-value="decimal" ng-repeat="decimal in decimales">
+                                                                <select class="form-control border-select"
+                                                                    ng-model="decimalVenta.nroIva">
+                                                                    <option ng-value="decimal"
+                                                                        ng-repeat="decimal in decimales">
                                                                         {{decimal}}
-                                                                    </option>                                    
+                                                                    </option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -258,10 +306,12 @@
                                                                 <span>Descuento</span>
                                                             </div>
                                                             <div class="col-6 py-2 text-truncate">
-                                                                 <select class="form-control border-select" ng-model="decimalVenta.nroDescuento">
-                                                                    <option ng-value="decimal" ng-repeat="decimal in decimales">
+                                                                <select class="form-control border-select"
+                                                                    ng-model="decimalVenta.nroDescuento">
+                                                                    <option ng-value="decimal"
+                                                                        ng-repeat="decimal in decimales">
                                                                         {{decimal}}
-                                                                    </option>                                    
+                                                                    </option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -271,10 +321,12 @@
                                                                 <span>Descuento Detalle</span>
                                                             </div>
                                                             <div class="col-6 py-2 text-truncate">
-                                                                 <select class="form-control border-select" ng-model="decimalVenta.nroDescuentoDetalle">
-                                                                    <option ng-value="decimal" ng-repeat="decimal in decimales">
+                                                                <select class="form-control border-select"
+                                                                    ng-model="decimalVenta.nroDescuentoDetalle">
+                                                                    <option ng-value="decimal"
+                                                                        ng-repeat="decimal in decimales">
                                                                         {{decimal}}
-                                                                    </option>                                    
+                                                                    </option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -284,10 +336,12 @@
                                                                 <span>Total Detalle</span>
                                                             </div>
                                                             <div class="col-6 py-2 text-truncate">
-                                                                 <select class="form-control border-select" ng-model="decimalVenta.nroTotalDetalle">
-                                                                    <option ng-value="decimal" ng-repeat="decimal in decimales">
+                                                                <select class="form-control border-select"
+                                                                    ng-model="decimalVenta.nroTotalDetalle">
+                                                                    <option ng-value="decimal"
+                                                                        ng-repeat="decimal in decimales">
                                                                         {{decimal}}
-                                                                    </option>                                    
+                                                                    </option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -297,10 +351,12 @@
                                                                 <span>SubTotales Comprobante</span>
                                                             </div>
                                                             <div class="col-6 py-2 text-truncate">
-                                                                 <select class="form-control border-select" ng-model="decimalVenta.nroTotalSubTotal">
-                                                                    <option ng-value="decimal" ng-repeat="decimal in decimales">
+                                                                <select class="form-control border-select"
+                                                                    ng-model="decimalVenta.nroTotalSubTotal">
+                                                                    <option ng-value="decimal"
+                                                                        ng-repeat="decimal in decimales">
                                                                         {{decimal}}
-                                                                    </option>                                    
+                                                                    </option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -310,10 +366,12 @@
                                                                 <span>ICE</span>
                                                             </div>
                                                             <div class="col-6 py-2 text-truncate">
-                                                                 <select class="form-control border-select" ng-model="decimalVenta.nroIce">
-                                                                    <option ng-value="decimal" ng-repeat="decimal in decimales">
+                                                                <select class="form-control border-select"
+                                                                    ng-model="decimalVenta.nroIce">
+                                                                    <option ng-value="decimal"
+                                                                        ng-repeat="decimal in decimales">
                                                                         {{decimal}}
-                                                                    </option>                                    
+                                                                    </option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -323,23 +381,25 @@
                                                                 <span>Importe Total</span>
                                                             </div>
                                                             <div class="col-6 py-2 text-truncate">
-                                                                 <select class="form-control border-select" ng-model="decimalVenta.importeTotal">
-                                                                    <option ng-value="decimal" ng-repeat="decimal in decimales">
+                                                                <select class="form-control border-select"
+                                                                    ng-model="decimalVenta.importeTotal">
+                                                                    <option ng-value="decimal"
+                                                                        ng-repeat="decimal in decimales">
                                                                         {{decimal}}
-                                                                    </option>                                    
+                                                                    </option>
                                                                 </select>
                                                             </div>
                                                         </div>
 
-                                                    </div>                                                  
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>  
+                                        </div>
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-12">
-                                         <div class="card">
+                                        <div class="card">
                                             <div class="card-header bg-info">
-                                                <h6 class="m-b-0 text-white">COMPRAS</h6>                                                
+                                                <h6 class="m-b-0 text-white">COMPRAS</h6>
                                             </div>
                                             <div class="card-body shadow">
                                                 <div class="row pb-1">
@@ -349,10 +409,12 @@
                                                                 <span>Precio</span>
                                                             </div>
                                                             <div class="col-6 py-2 text-truncate">
-                                                                 <select class="form-control border-select" ng-model="decimalCompra.nroPrecio">
-                                                                    <option ng-value="decimal" ng-repeat="decimal in decimales">
+                                                                <select class="form-control border-select"
+                                                                    ng-model="decimalCompra.nroPrecio">
+                                                                    <option ng-value="decimal"
+                                                                        ng-repeat="decimal in decimales">
                                                                         {{decimal}}
-                                                                    </option>                                    
+                                                                    </option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -362,10 +424,12 @@
                                                                 <span>Cantidad</span>
                                                             </div>
                                                             <div class="col-6 py-2 text-truncate">
-                                                                 <select class="form-control border-select" ng-model="decimalCompra.nroCantidad">
-                                                                    <option ng-value="decimal" ng-repeat="decimal in decimales">
+                                                                <select class="form-control border-select"
+                                                                    ng-model="decimalCompra.nroCantidad">
+                                                                    <option ng-value="decimal"
+                                                                        ng-repeat="decimal in decimales">
                                                                         {{decimal}}
-                                                                    </option>                                    
+                                                                    </option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -375,10 +439,12 @@
                                                                 <span>IVA</span>
                                                             </div>
                                                             <div class="col-6 py-2 text-truncate">
-                                                                 <select class="form-control border-select" ng-model="decimalCompra.nroIva">
-                                                                    <option ng-value="decimal" ng-repeat="decimal in decimales">
+                                                                <select class="form-control border-select"
+                                                                    ng-model="decimalCompra.nroIva">
+                                                                    <option ng-value="decimal"
+                                                                        ng-repeat="decimal in decimales">
                                                                         {{decimal}}
-                                                                    </option>                                    
+                                                                    </option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -388,10 +454,12 @@
                                                                 <span>Descuento</span>
                                                             </div>
                                                             <div class="col-6 py-2 text-truncate">
-                                                                 <select class="form-control border-select" ng-model="decimalCompra.nroDescuento">
-                                                                    <option ng-value="decimal" ng-repeat="decimal in decimales">
+                                                                <select class="form-control border-select"
+                                                                    ng-model="decimalCompra.nroDescuento">
+                                                                    <option ng-value="decimal"
+                                                                        ng-repeat="decimal in decimales">
                                                                         {{decimal}}
-                                                                    </option>                                    
+                                                                    </option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -401,10 +469,12 @@
                                                                 <span>Descuento Detalle</span>
                                                             </div>
                                                             <div class="col-6 py-2 text-truncate">
-                                                                 <select class="form-control border-select" ng-model="decimalCompra.nroDescuentoDetalle">
-                                                                    <option ng-value="decimal" ng-repeat="decimal in decimales">
+                                                                <select class="form-control border-select"
+                                                                    ng-model="decimalCompra.nroDescuentoDetalle">
+                                                                    <option ng-value="decimal"
+                                                                        ng-repeat="decimal in decimales">
                                                                         {{decimal}}
-                                                                    </option>                                    
+                                                                    </option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -414,10 +484,12 @@
                                                                 <span>Total Detalle</span>
                                                             </div>
                                                             <div class="col-6 py-2 text-truncate">
-                                                                 <select class="form-control border-select" ng-model="decimalCompra.nroTotalDetalle">
-                                                                    <option ng-value="decimal" ng-repeat="decimal in decimales">
+                                                                <select class="form-control border-select"
+                                                                    ng-model="decimalCompra.nroTotalDetalle">
+                                                                    <option ng-value="decimal"
+                                                                        ng-repeat="decimal in decimales">
                                                                         {{decimal}}
-                                                                    </option>                                    
+                                                                    </option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -427,10 +499,12 @@
                                                                 <span>Totales y SubTotales</span>
                                                             </div>
                                                             <div class="col-6 py-2 text-truncate">
-                                                                 <select class="form-control border-select" ng-model="decimalCompra.nroTotalSubTotal">
-                                                                    <option ng-value="decimal" ng-repeat="decimal in decimales">
+                                                                <select class="form-control border-select"
+                                                                    ng-model="decimalCompra.nroTotalSubTotal">
+                                                                    <option ng-value="decimal"
+                                                                        ng-repeat="decimal in decimales">
                                                                         {{decimal}}
-                                                                    </option>                                    
+                                                                    </option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -440,18 +514,20 @@
                                                                 <span>ICE</span>
                                                             </div>
                                                             <div class="col-6 py-2 text-truncate">
-                                                                 <select class="form-control border-select" ng-model="decimalCompra.nroIce">
-                                                                    <option ng-value="decimal" ng-repeat="decimal in decimales">
+                                                                <select class="form-control border-select"
+                                                                    ng-model="decimalCompra.nroIce">
+                                                                    <option ng-value="decimal"
+                                                                        ng-repeat="decimal in decimales">
                                                                         {{decimal}}
-                                                                    </option>                                    
+                                                                    </option>
                                                                 </select>
                                                             </div>
                                                         </div>
 
-                                                    </div>                                                  
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div> 
+                                        </div>
                                     </div>
                                 </div>
 
@@ -459,7 +535,7 @@
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                                         <div class="card">
                                             <div class="card-header bg-primary">
-                                                <h6 class="m-b-0 text-white">ALMACÉN</h6>  
+                                                <h6 class="m-b-0 text-white">ALMACÉN</h6>
                                             </div>
                                             <div class="card-body shadow">
                                                 <div class="row pb-1">
@@ -469,10 +545,12 @@
                                                                 <span>Precio</span>
                                                             </div>
                                                             <div class="col-6 py-2 text-truncate">
-                                                                 <select class="form-control border-select" ng-model="decimalAlmacen.nroPrecio">
-                                                                    <option ng-value="decimal" ng-repeat="decimal in decimales">
+                                                                <select class="form-control border-select"
+                                                                    ng-model="decimalAlmacen.nroPrecio">
+                                                                    <option ng-value="decimal"
+                                                                        ng-repeat="decimal in decimales">
                                                                         {{decimal}}
-                                                                    </option>                                    
+                                                                    </option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -494,7 +572,7 @@
 
                         <md-tab label="NOTIFICACIONES" md-on-select="getDataTabs('CS')">
                             <md-content class="md-padding">
-                                <div class="row">                                   
+                                <div class="row">
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                                         <div class="card">
                                             <div class="card-body shadow">
@@ -506,25 +584,26 @@
                                                             </div>
                                                             <div class="col-6 py-2 text-truncate">
                                                                 <div class="icheck-primary text-right">
-                                                                    <input type="checkbox" id="stockCantidad{{$index}}" ng-model="item.estado">
+                                                                    <input type="checkbox" id="stockCantidad{{$index}}"
+                                                                        ng-model="item.estado">
                                                                     <label for="stockCantidad{{$index}}"></label>
                                                                 </div>
                                                             </div>
                                                             <hr>
-                                                        </div>                                                        
-                                                    </div>                                                  
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                               
+
                                             </div>
                                         </div>
                                     </div>
-                                </div>  
+                                </div>
                                 <hr>
                                 <div class="float-right">
                                     <button type="button" class="btn btn-success" ng-click="save()">
                                         <icon class="ti-pencil"></icon> Actualizar
                                     </button>
-                                </div>                          
+                                </div>
                             </md-content>
                         </md-tab>
 
@@ -532,10 +611,10 @@
                 </md-content>
             </div>
         </div>
-    </div>   
+    </div>
 </div>
 
 @section Scripts{
     <script src="~/js/config/controllers/configGeneralCtrl.min.js" asp-append-version="true"></script>
-    
+
 }

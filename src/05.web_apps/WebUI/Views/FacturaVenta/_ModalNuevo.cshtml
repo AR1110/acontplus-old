@@ -174,11 +174,23 @@
                     </md-autocomplete-articulo-component>
                 </div>
 
-                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <label for="searchBarcode">Buscar por Código</label>
                         <articulo-search-barcode tipo-doc="$ctrl.TIPO_DOC_FV"
                             set-item-articulo-en-detalle="$ctrl.setItemArticuloEnDetalle(item)"></articulo-search-barcode>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12" ng-if="$ctrl.multipleVendedor">
+                    <div class="form-group">
+                        <label for="vendedor">Vendedor: <span class="text-danger">*</span></label>
+                        <select name="vendedor" id="vendedor" class="form-control border-select"
+                            ng-model="$ctrl.data.idUsuario">
+                            <option ng-value="item.idUsuario" ng-repeat="item in $ctrl.usuariosVendedor">
+                                {{item.nombreCompleto}}
+                            </option>
+                        </select>
                     </div>
                 </div>
             </div>

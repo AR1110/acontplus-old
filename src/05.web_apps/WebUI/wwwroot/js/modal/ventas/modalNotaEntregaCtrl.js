@@ -428,10 +428,9 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
             this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
 
             if (resultsDataForm[8].length > 0) {
-                let {
-                    searchCode } = resultsDataForm[8][0];
-                console.log(resultsDataForm[8])
+                let {searchCode, multipleVendedor} = resultsDataForm[8][0];
                 this.isSearchBarcode = searchCode;
+                this.multipleVendedor = multipleVendedor;
 
                 this.$uibModalInstance.rendered.then(result => {
                     if (this.isSearchBarcode == 1) {
@@ -442,6 +441,12 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
                 })
             }
 
+            this.usuariosVendedor = resultsDataForm[11];   
+            if(this.usuariosVendedor.length>0){
+                this.data.idUsuario = this.usuariosVendedor.find(item => (item.predeterminado)).idUsuario
+            }else{
+                this.data.idUsuario = 0;
+            }         
 
             this.data.fechaEmision = new Date();
             this.getFechaVencimiento();
@@ -1312,9 +1317,10 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
 
             if (resultsDataForm[8].length > 0) {
 
-                let {
-                    searchCode} = resultsDataForm[8][0];
+                let {searchCode, multipleVendedor} = resultsDataForm[8][0];
                 this.isSearchBarcode = searchCode;
+                this.multipleVendedor = multipleVendedor;
+
 
 
 
@@ -1333,6 +1339,8 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
 
             this.ventaComprobantePermission = Object.freeze(this.ventaPermission.comprobante);
             this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
+
+            this.usuariosVendedor = resultsDataForm[11];
 
 
             this.setColumnDefs('12%');
@@ -1366,6 +1374,12 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
             this.fechaEmisionEscrita = this._fS.getFechaEscrita(this.data.fechaEmision);
             this.fechaVencimientoEscrita = this._fS.getFechaEscrita(this.data.fechaVencimiento);
 
+            if(this.usuariosVendedor.length>0){
+                this.data.idUsuario = this.usuariosVendedor.find(item => (item.predeterminado)).idUsuario
+            }else{
+                this.data.idUsuario = 0;
+            }
+            
             this.setDataInfoEstab(this.establecimientos, this.puntosEmisiones);
 
             this.$scope.$apply();
