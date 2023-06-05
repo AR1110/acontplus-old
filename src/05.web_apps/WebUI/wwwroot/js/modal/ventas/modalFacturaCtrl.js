@@ -583,12 +583,10 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
             if (resultsDataForm[8].length > 0) {
                 let {
                     searchCode,
-                    printerAutomatic,
-                    payAutomatic
+                    multipleVendedor
                 } = resultsDataForm[8][0];
                 this.isSearchBarcode = searchCode;
-                this.printerAutomatic = printerAutomatic;
-                this.payAutomatic = payAutomatic;
+                this.multipleVendedor = multipleVendedor;
 
                 this.$uibModalInstance.rendered.then(result => {
                     if (this.isSearchBarcode == 1) {
@@ -599,6 +597,12 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
                 })
             }
 
+            this.usuariosVendedor = resultsDataForm[11];
+            if(this.usuariosVendedor.length>0){
+                this.data.idUsuario = this.usuariosVendedor.find(item => (item.predeterminado)).idUsuario
+            }else{
+                this.data.idUsuario = 0;
+            }
 
 
             this.data.fechaEmision = new Date();
@@ -886,9 +890,11 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
                 let {
                     searchCode,
                     printerAutomatic,
-                    payAutomatic
+                    payAutomatic,
+                    multipleVendedor
                 } = resultsDataForm[8][0];
                 this.isSearchBarcode = searchCode;
+                this.multipleVendedor = multipleVendedor;
 
                 this.$uibModalInstance.rendered.then(result => {
                     if (this.isSearchBarcode == 1) {
@@ -907,6 +913,8 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
             this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
 
 
+            //Usuario-vendedores 
+            console.log(resultsDataForm)
             this.setColumnDefs('12%');
 
             this.uiGridInvoice = new UiGridOptions({
@@ -1289,9 +1297,9 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
             this.tiempoCreditos = resultsDataForm[5];
 
             if (resultsDataForm[8].length > 0) {
-                let {
-                    searchCode} = resultsDataForm[8][0];
+                let {searchCode, multipleVendedor} = resultsDataForm[8][0];
                 this.isSearchBarcode = searchCode;
+                this.multipleVendedor = multipleVendedor;
 
                 this.$uibModalInstance.rendered.then(result => {
                     if (this.isSearchBarcode == 1) {
@@ -1309,6 +1317,9 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
             this.ventaComprobantePermission = Object.freeze(this.ventaPermission.comprobante);
             this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
 
+
+            this.usuariosVendedor = resultsDataForm[11];
+            
 
             this.setColumnDefs('12%');
 
@@ -1340,6 +1351,11 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
 
             // this.fechaEmisionEscrita = this._fS.getFechaEscrita(this.data.fechaEmision);
             // this.fechaVencimientoEscrita = this._fS.getFechaEscrita(this.data.fechaVencimiento);
+            if(this.usuariosVendedor.length>0){
+                this.data.idUsuario = this.usuariosVendedor.find(item => (item.predeterminado)).idUsuario
+            }else{
+                this.data.idUsuario = 0;
+            }
 
             this.setDataInfoEstab(this.establecimientos, this.puntosEmisiones);
             this.$scope.$apply();

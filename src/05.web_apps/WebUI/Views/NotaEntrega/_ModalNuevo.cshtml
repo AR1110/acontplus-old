@@ -181,26 +181,37 @@
                         </md-autocomplete-articulo-component>
                     </div>
 
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label for="searchBarcode">Buscar por Código</label>
                             <articulo-search-barcode tipo-doc="$ctrl.TIPO_DOC_NE"
                                 set-item-articulo-en-detalle="$ctrl.setItemArticuloEnDetalle(item)"></articulo-search-barcode>
                         </div>
                     </div>
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12" ng-if="$ctrl.multipleVendedor">
+                        <div class="form-group">
+                            <label for="vendedor">Vendedor: <span class="text-danger">*</span></label>
+                            <select name="vendedor" id="vendedor" class="form-control border-select"
+                                ng-model="$ctrl.data.idUsuario">
+                                <option ng-value="item.idUsuario" ng-repeat="item in $ctrl.usuariosVendedor">
+                                    {{item.nombreCompleto}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-                <div class="row justify-content-between">
+                <div class="row justify-content-end">
 
-                    <div class="col-lg-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="col-lg-5 col-lg-5 col-md-6 col-sm-12 col-12">
                         <button type="button" class="btn btn-block btn-lg btn-success mt-4"
                             id="btnSaveAndUpdateDocument" ng-click="$ctrl.onSave()">
                             <i class="ti-save"></i> Guardar
                         </button>
                     </div>
-                    <div class="col-lg-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="col-lg-5 col-lg-5 col-md-6 col-sm-12 col-12">
                         <button type="button" class="btn btn-block btn-lg btn-info mt-4"
                             ng-click="$ctrl.onSaveInvoice()">
                             <i class="ti-files"></i> Facturar

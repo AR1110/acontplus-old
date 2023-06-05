@@ -31,6 +31,7 @@ BEGIN
 	SET NOCOUNT ON;
 	DECLARE @idEntidad INT
 	DECLARE @idPolitica INT 	
+	DECLARE @idUsuario INT
 	DECLARE @jsonConfigDecimal AS VARCHAR(MAX)
 	DECLARE @jsonConfigVentas AS VARCHAR(MAX)
 	
@@ -40,6 +41,7 @@ BEGIN
 	   ,searchCode       BIT NOT NULL
 	   ,printerAutomatic BIT NOT NULL
 	   ,payAutomatic     BIT NOT NULL
+	   ,multipleVendedor  BIT NOT NULL
 	)
 
 	DECLARE @configDecimal AS TABLE (
@@ -54,20 +56,21 @@ BEGIN
 	   ,importeTotal INT NOT NULL
 	)
 
-	SELECT @idEntidad = idEntidad, @idPolitica = idRol FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol	
+	SELECT @idEntidad = idEntidad, @idPolitica = idRol, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol	
 
 	SELECT TOP 1 @jsonConfigVentas = jsonConfig FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CV'
 
 	SELECT TOP 1 @jsonConfigDecimal = jsonConfig FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CD'
 
-	INSERT INTO @configVentas (idCliente,idArticulo,searchCode,printerAutomatic,payAutomatic)
-						SELECT idCliente,idArticulo,searchCode,printerAutomatic,payAutomatic
+	INSERT INTO @configVentas (idCliente,idArticulo,searchCode,printerAutomatic,payAutomatic, multipleVendedor)
+						SELECT idCliente,idArticulo,searchCode,printerAutomatic,payAutomatic, ISNULL(multipleVendedor, 0)
 						FROM OPENJSON(@jsonConfigVentas)
 						WITH (idCliente        INT '$.idCliente'
 							 ,idArticulo       INT '$.idArticulo'
 							 ,searchCode       BIT '$.searchCode'
 							 ,printerAutomatic BIT '$.printerAutomatic'
-							 ,payAutomatic     BIT '$.payAutomatic') as dt
+							 ,payAutomatic     BIT '$.payAutomatic'
+							 ,multipleVendedor BIT '$.multipleVendedor') as dt
 	
 	INSERT INTO @configDecimal(nroPrecio,nroCantidad,nroIva,nroDescuentoDetalle ,nroTotalDetalle,nroTotalSubTotal,nroDescuento,nroIce,importeTotal)
 						SELECT nroPrecio,nroCantidad,nroIva,nroDescuentoDetalle ,nroTotalDetalle,nroTotalSubTotal,nroDescuento,nroIce,importeTotal
@@ -161,7 +164,8 @@ BEGIN
 	SELECT 
 	 searchCode,
 	 printerAutomatic,
-	 payAutomatic
+	 payAutomatic,
+	 multipleVendedor
 	FROM @configVentas gs
 
 	--Permisos 
@@ -172,6 +176,11 @@ BEGIN
 	SELECT a.leer, a.crear, a.editar FROM Acceso a
 	INNER JOIN SubMenu sm WITH(NOLOCK) ON sm.idSubMenu = a.idSubMenu
 	WHERE sm.codTemp ='ART' AND a.idPolitica = @idPolitica
+
+	SELECT u.idUsuario, u.nombreUsuario, u.nombreCompleto, predeterminado =  CAST(IIF(u.idUsuario = @idUsuario, 1, 0) AS bit)
+	FROM Usuario u WITH(NOLOCK)
+	INNER JOIN App.UsuarioRol ur WITH(NOLOCK) ON u.idUsuario = ur.idUsuario
+	WHERE ur.idEntidad = @idEntidad
 
 END
 GO
