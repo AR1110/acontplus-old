@@ -200,10 +200,10 @@
                         idMedida: item.idMedida,
                         descripcion: item.descripcion,
                         precioCosto: item.precioCosto,
-                        tarifas: JSON.parse(item.tarifas)
+                        // tarifas: JSON.parse(item.tarifas)
                     }))
                     
-
+                   
                     let etiquetasMapper = etiquetas.map(item => ({
                         idEtiqueta: item.idEtiqueta,
                         descripcion: item.descripcion,
