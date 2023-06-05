@@ -70,7 +70,7 @@ BEGIN
 									 @idUsuario INT,
 									 @idUsuarioSearch INT';
 
-	DECLARE @sql NVARCHAR(MAX) = 'SELECT TOP 100
+	DECLARE @sql NVARCHAR(MAX) = 'SELECT TOP 70
 	                                     de.idDocumentoElectronico
 										,de.idDocumento
 										,de.codDoc

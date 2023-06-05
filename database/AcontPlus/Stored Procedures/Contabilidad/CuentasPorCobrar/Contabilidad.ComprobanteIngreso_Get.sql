@@ -225,7 +225,7 @@ BEGIN
 																	  INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pe.codEstab
 																	  WHERE ne.idNotaEntrega = cx.idComprobante
 																	)
-	   END 
+									    END 
 			FROM dbo.CobroDetalle        cd WITH (NOLOCK)
 			INNER JOIN dbo.Cobro         co WITH (NOLOCK) ON co.idCobro         = cd.idCobro
 			INNER JOIN dbo.CuotaXCobrar  cx WITH (NOLOCK) ON cx.idCuotaXCobrar  = cd.idCuotaXCobrar
