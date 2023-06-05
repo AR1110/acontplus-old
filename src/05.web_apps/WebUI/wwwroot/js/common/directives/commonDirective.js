@@ -524,6 +524,37 @@
         };
     });
 
+    app.directive('clienteSearchCustom', function ($compile, clienteService) {
+        return {
+            restrict: 'A',
+            scope: {
+                onSelect: '&',
+                ngModel: '='
+            },
+            link: function (scope, element, attrs) {
+                scope.cliente = {
+                    nombreCliente: scope.ngModel
+                }
+                scope.searchCustomer = function (textSearch) {
+                    if (textSearch.length > 1) {
+                        return clienteService.search({textSearch})
+                        .catch(error=>{
+                            console.log(error);
+                        })
+                    }
+                }
+    
+                element.attr('uib-typeahead', 'item as item.nombreFiscal for item in searchCustomer($viewValue)');
+                element.attr('typeahead-on-select', 'onSelect({item: $item})');
+                element.attr('typeahead-template-url', 'autocompleteClienteTemplate.html');
+                // element.attr('ng-model', 'ngModel')
+                element.removeAttr('customer-search-custom');
+                $compile(element)(scope);
+            }
+        };
+    });
+    
+
     app.directive('btnEmpresa', function (modalService, nombreModalVenta) {
         return {
             restrict: 'A',

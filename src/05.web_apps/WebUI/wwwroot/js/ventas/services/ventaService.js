@@ -124,7 +124,6 @@
                         }
                         if(response.code==='1'){
                             let mainDataRepository = JSON.parse(response.payload)
-                            console.log(mainDataRepository)
                             return {
                                 tipoIdentificacion: mainDataRepository[0],
                                 tipoContribuyentes: mainDataRepository[1],
@@ -242,6 +241,11 @@
             })
         }
 
+        /**
+         * 
+         * @param {object} query  {textSearch}
+         * @returns 
+         */
         service.search = function(query){
             if(!query){
                 throw new Error('No se ha proporcionado ningun parámetro')
