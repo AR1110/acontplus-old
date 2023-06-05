@@ -2,7 +2,6 @@
 using DataAccess;
 using Domain.Models;
 using Helpers;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -37,6 +36,10 @@ namespace ApiConfig.Controllers
                 _log.LogError("Error al obtener EntidadConfigSri : \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener EntidadConfigSri");
             }
+            finally
+            {
+                _db.Close();
+            }
             return Ok(_response);
         }
 
@@ -63,6 +66,10 @@ namespace ApiConfig.Controllers
             {
                 _log.LogError("Error al actualizar EntidadConfigSri : \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar EntidadConfigSri");
+            }
+            finally
+            {
+                _db.Close();
             }
             return Ok(_response);
         }

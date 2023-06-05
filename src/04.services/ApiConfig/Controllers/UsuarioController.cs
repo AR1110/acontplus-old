@@ -36,6 +36,10 @@ namespace ApiConfig.Controllers
                 _log.LogError("Error while getting users: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error getting users");
             }
+            finally
+            {
+                _db.Close();
+            }
             return Ok(_response);
         }
 
@@ -56,6 +60,10 @@ namespace ApiConfig.Controllers
                 _log.LogError("Error while searching users: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error searching users");
             }
+            finally
+            {
+                _db.Close();
+            }
             return Ok(_response);
         }
 
@@ -75,6 +83,10 @@ namespace ApiConfig.Controllers
             {
                 _log.LogError("Error while insert users: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error insert users");
+            }
+            finally
+            {
+                _db.Close();
             }
             return Ok(_response);
         }
@@ -97,6 +109,10 @@ namespace ApiConfig.Controllers
                 _log.LogError("Error while updating users: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error updating users");
             }
+            finally
+            {
+                _db.Close();
+            }
             return Ok(_response);
         }
 
@@ -115,6 +131,10 @@ namespace ApiConfig.Controllers
             {
                 _log.LogError("Error while deleting users: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error deleting users");
+            }
+            finally
+            {
+                _db.Close();
             }
             return Ok(_response);
         }
