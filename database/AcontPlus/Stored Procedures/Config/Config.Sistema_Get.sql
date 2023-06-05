@@ -32,6 +32,7 @@ BEGIN
 		BEGIN
 			SELECT idSistema = @idSistema
 				  ,customerDefault  = IIF(dt.idCliente IS NULL ,CAST(0 AS BIT),CAST(1 AS BIT))
+				  ,cl.idCliente 
 				  ,cl.nombreFiscal
 				  ,cl.numeroIdentificacion
 				  ,articleDefault   = IIF(dt.idArticulo IS NULL,CAST(0 AS BIT),CAST(1 AS BIT))

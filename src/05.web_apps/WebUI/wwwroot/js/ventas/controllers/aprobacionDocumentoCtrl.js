@@ -3407,7 +3407,7 @@
 
                     $scope.data.codigoPorcentaje = $scope.dataTarifaImpuesto.codigoPorcentaje;
                     $scope.data.tarifa = $scope.dataTarifaImpuesto.tarifa;
-
+                    $scope.data.idUsuario = 0;
                     //Documento Destino Factuta
                     if($scope.data.docDestino==='01'){
                         let query = facturaSvc.queryMapper({
