@@ -24,7 +24,7 @@ namespace ApiVentas.Controllers
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Ventas.Proforma_Get");
+                await _db.SPExecute("Ventas.Proforma_Get", true);
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
                 _response = _db.GetDataTableAsync();
@@ -61,6 +61,10 @@ namespace ApiVentas.Controllers
                 LogWriter _log = new LogWriter(_configuration);
                 _log.LogError("Error al insertar proforma: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar proforma");
+            }
+            finally
+            {
+                _db.Close();
             }
             return Ok(_response);
         }
