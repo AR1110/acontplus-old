@@ -354,7 +354,9 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl {
             //7 cliente 
 
             if (resultsDataForm[8].length > 0) {
-                this.isSearchBarcode = resultsDataForm[8][0].searchCode || false;
+                let {searchCode, multipleVendedor} = resultsDataForm[8][0];
+                this.isSearchBarcode = searchCode;
+                this.multipleVendedor = multipleVendedor;
 
                 this.$uibModalInstance.rendered.then(result => {
                     if (this.isSearchBarcode == 1) {
@@ -372,6 +374,12 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl {
             this.ventaComprobantePermission = Object.freeze(this.ventaPermission.comprobante);
             this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
 
+            this.usuariosVendedor = resultsDataForm[11];
+            if(this.usuariosVendedor.length>0){
+                this.data.idUsuario = this.usuariosVendedor.find(item => (item.predeterminado)).idUsuario
+            }else{
+                this.data.idUsuario = 0;
+            }
 
             this.data.fechaEmision = new Date();
 
@@ -1043,7 +1051,9 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl {
             this.tiempoCreditos = resultsDataForm[5];
 
             if (resultsDataForm[8].length > 0) {
-                this.isSearchBarcode = resultsDataForm[8][0].searchCode || false;
+                let {searchCode, multipleVendedor} = resultsDataForm[8][0];
+                this.isSearchBarcode = searchCode;
+                this.multipleVendedor = multipleVendedor;
 
                 this.$uibModalInstance.rendered.then(result => {
                     if (this.isSearchBarcode == 1) {
@@ -1060,6 +1070,8 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl {
 
             this.ventaComprobantePermission = Object.freeze(this.ventaPermission.comprobante);
             this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
+
+            this.usuariosVendedor = resultsDataForm[11] || [];
 
             this.setColumnDefs();
 
@@ -1088,6 +1100,12 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl {
             this.cloneCodEstab = this.data.codEstab;
 
             this.gridOptions.data = this.detalleDocumento;
+
+            if(this.usuariosVendedor.length>0){
+                this.data.idUsuario = this.usuariosVendedor.find(item => (item.predeterminado)).idUsuario
+            }else{
+                this.data.idUsuario = 0;
+            }
 
             this.fechaEmisionEscrita = this._fS.getFechaEscrita(this.data.fechaEmision);
 
