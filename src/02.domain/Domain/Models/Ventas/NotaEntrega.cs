@@ -8,6 +8,7 @@
         public string codEstab { get; set; }
         public int idPuntoEmision { get; set; }
         public int idTipoDocumento { get; set; }
+        public int idUsuario { get; set; }
         public int idTiempoCredito { get; set; }
         public long nroFactura { get; set; }
         public string fechaEmision { get; set; }
