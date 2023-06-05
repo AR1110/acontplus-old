@@ -35,6 +35,10 @@ namespace ApiConfig.Controllers
                 _log.LogError("Error al obtener datos de solicitud: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos de solicitud");
             }
+            finally
+            {
+                _db.Close();
+            }
             return Ok(_response);
         }
 
@@ -55,6 +59,10 @@ namespace ApiConfig.Controllers
             {
                 _log.LogError("Error al insertar datos de solicitud: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar datos de solicitud");
+            }
+            finally
+            {
+                _db.Close();
             }
             return Ok(_response);
         }
@@ -77,6 +85,10 @@ namespace ApiConfig.Controllers
                 _log.LogError("Error al actualizar datos de solicitud: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar datos de solicitud");
             }
+            finally
+            {
+                _db.Close();
+            }
             return Ok(_response);
         }
 
@@ -98,6 +110,10 @@ namespace ApiConfig.Controllers
                 _log.LogError("Error al eliminar datos de solicitud: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al verificar datos de solicitud");
             }
+            finally
+            {
+                _db.Close();
+            }
             return Ok(_response);
         }
 
@@ -118,6 +134,10 @@ namespace ApiConfig.Controllers
             {
                 _log.LogError("Error al verificar datos de solicitud: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al verificar datos de solicitud");
+            }
+            finally
+            {
+                _db.Close();
             }
             return Ok(_response);
         }

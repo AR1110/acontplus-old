@@ -36,6 +36,10 @@ namespace ApiFactElect.Controllers
                 _log.LogError("Error al obtener datos de factura: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos de factura");
             }
+            finally
+            {
+                _db.Close();
+            }
             return Ok(_response);
         }
 
@@ -59,6 +63,10 @@ namespace ApiFactElect.Controllers
             {
                 _log.LogError("Error al crear la factura: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al crear la factura");
+            }
+            finally
+            {
+                _db.Close();
             }
             return Ok(_response);
         }

@@ -40,6 +40,10 @@ namespace ApiConfig.Controllers
                 _log.LogError("Error al listar tiempo credito: \n" + ex.ToString());
                 _response.Create("0", "Error al listar tiempo credito");
             }
+            finally
+            {
+                _db.Close();
+            }
             return Ok(_response);
         }
 
@@ -62,6 +66,10 @@ namespace ApiConfig.Controllers
                 LogWriter _log = new LogWriter(_configuration);
                 _log.LogError("Error al crear tiempo creditos: \n" + ex.ToString());
                 _response.Create("0", "Error al crear tiempo creditos");
+            }
+            finally
+            {
+                _db.Close();
             }
             return Ok(_response);
         }
@@ -88,6 +96,10 @@ namespace ApiConfig.Controllers
                 _log.LogError("Error al actualizar tiempo creditos: \n" + ex.ToString());
                 _response.Create("0", "Error al actualizar tiempo creditos");
             }
+            finally
+            {
+                _db.Close();
+            }
             return Ok(_response);
         }
 
@@ -111,6 +123,10 @@ namespace ApiConfig.Controllers
                 LogWriter _log = new LogWriter(_configuration);
                 _log.LogError("Error al eliminar tiempo creditos: \n" + ex.ToString());
                 _response.Create("0", "Error al eliminar tiempo creditos");
+            }
+            finally
+            {
+                _db.Close();
             }
             return Ok(_response);
         }
