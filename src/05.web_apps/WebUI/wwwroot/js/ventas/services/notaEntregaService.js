@@ -63,7 +63,7 @@
             notaEntrega.idCliente = cliente.idCliente;
 
 
-            return sendData = {
+            return {
                 notaEntrega,
                 detalle: service.detalleMapperTo(detalles),
                 infoAdicionalArticulo: JSON.stringify(historyDatosAdicionales)
