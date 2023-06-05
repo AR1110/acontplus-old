@@ -7,6 +7,7 @@
         public int idCliente { get; set; }
         public int idPuntoEmision { get; set; }
         public long idFactura { get; set; }
+        public int idUsuario { get; set; }
         public string fechaEmision { get; set; }
         public decimal subTotalSinImpuestos { get; set; }
         public decimal subTotalIva { get; set; }

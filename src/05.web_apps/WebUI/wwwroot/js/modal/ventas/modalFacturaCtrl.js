@@ -1318,7 +1318,7 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
             this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
 
 
-            this.usuariosVendedor = resultsDataForm[11];
+            this.usuariosVendedor = resultsDataForm[11] || [];
             
 
             this.setColumnDefs('12%');

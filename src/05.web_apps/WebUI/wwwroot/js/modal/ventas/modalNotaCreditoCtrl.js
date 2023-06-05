@@ -374,6 +374,11 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl {
 
             //6 articulo 
             //7 cliente 
+            if (resultsDataForm[8].length > 0) {
+                let {multipleVendedor} = resultsDataForm[8][0];                
+                this.multipleVendedor = multipleVendedor;
+            }
+            this.usuariosVendedor = resultsDataForm[11] || [];
 
             this.data.fechaEmision = new Date();
             this.getFechaVencimiento();
@@ -399,6 +404,11 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl {
             this.uiGridInvoice.idTarifa = this.idTarifa;
 
 
+            if(this.usuariosVendedor.length>0){
+                this.data.idUsuario = this.usuariosVendedor.find(item => (item.predeterminado)).idUsuario
+            }else{
+                this.data.idUsuario = 0;
+            }
 
             this.$scope.$apply();
 
