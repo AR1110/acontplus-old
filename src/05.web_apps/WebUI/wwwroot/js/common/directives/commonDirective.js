@@ -524,11 +524,12 @@
         };
     });
 
-    app.directive('clienteSearchCustom', function ($compile, clienteService) {
+    app.directive('clienteSearchDrtv', function ($compile, clienteService) {
         return {
             restrict: 'A',
             scope: {
                 onSelect: '&',
+                onKeyupCliente:'&',
                 ngModel: '='
             },
             link: function (scope, element, attrs) {
@@ -545,10 +546,12 @@
                 }
     
                 element.attr('uib-typeahead', 'item as item.nombreFiscal for item in searchCustomer($viewValue)');
-                element.attr('typeahead-on-select', 'onSelect({item: $item})');
+                element.attr('typeahead-on-select', 'onSelect({result: $item})');
                 element.attr('typeahead-template-url', 'autocompleteClienteTemplate.html');
+                element.attr('ng-keyup', 'onKeyupCliente()');
+                element.attr('typeahead-editable', 'false');
                 // element.attr('ng-model', 'ngModel')
-                element.removeAttr('customer-search-custom');
+                element.removeAttr('cliente-search-drtv');
                 $compile(element)(scope);
             }
         };
