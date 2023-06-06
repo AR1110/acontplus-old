@@ -705,6 +705,19 @@
             }
         }
 
+        function setDataInfoEstab() {
+            $scope.infoEstabPtoEmi = {}
+            if ($scope.establecimientos.length > 0) {
+                this.infoEstabPtoEmi.nombreComercial = establecimientos.find(item => item.codEstab === this.data.codEstab).nombreComercial;
+            }
+    
+            if (ptosEmision.length > 0) {
+                this.infoEstabPtoEmi.ptoEmi = ptosEmision.find(item => item.idPuntoEmision === this.data.idPuntoEmision).ptoEmi;
+            }
+    
+        }
+    
+
          /**
          * Agregamos lista de tipos IVA y bodegas en sus respectivas columnas
          */

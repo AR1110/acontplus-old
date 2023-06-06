@@ -14,11 +14,12 @@
         'nombreModal', 
         'nombreModalContabilidad',
         'toastService', 
-        'formulario'
+        'formulario',
+        'decodeToken'
     ];
 
-    function notaEntregaCtrl($scope, $filter, _mS, notaEntregaSvc, _commonSvc, _modalSvc, _nombreModalConst, nombreModalContabilidad, _tS, _fS) {
-        'use strict';
+    function notaEntregaCtrl($scope, $filter, _mS, notaEntregaSvc, _commonSvc, _modalSvc, _nombreModalConst, nombreModalContabilidad, _tS, _fS, decodeToken) {
+     
 
         const TIPO_DOC_NE = _commonSvc.tipoDoc['NE'];
         const PERMISSION_KEY_ACTIONS = {
@@ -30,19 +31,21 @@
 
         $scope.jsonPermission = {}
 
+        $scope.isPrintDocument = false; //Para impresiones termicas al registra el documento 
+        $scope.parametersPrint = {};
+
         $scope.dataSearch = {
             pageIndex: 1,
             pageSize: 1000
         }
 
-        $scope.clienteFiltro = {}
-        $scope.usuarioSearchFiltro = {};
-        $scope.mes = new Date().getMonth() + 1;
+        $scope.cliente = {}
         $scope.notaEntregas = [];
 
+        let idUsuarioRol = Number(decodeToken.idUsuarioRol)
 
-        $scope.isPrintDocument = false; //Para impresiones termicas al registra el documento 
-        $scope.parametersPrint = {};
+
+       
 
 
         // removed focus new NE
@@ -50,6 +53,68 @@
         btnNewDocument.addEventListener("click", () => {
             btnNewDocument.blur();
         })
+
+        //========================Start Filters=================
+
+        $scope.resultRangeFilter = function (item) {
+            $scope.dataSearch.fechaInicio = item.startDate,
+            $scope.dataSearch.fechaFin = item.endDate
+            $scope.getNotaEntregas();
+        }
+
+    
+
+        $scope.onKeyupCliente = function(e) {
+            if(!$scope.cliente.nombreCliente){
+                $scope.dataSearch.idCliente = 0;
+            }
+        }
+        $scope.onSelectCliente = function(item) {
+            $scope.dataSearch.idCliente = item.idCliente;
+            $scope.getNotaEntregas();
+        }
+
+        $scope.usuarioSearch = function (textSearch) {
+            try {
+                let query = {
+                    idRol: idUsuarioRol,
+                    busqueda: textSearch
+                }
+
+                if (query.busqueda.length > 2) {
+                    return _commonSvc.usuarioSearch(query)
+                        .catch(error => {
+                            console.log(error);
+                            throw error;
+                        })
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        $scope.onKeyupUsuarioSearch = function () {
+            if (!$scope.modelNombreCompleto) {
+                $scope.dataSearch.byUsuario = 0;
+            }
+        }
+
+        $scope.selectedUsuarioSearch = function (item) {
+            $scope.dataSearch.byUsuario = item.idUsuario;
+        }
+
+        $scope.onClickBtnMore = function () {
+            $scope.moreSearchOptions = !$scope.moreSearchOptions;
+        }
+
+        $scope.searchFilterLocal = function () {
+            let aprobComprobantes = JSON.parse(JSON.stringify($scope.cloneAproComprobantes));
+            $scope.aprobComprobantes = $filter("filter")(aprobComprobantes, $scope.dataSearch.bySearch);
+            $scope.calculoColumnTotal();
+        }
+
+        //=====================Eend Filters=======================
+
 
 
         $scope.getTotales = function () {
@@ -64,21 +129,35 @@
         $scope.getNotaEntregas = async () => {
             try {
 
-                if ($scope.dataSearch.checkBoxCliente ||
-                    $scope.dataSearch.checkBoxFecha ||
-                    $scope.dataSearch.checkBoxUsuario ||
-                    $scope.dataSearch.checkBoxEstado
-                ) {
-                    $scope.dataSearch.checkBoxDefault = false
-                } else {
-                    $scope.dataSearch.checkBoxDefault = true;
+                // if ($scope.dataSearch.checkBoxCliente ||
+                //     $scope.dataSearch.checkBoxFecha ||
+                //     $scope.dataSearch.checkBoxUsuario ||
+                //     $scope.dataSearch.checkBoxEstado
+                // ) {
+                //     $scope.dataSearch.checkBoxDefault = false
+                // } else {
+                //     $scope.dataSearch.checkBoxDefault = true;
+                // }
+                let dataSearch = {
+                    codEstab: $scope.dataSearch.codEstab,
+                    checkBoxDefault: false,
+                    checkBoxCliente: $scope.dataSearch.idCliente > 0,
+                    byCliente: $scope.dataSearch.idCliente,
+                    checkBoxFecha: true,
+                    checkBoxUsuario: $scope.dataSearch.byUsuario > 0,
+                    byUsuario: $scope.dataSearch.byUsuario,
+                    checkBoxEstado: $scope.dataSearch.codEstado ? true : false,
+                    codEstado: $scope.dataSearch.codEstado,
+                    fechaInicio: _fS.formatDateMoment($scope.dataSearch.fechaInicio),
+                    fechaFin: _fS.formatDateMoment($scope.dataSearch.fechaFin)
                 }
 
                 showLoader();
                 $scope.notaEntregas = [];
+                $scope.cloneNotaEntregas = [];
                 $scope.getTotales();
 
-                notaEntregaSvc.getAll($scope.dataSearch).then(response => {
+                notaEntregaSvc.getAll(dataSearch).then(response => {
                     hideLoader();
                     $scope.notaEntregas = response;
                     $scope.cloneNotaEntregas = JSON.parse(JSON.stringify($scope.notaEntregas));
@@ -101,7 +180,7 @@
         }
 
 
-        $scope.initiload = () => {
+        $scope.initiload = async function()  {
             _commonSvc.getEstabAsign().then(response => {
                 $scope.establecimientos = response;
                 let codEstab = $scope.establecimientos.length > 0 ? $scope.establecimientos[0].codEstab : 0;
@@ -114,49 +193,20 @@
                 $scope.jsonPermission = JSON.parse(result[9][0].jsonPermission)
             })
 
+            $scope.estadoDocumentos = await _commonSvc.getEstadoDocByCodDoc('NE');
+
         }
         $scope.initiload();
 
 
         //Filtro de Nota de Entregas localmente 
-        $scope.searchLocalNotaEntregas = function () {
+        $scope.searchFilterLocal = function () {
             let notaEntregas = JSON.parse(JSON.stringify($scope.cloneNotaEntregas));
             $scope.notaEntregas = $filter("filter")(notaEntregas, $scope.dataSearch.bySearch);
             $scope.getTotales();
         }
 
-        $scope.openModalFiltro = async () => {
-
-            let { MODAL_FILE_CTRL, MODAL_FILTRO } = _nombreModalConst.nota_entrega;
-            let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_FILTRO['controller']];
-            let template = MODAL_FILTRO['template'];
-
-            let params = {
-                dataSearch: $scope.dataSearch,
-                clienteFiltro: $scope.clienteFiltro,
-                usuarioSearchFiltro: $scope.usuarioSearchFiltro,
-                mes: $scope.mes
-            }
-
-            let modalRef = _modalSvc.openModalCustom({
-                controller,
-                template,
-                params,
-                size: 'lg'
-            })
-
-            modalRef.result.then(result => {
-                let { dataSearch, clienteFiltro, usuarioSearchFiltro, mes, isSearch } = result;
-                $scope.dataSearch = dataSearch;
-                $scope.clienteFiltro = clienteFiltro;
-                $scope.usuarioSearchFiltro = usuarioSearchFiltro;
-                $scope.mes = mes;
-                if (isSearch) {
-                    $scope.getNotaEntregas();
-                }
-            })
-        }
-
+        
 
         $scope.validateOperationPrintAndPayment = (result) => {
             

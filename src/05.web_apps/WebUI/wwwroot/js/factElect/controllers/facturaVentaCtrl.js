@@ -11,7 +11,8 @@ facturaVentaCtrl.$inject = [
     'nombreModal',
     'nombreModalContabilidad',
     'toastService',
-    'formulario'    
+    'formulario',
+    'decodeToken'    
 ]
 
 function facturaVentaCtrl(
@@ -25,7 +26,8 @@ function facturaVentaCtrl(
     _nombreModalConst, 
     nombreModalContabilidad,
     _tS, 
-    _fS    
+    _fS    ,
+    decodeToken
 ) {
     // let accion = JSON.parse(localStorage.getItem("accion"));
     // if (accion === null) {
@@ -56,6 +58,8 @@ function facturaVentaCtrl(
 
     $scope.isPrintDocument = false; //Para impresiones termicas al registra el documento 
     $scope.parametersPrint = {};
+
+    let idUsuarioRol = Number(decodeToken.idUsuarioRol)
 
 
     //Remove Focus new invoice 
@@ -120,7 +124,7 @@ function facturaVentaCtrl(
     $scope.searchFilterLocal = function () {
         let aprobComprobantes = JSON.parse(JSON.stringify($scope.cloneAproComprobantes));
         $scope.aprobComprobantes = $filter("filter")(aprobComprobantes, $scope.dataSearch.bySearch);
-        $scope.calculoColumnTotal();
+        $scope.getTotales();
     }
 
     //=====================Eend Filters=======================
