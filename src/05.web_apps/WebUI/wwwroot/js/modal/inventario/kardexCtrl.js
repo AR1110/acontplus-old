@@ -505,7 +505,7 @@ export class ModalKardexCtrl extends KardexCtrl {
     }
 
     closeModal() {
-        thia.kardexs = [];
+        this.kardexs = [];
         this.$uibModalInstance.close()
     }
 }

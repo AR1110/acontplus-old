@@ -49,10 +49,9 @@ function facturaVentaCtrl(
         pageIndex: 1,
         pageSize: 10000
     }
-
-    $scope.clienteFiltro = {}
-    $scope.usuarioSearchFiltro = {};
-    $scope.mes = new Date().getMonth() + 1;
+    $scope.cliente = {
+        nombreCliente: ''
+    }
 
 
     $scope.isPrintDocument = false; //Para impresiones termicas al registra el documento 
@@ -64,6 +63,67 @@ function facturaVentaCtrl(
     btnNewInvoice.addEventListener("click", () => {
         btnNewInvoice.blur();
     })
+
+    //========================Start Filters=================
+
+    $scope.resultRangeFilter = function (item) {
+        $scope.dataSearch.fechaInicio = item.startDate,
+        $scope.dataSearch.fechaFin = item.endDate
+        $scope.getFacturas();
+    }
+
+   
+
+    $scope.onKeyupCliente = function(e) {
+        if(!$scope.cliente.nombreCliente){
+            $scope.dataSearch.idCliente = 0;
+        }
+    }
+    $scope.onSelectCliente = function(item) {
+       $scope.dataSearch.idCliente = item.idCliente;
+       $scope.getFacturas();
+    }
+
+    $scope.usuarioSearch = function (textSearch) {
+        try {
+            let query = {
+                idRol: idUsuarioRol,
+                busqueda: textSearch
+            }
+
+            if (query.busqueda.length > 2) {
+                return _commonSvc.usuarioSearch(query)
+                    .catch(error => {
+                        console.log(error);
+                        throw error;
+                    })
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    $scope.onKeyupUsuarioSearch = function () {
+        if (!$scope.modelNombreCompleto) {
+            $scope.dataSearch.byUsuario = 0;
+        }
+    }
+
+    $scope.selectedUsuarioSearch = function (item) {
+        $scope.dataSearch.byUsuario = item.idUsuario;
+    }
+
+    $scope.onClickBtnMore = function () {
+        $scope.moreSearchOptions = !$scope.moreSearchOptions;
+    }
+
+    $scope.searchFilterLocal = function () {
+        let aprobComprobantes = JSON.parse(JSON.stringify($scope.cloneAproComprobantes));
+        $scope.aprobComprobantes = $filter("filter")(aprobComprobantes, $scope.dataSearch.bySearch);
+        $scope.calculoColumnTotal();
+    }
+
+    //=====================Eend Filters=======================
 
 
 
@@ -86,23 +146,37 @@ function facturaVentaCtrl(
     }
 
 
-
+    
 
     $scope.getFacturas = function () {
 
         try {
-            if ($scope.dataSearch.checkBoxCliente ||
-                $scope.dataSearch.checkBoxFecha ||
-                $scope.dataSearch.checkBoxUsuario ||
-                $scope.dataSearch.checkBoxEstado) {
-                    $scope.dataSearch.checkBoxDefault = false
-            } else {
-                $scope.dataSearch.checkBoxDefault = true;
+            // if ($scope.dataSearch.checkBoxCliente ||
+            //     $scope.dataSearch.checkBoxFecha ||
+            //     $scope.dataSearch.checkBoxUsuario ||
+            //     $scope.dataSearch.checkBoxEstado) {
+            //         $scope.dataSearch.checkBoxDefault = false
+            // } else {
+            //     $scope.dataSearch.checkBoxDefault = true;
+            // }
+            let dataSearch = {
+                codEstab: $scope.dataSearch.codEstab,
+                checkBoxDefault: false,
+                checkBoxCliente: $scope.dataSearch.idCliente > 0,
+                byCliente: $scope.dataSearch.idCliente,
+                checkBoxFecha: true,
+                checkBoxUsuario: $scope.dataSearch.byUsuario > 0,
+                byUsuario: $scope.dataSearch.byUsuario,
+                checkBoxEstado: $scope.dataSearch.byEstado ? true : false,
+                byEstado: $scope.dataSearch.byEstado,
+                fechaInicio: _fS.formatDateMoment($scope.dataSearch.fechaInicio),
+                fechaFin: _fS.formatDateMoment($scope.dataSearch.fechaFin)
             }
                 
             showLoader();
             $scope.facturas = [];
-            facturaSvc.getAll($scope.dataSearch).then(response=>{
+            $scope.getTotales();
+            facturaSvc.getAll(dataSearch).then(response=>{
                 $scope.facturas = response;
                 
                 $scope.cloneFacturas = JSON.parse(JSON.stringify($scope.facturas));
@@ -124,13 +198,16 @@ function facturaVentaCtrl(
 
 
 
-    $scope.initiload = () => {
+    $scope.initiload = async function() {
         _commonSvc.getEstabAsign().then(response => {
             $scope.establecimientos = response;
             let codEstab = $scope.establecimientos.length > 0 ? $scope.establecimientos[0].codEstab : 0;
             $scope.dataSearch.codEstab = codEstab;
             $scope.getFacturas();
         })
+
+        
+        $scope.estadoDocumentos = await _commonSvc.getEstadoDocByCodDoc('FV');
     }
     $scope.initiload();
 
@@ -199,71 +276,6 @@ function facturaVentaCtrl(
 
 
     }
-
-
-    $scope.openModalFiltro = async () => {
-        let {
-            MODAL_FILE_CTRL,
-            MODAL_FILTRO
-        } = _nombreModalConst.factura_venta;
-        let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_FILTRO['controller']];
-        let template = MODAL_FILTRO['template'];
-        let params = {
-            dataSearch: $scope.dataSearch,
-            clienteFiltro: $scope.clienteFiltro,
-            usuarioSearchFiltro: $scope.usuarioSearchFiltro,
-            mes: $scope.mes
-        }
-
-        let modalRef = _modalSvc.openModalCustom({
-            controller,
-            template,
-            params,
-            size: 'lg'
-        })
-
-        modalRef.result.then(result => {
-            let {
-                dataSearch,
-                clienteFiltro,
-                usuarioSearchFiltro,
-                mes,
-                isSearch
-            } = result;
-            $scope.dataSearch = dataSearch;
-            $scope.clienteFiltro = clienteFiltro;
-            $scope.usuarioSearchFiltro = usuarioSearchFiltro;
-            $scope.mes = mes;
-            if (isSearch) {
-                $scope.getFacturas();
-            }
-        })
-    }
-
-    //Filtro de Retencion 
-    $scope.filterLocalRetencion = function () {
-
-        let facturas = JSON.parse(JSON.stringify($scope.cloneFacturas));
-
-        if ($scope.dataSearch.filterCheckedLocal === "SR") {
-            facturas = facturas.filter(val => val.nroRetencion == "SN");
-        }
-        if ($scope.dataSearch.filterCheckedLocal === "CR") {
-            facturas = facturas.filter(val => val.nroRetencion !== "SN");
-        };
-
-        if ($scope.dataSearch.filterCheckedLocal === "CNC") {
-            facturas = facturas.filter(val => val.nroNotaCredito !== "SN");
-        }
-
-        if ($scope.dataSearch.filterCheckedLocal === "SNC") {
-            facturas = facturas.filter(val => val.nroNotaCredito == "SN");
-        }
-        // facturas = facturas.filter(item=>item.estadoFinanciero!=='Anulada');
-        $scope.facturas = $filter("filter")(facturas, $scope.textSearch);
-        $scope.getTotales();
-    }
-
 
     /**
      * 

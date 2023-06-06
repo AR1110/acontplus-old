@@ -50,17 +50,24 @@
                     <div class="input-group">
                         @await Html.PartialAsync("~/Views/Cliente/_UibModalSearchInvoice.cshtml")
                         <div class="input-group-append">
-                            <button type="button" class="btn btn-outline-secondary btn-sm"
-                                ng-click="$ctrl.openModalClienteNew()" tabindex="-1"> <i class="fa fa-plus fa-xs"></i>
+                            <button type="button" class="btn btn-outline-secondary btn-xs border-select"
+                                id="btnNewCustomerDocument" btn-cliente
+                                result-modal="$ctrl.onSelectedClienteChange(result)"> <i class="fa fa-plus fa-xs"></i>
                             </button>
 
-                            <button type="button" class="btn btn-outline-secondary btn-sm"
-                                ng-if="$ctrl.cliente.idCliente>0" ng-click="$ctrl.openModalClienteUpdate()"
+                            <button type="button" class="btn btn-outline-secondary btn-xs"
+                                ng-if="$ctrl.cliente.idCliente>0" btn-cliente
+                                result-modal="$ctrl.onSelectedClienteChange(result)" params="$ctrl.cliente"
                                 tabindex="-1"><i class="fa fa-edit fa-xs"></i>
                             </button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm"
-                                ng-click="$ctrl.openModalClienteLista()" tabindex="-1"><i
+                            <button type="button" class="btn btn-outline-secondary btn-xs" btn-cliente-lista
+                                result-modal="$ctrl.onSelectedClienteChange(result)" tabindex="-1"><i
                                     class="fa fa-search fa-xs"></i>
+                            </button>
+
+                            <button type="button" cliente-info-popover customer="$ctrl.cliente" popover-placement='top'
+                                class="btn btn-outline-secondary btn-xs" ng-if="$ctrl.cliente.idCliente>0"
+                                tabindex="-1"><i class="fa fa-info fa-xs"></i>
                             </button>
                         </div>
                     </div>

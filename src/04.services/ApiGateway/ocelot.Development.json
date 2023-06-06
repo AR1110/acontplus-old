@@ -1007,7 +1007,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44358
+          "Port": 7079
         }
       ],
       "DownstreamPathTemplate": "/api/NotaEntrega{everything}",
@@ -1240,6 +1240,22 @@
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "UpstreamPathTemplate": "/api/TiempoCredito{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 44395
+        }
+      ],
+      "DownstreamPathTemplate": "/api/GuiaRemision{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "UpstreamPathTemplate": "/api/GuiaRemision{everything}"
     }
   ]
 }

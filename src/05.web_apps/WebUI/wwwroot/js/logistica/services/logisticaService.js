@@ -2,6 +2,69 @@
 
     'use strict';
 
+    app.factory('guiaRemisionService', function($injector){
+        let url = 'GuiaRemision/';
+        let mS = $injector.get('mainService');
+        let service = {};
+
+        service.getAll = function(query) {
+            return mS.getData('get', url+ '?json=' + JSON.stringify(query), null, true).then(response=>{
+                if(response.code==='0'){
+                    throw response
+                }
+                if(response.code==='1'){
+                    let guiasRemision = JSON.parse(response.payload) || [];
+                    return guiasRemision.map(item=>{
+                        return {
+                            idGuiaRemision: item.idGuiaRemision,
+                            fechaEmision: item.fechaEmision,
+                            fechaInicio: item.fechaInicio,
+                            fechaFin: item.fechaFin,
+                            claveAcceso: item.claveAcceso,
+                            autorizada: item.autorizada,
+                            anulada: item.anulada,
+                            nroDoc: item.nroDoc,
+                            serieComprobante: item.nroDoc,
+                            cliente: item.cliente,
+                            correos: item.correos,
+                            nroFactura: item.nroFactura,
+                            transportista: item.transportista,
+                            estadoSri: item.estadoSri,
+                            usuario: item.usuario,
+                            style: item.style,
+                        }
+                    })
+                }
+            }).catch(error=>{
+                console.log(error)
+                throw error
+            })
+        }
+
+        service.save = function(data){
+            return mS.getData('post', url + 'Insert', data, true)
+            .catch(errorResponse => {
+                throw errorResponse
+            })
+        }
+
+        service.update = function(id, data){
+            return mS.getData('put', url + 'Update/' + id, data, true)
+            .catch(errorResponse => {
+                throw errorResponse
+            })
+        }
+
+        service.delete = function(id){
+            return mS.getData('delete', url + 'Delete/' + id, null, true)
+            .catch(errorResponse => {
+                throw errorResponse
+            })
+        }
+        return service;
+    });    
+
+
     app.factory('transportistaService', function($injector){
         let url = 'Transportista/';
         let mS = $injector.get('mainService');

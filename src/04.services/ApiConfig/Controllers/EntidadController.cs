@@ -36,6 +36,10 @@ namespace ApiConfig.Controllers
                 _log.LogError("Error al obtener lista de entidades : \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener lista de entidades");
             }
+            finally
+            {
+                _db.Close();
+            }
             return Ok(_response);
         }
 
@@ -60,6 +64,10 @@ namespace ApiConfig.Controllers
             {
                 _log.LogError("Error al crear entidad : \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al crear entidad");
+            }
+            finally
+            {
+                _db.Close();
             }
             return Ok(_response);
         }
@@ -88,6 +96,10 @@ namespace ApiConfig.Controllers
                 _log.LogError("Error al crear entidad : \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al crear entidad");
             }
+            finally
+            {
+                _db.Close();
+            }
             return Ok(_response);
         }
 
@@ -107,6 +119,10 @@ namespace ApiConfig.Controllers
             {
                 _log.LogError("Error al eliminar entidad : \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar entidad");
+            }
+            finally
+            {
+                _db.Close();
             }
             return Ok(_response);
         }

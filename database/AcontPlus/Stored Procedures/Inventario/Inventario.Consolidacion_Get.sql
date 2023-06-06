@@ -76,7 +76,7 @@ BEGIN
 								idArticulo INT '$.idArticulo',
 								rucProveedor VARCHAR(25) '$.rucProveedor',
 								idSubFamilia INT '$.idSubFamilia',
-								nroDocumento INT '$.nroDocumento'
+								nroDocumento VARCHAR(25) '$.nroDocumento'
 								)
 	IF @tipo = 1
 		BEGIN

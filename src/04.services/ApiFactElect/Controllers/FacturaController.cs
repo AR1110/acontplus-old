@@ -26,7 +26,7 @@ namespace ApiFactElect.Controllers
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Ventas.Factura_Get");
+                await _db.SPExecute("Ventas.Factura_Get", true);
                 _db.AddDynamicParam("idRol", idUsuarioRol);
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
                 _response = _db.GetDataTableAsync();
@@ -35,6 +35,10 @@ namespace ApiFactElect.Controllers
             {
                 _log.LogError("Error al obtener datos de factura: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos de factura");
+            }
+            finally
+            {
+                _db.Close();
             }
             return Ok(_response);
         }
@@ -59,6 +63,10 @@ namespace ApiFactElect.Controllers
             {
                 _log.LogError("Error al crear la factura: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al crear la factura");
+            }
+            finally
+            {
+                _db.Close();
             }
             return Ok(_response);
         }

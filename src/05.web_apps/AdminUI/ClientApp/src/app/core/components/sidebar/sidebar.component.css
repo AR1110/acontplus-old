@@ -1,9 +1,0 @@
-.example-spacer {
-  flex: 1 1 auto;
-}
-
-#snav .mat-nav-list .mat-list-item.selected>.mat-list-item-content>a {
-  background: #26c6da;
-  border-radius: 4px;
-  color: #fff;
-}

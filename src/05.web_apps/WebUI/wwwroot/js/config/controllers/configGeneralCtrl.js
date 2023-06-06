@@ -189,6 +189,7 @@
                     jsonConfig.printerAutomatic = $scope.gestionSistema.printerAutomatic;
                     jsonConfig.payAutomatic = $scope.gestionSistema.payAutomatic;
                     jsonConfig.configInteres = $scope.gestionSistema.configDeuda;
+                    jsonConfig.multipleVendedor = $scope.gestionSistema.multipleVendedor;
                     jsonConfig.infoInteres = {
                             tipo: $scope.gestionSistema.configPorcentaje,
                             porcentajeInteres: $scope.gestionSistema.configPorcentaje=='PF'? undefined: $scope.gestionSistema.porcentajeInteres,

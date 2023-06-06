@@ -6,6 +6,7 @@
         public long idTipoDocumento { get; set; }
         public long idCliente { get; set; }
         public long idPuntoEmision { get; set; }
+        public int idUsuario { get; set; }
         public long nroDocumento { get; set; }
         public string fechaEmision { get; set; }
         public decimal subTotalSinImpuestos { get; set; }

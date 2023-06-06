@@ -131,7 +131,7 @@ BEGIN
 		rucProveedor VARCHAR(25) '$.rucProveedor',
 		idFamilia INT '$.idFamilia',
 		idSubFamilia INT '$.idSubFamilia',
-		nroDocumento INT '$.nroDocumento'
+		nroDocumento VARCHAR(25) '$.nroDocumento'
 	)
 
 	IF (@tipo = 1)

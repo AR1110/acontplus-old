@@ -509,28 +509,8 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
 
         }
     }
-
-    //@ts-check    
-    $scope.openModalSendMail = async (item) => {
-        try {
-            item.typeSendMail = 'SRI';
-            const {
-                MODAL_SEND_MAIL_CTRL,
-                MODAL_SEND_MAIL_CSHTML
-            } = _nombreModalConst.common;
-            const {
-                SendMailCtrl
-            } = await import('./../../modal/' + MODAL_SEND_MAIL_CTRL);
-            _modalSvc.openModalCustom({
-                controller: SendMailCtrl,
-                template: 'Shared/' + MODAL_SEND_MAIL_CSHTML,
-                size: 'md',
-                params: item
-            })
-        } catch (error) {
-            console.error(error)
-        }
-    }
+    
+    $scope.typeSendMail = 'SRI';
 
     //------------------SEND WHATSAPP
     $scope.typeSend = 'SRI';
@@ -539,34 +519,7 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
     $scope.paramsToWhatsapp = {
         loginOnly: true
     }
-
-    // $scope.loginWhatsapp = () => {
-    //     $scope.openModalSendWhatsapp($scope.paramsToWhatsapp)
-    // }
-
-    // $scope.openModalSendWhatsapp = async (item = null) => {
-    //     try {
-    //         item.type = 'SRI'
-    //         item.hasPermissions = $scope.hasPermissions
-    //         const {
-    //             MODAL_SEND_WHATSAPP_CTRL,
-    //             MODAL_SEND_WHATSAPP_CSHTML
-    //         } = _nombreModalConst.common;
-    //         const {
-    //             ModalWhatsAppCtrl
-    //         } = await import('./../../modal/' + MODAL_SEND_WHATSAPP_CTRL)
-    //         _modalSvc.openModalCustom({
-    //             controller: ModalWhatsAppCtrl,
-    //             template: MODAL_SEND_WHATSAPP_CSHTML,
-    //             isRenderRazorPartial: true,
-    //             size: 'md',
-    //             params: item
-    //         })
-    //     } catch (error) {
-    //         console.error(error)
-    //     }
-    // }
-
+    
     $scope.showBtnUpdateXml = (item) => {
         return [2, 0, 5].includes(item.codEstado)
     }

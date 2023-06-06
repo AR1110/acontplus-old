@@ -24,7 +24,7 @@ namespace ApiVentas.Controllers
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Ventas.NotaEntrega_Get");
+                await _db.SPExecute("Ventas.NotaEntrega_Get", true);
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
                 _response = _db.GetDataTableAsync();
@@ -63,6 +63,10 @@ namespace ApiVentas.Controllers
                 _log.LogError("Error al insertar nota entrega: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar nota de entrega");
             }
+            finally
+            {
+                _db.Close();
+            }
             return Ok(_response);
         }
 
@@ -98,7 +102,7 @@ namespace ApiVentas.Controllers
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            DbAccess _db = new DbAccess(_configuration);           
+            DbAccess _db = new DbAccess(_configuration);
             GenericResponse _response = new GenericResponse();
             try
             {

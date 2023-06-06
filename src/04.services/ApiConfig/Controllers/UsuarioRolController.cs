@@ -34,6 +34,10 @@ namespace ApiConfig.Controllers
                 _log.LogError("Error while getting user role: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error getting user role");
             }
+            finally
+            {
+                _db.Close();
+            }
             return Ok(_response);
         }
     }

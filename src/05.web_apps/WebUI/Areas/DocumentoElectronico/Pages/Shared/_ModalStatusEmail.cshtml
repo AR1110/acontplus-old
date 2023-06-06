@@ -1,61 +1,63 @@
-
-
 <div class="modal-header">
     <h5 class="modal-title"><i class="mdi mdi-contact-mail"></i> Estado Correo</h5>
-    <button class="close" ng-click="$ctrl.closeModal()">&times;</button>
+    <button class="close" ng-click="closeModal()">&times;</button>
 </div>
 
 <div class="modal-body">
 
     <!--Estados de Correos por Comprobante-->
-    <md-table-container ng-if="$ctrl.showStatusMailByComp">
+    <md-table-container ng-if="showStatusMailByComp">
         <table md-table>
             <thead md-head>
                 <tr md-row>
                     <th md-column>N°</th>
                     <th md-column>Receptor</th>
-                    <th md-column>Fecha Envio</th>              
-                    <th md-column>Estado</th>              
-                    <th md-column>Op</th>              
+                    <th md-column>Fecha Envio</th>
+                    <th md-column>Estado</th>
+                    <th md-column>Op</th>
                 </tr>
             </thead>
 
             <tbody md-body>
-                <tr md-row ng-repeat="item in $ctrl.estadoCorreos">
+                <tr md-row ng-repeat="item in estadoCorreos">
                     <td md-cell>{{$index + 1}}</td>
                     <td md-cell>
-                        <md-chips ng-if="item.correos.length>0"  ng-model="item.correos" readonly="true" input-aria-label="Correos">
+                        <md-chips ng-if="item.correos.length>0" ng-model="item.correos" readonly="true"
+                            input-aria-label="Correos">
                             <md-chip-template>
                                 <span>
-                                <strong><i class="fas fa-user fa-xs"></i> {{$chip}}</strong>
-                            
+                                    <strong><i class="fas fa-user fa-xs"></i> {{$chip}}</strong>
+
                                 </span>
                             </md-chip-template>
-                        </md-chips>  
-                    </td>             
-                    <td md-cell>{{item.fechaEnvio | date:'MM/dd/yyyy h:mm'}}</td>               
-                    <td md-cell>{{item.estado}}</td>               
+                        </md-chips>
+                    </td>
+                    <td md-cell>{{item.fechaEnvio | date:'MM/dd/yyyy h:mm'}}</td>
+                    <td md-cell>{{item.estado}}</td>
                     <td md-cell>
-                        <button type="button" ng-if="item.estado=='ERROR'" ng-click="$ctrl.showError(item)" class="btn btn-info btn-sm">
+                        <button type="button" ng-if="item.estado=='ERROR'" ng-click="showError(item)"
+                            class="btn btn-info btn-sm">
                             <i class="ti-plus"></i>
                         </button>
-                        <button type="button" ng-if="item.estado=='ERROR'" ng-click="$ctrl.sendMail(item)" class="btn btn-success btn-sm">
+                        <button type="button" ng-if="item.estado=='ERROR'" btn-send-to-email params="item"
+                            type-send="typeSend" class="btn btn-success btn-sm">
                             <i class="fas fa-share"></i>
                         </button>
-                    </td>               
+                    </td>
                 </tr>
-                <tr class="text-center" ng-if="$ctrl.estadoCorreos.length===0">
+                <tr class="text-center" ng-if="estadoCorreos.length===0">
                     <td colspan="5">No hay registros de envios.</td>
                 </tr>
             </tbody>
-        </table>  
+        </table>
     </md-table-container>
 
     <!--Estado de Correos por todos los Comprobantes-->
-    <div ng-if="$ctrl.showStatusMailMasive">
+    <div ng-if="showStatusMailMasive">
         <div class="row justify-content-end">
             <div class="col-lg-4 col-xl-4 col-md-4 col-sm-12 col-12">
-                <input type="text" class="form-control border-select" ng-model="$ctrl.textSearch" placeholder="Buscar Comprobante">
+                <input type="text" class="form-control border-select" ng-model="textSearch"
+                    placeholder="Buscar Comprobante">
             </div>
         </div>
         <md-table-container>
@@ -65,12 +67,12 @@
                         <th md-column>Comprobante</th>
                         <th md-column>serie</th>
                         <th md-column>Ruc Receptor</th>
-                        <th md-column>Razón Social Receptor</th>              
+                        <th md-column>Razón Social Receptor</th>
                     </tr>
                 </thead>
 
                 <tbody md-body>
-                    <tr md-row ng-repeat-start="item in $ctrl.estadoCorreos | filter: $ctrl.textSearch">
+                    <tr md-row ng-repeat-start="item in estadoCorreos | filter: textSearch">
                         <td md-cell>{{item.comprobante}}</td>
                         <td md-cell>{{item.serie}}</td>
                         <td md-cell>{{item.rucReceptor}}</td>
@@ -78,56 +80,60 @@
                     </tr>
                     <tr md-row ng-if="item.isStatusMail" ng-repeat-end>
                         <td md-cell colspan="4">
-                            <div class="card mt-2 shadow">                            
+                            <div class="card mt-2 shadow">
                                 <div class="table-responsive">
                                     <table class="table c table-sm">
                                         <thead>
                                             <tr>
                                                 <th>N°</th>
                                                 <th>Receptor</th>
-                                                <th>Fecha Envio</th>              
-                                                <th>Estado</th>              
-                                                <th>Op</th>       
+                                                <th>Fecha Envio</th>
+                                                <th>Estado</th>
+                                                <th>Op</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr ng-repeat="correo in item.statusEmail">                                                
-                                                <td >{{$index + 1}}</td>
-                                                <td >
-                                                    <md-chips ng-if="correo.correos.length>0"  ng-model="correo.correos" readonly="true" input-aria-label="Correos">
+                                            <tr ng-repeat="correo in item.statusEmail">
+                                                <td>{{$index + 1}}</td>
+                                                <td>
+                                                    <md-chips ng-if="correo.correos.length>0" ng-model="correo.correos"
+                                                        readonly="true" input-aria-label="Correos">
                                                         <md-chip-template>
                                                             <span>
-                                                            <strong><i class="fas fa-user fa-xs"></i> {{$chip}}</strong>
-                                                        
+                                                                <strong><i class="fas fa-user fa-xs"></i>
+                                                                    {{$chip}}</strong>
+
                                                             </span>
                                                         </md-chip-template>
-                                                    </md-chips>                                                                                                                                                          
-                                                </td>               
-                                                <td >{{correo.fechaEnvio | date:'MM/dd/yyyy h:mm'}}</td>               
-                                                <td >{{correo.estado}}</td>               
-                                                <td >
-                                                    <button type="button" ng-if="correo.estado=='ERROR'" ng-click="$ctrl.showError(correo)" class="btn btn-info btn-xs">
+                                                    </md-chips>
+                                                </td>
+                                                <td>{{correo.fechaEnvio | date:'MM/dd/yyyy h:mm'}}</td>
+                                                <td>{{correo.estado}}</td>
+                                                <td>
+                                                    <button type="button" ng-if="correo.estado=='ERROR'"
+                                                        ng-click="showError(correo)" class="btn btn-info btn-xs">
                                                         <i class="ti-plus"></i>
                                                     </button>
-                                                    <button type="button" ng-if="correo.estado=='ERROR'" ng-click="$ctrl.sendMail(correo)" class="btn btn-success btn-xs">
+                                                    <button type="button" ng-if="correo.estado=='ERROR'"
+                                                        ng-click="sendMail(correo)" class="btn btn-success btn-xs">
                                                         <i class="fas fa-share"></i>
                                                     </button>
-                                                </td>               
-                                            </tr>                                     
+                                                </td>
+                                            </tr>
                                         </tbody>
-                                    </table>                                     
-                                </div>                            
+                                    </table>
+                                </div>
                             </div>
                         </td>
                     </tr>
                 </tbody>
-            </table>  
+            </table>
         </md-table-container>
-    </div>    
+    </div>
 </div>
 
 <div class="modal-footer">
-    <button type="button" class="btn btn-dark btn-sm" ng-click="$ctrl.closeModal()">
+    <button type="button" class="btn btn-dark btn-sm" ng-click="closeModal()">
         &times; Cerrar
     </button>
 </div>

@@ -23,10 +23,7 @@ BEGIN
 	SET @passwordEncryptada = HASHBYTES('SHA2_512',@password)
 	IF EXISTS(SELECT 1 FROM App.Usuario WHERE nombreUsuario = @username AND contrasena = @passwordEncryptada)
 		BEGIN 
-			SELECT 
-				code           = '1'
-				,mensaje       =  'Iniciando Session....'				
-				,idUsuarioRol  = r.idUsuarioRol
+			SELECT idUsuarioRol  = r.idUsuarioRol
 				,nombreUsuario = u.nombreUsuario
 				,nroIdentificacion = ISNULL(r.nroIdentificacion,'')											
 				,rol               = r.codRol		

@@ -71,6 +71,7 @@ BEGIN
 											,@codEstab          VARCHAR(50)'
 			DECLARE @sql NVARCHAR(MAX) = 'SELECT TOP 50
 											 idComprobanteIngreso = ci.idComprobanteIngreso
+											 ,s.codEstab
 											,total = ci.total
 											,fechaRegistro = dbo.AFTConvertDate(ci.fechaRegistro)+''''+ dbo.AFTConvertHora(ci.fechaRegistro)
 											,abono = ci.abono

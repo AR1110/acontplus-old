@@ -32,6 +32,7 @@ BEGIN
 		BEGIN
 			SELECT idSistema = @idSistema
 				  ,customerDefault  = IIF(dt.idCliente IS NULL ,CAST(0 AS BIT),CAST(1 AS BIT))
+				  ,cl.idCliente 
 				  ,cl.nombreFiscal
 				  ,cl.numeroIdentificacion
 				  ,articleDefault   = IIF(dt.idArticulo IS NULL,CAST(0 AS BIT),CAST(1 AS BIT))
@@ -40,6 +41,7 @@ BEGIN
 				  ,dt.searchCode                  
 				  ,dt.printerAutomatic           
 				  ,dt.payAutomatic
+				  ,dt.multipleVendedor
 				  ,dt.configDeuda     
 				  ,dt.configPorcentaje 
 				  ,dt.porcentajeInteres
@@ -50,6 +52,7 @@ BEGIN
 				,searchCode                  BIT '$.searchCode'
 				,printerAutomatic            BIT '$.printerAutomatic'
 				,payAutomatic                BIT '$.payAutomatic'
+				,multipleVendedor                BIT '$.multipleVendedor'
 				,configDeuda                 BIT '$.configInteres'
 				,configPorcentaje     VARCHAR(5) '$.infoInteres.tipo'
 				,porcentajeInteres NUMERIC(18,5) '$.infoInteres.porcentajeInteres'

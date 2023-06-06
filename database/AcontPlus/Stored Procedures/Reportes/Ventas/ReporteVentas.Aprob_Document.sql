@@ -297,6 +297,7 @@ BEGIN
 	IF @docDestino='NE'
 		BEGIN 
 			SELECT c.*, 
+				tipoDoc           = 'NOTA DE ENTREGA POR APROBAR',
 				direccion         = c.dirMatriz,
 				telefono          = telefonoEntidad,
 				cliente           = c.razonSocialComprador,

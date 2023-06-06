@@ -468,8 +468,13 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
         '06': 'RGR',
         '07': 'RRC',
         '08': 'RNE',
-        '09': 'PR'
+        '09': 'PR',
+        'CI': 'RCINGR'
     })
+
+    
+    const reportHasService =()=>['08', '09'].includes($scope.codDoc);
+    const getTypeReport =()=> ['08', '09', 'CI'].includes($scope.codDoc) ? "Reporte/Download" :  "Reporte/DynamicReport"
 
 
     $scope.generateFile = () => {
@@ -483,12 +488,12 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
         }
 
         let parameters = {
-            hasService: dataParms.codigo > '07' ? true : false,
+            hasService: reportHasService(),
             sendToWhatsapp: true,
             dataParams: JSON.stringify(dataParms),
             reportParams: JSON.stringify(dataParms)
         }
-        let url = Number($scope.codDoc) > 7 ? "Reporte/Download" : "Reporte/DynamicReport"
+        let url = getTypeReport();
         mS.getFile('post', url, JSON.stringify(parameters), true).then(response => {
 
             // let serverData = new Blob([response.data], {

@@ -65,24 +65,57 @@
                                 <tbody md-body>
                                     <tr md-row ng-repeat="c in cobros | filter: buscar" ng-class="c.style">
                                         <td md-cell>
-                                            <div class="dropdown h-2">
-                                                <button class="btn btn-default " type="button" id="dropdownMenu"
-                                                    data-toggle="dropdown" data-boundary="viewport" aria-haspopup="true"
-                                                    aria-expanded="false">
-                                                    <i class="fa fa-bars"></i>
-                                                </button>
-                                                <div class="dropdown-menu" aria-labelledby="dropdownMenu">
-                                                    <button class="dropdown-item" type="button" ng-if="accion.leer"
-                                                        ng-click="openModalCobroDetalle($event, c)"><i
-                                                            class="ti-menu"></i>
-                                                        Detalle</button>
-                                                    <button class="dropdown-item" type="button" ng-if="accion.anular"
-                                                        ng-disabled="c.color==='table-danger'"
-                                                        ng-click="askToDelete(c)"><i class="ti-na"></i> Anular</button>
-                                                    <button class="dropdown-item" type="button" ng-if="accion.reporte"
-                                                        ng-click="getReport(c)"><i class="ti-file"></i> Reporte</button>
-                                                </div>
-                                            </div>
+                                            <md-menu>
+                                                <md-button aria-label="Open demo menu" class="md-icon-button"
+                                                    ng-click="$mdMenu.open($event)">
+                                                    <icon class="mdi mdi-menu"></icon>
+                                                </md-button>
+                                                <md-menu-content class="md-dense">
+                                                    <md-menu-item>
+                                                        <md-button ng-click="openModalCobroDetalle($event, c)">
+                                                            <span md-menu-align-target><i class="ti-menu"></i>
+                                                                Detalle</span>
+                                                        </md-button>
+                                                    </md-menu-item>
+
+                                                    <md-menu-item>
+                                                        <md-button ng-if="accion.anular" ng-click="askToDelete(c)"
+                                                            ng-disabled="c.esAnulado">
+                                                            <span md-menu-align-target>
+                                                                <i class="ti-na"></i> Anular
+                                                            </span>
+                                                        </md-button>
+                                                    </md-menu-item>
+
+                                                    <md-menu-item>
+                                                        <md-button ng-if="accion.reporte" ng-click="getReport(c)"
+                                                            ng-disabled="c.esAnulado">
+                                                            <span md-menu-align-target>
+                                                                <i class="ti-file"></i> Reporte
+                                                            </span>
+                                                        </md-button>
+                                                    </md-menu-item>
+
+                                                    <md-menu-item ng-if="accion.enviarCorreo">
+                                                        <md-button btn-send-to-email params="c" type-send="typeSend"
+                                                            get-param-to-send-mail="getParamToSendMail(params)">
+                                                            <span md-menu-align-target><i class="far fa-envelope"></i>
+                                                                Enviar Correo</span>
+                                                        </md-button>
+                                                    </md-menu-item>
+
+                                                    <md-menu-item>
+                                                        <md-button uib-tooltip="Enviar por Whatsapp"
+                                                            tooltip-placement="top" btn-send-to-whats-app params="c"
+                                                            has-permission="hasPermissions" type-send="typeSend">
+                                                            <span md-menu-align-target>
+                                                                <i class="mdi mdi-whatsapp"></i> Enviar por Whatsapp
+                                                            </span>
+                                                        </md-button>
+                                                    </md-menu-item>
+
+                                                </md-menu-content>
+                                            </md-menu>
                                         </td>
                                         @* <td md-cell>{{$index+1}}</td> *@
                                         <td md-cell>{{c.nroDoc}}</td>

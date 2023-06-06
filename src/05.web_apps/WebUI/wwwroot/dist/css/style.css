@@ -21028,14 +21028,17 @@ Mini sidebar
         overflow: auto; }
       .mini-sidebar .sidebar-nav #sidebarnav > li > a {
         width: 70px;
-        padding: 15px 15px 15px 25px; }
+        padding: 15px 15px 15px 25px; 
+      }
       .mini-sidebar .sidebar-nav #sidebarnav .user-pro > a {
         padding-left: 18px; }
       .mini-sidebar .sidebar-nav #sidebarnav > li:hover > a {
-        width: 290px;
-        background: #f9f9f9; }
+        /* width: 290px;
+        background: #f9f9f9;  */
+      }
         .mini-sidebar .sidebar-nav #sidebarnav > li:hover > a .hide-menu {
-          display: inline; }
+          /* display: inline;  */
+        }
         .mini-sidebar .sidebar-nav #sidebarnav > li:hover > a .label {
           display: none; }
       .mini-sidebar .sidebar-nav #sidebarnav > li:hover > ul, .mini-sidebar .sidebar-nav #sidebarnav > li:hover > ul.collapse {

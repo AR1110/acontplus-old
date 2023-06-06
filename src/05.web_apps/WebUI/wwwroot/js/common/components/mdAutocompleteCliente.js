@@ -15,7 +15,7 @@ class MdAutocompleteClienteComponent{
     }
 
     $onInit(){    
-        console.log(this)
+        
         this.search.showBtnNew = this.searchOptions.showBtnNew;
         this.search.showBtnList = this.searchOptions.showBtnList;
         this.search.isDisabled  = this.searchOptions.isDisabled;
@@ -72,55 +72,12 @@ class MdAutocompleteClienteComponent{
         }        
     }
 
-    async openModalCliente(params){     
-        try {
-            let fileCtrl = this.nombreModalVenta.CLIENTE.fileCtrl;
-            let ctrl = this.nombreModalVenta.CLIENTE.controllers['M'];
-            let template = this.nombreModalVenta.CLIENTE.templates['M'];
-            
-            let controller = (await import(fileCtrl))[ctrl]
-            const modalRef = this._modalSvc.openModalCustom({
-                controller,
-                template,
-                size: 'xl',
-                params
-            })         
-                    
-            modalRef.result.then(response=>{
-                if(typeof response==='object'){
-                    this.selectedItemChange(response)
-                }
-            })
-        } catch (error) {
-            console.log(error)
-        }          
-   
+    resultModalCliente(result) {
+        if(typeof result==='object'){
+            this.selectedItemChange(result)
+        }
     }
 
-    async openModalClienteLista(){
-        try {
-            let fileCtrl = this.nombreModalVenta.CLIENTE.fileCtrl;
-            let ctrl = this.nombreModalVenta.CLIENTE.controllers['L'];
-            let template = this.nombreModalVenta.CLIENTE.templates['L'];
-            
-            let controller = (await import(fileCtrl))[ctrl]
-            const modalRef = this._modalSvc.openModalCustom({
-                controller,
-                template,
-                size: 'xl',
-                
-            })         
-                    
-            modalRef.result.then(response=>{
-                if(typeof response==='object'){
-                    this.selectedItemChange(response)
-                }
-            })
-        } catch (error) {
-            console.log(error)
-        } 
-       
-    }
 
 }
 
@@ -158,9 +115,9 @@ app.component("mdAutocompleteCliente",{
                     <md-item-template>
                         <span md-highlight-text="$ctrl.search.searchText">{{item.nombreFiscal}}</span>
                     </md-item-template>                        
-                    <a ng-if="$ctrl.search.showBtnList" class="btn btn-warning btn-sm mt-1" href="javascript:void(0)" ng-click="$ctrl.openModalClienteLista()"><i class="mdi mdi-account-search"></i> Lista</a>
-                    <a ng-if="$ctrl.search.showBtnNew" class="btn btn-info btn-sm mt-1" href="javascript:void(0)" ng-click="$ctrl.openModalCliente()"><i class="mdi mdi-plus"></i> Nuevo</a>
-                    <a ng-if="$ctrl.search.showBtnEdit" class="btn btn-success btn-sm mt-1" href="javascript:void(0)" ng-click="$ctrl.openModalCliente($ctrl.dataCliente)"><i class="mdi mdi-pencil"></i> Editar</a>
+                    <a ng-if="$ctrl.search.showBtnList" class="btn btn-warning btn-sm mt-1" href="javascript:void(0)" btn-cliente-lista result-modal="$ctrl.resultModalCliente(result)"><i class="mdi mdi-account-search"></i> Lista</a>
+                    <a ng-if="$ctrl.search.showBtnNew" class="btn btn-info btn-sm mt-1" href="javascript:void(0)" btn-cliente result-modal="$ctrl.resultModalCliente(result)"><i class="mdi mdi-plus"></i> Nuevo</a>
+                    <a ng-if="$ctrl.search.showBtnEdit" class="btn btn-success btn-sm mt-1" href="javascript:void(0)" btn-cliente result-modal="$ctrl.resultModalCliente(result)" params="$ctrl.dataCliente"><i class="mdi mdi-pencil"></i> Editar</a>
                 </md-autocomplete>   
                 `,
     bindings:{
@@ -193,13 +150,13 @@ app.component("mdAutocompleteClienteCustom",{
                         <span md-highlight-text="$ctrl.search.searchText">{{item.nombreFiscal}}</span>
                     </md-item-template>                        
                     </md-autocomplete>   
-                    <a  class="btn btn-warning btn-xs mt-1" href="javascript:void(0)" ng-click="$ctrl.openModalClienteLista()">
+                    <a  class="btn btn-warning btn-xs mt-1" href="javascript:void(0)" btn-cliente-lista result-modal="$ctrl.resultModalCliente(result)">
                         <i class="mdi mdi-account-search"></i>Lista
                     </a>
-                    <a ng-if="$ctrl.search.showBtnNew" class="btn btn-info btn-xs mt-1" href="javascript:void(0)" ng-click="$ctrl.openModalCliente()">
+                    <a ng-if="$ctrl.search.showBtnNew" class="btn btn-info btn-xs mt-1" href="javascript:void(0)" btn-cliente result-modal="$ctrl.resultModalCliente(result)">
                         <i class="mdi mdi-plus"></i> Nuevo
                     </a>
-                    <a ng-if="$ctrl.search.showBtnEdit" class="btn btn-success btn-xs mt-1" href="javascript:void(0)" ng-click="$ctrl.openModalCliente($ctrl.dataCliente)">
+                    <a ng-if="$ctrl.search.showBtnEdit" class="btn btn-success btn-xs mt-1" href="javascript:void(0)" btn-cliente result-modal="$ctrl.resultModalCliente(result)" params="$ctrl.dataCliente">
                         <i class="mdi mdi-pencil"></i> Editar
                     </a>
                 `,
@@ -215,9 +172,9 @@ app.component('searchClienteCustom', {
 
     template: `<div class="input-group"> 
                 <input   type="text" 
-                    id="proveedorAutocomplete"                 
+                    id="clienteSearchCustom"                 
                     autocomplete="off"
-                    name="proveedorAutocomplete"
+                    name="clienteSearchCustom"
                     class="form-control border-select"
                     placeholder="Ingrese C.I o Nombre Fiscal"
                     ng-model="$ctrl.search.searchText"            
@@ -228,7 +185,7 @@ app.component('searchClienteCustom', {
                     typeahead-template-url="autocompleteClienteTemplate.html"
                     typeahead-min-length="1"
                     typeahead-editable="false"
-                    typeahead-on-select="$ctrl.selectedItemChange($item)"  /> 
+                    typeahead-on-select="$ctrl.selectedItemChange($item)" onClick="select();"  /> 
 
                     <script type="text/ng-template" id="autocompleteClienteTemplate.html">
                         <div class="autocomplete-suggestion-uib-typeahead">
@@ -239,15 +196,20 @@ app.component('searchClienteCustom', {
                     </script>  
 
                     <div class="input-group-append" ng-if="$ctrl.search.showBtnNew">
-                        <button type="button" type="button" class="btn btn-outline-secondary btn-sm"  ng-click="$ctrl.openModalCliente()"        tabindex="-1">
+                        <button type="button" type="button" class="btn btn-outline-secondary btn-sm" btn-cliente result-modal="$ctrl.resultModalCliente(result)"  id="btnNewCustomerDocument">
                                 <i class="fa fa-plus fa-xs"></i>
                         </button>
-                        <button type="button" class="btn btn-outline-secondary btn-sm" ng-if="$ctrl.search.showBtnEdit && $ctrl.dataCliente.idCliente>0" ng-click="$ctrl.openModalCliente($ctrl.dataCliente)" 
+                        <button type="button" class="btn btn-outline-secondary btn-sm" ng-if="$ctrl.search.showBtnEdit && $ctrl.dataCliente.idCliente>0" btn-cliente result-modal="$ctrl.resultModalCliente(result)" params="$ctrl.dataCliente"
                                 tabindex="-1"> <i class="fas fa-pencil-alt fa-xs"></i>
                         </button>                         
-                        <button type="button" class="btn btn-outline-secondary btn-sm" ng-if="$ctrl.search.showBtnList"  ng-click="$ctrl.openModalClienteLista()" 
+                        <button type="button" class="btn btn-outline-secondary btn-sm" ng-if="$ctrl.search.showBtnList"  btn-cliente-lista result-modal="$ctrl.resultModalCliente(result)"
                                 tabindex="-1"> <i class="fa fa-search fa-xs"></i>
-                        </button>                                                                                               
+                        </button>   
+                        
+                        <button type="button" cliente-info-popover customer="$ctrl.dataCliente" popover-placement='top'
+                            class="btn btn-outline-secondary btn-xs" ng-if="$ctrl.dataCliente.idCliente>0" tabindex="-1"><i
+                                class="fa fa-info fa-xs"></i>
+                        </button>
                     </div>`,
     bindings:{
         selectedItemCliente:'&',

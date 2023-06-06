@@ -1,5 +1,4 @@
-(function(e) {
-    console.log(e)
+(function(e) { 
     'use strict';
 
     app.factory('notaEntregaService', function($injector) {
@@ -48,6 +47,7 @@
                             usuario: item.usuario,
                             codEstado: item.codEstado,
                             tiempoCredito: item.tiempoCredito,
+                            esContado: item.tiempoCredito,
                             nroIdentificacion: item.nroIdentificacion,
                         }
                     })
@@ -63,7 +63,7 @@
             notaEntrega.idCliente = cliente.idCliente;
 
 
-            return sendData = {
+            return {
                 notaEntrega,
                 detalle: service.detalleMapperTo(detalles),
                 infoAdicionalArticulo: JSON.stringify(historyDatosAdicionales)
@@ -115,7 +115,7 @@
                   
                     let dataResponse = {
                         ...dataRepository,                         
-                        esContado: dataRepository.gestion,
+                        esContado: dataRepository.tiempoCredito,
                     }
           
                     return {                        

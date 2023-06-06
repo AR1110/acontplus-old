@@ -43,13 +43,19 @@
                     <div class="input-group">
                         @await Html.PartialAsync("~/Views/Cliente/_UibModalSearchInvoice.cshtml")
                         <div class="input-group-append">
-                            <button type="button" class="btn btn-outline-secondary btn-sm"
-                                ng-if="$ctrl.cliente.idCliente>0" ng-click="$ctrl.openModalClienteUpdate()"
-                                tabindex="-1"><i class="fa fa-edit fa-xs"></i>
+
+                            <button type="button" class="btn btn-outline-secondary btn-xs"
+                                ng-if="$ctrl.cliente.idCliente>0" btn-cliente params="$ctrl.cliente" tabindex="-1"><i
+                                    class="fa fa-edit fa-xs"></i>
                             </button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm"
-                                ng-click="$ctrl.openModalClienteLista()" tabindex="-1"><i
+                            <button type="button" class="btn btn-outline-secondary btn-xs" btn-cliente-lista
+                                result-modal="$ctrl.onSelectedClienteChange(result)" tabindex="-1"><i
                                     class="fa fa-search fa-xs"></i>
+                            </button>
+
+                            <button type="button" cliente-info-popover customer="$ctrl.cliente" popover-placement='top'
+                                class="btn btn-outline-secondary btn-xs" ng-if="$ctrl.cliente.idCliente>0"
+                                tabindex="-1"><i class="fa fa-info fa-xs"></i>
                             </button>
                         </div>
                     </div>
@@ -83,9 +89,9 @@
         </div>
 
         <div class="row">
-            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-                <div class="row justify-content-between">
-                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-12">
+                <div class="row justify-content-start">
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                         <label for="">Buscar Articulo</label>
                         <md-autocomplete-articulo-component tipo-doc="$ctrl.TIPO_DOC"
                             abrir-modal-articulo="$ctrl.abrirModalArticulo(item)"
@@ -94,11 +100,23 @@
                             scope-parent="scopeParent" id-bodega="$ctrl.idBodega">
                         </md-autocomplete-articulo-component>
                     </div>
+
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12" ng-if="$ctrl.multipleVendedor">
+                        <div class="form-group">
+                            <label for="vendedor">Vendedor: <span class="text-danger">*</span></label>
+                            <select name="vendedor" id="vendedor" class="form-control border-select"
+                                ng-model="$ctrl.data.idUsuario">
+                                <option ng-value="item.idUsuario" ng-repeat="item in $ctrl.usuariosVendedor">
+                                    {{item.nombreCompleto}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
                 <div class="row justify-content-end">
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                         <div class="form-group">
                             <label for="bodegas">Bodega</label>
                             <select name="bodegas" id="bodegas" class="form-control border-select"
@@ -109,7 +127,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                         <div class="form-group">
                             <label for="tarifas">Tarifa:
                                 <span tooltip-placement="top"

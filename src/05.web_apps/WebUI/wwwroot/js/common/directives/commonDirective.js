@@ -447,7 +447,8 @@
                         controller: ctrl,
                         template,
                         size: 'xl',
-                        params: scope.params || {},
+                        params: Object.assign({}, scope.params) || {},
+                        isRenderRazorPartial: true
                     })
 
                     modalRef.result.then(result => {
@@ -459,6 +460,211 @@
                     })
 
                 })
+            }
+        }
+    })
+
+    app.directive('btnClienteLista', function (modalService, nombreModalVenta) {
+        return {
+            restrict: 'A',
+            scope: {
+                resultModal: '&',
+                params: '='
+            },
+            link: function (scope, element, att) {
+                element.on('click', async function (ev) {
+
+                    let { fileCtrl, controllers, templates } = nombreModalVenta.CLIENTE;
+                    let ctrl = (await import(fileCtrl))[controllers['ML']];
+                    let template = templates['ML'];
+
+                    let modalRef = modalService.openModalCustom({
+                        controller: ctrl,
+                        template,
+                        size: 'xl',
+                        params: Object.assign({}, scope.params) || {},
+                        isRenderRazorPartial: true
+                    })
+
+                    modalRef.result.then(result => {
+                        if (typeof result === 'object') {
+                            scope.resultModal({
+                                result
+                            })
+                        }
+                    })
+
+                })
+            }
+        }
+    })
+
+    app.directive('clienteInfoPopover', function () {
+        return {
+            restrict: 'A',
+            scope: {
+                customer: '=',
+                popoverPlacement: '@'
+            },
+            link: function (scope, element, attrs) {
+                element.popover({
+                    title: '<i class="text-info fas fa-info"></i> Información Cliente',
+                    content: `<div>
+                                <span><b>Nombre Fiscal:</b> ${scope.customer.nombreFiscal}</span><br>
+                                <span><b>Nombre Comercial:</b> ${scope.customer.nombreComercial}</span><br>
+                                <span><b>Correo:</b> ${scope.customer.correo || ''}</span><br>
+                                <span><b>Teléfono:</b> ${scope.customer.telefono || ''}</span><br>
+                                <span><b>Dirección:</b> ${scope.customer.direccion || ''}</span>
+                            </div>`,
+                    placement: scope.popoverPlacement,
+                    trigger: 'outisideclick',
+                    html: true
+                });
+            }
+        };
+    });
+
+    app.directive('clienteSearchDrtv', function ($compile, clienteService) {
+        return {
+            restrict: 'A',
+            scope: {
+                onSelect: '&',
+                onKeyupCliente:'&',
+                ngModel: '='
+            },
+            link: function (scope, element, attrs) {
+                scope.cliente = {
+                    nombreCliente: scope.ngModel
+                }
+                scope.searchCustomer = function (textSearch) {
+                    if (textSearch.length > 1) {
+                        return clienteService.search({textSearch})
+                        .catch(error=>{
+                            console.log(error);
+                        })
+                    }
+                }
+    
+                element.attr('uib-typeahead', 'item as item.nombreFiscal for item in searchCustomer($viewValue)');
+                element.attr('typeahead-on-select', 'onSelect({result: $item})');
+                element.attr('typeahead-template-url', 'autocompleteClienteTemplate.html');
+                element.attr('ng-keyup', 'onKeyupCliente()');
+                element.attr('typeahead-editable', 'false');
+                // element.attr('ng-model', 'ngModel')
+                element.removeAttr('cliente-search-drtv');
+                $compile(element)(scope);
+            }
+        };
+    });
+    
+
+    app.directive('btnEmpresa', function (modalService, nombreModalVenta) {
+        return {
+            restrict: 'A',
+            scope: {
+                params: '=',
+                resultModal: '&',
+            },
+            link: function (scope, element, attrs) {
+    
+                element.on('click', async function (event) {
+                    let fileCtrl = nombreModalVenta.EMPRESA.fileCtrl;
+                    let ctrl = nombreModalVenta.EMPRESA.controller 
+                    let template = nombreModalVenta.EMPRESA.template 
+                    let controller = (await import(fileCtrl))[ctrl];
+
+
+                    
+                    const modalDialogRef = modalService.openModalCustom({
+                        controller,
+                        template,
+                        size: 'md',
+                        params: Object.assign({}, scope.params) || {},                        
+                    })
+
+                    modalDialogRef.result.then(result => {
+                        if (typeof result === "object") {
+                            scope.resultModal({
+                                result
+                            })
+                        }
+                    })
+                })
+    
+            }
+        }
+    })
+    
+    
+    app.directive('btnEmpleado', function (modalService, nombreModalVenta) {
+        return {
+            restrict: 'A',
+            scope: {
+                params: '=',
+                resultModal: '&',
+            },
+            link: function (scope, element, attrs) {
+    
+                element.on('click', async function (event) {
+                    let fileCtrl = nombreModalVenta.EMPLEADO.fileCtrl;
+                    let ctrl = nombreModalVenta.EMPLEADO.controller 
+                    let template = nombreModalVenta.EMPLEADO.template 
+                    let controller = (await import(fileCtrl))[ctrl];
+
+
+                    const modalDialogRef = modalService.openModalCustom({
+                        controller,
+                        template,
+                        size: 'md',
+                        params: Object.assign({}, scope.params) || {},                                               
+                    })
+
+                    modalDialogRef.result.then(result => {
+                        if (typeof result === "object") {
+                            scope.resultModal({
+                                result
+                            })
+                        }
+                    })
+                })
+    
+            }
+        }
+    })
+    
+    
+    app.directive('btnCargo', function (modalService, nombreModalVenta) {
+        return {
+            restrict: 'A',
+            scope: {
+                params: '=',
+                resultModal: '&',
+            },
+            link: function (scope, element, attrs) {
+    
+                element.on('click', async function (event) {
+                    let fileCtrl = nombreModalVenta.CARGO.fileCtrl;
+                    let ctrl = nombreModalVenta.CARGO.controller 
+                    let template = nombreModalVenta.CARGO.template 
+                    let controller = (await import(fileCtrl))[ctrl];
+
+
+                    const modalDialogRef = modalService.openModalCustom({
+                        controller,
+                        template,
+                        size: 'md',
+                        params: Object.assign({}, scope.params) || {},                                              
+                    })
+
+                    modalDialogRef.result.then(result => {
+                        if (typeof result === "object") {
+                            scope.resultModal({
+                                result
+                            })
+                        }
+                    })
+                })
+    
             }
         }
     })
@@ -611,6 +817,47 @@
         }
     })
 
+    /**
+     * 
+     * ==========================SEND DOCS. BY EMAIL ========================= 
+     * 
+     * 
+     */
+    app.directive('btnSendToEmail', function(modalService, nombreModalCommon){
+        return {
+            restrict: 'A',
+            scope: {
+                params: '=',
+                resultModal: '&',
+                typeSend: '=',
+                getParamToSendMail: '&' //funcion que arma parametro necesario para el envio de correo
+            },
+            link: function(scope, element, att){
+                element.on('click', async function(){
+                    
+                    let fileCtrl = nombreModalCommon.MAIL.fileCtrl;
+                    let ctrl = nombreModalCommon.MAIL.controllers['ME'];
+                    let template = nombreModalCommon.MAIL.templates['ME'];
+                    let controller = (await import(fileCtrl))[ctrl];
+                    
+                    let params = scope.getParamToSendMail({
+                        params: scope.params
+                    }) || scope.params;
+
+                    modalService.openModalCustom({
+                        controller,
+                        template,
+                        size: 'md',
+                        params: {
+                            ...params,
+                            typeSend: scope.typeSend
+                        }
+                    })
+
+                })
+            }
+        }
+    })
 
     /**
      * -------------------------------SEND DOCS. BY WHATSAPP-----------------------
