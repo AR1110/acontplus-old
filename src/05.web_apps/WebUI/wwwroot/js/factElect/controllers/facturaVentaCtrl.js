@@ -174,7 +174,8 @@ function facturaVentaCtrl(
                 checkBoxEstado: $scope.dataSearch.byEstado ? true : false,
                 byEstado: $scope.dataSearch.byEstado,
                 fechaInicio: _fS.formatDateMoment($scope.dataSearch.fechaInicio),
-                fechaFin: _fS.formatDateMoment($scope.dataSearch.fechaFin)
+                fechaFin: _fS.formatDateMoment($scope.dataSearch.fechaFin),
+                tipoFecha: 'FE'
             }
                 
             showLoader();
