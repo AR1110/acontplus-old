@@ -25,7 +25,7 @@
       "DownstreamPathTemplate": "/api/Account",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Post" ],
-      "UpstreamPathTemplate": "/api/Account"
+      "UpstreamPathTemplate": "/gateway/Account"
     },
     {
       "AuthenticationOptions": {
@@ -41,7 +41,7 @@
       "DownstreamPathTemplate": "/api/CompraHabitual{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
-      "UpstreamPathTemplate": "/api/CompraHabitual{everything}"
+      "UpstreamPathTemplate": "/gateway/CompraHabitual{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -57,7 +57,7 @@
       "DownstreamPathTemplate": "/api/DocumentoRecibido{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
-      "UpstreamPathTemplate": "/api/DocumentoRecibido{everything}"
+      "UpstreamPathTemplate": "/gateway/DocumentoRecibido{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -73,7 +73,7 @@
       "DownstreamPathTemplate": "/api/Proveedor/{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
-      "UpstreamPathTemplate": "/api/Proveedor/{everything}"
+      "UpstreamPathTemplate": "/gateway/Proveedor/{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -89,7 +89,7 @@
       "DownstreamPathTemplate": "/api/Doc_Rec_DetailTemp{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
-      "UpstreamPathTemplate": "/api/Doc_Rec_DetailTemp{everything}"
+      "UpstreamPathTemplate": "/gateway/Doc_Rec_DetailTemp{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -105,7 +105,7 @@
       "DownstreamPathTemplate": "/api/Articulo{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Get" ],
-      "UpstreamPathTemplate": "/api/Recepcion/Articulo{everything}"
+      "UpstreamPathTemplate": "/gateway/Recepcion/Articulo{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -121,7 +121,7 @@
       "DownstreamPathTemplate": "/api/Factura{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
-      "UpstreamPathTemplate": "/api/Factura{everything}"
+      "UpstreamPathTemplate": "/gateway/Factura{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -137,7 +137,7 @@
       "DownstreamPathTemplate": "/api/DocumentoDetalle/{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Post", "Put" ],
-      "UpstreamPathTemplate": "/api/DocumentoDetalle/{everything}"
+      "UpstreamPathTemplate": "/gateway/DocumentoDetalle/{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -153,7 +153,7 @@
       "DownstreamPathTemplate": "/api/DocumentoDetalle/{id}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Delete" ],
-      "UpstreamPathTemplate": "/api/DocumentoDetalle/{id}"
+      "UpstreamPathTemplate": "/gateway/DocumentoDetalle/{id}"
     },
     {
       "AuthenticationOptions": {
@@ -169,7 +169,7 @@
       "DownstreamPathTemplate": "/api/DocumentoElectronico{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Get", "Put", "Delete", "Options" ],
-      "UpstreamPathTemplate": "/api/DocumentoElectronico{everything}"
+      "UpstreamPathTemplate": "/gateway/DocumentoElectronico{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -185,7 +185,7 @@
       "DownstreamPathTemplate": "/api/DocumentoElectronicoError/{id}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Get" ],
-      "UpstreamPathTemplate": "/api/DocumentoElectronicoError/{id}"
+      "UpstreamPathTemplate": "/gateway/DocumentoElectronicoError/{id}"
     },
     {
       "AuthenticationOptions": {
@@ -201,7 +201,7 @@
       "DownstreamPathTemplate": "/api/NotificacionTributaria{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Get", "Post" ],
-      "UpstreamPathTemplate": "/api/NotificacionTributaria{everything}"
+      "UpstreamPathTemplate": "/gateway/NotificacionTributaria{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -217,7 +217,7 @@
       "DownstreamPathTemplate": "/api/RetencionAts/{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Get", "Put", "Delete", "Options" ],
-      "UpstreamPathTemplate": "/api/RetencionAts/{everything}"
+      "UpstreamPathTemplate": "/gateway/RetencionAts/{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -233,7 +233,7 @@
       "DownstreamPathTemplate": "/api/RetencionAts/cancel/{id}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Put" ],
-      "UpstreamPathTemplate": "/api/RetencionAts/cancel/{id}"
+      "UpstreamPathTemplate": "/gateway/RetencionAts/cancel/{id}"
     },
     {
       "AuthenticationOptions": {
@@ -249,7 +249,7 @@
       "DownstreamPathTemplate": "/api/RetencionAts",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Post" ],
-      "UpstreamPathTemplate": "/api/RetencionAts"
+      "UpstreamPathTemplate": "/gateway/RetencionAts"
     },
     {
       "AuthenticationOptions": {
@@ -265,7 +265,7 @@
       "DownstreamPathTemplate": "/api/DocSustento{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/DocSustento{everything}"
+      "UpstreamPathTemplate": "/gateway/DocSustento{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -281,7 +281,7 @@
       "DownstreamPathTemplate": "/api/DocSustImpuesto{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/DocSustImpuesto{everything}"
+      "UpstreamPathTemplate": "/gateway/DocSustImpuesto{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -297,7 +297,7 @@
       "DownstreamPathTemplate": "/api/DocSustPago{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/DocSustPago{everything}"
+      "UpstreamPathTemplate": "/gateway/DocSustPago{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -313,7 +313,7 @@
       "DownstreamPathTemplate": "/api/DocSustRetencion{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/DocSustRetencion{everything}"
+      "UpstreamPathTemplate": "/gateway/DocSustRetencion{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -329,7 +329,7 @@
       "DownstreamPathTemplate": "/api/RetAtsInfoAdicional/{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Get", "Post" ],
-      "UpstreamPathTemplate": "/api/RetAtsInfoAdicional/{everything}"
+      "UpstreamPathTemplate": "/gateway/RetAtsInfoAdicional/{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -345,7 +345,7 @@
       "DownstreamPathTemplate": "/api/RetAtsInfoAdicional{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/RetAtsInfoAdicional{everything}"
+      "UpstreamPathTemplate": "/gateway/RetAtsInfoAdicional{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -361,7 +361,7 @@
       "DownstreamPathTemplate": "/api/CuentaPorPagar/{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/CuentaPorPagar/{everything}"
+      "UpstreamPathTemplate": "/gateway/CuentaPorPagar/{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -377,7 +377,7 @@
       "DownstreamPathTemplate": "/api/CuentaPorPagar?json={json}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Get" ],
-      "UpstreamPathTemplate": "/api/CuentaPorPagar?json={json}"
+      "UpstreamPathTemplate": "/gateway/CuentaPorPagar?json={json}"
     },
     {
       "AuthenticationOptions": {
@@ -393,7 +393,7 @@
       "DownstreamPathTemplate": "/api/CuentaPorPagar/{id}?json={json}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Put" ],
-      "UpstreamPathTemplate": "/api/CuentaPorPagar/{id}?json={json}"
+      "UpstreamPathTemplate": "/gateway/CuentaPorPagar/{id}?json={json}"
     },
     {
       "AuthenticationOptions": {
@@ -409,7 +409,7 @@
       "DownstreamPathTemplate": "/api/CompraNoHabitual/{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Get", "Put", "Delete", "Options" ],
-      "UpstreamPathTemplate": "/api/CompraNoHabitual/{everything}"
+      "UpstreamPathTemplate": "/gateway/CompraNoHabitual/{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -425,7 +425,7 @@
       "DownstreamPathTemplate": "/api/FacturaCompra{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
-      "UpstreamPathTemplate": "/api/IngresoFacturaCompra{everything}"
+      "UpstreamPathTemplate": "/gateway/IngresoFacturaCompra{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -441,7 +441,7 @@
       "DownstreamPathTemplate": "/api/CompraNoHabitual",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Post" ],
-      "UpstreamPathTemplate": "/api/CompraNoHabitual"
+      "UpstreamPathTemplate": "/gateway/CompraNoHabitual"
     },
     {
       "AuthenticationOptions": {
@@ -457,7 +457,7 @@
       "DownstreamPathTemplate": "/api/CompraNoHabitual/Cancel/{id}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Put" ],
-      "UpstreamPathTemplate": "/api/CompraNoHabitual/Cancel/{id}"
+      "UpstreamPathTemplate": "/gateway/CompraNoHabitual/Cancel/{id}"
     },
     {
       "AuthenticationOptions": {
@@ -473,7 +473,7 @@
       "DownstreamPathTemplate": "/api/Impresion/?json={json}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get" ],
-      "UpstreamPathTemplate": "/api/Impresion/?json={json}"
+      "UpstreamPathTemplate": "/gateway/Impresion/?json={json}"
     },
     {
       "AuthenticationOptions": {
@@ -489,7 +489,7 @@
       "DownstreamPathTemplate": "/api/Reporte/Post",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Post" ],
-      "UpstreamPathTemplate": "/api/Reporte/Post"
+      "UpstreamPathTemplate": "/gateway/Reporte/Post"
     },
     {
       "AuthenticationOptions": {
@@ -505,7 +505,7 @@
       "DownstreamPathTemplate": "/api/Reporte/{method}/{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/Reporte/{method}/{everything}"
+      "UpstreamPathTemplate": "/gateway/Reporte/{method}/{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -521,7 +521,7 @@
       "DownstreamPathTemplate": "/api/ReporteDataSource/",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Post" ],
-      "UpstreamPathTemplate": "/api/ReporteDataSource/"
+      "UpstreamPathTemplate": "/gateway/ReporteDataSource/"
     },
     {
       "AuthenticationOptions": {
@@ -537,7 +537,7 @@
       "DownstreamPathTemplate": "/api/ReporteDataSource/{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/ReporteDataSource/{everything}"
+      "UpstreamPathTemplate": "/gateway/ReporteDataSource/{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -553,7 +553,7 @@
       "DownstreamPathTemplate": "/api/Reporte{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Post" ],
-      "UpstreamPathTemplate": "/api/Reporte{everything}"
+      "UpstreamPathTemplate": "/gateway/Reporte{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -569,7 +569,7 @@
       "DownstreamPathTemplate": "/api/Usuario/{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "POST", "PUT", "Delete" ],
-      "UpstreamPathTemplate": "/api/Usuario/{everything}"
+      "UpstreamPathTemplate": "/gateway/Usuario/{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -585,7 +585,7 @@
       "DownstreamPathTemplate": "/api/Usuario/Search/{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get" ],
-      "UpstreamPathTemplate": "/api/Usuario/Search/{everything}"
+      "UpstreamPathTemplate": "/gateway/Usuario/Search/{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -601,7 +601,7 @@
       "DownstreamPathTemplate": "/api/UsuarioRol/Get/{id}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get" ],
-      "UpstreamPathTemplate": "/api/UsuarioRol/Get/{id}"
+      "UpstreamPathTemplate": "/gateway/UsuarioRol/Get/{id}"
     },
     {
       "AuthenticationOptions": {
@@ -617,7 +617,7 @@
       "DownstreamPathTemplate": "/api/UsuarioPermiso/{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/UsuarioPermiso/{everything}"
+      "UpstreamPathTemplate": "/gateway/UsuarioPermiso/{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -633,7 +633,7 @@
       "DownstreamPathTemplate": "/api/UsuarioPermiso",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Put" ],
-      "UpstreamPathTemplate": "/api/UsuarioPermiso"
+      "UpstreamPathTemplate": "/gateway/UsuarioPermiso"
     },
     {
       "AuthenticationOptions": {
@@ -649,7 +649,7 @@
       "DownstreamPathTemplate": "/api/UsuarioPermiso/CheckHasPermission/{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get" ],
-      "UpstreamPathTemplate": "/api/UsuarioPermiso/CheckHasPermission/{everything}"
+      "UpstreamPathTemplate": "/gateway/UsuarioPermiso/CheckHasPermission/{everything}"
     },
     {
       "DownstreamHostAndPorts": [
@@ -661,7 +661,7 @@
       "DownstreamPathTemplate": "/api/Consultas/{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Get" ],
-      "UpstreamPathTemplate": "/api/Consultas/{everything}"
+      "UpstreamPathTemplate": "/gateway/Consultas/{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -677,7 +677,7 @@
       "DownstreamPathTemplate": "/api/Kardex?json={json}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get" ],
-      "UpstreamPathTemplate": "/api/Kardex?json={json}"
+      "UpstreamPathTemplate": "/gateway/Kardex?json={json}"
     },
     {
       "AuthenticationOptions": {
@@ -693,7 +693,7 @@
       "DownstreamPathTemplate": "/api/Kardex/Filters",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get" ],
-      "UpstreamPathTemplate": "/api/Kardex/Filters"
+      "UpstreamPathTemplate": "/gateway/Kardex/Filters"
     },
     {
       "AuthenticationOptions": {
@@ -709,7 +709,7 @@
       "DownstreamPathTemplate": "/api/Solicitud/{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/Solicitud/{everything}"
+      "UpstreamPathTemplate": "/gateway/Solicitud/{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -725,7 +725,7 @@
       "DownstreamPathTemplate": "/api/Solicitud/Check/{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get" ],
-      "UpstreamPathTemplate": "/api/Solicitud/Check/{everything}"
+      "UpstreamPathTemplate": "/gateway/Solicitud/Check/{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -741,7 +741,7 @@
       "DownstreamPathTemplate": "/api/Sistema/{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Put" ],
-      "UpstreamPathTemplate": "/api/Sistema/{everything}"
+      "UpstreamPathTemplate": "/gateway/Sistema/{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -757,7 +757,7 @@
       "DownstreamPathTemplate": "/api/Cliente{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
-      "UpstreamPathTemplate": "/api/Cliente{everything}"
+      "UpstreamPathTemplate": "/gateway/Cliente{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -773,7 +773,7 @@
       "DownstreamPathTemplate": "/api/Cliente/GetDataForm/{json}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Get" ],
-      "UpstreamPathTemplate": "/api/Cliente/GetDataForm/{json}"
+      "UpstreamPathTemplate": "/gateway/Cliente/GetDataForm/{json}"
     },
     {
       "AuthenticationOptions": {
@@ -789,7 +789,7 @@
       "DownstreamPathTemplate": "/api/Ats{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Get" ],
-      "UpstreamPathTemplate": "/api/Ats{everything}"
+      "UpstreamPathTemplate": "/gateway/Ats{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -805,7 +805,7 @@
       "DownstreamPathTemplate": "/api/Entidad/{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/Entidad/{everything}"
+      "UpstreamPathTemplate": "/gateway/Entidad/{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -821,7 +821,7 @@
       "DownstreamPathTemplate": "/api/EntidadConfigSri/{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/EntidadConfigSri/{everything}"
+      "UpstreamPathTemplate": "/gateway/EntidadConfigSri/{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -837,7 +837,7 @@
       "DownstreamPathTemplate": "/api/SubMenu/{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/SubMenu/{everything}"
+      "UpstreamPathTemplate": "/gateway/SubMenu/{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -853,7 +853,7 @@
       "DownstreamPathTemplate": "/api/Etiqueta/{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/Etiqueta/{everything}"
+      "UpstreamPathTemplate": "/gateway/Etiqueta/{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -869,7 +869,7 @@
       "DownstreamPathTemplate": "/api/Familia{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/Familia{everything}"
+      "UpstreamPathTemplate": "/gateway/Familia{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -885,7 +885,7 @@
       "DownstreamPathTemplate": "/api/SubFamilia{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/SubFamilia{everything}"
+      "UpstreamPathTemplate": "/gateway/SubFamilia{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -901,7 +901,7 @@
       "DownstreamPathTemplate": "/api/Medida{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/Medida{everything}"
+      "UpstreamPathTemplate": "/gateway/Medida{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -917,7 +917,7 @@
       "DownstreamPathTemplate": "/api/Modelo{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/Modelo{everything}"
+      "UpstreamPathTemplate": "/gateway/Modelo{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -933,7 +933,7 @@
       "DownstreamPathTemplate": "/api/Marca{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/Marca{everything}"
+      "UpstreamPathTemplate": "/gateway/Marca{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -949,7 +949,7 @@
       "DownstreamPathTemplate": "/api/Tarifa{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/Tarifa{everything}"
+      "UpstreamPathTemplate": "/gateway/Tarifa{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -965,7 +965,7 @@
       "DownstreamPathTemplate": "/api/WhatsAppSession{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/WhatsAppSession{everything}"
+      "UpstreamPathTemplate": "/gateway/WhatsAppSession{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -981,7 +981,7 @@
       "DownstreamPathTemplate": "/api/DatoAdicionalArticulo{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
-      "UpstreamPathTemplate": "/api/DatoAdicionalArticulo{everything}"
+      "UpstreamPathTemplate": "/gateway/DatoAdicionalArticulo{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -997,7 +997,7 @@
       "DownstreamPathTemplate": "/api/Articulo{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/Articulo{everything}"
+      "UpstreamPathTemplate": "/gateway/Articulo{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -1013,7 +1013,7 @@
       "DownstreamPathTemplate": "/api/NotaEntrega{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/NotaEntrega{everything}"
+      "UpstreamPathTemplate": "/gateway/NotaEntrega{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -1029,7 +1029,7 @@
       "DownstreamPathTemplate": "/api/WhatsappMessage{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/WhatsappMessage{everything}"
+      "UpstreamPathTemplate": "/gateway/WhatsappMessage{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -1045,7 +1045,7 @@
       "DownstreamPathTemplate": "/api/PrecioMasivo{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
-      "UpstreamPathTemplate": "/api/PrecioMasivo{everything}"
+      "UpstreamPathTemplate": "/gateway/PrecioMasivo{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -1061,7 +1061,7 @@
       "DownstreamPathTemplate": "/api/AprobacionDocumento{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/AprobacionDocumento{everything}"
+      "UpstreamPathTemplate": "/gateway/AprobacionDocumento{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -1077,7 +1077,7 @@
       "DownstreamPathTemplate": "/api/Proforma{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/Proforma{everything}"
+      "UpstreamPathTemplate": "/gateway/Proforma{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -1093,7 +1093,7 @@
       "DownstreamPathTemplate": "/api/Transportista{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/Transportista{everything}"
+      "UpstreamPathTemplate": "/gateway/Transportista{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -1109,7 +1109,7 @@
       "DownstreamPathTemplate": "/api/Vehiculo{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/Vehiculo{everything}"
+      "UpstreamPathTemplate": "/gateway/Vehiculo{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -1125,7 +1125,7 @@
       "DownstreamPathTemplate": "/api/Dashboard{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get" ],
-      "UpstreamPathTemplate": "/api/Dashboard{everything}"
+      "UpstreamPathTemplate": "/gateway/Dashboard{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -1141,7 +1141,7 @@
       "DownstreamPathTemplate": "/api/CuentaPorCobrar{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/CuentaPorCobrar{everything}"
+      "UpstreamPathTemplate": "/gateway/CuentaPorCobrar{everything}"
     },
 
     {
@@ -1158,7 +1158,7 @@
       "DownstreamPathTemplate": "/api/ComprobanteIngreso{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/ComprobanteIngreso{everything}"
+      "UpstreamPathTemplate": "/gateway/ComprobanteIngreso{everything}"
     },
 
     {
@@ -1175,7 +1175,7 @@
       "DownstreamPathTemplate": "/api/CatalogoVenta{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get" ],
-      "UpstreamPathTemplate": "/api/CatalogoVenta{everything}"
+      "UpstreamPathTemplate": "/gateway/CatalogoVenta{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -1191,7 +1191,7 @@
       "DownstreamPathTemplate": "/api/WhatsappUsage{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/WhatsappUsage{everything}"
+      "UpstreamPathTemplate": "/gateway/WhatsappUsage{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -1207,7 +1207,7 @@
       "DownstreamPathTemplate": "/api/Consolidacion{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/Consolidacion{everything}"
+      "UpstreamPathTemplate": "/gateway/Consolidacion{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -1223,7 +1223,7 @@
       "DownstreamPathTemplate": "/api/TipoEntidad{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/TipoEntidad{everything}"
+      "UpstreamPathTemplate": "/gateway/TipoEntidad{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -1239,7 +1239,7 @@
       "DownstreamPathTemplate": "/api/TiempoCredito{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/TiempoCredito{everything}"
+      "UpstreamPathTemplate": "/gateway/TiempoCredito{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -1255,7 +1255,7 @@
       "DownstreamPathTemplate": "/api/GuiaRemision{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/api/GuiaRemision{everything}"
+      "UpstreamPathTemplate": "/gateway/GuiaRemision{everything}"
     }
   ]
 }
