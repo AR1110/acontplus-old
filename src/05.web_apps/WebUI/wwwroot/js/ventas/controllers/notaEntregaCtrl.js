@@ -149,7 +149,8 @@
                     checkBoxEstado: $scope.dataSearch.codEstado ? true : false,
                     codEstado: $scope.dataSearch.codEstado,
                     fechaInicio: _fS.formatDateMoment($scope.dataSearch.fechaInicio),
-                    fechaFin: _fS.formatDateMoment($scope.dataSearch.fechaFin)
+                    fechaFin: _fS.formatDateMoment($scope.dataSearch.fechaFin),
+                    tipoFecha: 'FE'
                 }
 
                 showLoader();
