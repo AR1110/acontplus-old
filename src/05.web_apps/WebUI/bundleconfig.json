@@ -346,5 +346,11 @@
     "inputFiles": [
       "wwwroot/js/factElect/controllers/retencionAtsCtrl.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/common/directives/commonDirective.min.js",
+    "inputFiles": [
+      "wwwroot/js/common/directives/commonDirective.js"
+    ]
   }
 ]
