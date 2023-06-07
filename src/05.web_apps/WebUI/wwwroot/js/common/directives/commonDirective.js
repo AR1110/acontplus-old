@@ -918,7 +918,7 @@
                                         template: MODAL_SEND_WHATSAPP_CSHTML,
                                         size: 'md',
                                         params: params || {},
-                                        isRenderRazorPartial: true,
+                                        isRenderRazorPartial: true,  
                                     })
 
                                     modalDialogRef.result.then(result => {

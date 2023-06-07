@@ -64,11 +64,14 @@
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <button type="button" class="btn btn-info btm-sm mt-4" data-toggle="button" data-more="#sh"
                         aria-pressed="false" ng-click="onClickBtnMore()">
-                        <span class="text"><i class="ti-plus" aria-hidden="true"></i> Más</span>
-                        <span class="text-active"><i class="ti-minus" aria-hidden="true"></i> Menos</span>
+                        <span class="text"><i class="fas fa-eye" aria-hidden="true"
+                                uib-tooltip="Más opciones"></i></span>
+                        <span class="text-active"><i class="fas fa-eye" aria-hidden="true"
+                                uib-tooltip="Ocultar opciones"></i></span>
                     </button>
-                    <button type="button" class="btn btn-success btm-sm mt-4" ng-click="getProformas()">
-                        <i class="fas fa-redo"></i> Recargar
+                    <button type="button" class="btn btn-success btm-sm mt-4" ng-click="getProformas()"
+                        uib-tooltip="Recargar">
+                        <i class="fas fa-redo"></i>
                     </button>
                 </div>
             </div>

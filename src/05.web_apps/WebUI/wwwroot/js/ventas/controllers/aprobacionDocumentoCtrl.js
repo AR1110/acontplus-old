@@ -59,6 +59,8 @@
         $scope.moreSearchOptions = false;
         $scope.dataSearch = {}
 
+ 
+
 
 
         let OPTION_APROBACION = Object.freeze({
@@ -1647,7 +1649,8 @@
         $scope.docDestinoDesc = docDestinoDesc
 
         $scope.data = comprobante;
-        $scope.data.fechaEmision = fS.formatDate($scope.data.fechaEmision)
+        var formattedDateTime = moment($scope.data.fechaEmision).tz("America/Guayaquil").format("YYYY-MM-DD HH:mm:ss");
+        $scope.data.fechaEmision = new Date(formattedDateTime)
         $scope.cliente = cliente;
         $scope.dataDisabled = {
             isDisabledSucursal: true,
@@ -1980,7 +1983,9 @@
         }
 
         $scope.data = comprobante;
-        $scope.data.fechaEmision = fS.formatDate($scope.data.fechaEmision)
+
+        var formattedDateTime = moment($scope.data.fechaEmision).tz("America/Guayaquil").format("YYYY-MM-DD HH:mm:ss");
+        $scope.data.fechaEmision = new Date(formattedDateTime)
         $scope.cliente = cliente;
        
         $scope.dataClone = {};
@@ -2653,7 +2658,10 @@
         $scope.docDestinoDesc = docDestinoDesc;
 
         $scope.data = comprobante;
-        $scope.data.fechaEmision = fS.formatDate($scope.data.fechaEmision)
+
+        var formattedDateTime = moment($scope.data.fechaEmision).tz("America/Guayaquil").format("YYYY-MM-DD HH:mm:ss");
+
+        $scope.data.fechaEmision = new Date(formattedDateTime)
         $scope.cliente = cliente;
        
         $scope.dataClone = {};
@@ -3042,10 +3050,12 @@
 					fechaVencimientoEscrita
 				} = fS.sumarDiasAFecha($scope.data.fechaEmision, diasCredito);
 
-				$scope.data.fechaVencimiento = fechaVencimiento;
+                var formattedDateTime = moment(fechaVencimiento).tz("America/Guayaquil").format("YYYY-MM-DD HH:mm:ss");
+
+				$scope.data.fechaVencimiento = new Date(formattedDateTime) ;
 				$scope.data.fechaEmisionEscrita = fechaEmisionEscrita;
 				$scope.data.fechaVencimientoEscrita = fechaVencimientoEscrita;
-
+                
                 //Variables temporales
                 $scope.dataClone.fechaEmision = $scope.data.fechaEmision;
                 $scope.dataClone.idTiempoCredito = $scope.data.idTiempoCredito;
