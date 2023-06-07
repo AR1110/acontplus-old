@@ -373,17 +373,14 @@
             $scope.uploadXml = function (files) {
                 var uploadPromises = [];
                 angular.forEach(files, function (file) {
-                    var uploadPromise = Upload.upload({
-                        url: 'DocumentoRecibido/UploadXml/?json=' + JSON.stringify({ codEstab: $scope.query.codEstab }, null, true), // Reemplaza con la URL de tu backend donde manejarás la carga de archivos
-                        data: { file: file }
-                    }).then(function (response) {
+                    var uploadPromise = mS.getDataFile('DocumentoRecibido/UploadXml/?json=' + JSON.stringify({ codEstab: $scope.query.codEstab }), file, null, true).then(function (response) {
                         // Maneja la respuesta del backend aquí
-                        if (response.data) {
-                            if (response.data.code == "0") {
-                                tS.toastr("warning", response.data.message)
+                        if (response) {
+                            if (response.code == "0") {
+                                tS.toastr("warning", response.message)
                             }
-                            if (response.data.code == "1") {
-                                tS.toastr("success", response.data.message)
+                            if (response.code == "1") {
+                                tS.toastr("success", response.message)
                             }
                         }
                         //console.log('Archivo cargado exitosamente:', response.data);
