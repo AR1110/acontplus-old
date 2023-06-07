@@ -51,6 +51,12 @@ BEGIN
 
 	BEGIN TRY
 		
+		IF 1=1
+			BEGIN
+				SELECT '0'code,'el json es :' + isnull(@json,'') as 'message'
+				RETURN 
+			END 
+
 		SELECT @codEstado = codEstado, @idTipoDocumento = idTipoDocumento,@idDocumento = idDocumento,@cuotas = cuotas 
 		FROM OPENJSON(@json) WITH (codEstado VARCHAR(5) '$.codEstado'
 		                          ,idTipoDocumento  INT '$.idTipoDocumento'
@@ -73,6 +79,8 @@ BEGIN
 		SELECT TOP 1 @codDoc = codigo FROM dbo.TipoDocumento WITH (NOLOCK) WHERE idTipoDocumento = @idTipoDocumento
 
 		SELECT TOP 1 @fechaVencimiento =  MAX(fechaVencimiento) FROM @tbCuotas
+
+		
 
 		IF (SELECT COUNT(*) FROM @tbCuotas) = 0 
 			BEGIN

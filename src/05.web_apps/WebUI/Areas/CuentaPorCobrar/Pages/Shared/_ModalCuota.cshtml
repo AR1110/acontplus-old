@@ -27,7 +27,7 @@
     </div>
     <md-divider></md-divider>
     <div class="row justify-content-between mt-2">
-        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
             <div class="form-group">
                 <label>Tiempo Crédito</label>
                 <div class="input-group">                                
@@ -48,7 +48,24 @@
                 </div>                            
             </div>
         </div>
-        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-612col-12">
+
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12" ng-if="showColumnPrecioFijo || showColumnPorcentajeInteres">
+            @* <div class="form-group">
+                <label for="">Config.</label>               *@
+                <button class="btn btn-info mt-3" type="button" ng-click="configFechaMora()">
+                    <i class="ti-money"></i> Mora
+                </button>
+            @* </div> *@
+        </div>
+        @* <div class="col-xl-3 col-lg-3 col-md-6 col-sm-612col-12">
+             
+            <button type="button" ng-disabled="comprobante.codEstado !=='PE'" ng-click="getConfigFechaCuota(false)" class="btn btn-success" uib-tooltip='El día tiene que ser menor a 28 días'>
+                <i class="mdi mdi-av-timer"></i> Interes / Mora
+            </button>
+        </div> *@
+
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+            
             <label>Configurar Fecha: <code>dd/MM/yyyy</code></label>
             <div class="input-group">
                 <input ng-disabled = "comprobante.codEstado!='PE'" type="date" ng-model="comprobante.configFecha" class="form-control border-select" aria-label="Config. Fecha Vencimiento">
