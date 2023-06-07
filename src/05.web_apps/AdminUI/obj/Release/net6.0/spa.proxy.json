@@ -1,8 +1,0 @@
-{
-"SpaProxyServer": {
-"ServerUrl": "http://localhost:44496",
-"LaunchCommand": "npm start",
-"WorkingDirectory": "C:\\Users\\AleXx\\Source\\Repos\\AcontPlus\\src\\05.web_apps\\AdminUI\\ClientApp\\",
-"MaxTimeoutInSeconds": "120"
-}
-}

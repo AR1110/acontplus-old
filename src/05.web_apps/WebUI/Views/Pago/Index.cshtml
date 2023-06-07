@@ -79,6 +79,19 @@
                                             ng-click="askToCancel(p)">&times; Anular</button>
                                         <button class="dropdown-item" type="button" ng-if="accion.reporte"
                                             ng-click="getReport(p)"><i class="ti-file"></i> PDF</button>
+
+                                        <button class="dropdown-item" type="button" ng-if="accion.enviarCorreo"
+                                            btn-send-to-email params="p" type-send="typeSend"
+                                            get-param-to-send-mail="getParamToSendMail(params)"> <i
+                                                class="far fa-envelope"></i>
+                                            Enviar Correo</button>
+
+                                        <button class="dropdown-item" type="button" uib-tooltip="Enviar por Whatsapp"
+                                            tooltip-placement="top" btn-send-to-whats-app params="c"
+                                            has-permission="hasPermissions" type-send="typeSend"> <i
+                                                class="mdi mdi-whatsapp"></i> Enviar por Whatsapp</button>
+
+
                                     </div>
                                 </div>
                             </td>

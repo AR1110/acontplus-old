@@ -903,9 +903,23 @@
             try {
                 showLoader();
                 $scope.documentos = [];
-                $scope.dataSearch.typeList = 2;
+                
+                let dataSearch = {
+                    codEstab: $scope.dataSearch.codEstab,
+                    checkBoxDefault: false,
+                    checkBoxCliente: $scope.dataSearch.byCliente > 0,
+                    byCliente: $scope.dataSearch.byCliente,
+                    checkBoxFecha: true,
+                    checkBoxUsuario: $scope.dataSearch.byUsuario > 0,
+                    byUsuario: $scope.dataSearch.byUsuario,
+                    checkBoxEstado: $scope.dataSearch.codEstado ? true : false,
+                    codEstado: $scope.dataSearch.codEstado,
+                    fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
+                    fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
+                    typeList: 2
+                }
                
-                notaEntregaSvc.getAll($scope.dataSearch).then(async response => {
+                notaEntregaSvc.getAll(dataSearch).then(async response => {
 
                     $scope.gridOptionsSelectedDocs.columnDefs = [{
                         name: 'Nro. Doc',

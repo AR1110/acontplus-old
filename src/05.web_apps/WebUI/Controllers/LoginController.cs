@@ -60,7 +60,7 @@ namespace WebUI.Controllers
                     loginDataDto.urlGateway = _config.GetSection("UrlApis").GetSection("UrlGateway").Value;
                     Console.WriteLine(loginDataDto.urlGateway);
                     var urlService = _config.GetSection("UrlApis").GetSection("UrlGateway").Value;
-                    var _authService = await new ApiServer(urlService).PostAsync<AuthResponse>("account", loginDataDto);
+                    var _authService = await new ApiServer(urlService).PostAsync<AuthResponse>("/gateway/account", loginDataDto);
 
 
                     if (_authService.jwtToken == null)

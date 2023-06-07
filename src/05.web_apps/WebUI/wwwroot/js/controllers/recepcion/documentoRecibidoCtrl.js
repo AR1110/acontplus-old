@@ -99,10 +99,7 @@
                         }
                     }
                 }
-            };
-            // console.log(jwtDecoded)
-
-            const _urlService = document.getElementById("urlGateway").value
+            }; 
 
             //console.log(_urlService)
 
@@ -146,7 +143,7 @@
                     $scope.query.startDate = $scope.dateRangePicker.date.startDate
                     $scope.query.endDate = $scope.dateRangePicker.date.endDate
                     //console.log($scope.query)
-                    mS.getData('get', _urlService + 'DocumentoRecibido/Get/' + JSON.stringify($scope.query)).then(response => {
+                    mS.getData('get', 'DocumentoRecibido/Get/' + JSON.stringify($scope.query), null, true).then(response => {
                         if (response.code == "0") {
                             hideLoader()
                             tS.toastr('warning', response.message)
@@ -329,8 +326,6 @@
 
             $scope.newImport = (tipo) => {
                 if (tipo == 1) {
-                    Swal.fire({ title: 'Aviso', text: 'Opcion no disponible debido a cambios en la estructura por parte del SRI, use la opcion manual', icon: 'warning' })
-                    return
                     tS.toastr('warning', 'Recuerde no haber modificado el archivo de texto descargado del SRI')
                     $('#newImportModal').modal('show')
                 } else {
@@ -379,7 +374,7 @@
                 var uploadPromises = [];
                 angular.forEach(files, function (file) {
                     var uploadPromise = Upload.upload({
-                        url: _urlService + 'DocumentoRecibido/UploadXml/?json=' + JSON.stringify({ codEstab: $scope.query.codEstab }), // Reemplaza con la URL de tu backend donde manejarás la carga de archivos
+                        url: 'DocumentoRecibido/UploadXml/?json=' + JSON.stringify({ codEstab: $scope.query.codEstab }, null, true), // Reemplaza con la URL de tu backend donde manejarás la carga de archivos
                         data: { file: file }
                     }).then(function (response) {
                         // Maneja la respuesta del backend aquí
@@ -462,7 +457,7 @@
                     }
 
                     showLoader();
-                    mS.getDataFile(_urlService + 'DocumentoRecibido/Read', $scope.fileTxt).then(response => {
+                    mS.getDataFile('DocumentoRecibido/Read', $scope.fileTxt, null, true).then(response => {
                         if (response.code == 0) {
                             hideLoader()
                             tS.toastr('warning', response.message)
@@ -596,7 +591,7 @@
                     }
 
 
-                    mS.getData('get', _urlService + 'DocumentoRecibido/Get/' + JSON.stringify(data)).then(
+                    mS.getData('get', 'DocumentoRecibido/Get/' + JSON.stringify(data), null, true).then(
                         response => {
                             console.log(response)
                             if (response.code == '0') {
@@ -628,7 +623,7 @@
             $scope.putXml = function () {
                 try {
                     showLoader()
-                    mS.getData('put', _urlService + 'DocumentoRecibido/Put/' + $scope.selected[0].idDocumento).then(
+                    mS.getData('put', 'DocumentoRecibido/Put/' + $scope.selected[0].idDocumento, null, true).then(
                         response => {
                             hideLoader()
                             if (response.code == 0) {
@@ -679,7 +674,7 @@
                         return;
                     }
                     console.log(file)
-                    mS.getDataFile(_urlService + 'DocumentoRecibido/' + $scope.selected[0].idDocumento + '/' + $scope.selected[0].claveAcceso, file).then(
+                    mS.getDataFile('DocumentoRecibido/' + $scope.selected[0].idDocumento + '/' + $scope.selected[0].claveAcceso, file, null, true).then(
                         response => {
                             hideLoader()
                             if (response.code == 0) {
@@ -724,7 +719,7 @@
             $scope.delete = function (item) {
                 try {
                     showLoader()
-                    mS.getData('delete', _urlService + 'DocumentoRecibido/' + item).then(
+                    mS.getData('delete', 'DocumentoRecibido/' + item, null, true).then(
                         response => {
                             if (response.code == 0) {
                                 hideLoader()
@@ -777,7 +772,7 @@
             $scope.medidas = [];
             $scope.getFormData = function () {
                 try {
-                    mS.getData('get', _urlService + 'DocumentoRecibido/Get/' + JSON.stringify({ tipo: '1', codEstab: $scope.query.codEstab })).then(
+                    mS.getData('get', 'DocumentoRecibido/Get/' + JSON.stringify({ tipo: '1', codEstab: $scope.query.codEstab }), null, true).then(
                         response => {
                             if (response.code == "0") {
                                 tS.toastr('warning', response.message)
@@ -917,7 +912,7 @@
             $scope.getId = () => {
                 try {
                     showLoader()
-                    mS.getData('get', _urlService + 'DocumentoRecibido/GetId/' + $scope.selected[0].idDocumento).then(response => {
+                    mS.getData('get', 'DocumentoRecibido/GetId/' + $scope.selected[0].idDocumento, null, true).then(response => {
                         if (!response.payload) {
                             tS.toastr('warning', "Aun no se actualizado el Xml del SRI")
                         } else {
@@ -1103,7 +1098,7 @@
 
             $scope.getProv = () => {
                 try {
-                    mS.getData('get', _urlService + 'Proveedor/' + JSON.stringify({ tipo: 1, ruc: $scope.infoTributaria.ruc })).then(
+                    mS.getData('get', 'Proveedor/' + JSON.stringify({ tipo: 1, ruc: $scope.infoTributaria.ruc }), null, true).then(
                         response => {
                             if (response.code == "0") {
                                 $scope.txtIconModalProv = 'ti-plus';
@@ -1128,7 +1123,7 @@
             $scope.arraysProvClient = [];
             $scope.addProvClient = function () {
                 try {
-                    mS.getData('get', _urlService + 'Proveedor/' + JSON.stringify({ tipo: 2 })).then(
+                    mS.getData('get', 'Proveedor/' + JSON.stringify({ tipo: 2 }), null, true).then(
                         response => {
                             $scope.arraysProvClient = JSON.parse(response.payload)
                             $scope.tiposIdentificacion = $scope.arraysProvClient[0]
@@ -1220,7 +1215,7 @@
                         return;
                     }
                     showLoader()
-                    mS.getData('post', _urlService + 'Proveedor?json=' + JSON.stringify($scope.provCliente)).then(
+                    mS.getData('post', 'Proveedor?json=' + JSON.stringify($scope.provCliente), null, true).then(
                         response => {
                             if (response.code == "0") {
                                 tS.toastr('warning', response.message)

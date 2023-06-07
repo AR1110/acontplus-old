@@ -204,7 +204,7 @@ function mainService($http, Upload, _token, _screenSize, $timeout) {
     function _getData(method, url, data = null, forApi = false) {
         return $http({
             method: method,
-            url: (forApi) ? _token.urlGateway + url : url,
+            url: (forApi) ? _token.urlGateway + '/gateway/' + url : url,
             data: data
         }).then(response => {
             return response.data
@@ -213,7 +213,7 @@ function mainService($http, Upload, _token, _screenSize, $timeout) {
 
     function _getDataFile(url, file, data = null, forApi = false) {
         return Upload.upload({
-            url: (forApi) ? _token.urlGateway + url : url,
+            url: (forApi) ? _token.urlGateway + '/gateway/' + url : url,
             data: {
                 file: file,
                 data: data
@@ -226,7 +226,7 @@ function mainService($http, Upload, _token, _screenSize, $timeout) {
     function _getFile(method, url, data = null, forApi = false) {
         return $http({
             method: method,
-            url: (forApi) ? _token.urlGateway + url : url,
+            url: (forApi) ? _token.urlGateway + '/gateway/' + url : url,
             data: data,
             responseType: 'blob'
         }).then(response => {

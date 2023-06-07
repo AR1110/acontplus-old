@@ -489,7 +489,7 @@
                 codDoc: 'CI',
                 serieComprobante: item.nroDoc,
                 correo: item.correo,
-                subject: 'Pago - Acontplus N°: ' + item.nroDoc,
+                subject: 'Acontplus - Comprobante de Cobro N°: ' + item.nroDoc,
                 json: {
                     hasFile: true,
                     isReport: "SI",

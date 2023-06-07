@@ -62,8 +62,6 @@
         }
 
         const idDocumentoElectronico = document.getElementById("idDocumentoElectronico").value
-        //console.log(idDocumentoElectronico)
-        const _urlService = document.getElementById("urlGateway").value 
 
         $scope.retencionesTemp = []
 
@@ -78,7 +76,7 @@
                 }
                 //console.log($cookies.get('ck_token'))
                 let data = { tipo: 1 }
-                mS.getData('get', _urlService + 'RetencionAts/' + JSON.stringify(data)).then(
+                mS.getData('get', 'RetencionAts/' + JSON.stringify(data), null, true).then(
                     response => {
                         if (response.code == '1') {
                             let tempArray = JSON.parse(response.payload)
@@ -120,7 +118,7 @@
             try {
                 showLoader()
                 let data = { tipo: 2, idDoc: idDocumentoElectronico }
-                mS.getData('get', _urlService + 'RetencionAts/' + JSON.stringify(data)).then(
+                mS.getData('get', 'RetencionAts/' + JSON.stringify(data), null, true).then(
                     response => {
                         let tempArray = JSON.parse(response.payload)
                         console.log('this is for edit')
@@ -387,7 +385,7 @@
                     // tS.toastr('warning', 'Este documento no ha sido registrado desde el modulo de recepcion de documentos')
                     return
                 }
-                mS.getData('get', _urlService + 'DocumentoRecibido/Preview/' + item.idDocumento).then(
+                mS.getData('get', 'DocumentoRecibido/Preview/' + item.idDocumento, null, true).then(
                     response => {
                         $('#facturaModal').modal('show')
                         $('#bodyFactura').html(response.payload)
@@ -575,7 +573,7 @@
                         $scope.docSustento.totalImpuestoReembolso = 0.00
                         $scope.docSustento.totalSinImpuestos = 0.00
                         $scope.docSustento.importeTotal = 0.00
-                        mS.getData('post', _urlService + 'DocSustento/' + $scope.infoCompRet.idRetencionAts + '?json=' + JSON.stringify($scope.docSustento)).then(
+                        mS.getData('post', 'DocSustento/' + $scope.infoCompRet.idRetencionAts + '?json=' + JSON.stringify($scope.docSustento), true).then(
                             response => {
                                 if (response.code == '0') {
                                     tS.toastr('warning', response.message)
@@ -702,7 +700,7 @@
                     let idRetAtsDocSustento = $scope.docsAdded.find(item => (item.uniqueIdDoc == uniqueIdDoc)).idRetAtsDocSustento
                     if (idRetAtsDocSustento > 0) {
                         $scope.tax.uniqueIdDoc = uniqueIdDoc
-                        mS.getData('post', _urlService + 'DocSustImpuesto/' + idRetAtsDocSustento + '?json=' + JSON.stringify($scope.tax)).then(
+                        mS.getData('post', 'DocSustImpuesto/' + idRetAtsDocSustento + '?json=' + JSON.stringify($scope.tax), null, true).then(
                             response => {
                                 if (response.code == '0') {
                                     tS.toastr('warning', response.message)
@@ -771,7 +769,7 @@
         $scope.updateTax = (uniqueIdDoc) => {
             if ($scope.taxValid()) {
                 if ($scope.tax.idRetAtsImpDocSustento > 0) {
-                    mS.getData('put', _urlService + 'DocSustImpuesto/' + $scope.tax.idRetAtsImpDocSustento + '?json=' + JSON.stringify($scope.tax)).then(
+                    mS.getData('put', 'DocSustImpuesto/' + $scope.tax.idRetAtsImpDocSustento + '?json=' + JSON.stringify($scope.tax), null, true).then(
                         response => {
                             if (response.code == '0') {
                                 tS.toastr('warning', response.message)
@@ -855,7 +853,7 @@
         $scope.removeTax = (index, item, d) => {
             if (item.idRetAtsImpDocSustento > 0) {
                 try {
-                    mS.getData('delete', _urlService + 'DocSustImpuesto/' + item.idRetAtsImpDocSustento).then(
+                    mS.getData('delete', 'DocSustImpuesto/' + item.idRetAtsImpDocSustento, null, true).then(
                         response => {
                             if (response.code == '0') {
                                 tS.toastr('warning', response.message)
@@ -974,7 +972,7 @@
                     let idRetAtsDocSustento = $scope.docsAdded.find(item => (item.uniqueIdDoc == uniqueIdDoc)).idRetAtsDocSustento
                     if (idRetAtsDocSustento > 0) {
                         $scope.retencion.uniqueIdDoc = uniqueIdDoc
-                        mS.getData('post', _urlService + 'DocSustRetencion/' + idRetAtsDocSustento + '?json=' + JSON.stringify($scope.retencion)).then(
+                        mS.getData('post', 'DocSustRetencion/' + idRetAtsDocSustento + '?json=' + JSON.stringify($scope.retencion), null, true).then(
                             response => {
                                 if (response.code == '0') {
                                     tS.toastr('warning', response.message)
@@ -1014,7 +1012,7 @@
         $scope.updateRet = (uniqueIdDoc) => {
             if ($scope.retencionValid()) {
                 if ($scope.retencion.idRetencionAtsRet > 0) {
-                    mS.getData('put', _urlService + 'DocSustRetencion/' + $scope.retencion.idRetencionAtsRet + '?json=' + JSON.stringify($scope.retencion)).then(
+                    mS.getData('put', 'DocSustRetencion/' + $scope.retencion.idRetencionAtsRet + '?json=' + JSON.stringify($scope.retencion), null, true).then(
                         response => {
                             if (response.code == '0') {
                                 tS.toastr('warning', response.message)
@@ -1079,7 +1077,7 @@
         $scope.removeRet = (index, item) => {
             if (item.idRetencionAtsRet > 0) {
                 try {
-                    mS.getData('delete', _urlService + 'DocSustRetencion/' + item.idRetencionAtsRet).then(
+                    mS.getData('delete', 'DocSustRetencion/' + item.idRetencionAtsRet, null, true).then(
                         response => {
                             if (response.code == '0') {
                                 tS.toastr('warning', response.message)
@@ -1156,7 +1154,7 @@
                     // }
                     let idRetAtsDocSustento = $scope.docsAdded.find(item => (item.uniqueIdDoc == uniqueIdDoc)).idRetAtsDocSustento
                     if (idRetAtsDocSustento > 0) {
-                        mS.getData('post', _urlService + 'DocSustPago/' + idRetAtsDocSustento + '?json=' + JSON.stringify(data)).then(
+                        mS.getData('post', 'DocSustPago/' + idRetAtsDocSustento + '?json=' + JSON.stringify(data), null, true).then(
                             response => {
                                 if (response.code == '0') {
                                     tS.toastr('warning', response.message)
@@ -1192,7 +1190,7 @@
             if ($scope.paymentValid()) {
                 try {
                     if ($scope.payment.idRetencionAtsPago > 0) {
-                        mS.getData('put', _urlService + 'DocSustPago/' + $scope.payment.idRetencionAtsPago + '?json=' + JSON.stringify($scope.payment)).then(
+                        mS.getData('put', 'DocSustPago/' + $scope.payment.idRetencionAtsPago + '?json=' + JSON.stringify($scope.payment), null, true).then(
                             response => {
                                 if (response.code == '0') {
                                     tS.toastr('warning', response.message)
@@ -1256,7 +1254,7 @@
 
             if (item.idRetencionAtsPago > 0) {
                 try {
-                    mS.getData('delete', _urlService + 'DocSustPago/' + item.idRetencionAtsPago).then(
+                    mS.getData('delete', 'DocSustPago/' + item.idRetencionAtsPago, null, true).then(
                         response => {
                             if (response.code == '0') {
                                 tS.toastr('warning', response.message)
@@ -1290,7 +1288,7 @@
         $scope.updateDocSustento = () => {
             if ($scope.validateDocSust()) {
                 if ($scope.docSustento.idRetAtsDocSustento > 0) {
-                    mS.getData('put', _urlService + 'DocSustento/' + $scope.docSustento.idRetAtsDocSustento + '?json=' + JSON.stringify($scope.docSustento)).then(
+                    mS.getData('put', 'DocSustento/' + $scope.docSustento.idRetAtsDocSustento + '?json=' + JSON.stringify($scope.docSustento), null, true).then(
                         response => {
                             if (response.code == '0') {
                                 tS.toastr('warning', response.message)
@@ -1420,7 +1418,7 @@
                             nombre: $scope.additionalInfo.nombre,
                             valor: $scope.additionalInfo.valor
                         }
-                        mS.getData('post', _urlService + 'RetAtsInfoAdicional/?json=' + JSON.stringify(data)).then(
+                        mS.getData('post', 'RetAtsInfoAdicional/?json=' + JSON.stringify(data), null, true).then(
                             response => {
                                 if (response.code == '0') {
                                     tS.toastr('warning', response.message)
@@ -1458,7 +1456,7 @@
                         nombre: $scope.additionalInfo.nombre,
                         valor: $scope.additionalInfo.valor
                     }
-                    mS.getData('put', _urlService + 'RetAtsInfoAdicional/' + $scope.additionalInfo.idRetAtsInfoAdicional + '?json=' + JSON.stringify(data)).then(
+                    mS.getData('put', 'RetAtsInfoAdicional/' + $scope.additionalInfo.idRetAtsInfoAdicional + '?json=' + JSON.stringify(data), null, true).then(
                         response => {
                             if (response.code == '0') {
                                 tS.toastr('warning', response.message)
@@ -1509,7 +1507,7 @@
         $scope.removeAdditionalInfo = (index, item) => {
             if (item.idRetAtsInfoAdicional > 0) {
                 try {
-                    mS.getData('delete', _urlService + 'RetAtsInfoAdicional/' + item.idRetAtsInfoAdicional).then(
+                    mS.getData('delete', 'RetAtsInfoAdicional/' + item.idRetAtsInfoAdicional, null, true).then(
                         response => {
                             if (response.code == '0') {
                                 tS.toastr('warning', response.message)
@@ -1620,8 +1618,8 @@
                 }
                 //console.log(data)
                 let method = (idDocumentoElectronico) ? 'put' : 'post'
-                let url = (idDocumentoElectronico) ? _urlService + 'RetencionAts/' + $scope.infoCompRet.idRetencionAts : _urlService + 'RetencionAts'
-                mS.getData(method, url, data).then(
+                let url = (idDocumentoElectronico) ? 'RetencionAts/' + $scope.infoCompRet.idRetencionAts : 'RetencionAts'
+                mS.getData(method, url, data, true).then(
                     response => {
                         if (response.code == '0') {
                             $scope.blockButton = false
@@ -1677,7 +1675,7 @@
         //
         $scope.exportPdf = (item) => {
             try {
-                mS.getFile('get', _urlService + 'DocumentoRecibido/Export/' + item).then(response => {
+                mS.getFile('get', 'DocumentoRecibido/Export/' + item, null, true).then(response => {
                     if (response.id == 0) {
                         tS.toastr('warning', response.message)
                         return

@@ -897,6 +897,7 @@
                                 } else {
                                     if (tempArray[0][0].message) {
                                         Swal.fire({ title: 'Aviso', text: tempArray[0][0].message, icon: 'info' })
+                                        return
                                     }
                                     // let fileCtrl = nombreModalLogistica.VEHICULO.fileCtrl;
                                     // let ctrl = nombreModalLogistica.VEHICULO.controllers['M'];
