@@ -465,7 +465,8 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl {
                 checkBoxCliente: true,
                 byCliente: this.cliente.idCliente,
                 checkBoxDefault: false,
-                codEstab: this.data.codEstab
+                codEstab: this.data.codEstab,
+                typeList: 2
             }
 
 

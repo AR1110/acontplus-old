@@ -1,20 +1,11 @@
 
 app.controller('notaCreditoClienteCtrl', notaCreditoClienteCtrl);
 
-notaCreditoClienteCtrl.$inject = ['$scope', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService']
+notaCreditoClienteCtrl.$inject = ['$scope', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'decodeToken']
 
-function notaCreditoClienteCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS){
+function notaCreditoClienteCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, decodeToken){
 
     'use strict';
-
-    // let accion = JSON.parse(localStorage.getItem("accion"));
-
-    // if (accion === null) {
-    //     location.href = "/Home/Index";
-    //     return
-    // } else {
-    //     $scope.accion = accion[0];
-    // }
 
     const TIPO_DOC = _commonSvc.tipoDoc['NC'];
 
@@ -23,124 +14,111 @@ function notaCreditoClienteCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModal
         pageSize: 1000
     }
 
-    $scope.clienteFiltro = {}
-    $scope.usuarioSearchFiltro = {};
+    $scope.cliente = {
 
-    $scope.meses = _fS.meses();
-    $scope.mes = new Date().getMonth() + 1;
-    $scope.notaCreditos = [];
+    }
+    let idUsuarioRol = Number(decodeToken.idUsuarioRol)
 
     //---------------------------------Busqueda Avanzada ----------------------------------
-    $scope.opemModalFiltroNotaCredito = ()=> {
-        $("#modalFiltroNotaCredito").modal('show');        
-    }
+    //========================Start Filters=================
 
-     /**
-     * 
-     * @param {string} textSearch 
-     * @returns 
-     */
-    $scope.clienteSearch = function(textSearch){
-        try {            
-            return _commonSvc.clienteSearch(textSearch);   
-            
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-    $scope.onChangeFechaFiltro=()=>{
-        $scope.dataSearch.tipoFecha = 'FE';
-        $scope.mes = new Date().getMonth() + 1;
-        $scope.getFechaInicioFinFilter($scope.mes)
-    }
-
-    //Fecha Inicial y Final dependiendo el Mes que seleccione el usuario en el Buscador AVanzado
-    $scope.getFechaInicioFinFilter = function (mes) {
-        let { fechaInicio, fechaFin } = _fS.getFechaInicioFinFilter(mes);
-        $scope.dataSearch.fechaInicio = fechaInicio;
-        $scope.dataSearch.fechaFin = fechaFin;
-    }
-
-    //----------------------------------CLIENTE FILTRO------------------------------
-    $scope.clienteFiltro = {};
-    $scope.onKeyupClienteSearchFiltro = ()=>{
-        if(_fS.campo($scope.clienteFiltro.nombreFiscal)){
-            $scope.clienteFiltro  = {};
-            $scope.dataSearch.byCliente = null;
-        } 
-    }
-
-    $scope.selectedClienteSearchFiltro = (item) => {
-        $scope.dataSearch.byCliente = item.idCliente;
-    }
-
-    
-
-    //Busqueda Avanzada 
-    $scope.busquedaAvanzada = function () {
-        if (_fS.campo($scope.dataSearch.codEstab)) {
-            _tS.toastr('warning', 'Por favor seleccione el Establecimiento');
-            return;
-        };
-        if ($scope.dataSearch.checkBoxCliente) {
-            if (_fS.campo($scope.dataSearch.byCliente)) {
-                _tS.toastr('warning', 'Seleccione el Cliente');
-                return;
-            };
-        }
-        
-        if ($scope.dataSearch.checkBoxFecha) {
-            if (_fS.campo($scope.dataSearch.fechaInicio)) {
-                _tS.toastr('warning', 'Ingrese la Fecha Inicio');
-                return;
-            };
-            if (_fS.campo($scope.dataSearch.fechaFin)) {
-                _tS.toastr('warning', 'Ingrese la Fecha Fin');
-                return;
-            };
-        };
-        
-        if ($scope.dataSearch.checkBoxEstado) {
-            if (_fS.campo($scope.dataSearch.byEstado)) {
-                _tS.toastr('warning', 'Por favor seleccione el Estado');
-                return
-            }
-        }            
+    $scope.resultRangeFilter = function (item) {
+        $scope.dataSearch.fechaInicio = item.startDate,
+        $scope.dataSearch.fechaFin = item.endDate
         $scope.getNotaCreditos();
-        $("#modalFiltroNotaCredito").modal('hide');        
     }
 
-    $scope.getNotaCreditos = async()=>{
+
+
+    $scope.onKeyupCliente = function(e) {
+        if(!$scope.cliente.nombreCliente){
+            $scope.dataSearch.idCliente = 0;
+        }
+    }
+    $scope.onSelectCliente = function(item) {
+        $scope.dataSearch.idCliente = item.idCliente;
+        $scope.getNotaCreditos();
+    }
+
+    $scope.usuarioSearch = function (textSearch) {
+        try {
+            let query = {
+                idRol: idUsuarioRol,
+                busqueda: textSearch
+            }
+
+            if (query.busqueda.length > 2) {
+                return _commonSvc.usuarioSearch(query)
+                    .catch(error => {
+                        console.log(error);
+                        throw error;
+                    })
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    $scope.onKeyupUsuarioSearch = function () {
+        if (!$scope.modelNombreCompleto) {
+            $scope.dataSearch.byUsuario = 0;
+        }
+    }
+
+    $scope.selectedUsuarioSearch = function (item) {
+        $scope.dataSearch.byUsuario = item.idUsuario;
+    }
+
+    $scope.onClickBtnMore = function () {
+        $scope.moreSearchOptions = !$scope.moreSearchOptions;
+    }
+
+    $scope.searchFilterLocal = function () {
+        let notaCreditos = JSON.parse(JSON.stringify($scope.cloneNotaCreditos));
+        $scope.notaCreditos = $filter("filter")(notaCreditos, $scope.dataSearch.bySearch);
+        // $scope.calculoColumnTotal();
+    }
+
+    //=====================Eend Filters=======================
+
+    $scope.getNotaCreditos = function(){
         try {
             showLoader();
-               
-            if($scope.dataSearch.checkBoxCliente ||
-                $scope.dataSearch.checkBoxFecha || 
-                $scope.dataSearch.checkBoxUsuario || 
-                $scope.dataSearch.checkBoxEstado){              
-                    $scope.dataSearch.checkBoxDefault = false
-                }else{                                
-                    $scope.dataSearch.checkBoxDefault = true;
-                }
+            		   
 
-            await _mS.getData('get', '/NotaCreditoCliente/Get?json=' + JSON.stringify($scope.dataSearch)).then(response=>{
-                if(response.code==="0"){
+            let dataSearch = {
+                codEstab: $scope.dataSearch.codEstab,
+                checkBoxDefault: false,
+                checkBoxCliente: $scope.dataSearch.idCliente > 0,
+                byCliente: $scope.dataSearch.idCliente,
+                checkBoxFecha: true,
+                checkBoxUsuario: $scope.dataSearch.byUsuario > 0,
+                byUsuario: $scope.dataSearch.byUsuario,
+                checkBoxEstado: $scope.dataSearch.codEstado ? true : false,
+                codEstado: $scope.dataSearch.codEstado,
+                fechaInicio: _fS.formatDateMoment($scope.dataSearch.fechaInicio),
+                fechaFin: _fS.formatDateMoment($scope.dataSearch.fechaFin)
+            }
+
+
+                $scope.notaCreditos = [];
+            _mS.getData('get', '/NotaCreditoCliente/Get?json=' + JSON.stringify(dataSearch)).then(response=>{
+                hideLoader();
+                console.log(response);
+                if(response.code==="0" || response.id==="0"){
                     $scope.notaCreditos = [];
-                    console.warn(response.message);
-                    return
+                    console.warn(response.message);                    
                 }
-                $scope.notaCreditos = JSON.parse(response.data) || []                
+                if(response.code==="1" || response.id==="1"){
+                    $scope.notaCreditos = JSON.parse(response.data) || [];
+                    $scope.cloneNotaCreditos = JSON.parse(JSON.stringify($scope.notaCreditos))                
+                }
             })
         } catch (error) {
-
+            hideLoader();
             console.log(error)
 
-        }finally{
-
-            hideLoader();
-
-        }
+        }        
     }
 
     $scope.initiload = ()=>{
@@ -153,45 +131,13 @@ function notaCreditoClienteCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModal
         })
         
         _commonSvc.getEstadoDocByCodDoc('NC').then(response=>{
-            $scope.estadoPagos = response;
+            $scope.estadoDocumentos = response;
         })  
 
     }
     $scope.initiload();
 
-    $scope.openModalFiltro = async()=>{
-        
-        let {MODAL_FILE_CTRL, MODAL_FILTRO} = _nombreModalConst.nota_entrega;
-        let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_FILTRO['controller']];
-        let template   = MODAL_FILTRO['template'];
-
-        let params = {
-            dataSearch: $scope.dataSearch,
-            clienteFiltro: $scope.clienteFiltro,
-            usuarioSearchFiltro: $scope.usuarioSearchFiltro,
-            mes: $scope.mes
-        }
-        
-        let modalRef = _modalSvc.openModalCustom({
-            controller,
-            template,
-            params,
-            size:'lg'
-        })
-        
-        modalRef.result.then(result=>{
-            let {dataSearch, clienteFiltro, usuarioSearchFiltro, mes, isSearch} = result;
-            $scope.dataSearch = dataSearch;
-            $scope.clienteFiltro = clienteFiltro;
-            $scope.usuarioSearchFiltro =  usuarioSearchFiltro;
-            $scope.mes = mes;
-            if(isSearch){
-                $scope.getNotaCreditos();
-            }
-        })
-    }
-
-
+   
     $scope.openModalNew = async()=>{
         let {MODAL_FILE_CTRL, MODAL_NUEVO} = _nombreModalConst.nota_credito_cliente;
         let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_NUEVO['controller']];
