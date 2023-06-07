@@ -286,7 +286,7 @@
             let total = iva + obj.getTotalDetalle();
 
             return {
-                subTotalSinImpuestos: obj.getSubTotalSinImpuesto(),
+                subTotalSinImpuestos: fS.roundNumber(obj.getSubTotalSinImpuesto(), decimal.nroTotalSubTotal),
                 subTotalIva,
                 subTotalNetoIva,
     
@@ -301,11 +301,15 @@
     
                 totalDescuento: obj.getTotalDescuento(),
                 porcentajeDescuento: obj.getTotalPorcentajeDescuento(),
+
+                totalDescuento: fS.roundNumber(obj.getTotalDescuento(), decimal.nroTotalSubTotal),
+                porcentajeDescuento: fS.roundNumber(obj.getTotalPorcentajeDescuento(), decimal.nroTotalSubTotal),
+
                 totalIce: obj.getTotalIce(),
                 irbpnr : 0,
                 propina : 0,
                 iva:  fS.roundNumber(iva, decimal.nroIva),
-                total: fS.roundNumber(total, decimal.nroTotalSubTotal)
+                total: fS.roundNumber(total, decimal.importeTotal)
             }       
 
         }
