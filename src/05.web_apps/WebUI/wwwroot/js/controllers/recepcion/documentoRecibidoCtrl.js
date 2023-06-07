@@ -326,8 +326,6 @@
 
             $scope.newImport = (tipo) => {
                 if (tipo == 1) {
-                    Swal.fire({ title: 'Aviso', text: 'Opcion no disponible debido a cambios en la estructura por parte del SRI, use la opcion manual', icon: 'warning' })
-                    return
                     tS.toastr('warning', 'Recuerde no haber modificado el archivo de texto descargado del SRI')
                     $('#newImportModal').modal('show')
                 } else {
