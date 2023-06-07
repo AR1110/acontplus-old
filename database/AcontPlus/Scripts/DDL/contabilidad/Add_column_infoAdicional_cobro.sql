@@ -6,8 +6,8 @@ DECLARE @table as table (idCobro INT UNIQUE NOT NULL, infoCobro VARCHAR(MAX) NUL
 --ALTER TABLE Cobro add infoCobro VARCHAR(MAX) NULL
 
 
---INSERT INTO @table (idCobro,infoCobro)
---select cp.idCobro, infoCobro = (SELECT cs.nro,cs.lote,cs.aprobacion,cs.referencia from Cobro cs where cs.idCobro = cp.idCobro FOR JSON PATH) from Cobro cp 
+INSERT INTO @table (idCobro,infoCobro)
+select cp.idCobro, infoCobro = (SELECT cs.nro,cs.lote,cs.aprobacion,cs.referencia from Cobro cs where cs.idCobro = cp.idCobro FOR JSON PATH) from Cobro cp 
 
 
 UPDATE c set

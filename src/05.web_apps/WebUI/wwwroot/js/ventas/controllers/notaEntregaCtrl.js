@@ -144,6 +144,7 @@
                     checkBoxCliente: $scope.dataSearch.idCliente > 0,
                     byCliente: $scope.dataSearch.idCliente,
                     checkBoxFecha: true,
+                    tipoFecha: 'FE',
                     checkBoxUsuario: $scope.dataSearch.byUsuario > 0,
                     byUsuario: $scope.dataSearch.byUsuario,
                     checkBoxEstado: $scope.dataSearch.codEstado ? true : false,

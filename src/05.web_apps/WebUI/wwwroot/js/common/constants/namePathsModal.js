@@ -244,7 +244,8 @@ app.constant('nombreModalContabilidad', {
             CL: 'ModalCobroLoteCtrl', //Cobro Lote
             MFC: 'ModalFormaCobroCtrl',
             CD: 'ModalCobroDetalleCtrl',
-            MC: 'ModalCuotaCtrl'
+            MC: 'ModalCuotaCtrl',
+            MM: 'ModalMoraCtrl'
         },
         templates: {
             CR: '~/Areas/CuentaPorCobrar/Pages/Shared/_ModalCobroRapido.cshtml',
@@ -252,6 +253,7 @@ app.constant('nombreModalContabilidad', {
             MFC: '~/Areas/CuentaPorCobrar/Pages/Shared/_ModalFormaCobro.cshtml',
             CD: '~/Areas/CuentaPorCobrar/Pages/Shared/_ModalCobroDetalle.cshtml',
             MC: '~/Areas/CuentaPorCobrar/Pages/Shared/_ModalCuota.cshtml',
+            MM: '~/Areas/CuentaPorCobrar/Pages/Shared/_ModalMora.cshtml',
         }
     }
 })

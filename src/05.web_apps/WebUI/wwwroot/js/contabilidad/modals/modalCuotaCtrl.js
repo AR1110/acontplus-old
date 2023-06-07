@@ -1,11 +1,21 @@
 
 export {
-    ModalCuotaCtrl
+    ModalCuotaCtrl,
+    ModalConfigMoraCtrl
 }
 
-ModalCuotaCtrl.$inject = ['$scope', '$uibModalInstance', 'mainService', 'toastService', 'formulario', 'params'];
+ModalCuotaCtrl.$inject = [
+    '$scope', 
+    '$uibModalInstance', 
+    'mainService',
+    'modalService', 
+    'nombreModalContabilidad', 
+    'toastService', 
+    'formulario', 
+    'params'
+];
 
-function ModalCuotaCtrl($scope, $uibModalInstance, mS, tS, fS, params){
+function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalContabilidad,  tS, fS, params){
     let {idTipoDocumento, idDocumento} = params;
 
     $scope.tiempoCreditos = [];
@@ -19,6 +29,8 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, tS, fS, params){
 
     $scope.isReload = false;
 
+    let url = 'CuentaPorCobrar/'
+
     initiload();
     function initiload(){
         try {
@@ -29,7 +41,7 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, tS, fS, params){
                 idDocumento
             }
 
-            mS.getData('get', 'CuentaPorCobrar/?json=' + JSON.stringify(query)  , null, true).then(response=>{
+            mS.getData('get', url + '?json=' + JSON.stringify(query)  , null, true).then(response=>{
                 hideLoader();
                 if(response.code==='0'){
                     throw response
@@ -50,11 +62,11 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, tS, fS, params){
                     $scope.tiempoCreditos = mainDataRepository[1];
                     
                     let tempCuotas = mainDataRepository[2];
-                    $scope.cuotas = tempCuotas.map(item=>({
-                        ...item,
-                        fechaVencimiento: new Date(item.fechaVencimiento)
-                    }))
+                    $scope.cuotas = tempCuotas.map(cuotaMappFrom)
                     console.log($scope.comprobante)
+
+                    let tempCuotasMora = mainDataRepository[3];
+                    $scope.cuotasMora = tempCuotasMora;
                 }
             }).catch(error=>{
                 hideLoader();
@@ -66,8 +78,15 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, tS, fS, params){
         }
     } 
 
+    function cuotaMappFrom(item){
+        return ({
+            ...item,
+            fechaVencimiento: new Date(item.fechaVencimiento)
+        })
+    }
+
     function formatDateFecha(fecha){
-        console.log(fecha)
+       
         const fechaCadena = fecha;
         const formatoEntrada = "DD/MM/YYYY HH:mm";
         const fechaReal = moment(fechaCadena, formatoEntrada).toDate();
@@ -149,6 +168,107 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, tS, fS, params){
             hideLoader();
             console.log(error)
         })
+    }
+
+
+    /**
+     * 
+     * @param {*} valid 
+     * @returns 
+     */
+    $scope.configFechaMora  = async function(){
+        try {
+            let {isConfirmed}= await  Swal.fire({
+                icon:'warning',
+                title: '',
+                html: `  <span class="text-info"> Desea Calcular la Mora con la fecha Actual</span>
+                <div class="row justify-content-center">
+                    <div class="col-6"><input type="date" class="form-control" id="dateConfigMora">
+                    </div>
+                </div>`,
+                showCancelButton: true,
+                confirmButtonText: 'Si',
+                cancelButtonText: 'No',
+                didOpen: () => {
+                    let dateConfigMora = document.getElementById('dateConfigMora');
+                    let fechaConfig = new Date(); 
+                    dateConfigMora.value =  fechaConfig.toISOString().split('T')[0];                                   
+                },                
+                preConfirm: () => {
+                    let fechaConfig = Swal.getPopup().querySelector('#dateConfigMora').value
+                    if (!fechaConfig) {
+                        tS.toastr('warning', '....')
+                        return false
+                    }
+                },            
+            }) 
+            if(isConfirmed){
+                let query = {
+                    idTipoDocumento,
+                    idDocumento,
+                    porcentaje: $scope.comprobante.porcentaje,
+                    tipoConfig: $scope.comprobante.tipoConfig,
+                    fecha: fS.formatDateMoment(Swal.getPopup().querySelector('#dateConfigMora').value)                    ,
+                    tipo: 4
+                }
+                showLoader();
+                mS.getData('get', url + '?json=' + JSON.stringify(query)  , null, true).then(response=>{
+                    hideLoader();
+                    console.log(response)
+                    if(response.code==='0'){
+                        fS.sweetAlert('warning', response.message)
+                    }
+                    if(response.code==='1'){
+                        let tempCuotas = JSON.parse(response.payload)[0]
+                        console.log(tempCuotas)
+                        $scope.cuotas = tempCuotas.map(cuotaMappFrom)
+
+                    }
+                })
+            }
+                // for(let item of $scope.cuotas){
+                //     let dataCuotaMora = $scope.cuotasMora.find(cuotaM=>cuotaM.idCuotaXCobrar===item.idCuotaXCobrar);
+                //     if(dataCuotaMora){
+                //         item.interes = dataCuotaMora.interes;
+                //         item.mora = dataCuotaMora.mora;
+                //         item.diasMora = dataCuotaMora.diasMora;
+                //         item.saldo = dataCuotaMora.saldo;
+                //     }
+                // }
+                // tS.toastr('success', 'Aplicada Mora Correctamente')
+                // $scope.$apply();
+            // }
+
+            
+
+            // if($scope.cuotasMora.length===0){
+            //     fS.sweetAlert('warning', '.....')
+            //     return
+            // }
+            // let fileCtrl = nombreModalContabilidad.COBRO.fileCtrl;
+            // let  ctrl = nombreModalContabilidad.COBRO.controllers.MM;
+            // let template = nombreModalContabilidad.COBRO.templates.MM;
+            // let controller =(await import(fileCtrl)[ctrl])
+            // let modalRef = modalSvc.openModalCustom({
+            //     controller,
+            //     template,
+            //     size: 'lg',
+            //     isRenderRazorPartial: true,
+            //     params: {
+            //         comprobante: Object.assign({}, $scope.comprobante),
+            //         cuotasMora: JSON.parse(JSON.stringify($scope.cuotasMora))
+
+            //     }
+            // })
+            // modalRef.result.then(result=>{
+            //     if(typeof result==='object'){
+            //         initiload();
+            //     }
+            // })
+        } catch (error) {
+            hideLoader();
+            console.log(error)
+        }
     }
 
 
@@ -393,8 +513,8 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, tS, fS, params){
                     idCuotaXCobrar: val.idCuotaXCobrar,
                     cuota: Number(val.cuota),
                     fechaVencimiento: fS.formatDateTimeZone(val.fechaVencimiento, "YYYY-MM-DD HH:mm:ss A"),
-                    diasMora: 0,
-                    mora: 0                    
+                    diasMora: val.diasMora,
+                    mora: val.mora                    
                 }))
                 let query = {
                     idTipoDocumento,
@@ -437,5 +557,21 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, tS, fS, params){
         $uibModalInstance.close({
             isReload
         });
+    }
+}
+
+
+ModalConfigMoraCtrl.$inject = ['$scope', '$uibModalInstance','params'];
+
+function ModalConfigMoraCtrl($scope, $uibModalInstance, params){
+    let { comprobante, cuotasMora} = params;
+
+    $scope.comprobante = comprobante;
+    $scope.cuotasMora = cuotasMora;
+
+    console.log($scope.cuotasMora)
+
+    $scope.closeModal = function(){
+        $uibModalInstance.close();
     }
 }

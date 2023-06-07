@@ -1,0 +1,129 @@
+
+<div class="modal-header">
+    <h5 class="modal-title"><i class="far fa-money-bill-alt"></i> Cofig. Mora</h5>
+    <button type="button" class="close" ng-click="closeModal()">&times;</button>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12 b-r">
+            <strong>Cliente:</strong>
+            <br>                        
+            <p class="text-muted">{{comprobante.nombreFiscal}}</p>
+        </div>
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12 b-r">
+            <strong>Nro. Documento:</strong>
+            <br>
+            <p class="text-muted">{{comprobante.serieComprobante}}</p>
+        </div>
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12 b-r">
+            <strong>Fecha Emisión:</strong>
+            <br>
+            <p class="text-muted">{{comprobante.fechaEmisionFormat}}</p>
+        </div>
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12 b-r">
+            <strong>Total:</strong>
+            <h4>${{comprobante.importeTotal}}</h4>
+        </div>
+    </div>
+    <md-divider></md-divider>
+   
+     <md-table-responsive>
+        <table md-table>
+            <thead md-head>
+                <tr md-row>                 
+                    <th md-column>Nro. Cuota</th>                    
+                    <th md-column>Cuota</th>                    
+                    <th md-column ng-if="showColumnPrecioFijo">Valor Mora</th> 
+                    <th md-column ng-if="showColumnPorcentajeInteres">Interes</th> 
+                    <th md-column ng-if="showColumnPorcentajeInteres">Dias Mora</th>
+                    <th md-column ng-if="showColumnPorcentajeInteres">Mora</th>
+                    <th md-column>Abono</th>
+                    <th md-column>Saldo</th>
+                    <th md-column>Fecha Vencimiento</th>
+                    <th md-column>Estado</th>                   
+                    @* <th md-column colspan="2" class="text-center"><span>F. Vencimiento</span></th> *@
+                </tr>
+            </thead>
+            <tbody md-body>
+                <tr md-row ng-repeat="item in cuotasMora">
+                    <td md-cell>{{item.nroCuota}}</td>
+                    <td md-cell>
+                         <!--Input Entrada-->
+                        <input type="text" 
+                               ng-if="item.nroCuota==='E'"
+                               valid-number 
+                               ng-model="item.cuota" 
+                               id="valorEntrada" 
+                               ng-blur="setValorEntrada(item.cuota)" 
+                               class="form-control border-select text-center" />
+                                
+                        <!--Input Cuota -->
+                        <input type="text" 
+                                ng-if="item.nroCuota!=='E'" 
+                                id="setValcuota{{item.idCuotaXCobrar}}" 
+                                valid-number 
+                                ng-blur="setValorCuota(item)" 
+                                ng-model="item.cuota" 
+                                class="form-control border-select text-center" />
+                    </td>
+                    <td md-cell ng-if="showColumnPrecioFijo">{{item.precioFijo}}</td>
+                    <td md-cell ng-if="showColumnPorcentajeInteres">{{item.interes}}</td>
+                    <td md-cell ng-if="showColumnPorcentajeInteres">{{item.diasMora}}</td>
+                    <td md-cell ng-if="showColumnPorcentajeInteres">{{item.mora}}</td>
+                    <td md-cell>{{item.abono}}</td>
+                    <td md-cell>{{item.saldo}}</td>
+                    <td md-cell>
+                        <span ng-if="item.nroCuota=='E'" uib-popover-html="'getFechaEscritaCuota(item.fechaVencimiento)'"  popover-trigger="'focus'" class="ml-1">{{item.fechaVencimiento}}</span>
+                        
+                        <input type="date" uib-popover-html="getFechaEscritaCuota(item)"  popover-trigger="'focus'"
+                               min="2020-01-01" 
+                               max="2030-12-31" 
+                               id="fechaVencimiento{{item.idCuotaXCobrar}}" 
+                               ng-if="item.nroCuota!=='E'" 
+                               ng-model="item.fechaVencimiento" 
+                               ng-change="setFechaVencimientoCuota(item)" 
+                               class="form-control border-select" required />
+                        <small class="invalid-feedback">Fecha Vcto. no válida </small>
+                    </td>
+                    <td md-cell>{{item.estado}}</td>
+                    @* <td md-cell width="100">{{c.nroCuota}}</td>
+                    <td md-cell width="100">
+                       
+                    </td>
+                    <td md-cell width="100">
+                        <span ng-if="c.nroCuota=='E'" class="ml-1">{{c.cxc.fechaVencimiento | date:'dd/MM/yyyy'}}</span>
+                        
+                        <input type="date" min="2020-01-01" max="2030-12-31" id="fechaVencimiento{{c.cxc.idCuotaXCobrar}}" ng-if="c.nroCuota!=='E'" ng-model="c.cxc.fechaVencimiento" ng-change="$ctrl.setFechaVencimientoCuota(c)" class="form-control border-select" required />
+                        <small class="invalid-feedback">Fecha Vcto. no válida </small>
+                    </td>
+                    <td md-cell width="100">
+                        {{$ctrl.getFechaEscritaCuota(c.cxc)}}
+                    </td> *@
+                </tr>  
+                <tr md-row>
+                    <td md-cell class="text-right">
+                        <h6><strong>Total Cuota: </strong></h5>
+                        <h6><strong>Diferencia: </strong></h5>
+                    </td>
+                    <td md-cell align="text-left">
+                        <h6>${{totalCuota}}</h4>
+                        <h6 class="text-danger">${{totalDiferencia}}</h4>
+                    </td>
+                    <td md-cell ng-if="showColumnPrecioFijo"></td>
+                    <td md-cell ng-if="showColumnPorcentajeInteres"></td>                    
+                    <td md-cell ng-if="showColumnPorcentajeInteres"></td>                    
+                    <td md-cell ng-if="showColumnPorcentajeInteres"></td>                    
+                    <td md-cell></td>                    
+                    <td md-cell></td>                    
+                    <td md-cell></td>                    
+                    <td md-cell></td>                    
+                </tr>                               
+            </tbody>
+        </table>
+    </md-table-responsive>
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-success" ng-click="onSave()"><i class="ti-save"></i> Guardar</button>
+    <button type="button" class="btn btn-dark" ng-click="closeModal()">&times; Cerrar</button>
+</div>
