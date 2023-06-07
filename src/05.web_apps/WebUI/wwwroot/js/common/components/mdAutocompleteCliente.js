@@ -172,9 +172,9 @@ app.component('searchClienteCustom', {
 
     template: `<div class="input-group"> 
                 <input   type="text" 
-                    id="proveedorAutocomplete"                 
+                    id="clienteSearchCustom"                 
                     autocomplete="off"
-                    name="proveedorAutocomplete"
+                    name="clienteSearchCustom"
                     class="form-control border-select"
                     placeholder="Ingrese C.I o Nombre Fiscal"
                     ng-model="$ctrl.search.searchText"            
@@ -185,7 +185,7 @@ app.component('searchClienteCustom', {
                     typeahead-template-url="autocompleteClienteTemplate.html"
                     typeahead-min-length="1"
                     typeahead-editable="false"
-                    typeahead-on-select="$ctrl.selectedItemChange($item)"  /> 
+                    typeahead-on-select="$ctrl.selectedItemChange($item)" onClick="select();"  /> 
 
                     <script type="text/ng-template" id="autocompleteClienteTemplate.html">
                         <div class="autocomplete-suggestion-uib-typeahead">
@@ -196,7 +196,7 @@ app.component('searchClienteCustom', {
                     </script>  
 
                     <div class="input-group-append" ng-if="$ctrl.search.showBtnNew">
-                        <button type="button" type="button" class="btn btn-outline-secondary btn-sm" btn-cliente result-modal="$ctrl.resultModalCliente(result)" tabindex="-1">
+                        <button type="button" type="button" class="btn btn-outline-secondary btn-sm" btn-cliente result-modal="$ctrl.resultModalCliente(result)"  id="btnNewCustomerDocument">
                                 <i class="fa fa-plus fa-xs"></i>
                         </button>
                         <button type="button" class="btn btn-outline-secondary btn-sm" ng-if="$ctrl.search.showBtnEdit && $ctrl.dataCliente.idCliente>0" btn-cliente result-modal="$ctrl.resultModalCliente(result)" params="$ctrl.dataCliente"
@@ -204,7 +204,12 @@ app.component('searchClienteCustom', {
                         </button>                         
                         <button type="button" class="btn btn-outline-secondary btn-sm" ng-if="$ctrl.search.showBtnList"  btn-cliente-lista result-modal="$ctrl.resultModalCliente(result)"
                                 tabindex="-1"> <i class="fa fa-search fa-xs"></i>
-                        </button>                                                                                               
+                        </button>   
+                        
+                        <button type="button" cliente-info-popover customer="$ctrl.dataCliente" popover-placement='top'
+                            class="btn btn-outline-secondary btn-xs" ng-if="$ctrl.dataCliente.idCliente>0" tabindex="-1"><i
+                                class="fa fa-info fa-xs"></i>
+                        </button>
                     </div>`,
     bindings:{
         selectedItemCliente:'&',

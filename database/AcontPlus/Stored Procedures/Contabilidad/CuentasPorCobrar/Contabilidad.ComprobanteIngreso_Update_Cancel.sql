@@ -70,9 +70,9 @@ BEGIN
 
 
 			DECLARE cursor_documentos CURSOR LOCAL FOR
-			SELECT codigo,cd.idComprobante 
+			SELECT td.codigo,cd.idComprobante 
 			FROM dbo.CobroDocumento  cd WITH (NOLOCK) 
-			INNER JOIN TipoDocumento td WITH (NOLOCK) ON td.idTipoDocumento = cd.idTipoDocumento
+			INNER JOIN dbo.TipoDocumento td WITH (NOLOCK) ON td.idTipoDocumento = cd.idTipoDocumento
 			WHERE cd.idComprobanteIngreso = @idComprobanteIngreso
 				
 				OPEN cursor_documentos
