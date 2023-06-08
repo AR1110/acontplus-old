@@ -147,60 +147,73 @@ namespace PrintServer
             }
         }
 
-
+        public static bool ValidateIPv4(string ip)
+        {
+            IPAddress address;
+            return ip != null && ip.Count(c => c == '.') == 3 &&
+                IPAddress.TryParse(ip, out address);
+        }
         public static void Main(string[] args)
         {
             NetAclChecker.RunProcessAsAdmin();
-            //        string executablePath = Assembly.GetEntryAssembly().Location;
-
-            //        RegistryKey rk = Registry.CurrentUser.OpenSubKey
-            //("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-            //        rk.SetValue("AcontplusPrint", executablePath);
-
-            // Create a Http server and start listening for incoming connections
-            listener = new HttpListener();
-
-            string hostname = Dns.GetHostName(); // Retrive the Name of HOST
-            string myIP = Dns.GetHostEntry(hostname).AddressList[0].ToString();
-            for (int i = 0; i <= Dns.GetHostEntry(hostname).AddressList.Length - 1; i++)
+            string myIP = string.Empty;
+            try
             {
-                if (Dns.GetHostEntry(hostname).AddressList[i].IsIPv6LinkLocal == false)
+                // Create a Http server and start listening for incoming connections
+                listener = new HttpListener();
+
+                string hostname = Dns.GetHostName(); // Retrive the Name of HOST
+                myIP = Dns.GetHostEntry(hostname).AddressList[0].ToString();
+                for (int i = 0; i <= Dns.GetHostEntry(hostname).AddressList.Length - 1; i++)
                 {
-                    myIP = Dns.GetHostEntry(hostname).AddressList[i].ToString();
+                    if (Dns.GetHostEntry(hostname).AddressList[i].IsIPv6LinkLocal == false)
+                    {
+                        var ipFounded = Dns.GetHostEntry(hostname).AddressList[i].ToString();
+
+                        if (ValidateIPv4(ipFounded))
+                        {
+                            myIP = Dns.GetHostEntry(hostname).AddressList[i].ToString();
+                        }
+                    }
                 }
+                myIP = $"http://{myIP}:9200/";
+                if (!string.IsNullOrEmpty(myIP) && myIP != "http://127.0.0.1:9100/")
+                {
+                    listener.Prefixes.Add(myIP);
+                    var appLog = new EventLog("Application");
+                    var eventSource = "PrinterServer";
+                    appLog.Source = EventsLogs.CreateEventSource(eventSource);
+                    appLog.WriteEntry($"Listening for connections on {myIP}", EventLogEntryType.Information);
+                    appLog.WriteEntry($"Listening for connections on {url}", EventLogEntryType.Information);
+                    Console.WriteLine("Listening for connections on {0}", myIP);
+                    Console.WriteLine("Listening for connections on {0}", url);
+                }
+                else
+                {
+                    listener.Prefixes.Add(url);
+                    var appLog = new EventLog("Application");
+                    var eventSource = "PrinterServer";
+                    appLog.Source = EventsLogs.CreateEventSource(eventSource);
+                    appLog.WriteEntry($"Listening for connections on {url}", EventLogEntryType.Information);
+                    Console.WriteLine("Listening for connections on {0}", url);
+                }
+                listener.Start();
+
+                // Handle requests
+                Task listenTask = HandleIncomingConnections();
+                listenTask.GetAwaiter().GetResult();
+
+                // Close the listener
+                listener.Close();
             }
-            myIP = $"http://{myIP}:9200/";
-            if (!string.IsNullOrEmpty(myIP) && myIP != "http://127.0.0.1:9100/")
+            catch (Exception ex)
             {
-                //NetAclChecker.AddAddress(myIP);
-                listener.Prefixes.Add(myIP);
-                //NetAclChecker.AddAddress(url);
-                listener.Prefixes.Add(url);
                 var appLog = new EventLog("Application");
                 var eventSource = "PrinterServer";
                 appLog.Source = EventsLogs.CreateEventSource(eventSource);
-                appLog.WriteEntry($"Listening for connections on {myIP}", EventLogEntryType.Information);
-                appLog.WriteEntry($"Listening for connections on {url}", EventLogEntryType.Information);
-                Console.WriteLine("Listening for connections on {0}", myIP);
-                Console.WriteLine("Listening for connections on {0}", url);
+                appLog.WriteEntry($"{myIP} \n {ex}", EventLogEntryType.Error);
             }
-            else
-            {
-                listener.Prefixes.Add(url);
-                var appLog = new EventLog("Application");
-                var eventSource = "PrinterServer";
-                appLog.Source = EventsLogs.CreateEventSource(eventSource);
-                appLog.WriteEntry($"Listening for connections on {url}", EventLogEntryType.Information);
-                Console.WriteLine("Listening for connections on {0}", url);
-            }
-            listener.Start();
 
-            // Handle requests
-            Task listenTask = HandleIncomingConnections();
-            listenTask.GetAwaiter().GetResult();
-
-            // Close the listener
-            listener.Close();
         }
 
     }

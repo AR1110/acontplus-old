@@ -100,14 +100,9 @@
                     "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
                     "ProductCode" = "8:.NETFramework,Version=v4.7.2"
                     }
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.NetCore.DesktopRuntime.6.0.x64"
-                    {
-                    "Name" = "8:.NET Desktop Runtime 6.0.15 (x64)"
-                    "ProductCode" = "8:Microsoft.NetCore.DesktopRuntime.6.0.x64"
-                    }
                     "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.NetCore.DesktopRuntime.6.0.x86"
                     {
-                    "Name" = "8:.NET Desktop Runtime 6.0.15 (x86)"
+                    "Name" = "8:.NET Desktop Runtime 6.0.16 (x86)"
                     "ProductCode" = "8:Microsoft.NetCore.DesktopRuntime.6.0.x86"
                     }
                 }
@@ -219,15 +214,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:AcontplusPrint"
-        "ProductCode" = "8:{3B1D988D-B941-4278-9577-78F91F9CC2A4}"
-        "PackageCode" = "8:{A18A63D5-5694-400D-9EFB-ADD06A365747}"
-        "UpgradeCode" = "8:{5DE067A5-37C9-4A6F-9EA5-66121C33F7CE}"
+        "ProductCode" = "8:{B013801F-1BA9-40D1-951D-5B998EA9DA21}"
+        "PackageCode" = "8:{CF9CCD9D-9E76-4F4D-BD7F-87E87B4BDDBF}"
+        "UpgradeCode" = "8:{FA9DCADC-C11E-4170-B168-20C8CA58C9D4}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:1.0.8"
+        "ProductVersion" = "8:1.1.0"
         "Manufacturer" = "8:Acontplus"
         "ARPHELPTELEPHONE" = "8:+593 98 666 9930"
         "ARPHELPLINK" = "8:"
@@ -919,7 +914,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_447F477C8A4F4986BC3DAAB9150885B9"
             {
-            "SourcePath" = "8:..\\..\\09.desktop_apps\\PrintServer\\obj\\Debug\\net6.0\\apphost.exe"
+            "SourcePath" = "8:..\\..\\09.desktop_apps\\PrintServer\\obj\\Release\\net6.0\\apphost.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_1197F1C2C5664704A82C3274AD240747"
