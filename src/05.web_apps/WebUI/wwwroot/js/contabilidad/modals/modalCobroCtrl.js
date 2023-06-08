@@ -748,7 +748,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc
         dataFormaCobro.subEntidadesFinancieras = mainDataRepository[1];
         dataFormaCobro.bancos = mainDataRepository[2];
         dataFormaCobro.ciudades = mainDataRepository[3];
-        dataFormaCobro.documnetos = mainDataRepository[4];       
+        dataFormaCobro.documentos = mainDataRepository[4];       
     }
 
     function getTotalesCuota(){

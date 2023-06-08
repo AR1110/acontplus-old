@@ -87,7 +87,7 @@ BEGIN
 			FROM Config.Bodeg_Asig ba  WITH (NOLOCK) 
 			INNER JOIN  Config.Estab_Asig ea WITH (NOLOCK)  ON ba.codEstab_Asig = ea.codEstab_Asig
 			INNER JOIN Bodega b WITH(NOLOCK) On b.idBodega = ba.idBodega
-			WHERE ea.idUsuarioRol = @idUsuarioRol 
+			WHERE b.estado = 1 AND ea.idUsuarioRol = @idUsuarioRol 
 
 			-------------Config. Ventas --------------------
 			SELECT 
