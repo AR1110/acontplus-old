@@ -3,9 +3,9 @@
 
     app.controller('medidaCtrl', medidaCtrl);
 
-    medidaCtrl.$inject = ['$scope', 'medidaService', 'toastService'];
+    medidaCtrl.$inject = ['$scope', 'medidaService', 'commonService', 'toastService'];
 
-    function medidaCtrl($scope, medidaSvc, tS) {
+    function medidaCtrl($scope, medidaSvc, commonSvc, tS) {
               
         $scope.medidas = [];
         $scope.dataSearch = {
@@ -52,9 +52,9 @@
                     codigo: item.codigo,
                     descripcion: item.descripcion,
                 }))                          
-                _commonSvc.exportTableToExcel({
+                commonSvc.exportTableToExcel({
                     arr: medidas,
-                    fileName: 'SubFamilias'
+                    fileName: 'Medidas'
                 })   
             } catch (error) {
                 hideLoader();

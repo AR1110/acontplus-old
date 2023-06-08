@@ -162,16 +162,15 @@
                     mS.getData('get', '/SubContribuyente/OptionSubContribuyente').then(res => res.data),
                     mS.getData('get', '/Ciudad/ReadCiudadProvincia').then(res => res.data),
                     mS.getData('get', '/CodigoEnvioSri/Get').then(res => JSON.parse(res.data)),
-                    mS.getData('get', '/AnioFiscal/GetAll').then(res => res.data),
                     mS.getData('get', `EntidadConfigSri/Get?json=${JSON.stringify({idEntidad})}`, null, true)
                 ])
-                console.log(results)
+                
 
                 $scope.subContribuyentes = results[0];
                 $scope.ciudadPronvincias = results[1];
                 $scope.biocombustibles = JSON.parse(results[2][0].biocombustible);
-                $scope.anioFiscales = results[3];
-                $scope.data.idAnioFiscal = $scope.anioFiscales.find(val => val.descripcion === $scope.anio).idAnioFiscal;
+                // $scope.anioFiscales = results[3];
+                // $scope.data.idAnioFiscal = $scope.anioFiscales.find(val => val.descripcion === $scope.anio).idAnioFiscal;
 
                 if (params) {
                     $scope.data = params;
@@ -262,16 +261,14 @@
                 let method = $scope.tipoRegistro == 1 ? 'post' : 'put';
                 showLoader();
                 mS.getData(method, enpPoint, $scope.data, true).then(response => {
-                    console.log(response);
+                    hideLoader();                     
                     if (response.id === "0" || response.code === "0") {
-                        hideLoader();
                         tS.toastr('warning', response.message)
                     }
-                    if (response.id === "1" || response.code === "1") {
-                        hideLoader();
+                    if (response.id === "1" || response.code === "1") {                    
                         tS.toastr('success', response.message)
-                        $uibModalInstance.close(response)
                     }
+                    $uibModalInstance.close(response)
                 }).catch(error => {
                     hideLoader();
                     console.log(error);
