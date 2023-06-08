@@ -38,21 +38,27 @@ BEGIN
 		BEGIN
 			DECLARE @ruc VARCHAR(25)
 			SET @ruc = (SELECT ruc FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
-			IF EXISTS (SELECT 1 FROM Config.WhatsappUsage WHERE ruc = @ruc AND estado = 0)
+			IF EXISTS (SELECT 1 FROM Config.WhatsappUsage WHERE ruc = @ruc AND estado = 0 AND ilimitado = 0)
 				BEGIN
 					SELECT '0' code, 'El envío de comprobantes por whatsapp esta bloqueado, para activarlo debe adquirir un plan, comuníquese con ACONTPLUS WEB al número 0991686066 para activarlo.' as 'message'
 					RETURN
 				END
 			ELSE
 				BEGIN
-					DECLARE @message VARCHAR(100)
+					DECLARE @message VARCHAR(100) = ''
 					,@limite INT = 0
 					,@totalUsed INT = 0
 					,@availables INT = 0
-					SELECT @totalUsed = used, @limite = limite FROM WhatsappUsage WHERE ruc = @ruc AND ilimitado = 0
-					SET @availables = (@limite - @totalUsed)
-					IF (@availables) < 25
-						SET @message = 'Le quedan ' + CONVERT(VARCHAR, @availables) + ' mensajes de whatsapp disponibles de su paquete contratado'
+					,@ilimitado BIT = 0
+					SELECT @totalUsed = used, @limite = limite, @ilimitado = ilimitado FROM WhatsappUsage WHERE ruc = @ruc
+
+					IF (@ilimitado = 0)
+						BEGIN
+							SET @availables = (@limite - @totalUsed)
+							IF (@availables) < 25
+							SET @message = 'Le quedan ' + CONVERT(VARCHAR, @availables) + ' mensajes de whatsapp disponibles de su paquete contratado'
+						END
+				
 
 					SELECT '1' code, @message as 'message'
 				END
