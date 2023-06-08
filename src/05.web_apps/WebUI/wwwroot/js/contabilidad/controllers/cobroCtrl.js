@@ -464,22 +464,31 @@
 
         //Reporte 
         $scope.getReport = function (item) {
-            let formatType = 'pdf'
-            let parameters = {
-                reportParams: JSON.stringify({
-                    codigo: "RCINGR",
-                    format: formatType,
-                    aditionalParams: []
-                }),
-                dataParams: JSON.stringify({
-                    idComprobanteIngreso: item.idComprobanteIngreso,
-                    codEstab: item.codEstab
-                })
-            }
+
+            let format = 'pdf';
+
+        let dataParms = {
+            id: item.idComprobanteIngreso,
+        }
+
+
+
+        const parameters = {
+            hasService: true,
+            reportParams: JSON.stringify({
+                hasParams: true,
+                codigo: 'RCINGR',
+                format,
+                codEstab: item.codEstab,
+                aditionalParams: []
+            }),
+            dataParams: JSON.stringify(dataParms)
+        }
+
 
             _commonSvc.getReport({
                 parameters,
-                formatType
+                formatType: format
             })
         }
 
