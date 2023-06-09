@@ -1494,12 +1494,21 @@ function ModalFormaCobroCtrl ($scope, $uibModalInstance, fS, tS, params){
             //Data Documento 
             nro: item.nroDocumento || $scope.data.nro,
             idTipoDocumento: item.idTipoDocumento,
-            idComprobante: item.idComprobante,
-            tipoDocumento: item.tipoDocumento,
+            idComprobante: item.idDocumento,
+            tipoDocumento: item.tipoDocumento || item.codDoc,
             valorAbono: item.saldo || $scope.data.valorAbono,
             controlCaja: subEntidadFinanciera.controlCaja
         }
     }
+    // {
+    //     "idDocumento": 1138,
+    //     "idTipoDocumento": 8,
+    //     "serieComprobante": "001-010-000000213",
+    //     "saldo": 9.24,
+    //     "codDoc": "Retención Version:2.0.0",
+    //     "nroDoc": "",
+    //     "$$hashKey": "object:1797"
+    // }
 
     $scope.addDocumentoElectronico = function(item) {
         if (item.saldo===0) {

@@ -497,7 +497,7 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
             } = _nombreModalConst.common;
             const {
                 StatusEmail
-            } = await import('./../../modal/' + MODAL_SEND_MAIL_CTRL);
+            } = await import(MODAL_SEND_MAIL_CTRL);
             _modalSvc.openModalCustom({
                 controller: StatusEmail,
                 template: MODAL_STATUS_MAIL_CSHTML,
