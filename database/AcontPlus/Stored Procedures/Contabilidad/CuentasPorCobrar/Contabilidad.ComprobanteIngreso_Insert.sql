@@ -165,7 +165,7 @@ BEGIN
 
 		SELECT TOP 1 @idTipoDocumento = td.idTipoDocumento FROM TipoDocumento td WITH (NOLOCK) WHERE td.codigo = 'CI'
 
-		SELECT TOP 1 @idCaja =  idCaja FROM AsignacionCaja WITH (NOLOCK) WHERE idUsuario = @idUsuario
+		SELECT TOP 1 @idCaja =  idCaja FROM AsignacionCaja WITH (NOLOCK) WHERE idUsuario = @idUsuario AND idEntidad = @idEntidad
 
 		SELECT TOP 1 @idControlCaja = idControlCaja FROM ControlCaja WITH (NOLOCK) WHERE idCaja = @idCaja AND estado = 1
 

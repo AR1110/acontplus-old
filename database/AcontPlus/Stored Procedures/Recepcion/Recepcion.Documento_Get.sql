@@ -113,7 +113,7 @@ BEGIN
 
 		SELECT *
 		FROM Bodega WITH (NOLOCK)
-		WHERE codEstab IN (SELECT codEstab FROM Config.Estab_Asig WHERE idUsuarioRol = @idRol)
+		WHERE estado = 1 AND codEstab IN (SELECT codEstab FROM Config.Estab_Asig WHERE idUsuarioRol = @idRol) 
 
 		SELECT *
 		FROM Medida WITH (NOLOCK)

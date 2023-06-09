@@ -1251,7 +1251,7 @@
                                 numeroIdentificacion: $scope.proveedor.identificacion,
                                 nombreFiscal: $scope.proveedor.nombreFiscal
                             }),
-                            pago: JSON.stringify($scope.datosPago.map(item=>({
+                            cobrosPagos: JSON.stringify($scope.datosPago.map(item=>({
                                 idEntidadFinanciera: item.idEntidadFinanciera,
                                 idSubEntidadFinanciera: item.idSubEntidadFinanciera,
                                 idBanco: item.idBanco,
@@ -1269,7 +1269,7 @@
                                 controlCaja: item.controlCaja,
                                 posfechado: item.posFechado,
                             }))),
-                            pagoDetalle: JSON.stringify($scope.pagosDetalle.map(item=>({
+                            detalles: JSON.stringify($scope.pagosDetalle.map(item=>({
                                 idCuotaPorPagar: item.idCuotaPorPagar,
                                 abono: item.abono,
                                 secuencial: item.secuencial                            

@@ -261,8 +261,8 @@
                                         md-on-select="addDocumentoElectronico" md-select-id="idComprobante"
                                         md-auto-select>
                                         <td md-cell>{{$index+1}}</td>
-                                        <td md-cell>{{item.nroDocumento}}</td>
-                                        <td md-cell>{{item.tipoDocumento}}</td>
+                                        <td md-cell>{{item.serieComprobante}}</td>
+                                        <td md-cell>{{item.codDoc}}</td>
                                         <td md-cell>${{item.saldo}}</td>
                                     </tr>
                                     <tr ng-if="documentosElectronicos.length===0" class="text-center">
