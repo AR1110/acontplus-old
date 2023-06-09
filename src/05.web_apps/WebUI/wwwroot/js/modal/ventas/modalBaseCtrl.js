@@ -91,14 +91,80 @@ export class ModalBaseCtrl {
      * @param {string} textSearch 
      * @returns 
      */
-    clienteSearchDynamic(textSearch) {
+    async clienteSearchDynamic(textSearch) {
         try {
-            return this._commonSvc.clienteSearch(textSearch);
+            if(textSearch.length<3) return;
+
+            let isSearchDataInSRI = this.isSearchDataInSRI || false;            
+            let response = await  this._commonSvc.clienteSearch(textSearch)
+            
+            if(response) return response;
+
+            if(isSearchDataInSRI && this.verificarNumero(textSearch) && !response) {
+               
+                if(textSearch.length===13){
+                    showLoader()
+                    this._commonSvc.checkClientSRIByRUC(textSearch).then(result => {
+                        hideLoader()
+                        if (!result.numeroRuc) return;
+
+                        let {razonSocial,establecimientos} = result;
+        
+                        this.cliente.identificacionComprador = textSearch;
+                        this.cliente.razonSocialComprador = razonSocial.replaceAll('"', '');
+                        this.cliente.nombreComercial = razonSocial.replaceAll('"', '');
+                        this.cliente.direccionComprador = establecimientos.find(item => item.matriz === 'SI').direccionCompleta;
+                        this.cliente.idCliente = 0;
+        
+                        
+                    }).catch(error =>{
+                        console.log(error)
+                        hideLoader();
+                    })
+                }
+
+                if(textSearch.length===10){
+                    showLoader();
+                    this._commonSvc.checkClientSRIByCedula(textSearch).then(result => {
+                        hideLoader();
+                        if (result.numeroRuc || result.nombreCompleto) {
+        
+                            let {nombreCompleto} = response;
+                            this.cliente.identificacionComprador = textSearch;
+                            this.cliente.razonSocialComprador = nombreCompleto.replaceAll('"', '');
+                            this.cliente.nombreComercial = nombreCompleto.replaceAll('"', '');                           
+                            this.cliente.idCliente = 0;
+                        } 
+                    }).catch(error => {                        
+                        hideLoader();  
+                        console.log(error);                    
+                    })
+                }
+                
+            }
+
 
         } catch (error) {
-            console.log(error)
+            console.log('Error search cliente',error)
         }
     }
+
+    verificarNumero(numero) {
+         // Eliminar espacios en blanco
+         numero = numero?   numero.trim(): ""
+        
+         if (![10, 13].includes(numero.length)) return;
+ 
+         console.log("ISNana", isNaN(numero))
+         if(isNaN(numero)) return
+ 
+       console.log(numero.slice(-3))
+         if(numero.length===13 && numero.slice(-3) !=="001") return; 
+ 
+         return true;
+    }
+
+    
 
 
     onKeyupSearchCliente() {

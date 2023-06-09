@@ -109,11 +109,20 @@
 
         service.queryMapper = function({data, cliente, detalles, infoAdicionalDocumento, historyDatosAdicionales}){
 
-            let factura = Object.assign({}, data);                    
+            let factura = Object.assign({}, data);      
+            
+            if(cliente.idCliente===0 && !cliente.razonSocialComprador && !cliente.identificacionComprador){
+                throw new Error("Datos de cliente no proporcionados")
+            }
 
             factura.idCliente = cliente.idCliente;
             factura.fechaEmision = formSvc.formatDateTimeZone(data.fechaEmision);
             factura.fechaVencimiento = formSvc.formatDateTimeZone(data.fechaVencimiento);
+            factura.identificacionComprador = cliente.identificacionComprador;
+            factura.razonSocialComprador = cliente.razonSocialComprador;
+            factura.direccionComprador = cliente.direccionComprador;
+            factura.email = cliente.email;
+            factura.telefono = cliente.telefono;
 
             return {
                 factura: JSON.stringify(factura),

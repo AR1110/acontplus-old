@@ -376,27 +376,6 @@
         }
 
 
-        formSvc.getTagInputAsList = function (item) {
-            return item.split(';').map(r => {
-                return {
-                    text: r
-                }
-            });
-        }
-
-        formSvc.getInputTagAsJoin = function (item) {
-            return item.map(r => r.text).join(';');
-        }
-
-        formSvc.getInputTagAsSplit = function (item) {
-            return item.split(';').map(r => {
-                return {
-                    text: r
-                }
-            });
-        }
-
-
         //Get fecha Inicio/Fin en la Busqueda Avanzada del Tipo Documentos 
         formSvc.getFechaInicioFinFilter = function (mes) {
             const fecha = new Date();
@@ -435,6 +414,23 @@
         formSvc.isEmail = function (value) {
             return /^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i.test(value);
         };
+
+      
+        formSvc.validarLongitudNroIdentificacion = function(numero) {
+            return numero.length === 10 || numero.length === 13;
+        }
+          
+        formSvc.isNumer = function(numero) {
+            return !isNaN(numero);
+        }
+          
+        formSvc.contieneSecuencia001 = function(numero) {
+            return numero.includes("001");
+        }
+          
+     
+    
+          
 
         return formSvc;
 

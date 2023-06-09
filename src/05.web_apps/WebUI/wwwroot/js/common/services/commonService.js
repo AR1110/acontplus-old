@@ -1627,6 +1627,7 @@ export class CommonService {
 
 
 
+    //===================================ELIMINAR MAS ADELANTE========================
     //--------------------------------PETICIONES PARA API ADMIN-CLIENTE----------------------
     async getDataApi({
         method,
@@ -2123,12 +2124,17 @@ export class CommonService {
 
 
 
+    //========================================END POINT EXTERNOS================== 
+    checkClientSRIByRUC = function (identificacion) {
+        return this.mS.getData('get', 'Consultas/GetRucSRI?Ruc=' + identificacion, null, true).then(response=>{
+            return response;
+        })
+    }
 
-
-
-    //----------------------------PERMISOS Invoice----------------------------
-    getPermisos() {
-        console.log(this.$rootScope)
+    checkClientSRIByCedula = function (identificacion) {
+        return this.mS.getData('get', 'Consultas/GetCedulaSri?Ruc=' + identificacion, null, true).then(response => {
+            return response;
+        })
     }
 
 }

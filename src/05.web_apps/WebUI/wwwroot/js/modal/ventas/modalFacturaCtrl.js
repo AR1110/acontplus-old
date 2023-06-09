@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.js?v=0.91";
+} from "./modalBaseCtrl.js?v=0.102";
 
 class ModalFacturaCtrl extends ModalBaseCtrl {
 
@@ -34,7 +34,9 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
         this._fS = _fS;
 
         this.TIPO_DOC_FV = _commonSvc.tipoDoc['FV']
-        this.CAMPOS = ["idSucursal", "idCliente", "idPuntoEmision", "fechaEmision", "fechaVencimiento", "validFechaVcto", "gridOptions", "gridOptionsBodega"];
+        this.CAMPOS = ["idSucursal", "idPuntoEmision", "fechaEmision", "fechaVencimiento", "validFechaVcto", "gridOptions", "gridOptionsBodega"];
+        
+        this.isSearchDataInSRI = true; //Registro Rapido de clientes 
 
         this.datosAdicionalesArticulo = [];
         this.infoAdicionalDocumento = [];
@@ -913,8 +915,7 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
             this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
 
 
-            //Usuario-vendedores 
-            console.log(resultsDataForm)
+            //Usuario-vendedores
             this.setColumnDefs('12%');
 
             this.uiGridInvoice = new UiGridOptions({
