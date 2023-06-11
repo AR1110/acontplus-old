@@ -108,9 +108,14 @@
 
             $scope.getFechaInicioFinFilter();
 
-            mS.getData('get', '/AnioFiscal/GetAll').then(response => {
-                $scope.anios = response.data;
-            });
+            
+            $scope.anios = [                
+                {descripcion: '2020'},
+                {descripcion: '2021'},
+                {descripcion: '2022'},
+                {descripcion: '2023'},                
+            ]
+           
 
             mS.getData('get', '/TipoDocumento/Get').then(response => {
                 $scope.tipoDocs = JSON.parse(response.data).filter(val => ['FV', 'NE', 'RV', 'NC'].includes(val.codigo));
@@ -385,7 +390,8 @@
         $scope.estadisticas = [];
         $scope.getEstadisticas = function () {
             $scope.estadisticas = [];
-            $scope.dataSearch.idRol = idUsuarioRol
+            $scope.dataSearch.idRol = idUsuarioRol;
+            console.log($scope.dataSearch)
             $scope.dataSearch.anio = Number($scope.dataSearch.byAnio);
 
             mS.getData('get', `/EstadisticaVenta/Get?json=${JSON.stringify($scope.dataSearch)}`).then(response => {                

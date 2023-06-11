@@ -179,7 +179,6 @@
             console.log($scope.dataSearch.verDetalleDoc)
             console.log(dataParams)
             const parameters = {
-                hasService: false,
                 hasIdUsuarioRol: true,
                 reportParams: JSON.stringify({
                     hasParams: false,
