@@ -129,7 +129,7 @@ export class ModalBaseCtrl {
                         hideLoader();
                         if (result.numeroRuc || result.nombreCompleto) {
         
-                            let {nombreCompleto} = response;
+                            let {nombreCompleto} = result;
                             this.cliente.identificacionComprador = textSearch;
                             this.cliente.razonSocialComprador = nombreCompleto.replaceAll('"', '');
                             this.cliente.nombreComercial = nombreCompleto.replaceAll('"', '');                           
