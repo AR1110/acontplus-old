@@ -179,7 +179,7 @@ BEGIN
 				,idEntidad
 				,importacion)
 			SELECT 
-				 'A'+Helper.F_Auto_Sequential(id+@sequential)
+				 'I'+Helper.F_Auto_Sequential(id+@sequential)
 				,idTipoIva
 				,idMedida
 				,idSubFamilia

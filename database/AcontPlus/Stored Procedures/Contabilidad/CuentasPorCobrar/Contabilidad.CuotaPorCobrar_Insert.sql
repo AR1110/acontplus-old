@@ -114,7 +114,7 @@ BEGIN
 			END 
 		
 		--===============================Calculo de cuota sin entrada=================================================
-	    IF @entrada = 0 
+	    IF @entrada = 0
 			BEGIN
 				SET @countFechas = @tiempoCuotas
 

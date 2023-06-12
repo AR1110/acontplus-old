@@ -468,6 +468,7 @@ BEGIN
 				  ,fechaEmision         = FORMAT(@fechaEmision,'MM/dd/yyyy')
 				  ,serieComprobante     = @serieComprobante
 			FROM @tbDocuments
+			
 		END
 	
 	-- ============================= Datos para el calculo de Interes de las moras ==========================================================
