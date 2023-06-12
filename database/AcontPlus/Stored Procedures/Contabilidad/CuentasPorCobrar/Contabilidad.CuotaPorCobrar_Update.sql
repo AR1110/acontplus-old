@@ -33,8 +33,7 @@ BEGIN
 	DECLARE @codDoc VARCHAR(5)
 	DECLARE @fechaVencimiento AS DATETIME 
 	DECLARE @codEstado VARCHAR(5)
-	DECLARE @idTipoDocumento INT 
-	DECLARE @idDocumento INT
+	DECLARE @idCuentaPorCobrar INT 
 	DECLARE @cuotas VARCHAR(MAX)
 	
 	-- ============== PAYLOAD =====================
@@ -42,7 +41,7 @@ BEGIN
 
 
 	DECLARE @tbCuotas AS TABLE (
-		idCuotaXCobrar INT UNIQUE NOT NULL
+		idCuotaPorCobrar INT UNIQUE NOT NULL
 	   ,fechaVencimiento DATETIME NOT NULL
 	   ,cuota NUMERIC(18,5) NOT NULL
 	   ,mora NUMERIC(18,5) NOT NULL
@@ -51,22 +50,15 @@ BEGIN
 
 	BEGIN TRY
 		
-		IF 1=1
-			BEGIN
-				SELECT '0'code,'el json es :' + isnull(@json,'') as 'message'
-				RETURN 
-			END 
-
-		SELECT @codEstado = codEstado, @idTipoDocumento = idTipoDocumento,@idDocumento = idDocumento,@cuotas = cuotas 
-		FROM OPENJSON(@json) WITH (codEstado VARCHAR(5) '$.codEstado'
-		                          ,idTipoDocumento  INT '$.idTipoDocumento'
-								  ,idDocumento      INT '$.idDocumento'
-								  ,cuotas NVARCHAR(MAX) '$.cuotas' AS JSON
+		SELECT @codEstado = codEstado, @idCuentaPorCobrar = idCuentaPorCobrar,@cuotas = cuotas 
+		FROM OPENJSON(@json) WITH (codEstado  VARCHAR(5) '$.codEstado'
+		                          ,idCuentaPorCobrar INT '$.idCuentaPorCobrar'
+								  ,cuotas  NVARCHAR(MAX) '$.cuotas' AS JSON
 								  )
 
-		INSERT INTO @tbCuotas (idCuotaXCobrar,fechaVencimiento,cuota,mora,diasMora)
-						SELECT idCuotaXCobrar,fechaVencimiento,cuota,mora,diasMora
-						FROM OPENJSON(@cuotas) WITH (idCuotaXCobrar        INT '$.idCuotaXCobrar'
+		INSERT INTO @tbCuotas (idCuotaPorCobrar,fechaVencimiento,cuota,mora,diasMora)
+						SELECT idCuotaPorCobrar,fechaVencimiento,cuota,mora,diasMora
+						FROM OPENJSON(@cuotas) WITH (idCuotaPorCobrar      INT '$.idCuotaPorCobrar'
 												    ,fechaVencimiento DATETIME '$.fechaVencimiento'
 												    ,cuota       NUMERIC(18,5) '$.cuota'
 												    ,mora        NUMERIC(18,5) '$.mora'
@@ -75,8 +67,6 @@ BEGIN
 
 	    -- ========================== recuperar variables ==================================================================
 		SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol
-
-		SELECT TOP 1 @codDoc = codigo FROM dbo.TipoDocumento WITH (NOLOCK) WHERE idTipoDocumento = @idTipoDocumento
 
 		SELECT TOP 1 @fechaVencimiento =  MAX(fechaVencimiento) FROM @tbCuotas
 
@@ -100,20 +90,14 @@ BEGIN
 	           ,cx.cuota             = tb.cuota
 	           ,cx.mora              = tb.mora
 	           ,cx.diasMora          = tb.diasMora
-			FROM dbo.CuotaXCobrar cx WITH (NOLOCK)
-			INNER JOIN @tbCuotas tb ON tb.idCuotaXCobrar = cx.idCuotaXCobrar
+			FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)
+			INNER JOIN @tbCuotas tb ON tb.idCuotaPorCobrar = cx.idCuotaPorCobrar
 
-			IF @codDoc = 'FV'
-				BEGIN
-					UPDATE dbo.Factura SET fechaVencimiento = @fechaVencimiento WHERE idFactura = @idDocumento
-				END 
+			
+			UPDATE Contabilidad.CuentaPorCobrar SET fechaVencimiento = @fechaVencimiento WHERE idCuentaPorCobrar = @idCuentaPorCobrar
+				
 
-			IF @codDoc = 'NE'
-				BEGIN
-					UPDATE dbo.NotaEntrega SET fechaVencimiento = @fechaVencimiento WHERE idNotaEntrega = @idDocumento
-				END 
-
-			SET @payload = (SELECT cx.idCuotaXCobrar
+			SET @payload = (SELECT cx.idCuotaPorCobrar
 			                      ,cx.nroCuota
 								  ,interes = 0
 								  ,cx.cuota
@@ -124,9 +108,9 @@ BEGIN
 				                  ,fechaGracia      = FORMAT(cx.fechaVencimiento,'MM/dd/yyyy')
 								  ,estado           = ep.descripcion
 								  ,codEstado        = ep.codigo
-			                FROM dbo.CuotaXCobrar     cx WITH (NOLOCK)
+			                FROM Contabilidad.CuotaPorCobrar  cx WITH (NOLOCK)
 							INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago
-							WHERE cx.idTipoDocumento = @idTipoDocumento AND cx.idComprobante = @idDocumento AND cx.estado = 1
+							WHERE cx.idCuentaPorCobrar = @idCuentaPorCobrar AND cx.estado = 1
 						   FOR JSON PATH)
 
 		COMMIT TRAN 
@@ -152,7 +136,7 @@ BEGIN
 							 ,idUsuario)
 						 VALUES
 							 (NEWID()
-							 ,'/CuentaPorPagar/Put'
+							 ,'/CuentaPorCobrar/Update'
 							 ,ERROR_NUMBER()
 							 ,ERROR_SEVERITY()
 							 ,ERROR_STATE()

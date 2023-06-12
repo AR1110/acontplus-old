@@ -122,12 +122,11 @@ class CobroService{
     getHistorialCobros(selectedDocumentos){        
         let historialCobros = [];
         for(let item of selectedDocumentos){
-            let totalAbono = this.cobrosDetalle.filter(cd =>cd.idDocumento===item.idDocumento && cd.idTipoDocumento===item.idTipoDocumento)
+            let totalAbono = this.cobrosDetalle.filter(cd =>cd.idCuentaPorCobrar===item.idCuentaPorCobrar)
                                               .reduce((prev, curr)=>prev + curr.abono, 0);
             if(totalAbono > 0){
                 historialCobros.push({
-                    idDocumento: item.idDocumento,
-                    idTipoDocumento: item.idTipoDocumento,
+                    idCuentaPorCobrar: item.idCuentaPorCobrar,                    
                     abono: totalAbono
                 })
             }else break;
@@ -250,9 +249,8 @@ class CobroService{
         if(item.cuota==0) return;
 
         this.cobrosDetalle.push({
-            idDocumento: this.group.idDocumento, //Cambia mas adelante por idCuentaPorCobrar
-            idTipoDocumento: this.group.idTipoDocumento, //Cambia mas adelante por idCuentaPorCobrar
-            idCuotaXCobrar: item.idCuotaXCobrar,
+            idCuentaPorCobrar: this.group.idCuentaPorCobrar,
+            idCuotaPorCobrar: item.idCuotaPorCobrar,
             abono: this.fS.roundNumber(abono, 5),
             cuota: this.fS.roundNumber(item.cuota, 5),
             saldo: this.getValorSaldo(item),
@@ -331,7 +329,7 @@ ModalCobroRapidoCtrl.$inject = [
 
 function ModalCobroRapidoCtrl($scope, $uibModalInstance, mS, commonSvc, modalSvc, nombreModalContabilidad, tS, fS, params){
     let {data}= params;
-    let {idDocumento, idTipoDocumento} = data;
+    let {idCuentaPorCobrar} = data;
     let cobroSvc = new CobroService(tS, mS, fS);
        
     $scope.data = {}  
@@ -389,8 +387,7 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, mS, commonSvc, modalSvc
                 tipo: 3,
                 idCliente : data.idCliente,
                 codEstab : data.codEstab,
-                idTipoDocumento,
-                idDocumento,
+                idCuentaPorCobrar,
                 credito: data.tiempoCredito
             }
             cobroSvc.getCuotas(query).then(response=>{
@@ -614,6 +611,7 @@ ModalCobroLoteCtrl.$inject = [
 function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc, modalSvc, nombreModalContabilidad, tS, fS, params){
     let cobroSvc = new CobroService(tS, mS, fS);
     let {data} = params;
+    let {idCuentaPorCobrar} = data;
     
     const NUM_MAX_ROUND = 4;
     //Cobro Lote
@@ -673,7 +671,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc
         stepSelectDoc = document.getElementById('stepSelectDocs');
         stepCuotas = document.getElementById('stepCuotas');
 
-        if(data && data.idDocumento>0){
+        if(data && data.idCuentaPorCobrar>0){
             $scope.stepCuotaPaymentDoc();
         }     
     })
@@ -684,7 +682,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc
 
 
     //Cobro desde Documento 
-    if(data && data.idDocumento>0){
+    if(data && data.idCuentaPorCobrar>0){
        try {
             showLoader();
             $scope.isPaymentDocument = true;
@@ -692,8 +690,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc
                 tipo: 3,
                 codEstab: data.codEstab,
                 idCliente: data.idCliente,
-                idDocumento: data.idDocumento,
-                idTipoDocumento: data.idTipoDocumento,
+                idCuentaPorCobrar,
                 credito: data.tiempoCredito,
             }
             cobroSvc.getCuotas(query).then(response=>{
@@ -1116,7 +1113,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc
     }
 
     $scope.showCobroDetalle = function(data) {        
-        let tempDetails = $scope.cobrosDetalle.filter(item=>item.idCuotaXCobrar===data.idCuotaXCobrar);
+        let tempDetails = $scope.cobrosDetalle.filter(item=>item.idCuotaPorCobrar===data.idCuotaPorCobrar);
         let infoCobrosDetalle = [];
       
         for(let pd of tempDetails){

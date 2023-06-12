@@ -16,7 +16,7 @@ ModalCuotaCtrl.$inject = [
 ];
 
 function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalContabilidad,  tS, fS, params){
-    let {idTipoDocumento, idDocumento} = params;
+    let {idCuentaPorCobrar} = params;
 
     $scope.tiempoCreditos = [];
     $scope.cuotas = [];
@@ -37,8 +37,7 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
             showLoader();
             let query ={
                 tipo: 2,
-                idTipoDocumento,
-                idDocumento
+                idCuentaPorCobrar
             }
 
             mS.getData('get', url + '?json=' + JSON.stringify(query)  , null, true).then(response=>{
@@ -56,7 +55,6 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
                     $scope.showColumnPorcentajeInteres = $scope.comprobante.tipoConfig ==='PI';
                     $scope.showColumnPrecioFijo = $scope.comprobante.tipoConfig ==='PF';
 
-                    console.log($scope.comprobante)
                     $scope.totalCuota = $scope.comprobante.importeTotal;
 
                     $scope.tiempoCreditos = mainDataRepository[1];
@@ -140,8 +138,7 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
 
     $scope.crearCuota = function() {
         let query = {
-            idDocumento,
-            idTipoDocumento,
+            idCuentaPorCobrar,
             idTiempoCredito: $scope.comprobante.idTiempoCredito,
             fechaEmision: fS.formatDateTimeZone($scope.comprobante.fechaEmision, "YYYY-MM-DD HH:mm:ss A"),
             codEstado: $scope.comprobante.codEstado,
@@ -510,16 +507,15 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
                 showLoader();
 
                 let cuotas =  $scope.cuotas.map(val => ({
-                    idCuotaXCobrar: val.idCuotaXCobrar,
+                    idCuotaPorCobrar: val.idCuotaPorCobrar,
                     cuota: Number(val.cuota),
                     fechaVencimiento: fS.formatDateTimeZone(val.fechaVencimiento, "YYYY-MM-DD HH:mm:ss A"),
                     diasMora: val.diasMora,
                     mora: val.mora                    
                 }))
                 let query = {
-                    idTipoDocumento,
-                    idDocumento,
-                    codEstab: $scope.comprobante.codEstab,
+                    idCuentaPorCobrar,
+                    codEstado: $scope.comprobante.codEstado,
                     cuotas
                 }
 

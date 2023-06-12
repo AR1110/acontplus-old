@@ -30,9 +30,8 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	DECLARE @idUsuario INT 
-	DECLARE @idCuotaXCobrar INT
-	DECLARE @codDoc VARCHAR(5)
-	DECLARE @idComprobante INT
+	DECLARE @idCuotaPorCobrar INT
+	DECLARE @idCuentaPorCobrar INT
 	DECLARE @idComprobanteIngreso INT
 	DECLARE @observacion VARCHAR(300)
 
@@ -52,17 +51,17 @@ BEGIN
 			UPDATE ComprobanteIngreso SET estado = 0,observacion = @observacion,fechaAnulada = dbo.ufnGetDateEcuador() ,idUsuarioAnulado = @idUsuario WHERE idComprobanteIngreso = @idComprobanteIngreso 
 			
 			DECLARE cursor_Cuotas CURSOR LOCAL FOR
-			SELECT idCuotaXCobrar 
+			SELECT cd.idCuotaPorCobrar 
 			FROM dbo.CobroDetalle cd WITH (NOLOCK)
 			INNER JOIN dbo.Cobro  co WITH (NOLOCK) ON co.idCobro = cd.idCobro 
 			WHERE co.idComprobanteIngreso = @idComprobanteIngreso
 				
 				OPEN cursor_Cuotas
-				FETCH NEXT FROM cursor_Cuotas INTO @idCuotaXCobrar
+				FETCH NEXT FROM cursor_Cuotas INTO @idCuotaPorCobrar
 					WHILE @@FETCH_STATUS = 0
 						BEGIN
-							EXEC Contabilidad.CuotaPorCobrar_Update_Status @idCuotaXCobrar
-							FETCH NEXT FROM cursor_Cuotas INTO @idCuotaXCobrar
+							EXEC Contabilidad.CuotaPorCobrar_Update_Status @idCuotaPorCobrar
+							FETCH NEXT FROM cursor_Cuotas INTO @idCuotaPorCobrar
 						END
 				CLOSE cursor_Cuotas
 
@@ -70,17 +69,16 @@ BEGIN
 
 
 			DECLARE cursor_documentos CURSOR LOCAL FOR
-			SELECT td.codigo,cd.idComprobante 
-			FROM dbo.CobroDocumento  cd WITH (NOLOCK) 
-			INNER JOIN dbo.TipoDocumento td WITH (NOLOCK) ON td.idTipoDocumento = cd.idTipoDocumento
-			WHERE cd.idComprobanteIngreso = @idComprobanteIngreso
+			SELECT idCuentaPorCobrar 
+			FROM Contabilidad.Historial_Cobro  WITH (NOLOCK) 
+			WHERE idComprobanteIngreso = @idComprobanteIngreso
 				
 				OPEN cursor_documentos
-				FETCH NEXT FROM cursor_documentos INTO @codDoc,@idComprobante
+				FETCH NEXT FROM cursor_documentos INTO @idCuentaPorCobrar
 					WHILE @@FETCH_STATUS = 0
 						BEGIN
-							EXEC Contabilidad.CuentaPorCobrar_Update_Status @codDoc,@idComprobante
-							FETCH NEXT FROM cursor_documentos INTO @codDoc,@idComprobante
+							EXEC Contabilidad.CuentaPorCobrar_Update_Status @idCuentaPorCobrar
+							FETCH NEXT FROM cursor_documentos INTO @idCuentaPorCobrar
 						END
 				CLOSE cursor_documentos
 

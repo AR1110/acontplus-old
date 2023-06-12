@@ -30,6 +30,7 @@
                             idDocumento: item.idDocumento,
                             idFactura:item.idFactura,
                             idTipoDocumento:item.idTipoDocumento,
+                            idCuentaPorCobrar : item.idCuentaPorCobrar,
                             idTiempoCredito:item.idTiempoCredito,
                             idCliente:item.idCliente,
                             codEstab:item.codEstab,

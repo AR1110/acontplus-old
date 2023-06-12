@@ -8,6 +8,7 @@ CREATE TABLE Contabilidad.CuotaPorCobrar
 (
 	 idCuotaPorCobrar INT PRIMARY KEY IDENTITY(1,1) NOT NULL
 	,idCuentaPorCobrar INT FOREIGN KEY REFERENCES Contabilidad.CuentaPorCobrar(idCuentaPorCobrar) NOT NULL
+	,idCuotaXCObrar BIGINT FOREIGN KEY REFERENCES dbo.CuotaxCobrar(idCuotaXCobrar) NOT NULL
 	,idEstadoPago INT FOREIGN KEY REFERENCES dbo.EstadoPago(idEstadoPago) NOT NULL 
 	,nroCuota INT NOT NULL
 	,fechaVencimiento DATE NOT NULL

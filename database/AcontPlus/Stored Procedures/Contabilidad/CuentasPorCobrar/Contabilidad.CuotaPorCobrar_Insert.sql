@@ -29,12 +29,12 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
+
 	DECLARE @idUsuario INT 
 
 	-- ============ Parameter Json ========================================
 	DECLARE @fechaEmision AS DATETIME
-	DECLARE @idTipoDocumento AS INT 
-	DECLARE @idDocumento AS INT 
+	DECLARE @idCuentaPorCobrar AS INT 
 	DECLARE @idTiempoCredito AS INT 
 	DECLARE @codEstado AS VARCHAR(5)
 	DECLARE @importeTotal AS NUMERIC(18,5)
@@ -51,7 +51,6 @@ BEGIN
 	--=========Parameter Update Document ========================================
 	DECLARE @fechaVencimiento AS DATETIME 
 	DECLARE @idEstadoPago AS INT
-	DECLARE @codDoc AS VARCHAR(5)
 
 	-- ======= Pameteter table ============================================
 	DECLARE @cuotas AS TABLE(
@@ -69,20 +68,16 @@ BEGIN
 
 		SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
-		SELECT @fechaEmision    = CONVERT(DATETIME,fechaEmision,121)
-		      ,@idTipoDocumento = idTipoDocumento 
-			  ,@idDocumento     = idDocumento
-			  ,@idTiempoCredito = idTiempoCredito
-			  ,@codEstado       = codEstado 
-			  ,@importeTotal    = importeTotal
+		SELECT @fechaEmision      = CONVERT(DATETIME,fechaEmision,121)
+		      ,@idCuentaPorCobrar = idCuentaPorCobrar 
+			  ,@idTiempoCredito   = idTiempoCredito
+			  ,@codEstado         = codEstado 
+			  ,@importeTotal      = importeTotal
 		FROM OPENJSON(@json) WITH (fechaEmision NVARCHAR(150) '$.fechaEmision'
-		                          ,idTipoDocumento        INT '$.idTipoDocumento'
-							      ,idDocumento            INT '$.idDocumento'
+							      ,idCuentaPorCobrar      INT '$.idCuentaPorCobrar'
 							      ,idTiempoCredito        INT '$.idTiempoCredito'
 							      ,codEstado       VARCHAR(5) '$.codEstado' 
 								  ,importeTotal NUMERIC(18,5) '$.importeTotal') as dt
-
-		SELECT TOP 1 @codDoc = codigo FROM dbo.TipoDocumento WITH (NOLOCK) WHERE idTipoDocumento = @idTipoDocumento
 
 		SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PE'
 
@@ -149,22 +144,14 @@ BEGIN
 
 		BEGIN TRAN 
 			
-			UPDATE dbo.CuotaXCobrar SET estado = 0 WHERE idTipoDocumento = @idTipoDocumento AND idComprobante = @idDocumento
+			UPDATE Contabilidad.CuotaPorCobrar SET estado = 0 WHERE idCuentaPorCobrar = @idCuentaPorCobrar
 
-			IF @codDoc = 'FV'
-				BEGIN
-					UPDATE dbo.Factura SET fechaVencimiento = @fechaVencimiento, idTiempoCredito = @idTiempoCredito WHERE idFactura = @idDocumento
-				END 
-
-			IF @codDoc = 'NE'
-				BEGIN
-					UPDATE dbo.NotaEntrega SET fechaVencimiento = @fechaVencimiento, idTiempoCredito = @idTiempoCredito WHERE idNotaEntrega = @idDocumento
-				END
-
-			INSERT INTO dbo.CuotaXCobrar (idTipoDocumento,idComprobante,idEstadoPago,fechaVencimiento,nroCuota,cuota,entrada)
-			                      SELECT @idTipoDocumento,@idDocumento,@idEstadoPago,fechaVencimiento,nroCuota,cuota,entrada FROM @cuotas
+		    UPDATE Contabilidad.CuentaPorCobrar SET fechaVencimiento = @fechaVencimiento, idTiempoCredito = @idTiempoCredito WHERE idCuentaPorCobrar = @idCuentaPorCobrar
+				
+			INSERT INTO Contabilidad.CuotaPorCobrar (idCuentaPorCobrar,idEstadoPago,fechaVencimiento,nroCuota,cuota,entrada)
+			                                 SELECT @idCuentaPorCobrar,@idEstadoPago,fechaVencimiento,nroCuota,cuota,entrada FROM @cuotas
 			
-			SET @payload = (SELECT cx.idCuotaXCobrar
+			SET @payload = (SELECT cx.idCuotaPorCobrar
 			                      ,cx.nroCuota
 								  ,interes = 0
 								  ,cx.cuota
@@ -175,9 +162,9 @@ BEGIN
 				                  ,fechaGracia      = FORMAT(cx.fechaVencimiento,'MM/dd/yyyy')
 								  ,estado           = ep.descripcion
 								  ,codEstado        = ep.codigo
-			                FROM dbo.CuotaXCobrar     cx WITH (NOLOCK)
+			                FROM Contabilidad.CuotaPorCobrar  cx WITH (NOLOCK)
 							INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago
-							WHERE cx.idTipoDocumento = @idTipoDocumento AND cx.idComprobante = @idDocumento AND cx.estado = 1
+							WHERE cx.idCuentaPorCobrar = @idCuentaPorCobrar AND cx.estado = 1
 						   FOR JSON PATH)
 
 		COMMIT TRAN 

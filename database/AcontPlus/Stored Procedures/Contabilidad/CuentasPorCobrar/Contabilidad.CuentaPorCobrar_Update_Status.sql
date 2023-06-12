@@ -23,7 +23,7 @@ GO
 IF OBJECT_ID(N'Contabilidad.CuentaPorCobrar_Update_Status', N'P') IS NOT NULL
 DROP PROCEDURE Contabilidad.CuentaPorCobrar_Update_Status
 GO
-CREATE PROCEDURE Contabilidad.CuentaPorCobrar_Update_Status @codDoc VARCHAR(5),@idComprobante INT
+CREATE PROCEDURE Contabilidad.CuentaPorCobrar_Update_Status @idCuentaPorCobrar INT
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -36,29 +36,20 @@ BEGIN
 	DECLARE @idTipoDocumento AS INT 
 	DECLARE @posfechado NUMERIC(18,5)
 	
-	SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo = @codDoc
 
 	SELECT @posfechado = SUM(cd.abono) 
-	FROM dbo.CobroDetalle             cd WITH (NOLOCK)
-	INNER JOIN dbo.CuotaXCobrar       cc WITH (NOLOCK) ON cc.idCuotaXCobrar       = cd.idCuotaXCobrar
-	INNER JOIN dbo.Cobro              co WITH (NOLOCK) ON co.idCobro              = cd.idCobro
-	INNER JOIN dbo.ComprobanteIngreso ci WITH (NOLOCK) ON ci.idComprobanteIngreso = co.idComprobanteIngreso
-	WHERE cc.idComprobante = @idComprobante AND cc.idTipoDocumento = @idTipoDocumento AND co.cobro = 0 AND ci.estado = 1
+	FROM dbo.CobroDetalle                  cd WITH (NOLOCK)
+	INNER JOIN Contabilidad.CuotaPorCobrar cc WITH (NOLOCK) ON cc.idCuotaPorCobrar     = cd.idCuotaPorCobrar
+	INNER JOIN dbo.Cobro                   co WITH (NOLOCK) ON co.idCobro              = cd.idCobro
+	INNER JOIN dbo.ComprobanteIngreso      ci WITH (NOLOCK) ON ci.idComprobanteIngreso = co.idComprobanteIngreso
+	WHERE cc.idCuentaPorCobrar = @idCuentaPorCobrar AND co.cobro = 0 AND ci.estado = 1
 
-	SELECT @abono =  SUM(abono) FROM dbo.CuotaXCobrar WITH (NOLOCK) WHERE idTipoDocumento = @idTipoDocumento AND idComprobante = @idComprobante AND estado = 1
+	SELECT @abono =  SUM(abono) FROM Contabilidad.CuotaPorCobrar WITH (NOLOCK) WHERE idCuentaPorCobrar = @idCuentaPorCobrar AND estado = 1
 
-	IF @codDoc = 'FV'
-		BEGIN
-			SELECT TOP 1 @importeTotal = total FROM dbo.Factura WITH (NOLOCK) WHERE idFactura = @idComprobante
-		END
-		
-	IF @codDoc = 'NE'
-		BEGIN
-			SELECT TOP 1 @importeTotal = total FROM dbo.NotaEntrega WITH (NOLOCK) WHERE idNotaEntrega = @idComprobante
-		END 
-
+	SELECT TOP 1 @importeTotal = importeTotal FROM Contabilidad.CuentaPorCobrar WITH (NOLOCK) WHERE idCuentaPorCobrar = @idCuentaPorCobrar
 
 	SELECT @residuo = ISNULL(@importeTotal,0) - ISNULL(@abono,0)
+
 
 	IF ISNULL(@posfechado,0) > 0
 		BEGIN
@@ -83,15 +74,8 @@ BEGIN
 				END 
 		END
 
-	IF @codDoc = 'FV'
-		BEGIN
-			UPDATE dbo.Factura SET idEstadoPago = @idEstadoPago, abono = ISNULL(@abono,0)  WHERE idFactura = @idComprobante
-		END
+	UPDATE Contabilidad.CuentaPorCobrar SET idEstadoPago = @idEstadoPago, abono = ISNULL(@abono,0) WHERE idCuentaPorCobrar = @idCuentaPorCobrar
 		
-	IF @codDoc = 'NE'
-		BEGIN
-			UPDATE dbo.NotaEntrega SET idEstadoPago = @idEstadoPago, abono = ISNULL(@abono,0) WHERE idNotaEntrega = @idComprobante
-		END 
 
 END
 GO

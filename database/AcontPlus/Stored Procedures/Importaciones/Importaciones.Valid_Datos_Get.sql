@@ -129,7 +129,7 @@ BEGIN
 					FROM OPENJSON(@json)
 					WITH
 					(
-						 codContribuyente     VARCHAR(10)   '$.codContribuyente'
+						 codContribuyente     VARCHAR(10)  '$.codContribuyente'
 						,codIdentificacion    VARCHAR(10)  '$.codIdentificacion'
 						,numeroIdentificacion VARCHAR(50)  '$.numeroIdentificacion'
 						,nombreComercial      VARCHAR(500) '$.nombreComercial'

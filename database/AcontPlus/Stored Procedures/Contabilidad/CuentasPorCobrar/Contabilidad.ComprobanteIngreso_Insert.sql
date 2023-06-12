@@ -34,9 +34,8 @@ BEGIN
 	DECLARE @idCaja INT
 	DECLARE @idControlCaja INT 
 	DECLARE @payload VARCHAR(MAX)
-	DECLARE @idCuotaXCobrar INT 
-	DECLARE @codDoc AS VARCHAR(5)
-	DECLARE @idComprobante AS INT
+	DECLARE @idCuotaPorCobrar INT 
+	DECLARE @idCuentaPorCobrar AS INT
 
 	DECLARE @documento AS TABLE(
 		 idTipoPersona INT NOT NULL
@@ -66,14 +65,13 @@ BEGIN
 	)
 
 	DECLARE @paymentDetail AS TABLE(
-		 idCuotaXCobrar INT NOT NULL
+		 idCuotaPorCobrar INT NOT NULL
 		,abono DECIMAL (15,5) NOT NULL
 		,secuencial INT NOT NULL
 	)
 
 	DECLARE @history AS TABLE (
-		 idTipoDocumento INT NOT NULL
-		,idDocumento INT NOT NULL
+		 idCuentaPorCobrar INT NOT NULL UNIQUE
 		,abono NUMERIC(18,5) NOT NULL
 	)
 
@@ -149,13 +147,13 @@ BEGIN
 			 ,controlCaja            BIT '$.controlCaja')
 		AS dt
 
-		INSERT INTO @paymentDetail(idCuotaXCobrar,abono,secuencial)
-							SELECT idCuotaXCobrar,abono,secuencial FROM OPENJSON(@cobroDetalle) 
-							 WITH (idCuotaXCobrar INT '$.idCuotaXCobrar',abono NUMERIC(15,5) '$.abono',secuencial INT '$.secuencial') AS dt
+		INSERT INTO @paymentDetail(idCuotaPorCobrar,abono,secuencial)
+							SELECT idCuotaPorCobrar,abono,secuencial FROM OPENJSON(@cobroDetalle) 
+							 WITH (idCuotaPorCobrar INT '$.idCuotaPorCobrar',abono NUMERIC(15,5) '$.abono',secuencial INT '$.secuencial') AS dt
 		
-		INSERT INTO @history(idTipoDocumento,idDocumento,abono)
-					  SELECT idTipoDocumento,idDocumento,abono FROM OPENJSON(@historial)
-		               WITH (idTipoDocumento INT '$.idTipoDocumento',idDocumento INT '$.idDocumento',abono NUMERIC(18,5) '$.abono') AS dt
+		INSERT INTO @history(idCuentaPorCobrar,abono)
+					  SELECT idCuentaPorCobrar,abono FROM OPENJSON(@historial)
+		               WITH (idCuentaPorCobrar INT '$.idCuentaPorCobrar',abono NUMERIC(18,5) '$.abono') AS dt
 
 		
 		--======================================Obteniendo variables ============================================================
@@ -234,21 +232,20 @@ BEGIN
 			SELECT @idComprobanteIngreso,idEntidadFinanciera,idSubEntidadFinanciera,idBanco,idTipoDocumento,idComprobante,fechaEmision,valor,abono,posfechado,secuencial,cobro,infoCobro,controlCaja
 			FROM @payment
 
-			INSERT INTO CobroDetalle
-			        (idCobro,idCuotaXCobrar,abono)
-			SELECT c.idCobro,dt.idCuotaXCobrar,dt.abono FROM @paymentDetail dt INNER JOIN dbo.Cobro c WITH (NOLOCK) ON c.secuencial = dt.secuencial WHERE c.idComprobanteIngreso = @idComprobanteIngreso
+			INSERT INTO CobroDetalle (idCobro,   idCuotaPorCobrar,   abono)
+			                 SELECT c.idCobro,dt.idCuotaPorCobrar,dt.abono FROM @paymentDetail dt INNER JOIN dbo.Cobro c WITH (NOLOCK) ON c.secuencial = dt.secuencial WHERE c.idComprobanteIngreso = @idComprobanteIngreso
 
-			INSERT INTO CobroDocumento(idComprobanteIngreso,idTipoDocumento,idComprobante,abono) SELECT @idComprobanteIngreso,idTipoDocumento,idDocumento,abono FROM @history
+			INSERT INTO Contabilidad.Historial_Cobro(idComprobanteIngreso,idCuentaPorCobrar,abono) SELECT @idComprobanteIngreso,idCuentaPorCobrar,abono FROM @history
 
 			DECLARE cursor_Cuotas CURSOR LOCAL FOR
-			SELECT idCuotaXCobrar FROM @paymentDetail
+			SELECT idCuotaPorCobrar FROM @paymentDetail
 				
 				OPEN cursor_Cuotas
-				FETCH NEXT FROM cursor_Cuotas INTO @idCuotaXCobrar
+				FETCH NEXT FROM cursor_Cuotas INTO @idCuotaPorCobrar
 					WHILE @@FETCH_STATUS = 0
 						BEGIN
-							EXEC Contabilidad.CuotaPorCobrar_Update_Status @idCuotaXCobrar
-							FETCH NEXT FROM cursor_Cuotas INTO @idCuotaXCobrar
+							EXEC Contabilidad.CuotaPorCobrar_Update_Status @idCuotaPorCobrar
+							FETCH NEXT FROM cursor_Cuotas INTO @idCuotaPorCobrar
 						END
 				CLOSE cursor_Cuotas
 
@@ -256,14 +253,14 @@ BEGIN
 
 
 			DECLARE cursor_documentos CURSOR LOCAL FOR
-			SELECT codigo,idDocumento FROM @history hi INNER JOIN TipoDocumento td WITH (NOLOCK) ON td.idTipoDocumento = hi.idTipoDocumento
+			SELECT hi.idCuentaPorCobrar FROM @history hi 
 				
 				OPEN cursor_documentos
-				FETCH NEXT FROM cursor_documentos INTO @codDoc,@idComprobante
+				FETCH NEXT FROM cursor_documentos INTO @idCuentaPorCobrar
 					WHILE @@FETCH_STATUS = 0
 						BEGIN
-							EXEC Contabilidad.CuentaPorCobrar_Update_Status @codDoc,@idComprobante
-							FETCH NEXT FROM cursor_documentos INTO @codDoc,@idComprobante
+							EXEC Contabilidad.CuentaPorCobrar_Update_Status @idCuentaPorCobrar
+							FETCH NEXT FROM cursor_documentos INTO @idCuentaPorCobrar
 						END
 				CLOSE cursor_documentos
 

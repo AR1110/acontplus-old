@@ -4,6 +4,7 @@ go
 declare @table as table (
 	idCuentaPorCobrar int 
    ,idEstadoPago int 
+   ,idCuotaXCobrar INT UNIQUE NOT NULL
    ,nroCuota int 
    ,fechaVencimiento date
    ,cuota numeric(18,5)
@@ -16,10 +17,10 @@ declare @table as table (
 
 
 
-INSERT INTO @table (idCuentaPorCobrar,idEstadoPago,nroCuota,fechaVencimiento,cuota,diasMora,mora,abono,entrada,estado)
+INSERT INTO @table (idCuotaXCobrar,idCuentaPorCobrar,idEstadoPago,nroCuota,fechaVencimiento,cuota,diasMora,mora,abono,entrada,estado)
 
-SELECT  
-		idCuentaPorCobrar = case td.codigo when 'fv' then (select cp.idCuentaPorCobrar from Contabilidad.CuentaPorCobrar cp where cp.codDoc = '01'and cp.idDocumento = cc.idComprobante)
+SELECT idCuotaXCobrar  
+	  ,idCuentaPorCobrar = case td.codigo when 'fv' then (select cp.idCuentaPorCobrar from Contabilidad.CuentaPorCobrar cp where cp.codDoc = '01'and cp.idDocumento = cc.idComprobante)
 							              when 'ne' then (select cp.idCuentaPorCobrar from Contabilidad.CuentaPorCobrar cp where cp.codDoc = 'NE'and cp.idDocumento = cc.idComprobante)
 							end
 ,idEstadoPago,nroCuota,fechaVencimiento,cuota,diasMora,mora,abono,entrada,CC.estado
@@ -28,6 +29,6 @@ inner join TipoDocumento td on td.idTipoDocumento = cc.idTipoDocumento
 
 order by idComprobante,cc.idTipoDocumento
 
-INSERT INTO Contabilidad.CuotaPorCobrar(idCuentaPorCobrar,idEstadoPago,nroCuota,fechaVencimiento,cuota,diasMora,mora,abono,entrada,estado)
-SELECT idCuentaPorCobrar,idEstadoPago,nroCuota,fechaVencimiento,cuota,diasMora,mora,abono,entrada,estado from  @table where idCuentaPorCobrar is not null
+INSERT INTO Contabilidad.CuotaPorCobrar(idCuotaXCobrar,idCuentaPorCobrar,idEstadoPago,nroCuota,fechaVencimiento,cuota,diasMora,mora,abono,entrada,estado)
+SELECT idCuotaXCobrar,idCuentaPorCobrar,idEstadoPago,nroCuota,fechaVencimiento,cuota,diasMora,mora,abono,entrada,estado from  @table where idCuentaPorCobrar is not null
 

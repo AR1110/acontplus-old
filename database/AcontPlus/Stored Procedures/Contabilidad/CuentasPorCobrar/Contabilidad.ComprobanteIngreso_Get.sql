@@ -207,31 +207,17 @@ BEGIN
 
 			SELECT cd.idCobroDetalle
 			      ,cd.idCobro 
-				  ,codDoc = td.codigo
+				  ,codDoc = cx.codDoc
 				  ,fechaVencimiento = FORMAT(cx.fechaVencimiento,'MM/dd/yyyy')
-				  ,cx.nroCuota
-				  ,cx.cuota
+				  ,cc.nroCuota
+				  ,cc.cuota
 				  ,cd.abono
-				  ,saldo = cx.cuota - cd.abono
-				  ,serieComprobante = CASE td.codigo WHEN 'FV' THEN (
-																	  SELECT es.estab  + '-' + pe.ptoEmi + '-' + Helper.F_Auto_Sequential(fe.nroFactura) 
-																	  FROM dbo.Factura               fe WITH (NOLOCK) 
-																	  INNER JOIN dbo.puntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision = fe.idPuntoEmision
-																	  INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pe.codEstab
-																	  WHERE fe.idFactura = cx.idComprobante
-																	)
-												     WHEN 'NE' THEN (
-																	  SELECT es.estab  + '-' + pe.ptoEmi + '-' + Helper.F_Auto_Sequential(ne.nroDocumento) 
-																	  FROM dbo.NotaEntrega           ne WITH (NOLOCK) 
-																	  INNER JOIN dbo.puntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision = ne.idPuntoEmision
-																	  INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pe.codEstab
-																	  WHERE ne.idNotaEntrega = cx.idComprobante
-																	)
-									    END 
-			FROM dbo.CobroDetalle        cd WITH (NOLOCK)
-			INNER JOIN dbo.Cobro         co WITH (NOLOCK) ON co.idCobro         = cd.idCobro
-			INNER JOIN dbo.CuotaXCobrar  cx WITH (NOLOCK) ON cx.idCuotaXCobrar  = cd.idCuotaXCobrar
-			INNER JOIN dbo.TipoDocumento td WITH (NOLOCK) ON td.idTipoDocumento = cx.idTipoDocumento
+				  ,saldo = cc.cuota - cd.abono
+				  ,serieComprobante = cx.serieComprobante
+			FROM dbo.CobroDetalle                   cd WITH (NOLOCK)
+			INNER JOIN dbo.Cobro                    co WITH (NOLOCK) ON co.idCobro           = cd.idCobro
+			INNER JOIN Contabilidad.CuotaPorCobrar  cc WITH (NOLOCK) ON cc.idCuotaPorCobrar  = cd.idCuotaPorCobrar
+			INNER JOIN Contabilidad.CuentaPorCobrar cx WITH (NOLOCK) ON cx.idCuentaPorCobrar = cc.idCuentaPorCobrar
 			WHERE co.idComprobanteIngreso = @idComprobanteIngreso
 		END
 
@@ -317,11 +303,11 @@ BEGIN
 				,cx.cuota
 				,cx.saldo
 				,cx.abono
-			FROM dbo.ComprobanteIngreso         ci WITH (NOLOCK)
-			INNER JOIN dbo.CobroDocumento       cd WITH (NOLOCK) ON ci.idComprobanteIngreso   = cd.idComprobanteIngreso
-			INNER JOIN dbo.Cobro                co WITH (NOLOCK) ON co.idComprobanteIngreso   = ci.idComprobanteIngreso
-			INNER JOIN dbo.CobroDetalle         cc WITH (NOLOCK) ON cc.idCobro                = co.idCobro
-			INNER JOIN dbo.CuotaXCobrar         cx WITH (NOLOCK) ON cx.idCuotaXCobrar         = cc.idCuotaXCobrar
+			FROM dbo.ComprobanteIngreso            ci WITH (NOLOCK)
+			INNER JOIN dbo.CobroDocumento          cd WITH (NOLOCK) ON ci.idComprobanteIngreso   = cd.idComprobanteIngreso
+			INNER JOIN dbo.Cobro                   co WITH (NOLOCK) ON co.idComprobanteIngreso   = ci.idComprobanteIngreso
+			INNER JOIN dbo.CobroDetalle            cc WITH (NOLOCK) ON cc.idCobro                = co.idCobro
+			INNER JOIN Contabilidad.CuotaPorCobrar cx WITH (NOLOCK) ON cx.idCuotaPorCobrar       = cc.idCuotaPorCobrar
 			WHERE cd.idComprobante = @idDocumento AND cd.idTipoDocumento = @idTipoDocumento
 		END 
 END

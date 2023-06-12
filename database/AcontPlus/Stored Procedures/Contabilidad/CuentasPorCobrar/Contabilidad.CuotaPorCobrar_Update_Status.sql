@@ -40,7 +40,7 @@ BEGIN
 	FROM dbo.CobroDetalle             cd WITH (NOLOCK)
 	INNER JOIN dbo.Cobro              co WITH (NOLOCK) ON co.idCobro = cd.idCobro
 	INNER JOIN dbo.ComprobanteIngreso ci WITH (NOLOCK) ON ci.idComprobanteIngreso = co.idComprobanteIngreso
-	WHERE cd.idCuotaXCobrar = @idCuotaPorCobrar AND ci.estado = 1 AND co.cobro = 1
+	WHERE cd.idCuotaPorCobrar = @idCuotaPorCobrar AND ci.estado = 1 AND co.cobro = 1
 
 	SELECT @residuo = ISNULL(@cuota,0) - ISNULL(@abono,0)
 
@@ -59,6 +59,6 @@ BEGIN
 			SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PE'
 		END 
 
-	UPDATE dbo.CuotaXCobrar SET idEstadoPago = @idEstadoPago, abono = ISNULL(@abono,0) WHERE idCuotaXCobrar = @idCuotaPorCobrar
+	UPDATE Contabilidad.CuotaPorCobrar SET idEstadoPago = @idEstadoPago, abono = ISNULL(@abono,0) WHERE idCuotaPorCobrar = @idCuotaPorCobrar
 END
 GO
