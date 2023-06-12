@@ -35,6 +35,8 @@ BEGIN
 	DECLARE @idEntidad AS INT
 	DECLARE @idUsuario AS INT
 
+	DECLARE @idComprobanteIngreso AS INT 
+
 	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT '$.tipo')
 
 	SELECT TOP 1 @idUsuario = idUsuario , @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
@@ -70,19 +72,19 @@ BEGIN
 											,@byUsuarioSearch	INT
 											,@codEstab          VARCHAR(50)'
 			DECLARE @sql NVARCHAR(MAX) = 'SELECT TOP 50
-											 idComprobanteIngreso = ci.idComprobanteIngreso
-											 ,s.codEstab
-											,total = ci.total
-											,fechaRegistro = dbo.AFTConvertDate(ci.fechaRegistro)+''''+ dbo.AFTConvertHora(ci.fechaRegistro)
-											,abono = ci.abono
-											,cambio = ci.cambio
-											,nroDoc = td.codigo+''-''+s.estab+''-''+Helper.F_Auto_Sequential(ci.nroDocumento)
-											,cliente = ci.nombreFiscal
-											,nroIdentificacion = ci.nroIdentificacion  
-											,caja =''Ninguna''
-											,style = CASE WHEN ci.estado = 0 THEN ''table-danger'' ELSE '''' END 
-											,estado = CASE WHEN ci.estado = 0 THEN ''Anulado'' ELSE ''Activo'' END 
-											,usuario = u.nombreUsuario
+													 idComprobanteIngreso = ci.idComprobanteIngreso
+													,s.codEstab
+													,total                = ci.total
+													,fechaRegistro        = dbo.AFTConvertDate(ci.fechaRegistro)+''''+ dbo.AFTConvertHora(ci.fechaRegistro)
+													,abono                = ci.abono
+													,cambio               = ci.cambio
+													,nroDoc               = td.codigo+''-''+s.estab+''-''+Helper.F_Auto_Sequential(ci.nroDocumento)
+													,cliente              = ci.nombreFiscal
+													,nroIdentificacion    = ci.nroIdentificacion  
+													,caja                 =''Ninguna''
+													,style                = CASE WHEN ci.estado = 0 THEN ''table-danger'' ELSE '''' END 
+													,estado               = CASE WHEN ci.estado = 0 THEN ''Anulado'' ELSE ''Activo'' END 
+													,usuario              = u.nombreUsuario
 										 FROM dbo.ComprobanteIngreso   ci WITH (NOLOCK) 
 										 INNER JOIN Sri.Establecimiento s WITH (NOLOCK) ON s.codEstab         = ci.codEstab
 										 INNER JOIN dbo.TipoDocumento  td WITH (NOLOCK) ON td.idTipoDocumento = ci.idTipoDocumento
@@ -147,9 +149,9 @@ BEGIN
 			ELSE
 				BEGIN 
 					IF @checkBoxUsuario = 1 
-					BEGIN
-						SET @sql = @sql + ' AND ci.idUsuario = @byUsuarioSearch '
-					END 
+						BEGIN
+							SET @sql = @sql + ' AND ci.idUsuario = @byUsuarioSearch '
+						END 
 				END 		
 
 			SET @sql = @sql + ' ORDER BY ci.nroDocumento DESC'
@@ -172,7 +174,7 @@ BEGIN
 	-- ====================== Historial para mostrar los detalles del comprobante de ingreso ===========================
 	IF @tipo = 2
 		BEGIN
-			DECLARE @idComprobanteIngreso AS INT 
+			
 
 			SELECT @idComprobanteIngreso = idComprobanteIngreso FROM OPENJSON(@json) WITH (idComprobanteIngreso INT '$.idComprobanteIngreso')
 

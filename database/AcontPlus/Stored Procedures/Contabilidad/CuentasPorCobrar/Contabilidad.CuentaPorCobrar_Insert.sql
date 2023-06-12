@@ -27,11 +27,9 @@ CREATE PROCEDURE Contabilidad.CuentaPorCobrar_Insert
 	-- Add the parameters for the stored procedure here
 	@codDoc VARCHAR(5)
    ,@idDocumento INT
-   ,@uniqueId VARCHAR(50)
    ,@idPuntoEmision INT
    ,@idTiempoCredito INT 
    ,@idCliente INT 
-   ,@idEstadoDocumento INT
    ,@serieComprobante VARCHAR(25)
    ,@fechaEmision DATETIME 
    ,@fechaVencimiento DATETIME 
@@ -43,9 +41,10 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
+
 	DECLARE @idCuentaPorCobrar INT
 
-	--===========Paramertros para el calculo de cuotas=====================
+	--===========Parametros para el calculo de cuotas=====================
 	DECLARE @count AS INT = 0
 	DECLARE @countFechas AS INT
 	DECLARE @diasCredito AS INT
@@ -53,6 +52,8 @@ BEGIN
 	DECLARE @tiempoCuotas AS INT
 	DECLARE @cuota AS NUMERIC(18,5)
 	DECLARE @entrada AS BIT 
+	DECLARE @uniqueId VARCHAR(50)
+	DECLARE @idEstadoDocumento INT
 
 	-- ======= Pameteter table ============================================
 	DECLARE @cuotas AS TABLE(
@@ -62,6 +63,9 @@ BEGIN
 	   ,entrada BIT NULL
 	)
 
+
+	SELECT TOP 1 @idEstadoDocumento = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PE'
+
 	SELECT TOP 1
 			 @nroCuota     = numeroCuota
 			,@diasCredito  = diasCredito 
@@ -69,6 +73,8 @@ BEGIN
 			,@tiempoCuotas = diasCredito / numeroCuota
 			,@cuota        = @importeTotal /numeroCuota
 	FROM dbo.TiempoCredito WITH (NOLOCK) WHERE idTiempoCredito = @idTiempoCredito
+
+	SELECT @uniqueId =  @codDoc + '-' + CAST(@idDocumento AS varchar)
 
 	--===============================Calculo de cuota con entrada=================================================
 	IF @entrada = 1
@@ -106,9 +112,9 @@ BEGIN
 					SET @countFechas += @tiempoCuotas
 					SET @count +=  1;
 				END 
-		END 
+		END
 
-	
+	--========================================= VALIDACIONES DE DATOS =======================================================================
 	IF (SELECT COUNT(*) FROM @cuotas) = 0
 		BEGIN
 			SELECT '0'code,'Error al generar las cuotas' as  'message'
@@ -116,7 +122,13 @@ BEGIN
 			RETURN 
 		END
 
-	
+	IF EXISTS (SELECT 1 FROM Contabilidad.CuentaPorCobrar WITH (NOLOCK) WHERE uniqueId = @uniqueId)
+		BEGIN
+			SELECT '0'code,'Este Documento ya se encuentra en una Cuenta Por Cobrar' as  'message'
+			ROLLBACK TRAN;
+			RETURN 
+		END
+	-- ======================================= TRANSANCION DE INSERT ========================================================================
 	INSERT INTO Contabilidad.CuentaPorCobrar
            (idPuntoEmision, idTiempoCredito, idCliente, idEstadoDocumento, codDoc, idDocumento, uniqueId, serieComprobante, fechaEmision, fechaVencimiento, importeTotal, idEntidad, idUsuario)
 	SELECT @idPuntoEmision,@idTiempoCredito,@idCliente,@idEstadoDocumento,@codDoc,@idDocumento,@uniqueId,@serieComprobante,@fechaEmision,@fechaVencimiento,@importeTotal,@idEntidad,@idUsuario

@@ -14,7 +14,7 @@ CREATE TABLE Contabilidad.CuentaPorCobrar(
 	,uniqueId VARCHAR(50) NOT NULL UNIQUE
 	,serieComprobante VARCHAR(25) NOT NULL
 	,fechaEmision DATETIME NOT NULL
-	,fechaVencimiento DATETIME NOT NULL
+	,fechaVencimiento DATE NOT NULL
 	,importeTotal NUMERIC(18,5) NOT NULL
 	,abono NUMERIC(18,5) DEFAULT 0 NOT NULL
 	,mora NUMERIC(18,5) DEFAULT 0 NOT NULL
