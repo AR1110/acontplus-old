@@ -93,8 +93,8 @@ export class ModalBaseCtrl {
      */
     async clienteSearchDynamic(textSearch) {
         try {
-            if(textSearch.length<3) return;
 
+            if(textSearch.length<3) return;
             let isSearchDataInSRI = this.isSearchDataInSRI || false;            
             let response = await  this._commonSvc.clienteSearch(textSearch)
             
@@ -122,7 +122,7 @@ export class ModalBaseCtrl {
                         hideLoader();
                     })
                 }
-
+ 
                 if(textSearch.length===10){
                     showLoader();
                     this._commonSvc.checkClientSRIByCedula(textSearch).then(result => {
@@ -154,11 +154,9 @@ export class ModalBaseCtrl {
          numero = numero?   numero.trim(): ""
         
          if (![10, 13].includes(numero.length)) return;
- 
-         console.log("ISNana", isNaN(numero))
+  
          if(isNaN(numero)) return
- 
-       console.log(numero.slice(-3))
+  
          if(numero.length===13 && numero.slice(-3) !=="001") return; 
  
          return true;
