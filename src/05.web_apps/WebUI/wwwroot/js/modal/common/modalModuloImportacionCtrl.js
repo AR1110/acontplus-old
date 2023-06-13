@@ -41,6 +41,7 @@ export class ModalModuloImportacionCrtl{
     }
 
     onKeyupSearch($event){
+        console.log($event)
         $event.stopPropagation();        
     }
 
@@ -153,6 +154,7 @@ export class ModalModuloImportacionCrtl{
         //     columns: this.columns
         // })                               
     }
+
 
     async  validateImport(obj){
         try {
