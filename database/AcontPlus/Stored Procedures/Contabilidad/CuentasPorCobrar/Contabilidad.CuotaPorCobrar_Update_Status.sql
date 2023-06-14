@@ -34,7 +34,7 @@ BEGIN
 	DECLARE @idEstadoPago AS INT
 	DECLARE @residuo AS NUMERIC(18,5)
 
-	SELECT @cuota = cuota + mora FROM dbo.CuotaXCobrar WHERE idCuotaXCobrar = @idCuotaPorCobrar
+	SELECT @cuota = cuota + mora FROM Contabilidad.CuotaPorCobrar WHERE idCuotaPorCobrar = @idCuotaPorCobrar
 
 	SELECT @abono = SUM(cd.abono)
 	FROM dbo.CobroDetalle             cd WITH (NOLOCK)
@@ -43,6 +43,7 @@ BEGIN
 	WHERE cd.idCuotaPorCobrar = @idCuotaPorCobrar AND ci.estado = 1 AND co.cobro = 1
 
 	SELECT @residuo = ISNULL(@cuota,0) - ISNULL(@abono,0)
+
 
 	IF @residuo = 0  
 		BEGIN

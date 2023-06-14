@@ -53,7 +53,7 @@ BEGIN
 	DECLARE @cuota AS NUMERIC(18,5)
 	DECLARE @entrada AS BIT 
 	DECLARE @uniqueId VARCHAR(50)
-	DECLARE @idEstadoDocumento INT
+	DECLARE @idEstadoPago INT
 
 	-- ======= Pameteter table ============================================
 	DECLARE @cuotas AS TABLE(
@@ -64,7 +64,7 @@ BEGIN
 	)
 
 
-	SELECT TOP 1 @idEstadoDocumento = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PE'
+	SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PE'
 
 	SELECT TOP 1
 			 @nroCuota     = numeroCuota
@@ -130,14 +130,14 @@ BEGIN
 		END
 	-- ======================================= TRANSANCION DE INSERT ========================================================================
 	INSERT INTO Contabilidad.CuentaPorCobrar
-           (idPuntoEmision, idTiempoCredito, idCliente, idEstadoDocumento, codDoc, idDocumento, uniqueId, serieComprobante, fechaEmision, fechaVencimiento, importeTotal, idEntidad, idUsuario)
-	SELECT @idPuntoEmision,@idTiempoCredito,@idCliente,@idEstadoDocumento,@codDoc,@idDocumento,@uniqueId,@serieComprobante,@fechaEmision,@fechaVencimiento,@importeTotal,@idEntidad,@idUsuario
+           (idPuntoEmision, idTiempoCredito, idCliente, idEstadoPago, codDoc, idDocumento, uniqueId, serieComprobante, fechaEmision, fechaVencimiento, importeTotal, idEntidad, idUsuario)
+	SELECT @idPuntoEmision,@idTiempoCredito,@idCliente,@idEstadoPago,@codDoc,@idDocumento,@uniqueId,@serieComprobante,@fechaEmision,@fechaVencimiento,@importeTotal,@idEntidad,@idUsuario
 
 	SET @idCuentaPorCobrar = @@IDENTITY
 
 	INSERT INTO Contabilidad.CuotaPorCobrar
            (idCuentaPorCobrar, idEstadoPago     ,nroCuota,fechaVencimiento,cuota,entrada)
-	SELECT @idCuentaPorCobrar,@idEstadoDocumento,nroCuota,fechaVencimiento,cuota,entrada FROM @cuotas 
+	SELECT @idCuentaPorCobrar,@idEstadoPago,nroCuota,fechaVencimiento,cuota,entrada FROM @cuotas 
 
 
 END

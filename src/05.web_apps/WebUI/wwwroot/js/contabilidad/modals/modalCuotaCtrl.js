@@ -31,7 +31,9 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
 
     let url = 'CuentaPorCobrar/'
 
-    initiload();
+    $scope.initiload = initiload;
+    $scope.initiload();
+
     function initiload(){
         try {
             showLoader();
@@ -167,45 +169,24 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
         })
     }
 
-
-    /**
-     * 
-     * @param {*} valid 
-     * @returns 
-     */
-    $scope.configFechaMora  = async function(){
+    $scope.askToApplyMora = async function(){
         try {
-            let {isConfirmed}= await  Swal.fire({
-                icon:'warning',
-                title: '',
-                html: `  <span class="text-info"> Desea Calcular la Mora con la fecha Actual</span>
-                <div class="row justify-content-center">
-                    <div class="col-6"><input type="date" class="form-control" id="dateConfigMora">
-                    </div>
-                </div>`,
+            
+            let {isConfirmed} = await Swal.fire({
+                html: `<small></small>`,
+                icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Si',
-                cancelButtonText: 'No',
-                didOpen: () => {
-                    let dateConfigMora = document.getElementById('dateConfigMora');
-                    let fechaConfig = new Date(); 
-                    dateConfigMora.value =  fechaConfig.toISOString().split('T')[0];                                   
-                },                
-                preConfirm: () => {
-                    let fechaConfig = Swal.getPopup().querySelector('#dateConfigMora').value
-                    if (!fechaConfig) {
-                        tS.toastr('warning', '....')
-                        return false
-                    }
-                },            
-            }) 
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si!',
+                cancelButtonText: 'No!'
+            })
+
             if(isConfirmed){
                 let query = {
-                    idTipoDocumento,
-                    idDocumento,
+                    idCuentaPorCobrar,                   
                     porcentaje: $scope.comprobante.porcentaje,
                     tipoConfig: $scope.comprobante.tipoConfig,
-                    fecha: fS.formatDateMoment(Swal.getPopup().querySelector('#dateConfigMora').value)                    ,
                     tipo: 4
                 }
                 showLoader();
@@ -223,50 +204,109 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
                     }
                 })
             }
-                // for(let item of $scope.cuotas){
-                //     let dataCuotaMora = $scope.cuotasMora.find(cuotaM=>cuotaM.idCuotaXCobrar===item.idCuotaXCobrar);
-                //     if(dataCuotaMora){
-                //         item.interes = dataCuotaMora.interes;
-                //         item.mora = dataCuotaMora.mora;
-                //         item.diasMora = dataCuotaMora.diasMora;
-                //         item.saldo = dataCuotaMora.saldo;
-                //     }
-                // }
-                // tS.toastr('success', 'Aplicada Mora Correctamente')
-                // $scope.$apply();
-            // }
-
-            
-
-            // if($scope.cuotasMora.length===0){
-            //     fS.sweetAlert('warning', '.....')
-            //     return
-            // }
-            // let fileCtrl = nombreModalContabilidad.COBRO.fileCtrl;
-            // let  ctrl = nombreModalContabilidad.COBRO.controllers.MM;
-            // let template = nombreModalContabilidad.COBRO.templates.MM;
-            // let controller =(await import(fileCtrl)[ctrl])
-            // let modalRef = modalSvc.openModalCustom({
-            //     controller,
-            //     template,
-            //     size: 'lg',
-            //     isRenderRazorPartial: true,
-            //     params: {
-            //         comprobante: Object.assign({}, $scope.comprobante),
-            //         cuotasMora: JSON.parse(JSON.stringify($scope.cuotasMora))
-
-            //     }
-            // })
-            // modalRef.result.then(result=>{
-            //     if(typeof result==='object'){
-            //         initiload();
-            //     }
-            // })
         } catch (error) {
-            hideLoader();
             console.log(error)
         }
     }
+    /**
+     * 
+     * @param {*} valid 
+     * @returns 
+     */
+    // $scope.configFechaMora  = async function(){
+    //     try {
+    //         let {isConfirmed}= await  Swal.fire({
+    //             icon:'warning',
+    //             title: '',
+    //             html: `  <span class="text-info"> Desea Calcular la Mora con la fecha Actual</span>
+    //             <div class="row justify-content-center">
+    //                 <div class="col-6"><input type="date" class="form-control" id="dateConfigMora">
+    //                 </div>
+    //             </div>`,
+    //             showCancelButton: true,
+    //             confirmButtonText: 'Si',
+    //             cancelButtonText: 'No',
+    //             didOpen: () => {
+    //                 let dateConfigMora = document.getElementById('dateConfigMora');
+    //                 let fechaConfig = new Date(); 
+    //                 dateConfigMora.value =  fechaConfig.toISOString().split('T')[0];                                   
+    //             },                
+    //             preConfirm: () => {
+    //                 let fechaConfig = Swal.getPopup().querySelector('#dateConfigMora').value
+    //                 if (!fechaConfig) {
+    //                     tS.toastr('warning', '....')
+    //                     return false
+    //                 }
+    //             },            
+    //         }) 
+    //         if(isConfirmed){
+    //             let query = {
+    //                 idTipoDocumento,
+    //                 idDocumento,
+    //                 porcentaje: $scope.comprobante.porcentaje,
+    //                 tipoConfig: $scope.comprobante.tipoConfig,
+    //                 fecha: fS.formatDateMoment(Swal.getPopup().querySelector('#dateConfigMora').value)                    ,
+    //                 tipo: 4
+    //             }
+    //             showLoader();
+    //             mS.getData('get', url + '?json=' + JSON.stringify(query)  , null, true).then(response=>{
+    //                 hideLoader();
+    //                 console.log(response)
+    //                 if(response.code==='0'){
+    //                     fS.sweetAlert('warning', response.message)
+    //                 }
+    //                 if(response.code==='1'){
+    //                     let tempCuotas = JSON.parse(response.payload)[0]
+    //                     console.log(tempCuotas)
+    //                     $scope.cuotas = tempCuotas.map(cuotaMappFrom)
+
+    //                 }
+    //             })
+    //         }
+    //             // for(let item of $scope.cuotas){
+    //             //     let dataCuotaMora = $scope.cuotasMora.find(cuotaM=>cuotaM.idCuotaXCobrar===item.idCuotaXCobrar);
+    //             //     if(dataCuotaMora){
+    //             //         item.interes = dataCuotaMora.interes;
+    //             //         item.mora = dataCuotaMora.mora;
+    //             //         item.diasMora = dataCuotaMora.diasMora;
+    //             //         item.saldo = dataCuotaMora.saldo;
+    //             //     }
+    //             // }
+    //             // tS.toastr('success', 'Aplicada Mora Correctamente')
+    //             // $scope.$apply();
+    //         // }
+
+            
+
+    //         // if($scope.cuotasMora.length===0){
+    //         //     fS.sweetAlert('warning', '.....')
+    //         //     return
+    //         // }
+    //         // let fileCtrl = nombreModalContabilidad.COBRO.fileCtrl;
+    //         // let  ctrl = nombreModalContabilidad.COBRO.controllers.MM;
+    //         // let template = nombreModalContabilidad.COBRO.templates.MM;
+    //         // let controller =(await import(fileCtrl)[ctrl])
+    //         // let modalRef = modalSvc.openModalCustom({
+    //         //     controller,
+    //         //     template,
+    //         //     size: 'lg',
+    //         //     isRenderRazorPartial: true,
+    //         //     params: {
+    //         //         comprobante: Object.assign({}, $scope.comprobante),
+    //         //         cuotasMora: JSON.parse(JSON.stringify($scope.cuotasMora))
+
+    //         //     }
+    //         // })
+    //         // modalRef.result.then(result=>{
+    //         //     if(typeof result==='object'){
+    //         //         initiload();
+    //         //     }
+    //         // })
+    //     } catch (error) {
+    //         hideLoader();
+    //         console.log(error)
+    //     }
+    // }
 
 
      //valid = 1 fin mes 

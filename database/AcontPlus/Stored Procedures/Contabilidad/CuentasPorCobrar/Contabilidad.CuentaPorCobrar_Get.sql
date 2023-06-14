@@ -53,7 +53,7 @@ BEGIN
 
 	DECLARE @tbCuotasInteres AS TABLE
 	(
-		 idCuotaXCobrar INT UNIQUE NOT NULL
+		 idCuotaPorCobrar INT UNIQUE NOT NULL
 		,nroCuota INT NOT NULL
 		,cuota NUMERIC(15,5) NOT NULL
 		,abono NUMERIC(15,5) NOT NULL
@@ -146,9 +146,9 @@ BEGIN
 						,cc.idTiempoCredito
 						,codEstado        = ep.codigo 
 						,config           = ISNULL(@configInteres,0)
-						,tipoConfig       = @tipoConfig
-						,precioFijo       = @precioFijo
-						,porcentaje       = @porcentaje
+						,tipoConfig       = ISNULL(@tipoConfig,'NA')
+						,precioFijo       = ISNULL(@precioFijo,0)
+						,porcentaje       = ISNULL(@porcentaje,0)
 			FROM Contabilidad.CuentaPorCobrar cc WITH (NOLOCK)
 			INNER JOIN dbo.Cliente            cl WITH (NOLOCK) ON cl.idCliente      = cc.idCliente 
 			INNER JOIN dbo.PuntoEmision       pt WITH (NOLOCK) ON pt.idPuntoEmision = cc.idPuntoEmision
@@ -173,7 +173,6 @@ BEGIN
 			INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago
 			WHERE cx.idCuentaPorCobrar = @idCuentaPorCobrar AND cx.estado = 1
 			ORDER BY cx.nroCuota ASC
-
 
 		END 
 	
@@ -205,6 +204,8 @@ BEGIN
 										   ,cx.idCuentaPorCobrar
 										   ,cx.nroCuota
 										   ,cx.cuota
+										   ,cx.mora
+										   ,cx.diasMora
 										   ,cx.abono
 										   ,cx.saldo
 										   ,estado = ep.descripcion
@@ -240,6 +241,8 @@ BEGIN
 									       ,cx.idCuentaPorCobrar
 										   ,cx.nroCuota
 										   ,cx.cuota
+										   ,cx.mora
+										   ,cx.diasMora
 										   ,cx.abono
 										   ,cx.saldo
 										   ,estado = ep.descripcion
@@ -334,7 +337,7 @@ BEGIN
 
 			SELECT idDocumento,idTipoDocumento,serieComprobante,saldo,codDoc,nroDoc FROM @documents 
 
-			SELECT idCuentaPorCobrar,serieComprobante,tipoDoc,fechaEmision = FORMAT(fechaEmision,'MM/dd/yyyy'),fechaVencimiento = FORMAT(fechaVencimiento,'MM/dd/yyyy'),importeTotal,abono,saldo,estado,cuotas,estado FROM @tbVentas ORDER BY fechaEmision DESC
+			SELECT idCuentaPorCobrar,serieComprobante,tipoDoc = CASE tipoDoc WHEN '01' THEN 'Factura' ELSE 'N. Entrega' END ,fechaEmision = FORMAT(fechaEmision,'MM/dd/yyyy'),fechaVencimiento = FORMAT(fechaVencimiento,'MM/dd/yyyy'),importeTotal,abono,saldo,estado,cuotas,estado FROM @tbVentas ORDER BY fechaEmision DESC
 
 			SELECT importeTotal         = SUM(importeTotal) 
 			      ,saldo                = SUM(saldo)
@@ -353,35 +356,43 @@ BEGIN
 	IF @tipo = 4
 		BEGIN 
 
-			SELECT @porcentaje = porcentaje, @fecha = fecha FROM OPENJSON(@json) WITH (porcentaje NUMERIC(18,5) '$.porcentaje', tipoConfig VARCHAR(5) '$.tipoConfig', precioFijo NUMERIC(18,5), fecha DATE '$.fecha') 
+			SELECT @porcentaje = porcentaje, @tipoConfig = tipoConfig FROM OPENJSON(@json) WITH (porcentaje NUMERIC(18,5) '$.porcentaje', tipoConfig VARCHAR(5) '$.tipoConfig', precioFijo NUMERIC(18,5)) 
 			
-			INSERT INTO @tbCuotasInteres(idCuotaXCobrar,nroCuota,cuota,abono,fechaVencimiento,diasMora,interes,mora,estado,codEstado)
-			SELECT   cx.idCuotaPorCobrar
-					,cx.nroCuota
-					,cx.cuota
-					,cx.abono
-					,fechaVencimiento = cx.fechaVencimiento
-					,diasMora         = CASE WHEN ep.codigo != 'CBR' THEN DATEDIFF(DAY,cx.fechaVencimiento,@fecha) ELSE 0 END 
-					,interes          = CASE WHEN ep.codigo != 'CBR' THEN (cx.cuota - cx.abono)  * @porcentaje  / 100 ELSE 0 END  
-					,mora             = CASE WHEN ep.codigo != 'CBR' THEN (cx.cuota - cx.abono)  * @porcentaje  / 100 * DATEDIFF(DAY,cx.fechaVencimiento,@fecha) ELSE 0 END  
-					,ep.descripcion
-					,ep.codigo
-			FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)
-			INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago 
-			WHERE cx.idCuentaPorCobrar = @idCuentaPorCobrar AND cx.estado = 1	
+			IF @tipoConfig = 'NA'
+				BEGIN
+					RETURN 
+				END
+
+			ELSE 
+				 BEGIN 
+					INSERT INTO @tbCuotasInteres(idCuotaPorCobrar,nroCuota,cuota,abono,fechaVencimiento,diasMora,interes,mora,estado,codEstado)
+					SELECT   cx.idCuotaPorCobrar
+							,cx.nroCuota
+							,cx.cuota
+							,cx.abono
+							,fechaVencimiento = cx.fechaVencimiento
+							,diasMora         = CASE WHEN ep.codigo != 'CBR' THEN DATEDIFF(DAY,cx.fechaVencimiento,dbo.ufnGetDateEcuador()) ELSE 0 END 
+							,interes          = CASE WHEN ep.codigo != 'CBR' THEN (cx.cuota - cx.abono)  * @porcentaje  / 100 ELSE 0 END  
+							,mora             = CASE WHEN ep.codigo != 'CBR' THEN (cx.cuota - cx.abono)  * @porcentaje  / 100 * DATEDIFF(DAY,cx.fechaVencimiento,dbo.ufnGetDateEcuador()) ELSE 0 END  
+							,ep.descripcion
+							,ep.codigo
+					FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)
+					INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago 
+					WHERE cx.idCuentaPorCobrar = @idCuentaPorCobrar AND cx.estado = 1	
 			
-			SELECT idCuotaXCobrar 
-			      ,nroCuota
-				  ,cuota
-				  ,abono
-				  ,interes
-				  ,mora     = IIF(mora < 0 ,0,mora)
-				  ,saldo    = IIF(saldo< 0,0,saldo)
-				  ,fechaVencimiento
-				  ,diasMora = IIF(diasMora < 0,0,diasMora)
-				  ,estado
-				  ,codEstado
-			FROM @tbCuotasInteres 
+					SELECT idCuotaPorCobrar 
+						  ,nroCuota
+						  ,cuota
+						  ,abono
+						  ,interes
+						  ,mora     = IIF(mora < 0 ,0,mora)
+						  ,saldo    = IIF(saldo< 0,0,saldo)
+						  ,fechaVencimiento
+						  ,diasMora = IIF(diasMora < 0,0,diasMora)
+						  ,estado
+						  ,codEstado
+					FROM @tbCuotasInteres 
+				END 
 		END 
 END
 GO

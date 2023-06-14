@@ -66,7 +66,9 @@ BEGIN
 
 	DECLARE @paymentDetail AS TABLE(
 		 idCuotaPorCobrar INT NOT NULL
-		,abono DECIMAL (15,5) NOT NULL
+		,abono NUMERIC (15,5) NOT NULL
+		,mora NUMERIC(15,5) NOT NULL
+		,diasMora INT NOT NULL
 		,secuencial INT NOT NULL
 	)
 
@@ -77,9 +79,6 @@ BEGIN
 
 	BEGIN TRY 
 		
-		SELECT '0'code,'Soporte' as 'message'
-		RETURN 
-
   	    --====================================obtener Datos de los Json============================================
 		SELECT @comprobante = comprobante,@cobros = cobros,@cobroDetalle= cobroDetalle,@historial = historial FROM OPENJSON(@json) 
 		WITH (comprobante  NVARCHAR(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS '$.comprobante'   AS JSON

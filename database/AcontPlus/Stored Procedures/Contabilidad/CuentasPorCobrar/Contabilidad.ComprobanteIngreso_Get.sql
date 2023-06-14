@@ -34,8 +34,9 @@ BEGIN
 	DECLARE @tipo AS INT 
 	DECLARE @idEntidad AS INT
 	DECLARE @idUsuario AS INT
-
 	DECLARE @idComprobanteIngreso AS INT 
+	DECLARE @idCuentaPorCobrar INT
+	DECLARE @codDoc AS VARCHAR(5)
 
 	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT '$.tipo')
 
@@ -174,8 +175,6 @@ BEGIN
 	-- ====================== Historial para mostrar los detalles del comprobante de ingreso ===========================
 	IF @tipo = 2
 		BEGIN
-			
-
 			SELECT @idComprobanteIngreso = idComprobanteIngreso FROM OPENJSON(@json) WITH (idComprobanteIngreso INT '$.idComprobanteIngreso')
 
 			SELECT ci.idComprobanteIngreso
@@ -188,7 +187,7 @@ BEGIN
 				  ,ci.cambio
 			FROM dbo.ComprobanteIngreso    ci WITH (NOLOCK) 
 			INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = ci.codEstab
-			WHERE idComprobanteIngreso = @idComprobanteIngreso
+			WHERE ci.idComprobanteIngreso = @idComprobanteIngreso
 
 			SELECT co.idCobro
 				  ,co.valor
@@ -207,7 +206,7 @@ BEGIN
 
 			SELECT cd.idCobroDetalle
 			      ,cd.idCobro 
-				  ,codDoc = cx.codDoc
+				  ,codDoc = CASE cx.codDoc WHEN '01' THEN 'Factura' ELSE 'Nota Entrega' END 
 				  ,fechaVencimiento = FORMAT(cx.fechaVencimiento,'MM/dd/yyyy')
 				  ,cc.nroCuota
 				  ,cc.cuota
@@ -224,57 +223,33 @@ BEGIN
 	-- ====================== Historial para mostrar los comprobantes de ingreso por Documento =========================
 	IF @tipo = 3
 		BEGIN
-			DECLARE @idTipoDocumento INT
-			DECLARE @idDocumento INT 
-			DECLARE @codDoc AS VARCHAR(5)
+			SELECT @idCuentaPorCobrar = idCuentaPorCobrar FROM OPENJSON(@json) WITH (idCuentaPorCobrar INT '$.idCuentaPorCobrar')
 
-			SELECT @idTipoDocumento = idTipoDocumento, @idDocumento = idDocumento FROM OPENJSON(@json) WITH (idTipoDocumento INT '$.idTipoDocumento',idDocumento INT '$.idDocumento')
 			
-			SELECT TOP 1 @codDoc = codigo FROM dbo.TipoDocumento WITH (NOLOCK) WHERE idTipoDocumento = @idTipoDocumento
+			SELECT   cl.numeroIdentificacion
+					,cl.nombreFiscal
+					,serieComprobante = cc.serieComprobante
+					,fechaEmision     = FORMAT(cc.fechaEmision,'MM/dd/yyyy hh:mm')
+					,cc.importeTotal
+					,cc.abono
+					,cc.saldo
+			FROM Contabilidad.CuentaPorCobrar cc WITH (NOLOCK)
+			INNER JOIN dbo.Cliente            cl WITH (NOLOCK) ON cl.idCliente      = cc.idCliente
+			INNER JOIN dbo.PuntoEmision       pt WITH (NOLOCK) ON pt.idPuntoEmision = cc.idPuntoEmision
+			INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.codEstab       = pt.codEstab
+			WHERE cc.idCuentaPorCobrar = @idCuentaPorCobrar
 
-			IF @codDoc = 'FV'
-				BEGIN 
-					SELECT cl.numeroIdentificacion
-					      ,cl.nombreFiscal
-						  ,serieComprobante = es.estab + '-' + pt.ptoEmi + '-' + Helper.F_Auto_Sequential(fe.nroFactura) 
-						  ,fechaEmision      = FORMAT(fe.fechaEmision,'MM/dd/yyyy hh:mm')
-						  ,fe.total
-						  ,fe.abono
-						  ,fe.saldo
-					FROM dbo.Factura               fe WITH (NOLOCK)
-					INNER JOIN dbo.Cliente         cl WITH (NOLOCK) ON cl.idCliente      = fe.idCliente
-					INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision = fe.idPuntoEmision
-					INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pt.codEstab
-					WHERE fe.idFactura = @idDocumento
-				END 
-
-			IF @codDoc = 'NE'
-				BEGIN
-					SELECT cl.numeroIdentificacion
-					      ,cl.nombreFiscal
-						  ,serieComprobante = es.estab + '-' + pt.ptoEmi + '-' + Helper.F_Auto_Sequential(ne.nroDocumento) 
-						  ,fechaEmision      = FORMAT(ne.fechaEmision,'MM/dd/yyyy hh:mm')
-						  ,ne.total
-						  ,ne.abono
-						  ,ne.saldo
-					FROM dbo.NotaEntrega           ne WITH (NOLOCK)
-					INNER JOIN dbo.Cliente         cl WITH (NOLOCK) ON cl.idCliente      = ne.idCliente
-					INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision = ne.idPuntoEmision
-					INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pt.codEstab
-					WHERE ne.idNotaEntrega = @idDocumento
-				END 
-
-			SELECT cd.idComprobanteIngreso 
+			SELECT hc.idComprobanteIngreso 
 				  ,fechaEmision = FORMAT(ci.fechaRegistro,'MM/dd/yyyy hh:mm')
 				  ,serieComprobante = 'CI' + '-' + es.estab + '-' + Helper.F_Auto_Sequential(ci.nroDocumento) 
 				  ,ci.total
 				  ,ci.abono
 				  ,ci.cambio
 				  ,estado = CASE ci.estado WHEN 1 THEN 'ACTIVO' ELSE 'ANULADO' END 
-			FROM dbo.ComprobanteIngreso    ci WITH (NOLOCK)
-			INNER JOIN dbo.CobroDocumento  cd WITH (NOLOCK) ON ci.idComprobanteIngreso = cd.idComprobanteIngreso
-			INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab             = ci.codEstab
-			WHERE cd.idComprobante = @idDocumento AND cd.idTipoDocumento = @idTipoDocumento
+			FROM dbo.ComprobanteIngreso             ci WITH (NOLOCK)
+			INNER JOIN Contabilidad.Historial_Cobro hc WITH (NOLOCK) ON ci.idComprobanteIngreso = hc.idComprobanteIngreso
+			INNER JOIN Sri.Establecimiento          es WITH (NOLOCK) ON es.codEstab             = ci.codEstab
+			WHERE hc.idCuentaPorCobrar = @idCuentaPorCobrar
 
 			SELECT co.idComprobanteIngreso
 			      ,co.idCobro
@@ -282,19 +257,19 @@ BEGIN
 				  ,fechaEmision = FORMAT(co.fechaEmision,'MM/dd/yyyy hh:mm')
 				  ,formaCobro = ISNULL(sf.descripcion,ef.descripcion)
 				  ,banco = ISNULL(bc.descripcion,'-------------')
-				  ,infoCobro = dbo.f_sanitize_json(co.infoCobro)
+				  ,infoCobro = ISNULL(dbo.f_sanitize_json(co.infoCobro),'[]')
 				  ,co.valor
 				  ,co.abono
 				  ,co.vuelto
 				  ,estado = CASE co.cobro WHEN 1 THEN 'COBRADO' ELSE 'POR COBRAR' END 
 				  ,codPago = ef.codigo
-			FROM dbo.ComprobanteIngreso         ci WITH (NOLOCK)
-			INNER JOIN dbo.CobroDocumento       cd WITH (NOLOCK) ON ci.idComprobanteIngreso   = cd.idComprobanteIngreso
-			INNER JOIN dbo.Cobro                co WITH (NOLOCK) ON co.idComprobanteIngreso   = ci.idComprobanteIngreso
-			INNER JOIN dbo.EntidadFinanciera    ef WITH (NOLOCK) ON ef.idEntidadFinanciera    = co.idEntidadFinanciera
-			 LEFT JOIN dbo.SubEntidadFinanciera sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = co.idSubEntidadFinanciera
-			 LEFT JOIN dbo.Banco                bc WITH (NOLOCK) ON bc.idBanco                = co.idBanco
-			WHERE cd.idComprobante = @idDocumento AND cd.idTipoDocumento = @idTipoDocumento
+			FROM dbo.ComprobanteIngreso             ci WITH (NOLOCK)
+			INNER JOIN Contabilidad.Historial_Cobro hc WITH (NOLOCK) ON ci.idComprobanteIngreso   = hc.idComprobanteIngreso
+			INNER JOIN dbo.Cobro                    co WITH (NOLOCK) ON co.idComprobanteIngreso   = ci.idComprobanteIngreso
+			INNER JOIN dbo.EntidadFinanciera        ef WITH (NOLOCK) ON ef.idEntidadFinanciera    = co.idEntidadFinanciera
+			 LEFT JOIN dbo.SubEntidadFinanciera     sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = co.idSubEntidadFinanciera
+			 LEFT JOIN dbo.Banco                    bc WITH (NOLOCK) ON bc.idBanco                = co.idBanco
+			WHERE hc.idCuentaPorCobrar = @idCuentaPorCobrar
 
 			SELECT 
 				 co.idCobro
@@ -304,11 +279,11 @@ BEGIN
 				,cx.saldo
 				,cx.abono
 			FROM dbo.ComprobanteIngreso            ci WITH (NOLOCK)
-			INNER JOIN dbo.CobroDocumento          cd WITH (NOLOCK) ON ci.idComprobanteIngreso   = cd.idComprobanteIngreso
-			INNER JOIN dbo.Cobro                   co WITH (NOLOCK) ON co.idComprobanteIngreso   = ci.idComprobanteIngreso
-			INNER JOIN dbo.CobroDetalle            cc WITH (NOLOCK) ON cc.idCobro                = co.idCobro
-			INNER JOIN Contabilidad.CuotaPorCobrar cx WITH (NOLOCK) ON cx.idCuotaPorCobrar       = cc.idCuotaPorCobrar
-			WHERE cd.idComprobante = @idDocumento AND cd.idTipoDocumento = @idTipoDocumento
+			INNER JOIN Contabilidad.Historial_Cobro hc WITH (NOLOCK) ON ci.idComprobanteIngreso   = hc.idComprobanteIngreso
+			INNER JOIN dbo.Cobro                    co WITH (NOLOCK) ON co.idComprobanteIngreso   = ci.idComprobanteIngreso
+			INNER JOIN dbo.CobroDetalle             cc WITH (NOLOCK) ON cc.idCobro                = co.idCobro
+			INNER JOIN Contabilidad.CuotaPorCobrar  cx WITH (NOLOCK) ON cx.idCuotaPorCobrar       = cc.idCuotaPorCobrar
+			WHERE hc.idCuentaPorCobrar = @idCuentaPorCobrar
 		END 
 END
 GO

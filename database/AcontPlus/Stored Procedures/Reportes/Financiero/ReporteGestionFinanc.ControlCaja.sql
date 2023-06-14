@@ -9,7 +9,7 @@ GO
 -- Author:		<Author,,Name>
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
--- exec ReporteGestionFinanc.ControlCaja '[{"id":"35"}]'
+-- exec ReporteGestionFinanc.ControlCaja '{"id":1764,"idUsuarioRol":209}'
 -- =============================================
 IF OBJECT_ID(N'ReporteGestionFinanc.ControlCaja', N'P') IS NOT NULL
 DROP PROCEDURE ReporteGestionFinanc.ControlCaja
@@ -31,8 +31,7 @@ BEGIN
 	DECLARE @otros DECIMAL(15,5)
 	DECLARE @chequesPosf DECIMAL(15,5)
 	DECLARE @direfencia DECIMAL(15,5)
-
-	DECLARE @idRol  INT ;
+	DECLARE @idRol  INT
 	
 
 	SELECT @idControlCaja = idControlCaja, @idRol = idUsuarioRol  FROM OPENJSON(@json) WITH (idControlCaja INT '$.id', idUsuarioRol INT '$.idUsuarioRol') AS jsonValues
