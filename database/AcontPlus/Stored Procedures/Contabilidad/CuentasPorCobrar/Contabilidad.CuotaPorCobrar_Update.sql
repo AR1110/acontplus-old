@@ -29,12 +29,15 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
+	
 	DECLARE @idUsuario INT
 	DECLARE @codDoc VARCHAR(5)
 	DECLARE @fechaVencimiento AS DATETIME 
 	DECLARE @codEstado VARCHAR(5)
 	DECLARE @idCuentaPorCobrar INT 
 	DECLARE @cuotas VARCHAR(MAX)
+	DECLARE @mora NUMERIC(18,5)
+	DECLARE @diasMora INT
 	
 	-- ============== PAYLOAD =====================
 	DECLARE @payload AS VARCHAR(MAX)
@@ -70,6 +73,7 @@ BEGIN
 
 		SELECT TOP 1 @fechaVencimiento =  MAX(fechaVencimiento) FROM @tbCuotas
 
+		SELECT @mora =  SUM(mora), @diasMora = SUM(diasMora) FROM @tbCuotas
 		
 
 		IF (SELECT COUNT(*) FROM @tbCuotas) = 0 
@@ -94,7 +98,7 @@ BEGIN
 			INNER JOIN @tbCuotas tb ON tb.idCuotaPorCobrar = cx.idCuotaPorCobrar
 
 			
-			UPDATE Contabilidad.CuentaPorCobrar SET fechaVencimiento = @fechaVencimiento WHERE idCuentaPorCobrar = @idCuentaPorCobrar
+			UPDATE Contabilidad.CuentaPorCobrar SET fechaVencimiento = @fechaVencimiento, mora = @mora , diasMora = @diasMora WHERE idCuentaPorCobrar = @idCuentaPorCobrar
 				
 
 			SET @payload = (SELECT cx.idCuotaPorCobrar

@@ -25,10 +25,10 @@
             <h4>${{comprobante.importeTotal}}</h4>
         </div>
     </div>
-    <md-divider></md-divider>
-    <div class="row justify-content-between mt-2">
-        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
-            <div class="form-group">
+    <hr>
+    <div class="row justify-content-between">
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+             <div class="form-group">
                 <label>Tiempo Crédito</label>
                 <div class="input-group">                                
                     <select ng-disabled = "comprobante.codEstado!='PE'" 
@@ -48,38 +48,28 @@
                 </div>                            
             </div>
         </div>
-
-        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12" ng-if="showColumnPrecioFijo || showColumnPorcentajeInteres">
-            @* <div class="form-group">
-                <label for="">Config.</label>               *@
-                <button class="btn btn-info mt-3" type="button" ng-click="configFechaMora()">
-                    <i class="ti-money"></i> Mora
-                </button>
-            @* </div> *@
-        </div>
-        @* <div class="col-xl-3 col-lg-3 col-md-6 col-sm-612col-12">
-             
-            <button type="button" ng-disabled="comprobante.codEstado !=='PE'" ng-click="getConfigFechaCuota(false)" class="btn btn-success" uib-tooltip='El día tiene que ser menor a 28 días'>
-                <i class="mdi mdi-av-timer"></i> Interes / Mora
-            </button>
-        </div> *@
-
+        
         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-            
-            <label>Configurar Fecha: <code>dd/MM/yyyy</code></label>
-            <div class="input-group">
-                <input ng-disabled = "comprobante.codEstado!='PE'" type="date" ng-model="comprobante.configFecha" class="form-control border-select" aria-label="Config. Fecha Vencimiento">
-                <div class="input-group-append">
-                    <button type="button" ng-disabled="comprobante.codEstado !=='PE'" ng-click="getConfigFechaCuota(true)" class="btn btn-info" uib-tooltip="">
-                        <i class="mdi mdi-update"></i> Fin Mes
-                    </button>
-                    <button type="button" ng-disabled="comprobante.codEstado !=='PE'" ng-click="getConfigFechaCuota(false)" class="btn btn-success" uib-tooltip='El día tiene que ser menor a 28 días'>
-                        <i class="mdi mdi-av-timer"></i> Mismo Dia
-                    </button>                  
+            <div class="form-group">
+                <label>Configurar Fecha: <code>dd/MM/yyyy</code></label>
+                <div class="input-group">
+                    <input ng-disabled = "comprobante.codEstado!='PE'" type="date" ng-model="comprobante.configFecha" class="form-control border-select" aria-label="Config. Fecha Vencimiento">
+                    <div class="input-group-append">
+                        <button type="button" ng-disabled="comprobante.codEstado !=='PE'" ng-click="getConfigFechaCuota(true)" class="btn btn-info" uib-tooltip="">
+                            <i class="mdi mdi-update"></i> Fin Mes
+                        </button>
+                        <button type="button" ng-disabled="comprobante.codEstado !=='PE'" ng-click="getConfigFechaCuota(false)" class="btn btn-success" uib-tooltip='El día tiene que ser menor a 28 días'>
+                            <i class="mdi mdi-av-timer"></i> Mismo Dia
+                        </button>                  
+                    </div>
                 </div>
             </div>
-        </div>
+        </div>   
     </div>
+    <div class="btn-group btn-group-sm" role="group" aria-label="Basic example" >
+        <button type="button" class="btn btn-success" ng-click="askToApplyMora()">Aplicar Mora</button>
+        <button type="button" class="btn btn-warning" ng-click="initiload()">Cancelar</button>                    
+    </div> 
     
      <md-table-responsive>
         <table md-table>
@@ -87,10 +77,9 @@
                 <tr md-row>                 
                     <th md-column>Nro. Cuota</th>                    
                     <th md-column>Cuota</th>                    
-                    <th md-column ng-if="showColumnPrecioFijo">Valor Mora</th> 
-                    <th md-column ng-if="showColumnPorcentajeInteres">Interes</th> 
-                    <th md-column ng-if="showColumnPorcentajeInteres">Dias Mora</th>
-                    <th md-column ng-if="showColumnPorcentajeInteres">Mora</th>
+                    <th md-column>Interes</th> 
+                    <th md-column>Dias Mora</th>
+                    <th md-column>Mora</th>
                     <th md-column>Abono</th>
                     <th md-column>Saldo</th>
                     <th md-column>Fecha Vencimiento</th>
@@ -120,10 +109,9 @@
                                 ng-model="item.cuota" 
                                 class="form-control border-select text-center" />
                     </td>
-                    <td md-cell ng-if="showColumnPrecioFijo">{{item.precioFijo}}</td>
-                    <td md-cell ng-if="showColumnPorcentajeInteres">{{item.interes}}</td>
-                    <td md-cell ng-if="showColumnPorcentajeInteres">{{item.diasMora}}</td>
-                    <td md-cell ng-if="showColumnPorcentajeInteres">{{item.mora}}</td>
+                    <td md-cell>{{item.interes}}</td>
+                    <td md-cell>{{item.diasMora}}</td>
+                    <td md-cell>{{item.mora}}</td>
                     <td md-cell>{{item.abono}}</td>
                     <td md-cell>{{item.saldo}}</td>
                     <td md-cell>
@@ -163,10 +151,10 @@
                         <h6>${{totalCuota}}</h4>
                         <h6 class="text-danger">${{totalDiferencia}}</h4>
                     </td>
-                    <td md-cell ng-if="showColumnPrecioFijo"></td>
-                    <td md-cell ng-if="showColumnPorcentajeInteres"></td>                    
-                    <td md-cell ng-if="showColumnPorcentajeInteres"></td>                    
-                    <td md-cell ng-if="showColumnPorcentajeInteres"></td>                    
+                    <td md-cell></td>
+                    <td md-cell></td>                    
+                    <td md-cell></td>                    
+                    <td md-cell></td>                    
                     <td md-cell></td>                    
                     <td md-cell></td>                    
                     <td md-cell></td>                    

@@ -76,7 +76,7 @@
                 }
                 if(response.code==="1"){
                     let dataRepository = JSON.parse(response.payload)[0];
-                    console.log(dataRepository)
+                   
                     let dataResponse = {
                         ...dataRepository,                        
                         esContado: dataRepository.tiempoCredito,

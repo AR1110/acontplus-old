@@ -611,7 +611,7 @@ ModalCobroLoteCtrl.$inject = [
 function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc, modalSvc, nombreModalContabilidad, tS, fS, params){
     let cobroSvc = new CobroService(tS, mS, fS);
     let {data} = params;
-    let {idCuentaPorCobrar} = data;
+    let {idCuentaPorCobrar} = typeof data ==='object'? data.idCuentaPorCobrar : 0;
     
     const NUM_MAX_ROUND = 4;
     //Cobro Lote
@@ -651,6 +651,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc
 
 
     $scope.data = {};
+    $scope.data.importeTotal = 0;
     $scope.data.totalAbonoAnterior = 0;
     $scope.data.totalValorAbono = 0;                
     $scope.data.totalSaldo = 0
@@ -748,6 +749,12 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc
         dataFormaCobro.documentos = mainDataRepository[4];       
     }
 
+    function resetDataStepCuota(){
+        $scope.selectedDocumentos = [];            
+        $scope.tipoDocumentos = [];
+
+        getTotalesCuota();
+    }
     function getTotalesCuota(){
         let importeTotal = 0,  abono = 0,  saldo = 0;
         for(let item of $scope.selectedDocumentos){
@@ -793,10 +800,8 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc
         })
 
         if(isConfirmed){
-            $scope.selectedDocumentos = [];            
-            $scope.tipoDocumentos = [];
-
             $scope.cloneCodEstab = $scope.dataSearch.codEstab;
+            resetDataStepCuota();
             $scope.getTipoDocumentos();
             $scope.$apply()
         }else{
@@ -821,16 +826,26 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc
         if (!$scope.modelTextSearch) {
             $scope.dataSearch.byCliente = 0;
             $scope.comprobante.idCliente = 0;
+           
+            resetDataStepCuota();
         }
     }
 
+
     $scope.selectedClienteSearch = function (item) {
         $scope.dataSearch.byCliente = item.idCliente;
+        
+        resetDataStepCuota();
        
         $scope.getTipoDocumentos();
     }
 
     $scope.refreshDocs = function(){
+        $scope.selectedDocumentos = [];            
+        $scope.tipoDocumentos = [];
+
+        getTotalesCuota();
+
         $scope.getTipoDocumentos();
     }
 
@@ -1571,7 +1586,7 @@ function ModalCobroDetalleCtrl($scope, $mdDialog, mS, tS, fS, params){
                     $scope.cobroDetalles = mainDataRepository[2]
                   
                     for(let item of $scope.cobros) {
-                        item.infoCobro = JSON.parse(item.infoCobro)[0]
+                        item.infoCobro = JSON.parse(item.infoCobro)
                         item.cobroDetalles = $scope.cobroDetalles.filter(itemDetalle=>itemDetalle.idCobro===item.idCobro);    
                         item.showInfoCobro = item.codPago!=='EFE'        
                     }
@@ -1579,13 +1594,12 @@ function ModalCobroDetalleCtrl($scope, $mdDialog, mS, tS, fS, params){
                     hideLoader();
                     console.log(error)
                 })
-            }else if (params && params.idDocumento > 0){        
+            }else if (params && params.idCuentaPorCobrar > 0){        
                 $scope.showDetalleCompIngresoByDoc = true;
         
                 let query = {
                     tipo:3,
-                    idTipoDocumento: params.idTipoDocumento,
-                    idDocumento: params.idDocumento
+                    idCuentaPorCobrar: params.idCuentaPorCobrar
                 }              
                 mS.getData('get', 'ComprobanteIngreso/?json='  + JSON.stringify(query),null,true).then(response=>{
                     hideLoader();
@@ -1603,7 +1617,7 @@ function ModalCobroDetalleCtrl($scope, $mdDialog, mS, tS, fS, params){
                    
 
                     for(let item of $scope.cobros) {
-                        item.infoCobro = JSON.parse(item.infoCobro)
+                        item.infoCobro =  JSON.parse(item.infoCobro)
                         item.cobroDetalles = $scope.cobroDetalles.filter(itemDetalle=>itemDetalle.idCobro===item.idCobro);    
                           
                     }
@@ -1626,6 +1640,7 @@ function ModalCobroDetalleCtrl($scope, $mdDialog, mS, tS, fS, params){
                     console.log(error)
                 })
             }
+            
         } catch (error) {
             hideLoader();
             console.log(error)
@@ -1642,7 +1657,7 @@ function ModalCobroDetalleCtrl($scope, $mdDialog, mS, tS, fS, params){
     }
 
     $scope.showInfo = function (item) {
-        let info = item.infoCobro || {};
+        let info =  item.infoCobro &&  item.infoCobro[0] || {};        
        
         Swal.fire({
             icon: 'info',

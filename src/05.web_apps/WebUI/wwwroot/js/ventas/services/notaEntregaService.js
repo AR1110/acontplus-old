@@ -23,6 +23,7 @@
                             idDocumento: item.idDocumento,
                             idNotaEntrega: item.idNotaEntrega,
                             idTipoDocumento: item.idTipoDocumento,
+                            idCuentaPorCobrar : item.idCuentaPorCobrar,
                             idTiempoCredito: item.idTiempoCredito,
                             idCliente: item.idCliente,
                             codEstab: item.codEstab,
@@ -49,6 +50,7 @@
                             tiempoCredito: item.tiempoCredito,
                             esContado: item.tiempoCredito,
                             nroIdentificacion: item.nroIdentificacion,
+                            
                         }
                     })
                 }
