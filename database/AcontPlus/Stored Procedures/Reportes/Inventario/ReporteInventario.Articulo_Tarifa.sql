@@ -62,7 +62,7 @@ BEGIN
 										FROM v_Articulo ar  WITH (NOLOCK) 		
 										INNER JOIN  ArticuloPvP apvp WITH (NOLOCK) ON ar.idArticulo = apvp.idArticulo
 										INNER JOIN Tarifa t WITH (NOLOCK) ON t.idTarifa = apvp.idTarifa
-										WHERE ar.estado = 1 AND ar.idEntidad = @byEntidad AND ar.llevaInventario = 1 '
+										WHERE ar.estado = 1 AND ar.idEntidad = @byEntidad '
 
 			
 			SELECT 	
