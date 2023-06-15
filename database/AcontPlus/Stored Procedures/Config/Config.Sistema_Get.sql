@@ -43,20 +43,18 @@ BEGIN
 				  ,dt.payAutomatic
 				  ,dt.multipleVendedor
 				  ,dt.configDeuda     
-				  ,dt.configPorcentaje 
-				  ,dt.porcentajeInteres
-				  ,dt.precioFijo
+				  ,dt.tipoConfig 
+				  ,dt.interes
 			FROM OPENJSON(@jsonConfig)
-			WITH (idCliente                  INT '$.idCliente'
-			    ,idArticulo                  INT '$.idArticulo'
-				,searchCode                  BIT '$.searchCode'
-				,printerAutomatic            BIT '$.printerAutomatic'
-				,payAutomatic                BIT '$.payAutomatic'
-				,multipleVendedor                BIT '$.multipleVendedor'
-				,configDeuda                 BIT '$.configInteres'
-				,configPorcentaje     VARCHAR(5) '$.infoInteres.tipo'
-				,porcentajeInteres NUMERIC(18,5) '$.infoInteres.porcentajeInteres'
-				,precioFijo        NUMERIC(18,5) '$.infoInteres.precioFijo'
+			WITH (idCliente        INT '$.idCliente'
+			    ,idArticulo        INT '$.idArticulo'
+				,searchCode        BIT '$.searchCode'
+				,printerAutomatic  BIT '$.printerAutomatic'
+				,payAutomatic      BIT '$.payAutomatic'
+				,multipleVendedor  BIT '$.multipleVendedor'
+				,configDeuda       BIT '$.configInteres'
+				,tipoConfig VARCHAR(5) '$.infoInteres.tipoConfig'
+				,interes NUMERIC(18,5) '$.infoInteres.interes'
 				) as dt
 			LEFT JOIN dbo.Cliente  cl WITH (NOLOCK) ON cl.idCliente  = dt.idCliente
 			LEFT JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = dt.idArticulo

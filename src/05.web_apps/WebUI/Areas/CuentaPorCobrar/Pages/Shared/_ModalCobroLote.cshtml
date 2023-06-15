@@ -83,6 +83,7 @@
                                 <th md-column colspan="3"></span></th>
                                 <th md-column><i>Total:</span></th>
                                 <th md-column md-numeric><i>{{data.importeTotal}}</span></th>
+                                <th md-column md-numeric><i>{{data.totalMora}}</span></th>
                                 <th md-column md-numeric><i>{{data.totalAbonoAnterior}}</span></th>
                                 <th md-column md-numeric><i>{{data.totalSaldo}}</span></th>
                                 <th md-column md-numeric><span></span></th>
@@ -94,6 +95,7 @@
                                 <th md-column><span>F. Emisión</span></th>
                                 <th md-column><span>F. Vcto.</span></th>
                                 <th md-column md-numeric><span>Total</span></th>
+                                <th md-column md-numeric><span>Mora</span></th>
                                 <th md-column md-numeric><span>Abono</span></th>
                                 <th md-column md-numeric><span>Saldo</span></th>
                                 <th md-column md-numeric><span>Estado</span></th>
@@ -114,6 +116,7 @@
                                 <td md-cell>{{item.fechaEmision}}</td>
                                 <td md-cell>{{item.fechaVencimiento}}</td>
                                 <td md-cell>${{item.importeTotal}}</td>
+                                <td md-cell>${{item.mora}}</td>
                                 <td md-cell>${{item.abono}}</td>
                                 <td md-cell>${{item.saldo}}</td>
                                 <td md-cell>{{item.estado}}</td>
@@ -163,6 +166,7 @@
                                             <th md-column><span>Mora</span></th>
                                             <th md-column><span>Dias Mora</span></th>
                                             <th md-column><span>Abono</span></th>
+                                            <th md-column><span>Saldo Cta</span></th>
                                             <th md-column><span>Saldo</span></th>
                                             <th md-column><span>Estado</span></th>
                                         </tr>
@@ -174,7 +178,7 @@
                                                 <span ng-if="!group.display"><i class="fas fa-caret-square-right"></i></span>
                                             </td>
                                             <td md-cell colspan="3">{{group.tipoDoc}} - {{group.serieComprobante}}</td>
-                                            <td md-cell colspan="2">
+                                            <td md-cell colspan="4">
                                                 <strong>${{group.importeTotal}}</strong>
                                             </td>
 
@@ -190,6 +194,7 @@
                                             <td md-cell>{{cuota.mora}}</td>
                                             <td md-cell>{{cuota.diasMora}}</td>
                                             <td md-cell>{{cuota.abono}}</td>
+                                            <td md-cell>{{cuota.saldoCta}}</td>
                                             <td md-cell>{{cuota.saldo}}</td>
                                             <td md-cell>{{cuota.estado}}</td>
                                         </tr>
@@ -309,6 +314,19 @@
                                     Abono
                                     <span>
                                         {{data.totalValorAbono | currency}}
+                                    </span>
+                                </li>
+
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Saldo Doc
+                                    <span>
+                                        {{data.totalSaldoDoc | currency}}
+                                    </span>
+
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Mora
+                                    <span>
+                                        {{data.totalMora | currency}}
                                     </span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between align-items-center">

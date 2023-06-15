@@ -127,7 +127,9 @@ class CobroService{
             if(totalAbono > 0){
                 historialCobros.push({
                     idCuentaPorCobrar: item.idCuentaPorCobrar,                    
-                    abono: totalAbono
+                    abono: totalAbono,
+                    diasMora : item.diasMora,
+                    mora : item.mora
                 })
             }else break;
         }
@@ -252,6 +254,9 @@ class CobroService{
             idCuentaPorCobrar: this.group.idCuentaPorCobrar,
             idCuotaPorCobrar: item.idCuotaPorCobrar,
             abono: this.fS.roundNumber(abono, 5),
+            interes : item.interes,
+            diasMora : item.diasMora,
+            mora : item.mora,
             cuota: this.fS.roundNumber(item.cuota, 5),
             saldo: this.getValorSaldo(item),
             secuencial: this.indexDatoCobro
@@ -652,6 +657,8 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc
 
     $scope.data = {};
     $scope.data.importeTotal = 0;
+    $scope.data.totalMora = 0;
+    $scope.data.totalSaldoDoc = 0;
     $scope.data.totalAbonoAnterior = 0;
     $scope.data.totalValorAbono = 0;                
     $scope.data.totalSaldo = 0
@@ -756,26 +763,30 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc
         getTotalesCuota();
     }
     function getTotalesCuota(){
-        let importeTotal = 0,  abono = 0,  saldo = 0;
+        let importeTotal = 0,  abono = 0,  saldo = 0, totalMora = 0, totalSaldoDoc = 0;
         for(let item of $scope.selectedDocumentos){
             //Totales
             importeTotal       += item.importeTotal
             saldo         += item.saldo
             // $scope.data.totalSaldoOriginal = fS.roundNumber($sc, 5);
-            abono              += item.abono;                        
+            abono              += item.abono; 
+            totalMora += item.mora;                       
         }
         $scope.data.importeTotal       = fS.roundNumber(importeTotal, 5);
         $scope.data.totalSaldo         = fS.roundNumber(saldo, 5);
         // $scope.data.totalSaldoOriginal = fS.roundNumber($sc, 5);
         $scope.data.totalAbonoAnterior = fS.roundNumber(abono, 5)                  
+        $scope.data.totalMora          = fS.roundNumber(totalMora, 5)                  
+        $scope.data.totalSaldoDoc      = fS.roundNumber(totalSaldoDoc, 5)                  
         $scope.data.totalValorAbono    = 0;        
         $scope.data.valorCambio        = 0;
        
-       
+       //cuando se realiza cobro desde modulo de comprobante ingreso 
         if($scope.isPaymentLote){
             $scope.comprobante.importeTotal =  $scope.data.importeTotal 
             $scope.comprobante.abono =  $scope.data.totalAbonoAnterior 
             $scope.comprobante.saldo =  $scope.data.totalSaldo 
+            $scope.comprobante.totalMora =  $scope.data.totalMora; 
         }
     }
 

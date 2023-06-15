@@ -17,6 +17,8 @@ CREATE TABLE Contabilidad.CuentaPorCobrar(
 	,fechaVencimiento DATE NOT NULL
 	,importeTotal NUMERIC(18,5) NOT NULL
 	,abono NUMERIC(18,5) DEFAULT 0 NOT NULL
+	,tipoConfig VARCHAR(5) DEFAULT 'NA' NOT NULL
+	,interes NUMERIC(18,5) DEFAULT 0 NOT NULL
 	,mora NUMERIC(18,5) DEFAULT 0 NOT NULL
 	,diasMora INT DEFAULT 0 NOT NULL
 	,saldo AS CAST((importeTotal + mora ) - abono AS NUMERIC(15,5))

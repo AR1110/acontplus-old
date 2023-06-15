@@ -31,13 +31,15 @@ BEGIN
 	SET NOCOUNT ON;
 	
 	DECLARE @idUsuario INT
-	DECLARE @codDoc VARCHAR(5)
+	DECLARE @fechaEmision AS DATETIME
 	DECLARE @fechaVencimiento AS DATETIME 
 	DECLARE @codEstado VARCHAR(5)
 	DECLARE @idCuentaPorCobrar INT 
 	DECLARE @cuotas VARCHAR(MAX)
 	DECLARE @mora NUMERIC(18,5)
 	DECLARE @diasMora INT
+	DECLARE @tipoConfig VARCHAR(5)
+	DECLARE @interes NUMERIC(18,5)
 	
 	-- ============== PAYLOAD =====================
 	DECLARE @payload AS VARCHAR(MAX)
@@ -46,39 +48,54 @@ BEGIN
 	DECLARE @tbCuotas AS TABLE (
 		idCuotaPorCobrar INT UNIQUE NOT NULL
 	   ,fechaVencimiento DATETIME NOT NULL
+	   ,interes NUMERIC(18,5) NOT NULL
 	   ,cuota NUMERIC(18,5) NOT NULL
 	   ,mora NUMERIC(18,5) NOT NULL
 	   ,diasMora INT NOT NULL
 	)
 
 	BEGIN TRY
-		
-		SELECT @codEstado = codEstado, @idCuentaPorCobrar = idCuentaPorCobrar,@cuotas = cuotas 
-		FROM OPENJSON(@json) WITH (codEstado  VARCHAR(5) '$.codEstado'
-		                          ,idCuentaPorCobrar INT '$.idCuentaPorCobrar'
-								  ,cuotas  NVARCHAR(MAX) '$.cuotas' AS JSON
+	
+		SELECT @tipoConfig = tipoConfig, @interes = interes, @codEstado = codEstado, @idCuentaPorCobrar = idCuentaPorCobrar,@cuotas = cuotas 
+		FROM OPENJSON(@json) WITH (codEstado   VARCHAR(5) '$.codEstado' 
+		                          ,tipoConfig  VARCHAR(5) '$.tipoConfig'
+								  ,interes  NUMERIC(18,5) '$.interes'
+								  ,idCuentaPorCobrar  INT '$.idCuentaPorCobrar'
+								  ,cuotas   NVARCHAR(MAX) '$.cuotas' AS JSON
 								  )
 
-		INSERT INTO @tbCuotas (idCuotaPorCobrar,fechaVencimiento,cuota,mora,diasMora)
-						SELECT idCuotaPorCobrar,fechaVencimiento,cuota,mora,diasMora
+		INSERT INTO @tbCuotas (idCuotaPorCobrar,fechaVencimiento,interes,cuota,mora,diasMora)
+						SELECT idCuotaPorCobrar,fechaVencimiento,interes,cuota,mora,diasMora
 						FROM OPENJSON(@cuotas) WITH (idCuotaPorCobrar      INT '$.idCuotaPorCobrar'
 												    ,fechaVencimiento DATETIME '$.fechaVencimiento'
 												    ,cuota       NUMERIC(18,5) '$.cuota'
-												    ,mora        NUMERIC(18,5) '$.mora'
+												    ,interes     NUMERIC(18,5) '$.interes'
+													,mora        NUMERIC(18,5) '$.mora'
 												    ,diasMora              INT '$.diasMora' 
 												    )
 
+
 	    -- ========================== recuperar variables ==================================================================
 		SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol
+
+		SELECT TOP 1 @fechaEmision = fechaEmision FROM Contabilidad.CuentaPorCobrar WITH (NOLOCK) WHERE idCuentaPorCobrar = @idCuentaPorCobrar
 
 		SELECT TOP 1 @fechaVencimiento =  MAX(fechaVencimiento) FROM @tbCuotas
 
 		SELECT @mora =  SUM(mora), @diasMora = SUM(diasMora) FROM @tbCuotas
 		
 
+		-- ========================= validación de datos ===================================================================
+
+		IF CAST(@fechaEmision AS date ) > CAST(@fechaVencimiento AS date)
+			BEGIN
+				SELECT '0'code,'La ultima fecha de Vencimiento no puede ser menor a la fecha de Emisión' as 'message'
+				RETURN 
+			END
+
 		IF (SELECT COUNT(*) FROM @tbCuotas) = 0 
 			BEGIN
-				SELECT '0'code,'Erro en la informacion de las cuotas' as 'message'
+				SELECT '0'code,'Error en la informacion de las cuotas' as 'message'
 				RETURN 
 			END 
 		
@@ -92,24 +109,31 @@ BEGIN
 			UPDATE cx SET 
 				cx.fechaVencimiento  = tb.fechaVencimiento
 	           ,cx.cuota             = tb.cuota
-	           ,cx.mora              = tb.mora
+	           ,cx.interes           = tb.interes
+			   ,cx.mora              = tb.mora
 	           ,cx.diasMora          = tb.diasMora
 			FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)
 			INNER JOIN @tbCuotas tb ON tb.idCuotaPorCobrar = cx.idCuotaPorCobrar
 
 			
-			UPDATE Contabilidad.CuentaPorCobrar SET fechaVencimiento = @fechaVencimiento, mora = @mora , diasMora = @diasMora WHERE idCuentaPorCobrar = @idCuentaPorCobrar
+			UPDATE Contabilidad.CuentaPorCobrar SET 
+				fechaVencimiento = @fechaVencimiento
+			   ,mora             = @mora
+			   ,diasMora         = @diasMora
+			   ,tipoConfig       = @tipoConfig
+			   ,interes          = @interes 
+			WHERE idCuentaPorCobrar = @idCuentaPorCobrar
 				
 
 			SET @payload = (SELECT cx.idCuotaPorCobrar
 			                      ,cx.nroCuota
-								  ,interes = 0
+								  ,cx.interes
 								  ,cx.cuota
 								  ,cx.diasMora
 								  ,cx.abono
 								  ,cx.saldo
+								  ,cx.mora
 								  ,fechaVencimiento = FORMAT(cx.fechaVencimiento,'MM/dd/yyyy')
-				                  ,fechaGracia      = FORMAT(cx.fechaVencimiento,'MM/dd/yyyy')
 								  ,estado           = ep.descripcion
 								  ,codEstado        = ep.codigo
 			                FROM Contabilidad.CuotaPorCobrar  cx WITH (NOLOCK)

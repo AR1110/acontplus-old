@@ -151,15 +151,17 @@ BEGIN
 			INSERT INTO Contabilidad.CuotaPorCobrar (idCuentaPorCobrar,idEstadoPago,fechaVencimiento,nroCuota,cuota,entrada)
 			                                 SELECT @idCuentaPorCobrar,@idEstadoPago,fechaVencimiento,nroCuota,cuota,entrada FROM @cuotas
 			
+			DELETE Contabilidad.CuotaPorCobrar WHERE idCuentaPorCobrar = @idCuentaPorCobrar AND estado = 0 AND idCuotaPorCobrar NOT IN (SELECT idCuotaPorCobrar FROM CobroDetalle WITH (NOLOCK))
+
 			SET @payload = (SELECT cx.idCuotaPorCobrar
 			                      ,cx.nroCuota
-								  ,interes = 0
+								  ,cx.interes 
 								  ,cx.cuota
+								  ,cx.mora
 								  ,cx.diasMora
 								  ,cx.abono
 								  ,cx.saldo
 								  ,fechaVencimiento = FORMAT(cx.fechaVencimiento,'MM/dd/yyyy')
-				                  ,fechaGracia      = FORMAT(cx.fechaVencimiento,'MM/dd/yyyy')
 								  ,estado           = ep.descripcion
 								  ,codEstado        = ep.codigo
 			                FROM Contabilidad.CuotaPorCobrar  cx WITH (NOLOCK)

@@ -67,6 +67,7 @@ BEGIN
 	DECLARE @paymentDetail AS TABLE(
 		 idCuotaPorCobrar INT NOT NULL
 		,abono NUMERIC (15,5) NOT NULL
+		,interes NUMERIC(15,5) NOT NULL
 		,mora NUMERIC(15,5) NOT NULL
 		,diasMora INT NOT NULL
 		,secuencial INT NOT NULL
@@ -75,10 +76,14 @@ BEGIN
 	DECLARE @history AS TABLE (
 		 idCuentaPorCobrar INT NOT NULL UNIQUE
 		,abono NUMERIC(18,5) NOT NULL
+		,mora NUMERIC(15,5) NOT NULL
+		,diasMora INT NOT NULL
 	)
 
 	BEGIN TRY 
 		
+		
+
   	    --====================================obtener Datos de los Json============================================
 		SELECT @comprobante = comprobante,@cobros = cobros,@cobroDetalle= cobroDetalle,@historial = historial FROM OPENJSON(@json) 
 		WITH (comprobante  NVARCHAR(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS '$.comprobante'   AS JSON
@@ -146,13 +151,22 @@ BEGIN
 			 ,controlCaja            BIT '$.controlCaja')
 		AS dt
 
-		INSERT INTO @paymentDetail(idCuotaPorCobrar,abono,secuencial)
-							SELECT idCuotaPorCobrar,abono,secuencial FROM OPENJSON(@cobroDetalle) 
-							 WITH (idCuotaPorCobrar INT '$.idCuotaPorCobrar',abono NUMERIC(15,5) '$.abono',secuencial INT '$.secuencial') AS dt
+		INSERT INTO @paymentDetail(idCuotaPorCobrar,abono,interes,diasMora,mora,secuencial)
+							SELECT idCuotaPorCobrar,abono,interes,diasMora,mora,secuencial FROM OPENJSON(@cobroDetalle) 
+							 WITH (idCuotaPorCobrar   INT '$.idCuotaPorCobrar'
+							      ,abono    NUMERIC(15,5) '$.abono'
+							      ,interes  NUMERIC(15,5) '$.interes'
+							      ,diasMora           INT '$.diasMora'
+							      ,mora     NUMERIC(15,5) '$.mora'
+								  ,secuencial         INT '$.secuencial') AS dt
 		
-		INSERT INTO @history(idCuentaPorCobrar,abono)
-					  SELECT idCuentaPorCobrar,abono FROM OPENJSON(@historial)
-		               WITH (idCuentaPorCobrar INT '$.idCuentaPorCobrar',abono NUMERIC(18,5) '$.abono') AS dt
+
+		INSERT INTO @history(idCuentaPorCobrar,abono,diasMora,mora)
+					  SELECT idCuentaPorCobrar,abono,diasMora,mora FROM OPENJSON(@historial)
+		               WITH (idCuentaPorCobrar INT '$.idCuentaPorCobrar'
+					        ,abono   NUMERIC(18,5) '$.abono'
+							,diasMora          INT '$.diasMora'
+							,mora    NUMERIC(15,5) '$.mora') AS dt
 
 		
 		--======================================Obteniendo variables ============================================================
@@ -231,10 +245,11 @@ BEGIN
 			SELECT @idComprobanteIngreso,idEntidadFinanciera,idSubEntidadFinanciera,idBanco,idTipoDocumento,idComprobante,fechaEmision,valor,abono,posfechado,secuencial,cobro,infoCobro,controlCaja
 			FROM @payment
 
-			INSERT INTO CobroDetalle (idCobro,   idCuotaPorCobrar,   abono)
-			                 SELECT c.idCobro,dt.idCuotaPorCobrar,dt.abono FROM @paymentDetail dt INNER JOIN dbo.Cobro c WITH (NOLOCK) ON c.secuencial = dt.secuencial WHERE c.idComprobanteIngreso = @idComprobanteIngreso
+			INSERT INTO CobroDetalle (idCobro,idCuotaPorCobrar,abono,interes,diasMora,mora)
+			                 SELECT c.idCobro,dt.idCuotaPorCobrar,dt.abono,dt.interes,dt.diasMora,dt.mora FROM @paymentDetail dt INNER JOIN dbo.Cobro c WITH (NOLOCK) ON c.secuencial = dt.secuencial WHERE c.idComprobanteIngreso = @idComprobanteIngreso
 
-			INSERT INTO Contabilidad.Historial_Cobro(idComprobanteIngreso,idCuentaPorCobrar,abono) SELECT @idComprobanteIngreso,idCuentaPorCobrar,abono FROM @history
+			INSERT INTO Contabilidad.Historial_Cobro(idComprobanteIngreso,idCuentaPorCobrar,abono,diasMora,mora) 
+			                                 SELECT @idComprobanteIngreso,idCuentaPorCobrar,abono,diasMora,mora FROM @history
 
 			DECLARE cursor_Cuotas CURSOR LOCAL FOR
 			SELECT idCuotaPorCobrar FROM @paymentDetail

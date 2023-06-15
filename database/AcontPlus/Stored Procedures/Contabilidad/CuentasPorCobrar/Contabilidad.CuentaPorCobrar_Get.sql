@@ -33,9 +33,8 @@ BEGIN
 
 	-- ==== PARAMETER CONFIG ==========
 	DECLARE @configInteres AS BIT
-	DECLARE @porcentaje AS NUMERIC(18,5)
-	DECLARE @precioFijo AS NUMERIC(18,5)
 	DECLARE @tipoConfig AS VARCHAR(5)
+	DECLARE @interes AS NUMERIC(18,5)
 			
 	-- == PARAMETER TIEMPO CREDITO =====
 	DECLARE @creditoContado BIT
@@ -59,7 +58,6 @@ BEGIN
 		,abono NUMERIC(15,5) NOT NULL
 		,interes NUMERIC(15,5) NOT NULL
 		,mora NUMERIC(15,5) NOT NULL
-		,saldo AS CAST(cuota + mora AS NUMERIC(15,5))
 		,fechaVencimiento DATE NOT NULL
 		,diasMora INT NOT NULL
 		,estado VARCHAR(150) NOT NULL
@@ -74,6 +72,8 @@ BEGIN
 		,fechaEmision DATETIME NOT NULL
 		,fechaVencimiento DATETIME NOT NULL
 		,importeTotal NUMERIC(18,5) NOT NULL
+		,diasMora INT NOT NULL
+		,mora NUMERIC(18,5) NOT NULL
 		,abono NUMERIC(18,5) NOT NULL
 		,saldo NUMERIC(18,5) NOT NULL
 		,estado VARCHAR(100) NOT NULL
@@ -109,6 +109,8 @@ BEGIN
 	IF @tipo = 2
 		BEGIN
 			
+			SELECT TOP 1 @interes = interes FROM Contabilidad.CuentaPorCobrar WITH (NOLOCK) WHERE idCuentaPorCobrar = @idCuentaPorCobrar
+
 			SELECT @configInteres = JSON_VALUE(dbo.f_sanitize_json(jsonConfig),'$.configInteres') FROM config.sistema WITH (NOLOCK) WHERE codConfig = 'CV' AND idEntidad = @idEntidad
 
 			
@@ -128,11 +130,16 @@ BEGIN
 							-- === Calculo para sacar el interes de las cuotas segun su configuracion --------------------------------------
 							IF @codEstado != 'CBR'
 								BEGIN
-									
-									SELECT @tipoConfig    = JSON_VALUE(dbo.f_sanitize_json(jsonConfig),'$.infoInteres.tipo')
-										  ,@porcentaje    = JSON_VALUE(dbo.f_sanitize_json(jsonConfig),'$.infoInteres.porcentajeInteres')
-										  ,@precioFijo    = JSON_VALUE(dbo.f_sanitize_json(jsonConfig),'$.infoInteres.precioFijo') 
-									FROM config.sistema WITH (NOLOCK) WHERE codConfig = 'CV' AND idEntidad = @idEntidad
+									IF EXISTS (SELECT 1 FROM Contabilidad.CuentaPorCobrar WITH (NOLOCK) WHERE idCuentaPorCobrar = @idCuentaPorCobrar AND tipoConfig != 'NA')
+										BEGIN
+											SELECT TOP 1 @tipoConfig = tipoConfig, @interes = interes FROM Contabilidad.CuentaPorCobrar WITH (NOLOCK) WHERE idCuentaPorCobrar = @idCuentaPorCobrar
+										END 
+									ELSE 
+										BEGIN 
+											SELECT @tipoConfig = JSON_VALUE(dbo.f_sanitize_json(jsonConfig),'$.infoInteres.tipoConfig')
+												  ,@interes    = JSON_VALUE(dbo.f_sanitize_json(jsonConfig),'$.infoInteres.interes')
+											FROM config.sistema WITH (NOLOCK) WHERE codConfig = 'CV' AND idEntidad = @idEntidad
+										END 
 								END 
 						END 
 				END 
@@ -147,8 +154,7 @@ BEGIN
 						,codEstado        = ep.codigo 
 						,config           = ISNULL(@configInteres,0)
 						,tipoConfig       = ISNULL(@tipoConfig,'NA')
-						,precioFijo       = ISNULL(@precioFijo,0)
-						,porcentaje       = ISNULL(@porcentaje,0)
+						,interes          = ISNULL(@interes,0)
 			FROM Contabilidad.CuentaPorCobrar cc WITH (NOLOCK)
 			INNER JOIN dbo.Cliente            cl WITH (NOLOCK) ON cl.idCliente      = cc.idCliente 
 			INNER JOIN dbo.PuntoEmision       pt WITH (NOLOCK) ON pt.idPuntoEmision = cc.idPuntoEmision
@@ -161,10 +167,11 @@ BEGIN
 			SELECT cx.idCuotaPorCobrar
 			      ,cx.nroCuota
 				  ,cx.cuota
-				  ,interes = 0
+				  ,cx.interes
 				  ,cx.diasMora
 				  ,cx.mora
 				  ,cx.abono
+				  ,saldoCta = cx.cuota - cx.abono
 				  ,cx.saldo
 				  ,fechaVencimiento = FORMAT(cx.fechaVencimiento,'MM/dd/yyyy')
 				  ,estado = ep.descripcion
@@ -189,13 +196,15 @@ BEGIN
 			-- ====================================== Datos por lote se trae por cliente y establecimiento   ==================================================================
 			IF @tiempoCredito IS NULL
 				BEGIN 
-					INSERT INTO @tbVentas (idCuentaPorCobrar,serieComprobante,tipoDoc,fechaEmision,fechaVencimiento,importeTotal,abono,saldo,estado,cuotas)
+					INSERT INTO @tbVentas (idCuentaPorCobrar,serieComprobante,tipoDoc,fechaEmision,fechaVencimiento,importeTotal,diasMora,mora,abono,saldo,estado,cuotas)
 					SELECT cc.idCuentaPorCobrar
 						  ,cc.serieComprobante 
 						  ,cc.codDoc
 						  ,fechaEmision
 						  ,fechaVencimiento
 						  ,cc.importeTotal
+						  ,cc.diasMora
+						  ,cc.mora
 						  ,cc.abono
 						  ,cc.saldo
 						  ,ep.descripcion
@@ -205,8 +214,10 @@ BEGIN
 										   ,cx.nroCuota
 										   ,cx.cuota
 										   ,cx.mora
+										   ,cx.interes
 										   ,cx.diasMora
 										   ,cx.abono
+										   ,saldoCta = cx.cuota - cx.abono
 										   ,cx.saldo
 										   ,estado = ep.descripcion
 						             FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)
@@ -226,13 +237,15 @@ BEGIN
 			-- ====================================== Documento a credito o contado  ==================================================================
 		    IF @tiempoCredito = 0 OR @tiempoCredito = 1
 				BEGIN
-					INSERT INTO @tbVentas (idCuentaPorCobrar,serieComprobante,tipoDoc,fechaEmision,fechaVencimiento,importeTotal,abono,saldo,estado,cuotas)
+					INSERT INTO @tbVentas (idCuentaPorCobrar,serieComprobante,tipoDoc,fechaEmision,fechaVencimiento,importeTotal,diasMora,mora,abono,saldo,estado,cuotas)
 					SELECT cc.idCuentaPorCobrar
 						  ,cc.serieComprobante 
 						  ,cc.codDoc
 						  ,fechaEmision
 						  ,fechaVencimiento
 						  ,cc.importeTotal
+						  ,cc.diasMora
+						  ,cc.mora
 						  ,cc.abono
 						  ,cc.saldo
 						  ,ep.descripcion
@@ -241,9 +254,11 @@ BEGIN
 									       ,cx.idCuentaPorCobrar
 										   ,cx.nroCuota
 										   ,cx.cuota
+										   ,cx.interes
 										   ,cx.mora
 										   ,cx.diasMora
 										   ,cx.abono
+										   ,saldoCta = cx.cuota - cx.abono
 										   ,cx.saldo
 										   ,estado = ep.descripcion
 						             FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)
@@ -261,65 +276,62 @@ BEGIN
 				END 
 
 			-- ====================== Documetos Emitidos o recibidos para aplicar a cobros ; si el documento es a credito ===========================================
-			IF @tiempoCredito = 0 
-				BEGIN
-					INSERT INTO @cobroDocuments (idComprobante,codDoc,codMov)
-				    SELECT c.idComprobante,td.codigoSri,td.codigo 
-			        FROM dbo.Cobro c WITH (NOLOCK)
-					INNER JOIN dbo.TipoDocumento     td  WITH (NOLOCK) ON td.idTipoDocumento      = c.idTipoDocumento
-					INNER JOIN dbo.EntidadFinanciera ef  WITH (NOLOCK) ON ef.idEntidadFinanciera  = c.idEntidadFinanciera
-					INNER JOIN dbo.ComprobanteIngreso ci WITH (NOLOCK) ON ci.idComprobanteIngreso = c.idComprobanteIngreso
-					WHERE ef.codigo = 'DOC' 
-					  AND ci.estado = 1
-					  AND ci.idEntidad = @idEntidad
+			
+			INSERT INTO @cobroDocuments (idComprobante,codDoc,codMov)
+			SELECT co.idComprobante,td.codigoSri,td.codigo 
+			FROM dbo.Cobro                    co WITH (NOLOCK)
+			INNER JOIN dbo.TipoDocumento      td WITH (NOLOCK) ON td.idTipoDocumento      = co.idTipoDocumento
+			INNER JOIN dbo.EntidadFinanciera  ef WITH (NOLOCK) ON ef.idEntidadFinanciera  = co.idEntidadFinanciera
+			INNER JOIN dbo.ComprobanteIngreso ci WITH (NOLOCK) ON ci.idComprobanteIngreso = co.idComprobanteIngreso
+			WHERE ef.codigo = 'DOC' 
+				AND ci.estado = 1
+				AND ci.idEntidad = @idEntidad
 
-					INSERT INTO @documents (idDocumento,idTipoDocumento,serieComprobante,saldo,codDoc,nroDoc)
-					SELECT 
-						 d.idDocRelacionado
-						,idTipoDocumento = (SELECT TOP 1 td.idTipoDocumento FROM dbo.TipoDocumento td WITH (NOLOCK) WHERE td.codigoSri = '07')
-						,dr.serieComprobante
-						,saldo = d.valorRetenido
-						,codDoc = 'Retención Version:'+dr.versionComp
-						,nroDoc = ''
-					FROM factelect.DocRelacionado d WITH (NOLOCK)
-					INNER JOIN Recepcion.DocumentoRecibido dr WITH (NOLOCK) ON dr.idDocumento = d.idDocumentoRecibido
-					WHERE dr.codDoc = '07' 
-					  AND dr.identificacionReceptor = @identificacionReceptor 
-					  AND dr.rucEmisor = @numeroIdentificacion 
-					  AND d.estado = 'PE'
-					  AND d.idDocRelacionado NOT IN (SELECT c.idComprobante FROM @cobroDocuments c WHERE c.codDoc = '07')
+			INSERT INTO @documents (idDocumento,idTipoDocumento,serieComprobante,saldo,codDoc,nroDoc)
+			SELECT 
+			     d.idDocRelacionado
+				,idTipoDocumento = (SELECT TOP 1 td.idTipoDocumento FROM dbo.TipoDocumento td WITH (NOLOCK) WHERE td.codigoSri = '07')
+				,dr.serieComprobante
+				,saldo = d.valorRetenido
+				,codDoc = 'Retención Version:'+dr.versionComp
+				,nroDoc = ''
+			FROM factelect.DocRelacionado d WITH (NOLOCK)
+			INNER JOIN Recepcion.DocumentoRecibido dr WITH (NOLOCK) ON dr.idDocumento = d.idDocumentoRecibido
+			WHERE dr.codDoc = '07' 
+				AND dr.identificacionReceptor = @identificacionReceptor 
+				AND dr.rucEmisor = @numeroIdentificacion 
+				AND d.estado = 'PE'
+				AND d.idDocRelacionado NOT IN (SELECT c.idComprobante FROM @cobroDocuments c WHERE c.codDoc = '07')
 
+			INSERT INTO @documents (idDocumento,idTipoDocumento,serieComprobante,saldo,codDoc,nroDoc)
+			SELECT 
+			     de.idDocumentoElectronico
+				,idTipoDocumento = (SELECT TOP 1 td.idTipoDocumento FROM dbo.TipoDocumento td WITH (NOLOCK) WHERE td.codigoSri = '04')
+				,serieComprobante = de.numEstab+'-'+de.ptoEmision+'-'+Helper.F_Auto_Sequential(de.nroDocumento)
+				,saldo = (SELECT TOP 1 nc.total FROM dbo.NotaCredito nc WITH (NOLOCK) WHERE nc.idNotaCredito = de.idDocumento)
+				,codDoc = 'Nota de Crédito Version: '+de.versionComp
+				,nroDoc = ''
+			FROM dbo.DocumentoElectronico de
+			WHERE de.codDoc = '04'
+				AND de.codEstado = 4
+				AND de.idEntidad = @idEntidad
+				AND de.idContribuyente = @idCliente
+				AND de.idDocumentoElectronico NOT IN (SELECT c.idComprobante FROM @cobroDocuments c WHERE c.codDoc = '04')
 
-					INSERT INTO @documents (idDocumento,idTipoDocumento,serieComprobante,saldo,codDoc,nroDoc)
-					SELECT 
-						 de.idDocumentoElectronico
-						,idTipoDocumento = (SELECT TOP 1 td.idTipoDocumento FROM dbo.TipoDocumento td WITH (NOLOCK) WHERE td.codigoSri = '04')
-						,serieComprobante = de.numEstab+'-'+de.ptoEmision+'-'+Helper.F_Auto_Sequential(de.nroDocumento)
-						,saldo = (SELECT TOP 1 nc.total FROM dbo.NotaCredito nc WITH (NOLOCK) WHERE nc.idNotaCredito = de.idDocumento)
-						,codDoc = 'Nota de Crédito Version: '+de.versionComp
-						,nroDoc = ''
-					FROM dbo.DocumentoElectronico de
-					WHERE de.codDoc = '04'
-					  AND de.codEstado = 4
-					  AND de.idEntidad = @idEntidad
-					  AND de.idContribuyente = @idCliente
-					  AND de.idDocumentoElectronico NOT IN (SELECT c.idComprobante FROM @cobroDocuments c WHERE c.codDoc = '04')
-
-					INSERT INTO @documents (idDocumento,idTipoDocumento,serieComprobante,saldo,codDoc,nroDoc)
-					SELECT 
-						 a.idAnticipo as idComprobante
-						,a.idTipoDocumento as idTipoDocumento
-						,td.codigo+'-'+es.estab+'-'+dbo.AFTAutoComplete(a.nroDoc) as nroDocumento
-						,a.valor
-						,td.codigo as tipoDocumento
-						,''
-					FROM Anticipo a
-					INNER JOIN Sri.Establecimiento es ON es.codEstab = a.codEstab
-					INNER JOIN TipoDocumento td ON td.idTipoDocumento = a.idTipoDocumento
-					WHERE a.idCliente =  @idCliente 
-					  AND a.estado = 1 
-					  AND a.idAnticipo NOT IN (SELECT t.idComprobante FROM @cobroDocuments t WHERE t.codMov = 'A')
-				END 
+			INSERT INTO @documents (idDocumento,idTipoDocumento,serieComprobante,saldo,codDoc,nroDoc)
+			SELECT 
+				 a.idAnticipo as idComprobante
+				,a.idTipoDocumento as idTipoDocumento
+				,td.codigo+'-'+es.estab+'-'+dbo.AFTAutoComplete(a.nroDoc) as nroDocumento
+				,a.valor
+				,td.codigo as tipoDocumento
+				,''
+			FROM Anticipo a
+			INNER JOIN Sri.Establecimiento es ON es.codEstab = a.codEstab
+			INNER JOIN TipoDocumento td ON td.idTipoDocumento = a.idTipoDocumento
+			WHERE a.idCliente =  @idCliente 
+				AND a.estado = 1 
+				AND a.idAnticipo NOT IN (SELECT t.idComprobante FROM @cobroDocuments t WHERE t.codMov = 'A')
 			
 			-- ==================================== PAYLOAD ================================================================================
 			IF @tiempoCredito = 1 OR @tiempoCredito = 0
@@ -337,10 +349,24 @@ BEGIN
 
 			SELECT idDocumento,idTipoDocumento,serieComprobante,saldo,codDoc,nroDoc FROM @documents 
 
-			SELECT idCuentaPorCobrar,serieComprobante,tipoDoc = CASE tipoDoc WHEN '01' THEN 'Factura' ELSE 'N. Entrega' END ,fechaEmision = FORMAT(fechaEmision,'MM/dd/yyyy'),fechaVencimiento = FORMAT(fechaVencimiento,'MM/dd/yyyy'),importeTotal,abono,saldo,estado,cuotas,estado FROM @tbVentas ORDER BY fechaEmision DESC
+			SELECT idCuentaPorCobrar
+			      ,serieComprobante
+				  ,tipoDoc          = CASE tipoDoc WHEN '01' THEN 'Factura' ELSE 'N. Entrega' END 
+				  ,fechaEmision     = FORMAT(fechaEmision,'MM/dd/yyyy')
+				  ,fechaVencimiento = FORMAT(fechaVencimiento,'MM/dd/yyyy')
+				  ,importeTotal
+				  ,diasMora
+				  ,mora
+				  ,abono
+				  ,saldo
+				  ,estado
+				  ,cuotas
+			FROM @tbVentas ORDER BY fechaEmision DESC
 
 			SELECT importeTotal         = SUM(importeTotal) 
-			      ,saldo                = SUM(saldo)
+			      ,mora                 = SUM(mora)
+				  ,totalSaldoDoc        = SUM(importeTotal - abono)
+				  ,saldo                = SUM(saldo)
 				  ,abono                = SUM(abono)
 				  ,idCliente            = @idCliente
 				  ,numeroIdentificacion = @numeroIdentificacion
@@ -356,7 +382,7 @@ BEGIN
 	IF @tipo = 4
 		BEGIN 
 
-			SELECT @porcentaje = porcentaje, @tipoConfig = tipoConfig FROM OPENJSON(@json) WITH (porcentaje NUMERIC(18,5) '$.porcentaje', tipoConfig VARCHAR(5) '$.tipoConfig', precioFijo NUMERIC(18,5)) 
+			SELECT @interes = interes, @tipoConfig = tipoConfig FROM OPENJSON(@json) WITH (interes NUMERIC(18,5) '$.interes', tipoConfig VARCHAR(5) '$.tipoConfig', precioFijo NUMERIC(18,5)) 
 			
 			IF @tipoConfig = 'NA'
 				BEGIN
@@ -372,8 +398,8 @@ BEGIN
 							,cx.abono
 							,fechaVencimiento = cx.fechaVencimiento
 							,diasMora         = CASE WHEN ep.codigo != 'CBR' THEN DATEDIFF(DAY,cx.fechaVencimiento,dbo.ufnGetDateEcuador()) ELSE 0 END 
-							,interes          = CASE WHEN ep.codigo != 'CBR' THEN (cx.cuota - cx.abono)  * @porcentaje  / 100 ELSE 0 END  
-							,mora             = CASE WHEN ep.codigo != 'CBR' THEN (cx.cuota - cx.abono)  * @porcentaje  / 100 * DATEDIFF(DAY,cx.fechaVencimiento,dbo.ufnGetDateEcuador()) ELSE 0 END  
+							,interes          = CASE WHEN ep.codigo != 'CBR' THEN (cx.cuota - cx.abono)  * @interes  / 100 ELSE 0 END  
+							,mora             = CASE WHEN ep.codigo != 'CBR' THEN (cx.cuota - cx.abono)  * @interes  / 100 * DATEDIFF(DAY,cx.fechaVencimiento,dbo.ufnGetDateEcuador()) ELSE 0 END  
 							,ep.descripcion
 							,ep.codigo
 					FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)
@@ -386,7 +412,8 @@ BEGIN
 						  ,abono
 						  ,interes
 						  ,mora     = IIF(mora < 0 ,0,mora)
-						  ,saldo    = IIF(saldo< 0,0,saldo)
+						  ,saldoCta = cuota - abono
+						  ,saldo    = IIF(mora< 0,0,mora) + (cuota - abono)
 						  ,fechaVencimiento
 						  ,diasMora = IIF(diasMora < 0,0,diasMora)
 						  ,estado
