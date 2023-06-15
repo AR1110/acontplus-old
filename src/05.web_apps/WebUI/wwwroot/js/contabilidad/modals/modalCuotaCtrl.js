@@ -173,7 +173,7 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
         try {
             
             let {isConfirmed} = await Swal.fire({
-                html: `<small></small>`,
+                html: `<small>Desea Aplicar el calculo de mora a estas Cuotas</small>`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -185,7 +185,7 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
             if(isConfirmed){
                 let query = {
                     idCuentaPorCobrar,                   
-                    porcentaje: $scope.comprobante.porcentaje,
+                    interes: $scope.comprobante.interes,
                     tipoConfig: $scope.comprobante.tipoConfig,
                     tipo: 4
                 }
@@ -198,7 +198,6 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
                     }
                     if(response.code==='1'){
                         let tempCuotas = JSON.parse(response.payload)[0]
-                        console.log(tempCuotas)
                         $scope.cuotas = tempCuotas.map(cuotaMappFrom)
 
                     }
@@ -550,12 +549,15 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
                     idCuotaPorCobrar: val.idCuotaPorCobrar,
                     cuota: Number(val.cuota),
                     fechaVencimiento: fS.formatDateTimeZone(val.fechaVencimiento, "YYYY-MM-DD HH:mm:ss A"),
+                    interes : val.interes,
                     diasMora: val.diasMora,
                     mora: val.mora                    
                 }))
                 let query = {
                     idCuentaPorCobrar,
                     codEstado: $scope.comprobante.codEstado,
+                    tipoConfig : $scope.comprobante.tipoConfig,
+                    interes : $scope.comprobante.interes,
                     cuotas
                 }
 

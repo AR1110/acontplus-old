@@ -81,6 +81,7 @@
                     <th md-column>Dias Mora</th>
                     <th md-column>Mora</th>
                     <th md-column>Abono</th>
+                    <th md-column>Saldo Cta</th>
                     <th md-column>Saldo</th>
                     <th md-column>Fecha Vencimiento</th>
                     <th md-column>Estado</th>                   
@@ -113,6 +114,7 @@
                     <td md-cell>{{item.diasMora}}</td>
                     <td md-cell>{{item.mora}}</td>
                     <td md-cell>{{item.abono}}</td>
+                    <td md-cell>{{item.saldoCta}}</td>
                     <td md-cell>{{item.saldo}}</td>
                     <td md-cell>
                         <span ng-if="item.nroCuota=='E'" uib-popover-html="'getFechaEscritaCuota(item.fechaVencimiento)'"  popover-trigger="'focus'" class="ml-1">{{item.fechaVencimiento}}</span>

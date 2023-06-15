@@ -146,7 +146,7 @@
                                                     <div class="col-xl-5 col-lg-5 col-md-6 col-sm-12 col-12"
                                                         ng-if="gestionSistema.configDeuda">
                                                         <div class="form-group">
-                                                            <md-radio-group ng-model="gestionSistema.configPorcentaje"
+                                                            <md-radio-group ng-model="gestionSistema.tipoConfig"
                                                                 ng-change="onChangeConfigPorcentaje()"
                                                                 aria-labelledby="">
                                                                 <md-radio-button value="PI"
@@ -158,20 +158,12 @@
                                                         </div>
 
 
-                                                        <div class="form-group" ng-if="configPorcentajePI">
-                                                            <label for="dias">Porcentaje de Interes</label>
+                                                        <div class="form-group" >
+                                                            <label for="dias">Interes</label>
                                                             <input type="text" name="porcentaje" id="porcentaje"
                                                                 valid-number class="form-control border-select"
                                                                 placeholder="20%"
-                                                                ng-model="gestionSistema.porcentajeInteres">
-                                                        </div>
-
-                                                        <div class="form-group" ng-if="configPorcentajePF">
-                                                            <label for="dias">Precio Fijo</label>
-                                                            <input type="text" name="precioFijo" id="precioFijo"
-                                                                valid-number class="form-control border-select"
-                                                                placeholder="15 dolares"
-                                                                ng-model="gestionSistema.precioFijo">
+                                                                ng-model="gestionSistema.interes">
                                                         </div>
                                                     </div>
                                                 </div>

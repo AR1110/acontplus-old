@@ -43,10 +43,8 @@ BEGIN
 	
 		SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
-		--SELECT TOP 1 @inventory = JSON_VALUE(dbo.f_sanitize_json(jsonConfig),'$.llevaInventario') FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CI'
+		SELECT TOP 1 @inventory = JSON_VALUE(dbo.f_sanitize_json(jsonConfig),'$.llevaInventario') FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CI'
 		
-		SELECT TOP 1 @inventory = llevaInventario FROM Config.GestionSistema WHERE idEntidad = @idEntidad
-
 		SELECT TOP 1 @rucProv = rucEmisor, @fechaEmision = CAST(fechaEmision AS date), @codDoc = codDoc FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE idDocumento = @idDocumento 
 		
 		SELECT TOP 1 @idProveedor = idProveedor FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND numeroIdentificacion = @rucProv
@@ -161,7 +159,7 @@ BEGIN
 					IF @idArticulo > 0 
 						BEGIN 
 							INSERT INTO @tblDetails (idArticulo   ,idBodega   ,idMedida   ,cantidad,precioUnitario,precioTotalSimImpuestos)
-									SELECT dd.idArticulo,dd.idBodega,dd.idMedida,dd.cantidad,precioUnitario,dd.precioTotalSinImpuesto 
+									SELECT dd.idArticulo,dd.idBodega,dd.idMedida,dd.cantidad,costoNeto,dd.precioTotalSinImpuesto 
 									FROM Recepcion.DocumentoDetalle dd WITH (NOLOCK) 
 									WHERE dd.idDocumento = @idDocumento
 										AND dd.idArticulo = @idArticulo
@@ -170,12 +168,12 @@ BEGIN
 					ELSE 
 						BEGIN 
 							INSERT INTO @tblDetails (idArticulo   ,idBodega   ,idMedida   ,cantidad,precioUnitario,precioTotalSimImpuestos)
-									SELECT dd.idArticulo,dd.idBodega,dd.idMedida,dd.cantidad,precioUnitario,dd.precioTotalSinImpuesto 
+									SELECT dd.idArticulo,dd.idBodega,dd.idMedida,dd.cantidad,costoNeto,dd.precioTotalSinImpuesto 
 									FROM Recepcion.DocumentoDetalle dd WITH (NOLOCK) 
 									WHERE dd.idDocumento = @idDocumento
 						END 
 
-					SET @codDocInv = (SELECT CASE WHEN @codDoc = '01' THEN 'FE' WHEN @codDoc = '04' THEN 'NC' END)
+					SET @codDocInv  = (SELECT CASE WHEN @codDoc = '01' THEN 'FE' WHEN @codDoc = '04' THEN 'NC' END)
 
 					SET @multiplier = (SELECT CASE WHEN @codDoc = '01' THEN 1  WHEN @codDoc = '04' THEN -1 END)
 
@@ -202,6 +200,7 @@ BEGIN
 			SELECT '1' code, 'Detalle importado exitosamente' as 'message'
 		COMMIT TRAN 
 	END TRY
+
 	BEGIN CATCH
 		SELECT '0' code, 'Error en base de datos: ' + ERROR_MESSAGE() as 'message'
 		IF (@@TRANCOUNT > 0)
