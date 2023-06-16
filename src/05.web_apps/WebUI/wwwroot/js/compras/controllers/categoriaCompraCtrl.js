@@ -25,14 +25,13 @@
                 showLoader();
                 $scope.categoriaCompras = [];
                 mS.getData('get', '/CategoriaCompra/Get?pageIndex=' + $scope.pageIndex + '&pageSize=' + $scope.pageSize).then(response => {
-                    if (response.id == "0") {
-                        hideLoader();
+                    hideLoader();
+                    if (response.id == "0") {                        
                         $scope.categoriaCompras=[];
                         toast.toastr("warning", response.message, response.titleSms);
                         return
                     }                
-                    if(response.id == "1") {
-                        hideLoader();
+                    if(response.id == "1") {                        
                         $scope.categoriaCompras = response.data;  
                                   
                         $scope.totalRecords = $scope.categoriaCompras.length>0?  $scope.categoriaCompras[0].totalRecords: 0
