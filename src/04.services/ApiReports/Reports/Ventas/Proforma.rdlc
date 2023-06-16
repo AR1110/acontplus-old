@@ -273,7 +273,7 @@
                                 <TextRun>
                                   <Value>Còdigo</Value>
                                   <Style>
-                                    <FontSize>6pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -308,7 +308,7 @@
                                 <TextRun>
                                   <Value>Descripciòn</Value>
                                   <Style>
-                                    <FontSize>6pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -343,7 +343,7 @@
                                 <TextRun>
                                   <Value>Medida</Value>
                                   <Style>
-                                    <FontSize>6pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -378,7 +378,7 @@
                                 <TextRun>
                                   <Value>Cant.</Value>
                                   <Style>
-                                    <FontSize>6pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -413,7 +413,7 @@
                                 <TextRun>
                                   <Value>Precio U.</Value>
                                   <Style>
-                                    <FontSize>6pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -448,7 +448,7 @@
                                 <TextRun>
                                   <Value>Descuento</Value>
                                   <Style>
-                                    <FontSize>6pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -483,7 +483,7 @@
                                 <TextRun>
                                   <Value>Precio Total</Value>
                                   <Style>
-                                    <FontSize>6pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -523,7 +523,7 @@
                                 <TextRun>
                                   <Value>=Fields!codigo.Value</Value>
                                   <Style>
-                                    <FontSize>6pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -557,7 +557,7 @@
                                 <TextRun>
                                   <Value>=Fields!descripcion.Value</Value>
                                   <Style>
-                                    <FontSize>6pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -591,7 +591,7 @@
                                 <TextRun>
                                   <Value>=Fields!medida.Value</Value>
                                   <Style>
-                                    <FontSize>6pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -625,7 +625,7 @@
                                 <TextRun>
                                   <Value>=Fields!cantidad.Value</Value>
                                   <Style>
-                                    <FontSize>6pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -659,7 +659,7 @@
                                 <TextRun>
                                   <Value>=Fields!precioUnitario.Value</Value>
                                   <Style>
-                                    <FontSize>6pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -693,7 +693,7 @@
                                 <TextRun>
                                   <Value>=Fields!valorDescuento.Value</Value>
                                   <Style>
-                                    <FontSize>6pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -727,7 +727,7 @@
                                 <TextRun>
                                   <Value>=Fields!precioTotal.Value</Value>
                                   <Style>
-                                    <FontSize>6pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -811,7 +811,7 @@
                                 <TextRun>
                                   <Value>=Fields!porcentajeIva.Value</Value>
                                   <Style>
-                                    <FontSize>6pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -845,7 +845,7 @@
                                 <TextRun>
                                   <Value>=Fields!subtotalIva12.Value</Value>
                                   <Style>
-                                    <FontSize>7pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -884,7 +884,7 @@
                                 <TextRun>
                                   <Value>SUBTOTAL IVA 0%</Value>
                                   <Style>
-                                    <FontSize>6pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -918,7 +918,7 @@
                                 <TextRun>
                                   <Value>=Fields!subtotalIva0.Value</Value>
                                   <Style>
-                                    <FontSize>7pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -957,7 +957,7 @@
                                 <TextRun>
                                   <Value>SUBTOTAL NO OBJETO IVA</Value>
                                   <Style>
-                                    <FontSize>6pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -991,7 +991,7 @@
                                 <TextRun>
                                   <Value>=Fields!subtotalNoObjetoIva.Value</Value>
                                   <Style>
-                                    <FontSize>7pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1030,7 +1030,7 @@
                                 <TextRun>
                                   <Value>SUBTOTAL EXCENTO IVA</Value>
                                   <Style>
-                                    <FontSize>6pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1064,7 +1064,7 @@
                                 <TextRun>
                                   <Value>=Fields!subtotalExcentoIva.Value</Value>
                                   <Style>
-                                    <FontSize>7pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1103,7 +1103,7 @@
                                 <TextRun>
                                   <Value>SUBTOTAL SIN IMPUESTOS</Value>
                                   <Style>
-                                    <FontSize>6pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1137,7 +1137,7 @@
                                 <TextRun>
                                   <Value>=Fields!subtotalSinImpuestos.Value</Value>
                                   <Style>
-                                    <FontSize>7pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1176,7 +1176,7 @@
                                 <TextRun>
                                   <Value>DESCUENTO</Value>
                                   <Style>
-                                    <FontSize>6pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1210,7 +1210,7 @@
                                 <TextRun>
                                   <Value>=Fields!totalDescuentos.Value</Value>
                                   <Style>
-                                    <FontSize>7pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1249,7 +1249,7 @@
                                 <TextRun>
                                   <Value>ICE</Value>
                                   <Style>
-                                    <FontSize>6pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1283,7 +1283,7 @@
                                 <TextRun>
                                   <Value>=Fields!ice.Value</Value>
                                   <Style>
-                                    <FontSize>7pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1322,7 +1322,7 @@
                                 <TextRun>
                                   <Value>=Fields!tipoIva.Value</Value>
                                   <Style>
-                                    <FontSize>6pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1356,7 +1356,7 @@
                                 <TextRun>
                                   <Value>=Fields!iva12.Value</Value>
                                   <Style>
-                                    <FontSize>7pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1395,7 +1395,7 @@
                                 <TextRun>
                                   <Value>VALOR TOTAL</Value>
                                   <Style>
-                                    <FontSize>6pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1429,7 +1429,7 @@
                                 <TextRun>
                                   <Value>=Fields!valorTotal.Value</Value>
                                   <Style>
-                                    <FontSize>7pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>

@@ -176,27 +176,27 @@ namespace PrintServer
                         }
                     }
                 }
-                myIP = $"http://{myIP}:9200/";
-                if (!string.IsNullOrEmpty(myIP) && myIP != "http://127.0.0.1:9100/")
-                {
-                    listener.Prefixes.Add(myIP);
-                    var appLog = new EventLog("Application");
-                    var eventSource = "PrinterServer";
-                    appLog.Source = EventsLogs.CreateEventSource(eventSource);
-                    appLog.WriteEntry($"Listening for connections on {myIP}", EventLogEntryType.Information);
-                    appLog.WriteEntry($"Listening for connections on {url}", EventLogEntryType.Information);
-                    Console.WriteLine("Listening for connections on {0}", myIP);
-                    Console.WriteLine("Listening for connections on {0}", url);
-                }
-                else
-                {
+                //myIP = $"http://{myIP}:9200/";
+                //if (!string.IsNullOrEmpty(myIP) && myIP != "http://127.0.0.1:9100/")
+                //{
+                //    listener.Prefixes.Add(myIP);
+                //    var appLog = new EventLog("Application");
+                //    var eventSource = "PrinterServer";
+                //    appLog.Source = EventsLogs.CreateEventSource(eventSource);
+                //    appLog.WriteEntry($"Listening for connections on {myIP}", EventLogEntryType.Information);
+                //    appLog.WriteEntry($"Listening for connections on {url}", EventLogEntryType.Information);
+                //    Console.WriteLine("Listening for connections on {0}", myIP);
+                //    Console.WriteLine("Listening for connections on {0}", url);
+                //}
+                //else
+                //{
                     listener.Prefixes.Add(url);
                     var appLog = new EventLog("Application");
                     var eventSource = "PrinterServer";
                     appLog.Source = EventsLogs.CreateEventSource(eventSource);
                     appLog.WriteEntry($"Listening for connections on {url}", EventLogEntryType.Information);
                     Console.WriteLine("Listening for connections on {0}", url);
-                }
+                //}
                 listener.Start();
 
                 // Handle requests

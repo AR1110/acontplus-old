@@ -234,6 +234,14 @@
           <DataField>formaPago</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="labelObligadoContabilidad">
+          <DataField>labelObligadoContabilidad</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="labelAgenteRetencion">
+          <DataField>labelAgenteRetencion</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>ComprobantesElectronicosVentas</rd:DataSetName>
@@ -318,7 +326,7 @@
             </Paragraphs>
             <rd:DefaultName>Textbox43</rd:DefaultName>
             <Top>0.03527cm</Top>
-            <Left>0.00954cm</Left>
+            <Left>0.1249cm</Left>
             <Height>0.516cm</Height>
             <Width>6.48648cm</Width>
             <Style>
@@ -354,7 +362,7 @@
             </Paragraphs>
             <rd:DefaultName>Textbox44</rd:DefaultName>
             <Top>0.62183cm</Top>
-            <Left>0.00954cm</Left>
+            <Left>0.1249cm</Left>
             <Height>0.41479cm</Height>
             <Width>6.48648cm</Width>
             <ZIndex>1</ZIndex>
@@ -387,10 +395,10 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox48</rd:DefaultName>
-            <Top>1.07191cm</Top>
-            <Left>2.82374cm</Left>
-            <Height>0.40597cm</Height>
-            <Width>3.07149cm</Width>
+            <Top>1.10717cm</Top>
+            <Left>1.30056cm</Left>
+            <Height>0.44126cm</Height>
+            <Width>5.31082cm</Width>
             <ZIndex>2</ZIndex>
             <Style>
               <Border>
@@ -753,8 +761,8 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>detalleDs</DataSetName>
-            <Top>5.06932cm</Top>
-            <Left>0.00953cm</Left>
+            <Top>6.70175cm</Top>
+            <Left>0.12491cm</Left>
             <Height>1.13826cm</Height>
             <Width>6.48649cm</Width>
             <ZIndex>3</ZIndex>
@@ -784,47 +792,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox126</rd:DefaultName>
-            <Top>1.07191cm</Top>
-            <Left>1.64808cm</Left>
-            <Height>0.40597cm</Height>
+            <Top>1.10717cm</Top>
+            <Left>0.1249cm</Left>
+            <Height>0.44126cm</Height>
             <Width>1.17566cm</Width>
             <ZIndex>4</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <VerticalAlign>Middle</VerticalAlign>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox132">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>=First(Fields!regimen.Value, "encabezadoDs")</Value>
-                    <Style>
-                      <FontSize>7pt</FontSize>
-                      <FontWeight>Bold</FontWeight>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style>
-                  <TextAlign>Center</TextAlign>
-                </Style>
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox120</rd:DefaultName>
-            <Top>1.58371cm</Top>
-            <Left>0.00954cm</Left>
-            <Height>0.38833cm</Height>
-            <Width>6.48648cm</Width>
-            <ZIndex>5</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -840,10 +812,10 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>2.67978cm</Width>
+                  <Width>2.55024cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.45627cm</Width>
+                  <Width>2.2977cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -893,6 +865,7 @@
                                   <Value>=Fields!subtotalIva12.Value</Value>
                                   <Style>
                                     <FontSize>7pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -962,6 +935,7 @@
                                   <Value>=Fields!subtotalIva0.Value</Value>
                                   <Style>
                                     <FontSize>7pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1031,6 +1005,7 @@
                                   <Value>=Fields!subtotalNoObjetoIva.Value</Value>
                                   <Style>
                                     <FontSize>7pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1100,6 +1075,7 @@
                                   <Value>=Fields!subtotalExcentoIva.Value</Value>
                                   <Style>
                                     <FontSize>7pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1169,6 +1145,7 @@
                                   <Value>=Fields!subtotalSinImpuestos.Value</Value>
                                   <Style>
                                     <FontSize>7pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1238,6 +1215,7 @@
                                   <Value>=Fields!totalDescuentos.Value</Value>
                                   <Style>
                                     <FontSize>7pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1310,6 +1288,7 @@
                                   <Value>=Fields!ice.Value</Value>
                                   <Style>
                                     <FontSize>7pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1379,6 +1358,7 @@
                                   <Value>=Fields!iva12.Value</Value>
                                   <Style>
                                     <FontSize>7pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1447,7 +1427,8 @@
                                 <TextRun>
                                   <Value>=Fields!valorTotal.Value</Value>
                                   <Style>
-                                    <FontSize>7pt</FontSize>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1519,6 +1500,7 @@
                                   <Value>=Fields!pago.Value</Value>
                                   <Style>
                                     <FontSize>7pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1591,6 +1573,7 @@
                                   <Value>=Fields!cambio.Value</Value>
                                   <Style>
                                     <FontSize>7pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1643,11 +1626,11 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>encabezadoDs</DataSetName>
-            <Top>6.31341cm</Top>
-            <Left>2.35997cm</Left>
+            <Top>7.94584cm</Top>
+            <Left>1.76346cm</Left>
             <Height>4.31362cm</Height>
-            <Width>4.13605cm</Width>
-            <ZIndex>6</ZIndex>
+            <Width>4.84794cm</Width>
+            <ZIndex>5</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1674,11 +1657,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox3</rd:DefaultName>
-            <Top>2.0426cm</Top>
-            <Left>0.00954cm</Left>
-            <Height>0.45889cm</Height>
+            <Top>2.11316cm</Top>
+            <Left>0.1249cm</Left>
+            <Height>0.37952cm</Height>
             <Width>0.70287cm</Width>
-            <ZIndex>7</ZIndex>
+            <ZIndex>6</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1710,11 +1693,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox3</rd:DefaultName>
-            <Top>2.0426cm</Top>
-            <Left>0.71241cm</Left>
-            <Height>0.45889cm</Height>
-            <Width>1.87687cm</Width>
-            <ZIndex>8</ZIndex>
+            <Top>2.11316cm</Top>
+            <Left>0.82777cm</Left>
+            <Height>0.37952cm</Height>
+            <Width>5.78361cm</Width>
+            <ZIndex>7</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1746,11 +1729,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox3</rd:DefaultName>
-            <Top>2.0426cm</Top>
-            <Left>2.58928cm</Left>
+            <Top>1.61899cm</Top>
+            <Left>0.1249cm</Left>
             <Height>0.45889cm</Height>
             <Width>1.39455cm</Width>
-            <ZIndex>9</ZIndex>
+            <ZIndex>8</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1777,16 +1760,16 @@
                   </TextRun>
                 </TextRuns>
                 <Style>
-                  <TextAlign>Left</TextAlign>
+                  <TextAlign>Center</TextAlign>
                 </Style>
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox3</rd:DefaultName>
-            <Top>2.0426cm</Top>
-            <Left>3.98383cm</Left>
+            <Top>1.61899cm</Top>
+            <Left>1.51945cm</Left>
             <Height>0.45889cm</Height>
-            <Width>2.51219cm</Width>
-            <ZIndex>10</ZIndex>
+            <Width>5.09193cm</Width>
+            <ZIndex>9</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1807,7 +1790,7 @@
                   <TextRun>
                     <Value>=First(Fields!nroFactura.Value, "encabezadoDs")</Value>
                     <Style>
-                      <FontSize>7pt</FontSize>
+                      <FontSize>9pt</FontSize>
                       <FontWeight>Bold</FontWeight>
                     </Style>
                   </TextRun>
@@ -1818,11 +1801,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox3</rd:DefaultName>
-            <Top>2.57203cm</Top>
-            <Left>3.10311cm</Left>
-            <Height>0.45007cm</Height>
-            <Width>3.39291cm</Width>
-            <ZIndex>11</ZIndex>
+            <Top>3.97516cm</Top>
+            <Left>2.97206cm</Left>
+            <Height>0.52063cm</Height>
+            <Width>3.67228cm</Width>
+            <ZIndex>10</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1854,11 +1837,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox3</rd:DefaultName>
-            <Top>2.57203cm</Top>
-            <Left>0.26833cm</Left>
-            <Height>0.45007cm</Height>
-            <Width>2.83478cm</Width>
-            <ZIndex>12</ZIndex>
+            <Top>3.97516cm</Top>
+            <Left>0.15786cm</Left>
+            <Height>0.52063cm</Height>
+            <Width>2.8142cm</Width>
+            <ZIndex>11</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1888,11 +1871,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox12</rd:DefaultName>
-            <Top>3.05738cm</Top>
-            <Left>0.00953cm</Left>
+            <Top>4.56634cm</Top>
+            <Left>0.12488cm</Left>
             <Height>0.44125cm</Height>
             <Width>1.30056cm</Width>
-            <ZIndex>13</ZIndex>
+            <ZIndex>12</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1912,7 +1895,6 @@
                   <TextRun>
                     <Value>=First(Fields!razonSocialComprador.Value, "encabezadoDs")</Value>
                     <Style>
-                      <FontSize>7pt</FontSize>
                       <FontWeight>Bold</FontWeight>
                     </Style>
                   </TextRun>
@@ -1921,11 +1903,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox13</rd:DefaultName>
-            <Top>3.05738cm</Top>
-            <Left>1.31009cm</Left>
+            <Top>4.56634cm</Top>
+            <Left>1.42544cm</Left>
             <Height>0.44125cm</Height>
             <Width>5.18593cm</Width>
-            <ZIndex>14</ZIndex>
+            <ZIndex>13</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1954,11 +1936,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox12</rd:DefaultName>
-            <Top>3.56918cm</Top>
-            <Left>0.00954cm</Left>
+            <Top>5.07814cm</Top>
+            <Left>0.12489cm</Left>
             <Height>0.44125cm</Height>
             <Width>1.30055cm</Width>
-            <ZIndex>15</ZIndex>
+            <ZIndex>14</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1987,11 +1969,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox13</rd:DefaultName>
-            <Top>3.56918cm</Top>
-            <Left>1.31009cm</Left>
+            <Top>5.07814cm</Top>
+            <Left>1.42544cm</Left>
             <Height>0.44125cm</Height>
             <Width>5.18593cm</Width>
-            <ZIndex>16</ZIndex>
+            <ZIndex>15</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2020,11 +2002,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox13</rd:DefaultName>
-            <Top>4.04571cm</Top>
-            <Left>1.31009cm</Left>
+            <Top>5.55467cm</Top>
+            <Left>1.42544cm</Left>
             <Height>0.47652cm</Height>
             <Width>5.18593cm</Width>
-            <ZIndex>17</ZIndex>
+            <ZIndex>16</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2053,11 +2035,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox13</rd:DefaultName>
-            <Top>4.55751cm</Top>
-            <Left>1.31009cm</Left>
+            <Top>6.06647cm</Top>
+            <Left>1.42544cm</Left>
             <Height>0.44125cm</Height>
             <Width>5.18593cm</Width>
-            <ZIndex>18</ZIndex>
+            <ZIndex>17</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2086,11 +2068,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox56</rd:DefaultName>
-            <Top>11.89785cm</Top>
-            <Left>1.64808cm</Left>
+            <Top>13.89199cm</Top>
+            <Left>1.66045cm</Left>
             <Height>0.46771cm</Height>
-            <Width>1.27865cm</Width>
-            <ZIndex>19</ZIndex>
+            <Width>1.40527cm</Width>
+            <ZIndex>18</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2119,11 +2101,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox57</rd:DefaultName>
-            <Top>11.89785cm</Top>
-            <Left>2.92672cm</Left>
+            <Top>13.89199cm</Top>
+            <Left>3.11549cm</Left>
             <Height>0.46771cm</Height>
-            <Width>2.37761cm</Width>
-            <ZIndex>20</ZIndex>
+            <Width>2.32783cm</Width>
+            <ZIndex>19</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2154,11 +2136,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox51</rd:DefaultName>
-            <Top>11.50952cm</Top>
-            <Left>0.00953cm</Left>
+            <Top>12.97449cm</Top>
+            <Left>0.1249cm</Left>
             <Height>0.38833cm</Height>
             <Width>6.48649cm</Width>
-            <ZIndex>21</ZIndex>
+            <ZIndex>20</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2190,11 +2172,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox32</rd:DefaultName>
-            <Top>11.12119cm</Top>
-            <Left>2.11002cm</Left>
-            <Height>0.38833cm</Height>
+            <Top>12.50678cm</Top>
+            <Left>2.22539cm</Left>
+            <Height>0.46771cm</Height>
             <Width>2.35288cm</Width>
-            <ZIndex>22</ZIndex>
+            <ZIndex>21</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2224,11 +2206,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox12</rd:DefaultName>
-            <Top>4.08098cm</Top>
-            <Left>0.00954cm</Left>
+            <Top>5.58994cm</Top>
+            <Left>0.12489cm</Left>
             <Height>0.44125cm</Height>
             <Width>1.30055cm</Width>
-            <ZIndex>23</ZIndex>
+            <ZIndex>22</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2257,11 +2239,191 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox12</rd:DefaultName>
-            <Top>4.55751cm</Top>
-            <Left>0.00954cm</Left>
+            <Top>6.06647cm</Top>
+            <Left>0.12489cm</Left>
             <Height>0.44125cm</Height>
             <Width>1.30055cm</Width>
+            <ZIndex>23</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox132">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!regimen.Value, "encabezadoDs")</Value>
+                    <Style>
+                      <FontSize>7pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Center</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox120</rd:DefaultName>
+            <Top>2.52795cm</Top>
+            <Left>0.12488cm</Left>
+            <Height>0.38833cm</Height>
+            <Width>6.48648cm</Width>
             <ZIndex>24</ZIndex>
+            <Visibility>
+              <Hidden>=IIf(Trim(First(Fields!regimen.Value, "encabezadoDs")) = "" Or IsNothing(First(Fields!regimen.Value, "encabezadoDs")), True, False)</Hidden>
+            </Visibility>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <VerticalAlign>Middle</VerticalAlign>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox133">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!labelObligadoContabilidad.Value, "encabezadoDs")</Value>
+                    <Style>
+                      <FontSize>7pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Center</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox120</rd:DefaultName>
+            <Top>2.98684cm</Top>
+            <Left>0.12486cm</Left>
+            <Height>0.42361cm</Height>
+            <Width>6.48648cm</Width>
+            <ZIndex>25</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <VerticalAlign>Middle</VerticalAlign>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox134">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!labelAgenteRetencion.Value, "encabezadoDs")</Value>
+                    <Style>
+                      <FontSize>7pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Center</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox120</rd:DefaultName>
+            <Top>3.44572cm</Top>
+            <Left>0.12486cm</Left>
+            <Height>0.42361cm</Height>
+            <Width>6.48648cm</Width>
+            <ZIndex>26</ZIndex>
+            <Visibility>
+              <Hidden>=IIf(Trim(First(Fields!labelAgenteRetencion.Value, "encabezadoDs")) = "" Or IsNothing(First(Fields!labelAgenteRetencion.Value, "encabezadoDs")), True, False)</Hidden>
+            </Visibility>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <VerticalAlign>Middle</VerticalAlign>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox58">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Ambiente:</Value>
+                    <Style>
+                      <FontSize>7pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox56</rd:DefaultName>
+            <Top>13.35372cm</Top>
+            <Left>1.66045cm</Left>
+            <Height>0.46771cm</Height>
+            <Width>1.40527cm</Width>
+            <ZIndex>27</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox59">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!ambiente.Value, "encabezadoDs")</Value>
+                    <Style>
+                      <FontSize>7pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox57</rd:DefaultName>
+            <Top>13.35372cm</Top>
+            <Left>3.06571cm</Left>
+            <Height>0.46771cm</Height>
+            <Width>2.37761cm</Width>
+            <ZIndex>28</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2273,10 +2435,10 @@
             </Style>
           </Textbox>
         </ReportItems>
-        <Height>4.86833in</Height>
+        <Height>5.65342in</Height>
         <Style />
       </Body>
-      <Width>2.57046in</Width>
+      <Width>2.61588in</Width>
       <Page>
         <PageHeight>29.7cm</PageHeight>
         <PageWidth>21cm</PageWidth>
