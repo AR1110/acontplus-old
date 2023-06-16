@@ -160,16 +160,16 @@ BEGIN
 			EXEC sp_executesql 
 					  @sql
 					 ,@params
-					 ,@idEntidad = @idEntidad
-					 ,@fechaI = @fechaInicio
-					 ,@fechaF = @fechaFin
+					 ,@idEntidad         = @idEntidad
+					 ,@fechaI            = @fechaInicio
+					 ,@fechaF            = @fechaFin
 					 ,@nroIdentificacion = @byPersona
-					 ,@idTipoDocumento = @byTipoDocumento
-					 ,@idComprobante = @byComprobante
-					 ,@estado = @byEstado
-					 ,@idUsuario = @idUsuario
-					 ,@byUsuarioSearch = @byUsuarioSearch
-					 ,@codEstab  = @codEstab
+					 ,@idTipoDocumento   = @byTipoDocumento
+					 ,@idComprobante     = @byComprobante
+					 ,@estado            = @byEstado
+					 ,@idUsuario         = @idUsuario
+					 ,@byUsuarioSearch   = @byUsuarioSearch
+					 ,@codEstab          = @codEstab
 		END 
 
 	-- ====================== Historial para mostrar los detalles del comprobante de ingreso ===========================
@@ -192,12 +192,12 @@ BEGIN
 			SELECT co.idCobro
 				  ,co.valor
 				  ,co.abono
-				  ,fechaEmision = FORMAT(co.fechaEmision, 'MM/dd/yyyy')
-				  ,codPago = ef.codigo
+				  ,fechaEmision         = FORMAT(co.fechaEmision, 'MM/dd/yyyy')
+				  ,codPago              = ef.codigo
 				  ,subEntidadFinanciera = ISNULL(sf.descripcion, ef.descripcion)
 				  ,co.infoCobro
-				  ,posfechado = CASE WHEN co.posfechado = 1 THEN  'SI' ELSE 'NO' END 
-			      ,estado     = CASE WHEN co.cobro = 1 THEN 'COBRADO' ELSE 'POR COBRAR' END
+				  ,posfechado           = CASE WHEN co.posfechado = 1 THEN  'SI' ELSE 'NO' END 
+			      ,estado               = CASE WHEN co.cobro = 1 THEN 'COBRADO' ELSE 'POR COBRAR' END
 			FROM dbo.Cobro                   co WITH (NOLOCK) 
 			INNER JOIN dbo.EntidadFinanciera ef WITH (NOLOCK) ON ef.idEntidadFinanciera    = co.idEntidadFinanciera
 			 LEFT JOIN SubEntidadFinanciera  sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = co.idSubEntidadFinanciera
@@ -210,6 +210,9 @@ BEGIN
 				  ,fechaVencimiento = FORMAT(cx.fechaVencimiento,'MM/dd/yyyy')
 				  ,cc.nroCuota
 				  ,cc.cuota
+				  ,cd.interes
+				  ,cd.diasMora
+				  ,cd.mora
 				  ,cd.abono
 				  ,saldo = cc.cuota - cd.abono
 				  ,serieComprobante = cx.serieComprobante
@@ -253,11 +256,11 @@ BEGIN
 
 			SELECT co.idComprobanteIngreso
 			      ,co.idCobro
-				  ,posfechado =  CASE co.posfechado WHEN 1 THEN 'SI' ELSE 'NO' END 
+				  ,posfechado   =  CASE co.posfechado WHEN 1 THEN 'SI' ELSE 'NO' END 
 				  ,fechaEmision = FORMAT(co.fechaEmision,'MM/dd/yyyy hh:mm')
-				  ,formaCobro = ISNULL(sf.descripcion,ef.descripcion)
-				  ,banco = ISNULL(bc.descripcion,'-------------')
-				  ,infoCobro = ISNULL(dbo.f_sanitize_json(co.infoCobro),'[]')
+				  ,formaCobro   = ISNULL(sf.descripcion,ef.descripcion)
+				  ,banco        = ISNULL(bc.descripcion,'-------------')
+				  ,infoCobro    = ISNULL(dbo.f_sanitize_json(co.infoCobro),'[]')
 				  ,co.valor
 				  ,co.abono
 				  ,co.vuelto
@@ -278,7 +281,7 @@ BEGIN
 				,cx.cuota
 				,cx.saldo
 				,cx.abono
-			FROM dbo.ComprobanteIngreso            ci WITH (NOLOCK)
+			FROM dbo.ComprobanteIngreso             ci WITH (NOLOCK)
 			INNER JOIN Contabilidad.Historial_Cobro hc WITH (NOLOCK) ON ci.idComprobanteIngreso   = hc.idComprobanteIngreso
 			INNER JOIN dbo.Cobro                    co WITH (NOLOCK) ON co.idComprobanteIngreso   = ci.idComprobanteIngreso
 			INNER JOIN dbo.CobroDetalle             cc WITH (NOLOCK) ON cc.idCobro                = co.idCobro

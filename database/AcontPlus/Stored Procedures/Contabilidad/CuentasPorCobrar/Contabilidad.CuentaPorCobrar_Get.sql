@@ -358,6 +358,7 @@ BEGIN
 				  ,diasMora
 				  ,mora
 				  ,abono
+				  ,saldoDoc = importeTotal - abono
 				  ,saldo
 				  ,estado
 				  ,cuotas
