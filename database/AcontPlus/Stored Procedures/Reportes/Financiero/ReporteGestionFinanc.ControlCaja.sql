@@ -9,7 +9,7 @@ GO
 -- Author:		<Author,,Name>
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
--- exec ReporteGestionFinanc.ControlCaja '{"id":1764,"idUsuarioRol":209}'
+-- exec ReporteGestionFinanc.ControlCaja '{"id":33,"idUsuarioRol":63}'
 -- =============================================
 IF OBJECT_ID(N'ReporteGestionFinanc.ControlCaja', N'P') IS NOT NULL
 DROP PROCEDURE ReporteGestionFinanc.ControlCaja
@@ -20,10 +20,8 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-	DECLARE @idEntidad INT
 	DECLARE @idControlCaja INT 
 	DECLARE @color VARCHAR(200) = '#000000'
-	DECLARE @fechaApertura DATETIME
 	DECLARE @efectivoSistema DECIMAL(15,5)
 	DECLARE @totalSistema DECIMAL(15,5)
 	DECLARE @totalArqueo DECIMAL(15,5)
@@ -31,22 +29,193 @@ BEGIN
 	DECLARE @otros DECIMAL(15,5)
 	DECLARE @chequesPosf DECIMAL(15,5)
 	DECLARE @direfencia DECIMAL(15,5)
-	DECLARE @idRol  INT
 	
+	DECLARE @tbDetalleCaja AS TABLE (
+		id INT IDENTITY(1,1) NOT NULL
+	   ,idEntidadFinanciera INT NOT NULL
+	   ,nroComprobante VARCHAR(100) NOT NULL
+	   ,tipDoc VARCHAR(10) NOT NULL
+	   ,nroDoc VARCHAR(25) NOT NULL
+	   ,fechaEmision DATETIME NOT NULL
+	   ,persona VARCHAR(200) NOT NULL
+	   ,total NUMERIC(18,5) NOT NULL
+	   ,abono NUMERIC(18,5) NOT NULL
+	   ,saldo NUMERIC(18,5) DEFAULT 0 NOT NULL
+	   ,pay  VARCHAR(150) NOT NULL
+	   ,cobro BIT NOT NULL DEFAULT 1 
+	)
 
-	SELECT @idControlCaja = idControlCaja, @idRol = idUsuarioRol  FROM OPENJSON(@json) WITH (idControlCaja INT '$.id', idUsuarioRol INT '$.idUsuarioRol') AS jsonValues
-
-	SELECT @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
+	SELECT @idControlCaja = idControlCaja FROM OPENJSON(@json) WITH (idControlCaja INT '$.id', idUsuarioRol INT '$.idUsuarioRol') AS jsonValues
 
 
-	SELECT @fechaApertura = fechaApertura FROM dbo.ControlCaja WITH (NOLOCK) WHERE idControlCaja = @idControlCaja
+	INSERT INTO @tbDetalleCaja (nroComprobante,tipDoc,nroDoc,fechaEmision,persona,total,abono,saldo,pay,idEntidadFinanciera,cobro)
+	SELECT nroComprobante  = 'CI' + '-' + es.estab + '-' + Helper.F_Auto_Sequential(ci.nroDocumento)
+		  ,doc             = IIF(cc.codDoc = '01','FV',cc.codDoc)
+		  ,nroDoc          = cc.serieComprobante 
+		  ,fechaEmision    = cc.fechaEmision
+		  ,agenteEconomico = cl.nombreFiscal
+		  ,total           = cc.importeTotal
+		  ,hc.abono
+		  ,saldo           = cc.importeTotal - hc.abono
+		  ,pay             = ISNULL(sf.descripcion,ef.descripcion)
+		  ,ef.idEntidadFinanciera
+		  ,co.cobro
+	FROM dbo.ComprobanteIngreso             ci WITH (NOLOCK)
+	INNER JOIN Sri.Establecimiento          es WITH (NOLOCK) ON es.codEstab               = ci.codEstab
+	INNER JOIN Contabilidad.Historial_Cobro hc WITH (NOLOCK) ON hc.idComprobanteIngreso   = ci.idComprobanteIngreso 
+	INNER JOIN Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) ON cc.idCuentaPorCobrar      = hc.idCuentaPorCobrar
+	INNER JOIN dbo.Cliente                  cl WITH (NOLOCK) ON cl.idCliente              = cc.idCliente
+	INNER JOIN dbo.Cobro                    co WITH (NOLOCK) ON co.idComprobanteIngreso   = ci.idComprobanteIngreso
+	INNER JOIN dbo.EntidadFinanciera        ef WITH (NOLOCK) ON ef.idEntidadFinanciera    = co.idEntidadFinanciera
+	 LEFT JOIN dbo.SubEntidadFinanciera     sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = co.idSubEntidadFinanciera
+	WHERE ci.idControlCaja = @idControlCaja AND ci.estado = 1
 	
-	SELECT @chequesPosf     = SUM(abono)  FROM AFTAdministracionCaja() WHERE idControlCaja = @idControlCaja AND cobro = 0 AND estado = 1 AND codpay = 'CHE'  
-	
-	SELECT @efectivoSistema = SUM(abono)  FROM AFTAdministracionCaja() WHERE idControlCaja = @idControlCaja AND cobro = 1 AND estado = 1 AND codPay = 'EFE'
-	
-	SELECT @otros           = SUM(abono)  FROM AFTAdministracionCaja() WHERE idControlCaja = @idControlCaja AND cobro = 1 AND estado = 1 AND codPay != 'EFE'
+	INSERT INTO @tbDetalleCaja (nroComprobante,tipDoc,nroDoc,fechaEmision,persona,total,abono,pay,idEntidadFinanciera)
+	SELECT nroComprobante = 'CI' + '-' + es.estab + '-' + Helper.F_Auto_Sequential(ci.nroDocumento)
+		  ,doc = td.codigo
+		  ,nroDoc    =   CASE td.codigo WHEN 'A'  THEN (
+														SELECT 'A' + '-' + es.estab + '-' + Helper.F_Auto_Sequential(an.nroDoc)
+														FROM dbo.Anticipo an WITH (NOLOCK) 
+														INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = an.codEstab
+														WHERE an.idAnticipo = cd.idComprobante
+														)  
+										WHEN 'IC' THEN  (
+														SELECT 'IC' + '-' + es.estab + '-' + Helper.F_Auto_Sequential(mc.nroDoc)
+														FROM dbo.MovimientoCaja mc WITH (NOLOCK) 
+														INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = mc.codEstab
+														WHERE mc.idMovimientoCaja = cd.idComprobante
+														)
+						  END 
+		,fechaEmsion =    CASE td.codigo WHEN 'A'  THEN (
+														SELECT an.fechaEmision FROM dbo.Anticipo an WITH (NOLOCK) WHERE an.idAnticipo = cd.idComprobante
+														)  
+										 WHEN 'IC' THEN (
+														SELECT mc.fechaEmision FROM dbo.MovimientoCaja mc WITH (NOLOCK) WHERE mc.idMovimientoCaja = cd.idComprobante
+														)
+						   END 
+		,agenteEconomico = CASE td.codigo WHEN 'A' THEN 
+														(
+														SELECT cl.nombreFiscal
+														FROM dbo.Anticipo an WITH (NOLOCK) 
+														INNER JOIN dbo.Cliente cl WITH (NOLOCK) ON cl.idCliente = an.idCliente
+														WHERE an.idAnticipo = cd.idComprobante
+														)  
+										  WHEN 'IC' THEN 
+														(
+														SELECT em.nombreCompleto 
+														FROM dbo.MovimientoCaja mc WITH (NOLOCK) 
+														INNER JOIN dbo.Empleado em WITH (NOLOCK) ON em.idEmpleado = mc.idEmpleado
+														WHERE mc.idMovimientoCaja = cd.idComprobante
+														)
+							END
+		,total            = CASE td.codigo WHEN 'A'  THEN 
+														(
+														SELECT an.valor FROM dbo.Anticipo an WITH (NOLOCK) WHERE an.idAnticipo = cd.idComprobante
+														)  
+										   WHEN 'IC' THEN 
+														(
+														SELECT mc.valor FROM dbo.MovimientoCaja mc WITH (NOLOCK) WHERE mc.idMovimientoCaja = cd.idComprobante
+														)
+							END 
+		,cd.abono
+		,pay              = CASE td.codigo WHEN 'A'  THEN 
+														(
+														SELECT sf.descripcion
+														FROM dbo.Anticipo an WITH (NOLOCK) 
+														INNER JOIN dbo.SubEntidadFinanciera sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = an.idSubEntidadFinanciera
+														WHERE an.idAnticipo = cd.idComprobante
+														)  
+										   WHEN 'IC' THEN 
+														(
+														SELECT sf.descripcion
+														FROM dbo.MovimientoCaja mc WITH (NOLOCK) 
+														INNER JOIN dbo.SubEntidadFinanciera sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = mc.idSubEntidadFinanciera
+														WHERE mc.idMovimientoCaja = cd.idComprobante
+														)
+							END
+		,idEntidadFinanciera =  CASE td.codigo WHEN 'A'  THEN 
+														(
+														SELECT sf.idEntidadFinanciera
+														FROM dbo.Anticipo an WITH (NOLOCK) 
+														INNER JOIN dbo.SubEntidadFinanciera sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = an.idSubEntidadFinanciera
+														WHERE an.idAnticipo = cd.idComprobante
+														)  
+											  WHEN 'IC' THEN 
+														(
+														SELECT sf.idEntidadFinanciera
+														FROM dbo.MovimientoCaja mc WITH (NOLOCK) 
+														INNER JOIN dbo.SubEntidadFinanciera sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = mc.idSubEntidadFinanciera
+														WHERE mc.idMovimientoCaja = cd.idComprobante
+														)
+								END
+	FROM dbo.ComprobanteIngreso    ci WITH (NOLOCK)
+	INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab             = ci.codEstab
+	INNER JOIN dbo.CobroDocumento  cd WITH (NOLOCK) ON cd.idComprobanteIngreso = ci.idComprobanteIngreso
+	INNER JOIN dbo.TipoDocumento   td WITH (NOLOCK) ON td.idTipoDocumento      = cd.idTipoDocumento
+	WHERE td.codigo IN ('A','IC') AND ci.estado = 1 AND ci.idControlCaja = @idControlCaja
 
+	INSERT INTO @tbDetalleCaja (nroComprobante,tipDoc,nroDoc,fechaEmision,persona,total,abono,pay,idEntidadFinanciera)
+	SELECT nroComprobante = 'CE' + '-' + es.estab + '-' + Helper.F_Auto_Sequential(ce.nroDocumento)
+		  ,doc = td.codigo
+		  ,nroDoc        = CASE td.codigo  WHEN 'EC' THEN 
+														(
+														SELECT 'IC' + '-' + es.estab + '-' + Helper.F_Auto_Sequential(mc.nroDoc)
+														FROM dbo.MovimientoCaja mc WITH (NOLOCK) 
+														INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = mc.codEstab
+														WHERE mc.idMovimientoCaja = pd.idComprobante
+														)
+						   END 
+		,fechaEmsion     = CASE td.codigo WHEN 'EC' THEN 
+														(
+														SELECT mc.fechaEmision FROM dbo.MovimientoCaja mc WITH (NOLOCK) WHERE mc.idMovimientoCaja = pd.idComprobante
+														)
+						   END 
+		,agenteEconomico = CASE td.codigo WHEN 'EC' THEN 
+														(
+														SELECT em.nombreCompleto 
+														FROM dbo.MovimientoCaja mc WITH (NOLOCK) 
+														INNER JOIN dbo.Empleado em WITH (NOLOCK) ON em.idEmpleado = mc.idEmpleado
+														WHERE mc.idMovimientoCaja = pd.idComprobante
+														)
+							END
+		,total            = CASE td.codigo WHEN 'EC' THEN 
+														(
+														SELECT mc.valor FROM dbo.MovimientoCaja mc WITH (NOLOCK) WHERE mc.idMovimientoCaja = pd.idComprobante
+														)
+							END 
+		,pd.abono
+		,pay                 = CASE td.codigo WHEN 'EC' THEN 
+															(
+															SELECT sf.descripcion
+															FROM dbo.MovimientoCaja mc WITH (NOLOCK) 
+															INNER JOIN dbo.SubEntidadFinanciera sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = mc.idSubEntidadFinanciera
+															WHERE mc.idMovimientoCaja = pd.idComprobante
+															)
+								END
+		,idEntidadFinanciera =  CASE td.codigo WHEN 'EC' THEN 
+														(
+														SELECT sf.idEntidadFinanciera
+														FROM dbo.MovimientoCaja mc WITH (NOLOCK) 
+														INNER JOIN dbo.SubEntidadFinanciera sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = mc.idSubEntidadFinanciera
+														WHERE mc.idMovimientoCaja = pd.idComprobante
+														)
+								END
+	FROM dbo.ComprobanteEgreso     ce WITH (NOLOCK)
+	INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab             = ce.codEstab
+	INNER JOIN dbo.PagoDocumento   pd WITH (NOLOCK) ON pd.idComprobanteEgreso  = ce.idComprobanteEgreso
+	INNER JOIN dbo.TipoDocumento   td WITH (NOLOCK) ON td.idTipoDocumento      = pd.idTipoDocumento
+	WHERE td.codigo = 'EC' AND ce.estado = 1 AND ce.idControlCaja = @idControlCaja
+
+
+	-- ================================ FORMAS DE PAGOS TOTALIZADAS ========================================
+	SELECT @chequesPosf     = SUM(td.abono) FROM @tbDetalleCaja td INNER JOIN dbo.EntidadFinanciera ef WITH (NOLOCK) ON ef.idEntidadFinanciera = td.idEntidadFinanciera WHERE cobro = 0 AND ef.codigo = 'CHE'
+	
+	SELECT @efectivoSistema = SUM(abono)    FROM @tbDetalleCaja td INNER JOIN dbo.EntidadFinanciera ef WITH (NOLOCK) ON ef.idEntidadFinanciera = td.idEntidadFinanciera WHERE cobro = 1 AND ef.codigo = 'EFE'
+	
+	SELECT @otros           = SUM(abono)    FROM @tbDetalleCaja td INNER JOIN dbo.EntidadFinanciera ef WITH (NOLOCK) ON ef.idEntidadFinanciera = td.idEntidadFinanciera WHERE cobro = 1 AND ef.codigo != 'EFE'
+
+
+	-- ============================== CUADRES DE CAJA  ========================================================
 	SELECT @efectivoArqueo = totalArqueo FROM  dbo.ControlCaja WITH (NOLOCK) WHERE idControlCaja = @idControlCaja 
 
 	SELECT @totalSistema = ISNULL(@efectivoSistema,0) + ISNULL(@otros,0)
@@ -60,26 +229,26 @@ BEGIN
 			SET	@color = '#FB0909'
 		END 
 
-	----info Ds 
+	-- ====== INFORMACION PRINCIPAL DEL CONTROL DE CAJA =================================
 	 SELECT 
-		nroControl         = cc.idControlCaja,
-		caja               = c.descripcion,
-		apertura           = dbo.AFTConvertDate(cc.fechaApertura)+dbo.AFTConvertHora(cc.fechaApertura),
-		cierre             = ISNULL(dbo.AFTConvertDate(cc.fechaCierre)+dbo.AFTConvertHora(cc.fechaCierre),'Pendiente'),
-		usuario            = u.nombreCompleto,
-		estado             = CASE WHEN cc.estado = 1 THEN 'ABIERTA' ELSE 'CERRADA' END,
-		entrada            = CAST(cc.entrada AS numeric(15,2)),
-		efectivoSistema    = CAST(ISNULL(@efectivoSistema,0) AS numeric(15,2)),
-		efectivoArqueo     = CAST(ISNULL(@efectivoArqueo,0) AS numeric(15,2)),
-		otros              = CAST(ISNULL(@otros,0) AS numeric(15,2)),
-		totalSistema       = CAST(ISNULL(@totalSistema,0) AS numeric(15,2)),
-		totalArqueo        = CAST(ISNULL(@totalArqueo,0)  AS numeric(15,2)),
-		diferencia         = CAST(ISNULL(@direfencia,0)   AS numeric(15,2)),
-		color              = @color
+		 nroControl         = cc.idControlCaja
+		,caja               = ca.descripcion
+		,apertura           = FORMAT(cc.fechaApertura, 'dd/MM/yyyy HH:mm')
+		,cierre             = FORMAT(cc.fechaCierre, 'dd/MM/yyyy HH:mm') 
+		,usuario            = us.nombreCompleto
+		,estado             = CASE WHEN cc.estado = 1 THEN 'ABIERTA' ELSE 'CERRADA' END
+		,entrada            = CAST(cc.entrada AS numeric(15,2))
+		,efectivoSistema    = CAST(ISNULL(@efectivoSistema,0) AS numeric(15,2))
+		,efectivoArqueo     = CAST(ISNULL(@efectivoArqueo,0) AS numeric(15,2))
+		,otros              = CAST(ISNULL(@otros,0) AS numeric(15,2))
+		,totalSistema       = CAST(ISNULL(@totalSistema,0) AS numeric(15,2))
+		,totalArqueo        = CAST(ISNULL(@totalArqueo,0)  AS numeric(15,2))
+		,diferencia         = CAST(ISNULL(@direfencia,0)   AS numeric(15,2))
+		,color              = @color
 	 FROM dbo.ControlCaja cc WITH (NOLOCK)
-	 INNER JOIN dbo.Caja            c WITH (NOLOCK) ON c.idCaja    = cc.idCaja
-	 INNER JOIN dbo.AsignacionCaja ac WITH (NOLOCK) ON ac.idCaja   = c.idCaja
-	 INNER JOIN dbo.Usuario         u WITH (NOLOCK) ON u.idUsuario = ac.idUsuario
+	 INNER JOIN dbo.Caja           ca WITH (NOLOCK) ON ca.idCaja    = cc.idCaja
+	 INNER JOIN dbo.AsignacionCaja ac WITH (NOLOCK) ON ac.idCaja   = ca.idCaja
+	 INNER JOIN dbo.Usuario        us WITH (NOLOCK) ON us.idUsuario = ac.idUsuario
 	 WHERE cc.idControlCaja = @idControlCaja
 
 	
@@ -88,11 +257,12 @@ BEGIN
 
 	 -----------------------------------RESUMEN TOTALIZADO EN LAS FORMAS DE PAGO----------------------------------------
 	 SELECT  
-		formaPago = ef.descripcion,
-	    ingreso   = CAST(ISNULL((SELECT sum(abono) FROM AFTAdministracionCaja() WHERE estado = 1 AND tipo!= 4 AND idEntidadFinanciera = ef.idEntidadFinanciera AND cobro = 1 AND idControlCaja = @idControlCaja),0) AS numeric(15,2) ),
-		egreso    = CAST(ISNULL((SELECT sum(abono) FROM AFTAdministracionCaja() WHERE estado = 1 AND tipo = 4 AND idEntidadFinanciera = ef.idEntidadFinanciera AND cobro = 1 AND idControlCaja = @idControlCaja),0) * -1 AS numeric(15,2))		
+		 formaPago = ef.descripcion
+	    ,ingreso   = CAST(ISNULL((SELECT sum(abono) FROM @tbDetalleCaja WHERE tipDoc != 'EC' AND idEntidadFinanciera = ef.idEntidadFinanciera AND cobro = 1),0) AS numeric(15,2))
+		,egreso    = CAST(ISNULL((SELECT sum(abono) FROM @tbDetalleCaja WHERE tipDoc  = 'EC' AND idEntidadFinanciera = ef.idEntidadFinanciera AND cobro = 1),0) * -1 AS numeric(15,2))		
 	 FROM EntidadFinanciera ef WITH (NOLOCK)
-	 ORDER BY EF.fechaRegistro ASC
+	 WHERE ef.estado = 1
+	 ORDER BY ef.fechaRegistro ASC
 	 -------------------------------------------------END----------------------------------------------------------------
 
 
@@ -101,42 +271,45 @@ BEGIN
 
 	 SELECT 
 		tipDoc   = td.descripcion
-	   ,total    = CAST(ISNULL((SELECT SUM(ac.total) FROM AFTAdministracionCaja() ac WHERE ac.idcontrolcaja = @idControlCaja AND ac.tipDoc = td.codigo AND ac.cobro = 1 ),0) AS numeric(15,2))
-	   ,abono    = CAST(ISNULL((SELECT SUM(ac.abono) FROM AFTAdministracionCaja() ac WHERE ac.idcontrolcaja = @idControlCaja AND ac.tipDoc = td.codigo AND ac.cobro = 1 ),0) AS numeric(15,2))
-	   ,cantidad =     (ISNULL((SELECT COUNT(*)      FROM AFTAdministracionCaja() ac WHERE ac.idcontrolcaja = @idControlCaja AND ac.tipDoc = td.codigo),0))
+	   ,total    = CAST(ISNULL((SELECT SUM(ac.total) FROM @tbDetalleCaja ac WHERE ac.tipDoc = td.codigo AND ac.cobro = 1 ),0) AS numeric(15,2))
+	   ,abono    = CAST(ISNULL((SELECT SUM(ac.abono) FROM @tbDetalleCaja ac WHERE ac.tipDoc = td.codigo AND ac.cobro = 1 ),0) AS numeric(15,2))
+	   ,cantidad = (ISNULL((SELECT COUNT(*) FROM @tbDetalleCaja ac WHERE ac.tipDoc = td.codigo AND ac.cobro = 1 ),0))
 	 FROM dbo.TipoDocumento td WITH (NOLOCK)
 	 WHERE td.codigo IN ('FV','NE','IC','EC','A')
 	 
 	  -------------------------------------------------END-----------------------------------------------------------------
 
-
-	 SELECT 
-		tipoDoc = codigo,
-		nroDoc ,
-		fechaEmision = dbo.AFTConvertDate(fechaEmision)+dbo.AFTConvertHora(fechaEmision),
-		cliente,
-		total = CAST(total as numeric(15,2))
-	 FROM AFTDocumentoForPayment() 
-	 WHERE gestion = 1 AND idEntidad = @idEntidad AND CAST(fechaEmision AS date) = CAST(@fechaApertura AS date)
-
-
 	 -----------------------------HISTORIAL DE MOVIMIENTO POR DOCUMENTO DEL CONTROL DE CAJA-----------------------------
-     SELECT 
-	      nroComprobante = nroCobro,
-		  tipDoc,
-		  nroDoc,
-		  fechaEmision = dbo.AFTConvertDate(fechaEmision)+dbo.AFTConvertHora(fechaEmision),
-		  persona = nombreComercial,
-		  total = CAST(total AS numeric(15,2)),
-		  abono = CAST(abono AS numeric(15,2)),
-		  saldo = CAST(saldo AS numeric(15,2)),
-		  pay =   pay
-	 FROM AFTAdministracionCaja()
-	 WHERE estado = 1 AND idEntidad = @idEntidad AND idControlCaja = @idControlCaja
-	 ORDER BY tipo,nroDoc,nroCobro ASC 
+	  SELECT tipoDoc = td.codigo
+	       ,nroDoc  = JSON_VALUE(dbo.f_sanitize_json(co.infoCobro),'$.nro')
+		   ,fechaEmision = CASE td.codigo WHEN 'NC' THEN (SELECT FORMAT(de.fechaEmision, 'dd/MM/yyyy HH:mm') FROM dbo.DocumentoElectronico de WITH (NOLOCK) WHERE de.idDocumento = co.idComprobante)
+								          WHEN 'RV' THEN (SELECT FORMAT(rv.fechaEmision, 'dd/MM/yyyy HH:mm') FROM dbo.RetencionVenta       rv WITH (NOLOCK) WHERE rv.idRetencionVenta  = co.idComprobante)
+								          WHEN 'RC' THEN (SELECT        dd.fechaEmision                      FROM FactElect.DocRelacionado dr WITH (NOLOCK) INNER JOIN Recepcion.DocumentoRecibido dd WITH (NOLOCK) ON dd.idDocumento = dr.idDocumentoRecibido WHERE dr.idDocRelacionado = co.idComprobante)
+								          WHEN 'A'  THEN (SELECT FORMAT(an.fechaEmision, 'dd/MM/yyyy HH:mm') FROM dbo.Anticipo             an WITH (NOLOCK) WHERE an.idAnticipo = co.idComprobante)
+						  END
+		  ,cliente = ci.nombreFiscal
+		  ,total = co.abono
+	 FROM dbo.ComprobanteIngreso       ci WITH (NOLOCK)
+	 INNER JOIN dbo.Cobro              co WITH (NOLOCK) ON ci.idComprobanteIngreso = co.idComprobanteIngreso
+	 INNER JOIN dbo.EntidadFinanciera  ef WITH (NOLOCK) ON ef.idEntidadFinanciera  = co.idEntidadFinanciera
+	  LEFT JOIN dbo.TipoDocumento      td WITH (NOLOCK) ON td.idTipoDocumento      = co.idTipoDocumento
+	 WHERE ci.idControlCaja = @idControlCaja AND ci.estado = 1 AND ef.codigo = 'DOC' 
+	 
 
 	 ------------------------------------------------END----------------------------------------------------------------
 	
+	 SELECT 
+	       nroComprobante 
+		  ,tipDoc
+		  ,nroDoc
+		  ,fechaEmision = dbo.AFTConvertDate(fechaEmision)+dbo.AFTConvertHora(fechaEmision)
+		  ,persona
+		  ,total = CAST(total AS numeric(15,2))
+		  ,abono = CAST(abono AS numeric(15,2))
+		  ,saldo = CAST(saldo AS numeric(15,2))
+		  ,pay =   pay
+	 FROM @tbDetalleCaja
+	 ORDER BY nroDoc,nroComprobante ASC 
 
 	 SELECT @chequesPosf as chequePosfechado
 	 

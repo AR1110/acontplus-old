@@ -33,7 +33,7 @@ BEGIN
 	INSERT INTO @configVentas(idCliente,idArticulo,searchCode,printerAutomatic,payAutomatic) 
 	SELECT idCliente, idArticulo, searchCode, printerAutomatic, payAutomatic FROM Config.Sistema WITH (NOLOCK)  
 	CROSS APPLY OPENJSON(jsonConfig)		
-	WITH(idCliente        INT '$.idCliente'
+	WITH(idCliente            INT '$.idCliente'
 			,idArticulo       INT '$.idArticulo'
 			,searchCode       BIT '$.searchCode'
 			,printerAutomatic BIT '$.printerAutomatic'
@@ -72,7 +72,8 @@ BEGIN
 				Config.Estab_Asig ea WITH (NOLOCK)
 				INNER JOIN Sri.Establecimiento e WITH (NOLOCK) ON ea.codEstab = e.codEstab
 			WHERE
-				idUsuarioRol = @idUsuarioRol;
+				idUsuarioRol = @idUsuarioRol
+			ORDER BY ea.predeterminado 
 
 
 			--Puntos de Emision Asignados 

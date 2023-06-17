@@ -75,12 +75,12 @@ BEGIN
 																					 WHEN ''APR'' THEN  ''table-success''
 																					 ELSE ''''
 																   END 
-								  FROM Ventas.Aprob_Document ad
-								  INNER JOIN dbo.EstadoPago ep ON ep.codigo = ad.codEstado
-								  INNER JOIN dbo.Cliente cl ON cl.idCliente = ad.idCliente
-								  INNER JOIN PuntoEmision pe WITH(NOLOCK) ON pe.idPuntoEmision = ad.idPuntoEmision
-								  INNER JOIN Sri.Establecimiento es WITH(NOLOCK) ON es.codEstab = pe.codEstab 
-								  WHERE ad.idEntidad = @idEntidad '
+								  FROM Ventas.Aprob_Document     ad WITH(NOLOCK) 
+								  INNER JOIN dbo.EstadoPago      ep WITH(NOLOCK) ON ep.codigo         = ad.codEstado
+								  INNER JOIN dbo.Cliente         cl WITH(NOLOCK) ON cl.idCliente      = ad.idCliente
+								  INNER JOIN PuntoEmision        pe WITH(NOLOCK) ON pe.idPuntoEmision = ad.idPuntoEmision
+								  INNER JOIN Sri.Establecimiento es WITH(NOLOCK) ON es.codEstab       = pe.codEstab 
+								  WHERE ad.idEntidad = @idEntidad AND es.codEstab = @codEstab '
 
 	SELECT @idEntidad = idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol
 
@@ -108,14 +108,13 @@ BEGIN
 		,byEstado        VARCHAR(5)  '$.byEstado'
 		,byUsuario       INT         '$.byUsuario'
 		,fechaInicio     VARCHAR(50) '$.fechaInicio'
-		,fechaFin        VARCHAR(50)   '$.fechaFin'
+		,fechaFin        VARCHAR(50) '$.fechaFin'
 		,tipoFecha       VARCHAR(50) '$.tipoFecha')
 
 
 	BEGIN TRY
 		--------------------------------------------BUSQUEDA INDIVIDUAL POR PARAMETRO-------------------------------------------------------------------
-		SET @sql = @sql + ' AND es.codEstab = @codEstab '
-
+		
 		IF @checkBoxCliente = 1
 			BEGIN
 				SET @sql = @sql + ' AND ad.idCliente = @idCliente '
@@ -126,10 +125,6 @@ BEGIN
 				 SET @sql = @sql + ' AND ad.codEstado = @codEstado'
 			END
 
-		ELSE
-			BEGIN
-				SET @sql = @sql + ' AND ad.codEstado NOT IN(''A'')'
-			END
 
 		IF @checkBoxUsuario = 1
 			BEGIN
