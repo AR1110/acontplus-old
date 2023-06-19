@@ -1,6 +1,66 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
   <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="DataSetMain">
+      <ConnectionProperties>
+        <DataProvider>SQL</DataProvider>
+        <ConnectString />
+      </ConnectionProperties>
+      <rd:SecurityType>None</rd:SecurityType>
+      <rd:DataSourceID>fee0c161-d652-4094-b50c-a5e2d96b5d4e</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="mainDs">
+      <Query>
+        <DataSourceName>DataSetMain</DataSourceName>
+        <CommandText />
+      </Query>
+      <Fields>
+        <Field Name="entidad">
+          <DataField>entidad</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="establecimiento">
+          <DataField>establecimiento</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="nroDocumento">
+          <DataField>nroDocumento</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="fechaHora">
+          <DataField>fechaHora</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="entregadoPor">
+          <DataField>entregadoPor</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="recibidoPor">
+          <DataField>recibidoPor</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="entidadFinanciera">
+          <DataField>entidadFinanciera</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="valor">
+          <DataField>valor</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="observacion">
+          <DataField>observacion</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="usuario">
+          <DataField>usuario</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
   <ReportSections>
     <ReportSection>
       <Body>
@@ -12,7 +72,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=Parameters!entidad.Value</Value>
+                    <Value>=First(Fields!entidad.Value, "mainDs")</Value>
                     <Style>
                       <FontFamily>Arial Narrow</FontFamily>
                     </Style>
@@ -45,7 +105,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=Parameters!sucursal.Value</Value>
+                    <Value>=First(Fields!establecimiento.Value, "mainDs")</Value>
                     <Style>
                       <FontFamily>Arial Narrow</FontFamily>
                       <FontSize>9pt</FontSize>
@@ -80,7 +140,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=Parameters!tipoMovimientoCaja.Value</Value>
+                    <Value>=First(Fields!nroDocumento.Value, "mainDs")</Value>
                     <Style>
                       <FontFamily>Arial Narrow</FontFamily>
                     </Style>
@@ -148,7 +208,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=Parameters!fechaHora.Value</Value>
+                    <Value>=First(Fields!fechaHora.Value, "mainDs")</Value>
                     <Style>
                       <FontFamily>Arial Narrow</FontFamily>
                     </Style>
@@ -216,7 +276,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=Parameters!entregadoPor.Value</Value>
+                    <Value>=First(Fields!entregadoPor.Value, "mainDs")</Value>
                     <Style>
                       <FontFamily>Arial Narrow</FontFamily>
                     </Style>
@@ -284,7 +344,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=Parameters!recibidoPor.Value</Value>
+                    <Value>=First(Fields!recibidoPor.Value, "mainDs")</Value>
                     <Style>
                       <FontFamily>Arial Narrow</FontFamily>
                     </Style>
@@ -352,13 +412,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=Parameters!entidadFinanciera.Value</Value>
-                    <Style>
-                      <FontFamily>Arial Narrow</FontFamily>
-                    </Style>
-                  </TextRun>
-                  <TextRun>
-                    <Value xml:space="preserve"> </Value>
+                    <Value>=First(Fields!entidadFinanciera.Value, "mainDs")</Value>
                     <Style>
                       <FontFamily>Arial Narrow</FontFamily>
                     </Style>
@@ -426,7 +480,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=Parameters!valor.Value</Value>
+                    <Value>=First(Fields!valor.Value, "mainDs")</Value>
                     <Style>
                       <FontFamily>Arial Narrow</FontFamily>
                     </Style>
@@ -494,7 +548,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=Parameters!observacion.Value</Value>
+                    <Value>=First(Fields!observacion.Value, "mainDs")</Value>
                     <Style>
                       <FontFamily>Arial Narrow</FontFamily>
                     </Style>
@@ -563,7 +617,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=Parameters!usuario.Value</Value>
+                    <Value>=First(Fields!usuario.Value, "mainDs")</Value>
                     <Style>
                       <FontFamily>Arial Narrow</FontFamily>
                     </Style>
@@ -715,133 +769,19 @@
       <Page>
         <PageHeight>29.7cm</PageHeight>
         <PageWidth>21cm</PageWidth>
-        <LeftMargin>2cm</LeftMargin>
-        <RightMargin>2cm</RightMargin>
-        <TopMargin>2cm</TopMargin>
-        <BottomMargin>2cm</BottomMargin>
+        <LeftMargin>0.2cm</LeftMargin>
+        <RightMargin>0.2cm</RightMargin>
+        <TopMargin>0.2cm</TopMargin>
+        <BottomMargin>0.2cm</BottomMargin>
         <ColumnSpacing>0.13cm</ColumnSpacing>
         <Style />
       </Page>
     </ReportSection>
   </ReportSections>
-  <ReportParameters>
-    <ReportParameter Name="entidad">
-      <DataType>String</DataType>
-      <Nullable>true</Nullable>
-      <AllowBlank>true</AllowBlank>
-      <Prompt>entidad</Prompt>
-    </ReportParameter>
-    <ReportParameter Name="sucursal">
-      <DataType>String</DataType>
-      <Nullable>true</Nullable>
-      <AllowBlank>true</AllowBlank>
-      <Prompt>sucursal</Prompt>
-    </ReportParameter>
-    <ReportParameter Name="tipoMovimientoCaja">
-      <DataType>String</DataType>
-      <Nullable>true</Nullable>
-      <AllowBlank>true</AllowBlank>
-      <Prompt>tipoMovimientoCaja</Prompt>
-    </ReportParameter>
-    <ReportParameter Name="fechaHora">
-      <DataType>String</DataType>
-      <Nullable>true</Nullable>
-      <AllowBlank>true</AllowBlank>
-      <Prompt>fechaHora</Prompt>
-    </ReportParameter>
-    <ReportParameter Name="entregadoPor">
-      <DataType>String</DataType>
-      <Nullable>true</Nullable>
-      <AllowBlank>true</AllowBlank>
-      <Prompt>entregadoPor</Prompt>
-    </ReportParameter>
-    <ReportParameter Name="recibidoPor">
-      <DataType>String</DataType>
-      <Nullable>true</Nullable>
-      <AllowBlank>true</AllowBlank>
-      <Prompt>recibidoPor</Prompt>
-    </ReportParameter>
-    <ReportParameter Name="entidadFinanciera">
-      <DataType>String</DataType>
-      <Nullable>true</Nullable>
-      <AllowBlank>true</AllowBlank>
-      <Prompt>entidadFinanciero</Prompt>
-    </ReportParameter>
-    <ReportParameter Name="valor">
-      <DataType>String</DataType>
-      <Nullable>true</Nullable>
-      <AllowBlank>true</AllowBlank>
-      <Prompt>valor</Prompt>
-    </ReportParameter>
-    <ReportParameter Name="observacion">
-      <DataType>String</DataType>
-      <Nullable>true</Nullable>
-      <AllowBlank>true</AllowBlank>
-      <Prompt>observacion</Prompt>
-    </ReportParameter>
-    <ReportParameter Name="usuario">
-      <DataType>String</DataType>
-      <Nullable>true</Nullable>
-      <AllowBlank>true</AllowBlank>
-      <Prompt>usuario</Prompt>
-    </ReportParameter>
-  </ReportParameters>
   <ReportParametersLayout>
     <GridLayoutDefinition>
       <NumberOfColumns>4</NumberOfColumns>
       <NumberOfRows>3</NumberOfRows>
-      <CellDefinitions>
-        <CellDefinition>
-          <ColumnIndex>0</ColumnIndex>
-          <RowIndex>0</RowIndex>
-          <ParameterName>entidad</ParameterName>
-        </CellDefinition>
-        <CellDefinition>
-          <ColumnIndex>1</ColumnIndex>
-          <RowIndex>0</RowIndex>
-          <ParameterName>sucursal</ParameterName>
-        </CellDefinition>
-        <CellDefinition>
-          <ColumnIndex>2</ColumnIndex>
-          <RowIndex>0</RowIndex>
-          <ParameterName>tipoMovimientoCaja</ParameterName>
-        </CellDefinition>
-        <CellDefinition>
-          <ColumnIndex>3</ColumnIndex>
-          <RowIndex>0</RowIndex>
-          <ParameterName>fechaHora</ParameterName>
-        </CellDefinition>
-        <CellDefinition>
-          <ColumnIndex>0</ColumnIndex>
-          <RowIndex>1</RowIndex>
-          <ParameterName>entregadoPor</ParameterName>
-        </CellDefinition>
-        <CellDefinition>
-          <ColumnIndex>1</ColumnIndex>
-          <RowIndex>1</RowIndex>
-          <ParameterName>recibidoPor</ParameterName>
-        </CellDefinition>
-        <CellDefinition>
-          <ColumnIndex>2</ColumnIndex>
-          <RowIndex>1</RowIndex>
-          <ParameterName>entidadFinanciera</ParameterName>
-        </CellDefinition>
-        <CellDefinition>
-          <ColumnIndex>3</ColumnIndex>
-          <RowIndex>1</RowIndex>
-          <ParameterName>valor</ParameterName>
-        </CellDefinition>
-        <CellDefinition>
-          <ColumnIndex>0</ColumnIndex>
-          <RowIndex>2</RowIndex>
-          <ParameterName>observacion</ParameterName>
-        </CellDefinition>
-        <CellDefinition>
-          <ColumnIndex>1</ColumnIndex>
-          <RowIndex>2</RowIndex>
-          <ParameterName>usuario</ParameterName>
-        </CellDefinition>
-      </CellDefinitions>
     </GridLayoutDefinition>
   </ReportParametersLayout>
   <rd:ReportUnitType>Cm</rd:ReportUnitType>

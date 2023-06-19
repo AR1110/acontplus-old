@@ -496,19 +496,34 @@ class MovimientoCajaCtrl {
 
 
     getReport(item) {
-        const json = {
-            tipoRegistro: 2,
-            codEstab: item.codEstab,
-            idMovimientoCaja: item.idMovimientoCaja
-        }
+        try {
+            let format = 'pdf';
 
-        this._mS.getData('get', "/MovimientoCaja/Report?json=" + JSON.stringify(json)).then(response => {
-            console.log(response)
-            // let results = JSON.parse(response.payload)[0];
-            // let parameters = JSON.parse(results.payload)
+            let dataParms = {
+                id: item.idMovimientoCaja,
+            }
 
-        })
-        console.log(item)
+
+
+            const parameters = {
+                hasService: true,                
+                reportParams: JSON.stringify({
+                    hasParams: false,
+                    codigo: 'RMIE',
+                    format,
+                    codEstab: item.codEstab,
+                    aditionalParams: []
+                }),
+                dataParams: JSON.stringify(dataParms)
+            }
+
+            this._commonSvc.getReport({
+                parameters,
+                formatType: format
+            })
+        } catch (error) {
+            console.log(error)
+        }      
     }
 
 
