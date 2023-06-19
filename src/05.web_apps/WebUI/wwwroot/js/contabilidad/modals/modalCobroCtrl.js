@@ -478,7 +478,10 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, mS, commonSvc, modalSvc
     $scope.setValorEfectivo = function(){
         let valorCambio=0, valor=0, abono=0, saldo;
         if(!(typeof $scope.cobro.valorAbono === 'number')){
-            tS.toastr('warning', 'Ingrese un número válido');
+            $scope.cobro.valorCambio = 0
+            $scope.cobro.abono = 0
+            $scope.cobro.valorSaldo = 0;
+            // tS.toastr('warning', 'Ingrese un número válido');
             return
         }
             
@@ -771,7 +774,6 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc
             // $scope.data.totalSaldoOriginal = fS.roundNumber($sc, 5);
             abono              += item.abono; 
             totalMora += item.mora;                       
-            totalSaldoDoc += item.saldoDoc;                       
         }
         $scope.data.importeTotal       = fS.roundNumber(importeTotal, 5);
         $scope.data.totalSaldo         = fS.roundNumber(saldo, 5);
@@ -782,7 +784,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc
         $scope.data.totalValorAbono    = 0;        
         $scope.data.valorCambio        = 0;
        
-       //cuando se realiza cobro desde modulo de comprobante ingreso (totales que se presentan cuando seleccionan o quitan el documento)
+       //cuando se realiza cobro desde modulo de comprobante ingreso 
         if($scope.isPaymentLote){
             $scope.comprobante.importeTotal =  $scope.data.importeTotal 
             $scope.comprobante.abono =  $scope.data.totalAbonoAnterior 

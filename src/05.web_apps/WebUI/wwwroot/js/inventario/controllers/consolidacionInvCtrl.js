@@ -789,17 +789,9 @@
 
         $scope.consolidacionArticuloImport = async () => {
             try {
-                let {
-                    MODAL_FILE_CTRL,
-                    MODAL_CONSOL_IMPORT
-                } = _nombreConst.consolidacion_inv;
-                let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_CONSOL_IMPORT['controller']]
-                let template = MODAL_CONSOL_IMPORT['template'];
-
-
                 let modalRef = _modalSvc.openModalCustom({
                     controller: 'ModalConsolidacionImportacionCtrl',
-                    template,
+                    template: '~/Areas/Consolidacion/Pages/Shared/_ModalConsolidacionImportacion.cshtml' ,
                     isRenderRazorPartial: true,
                     size: 'xl',
                     windowClass: 'uibModalFullScreen'
@@ -1087,8 +1079,9 @@
             width: '15%',
             minWidth: '100',
             editableCellTemplate: 'ui-grid/dropdownEditor',
-            cellFilter: 'mapBodega:grid.appScope.bodegas',
-            editDropdownValueLabel: 'descripcion',
+            editDropdownOptionsArray: bodegas,
+            cellFilter: 'cellFilterBodega:this',
+            editDropdownValueLabel: 'bodega',
             editDropdownIdLabel: 'idBodega',
         },
         {
@@ -1103,8 +1096,6 @@
             aggregationLabel: "Total: ",
             footerCellFilter: 'number:2',
         },
-
-
         ]
 
         if (establecimientos.length > 0) {
@@ -1119,7 +1110,9 @@
 
             $scope.bodegas = bodegas
             $scope.idBodega = $scope.bodegas.length > 0 ? $scope.bodegas.find(x => x.defaultBodega == true).idBodega : 0
-            $scope.cloneIdBodega = $scope.idBodega
+            $scope.cloneIdBodega = $scope.idBodega;
+
+
 
         } else {
             _tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO')
@@ -1129,7 +1122,7 @@
 
         console.log("Inside Importacion Modal")
         $scope.initialLoad = () => {
-            _mS.getData("GET", '/Articulo/Get?json=' + JSON.stringify({ checkBoxConsolidar: true })).then(
+            _mS.getData("get", 'Articulo/Get?json=' + JSON.stringify({ checkBoxConsolidar: true, idBodega: $scope.idBodega }), null, true).then(
                 response => {
                     if (response.code == "0") {
                         _tS.toastr("warning", response.message)
@@ -1181,7 +1174,7 @@
                     return
                 }
 
-                let nroDocumentoSecuencial = await $scope._commonSvc.generarNroDocumentoCompra({
+                let nroDocumentoSecuencial = await _commonSvc.generarNroDocumentoCompra({
                     idPuntoEmision: $scope.data.idPuntoEmision,
                     codigoDocumento: $scope.TIPO_DOC.codigo
                 })
@@ -1214,7 +1207,7 @@
                     detalle: $scope.gridOptions.data
                 }
 
-                _mS.getData('post', '/Consolidacion/Insert', { data: data }, true).then(response => {
+                _mS.getData('post', 'Consolidacion/Insert', { data: data }, true).then(response => {
                     if (response.code === '0') {
                         hideLoader();
                         _fS.sweetAlert('warning', response.message, response.titleSms);

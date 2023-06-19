@@ -215,7 +215,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:AcontplusPrint"
         "ProductCode" = "8:{B013801F-1BA9-40D1-951D-5B998EA9DA21}"
-        "PackageCode" = "8:{D2408A43-5AE3-4D0B-BF8D-B8382C8052B7}"
+        "PackageCode" = "8:{9635CB87-0A71-4583-B2E9-F4FDB451C9F9}"
         "UpgradeCode" = "8:{FA9DCADC-C11E-4170-B168-20C8CA58C9D4}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
