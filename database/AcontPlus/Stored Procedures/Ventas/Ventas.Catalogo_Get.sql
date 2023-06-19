@@ -181,10 +181,6 @@ BEGIN
 			INNER JOIN SubMenu sm WITH(NOLOCK) ON sm.idSubMenu = a.idSubMenu
 			WHERE sm.codTemp ='ART' AND a.idPolitica = @idPolitica
 
-
-
-
-
 		END
 
 END 
