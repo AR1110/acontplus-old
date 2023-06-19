@@ -41,10 +41,7 @@ BEGIN
 			,@nota NVARCHAR(300)
 			,@validationSri BIT
 	
-	SELECT 
-	     @idEntidad = idEntidad
-		,@idUsuario = idUsuario
-	FROM AFTDataRol(@idUsuarioRol)
+	SELECT  @idEntidad = idEntidad ,@idUsuario = idUsuario  FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol
 
 
 
@@ -91,7 +88,7 @@ BEGIN
 
 	IF EXISTS (SELECT 1 FROM Cliente WHERE numeroIdentificacion = @numeroIdentificacion AND idEntidad = @idEntidad)
 		BEGIN
-			SELECT '0'code,'Este cliente ya se encuentra registrado'
+			SELECT '0'code,'Este cliente ya se encuentra registrado' as 'message'
 			RETURN 
 		END 
 
