@@ -67,10 +67,6 @@ namespace ApiInventory.Controllers
             return Ok(_response);
         }
 
-
-
-        
-
         [HttpPost("Insert")]
         public async Task<IActionResult> Insert([FromBody] ArticuloParams data)
         {
