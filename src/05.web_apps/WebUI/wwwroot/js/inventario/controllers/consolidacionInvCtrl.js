@@ -1121,6 +1121,12 @@
         $scope.decimal = config
 
         console.log("Inside Importacion Modal")
+        $scope.setTotalDetalle = () => {
+            let total = $scope.gridOptions.data.map(val => val.total).reduce((acc, curr) => acc + curr, 0);
+
+            $scope.data.total = _fS.roundNumber(total, $scope.decimal.nroTotalSubTotal)
+        }
+
         $scope.initialLoad = () => {
             _mS.getData("get", 'Articulo/Get?json=' + JSON.stringify({ checkBoxConsolidar: true, idBodega: $scope.idBodega }), null, true).then(
                 response => {
@@ -1134,10 +1140,12 @@
                         $scope.gridOptions.data = $scope.articulosImportados.map(item => ({
                             ...item,
                             idBodega: $scope.idBodega,
+                            precioActual: item.precioCosto,
                             cantidad: item.stock,
                             total: item.stock * item.precioCosto,
                             num: num++
                         }))
+                        $scope.setTotalDetalle();
                     }
                 }
             ).catch(error => {
@@ -1145,6 +1153,62 @@
             })
         }
         $scope.initialLoad()
+
+        $scope.onChangeEstablecimiento = async () => {
+            try {
+                const swalWithBootstrapButtons = Swal.mixin({
+                    customClass: {
+                        confirmButton: 'btn btn-success',
+                        cancelButton: 'btn btn-danger ml-2'
+                    },
+                    buttonsStyling: false
+                })
+                let {
+                    isConfirmed
+                } = await swalWithBootstrapButtons.fire({
+                    title: '<small>Cambiar Establecimiento?</small>',
+                    html: "<small>Esta seguro de cambiar <b>Punto de Emisión</b> y la <b>Bodega</b>?</small>",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Si, cambiar!',
+                    cancelButtonText: 'No, cancelar!',
+                    reverseButtons: false,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false
+                })
+
+                if (!isConfirmed) {
+                    $scope.data.codEstab = $scope.cloneCodEstab;
+                    $scope.$apply();
+                    return
+                }
+                $scope.puntosEmision = []
+                $scope.bodegas = []
+                $scope.cloneCodEstab = $scope.data.codEstab;
+                const dataEstab = $scope.establecimientos.find(item => item.codEstab === $scope.data.codEstab);
+                for (const p of allPuntosEmision) {
+                    if (dataEstab.codEstab == p.codEstab) {
+                        $scope.puntosEmision.push(p)
+                    }
+                }
+                $scope.data.idPuntoEmision = $scope.puntosEmision.length > 0 ? $scope.puntosEmision[0].idPuntoEmision : 0;
+                for (const p of allBodegas) {
+                    if (dataEstab.codEstab == p.codEstab) {
+                        $scope.bodegas.push(p)
+                    }
+                }
+                $scope.idBodega = $scope.bodegas.length > 0 ? $scope.bodegas[0].idBodega : 0;
+                $scope.cloneIdBodega = $scope.idBodega;
+                let indexColumn = $scope.gridOptions.columnDefs.findIndex(item => item.field === 'idBodega');
+                $scope.gridOptions.columnDefs[indexColumn].editDropdownOptionsArray = $scope.bodegas;
+                for (let item of $scope.gridOptions.data) {
+                    item.idBodega = $scope.idBodega;
+                }
+                $scope.$apply()
+            } catch (error) {
+                console.trace(error)
+            }
+        }
 
         $scope.askToSave = async () => {
             try {
@@ -1207,7 +1271,8 @@
                     detalle: $scope.gridOptions.data
                 }
 
-                _mS.getData('post', 'Consolidacion/Insert', { data: data }, true).then(response => {
+                
+                _mS.getData('post', 'Consolidacion/', { data: data }, true).then(response => {
                     if (response.code === '0') {
                         hideLoader();
                         _fS.sweetAlert('warning', response.message, response.titleSms);
