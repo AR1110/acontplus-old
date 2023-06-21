@@ -683,7 +683,7 @@
          this._tS = _tS;
 
          this.dataSearch = {};
-         this.dataSearch.busqueda;
+         this.dataSearch.busqueda = "";
          this.dataSearch.numeroPagina = 0;
          this.dataSearch.cantidadRegistro = 15;
          this.dataSearch.stock = 0;
@@ -692,6 +692,7 @@
          this.listaArticulos = [];
          this.selectedArticulos = [];
 
+         this.activated = false;
 
          this.tipoBusquedas = [{
                  codigo: 'DESC',
@@ -750,12 +751,13 @@
 
      querySearchArticulo() {
          this.dataSearch.numeroPagina = 1;
-
-
+         this.activated = true;
+         this.listaArticulos = []; //Vaciar el array (Lista de Articulos);  
+         
          this._mS.getData('get', '/Articulo/List?json=' + JSON.stringify(this.dataSearch)).then(response => {
-
+             this.listaArticulos = []; //Vaciar el array (Lista de Articulos);  
+             this.activated = false;
              if (response.code === "0") {
-                 this.listaArticulos = []; //Vaciar el array (Lista de Articulos);  
                  this._tS.toastr('warning', response.message, response.titleSms);
                  return
              }
@@ -766,6 +768,8 @@
                  return item;
              })
              this.tarifas = this.listaArticulos.length > 0 ? this.listaArticulos[0].tarifa : [];
+         }).catch(error=>{
+            this.activated = false;
          })
 
      }

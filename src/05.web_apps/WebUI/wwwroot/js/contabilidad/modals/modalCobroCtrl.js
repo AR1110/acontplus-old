@@ -619,7 +619,7 @@ ModalCobroLoteCtrl.$inject = [
 function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc, modalSvc, nombreModalContabilidad, tS, fS, params){
     let cobroSvc = new CobroService(tS, mS, fS);
     let {data} = params;
-    let {idCuentaPorCobrar} = typeof data ==='object'? data.idCuentaPorCobrar : 0;
+    let {idCuentaPorCobrar} = typeof data ==='object'? data : 0;
     
     const NUM_MAX_ROUND = 4;
     //Cobro Lote
@@ -929,7 +929,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc
         }      
     }
 
-    $scope.hastDatosCobro = ()=>$scope.datosCobro.length>0;
+    $scope.hasDatosCobro = ()=>$scope.datosCobro.length>0;
     //Cuando Seleccionan los documentos 
 
     $scope.deleteDocSeleted = function(item) {
@@ -1009,7 +1009,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc
             return
         }
 
-        if($scope.hastDatosCobro()){
+        if($scope.hasDatosCobro()){
             Swal.fire({
                 //title: 'Are you sure?',
                 text: "Tienes formas de cobro aplicados a los documentos seleccionados, desea borrar e iniciar nuevamente!",
@@ -1023,7 +1023,15 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc
                 if (result.isConfirmed) {
                     $scope.datosCobro = [];    
                     cobroSvc.cobrosDetalle = [];
-                    cobroSvc.indexDatoCobro = 0;                                         
+                    cobroSvc.indexDatoCobro = 0; 
+                    
+                    //Todas las cuotas en su estado original                     
+                    for (let item of $scope.selectedDocumentos) {                        
+                        item.cuotas = JSON.parse(JSON.stringify(item.cuotaOriginal));
+                    }
+
+                    cobroSvc.selectedDocumentos = $scope.selectedDocumentos;
+                    
                     getTotalesCuota();              
                     $scope.passingStepSelectedDoc();
                 }

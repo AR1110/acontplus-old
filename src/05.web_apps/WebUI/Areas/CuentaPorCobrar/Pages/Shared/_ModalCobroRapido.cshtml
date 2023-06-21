@@ -277,12 +277,12 @@
                 <div class="table-responsive">
                     <table class="table table-condensed table-no-bordered table-sm" width="100%">
                         <tbody>
-                            <tr class="table-danger" ng-show="cobro.abonoAnterior>0">
+                            <tr class="table-danger" ng-if="comprobante.abono>0">
                                 <td align="left">
                                     <h4>Abono Anterior</h4>
                                 </td>
                                 <td align="right">
-                                    <h4>${{cobro.abonoAnterior}}</h4>
+                                    <h4>${{comprobante.abono}}</h4>
                                 </td>
                             </tr>
                             <tr>

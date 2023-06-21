@@ -74,7 +74,7 @@
                         </div>
                     </div>
                 </div>
-               
+
 
                 <md-table-container style=" max-height: 400px;" ng-show="tipoDocumentos.length>0">
                     <table md-table md-row-select="options.rowSelection" multiple="{{options.multiSelect}}" ng-model="selectedDocumentos">
@@ -178,7 +178,7 @@
                                                 <span ng-if="!group.display"><i class="fas fa-caret-square-right"></i></span>
                                             </td>
                                             <td md-cell colspan="3">{{group.tipoDoc}} - {{group.serieComprobante}}</td>
-                                            <td md-cell colspan="4">
+                                            <td md-cell colspan="5">
                                                 <strong>${{group.importeTotal}}</strong>
                                             </td>
 

@@ -1,4 +1,6 @@
-<div>
+ 
+ <center ng-if="$ctrl.activated"><md-progress-circular  ng-disabled="!$ctrl.activated" md-diameter="96"></md-progress-circular></center>
+<div ng-show="$ctrl.listaArticulos.length>0">
     <md-table-container style="max-height: 400px;">
         <table resize master md-table md-row-select="$ctrl.options.rowSelection"
             multiple="{{$ctrl.options.multiSelect}}" ng-model="$ctrl.selectedArticulos">
