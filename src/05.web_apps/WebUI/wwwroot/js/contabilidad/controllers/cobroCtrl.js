@@ -212,7 +212,7 @@
             try {
                 showLoader();
                 $scope.facturas = [];
-                _mS.getData('get', '/FacturaVenta/Get?json=' + JSON.stringify($scope.dataSearch)).then(response => {
+                _mS.getData('get', 'Factura/' +'Get?json=' + JSON.stringify($scope.dataSearch), null, true ).then(response => {
                     if (response.id === "0") {
                         hideLoader();
                         _form.sweetAlert('warning', response.message, response.titleSms);
@@ -234,7 +234,7 @@
             try {
                 showLoader();
                 $scope.notaEntregas = [];
-                _mS.getData('get', '/NotaEntrega/Get?json=' + JSON.stringify($scope.dataSearch)).then(response => {
+                _mS.getData('get', 'NotaEntrega/' + 'Get?json=' + JSON.stringify($scope.dataSearch), null, true).then(response => {
                     if (response.id === "0") {
                         hideLoader();
                         Swal.fire({
