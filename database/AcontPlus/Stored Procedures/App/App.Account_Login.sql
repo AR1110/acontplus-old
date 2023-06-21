@@ -34,9 +34,9 @@ BEGIN
 			SET @idUsuario = (SELECT idUsuario FROM Seguridad.Usuario WHERE nombreUsuario = @username AND contrasenia = HASHBYTES('SHA2_512', @password + CAST(salt AS NVARCHAR(36))))
 			
 			IF (@idUsuario IS NULL)
-				SELECT -2, 'Contraseña incorrecta' as 'message'
+				SELECT -2 code, 'Contraseña incorrecta' as 'message'
 			ELSE
-				SELECT 0, 'Ingreso exitoso' as 'message', payload = (SELECT idUsuario, nombreUsuario, ISNULL(email,'') email, nombreCompleto, nroIdentificacion FROM Seguridad.Usuario WHERE idUsuario = @idUsuario FOR JSON PATH) 
+				SELECT 0 code, 'Ingreso exitoso' as 'message', payload = (SELECT u.idUsuario, nombreUsuario, ISNULL(email,'') email, nombreCompleto, nroIdentificacion, ur.idUsuarioRol FROM Seguridad.Usuario u INNER JOIN Seguridad.UsuarioRol ur WITH (NOLOCK) ON ur.idUsuario = u.idUsuario WHERE u.idUsuario = @idUsuario FOR JSON PATH) 
 		END
 	ELSE
 		BEGIN
