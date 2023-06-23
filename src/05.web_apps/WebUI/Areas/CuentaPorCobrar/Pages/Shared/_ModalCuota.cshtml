@@ -1,4 +1,10 @@
 
+<style>
+    .width-override{
+  width:100px !important;
+  padding:0px !important;
+}
+</style>
 <div class="modal-header">
     <h5 class="modal-title"><i class="far fa-money-bill-alt"></i> Cuotas</h5>
     <button type="button" class="close" ng-click="closeModal()">&times;</button>
@@ -48,7 +54,7 @@
                 </div>                            
             </div>
         </div>
-        
+
         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
             <div class="form-group">
                 <label>Configurar Fecha: <code>dd/MM/yyyy</code></label>
@@ -70,36 +76,36 @@
         <button type="button" class="btn btn-success" ng-click="askToApplyMora()">Aplicar Mora</button>
         <button type="button" class="btn btn-warning" ng-click="initiload()">Cancelar</button>                    
     </div> 
-    
-     <md-table-responsive>
-        <table md-table>
-            <thead md-head>
-                <tr md-row>                 
-                    <th md-column>Nro. Cuota</th>                    
-                    <th md-column>Cuota</th>                    
-                    <th md-column>Interes</th> 
-                    <th md-column>Dias Mora</th>
-                    <th md-column>Mora</th>
-                    <th md-column>Abono</th>
-                    <th md-column>Saldo Cta</th>
-                    <th md-column>Saldo</th>
-                    <th md-column>Fecha Vencimiento</th>
-                    <th md-column>Estado</th>                   
-                    @* <th md-column colspan="2" class="text-center"><span>F. Vencimiento</span></th> *@
+
+     <div class="table-responsive mt-3">
+        <table class="table table-hover">
+            <thead>
+                <tr  >                 
+                    <th class=" small">Nro. Cuota</th>                    
+                    <th class=" small">Cuota</th>                    
+                    <th class=" small">Interes</th> 
+                    <th class=" small">Dias Mora</th>
+                    <th class=" small">Mora</th>
+                    <th class=" small">Abono</th>
+                    <th class=" small">Saldo Cta</th>
+                    <th class=" small">Saldo</th>
+                    <th class=" small">Fecha Vcto</th>
+                    <th class=" small">Estado</th>                   
+                    @* <th  colspan="2" class="text-center"><span>F. Vencimiento</span></th> *@
                 </tr>
             </thead>
-            <tbody md-body>
-                <tr md-row ng-repeat="item in cuotas">
-                    <td md-cell>{{item.nroCuota}}</td>
-                    <td md-cell>
+            <tbody  >
+                <tr   ng-repeat="item in cuotas">
+                    <td >{{item.nroCuota}}</td>
+                    <td >
                          <!--Input Entrada-->
                         <input type="text"
                                ng-if="item.nroCuota==='E'"
                                valid-number 
                                ng-model="item.cuota" 
                                id="valorEntrada" 
-                               ng-keyup="setValorEntrada(item.cuota)" 
-                               class="form-control border-select text-center w-50" />
+                               ng-blur="setValorEntrada(item.cuota)" 
+                               class="form-control border-select text-center" />
                                 
                         <!--Input Cuota -->
                         <input type="text" 
@@ -108,17 +114,17 @@
                                 valid-number 
                                 ng-keyup="setValorCuota(item)" 
                                 ng-model="item.cuota" 
-                                class="form-control border-select text-center w-50" />
+                                class="form-control border-select text-center" />
                     </td>
-                    <td md-cell>{{item.interes}}</td>
-                    <td md-cell>{{item.diasMora}}</td>
-                    <td md-cell>{{item.mora}}</td>
-                    <td md-cell>{{item.abono}}</td>
-                    <td md-cell>{{item.saldoCta}}</td>
-                    <td md-cell>{{item.saldo}}</td>
-                    <td md-cell>
+                    <td >{{item.interes}}</td>
+                    <td >{{item.diasMora}}</td>
+                    <td >{{item.mora}}</td>
+                    <td >{{item.abono}}</td>
+                    <td >{{item.saldoCta}}</td>
+                    <td >{{item.saldo}}</td>
+                    <td >
                         <span ng-if="item.nroCuota=='E'" uib-popover-html="'getFechaEscritaCuota(item.fechaVencimiento)'"  popover-trigger="'focus'" class="ml-1">{{item.fechaVencimiento}}</span>
-                        
+
                         <input type="date" uib-popover-html="getFechaEscritaCuota(item)"  popover-trigger="'focus'"
                                min="2020-01-01" 
                                max="2030-12-31" 
@@ -129,42 +135,42 @@
                                class="form-control border-select" required />
                         <small class="invalid-feedback">Fecha Vcto. no válida </small>
                     </td>
-                    <td md-cell>{{item.estado}}</td>
-                    @* <td md-cell width="100">{{c.nroCuota}}</td>
-                    <td md-cell width="100">
-                       
+                    <td >{{item.estado}}</td>
+                    @* <td  width="100">{{c.nroCuota}}</td>
+                    <td  width="100">
+
                     </td>
-                    <td md-cell width="100">
+                    <td  width="100">
                         <span ng-if="c.nroCuota=='E'" class="ml-1">{{c.cxc.fechaVencimiento | date:'dd/MM/yyyy'}}</span>
-                        
+
                         <input type="date" min="2020-01-01" max="2030-12-31" id="fechaVencimiento{{c.cxc.idCuotaXCobrar}}" ng-if="c.nroCuota!=='E'" ng-model="c.cxc.fechaVencimiento" ng-change="$ctrl.setFechaVencimientoCuota(c)" class="form-control border-select" required />
                         <small class="invalid-feedback">Fecha Vcto. no válida </small>
                     </td>
-                    <td md-cell width="100">
+                    <td  width="100">
                         {{$ctrl.getFechaEscritaCuota(c.cxc)}}
                     </td> *@
                 </tr>  
-                <tr md-row>
-                    <td md-cell class="text-right">
-                        <h6><strong>Total Cuota: </strong></h5>
-                        <h6><strong>Diferencia: </strong></h5>
+                <tr >
+                    <td  class="text-right">
+                        <h5><strong>Total Cuota: </strong></h5>
+                        <h5><strong>Diferencia: </strong></h5>
                     </td>
-                    <td md-cell align="text-left">
-                        <h6>${{totalCuota}}</h4>
-                        <h6 class="text-danger">${{totalDiferencia}}</h4>
+                    <td  align="text-left">
+                        <h6>${{totalCuota}}</h6>
+                        <h6 class="text-danger">${{totalDiferencia}}</h6>
                     </td>
-                    <td md-cell></td>
-                    <td md-cell></td>                    
-                    <td md-cell></td>                    
-                    <td md-cell></td>                    
-                    <td md-cell></td>                    
-                    <td md-cell></td>                    
-                    <td md-cell></td>                    
-                    <td md-cell></td>                    
+                    <td ></td>
+                    <td ></td>                    
+                    <td ></td>                    
+                    <td ></td>                    
+                    <td ></td>                    
+                    <td ></td>                    
+                    <td ></td>                    
+                    <td ></td>                    
                 </tr>                               
             </tbody>
         </table>
-    </md-table-responsive>
+    </div>
 
 </div>
 <div class="modal-footer">
