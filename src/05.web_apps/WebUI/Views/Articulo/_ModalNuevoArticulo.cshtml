@@ -125,6 +125,12 @@
                                 ng-blur="$ctrl.redondearPrecioCosto()" ng-change="$ctrl.recalculateTarifaAdd()"
                                 placeholder="0.00">
                         </div>
+                        <div class="form-group col-lg-2 col-md-6 col-sm-6 col-xs-6">
+                            <label for="">Precio Sin Subsidio:</label>
+                            <input type="text" class="form-control border-select precioSinSubsidio" decimal
+                                ng-focus="delayFocus('.precioSinSubsidio')" ng-model="$ctrl.data.precioSinSubsidio"
+                                placeholder="0.00">
+                        </div>
                         <div class="form-group col-lg-2 col-md-6 col-sm-6 col-12 text-center ">
                             <label>Inventario: </label>
                             <div class="icheck-primary ">
@@ -278,6 +284,13 @@
                                     ng-change="$ctrl.recalculateTarifaUpdate()" ng-model="$ctrl.data.precioCosto"
                                     step="any" placeholder="0.00">
                             </div>
+
+                             <div class="form-group col-lg-2 col-md-6 col-sm-6 col-xs-6">
+                                <label for="">Precio Sin Subsidio:</label>
+                                <input type="text" class="form-control border-select precioSinSubsidio" decimal
+                                ng-focus="delayFocus('.precioSinSubsidio')" ng-model="$ctrl.data.precioSinSubsidio"
+                                placeholder="0.00">
+                             </div>
                             <!--Opcion para calcular pvp-tarifas-->
                             <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 mt-4"
                                 ng-if="$ctrl.articlePermission.precio.update">

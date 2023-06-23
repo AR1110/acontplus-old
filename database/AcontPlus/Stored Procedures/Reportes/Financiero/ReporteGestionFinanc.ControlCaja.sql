@@ -45,6 +45,12 @@ BEGIN
 	   ,cobro BIT NOT NULL DEFAULT 1 
 	)
 
+	DECLARE @tbDocuments AS TABLE(
+		 tipDoc VARCHAR(5) NOT NULL
+		,total NUMERIC(18,5) NOT NULL
+		,abono NUMERIC(18,5) NOT NULL
+	)
+
 	SELECT @idControlCaja = idControlCaja FROM OPENJSON(@json) WITH (idControlCaja INT '$.id', idUsuarioRol INT '$.idUsuarioRol') AS jsonValues
 
 
@@ -55,8 +61,8 @@ BEGIN
 		  ,fechaEmision    = cc.fechaEmision
 		  ,agenteEconomico = cl.nombreFiscal
 		  ,total           = cc.importeTotal
-		  ,hc.abono
-		  ,saldo           = cc.importeTotal - hc.abono
+		  ,abono           = CASE WHEN co.cobro = 1 THEN IIF(co.abono >= cc.importeTotal,hc.abono,co.abono) ELSE 0 END
+		  ,saldo           = cc.importeTotal - SUM(CASE WHEN co.cobro = 1 THEN IIF(co.abono >= cc.importeTotal,hc.abono,co.abono) ELSE 0 END) OVER (PARTITION BY cc.idCuentaPorCobrar ORDER BY co.idCobro ROWS UNBOUNDED PRECEDING)    
 		  ,pay             = ISNULL(sf.descripcion,ef.descripcion)
 		  ,ef.idEntidadFinanciera
 		  ,co.cobro
@@ -182,16 +188,16 @@ BEGIN
 														(
 														SELECT mc.valor FROM dbo.MovimientoCaja mc WITH (NOLOCK) WHERE mc.idMovimientoCaja = pd.idComprobante
 														)
-							END 
-		,pd.abono
-		,pay                 = CASE td.codigo WHEN 'EC' THEN 
-															(
-															SELECT sf.descripcion
-															FROM dbo.MovimientoCaja mc WITH (NOLOCK) 
-															INNER JOIN dbo.SubEntidadFinanciera sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = mc.idSubEntidadFinanciera
-															WHERE mc.idMovimientoCaja = pd.idComprobante
-															)
-								END
+							END * -1
+		,pd.abono * -1
+		,pay              = CASE td.codigo WHEN 'EC' THEN 
+														(
+														SELECT sf.descripcion
+														FROM dbo.MovimientoCaja mc WITH (NOLOCK) 
+														INNER JOIN dbo.SubEntidadFinanciera sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = mc.idSubEntidadFinanciera
+														WHERE mc.idMovimientoCaja = pd.idComprobante
+														)
+							END
 		,idEntidadFinanciera =  CASE td.codigo WHEN 'EC' THEN 
 														(
 														SELECT sf.idEntidadFinanciera
@@ -206,6 +212,8 @@ BEGIN
 	INNER JOIN dbo.TipoDocumento   td WITH (NOLOCK) ON td.idTipoDocumento      = pd.idTipoDocumento
 	WHERE td.codigo = 'EC' AND ce.estado = 1 AND ce.idControlCaja = @idControlCaja
 
+	INSERT INTO @tbDocuments (tipDoc,abono,total)
+	SELECT tipDoc,SUM(abono),total FROM @tbDetalleCaja WHERE cobro = 1 GROUP BY tipDoc,total 
 
 	-- ================================ FORMAS DE PAGOS TOTALIZADAS ========================================
 	SELECT @chequesPosf     = SUM(td.abono) FROM @tbDetalleCaja td INNER JOIN dbo.EntidadFinanciera ef WITH (NOLOCK) ON ef.idEntidadFinanciera = td.idEntidadFinanciera WHERE cobro = 0 AND ef.codigo = 'CHE'
@@ -271,9 +279,10 @@ BEGIN
 
 	 SELECT 
 		tipDoc   = td.descripcion
-	   ,total    = CAST(ISNULL((SELECT SUM(ac.total) FROM @tbDetalleCaja ac WHERE ac.tipDoc = td.codigo AND ac.cobro = 1 ),0) AS numeric(15,2))
-	   ,abono    = CAST(ISNULL((SELECT SUM(ac.abono) FROM @tbDetalleCaja ac WHERE ac.tipDoc = td.codigo AND ac.cobro = 1 ),0) AS numeric(15,2))
-	   ,cantidad = (ISNULL((SELECT COUNT(*) FROM @tbDetalleCaja ac WHERE ac.tipDoc = td.codigo AND ac.cobro = 1 ),0))
+	   ,total    = CAST(ISNULL((SELECT SUM(ac.total) FROM @tbDocuments ac WHERE ac.tipDoc = td.codigo),0) AS numeric(15,2))
+	   ,abono    = CAST(ISNULL((SELECT SUM(ac.abono) FROM @tbDocuments ac WHERE ac.tipDoc = td.codigo),0) AS numeric(15,2))
+	   ,saldo    = CAST(ISNULL((SELECT SUM(ac.total) FROM @tbDocuments ac WHERE ac.tipDoc = td.codigo),0)  - ISNULL((SELECT SUM(ac.abono) FROM @tbDocuments ac WHERE ac.tipDoc = td.codigo),0) AS numeric(18,5))
+	   ,cantidad = (ISNULL((    SELECT COUNT(*)      FROM @tbDocuments ac WHERE ac.tipDoc = td.codigo),0))
 	 FROM dbo.TipoDocumento td WITH (NOLOCK)
 	 WHERE td.codigo IN ('FV','NE','IC','EC','A')
 	 
