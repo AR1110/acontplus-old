@@ -17,6 +17,8 @@ class CobroService{
         this.indexDatoCobro = 0;
 
         this.url = 'ComprobanteIngreso/'
+
+        this.MAX_NUMBER_ROUND = 5;
     }
 
     isDateValid(dateString) {
@@ -148,23 +150,28 @@ class CobroService{
                 
                 item.abonoPosfechado = 0;
                 
-                if(typeof this.valorAbono !=='number' || this.valorAbonoFormaPago===0) return;
+                if(typeof this.valorAbono !=='number' || this.valorAbono===0) return;
 
                 //Si la cuota no tiene ningún abono
-                if((item.cuota ===item.saldo)  && (item.abono === 0 || item.abonoPosfechado === 0)){
+                // if((item.cuota ===item.saldo)  && (item.abono === 0 || item.abonoPosfechado === 0)){
                    
-                    this.cuotaSinAbono(item)
+                //     this.cuotaSinAbono(item)
 
-                } else if(item.cuota !== item.saldo && item.saldo > 0) {
+                // } else if(item.cuota !== item.saldo && item.saldo > 0) {
 
+                //     this.cuotaConAbono(item)
+                // }
+                
+                if(item.abono > 0){
                     this.cuotaConAbono(item)
+                }else{
+                    this.cuotaSinAbono(item)
                 }
-              
 
-                item.cuota = this.fS.roundNumber(item.cuota, 5);
-                item.abono = this.fS.roundNumber(item.abono, 5);
-                item.abonoPosfechado = this.fS.roundNumber(item.abonoPosfechado, 5);
-                item.saldo = this.getValorSaldo(item) //Verificamos el saldo de la Cuota 
+                item.cuota = this.fS.roundNumber(item.cuota, this.MAX_NUMBER_ROUND);
+                item.abono = this.fS.roundNumber(item.abono, this.MAX_NUMBER_ROUND);
+                item.abonoPosfechado = this.fS.roundNumber(item.abonoPosfechado, this.MAX_NUMBER_ROUND);
+               // item.saldo = this.getValorSaldo(item) //Verificamos el saldo de la Cuota 
                 item.estado = this.getEstadoCuota(item);
 
                 item.esCuotaAfectada = true; //
@@ -234,7 +241,7 @@ class CobroService{
             }
             
             let resultValorAbono = this.valorAbono -= item.saldo;
-            this.valorAbono = this.fS.roundNumber(resultValorAbono, 5);
+            this.valorAbono = this.fS.roundNumber(resultValorAbono, this.MAX_NUMBER_ROUND);
             
             this.addCobroDetalle(item, item.saldo);
         }
@@ -253,15 +260,15 @@ class CobroService{
         this.cobrosDetalle.push({
             idCuentaPorCobrar: this.group.idCuentaPorCobrar,
             idCuotaPorCobrar: item.idCuotaPorCobrar,
-            abono: this.fS.roundNumber(abono, 5),
+            abono: this.fS.roundNumber(abono, this.MAX_NUMBER_ROUND),
             interes : item.interes,
             diasMora : item.diasMora,
             mora : item.mora,
-            cuota: this.fS.roundNumber(item.cuota, 5),
+            cuota: this.fS.roundNumber(item.cuota, this.MAX_NUMBER_ROUND),
             saldo: this.getValorSaldo(item),
             secuencial: this.indexDatoCobro
         })
-
+        item.saldo = this.fS.roundNumber(item.saldo, this.MAX_NUMBER_ROUND)
     }
 
     /**
@@ -270,8 +277,9 @@ class CobroService{
      * @returns number
      */
     getValorSaldo(item) {
-        let total = item.abono + item.abonoPosfechado;
-        return this.fS.roundNumber(total, 5) === this.fS.roundNumber(item.cuota, 5) ? 0 : this.fS.roundNumber(item.saldo, 5);
+        // let total = item.abono + item.abonoPosfechado;
+        // return this.fS.roundNumber(total, 5) === this.fS.roundNumber(item.cuota, 5) ? 0 : this.fS.roundNumber(item.saldo, 5);
+        return this.fS.roundNumber(item.saldo, this.MAX_NUMBER_ROUND);
     }
 
 
@@ -282,9 +290,9 @@ class CobroService{
      */
     getEstadoCuota(item) {
         let estado = '';
-        if (item.cuota === (item.abono + item.abonoPosfechado)) estado = 'COBRADA'
+        if (item.saldo === 0) estado = 'COBRADA'
         if (item.saldo > 0) estado = "PENDIENTE PARCIAL";
-        if (item.cuota === item.saldo) estado = "PENDIENTE";
+        if (item.abono ===0) estado = "PENDIENTE";
         return estado
     }
 
