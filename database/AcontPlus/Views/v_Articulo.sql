@@ -28,6 +28,7 @@ SELECT  a.idArticulo
 	,a.fechaModificacion
 	,a.idMedida
 	,a.productoFraccionable fraccionado
+	,precioSinSubsidio = ISNULL(a.precioSinSubsidio, 0)
 FROM dbo.Articulo a WITH(NOLOCK)
 INNER JOIN dbo.TipoIva    ti WITH(NOLOCK) ON ti.idTipoIva    = a.idTipoIva 
 LEFT JOIN dbo.SubFamilia sf WITH(NOLOCK) ON sf.idSubFamilia = a.idSubFamilia
