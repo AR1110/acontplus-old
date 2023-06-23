@@ -16,6 +16,32 @@ namespace ApiInventory.Controllers.v2
         {
             _configuration = configuration;
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetId(int id)
+        {
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Almacen.Articulo_Get_Id");
+                _db.AddDynamicParam("id", id);
+                _response = _db.GetDataSetAsync();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error in articulo getId: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al Obtener los datos del articulo");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
+        }
+
+
         [HttpGet("Search")]
         public async Task<IActionResult> Search(string json)
         {
