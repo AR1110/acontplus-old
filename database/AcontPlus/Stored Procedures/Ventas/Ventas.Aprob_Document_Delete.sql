@@ -64,7 +64,8 @@ BEGIN
 				    WHERE dt.uniqueId = @uniqueId
 
 					
-					UPDATE ne SET ne.idEstadoPago = @idEstadoDocumento FROM dbo.NotaEntrega ne WITH(NOLOCK) JOIN (SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt WHERE dt.uniqueId = @uniqueId) dt ON dt.idDocumento = ne.idNotaEntrega
+					UPDATE cc SET cc.idEstadoPago = @idEstadoDocumento FROM Contabilidad.CuentaPorCobrar cc WITH(NOLOCK)
+				    JOIN (SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt WHERE dt.uniqueId = @uniqueId) dt ON dt.idDocumento = cc.idDocumento AND cc.codDoc = 'NE'
 
 
 					OPEN cursor_inventory
