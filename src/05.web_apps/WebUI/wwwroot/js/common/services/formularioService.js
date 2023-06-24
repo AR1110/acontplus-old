@@ -370,9 +370,11 @@
          * @returns fecha
          */
         formSvc.formatDate = function (fecha) {
-            let _getFecha = new Date(fecha);
-            _getFecha.setMinutes(_getFecha.getMinutes() + _getFecha.getTimezoneOffset());
-            return _getFecha;
+            var date = moment.tz(fecha, 'America/Guayaquil');
+            var htmlDateTime = date.format('YYYY-MM-DDTHH:mm:ss');
+            // let _getFecha = new Date(fecha);
+            // _getFecha.setMinutes(_getFecha.getMinutes() + _getFecha.getTimezoneOffset());
+            return new Date(htmlDateTime);
         }
 
 
