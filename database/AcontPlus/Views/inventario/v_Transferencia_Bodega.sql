@@ -16,7 +16,9 @@ CREATE VIEW v_Transferencia_Bodega AS (
 		tb.idBodegaOrigen,
 		tb.idBodegaDestino,
 		tb.idUsuario,
+		e.razonSocial,
 		es.estab,
+		es.nombreComercial,
 		es.codEstab,
 		pto.ptoEmi,
 		tb.nroDoc,
@@ -36,4 +38,5 @@ CREATE VIEW v_Transferencia_Bodega AS (
 	INNER JOIN Bodega bo WITH(NOLOCK) ON bo.idBodega = tb.idBodegaOrigen
 	INNER JOIN Bodega bd WITH(NOLOCK) ON bd.idBodega = tb.idBodegaDestino
 	INNER JOIN Usuario u WITH(NOLOCK) ON u.idUsuario = tb.idUsuario
+	INNER JOIN Entidad e WITH(NOLOCK) ON e.idEntidad = tb.idEntidad
 ) 

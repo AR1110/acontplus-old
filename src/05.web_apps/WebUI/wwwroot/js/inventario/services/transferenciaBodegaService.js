@@ -33,6 +33,7 @@
                         bodegaOrigen: item.bodegaOrigen,
                         bodegaDestino: item.bodegaDestino,
                         rowColor: item.rowColor,
+                        codEstab: item.codEstab,
                     }))                   
                 }
             }).catch(err=>{

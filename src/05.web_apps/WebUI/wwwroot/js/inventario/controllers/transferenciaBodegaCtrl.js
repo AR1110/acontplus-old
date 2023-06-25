@@ -208,26 +208,30 @@
     
          //Reporte 
          $scope.getReport = function (item) {                   
+             
+            let format = 'pdf';
             let dataParms = {
-                codEstab: item.codEstab,
-                id: item.idTransferenciaBodega,            
+                id: item.idTransferenciaBodega
             }
-            
-            let parameters = {
+
+            const parameters = {
+                hasService: true,
                 reportParams: JSON.stringify({
-                    codigo: 'RFC', 
+                    hasParams: true,
+                    codigo: 'RTB',
                     codEstab: item.codEstab,
-                    format: 'pdf',
-                    aditionalParams: []
+                    format,
+                    aditionalParams: [
+
+                    ]
                 }),
-                dataParams: JSON.stringify(dataParms),
-                sendEmail:false
+                dataParams: JSON.stringify(dataParms)
             }
-            showLoader();
+
             commonSvc.getReport({
                 parameters,
-                formatType:'pdf'
-            })        
+                formatType: format
+            })  
         }
     
  

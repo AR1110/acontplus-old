@@ -49,6 +49,7 @@
 		<None Remove="Reports\GuiaRemision.rdlc" />
 		<None Remove="Reports\Inventario\ConsolidacionInventario.rdlc" />
 		<None Remove="Reports\Inventario\Kardex.rdlc" />
+		<None Remove="Reports\Inventario\TransferenciaBodega.rdl" />
 		<None Remove="Reports\NotaCredito.rdlc" />
 		<None Remove="Reports\NotFound.pdf" />
 		<None Remove="Reports\OpenMoneyBox.rdl" />
@@ -151,6 +152,9 @@
 		</Content>
 		<Content Include="Reports\Inventario\Kardex.rdlc">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Reports\Inventario\TransferenciaBodega.rdl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 		<Content Include="Reports\NotaCredito.rdlc">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
