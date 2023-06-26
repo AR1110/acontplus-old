@@ -39,7 +39,7 @@ BEGIN
 			,printerAutomatic BIT '$.printerAutomatic'
 			,payAutomatic     BIT '$.payAutomatic'
 	)
-	WHERE idEntidad = 4 AND codConfig = 'CV'
+	WHERE idEntidad = @idEntidad AND codConfig = 'CV'
 
 	IF @typeList = 1
 		BEGIN 
