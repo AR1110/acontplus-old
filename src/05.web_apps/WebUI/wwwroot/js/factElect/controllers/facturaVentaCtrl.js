@@ -304,7 +304,7 @@ function facturaVentaCtrl(
         let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_DETALLE['controller']];
         let template = MODAL_DETALLE['template'];
 
-        let response = await $scope.getDataDocumento(item.idFactura);
+        let response = await $scope.getDataDocumento(item.idDocumento);
 
         if (!response.isComplete) return
 
@@ -341,7 +341,7 @@ function facturaVentaCtrl(
             let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_EDITAR['controller']];
             let template = MODAL_EDITAR['template'];
 
-            let response = await $scope.getDataDocumento(item.idFactura);
+            let response = await $scope.getDataDocumento(item.idDocument);
 
             if (!response.isComplete) return
 
@@ -388,7 +388,7 @@ function facturaVentaCtrl(
             let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_DUPLICAR['controller']];
             let template = MODAL_DUPLICAR['template'];
 
-            let response = await $scope.getDataDocumento(item.idFactura);
+            let response = await $scope.getDataDocumento(item.idDocumento);
 
             if (!response.isComplete) return
 
@@ -479,7 +479,7 @@ function facturaVentaCtrl(
 
             if (isConfirmed) {
                 showLoader();
-                facturaSvc.delete(item.idFactura).then(response => {
+                facturaSvc.delete(item.idDocumento).then(response => {
                     if (response.code === "0") {
                         hideLoader();
                         _fS.sweetAlert('warning', response.message, response.titleSms);
@@ -516,7 +516,7 @@ function facturaVentaCtrl(
         showLoader();
         let format = 'pdf';
         let dataParms = {
-            id: item.idFactura,
+            id: item.idDocumento,
             codEstab: item.codEstab,
             codigo: 'RF',
             format,

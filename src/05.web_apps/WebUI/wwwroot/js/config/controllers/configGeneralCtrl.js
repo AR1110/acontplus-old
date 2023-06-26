@@ -24,7 +24,7 @@
 
         $scope.getDataTabs = function(codConfig){
             try {
-                hideLoader();
+                showLoader();
                 $scope.codConfig = codConfig;
 
                 mS.getData('get','Sistema/Get/'+JSON.stringify({codConfig}), null, true).then(response=>{

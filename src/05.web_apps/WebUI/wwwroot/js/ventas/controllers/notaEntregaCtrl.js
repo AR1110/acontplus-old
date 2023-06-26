@@ -288,7 +288,7 @@
             let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_DETALLE['controller']];
             let template = MODAL_DETALLE['template'];
             let response = await _commonSvc.getDataTipoDocVenta({
-                id: item.idNotaEntrega,
+                id: item.idDocumento,
                 codigoDocumento: TIPO_DOC_NE.codigo
             })
 
@@ -329,7 +329,7 @@
                 let template = MODAL_EDITAR['template'];
 
                 let response = await _commonSvc.getDataTipoDocVenta({
-                    id: item.idNotaEntrega,
+                    id: item.idDocumento,
                     codigoDocumento: TIPO_DOC_NE.codigo
                 })
 
@@ -377,7 +377,7 @@
                 let template = MODAL_DUPLICAR['template'];
 
                 let response = await _commonSvc.getDataTipoDocVenta({
-                    id: item.idNotaEntrega,
+                    id: item.idDocumento,
                     codigoDocumento: TIPO_DOC_NE.codigo
                 })
 
@@ -464,7 +464,7 @@
 
                 if (isConfirmed) {
                     showLoader();
-                    notaEntregaSvc.delete(item.idNotaEntrega).then(response => {
+                    notaEntregaSvc.delete(item.idDocumento).then(response => {
                         hideLoader();
                         if (response.code === "0") {
                             _fS.sweetAlert('warning', response.message, response.titleSms);
