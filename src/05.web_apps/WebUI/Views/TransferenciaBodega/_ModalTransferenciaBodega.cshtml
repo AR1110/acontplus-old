@@ -1,7 +1,7 @@
-<form autocomplete="off" ng-submit="$ctrl.onSave()">
+<form autocomplete="off" >
     <div class="modal-header">
-        <h4 class="modal-title">Nueva Transferencia Bodega</h4>
-        <button type="button" class="close" ng-click="$ctrl.closeModal()">&times;</button>
+        <h4 class="modal-title">{{tituloModal}} Transferencia Bodega</h4>
+        <button type="button" class="close" ng-click="closeModal()">&times;</button>
     </div>
     <div class="modal-body">
         <div class="row">
@@ -10,9 +10,9 @@
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-sm-12">
                         <div class="form-group">
                             <label for="">Establecimiento Origen: <span class="text-danger">*</span></label>
-                            <select class="form-control border-select" ng-model="$ctrl.data.codEstabOrigen"
-                                ng-change="$ctrl.onChangeEstablecimientoOrigen()">
-                                <option ng-value="item.codEstab" ng-repeat="item in $ctrl.establecimientosOrigen">
+                            <select class="form-control border-select" ng-model="data.codEstabOrigen"
+                                ng-change="onChangeEstablecimientoOrigen()" ng-disabled="data.idTransferenciaBodega>0">
+                                <option ng-value="item.codEstab" ng-repeat="item in establecimientosOrigen">
                                     {{item.nombreComercial}}
                                 </option>
                             </select>
@@ -22,8 +22,8 @@
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label for="">Bodega Origen: <span class="text-danger">*</span> </label>
-                            <select class="form-control border-select" ng-model="$ctrl.data.idBodegaOrigen">
-                                <option ng-value="item.idBodega" ng-repeat="item in $ctrl.bodegasOrigen">
+                            <select class="form-control border-select" ng-model="data.idBodegaOrigen" ng-disabled="data.idTransferenciaBodega>0">
+                                <option ng-value="item.idBodega" ng-repeat="item in bodegasOrigen">
                                     {{item.descripcion}}
                                 </option>
                             </select>
@@ -37,9 +37,9 @@
                         <div class="form-group">
                             <label for="Establecimiento">Establecimiento Destino: <span
                                     class="text-danger">*</span></label>
-                            <select class="form-control" ng-model="$ctrl.data.codEstabDestino"
-                                ng-change="$ctrl.onChangeEstablecimientoDestino()">
-                                <option ng-value="item.codEstab" ng-repeat="item in $ctrl.establecimientosDestino">
+                            <select class="form-control" ng-model="data.codEstabDestino"
+                                ng-change="onChangeEstablecimientoDestino()" ng-disabled="data.idTransferenciaBodega>0">
+                                <option ng-value="item.codEstab" ng-repeat="item in establecimientosDestino">
                                     {{item.nombreComercial}}
                                 </option>
                             </select>
@@ -48,8 +48,8 @@
                     <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label for="">Bodega Destino: <span class="text-danger">*</span> </label>
-                            <select class="form-control border-select" ng-model="$ctrl.data.idBodegaDestino">
-                                <option ng-value="item.idBodega" ng-repeat="item in $ctrl.bodegasDestino">
+                            <select class="form-control border-select" ng-model="data.idBodegaDestino" ng-disabled="data.idTransferenciaBodega>0">
+                                <option ng-value="item.idBodega" ng-repeat="item in bodegasDestino">
                                     {{item.descripcion}}
                                 </option>
                             </select>
@@ -63,8 +63,8 @@
             <div class="col-lg-3 col-md-4 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="">Punto Emision: <span class="text-danger"></span></label>
-                    <select class="form-control border-select" ng-model="$ctrl.data.idPuntoEmision">
-                        <option ng-value="item.idPuntoEmision" ng-repeat="item in $ctrl.puntosEmision">
+                    <select class="form-control border-select" ng-model="data.idPuntoEmision" ng-disabled="data.idTransferenciaBodega>0">
+                        <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
                             {{item.ptoEmi}}
                         </option>
                     </select>
@@ -73,7 +73,7 @@
             <div class="col-lg-3 col-md-4 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="fechaEmision">Fecha Emisión: <span class="text-danger">*</span></label>
-                    <input type="date" ng-model="$ctrl.data.fechaEmision" class="form-control border-select"
+                    <input type="date" ng-model="data.fechaEmision" class="form-control border-select"
                         ng-requerid="true">
                 </div>
             </div>
@@ -81,7 +81,7 @@
             <div class="col-lg-6 col-md-4 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="observación">Observación</label>
-                    <textarea ng-model="$ctrl.data.observacion" touppercase class="form-control border-select" cols="20"
+                    <textarea ng-model="data.observacion" touppercase class="form-control border-select" cols="20"
                         rows="2"></textarea>
                 </div>
             </div>
@@ -91,24 +91,26 @@
             <div class="col-lg-6">
                 <div class="form-group">
                     <label for="articulo">Articulo</label>
-                    <md-autocomplete-articulo-component tipo-doc="$ctrl.TIPO_DOC"
-                        abrir-modal-articulo="$ctrl.abrirModalArticulo(item)"
-                        get-data-articulo="$ctrl.getDataIdArticulo(item)"
-                        set-item-articulo-en-detalle="$ctrl.setItemArticuloEnDetalle(item)" scope-parent="scopeParent"
-                        id-bodega="$ctrl.data.idBodegaOrigen">
+                    <md-autocomplete-articulo-component tipo-doc="tipoDoc"
+                        abrir-modal-articulo="abrirModalArticulo(item)"
+                        get-data-articulo="getDataIdArticulo(item)"
+                        set-item-articulo-en-detalle="setItemArticuloEnDetalle(item)" scope-parent="scopeParent"
+                        id-bodega="data.idBodegaOrigen">
                     </md-autocomplete-articulo-component>
                 </div>
             </div>
         </div>
 
-        <div ui-grid="$ctrl.gridOptions" ui-grid-edit ui-grid-resize-columns ui-grid-cellNav ui-grid-auto-resize
+        <div ui-grid="gridOptions" ui-grid-edit ui-grid-resize-columns ui-grid-cellNav ui-grid-auto-resize
             class="grid"></div>
 
 
     </div>
     <div class="modal-footer">
-        <button type="submit" class="btn btn-success">
-            <i class="ti-save"></i> Guardar</button>
-        <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">&times; Cerrar</button>
+        <button type="button" class="btn btn-success" ng-click="onSave()">
+            <i class="{{iconModal}}"></i> 
+            {{btnText }}
+            </button>
+        <button type="button" class="btn btn-dark" ng-click="closeModal()">&times; Cerrar</button>
     </div>
 </form>
