@@ -90,6 +90,15 @@ app.constant('nombreModalInventario', {
         templates: {
             D:'ConsolidacionInventario/_ModalDetalle.cshtml',
         }
+    },
+    TRANSFERENCIA_BODEGA: {
+        fileCtrl: '/js/inventario/modals/modalTransferenciaBodegaCtrl.js' + CHANGE_VERSION(),
+        controllers: {
+            D:'ModalTransferenciaBodegaDetalleCtrl',
+        },
+        templates: {
+            D:'~/Views/TransferenciaBodega/_ModalDetalle.cshtml',
+        }
     }
         
 })

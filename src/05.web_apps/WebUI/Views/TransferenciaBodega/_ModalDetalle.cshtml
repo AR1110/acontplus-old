@@ -1,7 +1,7 @@
-<form autocomplete="off" ng-submit="$ctrl.onSave()">
+ 
     <div class="modal-header bg-info text-white">
         <h5 class="modal-title">Detalle Transferencia Bodega</h5>
-        <button type="button" class="close" ng-click="$ctrl.closeModal()">&times;</button>
+        <button type="button" class="close" ng-click="closeModal()">&times;</button>
     </div>
     <div class="modal-body"> 
         <div class="row">
@@ -10,8 +10,8 @@
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-sm-12">
                         <div class="form-group">
                             <label for="">Establecimiento Origen: <span class="text-danger">*</span></label>                        
-                            <select class="form-control border-select" ng-model="$ctrl.data.codEstabOrigen" disabled>
-                                <option ng-value="item.codEstab" ng-repeat="item in $ctrl.establecimientosOrigen">
+                            <select class="form-control border-select" ng-model="data.codEstabOrigen" disabled>
+                                <option ng-value="item.codEstab" ng-repeat="item in establecimientosOrigen">
                                     {{item.nombreComercial}}
                                 </option>                               
                             </select>                           
@@ -21,8 +21,8 @@
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label for="">Bodega Origen: <span class="text-danger">*</span> </label>
-                            <select class="form-control border-select" ng-model="$ctrl.data.idBodegaOrigen" disabled>
-                                <option ng-value="item.idBodega" ng-repeat="item in $ctrl.bodegasOrigen">
+                            <select class="form-control border-select" ng-model="data.idBodegaOrigen" disabled>
+                                <option ng-value="item.idBodega" ng-repeat="item in bodegasOrigen">
                                     {{item.descripcion}}
                                 </option>                           
                             </select>
@@ -35,8 +35,8 @@
                     <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label for="Establecimiento">Establecimiento Destino: <span class="text-danger">*</span></label>
-                            <select class="form-control" ng-model="$ctrl.data.codEstabDestino" disabled>  
-                                <option ng-value="item.codEstab" ng-repeat="item in $ctrl.establecimientosDestino">
+                            <select class="form-control" ng-model="data.codEstabDestino" disabled>  
+                                <option ng-value="item.codEstab" ng-repeat="item in establecimientosDestino">
                                     {{item.nombreComercial}}
                                 </option>                                                         
                             </select>
@@ -45,8 +45,8 @@
                     <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label for="">Bodega Destino: <span class="text-danger">*</span> </label>
-                            <select class="form-control border-select" ng-model="$ctrl.data.idBodegaDestino" disabled>
-                                <option ng-value="item.idBodega" ng-repeat="item in $ctrl.bodegasDestino">
+                            <select class="form-control border-select" ng-model="data.idBodegaDestino" disabled>
+                                <option ng-value="item.idBodega" ng-repeat="item in bodegasDestino">
                                     {{item.descripcion}}
                                 </option>                           
                             </select>
@@ -60,8 +60,8 @@
             <div class="col-lg-3 col-md-4 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="">Punto Emision: <span class="text-danger"></span></label>                        
-                    <select class="form-control border-select" ng-model="$ctrl.data.idPuntoEmision" disabled>
-                        <option ng-value="item.idPuntoEmision" ng-repeat="item in $ctrl.puntosEmision">
+                    <select class="form-control border-select" ng-model="data.idPuntoEmision" disabled>
+                        <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
                             {{item.ptoEmi}}
                         </option>
                     </select>
@@ -70,19 +70,19 @@
             <div class="col-lg-3 col-md-4 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="fechaEmision">Fecha Emisión: <span class="text-danger">*</span></label>
-                    <input type="date" ng-model="$ctrl.data.fechaEmision" class="form-control border-select" disabled>                        
+                    <input type="date" ng-model="data.fechaEmision" class="form-control border-select" disabled>                        
                 </div>
             </div>
 
             <div class="col-lg-6 col-md-4 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="observación">Observación</label>
-                    <textarea ng-model="$ctrl.data.observacion" touppercase class="form-control border-select" cols="20" rows="2" disabled></textarea>
+                    <textarea ng-model="data.observacion" touppercase class="form-control border-select" cols="20" rows="2" disabled></textarea>
                 </div>
             </div>
         </div>
 
-        <div ui-grid="$ctrl.gridOptions"
+        <div ui-grid="gridOptions"
             ui-grid-edit
             ui-grid-resize-columns
             ui-grid-cellNav
@@ -92,6 +92,6 @@
                                 
     </div>
     <div class="modal-footer">       
-        <button type="button" class="btn btn-dark"  ng-click="$ctrl.closeModal()">&times; Cerrar</button>
+        <button type="button" class="btn btn-dark"  ng-click="closeModal()">&times; Cerrar</button>
     </div>
-</form>
+ 
