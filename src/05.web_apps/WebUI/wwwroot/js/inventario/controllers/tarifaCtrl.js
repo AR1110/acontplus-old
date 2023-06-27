@@ -25,7 +25,7 @@
         $scope.totalRecords = 0;
  
 
-        $scope.get = function() {
+        $scope.getTarifas = function() {
             try {
                 $scope.tarifas = [];
                 tarifaSvc.getAll($scope.dataSearch).then(response => {
@@ -38,7 +38,7 @@
             }       
         }
 
-        $scope.get();
+        $scope.getTarifas();
 
         $scope.abrirModal = function(data, type) {
             $scope.type = type;
@@ -71,10 +71,7 @@
                 .catch(err => {
                     hideLoader();
                     console.log(err);
-                })
-            }else{
-                tarifaSvc.save($scope.data).then($scope.successReponse)
-                .catch(err => {
+                }).catch(err => {
                     hideLoader();
                     console.log(err);
                 })
@@ -90,7 +87,7 @@
             if (response.code==='1') {
                 tS.toastr('success', response.message, response.titleSms);
                 $("#agregar").modal('hide');                            
-               $scope.get();
+               $scope.getTarifas();
             }
         }
 
@@ -114,7 +111,7 @@
                             }
                             if (response.code == "1") {
                                 tS.toastr('success', response.message, response.titleSms);
-                                $scope.get();
+                                $scope.getTarifas();
                             }
                         }).catch(error => {
                             hideLoader();
@@ -131,7 +128,7 @@
 
 
         $(".modal").on('hide.bs.modal', function(e) {
-            $scope.get();
+           
             $scope.data = {};
         })
     }

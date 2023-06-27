@@ -7,6 +7,7 @@ using DataAccess;
 using Domain.Models;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace ApiInventory.Controllers
 {
@@ -72,7 +73,7 @@ namespace ApiInventory.Controllers
         }
 
         [HttpPut("Update/{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] Tarifa data)
+        public async Task<IActionResult> Update(int id, string json)
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
@@ -81,8 +82,7 @@ namespace ApiInventory.Controllers
                 await _db.SPExecute("Almacen.Tarifa_Update");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("descripcion", data.descripcion);
-                _db.AddDynamicParam("estado", data.estado);
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));             
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
