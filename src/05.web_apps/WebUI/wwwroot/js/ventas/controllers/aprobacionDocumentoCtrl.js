@@ -2432,6 +2432,7 @@
                 entity.articuloTarifas = JSON.parse(dataMedida.tarifas);
                 let tarifa = entity.articuloTarifas.find(item => item.idTarifa === $scope.data.idTarifa);
                 entity.idTarifa = $scope.data.idTarifa;
+                entity.precioSinSubsidio = articulo.precioSinSubsidio;
                 entity.precioUnitario = fS.roundNumber(tarifa.precioVenta, $scope.decimal.nroPrecio);
                 entity.precioConIva = fS.roundNumber(tarifa.precioConIva, $scope.decimal.nroPrecio);
 
@@ -3229,6 +3230,7 @@
                 entity.articuloTarifas = JSON.parse(dataMedida.tarifas);
                 let tarifa = entity.articuloTarifas.find(item => item.idTarifa === $scope.data.idTarifa);
                 entity.idTarifa = $scope.data.idTarifa;
+                entity.precioSinSubsidio = articulo.precioSinSubsidio;
                 entity.precioUnitario = fS.roundNumber(tarifa.precioVenta, $scope.decimal.nroPrecio);
                 entity.precioConIva = fS.roundNumber(tarifa.precioConIva, $scope.decimal.nroPrecio);
 
