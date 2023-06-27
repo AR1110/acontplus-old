@@ -255,7 +255,7 @@
                     if(dataRepository[2]){
                         dataInfoAdicionales = dataRepository[2]
                     }
-                    
+                     
                     let articuloMapper = {                        
                         idArticulo: dataArticulo.idArticulo,
                         idTipoIva: dataArticulo.idTipoIva,
