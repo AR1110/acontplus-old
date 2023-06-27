@@ -193,6 +193,8 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
             entity.articuloTarifas = JSON.parse(dataMedida.tarifas);
             let tarifa = entity.articuloTarifas.find(item => item.idTarifa === self.idTarifa);
             entity.idTarifa = self.idTarifa;
+
+            entity.precioSinSubsidio = articulo.precioSinSubsidio;
             entity.precioUnitario = self._fS.roundNumber(tarifa.precioVenta, self.decimal.nroPrecio);
             entity.precioConIva = self._fS.roundNumber(tarifa.precioConIva, self.decimal.nroPrecio);
 
