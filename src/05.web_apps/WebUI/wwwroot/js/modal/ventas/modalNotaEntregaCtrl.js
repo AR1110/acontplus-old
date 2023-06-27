@@ -182,6 +182,8 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl {
             entity.precioUnitario = self._fS.roundNumber(tarifa.precioVenta, self.decimal.nroPrecio);
             entity.precioConIva = self._fS.roundNumber(tarifa.precioConIva, self.decimal.nroPrecio);
 
+              //Datos Adicionales 
+              entity.cantMinimaVentaPorMayor = articulo.cantMinimaVentaPorMayor
 
             const objCalculo = self.uiGridInvoice.calculoColDef(entity, 0);
 
@@ -466,7 +468,8 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
                 bodegas: this.bodegas,
                 tipoIvas: this.tipoIvas,
                 decimal: this.decimal,
-                actividadTipoIva: this.actividadTipoIva
+                actividadTipoIva: this.actividadTipoIva,
+                codigoDoc: 'NE'
             })
 
             this.uiGridInvoice.idTarifa = this.idTarifa;
@@ -532,6 +535,15 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
 
 
             if (!this.isValidaForm()) return
+
+            if(this.gridOptions.data.some(item=>item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))){
+                for(let item of this.gridOptions.data){
+                    if(item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)){
+                        this._fS.sweetAlert('warning', `Artículo ${item.descripcion}: La cantidad mínima requerida para la venta al por mayor no se ajusta a la cantidad asignada al artículo.`)
+                    }
+                }
+                return
+            }
 
             // if(this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total>50 ){
             //     this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')           
@@ -624,10 +636,14 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
 
             if (!this.isValidaForm()) return
 
-            // if(this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total>50 ){
-            //     this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')           
-            //     return
-            // }
+            if(this.gridOptions.data.some(item=>item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))){
+                for(let item of this.gridOptions.data){
+                    if(item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)){
+                        this._fS.sweetAlert('warning', `Artículo ${item.descripcion}: La cantidad mínima requerida para la venta al por mayor no se ajusta a la cantidad asignada al artículo.`)
+                    }
+                }
+                return
+            }
 
             this.validarDatosAdicionales("idFacturaDetalle");
 
@@ -883,7 +899,8 @@ export class ModalNotaEntregaDetalleCtrl extends ModalNotaEntregaCtrl {
                 bodegas: this.bodegas,
                 tipoIvas: this.tipoIvas,
                 decimal: this.decimal,
-                actividadTipoIva: this.actividadTipoIva
+                actividadTipoIva: this.actividadTipoIva,
+                codigoDoc: 'NE'
             })
 
             this.uiGridInvoice.idTarifa = this.idTarifa;
@@ -1074,7 +1091,8 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
                 bodegas: this.bodegas,
                 tipoIvas: this.tipoIvas,
                 decimal: this.decimal,
-                actividadTipoIva: this.actividadTipoIva
+                actividadTipoIva: this.actividadTipoIva,
+                codigoDoc: 'NE'
             })
 
             this.uiGridInvoice.idTarifa = this.idTarifa;
@@ -1122,6 +1140,15 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
     async onSave() {
         try {
             if (!this.isValidaForm()) return
+
+            if(this.gridOptions.data.some(item=>item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))){
+                for(let item of this.gridOptions.data){
+                    if(item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)){
+                        this._fS.sweetAlert('warning', `Artículo ${item.descripcion}: La cantidad mínima requerida para la venta al por mayor no se ajusta a la cantidad asignada al artículo.`)
+                    }
+                }
+                return
+            }
 
             // if(this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total>50 ){
             //     this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')           
@@ -1358,7 +1385,8 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
                 bodegas: this.bodegas,
                 tipoIvas: this.tipoIvas,
                 decimal: this.decimal,
-                actividadTipoIva: this.actividadTipoIva
+                actividadTipoIva: this.actividadTipoIva,
+                codigoDoc: 'NE'
             })
 
             this.uiGridInvoice.idTarifa = this.idTarifa;
@@ -1425,6 +1453,15 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
           
 
             if (!this.isValidaForm()) return
+
+            if(this.gridOptions.data.some(item=>item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))){
+                for(let item of this.gridOptions.data){
+                    if(item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)){
+                        this._fS.sweetAlert('warning', `Artículo ${item.descripcion}: La cantidad mínima requerida para la venta al por mayor no se ajusta a la cantidad asignada al artículo.`)
+                    }
+                }
+                return
+            }
 
             // if(this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total>50 ){
             //     this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')           
@@ -1516,6 +1553,15 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
         try {
 
             if (!this.isValidaForm()) return
+
+            if(this.gridOptions.data.some(item=>item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))){
+                for(let item of this.gridOptions.data){
+                    if(item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)){
+                        this._fS.sweetAlert('warning', `Artículo ${item.descripcion}: La cantidad mínima requerida para la venta al por mayor no se ajusta a la cantidad asignada al artículo.`)
+                    }
+                }
+                return
+            }
 
             if (this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total > 50) {
                 this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')

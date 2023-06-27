@@ -298,7 +298,7 @@
                         codigo: item.codigo,
                         predeterminada: item.predeterminada,
                         estado: item.estado,
-                        ventaAlPorMayor: item.ventaAlPorMayor,
+                        ventaPorMayor: item.ventaPorMayor,
                         totalRecords: item.totalRecords,
                     }))
                 }
