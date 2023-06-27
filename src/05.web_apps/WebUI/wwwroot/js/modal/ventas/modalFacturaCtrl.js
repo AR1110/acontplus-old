@@ -196,6 +196,8 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
             entity.precioUnitario = self._fS.roundNumber(tarifa.precioVenta, self.decimal.nroPrecio);
             entity.precioConIva = self._fS.roundNumber(tarifa.precioConIva, self.decimal.nroPrecio);
 
+            //Datos Adicionales 
+            entity.cantMinimaVentaPorMayor = articulo.cantMinimaVentaPorMayor
 
             const objCalculo = self.uiGridInvoice.calculoColDef(entity, 0);
 
@@ -625,7 +627,8 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
                 bodegas: this.bodegas,
                 tipoIvas: this.tipoIvas,
                 decimal: this.decimal,
-                actividadTipoIva: this.actividadTipoIva
+                actividadTipoIva: this.actividadTipoIva,
+                codigoDoc: 'FV'
             })
 
             this.uiGridInvoice.idTarifa = this.idTarifa;
@@ -694,8 +697,17 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
 
             if (!this.isValidaForm()) return
 
+            if(this.gridOptions.data.some(item=>item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))){
+                for(let item of this.gridOptions.data){
+                    if(item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)){
+                        this._fS.sweetAlert('warning', `Artículo ${item.descripcion}: La cantidad mínima requerida para la venta al por mayor no se ajusta a la cantidad asignada al artículo.`)
+                    }
+                }
+                return
+            }
+
             if (this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total > 50) {
-                this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')
+                this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>');
                 return
             }
 
@@ -931,7 +943,8 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
                 bodegas: this.bodegas,
                 tipoIvas: this.tipoIvas,
                 decimal: this.decimal,
-                actividadTipoIva: this.actividadTipoIva
+                actividadTipoIva: this.actividadTipoIva,
+                codigoDoc: 'FV'
             })
 
             this.uiGridInvoice.idTarifa = this.idTarifa;
@@ -1155,7 +1168,8 @@ export class ModalFacturaDetalleCtrl extends ModalFacturaCtrl {
                 bodegas: this.bodegas,
                 tipoIvas: this.tipoIvas,
                 decimal: this.decimal,
-                actividadTipoIva: this.actividadTipoIva
+                actividadTipoIva: this.actividadTipoIva,
+                codigoDoc: 'FV'
             })
 
             this.uiGridInvoice.idTarifa = this.idTarifa;
@@ -1337,7 +1351,8 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
                 bodegas: this.bodegas,
                 tipoIvas: this.tipoIvas,
                 decimal: this.decimal,
-                actividadTipoIva: this.actividadTipoIva
+                actividadTipoIva: this.actividadTipoIva,
+                codigoDoc: 'FV'
             })
 
             this.uiGridInvoice.idTarifa = this.idTarifa;

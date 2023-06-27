@@ -23,88 +23,15 @@ export class UiGridOptions{
      * @param {object} props  {bodegas, configColumn, tipoIvas, decimal}
      */
     setInitiload(props){
-        const {bodegas, configColumn, tipoIvas, decimal, actividadTipoIva} = props;
+        const {bodegas, configColumn, tipoIvas, decimal, actividadTipoIva, codigoDoc} = props;
         this.bodegas = bodegas;
         this.configColumn = configColumn;
         this.tipoIvas = tipoIvas || this.tipoIvas;
         this.decimal = decimal;
         this.actividadTipoIva = actividadTipoIva;
+        this.codigoDoc = codigoDoc;
     }
 
-    
-    static getColumnDefs(configVisible={}){
-        return  [
-            // {name:'N°',  field:'num',    width: '5%', minWidth:'50', enableCellEdit: false, allowCellFocus: false,},
-            {name:'Cód', field:'codigo', width: '8%', minWidth:'100', enableCellEdit: false, allowCellFocus: false, },
-            {
-                name:'descripcion', field:'descripcion', width: '25%', minWidth:'100', enableCellEdit: true, enableCellEditOnFocus: true,
-                cellEditableCondition: function(scope) {
-                    return scope.row.entity.llevaInventario !== true;
-                },
-                cellTooltip: function(row) {
-                    return row.entity.descripcion;
-                },
-            },
-            {name:'Cant', field:'cantidad', width: '6%', minWidth:'50', type:"number", enableCellEdit:true, enableCellEditOnFocus: true,},
-            {
-                name: 'medida', field:'idMedida', width: '8%', minWidth:'100',  type: 'number', enableCellEdit: true, enableCellEditOnFocus: true,  
-                cellFilter: 'mapMedida:row.entity.medidas',
-                editableCellTemplate: 'ui-grid/dropdownEditor',
-                enableCellEdit: true,
-                enableCellEditOnFocus: true,
-                editDropdownOptionsFunction: function(rowEntity, colDef) {
-                    return rowEntity.medidas.map(val=>({ id: val.idMedida, value: val.descripcion }))
-                }
-            },
-            {
-                name: 'I.V.A', field: 'idTipoIva',  width: '8%', minWidth:'100', type: 'number', enableCellEdit: true, allowCellFocus:true, enableCellEditOnFocus:true,
-                editableCellTemplate: 'ui-grid/dropdownEditor',
-                cellFilter: 'cellFilterTipoIva:this',
-               // editDropdownOptionsArray: this.tipoIvas,
-                editDropdownValueLabel: 'descripcion',
-                editDropdownIdLabel: 'idTipoIva',
-            },
-            {
-                name: 'Tarifa', field: 'idTarifa',  width: '12%', minWidth:'100', type:"number", enableCellEdit: true, enableCellEditOnFocus: true,
-                cellFilter: 'mapTarifa:row.entity.articuloTarifas',
-                editableCellTemplate: 'ui-grid/dropdownEditor',
-                editDropdownOptionsFunction: function(rowEntity, colDef) {
-                    return rowEntity.articuloTarifas.map(function(val) {                      
-                        return { id: val.idTarifa, value: val.tarifa + ' - $' + val.precioConIva }
-                    })
-
-                }
-            },
-            {name: 'Precio U.',field: 'precioUnitario', width: '8%', minWidth:'100', type: 'number', enableCellEdit: true,  enableCellEditOnFocus: true},
-            {name: 'P. Iva',field: 'precioConIva',  width: '7%', minWidth:'100',  type: 'number', enableCellEdit: true, allowCellFocus:true, enableCellEditOnFocus: true,},
-            {name: '%',field: 'porcentajeDescuento',  width: '6%', minWidth:'100', type:"number", enableCellEdit:true, allowCellFocus:true, enableCellEditOnFocus: true, visible: configVisible.porcentajeDescuento || false},
-            {name: 'dsto.', field: 'valorDescuento',  width: '6%', minWidth:'100', type:'number', enableCellEdit:true, allowCellFocus:true, enableCellEditOnFocus: true, visible: configVisible.descuento || false},
-            {name: 'T. Dsto.',field: 'totalDescuento',  width: '7%', minWidth:'100', type:'number', enableCellEdit: false, visible: configVisible.totalDescuento||false},
-            {name: 'Total', field: 'total',  width: '5%', minWidth:'100',  type: 'number',  enableCellEdit: false, visible: true,},
-            {name: 'Ice',field: 'ice',  width: '6%', minWidth:'100',  type: 'number',  enableCellEdit: false, visible: configVisible.ice || false },
-            {name: 'Nota',field: 'nota', width: '15%', minWidth:'100', type: 'string', enableCellEdit:true, allowCellFocus:true, enableCellEditOnFocus: true},
-            {
-                name: 'bodega',field: 'idBodega', type: 'number', width: '11%', minWidth:'100',  enableCellEdit: true, enableCellEditOnFocus: true,
-                editableCellTemplate: 'ui-grid/dropdownEditor',
-                cellFilter: 'cellFilterBodega:this',
-               // editDropdownOptionsArray: this.bodegas,
-                editDropdownValueLabel: 'descripcion',
-                editDropdownIdLabel: 'idBodega',
-            }
-        ]
-    }
-    
-    createColumnDefs(){        
-        for(let col of UiGridOptions.getColumnDefs(this.configColumn)){
-            if(col.field==='idTipoIva'){
-                col.editDropdownOptionsArray = this.tipoIvas;
-            }
-            if(col.field==='idBodega'){
-                col.editDropdownOptionsArray = this.bodegas;
-            }
-            this.gridOptions.columnDefs.push(col);
-        }
-    }
     
     
     setIdBodegaEnColumnDefs(){
@@ -226,6 +153,18 @@ export class UiGridOptions{
         return result;
     }
 
+    validateCantMinimaVentaPorMayor(rowEntity, oldValue, tipo){
+        if(['FV', 'NE', 'PR'].includes(this.codigoDoc) && rowEntity.articuloTarifas.some(item=>(item.ventaPorMayor) && rowEntity.cantidad < rowEntity.cantMinimaVentaPorMayor)){
+            this._fS.sweetAlert('warning', `La cantidad mínima requerida para la venta al por mayor no se ajusta a la cantidad asignada al artículo.`)
+
+            if(tipo===1){
+                rowEntity.cantidad = oldValue;
+            }else if(tipo===2){
+                rowEntity.idTarget = oldValue; 
+            }
+        }
+    }
+
     /**
      * 
      *  
@@ -237,6 +176,8 @@ export class UiGridOptions{
         const calculoColumnas =  {
             'cantidad': ()=>{                     
                 if(rowEntity.cantidad===oldValue) return
+
+                this.validateCantMinimaVentaPorMayor(rowEntity, oldValue, 1)
                 rowEntity.cantidad = this._fS.roundNumber(rowEntity.cantidad, this.decimal.nroCantidad);
                     //Verificacion de Stock                        
             },
@@ -245,13 +186,13 @@ export class UiGridOptions{
 
                 let dataMedida = rowEntity.medidas.find(val => val.idMedida === rowEntity.idMedida);
                 let articuloTarifas = JSON.parse(dataMedida.tarifas);                
-                let pvp = articuloTarifas.find(item=>item.idTarifa===this.idTarifa);
+                let tarifa = articuloTarifas.find(item=>item.idTarifa===this.idTarifa);
            
 
                 rowEntity.articuloTarifas = articuloTarifas;          
                 rowEntity.idTarifa        = this.idTarifa
-                rowEntity.precioUnitario      = this._fS.roundNumber(pvp.precioVenta, this.decimal.nroPrecio);
-                rowEntity.precioConIva        = this._fS.roundNumber(pvp.precioConIva, this.decimal.nroPrecio);
+                rowEntity.precioUnitario      = this._fS.roundNumber(tarifa.precioVenta, this.decimal.nroPrecio);
+                rowEntity.precioConIva        = this._fS.roundNumber(tarifa.precioConIva, this.decimal.nroPrecio);
                 rowEntity.porcentajeDescuento = 0;
                 rowEntity.valorDescuento = 0;
                 //  this.setTotalRow(rowEntity, index);                                  
@@ -285,6 +226,9 @@ export class UiGridOptions{
                 try {
                     if(rowEntity.idTarifa===oldValue) return
                     let tipoIva                 = this.tipoIvaFindById(rowEntity);
+
+                    this.validateCantMinimaVentaPorMayor(rowEntity, oldValue, 2)
+
                     let tarifa                  = rowEntity.articuloTarifas.find(item=>item.idTarifa===rowEntity.idTarifa);
                                                              
                     let precioConIva            = CalculoTarifaHelper.calcularPrecioConIva(tarifa.precioVenta, tipoIva.tarifa);
@@ -294,6 +238,8 @@ export class UiGridOptions{
                     rowEntity.precioUnitario = this._fS.roundNumber(tarifa.precioVenta, this.decimal.nroPrecio);
                     rowEntity.precioConIva   = this._fS.roundNumber(precioConIvaConDesuento, this.decimal.nroPrecio);
                     rowEntity.valorDescuento = this._fS.roundNumber(valorDescuento, this.decimal.nroDescuentoDetalle);
+
+                    
 
                 } catch (error) {
                     toastr.error(`CAMBIO DE TARIFA: ${error}`)

@@ -43,7 +43,7 @@
                                     <td>{{t.codigo}}</td>
                                     <td>{{t.descripcion}}</td>
                                     <td ng-bind-html="t.predeterminada|sino"></td>
-                                    <td ng-bind-html="t.ventaAlPorMayor | sino"></td>
+                                    <td ng-bind-html="t.ventaPorMayor | sino"></td>
                                     <td ng-bind-html="t.estado | estadoPrimario"></td>
                                 </tr>
                                 <tr class="text-center" ng-show="tarifas.length==0">
@@ -92,7 +92,7 @@
                             </div>
                         </div>
                          
-                        <md-switch class="md-primary" md-no-ink aria-label="Switch No Ink" ng-model="data.ventaAlPorMayor">
+                        <md-switch class="md-primary" md-no-ink aria-label="Switch No Ink" ng-model="data.ventaPorMayor">
                             Venta al por mayor
                         </md-switch>
                            
