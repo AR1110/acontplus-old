@@ -1009,6 +1009,8 @@ export class CommonService {
 
                     let dataMedida = medidas.find(m => m.idMedida === item.idMedida) || {};
                     item.articuloTarifas = JSON.parse(dataMedida.tarifas);
+
+                    item.cantMinimaVentaPorMayor = articulo.cantMinimaVentaPorMayor;
                 }).catch(err => {
                     console.log(err);
                 })

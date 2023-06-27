@@ -277,6 +277,7 @@
                         codigoPorcentaje:dataArticulo.codigoPorcentaje,
                         tarifa: dataArticulo.tarifa,
                         precioCosto: dataArticulo.precioCosto,
+                        cantMinimaVentaPorMayor: dataArticulo.cantMinimaVentaPorMayor
                     }
                     
                     medidaMapper = dataMedida.map(item=>({

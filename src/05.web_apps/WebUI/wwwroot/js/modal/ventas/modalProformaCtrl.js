@@ -158,6 +158,9 @@ class ModalProformaCtrl extends ModalBaseCtrl {
             entity.precioConIva = self._fS.roundNumber(tarifa.precioConIva, self.decimal.nroPrecio);
 
 
+            //Datos Adicionales 
+            entity.cantMinimaVentaPorMayor = articulo.cantMinimaVentaPorMayor
+
             const objCalculo = self.uiGridInvoice.calculoColDef(entity, 0);
 
             objCalculo["precioUnitario"] && objCalculo["precioUnitario"]();
@@ -398,7 +401,8 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl {
                 bodegas: this.bodegas,
                 tipoIvas: this.tipoIvas,
                 decimal: this.decimal,
-                actividadTipoIva: this.actividadTipoIva
+                actividadTipoIva: this.actividadTipoIva,
+                codigoDoc: 'PR'
             })
 
             this.uiGridInvoice.idTarifa = this.idTarifa;
@@ -451,6 +455,15 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl {
 
 
             if (!this.isValidaForm()) return
+
+            if(this.gridOptions.data.some(item=>item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))){
+                for(let item of this.gridOptions.data){
+                    if(item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)){
+                        this._fS.sweetAlert('warning', `Artículo ${item.descripcion}: La cantidad mínima requerida para la venta al por mayor no se ajusta a la cantidad asignada al artículo.`)
+                    }
+                }
+                return
+            }
 
             // if(this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total>50 ){
             //     this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')           
@@ -672,7 +685,8 @@ export class ModalProformaDetalleCtrl extends ModalProformaCtrl {
                 bodegas: this.bodegas,
                 tipoIvas: this.tipoIvas,
                 decimal: this.decimal,
-                actividadTipoIva: this.actividadTipoIva
+                actividadTipoIva: this.actividadTipoIva,
+                codigoDoc: 'PR'
             })
             this.uiGridInvoice.idTarifa = this.idTarifa;
 
@@ -838,7 +852,8 @@ export class ModalProformaEditarCtrl extends ModalProformaCtrl {
                 bodegas: this.bodegas,
                 tipoIvas: this.tipoIvas,
                 decimal: this.decimal,
-                actividadTipoIva: this.actividadTipoIva
+                actividadTipoIva: this.actividadTipoIva,
+                codigoDoc: 'PR'
             })
 
             this.uiGridInvoice.idTarifa = this.idTarifa;
@@ -879,6 +894,15 @@ export class ModalProformaEditarCtrl extends ModalProformaCtrl {
     async onSave() {
         try {
             if (!this.isValidaForm()) return
+
+            if(this.gridOptions.data.some(item=>item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))){
+                for(let item of this.gridOptions.data){
+                    if(item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)){
+                        this._fS.sweetAlert('warning', `Artículo ${item.descripcion}: La cantidad mínima requerida para la venta al por mayor no se ajusta a la cantidad asignada al artículo.`)
+                    }
+                }
+                return
+            }
 
             // if(this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total>50 ){
             //     this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')           
@@ -1088,7 +1112,8 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl {
                 bodegas: this.bodegas,
                 tipoIvas: this.tipoIvas,
                 decimal: this.decimal,
-                actividadTipoIva: this.actividadTipoIva
+                actividadTipoIva: this.actividadTipoIva,
+                codigoDoc: 'PR'
             })
 
             this.uiGridInvoice.idTarifa = this.idTarifa;
@@ -1141,6 +1166,15 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl {
             showLoader();
 
             if (!this.isValidaForm()) return
+
+            if(this.gridOptions.data.some(item=>item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))){
+                for(let item of this.gridOptions.data){
+                    if(item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)){
+                        this._fS.sweetAlert('warning', `Artículo ${item.descripcion}: La cantidad mínima requerida para la venta al por mayor no se ajusta a la cantidad asignada al artículo.`)
+                    }
+                }
+                return
+            }
 
             // if(this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total>50 ){
             //     this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')           
@@ -1210,92 +1244,6 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl {
         }
     }
 
-
-    // //Guardar Nota de Entrega como Nota de Entrega    
-    // async onSaveInvoice() {
-    //     try {
-    //         showLoader();
-
-    //         if (!this.isValidaForm()) return
-
-    //         if (this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total > 50) {
-    //             this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')
-    //             return
-    //         }
-
-    //         this.validarDatosAdicionales("idFacturaDetalle");
-
-
-    //         this.nroDocumentoSecuencial = await this._commonSvc.generarNroDocumentoVenta({
-    //             idPuntoEmision: this.data.idPuntoEmision,
-    //             codigoDocumento: this.TIPO_DOC_FV.codigo,
-    //         })
-    //         hideLoader();
-
-    //         if (!this.nroDocumentoSecuencial) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE"
-
-    //         let textAccion = 'Guardar';
-    //         const swalWithBootstrapButtons = Swal.mixin({
-    //             customClass: {
-    //                 confirmButton: 'btn btn-success',
-    //                 cancelButton: 'btn btn-danger ml-2'
-    //             },
-    //             buttonsStyling: false
-    //         })
-
-    //         let {
-    //             isConfirmed
-    //         } = await swalWithBootstrapButtons.fire({
-    //             title: '<small>Guardar Factura</small>',
-    //             html: `<small>Esta Ud. seguro de ${textAccion} este Documento <b>N°. ${this.nroDocumentoSecuencial} </b></small>?`,
-    //             icon: 'warning',
-    //             showCancelButton: true,
-    //             confirmButtonText: 'Si, guardar!',
-    //             cancelButtonText: 'No, cancelar!',
-    //             reverseButtons: false,
-    //             allowOutsideClick: false,
-    //             allowEscapeKey: false
-    //         })
-
-
-    //         if (!isConfirmed) return
-
-    //         showLoader();
-    //         let factura = Object.assign({}, this.data);
-    //         factura.idCliente = this.cliente.idCliente;
-    //         factura.fechaEmision = this._fS.formatDateTimeZone(this.data.fechaEmision);
-    //         factura.fechaVencimiento = this._fS.formatDateTimeZone(this.data.fechaVencimiento);
-
-    //         //Tarifa Aplicada al Documento
-    //         factura.tarifa = this.actividadTipoIva.tarifa;
-
-
-
-    //         const data = {
-    //             factura: JSON.stringify(factura),
-    //             detalle: JSON.stringify(this.trimDetailDoc()),
-    //             adicional: JSON.stringify(this.infoAdicionalDocumento || []),
-    //             manejoArticulo: JSON.stringify(this.datosAdicionalesArticulo)
-    //         }
-
-    //         await this._mS.getData('post', '/FacturaVenta/Insert', data).then(response => {
-    //             if (response.code === '0') {
-    //                 this._fS.sweetAlert('warning', response.message, response.titleSms);
-    //             }
-    //             if (response.code === "1") {
-    //                 this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
-    //                 let data = JSON.parse(response.payload)[0];
-
-    //                 this.$uibModalInstance.close(data)
-    //             }
-    //         })
-
-    //     } catch (error) {
-    //         console.log(error)
-    //     } finally {
-    //         hideLoader();
-    //     }
-    // }
 
 }
 

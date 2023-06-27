@@ -298,6 +298,7 @@
                         codigo: item.codigo,
                         predeterminada: item.predeterminada,
                         estado: item.estado,
+                        ventaPorMayor: item.ventaPorMayor,
                         totalRecords: item.totalRecords,
                     }))
                 }
@@ -309,7 +310,7 @@
         }
 
         service.update = function (id, data) {
-            return mS.getData('put', url + 'Update/' + id, data, true);
+            return mS.getData('put', url + 'Update/' + id + '?json=' + JSON.stringify(data), null, true);
         }
 
         service.delete = function (id) {
