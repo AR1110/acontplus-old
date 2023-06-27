@@ -152,6 +152,7 @@
                     ice: item.ice,
                     descripcion: item.descripcion,
                     cantidad: item.cantidad,
+                    precioSinSubsidio: item.precioSinSubsidio,
                     precioCostoNeto: item.precioCostoNeto,
                     precioUnitario: item.precioUnitario,
                     precioVenta: item.precioUnitario,
