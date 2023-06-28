@@ -1,41 +1,43 @@
-﻿using Common.Logs;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Common.Logs;
 using DataAccess;
+using Domain.Dtos;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
-using WebUI.ApiClient;
 
-namespace WebUI.Controllers.Reports
+namespace ApiConfig.Controllers
 {
-
-    public class ImpresoraController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ImpresoraController : ControllerBase
     {
-        private IConfiguration _configuration;
-        public ImpresoraController(IConfiguration config)
+        private readonly IConfiguration _configuration;
+        public ImpresoraController(IConfiguration configuration)
         {
-            _configuration = config;
-        }
-        public IActionResult Index()
-        {
-            return View();
+            _configuration = configuration;
         }
 
-        [HttpGet]
+
+        [HttpGet("Get")]
         public async Task<IActionResult> Get(string json)
         {
-            DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
             GenericResponse _response = new GenericResponse();
+            DbAccess _db = new DbAccess(_configuration);
             try
             {
                 await _db.SPExecute("ApiPrinter.Impresora_Get");
-                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
                 _response = _db.GetDataTableAsync();
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in Get: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al Obtener los datos");
+                LogWriter _log = new LogWriter(_configuration);
+                _log.LogError("Error on Get Printers: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al obtener las impresoras");
             }
             finally
             {
@@ -44,21 +46,22 @@ namespace WebUI.Controllers.Reports
             return Ok(_response);
         }
 
-        [HttpGet]
+
+        [HttpGet("GetDataForm")]
         public async Task<IActionResult> GetDataForm(string json)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
             GenericResponse _response = new GenericResponse();
             try
             {
                 await _db.SPExecute("ApiPrinter.Impresora_Get_Data_Form");
-                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
                 _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)
             {
+                LogWriter _log = new LogWriter(_configuration);
                 _log.LogError("Error in GetDataForm: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
@@ -69,11 +72,10 @@ namespace WebUI.Controllers.Reports
             return Ok(_response);
         }
 
-        [HttpGet]
+        [HttpGet("GetId/{id}")]
         public async Task<IActionResult> GetId(int id)
         {
-            DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            DbAccess _db = new DbAccess(_configuration);          
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -83,6 +85,7 @@ namespace WebUI.Controllers.Reports
             }
             catch (Exception ex)
             {
+                LogWriter _log = new LogWriter(_configuration);
                 _log.LogError("Error in GetId: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
@@ -93,22 +96,23 @@ namespace WebUI.Controllers.Reports
             return Ok(_response);
         }
 
+
         [HttpPost]
-        public async Task<IActionResult> Post(string json)
+        public async Task<IActionResult> Post(RequestApiDto parameters)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
             GenericResponse _response = new GenericResponse();
             try
             {
                 await _db.SPExecute("ApiPrinter.Impresora_Insert");
-                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("json", DataHelper.SerializeDictionary(parameters.data));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in Post: \n" + ex.ToString());
+                LogWriter _log = new LogWriter(_configuration);
+                _log.LogError("Error in Post Printer: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al guardar los datos");
             }
             finally
@@ -119,21 +123,22 @@ namespace WebUI.Controllers.Reports
         }
 
         [HttpPut]
-        public async Task<IActionResult> Put(string json)
+        public async Task<IActionResult> Put(RequestApiDto parameters)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
             GenericResponse _response = new GenericResponse();
             try
             {
                 await _db.SPExecute("ApiPrinter.Impresora_Update");
-                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("json", DataHelper.SerializeDictionary(parameters.data));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in Put: \n" + ex.ToString());
+                LogWriter _log = new LogWriter(_configuration);
+
+                _log.LogError("Error in Put Printers: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar");
             }
             finally
@@ -147,7 +152,6 @@ namespace WebUI.Controllers.Reports
         public async Task<IActionResult> Delete(int id)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -158,7 +162,8 @@ namespace WebUI.Controllers.Reports
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in Delete: \n" + ex.ToString());
+                LogWriter _log = new LogWriter(_configuration);
+                _log.LogError("Error in Delete Printer: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar");
             }
             finally
@@ -167,10 +172,6 @@ namespace WebUI.Controllers.Reports
             }
             return Ok(_response);
         }
-        public async Task<IActionResult> Load()
-        {
-            var _response = await new ApiServer(_configuration.GetSection("UrlApis").GetSection("UrlApiPrint").Value).GetAsync<GenericResponse>("api/Imprimir/GetPrinters");
-            return Ok(_response);
-        }
+
     }
 }

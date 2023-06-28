@@ -8,7 +8,7 @@ namespace ApiInventory.Controllers.v3
 {
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
-    [ApiVersion("2.0")]
+    [ApiVersion("3.0")]
     public class ArticuloController : ControllerBase
     {
         private readonly IConfiguration _configuration;
@@ -25,7 +25,7 @@ namespace ApiInventory.Controllers.v3
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Almacen.Articulo_Get_Search");            
+                await _db.SPExecute("Inventario.Articulo_Search_v3");            
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
                 _response = _db.GetDataTableAsync();
             }
@@ -33,7 +33,7 @@ namespace ApiInventory.Controllers.v3
             {
                 LogWriter _log = new LogWriter(_configuration);
                 _log.LogError("Error on Get Search: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al obtener las bodegas");
+                _response.Create(code: "0", message: "Error al obtener las Articulos");
             }
             finally
             {
