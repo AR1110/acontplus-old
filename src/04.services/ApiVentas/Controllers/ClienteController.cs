@@ -79,7 +79,7 @@ namespace ApiVentas.Controllers
                 await _db.SPExecute("Ventas.Cliente_Get_Search");
                 _db.AddDynamicParam("idRol ", idUsuarioRol);
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
-                _response = _db.GetDataSetAsync();
+                _response = _db.GetDataTableAsync();
             }
             catch (Exception ex)
             {
