@@ -7,6 +7,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="Data\SeedData\PetBreeds.json" />
+	  <None Remove="Data\SeedData\PetSexes.json" />
+	  <None Remove="Data\SeedData\PetTypes.json" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.19" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.8" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.8">
@@ -25,6 +31,17 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Vet.Core\Vet.Core.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Content Include="Data\SeedData\PetBreeds.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Data\SeedData\PetSexes.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Data\SeedData\PetTypes.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
 	</ItemGroup>
 
 </Project>
