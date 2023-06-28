@@ -1,7 +1,6 @@
 
 export {
-    ModalCuotaCtrl,
-    ModalConfigMoraCtrl
+    ModalCuotaCtrl    
 }
 
 ModalCuotaCtrl.$inject = [
@@ -30,6 +29,8 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
     $scope.isReload = false;
 
     let url = 'CuentaPorCobrar/'
+
+    const MAX_ROUND_NUMBER = 5;
 
     $scope.initiload = initiload;
     $scope.initiload();
@@ -67,6 +68,8 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
 
                     let tempCuotasMora = mainDataRepository[3];
                     $scope.cuotasMora = tempCuotasMora;
+
+                    setFooterTotals();
                 }
             }).catch(error=>{
                 hideLoader();
@@ -103,6 +106,19 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
     function getTotalCuota() {
         let total = $scope.cuotas.map(val => Number(val.cuota)).reduce((prev, curr) => prev + curr, 0);
         return fS.roundNumber(total, 5);
+    }
+
+    function setFooterTotals(){
+        let totalCuota = 0, totalMora = 0, totalSaldo = 0;
+        for(let item of $scope.cuotas){
+            totalCuota+=item.cuota;
+            totalMora+=item.mora;
+            totalSaldo+=item.saldo;
+        }
+        $scope.totalCuota = fS.roundNumber(totalCuota, MAX_ROUND_NUMBER);
+        $scope.totalMora = fS.roundNumber(totalMora, MAX_ROUND_NUMBER);
+        $scope.totalSaldo = fS.roundNumber(totalSaldo, MAX_ROUND_NUMBER);
+
     }
 
     $scope.askToChangeCreditTime = async function() {
@@ -158,10 +174,8 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
                 $scope.isReload = true;               
                 fS.sweetAlert('success', response.message, response.titleSms, 1000);  
                 let tempCuotas = JSON.parse(response.payload) || [];                
-                $scope.cuotas = tempCuotas.map(item=>({
-                    ...item,
-                    fechaVencimiento: new Date(item.fechaVencimiento)
-                }))                                                               
+                $scope.cuotas = tempCuotas.map(cuotaMappFrom);
+                setFooterTotals();                                                               
             }
         }).catch(error=>{
             hideLoader();
@@ -198,7 +212,8 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
                     }
                     if(response.code==='1'){
                         let tempCuotas = JSON.parse(response.payload)[0]
-                        $scope.cuotas = tempCuotas.map(cuotaMappFrom)
+                        $scope.cuotas = tempCuotas.map(cuotaMappFrom);
+                        setFooterTotals();
 
                     }
                 })
@@ -315,7 +330,7 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
                 }
             }
 
-            $scope.totalCuota = getTotalCuota();
+            setFooterTotals();
 
         } catch (error) {
             console.log(error)
@@ -351,9 +366,9 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
                 angular.forEach($scope.cuotas, (val, index, arrayCuotas) => {
                     //Si la Cuota tiene entrada 
                     if (val.nroCuota !== "E" && index > arrayCuotas.indexOf(cuota)) {
-                        val.cuota = fS.roundNumber(valorCuota, 5);
+                        val.cuota = fS.roundNumber(valorCuota, MAX_ROUND_NUMBER);
                     } else if (index > arrayCuotas.indexOf(cuota)) {
-                        val.cuota = fS.roundNumber(valorCuota, 5);
+                        val.cuota = fS.roundNumber(valorCuota, MAX_ROUND_NUMBER);
                     }
                 });
 
@@ -361,8 +376,8 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
 
             $scope.totalCuota = getTotalCuota();
             let result = $scope.comprobante.importeTotal - $scope.totalCuota;
-            $scope.totalDiferencia = fS.roundNumber(result, 5);
-
+            $scope.totalDiferencia = fS.roundNumber(result, MAX_ROUND_NUMBER);
+            setFooterTotals();
         } catch (error) {
             console.log(error)
         }
@@ -472,10 +487,8 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
                         fS.sweetAlert('success', response.message, response.titleSms, 1000);                                                               
                         $scope.isReload = true;
                         let tempCuotas = JSON.parse(response.payload) || [];                
-                        $scope.cuotas = tempCuotas.map(item=>({
-                            ...item,
-                            fechaVencimiento: new Date(item.fechaVencimiento)
-                        })) 
+                        $scope.cuotas = tempCuotas.map(cuotaMappFrom) ;
+                        setFooterTotals();
                     }
                 }).catch(error=>{
                     hideLoader();
@@ -500,18 +513,3 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
     }
 }
 
-
-ModalConfigMoraCtrl.$inject = ['$scope', '$uibModalInstance','params'];
-
-function ModalConfigMoraCtrl($scope, $uibModalInstance, params){
-    let { comprobante, cuotasMora} = params;
-
-    $scope.comprobante = comprobante;
-    $scope.cuotasMora = cuotasMora;
-
-    console.log($scope.cuotasMora)
-
-    $scope.closeModal = function(){
-        $uibModalInstance.close();
-    }
-}

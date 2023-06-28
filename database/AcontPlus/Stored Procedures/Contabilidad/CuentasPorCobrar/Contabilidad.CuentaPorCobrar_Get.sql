@@ -390,7 +390,7 @@ BEGIN
 					RETURN 
 				END
 
-			ELSE 
+			IF @tipoConfig = 'PI' 
 				 BEGIN 
 					INSERT INTO @tbCuotasInteres(idCuotaPorCobrar,nroCuota,cuota,abono,fechaVencimiento,diasMora,interes,mora,estado,codEstado)
 					SELECT   cx.idCuotaPorCobrar
@@ -406,21 +406,39 @@ BEGIN
 					FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)
 					INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago 
 					WHERE cx.idCuentaPorCobrar = @idCuentaPorCobrar AND cx.estado = 1	
-			
-					SELECT idCuotaPorCobrar 
-						  ,nroCuota
-						  ,cuota
-						  ,abono
-						  ,interes
-						  ,mora     = IIF(mora < 0 ,0,mora)
-						  ,saldoCta = cuota - abono
-						  ,saldo    = IIF(mora< 0,0,mora) + (cuota - abono)
-						  ,fechaVencimiento
-						  ,diasMora = IIF(diasMora < 0,0,diasMora)
-						  ,estado
-						  ,codEstado
-					FROM @tbCuotasInteres 
 				END 
+			
+			IF  @tipoConfig = 'PF'
+				BEGIN
+					INSERT INTO @tbCuotasInteres(idCuotaPorCobrar,nroCuota,cuota,abono,fechaVencimiento,diasMora,interes,mora,estado,codEstado)
+					SELECT   cx.idCuotaPorCobrar
+							,cx.nroCuota
+							,cx.cuota
+							,cx.abono
+							,fechaVencimiento = cx.fechaVencimiento
+							,diasMora         = CASE WHEN ep.codigo != 'CBR' THEN DATEDIFF(DAY,cx.fechaVencimiento,dbo.ufnGetDateEcuador()) ELSE 0 END 
+							,interes          = CASE WHEN ep.codigo != 'CBR' THEN @interes ELSE 0 END  
+							,mora             = CASE WHEN ep.codigo != 'CBR' THEN @interes * DATEDIFF(DAY,cx.fechaVencimiento,dbo.ufnGetDateEcuador()) ELSE 0 END  
+							,ep.descripcion
+							,ep.codigo
+					FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)
+					INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago 
+					WHERE cx.idCuentaPorCobrar = @idCuentaPorCobrar AND cx.estado = 1	
+				END 
+
+			SELECT idCuotaPorCobrar 
+				  ,nroCuota
+				  ,cuota
+				  ,abono
+				  ,interes
+				  ,mora     = IIF(mora < 0 ,0,mora)
+				  ,saldoCta = cuota - abono
+				  ,saldo    = IIF(mora< 0,0,mora) + (cuota - abono)
+				  ,fechaVencimiento
+				  ,diasMora = IIF(diasMora < 0,0,diasMora)
+				  ,estado
+				  ,codEstado
+			FROM @tbCuotasInteres 
 		END 
 END
 GO
