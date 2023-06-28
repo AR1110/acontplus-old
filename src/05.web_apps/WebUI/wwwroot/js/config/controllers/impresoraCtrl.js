@@ -1,4 +1,6 @@
-﻿app.controller('impresoraCtrl', impresoraCtrl)
+﻿ 
+
+app.controller('impresoraCtrl', impresoraCtrl)
 
 impresoraCtrl.$inject = ['$scope', 'commonService', 'mainService', 'toastService']
 
@@ -10,12 +12,18 @@ function impresoraCtrl($scope, _commonSvc, mS, tS) {
     $scope.disabledInputIpMaquina = false;
 
     $scope.isDisabledAsigEquipo = true;
-    $scope.data.asignar = true
+    $scope.data.asignar = true;
 
-    $scope.initialLoad = () => {
-        mS.getData('get','/Impresora/Get?json=' + JSON.stringify({ tipo: 1 })).then(response => {
+    let url = 'Impresora/'
+
+    $scope.initialLoad = async () => {
+        showLoader();
+        await mS.getData('get', url +'Get?json=' + JSON.stringify({ tipo: 1 }), null, true).then(response => {
             $scope.printers = [];
-            if(response.payload) {
+            if(response.code=="0"){
+                console.log(response.message);
+            }
+            if(response.code ==="1") {
                 $scope.printers = JSON.parse(response.payload) || [];
                 
                 $scope.printers = $scope.printers.map(item=>{
@@ -26,7 +34,7 @@ function impresoraCtrl($scope, _commonSvc, mS, tS) {
         })
 
 
-        mS.getData("get","/Impresora/GetDataForm?json=" + JSON.stringify({})).then(response => {
+        await mS.getData("get", url + "GetDataForm?json=" + JSON.stringify({}), null, true).then(response => {
             let dataForm = JSON.parse(response.payload);
             $scope.sucursales = dataForm[0];
             $scope.tipoImpresoras = dataForm[1];
@@ -37,7 +45,10 @@ function impresoraCtrl($scope, _commonSvc, mS, tS) {
                 tS.toastr('info', 'No tienes asignado las Sucursales')
             }
         })
+        hideLoader();
     }
+
+    $scope.initialLoad();
 
     $scope.openModalNew = () => {
         $scope.tipoRegistro = 1;
@@ -58,7 +69,9 @@ function impresoraCtrl($scope, _commonSvc, mS, tS) {
     // }
       
     $scope.openEdit = (id) => {
-        mS.getData("get","/Impresora/GetId?id=" + id).then(response => {
+        showLoader();
+        mS.getData("get", url + "GetId/" + id, null, true).then(response => {
+            hideLoader();
             let data = JSON.parse(response.payload);
             
             $scope.data = data[0][0];
@@ -69,7 +82,9 @@ function impresoraCtrl($scope, _commonSvc, mS, tS) {
             $scope.data.asignar = true
 
 	        $('#addUpdatePrinter').modal('show')
-        }) 
+        }).catch(error=>{
+            console.log(error)
+        })
     }
 
     $scope.clearNameEquipment = ()=>{
@@ -134,36 +149,36 @@ function impresoraCtrl($scope, _commonSvc, mS, tS) {
                 return
             }
 
-            let url = $scope.tipoRegistro === 1 ? '/Impresora/Post?json=' : '/Impresora/Put?json=';
+            // let urlRequest = $scope.tipoRegistro === 1 ? url +'Post' : url +  'Put';
             let method = $scope.tipoRegistro === 1 ? 'post' : 'put';
-            let data = "";
+            let codDoc = "";
             
             if($scope.documents.some(item=>item.codDoc==="FV" && item.estado)){
-                data = "FV"    
+                codDoc = "FV"    
             }
                 
             if($scope.documents.some(item=>item.codDoc==="NE" && item.estado)){
-                data = "NE";
+                codDoc = "NE";
             }
 
             if($scope.documents.every(item=>item.estado)){
-                data = "A";
+                codDoc = "A";
             }
 
-            $scope.data.codDoc = data;
+            $scope.data.codDoc = codDoc;
 
-            let object = {printer: $scope.data, documents : $scope.documents.map(item=>{
-                let obj = {
+            let data = {
+                printer: $scope.data, 
+                documents : $scope.documents.map(item=>({
                     idConfig_Document : item.idConfig_Document,
                     codDoc: item.codDoc,
                     estado: item.estado,
                     copyPrint : item.copyPrint
-                }
-                return obj
-            })};
+                })
+            )};
 
             showLoader();
-            mS.getData(method, url + JSON.stringify(object)).then(response => {
+            mS.getData(method, url, {data} , true).then(response => {
                 if (response.code == "0") {
                     hideLoader()
                     tS.toastr('warning', response.message)
@@ -208,7 +223,7 @@ function impresoraCtrl($scope, _commonSvc, mS, tS) {
     $scope.delete = (item) => {
         try {
             showLoader()
-            mS.getData('delete', '/Impresora/Delete?id=' + item.id).then(response => {
+            mS.getData('delete',  url + 'Delete?id=' + item.id, null, true).then(response => {
                 if (response.code == "0") {
                     hideLoader()
                     tS.toastr('warning', response.message)
@@ -265,9 +280,7 @@ function impresoraCtrl($scope, _commonSvc, mS, tS) {
     $('#addUpdatePrinter').on('hidden.bs.modal', function () {
         $scope.disabledInputIpMaquina = false;
         $scope.isDisabledAsigEquipo = true;
-        $scope.data.asignar = true
-
-        $scope.initialLoad();
+        $scope.data.asignar = true;
        $scope.data = {};
     });
 }

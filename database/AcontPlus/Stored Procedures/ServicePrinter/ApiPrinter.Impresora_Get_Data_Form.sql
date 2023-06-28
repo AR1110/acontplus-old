@@ -23,7 +23,7 @@ GO
 IF OBJECT_ID(N'ApiPrinter.Impresora_Get_Data_Form', N'P') IS NOT NULL
 DROP PROCEDURE ApiPrinter.Impresora_Get_Data_Form
 GO
-CREATE PROCEDURE ApiPrinter.Impresora_Get_Data_Form @idRol INT, @json VARCHAR(MAX)
+CREATE PROCEDURE ApiPrinter.Impresora_Get_Data_Form @idUsuarioRol INT, @json VARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -37,7 +37,7 @@ BEGIN
 	   ,ar.predeterminado
 	FROM Config.Estab_Asig ar WITH (NOLOCK)
 	INNER JOIN Sri.Establecimiento e WITH (NOLOCK) ON e.codEstab = ar.codEstab
-	WHERE ar.idUsuarioRol = @idRol
+	WHERE ar.idUsuarioRol = @idUsuarioRol
 	ORDER BY ar.predeterminado DESC
 
 	SELECT idTipoImpresora,codigo,descripcion FROM ApiPrinter.TipoImpresora WITH (NOLOCK) WHERE estado = 1
@@ -52,6 +52,6 @@ BEGIN
 		descripcion = UPPER(descripcion),
 		estado = CAST(1 AS BIT),
 		copyPrint = CAST(0 AS BIT)
-	FROM TipoDocumento WHERE codigo IN ('FV', 'NE', 'PR')
+	FROM TipoDocumento WHERE codigo IN ('FV', 'NE', 'PR', 'IC', 'EC')
 END
 GO
