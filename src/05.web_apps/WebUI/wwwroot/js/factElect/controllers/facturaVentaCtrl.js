@@ -341,7 +341,7 @@ function facturaVentaCtrl(
             let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_EDITAR['controller']];
             let template = MODAL_EDITAR['template'];
 
-            let response = await $scope.getDataDocumento(item.idDocument);
+            let response = await $scope.getDataDocumento(item.idDocumento);
 
             if (!response.isComplete) return
 

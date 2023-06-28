@@ -24,6 +24,7 @@
                         <table class="table table-no-bordered">
                             <thead>
                                 <tr>
+                                    <th class="text-center">Op.</th>
                                     <th>N°</th>
                                     <th class="text-center">Estab.</th> 
                                     <th class="text-center">Impresora</th>
@@ -31,11 +32,16 @@
                                     <th class="text-center">Equipo</th>
                                     <th class="text-center">Documento</th>
                                     <th class="text-center">Tipo Impr.</th>                                     
-                                    <th class="text-center">Opciones</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr ng-repeat="item in printers |filter:buscar">
+                                    <td class="text-center">
+                                        <button class="btn btn-warning btn-sm" ng-click="openEdit(item.id)"><i
+                                                class="ti-pencil"></i></button>
+                                        <button class="btn btn-danger btn-sm" ng-click="askToDelete(item)"><i
+                                                class="ti-trash"></i></button>
+                                    </td>
                                     <td >{{$index+1}}</td>
                                     <td class="text-center">{{item.estab}}</td>
                                     <td class="text-center">{{item.nombreImpresora}}</td>
@@ -43,12 +49,6 @@
                                     <td class="text-center">{{item.nombreEquipo}}</td>
                                     <td class="text-center">{{item.documento}}</td>
                                     <td class="text-center">{{item.tipoImpresora}}</td>  
-                                    <td class="text-center">
-                                        <button class="btn btn-warning btn-sm" ng-click="openEdit(item.id)"><i
-                                                class="ti-pencil"></i></button>
-                                        <button class="btn btn-danger btn-sm" ng-click="askToDelete(item)"><i
-                                                class="ti-trash"></i></button>
-                                    </td>
                                 </tr>
                             </tbody>
                         </table>

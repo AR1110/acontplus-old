@@ -34,6 +34,7 @@ CREATE VIEW v_usuario AS (
 	,ur.idUsuarioRol
 	,ur.idEntidad
 	,ur.idRol
+	,e.ruc rucEmpresa
 	,e.razonSocial entidad
 	,r.codigo codRol
 	,r.descripcion rol
