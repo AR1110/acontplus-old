@@ -23,7 +23,7 @@ namespace Vet.Infrastructure.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false),
-                    Deleted = table.Column<int>(type: "int", nullable: false),
+                    Deleted = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -41,7 +41,7 @@ namespace Vet.Infrastructure.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false),
-                    Deleted = table.Column<int>(type: "int", nullable: false),
+                    Deleted = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -59,7 +59,7 @@ namespace Vet.Infrastructure.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false),
-                    Deleted = table.Column<int>(type: "int", nullable: false),
+                    Deleted = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -75,13 +75,15 @@ namespace Vet.Infrastructure.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    ClientUniqueId = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    CompanyUniqueId = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
                     PetTypeId = table.Column<int>(type: "int", nullable: true),
                     PetBreedId = table.Column<int>(type: "int", nullable: true),
                     PetSexId = table.Column<int>(type: "int", nullable: true),
                     Color = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Birthdate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Deleted = table.Column<int>(type: "int", nullable: false),
+                    Birthdate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Deleted = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },

@@ -7,6 +7,12 @@ namespace Vet.Core.Entities
     public class Pet : BaseEntity
     {
         [Required]
+        [MaxLength(25)]
+        public string ClientUniqueId { get; set; }
+        [Required]
+        [MaxLength(25)]
+        public string CompanyUniqueId { get; set; }
+        [Required]
         [MaxLength(150)]
         public string Name { get; set; }
         public virtual PetType PetType { get; set; }
@@ -18,7 +24,7 @@ namespace Vet.Core.Entities
         [Required]
         [MaxLength(50)]
         public string Color { get; set; }
-        public DateTime Birthdate { get; set; }
-        public int Deleted { get; set; }
+        public DateTime? Birthdate { get; set; }
+        public int? Deleted { get; set; }
     }
 }

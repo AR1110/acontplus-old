@@ -13,6 +13,6 @@ namespace Vet.Core.Entities
         [Required]
         [MaxLength(300)]
         public string Description { get; set; }
-        public int Deleted { get; set; }
+        public int? Deleted { get; set; }
     }
 }

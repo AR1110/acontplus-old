@@ -6,4 +6,9 @@
     <Nullable>disable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Vet.Core\Vet.Core.csproj" />
+    <ProjectReference Include="..\Vet.Infrastructure\Vet.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

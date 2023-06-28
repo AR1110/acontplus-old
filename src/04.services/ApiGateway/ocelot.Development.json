@@ -1302,8 +1302,25 @@
       ],
       "DownstreamPathTemplate": "/api/Impresora{everything}",
       "DownstreamScheme": "https",
-      "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete"],
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "UpstreamPathTemplate": "/gateway/Impresora{everything}"
+    },
+    {
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7166
+        }
+      ],
+      "DownstreamPathTemplate": "/api/PetSexes{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/gateway/PetSexes{everything}"
     }
   ]
 }

@@ -12,7 +12,7 @@ using Vet.Infrastructure.Data;
 namespace Vet.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(VetContext))]
-    [Migration("20230627172842_Initial")]
+    [Migration("20230628023918_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -33,18 +33,28 @@ namespace Vet.Infrastructure.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("Birthdate")
+                    b.Property<DateTime?>("Birthdate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("ClientUniqueId")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
 
                     b.Property<string>("Color")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("CompanyUniqueId")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Deleted")
+                    b.Property<int?>("Deleted")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -86,7 +96,7 @@ namespace Vet.Infrastructure.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Deleted")
+                    b.Property<int?>("Deleted")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
@@ -118,7 +128,7 @@ namespace Vet.Infrastructure.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Deleted")
+                    b.Property<int?>("Deleted")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
@@ -150,7 +160,7 @@ namespace Vet.Infrastructure.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Deleted")
+                    b.Property<int?>("Deleted")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
