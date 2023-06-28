@@ -278,6 +278,31 @@ BEGIN
 							FOR JSON PATH)
 		END 
 
+
+	IF @codDoc = 'IC' OR @codDoc = 'EC'
+		BEGIN 
+			SET @header = (	
+							SELECT 
+								 mc.razonSocial
+								 ,mc.ruc
+								,mc.establecimiento
+								,dirMatriz = mc.dirEstablecimiento
+								,fechaEmision =  CONVERT(NVARCHAR, FORMAT(mc.fechaEmision, 'dd/MM/yyyy hh:mm')) 						
+								,nroDoc= UPPER(mc.tipoDoc) + ' : ' + mc.codDoc + '-'+ mc.estab+ '-'+ dbo.AFTAutoComplete(mc.nroDoc)
+								,mc.entregadoPor
+								,mc.recibidoPor
+								,entidadFinanciera = UPPER(mc.entidadFinanciera)
+								,valorTotal = convert(numeric(18,2), mc.valor)
+								,observacion = UPPER(mc.observacion)
+								,usuario	
+							FROM v_movimiento_caja mc
+							WHERE idMovimientoCaja = @idDocument
+							FOR JSON PATH
+				
+			)
+		END 
+ 
+
 	SET @dataSources = (SELECT encabezadoDs = @header, detalleDs = @detail FOR JSON PATH )
 
 	INSERT INTO @table (dataSources) SELECT @dataSources
