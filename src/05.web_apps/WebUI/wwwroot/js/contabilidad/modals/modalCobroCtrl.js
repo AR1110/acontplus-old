@@ -153,15 +153,7 @@ class CobroService{
                 if(typeof this.valorAbono !=='number' || this.valorAbono===0) return;
 
                 //Si la cuota no tiene ningún abono
-                // if((item.cuota ===item.saldo)  && (item.abono === 0 || item.abonoPosfechado === 0)){
-                   
-                //     this.cuotaSinAbono(item)
-
-                // } else if(item.cuota !== item.saldo && item.saldo > 0) {
-
-                //     this.cuotaConAbono(item)
-                // }
-                
+               
                 if(item.abono > 0){
                     this.cuotaConAbono(item)
                 }else{
@@ -186,6 +178,15 @@ class CobroService{
          */
     cuotaSinAbono(item){
 
+        //Validaciones Saldo Cuota 
+        if(item.saldoCta >= this.valorAbono){
+            let valorSaldoCta = item.saldoCta - this.valorAbono;
+            item.saldoCta = this.fS.roundNumber(valorSaldoCta, this.MAX_NUMBER_ROUND);
+        }else if (item.saldoCta <= this.valorAbono){
+            item.saldoCta = 0;
+        }
+
+        //Validaciones Saldo 
         if(item.saldo >= this.valorAbono){
 
             //Si el Abono pago no es Posfechado
@@ -193,22 +194,28 @@ class CobroService{
 
             //Si el abono pago es posfechado
             item.abonoPosfechado =  this.esAbonoPosfechado ? this.valorAbono : 0;
-            item.saldo = item.saldo - this.valorAbono;
+            
+            let valorSaldo = item.saldo - this.valorAbono;
+            // let valorSaldoCta = item.saldoCta - this.valorAbono;
+            item.saldo = this.fS.roundNumber(valorSaldo, this.MAX_NUMBER_ROUND);
+            // item.saldoCta = this.fS.roundNumber(valorSaldoCta, this.MAX_NUMBER_ROUND);
 
-            this.addCobroDetalle(item, this.valorAbono)
+            this.addCobroDetalle(item, this.valorAbono, item.saldo)
             this.valorAbono = 0;
 
         }else if(item.saldo <= this.valorAbono) {
 
             //Si el Abono pago no es Posfechado
-            item.abono = this.esAbonoPosfechado ? 0 : item.cuota;
+            item.abono = this.esAbonoPosfechado ? 0 : item.saldo;
             
             //Si el abono pago es posfechado
-            item.abonoPosfechado = this.esAbonoPosfechado ? item.cuota : 0; 
+            item.abonoPosfechado = this.esAbonoPosfechado ? item.saldo : 0; 
 
-            item.saldo = this.valorAbono -= item.saldo;
-
-            this.addCobroDetalle(item, item.cuota)
+            this.valorAbono = this.valorAbono - item.saldo;
+            
+            this.addCobroDetalle(item, item.saldo, 0)
+            item.saldo = 0;
+            // item.saldoCta = 0;
         }
 
     }
@@ -219,31 +226,45 @@ class CobroService{
      */
     cuotaConAbono(item){
 
+          //Validaciones Saldo Cuota 
+        if(item.saldoCta >= this.valorAbono){
+            let valorSaldoCta = item.saldoCta - this.valorAbono;
+            item.saldoCta = this.fS.roundNumber(valorSaldoCta, this.MAX_NUMBER_ROUND);
+        }else if (item.saldoCta <= this.valorAbono){
+            item.saldoCta = 0;
+        }
+
+        //Validaciones Saldo 
+
         if (item.saldo >= this.valorAbono) {
             
             if (this.esAbonoPosfechado) {
                 item.abonoPosfechado = this.valorAbono + item.abonoPosfechado;
-            } else {
+            } else  {
                 item.abono = this.valorAbono + item.abono;
             }
 
-            item.saldo = item.saldo - this.valorAbono;
-            this.addCobroDetalle(item, this.valorAbono);
+            let valorSaldo = item.saldo - this.valorAbono;
+            // let valorSaldoCta = item.saldoCta - this.valorAbono;
+            item.saldo = this.fS.roundNumber(valorSaldo, this.MAX_NUMBER_ROUND);
+            // item.saldoCta = this.fS.roundNumber(valorSaldoCta, this.MAX_NUMBER_ROUND);
+
+            this.addCobroDetalle(item, this.valorAbono, item.saldo);
             this.valorAbono = 0;
     
            
         } else if (item.saldo <= this.valorAbono) {
-           
+           let abonoCuota = item.saldo;
             if (this.esAbonoPosfechado) {
                 item.abonoPosfechado = item.abonoPosfechado + item.saldo;
             } else {
                 item.abono = item.abono + item.saldo;
             }
             
-            let resultValorAbono = this.valorAbono -= item.saldo;
-            this.valorAbono = this.fS.roundNumber(resultValorAbono, this.MAX_NUMBER_ROUND);
-            
-            this.addCobroDetalle(item, item.saldo);
+            this.valorAbono = this.valorAbono - item.saldo;
+            this.valorAbono = this.fS.roundNumber(this.valorAbono, this.MAX_NUMBER_ROUND);
+            this.addCobroDetalle(item, abonoCuota, 0);
+            item.saldo = 0;
         }
     }
 
@@ -254,7 +275,7 @@ class CobroService{
      * @param {number} abono 
      * @returns void
      */
-    addCobroDetalle(item, abono){
+    addCobroDetalle(item, abono, saldo){
         if(item.cuota==0) return;
 
         this.cobrosDetalle.push({
@@ -265,7 +286,7 @@ class CobroService{
             diasMora : item.diasMora,
             mora : item.mora,
             cuota: this.fS.roundNumber(item.cuota, this.MAX_NUMBER_ROUND),
-            saldo: this.getValorSaldo(item),
+            saldo,
             secuencial: this.indexDatoCobro
         })
         item.saldo = this.fS.roundNumber(item.saldo, this.MAX_NUMBER_ROUND)
@@ -568,11 +589,15 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, mS, commonSvc, modalSvc
                     cobroSvc.addFormaCobro();
                     let historial = cobroSvc.getHistorialCobros(cobroSvc.selectedDocumentos);
 
+                    if(cobroSvc.cobrosDetalle.length===0){
+                        fS.sweetAlert('warning', 'Cobro detalle vacio')
+                        throw 'Cobro detalle vacio';
+                    }
                 
                     let data = {
                         comprobante,
                         cobros,
-                        cobroDetalle: cobroSvc.cobrosDetalle,
+                        cobroDetalle: cobroSvc.cobrosDetalle.filter(item=>(item.abono>0)),
                         historial,
                     }
 
@@ -776,12 +801,11 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc
     function getTotalesCuota(){
         let importeTotal = 0,  abono = 0,  saldo = 0, totalMora = 0, totalSaldoDoc = 0;
         for(let item of $scope.selectedDocumentos){
-            //Totales
-            importeTotal       += item.importeTotal
-            saldo         += item.saldo
-            // $scope.data.totalSaldoOriginal = fS.roundNumber($sc, 5);
-            abono              += item.abono; 
-            totalMora += item.mora;                       
+            importeTotal += item.importeTotal;
+            saldo += item.saldo;
+            abono += item.abono; 
+            totalMora += item.mora;
+            totalSaldoDoc += item.saldoDoc;            
         }
         $scope.data.importeTotal       = fS.roundNumber(importeTotal, 5);
         $scope.data.totalSaldo         = fS.roundNumber(saldo, 5);
@@ -1132,6 +1156,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc
                         $scope.addDatosCobro(result, abonoCuota);
                     
                         $scope.calculoTotales();
+
                         fS.sweetAlert('success', 'Agregado Correctamente', '', 1000);
                     } catch (error) {
                         Swal.fire({
@@ -1158,16 +1183,18 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc
     }
 
     $scope.showCobroDetalle = function(data) {        
-        let tempDetails = $scope.cobrosDetalle.filter(item=>item.idCuotaPorCobrar===data.idCuotaPorCobrar);
+        let tempDetails = $scope.cobrosDetalle.filter(item=>item.idCuotaPorCobrar===data.idCuotaPorCobrar && item.idCuentaPorCobrar ===data.idCuentaPorCobrar);
         let infoCobrosDetalle = [];
       
         for(let pd of tempDetails){
+            if(pd.abono>0) {
             let datoCobro = $scope.datosCobro.find(item=>item.secuencial===pd.secuencial);
             infoCobrosDetalle.push({
                 ...pd,
                 subEntidadFinanciera: datoCobro.subEntidadFinanciera,
                 posFechado: datoCobro.posFechado?'SI':'NO'
             })
+        }
         }
         
         let index = 1;
@@ -1198,7 +1225,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc
 
         Swal.fire({
             icon:'info',
-            title:`<span>Cuota:</span> $${data.cuota}`,
+            title:`<span>Cuota ${data.nroCuota}:</span> $${data.cuota} <br> <span>Mora:</span> $${data.mora}`,
             width: 600,
             html: message
         })
@@ -1306,6 +1333,11 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc
                 return
             }
 
+            if($scope.cobrosDetalle.length===0) {
+                fS.sweetAlert('warning', 'Cobro detalle vacio!')
+                return
+            }
+
             Swal.fire({
                 title: '<small>Guardar Cobro</small>',
                 html: "<small class='text-muted'>Esta seguro de guardar este cobro ahora?</small> !",
@@ -1358,7 +1390,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc
                     let data = {
                         comprobante,
                         cobros,
-                        cobroDetalle : $scope.cobrosDetalle,
+                        cobroDetalle : $scope.cobrosDetalle.filter(item=>(item.abono > 0)),
                         historial,
                     }
 

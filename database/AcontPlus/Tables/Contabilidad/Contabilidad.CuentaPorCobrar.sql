@@ -8,7 +8,7 @@ CREATE TABLE Contabilidad.CuentaPorCobrar(
 	,idPuntoEmision INT NOT NULL CONSTRAINT fk_estad_cxc FOREIGN KEY (idPuntoEmision) REFERENCES dbo.PuntoEmision(idPuntoEmision) 
 	,idTiempoCredito INT NOT NULL CONSTRAINT fk_tcredito_cxc FOREIGN KEY (idTiempoCredito) REFERENCES dbo.TiempoCredito(idTiempoCredito) 
 	,idCliente INT NOT NULL CONSTRAINT fk_cliente_cxc FOREIGN KEY (idCliente) REFERENCES dbo.Cliente(idCliente)
-	,idEstadoDocumento INT NOT NULL CONSTRAINT fk_estadoDoc_cxc FOREIGN KEY (idEstadoDocumento) REFERENCES dbo.EstadoPago(idEstadoPago)
+	,idEstadoPago INT NOT NULL CONSTRAINT fk_estadoDoc_cxc FOREIGN KEY (idEstadoPago) REFERENCES dbo.EstadoPago(idEstadoPago)
 	,codDoc VARCHAR(5) NOT NULL
 	,idDocumento INT NOT NULL
 	,uniqueId VARCHAR(50) NOT NULL UNIQUE

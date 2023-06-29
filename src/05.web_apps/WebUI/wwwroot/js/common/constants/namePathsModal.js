@@ -246,7 +246,7 @@ app.constant('nombreModalLogistica', {
 
 app.constant('nombreModalContabilidad', {
     COBRO: {
-        fileCtrl: '/js/contabilidad/modals/modalCobroCtrl.min.js' + CHANGE_VERSION(),
+        fileCtrl: '/js/contabilidad/modals/modalCobroCtrl.js' + CHANGE_VERSION(),
         fileCuotaCtrl: '/js/contabilidad/modals/modalCuotaCtrl.min.js' + CHANGE_VERSION(),
         controllers: {
             CR: 'ModalCobroRapidoCtrl', //Modal - Cobro Rapido 

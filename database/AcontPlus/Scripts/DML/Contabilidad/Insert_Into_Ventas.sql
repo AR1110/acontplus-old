@@ -1,16 +1,21 @@
 use [acontplus]
 go 
 
---select COUNT(*) from Contabilidad.CuentaPorCobrar where codDoc = '01'
+select COUNT(*) from Contabilidad.CuentaPorCobrar where codDoc = '01'
 
---select COUNT(*) from NotaEntrega 
+select COUNT(*) from factura 
+
+select COUNT(*) from Contabilidad.CuentaPorCobrar where codDoc = 'NE'
+
+select COUNT(*) from NotaEntrega 
+
 
 --INSERT INTO Contabilidad.CuentaPorCobrar
 --	  (	
 --	    idPuntoEmision
 --		,idTiempoCredito
 --		,idCliente
---		,idEstadoDocumento
+--		,idEstadoPago
 --		,codDoc
 --		,idDocumento
 --		,uniqueId
@@ -48,7 +53,7 @@ go
 --	    idPuntoEmision
 --		,idTiempoCredito
 --		,idCliente
---		,idEstadoDocumento
+--		,idEstadoPago
 --		,codDoc
 --		,idDocumento
 --		,uniqueId
