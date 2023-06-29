@@ -124,6 +124,8 @@
             factura.direccionComprador = cliente.direccionComprador;
             factura.email = cliente.email;
             factura.telefono = cliente.telefono;
+            factura.recargo = data.recargo || 0;
+            factura.propina = data.propina || 0;
 
             return {
                 factura: JSON.stringify(factura),
