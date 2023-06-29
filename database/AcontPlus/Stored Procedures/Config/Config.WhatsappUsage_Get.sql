@@ -31,7 +31,14 @@ BEGIN
 			INSERT INTO @tbl(ruc, razonSocial)
 			SELECT ruc, razonSocial FROM Entidad WITH (NOLOCK) WHERE estado = 1 GROUP BY ruc, razonSocial
 
-			SELECT wu.*, e.razonSocial FROM @tbl e
+			SELECT wu.idWhatsappUsage
+			,wu.fechaInicio
+			,wu.fechaFin
+			,wu.ilimitado
+			,wu.used
+			,wu.estado
+			,wu.idUsuario
+			,e.ruc, e.razonSocial FROM @tbl e
 										LEFT JOIN  Config.WhatsappUsage wu WITH(NOLOCK) ON wu.ruc = e.ruc ORDER BY e.razonSocial
 		END
 	IF @tipo = 2
