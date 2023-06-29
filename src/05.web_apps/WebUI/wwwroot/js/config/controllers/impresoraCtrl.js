@@ -31,6 +31,8 @@ function impresoraCtrl($scope, _commonSvc, mS, tS) {
                     return item;
                 })  
             }             
+        }).catch(error=>{
+            hideLoader();
         })
 
 
@@ -44,6 +46,8 @@ function impresoraCtrl($scope, _commonSvc, mS, tS) {
             } else {
                 tS.toastr('info', 'No tienes asignado las Sucursales')
             }
+        }).catch(error => {
+            hideLoader();
         })
         hideLoader();
     }
