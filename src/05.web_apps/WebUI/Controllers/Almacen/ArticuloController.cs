@@ -164,7 +164,7 @@ namespace WebUI.Controllers
         }
 
         [HttpGet]
-        //Get Data Articulo para Ventas 
+        //Get Data Articulo para Ventas
         public async Task<IActionResult> GetFormData(string json)
         {
             DbAccess _db = new DbAccess(_configuration);
