@@ -31,7 +31,7 @@ BEGIN
 			INSERT INTO @tbl(ruc, razonSocial)
 			SELECT ruc, razonSocial FROM Entidad WITH (NOLOCK) WHERE estado = 1 GROUP BY ruc, razonSocial
 
-			SELECT wu.idWhatsappUsage
+			SELECT ISNULL(wu.idWhatsappUsage, 0) idWhatsappUsage
 			,wu.fechaInicio
 			,wu.fechaFin
 			,wu.ilimitado
