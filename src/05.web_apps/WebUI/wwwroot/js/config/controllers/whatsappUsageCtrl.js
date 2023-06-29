@@ -35,15 +35,15 @@
         $scope.save = (item) => {
             showLoader()
             let method, url
-            if (!item.ruc) {
-                if (item.limite < 1) {
+            if (item.idWhatsappUsage == 0) {
+                if (item.limite < 1 && !item.ilimitado) {
                     _tS.toastr('warning', 'El limite debe ser mayor a 1')
                     return
                 }
                 method = "POST"
-                url = "WhatsappUsage"
+                url = "WhatsappUsage/"
             } else {
-                if (item.limite < 1) {
+                if (item.limite < 1 && !item.ilimitado) {
                     _tS.toastr('warning', 'El limite debe ser mayor a 1')
                     return
                 }

@@ -186,6 +186,12 @@
 	}
 
 	/**
+	 * @returns {number} */
+	function to_number(value) {
+		return value === '' ? null : +value;
+	}
+
+	/**
 	 * @param {Element} element
 	 * @returns {ChildNode[]}
 	 */
@@ -4314,42 +4320,460 @@
 	// this module should only have a default export
 	var axios$1 = axios;
 
+	const processQueue = (error) => {
+	    failedQueue.forEach((prom) => {
+	        if (error) {
+	            prom.reject(error);
+	        } else {
+	            prom.resolve();
+	        }
+	    });
+
+	    failedQueue = [];
+	};
+
+	function CreateAxiosClient({
+	    options,
+	    getCurrentAccessToken,
+	    getCurrentRefreshToken,
+	    refreshTokenUrl = null,
+	    logout,
+	    setRefreshedTokens,
+	}) {
+	    const client = axios$1.create(options);
+
+	    client.interceptors.request.use(
+	        (config) => {
+	            if (config.authorization !== false) {
+	                const token = getCurrentAccessToken();
+	                if (token) {
+	                    config.headers.Authorization = "Bearer " + token;
+	                }
+	            }
+	            return config;
+	        },
+	        (error) => {
+	            return Promise.reject(error);
+	        }
+	    );
+
+	    client.interceptors.response.use(
+	        (response) => {
+	            // Any status code that lie within the range of 2xx cause this function to trigger
+	            // Do something with response data
+	            return response.data;
+	        },
+	        (error) => {
+	            const originalRequest = error.config;
+	            // In "axios": "^1.1.3" there is an issue with headers, and this is the workaround.
+	            originalRequest.headers = JSON.parse(
+	                JSON.stringify(originalRequest.headers || {})
+	            );
+	            const refreshToken = getCurrentRefreshToken();
+
+	            // If error, process all the requests in the queue and logout the user.
+	            const handleError = (error) => {
+	                processQueue(error);
+	                logout();
+	                return Promise.reject(error);
+	            };
+
+	            // Refresh token conditions
+	            if (
+	                refreshToken &&
+	                error.response?.status === 401 &&
+	                error.response.data.message === "TokenExpiredError" &&
+	                originalRequest?.url !== refreshTokenUrl &&
+	                originalRequest?._retry !== true
+	            ) {
+
+	                if (isRefreshing) {
+	                    return new Promise(function (resolve, reject) {
+	                        failedQueue.push({ resolve, reject });
+	                    })
+	                        .then(() => {
+	                            return client(originalRequest);
+	                        })
+	                        .catch((err) => {
+	                            return Promise.reject(err);
+	                        });
+	                }
+	                isRefreshing = true;
+	                originalRequest._retry = true;
+	                return client
+	                    .post(refreshTokenUrl, {
+	                        refreshToken: refreshToken,
+	                    })
+	                    .then((res) => {
+	                        const tokens = {
+	                            accessToken: res.data?.accessToken,
+	                            refreshToken: res.data?.refreshToken,
+	                        };
+	                        setRefreshedTokens(tokens);
+	                        processQueue(null);
+
+	                        return client(originalRequest);
+	                    }, handleError)
+	                    .finally(() => {
+	                        isRefreshing = false;
+	                    });
+	            }
+
+	            // Refresh token missing or expired => logout user...
+	            if (
+	                error.response?.status === 401 &&
+	                error.response?.data?.message === "TokenExpiredError"
+	            ) {
+	                return handleError(error);
+	            }
+
+	            // Any status codes that falls outside the range of 2xx cause this function to trigger
+	            // Do something with response error
+	            return Promise.reject(error);
+	        }
+	    );
+	    return client;
+	}
+
 	function e(e){this.message=e;}e.prototype=new Error,e.prototype.name="InvalidCharacterError";var r="undefined"!=typeof window&&window.atob&&window.atob.bind(window)||function(r){var t=String(r).replace(/=+$/,"");if(t.length%4==1)throw new e("'atob' failed: The string to be decoded is not correctly encoded.");for(var n,o,a=0,i=0,c="";o=t.charAt(i++);~o&&(n=a%4?64*n+o:o,a++%4)?c+=String.fromCharCode(255&n>>(-2*a&6)):0)o="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".indexOf(o);return c};function t(e){var t=e.replace(/-/g,"+").replace(/_/g,"/");switch(t.length%4){case 0:break;case 2:t+="==";break;case 3:t+="=";break;default:throw "Illegal base64url string!"}try{return function(e){return decodeURIComponent(r(e).replace(/(.)/g,(function(e,r){var t=r.charCodeAt(0).toString(16).toUpperCase();return t.length<2&&(t="0"+t),"%"+t})))}(t)}catch(e){return r(t)}}function n(e){this.message=e;}function o(e,r){if("string"!=typeof e)throw new n("Invalid token specified");var o=!0===(r=r||{}).header?0:1;try{return JSON.parse(t(e.split(".")[o]))}catch(e){throw new n("Invalid token specified: "+e.message)}}n.prototype=new Error,n.prototype.name="InvalidTokenError";
+
+	function getCurrentAccessToken() {
+	        const cat = localStorage.getItem("ngStorage-currentUser");
+	        const objToken = JSON.parse(cat);
+	        return objToken.token;
+	        // this is how you access the zustand store outside of React.
+	        //return useAuthStore.getState().accessToken;
+	    }
+
+	    function getCurrentRefreshToken() {
+	        // this is how you access the zustand store outside of React.
+	        //return useAuthStore.getState().refreshToken;
+	    }
+
+	    function setRefreshedTokens(tokens) {
+	        console.log("set tokens...");
+	    }
+
+	    async function logout() {
+	        console.log("logout...");
+	    }
+	    console.log(getCurrentAccessToken());
+	    var decodedJwt = o(getCurrentAccessToken());
+		console.log(decodedJwt);
+
+	    const client = CreateAxiosClient({
+	        options: {
+	            baseURL: `${decodedJwt.urlGateway}`,
+	            timeout: 300000,
+	            headers: {
+	                "Content-Type": "application/json",
+	            },
+	        },
+	        getCurrentAccessToken,
+	        getCurrentRefreshToken,
+	        refreshTokenUrl: null,//refreshTokenUrl: REFRESH_TOKEN_URL,
+	        logout,
+	        setRefreshedTokens,
+	    });
 
 	/* wwwroot\js\Vet.svelte generated by Svelte v4.0.0 */
 
 	function add_css(target) {
-		append_styles(target, "svelte-8swdjs", "@import \"../dist/css/style.css\";");
+		append_styles(target, "svelte-ujbddh", "@import \"../dist/css/style.css\";.floating-results.svelte-ujbddh.svelte-ujbddh{position:absolute;z-index:1000;width:100%;max-height:300px;overflow-y:auto;background-color:#fff;border:1px solid #ced4da;border-top:none;border-radius:0 0 0.25rem 0.25rem;box-shadow:0px 2px 5px rgba(0, 0, 0, 0.15)}.floating-results.svelte-ujbddh .list-group-item.svelte-ujbddh{cursor:pointer}.floating-results.svelte-ujbddh .list-group-item.svelte-ujbddh:hover{background-color:#f8f9fa}");
 	}
 
 	function get_each_context(ctx, list, i) {
 		const child_ctx = ctx.slice();
-		child_ctx[5] = list[i];
+		child_ctx[10] = list[i];
 		return child_ctx;
 	}
 
 	function get_each_context_1(ctx, list, i) {
 		const child_ctx = ctx.slice();
-		child_ctx[26] = list[i];
+		child_ctx[32] = list[i];
 		return child_ctx;
 	}
 
 	function get_each_context_2(ctx, list, i) {
 		const child_ctx = ctx.slice();
-		child_ctx[26] = list[i];
+		child_ctx[32] = list[i];
 		return child_ctx;
 	}
 
 	function get_each_context_3(ctx, list, i) {
 		const child_ctx = ctx.slice();
-		child_ctx[26] = list[i];
+		child_ctx[32] = list[i];
 		return child_ctx;
 	}
 
-	// (166:4) {#each petSexes as sex}
+	function get_each_context_4(ctx, list, i) {
+		const child_ctx = ctx.slice();
+		child_ctx[32] = list[i];
+		return child_ctx;
+	}
+
+	// (207:32) {:else}
+	function create_else_block_2(ctx) {
+		let t;
+
+		return {
+			c() {
+				t = text("Editar Mascota");
+			},
+			m(target, anchor) {
+				insert(target, t, anchor);
+			},
+			d(detaching) {
+				if (detaching) {
+					detach(t);
+				}
+			}
+		};
+	}
+
+	// (207:1) {#if !editStatus}
+	function create_if_block_4(ctx) {
+		let t;
+
+		return {
+			c() {
+				t = text("Añadir Mascota");
+			},
+			m(target, anchor) {
+				insert(target, t, anchor);
+			},
+			d(detaching) {
+				if (detaching) {
+					detach(t);
+				}
+			}
+		};
+	}
+
+	// (239:4) {#if clients.length > 0 && !isClientSelected}
+	function create_if_block_3(ctx) {
+		let div;
+		let each_value_4 = ensure_array_like(/*clients*/ ctx[7]);
+		let each_blocks = [];
+
+		for (let i = 0; i < each_value_4.length; i += 1) {
+			each_blocks[i] = create_each_block_4(get_each_context_4(ctx, each_value_4, i));
+		}
+
+		return {
+			c() {
+				div = element("div");
+
+				for (let i = 0; i < each_blocks.length; i += 1) {
+					each_blocks[i].c();
+				}
+
+				attr(div, "class", "floating-results list-group svelte-ujbddh");
+			},
+			m(target, anchor) {
+				insert(target, div, anchor);
+
+				for (let i = 0; i < each_blocks.length; i += 1) {
+					if (each_blocks[i]) {
+						each_blocks[i].m(div, null);
+					}
+				}
+			},
+			p(ctx, dirty) {
+				if (dirty[0] & /*selectClient, clients*/ 131200) {
+					each_value_4 = ensure_array_like(/*clients*/ ctx[7]);
+					let i;
+
+					for (i = 0; i < each_value_4.length; i += 1) {
+						const child_ctx = get_each_context_4(ctx, each_value_4, i);
+
+						if (each_blocks[i]) {
+							each_blocks[i].p(child_ctx, dirty);
+						} else {
+							each_blocks[i] = create_each_block_4(child_ctx);
+							each_blocks[i].c();
+							each_blocks[i].m(div, null);
+						}
+					}
+
+					for (; i < each_blocks.length; i += 1) {
+						each_blocks[i].d(1);
+					}
+
+					each_blocks.length = each_value_4.length;
+				}
+			},
+			d(detaching) {
+				if (detaching) {
+					detach(div);
+				}
+
+				destroy_each(each_blocks, detaching);
+			}
+		};
+	}
+
+	// (241:6) {#each clients as item}
+	function create_each_block_4(ctx) {
+		let a;
+		let i;
+		let t0;
+		let t1_value = /*item*/ ctx[32].numeroIdentificacion + "";
+		let t1;
+		let t2;
+		let t3_value = /*item*/ ctx[32].nombreFiscal + "";
+		let t3;
+		let mounted;
+		let dispose;
+
+		return {
+			c() {
+				a = element("a");
+				i = element("i");
+				t0 = text(" - ");
+				t1 = text(t1_value);
+				t2 = text("\r\n\t\t\t\t\t\t\t\t- ");
+				t3 = text(t3_value);
+				attr(i, "class", "ti-user");
+				attr(a, "href", "#");
+				attr(a, "class", "list-group-item svelte-ujbddh");
+			},
+			m(target, anchor) {
+				insert(target, a, anchor);
+				append(a, i);
+				append(a, t0);
+				append(a, t1);
+				append(a, t2);
+				append(a, t3);
+
+				if (!mounted) {
+					dispose = listen(a, "click", function () {
+						if (is_function(/*selectClient*/ ctx[17](/*item*/ ctx[32]))) /*selectClient*/ ctx[17](/*item*/ ctx[32]).apply(this, arguments);
+					});
+
+					mounted = true;
+				}
+			},
+			p(new_ctx, dirty) {
+				ctx = new_ctx;
+				if (dirty[0] & /*clients*/ 128 && t1_value !== (t1_value = /*item*/ ctx[32].numeroIdentificacion + "")) set_data(t1, t1_value);
+				if (dirty[0] & /*clients*/ 128 && t3_value !== (t3_value = /*item*/ ctx[32].nombreFiscal + "")) set_data(t3, t3_value);
+			},
+			d(detaching) {
+				if (detaching) {
+					detach(a);
+				}
+
+				mounted = false;
+				dispose();
+			}
+		};
+	}
+
+	// (254:1) {#if isClientSelected}
+	function create_if_block_2(ctx) {
+		let div6;
+		let div1;
+		let div0;
+		let label0;
+		let t1;
+		let h50;
+		let t2_value = /*clientSelected*/ ctx[9].nombreFiscal + "";
+		let t2;
+		let t3;
+		let div3;
+		let div2;
+		let label1;
+		let t5;
+		let h51;
+		let t6_value = /*clientSelected*/ ctx[9].numeroIdentificacion + "";
+		let t6;
+		let t7;
+		let div5;
+		let div4;
+		let label2;
+		let t9;
+		let h52;
+		let t10_value = /*clientSelected*/ ctx[9].correo + "";
+		let t10;
+
+		return {
+			c() {
+				div6 = element("div");
+				div1 = element("div");
+				div0 = element("div");
+				label0 = element("label");
+				label0.textContent = "Cliente";
+				t1 = space();
+				h50 = element("h5");
+				t2 = text(t2_value);
+				t3 = space();
+				div3 = element("div");
+				div2 = element("div");
+				label1 = element("label");
+				label1.textContent = "Ruc";
+				t5 = space();
+				h51 = element("h5");
+				t6 = text(t6_value);
+				t7 = space();
+				div5 = element("div");
+				div4 = element("div");
+				label2 = element("label");
+				label2.textContent = "Email";
+				t9 = space();
+				h52 = element("h5");
+				t10 = text(t10_value);
+				attr(label0, "for", "");
+				attr(div0, "class", "form-group");
+				attr(div1, "class", "col-xl-4");
+				attr(label1, "for", "");
+				attr(div2, "class", "form-group");
+				attr(div3, "class", "col-xl-4");
+				attr(label2, "for", "");
+				attr(div4, "class", "form-group");
+				attr(div5, "class", "col-xl-4");
+				attr(div6, "class", "row");
+			},
+			m(target, anchor) {
+				insert(target, div6, anchor);
+				append(div6, div1);
+				append(div1, div0);
+				append(div0, label0);
+				append(div0, t1);
+				append(div0, h50);
+				append(h50, t2);
+				append(div6, t3);
+				append(div6, div3);
+				append(div3, div2);
+				append(div2, label1);
+				append(div2, t5);
+				append(div2, h51);
+				append(h51, t6);
+				append(div6, t7);
+				append(div6, div5);
+				append(div5, div4);
+				append(div4, label2);
+				append(div4, t9);
+				append(div4, h52);
+				append(h52, t10);
+			},
+			p(ctx, dirty) {
+				if (dirty[0] & /*clientSelected*/ 512 && t2_value !== (t2_value = /*clientSelected*/ ctx[9].nombreFiscal + "")) set_data(t2, t2_value);
+				if (dirty[0] & /*clientSelected*/ 512 && t6_value !== (t6_value = /*clientSelected*/ ctx[9].numeroIdentificacion + "")) set_data(t6, t6_value);
+				if (dirty[0] & /*clientSelected*/ 512 && t10_value !== (t10_value = /*clientSelected*/ ctx[9].correo + "")) set_data(t10, t10_value);
+			},
+			d(detaching) {
+				if (detaching) {
+					detach(div6);
+				}
+			}
+		};
+	}
+
+	// (299:5) {#each petTypes as item}
 	function create_each_block_3(ctx) {
 		let option;
-		let t_value = /*sex*/ ctx[26].name + "";
+		let t_value = /*item*/ ctx[32].name + "";
 		let t;
 		let option_value_value;
 
@@ -4357,7 +4781,7 @@
 			c() {
 				option = element("option");
 				t = text(t_value);
-				option.__value = option_value_value = /*sex*/ ctx[26].name;
+				option.__value = option_value_value = /*item*/ ctx[32].id;
 				set_input_value(option, option.__value);
 			},
 			m(target, anchor) {
@@ -4365,9 +4789,9 @@
 				append(option, t);
 			},
 			p(ctx, dirty) {
-				if (dirty[0] & /*petSexes*/ 1 && t_value !== (t_value = /*sex*/ ctx[26].name + "")) set_data(t, t_value);
+				if (dirty[0] & /*petTypes*/ 4 && t_value !== (t_value = /*item*/ ctx[32].name + "")) set_data(t, t_value);
 
-				if (dirty[0] & /*petSexes*/ 1 && option_value_value !== (option_value_value = /*sex*/ ctx[26].name)) {
+				if (dirty[0] & /*petTypes*/ 4 && option_value_value !== (option_value_value = /*item*/ ctx[32].id)) {
 					option.__value = option_value_value;
 					set_input_value(option, option.__value);
 				}
@@ -4380,10 +4804,10 @@
 		};
 	}
 
-	// (176:4) {#each petSexes as sex}
+	// (316:5) {#each petBreeds as item}
 	function create_each_block_2(ctx) {
 		let option;
-		let t_value = /*sex*/ ctx[26].name + "";
+		let t_value = /*item*/ ctx[32].name + "";
 		let t;
 		let option_value_value;
 
@@ -4391,7 +4815,7 @@
 			c() {
 				option = element("option");
 				t = text(t_value);
-				option.__value = option_value_value = /*sex*/ ctx[26].name;
+				option.__value = option_value_value = /*item*/ ctx[32].id;
 				set_input_value(option, option.__value);
 			},
 			m(target, anchor) {
@@ -4399,9 +4823,9 @@
 				append(option, t);
 			},
 			p(ctx, dirty) {
-				if (dirty[0] & /*petSexes*/ 1 && t_value !== (t_value = /*sex*/ ctx[26].name + "")) set_data(t, t_value);
+				if (dirty[0] & /*petBreeds*/ 2 && t_value !== (t_value = /*item*/ ctx[32].name + "")) set_data(t, t_value);
 
-				if (dirty[0] & /*petSexes*/ 1 && option_value_value !== (option_value_value = /*sex*/ ctx[26].name)) {
+				if (dirty[0] & /*petBreeds*/ 2 && option_value_value !== (option_value_value = /*item*/ ctx[32].id)) {
 					option.__value = option_value_value;
 					set_input_value(option, option.__value);
 				}
@@ -4414,10 +4838,10 @@
 		};
 	}
 
-	// (186:4) {#each petSexes as sex}
+	// (335:5) {#each petSexes as item}
 	function create_each_block_1(ctx) {
 		let option;
-		let t_value = /*sex*/ ctx[26].name + "";
+		let t_value = /*item*/ ctx[32].name + "";
 		let t;
 		let option_value_value;
 
@@ -4425,7 +4849,7 @@
 			c() {
 				option = element("option");
 				t = text(t_value);
-				option.__value = option_value_value = /*sex*/ ctx[26].name;
+				option.__value = option_value_value = /*item*/ ctx[32].id;
 				set_input_value(option, option.__value);
 			},
 			m(target, anchor) {
@@ -4433,9 +4857,9 @@
 				append(option, t);
 			},
 			p(ctx, dirty) {
-				if (dirty[0] & /*petSexes*/ 1 && t_value !== (t_value = /*sex*/ ctx[26].name + "")) set_data(t, t_value);
+				if (dirty[0] & /*petSexes*/ 1 && t_value !== (t_value = /*item*/ ctx[32].name + "")) set_data(t, t_value);
 
-				if (dirty[0] & /*petSexes*/ 1 && option_value_value !== (option_value_value = /*sex*/ ctx[26].name)) {
+				if (dirty[0] & /*petSexes*/ 1 && option_value_value !== (option_value_value = /*item*/ ctx[32].id)) {
 					option.__value = option_value_value;
 					set_input_value(option, option.__value);
 				}
@@ -4448,15 +4872,53 @@
 		};
 	}
 
-	// (210:8) {:else}
-	function create_else_block_2(ctx) {
+	// (370:28) {:else}
+	function create_else_block_1(ctx) {
+		let t;
+
+		return {
+			c() {
+				t = text("Actualizar");
+			},
+			m(target, anchor) {
+				insert(target, t, anchor);
+			},
+			d(detaching) {
+				if (detaching) {
+					detach(t);
+				}
+			}
+		};
+	}
+
+	// (370:2) {#if !editStatus}
+	function create_if_block_1(ctx) {
+		let t;
+
+		return {
+			c() {
+				t = text("Guardar");
+			},
+			m(target, anchor) {
+				insert(target, t, anchor);
+			},
+			d(detaching) {
+				if (detaching) {
+					detach(t);
+				}
+			}
+		};
+	}
+
+	// (391:8) {:else}
+	function create_else_block(ctx) {
 		let img;
 		let img_src_value;
 
 		return {
 			c() {
 				img = element("img");
-				if (!src_url_equal(img.src, img_src_value = /*product*/ ctx[5].imageURL)) attr(img, "src", img_src_value);
+				if (!src_url_equal(img.src, img_src_value = /*product*/ ctx[10].imageURL)) attr(img, "src", img_src_value);
 				attr(img, "class", "p-2 img-fluid");
 				attr(img, "alt", "Image");
 			},
@@ -4464,7 +4926,7 @@
 				insert(target, img, anchor);
 			},
 			p(ctx, dirty) {
-				if (dirty[0] & /*products*/ 2 && !src_url_equal(img.src, img_src_value = /*product*/ ctx[5].imageURL)) {
+				if (dirty[0] & /*products*/ 8 && !src_url_equal(img.src, img_src_value = /*product*/ ctx[10].imageURL)) {
 					attr(img, "src", img_src_value);
 				}
 			},
@@ -4476,8 +4938,8 @@
 		};
 	}
 
-	// (204:8) {#if !product.imageURL}
-	function create_if_block_2(ctx) {
+	// (384:8) {#if !product.imageURL}
+	function create_if_block(ctx) {
 		let img;
 		let img_src_value;
 
@@ -4500,7 +4962,7 @@
 		};
 	}
 
-	// (198:4) {#each products as product}
+	// (378:4) {#each products as product}
 	function create_each_block(ctx) {
 		let div4;
 		let div3;
@@ -4510,16 +4972,16 @@
 		let div1;
 		let h5;
 		let strong;
-		let t1_value = /*product*/ ctx[5].name + "";
+		let t1_value = /*pet*/ ctx[4].name + "";
 		let t1;
 		let t2;
 		let span;
 		let small;
-		let t3_value = /*product*/ ctx[5].category + "";
+		let t3_value = /*product*/ ctx[10].category + "";
 		let t3;
 		let t4;
 		let p;
-		let t5_value = /*product*/ ctx[5].description + "";
+		let t5_value = /*pet*/ ctx[4].age + "";
 		let t5;
 		let t6;
 		let button0;
@@ -4529,12 +4991,12 @@
 		let mounted;
 		let dispose;
 
-		function select_block_type(ctx, dirty) {
-			if (!/*product*/ ctx[5].imageURL) return create_if_block_2;
-			return create_else_block_2;
+		function select_block_type_2(ctx, dirty) {
+			if (!/*product*/ ctx[10].imageURL) return create_if_block;
+			return create_else_block;
 		}
 
-		let current_block_type = select_block_type(ctx);
+		let current_block_type = select_block_type_2(ctx);
 		let if_block = current_block_type(ctx);
 
 		return {
@@ -4600,10 +5062,10 @@
 				if (!mounted) {
 					dispose = [
 						listen(button0, "click", function () {
-							if (is_function(/*deleteProduct*/ ctx[6](/*product*/ ctx[5].id))) /*deleteProduct*/ ctx[6](/*product*/ ctx[5].id).apply(this, arguments);
+							if (is_function(/*deletePet*/ ctx[11](/*product*/ ctx[10].id))) /*deletePet*/ ctx[11](/*product*/ ctx[10].id).apply(this, arguments);
 						}),
 						listen(button1, "click", function () {
-							if (is_function(/*editProduct*/ ctx[7](/*product*/ ctx[5]))) /*editProduct*/ ctx[7](/*product*/ ctx[5]).apply(this, arguments);
+							if (is_function(/*editPet*/ ctx[12](/*product*/ ctx[10]))) /*editPet*/ ctx[12](/*product*/ ctx[10]).apply(this, arguments);
 						})
 					];
 
@@ -4613,7 +5075,7 @@
 			p(new_ctx, dirty) {
 				ctx = new_ctx;
 
-				if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block) {
+				if (current_block_type === (current_block_type = select_block_type_2(ctx)) && if_block) {
 					if_block.p(ctx, dirty);
 				} else {
 					if_block.d(1);
@@ -4625,9 +5087,9 @@
 					}
 				}
 
-				if (dirty[0] & /*products*/ 2 && t1_value !== (t1_value = /*product*/ ctx[5].name + "")) set_data(t1, t1_value);
-				if (dirty[0] & /*products*/ 2 && t3_value !== (t3_value = /*product*/ ctx[5].category + "")) set_data(t3, t3_value);
-				if (dirty[0] & /*products*/ 2 && t5_value !== (t5_value = /*product*/ ctx[5].description + "")) set_data(t5, t5_value);
+				if (dirty[0] & /*pet*/ 16 && t1_value !== (t1_value = /*pet*/ ctx[4].name + "")) set_data(t1, t1_value);
+				if (dirty[0] & /*products*/ 8 && t3_value !== (t3_value = /*product*/ ctx[10].category + "")) set_data(t3, t3_value);
+				if (dirty[0] & /*pet*/ 16 && t5_value !== (t5_value = /*pet*/ ctx[4].age + "")) set_data(t5, t5_value);
 			},
 			d(detaching) {
 				if (detaching) {
@@ -4641,167 +5103,96 @@
 		};
 	}
 
-	// (251:38) {:else}
-	function create_else_block_1(ctx) {
-		let t;
-
-		return {
-			c() {
-				t = text("Editar Mascota");
-			},
-			m(target, anchor) {
-				insert(target, t, anchor);
-			},
-			d(detaching) {
-				if (detaching) {
-					detach(t);
-				}
-			}
-		};
-	}
-
-	// (251:7) {#if !editStatus}
-	function create_if_block_1(ctx) {
-		let t;
-
-		return {
-			c() {
-				t = text("Añadir Mascota");
-			},
-			m(target, anchor) {
-				insert(target, t, anchor);
-			},
-			d(detaching) {
-				if (detaching) {
-					detach(t);
-				}
-			}
-		};
-	}
-
-	// (309:37) {:else}
-	function create_else_block(ctx) {
-		let t;
-
-		return {
-			c() {
-				t = text("Update\r\n\t\t\t\t\t\t\t\t\tProduct");
-			},
-			m(target, anchor) {
-				insert(target, t, anchor);
-			},
-			d(detaching) {
-				if (detaching) {
-					detach(t);
-				}
-			}
-		};
-	}
-
-	// (309:8) {#if !editStatus}
-	function create_if_block(ctx) {
-		let t;
-
-		return {
-			c() {
-				t = text("Save Product");
-			},
-			m(target, anchor) {
-				insert(target, t, anchor);
-			},
-			d(detaching) {
-				if (detaching) {
-					detach(t);
-				}
-			}
-		};
-	}
-
 	function create_fragment(ctx) {
-		let input0;
+		let h5;
 		let t0;
+		let form;
+		let div3;
+		let div2;
+		let div1;
 		let div0;
+		let input0;
 		let t1;
 		let t2;
 		let t3;
-		let div1;
-		let t4;
-		let t5;
-		let t6;
-		let div8;
-		let div3;
-		let div2;
-		let label0;
-		let t8;
-		let select0;
-		let t9;
+		let div10;
 		let div5;
 		let div4;
-		let label1;
-		let t11;
-		let select1;
-		let t12;
+		let label0;
+		let t5;
+		let input1;
+		let t6;
 		let div7;
 		let div6;
-		let label2;
-		let t14;
-		let select2;
-		let t15;
-		let main;
-		let div18;
-		let div17;
+		let label1;
+		let t8;
+		let select0;
+		let option0;
+		let t10;
 		let div9;
+		let div8;
+		let label2;
+		let t12;
+		let select1;
+		let option1;
+		let t14;
+		let div17;
+		let div12;
+		let div11;
+		let label3;
 		let t16;
+		let select2;
+		let option2;
+		let t18;
+		let div14;
+		let div13;
+		let label4;
+		let t20;
+		let input2;
+		let t21;
 		let div16;
 		let div15;
-		let div14;
-		let h2;
-		let t17;
-		let form;
-		let div10;
-		let label3;
-		let t19;
-		let input1;
-		let t20;
-		let div11;
-		let label4;
-		let t22;
-		let textarea;
-		let t23;
-		let div12;
 		let label5;
-		let t25;
-		let input2;
-		let t26;
-		let div13;
-		let label6;
-		let t28;
-		let select3;
-		let option0;
-		let option1;
-		let option2;
-		let option3;
-		let t33;
+		let t23;
+		let input3;
+		let t24;
 		let button;
+		let i;
+		let t25;
+		let t26;
+		let main;
+		let div20;
+		let div19;
+		let div18;
 		let current;
 		let mounted;
 		let dispose;
 
+		function select_block_type(ctx, dirty) {
+			if (!/*editStatus*/ ctx[5]) return create_if_block_4;
+			return create_else_block_2;
+		}
+
+		let current_block_type = select_block_type(ctx);
+		let if_block0 = current_block_type(ctx);
+
 		input0 = new Input({
-				props: { value: /*value*/ ctx[3], placeholder }
+				props: { value: /*value*/ ctx[6], placeholder }
 			});
 
-		input0.$on("input", /*onInput*/ ctx[9]);
-		input0.$on("focus", /*onFocus*/ ctx[10]);
-		input0.$on("blur", /*onBlur*/ ctx[11]);
-		let each_value_3 = ensure_array_like(/*petSexes*/ ctx[0]);
+		input0.$on("input", /*onInput*/ ctx[14]);
+		input0.$on("focus", /*onFocus*/ ctx[15]);
+		input0.$on("blur", /*onBlur*/ ctx[16]);
+		let if_block1 = /*clients*/ ctx[7].length > 0 && !/*isClientSelected*/ ctx[8] && create_if_block_3(ctx);
+		let if_block2 = /*isClientSelected*/ ctx[8] && create_if_block_2(ctx);
+		let each_value_3 = ensure_array_like(/*petTypes*/ ctx[2]);
 		let each_blocks_3 = [];
 
 		for (let i = 0; i < each_value_3.length; i += 1) {
 			each_blocks_3[i] = create_each_block_3(get_each_context_3(ctx, each_value_3, i));
 		}
 
-		let each_value_2 = ensure_array_like(/*petSexes*/ ctx[0]);
+		let each_value_2 = ensure_array_like(/*petBreeds*/ ctx[1]);
 		let each_blocks_2 = [];
 
 		for (let i = 0; i < each_value_2.length; i += 1) {
@@ -4815,208 +5206,212 @@
 			each_blocks_1[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
 		}
 
-		let each_value = ensure_array_like(/*products*/ ctx[1]);
+		function select_block_type_1(ctx, dirty) {
+			if (!/*editStatus*/ ctx[5]) return create_if_block_1;
+			return create_else_block_1;
+		}
+
+		let current_block_type_1 = select_block_type_1(ctx);
+		let if_block3 = current_block_type_1(ctx);
+		let each_value = ensure_array_like(/*products*/ ctx[3]);
 		let each_blocks = [];
 
 		for (let i = 0; i < each_value.length; i += 1) {
 			each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
 		}
 
-		function select_block_type_1(ctx, dirty) {
-			if (!/*editStatus*/ ctx[2]) return create_if_block_1;
-			return create_else_block_1;
-		}
-
-		let current_block_type = select_block_type_1(ctx);
-		let if_block0 = current_block_type(ctx);
-
-		function select_block_type_2(ctx, dirty) {
-			if (!/*editStatus*/ ctx[2]) return create_if_block;
-			return create_else_block;
-		}
-
-		let current_block_type_1 = select_block_type_2(ctx);
-		let if_block1 = current_block_type_1(ctx);
-
 		return {
 			c() {
-				create_component(input0.$$.fragment);
+				h5 = element("h5");
+				if_block0.c();
 				t0 = space();
-				div0 = element("div");
-				t1 = text("Focus: ");
-				t2 = text(/*isFocused*/ ctx[4]);
-				t3 = space();
-				div1 = element("div");
-				t4 = text("Value: ");
-				t5 = text(/*value*/ ctx[3]);
-				t6 = space();
-				div8 = element("div");
+				form = element("form");
 				div3 = element("div");
 				div2 = element("div");
+				div1 = element("div");
+				div0 = element("div");
+				create_component(input0.$$.fragment);
+				t1 = space();
+				if (if_block1) if_block1.c();
+				t2 = space();
+				if (if_block2) if_block2.c();
+				t3 = space();
+				div10 = element("div");
+				div5 = element("div");
+				div4 = element("div");
 				label0 = element("label");
-				label0.textContent = "Sexo:";
+				label0.textContent = "Nombre";
+				t5 = space();
+				input1 = element("input");
+				t6 = space();
+				div7 = element("div");
+				div6 = element("div");
+				label1 = element("label");
+				label1.textContent = "Tipo:";
 				t8 = space();
 				select0 = element("select");
+				option0 = element("option");
+				option0.textContent = "Seleccione el tipo";
 
 				for (let i = 0; i < each_blocks_3.length; i += 1) {
 					each_blocks_3[i].c();
 				}
 
-				t9 = space();
-				div5 = element("div");
-				div4 = element("div");
-				label1 = element("label");
-				label1.textContent = "Tipo:";
-				t11 = space();
+				t10 = space();
+				div9 = element("div");
+				div8 = element("div");
+				label2 = element("label");
+				label2.textContent = "Raza:";
+				t12 = space();
 				select1 = element("select");
+				option1 = element("option");
+				option1.textContent = "Seleccione la raza";
 
 				for (let i = 0; i < each_blocks_2.length; i += 1) {
 					each_blocks_2[i].c();
 				}
 
-				t12 = space();
-				div7 = element("div");
-				div6 = element("div");
-				label2 = element("label");
-				label2.textContent = "Raza:";
 				t14 = space();
+				div17 = element("div");
+				div12 = element("div");
+				div11 = element("div");
+				label3 = element("label");
+				label3.textContent = "Sexo:";
+				t16 = space();
 				select2 = element("select");
+				option2 = element("option");
+				option2.textContent = "Seleccione el sexo";
 
 				for (let i = 0; i < each_blocks_1.length; i += 1) {
 					each_blocks_1[i].c();
 				}
 
-				t15 = space();
+				t18 = space();
+				div14 = element("div");
+				div13 = element("div");
+				label4 = element("label");
+				label4.textContent = "Edad";
+				t20 = space();
+				input2 = element("input");
+				t21 = space();
+				div16 = element("div");
+				div15 = element("div");
+				label5 = element("label");
+				label5.textContent = "Color";
+				t23 = space();
+				input3 = element("input");
+				t24 = space();
+				button = element("button");
+				i = element("i");
+				t25 = space();
+				if_block3.c();
+				t26 = space();
 				main = element("main");
+				div20 = element("div");
+				div19 = element("div");
 				div18 = element("div");
-				div17 = element("div");
-				div9 = element("div");
 
 				for (let i = 0; i < each_blocks.length; i += 1) {
 					each_blocks[i].c();
 				}
 
-				t16 = space();
-				div16 = element("div");
-				div15 = element("div");
-				div14 = element("div");
-				h2 = element("h2");
-				if_block0.c();
-				t17 = space();
-				form = element("form");
-				div10 = element("div");
-				label3 = element("label");
-				label3.textContent = "Product Name";
-				t19 = space();
-				input1 = element("input");
-				t20 = space();
-				div11 = element("div");
-				label4 = element("label");
-				label4.textContent = "Product Description";
-				t22 = space();
-				textarea = element("textarea");
-				t23 = space();
-				div12 = element("div");
-				label5 = element("label");
-				label5.textContent = "Product Image URL";
-				t25 = space();
-				input2 = element("input");
-				t26 = space();
-				div13 = element("div");
-				label6 = element("label");
-				label6.textContent = "Product Category";
-				t28 = space();
-				select3 = element("select");
-				option0 = element("option");
-				option0.textContent = "Select a Category";
-				option1 = element("option");
-				option1.textContent = "Laptops";
-				option2 = element("option");
-				option2.textContent = "Peripherals";
-				option3 = element("option");
-				option3.textContent = "Servers";
-				t33 = space();
-				button = element("button");
-				if_block1.c();
-				attr(label0, "for", "petSex");
-				attr(select0, "name", "");
-				attr(select0, "id", "");
-				attr(select0, "class", "form-control");
-				attr(div2, "class", "form-group");
-				attr(div3, "class", "col-md-4");
-				attr(label1, "for", "petType");
-				attr(select1, "name", "");
-				attr(select1, "id", "petType");
-				attr(select1, "class", "form-control");
-				attr(div4, "class", "form-group");
-				attr(div5, "class", "col-md-4");
-				attr(label2, "for", "petBreed");
-				attr(select2, "name", "");
-				attr(select2, "id", "petBreed");
-				attr(select2, "class", "form-control");
-				attr(div6, "class", "form-group");
-				attr(div7, "class", "col-md-4");
-				attr(div8, "class", "row");
-				attr(div9, "class", "col-md-6");
-				attr(h2, "class", "card-title");
-				attr(label3, "for", "product-name");
+				attr(h5, "class", "card-title");
+				attr(div0, "class", "input-group");
+				attr(div1, "class", "form-group");
+				attr(div2, "class", "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12");
+				attr(div3, "class", "row");
+				attr(label0, "for", "pet-name");
 				attr(input1, "type", "text");
 				attr(input1, "class", "form-control");
-				attr(input1, "id", "product-name");
-				attr(input1, "placeholder", "Product Name");
-				attr(div10, "class", "form-group");
-				attr(label4, "for", "product-description");
-				attr(textarea, "id", "product-description");
-				attr(textarea, "rows", "3");
-				attr(textarea, "class", "form-control");
-				attr(textarea, "placeholder", "Product Description");
-				attr(div11, "class", "form-group");
-				attr(label5, "for", "produtc-image-url");
-				attr(input2, "type", "url");
-				attr(input2, "id", "product-image-url");
-				attr(input2, "class", "form-control");
-				attr(input2, "placeholder", "https://faztweb.com");
-				attr(div12, "class", "form-group");
-				attr(label6, "for", "category");
+				attr(input1, "id", "pet-name");
+				attr(input1, "placeholder", "Nombre");
+				attr(div4, "class", "form-group");
+				attr(div5, "class", "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12");
+				attr(label1, "for", "petType");
 				option0.selected = true;
 				option0.disabled = true;
-				option0.__value = "Select a Category";
+				option0.__value = "Seleccione el tipo";
 				set_input_value(option0, option0.__value);
-				option1.__value = "laptops";
+				attr(select0, "name", "petType");
+				attr(select0, "id", "petType");
+				attr(select0, "class", "form-control");
+				if (/*pet*/ ctx[4].petTypeId === void 0) add_render_callback(() => /*select0_change_handler*/ ctx[19].call(select0));
+				attr(div6, "class", "form-group");
+				attr(div7, "class", "col-xl-3 col-lg-3 col-md-3 col-sm-3 col-3");
+				attr(label2, "for", "petBreed");
+				option1.selected = true;
+				option1.disabled = true;
+				option1.__value = "Seleccione la raza";
 				set_input_value(option1, option1.__value);
-				option2.__value = "peripherals";
+				attr(select1, "name", "petBreed");
+				attr(select1, "id", "petBreed");
+				attr(select1, "class", "form-control");
+				if (/*pet*/ ctx[4].petBreedId === void 0) add_render_callback(() => /*select1_change_handler*/ ctx[20].call(select1));
+				attr(div8, "class", "form-group");
+				attr(div9, "class", "col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6");
+				attr(div10, "class", "row");
+				attr(label3, "for", "petSex");
+				option2.selected = true;
+				option2.disabled = true;
+				option2.__value = "Seleccione el sexo";
 				set_input_value(option2, option2.__value);
-				option3.__value = "servers";
-				set_input_value(option3, option3.__value);
-				attr(select3, "id", "category");
-				attr(select3, "class", "form-control");
-				if (/*product*/ ctx[5].category === void 0) add_render_callback(() => /*select3_change_handler*/ ctx[15].call(select3));
+				attr(select2, "name", "petSex");
+				attr(select2, "id", "petSex");
+				attr(select2, "class", "form-control");
+				if (/*pet*/ ctx[4].petSexId === void 0) add_render_callback(() => /*select2_change_handler*/ ctx[21].call(select2));
+				attr(div11, "class", "form-group");
+				attr(div12, "class", "col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6");
+				attr(label4, "for", "pet-age");
+				attr(input2, "type", "number");
+				attr(input2, "id", "pet-age");
+				attr(input2, "class", "form-control");
+				attr(input2, "step", "any");
 				attr(div13, "class", "form-group");
-				attr(button, "type", "submit");
-				attr(button, "class", "btn btn-primary");
-				attr(div14, "class", "card-body");
-				attr(div15, "class", "card");
-				attr(div16, "class", "col-md-6");
+				attr(div14, "class", "col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6");
+				attr(label5, "for", "pet-color");
+				attr(input3, "type", "text");
+				attr(input3, "id", "pet-color");
+				attr(input3, "class", "form-control");
+				attr(input3, "placeholder", "blanco");
+				attr(div15, "class", "form-group");
+				attr(div16, "class", "col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6");
 				attr(div17, "class", "row");
-				attr(div18, "class", "container p-4");
+				attr(i, "class", "ti-save");
+				attr(button, "type", "submit");
+				attr(button, "class", "btn btn-success");
+				attr(div18, "class", "col-md-6");
+				attr(div19, "class", "row");
+				attr(div20, "class", "container p-4");
 			},
 			m(target, anchor) {
-				mount_component(input0, target, anchor);
+				insert(target, h5, anchor);
+				if_block0.m(h5, null);
 				insert(target, t0, anchor);
-				insert(target, div0, anchor);
-				append(div0, t1);
-				append(div0, t2);
-				insert(target, t3, anchor);
-				insert(target, div1, anchor);
-				append(div1, t4);
-				append(div1, t5);
-				insert(target, t6, anchor);
-				insert(target, div8, anchor);
-				append(div8, div3);
+				insert(target, form, anchor);
+				append(form, div3);
 				append(div3, div2);
-				append(div2, label0);
-				append(div2, t8);
-				append(div2, select0);
+				append(div2, div1);
+				append(div1, div0);
+				mount_component(input0, div0, null);
+				append(div1, t1);
+				if (if_block1) if_block1.m(div1, null);
+				append(form, t2);
+				if (if_block2) if_block2.m(form, null);
+				append(form, t3);
+				append(form, div10);
+				append(div10, div5);
+				append(div5, div4);
+				append(div4, label0);
+				append(div4, t5);
+				append(div4, input1);
+				set_input_value(input1, /*pet*/ ctx[4].name);
+				append(div10, t6);
+				append(div10, div7);
+				append(div7, div6);
+				append(div6, label1);
+				append(div6, t8);
+				append(div6, select0);
+				append(select0, option0);
 
 				for (let i = 0; i < each_blocks_3.length; i += 1) {
 					if (each_blocks_3[i]) {
@@ -5024,12 +5419,14 @@
 					}
 				}
 
-				append(div8, t9);
-				append(div8, div5);
-				append(div5, div4);
-				append(div4, label1);
-				append(div4, t11);
-				append(div4, select1);
+				select_option(select0, /*pet*/ ctx[4].petTypeId, true);
+				append(div10, t10);
+				append(div10, div9);
+				append(div9, div8);
+				append(div8, label2);
+				append(div8, t12);
+				append(div8, select1);
+				append(select1, option1);
 
 				for (let i = 0; i < each_blocks_2.length; i += 1) {
 					if (each_blocks_2[i]) {
@@ -5037,12 +5434,15 @@
 					}
 				}
 
-				append(div8, t12);
-				append(div8, div7);
-				append(div7, div6);
-				append(div6, label2);
-				append(div6, t14);
-				append(div6, select2);
+				select_option(select1, /*pet*/ ctx[4].petBreedId, true);
+				append(form, t14);
+				append(form, div17);
+				append(div17, div12);
+				append(div12, div11);
+				append(div11, label3);
+				append(div11, t16);
+				append(div11, select2);
+				append(select2, option2);
 
 				for (let i = 0; i < each_blocks_1.length; i += 1) {
 					if (each_blocks_1[i]) {
@@ -5050,79 +5450,101 @@
 					}
 				}
 
-				insert(target, t15, anchor);
+				select_option(select2, /*pet*/ ctx[4].petSexId, true);
+				append(div17, t18);
+				append(div17, div14);
+				append(div14, div13);
+				append(div13, label4);
+				append(div13, t20);
+				append(div13, input2);
+				set_input_value(input2, /*pet*/ ctx[4].age);
+				append(div17, t21);
+				append(div17, div16);
+				append(div16, div15);
+				append(div15, label5);
+				append(div15, t23);
+				append(div15, input3);
+				set_input_value(input3, /*pet*/ ctx[4].color);
+				append(form, t24);
+				append(form, button);
+				append(button, i);
+				append(button, t25);
+				if_block3.m(button, null);
+				insert(target, t26, anchor);
 				insert(target, main, anchor);
-				append(main, div18);
-				append(div18, div17);
-				append(div17, div9);
+				append(main, div20);
+				append(div20, div19);
+				append(div19, div18);
 
 				for (let i = 0; i < each_blocks.length; i += 1) {
 					if (each_blocks[i]) {
-						each_blocks[i].m(div9, null);
+						each_blocks[i].m(div18, null);
 					}
 				}
 
-				append(div17, t16);
-				append(div17, div16);
-				append(div16, div15);
-				append(div15, div14);
-				append(div14, h2);
-				if_block0.m(h2, null);
-				append(div14, t17);
-				append(div14, form);
-				append(form, div10);
-				append(div10, label3);
-				append(div10, t19);
-				append(div10, input1);
-				set_input_value(input1, /*product*/ ctx[5].name);
-				append(form, t20);
-				append(form, div11);
-				append(div11, label4);
-				append(div11, t22);
-				append(div11, textarea);
-				set_input_value(textarea, /*product*/ ctx[5].description);
-				append(form, t23);
-				append(form, div12);
-				append(div12, label5);
-				append(div12, t25);
-				append(div12, input2);
-				set_input_value(input2, /*product*/ ctx[5].imageURL);
-				append(form, t26);
-				append(form, div13);
-				append(div13, label6);
-				append(div13, t28);
-				append(div13, select3);
-				append(select3, option0);
-				append(select3, option1);
-				append(select3, option2);
-				append(select3, option3);
-				select_option(select3, /*product*/ ctx[5].category, true);
-				append(form, t33);
-				append(form, button);
-				if_block1.m(button, null);
 				current = true;
 
 				if (!mounted) {
 					dispose = [
-						listen(input1, "input", /*input1_input_handler*/ ctx[12]),
-						listen(textarea, "input", /*textarea_input_handler*/ ctx[13]),
-						listen(input2, "input", /*input2_input_handler*/ ctx[14]),
-						listen(select3, "change", /*select3_change_handler*/ ctx[15]),
-						listen(form, "submit", prevent_default(/*onSubmitHandler*/ ctx[8]))
+						listen(input1, "input", /*input1_input_handler*/ ctx[18]),
+						listen(select0, "change", /*select0_change_handler*/ ctx[19]),
+						listen(select1, "change", /*select1_change_handler*/ ctx[20]),
+						listen(select2, "change", /*select2_change_handler*/ ctx[21]),
+						listen(input2, "input", /*input2_input_handler*/ ctx[22]),
+						listen(input3, "input", /*input3_input_handler*/ ctx[23]),
+						listen(form, "submit", prevent_default(/*onSubmitHandler*/ ctx[13]))
 					];
 
 					mounted = true;
 				}
 			},
 			p(ctx, dirty) {
-				const input0_changes = {};
-				if (dirty[0] & /*value*/ 8) input0_changes.value = /*value*/ ctx[3];
-				input0.$set(input0_changes);
-				if (!current || dirty[0] & /*isFocused*/ 16) set_data(t2, /*isFocused*/ ctx[4]);
-				if (!current || dirty[0] & /*value*/ 8) set_data(t5, /*value*/ ctx[3]);
+				if (current_block_type !== (current_block_type = select_block_type(ctx))) {
+					if_block0.d(1);
+					if_block0 = current_block_type(ctx);
 
-				if (dirty[0] & /*petSexes*/ 1) {
-					each_value_3 = ensure_array_like(/*petSexes*/ ctx[0]);
+					if (if_block0) {
+						if_block0.c();
+						if_block0.m(h5, null);
+					}
+				}
+
+				const input0_changes = {};
+				if (dirty[0] & /*value*/ 64) input0_changes.value = /*value*/ ctx[6];
+				input0.$set(input0_changes);
+
+				if (/*clients*/ ctx[7].length > 0 && !/*isClientSelected*/ ctx[8]) {
+					if (if_block1) {
+						if_block1.p(ctx, dirty);
+					} else {
+						if_block1 = create_if_block_3(ctx);
+						if_block1.c();
+						if_block1.m(div1, null);
+					}
+				} else if (if_block1) {
+					if_block1.d(1);
+					if_block1 = null;
+				}
+
+				if (/*isClientSelected*/ ctx[8]) {
+					if (if_block2) {
+						if_block2.p(ctx, dirty);
+					} else {
+						if_block2 = create_if_block_2(ctx);
+						if_block2.c();
+						if_block2.m(form, t3);
+					}
+				} else if (if_block2) {
+					if_block2.d(1);
+					if_block2 = null;
+				}
+
+				if (dirty[0] & /*pet, petTypes*/ 20 && input1.value !== /*pet*/ ctx[4].name) {
+					set_input_value(input1, /*pet*/ ctx[4].name);
+				}
+
+				if (dirty[0] & /*petTypes*/ 4) {
+					each_value_3 = ensure_array_like(/*petTypes*/ ctx[2]);
 					let i;
 
 					for (i = 0; i < each_value_3.length; i += 1) {
@@ -5144,8 +5566,12 @@
 					each_blocks_3.length = each_value_3.length;
 				}
 
-				if (dirty[0] & /*petSexes*/ 1) {
-					each_value_2 = ensure_array_like(/*petSexes*/ ctx[0]);
+				if (dirty[0] & /*pet, petTypes*/ 20) {
+					select_option(select0, /*pet*/ ctx[4].petTypeId);
+				}
+
+				if (dirty[0] & /*petBreeds*/ 2) {
+					each_value_2 = ensure_array_like(/*petBreeds*/ ctx[1]);
 					let i;
 
 					for (i = 0; i < each_value_2.length; i += 1) {
@@ -5165,6 +5591,10 @@
 					}
 
 					each_blocks_2.length = each_value_2.length;
+				}
+
+				if (dirty[0] & /*pet, petTypes*/ 20) {
+					select_option(select1, /*pet*/ ctx[4].petBreedId);
 				}
 
 				if (dirty[0] & /*petSexes*/ 1) {
@@ -5190,8 +5620,30 @@
 					each_blocks_1.length = each_value_1.length;
 				}
 
-				if (dirty[0] & /*editProduct, products, deleteProduct*/ 194) {
-					each_value = ensure_array_like(/*products*/ ctx[1]);
+				if (dirty[0] & /*pet, petTypes*/ 20) {
+					select_option(select2, /*pet*/ ctx[4].petSexId);
+				}
+
+				if (dirty[0] & /*pet, petTypes*/ 20 && to_number(input2.value) !== /*pet*/ ctx[4].age) {
+					set_input_value(input2, /*pet*/ ctx[4].age);
+				}
+
+				if (dirty[0] & /*pet, petTypes*/ 20 && input3.value !== /*pet*/ ctx[4].color) {
+					set_input_value(input3, /*pet*/ ctx[4].color);
+				}
+
+				if (current_block_type_1 !== (current_block_type_1 = select_block_type_1(ctx))) {
+					if_block3.d(1);
+					if_block3 = current_block_type_1(ctx);
+
+					if (if_block3) {
+						if_block3.c();
+						if_block3.m(button, null);
+					}
+				}
+
+				if (dirty[0] & /*editPet, products, deletePet, pet*/ 6168) {
+					each_value = ensure_array_like(/*products*/ ctx[3]);
 					let i;
 
 					for (i = 0; i < each_value.length; i += 1) {
@@ -5202,7 +5654,7 @@
 						} else {
 							each_blocks[i] = create_each_block(child_ctx);
 							each_blocks[i].c();
-							each_blocks[i].m(div9, null);
+							each_blocks[i].m(div18, null);
 						}
 					}
 
@@ -5211,42 +5663,6 @@
 					}
 
 					each_blocks.length = each_value.length;
-				}
-
-				if (current_block_type !== (current_block_type = select_block_type_1(ctx))) {
-					if_block0.d(1);
-					if_block0 = current_block_type(ctx);
-
-					if (if_block0) {
-						if_block0.c();
-						if_block0.m(h2, null);
-					}
-				}
-
-				if (dirty[0] & /*product*/ 32 && input1.value !== /*product*/ ctx[5].name) {
-					set_input_value(input1, /*product*/ ctx[5].name);
-				}
-
-				if (dirty[0] & /*product*/ 32) {
-					set_input_value(textarea, /*product*/ ctx[5].description);
-				}
-
-				if (dirty[0] & /*product*/ 32 && input2.value !== /*product*/ ctx[5].imageURL) {
-					set_input_value(input2, /*product*/ ctx[5].imageURL);
-				}
-
-				if (dirty[0] & /*product*/ 32) {
-					select_option(select3, /*product*/ ctx[5].category);
-				}
-
-				if (current_block_type_1 !== (current_block_type_1 = select_block_type_2(ctx))) {
-					if_block1.d(1);
-					if_block1 = current_block_type_1(ctx);
-
-					if (if_block1) {
-						if_block1.c();
-						if_block1.m(button, null);
-					}
 				}
 			},
 			i(local) {
@@ -5260,32 +5676,31 @@
 			},
 			d(detaching) {
 				if (detaching) {
+					detach(h5);
 					detach(t0);
-					detach(div0);
-					detach(t3);
-					detach(div1);
-					detach(t6);
-					detach(div8);
-					detach(t15);
+					detach(form);
+					detach(t26);
 					detach(main);
 				}
 
-				destroy_component(input0, detaching);
+				if_block0.d();
+				destroy_component(input0);
+				if (if_block1) if_block1.d();
+				if (if_block2) if_block2.d();
 				destroy_each(each_blocks_3, detaching);
 				destroy_each(each_blocks_2, detaching);
 				destroy_each(each_blocks_1, detaching);
+				if_block3.d();
 				destroy_each(each_blocks, detaching);
-				if_block0.d();
-				if_block1.d();
 				mounted = false;
 				run_all(dispose);
 			}
 		};
 	}
-	let placeholder = 'Buscar cliente';
+	let placeholder = "Buscar cliente";
 
 	function instance($$self, $$props, $$invalidate) {
-		console.log('amazing svelte yeyey');
+		console.log("amazing svelte yeyey");
 
 		// onMount(async () => {
 		// 	try {
@@ -5299,23 +5714,38 @@
 		// 		error = e;
 		// 	}
 		// });
-		let petSexes = [];
+		let petSexes = [], petBreeds = [], petTypes = [];
 
-		const cat = localStorage.getItem("ngStorage-currentUser");
-		const objToken = JSON.parse(cat);
-		console.log(objToken.token);
-		var decodedJwt = o(objToken.token);
-		console.log(decodedJwt);
-
+		// const cat = localStorage.getItem("ngStorage-currentUser");
+		// const objToken = JSON.parse(cat);
+		// console.log(objToken.token);
+		// var decodedJwt = jwt_decode(objToken.token);
+		// console.log(decodedJwt);
 		const requestAPI = async () => {
-			try {
-				console.log("inside axios request");
-				const res = await axios$1.get(`${decodedJwt.urlGateway}/gateway/PetSexes/`, { headers: {}, params: {} });
-				$$invalidate(0, petSexes = res.data);
-				console.log(res.data);
-			} catch(err) {
-				console.log(err);
-			}
+			// console.log("inside axios request");
+			// const res = await axios.get(
+			// 	`${decodedJwt.urlGateway}/gateway/PetSexes/`,
+			// 	{
+			// 		headers: {},
+			// 		params: {},
+			// 	}
+			// );
+			// petSexes = res.data;
+			// console.log(res.data);
+			await client.get("/gateway/PetSexes/").then(response => {
+				$$invalidate(0, petSexes = response);
+				console.log("petSexes =>", petSexes);
+			});
+
+			await client.get("/gateway/PetTypes/").then(response => {
+				$$invalidate(2, petTypes = response);
+				console.log("petTypes =>", petTypes);
+			});
+
+			await client.get("/gateway/PetBreeds/").then(response => {
+				$$invalidate(1, petBreeds = response);
+				console.log("breeds => ", petBreeds);
+			});
 		};
 
 		requestAPI();
@@ -5349,10 +5779,22 @@
 			imageURL: ""
 		};
 
+		let pet = {
+			id: "",
+			clientUniqueId: "",
+			companyUniqueId: "",
+			name: "",
+			petTypeId: "",
+			petBreedId: "",
+			petSexId: "",
+			age: "",
+			color: ""
+		};
+
 		let editStatus = false;
 
-		const cleanProduct = () => {
-			$$invalidate(5, product = {
+		const cleanPet = () => {
+			$$invalidate(10, product = {
 				id: "",
 				name: "",
 				description: "",
@@ -5361,43 +5803,43 @@
 			});
 		};
 
-		const addProduct = () => {
+		const addPet = () => {
 			const newProduct = {
 				id: v4(),
-				name: product.name,
-				description: product.description,
+				name: pet.name,
+				description: pet.age,
 				category: product.category,
 				imageURL: product.imageURL
 			};
 
-			$$invalidate(1, products = products.concat(newProduct));
-			cleanProduct();
+			$$invalidate(3, products = products.concat(newProduct));
+			cleanPet();
 			console.log(products);
 		};
 
-		const deleteProduct = id => {
+		const deletePet = id => {
 			console.log(id);
-			$$invalidate(1, products = products.filter(product => product.id !== id));
+			$$invalidate(3, products = products.filter(product => product.id !== id));
 		};
 
-		const editProduct = productEdited => {
-			$$invalidate(2, editStatus = true);
-			$$invalidate(5, product = productEdited);
+		const editPet = productEdited => {
+			$$invalidate(5, editStatus = true);
+			$$invalidate(10, product = productEdited);
 			console.log(product);
 		};
 
-		const updateProduct = () => {
+		const updatePet = () => {
 			let updatedProduct = {
-				name: product.name,
-				description: product.description,
+				name: pet.name,
+				description: pet.age,
 				id: product.id,
 				imageURL: product.imageURL,
 				category: product.category
 			};
 
 			const productIndex = products.findIndex(p => p.id === product.id);
-			$$invalidate(1, products[productIndex] = updatedProduct, products);
-			cleanProduct();
+			$$invalidate(3, products[productIndex] = updatedProduct, products);
+			cleanPet();
 
 			//   new Noty({
 			// 	theme: "sunset",
@@ -5405,60 +5847,110 @@
 			// 	timeout: 3000,
 			// 	text: "Product Update Successfully"
 			//   }).show();
-			$$invalidate(2, editStatus = false);
+			$$invalidate(5, editStatus = false);
 		};
 
 		const onSubmitHandler = () => {
 			if (!editStatus) {
-				addProduct();
+				addPet();
 			} else {
-				updateProduct();
+				updatePet();
 			}
 		};
 
-		let value = 'test';
-		let isFocused = false;
-		const onInput = e => $$invalidate(3, value = e.target.value);
-		const onFocus = () => $$invalidate(4, isFocused = true);
-		const onBlur = () => $$invalidate(4, isFocused = false);
+		let value = "";
+
+		//const onInput = (e) => (value = e.target.value);
+		let clients = [];
+
+		const onInput = async e => {
+			$$invalidate(6, value = e.target.value);
+			console.log(value);
+
+			if (value.length >= 3) {
+				let data = { textSearch: value };
+
+				await client.get(`/gateway/Cliente/Search/`, { params: { json: JSON.stringify(data) } }).then(response => {
+					if (response.code == "1") {
+						$$invalidate(7, clients = JSON.parse(response.payload));
+						console.log(clients);
+					}
+				});
+			}
+		};
+
+		const onFocus = () => true;
+		const onBlur = () => false;
+		let isClientSelected = false;
+		let clientSelected = {};
+
+		const selectClient = e => {
+			$$invalidate(8, isClientSelected = true);
+			$$invalidate(9, clientSelected = e);
+			console.log(e);
+		};
 
 		function input1_input_handler() {
-			product.name = this.value;
-			$$invalidate(5, product);
+			pet.name = this.value;
+			$$invalidate(4, pet);
+			$$invalidate(2, petTypes);
 		}
 
-		function textarea_input_handler() {
-			product.description = this.value;
-			$$invalidate(5, product);
+		function select0_change_handler() {
+			pet.petTypeId = select_value(this);
+			$$invalidate(4, pet);
+			$$invalidate(2, petTypes);
+		}
+
+		function select1_change_handler() {
+			pet.petBreedId = select_value(this);
+			$$invalidate(4, pet);
+			$$invalidate(2, petTypes);
+		}
+
+		function select2_change_handler() {
+			pet.petSexId = select_value(this);
+			$$invalidate(4, pet);
+			$$invalidate(2, petTypes);
 		}
 
 		function input2_input_handler() {
-			product.imageURL = this.value;
-			$$invalidate(5, product);
+			pet.age = to_number(this.value);
+			$$invalidate(4, pet);
+			$$invalidate(2, petTypes);
 		}
 
-		function select3_change_handler() {
-			product.category = select_value(this);
-			$$invalidate(5, product);
+		function input3_input_handler() {
+			pet.color = this.value;
+			$$invalidate(4, pet);
+			$$invalidate(2, petTypes);
 		}
 
 		return [
 			petSexes,
+			petBreeds,
+			petTypes,
 			products,
+			pet,
 			editStatus,
 			value,
-			isFocused,
+			clients,
+			isClientSelected,
+			clientSelected,
 			product,
-			deleteProduct,
-			editProduct,
+			deletePet,
+			editPet,
 			onSubmitHandler,
 			onInput,
 			onFocus,
 			onBlur,
+			selectClient,
 			input1_input_handler,
-			textarea_input_handler,
+			select0_change_handler,
+			select1_change_handler,
+			select2_change_handler,
 			input2_input_handler,
-			select3_change_handler
+			input3_input_handler
 		];
 	}
 

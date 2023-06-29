@@ -14,7 +14,7 @@ namespace Vet.Infrastructure.Data
         public DbSet<PetBreed> PetBreeds { get; set; }
         public DbSet<PetSex> PetSexs { get; set; }
         public DbSet<Pet> Pets { get; set; }
-        
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -29,6 +29,19 @@ namespace Vet.Infrastructure.Data
                     {
                         modelBuilder.Entity(entityType.Name).Property(property.Name).HasConversion<double>();
                     }
+                }
+                // Force all string-based columns to non-unicode equivalent 
+                // when no column type is explicitly set.
+                foreach (var property in modelBuilder.Model.GetEntityTypes()
+                    .SelectMany(t => t.GetProperties())
+                    .Where(
+                           p => p.ClrType == typeof(string)    // Entity is a string
+                        && p.GetColumnType() == null           // No column type is set
+                                                               // Next line only required if using ASP.Net Identity:
+                        && !p.DeclaringEntityType.GetTableName().StartsWith("AspNet")
+                    ))
+                {
+                    property.SetIsUnicode(false);
                 }
             }
 

@@ -451,49 +451,20 @@ class MovimientoCajaCtrl {
 
 
     getPrint(item) {
-        let parameters = {
-            isPrint: 1,
-            idMovimientoCaja: item.idMovimientoCaja,
+        let parameters = { 
+            idDocument: item.idMovimientoCaja,
+            idTipoDocumento: item.idTipoDocumento,
             codEstab: item.codEstab,
-            codigo: 'MCPT',
+            codDoc: item.codDoc,
+            nroIdentificacion: item.nroIdentificacion
         }
-
 
         this._commonSvc.askToPrint({
             parameters: JSON.stringify(parameters)
         })
+
     }
-
-    //Print Section
-    print(parameters) {
-        try {
-            showLoader();
-            let url = parameters.urlPrintService;
-            let dataPrint = {
-                rdlcProps: {
-                    printerName: parameters.printerName,
-                    rdlcName: parameters.rdlName
-                },
-                rdlcParams: parameters.rdlcParams[0]
-            }
-
-            this._mS.getData('post', url, dataPrint).then(({
-                data: response
-            }) => {
-                if (response.code == "1") {
-                    hideLoader();
-                    toastr.success(response.message, "")
-                } else {
-                    showLoader();
-                    toastr.warning(response.message, "")
-                }
-            })
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-
+ 
 
     getReport(item) {
         try {

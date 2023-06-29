@@ -98,7 +98,7 @@ BEGIN
 								id              = dd.idDocumentoDetalle
 								,idArticulo     = dd.idArticulo
 								,codigo         = ar.codigo
-								,descripcion    = dd.descripcion
+								,descripcion    = ar.descripcion
 								,cantidad       = Herramientas.Round_Out(dd.cantidad,@nroCantidad) 
 								,medida         = me.descripcion
 								,tipoIva        = ti.descripcion

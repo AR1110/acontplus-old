@@ -3,6 +3,7 @@ import resolve from '@rollup/plugin-node-resolve';
 import serve from 'rollup-plugin-serve'
 
 import livereload from 'rollup-plugin-livereload'
+import commonjs from '@rollup/plugin-commonjs';
 
 export default {
     // This `main.js` file we wrote
@@ -18,6 +19,7 @@ export default {
     plugins: [
         // serve(),
         // livereload(),
+        commonjs(),
         svelte({
             // Tell the svelte plugin where our svelte files are located
             include: 'wwwroot/**/*.svelte',

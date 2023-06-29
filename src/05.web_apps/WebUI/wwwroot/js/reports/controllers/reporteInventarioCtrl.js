@@ -144,10 +144,12 @@ function reporteInventarioCtrl($scope, _commonSvc, mS, form, toast, FileSaver, B
             dataParams: JSON.stringify($scope.dataSearch)
         }
 
-        _commonSvc.getReport({
+        const params = {
             parameters,
             formatType: $scope.dataSearch.byTipoFormato
-        })
+        }
+
+        _commonSvc.getReport(params)
     }
 }
 

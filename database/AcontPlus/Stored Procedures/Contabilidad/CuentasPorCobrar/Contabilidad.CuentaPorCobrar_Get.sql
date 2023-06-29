@@ -171,13 +171,13 @@ BEGIN
 				  ,cx.diasMora
 				  ,cx.mora
 				  ,cx.abono
-				  ,saldoCta = cx.cuota - cx.abono
+				  ,saldoCta = CASE WHEN (cx.cuota - cx.abono) > 0 THEN cx.cuota - cx.abono ELSE 0 END 
 				  ,cx.saldo
 				  ,fechaVencimiento = FORMAT(cx.fechaVencimiento,'MM/dd/yyyy')
 				  ,estado = ep.descripcion
 				  ,codEstado = ep.codigo
 			FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)
-			INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago
+			INNER JOIN dbo.EstadoPago        ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago
 			WHERE cx.idCuentaPorCobrar = @idCuentaPorCobrar AND cx.estado = 1
 			ORDER BY cx.nroCuota ASC
 
@@ -221,7 +221,7 @@ BEGIN
 										   ,cx.saldo
 										   ,estado = ep.descripcion
 						             FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)
-									 INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago
+									 INNER JOIN dbo.EstadoPago        ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago
 						             WHERE cx.idCuentaPorCobrar = cc.idCuentaPorCobrar 
 									   AND cx.estado          = 1 
 									   AND ep.codigo         IN ('PE','PP')
@@ -262,7 +262,7 @@ BEGIN
 										   ,cx.saldo
 										   ,estado = ep.descripcion
 						             FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)
-									 INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago
+									 INNER JOIN dbo.EstadoPago        ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago
 						             WHERE cx.idCuentaPorCobrar = cc.idCuentaPorCobrar 
 									   AND cx.estado          = 1 
 									   AND ep.codigo         IN ('PE','PP')
@@ -292,10 +292,10 @@ BEGIN
 			     d.idDocRelacionado
 				,idTipoDocumento = (SELECT TOP 1 td.idTipoDocumento FROM dbo.TipoDocumento td WITH (NOLOCK) WHERE td.codigoSri = '07')
 				,dr.serieComprobante
-				,saldo = d.valorRetenido
-				,codDoc = 'Retención Version:'+dr.versionComp
-				,nroDoc = ''
-			FROM factelect.DocRelacionado d WITH (NOLOCK)
+				,saldo           = d.valorRetenido
+				,codDoc          = 'Retención Version:'+dr.versionComp
+				,nroDoc          = ''
+			FROM factelect.DocRelacionado           d WITH (NOLOCK)
 			INNER JOIN Recepcion.DocumentoRecibido dr WITH (NOLOCK) ON dr.idDocumento = d.idDocumentoRecibido
 			WHERE dr.codDoc = '07' 
 				AND dr.identificacionReceptor = @identificacionReceptor 
@@ -306,12 +306,12 @@ BEGIN
 			INSERT INTO @documents (idDocumento,idTipoDocumento,serieComprobante,saldo,codDoc,nroDoc)
 			SELECT 
 			     de.idDocumentoElectronico
-				,idTipoDocumento = (SELECT TOP 1 td.idTipoDocumento FROM dbo.TipoDocumento td WITH (NOLOCK) WHERE td.codigoSri = '04')
+				,idTipoDocumento  = (SELECT TOP 1 td.idTipoDocumento FROM dbo.TipoDocumento td WITH (NOLOCK) WHERE td.codigoSri = '04')
 				,serieComprobante = de.numEstab+'-'+de.ptoEmision+'-'+Helper.F_Auto_Sequential(de.nroDocumento)
-				,saldo = (SELECT TOP 1 nc.total FROM dbo.NotaCredito nc WITH (NOLOCK) WHERE nc.idNotaCredito = de.idDocumento)
-				,codDoc = 'Nota de Crédito Version: '+de.versionComp
-				,nroDoc = ''
-			FROM dbo.DocumentoElectronico de
+				,saldo            = (SELECT TOP 1 nc.total FROM dbo.NotaCredito nc WITH (NOLOCK) WHERE nc.idNotaCredito = de.idDocumento)
+				,codDoc           = 'Nota de Crédito Version: '+de.versionComp
+				,nroDoc           = ''
+			FROM dbo.DocumentoElectronico de WITH (NOLOCK)
 			WHERE de.codDoc = '04'
 				AND de.codEstado = 4
 				AND de.idEntidad = @idEntidad
@@ -326,9 +326,9 @@ BEGIN
 				,a.valor
 				,td.codigo as tipoDocumento
 				,''
-			FROM Anticipo a
-			INNER JOIN Sri.Establecimiento es ON es.codEstab = a.codEstab
-			INNER JOIN TipoDocumento td ON td.idTipoDocumento = a.idTipoDocumento
+			FROM dbo.Anticipo               a WITH (NOLOCK)
+			INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab        = a.codEstab
+			INNER JOIN TipoDocumento       td WITH (NOLOCK) ON td.idTipoDocumento = a.idTipoDocumento
 			WHERE a.idCliente =  @idCliente 
 				AND a.estado = 1 
 				AND a.idAnticipo NOT IN (SELECT t.idComprobante FROM @cobroDocuments t WHERE t.codMov = 'A')
@@ -341,7 +341,7 @@ BEGIN
 
 			SELECT idEntidadFinanciera,descripcion,detalle,codigo FROM dbo.EntidadFinanciera WITH (NOLOCK) WHERE estado = 1
 
-			SELECT idEntidadFinanciera,idSubEntidadFinanciera,descripcion,codigo,interes,controlCaja FROM dbo.SubEntidadFinanciera WHERE idEntidad = @idEntidad AND estado = 1 
+			SELECT idEntidadFinanciera,idSubEntidadFinanciera,descripcion,codigo,interes,controlCaja FROM dbo.SubEntidadFinanciera WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 
 
 			SELECT idBanco,descripcion,codigo FROM dbo.Banco WITH (NOLOCK) WHERE estado = 1
 
@@ -404,7 +404,7 @@ BEGIN
 							,ep.descripcion
 							,ep.codigo
 					FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)
-					INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago 
+					INNER JOIN dbo.EstadoPago        ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago 
 					WHERE cx.idCuentaPorCobrar = @idCuentaPorCobrar AND cx.estado = 1	
 				END 
 			
@@ -422,7 +422,7 @@ BEGIN
 							,ep.descripcion
 							,ep.codigo
 					FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)
-					INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago 
+					INNER JOIN dbo.EstadoPago        ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago 
 					WHERE cx.idCuentaPorCobrar = @idCuentaPorCobrar AND cx.estado = 1	
 				END 
 
