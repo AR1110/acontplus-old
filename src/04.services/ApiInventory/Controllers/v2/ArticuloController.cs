@@ -41,6 +41,32 @@ namespace ApiInventory.Controllers.v2
             return Ok(_response);
         }
 
+        [HttpGet]
+        //Get Data Articulo para Ventas 
+        public async Task<IActionResult> GetFormData(string json)
+        {
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Almacen.Articulo_Get_Data_Form");
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _response = _db.GetDataTableAsync();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error in articulo GetFormData: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al Obtener los datos del articulo");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
+        }
+
 
         [HttpGet("Search")]
         public async Task<IActionResult> Search(string json)
@@ -66,6 +92,8 @@ namespace ApiInventory.Controllers.v2
             }
             return Ok(_response);
         }
+
+
         [HttpPost("Post")]
         public async Task<IActionResult> Post([FromBody] RequestApiDto parameters)
         {
