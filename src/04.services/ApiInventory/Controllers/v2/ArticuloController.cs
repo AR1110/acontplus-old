@@ -42,8 +42,7 @@ namespace ApiInventory.Controllers.v2
             return Ok(_response);
         }
 
-
-        [HttpGet]
+        [HttpGet("GetDataForm")]
         public async Task<IActionResult> GetDataForm(string json)
         {
             GenericResponse _response = new GenericResponse();
@@ -171,5 +170,6 @@ namespace ApiInventory.Controllers.v2
             }
             return Ok(_response);
         }
+
     }
 }
