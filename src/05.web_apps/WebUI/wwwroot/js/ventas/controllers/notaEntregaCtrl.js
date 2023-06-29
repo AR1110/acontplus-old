@@ -220,7 +220,7 @@
             $scope.parametersPrint = {
                 ...data,
                 idDocument: data.idDocumento,
-                codigo: data.codDocs === "FV" ? 'RFPT' : 'RNEPT',
+                codigo: data.codDoc === "01" ? 'RFPT' : 'RNEPT',
             }
 
             if (data.payAutomatic) {
