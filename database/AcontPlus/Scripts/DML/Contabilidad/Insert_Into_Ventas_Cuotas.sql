@@ -26,8 +26,9 @@ SELECT idCuotaXCobrar
 ,idEstadoPago,nroCuota,fechaVencimiento,cuota,diasMora,mora,abono,entrada,CC.estado
 FROM DBO.CuotaXCobrar cc
 inner join TipoDocumento td on td.idTipoDocumento = cc.idTipoDocumento
-
 order by idComprobante,cc.idTipoDocumento
+
+
 
 INSERT INTO Contabilidad.CuotaPorCobrar(idCuotaXCobrar,idCuentaPorCobrar,idEstadoPago,nroCuota,fechaVencimiento,cuota,diasMora,mora,abono,entrada,estado)
 SELECT idCuotaXCobrar,idCuentaPorCobrar,idEstadoPago,nroCuota,fechaVencimiento,cuota,diasMora,mora,abono,entrada,estado from  @table where idCuentaPorCobrar is not null
