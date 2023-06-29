@@ -86,17 +86,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{AB
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Vet", "Vet", "{2E3A1F05-F737-4B14-BCA7-37B31E2BC670}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vet.API", "Services\Vet\Vet.API\Vet.API.csproj", "{CCB0D34D-FF49-4DDD-A636-63CCEE62F406}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vet.API", "Services\Vet\Vet.API\Vet.API.csproj", "{CCB0D34D-FF49-4DDD-A636-63CCEE62F406}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vet.Core", "Services\Vet\Vet.Core\Vet.Core.csproj", "{C4D219C4-ED15-4AEA-BAAF-B96173E9132F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vet.Core", "Services\Vet\Vet.Core\Vet.Core.csproj", "{C4D219C4-ED15-4AEA-BAAF-B96173E9132F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vet.Infrastructure", "Services\Vet\Vet.Infrastructure\Vet.Infrastructure.csproj", "{C5629B5F-4963-41C3-8345-C54C061488B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vet.Infrastructure", "Services\Vet\Vet.Infrastructure\Vet.Infrastructure.csproj", "{C5629B5F-4963-41C3-8345-C54C061488B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vet.Application", "Services\Vet\Vet.Application\Vet.Application.csproj", "{A455B34D-8FBC-4C25-8A7A-53B5A17F685E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vet.Application", "Services\Vet\Vet.Application\Vet.Application.csproj", "{A455B34D-8FBC-4C25-8A7A-53B5A17F685E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{8489F03A-21B6-4434-9151-E11DF256305C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.Common", "Services\Common\Services.Common\Services.Common.csproj", "{60F6708F-4976-4535-9DE3-7ECC99C631B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.Common", "Services\Common\Services.Common\Services.Common.csproj", "{60F6708F-4976-4535-9DE3-7ECC99C631B3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

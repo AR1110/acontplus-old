@@ -1,5 +1,5 @@
 
-    import { CreateAxiosClient } from "./CreateAxiosClient";
+    import { createAxiosClient } from "./createAxiosClient";
 	
     import jwt_decode from "jwt-decode";
 
@@ -27,7 +27,7 @@
     var decodedJwt = jwt_decode(getCurrentAccessToken());
 	console.log(decodedJwt);
 
-    export const client = CreateAxiosClient({
+    export const client = createAxiosClient({
         options: {
             baseURL: `${decodedJwt.urlGateway}`,
             timeout: 300000,

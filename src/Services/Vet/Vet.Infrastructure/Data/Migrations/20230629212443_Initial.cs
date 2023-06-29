@@ -24,10 +24,10 @@ namespace Vet.Infrastructure.Data.Migrations
                     Code = table.Column<string>(type: "varchar(2)", unicode: false, maxLength: 2, nullable: false),
                     Name = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: true),
-                    Deleted = table.Column<int>(type: "int", nullable: true),
-                    UniqueId = table.Column<string>(type: "varchar(36)", unicode: false, maxLength: 36, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Enabled = table.Column<bool>(type: "bit", nullable: false),
+                    Deleted = table.Column<bool>(type: "bit", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -44,10 +44,10 @@ namespace Vet.Infrastructure.Data.Migrations
                     Code = table.Column<string>(type: "varchar(2)", unicode: false, maxLength: 2, nullable: false),
                     Name = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: true),
-                    Deleted = table.Column<int>(type: "int", nullable: true),
-                    UniqueId = table.Column<string>(type: "varchar(36)", unicode: false, maxLength: 36, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Enabled = table.Column<bool>(type: "bit", nullable: false),
+                    Deleted = table.Column<bool>(type: "bit", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -65,10 +65,10 @@ namespace Vet.Infrastructure.Data.Migrations
                     Code = table.Column<string>(type: "varchar(2)", unicode: false, maxLength: 2, nullable: false),
                     Name = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true),
-                    Deleted = table.Column<int>(type: "int", nullable: true),
-                    UniqueId = table.Column<string>(type: "varchar(36)", unicode: false, maxLength: 36, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Enabled = table.Column<bool>(type: "bit", nullable: false),
+                    Deleted = table.Column<bool>(type: "bit", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -94,12 +94,13 @@ namespace Vet.Infrastructure.Data.Migrations
                     PetTypeId = table.Column<int>(type: "int", nullable: true),
                     PetBreedId = table.Column<int>(type: "int", nullable: true),
                     PetSexId = table.Column<int>(type: "int", nullable: true),
+                    Age = table.Column<double>(type: "float", nullable: false),
                     Color = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
                     Birthdate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Deleted = table.Column<int>(type: "int", nullable: true),
-                    UniqueId = table.Column<string>(type: "varchar(36)", unicode: false, maxLength: 36, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Enabled = table.Column<bool>(type: "bit", nullable: false),
+                    Deleted = table.Column<bool>(type: "bit", nullable: true)
                 },
                 constraints: table =>
                 {
