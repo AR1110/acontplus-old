@@ -46,10 +46,9 @@ BEGIN
 
 	SELECT @abono =  SUM(abono) FROM Contabilidad.CuotaPorCobrar WITH (NOLOCK) WHERE idCuentaPorCobrar = @idCuentaPorCobrar AND estado = 1
 
-	SELECT TOP 1 @importeTotal = importeTotal FROM Contabilidad.CuentaPorCobrar WITH (NOLOCK) WHERE idCuentaPorCobrar = @idCuentaPorCobrar
+	SELECT TOP 1 @importeTotal = importeTotal + mora FROM Contabilidad.CuentaPorCobrar WITH (NOLOCK) WHERE idCuentaPorCobrar = @idCuentaPorCobrar
 
 	SELECT @residuo = ISNULL(@importeTotal,0) - ISNULL(@abono,0)
-
 
 	IF ISNULL(@posfechado,0) > 0
 		BEGIN

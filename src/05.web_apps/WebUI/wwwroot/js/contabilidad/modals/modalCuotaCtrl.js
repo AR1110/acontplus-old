@@ -109,15 +109,19 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
     }
 
     function setFooterTotals(){
-        let totalCuota = 0, totalMora = 0, totalSaldo = 0;
+        let totalCuota = 0, totalMora = 0, totalSaldo = 0, totalSaldoCta = 0, totalAbono = 0;
         for(let item of $scope.cuotas){
             totalCuota+=item.cuota;
             totalMora+=item.mora;
             totalSaldo+=item.saldo;
+            totalSaldoCta+=item.saldoCta;
+            totalAbono+=item.abono;
         }
-        $scope.totalCuota = fS.roundNumber(totalCuota, MAX_ROUND_NUMBER);
-        $scope.totalMora = fS.roundNumber(totalMora, MAX_ROUND_NUMBER);
-        $scope.totalSaldo = fS.roundNumber(totalSaldo, MAX_ROUND_NUMBER);
+        $scope.totalCuota    = fS.roundNumber(totalCuota, MAX_ROUND_NUMBER);
+        $scope.totalMora     = fS.roundNumber(totalMora, MAX_ROUND_NUMBER);
+        $scope.totalSaldo    = fS.roundNumber(totalSaldo, MAX_ROUND_NUMBER);
+        $scope.totalSaldoCta = fS.roundNumber(totalSaldoCta, MAX_ROUND_NUMBER);
+        $scope.totalAbono    = fS.roundNumber(totalAbono, MAX_ROUND_NUMBER);
 
     }
 
