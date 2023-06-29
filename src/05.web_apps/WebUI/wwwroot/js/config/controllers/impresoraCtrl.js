@@ -47,6 +47,7 @@ function impresoraCtrl($scope, _commonSvc, mS, tS) {
                 tS.toastr('info', 'No tienes asignado las Sucursales')
             }
         }).catch(error => {
+            console.log(error);
             hideLoader();
         })
         hideLoader();
