@@ -225,7 +225,8 @@ BEGIN
 						             WHERE cx.idCuentaPorCobrar = cc.idCuentaPorCobrar 
 									   AND cx.estado          = 1 
 									   AND ep.codigo         IN ('PE','PP')
-									   FOR JSON PATH
+									 ORDER BY cx.nroCuota ASC
+									 FOR JSON PATH
 									 )
 					FROM Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) 
 					INNER JOIN dbo.PuntoEmision       pt WITH (NOLOCK) ON pt.idPuntoEmision = cc.idPuntoEmision
@@ -266,7 +267,8 @@ BEGIN
 						             WHERE cx.idCuentaPorCobrar = cc.idCuentaPorCobrar 
 									   AND cx.estado          = 1 
 									   AND ep.codigo         IN ('PE','PP')
-									   FOR JSON PATH
+									 ORDER BY cx.nroCuota ASC
+									 FOR JSON PATH
 									 )
 					FROM Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) 
 					INNER JOIN dbo.PuntoEmision       pt WITH (NOLOCK) ON pt.idPuntoEmision = cc.idPuntoEmision

@@ -27,4 +27,4 @@ go
 --ALTER TABLE Contabilidad.Historial_Cobro ALTER COLUMN  mora NUMERIC(18,5) NOT NULL
 
 SELECT * FROM Contabilidad.Historial_Cobro
---SELECT * FROM CobroDetalle
+SELECT * FROM CobroDetalle

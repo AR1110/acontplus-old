@@ -9,7 +9,7 @@ GO
 -- Author:		<Author,,Name>
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
--- exec ReporteGestionFinanc.ControlCaja '{"id":33,"idUsuarioRol":63}'
+-- exec ReporteGestionFinanc.ControlCaja '{"id":125,"idUsuarioRol":28}'
 -- =============================================
 IF OBJECT_ID(N'ReporteGestionFinanc.ControlCaja', N'P') IS NOT NULL
 DROP PROCEDURE ReporteGestionFinanc.ControlCaja
@@ -291,10 +291,10 @@ BEGIN
 	 -----------------------------HISTORIAL DE MOVIMIENTO POR DOCUMENTO DEL CONTROL DE CAJA-----------------------------
 	  SELECT tipoDoc = td.codigo
 	       ,nroDoc  = JSON_VALUE(dbo.f_sanitize_json(co.infoCobro),'$.nro')
-		   ,fechaEmision = CASE td.codigo WHEN 'NC' THEN (SELECT FORMAT(de.fechaEmision, 'dd/MM/yyyy HH:mm') FROM dbo.DocumentoElectronico de WITH (NOLOCK) WHERE de.idDocumento = co.idComprobante)
-								          WHEN 'RV' THEN (SELECT FORMAT(rv.fechaEmision, 'dd/MM/yyyy HH:mm') FROM dbo.RetencionVenta       rv WITH (NOLOCK) WHERE rv.idRetencionVenta  = co.idComprobante)
-								          WHEN 'RC' THEN (SELECT        dd.fechaEmision                      FROM FactElect.DocRelacionado dr WITH (NOLOCK) INNER JOIN Recepcion.DocumentoRecibido dd WITH (NOLOCK) ON dd.idDocumento = dr.idDocumentoRecibido WHERE dr.idDocRelacionado = co.idComprobante)
-								          WHEN 'A'  THEN (SELECT FORMAT(an.fechaEmision, 'dd/MM/yyyy HH:mm') FROM dbo.Anticipo             an WITH (NOLOCK) WHERE an.idAnticipo = co.idComprobante)
+		   ,fechaEmision = CASE td.codigo WHEN 'NC' THEN (SELECT TOP 1 FORMAT(de.fechaEmision, 'dd/MM/yyyy HH:mm') FROM dbo.DocumentoElectronico de WITH (NOLOCK) WHERE de.idDocumento = co.idComprobante)
+								          WHEN 'RV' THEN (SELECT TOP 1 FORMAT(rv.fechaEmision, 'dd/MM/yyyy HH:mm') FROM dbo.RetencionVenta       rv WITH (NOLOCK) WHERE rv.idRetencionVenta  = co.idComprobante)
+								          WHEN 'RC' THEN (SELECT TOP 1 dd.fechaEmision                             FROM FactElect.DocRelacionado dr WITH (NOLOCK) INNER JOIN Recepcion.DocumentoRecibido dd WITH (NOLOCK) ON dd.idDocumento = dr.idDocumentoRecibido WHERE dr.idDocRelacionado = co.idComprobante)
+								          WHEN 'A'  THEN (SELECT TOP 1 FORMAT(an.fechaEmision, 'dd/MM/yyyy HH:mm') FROM dbo.Anticipo             an WITH (NOLOCK) WHERE an.idAnticipo = co.idComprobante)
 						  END
 		  ,cliente = ci.nombreFiscal
 		  ,total = co.abono
@@ -320,6 +320,6 @@ BEGIN
 	 FROM @tbDetalleCaja
 	 ORDER BY nroDoc,nroComprobante ASC 
 
-	 SELECT @chequesPosf as chequePosfechado
+	 SELECT ISNULL(@chequesPosf,0) as chequePosfechado
 	 
 END 
