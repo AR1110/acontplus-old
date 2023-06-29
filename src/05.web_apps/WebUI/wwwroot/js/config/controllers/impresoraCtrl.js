@@ -31,6 +31,8 @@ function impresoraCtrl($scope, _commonSvc, mS, tS) {
                     return item;
                 })  
             }             
+        }).catch(error=>{
+            hideLoader();
         })
 
 
@@ -44,6 +46,8 @@ function impresoraCtrl($scope, _commonSvc, mS, tS) {
             } else {
                 tS.toastr('info', 'No tienes asignado las Sucursales')
             }
+        }).catch(error => {
+            hideLoader();
         })
         hideLoader();
     }
@@ -223,7 +227,7 @@ function impresoraCtrl($scope, _commonSvc, mS, tS) {
     $scope.delete = (item) => {
         try {
             showLoader()
-            mS.getData('delete',  url + 'Delete?id=' + item.id, null, true).then(response => {
+            mS.getData('delete',  url + '?id=' + item.id, null, true).then(response => {
                 if (response.code == "0") {
                     hideLoader()
                     tS.toastr('warning', response.message)

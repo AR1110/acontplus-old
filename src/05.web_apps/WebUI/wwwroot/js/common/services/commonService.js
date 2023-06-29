@@ -1392,13 +1392,12 @@ export class CommonService {
 
    
     //--------------------------------------------------REPORTE----------------------------------
-    async getReport({
-        method = "post",
-        url = 'Reporte/Download',
-        parameters,
-        formatType = "pdf"
-    }) {
+    async getReport(params) {
         try {
+            let method = params.method || 'post';
+            let url = params.url || 'Reporte/Download';
+            let parameters = params.parameters;
+            let formatType = params.formatType || "pdf";
             showLoader();
             await this.mS.getFile(method, url, parameters, true).then(response => {
 

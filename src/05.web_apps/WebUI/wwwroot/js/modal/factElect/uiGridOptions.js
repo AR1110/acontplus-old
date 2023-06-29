@@ -177,7 +177,7 @@ export class UiGridOptions{
             'cantidad': ()=>{                     
                 if(rowEntity.cantidad===oldValue) return
 
-                this.validateCantMinimaVentaPorMayor(rowEntity, oldValue, 1)
+                // this.validateCantMinimaVentaPorMayor(rowEntity, oldValue, 1)
                 rowEntity.cantidad = this._fS.roundNumber(rowEntity.cantidad, this.decimal.nroCantidad);
                     //Verificacion de Stock                        
             },
