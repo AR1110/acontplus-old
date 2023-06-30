@@ -61,6 +61,7 @@ namespace DataAccess
                                     item.nombreComercial = reader.GetString(9);
                                     item.role = reader.GetString(10);
                                     item.actividad = reader.GetString(11);
+                                    item.ruc = reader.GetString(12);
                                     userData.Add(item);
                                 }
                             }

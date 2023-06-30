@@ -19,17 +19,16 @@ namespace BL.JwtAuthenticationManger
                 var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey), SecurityAlgorithms.HmacSha256Signature);
                 var claimsIdentiy = new ClaimsIdentity(new List<Claim>
                 {
-                    new Claim(JwtRegisteredClaimNames.Name, authRequest.userName),
-                            new Claim(ClaimTypes.UserData, Convert.ToString(authRequest.userName)),
-                            new Claim(ClaimTypes.NameIdentifier, authRequest.userName),
-                            new Claim(ClaimTypes.Name, authRequest.fullName),
-                            new Claim(ClaimTypes.Role, authRequest.role),
-                            new Claim("idUsuarioRol", Convert.ToString(authRequest.idUsuarioRol)),
-                            new Claim("nroIdentificacion", authRequest.nroIdentificacion),
-                        //new Claim("image",  authRequest.image),
-                        new Claim("ruc", authRequest.ruc),
-                        new Claim("razonSocial", authRequest.razonSocial),
-                        new Claim("urlGateway", authRequest.urlGateway)
+                    new Claim(JwtRegisteredClaimNames.Name, authRequest.fullName),
+                    new Claim(JwtRegisteredClaimNames.GivenName, authRequest.fullName),
+                    new Claim(JwtRegisteredClaimNames.UniqueName, authRequest.userName),
+                    //new Claim(ClaimTypes.Name, authRequest.fullName),
+                    new Claim(ClaimTypes.Role, authRequest.role),
+                    new Claim("idUsuarioRol", Convert.ToString(authRequest.idUsuarioRol)),
+                    new Claim("nroIdentificacion", authRequest.nroIdentificacion),
+                    new Claim("companyUniqueId", authRequest.rucEmpresa),
+                    new Claim("razonSocial", authRequest.razonSocial),
+                    new Claim("urlGateway", authRequest.urlGateway)
                 });
                 var securityTokenDescriptor = new SecurityTokenDescriptor
                 {

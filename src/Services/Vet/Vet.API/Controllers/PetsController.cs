@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Services.Common;
 using Vet.Core.Entities;
 using Vet.Infrastructure.Data;
 
@@ -18,7 +19,13 @@ namespace Vet.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Pet>>> GetPets()
         {
-            return await _context.Pets.Include(t => t.PetType).Include(b => b.PetBreed).Include(s => s.PetSex).ToListAsync();
+            var companyId = User.GetCompanyId();
+            return await _context.Pets
+                .Include(t => t.PetType)
+                .Include(b => b.PetBreed)
+                .Include(s => s.PetSex)
+                .Where(x => x.CompanyUniqueId == companyId)
+                .ToListAsync();
         }
 
         // GET: api/Pet/5

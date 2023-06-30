@@ -4,12 +4,12 @@
 <script>
 	import { v4 } from "uuid";
 	import { onMount } from "svelte";
-	import axios from "axios";
 	//import jwt_decode from "jwt-decode"
-	import { client } from "./axiosClient";
-	import toast from "./toast";
+	import { client } from "../core/api/axiosClient";
+	import toast from "../core/utils/toast";
 	import Swal from "sweetalert2";
-	import Search from "./Search.svelte";
+	import Search from "../components/Search.svelte";
+	import Input from "../components/Input.svelte";
 	console.log("amazing svelte yeyey");
 	let quotes = [];
 	let error = null;
@@ -91,6 +91,7 @@
 			cleanPet();
 		}
 	};
+
 	const addPet = async () => {
 		if (!clientSelected.numeroIdentificacion) {
 			toast({ type: "warning", message: "Debe asignar un cliente" });
@@ -148,7 +149,7 @@
 					console.log(response);
 					toast({
 						type: "success",
-						message: "Eliminada exitosamente",
+						message: "Eliminada exitosamente"
 					});
 					pets = pets.filter((pet) => pet.id !== id);
 				})
@@ -215,7 +216,6 @@
 		updatePet();
 	}
 
-	import Input from "./Input.svelte";
 	let value = "";
 	let isFocused = false;
 	//const onInput = (e) => (value = e.target.value)
@@ -504,6 +504,7 @@
 			</form>
 			<hr />
 		{/if}
+
 		<Search
 			bind:searchTerm
 			on:input={searchPets}
