@@ -22,10 +22,10 @@ namespace Vet.Core.Entities
         public int? PetBreedId { get; set; }
         public virtual PetSex PetSex { get; set; }
         public int? PetSexId { get; set; }
+        public double Age { get; set; }
         [Required]
         [MaxLength(50)]
         public string Color { get; set; }
         public DateTime? Birthdate { get; set; }
-        public int? Deleted { get; set; }
     }
 }

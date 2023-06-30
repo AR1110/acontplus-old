@@ -18,7 +18,7 @@ namespace Vet.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Pet>>> GetPets()
         {
-            return await _context.Pets.ToListAsync();
+            return await _context.Pets.Include(t => t.PetType).Include(b => b.PetBreed).Include(s => s.PetSex).ToListAsync();
         }
 
         // GET: api/Pet/5
@@ -87,8 +87,26 @@ namespace Vet.API.Controllers
                 return NotFound();
             }
 
-            _context.Pets.Remove(pet);
-            await _context.SaveChangesAsync();
+            // _context.Pets.Remove(pet);
+            //await _context.SaveChangesAsync();
+            pet.Deleted = true;
+            _context.Entry(pet).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!PetExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
             return NoContent();
         }

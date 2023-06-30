@@ -1,6 +1,18 @@
 [
     {
-        "Code":"CH",
-        "Name":"Chihuahua"
+        "Code": "CH",
+        "Name": "Chihuahua"
+    },
+    {
+        "Code": "D",
+        "Name": "Dalmata"
+    },
+    {
+        "Code": "S",
+        "Name": "Samoyedo"
+    },
+    {
+        "Code": "ST",
+        "Name": "Shih tzu"
     }
 ]

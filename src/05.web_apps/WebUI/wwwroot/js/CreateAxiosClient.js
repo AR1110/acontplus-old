@@ -15,7 +15,7 @@ const processQueue = (error) => {
     failedQueue = [];
 };
 
-export function CreateAxiosClient({
+export function createAxiosClient({
     options,
     getCurrentAccessToken,
     getCurrentRefreshToken,
