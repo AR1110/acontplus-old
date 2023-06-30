@@ -1,6 +1,7 @@
 ﻿using Common.Logs;
 using DataAccess;
 using Domain.Dtos;
+using Domain.ViewModels.Almacen;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
 
@@ -41,24 +42,23 @@ namespace ApiInventory.Controllers.v2
             return Ok(_response);
         }
 
-        [HttpGet]
-        //Get Data Articulo para Ventas 
-        public async Task<IActionResult> GetFormData(string json)
+        [HttpGet("GetDataForm")]
+        public async Task<IActionResult> GetDataForm(string json)
         {
-            DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
             GenericResponse _response = new GenericResponse();
+            DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Almacen.Articulo_Get_Data_Form");
+                await _db.SPExecute("Sistema.Almacen_Get_Data_Form");
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
-                _response = _db.GetDataTableAsync();
+                _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in articulo GetFormData: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al Obtener los datos del articulo");
+                LogWriter _log = new LogWriter(_configuration);
+                _log.LogError("Error al obtener datos del form-articulo: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al obtener datos del form-articulo");
             }
             finally
             {
@@ -118,5 +118,57 @@ namespace ApiInventory.Controllers.v2
             }
             return Ok(_response);
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] RequestApiDto parameters)
+        {
+            GenericResponse _response = new GenericResponse();
+            DbAccess _db = new DbAccess(_configuration);
+            try
+            {
+                await _db.SPExecute("Almacen.Articulo_Update_v2");
+                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("id", id);
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(DataHelper.SerializeDictionary(parameters.data)));
+                _response = _db.GetDefault();
+            }
+            catch (Exception ex)
+            {
+                LogWriter _log = new LogWriter(_configuration);
+                _log.LogError("Error al actualizar articulo: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al actualizar articulo");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            GenericResponse _response = new GenericResponse();
+            DbAccess _db = new DbAccess(_configuration);
+            try
+            {
+                await _db.SPExecute("Almacen.Articulo_Delete");
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("id", id);
+                _response = _db.GetDefault();
+            }
+            catch (Exception ex)
+            {
+                LogWriter _log = new LogWriter(_configuration);
+                _log.LogError("Error al eliminar articulo: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al eliminar articulo");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
+        }
+
     }
 }
