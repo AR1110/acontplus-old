@@ -1,0 +1,18 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Vet.Core.Entities
+{
+    [Table("DiseaseType", Schema = "Pet")]
+    public class DiseaseType : BaseEntity
+    {
+        [Required]
+        [MaxLength(5)]
+        public string Code { get; set; }
+        [Required]
+        [MaxLength(100)]
+        public string Name { get; set; }
+        [MaxLength(500)]
+        public string Description { get; set; }
+    }
+}

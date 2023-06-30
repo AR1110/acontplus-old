@@ -1316,7 +1316,7 @@
           "Port": 7166
         }
       ],
-      "DownstreamPathTemplate": "/api/PetSexes{everything}",
+      "DownstreamPathTemplate": "/api/Gender{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "Get",
@@ -1324,7 +1324,7 @@
         "Put",
         "Delete"
       ],
-      "UpstreamPathTemplate": "/gateway/PetSexes{everything}"
+      "UpstreamPathTemplate": "/gateway/Gender{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -1337,7 +1337,7 @@
           "Port": 7166
         }
       ],
-      "DownstreamPathTemplate": "/api/PetTypes{everything}",
+      "DownstreamPathTemplate": "/api/PetType{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "Get",
@@ -1345,7 +1345,7 @@
         "Put",
         "Delete"
       ],
-      "UpstreamPathTemplate": "/gateway/PetTypes{everything}"
+      "UpstreamPathTemplate": "/gateway/PetType{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -1358,7 +1358,7 @@
           "Port": 7166
         }
       ],
-      "DownstreamPathTemplate": "/api/PetBreeds{everything}",
+      "DownstreamPathTemplate": "/api/Breed{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "Get",
@@ -1366,7 +1366,7 @@
         "Put",
         "Delete"
       ],
-      "UpstreamPathTemplate": "/gateway/PetBreeds{everything}"
+      "UpstreamPathTemplate": "/gateway/Breed{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -1379,7 +1379,7 @@
           "Port": 7166
         }
       ],
-      "DownstreamPathTemplate": "/api/Pets{everything}",
+      "DownstreamPathTemplate": "/api/Pet{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "Get",
@@ -1387,7 +1387,7 @@
         "Put",
         "Delete"
       ],
-      "UpstreamPathTemplate": "/gateway/Pets{everything}"
+      "UpstreamPathTemplate": "/gateway/Pet{everything}"
     }
   ]
 }

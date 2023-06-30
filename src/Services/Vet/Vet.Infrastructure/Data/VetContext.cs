@@ -11,9 +11,17 @@ namespace Vet.Infrastructure.Data
 
         }
         public DbSet<PetType> PetTypes { get; set; }
-        public DbSet<PetBreed> PetBreeds { get; set; }
-        public DbSet<PetSex> PetSexs { get; set; }
+        public DbSet<Breed> Breeds { get; set; }
+        public DbSet<Gender> Genders { get; set; }
         public DbSet<Pet> Pets { get; set; }
+        public DbSet<DiseaseStatus> DiseaseStatuses { get; set; }
+        public DbSet<DiseaseType> DiseaseTypes { get; set; }
+        public DbSet<Disease> Diseases { get; set; }
+        public DbSet<HealthCheck> HealthChecks { get; set; }
+        public DbSet<BehaviorStatus> BehaviorStatuses { get; set; }
+        public DbSet<Behavior> Behaviors { get; set; }
+        public DbSet<BehaviorTest> BehaviorTests { get; set; }
+        public DbSet<MedicalHistory> MedicalHistories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -46,9 +54,17 @@ namespace Vet.Infrastructure.Data
             }
 
             modelBuilder.Entity<PetType>().ToTable("PetType", schema: "Pet");
-            modelBuilder.Entity<PetBreed>().ToTable("PetBreed", schema: "Pet");
-            modelBuilder.Entity<PetSex>().ToTable("PetSex", schema: "Pet");
+            modelBuilder.Entity<Breed>().ToTable("Breed", schema: "Pet");
+            modelBuilder.Entity<Gender>().ToTable("Gender", schema: "Pet");
             modelBuilder.Entity<Pet>().ToTable("Pet", schema: "Pet");
+            modelBuilder.Entity<DiseaseStatus>().ToTable("DiseaseStatus", schema: "Pet");
+            modelBuilder.Entity<DiseaseType>().ToTable("DiseaseType", schema: "Pet");
+            modelBuilder.Entity<Disease>().ToTable("Disease", schema: "Pet");
+            modelBuilder.Entity<HealthCheck>().ToTable("HealthCheck", schema: "Pet");
+            modelBuilder.Entity<BehaviorStatus>().ToTable("BehaviorStatus", schema: "Pet");
+            modelBuilder.Entity<Behavior>().ToTable("Behavior", schema: "Pet");
+            modelBuilder.Entity<BehaviorTest>().ToTable("BehaviorTest", schema: "Pet");
+            modelBuilder.Entity<MedicalHistory>().ToTable("MedicalHistory", schema: "Pet");
 
         }
     }

@@ -7,8 +7,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="Data\SeedData\PetBreeds.json" />
-	  <None Remove="Data\SeedData\PetSexes.json" />
+	  <None Remove="Data\SeedData\Behaviors.json" />
+	  <None Remove="Data\SeedData\BehaviorStatuses.json" />
+	  <None Remove="Data\SeedData\Breeds.json" />
+	  <None Remove="Data\SeedData\Diseases.json" />
+	  <None Remove="Data\SeedData\DiseaseStatuses.json" />
+	  <None Remove="Data\SeedData\Genderes.json" />
 	  <None Remove="Data\SeedData\PetTypes.json" />
 	</ItemGroup>
 
@@ -33,10 +37,22 @@
 		<ProjectReference Include="..\Vet.Core\Vet.Core.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Content Include="Data\SeedData\PetBreeds.json">
+	  <Content Include="Data\SeedData\Behaviors.json">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
-	  <Content Include="Data\SeedData\PetSexes.json">
+	  <Content Include="Data\SeedData\BehaviorStatuses.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Data\SeedData\Breeds.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Data\SeedData\Diseases.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Data\SeedData\DiseaseStatuses.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Data\SeedData\Genderes.json">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
 	  <Content Include="Data\SeedData\PetTypes.json">
