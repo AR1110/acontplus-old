@@ -226,6 +226,7 @@ function facturaVentaCtrl(
 
         $scope.parametersPrint = {
             ...data,
+            codDoc: 'FV',
             idDocument: data.idDocumento,
             codigo: 'RFPT',
         }

@@ -219,8 +219,9 @@
 
             $scope.parametersPrint = {
                 ...data,
+                codDoc: data.codDoc==='01'?'FV': 'NE',
                 idDocument: data.idDocumento,
-                codigo: data.codDocs === "FV" ? 'RFPT' : 'RNEPT',
+                codigo: data.codDoc === "01" ? 'RFPT' : 'RNEPT',
             }
 
             if (data.payAutomatic) {
@@ -239,8 +240,6 @@
             $scope.getNotaEntregas();
             btnNewDocument.focus();
         }
-
-
 
 
         $scope.openModalNew = async () => {
