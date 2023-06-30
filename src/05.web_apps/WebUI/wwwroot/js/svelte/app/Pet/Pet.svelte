@@ -4,12 +4,12 @@
 <script>
 	import { v4 } from "uuid";
 	import { onMount } from "svelte";
-	import axios from "axios";
 	//import jwt_decode from "jwt-decode"
-	import { client } from "./axiosClient";
-	import toast from "./toast";
+	import { client } from "../../core/api/axiosClient";
+	import toast from "../../core/utils/toast";
 	import Swal from "sweetalert2";
-	import Search from "./Search.svelte";
+	import Search from "../../core/components/Search.svelte";
+	import Input from "./components/Input.svelte";
 	console.log("amazing svelte yeyey");
 	let quotes = [];
 	let error = null;
@@ -17,7 +17,7 @@
 	// 	try {
 	// 		console.log("inside axios request")
 	// 		const res = await axios.get(
-	// 			`http://localhost:57340/gateway/PetSexes/`
+	// 			`http://localhost:57340/gateway/Genderes/`
 	// 		)
 	// 		quotes = res.data
 	// 		console.log(quotes)
@@ -25,8 +25,8 @@
 	// 		error = e
 	// 	}
 	// })
-	let petSexes = [],
-		petBreeds = [],
+	let genderes = [],
+		breeds = [],
 		petTypes = [],
 		pets = [];
 
@@ -38,29 +38,29 @@
 	const initialLoad = async () => {
 		// console.log("inside axios request")
 		// const res = await axios.get(
-		// 	`${decodedJwt.urlGateway}/gateway/PetSexes/`,
+		// 	`${decodedJwt.urlGateway}/gateway/Genderes/`,
 		// 	{
 		// 		headers: {},
 		// 		params: {},
 		// 	}
 		// )
-		// petSexes = res.data
+		// genderes = res.data
 		// console.log(res.data)
-		await client.get("/gateway/Pets/").then((response) => {
+		await client.get("/gateway/Pet/").then((response) => {
 			pets = response;
 			console.log("pets =>", pets);
 		});
-		await client.get("/gateway/PetSexes/").then((response) => {
-			petSexes = response;
-			console.log("petSexes =>", petSexes);
+		await client.get("/gateway/Gender/").then((response) => {
+			genderes = response;
+			console.log("genderes =>", genderes);
 		});
-		await client.get("/gateway/PetTypes/").then((response) => {
+		await client.get("/gateway/PetType/").then((response) => {
 			petTypes = response;
 			console.log("petTypes =>", petTypes);
 		});
-		await client.get("/gateway/PetBreeds/").then((response) => {
-			petBreeds = response;
-			console.log("breeds => ", petBreeds);
+		await client.get("/gateway/Breed/").then((response) => {
+			breeds = response;
+			console.log("breeds => ", breeds);
 		});
 	};
 
@@ -72,8 +72,8 @@
 		companyUniqueId: "",
 		name: "",
 		petTypeId: "",
-		petBreedId: "",
-		petSexId: "",
+		breedId: "",
+		genderId: "",
 		age: "",
 		color: "",
 	};
@@ -91,6 +91,7 @@
 			cleanPet();
 		}
 	};
+
 	const addPet = async () => {
 		if (!clientSelected.numeroIdentificacion) {
 			toast({ type: "warning", message: "Debe asignar un cliente" });
@@ -100,7 +101,7 @@
 			toast({ type: "warning", message: "Debe seleccionar una especie" });
 			return;
 		}
-		if (!pet.petSexId) {
+		if (!pet.genderId) {
 			toast({ type: "warning", message: "Debe seleccionar el sexo" });
 			return;
 		}
@@ -109,13 +110,13 @@
 			companyUniqueId: clientSelected.rucEmpresa,
 			name: pet.name,
 			petTypeId: pet.petTypeId,
-			petBreedId: pet.petBreedId,
-			petSexId: pet.petSexId,
+			breedId: pet.breedId,
+			genderId: pet.genderId,
 			age: pet.age,
 			color: pet.color,
 		};
 		await client
-			.post("/gateway/Pets/", newPet)
+			.post("/gateway/Pet/", newPet)
 			.then((response) => {
 				console.log(response);
 				toast({
@@ -143,12 +144,12 @@
 		});
 		if (isConfirmed) {
 			await client
-				.delete("/gateway/Pets/" + id)
+				.delete("/gateway/Pet/" + id)
 				.then((response) => {
 					console.log(response);
 					toast({
 						type: "success",
-						message: "Eliminada exitosamente",
+						message: "Eliminada exitosamente"
 					});
 					pets = pets.filter((pet) => pet.id !== id);
 				})
@@ -171,17 +172,17 @@
 			name: pet.name,
 			petType: pet.petType,
 			petTypeId: pet.petTypeId,
-			petBreed: pet.petBreed,
-			petBreedId: pet.petBreedId,
-			petSex: pet.petSex,
-			petSexId: pet.petSexId,
+			breed: pet.breed,
+			breedId: pet.breedId,
+			gender: pet.gender,
+			genderId: pet.genderId,
 			age: pet.age,
 			color: pet.color,
 			enabled: pet.enabled,
 		};
 
 		await client
-			.put("/gateway/Pets/" + updatedpet.id, updatedpet)
+			.put("/gateway/Pet/" + updatedpet.id, updatedpet)
 			.then((response) => {
 				const petIndex = pets.findIndex((p) => p.id === pet.id);
 				pets[petIndex] = updatedpet;
@@ -215,7 +216,6 @@
 		updatePet();
 	}
 
-	import Input from "./Input.svelte";
 	let value = "";
 	let isFocused = false;
 	//const onInput = (e) => (value = e.target.value)
@@ -421,18 +421,18 @@
 
 					<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
 						<div class="form-group">
-							<label for="petBreed">Raza:</label>
+							<label for="breed">Raza:</label>
 							<select
-								name="petBreed"
-								id="petBreed"
+								name="breed"
+								id="breed"
 								class="form-control"
 								required
-								bind:value={pet.petBreedId}
+								bind:value={pet.breedId}
 							>
 								<option selected disabled
 									>Seleccione la raza</option
 								>
-								{#each petBreeds as item}
+								{#each breeds as item}
 									<option value={item.id}>{item.name}</option>
 								{/each}
 							</select>
@@ -443,17 +443,17 @@
 				<div class="row">
 					<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
 						<div class="form-group">
-							<label for="petSex">Sexo:</label>
+							<label for="gender">Sexo:</label>
 							<select
-								name="petSex"
-								id="petSex"
+								name="gender"
+								id="gender"
 								class="form-control"
-								bind:value={pet.petSexId}
+								bind:value={pet.genderId}
 							>
 								<option selected disabled
 									>Seleccione el sexo</option
 								>
-								{#each petSexes as item}
+								{#each genderes as item}
 									<option value={item.id}>{item.name}</option>
 								{/each}
 							</select>
@@ -504,6 +504,7 @@
 			</form>
 			<hr />
 		{/if}
+
 		<Search
 			bind:searchTerm
 			on:input={searchPets}
@@ -532,8 +533,8 @@
 							<tr>
 								<td>{item.name}</td>
 								<td>{item.petType.name}</td>
-								<td>{item.petBreed.name}</td>
-								<td>{item.petSex.name}</td>
+								<td>{item.breed.name}</td>
+								<td>{item.gender.name}</td>
 								<td>{item.age}</td>
 								<td>{item.color}</td>
 								<td>
@@ -574,8 +575,8 @@
 							<tr>
 								<td>{item.name}</td>
 								<td>{item.petType.name}</td>
-								<td>{item.petBreed.name}</td>
-								<td>{item.petSex.name}</td>
+								<td>{item.breed.name}</td>
+								<td>{item.gender.name}</td>
 								<td>{item.age}</td>
 								<td>{item.color}</td>
 								<td>

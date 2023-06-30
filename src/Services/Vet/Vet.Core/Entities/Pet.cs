@@ -18,10 +18,10 @@ namespace Vet.Core.Entities
         public string Name { get; set; }
         public virtual PetType PetType { get; set; }
         public int? PetTypeId { get; set; }
-        public virtual PetBreed PetBreed { get; set; }
-        public int? PetBreedId { get; set; }
-        public virtual PetSex PetSex { get; set; }
-        public int? PetSexId { get; set; }
+        public virtual Breed Breed { get; set; }
+        public int? BreedId { get; set; }
+        public virtual Gender Gender { get; set; }
+        public int? GenderId { get; set; }
         public double Age { get; set; }
         [Required]
         [MaxLength(50)]

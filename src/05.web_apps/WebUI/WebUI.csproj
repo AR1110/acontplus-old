@@ -583,7 +583,7 @@
 		<None Include="wwwroot\dist\scss\widgets\weather-widget.scss" />
 		<None Include="wwwroot\dist\scss\widgets\widgets.scss" />
 		<None Include="wwwroot\js\app\acontPlusApp.js" />
-		<None Include="wwwroot\js\build\bundle.js" />
+		<None Include="wwwroot\js\svelte\build\bundle.js" />
 		<None Include="wwwroot\js\controllers\admin\anioFiscalCtrl.js" />
 		<None Include="wwwroot\js\controllers\admin\anioFiscalCtrl.min.js" />
 		<None Include="wwwroot\js\controllers\admin\asignacionCajaCtrl.js" />

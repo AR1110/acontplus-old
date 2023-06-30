@@ -22,7 +22,7 @@ namespace Vet.Infrastructure.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Vet.Core.Entities.Pet", b =>
+            modelBuilder.Entity("Vet.Core.Entities.Behavior", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -30,29 +30,95 @@ namespace Vet.Infrastructure.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<double>("Age")
-                        .HasColumnType("float");
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(5)");
 
-                    b.Property<DateTime?>("Birthdate")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ClientUniqueId")
-                        .IsRequired()
-                        .HasMaxLength(25)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(25)");
+                    b.Property<bool?>("Deleted")
+                        .HasColumnType("bit");
 
-                    b.Property<string>("Color")
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Behavior", "Pet");
+                });
+
+            modelBuilder.Entity("Vet.Core.Entities.BehaviorStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<string>("CompanyUniqueId")
-                        .IsRequired()
-                        .HasMaxLength(25)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(25)");
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BehaviorStatus", "Pet");
+                });
+
+            modelBuilder.Entity("Vet.Core.Entities.BehaviorTest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BehaviorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BehaviorStatusId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -63,19 +129,7 @@ namespace Vet.Infrastructure.Data.Migrations
                     b.Property<bool>("Enabled")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(150)");
-
-                    b.Property<int?>("PetBreedId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("PetSexId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("PetTypeId")
+                    b.Property<int>("PetServiceId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -83,16 +137,16 @@ namespace Vet.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PetBreedId");
+                    b.HasIndex("BehaviorId");
 
-                    b.HasIndex("PetSexId");
+                    b.HasIndex("BehaviorStatusId");
 
-                    b.HasIndex("PetTypeId");
+                    b.HasIndex("PetServiceId");
 
-                    b.ToTable("Pet", "Pet");
+                    b.ToTable("BehaviorTest", "Pet");
                 });
 
-            modelBuilder.Entity("Vet.Core.Entities.PetBreed", b =>
+            modelBuilder.Entity("Vet.Core.Entities.Breed", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -136,10 +190,141 @@ namespace Vet.Infrastructure.Data.Migrations
 
                     b.HasIndex("PetTypeId");
 
-                    b.ToTable("PetBreed", "Pet");
+                    b.ToTable("Breed", "Pet");
                 });
 
-            modelBuilder.Entity("Vet.Core.Entities.PetSex", b =>
+            modelBuilder.Entity("Vet.Core.Entities.Disease", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(5)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<int?>("DiseaseTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DiseaseTypeId");
+
+                    b.ToTable("Disease", "Pet");
+                });
+
+            modelBuilder.Entity("Vet.Core.Entities.DiseaseStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DiseaseStatus", "Pet");
+                });
+
+            modelBuilder.Entity("Vet.Core.Entities.DiseaseType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(5)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DiseaseType", "Pet");
+                });
+
+            modelBuilder.Entity("Vet.Core.Entities.Gender", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -178,7 +363,155 @@ namespace Vet.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PetSex", "Pet");
+                    b.ToTable("Gender", "Pet");
+                });
+
+            modelBuilder.Entity("Vet.Core.Entities.HealthCheck", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("DiseaseId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DiseaseStatusId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("PetServiceId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DiseaseId");
+
+                    b.HasIndex("DiseaseStatusId");
+
+                    b.HasIndex("PetServiceId");
+
+                    b.ToTable("HealthCheck", "Pet");
+                });
+
+            modelBuilder.Entity("Vet.Core.Entities.MedicalHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("PetId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Style")
+                        .HasMaxLength(300)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(300)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PetId");
+
+                    b.ToTable("MedicalHistory", "Pet");
+                });
+
+            modelBuilder.Entity("Vet.Core.Entities.Pet", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<double>("Age")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime?>("Birthdate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("BreedId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ClientUniqueId")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(25)");
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("CompanyUniqueId")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(25)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("GenderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(150)");
+
+                    b.Property<int?>("PetTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BreedId");
+
+                    b.HasIndex("GenderId");
+
+                    b.HasIndex("PetTypeId");
+
+                    b.ToTable("Pet", "Pet");
                 });
 
             modelBuilder.Entity("Vet.Core.Entities.PetType", b =>
@@ -223,32 +556,106 @@ namespace Vet.Infrastructure.Data.Migrations
                     b.ToTable("PetType", "Pet");
                 });
 
-            modelBuilder.Entity("Vet.Core.Entities.Pet", b =>
+            modelBuilder.Entity("Vet.Core.Entities.BehaviorTest", b =>
                 {
-                    b.HasOne("Vet.Core.Entities.PetBreed", "PetBreed")
+                    b.HasOne("Vet.Core.Entities.Behavior", "Behavior")
                         .WithMany()
-                        .HasForeignKey("PetBreedId");
+                        .HasForeignKey("BehaviorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("Vet.Core.Entities.PetSex", "PetSex")
+                    b.HasOne("Vet.Core.Entities.BehaviorStatus", "BehaviorStatus")
                         .WithMany()
-                        .HasForeignKey("PetSexId");
+                        .HasForeignKey("BehaviorStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
+                    b.HasOne("Vet.Core.Entities.MedicalHistory", "PetService")
+                        .WithMany()
+                        .HasForeignKey("PetServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Behavior");
+
+                    b.Navigation("BehaviorStatus");
+
+                    b.Navigation("PetService");
+                });
+
+            modelBuilder.Entity("Vet.Core.Entities.Breed", b =>
+                {
                     b.HasOne("Vet.Core.Entities.PetType", "PetType")
                         .WithMany()
                         .HasForeignKey("PetTypeId");
-
-                    b.Navigation("PetBreed");
-
-                    b.Navigation("PetSex");
 
                     b.Navigation("PetType");
                 });
 
-            modelBuilder.Entity("Vet.Core.Entities.PetBreed", b =>
+            modelBuilder.Entity("Vet.Core.Entities.Disease", b =>
                 {
+                    b.HasOne("Vet.Core.Entities.DiseaseType", "DiseaseType")
+                        .WithMany()
+                        .HasForeignKey("DiseaseTypeId");
+
+                    b.Navigation("DiseaseType");
+                });
+
+            modelBuilder.Entity("Vet.Core.Entities.HealthCheck", b =>
+                {
+                    b.HasOne("Vet.Core.Entities.Disease", "Disease")
+                        .WithMany()
+                        .HasForeignKey("DiseaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Vet.Core.Entities.DiseaseStatus", "DiseaseStatus")
+                        .WithMany()
+                        .HasForeignKey("DiseaseStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Vet.Core.Entities.MedicalHistory", "PetService")
+                        .WithMany()
+                        .HasForeignKey("PetServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Disease");
+
+                    b.Navigation("DiseaseStatus");
+
+                    b.Navigation("PetService");
+                });
+
+            modelBuilder.Entity("Vet.Core.Entities.MedicalHistory", b =>
+                {
+                    b.HasOne("Vet.Core.Entities.Pet", "Pet")
+                        .WithMany()
+                        .HasForeignKey("PetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Pet");
+                });
+
+            modelBuilder.Entity("Vet.Core.Entities.Pet", b =>
+                {
+                    b.HasOne("Vet.Core.Entities.Breed", "Breed")
+                        .WithMany()
+                        .HasForeignKey("BreedId");
+
+                    b.HasOne("Vet.Core.Entities.Gender", "Gender")
+                        .WithMany()
+                        .HasForeignKey("GenderId");
+
                     b.HasOne("Vet.Core.Entities.PetType", "PetType")
                         .WithMany()
                         .HasForeignKey("PetTypeId");
+
+                    b.Navigation("Breed");
+
+                    b.Navigation("Gender");
 
                     b.Navigation("PetType");
                 });

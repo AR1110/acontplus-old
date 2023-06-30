@@ -5,27 +5,27 @@ using Vet.Infrastructure.Data;
 
 namespace Vet.API.Controllers
 {
-    public class PetSexesController : BaseApiController
+    public class GenderController : BaseApiController
     {
         private readonly VetContext _context;
 
-        public PetSexesController(VetContext context)
+        public GenderController(VetContext context)
         {
             _context = context;
         }
 
-        // GET: api/PetSexes
+        // GET: api/Genderes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PetSex>>> GetPetSexs()
+        public async Task<ActionResult<IEnumerable<Gender>>> GetGenders()
         {
-            return await _context.PetSexs.ToListAsync();
+            return await _context.Genders.ToListAsync();
         }
 
-        // GET: api/PetSexes/5
+        // GET: api/Genderes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<PetSex>> GetPetSex(int id)
+        public async Task<ActionResult<Gender>> GetGender(int id)
         {
-            var petSex = await _context.PetSexs.FindAsync(id);
+            var petSex = await _context.Genders.FindAsync(id);
 
             if (petSex == null)
             {
@@ -35,10 +35,10 @@ namespace Vet.API.Controllers
             return petSex;
         }
 
-        // PUT: api/PetSexes/5
+        // PUT: api/Genderes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPetSex(int id, PetSex petSex)
+        public async Task<IActionResult> PutGender(int id, Gender petSex)
         {
             if (id != petSex.Id)
             {
@@ -53,7 +53,7 @@ namespace Vet.API.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PetSexExists(id))
+                if (!GenderExists(id))
                 {
                     return NotFound();
                 }
@@ -66,36 +66,36 @@ namespace Vet.API.Controllers
             return NoContent();
         }
 
-        // POST: api/PetSexes
+        // POST: api/Genderes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<PetSex>> PostPetSex(PetSex petSex)
+        public async Task<ActionResult<Gender>> PostGender(Gender petSex)
         {
-            _context.PetSexs.Add(petSex);
+            _context.Genders.Add(petSex);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetPetSex", new { id = petSex.Id }, petSex);
+            return CreatedAtAction("GetGender", new { id = petSex.Id }, petSex);
         }
 
-        // DELETE: api/PetSexes/5
+        // DELETE: api/Genderes/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePetSex(int id)
+        public async Task<IActionResult> DeleteGender(int id)
         {
-            var petSex = await _context.PetSexs.FindAsync(id);
+            var petSex = await _context.Genders.FindAsync(id);
             if (petSex == null)
             {
                 return NotFound();
             }
 
-            _context.PetSexs.Remove(petSex);
+            _context.Genders.Remove(petSex);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool PetSexExists(int id)
+        private bool GenderExists(int id)
         {
-            return _context.PetSexs.Any(e => e.Id == id);
+            return _context.Genders.Any(e => e.Id == id);
         }
     }
 }

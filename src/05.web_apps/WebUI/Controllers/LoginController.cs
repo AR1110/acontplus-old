@@ -56,7 +56,7 @@ namespace WebUI.Controllers
                     loginDataDto.nroIdentificacion = loginData.nroIdentificacion;
                     loginDataDto.role = loginData.role;
                     loginDataDto.razonSocial = loginData.entidad;
-                    loginDataDto.ruc = loginData.ruc ?? "";
+                    loginDataDto.rucEmpresa = loginData.ruc ?? "";
                     loginDataDto.urlGateway = _config.GetSection("UrlApis").GetSection("UrlGateway").Value;
                     Console.WriteLine(loginDataDto.urlGateway);
                     var urlService = _config.GetSection("UrlApis").GetSection("UrlGateway").Value;

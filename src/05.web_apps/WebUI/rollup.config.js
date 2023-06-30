@@ -10,11 +10,11 @@ const production = !process.env.ROLLUP_WATCH;
 
 export default {
     // This `main.js` file we wrote
-    input: 'wwwroot/js/main.js',
+    input: 'wwwroot/js/svelte/main.js',
     output: {
         sourcemap: true,
         // The destination for our bundled JavaScript
-        file: 'wwwroot/js/build/bundle.js',
+        file: 'wwwroot/js/svelte/build/bundle.js',
         // Our bundle will be an Immediately-Invoked Function Expression
         format: 'iife',
         //format: 'cjs',

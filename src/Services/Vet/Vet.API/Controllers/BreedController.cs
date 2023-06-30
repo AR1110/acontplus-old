@@ -5,27 +5,27 @@ using Vet.Infrastructure.Data;
 
 namespace Vet.API.Controllers
 {
-    public class PetBreedsController : BaseApiController
+    public class BreedController : BaseApiController
     {
         private readonly VetContext _context;
 
-        public PetBreedsController(VetContext context)
+        public BreedController(VetContext context)
         {
             _context = context;
         }
 
-        // GET: api/PetBreeds
+        // GET: api/Breeds
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PetBreed>>> GetPetBreeds()
+        public async Task<ActionResult<IEnumerable<Breed>>> GetBreeds()
         {
-            return await _context.PetBreeds.ToListAsync();
+            return await _context.Breeds.ToListAsync();
         }
 
-        // GET: api/PetBreeds/5
+        // GET: api/Breeds/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<PetBreed>> GetPetBreed(int id)
+        public async Task<ActionResult<Breed>> GetBreed(int id)
         {
-            var petBreed = await _context.PetBreeds.FindAsync(id);
+            var petBreed = await _context.Breeds.FindAsync(id);
 
             if (petBreed == null)
             {
@@ -35,10 +35,10 @@ namespace Vet.API.Controllers
             return petBreed;
         }
 
-        // PUT: api/PetBreeds/5
+        // PUT: api/Breeds/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPetBreed(int id, PetBreed petBreed)
+        public async Task<IActionResult> PutBreed(int id, Breed petBreed)
         {
             if (id != petBreed.Id)
             {
@@ -53,7 +53,7 @@ namespace Vet.API.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PetBreedExists(id))
+                if (!BreedExists(id))
                 {
                     return NotFound();
                 }
@@ -66,36 +66,36 @@ namespace Vet.API.Controllers
             return NoContent();
         }
 
-        // POST: api/PetBreeds
+        // POST: api/Breeds
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<PetBreed>> PostPetBreed(PetBreed petBreed)
+        public async Task<ActionResult<Breed>> PostBreed(Breed petBreed)
         {
-            _context.PetBreeds.Add(petBreed);
+            _context.Breeds.Add(petBreed);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetPetBreed", new { id = petBreed.Id }, petBreed);
+            return CreatedAtAction("GetBreed", new { id = petBreed.Id }, petBreed);
         }
 
-        // DELETE: api/PetBreeds/5
+        // DELETE: api/Breeds/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePetBreed(int id)
+        public async Task<IActionResult> DeleteBreed(int id)
         {
-            var petBreed = await _context.PetBreeds.FindAsync(id);
+            var petBreed = await _context.Breeds.FindAsync(id);
             if (petBreed == null)
             {
                 return NotFound();
             }
 
-            _context.PetBreeds.Remove(petBreed);
+            _context.Breeds.Remove(petBreed);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool PetBreedExists(int id)
+        private bool BreedExists(int id)
         {
-            return _context.PetBreeds.Any(e => e.Id == id);
+            return _context.Breeds.Any(e => e.Id == id);
         }
     }
 }
