@@ -517,7 +517,7 @@
                   <Width>1.52596cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>9.00854cm</Width>
+                  <Width>6.77488cm</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1.50515cm</Width>
@@ -1235,7 +1235,7 @@
             <Top>12.21815cm</Top>
             <Left>0.21852cm</Left>
             <Height>0.96188cm</Height>
-            <Width>21.84926cm</Width>
+            <Width>19.6156cm</Width>
             <ZIndex>5</ZIndex>
             <Style>
               <Border>
@@ -1955,7 +1955,7 @@
                 <Top>0.25157cm</Top>
                 <Left>5.43303cm</Left>
                 <Height>0.6cm</Height>
-                <Width>9.85576cm</Width>
+                <Width>7.13936cm</Width>
                 <Style>
                   <Border>
                     <Style>None</Style>
@@ -1985,7 +1985,7 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox91</rd:DefaultName>
                 <Top>0.21629cm</Top>
-                <Left>18.04675cm</Left>
+                <Left>15.50675cm</Left>
                 <Height>0.6cm</Height>
                 <Width>3.41291cm</Width>
                 <ZIndex>1</ZIndex>
@@ -2053,7 +2053,7 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox125</rd:DefaultName>
                 <Top>0.21629cm</Top>
-                <Left>15.62492cm</Left>
+                <Left>13.08492cm</Left>
                 <Height>0.6cm</Height>
                 <Width>2.38655cm</Width>
                 <ZIndex>3</ZIndex>
@@ -2088,7 +2088,7 @@
                 <Top>0.92212cm</Top>
                 <Left>3.19377cm</Left>
                 <Height>0.6cm</Height>
-                <Width>10.36068cm</Width>
+                <Width>6.84172cm</Width>
                 <ZIndex>4</ZIndex>
                 <Style>
                   <Border>
@@ -2119,7 +2119,7 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox93</rd:DefaultName>
                 <Top>0.88684cm</Top>
-                <Left>18.01147cm</Left>
+                <Left>15.47147cm</Left>
                 <Height>0.6cm</Height>
                 <Width>3.47341cm</Width>
                 <ZIndex>5</ZIndex>
@@ -2187,7 +2187,7 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox124</rd:DefaultName>
                 <Top>0.88684cm</Top>
-                <Left>15.62492cm</Left>
+                <Left>13.08492cm</Left>
                 <Height>0.6cm</Height>
                 <Width>2.38655cm</Width>
                 <ZIndex>7</ZIndex>
@@ -2222,7 +2222,7 @@
                 <Top>1.62795cm</Top>
                 <Left>3.19377cm</Left>
                 <Height>0.6cm</Height>
-                <Width>14.85053cm</Width>
+                <Width>9.37862cm</Width>
                 <ZIndex>8</ZIndex>
                 <Style>
                   <Border>
@@ -2274,7 +2274,7 @@
             <Top>9.5236cm</Top>
             <Left>0.21852cm</Left>
             <Height>2.37705cm</Height>
-            <Width>21.8381cm</Width>
+            <Width>19.6156cm</Width>
             <ZIndex>14</ZIndex>
             <Style>
               <Border>
@@ -3082,7 +3082,7 @@
             </TablixRowHierarchy>
             <DataSetName>facturaDs</DataSetName>
             <Top>13.28903cm</Top>
-            <Left>15.84344cm</Left>
+            <Left>13.62094cm</Left>
             <Height>5.48878cm</Height>
             <Width>6.21318cm</Width>
             <ZIndex>15</ZIndex>
@@ -3393,13 +3393,10 @@
             </TablixRowHierarchy>
             <DataSetName>facturaDs</DataSetName>
             <Top>18.9542cm</Top>
-            <Left>15.84344cm</Left>
+            <Left>13.62094cm</Left>
             <Height>1.64979cm</Height>
             <Width>6.21319cm</Width>
             <ZIndex>18</ZIndex>
-            <Visibility>
-              <Hidden>=IIF(First(Fields!actividad.Value, "facturaDs")="23",False,True)</Hidden>
-            </Visibility>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -3925,7 +3922,7 @@
             </ReportItems>
             <KeepTogether>true</KeepTogether>
             <Top>0.40096cm</Top>
-            <Left>13.1785cm</Left>
+            <Left>10.956cm</Left>
             <Height>8.07548cm</Height>
             <Width>8.87812cm</Width>
             <ZIndex>19</ZIndex>
@@ -3936,21 +3933,21 @@
             </Style>
           </Rectangle>
         </ReportItems>
-        <Height>12.38372in</Height>
+        <Height>8.11181in</Height>
         <Style>
           <Border>
             <Style>None</Style>
           </Border>
         </Style>
       </Body>
-      <Width>8.78494in</Width>
+      <Width>7.80871in</Width>
       <Page>
         <PageHeight>29.7cm</PageHeight>
-        <PageWidth>22.5cm</PageWidth>
-        <LeftMargin>0cm</LeftMargin>
-        <RightMargin>0cm</RightMargin>
-        <TopMargin>1cm</TopMargin>
-        <BottomMargin>0cm</BottomMargin>
+        <PageWidth>21cm</PageWidth>
+        <LeftMargin>0.5cm</LeftMargin>
+        <RightMargin>0.5cm</RightMargin>
+        <TopMargin>0.5cm</TopMargin>
+        <BottomMargin>0.5cm</BottomMargin>
         <ColumnSpacing>0.13cm</ColumnSpacing>
         <Style />
       </Page>

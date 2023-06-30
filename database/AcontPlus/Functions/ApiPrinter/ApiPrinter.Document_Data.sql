@@ -48,18 +48,18 @@ BEGIN
 		 @pago =  ci.total
 		,@cambio = ci.cambio
 		,@formaPago = ef.descripcion
-	FROM 
-	dbo.CobroDocumento cd WITH (NOLOCK) 
-	INNER JOIN dbo.ComprobanteIngreso ci WITH (NOLOCK) ON ci.idComprobanteIngreso = cd.idComprobanteIngreso
-	INNER JOIN dbo.Cobro               c WITH (NOLOCK) ON c.idComprobanteIngreso  = ci.idComprobanteIngreso
-	INNER JOIN dbo.EntidadFinanciera  ef WITH (NOLOCK) ON ef.idEntidadFinanciera  = c.idEntidadFinanciera
-	WHERE cd.idTipoDocumento = @idTipoDocumento AND cd.idComprobante = @idDocument AND ci.estado = 1
+	FROM Contabilidad.Historial_Cobro hc WITH (NOLOCK) 
+	INNER JOIN Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) ON cc.idCuentaPorCobrar    = hc.idCuentaPorCobrar
+	INNER JOIN dbo.ComprobanteIngreso       ci WITH (NOLOCK) ON ci.idComprobanteIngreso = hc.idComprobanteIngreso
+	INNER JOIN dbo.Cobro                     c WITH (NOLOCK) ON c.idComprobanteIngreso  = ci.idComprobanteIngreso
+	INNER JOIN dbo.EntidadFinanciera        ef WITH (NOLOCK) ON ef.idEntidadFinanciera  = c.idEntidadFinanciera
+	WHERE cc.codDoc = IIF(@codDoc = 'FV','01','NE') AND cc.idDocumento = @idDocument AND ci.estado = 1
 
 	IF @codDoc = 'FV'
 		BEGIN
 			SET @header = (
 					SELECT 
-					    codDoc = 'FV'
+					     codDoc = 'FV'
 						,nroDoc = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,f.nroFactura) 
 						,nroFactura = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,f.nroFactura) 
 						,labelNroDoc = 'FACTURA Nro. '

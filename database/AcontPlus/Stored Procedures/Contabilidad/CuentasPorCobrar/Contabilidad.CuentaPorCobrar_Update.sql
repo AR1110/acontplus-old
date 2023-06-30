@@ -106,6 +106,7 @@ BEGIN
 		END
 
 	--========================================= VALIDACIONES DE DATOS =======================================================================
+	
 	IF (SELECT COUNT(*) FROM @cuotas) = 0
 		BEGIN
 			SELECT '0'code,'Error al generar las cuotas' as  'message'
