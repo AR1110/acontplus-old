@@ -119,7 +119,7 @@ namespace ApiInventory.Controllers.v2
             return Ok(_response);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("Put/{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] RequestApiDto parameters)
         {
             GenericResponse _response = new GenericResponse();
