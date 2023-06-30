@@ -276,7 +276,10 @@ class MovimientoCajaCtrl {
         this.accion = {};
 
         //Filters                        
-        this.dataSearch = {};
+        this.dataSearch = {
+            fechaInicio: new Date(),
+            fechaFin: new Date(),
+        };
         this.dataSearchAnticipo = {};
         this.meses = _form.meses();
         this.dataSearch.mes = new Date().getMonth() + 1;
@@ -288,7 +291,48 @@ class MovimientoCajaCtrl {
         this.anticipos = [];
 
         this.searchEmpleado = ModalMovimientoCajaCtrl.searchEmpleado
-        this.clienteSearch = ModalAnticipoCtrl.clienteSearch
+        this.clienteSearch = ModalAnticipoCtrl.clienteSearch;
+
+        //Filter 
+        // this.moreSearchOptions = false;
+
+
+        let thisMoment = moment(new Date())
+        
+        //https://www.daterangepicker.com/
+        this.dateRangePicker = {
+            date: { startDate: thisMoment, endDate: thisMoment },
+            picker: null,
+            options: {
+                pickerClasses: 'custom-display', //angular-daterangepicker extra
+                buttonClasses: 'btn',
+                applyButtonClasses: 'btn-success',
+                cancelButtonClasses: 'btn-danger',
+                locale: {
+                    applyLabel: "Aplicar",
+                    cancelLabel: 'Cancelar',
+                    customRangeLabel: 'Rango Personalizado',
+                    separator: ' - ',
+                    format: "YYYY-MM-DD", //will give you 2017-01-06
+                    //format: "D-MMM-YY", //will give you 6-Jan-17
+                    //format: "D-MMMM-YY", //will give you 6-January-17
+                },
+                ranges: {
+                    'Hoy': [moment(), moment()],
+                    'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
+                    'Ultimos 15 Días': [moment().subtract(14, 'days'), moment()],
+                    'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
+                    'Este Mes': [moment().startOf('month'), moment().endOf('month')],
+                },
+                eventHandlers: {
+                    'apply.daterangepicker':  (event, picker)=> {
+                        this.getMovCajas()
+                        console.log('applied')
+                    }
+                }
+            }
+        }; 
 
     }
 
@@ -318,12 +362,32 @@ class MovimientoCajaCtrl {
     }
 
 
+    resultRangeFilter (item) {
+        this.dataSearch.fechaInicio = item.startDate,
+        this.dataSearch.fechaFin = item.endDate
+        this.getMovCajas();
+    }
+    onClickBtnMore() {
+        this.moreSearchOptions = !this.moreSearchOptions;
+    }
+
+
     //Get Movimientos Caja
     getMovCajas() {
         try {
 
+            let dataSearch = {
+                codEstab:this.dataSearch.codEstab, 
+                checkBoxEmpleado: this.dataSearch.byEmpleado > 0,
+                byEmpleado: this.dataSearch.byEmpleado,                 
+                checkBoxEstado: this.dataSearch.codEstado ? true : false,
+                codEstado: this.dataSearch.codEstado,
+                fechaInicio: this._form.formatDateMoment(this.dataSearch.fechaInicio),
+                fechaFin: this._form.formatDateMoment(this.dataSearch.fechaFin), 
+            }
+
             showLoader();
-            this._mS.getData('get', '/MovimientoCaja/Get?json=' + JSON.stringify(this.dataSearch)).then(response => {
+            this._mS.getData('get', '/MovimientoCaja/Get?json=' + JSON.stringify(dataSearch)).then(response => {
                 if (response.id === "0") {
                     hideLoader();
                     toastr.warning(response.message, response.titleSms);
