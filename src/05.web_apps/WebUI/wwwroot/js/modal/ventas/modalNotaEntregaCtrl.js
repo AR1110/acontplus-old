@@ -699,10 +699,10 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
                         }
                         if (response.code === "1") {                        
                             this._fS.sweetAlert('success', 'Registrado Correctamente', response.titleSms, 1000);
-    
+     
                             let mainData = {
-                                isRegister: true,
-                                data: response.dataResponse,
+                                isRegister: true,                            
+                                data: response.dataResponse
                             }
     
                             this.$uibModalInstance.close(mainData)
