@@ -50,10 +50,6 @@ BEGIN
 
 	SELECT @residuo = ISNULL(@importeTotal,0) - ISNULL(@abono,0)
 
-	SELECT '0' code,'RESIDUO : ' + CAST(@residuo AS varchar) as 'message'
-	ROLLBACK TRAN 
-	RETURN 
-
 	IF ISNULL(@posfechado,0) > 0
 		BEGIN
 			SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PFC'
