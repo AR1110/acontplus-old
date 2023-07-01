@@ -121,6 +121,7 @@ function facturaVentaCtrl(
     $scope.onClickBtnMore = function () {
         $scope.moreSearchOptions = !$scope.moreSearchOptions;
     }
+    
 
     $scope.searchFilterLocal = function () {
         let facturas = JSON.parse(JSON.stringify($scope.cloneFacturas));
@@ -176,7 +177,9 @@ function facturaVentaCtrl(
                 byEstado: $scope.dataSearch.byEstado,
                 fechaInicio: _fS.formatDateMoment($scope.dataSearch.fechaInicio),
                 fechaFin: _fS.formatDateMoment($scope.dataSearch.fechaFin),
-                tipoFecha: 'FE'
+                tipoFecha: 'FE',
+                isSearchNroSequential: $scope.dataSearch.nroSecuencial? true: false,
+                nroSecuencial: $scope.dataSearch.nroSecuencial
             }
                 
             showLoader();

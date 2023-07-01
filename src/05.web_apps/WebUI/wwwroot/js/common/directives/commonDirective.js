@@ -551,10 +551,28 @@
                 element.attr('ng-keyup', 'onKeyupCliente()');
                 element.attr('typeahead-editable', 'false');
 
-                element.css('max-height', '200px'); // Set a fixed height
-element.css('overflow-y', 'auto'); // Enable vertical scrolling
+                 
                 // element.attr('ng-model', 'ngModel')
                 element.removeAttr('cliente-search-drtv');
+
+                // Add CSS styles dynamically
+element.attr('style', 'position:relative;');
+element.attr('popover-append-to-body', 'true');
+element.attr('popover-placement', 'bottom-left');
+element.attr('popover-popup-delay', '200');
+element.attr('popover-trigger', 'mouseenter');
+
+// Create a style element to apply custom CSS styles
+var customStyle = document.createElement('style');
+customStyle.innerHTML = `
+    [uib-typeahead-popup].dropdown-menu {
+        z-index: 999999 !important;
+        max-height: 250px;
+        overflow-y: auto;
+        width: auto;
+    }
+`;
+document.head.appendChild(customStyle);
                 $compile(element)(scope);
             }
         };
