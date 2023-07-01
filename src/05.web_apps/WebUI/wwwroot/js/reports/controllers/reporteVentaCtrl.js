@@ -28,7 +28,8 @@
             { codigo: 'NC', descripcion: 'Nota de Crédito', codigoReporte: 'NCRG' },
             { codigo: 'RV', descripcion: 'Retencion Venta', codigoReporte: 'RVRG' },
             { codigo: 'PR', descripcion: 'Proforma', codigoReporte: 'PRRG' },
-            { codigo: 'FVNE', descripcion: 'Consolidado Diario de Venta', codigoReporte: 'RFVNE' }
+            { codigo: 'FVNE', descripcion: 'Consolidado Diario de Venta', codigoReporte: 'RFVNE' },
+            { codigo: 'RCA', descripcion: 'Reporte Consumo de Articulo', codigoReporte: 'RCA' }
         ];
 
         $scope.dataSearch.codDoc = 'FV';

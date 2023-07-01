@@ -169,11 +169,11 @@ BEGIN
 									'FV', 
 									dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,fv.nroFactura), 
 									dbo.AFTConvertDate(fv.fechaEmision),
-									dbo.AFTConvertDate(fv.fechaVencimiento),
+									dbo.AFTConvertDate(cc.fechaVencimiento),
 									cl.nombreFiscal, 
 									CAST(fv.total AS numeric(15, 2)), 
-									CAST(fv.abono AS numeric(15, 2)), 
-									CAST(fv.saldo AS numeric(15, 2)), 
+									CAST(cc.abono AS numeric(15, 2)), 
+									CAST(cc.saldo AS numeric(15, 2)), 
 									ep.descripcion, 
 									ep.codigo, 
 									fv.fechaRegistro, 
@@ -182,7 +182,8 @@ BEGIN
 								INNER JOIN PuntoEmision                 pe WITH(NOLOCK) ON pe.idPuntoEmision  = fv.idPuntoEmision 
 								INNER JOIN Sri.Establecimiento          s  WITH(NOLOCK) ON s.codEstab         = pe.codEstab
 								INNER JOIN Cliente                      cl WITH(NOLOCK) ON cl.idCliente       = fv.idCliente	
-								INNER JOIN EstadoPago                   ep WITH(NOLOCK) ON ep.idEstadoPago    = fv.idEstadoPago
+								INNER JOIN Contabilidad.CuentaPorCobrar cc WITH(NOLOCK) ON cc.idDocumento     = fv.idFactura AND cc.codDoc = '01'
+								INNER JOIN EstadoPago                   ep WITH(NOLOCK) ON ep.idEstadoPago    = cc.idEstadoPago
 								INNER JOIN Usuario                       u WITH(NOLOCK) ON u.idUsuario        = fv.idUsuario								
 								WHERE fv.estado = 1 AND  fv.idEntidad = @byEntidad AND CAST(fv.fechaEmision as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date)
 								--AND CAST(fv.fechaEmision AS DATE) =  CAST(GETDATE() AS DATE)
@@ -197,21 +198,22 @@ BEGIN
 									'NE', 
 									dbo.AFTGenerarNroDocumento(es.estab+pe.ptoEmi,ne.nroDocumento), 
 									dbo.AFTConvertDate(ne.fechaEmision), 
-									dbo.AFTConvertDate(ne.fechaVencimiento), 
+									dbo.AFTConvertDate(cc.fechaVencimiento), 
 									cl.nombreFiscal, 
 									CAST(ne.total AS numeric(15, 2)), 
-									CAST(ne.abono AS numeric(15, 2)), 
-									CAST(ne.saldo AS numeric(15, 2)), 
+									CAST(cc.abono AS numeric(15, 2)), 
+									CAST(cc.saldo AS numeric(15, 2)), 
 									ep.descripcion, 
 									ep.codigo, 
 									ne.fechaRegistro,
 									u.nombreUsuario
 								FROM dbo.NotaEntrega ne	WITH(NOLOCK)
-								INNER JOIN PuntoEmision         pe WITH(NOLOCK) ON pe.idPuntoEmision = ne.idPuntoEmision 
-								INNER JOIN Sri.Establecimiento  es WITH(NOLOCK) ON es.codEstab       = pe.codEstab
-								INNER JOIN Cliente              cl WITH(NOLOCK) ON cl.idCliente      = ne.idCliente	
-								INNER JOIN EstadoPago           ep WITH(NOLOCK) ON ep.idEstadoPago   = ne.idEstadoPago
-								INNER JOIN Usuario              u  WITH(NOLOCK) ON u.idUsuario       = ne.idUsuario										
+								INNER JOIN PuntoEmision                 pe WITH(NOLOCK) ON pe.idPuntoEmision = ne.idPuntoEmision 
+								INNER JOIN Sri.Establecimiento          es WITH(NOLOCK) ON es.codEstab       = pe.codEstab
+								INNER JOIN Cliente                      cl WITH(NOLOCK) ON cl.idCliente      = ne.idCliente	
+								INNER JOIN Contabilidad.CuentaPorCobrar cc WITH(NOLOCK) ON cc.idDocumento    = ne.idNotaEntrega AND cc.codDoc = 'NE'
+								INNER JOIN EstadoPago                   ep WITH(NOLOCK) ON ep.idEstadoPago   = cc.idEstadoPago
+								INNER JOIN Usuario                       u WITH(NOLOCK) ON u.idUsuario       = ne.idUsuario										
 								WHERE ne.estado = 1 AND ne.idEntidad = @byEntidad AND CAST(ne.fechaEmision as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date)
 								--CAST(ne.fechaEmision as date) = CAST(GETDATE() AS DATE)
 
