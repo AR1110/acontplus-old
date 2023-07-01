@@ -115,6 +115,7 @@ function facturaVentaCtrl(
 
     $scope.selectedUsuarioSearch = function (item) {
         $scope.dataSearch.byUsuario = item.idUsuario;
+        $scope.getFacturas();
     }
 
     $scope.onClickBtnMore = function () {
@@ -122,8 +123,8 @@ function facturaVentaCtrl(
     }
 
     $scope.searchFilterLocal = function () {
-        let aprobComprobantes = JSON.parse(JSON.stringify($scope.cloneAproComprobantes));
-        $scope.aprobComprobantes = $filter("filter")(aprobComprobantes, $scope.dataSearch.bySearch);
+        let facturas = JSON.parse(JSON.stringify($scope.cloneFacturas));
+        $scope.facturas = $filter("filter")(facturas, $scope.dataSearch.bySearch);
         $scope.getTotales();
     }
 

@@ -550,6 +550,9 @@
                 element.attr('typeahead-template-url', 'autocompleteClienteTemplate.html');
                 element.attr('ng-keyup', 'onKeyupCliente()');
                 element.attr('typeahead-editable', 'false');
+
+                element.css('max-height', '200px'); // Set a fixed height
+element.css('overflow-y', 'auto'); // Enable vertical scrolling
                 // element.attr('ng-model', 'ngModel')
                 element.removeAttr('cliente-search-drtv');
                 $compile(element)(scope);
