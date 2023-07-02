@@ -6,7 +6,7 @@
 
     app.factory('transferenciaBodegaService', function($injector) {
         let mS = $injector.get('mainService');
-        let url = '/TransferenciaBodega/'
+        let url = 'TransferenciaBodega/'
         return {
             getAll,
             insert,
@@ -15,7 +15,7 @@
         }
 
         function getAll(query) {
-            return mS.getData('get', `${url}Get?json=${JSON.stringify(query)}`).then(response=>{
+            return mS.getData('get', `${url}Get?json=${JSON.stringify(query)}`, null, true).then(response=>{
                 if(response.code=="0"){
                     throw response;
                 }

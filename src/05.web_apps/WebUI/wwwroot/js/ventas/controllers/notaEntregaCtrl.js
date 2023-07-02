@@ -151,7 +151,9 @@
                     codEstado: $scope.dataSearch.codEstado,
                     fechaInicio: _fS.formatDateMoment($scope.dataSearch.fechaInicio),
                     fechaFin: _fS.formatDateMoment($scope.dataSearch.fechaFin),
-                    tipoFecha: 'FE'
+                    tipoFecha: 'FE',
+                    isSearchNroSequential: $scope.dataSearch.nroSecuencial? true: false,
+                    nroSecuencial: $scope.dataSearch.nroSecuencial
                 }
 
                 showLoader();
