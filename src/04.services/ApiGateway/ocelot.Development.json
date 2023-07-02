@@ -751,7 +751,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44358
+          "Port": 7079
         }
       ],
       "DownstreamPathTemplate": "/api/Cliente{everything}",
@@ -1388,6 +1388,27 @@
         "Delete"
       ],
       "UpstreamPathTemplate": "/gateway/Pet{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7166
+        }
+      ],
+      "DownstreamPathTemplate": "/api/TransferenciaBodega{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/gateway/TransferenciaBodega{everything}"
     }
   ]
 }

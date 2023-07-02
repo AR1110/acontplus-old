@@ -259,7 +259,7 @@
                     throw response;
                 }
                 if(response.code==='1'){
-                    let clientes = JSON.parse(response.payload)[0] || {};
+                    let clientes = JSON.parse(response.payload) || [];
                     return clientes.map(item=>{
                         return {
                             idCliente: item.idCliente,

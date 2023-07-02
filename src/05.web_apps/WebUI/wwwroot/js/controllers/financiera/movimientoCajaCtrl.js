@@ -382,11 +382,12 @@ class MovimientoCajaCtrl {
                 byEmpleado: this.dataSearch.byEmpleado,                 
                 checkBoxEstado: this.dataSearch.codEstado ? true : false,
                 codEstado: this.dataSearch.codEstado,
-                fechaInicio: this._form.formatDateMoment(this.dataSearch.fechaInicio),
-                fechaFin: this._form.formatDateMoment(this.dataSearch.fechaFin), 
+                fechaInicio: this._form.formatDateMoment(this.dateRangePicker.date.startDate),
+                fechaFin: this._form.formatDateMoment(this.dateRangePicker.date.endDate), 
             }
 
             showLoader();
+            this.movCajas = [];
             this._mS.getData('get', '/MovimientoCaja/Get?json=' + JSON.stringify(dataSearch)).then(response => {
                 if (response.id === "0") {
                     hideLoader();
@@ -396,6 +397,9 @@ class MovimientoCajaCtrl {
 
                 this.movCajas = JSON.parse(response.data) || [];
                 hideLoader();
+            }).catch(error => {
+                hideLoader();
+                console.log(error)
             })
         } catch (error) {
             hideLoader();

@@ -1368,7 +1368,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc
                             nro: item.nro,
                             lote: item.lote,
                             aprobacion: item.aprobacion,
-                            referencia: item.referencia
+                            referencia: item.referencia                            
                         }]
                         let obj = {
                             idSubEntidadFinanciera : item.idSubEntidadFinanciera,
@@ -1381,7 +1381,9 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc
                             secuencial : item.secuencial,    
                             infoCobro : item.codEntidadFinanciera === 'EFE' ? undefined : JSON.stringify(infoCobro),   
                             abono : item.abonoCuota,       
-                            controlCaja : item.controlCaja                            
+                            controlCaja : item.controlCaja  ,
+                            idComprobante: item.idComprobante,
+                            idTipoDocumento: item.idTipoDocumento                     
                         }
                         return obj;
                     })
@@ -1566,7 +1568,7 @@ function ModalFormaCobroCtrl ($scope, $uibModalInstance, fS, tS, params){
             lote: $scope.data.lote,
 
             //Data Documento 
-            nro: item.nroDocumento || $scope.data.nro,
+            nro: item.serieComprobante || $scope.data.nro,
             idTipoDocumento: item.idTipoDocumento,
             idComprobante: item.idDocumento,
             tipoDocumento: item.tipoDocumento || item.codDoc,

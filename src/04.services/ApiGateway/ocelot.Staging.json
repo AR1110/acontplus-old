@@ -1565,6 +1565,38 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
+          "Port": 44395
+        }
+      ],
+      "DownstreamPathTemplate": "/api/TipoDocumento{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "UpstreamPathTemplate": "/gateway/TipoDocumento{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 42629
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Caja{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "UpstreamPathTemplate": "/gateway/Caja{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
           "Port": 44354
         }
       ],
@@ -1572,6 +1604,90 @@
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "UpstreamPathTemplate": "/gateway/Impresora{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7166
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Gender{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/gateway/Gender{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7166
+        }
+      ],
+      "DownstreamPathTemplate": "/api/PetType{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/gateway/PetType{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7166
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Breed{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/gateway/Breed{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7166
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Pet{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/gateway/Pet{everything}"
     }
   ]
 }
